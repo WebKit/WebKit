@@ -31,7 +31,6 @@ class GraphicsLayer;
 
 class TextureMapperBackingStore : public TextureMapperPlatformLayer, public RefCounted<TextureMapperBackingStore> {
 public:
-    virtual RefPtr<BitmapTexture> texture() const = 0;
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override = 0;
     virtual void drawRepaintCounter(TextureMapper&, int /* repaintCount */, const Color&, const FloatRect&, const TransformationMatrix&) { }
     virtual ~TextureMapperBackingStore() = default;

@@ -163,14 +163,4 @@ void TextureMapperTiledBackingStore::updateContents(TextureMapper& textureMapper
         tile.updateContents(textureMapper, sourceLayer, dirtyRect, updateContentsFlag, m_contentsScale);
 }
 
-RefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const
-{
-    for (const auto& tile : m_tiles) {
-        if (auto texture = tile.texture())
-            return texture;
-    }
-
-    return nullptr;
-}
-
 } // namespace WebCore

@@ -63,7 +63,6 @@ public:
     void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, RefPtr<Nicosia::Buffer>&&, const WebCore::IntPoint&);
     static Ref<CoordinatedBackingStore> create() { return adoptRef(*new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper&);
-    RefPtr<WebCore::BitmapTexture> texture() const override;
     void setSize(const WebCore::FloatSize&);
     void paintToTextureMapper(WebCore::TextureMapper&, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float) override;
     void drawBorder(WebCore::TextureMapper&, const WebCore::Color&, float borderWidth, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;

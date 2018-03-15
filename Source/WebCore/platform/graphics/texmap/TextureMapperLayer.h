@@ -125,7 +125,6 @@ private:
 
     static void sortByZOrder(Vector<TextureMapperLayer* >& array);
 
-    RefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
     FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta; }
     bool isAncestorFixedToViewport() const;
     TransformationMatrix replicaTransform();

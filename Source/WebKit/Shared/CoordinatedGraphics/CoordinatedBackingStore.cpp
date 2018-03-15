@@ -84,17 +84,6 @@ void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect,
     it->value.setBackBuffer(tileRect, sourceRect, WTFMove(buffer), offset);
 }
 
-RefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
-{
-    for (auto& tile : m_tiles.values()) {
-        RefPtr<BitmapTexture> texture = tile.texture();
-        if (texture)
-            return texture;
-    }
-
-    return RefPtr<BitmapTexture>();
-}
-
 void CoordinatedBackingStore::setSize(const FloatSize& size)
 {
     m_pendingSize = size;

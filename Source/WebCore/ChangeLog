@@ -1,5 +1,25 @@
 2018-03-15  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Remove TextureMapperLayer::texture()
+        https://bugs.webkit.org/show_bug.cgi?id=183635
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the unused TextureMapperLayer::texture() method. This enables
+        removing the virtual TextureMapperBackingStore::texture() method, as
+        well as the implementations of it in TextureMapperTiledBackingStore and
+        CoordinatedBackingStore classes.
+
+        No change in behavior.
+
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.cpp:
+        (WebCore::TextureMapperTiledBackingStore::texture const): Deleted.
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.h:
+
+2018-03-15  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Don't bother caching pattern transform matrix
         https://bugs.webkit.org/show_bug.cgi?id=183633
 

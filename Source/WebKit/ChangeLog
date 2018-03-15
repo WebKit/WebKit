@@ -1,3 +1,17 @@
+2018-03-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Remove TextureMapperLayer::texture()
+        https://bugs.webkit.org/show_bug.cgi?id=183635
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the CoordinatedBackingStore::texture() override since the virtual
+        method is also being removed.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStore::texture const): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.h:
+
 2018-03-14  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add clearing of storage access to WebResourceLoadStatisticsStore::clearInMemory()
