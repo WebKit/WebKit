@@ -184,7 +184,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redire
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 
 # Console log lines may appear in a different order so we silence them.
-http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
 
@@ -1717,6 +1716,8 @@ webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
 
 # There is a bug in the test
 imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Failure ]
+
+webkit.org/b/183390 http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 
 media/event-queue-crash.html [ DumpJSConsoleLogInStdErr ]
 

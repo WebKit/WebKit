@@ -1,3 +1,10 @@
+2018-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark location-protocol-setter-non-broken-async-delegate.html as flaky on all platforms, not just WK1
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2018-03-15  Youenn Fablet  <youenn@apple.com>
 
         Bad configuration parameters should make RTCPeerConnection constructor throw
