@@ -1102,6 +1102,7 @@ describe('BuildbotSyncer', () => {
                     'webkit': {'revision': 'WebKit'},
                     'webkit-patch': {'patch': 'WebKit'},
                     'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-webkit'},
+                    'build-webkit': {'ifRepositorySet': ['WebKit'], 'value': true},
                     'shared': {'revision': 'Shared'},
                 },
                 'acceptsRoots': true,
@@ -1112,6 +1113,7 @@ describe('BuildbotSyncer', () => {
             assert.equal(properties['webkit'], '197463');
             assert.equal(properties['webkit-patch'], 'http://build.webkit.org/api/uploaded-file/453.dat');
             assert.equal(properties['checkbox'], 'build-webkit');
+            assert.equal(properties['build-webkit'], true);
         });
 
         it('should resolve "ifBuilt"', () => {
@@ -1162,12 +1164,14 @@ describe('BuildbotSyncer', () => {
                     'webkit': {'revision': 'WebKit'},
                     'shared': {'revision': 'Shared'},
                     'roots': {'roots': {}},
-                    'checkbox': {'ifBuilt': ['WebKit'], 'value': 'test-webkit'}
+                    'checkbox': {'ifBuilt': ['WebKit'], 'value': 'test-webkit'},
+                    'test-webkit': {'ifBuilt': ['WebKit'], 'value': true}
                 },
                 'buildProperties': {
                     'webkit': {'revision': 'WebKit'},
                     'webkit-patch': {'patch': 'WebKit'},
                     'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-webkit'},
+                    'build-webkit': {'ifRepositorySet': ['WebKit'], 'value': true},
                     'shared': {'revision': 'Shared'},
                 },
                 'acceptsRoots': true,
@@ -1179,6 +1183,7 @@ describe('BuildbotSyncer', () => {
             assert.equal(properties['webkit'], '197463');
             assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456.dat"}]');
             assert.equal(properties['checkbox'], 'test-webkit');
+            assert.equal(properties['test-webkit'], true);
         });
 
         it('should not set the value for "ifBuilt" if no build for the repository in the list appears', () => {
@@ -1190,13 +1195,15 @@ describe('BuildbotSyncer', () => {
                     'webkit': {'revision': 'WebKit'},
                     'owner-repo': {'revision': 'Owner Repository'},
                     'roots': {'roots': {}},
-                    'checkbox': {'ifBuilt': ['WebKit'], 'value': 'test-webkit'}
+                    'checkbox': {'ifBuilt': ['WebKit'], 'value': 'test-webkit'},
+                    'test-webkit': {'ifBuilt': ['WebKit'], 'value': true}
                 },
                 'buildProperties': {
                     'webkit': {'revision': 'WebKit'},
                     'webkit-patch': {'patch': 'WebKit'},
                     'owner-repo': {'revision': 'Owner Repository'},
                     'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-webkit'},
+                    'build-webkit': {'ifRepositorySet': ['WebKit'], 'value': true},
                     'owned-commits': {'ownedRevisions': 'Owner Repository'}
                 },
                 'acceptsRoots': true,
@@ -1209,6 +1216,7 @@ describe('BuildbotSyncer', () => {
             assert.equal(properties['webkit'], '197463');
             assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456.dat"}]');
             assert.equal(properties['checkbox'], undefined);
+            assert.equal(properties['test-webkit'], undefined);
         });
 
         it('should resolve "ifRepositorySet" and "requiresBuild"', () => {
@@ -1226,6 +1234,7 @@ describe('BuildbotSyncer', () => {
                     'webkit-patch': {'patch': 'WebKit'},
                     'owner-repo': {'revision': 'Owner Repository'},
                     'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-webkit'},
+                    'build-webkit': {'ifRepositorySet': ['WebKit'], 'value': true},
                     'owned-commits': {'ownedRevisions': 'Owner Repository'}
                 },
                 'acceptsRoots': true,
@@ -1236,6 +1245,7 @@ describe('BuildbotSyncer', () => {
             assert.equal(properties['webkit'], '197463');
             assert.equal(properties['owner-repo'], 'owner-001');
             assert.equal(properties['checkbox'], undefined);
+            assert.equal(properties['build-webkit'], undefined);
             assert.deepEqual(JSON.parse(properties['owned-commits']), {'Owner Repository': [{revision: 'owned-002', repository: 'Owned Repository', ownerRevision: 'owner-001'}]});
         });
 
@@ -1255,6 +1265,7 @@ describe('BuildbotSyncer', () => {
                     'webkit-patch': {'patch': 'WebKit'},
                     'owner-repo': {'revision': 'Owner Repository'},
                     'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-webkit'},
+                    'build-webkit': {'ifRepositorySet': ['WebKit'], 'value': true},
                     'owned-commits': {'ownedRevisions': 'Owner Repository'}
                 },
                 'acceptsRoots': true,
@@ -1265,6 +1276,7 @@ describe('BuildbotSyncer', () => {
             assert.equal(properties['webkit'], '197463');
             assert.equal(properties['owner-repo'], 'owner-001');
             assert.equal(properties['checkbox'], 'build-webkit');
+            assert.equal(properties['build-webkit'], true);
             assert.equal(properties['webkit-patch'], 'http://build.webkit.org/api/uploaded-file/453.dat');
             assert.deepEqual(JSON.parse(properties['owned-commits']), {'Owner Repository': [{revision: 'owned-002', repository: 'Owned Repository', ownerRevision: 'owner-001'}]});
         });

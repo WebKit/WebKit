@@ -25,6 +25,7 @@ const configWithOneTesterTwoBuilders = {
             testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
             buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
                 'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
+                'build-wk': {'ifRepositorySet': ['WebKit'], 'value': true},
                 'owned-commits': {'ownedRevisions': 'WebKit'}},
             acceptsRoots: true,
         }
@@ -70,6 +71,7 @@ const configWithPlatformName = {
             testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
             buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
                 'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
+                'build-wk': {'ifRepositorySet': ['WebKit'], 'value': true},
                 'owned-commits': {'ownedRevisions': 'WebKit'}},
             acceptsRoots: true,
         }
@@ -114,6 +116,7 @@ const configWithTwoTesters = {
             testProperties: {'wk': {'revision': 'WebKit'}, 'roots': {'roots': {}}},
             buildProperties: {'wk': {'revision': 'WebKit'}, 'wk-patch': {'patch': 'WebKit'},
                 'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-wk'},
+                'build-wk': {'ifRepositorySet': ['WebKit'], 'value': true},
                 'owned-commits': {'ownedRevisions': 'WebKit'}},
             acceptsRoots: true,
         }
@@ -382,7 +385,7 @@ describe('sync-buildbot', function () {
             assert.equal(requests.length, 7);
             assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
             assert.deepEqual(requests[6].data, {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'),
-                'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk'});
+                'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 10);
@@ -496,7 +499,7 @@ describe('sync-buildbot', function () {
         }).then(() => {
             assert.equal(requests.length, 7);
             assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
-            assert.deepEqual(requests[6].data, {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk'});
+            assert.deepEqual(requests[6].data, {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 10);
@@ -655,7 +658,7 @@ describe('sync-buildbot', function () {
             assert.equal(requests.length, 7);
             assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
             assert.deepEqual(requests[6].data, {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'),
-                'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'platform-name': 'some platform'});
+                'build-request-id': '1', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true, 'platform-name': 'some platform'});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 10);
@@ -769,7 +772,7 @@ describe('sync-buildbot', function () {
         }).then(() => {
             assert.equal(requests.length, 7);
             assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
-            assert.deepEqual(requests[6].data, {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'platform-name': 'some platform'});
+            assert.deepEqual(requests[6].data, {'wk': '191622', 'build-request-id': '2', 'forcescheduler': 'force-ab-builds', 'checkbox': 'build-wk', 'build-wk': true, 'platform-name': 'some platform'});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 10);

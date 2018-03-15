@@ -576,7 +576,7 @@ class BuildbotSyncer {
         for (const propertyName in properties) {
             let value = properties[propertyName];
             const isDictionary = typeof(value) == 'object';
-            assert(isDictionary || typeof(value) == 'string',
+            assert(isDictionary || typeof(value) == 'string' || typeof(value) == 'boolean',
                 `Repository group "${groupName}" uses an invalid value "${value}" in property "${propertyName}"`);
 
             if (!isDictionary) {
