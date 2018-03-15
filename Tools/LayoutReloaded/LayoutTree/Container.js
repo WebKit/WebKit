@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Container extends Box {
+Layout.Container = class Container extends Layout.Box {
     constructor(node, id) {
         super(node, id);
         this.m_firstChild = null;

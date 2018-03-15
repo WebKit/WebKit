@@ -28,7 +28,7 @@ class TreeBuilder {
 
     createTree(document, renderTreeDump) {
         // Root.
-        let initialBlockContainer = new InitialBlockContainer(document, parseInt(renderTreeDump.substring(0, renderTreeDump.indexOf("("))));
+        let initialBlockContainer = new Layout.InitialBlockContainer(document, parseInt(renderTreeDump.substring(0, renderTreeDump.indexOf("("))));
         initialBlockContainer.setRendererName("RenderView");
         renderTreeDump = renderTreeDump.substring(renderTreeDump.indexOf("|") + 1);
 
@@ -53,13 +53,13 @@ class TreeBuilder {
         let text = null;
         let node = this._findNode(initialBlockContainer.node(), id, name);
         if (name == "RenderBlock" || name == "RenderBody")
-            box = new BlockContainer(node, id);
+            box = new Layout.BlockContainer(node, id);
         else if (name == "RenderInline") {
-            box = new InlineContainer(node, id);
+            box = new Layout.InlineContainer(node, id);
         } else if (name == "RenderText") {
             text = new Text(node, id);
         } else
-            box = new Box(node, id);
+            box = new Layout.Box(node, id);
 
         if (box)
             box.setRendererName(name);
@@ -68,7 +68,7 @@ class TreeBuilder {
         // WebKit does not construct anonymous inline container for text if the text
         // is a direct child of a block container.
         if (text && !parentBox.isInlineContainer) {
-            box = new InlineBox(null, -1);
+            box = new Layout.InlineBox(null, -1);
             box.setIsAnonymous();
             box.setText(text);
         }

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class InitialBlockContainer extends BlockContainer {
+Layout.InitialBlockContainer = class InitialBlockContainer extends Layout.BlockContainer {
     constructor(document, id, name) {
         super(document, id);
     }

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class BlockContainer extends Container {
+Layout.BlockContainer = class BlockContainer extends Layout.Container {
     constructor(node, id) {
         super(node, id);
     }

@@ -47,33 +47,33 @@ class BlockFormattingContext extends FormattingContext {
         while (layoutStack.length) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
-                let box = layoutStack[layoutStack.length - 1];
-                box.setWidth(this.computeWidth(box));
-                box.setTopLeft(this._computeStaticPosition(box));
-                if (box.establishesFormattingContext()) {
-                    layoutContext.layoutFormattingContext(box.establishedFormattingContext());
+                let layoutBox = layoutStack[layoutStack.length - 1];
+                this.computeWidth(layoutBox);
+                this._computeStaticPosition(layoutBox);
+                if (layoutBox.establishesFormattingContext()) {
+                    layoutContext.layoutFormattingContext(layoutBox.establishedFormattingContext());
                     break;
                 }
-                if (!box.isContainer() || !box.hasChild())
+                if (!layoutBox.isContainer() || !layoutBox.hasChild())
                     break;
-                layoutStack.push(box.firstChild());
+                layoutStack.push(layoutBox.firstChild());
             }
 
             // Climb back on the ancestors and compute height/final position.
             while (layoutStack.length) {
                 // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
-                let box = layoutStack.pop();
-                box.setHeight(this.computeHeight(box));
+                let layoutBox = layoutStack.pop();
+                this.computeHeight(layoutBox);
                 // Adjust position now that we have all the previous floats placed in this context -if needed.
-                box.setTopLeft(this.floatingContext().computePosition(box));
+                this.floatingContext().computePosition(layoutBox);
                 // Move positioned children to their final position.
-                if (box.isContainer()) {
-                    this._placeInFlowPositionedChildren(box);
+                if (layoutBox.isContainer()) {
+                    this._placeInFlowPositionedChildren(layoutBox);
                     // Place the out of flow content.
-                    this._placeOutOfFlowDescendants(box);
+                    this._placeOutOfFlowDescendants(layoutBox);
                 }
-                if (box.nextSibling()) {
-                    layoutStack.push(box.nextSibling());
+                if (layoutBox.nextSibling()) {
+                    layoutStack.push(layoutBox.nextSibling());
                     break;
                 }
             }
@@ -82,55 +82,55 @@ class BlockFormattingContext extends FormattingContext {
         this._placeOutOfFlowDescendants(this.rootContainer());
    }
 
-    computeWidth(box) {
-        if (box.isOutOfFlowPositioned())
-            return this._computeOutOfFlowWidth(box);
-        if (box.isFloatingPositioned())
-            return this._computeFloatingWidth(box);
-        return this._computeInFlowWidth(box);
+    computeWidth(layoutBox) {
+        if (layoutBox.isOutOfFlowPositioned())
+            return this._computeOutOfFlowWidth(layoutBox);
+        if (layoutBox.isFloatingPositioned())
+            return this._computeFloatingWidth(layoutBox);
+        return this._computeInFlowWidth(layoutBox);
     }
 
-    computeHeight(box) {
-        if (box.isOutOfFlowPositioned())
-            return this._computeOutOfFlowHeight(box);
-        if (box.isFloatingPositioned())
-            return this._computeFloatingHeight(box);
-        return this._computeInFlowHeight(box);
+    computeHeight(layoutBox) {
+        if (layoutBox.isOutOfFlowPositioned())
+            return this._computeOutOfFlowHeight(layoutBox);
+        if (layoutBox.isFloatingPositioned())
+            return this._computeFloatingHeight(layoutBox);
+        return this._computeInFlowHeight(layoutBox);
     }
 
-    marginTop(box) {
-        return BlockMarginCollapse.marginTop(box);
+    marginTop(layoutBox) {
+        return BlockMarginCollapse.marginTop(layoutBox);
     }
 
-    marginBottom(box) {
-        return BlockMarginCollapse.marginBottom(box);
+    marginBottom(layoutBox) {
+        return BlockMarginCollapse.marginBottom(layoutBox);
     }
 
-    _computeStaticPosition(box) {
+    _computeStaticPosition(layoutBox) {
         // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
         // The vertical distance between two sibling boxes is determined by the 'margin' properties.
         // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
-        let parent = box.parent();
+        let parent = layoutBox.parent();
         // Start from the top of the container's content box.
-        let previousInFlowSibling = box.previousInFlowSibling();
+        let previousInFlowSibling = layoutBox.previousInFlowSibling();
         let contentBottom = previousInFlowSibling ? previousInFlowSibling.bottomRight().top() + this.marginBottom(previousInFlowSibling) : parent.contentBox().top();
         let position = new LayoutPoint(contentBottom, parent.contentBox().left());
-        position.moveBy(new LayoutSize(this.marginLeft(box), this.marginTop(box)));
-        return position;
+        position.moveBy(new LayoutSize(this.marginLeft(layoutBox), this.marginTop(layoutBox)));
+        layoutBox.setTopLeft(position);
     }
 
     _placeInFlowPositionedChildren(container) {
         for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling())
-            inFlowChild.setTopLeft(this._computeInFlowPositionedPosition(inFlowChild));
+            this._computeInFlowPositionedPosition(inFlowChild);
     }
 
     _placeOutOfFlowDescendants(container) {
         let outOfFlowDescendants = Utils.collectOutOfFlowDescendants(container);
         for (let outOfFlowBox of outOfFlowDescendants)
-            outOfFlowBox.setTopLeft(this._computeOutOfFlowPosition(outOfFlowBox));
+            this._computeOutOfFlowPosition(outOfFlowBox);
     }
 
-    _computeOutOfFlowWidth(box) {
+    _computeOutOfFlowWidth(layoutBox) {
         // 10.3.7 Absolutely positioned, non-replaced elements
 
         // 1. 'left' and 'width' are 'auto' and 'right' is not 'auto', then the width is shrink-to-fit. Then solve for 'left'
@@ -142,37 +142,38 @@ class BlockFormattingContext extends FormattingContext {
         // 5. 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
         // 6. 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
         let width = Number.NaN;
-        if (Utils.isWidthAuto(box) && Utils.isLeftAuto(box) && Utils.isRightAuto(box))
-            width = this._shrinkToFitWidth(box);
-        else if (Utils.isLeftAuto(box) && Utils.isWidthAuto(box) && !Utils.isRightAuto(box))
-            width = this._shrinkToFitWidth(box); // 1
-        else if (Utils.isLeftAuto(box) && Utils.isRightAuto(box) && !Utils.isWidthAuto(box))
-            width = Utils.width(box); // 2
-        else if (Utils.isWidthAuto(box) && Utils.isRightAuto(box) && !Utils.isLeftAuto(box))
-            width = this._shrinkToFitWidth(box); // 3
-        else if (Utils.isLeftAuto(box) && !Utils.isWidthAuto(box) && !Utils.isRightAuto(box))
-            width = Utils.width(box); // 4
-        else if (Utils.isWidthAuto(box) && !Utils.isLeftAuto(box) && !Utils.isRightAuto(box))
-            width = Math.max(0, box.containingBlock().contentBox().width() - Utils.right(box) - Utils.left(box)); // 5
-        else if (Utils.isRightAuto(box) && !Utils.isLeftAuto(box) && !Utils.isWidthAuto(box))
-            width = Utils.width(box); // 6
+        if (Utils.isWidthAuto(layoutBox) && Utils.isLeftAuto(layoutBox) && Utils.isRightAuto(layoutBox))
+            width = this._shrinkToFitWidth(layoutBox);
+        else if (Utils.isLeftAuto(layoutBox) && Utils.isWidthAuto(layoutBox) && !Utils.isRightAuto(layoutBox))
+            width = this._shrinkToFitWidth(layoutBox); // 1
+        else if (Utils.isLeftAuto(layoutBox) && Utils.isRightAuto(layoutBox) && !Utils.isWidthAuto(layoutBox))
+            width = Utils.width(layoutBox); // 2
+        else if (Utils.isWidthAuto(layoutBox) && Utils.isRightAuto(layoutBox) && !Utils.isLeftAuto(layoutBox))
+            width = this._shrinkToFitWidth(layoutBox); // 3
+        else if (Utils.isLeftAuto(layoutBox) && !Utils.isWidthAuto(layoutBox) && !Utils.isRightAuto(layoutBox))
+            width = Utils.width(layoutBox); // 4
+        else if (Utils.isWidthAuto(layoutBox) && !Utils.isLeftAuto(layoutBox) && !Utils.isRightAuto(layoutBox))
+            width = Math.max(0, layoutBox.containingBlock().contentBox().width() - Utils.right(layoutBox) - Utils.left(layoutBox)); // 5
+        else if (Utils.isRightAuto(layoutBox) && !Utils.isLeftAuto(layoutBox) && !Utils.isWidthAuto(layoutBox))
+            width = Utils.width(layoutBox); // 6
         else
             ASSERT_NOT_REACHED();
-        return width + Utils.computedHorizontalBorderAndPadding(box);
+        width += Utils.computedHorizontalBorderAndPadding(layoutBox);
+        layoutBox.setWidth(width);
     }
 
-    _computeFloatingWidth(box) {
+    _computeFloatingWidth(layoutBox) {
         // FIXME: missing cases
-        return Utils.width(box) + Utils.computedHorizontalBorderAndPadding(box);
+        layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox));
     }
 
-    _computeInFlowWidth(box) {
-        if (Utils.isWidthAuto(box))
-            return this._computeHorizontalConstraint(box);
-        return Utils.width(box) + Utils.computedHorizontalBorderAndPadding(box);
+    _computeInFlowWidth(layoutBox) {
+        if (Utils.isWidthAuto(layoutBox))
+            return layoutBox.setWidth(this._horizontalConstraint(layoutBox));
+        return layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox));
     }
 
-    _computeOutOfFlowHeight(box) {
+    _computeOutOfFlowHeight(layoutBox) {
         // 1. If all three of 'top', 'height', and 'bottom' are auto, set 'top' to the static position and apply rule number three below.
         // 2. If none of the three are 'auto': If both 'margin-top' and 'margin-bottom' are 'auto', solve the equation under
         //    the extra constraint that the two margins get equal values. If one of 'margin-top' or 'margin-bottom' is 'auto',
@@ -189,49 +190,50 @@ class BlockFormattingContext extends FormattingContext {
         // 7. 'height' is 'auto', 'top' and 'bottom' are not 'auto', then 'auto' values for 'margin-top' and 'margin-bottom' are set to 0 and solve for 'height'
         // 8. 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
         let height = Number.NaN;
-        if (Utils.isHeightAuto(box) && Utils.isBottomAuto(box) && Utils.isTopAuto(box))
-            height = this._computeContentHeight(box); // 1
-        else if (Utils.isTopAuto((box)) && Utils.isHeightAuto((box)) && !Utils.isBottomAuto((box)))
-            height = this._computeContentHeight(box); // 3
-        else if (Utils.isTopAuto((box)) && Utils.isBottomAuto((box)) && !Utils.isHeightAuto((box)))
-            height = Utils.height(box); // 4
-        else if (Utils.isHeightAuto((box)) && Utils.isBottomAuto((box)) && !Utils.isTopAuto((box)))
-            height = this._computeContentHeight(box); // 5
-        else if (Utils.isTopAuto((box)) && !Utils.isHeightAuto((box)) && !Utils.isBottomAuto((box)))
-            height = Utils.height(box); // 6
-        else if (Utils.isHeightAuto((box)) && !Utils.isTopAuto((box)) && !Utils.isBottomAuto((box)))
-            height = Math.max(0, box.containingBlock().contentBox().height() - Utils.bottom(box) - Utils.top(box)); // 7
-        else if (Utils.isBottomAuto((box)) && !Utils.isTopAuto((box)) && !Utils.isHeightAuto((box)))
-            height = Utils.height(box); // 8
+        if (Utils.isHeightAuto(layoutBox) && Utils.isBottomAuto(layoutBox) && Utils.isTopAuto(layoutBox))
+            height = this._contentHeight(layoutBox); // 1
+        else if (Utils.isTopAuto((layoutBox)) && Utils.isHeightAuto((layoutBox)) && !Utils.isBottomAuto((layoutBox)))
+            height = this._contentHeight(layoutBox); // 3
+        else if (Utils.isTopAuto((layoutBox)) && Utils.isBottomAuto((layoutBox)) && !Utils.isHeightAuto((layoutBox)))
+            height = Utils.height(layoutBox); // 4
+        else if (Utils.isHeightAuto((layoutBox)) && Utils.isBottomAuto((layoutBox)) && !Utils.isTopAuto((layoutBox)))
+            height = this._contentHeight(layoutBox); // 5
+        else if (Utils.isTopAuto((layoutBox)) && !Utils.isHeightAuto((layoutBox)) && !Utils.isBottomAuto((layoutBox)))
+            height = Utils.height(layoutBox); // 6
+        else if (Utils.isHeightAuto((layoutBox)) && !Utils.isTopAuto((layoutBox)) && !Utils.isBottomAuto((layoutBox)))
+            height = Math.max(0, layoutBox.containingBlock().contentBox().height() - Utils.bottom(layoutBox) - Utils.top(layoutBox)); // 7
+        else if (Utils.isBottomAuto((layoutBox)) && !Utils.isTopAuto((layoutBox)) && !Utils.isHeightAuto((layoutBox)))
+            height = Utils.height(layoutBox); // 8
         else
             ASSERT_NOT_REACHED();
-        return height + Utils.computedVerticalBorderAndPadding(box);
+        height += Utils.computedVerticalBorderAndPadding(layoutBox);
+        layoutBox.setHeight(height);
     }
 
-    _computeFloatingHeight(box) {
+    _computeFloatingHeight(layoutBox) {
         // FIXME: missing cases
-        return Utils.height(box) + Utils.computedVerticalBorderAndPadding(box);
+        layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox));
     }
 
-    _computeInFlowHeight(box) {
-        if (Utils.isHeightAuto(box)) {
+    _computeInFlowHeight(layoutBox) {
+        if (Utils.isHeightAuto(layoutBox)) {
             // Only children in the normal flow are taken into account (i.e., floating boxes and absolutely positioned boxes are ignored,
             // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
 
             // The element's height is the distance from its top content edge to the first applicable of the following:
             // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
-            return this._computeContentHeight(box) + Utils.computedVerticalBorderAndPadding(box);
+            return layoutBox.setHeight(this._contentHeight(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox));
         }
-        return Utils.height(box) + Utils.computedVerticalBorderAndPadding(box);
+        return layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox));
     }
 
-    _computeHorizontalConstraint(box) {
-        let horizontalConstraint = box.containingBlock().contentBox().width();
-        horizontalConstraint -= this.marginLeft(box) + this.marginRight(box);
+    _horizontalConstraint(layoutBox) {
+        let horizontalConstraint = layoutBox.containingBlock().contentBox().width();
+        horizontalConstraint -= this.marginLeft(layoutBox) + this.marginRight(layoutBox);
         return horizontalConstraint;
     }
 
-    _computeContentHeight(box) {
+    _contentHeight(layoutBox) {
         // 10.6.3 Block-level non-replaced elements in normal flow when 'overflow' computes to 'visible'
         // The element's height is the distance from its top content edge to the first applicable of the following:
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
@@ -240,82 +242,86 @@ class BlockFormattingContext extends FormattingContext {
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
         // 4. zero, otherwise
         // Only children in the normal flow are taken into account.
-        if (!box.isContainer() || !box.hasInFlowChild())
+        if (!layoutBox.isContainer() || !layoutBox.hasInFlowChild())
             return 0;
-        if (box.establishesInlineFormattingContext()) {
-            ASSERT(box.establishedFormattingContext());
-            let lines = box.establishedFormattingContext().lines();
+        if (layoutBox.establishesInlineFormattingContext()) {
+            ASSERT(layoutBox.establishedFormattingContext());
+            let lines = layoutBox.establishedFormattingContext().lines();
             if (!lines.length)
                 return 0;
             let lastLine = lines[lines.length - 1];
             return lastLine.rect().bottom();
         }
-        let top = box.contentBox().top();
-        let lastInFlowChild = box.lastInFlowChild();
+        let top = layoutBox.contentBox().top();
+        let bottom = this._adjustBottomWithFIXME(layoutBox);
+        return bottom - top;
+    }
 
+    _adjustBottomWithFIXME(layoutBox) {
+        let lastInFlowChild = layoutBox.lastInFlowChild();
         let bottom = lastInFlowChild.rect().bottom() + this.marginBottom(lastInFlowChild);
         // FIXME: margin for body
         if (lastInFlowChild.name() == "RenderBody" && Utils.isHeightAuto(lastInFlowChild) && !lastInFlowChild.contentBox().height())
             bottom -= this.marginBottom(lastInFlowChild);
         // FIXME: figure out why floatings part of the initial block formatting context get propagated to HTML
-        if (box.node().tagName == "HTML") {
+        if (layoutBox.node().tagName == "HTML") {
             let floatingBottom = this.floatingContext().bottom();
             if (!Number.isNaN(floatingBottom))
                 bottom = Math.max(floatingBottom, bottom);
         }
-        return bottom - top;
+        return bottom;
     }
 
-    _computeInFlowPositionedPosition(box) {
+    _computeInFlowPositionedPosition(layoutBox) {
         // Start with the original, static position.
-        let relativePosition = box.topLeft();
+        let relativePosition = layoutBox.topLeft();
         // Top/bottom
-        if (!Utils.isTopAuto(box))
-            relativePosition.shiftTop(Utils.top(box));
-        else if (!Utils.isBottomAuto(box))
-            relativePosition.shiftTop(-Utils.bottom(box));
+        if (!Utils.isTopAuto(layoutBox))
+            relativePosition.shiftTop(Utils.top(layoutBox));
+        else if (!Utils.isBottomAuto(layoutBox))
+            relativePosition.shiftTop(-Utils.bottom(layoutBox));
         // Left/right
-        if (!Utils.isLeftAuto(box))
-            relativePosition.shiftLeft(Utils.left(box));
-        else if (!Utils.isRightAuto(box))
-            relativePosition.shiftLeft(-Utils.right(box));
-        return relativePosition;
+        if (!Utils.isLeftAuto(layoutBox))
+            relativePosition.shiftLeft(Utils.left(layoutBox));
+        else if (!Utils.isRightAuto(layoutBox))
+            relativePosition.shiftLeft(-Utils.right(layoutBox));
+        layoutBox.setTopLeft(relativePosition);
     }
 
-    _computeOutOfFlowPosition(box) {
-        let containerSize = box.containingBlock().contentBox().size();
+    _computeOutOfFlowPosition(layoutBox) {
+        let containerSize = layoutBox.containingBlock().contentBox().size();
         // Top/bottom
         let top = Number.NaN;
-        if (Utils.isTopAuto(box) && Utils.isBottomAuto(box)) {
+        if (Utils.isTopAuto(layoutBox) && Utils.isBottomAuto(layoutBox)) {
             // Convert static position to absolute.
-            top = Utils.mapStaticToAbsolute(box).top();
-        } else if (!Utils.isTopAuto(box))
-            top = Utils.top(box) + this.marginTop(box);
-        else if (!Utils.isBottomAuto(box))
-            top = containerSize.height() - Utils.bottom(box) - box.rect().height() - this.marginBottom(box);
+            top = Utils.mapStaticToAbsolute(layoutBox).top();
+        } else if (!Utils.isTopAuto(layoutBox))
+            top = Utils.top(layoutBox) + this.marginTop(layoutBox);
+        else if (!Utils.isBottomAuto(layoutBox))
+            top = containerSize.height() - Utils.bottom(layoutBox) - layoutBox.rect().height() - this.marginBottom(layoutBox);
         else
             ASSERT_NOT_REACHED();
         // Left/right
         let left = Number.NaN;
-        if (Utils.isLeftAuto(box) && Utils.isRightAuto(box)) {
+        if (Utils.isLeftAuto(layoutBox) && Utils.isRightAuto(layoutBox)) {
             // Convert static position to absolute.
-            left = Utils.mapStaticToAbsolute(box).left();
-        } else if (!Utils.isLeftAuto(box))
-            left = Utils.left(box) + this.marginLeft(box);
-        else if (!Utils.isRightAuto(box))
-            left = containerSize.width() - Utils.right(box) - box.rect().width() - this.marginRight(box);
+            left = Utils.mapStaticToAbsolute(layoutBox).left();
+        } else if (!Utils.isLeftAuto(layoutBox))
+            left = Utils.left(layoutBox) + this.marginLeft(layoutBox);
+        else if (!Utils.isRightAuto(layoutBox))
+            left = containerSize.width() - Utils.right(layoutBox) - layoutBox.rect().width() - this.marginRight(layoutBox);
         else
             ASSERT_NOT_REACHED();
-        return new LayoutPoint(top, left);
+        layoutBox.setTopLeft(new LayoutPoint(top, left));
     }
 
-    _shrinkToFitWidth(box) {
+    _shrinkToFitWidth(layoutBox) {
         // FIXME: this is naive.
-        ASSERT(Utils.isWidthAuto(box));
-        if (!box.isContainer() || !box.hasChild())
+        ASSERT(Utils.isWidthAuto(layoutBox));
+        if (!layoutBox.isContainer() || !layoutBox.hasChild())
             return 0;
         let width = 0;
-        for (let inFlowChild = box.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
+        for (let inFlowChild = layoutBox.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
             let widthCandidate = Utils.isWidthAuto(inFlowChild) ? this._shrinkToFitWidth(inFlowChild) : Utils.width(inFlowChild);
             width = Math.max(width, widthCandidate + Utils.computedHorizontalBorderAndPadding(inFlowChild));
         }

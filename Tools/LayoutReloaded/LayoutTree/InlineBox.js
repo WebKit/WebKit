@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class InlineBox extends Box {
+Layout.InlineBox = class InlineBox extends Layout.Box {
     constructor(node, id) {
         super(node, id);
         this.m_text = null;

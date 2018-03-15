@@ -40,52 +40,52 @@ class FormattingContext {
     layout(layoutContext) {
     }
 
-    computeWidth(box) {
+    computeWidth(layoutBox) {
     }
 
-    computeHeight(box) {
+    computeHeight(layoutBox) {
     }
 
-    marginTop(box) {
-        return Utils.computedMarginTop(box);
+    marginTop(layoutBox) {
+        return Utils.computedMarginTop(layoutBox);
     }
     
-    marginLeft(box) {
-        return Utils.computedMarginLeft(box);
+    marginLeft(layoutBox) {
+        return Utils.computedMarginLeft(layoutBox);
     }
     
-    marginBottom(box) {
-        return Utils.computedMarginBottom(box);
+    marginBottom(layoutBox) {
+        return Utils.computedMarginBottom(layoutBox);
     }
     
-    marginRight(box) {
-        return Utils.computedMarginRight(box);
+    marginRight(layoutBox) {
+        return Utils.computedMarginRight(layoutBox);
     }
 
-    absoluteMarginBox(box) {
-        let absoluteContentBox = Utils.mapToContainer(box, this.rootContainer());
-        absoluteContentBox.moveBy(new LayoutSize(-this.marginLeft(box), -this.marginTop(box)));
-        absoluteContentBox.growBy(new LayoutSize(this.marginLeft(box) + this.marginRight(box), this.marginTop(box) + this.marginBottom(box)));
+    absoluteMarginBox(layoutBox) {
+        let absoluteContentBox = Utils.mapToContainer(layoutBox, this.rootContainer());
+        absoluteContentBox.moveBy(new LayoutSize(-this.marginLeft(layoutBox), -this.marginTop(layoutBox)));
+        absoluteContentBox.growBy(new LayoutSize(this.marginLeft(layoutBox) + this.marginRight(layoutBox), this.marginTop(layoutBox) + this.marginBottom(layoutBox)));
         return absoluteContentBox;
     }
 
-    absoluteBorderBox(box) {
-        let borderBox = box.borderBox();
-        let absoluteRect = new LayoutRect(Utils.mapToContainer(box, this.rootContainer()).topLeft(), borderBox.size());
+    absoluteBorderBox(layoutBox) {
+        let borderBox = layoutBox.borderBox();
+        let absoluteRect = new LayoutRect(Utils.mapToContainer(layoutBox, this.rootContainer()).topLeft(), borderBox.size());
         absoluteRect.moveBy(borderBox.topLeft());
         return absoluteRect;
     }
 
-    absolutePaddingBox(box) {
-        let paddingBox = box.paddingBox();
-        let absoluteRect = new LayoutRect(Utils.mapToContainer(box, this.rootContainer()).topLeft(), paddingBox.size());
+    absolutePaddingBox(layoutBox) {
+        let paddingBox = layoutBox.paddingBox();
+        let absoluteRect = new LayoutRect(Utils.mapToContainer(layoutBox, this.rootContainer()).topLeft(), paddingBox.size());
         absoluteRect.moveBy(paddingBox.topLeft());
         return absoluteRect;
     }
 
-    absoluteContentBox(box) {
-        let contentBox = box.contentBox();
-        let absoluteRect = new LayoutRect(Utils.mapToContainer(box, this.rootContainer()).topLeft(), contentBox.size());
+    absoluteContentBox(layoutBox) {
+        let contentBox = layoutBox.contentBox();
+        let absoluteRect = new LayoutRect(Utils.mapToContainer(layoutBox, this.rootContainer()).topLeft(), contentBox.size());
         absoluteRect.moveBy(contentBox.topLeft());
         return absoluteRect;
     }

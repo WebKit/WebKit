@@ -31,18 +31,18 @@ class FloatingContext {
         this.m_formattingContext = formattingContext;
     }
 
-    computePosition(box) {
-        if (box.isOutOfFlowPositioned())
-            return box.topLeft();
-        if (box.isFloatingPositioned()) {
-            let position = this._positionForFloating(box);
-            this._addFloating(box);
-            return position;
+    computePosition(layoutBox) {
+        if (layoutBox.isOutOfFlowPositioned())
+            return;
+        if (layoutBox.isFloatingPositioned()) {
+            let position = this._positionForFloating(layoutBox);
+            this._addFloating(layoutBox);
+            return layoutBox.setTopLeft(position);
         }
-        if (Utils.hasClear(box))
-            return this._positionForClear(box);
+        if (Utils.hasClear(layoutBox))
+            return layoutBox.setTopLeft(this._positionForClear(layoutBox));
         // Intruding floats might force this box move.
-        return this._computePositionToAvoidIntrudingFloats(box);
+        return layoutBox.setTopLeft(this._computePositionToAvoidIntrudingFloats(layoutBox));
     }
 
     bottom() {
@@ -71,35 +71,35 @@ class FloatingContext {
         return Math.Nan;
     }
 
-    _positionForClear(box) {
-        ASSERT(Utils.hasClear(box));
+    _positionForClear(layoutBox) {
+        ASSERT(Utils.hasClear(layoutBox));
         if (this._isEmpty())
-            return box.topLeft();
+            return layoutBox.topLeft();
 
         let leftBottom = Number.NaN;
         let rightBottom = Number.NaN;
-        if (Utils.hasClearLeft(box) || Utils.hasClearBoth(box))
+        if (Utils.hasClearLeft(layoutBox) || Utils.hasClearBoth(layoutBox))
             leftBottom = this._bottom(this.m_leftFloatingBoxStack);
-        if (Utils.hasClearRight(box) || Utils.hasClearBoth(box))
+        if (Utils.hasClearRight(layoutBox) || Utils.hasClearBoth(layoutBox))
             rightBottom = this._bottom(this.m_rightFloatingBoxStack);
 
         if (!Number.isNaN(leftBottom) && !Number.isNaN(rightBottom))
-            return new LayoutPoint(Math.max(leftBottom, rightBottom), box.rect().left());
+            return new LayoutPoint(Math.max(leftBottom, rightBottom), layoutBox.rect().left());
         if (!Number.isNaN(leftBottom))
-            return new LayoutPoint(leftBottom, box.rect().left());
+            return new LayoutPoint(leftBottom, layoutBox.rect().left());
         if (!Number.isNaN(rightBottom))
-            return new LayoutPoint(rightBottom, box.rect().left());
-        return box.topLeft();
+            return new LayoutPoint(rightBottom, layoutBox.rect().left());
+        return layoutBox.topLeft();
     }
 
-    _computePositionToAvoidIntrudingFloats(box) {
-        if (!box.establishesBlockFormattingContext() || this._isEmpty())
-            return box.topLeft();
+    _computePositionToAvoidIntrudingFloats(layoutBox) {
+        if (!layoutBox.establishesBlockFormattingContext() || this._isEmpty())
+            return layoutBox.topLeft();
         // The border box of a table, a block-level replaced element, or an element in the normal flow that establishes
         // a new block formatting context (such as an element with 'overflow' other than 'visible') must not overlap the
         // margin box of any floats in the same block formatting context as the element itself.
         // For some reason, we position this as if it was floating left.
-        return this._positionForFloating(box);
+        return this._positionForFloating(layoutBox);
     }
 
     _addFloating(floatingBox) {

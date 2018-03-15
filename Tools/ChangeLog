@@ -1,3 +1,142 @@
+2018-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Introduce Layout namespace
+        https://bugs.webkit.org/show_bug.cgi?id=183659
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for introducing the display tree.
+        Box -> Layout.Box
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype.layout):
+        (BlockFormattingContext.prototype.computeWidth):
+        (BlockFormattingContext.prototype.computeHeight):
+        (BlockFormattingContext.prototype.marginTop):
+        (BlockFormattingContext.prototype.marginBottom):
+        (BlockFormattingContext.prototype._computeStaticPosition):
+        (BlockFormattingContext.prototype._placeInFlowPositionedChildren):
+        (BlockFormattingContext.prototype._placeOutOfFlowDescendants):
+        (BlockFormattingContext.prototype._computeOutOfFlowWidth):
+        (BlockFormattingContext.prototype._computeFloatingWidth):
+        (BlockFormattingContext.prototype._computeInFlowWidth):
+        (BlockFormattingContext.prototype._computeOutOfFlowHeight):
+        (BlockFormattingContext.prototype._computeFloatingHeight):
+        (BlockFormattingContext.prototype._computeInFlowHeight):
+        (BlockFormattingContext.prototype._horizontalConstraint):
+        (BlockFormattingContext.prototype._contentHeight):
+        (BlockFormattingContext.prototype._adjustBottomWithFIXME):
+        (BlockFormattingContext.prototype._computeInFlowPositionedPosition):
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        (BlockFormattingContext.prototype._shrinkToFitWidth):
+        (BlockFormattingContext):
+        (BlockFormattingContext.prototype._computeHorizontalConstraint): Deleted.
+        (BlockFormattingContext.prototype._computeContentHeight): Deleted.
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockMarginCollapse.js:
+        (BlockMarginCollapse.marginTop):
+        (BlockMarginCollapse.marginBottom):
+        (BlockMarginCollapse._isMarginTopCollapsedWithSibling):
+        (BlockMarginCollapse._isMarginBottomCollapsedWithSibling):
+        (BlockMarginCollapse._isMarginTopCollapsedWithParent):
+        (BlockMarginCollapse._isMarginBottomCollapsedWithParent):
+        (BlockMarginCollapse._nonCollapsedMarginTop):
+        (BlockMarginCollapse._nonCollapsedMarginBottom):
+        (BlockMarginCollapse._collapsedMarginTopFromFirstChild):
+        (BlockMarginCollapse._collapsedMarginBottomFromLastChild):
+        (BlockMarginCollapse._hasAdjoiningMarginTopAndBottom):
+        (BlockMarginCollapse):
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype.computePosition):
+        (FloatingContext.prototype._positionForClear):
+        (FloatingContext.prototype._computePositionToAvoidIntrudingFloats):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype.computeWidth):
+        (FormattingContext.prototype.computeHeight):
+        (FormattingContext.prototype.marginTop):
+        (FormattingContext.prototype.marginLeft):
+        (FormattingContext.prototype.marginBottom):
+        (FormattingContext.prototype.marginRight):
+        (FormattingContext.prototype.absoluteMarginBox):
+        (FormattingContext.prototype.absoluteBorderBox):
+        (FormattingContext.prototype.absolutePaddingBox):
+        (FormattingContext.prototype.absoluteContentBox):
+        (FormattingContext):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+        * LayoutReloaded/LayoutTree/BlockContainer.js:
+        (BlockContainer): Deleted.
+        (BlockContainer.prototype.establishesInlineFormattingContext): Deleted.
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Box): Deleted.
+        (Box.prototype.id): Deleted.
+        (Box.prototype.setRendererName): Deleted.
+        (Box.prototype.name): Deleted.
+        (Box.prototype.node): Deleted.
+        (Box.prototype.parent): Deleted.
+        (Box.prototype.nextSibling): Deleted.
+        (Box.prototype.nextInFlowSibling): Deleted.
+        (Box.prototype.previousSibling): Deleted.
+        (Box.prototype.previousInFlowSibling): Deleted.
+        (Box.prototype.setParent): Deleted.
+        (Box.prototype.setNextSibling): Deleted.
+        (Box.prototype.setPreviousSibling): Deleted.
+        (Box.prototype.rect): Deleted.
+        (Box.prototype.topLeft): Deleted.
+        (Box.prototype.bottomRight): Deleted.
+        (Box.prototype.setTopLeft): Deleted.
+        (Box.prototype.setSize): Deleted.
+        (Box.prototype.setWidth): Deleted.
+        (Box.prototype.setHeight): Deleted.
+        (Box.prototype.isContainer): Deleted.
+        (Box.prototype.isBlockLevelBox): Deleted.
+        (Box.prototype.isBlockContainerBox): Deleted.
+        (Box.prototype.isInlineLevelBox): Deleted.
+        (Box.prototype.setIsAnonymous): Deleted.
+        (Box.prototype.isAnonymous): Deleted.
+        (Box.prototype.establishesFormattingContext): Deleted.
+        (Box.prototype.establishedFormattingContext): Deleted.
+        (Box.prototype.establishesBlockFormattingContext): Deleted.
+        (Box.prototype.establishesInlineFormattingContext): Deleted.
+        (Box.prototype.isPositioned): Deleted.
+        (Box.prototype.isRelativePositioned): Deleted.
+        (Box.prototype.isAbsolutePositioned): Deleted.
+        (Box.prototype.isFixedPositioned): Deleted.
+        (Box.prototype.isInFlow): Deleted.
+        (Box.prototype.isOutOfFlowPositioned): Deleted.
+        (Box.prototype.isInFlowPositioned): Deleted.
+        (Box.prototype.isFloatingPositioned): Deleted.
+        (Box.prototype.isFloatingOrOutOfFlowPositioned): Deleted.
+        (Box.prototype.isRootElement): Deleted.
+        (Box.prototype.containingBlock): Deleted.
+        (Box.prototype.borderBox): Deleted.
+        (Box.prototype.paddingBox): Deleted.
+        (Box.prototype.contentBox): Deleted.
+        * LayoutReloaded/LayoutTree/Container.js:
+        (Container): Deleted.
+        (Container.prototype.isContainer): Deleted.
+        (Container.prototype.setFirstChild): Deleted.
+        (Container.prototype.setLastChild): Deleted.
+        (Container.prototype.firstChild): Deleted.
+        (Container.prototype.firstInFlowChild): Deleted.
+        (Container.prototype.lastChild): Deleted.
+        (Container.prototype.lastInFlowChild): Deleted.
+        (Container.prototype.hasChild): Deleted.
+        (Container.prototype.hasInFlowChild): Deleted.
+        * LayoutReloaded/LayoutTree/InitialBlockContainer.js:
+        (InitialBlockContainer): Deleted.
+        (InitialBlockContainer.prototype.establishesBlockFormattingContext): Deleted.
+        (InitialBlockContainer.prototype.paddingBox): Deleted.
+        (InitialBlockContainer.prototype.contentBox): Deleted.
+        * LayoutReloaded/LayoutTree/InlineBox.js:
+        (InlineBox): Deleted.
+        (InlineBox.prototype.setText): Deleted.
+        (InlineBox.prototype.text): Deleted.
+        * LayoutReloaded/TreeBuilder.js:
+        (TreeBuilder.prototype.createTree):
+        (TreeBuilder.prototype._createAndAttachBox):
+        * LayoutReloaded/Utils.js:
+        (Utils._dumpBox):
+
 2018-03-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement accessible dismiss action on iOS

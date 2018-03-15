@@ -51,20 +51,20 @@ class InlineFormattingContext extends FormattingContext {
         while (layoutStack.length) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
-                let box = layoutStack[layoutStack.length - 1];
-                if (box.establishesFormattingContext()) {
-                    layoutContext.layoutFormattingContext(box.establishedFormattingContext());
+                let layoutBox = layoutStack[layoutStack.length - 1];
+                if (layoutBox.establishesFormattingContext()) {
+                    layoutContext.layoutFormattingContext(layoutBox.establishedFormattingContext());
                     break;
                 }
-                if (!box.isContainer() || !box.hasChild())
+                if (!layoutBox.isContainer() || !layoutBox.hasChild())
                     break;
                 layoutStack.push(box.firstChild());
             }
             while (layoutStack.length) {
-                let box = layoutStack.pop();
-                this._handleInlineBox(box);
-                if (box.nextSibling()) {
-                    layoutStack.push(box.nextSibling());
+                let layoutBox = layoutStack.pop();
+                this._handleInlineBox(layoutBox);
+                if (layoutBox.nextSibling()) {
+                    layoutStack.push(layoutBox.nextSibling());
                     break;
                 }
             }

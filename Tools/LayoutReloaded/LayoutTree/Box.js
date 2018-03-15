@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Box {
+var Layout = { }
+
+Layout.Box = class Box {
     constructor(node, id) {
         this.m_id = id;
         this.m_rendererName = null;
