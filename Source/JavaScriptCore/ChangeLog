@@ -1,3 +1,16 @@
+2018-03-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Fix MSVC run-time check after r229391. 
+        https://bugs.webkit.org/show_bug.cgi?id=183673
+
+        Reviewed by Keith Miller.
+
+        Replaces attempted fix from r229424/r229432.
+        Apparently MSVC doesn't like it when a zero-length std::array is defined without explicit braces.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::clampArrayToSize):
+
 2018-03-15  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in ANGLE
