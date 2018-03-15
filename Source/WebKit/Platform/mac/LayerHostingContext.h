@@ -46,6 +46,9 @@ public:
     static std::unique_ptr<LayerHostingContext> createForPort(const WebCore::MachSendRight& serverPort);
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
     static std::unique_ptr<LayerHostingContext> createForExternalHostingProcess();
+#if PLATFORM(MAC)
+    static std::unique_ptr<LayerHostingContext> createForExternalPluginHostingProcess();
+#endif
 #endif
 
     LayerHostingContext();

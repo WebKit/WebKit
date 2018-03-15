@@ -72,7 +72,17 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
     
     return layerHostingContext;
 }
+
+#if PLATFORM(MAC)
+std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalPluginHostingProcess()
+{
+    auto layerHostingContext = std::make_unique<LayerHostingContext>();
+    layerHostingContext->m_layerHostingMode = LayerHostingMode::OutOfProcess;
+    layerHostingContext->m_context = [CAContext contextWithCGSConnection:CGSMainConnectionID() options:@{ kCAContextCIFilterBehavior : @"ignore" }];
+    return layerHostingContext;
+}
 #endif
+#endif // HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
 
 LayerHostingContext::LayerHostingContext()
 {

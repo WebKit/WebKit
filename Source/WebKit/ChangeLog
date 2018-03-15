@@ -1,3 +1,22 @@
+2018-03-15  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r229484): Plugins often require CGS Connections to draw
+        https://bugs.webkit.org/show_bug.cgi?id=183663
+        <rdar://problem/38439218>
+
+        Reviewed by Per Arne Vollan.
+
+        Flash requires an active CGSConnection to work properly. Since we don't want the WebContent
+        process to have on, create a new plugin process-specific layer host creation method that
+        gives this access.
+
+        * Platform/mac/LayerHostingContext.h:
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForExternalPluginHostingProcess): Added.
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::updateLayerHostingContext): Use the new creation
+        method.
+
 2018-03-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Remove TextureMapperLayer::texture()
