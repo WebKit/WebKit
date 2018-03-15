@@ -1,3 +1,14 @@
+2018-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=183649
+        <rdar://problem/38480526>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-03-14  Mark Lam  <mark.lam@apple.com>
 
         Enhance the MacroAssembler and LinkBuffer to support pointer profiling.
