@@ -54,6 +54,10 @@ public:
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type)
         , m_dataIsUpToDate(true)
     {
+#if PLATFORM(COCOA)
+        ASSERT(domain != getNSURLErrorDomain());
+        ASSERT(domain != getCFErrorDomainCFNetwork());
+#endif
     }
 
     WEBCORE_EXPORT ResourceError(CFErrorRef error);
@@ -81,6 +85,11 @@ public:
 private:
     friend class ResourceErrorBase;
 
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT const String& getNSURLErrorDomain() const;
+    WEBCORE_EXPORT const String& getCFErrorDomainCFNetwork() const;
+    WEBCORE_EXPORT void mapPlatformError();
+#endif
     void platformLazyInit();
 
     void doPlatformIsolatedCopy(const ResourceError&);

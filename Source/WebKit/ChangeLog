@@ -1,3 +1,25 @@
+2018-03-15  Keith Rollin  <krollin@apple.com>
+
+        Telemetry for stalled webpage loads
+        https://bugs.webkit.org/show_bug.cgi?id=183221
+        <rdar://problem/36549013>
+
+        Reviewed by Chris Dumez.
+
+        Add telemetry for page loads, tracking the pages that succeed, fail,
+        or are canceled. This information will be used to track the overall
+        health of our page loading as time goes on.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::reportPageLoadResult):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::reportPageLoadResult):
+
 2018-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Hit-testing fails when specifying a large top content inset

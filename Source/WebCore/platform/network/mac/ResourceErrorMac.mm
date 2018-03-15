@@ -30,6 +30,8 @@
 #import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/text/WTFString.h>
 
 @interface NSError (WebExtras)
 - (NSString *)_web_localizedDescription;
@@ -112,13 +114,41 @@ ResourceError::ResourceError(NSError *nsError)
     , m_dataIsUpToDate(false)
     , m_platformError(nsError)
 {
-    if (nsError)
-        setType(([m_platformError.get() code] == NSURLErrorTimedOut) ? Type::Timeout : Type::General);
+    mapPlatformError();
 }
 
 ResourceError::ResourceError(CFErrorRef cfError)
     : ResourceError((NSError *)cfError)
 {
+}
+
+const String& ResourceError::getNSURLErrorDomain() const
+{
+    static const NeverDestroyed<String> errorDomain(NSURLErrorDomain);
+    return errorDomain.get();
+}
+
+const String& ResourceError::getCFErrorDomainCFNetwork() const
+{
+    static const NeverDestroyed<String> errorDomain(kCFErrorDomainCFNetwork);
+    return errorDomain.get();
+}
+
+void ResourceError::mapPlatformError()
+{
+    static_assert(NSURLErrorTimedOut == kCFURLErrorTimedOut, "NSURLErrorTimedOut needs to equal kCFURLErrorTimedOut");
+    static_assert(NSURLErrorCancelled == kCFURLErrorCancelled, "NSURLErrorCancelled needs to equal kCFURLErrorCancelled");
+
+    if (!m_platformError)
+        return;
+
+    auto domain = [m_platformError.get() domain];
+    auto errorCode = [m_platformError.get() code];
+
+    if ([domain isEqualToString:NSURLErrorDomain] || [domain isEqualToString:(__bridge NSString *)kCFErrorDomainCFNetwork])
+        setType((errorCode == NSURLErrorTimedOut) ? Type::Timeout : (errorCode == NSURLErrorCancelled) ? Type::Cancellation : Type::General);
+    else
+        setType(Type::General);
 }
 
 void ResourceError::platformLazyInit()

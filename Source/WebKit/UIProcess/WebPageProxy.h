@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +87,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Optional.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -1720,6 +1721,8 @@ private:
     void didRemoveAttachment(const String& identifier);
 #endif
 
+    void reportPageLoadResult(const WebCore::ResourceError& = { });
+
     PageClient& m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 
@@ -2118,6 +2121,8 @@ private:
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
     HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;
+
+    std::optional<MonotonicTime> m_pageLoadStart;
 };
 
 } // namespace WebKit

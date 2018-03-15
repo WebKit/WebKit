@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -563,6 +563,81 @@ String DiagnosticLoggingKeys::svgDocumentKey()
 String DiagnosticLoggingKeys::synchronousMessageFailedKey()
 {
     return ASCIILiteral("synchronousMessageFailed");
+}
+
+String DiagnosticLoggingKeys::telemetryPageLoadKey()
+{
+    return ASCIILiteral("telemetryPageLoad");
+}
+
+String DiagnosticLoggingKeys::timedOutKey()
+{
+    return ASCIILiteral("timedOut");
+}
+
+String DiagnosticLoggingKeys::canceledLessThan2SecondsKey()
+{
+    return ASCIILiteral("canceledLessThan2Seconds");
+}
+
+String DiagnosticLoggingKeys::canceledLessThan5SecondsKey()
+{
+    return ASCIILiteral("canceledLessThan5Seconds");
+}
+
+String DiagnosticLoggingKeys::canceledLessThan20SecondsKey()
+{
+    return ASCIILiteral("canceledLessThan20Seconds");
+}
+
+String DiagnosticLoggingKeys::canceledMoreThan20SecondsKey()
+{
+    return ASCIILiteral("canceledMoreThan20Seconds");
+}
+
+String DiagnosticLoggingKeys::failedLessThan2SecondsKey()
+{
+    return ASCIILiteral("failedLessThan2Seconds");
+}
+
+String DiagnosticLoggingKeys::failedLessThan5SecondsKey()
+{
+    return ASCIILiteral("failedLessThan5Seconds");
+}
+
+String DiagnosticLoggingKeys::failedLessThan20SecondsKey()
+{
+    return ASCIILiteral("failedLessThan20Seconds");
+}
+
+String DiagnosticLoggingKeys::failedMoreThan20SecondsKey()
+{
+    return ASCIILiteral("failedMoreThan20Seconds");
+}
+
+String DiagnosticLoggingKeys::occurredKey()
+{
+    return ASCIILiteral("occurred");
+}
+
+String DiagnosticLoggingKeys::succeededLessThan2SecondsKey()
+{
+    return ASCIILiteral("succeededLessThan2Seconds");
+}
+
+String DiagnosticLoggingKeys::succeededLessThan5SecondsKey()
+{
+    return ASCIILiteral("succeededLessThan5Seconds");
+}
+
+String DiagnosticLoggingKeys::succeededLessThan20SecondsKey()
+{
+    return ASCIILiteral("succeededLessThan20Seconds");
+}
+
+String DiagnosticLoggingKeys::succeededMoreThan20SecondsKey()
+{
+    return ASCIILiteral("succeededMoreThan20Seconds");
 }
 
 String DiagnosticLoggingKeys::uncacheableStatusCodeKey()
