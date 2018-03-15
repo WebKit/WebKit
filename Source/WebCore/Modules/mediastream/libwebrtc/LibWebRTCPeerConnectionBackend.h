@@ -105,6 +105,8 @@ private:
     AudioReceiver audioReceiver(String&& trackId);
 
 private:
+    bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
+
     Ref<LibWebRTCMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };

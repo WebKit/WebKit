@@ -39,14 +39,7 @@ function initializeRTCPeerConnection(configuration)
     else if (!@isObject(configuration))
         @throwTypeError("RTCPeerConnection argument must be a valid dictionary");
 
-    // FIXME: Handle errors in a better way than catching and re-throwing (http://webkit.org/b/158936)
-    try {
-        this.@initializeWith(configuration);
-    } catch (e) {
-        const message = e.name === "TypeMismatchError" ? "Invalid RTCPeerConnection constructor arguments"
-            : "Error creating RTCPeerConnection";
-        @throwTypeError(message);
-    }
+    this.@initializeWith(configuration);
     this.@operations = [];
     this.@localStreams = [];
 

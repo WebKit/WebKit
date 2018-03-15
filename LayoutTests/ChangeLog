@@ -1,5 +1,21 @@
 2018-03-15  Youenn Fablet  <youenn@apple.com>
 
+        Bad configuration parameters should make RTCPeerConnection constructor throw
+        https://bugs.webkit.org/show_bug.cgi?id=183615
+
+        Reviewed by Eric Carlson.
+
+        Removed tests that are subsumed by WPT ones.
+
+        * fast/mediastream/RTCPeerConnection-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-getConfiguration-expected.txt: Removed.
+        * fast/mediastream/RTCPeerConnection-getConfiguration.html: Removed.
+        * fast/mediastream/RTCPeerConnection.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+
+2018-03-15  Youenn Fablet  <youenn@apple.com>
+
         replaceTrack triggers negotiationneeded
         https://bugs.webkit.org/show_bug.cgi?id=180342
         <rdar://problem/35822426>

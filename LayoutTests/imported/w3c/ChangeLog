@@ -1,3 +1,14 @@
+2018-03-15  Youenn Fablet  <youenn@apple.com>
+
+        Bad configuration parameters should make RTCPeerConnection constructor throw
+        https://bugs.webkit.org/show_bug.cgi?id=183615
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCConfiguration-bundlePolicy-expected.txt:
+        * web-platform-tests/webrtc/RTCConfiguration-iceServers-expected.txt:
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor-expected.txt:
+
 2018-03-14  Frederic Wang  <fwang@igalia.com>
 
         Finish migration to MathML WPT tests

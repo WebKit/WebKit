@@ -300,12 +300,19 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOM
     m_backend->addIceCandidate(rtcCandidate, WTFMove(promise));
 }
 
-static inline std::optional<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& configuration)
+// Implementation of https://w3c.github.io/webrtc-pc/#set-pc-configuration
+static inline ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, std::optional<const RTCConfiguration&> existingConfiguration, bool isLocalDescriptionSet)
 {
+    if (existingConfiguration && newConfiguration.bundlePolicy != existingConfiguration->bundlePolicy)
+        return Exception { InvalidModificationError, "IceTransportPolicy does not match existing policy" };
+
+    if (existingConfiguration && newConfiguration.iceCandidatePoolSize != existingConfiguration->iceCandidatePoolSize && isLocalDescriptionSet)
+        return Exception { InvalidModificationError, "IceTransportPolicy pool size does not match existing pool size" };
+
     Vector<MediaEndpointConfiguration::IceServerInfo> servers;
-    if (configuration.iceServers) {
-        servers.reserveInitialCapacity(configuration.iceServers->size());
-        for (auto& server : configuration.iceServers.value()) {
+    if (newConfiguration.iceServers) {
+        servers.reserveInitialCapacity(newConfiguration.iceServers->size());
+        for (auto& server : newConfiguration.iceServers.value()) {
             Vector<URL> serverURLs;
             WTF::switchOn(server.urls, [&serverURLs] (const String& string) {
                 serverURLs.reserveInitialCapacity(1);
@@ -316,26 +323,31 @@ static inline std::optional<Vector<MediaEndpointConfiguration::IceServerInfo>> i
                     serverURLs.uncheckedAppend(URL { URL { }, string });
             });
             for (auto& serverURL : serverURLs) {
-                if (!(serverURL.protocolIs("turn") || serverURL.protocolIs("turns") || serverURL.protocolIs("stun")))
-                    return std::nullopt;
+                if (serverURL.isNull())
+                    return Exception { TypeError, "Bad ICE server URL" };
+                if (serverURL.protocolIs("turn") || serverURL.protocolIs("turns")) {
+                    if (server.credential.isNull() || server.username.isNull())
+                        return Exception { InvalidAccessError, "TURN/TURNS server requires both username and credential" };
+                } else if (!serverURL.protocolIs("stun"))
+                    return Exception { NotSupportedError, "ICE server protocol not supported" };
             }
-            servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
+            if (serverURLs.size())
+                servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
         }
     }
-    return servers;
+    return WTFMove(servers);
 }
 
 ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& configuration)
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    auto servers = iceServersFromConfiguration(configuration);
-    if (!servers)
-        return Exception { InvalidAccessError };
+    auto servers = iceServersFromConfiguration(configuration, std::nullopt, false);
+    if (servers.hasException())
+        return servers.releaseException();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=173938
-    // Also decide whether to report an exception or output a message in the console log if setting configuration fails.
-    m_backend->setConfiguration({ WTFMove(servers.value()), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize });
+    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize }))
+        return Exception { InvalidAccessError, "Bad Configuration Parameters" };
 
     m_configuration = WTFMove(configuration);
     return { };
@@ -348,13 +360,13 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
 
     INFO_LOG(LOGIDENTIFIER);
 
-    auto servers = iceServersFromConfiguration(configuration);
-    if (!servers)
-        return Exception { InvalidAccessError };
+    auto servers = iceServersFromConfiguration(configuration, m_configuration, m_backend->isLocalDescriptionSet());
+    if (servers.hasException())
+        return servers.releaseException();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=173938
-    // Also decide whether to report an exception or output a message in the console log if setting configuration fails.
-    m_backend->setConfiguration({ WTFMove(servers.value()), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize });
+    if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize }))
+        return Exception { InvalidAccessError, "Bad Configuration Parameters" };
+
     m_configuration = WTFMove(configuration);
     return { };
 }

@@ -125,6 +125,8 @@ public:
     WTFLogChannel& logChannel() const final;
 #endif
 
+    virtual bool isLocalDescriptionSet() const = 0;
+
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&);
     void doneGatheringCandidates();

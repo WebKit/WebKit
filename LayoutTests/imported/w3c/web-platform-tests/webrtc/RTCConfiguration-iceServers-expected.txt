@@ -22,102 +22,58 @@ FAIL new RTCPeerConnection(config) - with 2 stun servers should succeed assert_e
 FAIL setConfiguration(config) - with 2 stun servers should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL new RTCPeerConnection(config) - with turn server, username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
 FAIL setConfiguration(config) - with turn server, username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
-FAIL new RTCPeerConnection(config) - with turns server and empty string username, credential should succeed assert_array_equals: value is "turns:turn.example.org", expected array
-FAIL setConfiguration(config) - with turns server and empty string username, credential should succeed assert_array_equals: value is "turns:turn.example.org", expected array
-FAIL new RTCPeerConnection(config) - with turn server and empty string username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
-FAIL setConfiguration(config) - with turn server and empty string username, credential should succeed assert_array_equals: value is "turn:turn.example.org", expected array
+FAIL new RTCPeerConnection(config) - with turns server and empty string username, credential should succeed Bad Configuration Parameters
+FAIL setConfiguration(config) - with turns server and empty string username, credential should succeed Bad Configuration Parameters
+FAIL new RTCPeerConnection(config) - with turn server and empty string username, credential should succeed Bad Configuration Parameters
+FAIL setConfiguration(config) - with turn server and empty string username, credential should succeed Bad Configuration Parameters
 PASS new RTCPeerConnection(config) - with one turns server, one turn server, username, credential should succeed 
 PASS setConfiguration(config) - with one turns server, one turn server, username, credential should succeed 
 FAIL new RTCPeerConnection(config) - with stun server and credentialType password should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
 FAIL setConfiguration(config) - with stun server and credentialType password should succeed assert_array_equals: value is "stun:stun1.example.net", expected array
-FAIL new RTCPeerConnection(config) - with turn server and no credentials should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn:turn.example.net'
-      }] })" did not throw
-FAIL setConfiguration(config) - with turn server and no credentials should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn:turn.example.net'
-      }] })" did not throw
-FAIL new RTCPeerConnection(config) - with turn server and only username should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn:turn.example.net',
-        username: 'user'
-      }] })" did not throw
-FAIL setConfiguration(config) - with turn server and only username should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn:turn.example.net',
-        username: 'user'
-      }] })" did not throw
-FAIL new RTCPeerConnection(config) - with turn server and only credential should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn:turn.example.net',
-        credential: 'cred'
-      }] })" did not throw
-FAIL setConfiguration(config) - with turn server and only credential should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turn:turn.example.net',
-        credential: 'cred'
-      }] })" did not throw
-FAIL new RTCPeerConnection(config) - with turns server and no credentials should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.net'
-      }] })" did not throw
-FAIL setConfiguration(config) - with turns server and no credentials should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.net'
-      }] })" did not throw
-FAIL new RTCPeerConnection(config) - with turns server and only username should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.net',
-        username: 'user'
-      }] })" did not throw
-FAIL setConfiguration(config) - with turns server and only username should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.net',
-        username: 'user'
-      }] })" did not throw
-FAIL new RTCPeerConnection(config) - with turns server and only credential should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.net',
-        credential: 'cred'
-      }] })" did not throw
-FAIL setConfiguration(config) - with turns server and only credential should throw InvalidAccessError assert_throws: function "() =>
-      makePc({ iceServers: [{
-        urls: 'turns:turn.example.net',
-        credential: 'cred'
-      }] })" did not throw
+PASS new RTCPeerConnection(config) - with turn server and no credentials should throw InvalidAccessError 
+PASS setConfiguration(config) - with turn server and no credentials should throw InvalidAccessError 
+PASS new RTCPeerConnection(config) - with turn server and only username should throw InvalidAccessError 
+PASS setConfiguration(config) - with turn server and only username should throw InvalidAccessError 
+PASS new RTCPeerConnection(config) - with turn server and only credential should throw InvalidAccessError 
+PASS setConfiguration(config) - with turn server and only credential should throw InvalidAccessError 
+PASS new RTCPeerConnection(config) - with turns server and no credentials should throw InvalidAccessError 
+PASS setConfiguration(config) - with turns server and no credentials should throw InvalidAccessError 
+PASS new RTCPeerConnection(config) - with turns server and only username should throw InvalidAccessError 
+PASS setConfiguration(config) - with turns server and only username should throw InvalidAccessError 
+PASS new RTCPeerConnection(config) - with turns server and only credential should throw InvalidAccessError 
+PASS setConfiguration(config) - with turns server and only credential should throw InvalidAccessError 
 FAIL new RTCPeerConnection(config) - with relative url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'relative-url'
-      }] })" threw object "TypeError: Error creating RTCPeerConnection" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
 FAIL setConfiguration(config) - with relative url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'relative-url'
-      }] })" threw object "InvalidAccessError: The object does not support the operation or argument." that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
 FAIL new RTCPeerConnection(config) - with http url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'http://example.com'
-      }] })" threw object "TypeError: Error creating RTCPeerConnection" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
 FAIL setConfiguration(config) - with http url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'http://example.com'
-      }] })" threw object "InvalidAccessError: The object does not support the operation or argument." that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+      }] })" threw object "NotSupportedError: ICE server protocol not supported" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
 FAIL new RTCPeerConnection(config) - with invalid turn url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'turn://example.org/foo?x=y'
-      }] })" did not throw
+      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
 FAIL setConfiguration(config) - with invalid turn url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'turn://example.org/foo?x=y'
-      }] })" did not throw
+      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
 FAIL new RTCPeerConnection(config) - with invalid stun url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'stun://example.org/foo?x=y'
-      }] })" did not throw
+      }] })" threw object "InvalidAccessError: Bad Configuration Parameters" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
 FAIL setConfiguration(config) - with invalid stun url should throw SyntaxError assert_throws: function "() =>
       makePc({ iceServers: [{
         urls: 'stun://example.org/foo?x=y'
-      }] })" did not throw
+      }] })" threw object "InvalidAccessError: Bad Configuration Parameters" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
 FAIL new RTCPeerConnection(config) - with empty urls and credentialType password should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL setConfiguration(config) - with empty urls and credentialType password should succeed assert_equals: expected (string) "password" but got (undefined) undefined
 FAIL new RTCPeerConnection(config) - with empty urls and credentialType oauth should succeed assert_equals: expected (string) "oauth" but got (undefined) undefined
