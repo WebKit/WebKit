@@ -1,3 +1,15 @@
+2018-03-15  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should print the URL in logs on URLError
+        https://bugs.webkit.org/show_bug.cgi?id=183651
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.open_url): Pass the url.
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        (NetworkTransaction.run): Accept optional url parameter and print it on URLError.
+
 2018-03-15  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Introduce Layout namespace

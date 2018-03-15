@@ -329,7 +329,7 @@ class Bugzilla(object):
         socket.setdefaulttimeout(value)
 
     def open_url(self, url):
-        return NetworkTransaction().run(lambda: self.browser.open(url))
+        return NetworkTransaction().run(lambda: self.browser.open(url), url)
 
     def fetch_user(self, user_id):
         self.authenticate()
