@@ -1,5 +1,12 @@
 2018-03-16  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Rebaseline for web-platform-tests specific test
+
+        Unreviewed gardening.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
+2018-03-16  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK][WPE] Remove baselines for FileAPI test.
 
         Unreviewed gardening. Now with service workers the results in both

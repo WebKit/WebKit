@@ -1,3 +1,12 @@
+2018-03-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Unreviewed rebaseline
+
+        These seem to have been forgotten, update baseline as it seemed needed.
+        * web-platform-tests/dom/events/EventListener-invoke-legacy-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-expected.txt:
+        * web-platform-tests/encrypted-media/idlharness-expected.txt:
+
 2018-03-15  Youenn Fablet  <youenn@apple.com>
 
         Bad configuration parameters should make RTCPeerConnection constructor throw

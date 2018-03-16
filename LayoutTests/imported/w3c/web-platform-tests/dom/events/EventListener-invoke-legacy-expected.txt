@@ -3,8 +3,6 @@ PASS Listener of transitionend
 PASS Legacy listener of transitionend 
 PASS Listener of animationend 
 PASS Legacy listener of animationend 
-PASS Listener of animationiteration 
-PASS Legacy listener of animationiteration 
 PASS Listener of animationstart 
 PASS Legacy listener of animationstart 
 
