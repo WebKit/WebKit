@@ -29,7 +29,7 @@
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && PLATFORM(IOS)
 
 #import "WebCoreThread.h"
-#import <QuartzCore/QuartzCore.h>
+#import <QuartzCore/CADisplayLink.h>
 #import <wtf/MainThread.h>
 
 using WebCore::DisplayRefreshMonitorIOS;

@@ -1,5 +1,15 @@
 2018-03-15  Tim Horton  <timothy_horton@apple.com>
 
+        Include CADisplayLink explicitly where needed, instead of all of CA
+        https://bugs.webkit.org/show_bug.cgi?id=183689
+        <rdar://problem/38528719>
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+
+2018-03-15  Tim Horton  <timothy_horton@apple.com>
+
         Include MobileCoreServices in the WebCore prefix header
         https://bugs.webkit.org/show_bug.cgi?id=183688
         <rdar://problem/38527621>
