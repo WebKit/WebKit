@@ -1,5 +1,83 @@
 2018-03-16  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Nicosia] Add Cairo-specific GraphicsContext operation recorder
+        https://bugs.webkit.org/show_bug.cgi?id=183593
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add Nicosia::CairoOperationRecorder, GraphicsContextImpl implementation
+        that records all GraphicsContext operations for deferred replay on a
+        different thread. Recording here mostly consists of storing all the
+        Cairo resources in a thread-safe manner, which is eased by the atomic
+        reference counting used in Cairo.
+
+        Nicosia::PaintingOperation derivatives are used for operations or state
+        updates that require recording. Instances of these classes are appended
+        to a Vector<> object that is then pushed into a thread pool in
+        Nicosia::PaintingEngineThreaded , replaying all the operations against
+        the Cairo context established from an associated target Nicosia::Buffer.
+
+        This GraphicsContextImpl implementation is now used in the
+        PaintingContextCairo::ForRecording constructor to construct the
+        GraphicsContext implementation that will be used for recording.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp: Added.
+        (Nicosia::getContext):
+        (Nicosia::OperationData::arg const const):
+        (Nicosia::createCommand):
+        (Nicosia::CairoOperationRecorder::CairoOperationRecorder):
+        (Nicosia::m_commandList):
+        (Nicosia::CairoOperationRecorder::updateState):
+        (Nicosia::CairoOperationRecorder::clearShadow):
+        (Nicosia::CairoOperationRecorder::setLineCap):
+        (Nicosia::CairoOperationRecorder::setLineDash):
+        (Nicosia::CairoOperationRecorder::setLineJoin):
+        (Nicosia::CairoOperationRecorder::setMiterLimit):
+        (Nicosia::CairoOperationRecorder::fillRect):
+        (Nicosia::CairoOperationRecorder::fillRoundedRect):
+        (Nicosia::CairoOperationRecorder::fillRectWithRoundedHole):
+        (Nicosia::CairoOperationRecorder::fillPath):
+        (Nicosia::CairoOperationRecorder::fillEllipse):
+        (Nicosia::CairoOperationRecorder::strokeRect):
+        (Nicosia::CairoOperationRecorder::strokePath):
+        (Nicosia::CairoOperationRecorder::strokeEllipse):
+        (Nicosia::CairoOperationRecorder::clearRect):
+        (Nicosia::CairoOperationRecorder::drawGlyphs):
+        (Nicosia::CairoOperationRecorder::drawImage):
+        (Nicosia::CairoOperationRecorder::drawTiledImage):
+        (Nicosia::CairoOperationRecorder::drawNativeImage):
+        (Nicosia::CairoOperationRecorder::drawPattern):
+        (Nicosia::CairoOperationRecorder::drawRect):
+        (Nicosia::CairoOperationRecorder::drawLine):
+        (Nicosia::CairoOperationRecorder::drawLinesForText):
+        (Nicosia::CairoOperationRecorder::drawLineForDocumentMarker):
+        (Nicosia::CairoOperationRecorder::drawEllipse):
+        (Nicosia::CairoOperationRecorder::drawPath):
+        (Nicosia::CairoOperationRecorder::drawFocusRing):
+        (Nicosia::CairoOperationRecorder::save):
+        (Nicosia::CairoOperationRecorder::restore):
+        (Nicosia::CairoOperationRecorder::translate):
+        (Nicosia::CairoOperationRecorder::rotate):
+        (Nicosia::CairoOperationRecorder::scale):
+        (Nicosia::CairoOperationRecorder::concatCTM):
+        (Nicosia::CairoOperationRecorder::setCTM):
+        (Nicosia::CairoOperationRecorder::getCTM):
+        (Nicosia::CairoOperationRecorder::beginTransparencyLayer):
+        (Nicosia::CairoOperationRecorder::endTransparencyLayer):
+        (Nicosia::CairoOperationRecorder::clip):
+        (Nicosia::CairoOperationRecorder::clipOut):
+        (Nicosia::CairoOperationRecorder::clipPath):
+        (Nicosia::CairoOperationRecorder::clipBounds):
+        (Nicosia::CairoOperationRecorder::applyDeviceScaleFactor):
+        (Nicosia::CairoOperationRecorder::roundToDevicePixels):
+        (Nicosia::CairoOperationRecorder::append):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h: Added.
+        * platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp:
+        (Nicosia::PaintingContextCairo::ForRecording::ForRecording):
+
+2018-03-16  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Clean up TextureMapperLayer constructor
         https://bugs.webkit.org/show_bug.cgi?id=183634
 

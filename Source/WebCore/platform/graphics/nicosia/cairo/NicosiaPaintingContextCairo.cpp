@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextImplCairo.h"
 #include "NicosiaBuffer.h"
+#include "NicosiaCairoOperationRecorder.h"
 #include "NicosiaPaintingOperationReplayCairo.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
@@ -104,10 +105,9 @@ void PaintingContextCairo::ForPainting::replay(const PaintingOperations& paintin
 PaintingContextCairo::ForRecording::ForRecording(PaintingOperations& paintingOperations)
 {
     m_graphicsContext = std::make_unique<WebCore::GraphicsContext>(
-        [&paintingOperations](WebCore::GraphicsContext&)
+        [&paintingOperations](WebCore::GraphicsContext& context)
         {
-            // FIXME: return a GraphicsContextImpl with recording capabilities.
-            return nullptr;
+            return std::make_unique<CairoOperationRecorder>(context, paintingOperations);
         });
 }
 
