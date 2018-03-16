@@ -1278,11 +1278,7 @@ String AccessibilityNodeObject::textForLabelElement(Element* element) const
     if (AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label))
         result = labelObject->ariaLabeledByAttribute();
     
-    // Then check for aria-label attribute.
-    if (result.isEmpty())
-        result = label->attributeWithoutSynchronization(aria_labelAttr);
-    
-    return !result.isEmpty() ? result : label->innerText();
+    return !result.isEmpty() ? result : accessibleNameForNode(label);
 }
     
 void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOrder) const
@@ -1293,12 +1289,11 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
     
     if (isLabelable()) {
         if (HTMLLabelElement* label = labelForElement(downcast<Element>(node))) {
-            AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
             String innerText = textForLabelElement(label);
             
             // Only use the <label> text if there's no ARIA override.
             if (!innerText.isEmpty() && !ariaAccessibilityDescription())
-                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement, labelObject));
+                textOrder.append(AccessibilityText(innerText, isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement, axObjectCache()->getOrCreate(label)));
             return;
         }
     }

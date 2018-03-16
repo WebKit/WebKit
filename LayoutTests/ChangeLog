@@ -1,3 +1,19 @@
+2018-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: AccessibilityNodeObject::textForLabelElement() doesn't follow AccName calculation rules
+        https://bugs.webkit.org/show_bug.cgi?id=183661
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-label-on-label-element-expected.txt: Moved from Mac tests to shared tests.
+        * accessibility/aria-label-on-label-element.html: Moved from Mac tests to shared tests.
+        * accessibility/label-with-pseudo-elements-expected.txt: Added.
+        * accessibility/label-with-pseudo-elements.html: Added.
+        * platform/gtk/accessibility/aria-label-on-label-element-expected.txt: Added.
+        * platform/gtk/accessibility/label-with-pseudo-elements-expected.txt: Added.
+        * platform/mac/accessibility/label-with-pseudo-elements-expected.txt: Added.
+        * platform/win/accessibility/label-with-pseudo-elements-expected.txt: Added.
+
 2018-03-16  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Rebaseline for web-platform-tests specific test

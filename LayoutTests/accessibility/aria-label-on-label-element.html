@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/js-test-pre.js"></script>
 </head>
 <body id="body">
 
-<label for="input" aria-label="aria label">Some text</label>
+<label id="label1" for="input" aria-label="aria label">Some text</label>
 <input id="input" type="text" size=20>
 
 <label id="label2" for="input2">Some other text</label>
@@ -29,9 +29,14 @@
     if (window.accessibilityController) {
     
         // aria-label on the <label> element return a title for the input, instead of a title ui element.
+        // For ATK, it should return both, with the title ui element being the label element.
         var input1 = accessibilityController.accessibleElementById("input");
         var titleUIElement1 = input1.titleUIElement();
-        shouldBeTrue("!titleUIElement1");
+        if (accessibilityController.platformName != "atk")
+            shouldBeTrue("!titleUIElement1");
+        else
+            shouldBeTrue("titleUIElement1.isEqual(accessibilityController.accessibleElementById('label1'))");
+
         shouldBe("input1.title", "'AXTitle: aria label'");
         
         // Normal case.
@@ -50,6 +55,6 @@
 
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

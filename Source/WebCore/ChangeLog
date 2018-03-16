@@ -1,3 +1,21 @@
+2018-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: AccessibilityNodeObject::textForLabelElement() doesn't follow AccName calculation rules
+        https://bugs.webkit.org/show_bug.cgi?id=183661
+
+        Reviewed by Chris Fleizach.
+
+        Have AccessibilityNodeObject::textForLabelElement() return the value from
+        accessibleNameForNode() instead of innerText(). The former falls back on
+        the latter if there is no author-provided accessible name.
+
+        Tests: accessibility/aria-label-on-label-element.html
+               accessibility/label-with-pseudo-elements.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::textForLabelElement const):
+        (WebCore::AccessibilityNodeObject::titleElementText const):
+
 2018-03-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix crash on websocket with bad handshake message.

@@ -1,0 +1,44 @@
+
+
+
+
+
+This tests the accessible text alternatives results for labels with pseudo elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+	AXTitleUIElement: non-null
+
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+	AXTitleUIElement: non-null
+
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+	AXTitleUIElement: non-null
+
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+	AXTitleUIElement: null
+
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+	AXTitleUIElement: non-null
+
+	AXTitle: 
+	AXDescription: 
+	AXHelp: 
+	AXTitleUIElement: non-null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
