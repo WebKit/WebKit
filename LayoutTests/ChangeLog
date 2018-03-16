@@ -1,3 +1,12 @@
+2018-03-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Remove baselines for FileAPI test.
+
+        Unreviewed gardening. Now with service workers the results in both
+        WPE and GTK+ are the same as the default expectation.
+        * platform/gtk/imported/w3c/web-platform-tests/FileAPI/historical.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/historical.https-expected.txt: Removed.
+
 2018-03-15  Matt Lewis  <jlewis3@apple.com>
 
         Rebaselined test on macOS WK1 after r229642.

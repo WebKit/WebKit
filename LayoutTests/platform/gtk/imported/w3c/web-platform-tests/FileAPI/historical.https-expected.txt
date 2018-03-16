@@ -1,9 +1,0 @@
-
-PASS "toNativeLineEndings" should not be supported 
-FAIL "FileError" should not be supported assert_false: expected false got true
-PASS "FileException" should not be supported 
-PASS Blob should not support slice prefixed 
-PASS BlobBuilder should not be supported. 
-PASS createFor method should not be supported 
-PASS Blob.close() should not be supported 
-
