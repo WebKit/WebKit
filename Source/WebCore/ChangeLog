@@ -1,3 +1,13 @@
+2018-03-15  Tim Horton  <timothy_horton@apple.com>
+
+        Include MobileCoreServices in the WebCore prefix header
+        https://bugs.webkit.org/show_bug.cgi?id=183688
+        <rdar://problem/38527621>
+
+        Reviewed by Dan Bernstein.
+
+        * WebCorePrefix.h:
+
 2018-03-15  Megan Gardner  <megan_gardner@apple.com>
 
         Create MediaQueryParserContext to provide additional context for the evaluation of media queries
