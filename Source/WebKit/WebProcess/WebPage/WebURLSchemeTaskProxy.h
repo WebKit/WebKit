@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ResourceRequest.h>
+#include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -61,11 +62,15 @@ private:
     WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&);
     bool hasLoader();
 
+    void queueTask(Function<void()>&& task) { m_queuedTasks.append(WTFMove(task)); }
+    void processNextPendingTask();
+
     WebURLSchemeHandlerProxy& m_urlSchemeHandler;
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     WebCore::ResourceRequest m_request;
     unsigned long m_identifier;
-    bool m_waitingForRedirectCompletionHandler { };
+    bool m_waitingForCompletionHandler { false };
+    Deque<Function<void()>> m_queuedTasks;
 };
 
 } // namespace WebKit

@@ -99,6 +99,32 @@ static bool done;
 
 @end
 
+@interface URLSchemeHandlerAsyncNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@end
+
+@implementation URLSchemeHandlerAsyncNavigationDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
+    dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
+    dispatch_after(when, dispatch_get_main_queue(), ^{
+        decisionHandler(WKNavigationActionPolicyAllow);
+    });
+
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
+    dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
+    dispatch_after(when, dispatch_get_main_queue(), ^{
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    });
+}
+@end
+
+
 static const char mainBytes[] =
 "<html>" \
 "<img src='testing:image'>" \
@@ -114,6 +140,30 @@ TEST(URLSchemeHandler, Basic)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:main"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ([handler.get().startedURLs count], 2u);
+    EXPECT_TRUE([[handler.get().startedURLs objectAtIndex:0] isEqual:[NSURL URLWithString:@"testing:main"]]);
+    EXPECT_TRUE([[handler.get().startedURLs objectAtIndex:1] isEqual:[NSURL URLWithString:@"testing:image"]]);
+    EXPECT_EQ([handler.get().stoppedURLs count], 0u);
+}
+
+TEST(URLSchemeHandler, BasicWithAsyncPolicyDelegate)
+{
+    done = false;
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<SchemeHandler> handler = adoptNS([[SchemeHandler alloc] initWithData:[NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO] mimeType:@"text/html"]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([[URLSchemeHandlerAsyncNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:main"]];
     [webView loadRequest:request];

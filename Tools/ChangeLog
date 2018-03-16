@@ -1,3 +1,17 @@
+2018-03-16  Chris Dumez  <cdumez@apple.com>
+
+        URLSchemeHandler.Basic API test fails with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183678
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[URLSchemeHandlerAsyncNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[URLSchemeHandlerAsyncNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (TEST):
+
 2018-03-16  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Utils.computed* functions should just take node instead of box.
