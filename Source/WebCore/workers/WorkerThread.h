@@ -102,6 +102,7 @@ protected:
 
 private:
     void workerThread();
+    virtual bool isServiceWorkerThread() const { return false; }
 
     RefPtr<Thread> m_thread;
     WorkerRunLoop m_runLoop;

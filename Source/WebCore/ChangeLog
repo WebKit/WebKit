@@ -1,5 +1,22 @@
 2018-03-16  Youenn Fablet  <youenn@apple.com>
 
+        Name Service Worker threads differently from regular Worker threads
+        https://bugs.webkit.org/show_bug.cgi?id=183698
+
+        Reviewed by Chris Dumez.
+
+        No observable change of behavior.
+        For debugging purposes, knowing that a thread is a service worker thread might help give context.
+        It might also identify on a crash log whether the process is a service worker process or a regular web process.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::start):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::isServiceWorkerThread const):
+        * workers/service/context/ServiceWorkerThread.h:
+
+2018-03-16  Youenn Fablet  <youenn@apple.com>
+
         IceCandidates leak on webrtc/datachannel/basic.html and other tests
         https://bugs.webkit.org/show_bug.cgi?id=183676
         <rdar://problem/36116228>

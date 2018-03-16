@@ -72,6 +72,8 @@ protected:
 private:
     WEBCORE_EXPORT ServiceWorkerThread(const ServiceWorkerContextData&, PAL::SessionID, String&& userAgent, WorkerLoaderProxy&, WorkerDebuggerProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
+    bool isServiceWorkerThread() const final { return true; }
+
     ServiceWorkerContextData m_data;
     WorkerObjectProxy& m_workerObjectProxy;
 };
