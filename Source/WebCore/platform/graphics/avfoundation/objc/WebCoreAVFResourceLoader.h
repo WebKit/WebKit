@@ -56,7 +56,7 @@ public:
 
 private:
     // CachedResourceClient
-    void responseReceived(CachedResource&, const ResourceResponse&) override;
+    void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
     void dataReceived(CachedResource&, const char*, int) override;
     void notifyFinished(CachedResource&) override;
 

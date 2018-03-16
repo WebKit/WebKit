@@ -108,9 +108,10 @@ void WebCoreAVFResourceLoader::invalidate()
     });
 }
 
-void WebCoreAVFResourceLoader::responseReceived(CachedResource& resource, const ResourceResponse& response)
+void WebCoreAVFResourceLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
+    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {

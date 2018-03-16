@@ -66,11 +66,14 @@ void KeepaliveRequestTracker::registerRequest(CachedResource& resource)
     resource.addClient(*this);
 }
 
-void KeepaliveRequestTracker::responseReceived(CachedResource& resource, const ResourceResponse&)
+void KeepaliveRequestTracker::responseReceived(CachedResource& resource, const ResourceResponse&, CompletionHandler<void()>&& completionHandler)
 {
     // Per Fetch specification, allocated quota should be returned before the promise is resolved,
     // which is when the response is received.
     unregisterRequest(resource);
+
+    if (completionHandler)
+        completionHandler();
 }
 
 void KeepaliveRequestTracker::notifyFinished(CachedResource& resource)

@@ -308,10 +308,13 @@ void DocumentThreadableLoader::dataSent(CachedResource& resource, unsigned long 
     m_client->didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void DocumentThreadableLoader::responseReceived(CachedResource& resource, const ResourceResponse& response)
+void DocumentThreadableLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
     didReceiveResponse(m_resource->identifier(), response);
+
+    if (completionHandler)
+        completionHandler();
 }
 
 void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)

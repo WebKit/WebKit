@@ -1,3 +1,40 @@
+2018-03-16  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.RestoreSessionStateContainingScrollRestorationDefault API test is failing with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183679
+
+        Reviewed by Alex Christensen.
+
+        Update CachedRawResource::didAddClient() to not send data until we've received
+        the policy decision for the response.
+
+        No new tests, covered by new API test.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::handleSubstituteDataLoadNow):
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/DocumentLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::responseReceived):
+        * loader/DocumentThreadableLoader.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::responseReceived):
+        * loader/MediaResourceLoader.h:
+        * loader/appcache/ApplicationCacheResourceLoader.cpp:
+        (WebCore::ApplicationCacheResourceLoader::responseReceived):
+        * loader/appcache/ApplicationCacheResourceLoader.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient):
+        (WebCore::CachedRawResource::responseReceived):
+        * loader/cache/CachedRawResourceClient.h:
+        (WebCore::CachedRawResourceClient::responseReceived):
+        * loader/cache/KeepaliveRequestTracker.cpp:
+        (WebCore::KeepaliveRequestTracker::responseReceived):
+        * loader/cache/KeepaliveRequestTracker.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::responseReceived):
+
 2018-03-16  Youenn Fablet  <youenn@apple.com>
 
         Name Service Worker threads differently from regular Worker threads

@@ -139,9 +139,10 @@ void MediaResource::setDefersLoading(bool defersLoading)
         m_resource->setDefersLoading(defersLoading);
 }
 
-void MediaResource::responseReceived(CachedResource& resource, const ResourceResponse& response)
+void MediaResource::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
+    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
     if (!m_loader->document())
         return;

@@ -54,7 +54,7 @@ private:
     explicit ApplicationCacheResourceLoader(unsigned, CachedResourceHandle<CachedRawResource>&&, CompletionHandler<void(ResourceOrError&&)>&&);
 
     // CachedRawResourceClient
-    void responseReceived(CachedResource&, const ResourceResponse&) final;
+    void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) final;
     void dataReceived(CachedResource&, const char* data, int dataLength) final;
     void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) final;
     void notifyFinished(CachedResource&) final;

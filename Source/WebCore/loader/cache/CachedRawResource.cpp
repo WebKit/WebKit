@@ -158,6 +158,16 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
     iterateRedirects(CachedResourceHandle<CachedRawResource>(this), client, WTFMove(redirectsInReverseOrder), [this, protectedThis = CachedResourceHandle<CachedRawResource>(this), client = &client] (ResourceRequest&&) mutable {
         if (!hasClient(*client))
             return;
+        auto responseProcessedHandler = [this, protectedThis = WTFMove(protectedThis), client] {
+            if (!hasClient(*client))
+                return;
+            if (m_data)
+                client->dataReceived(*this, m_data->data(), m_data->size());
+            if (!hasClient(*client))
+                return;
+            CachedResource::didAddClient(*client);
+        };
+
         if (!m_response.isNull()) {
             ResourceResponse response(m_response);
             if (validationCompleting())
@@ -166,15 +176,9 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
                 ASSERT(!validationInProgress());
                 response.setSource(ResourceResponse::Source::MemoryCache);
             }
-            client->responseReceived(*this, response);
-        }
-        if (!hasClient(*client))
-            return;
-        if (m_data)
-            client->dataReceived(*this, m_data->data(), m_data->size());
-        if (!hasClient(*client))
-            return;
-        CachedResource::didAddClient(*client);
+            client->responseReceived(*this, response, WTFMove(responseProcessedHandler));
+        } else
+            responseProcessedHandler();
     });
 }
 
@@ -215,7 +219,7 @@ void CachedRawResource::responseReceived(const ResourceResponse& response)
     CachedResource::responseReceived(response);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
-        c->responseReceived(*this, m_response);
+        c->responseReceived(*this, m_response, nullptr);
 }
 
 bool CachedRawResource::shouldCacheResponse(const ResourceResponse& response)

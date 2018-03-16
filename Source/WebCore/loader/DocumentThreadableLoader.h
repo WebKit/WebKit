@@ -81,7 +81,7 @@ namespace WebCore {
 
         // CachedRawResourceClient
         void dataSent(CachedResource&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-        void responseReceived(CachedResource&, const ResourceResponse&) override;
+        void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
         void dataReceived(CachedResource&, const char* data, int dataLength) override;
         void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
         void finishedTimingForWorkerLoad(CachedResource&, const ResourceTiming&) override;

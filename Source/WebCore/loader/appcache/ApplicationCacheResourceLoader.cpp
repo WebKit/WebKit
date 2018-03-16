@@ -75,9 +75,10 @@ void ApplicationCacheResourceLoader::cancel(Error error)
     }
 }
 
-void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, const ResourceResponse& response)
+void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
+    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
     if (response.httpStatusCode() == 404 || response.httpStatusCode() == 410) {
         cancel(Error::NotFound);

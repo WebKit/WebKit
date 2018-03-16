@@ -82,7 +82,7 @@ public:
     bool didPassAccessControlCheck() const override { return m_didPassAccessControlCheck; }
 
     // CachedRawResourceClient
-    void responseReceived(CachedResource&, const ResourceResponse&) override;
+    void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
     void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(CachedResource&, const ResourceResponse&) override;
     void dataSent(CachedResource&, unsigned long long, unsigned long long) override;
