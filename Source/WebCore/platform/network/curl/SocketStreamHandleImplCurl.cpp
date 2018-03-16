@@ -88,6 +88,10 @@ void SocketStreamHandleImpl::platformClose()
 
     ASSERT(isMainThread());
 
+    if (m_closed)
+        return;
+
+    m_closed = true;
     stopThread();
 
     m_client.didCloseSocketStream(*this);
@@ -268,7 +272,7 @@ void SocketStreamHandleImpl::didReceiveData()
         if (socketData.size > 0) {
             if (state() == Open)
                 m_client.didReceiveSocketStreamData(*this, socketData.data.get(), socketData.size);
-        } else
+        } else if (!m_closed)
             platformClose();
     }
 }

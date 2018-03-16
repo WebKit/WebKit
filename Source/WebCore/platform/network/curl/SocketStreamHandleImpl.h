@@ -100,6 +100,7 @@ private:
     Lock m_mutexReceive;
     Deque<SocketData> m_sendData;
     Deque<SocketData> m_receiveData;
+    bool m_closed { false };
 
     StreamBuffer<char, 1024 * 1024> m_buffer;
     static const unsigned maxBufferSize = 100 * 1024 * 1024;

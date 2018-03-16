@@ -1,3 +1,21 @@
+2018-03-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Fix crash on websocket with bad handshake message.
+        https://bugs.webkit.org/show_bug.cgi?id=183686
+
+        Reviewed by Youenn Fablet.
+
+        The closing cleanup was called multiple times. Add flag to detect
+        it is already closed or not.
+
+        No new tests because it is covered by existing test:
+        - LayoutTests/http/tests/websocket/tests/hybi/bad-handshake-crash.html
+
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        * platform/network/curl/SocketStreamHandleImplCurl.cpp:
+        (WebCore::SocketStreamHandleImpl::platformClose):
+        (WebCore::SocketStreamHandleImpl::didReceiveData):
+
 2018-03-16  Jer Noble  <jer.noble@apple.com>
 
         Make Fullscreen API an Experimental Feature
