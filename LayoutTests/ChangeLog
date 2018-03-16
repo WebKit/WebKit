@@ -1,3 +1,12 @@
+2018-03-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=183219
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: AccessibilityNodeObject::textForLabelElement() doesn't follow AccName calculation rules
