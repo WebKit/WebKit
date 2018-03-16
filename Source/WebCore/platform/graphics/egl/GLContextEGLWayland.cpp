@@ -51,14 +51,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWaylandContext(PlatformDisplay
     if (!getEGLConfig(display, &config, WindowSurface))
         return nullptr;
 
-    static const EGLint contextAttributes[] = {
-#if USE(OPENGL_ES)
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-#endif
-        EGL_NONE
-    };
-
-    EGLContext context = eglCreateContext(display, config, sharingContext, contextAttributes);
+    EGLContext context = createContextForEGLVersion(platformDisplay, config, sharingContext);
     if (context == EGL_NO_CONTEXT)
         return nullptr;
 

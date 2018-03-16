@@ -55,6 +55,8 @@ public:
     virtual ~GLContextEGL();
 
 private:
+    static EGLContext createContextForEGLVersion(PlatformDisplay&, EGLConfig, EGLContext);
+
     bool makeContextCurrent() override;
     void swapBuffers() override;
     void waitNative() override;

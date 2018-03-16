@@ -1,3 +1,30 @@
+2018-03-16  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] When using EGL, request an OpenGL core profile when possible
+        https://bugs.webkit.org/show_bug.cgi?id=178719
+
+        Reviewed by Carlos Garcia Campos.
+
+        When using EGL and OpenGL, try to request a context with version >= 3.2 with a core profile
+        whenever possible. In order to to this, we require EGL version 1.5 or version 1.4 with the
+        extension EGL_KHR_create_context. If EGL requirements are not met, or we cannot get a
+        context with version >= 3.2 then use whatever EGL gives us.
+
+        Covered by existent tests.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createWindowContext):
+        (WebCore::GLContextEGL::createPbufferContext):
+        (WebCore::GLContextEGL::createSurfacelessContext):
+        (WebCore::GLContextEGL::createContextForEGLVersion):
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/egl/GLContextEGLWPE.cpp:
+        (WebCore::GLContextEGL::createWPEContext):
+        * platform/graphics/egl/GLContextEGLWayland.cpp:
+        (WebCore::GLContextEGL::createWaylandContext):
+        * platform/graphics/egl/GLContextEGLX11.cpp:
+        (WebCore::GLContextEGL::createPixmapContext):
+
 2018-03-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Don't use the TextureMapperAnimation::Client interface to apply animation
