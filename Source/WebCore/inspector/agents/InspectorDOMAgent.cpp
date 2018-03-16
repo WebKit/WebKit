@@ -2023,14 +2023,6 @@ Node* InspectorDOMAgent::innerParentNode(Node* node)
     return node->parentNode();
 }
 
-void InspectorDOMAgent::mainFrameDOMContentLoaded()
-{
-    // Re-push document once it is loaded.
-    discardBindings();
-    if (m_documentRequested)
-        m_frontendDispatcher->documentUpdated();
-}
-
 void InspectorDOMAgent::didCommitLoad(Document* document)
 {
     RefPtr<Element> frameOwner = document->ownerElement();

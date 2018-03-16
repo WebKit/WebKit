@@ -1,3 +1,35 @@
+2018-03-16  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas Tab: main WebGL canvas on acko.net has no reported size
+        https://bugs.webkit.org/show_bug.cgi?id=178798
+        <rdar://problem/35175740>
+
+        Reviewed by Brian Burg.
+
+        When the main frame navigates, the DOMAgent would recieve two InspectorInstrumentation calls,
+        one when the frame begins its navigation and the other when the document for that frame has
+        loaded. Both of these would discard the DOMAgent's bindings, which included the map of
+        `nodeId`s. This was an issue for canvases, as the frontend would be notified whenever any
+        canvas is created, which would usually occur before the `DOMContentLoaded` event is fired.
+        As a result, the canvases would attempt to retrieve their associated node, only to have the
+        DOMAgent discard those bindings quickly thereafter.
+
+        This patch removes DOMAgent's and DOMDebuggerAgent's (parity) instrumentation hooks for the
+        latter event, ensuring that the bindings are only discarded once.
+
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::mainFrameDOMContentLoaded): Deleted.
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::frameDocumentUpdated): Added.
+        (WebCore::InspectorDOMDebuggerAgent::mainFrameDOMContentLoaded): Deleted.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdatedImpl):
+
 2018-03-15  Tim Horton  <timothy_horton@apple.com>
 
         Include CADisplayLink explicitly where needed, instead of all of CA

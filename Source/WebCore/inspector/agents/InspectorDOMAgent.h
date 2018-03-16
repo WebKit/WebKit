@@ -176,7 +176,6 @@ public:
     // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);
     void releaseDanglingNodes();
-    void mainFrameDOMContentLoaded();
 
     void styleAttributeInvalidated(const Vector<Element*>& elements);
 

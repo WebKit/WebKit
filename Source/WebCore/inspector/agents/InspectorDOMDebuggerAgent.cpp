@@ -32,6 +32,7 @@
 #include "config.h"
 #include "InspectorDOMDebuggerAgent.h"
 
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
@@ -109,8 +110,11 @@ void InspectorDOMDebuggerAgent::discardAgent()
     m_debuggerAgent = nullptr;
 }
 
-void InspectorDOMDebuggerAgent::mainFrameDOMContentLoaded()
+void InspectorDOMDebuggerAgent::frameDocumentUpdated(Frame& frame)
 {
+    if (!frame.isMainFrame())
+        return;
+
     discardBindings();
 }
 

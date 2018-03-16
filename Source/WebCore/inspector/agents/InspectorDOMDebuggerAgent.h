@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class Element;
+class Frame;
 class InspectorDOMAgent;
 class Node;
 
@@ -72,7 +73,7 @@ public:
     void willModifyDOMAttr(Element&);
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
-    void mainFrameDOMContentLoaded();
+    void frameDocumentUpdated(Frame&);
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
