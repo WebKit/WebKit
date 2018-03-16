@@ -29,6 +29,7 @@
 #include "CachedResourceRequestInitiators.h"
 #include "Document.h"
 #include "MediaList.h"
+#include "MediaQueryParser.h"
 #include "SecurityOrigin.h"
 #include "StyleSheetContents.h"
 #include <wtf/StdLibExtras.h>
@@ -50,7 +51,7 @@ StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media)
     , m_loading(false)
 {
     if (!m_mediaQueries)
-        m_mediaQueries = MediaQuerySet::create(String());
+        m_mediaQueries = MediaQuerySet::create(String(), MediaQueryParserContext());
 }
 
 StyleRuleImport::~StyleRuleImport()

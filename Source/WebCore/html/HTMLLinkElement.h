@@ -37,6 +37,7 @@ namespace WebCore {
 class DOMTokenList;
 class HTMLLinkElement;
 class URL;
+struct MediaQueryParserContext;
 
 template<typename T> class EventSender;
 typedef EventSender<HTMLLinkElement> LinkEventSender;
@@ -89,7 +90,7 @@ private:
     void didFinishInsertingNode() final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
 
-    void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&);
+    void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&, MediaQueryParserContext);
 
     // from CachedResourceClient
     void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet*) final;

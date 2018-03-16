@@ -4517,7 +4517,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         if (mediaURL.isEmpty())
             goto CheckAgain;
 
-        if (auto* media = source->parsedMediaAttribute()) {
+        if (auto* media = source->parsedMediaAttribute(document())) {
             if (shouldLog)
                 INFO_LOG(LOGIDENTIFIER, "'media' is ", source->attributeWithoutSynchronization(mediaAttr));
             auto* renderer = this->renderer();

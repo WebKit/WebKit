@@ -40,6 +40,7 @@
 #include "CSSVariableReferenceValue.h"
 #include "Document.h"
 #include "Element.h"
+#include "Page.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -90,6 +91,7 @@ CSSParserContext::CSSParserContext(Document& document, const URL& sheetBaseURL, 
     conicGradientsEnabled = document.settings().conicGradientsEnabled();
     deferredCSSParserEnabled = document.settings().deferredCSSParserEnabled();
     allowNewLinesClamp = document.settings().appleMailLinesClampEnabled();
+    useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
     
 #if PLATFORM(IOS)
     // FIXME: Force the site specific quirk below to work on iOS. Investigating other site specific quirks
@@ -112,7 +114,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.conicGradientsEnabled == b.conicGradientsEnabled
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
-        && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin;
+        && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
+        && a.useSystemAppearance == b.useSystemAppearance;
 }
 
 CSSParser::CSSParser(const CSSParserContext& context)

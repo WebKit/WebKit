@@ -28,6 +28,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryList.h"
 #include "MediaQueryListListener.h"
+#include "MediaQueryParserContext.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "StyleResolver.h"
@@ -82,7 +83,7 @@ RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
     if (!m_document)
         return nullptr;
 
-    auto media = MediaQuerySet::create(query);
+    auto media = MediaQuerySet::create(query, MediaQueryParserContext(*m_document));
     reportMediaQueryWarningIfNeeded(m_document, media.ptr());
     bool result = evaluate(media.get());
     return MediaQueryList::create(*this, WTFMove(media), result);

@@ -630,6 +630,7 @@ css/MediaQueryEvaluator.cpp
 css/MediaQueryExpression.cpp
 css/MediaQueryList.cpp
 css/MediaQueryMatcher.cpp
+css/MediaQueryParserContext.cpp
 css/PageRuleCollector.cpp
 css/PropertySetCSSStyleDeclaration.cpp
 css/RGBColor.cpp

@@ -34,16 +34,18 @@
 #include "MediaQuery.h"
 #include "MediaQueryBlockWatcher.h"
 #include "MediaQueryExpression.h"
+#include "MediaQueryParserContext.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MediaQuerySet;
+struct CSSParserContext;
 
 class MediaQueryData {
     WTF_MAKE_NONCOPYABLE(MediaQueryData);
 public:
-    MediaQueryData();
+    MediaQueryData(MediaQueryParserContext context);
     void clear();
     void addExpression(CSSParserTokenRange&);
     bool lastExpressionValid();
@@ -63,6 +65,8 @@ public:
     inline void setRestrictor(MediaQuery::Restrictor restrictor) { m_restrictor = restrictor; }
 
     inline void setMediaFeature(const String& str) { m_mediaFeature = str; }
+    
+    inline void setMediaQueryParserContext(MediaQueryParserContext context) { m_context = context; }
 
 private:
     MediaQuery::Restrictor m_restrictor;
@@ -70,14 +74,15 @@ private:
     Vector<MediaQueryExpression> m_expressions;
     String m_mediaFeature;
     bool m_mediaTypeSet;
+    MediaQueryParserContext m_context;
 };
 
 class MediaQueryParser {
     WTF_MAKE_NONCOPYABLE(MediaQueryParser);
 public:
-    static RefPtr<MediaQuerySet> parseMediaQuerySet(const String&);
-    static RefPtr<MediaQuerySet> parseMediaQuerySet(CSSParserTokenRange);
-    static RefPtr<MediaQuerySet> parseMediaCondition(CSSParserTokenRange);
+    static RefPtr<MediaQuerySet> parseMediaQuerySet(const String&, MediaQueryParserContext);
+    static RefPtr<MediaQuerySet> parseMediaQuerySet(CSSParserTokenRange, MediaQueryParserContext);
+    static RefPtr<MediaQuerySet> parseMediaCondition(CSSParserTokenRange, MediaQueryParserContext);
 
 private:
     enum ParserType {
@@ -85,7 +90,7 @@ private:
         MediaConditionParser,
     };
 
-    MediaQueryParser(ParserType);
+    MediaQueryParser(ParserType, MediaQueryParserContext);
     virtual ~MediaQueryParser();
 
     RefPtr<MediaQuerySet> parseInternal(CSSParserTokenRange);

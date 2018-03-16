@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StyleMedia.h"
-
-#include "Document.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "MediaQueryParser.h"
-#include "NodeRenderStyle.h"
-#include "RenderElement.h"
-#include "StyleResolver.h"
-#include "StyleScope.h"
+#pragma once
 
 namespace WebCore {
+    
+class Document;
+struct CSSParserContext;
 
-StyleMedia::StyleMedia(Frame* frame)
-    : DOMWindowProperty(frame)
-{
-}
-
-String StyleMedia::type() const
-{
-    FrameView* view = m_frame ? m_frame->view() : 0;
-    if (view)
-        return view->mediaType();
-
-    return String();
-}
-
-bool StyleMedia::matchMedium(const String& query) const
-{
-    if (!m_frame)
-        return false;
-
-    Document* document = m_frame->document();
-    ASSERT(document);
-    Element* documentElement = document->documentElement();
-    if (!documentElement)
-        return false;
-
-    auto rootStyle = document->styleScope().resolver().styleForElement(*documentElement, document->renderStyle(), nullptr, MatchOnlyUserAgentRules).renderStyle;
-
-    auto media = MediaQuerySet::create(query, MediaQueryParserContext(*document));
-
-    return MediaQueryEvaluator { type(), *document, rootStyle.get() }.evaluate(media.get());
-}
-
+struct MediaQueryParserContext {
+public:
+    MediaQueryParserContext() { }
+    MediaQueryParserContext(const CSSParserContext&);
+    WEBCORE_EXPORT MediaQueryParserContext(const Document&);
+    
+    bool useSystemAppearance { false };
+};
+    
 } // namespace WebCore

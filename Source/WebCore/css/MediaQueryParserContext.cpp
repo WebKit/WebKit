@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,51 +24,22 @@
  */
 
 #include "config.h"
-#include "StyleMedia.h"
+#include "MediaQueryParserContext.h"
 
+#include "CSSParserMode.h"
 #include "Document.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
-#include "MediaQueryParser.h"
-#include "NodeRenderStyle.h"
-#include "RenderElement.h"
-#include "StyleResolver.h"
-#include "StyleScope.h"
+#include "Page.h"
 
 namespace WebCore {
-
-StyleMedia::StyleMedia(Frame* frame)
-    : DOMWindowProperty(frame)
+    
+MediaQueryParserContext::MediaQueryParserContext(const CSSParserContext& context)
 {
+    useSystemAppearance = context.useSystemAppearance;
 }
 
-String StyleMedia::type() const
+MediaQueryParserContext::MediaQueryParserContext(const Document& document)
 {
-    FrameView* view = m_frame ? m_frame->view() : 0;
-    if (view)
-        return view->mediaType();
-
-    return String();
+    useSystemAppearance = document.page() ? document.page()->useSystemAppearance() : false;
 }
-
-bool StyleMedia::matchMedium(const String& query) const
-{
-    if (!m_frame)
-        return false;
-
-    Document* document = m_frame->document();
-    ASSERT(document);
-    Element* documentElement = document->documentElement();
-    if (!documentElement)
-        return false;
-
-    auto rootStyle = document->styleScope().resolver().styleForElement(*documentElement, document->renderStyle(), nullptr, MatchOnlyUserAgentRules).renderStyle;
-
-    auto media = MediaQuerySet::create(query, MediaQueryParserContext(*document));
-
-    return MediaQueryEvaluator { type(), *document, rootStyle.get() }.evaluate(media.get());
-}
-
+    
 } // namespace WebCore

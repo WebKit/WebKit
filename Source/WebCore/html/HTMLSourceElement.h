@@ -40,7 +40,7 @@ public:
     void scheduleErrorEvent();
     void cancelPendingErrorEvent();
 
-    const MediaQuerySet* parsedMediaAttribute() const;
+    const MediaQuerySet* parsedMediaAttribute(Document&) const;
 
 private:
     HTMLSourceElement(const QualifiedName&, Document&);

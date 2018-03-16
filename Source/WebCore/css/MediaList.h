@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "MediaQueryParserContext.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -43,8 +44,7 @@ public:
     {
         return adoptRef(*new MediaQuerySet);
     }
-
-    static WEBCORE_EXPORT Ref<MediaQuerySet> create(const String& mediaString);
+    static WEBCORE_EXPORT Ref<MediaQuerySet> create(const String& mediaString, MediaQueryParserContext = MediaQueryParserContext());
 
     WEBCORE_EXPORT ~MediaQuerySet();
 

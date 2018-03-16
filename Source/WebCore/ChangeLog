@@ -1,3 +1,82 @@
+2018-03-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Create MediaQueryParserContext to provide additional context for the evaluation of media queries
+        https://bugs.webkit.org/show_bug.cgi?id=183677
+
+        Reviewed by Tim Horton.
+
+        We need additional context for parsing media queries to make sure they are parsed correctly and valid.
+
+        Not currently testable, will add tests in a later patch.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::create):
+        (WebCore::MediaQuerySet::set):
+        (WebCore::MediaQuerySet::add):
+        (WebCore::MediaQuerySet::remove):
+        * css/MediaList.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::mediaAttributeMatches):
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent):
+        (WebCore::featureWithValidDensity):
+        (WebCore::featureWithValidPositiveLength):
+        (WebCore::featureWithPositiveInteger):
+        (WebCore::featureWithPositiveNumber):
+        (WebCore::featureWithZeroOrOne):
+        (WebCore::isFeatureValidWithoutValue):
+        (WebCore::MediaQueryExpression::MediaQueryExpression):
+        * css/MediaQueryExpression.h:
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::matchMedia):
+        * css/MediaQueryParserContext.cpp: Added.
+        (WebCore::MediaQueryParserContext::MediaQueryParserContext):
+        * css/MediaQueryParserContext.h: Added.
+        (WebCore::MediaQueryParserContext::MediaQueryParserContext):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium const):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::StyleRuleImport):
+        (WebCore::StyleRuleImport::setCSSStyleSheet):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeImportRule):
+        (WebCore::CSSParserImpl::consumeMediaRule):
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::parseMediaQuerySet):
+        (WebCore::MediaQueryParser::parseMediaCondition):
+        (WebCore::MediaQueryParser::MediaQueryParser):
+        (WebCore::MediaQueryData::addExpression):
+        * css/parser/MediaQueryParser.h:
+        (WebCore::MediaQueryData::setMediaQueryParserContext):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::parse):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createCSSStyleSheet):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::initializeStyleSheet):
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLLinkElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::parsedMediaAttribute const):
+        * html/HTMLSourceElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+
 2018-03-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r229639.

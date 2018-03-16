@@ -39,6 +39,7 @@
 #include "MediaFeatureNames.h"
 #include "MediaList.h"
 #include "MediaQuery.h"
+#include "MediaQueryParserContext.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformScreen.h"
@@ -813,8 +814,8 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
 bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
 {
     ASSERT(document.renderView());
-    auto mediaQueries = MediaQuerySet::create(attributeValue);
+    auto mediaQueries = MediaQuerySet::create(attributeValue, MediaQueryParserContext(document));
     return MediaQueryEvaluator { "screen", document, &document.renderView()->style() }.evaluate(mediaQueries.get());
 }
 
-} // namespace
+} // WebCore

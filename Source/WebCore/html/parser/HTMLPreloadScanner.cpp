@@ -39,6 +39,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "MediaQueryParser.h"
 #include "RenderView.h"
 #include "SizesAttributeParser.h"
 #include <wtf/MainThread.h>
@@ -215,7 +216,7 @@ private:
             }
             if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
                 m_mediaAttribute = attributeValue;
-                auto mediaSet = MediaQuerySet::create(attributeValue);
+                auto mediaSet = MediaQuerySet::create(attributeValue, MediaQueryParserContext(document));
                 auto documentElement = makeRefPtr(document.documentElement());
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
                 m_mediaMatched = MediaQueryEvaluator { document.printing() ? "print" : "screen", document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());

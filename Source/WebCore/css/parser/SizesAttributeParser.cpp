@@ -37,6 +37,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
+#include "MediaQueryParserContext.h"
 #include "RenderView.h"
 #include "SizesCalcParser.h"
 #include "StyleScope.h"
@@ -136,7 +137,7 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
         float length;
         if (!calculateLengthInPixels(range.makeSubRange(lengthTokenStart, lengthTokenEnd), length))
             continue;
-        RefPtr<MediaQuerySet> mediaCondition = MediaQueryParser::parseMediaCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart));
+        RefPtr<MediaQuerySet> mediaCondition = MediaQueryParser::parseMediaCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(m_document));
         if (!mediaCondition || !mediaConditionMatches(*mediaCondition))
             continue;
         m_length = length;

@@ -32,12 +32,13 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserHelpers.h"
 #include "MediaFeatureNames.h"
+#include "MediaQueryParserContext.h"
 #include <wtf/text/TextStream.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static inline bool featureWithValidIdent(const AtomicString& mediaFeature, const CSSPrimitiveValue& value)
+static inline bool featureWithValidIdent(const AtomicString& mediaFeature, const CSSPrimitiveValue& value, const MediaQueryParserContext& context)
 {
     if (value.primitiveType() != CSSPrimitiveValue::UnitType::CSS_IDENT)
         return false;
@@ -53,7 +54,7 @@ static inline bool featureWithValidIdent(const AtomicString& mediaFeature, const
     || mediaFeature == MediaFeatureNames::displayMode
 #endif
     || mediaFeature == MediaFeatureNames::prefersReducedMotion
-    || mediaFeature == MediaFeatureNames::defaultAppearance;
+    || (mediaFeature == MediaFeatureNames::defaultAppearance && context.useSystemAppearance);
 }
 
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSPrimitiveValue& value)
@@ -137,7 +138,7 @@ static inline bool isAspectRatioFeature(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::maxDeviceAspectRatio;
 }
 
-static inline bool isFeatureValidWithoutValue(const AtomicString& mediaFeature)
+static inline bool isFeatureValidWithoutValue(const AtomicString& mediaFeature, const MediaQueryParserContext& context)
 {
     // Media features that are prefixed by min/max cannot be used without a value.
     return mediaFeature == MediaFeatureNames::anyHover
@@ -161,7 +162,7 @@ static inline bool isFeatureValidWithoutValue(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::invertedColors
         || mediaFeature == MediaFeatureNames::pointer
         || mediaFeature == MediaFeatureNames::prefersReducedMotion
-        || mediaFeature == MediaFeatureNames::defaultAppearance
+        || (mediaFeature == MediaFeatureNames::defaultAppearance && context.useSystemAppearance)
         || mediaFeature == MediaFeatureNames::devicePixelRatio
         || mediaFeature == MediaFeatureNames::resolution
 #if ENABLE(APPLICATION_MANIFEST)
@@ -192,13 +193,13 @@ inline RefPtr<CSSPrimitiveValue> consumeFirstValue(const String& mediaFeature, C
     return nullptr;
 }
 
-MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserTokenRange& range)
+MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserTokenRange& range, MediaQueryParserContext& context)
     : m_mediaFeature(feature.convertToASCIILowercase())
     , m_isValid(false)
 {
     RefPtr<CSSPrimitiveValue> firstValue = consumeFirstValue(m_mediaFeature, range);
     if (!firstValue) {
-        if (isFeatureValidWithoutValue(m_mediaFeature)) {
+        if (isFeatureValidWithoutValue(m_mediaFeature, context)) {
             // Valid, creates a MediaQueryExp with an 'invalid' MediaQueryExpValue
             m_isValid = true;
         }
@@ -222,7 +223,7 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserToken
     }
     if (featureWithPositiveInteger(m_mediaFeature, *firstValue) || featureWithPositiveNumber(m_mediaFeature, *firstValue)
         || featureWithZeroOrOne(m_mediaFeature, *firstValue) || featureWithValidDensity(m_mediaFeature, *firstValue)
-        || featureWithValidPositiveLength(m_mediaFeature, *firstValue) || featureWithValidIdent(m_mediaFeature, *firstValue)) {
+        || featureWithValidPositiveLength(m_mediaFeature, *firstValue) || featureWithValidIdent(m_mediaFeature, *firstValue, context)) {
         m_value = firstValue;
         m_isValid = true;
         return;

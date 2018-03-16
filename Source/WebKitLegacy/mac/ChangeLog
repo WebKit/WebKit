@@ -1,3 +1,15 @@
+2018-03-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Create MediaQueryParserContext to provide additional context for the evaluation of media queries
+        https://bugs.webkit.org/show_bug.cgi?id=183677
+
+        Reviewed by Tim Horton.
+
+        We need additional context for parsing media queries to make sure they are parsed correctly and valid.
+
+        * DOM/DOM.mm:
+        (-[DOMHTMLLinkElement _mediaQueryMatches]):
+
 2018-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229567

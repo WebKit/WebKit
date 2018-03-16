@@ -33,6 +33,7 @@
 #include "HTMLPictureElement.h"
 #include "Logging.h"
 #include "MediaList.h"
+#include "MediaQueryParser.h"
 
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
@@ -162,13 +163,13 @@ void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomicSt
     }
 }
 
-const MediaQuerySet* HTMLSourceElement::parsedMediaAttribute() const
+const MediaQuerySet* HTMLSourceElement::parsedMediaAttribute(Document& document) const
 {
     if (!m_cachedParsedMediaAttribute) {
         RefPtr<const MediaQuerySet> parsedAttribute;
         auto& value = attributeWithoutSynchronization(mediaAttr);
         if (!value.isNull())
-            parsedAttribute = MediaQuerySet::create(value);
+            parsedAttribute = MediaQuerySet::create(value, MediaQueryParserContext(document));
         m_cachedParsedMediaAttribute = WTFMove(parsedAttribute);
     }
     return m_cachedParsedMediaAttribute.value().get();

@@ -61,12 +61,12 @@ namespace WebCore {
  * throw SyntaxError exception.
  */
     
-Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString)
+Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString, MediaQueryParserContext context)
 {
     if (mediaString.isEmpty())
         return MediaQuerySet::create();
     
-    return MediaQueryParser::parseMediaQuerySet(mediaString).releaseNonNull();
+    return MediaQueryParser::parseMediaQuerySet(mediaString, context).releaseNonNull();
 }
 
 MediaQuerySet::MediaQuerySet() = default;
