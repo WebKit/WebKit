@@ -1,3 +1,20 @@
+2018-03-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Elements: "Force Print Media Styles" should not persist across Web Inspector sessions
+        https://bugs.webkit.org/show_bug.cgi?id=183708
+        <rdar://problem/36452183>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype._showPrintStylesChanged):
+        (WI.DOMTreeContentView.prototype._togglePrintStyles):
+        (WI.DOMTreeContentView.prototype._showPrintStylesSettingChanged): Deleted.
+        (WI.DOMTreeContentView.prototype._togglePrintStylesSetting): Deleted.
+
 2018-03-14  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas: a recording initiated by the user should be shown immediately on completion

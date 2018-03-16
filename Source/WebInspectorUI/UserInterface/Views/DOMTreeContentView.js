@@ -49,11 +49,10 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._showsShadowDOMButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._showShadowDOMSettingChanged();
 
-        WI.showPrintStylesSetting.addEventListener(WI.Setting.Event.Changed, this._showPrintStylesSettingChanged, this);
         this._showPrintStylesButtonNavigationItem = new WI.ActivateButtonNavigationItem("print-styles", WI.UIString("Force Print Media Styles"), WI.UIString("Use Default Media Styles"), "Images/Printer.svg", 16, 16);
-        this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStylesSetting, this);
+        this._showPrintStylesButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._togglePrintStyles, this);
         this._showPrintStylesButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._showPrintStylesSettingChanged();
+        this._showPrintStylesChanged();
 
         this.element.classList.add("dom-tree");
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
@@ -552,19 +551,20 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.showShadowDOMSetting.value = !WI.showShadowDOMSetting.value;
     }
 
-    _showPrintStylesSettingChanged(event)
+    _showPrintStylesChanged()
     {
-        this._showPrintStylesButtonNavigationItem.activated = WI.showPrintStylesSetting.value;
-    }
+        this._showPrintStylesButtonNavigationItem.activated = WI.printStylesEnabled;
 
-    _togglePrintStylesSetting(event)
-    {
-        WI.showPrintStylesSetting.value = !WI.showPrintStylesSetting.value;
-
-        let mediaType = WI.showPrintStylesSetting.value ? "print" : "";
+        let mediaType = WI.printStylesEnabled ? "print" : "";
         PageAgent.setEmulatedMedia(mediaType);
 
         WI.cssStyleManager.mediaTypeChanged();
+    }
+
+    _togglePrintStyles(event)
+    {
+        WI.printStylesEnabled = !WI.printStylesEnabled;
+        this._showPrintStylesChanged();
     }
 
     _showSearchHighlights()

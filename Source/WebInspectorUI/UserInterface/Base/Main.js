@@ -179,9 +179,7 @@ WI.loaded = function()
     if (this.showPaintRectsSetting.value && window.PageAgent && PageAgent.setShowPaintRects)
         PageAgent.setShowPaintRects(true);
 
-    this.showPrintStylesSetting = new WI.Setting("show-print-styles", false);
-    if (this.showPrintStylesSetting.value && window.PageAgent)
-        PageAgent.setEmulatedMedia("print");
+    this.printStylesEnabled = false;
 
     // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
     this.resourceCachingDisabledSetting = new WI.Setting("disable-resource-caching", false);
