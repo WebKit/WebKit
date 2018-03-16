@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SystemPreviewController.h"
 
-#import "WebPageProxy.h"
+#include "WebPageProxy.h"
 
 namespace WebKit {
 

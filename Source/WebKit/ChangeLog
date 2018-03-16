@@ -1,3 +1,10 @@
+2018-03-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Suppress GCC warnings by using #include instead of #import
+
+        Unreviewed.
+        * UIProcess/SystemPreviewController.cpp:
+
 2018-03-15  Keith Rollin  <krollin@apple.com>
 
         Telemetry for stalled webpage loads
