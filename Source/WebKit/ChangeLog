@@ -1,3 +1,30 @@
+2018-03-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Add _useSystemAppearance to WKView
+        https://bugs.webkit.org/show_bug.cgi?id=183706
+        <rdar://problem/38516584>
+
+        Reviewed by Tim Horton.
+
+        Plumb useSystemAppearance and other supporting functions to WKView
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _useSystemAppearance]):
+        (-[WKWebView _setUseSystemAppearance:]):
+        (-[WKWebView effectiveAppearanceDidChange]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView effectiveAppearanceDidChange]):
+        (-[WKView _setUseSystemAppearance:]):
+        (-[WKView _useSystemAppearance]):
+        (-[WKView _setDefaultAppearance:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setUseSystemAppearance):
+        (WebKit::WebViewImpl::useSystemAppearance):
+        (WebKit::WebViewImpl::setDefaultAppearance):
+
 2018-03-16  Brent Fulgham  <bfulgham@apple.com>
 
         Set a trap to catch an infrequent form-related nullptr crash

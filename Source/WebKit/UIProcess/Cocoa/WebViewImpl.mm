@@ -4973,6 +4973,21 @@ bool WebViewImpl::completeBackSwipeForTesting()
         return false;
     return m_gestureController->completeSimulatedSwipeInDirectionForTesting(ViewGestureController::SwipeDirection::Back);
 }
+    
+void WebViewImpl::setUseSystemAppearance(bool useSystemAppearance)
+{
+    m_page->setUseSystemAppearance(useSystemAppearance);
+}
+
+bool WebViewImpl::useSystemAppearance()
+{
+    return m_page->useSystemAppearance();
+}
+
+void WebViewImpl::setDefaultAppearance(bool defaultAppearance)
+{
+    m_page->setDefaultAppearance(defaultAppearance);
+}
 
 } // namespace WebKit
 

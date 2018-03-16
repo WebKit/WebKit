@@ -684,8 +684,6 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
     _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
-    
-    _page->setDefaultAppearance([self _defaultAppearance]);
 #endif
 
     _page->setBackgroundExtendsBeyondPage(true);
@@ -6172,18 +6170,18 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (BOOL)_useSystemAppearance
 {
-    return _page->useSystemAppearance();
+    return _impl->useSystemAppearance();
 }
 
 - (void)_setUseSystemAppearance:(BOOL)useSystemAppearance
 {
-    _page->setUseSystemAppearance(useSystemAppearance);
-    _page->setDefaultAppearance([self _defaultAppearance]);
+    _impl->setUseSystemAppearance(useSystemAppearance);
+    _impl->setDefaultAppearance([self _defaultAppearance]);
 }
 
 - (void)effectiveAppearanceDidChange
 {
-    _page->setDefaultAppearance([self _defaultAppearance]);
+    _impl->setDefaultAppearance([self _defaultAppearance]);
 }
 
 - (void)_setHeaderBannerHeight:(int)height

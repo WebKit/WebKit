@@ -533,6 +533,10 @@ public:
 
     bool beginBackSwipeForTesting();
     bool completeBackSwipeForTesting();
+    
+    void setUseSystemAppearance(bool);
+    bool useSystemAppearance();
+    void setDefaultAppearance(bool);
 
 private:
 #if HAVE(TOUCH_BAR)
