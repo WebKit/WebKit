@@ -1,3 +1,39 @@
+2018-03-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Don't use the TextureMapperAnimation::Client interface to apply animation
+        https://bugs.webkit.org/show_bug.cgi?id=183656
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't have the TextureMapperLayer class inherit from the
+        TextureMapperAnimation::Client interface just for the purposes of
+        synchronization of animation-affected attributes in syncAnimations().
+        For that purpose it's enough to provide a struct that is passed to that
+        method, and with the TextureMapperAnimation class filling out any of the
+        animated attributes that need to be updated.
+
+        TextureMapperAnimation::ApplicationResult struct is introducted for that
+        purpose. std::optional<> members in it are assigned values during the
+        application process, if an appropriate animation affects them. The
+        relevant member values in TextureMapperLayer are then updated, or value
+        from the default state is used.
+
+        TextureMapperAnimation::Client is removed.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimation::apply):
+        (WebCore::TextureMapperAnimation::applyInternal):
+        (WebCore::TextureMapperAnimations::apply):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::syncAnimations):
+        (WebCore::TextureMapperLayer::setAnimatedTransform): Deleted.
+        (WebCore::TextureMapperLayer::setAnimatedOpacity): Deleted.
+        (WebCore::TextureMapperLayer::setAnimatedFilters): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2018-03-16  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas Tab: main WebGL canvas on acko.net has no reported size

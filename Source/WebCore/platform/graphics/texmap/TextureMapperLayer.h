@@ -34,7 +34,7 @@ class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
-class WEBCORE_EXPORT TextureMapperLayer : public TextureMapperAnimation::Client {
+class TextureMapperLayer {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -145,11 +145,6 @@ private:
     void paintSelfAndChildren(const TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
     void applyMask(const TextureMapperPaintOptions&);
-
-    // TextureMapperAnimation::Client
-    void setAnimatedTransform(const TransformationMatrix&) override;
-    void setAnimatedOpacity(float) override;
-    void setAnimatedFilters(const FilterOperations&) override;
 
     bool isVisible() const;
 

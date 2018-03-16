@@ -30,11 +30,10 @@ class TextureMapperAnimation {
 public:
     enum class AnimationState { Playing, Paused, Stopped };
 
-    class Client {
-    public:
-        virtual void setAnimatedTransform(const TransformationMatrix&) = 0;
-        virtual void setAnimatedOpacity(float) = 0;
-        virtual void setAnimatedFilters(const FilterOperations&) = 0;
+    struct ApplicationResult {
+        std::optional<TransformationMatrix> transform;
+        std::optional<double> opacity;
+        std::optional<FilterOperations> filters;
     };
 
     TextureMapperAnimation()
@@ -43,7 +42,7 @@ public:
     TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, bool, MonotonicTime, Seconds, AnimationState);
     WEBCORE_EXPORT TextureMapperAnimation(const TextureMapperAnimation&);
 
-    void apply(Client&, MonotonicTime);
+    void apply(ApplicationResult&, MonotonicTime);
     void pause(Seconds);
     void resume();
     bool isActive() const;
@@ -54,7 +53,7 @@ public:
     AnimationState state() const { return m_state; }
 
 private:
-    void applyInternal(Client&, const AnimationValue& from, const AnimationValue& to, float progress);
+    void applyInternal(ApplicationResult&, const AnimationValue& from, const AnimationValue& to, float progress);
     Seconds computeTotalRunningTime(MonotonicTime);
 
     String m_name;
@@ -80,7 +79,7 @@ public:
     void suspend(MonotonicTime);
     void resume();
 
-    void apply(TextureMapperAnimation::Client&, MonotonicTime);
+    void apply(TextureMapperAnimation::ApplicationResult&, MonotonicTime);
 
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }
