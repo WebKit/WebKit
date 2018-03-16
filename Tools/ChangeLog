@@ -1,3 +1,57 @@
+2018-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Introduce Display.Box
+        https://bugs.webkit.org/show_bug.cgi?id=183700
+
+        Reviewed by Antti Koivisto.
+
+        Display.Box objects will end up in the display(box) tree. Currently
+        they are just hanging off of the Layout.Box objects.
+
+        * LayoutReloaded/DisplayTree/Box.js: Added.
+        (Display.Box):
+        (Display.Box.prototype.rect):
+        (Display.Box.prototype.top):
+        (Display.Box.prototype.left):
+        (Display.Box.prototype.bottom):
+        (Display.Box.prototype.right):
+        (Display.Box.prototype.topLeft):
+        (Display.Box.prototype.bottomRight):
+        (Display.Box.prototype.setTopLeft):
+        (Display.Box.prototype.setSize):
+        (Display.Box.prototype.setWidth):
+        (Display.Box.prototype.setHeight):
+        (Display.Box.prototype.borderBox):
+        (Display.Box.prototype.paddingBox):
+        (Display.Box.prototype.contentBox):
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext):
+        (BlockFormattingContext.prototype.layout):
+        (BlockFormattingContext.prototype._toAbsolutePosition):
+        (BlockFormattingContext.prototype._needsLayout):
+        (BlockFormattingContext.prototype._addToLayoutQueue):
+        (BlockFormattingContext.prototype._nextInLayoutQueue):
+        (BlockFormattingContext.prototype._removeFromLayoutQueue):
+        (BlockFormattingContext.prototype._createDisplayBox):
+        (BlockFormattingContext.prototype._toDisplayBox):
+        (BlockFormattingContext.prototype._toLayoutBox):
+        * LayoutReloaded/Layout.js:
+        (layout):
+        * LayoutReloaded/LayoutReloaded.xcworkspace/contents.xcworkspacedata:
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box):
+        (Layout.Box.prototype.setDisplayBox):
+        (Layout.Box.prototype.displayBox):
+        (Layout.Box.prototype.rect):
+        (Layout.Box.prototype.setTopLeft):
+        (Layout.Box.prototype.setSize):
+        (Layout.Box.prototype.setWidth):
+        (Layout.Box.prototype.setHeight):
+        (Layout.Box.prototype.borderBox):
+        (Layout.Box.prototype.paddingBox):
+        (Layout.Box.prototype.contentBox):
+        * LayoutReloaded/test/index.html:
+
 2018-03-16  Chris Dumez  <cdumez@apple.com>
 
         URLSchemeHandler.Basic API test fails with async policy delegates

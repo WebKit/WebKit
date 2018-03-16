@@ -27,6 +27,9 @@ class BlockFormattingContext extends FormattingContext {
         super(root);
         // New block formatting context always establishes a new floating context.
         this.m_floatingContext = new FloatingContext(this);
+        this.m_displayToLayout = new Map();
+        this.m_layoutToDisplay = new Map();
+        this.m_layoutStack = new Array();
     }
 
     layout(layoutContext) {
@@ -37,17 +40,16 @@ class BlockFormattingContext extends FormattingContext {
         if (!this.rootContainer().firstChild())
             return;
         // This is a post-order tree traversal layout.
-        let layoutStack = new Array();
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-        layoutStack.push(this.rootContainer().firstChild());
+        this._addToLayoutQueue(this.rootContainer().firstChild());
         // 1. Go all the way down to the leaf node
         // 2. Compute static position and width as we travers down
         // 3. As we climb back on the tree, compute height and finialize position
         // (Any subtrees with new formatting contexts need to layout synchronously)
-        while (layoutStack.length) {
+        while (this._needsLayout()) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
-                let layoutBox = layoutStack[layoutStack.length - 1];
+                let layoutBox = this._nextInLayoutQueue();
                 this.computeWidth(layoutBox);
                 this._computeStaticPosition(layoutBox);
                 if (layoutBox.establishesFormattingContext()) {
@@ -56,13 +58,13 @@ class BlockFormattingContext extends FormattingContext {
                 }
                 if (!layoutBox.isContainer() || !layoutBox.hasChild())
                     break;
-                layoutStack.push(layoutBox.firstChild());
+                this._addToLayoutQueue(layoutBox.firstChild());
             }
 
             // Climb back on the ancestors and compute height/final position.
-            while (layoutStack.length) {
+            while (this._needsLayout()) {
                 // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
-                let layoutBox = layoutStack.pop();
+                let layoutBox = this._nextInLayoutQueue();
                 this.computeHeight(layoutBox);
                 // Adjust position now that we have all the previous floats placed in this context -if needed.
                 this.floatingContext().computePosition(layoutBox);
@@ -72,8 +74,10 @@ class BlockFormattingContext extends FormattingContext {
                     // Place the out of flow content.
                     this._placeOutOfFlowDescendants(layoutBox);
                 }
+                // We are done with laying out this box.
+                this._removeFromLayoutQueue(layoutBox);
                 if (layoutBox.nextSibling()) {
-                    layoutStack.push(layoutBox.nextSibling());
+                    this._addToLayoutQueue(layoutBox.nextSibling());
                     break;
                 }
             }
@@ -340,5 +344,46 @@ class BlockFormattingContext extends FormattingContext {
         }
         return new LayoutRect(topLeft, layoutBox.rect().size());
     }
-}
 
+    _needsLayout() {
+        return this.m_layoutStack.length;
+    }
+
+    _addToLayoutQueue(layoutBox) {
+        // Initialize the corresponding display box.
+        this._createDisplayBox(layoutBox);
+        this.m_layoutStack.push(layoutBox);
+    }
+
+    _nextInLayoutQueue() {
+        ASSERT(this.m_layoutStack.length);
+        return this.m_layoutStack[this.m_layoutStack.length - 1];
+    }
+
+    _removeFromLayoutQueue(layoutBox) {
+        // With the current layout logic, the layoutBox should be at the top (this.m_layoutStack.pop() should do).
+        ASSERT(this.m_layoutStack.length);
+        ASSERT(this.m_layoutStack[this.m_layoutStack.length - 1] == layoutBox);
+        this.m_layoutStack.splice(this.m_layoutStack.indexOf(layoutBox), 1);
+    }
+
+    _createDisplayBox(layoutBox) {
+        let displayBox = new Display.Box(layoutBox.node());
+        this.m_displayToLayout.set(displayBox, layoutBox);
+        this.m_layoutToDisplay.set(layoutBox, displayBox);
+        // This is temporary.
+        layoutBox.setDisplayBox(displayBox);
+    }
+
+    _toDisplayBox(layoutBox) {
+        ASSERT(layoutBox);
+        ASSERT(this.m_layoutToDisplay.has(layoutBox));
+        return this.m_layoutToDisplay.get(layout);
+    }
+
+    _toLayoutBox(displayBox) {
+        ASSERT(displayBox);
+        ASSERT(this.m_displayToLayout.has(displayBox));
+        return this.m_displayToLayout.get(layout);
+    }
+}

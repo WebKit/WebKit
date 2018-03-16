@@ -34,8 +34,8 @@ Layout.Box = class Box {
         this.m_nextSibling = null;
         this.m_previousSibling = null;
         this.m_isAnonymous = false;
-        this.m_rect = new LayoutRect(new LayoutPoint(0, 0), new LayoutSize(0, 0));
         this.m_establishedFormattingContext = null;
+        this.m_displayBox = null;
     }
 
     id() {
@@ -98,8 +98,18 @@ Layout.Box = class Box {
         this.m_previousSibling = previousSibling;
     }
 
+    setDisplayBox(displayBox) {
+        ASSERT(!this.m_displayBox);
+        this.m_displayBox = displayBox;
+    }
+
+    displayBox() {
+        ASSERT(this.m_displayBox);
+        return this.m_displayBox;
+    }
+
     rect() {
-        return this.m_rect.clone();
+        return this.displayBox().rect();
     }
 
     topLeft() {
@@ -111,19 +121,19 @@ Layout.Box = class Box {
     }
 
     setTopLeft(topLeft) {
-        this.m_rect.setTopLeft(topLeft);
+        this.displayBox().setTopLeft(topLeft);
     }
 
     setSize(size) {
-        this.m_rect.setSize(size);
+        this.displayBox().setSize(size);
     }
 
     setWidth(width) {
-        this.m_rect.setWidth(width);
+        this.displayBox().setWidth(width);
     }
 
     setHeight(height) {
-        this.m_rect.setHeight(height);
+        this.displayBox().setHeight(height);
     }
 
     isContainer() {
@@ -234,24 +244,14 @@ Layout.Box = class Box {
     }
 
     borderBox() {
-        return new LayoutRect(new LayoutPoint(0, 0), this.rect().size());
+        return this.displayBox().borderBox();
     }
 
     paddingBox() {
-        let paddingBox = this.borderBox();
-        let borderSize = Utils.computedBorderTopLeft(this.node());
-        paddingBox.moveBy(borderSize);
-        paddingBox.shrinkBy(borderSize);
-        paddingBox.shrinkBy(Utils.computedBorderBottomRight(this.node()));
-        return paddingBox;
+        return this.displayBox().paddingBox();
     }
 
     contentBox() {
-        let contentBox = this.paddingBox();
-        let paddingSize = Utils.computedPaddingTopLeft(this.node());
-        contentBox.moveBy(paddingSize);
-        contentBox.shrinkBy(paddingSize);
-        contentBox.shrinkBy(Utils.computedPaddingBottomRight(this.node()));
-        return contentBox;
+        return this.displayBox().contentBox();
     }
 }

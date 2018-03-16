@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:DisplayTree">
+   </FileRef>
+   <FileRef
       location = "group:test">
    </FileRef>
    <FileRef
