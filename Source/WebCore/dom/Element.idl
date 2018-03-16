@@ -94,8 +94,8 @@
 
     // Extensions from Full Screen API (https://fullscreen.spec.whatwg.org/#api).
     // FIXME: Should we add unprefixed versions?
-    [Conditional=FULLSCREEN_API, ImplementedAs=webkitRequestFullscreen] void webkitRequestFullScreen(); // Prefixed Mozilla version.
-    [Conditional=FULLSCREEN_API] void webkitRequestFullscreen(); // Prefixed W3C version.
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitRequestFullscreen] void webkitRequestFullScreen(); // Prefixed Mozilla version.
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] void webkitRequestFullscreen(); // Prefixed W3C version.
 
     // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-element-interface).
     [Conditional=POINTER_LOCK] void requestPointerLock();
@@ -119,8 +119,8 @@
     [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
 
     // FIXME: These event handlers should only be on Document (https://fullscreen.spec.whatwg.org/#api).
-    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] attribute EventHandler onwebkitfullscreenchange;
+    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] attribute EventHandler onwebkitfullscreenerror;
 
     // FIXME: Cannot find those EventHandlers in the latest specification (https://w3c.github.io/uievents/#events-focus-types).
     [NotEnumerable] attribute EventHandler onfocusin;

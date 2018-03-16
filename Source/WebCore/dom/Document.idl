@@ -144,15 +144,15 @@ typedef (
 
     // Extensions from FullScreen API (https://fullscreen.spec.whatwg.org/#api).
     // FIXME: Should probably be unprefixed.
-    [Conditional=FULLSCREEN_API] readonly attribute boolean webkitFullscreenEnabled;
-    [Conditional=FULLSCREEN_API, ImplementedAs=webkitFullscreenElementForBindings] readonly attribute Element? webkitFullscreenElement;
-    [Conditional=FULLSCREEN_API] void webkitExitFullscreen();
-    [Conditional=FULLSCREEN_API] readonly attribute boolean webkitIsFullScreen; // Mozilla version.
-    [Conditional=FULLSCREEN_API] readonly attribute boolean webkitFullScreenKeyboardInputAllowed; // Mozilla version.
-    [Conditional=FULLSCREEN_API, ImplementedAs=webkitCurrentFullScreenElementForBindings] readonly attribute Element webkitCurrentFullScreenElement; // Mozilla version.
-    [Conditional=FULLSCREEN_API] void webkitCancelFullScreen(); // Mozilla version.
-    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] readonly attribute boolean webkitFullscreenEnabled;
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitFullscreenElementForBindings] readonly attribute Element? webkitFullscreenElement;
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] void webkitExitFullscreen();
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] readonly attribute boolean webkitIsFullScreen; // Mozilla version.
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] readonly attribute boolean webkitFullScreenKeyboardInputAllowed; // Mozilla version.
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitCurrentFullScreenElementForBindings] readonly attribute Element webkitCurrentFullScreenElement; // Mozilla version.
+    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] void webkitCancelFullScreen(); // Mozilla version.
+    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] attribute EventHandler onwebkitfullscreenchange;
+    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] attribute EventHandler onwebkitfullscreenerror;
 
     // Extensions from Pointer Lock API (https://www.w3.org/TR/pointerlock/#extensions-to-the-document-interface).
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange; // FIXME: Should be enumerable.

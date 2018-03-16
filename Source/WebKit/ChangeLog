@@ -1,3 +1,17 @@
+2018-03-16  Jer Noble  <jer.noble@apple.com>
+
+        Make Fullscreen API an Experimental Feature
+        https://bugs.webkit.org/show_bug.cgi?id=183662
+
+        Reviewed by Jon Lee.
+
+        Add the ability to have a conditional for whether an Experimental Feature is "visible", separate from
+        whether the preference is available, for definining platform-specific Experimental Features.
+
+        * Scripts/GeneratePreferences.rb:
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Shared/WebPreferences.yaml:
+
 2018-03-16  Megan Gardner  <megan_gardner@apple.com>
 
         Ensure that style is updated when the effective appearance changes

@@ -167,6 +167,10 @@ FullScreenEnabled:
   type: bool
   defaultValue: false
   condition: ENABLE(FULLSCREEN_API)
+  visibleCondition: PLATFORM(IOS)
+  humanReadableName: "Fullscreen API"
+  humanReadableDescription: "Fullscreen API"
+  category: experimental
 
 AsynchronousSpellCheckingEnabled:
   type: bool
@@ -1203,3 +1207,4 @@ ResourceLoadStatisticsDebugMode:
   humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
+
