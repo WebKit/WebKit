@@ -5202,14 +5202,25 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (auto page = _private->page) {
         page->setUseSystemAppearance(useSystemAppearance);
         page->setDefaultAppearance([self _defaultAppearance]);
+        page->setNeedsRecalcStyleInAllFrames();
     }
 }
 
 - (BOOL)_useSystemAppearance
 {
-    if (auto page = _private->page)
-        return page->useSystemAppearance();
-    return NO;
+    if (!_private->page)
+        return NO;
+    
+    return _private->page->useSystemAppearance();
+}
+
+- (void)effectiveAppearanceDidChange
+{
+    if (!_private->page)
+        return;
+    
+    _private->page->setDefaultAppearance([self _defaultAppearance]);
+    _private->page->setNeedsRecalcStyleInAllFrames();
 }
 
 - (void)_setSourceApplicationAuditData:(NSData *)sourceApplicationAuditData

@@ -1,3 +1,17 @@
+2018-03-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Ensure that style is updated when the effective appearance changes
+        https://bugs.webkit.org/show_bug.cgi?id=183690
+        <rdar://problem/38385900>
+
+        Reviewed by Tim Horton and Wenson Hsieh.
+
+        Respond to and respect the effective appearance changing.
+
+        * WebView/WebView.mm:
+        (-[WebView _setUseSystemAppearance:]):
+        (-[WebView effectiveAppearanceDidChange]):
+
 2018-03-15  Megan Gardner  <megan_gardner@apple.com>
 
         Create MediaQueryParserContext to provide additional context for the evaluation of media queries

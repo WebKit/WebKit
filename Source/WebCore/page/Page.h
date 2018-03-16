@@ -160,7 +160,7 @@ public:
 
     WEBCORE_EXPORT uint64_t renderTreeSize() const;
 
-    void setNeedsRecalcStyleInAllFrames();
+    WEBCORE_EXPORT void setNeedsRecalcStyleInAllFrames();
 
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 

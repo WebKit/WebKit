@@ -6181,6 +6181,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _page->setDefaultAppearance([self _defaultAppearance]);
 }
 
+- (void)effectiveAppearanceDidChange
+{
+    _page->setDefaultAppearance([self _defaultAppearance]);
+}
+
 - (void)_setHeaderBannerHeight:(int)height
 {
     _page->setHeaderBannerHeightForTesting(height);

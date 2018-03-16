@@ -4130,6 +4130,7 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 void WebPage::setDefaultAppearance(bool defaultAppearance)
 {
     corePage()->setDefaultAppearance(defaultAppearance);
+    corePage()->setNeedsRecalcStyleInAllFrames();
 }
 #endif
 
