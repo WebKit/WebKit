@@ -1,3 +1,21 @@
+2018-03-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add SPI to expose width and height anchors for WKWebView's content view
+        https://bugs.webkit.org/show_bug.cgi?id=183711
+        <rdar://problem/38562899>
+
+        Reviewed by Tim Horton.
+
+        Add _contentWidthAnchor and _contentHeightAnchor SPI to WKWebView for internal clients to be able to reason
+        about the size of the content view on iOS using autolayout.
+
+        Test: WebKit.AutoLayoutPositionHeaderAndFooterViewsInScrollView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _contentWidthAnchor]):
+        (-[WKWebView _contentHeightAnchor]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-03-16  Megan Gardner  <megan_gardner@apple.com>
 
         Add _useSystemAppearance to WKView
