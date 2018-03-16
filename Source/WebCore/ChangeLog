@@ -1,3 +1,18 @@
+2018-03-16  Youenn Fablet  <youenn@apple.com>
+
+        IceCandidates leak on webrtc/datachannel/basic.html and other tests
+        https://bugs.webkit.org/show_bug.cgi?id=183676
+        <rdar://problem/36116228>
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing using --leaks option on WK1.
+        WebKit should not release the candidates since libwebrtc is not taking ownership.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetLocalDescription):
+        (WebCore::LibWebRTCPeerConnectionBackend::doSetRemoteDescription):
+
 2018-03-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [Nicosia] Add Cairo-specific GraphicsContext operation recorder

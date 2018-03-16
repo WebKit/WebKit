@@ -150,8 +150,9 @@ void LibWebRTCPeerConnectionBackend::doSetLocalDescription(RTCSessionDescription
     m_endpoint->doSetLocalDescription(description);
     if (!m_isLocalDescriptionSet) {
         if (m_isRemoteDescriptionSet) {
-            while (m_pendingCandidates.size())
-                m_endpoint->addIceCandidate(*m_pendingCandidates.takeLast().release());
+            for (auto& candidate : m_pendingCandidates)
+                m_endpoint->addIceCandidate(*candidate);
+            m_pendingCandidates.clear();
         }
         m_isLocalDescriptionSet = true;
     }
@@ -162,8 +163,8 @@ void LibWebRTCPeerConnectionBackend::doSetRemoteDescription(RTCSessionDescriptio
     m_endpoint->doSetRemoteDescription(description);
     if (!m_isRemoteDescriptionSet) {
         if (m_isLocalDescriptionSet) {
-            while (m_pendingCandidates.size())
-                m_endpoint->addIceCandidate(*m_pendingCandidates.takeLast().release());
+            for (auto& candidate : m_pendingCandidates)
+                m_endpoint->addIceCandidate(*candidate);
         }
         m_isRemoteDescriptionSet = true;
     }
