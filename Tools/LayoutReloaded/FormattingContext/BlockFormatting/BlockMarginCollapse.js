@@ -130,12 +130,12 @@ class BlockMarginCollapse {
 
     static _nonCollapsedMarginTop(layoutBox) {
         // Non collapsed margin top includes collapsed margin from inflow first child.
-        return this._marginValue(Utils.computedMarginTop(layoutBox), this._collapsedMarginTopFromFirstChild(layoutBox));
+        return this._marginValue(Utils.computedMarginTop(layoutBox.node()), this._collapsedMarginTopFromFirstChild(layoutBox));
     }
 
     static _nonCollapsedMarginBottom(layoutBox) {
         // Non collapsed margin bottom includes collapsed margin from inflow last child.
-        return this._marginValue(Utils.computedMarginBottom(layoutBox), this._collapsedMarginBottomFromLastChild(layoutBox));
+        return this._marginValue(Utils.computedMarginBottom(layoutBox.node()), this._collapsedMarginBottomFromLastChild(layoutBox));
     }
 
     static _collapsedMarginTopFromFirstChild(layoutBox) {
@@ -146,7 +146,7 @@ class BlockMarginCollapse {
         if (!this._isMarginTopCollapsedWithParent(firstInFlowChild))
             return 0;
         // Collect collapsed margin top recursively.
-        return this._marginValue(Utils.computedMarginTop(firstInFlowChild), this._collapsedMarginTopFromFirstChild(firstInFlowChild));
+        return this._marginValue(Utils.computedMarginTop(firstInFlowChild.node()), this._collapsedMarginTopFromFirstChild(firstInFlowChild));
     }
 
     static _collapsedMarginBottomFromLastChild(layoutBox) {
@@ -157,7 +157,7 @@ class BlockMarginCollapse {
         if (!this._isMarginBottomCollapsedWithParent(lastInFlowChild))
             return 0;
         // Collect collapsed margin bottom recursively.
-        return this._marginValue(Utils.computedMarginBottom(lastInFlowChild), this._collapsedMarginBottomFromLastChild(lastInFlowChild));
+        return this._marginValue(Utils.computedMarginBottom(lastInFlowChild.node()), this._collapsedMarginBottomFromLastChild(lastInFlowChild));
     }
 
     static _marginValue(currentMarginValue, candidateMarginValue) {

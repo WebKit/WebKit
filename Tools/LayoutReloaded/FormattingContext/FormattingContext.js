@@ -47,19 +47,19 @@ class FormattingContext {
     }
 
     marginTop(layoutBox) {
-        return Utils.computedMarginTop(layoutBox);
+        return Utils.computedMarginTop(layoutBox.node());
     }
     
     marginLeft(layoutBox) {
-        return Utils.computedMarginLeft(layoutBox);
+        return Utils.computedMarginLeft(layoutBox.node());
     }
     
     marginBottom(layoutBox) {
-        return Utils.computedMarginBottom(layoutBox);
+        return Utils.computedMarginBottom(layoutBox.node());
     }
     
     marginRight(layoutBox) {
-        return Utils.computedMarginRight(layoutBox);
+        return Utils.computedMarginRight(layoutBox.node());
     }
 
     absoluteMarginBox(layoutBox) {

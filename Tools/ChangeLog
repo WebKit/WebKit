@@ -1,3 +1,54 @@
+2018-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Utils.computed* functions should just take node instead of box.
+        https://bugs.webkit.org/show_bug.cgi?id=183697
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for introducing the display tree.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeOutOfFlowWidth):
+        (BlockFormattingContext.prototype._computeFloatingWidth):
+        (BlockFormattingContext.prototype._computeInFlowWidth):
+        (BlockFormattingContext.prototype._computeOutOfFlowHeight):
+        (BlockFormattingContext.prototype._computeFloatingHeight):
+        (BlockFormattingContext.prototype._computeInFlowHeight):
+        (BlockFormattingContext.prototype._shrinkToFitWidth):
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockMarginCollapse.js:
+        (BlockMarginCollapse._nonCollapsedMarginTop):
+        (BlockMarginCollapse._nonCollapsedMarginBottom):
+        (BlockMarginCollapse._collapsedMarginTopFromFirstChild):
+        (BlockMarginCollapse._collapsedMarginBottomFromLastChild):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype.marginTop):
+        (FormattingContext.prototype.marginLeft):
+        (FormattingContext.prototype.marginBottom):
+        (FormattingContext.prototype.marginRight):
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box.prototype.paddingBox):
+        (Layout.Box.prototype.contentBox):
+        (Layout.Box):
+        * LayoutReloaded/Utils.js:
+        (Utils.computedMarginTop):
+        (Utils.computedMarginLeft):
+        (Utils.computedMarginBottom):
+        (Utils.computedMarginRight):
+        (Utils.computedBorderTopLeft):
+        (Utils.computedBorderBottomRight):
+        (Utils.computedPaddingTopLeft):
+        (Utils.computedPaddingBottomRight):
+        (Utils.computedBorderAndPaddingTop):
+        (Utils.computedBorderAndPaddingLeft):
+        (Utils.computedBorderAndPaddingBottom):
+        (Utils.computedBorderAndPaddingRight):
+        (Utils.computedHorizontalBorderAndPadding):
+        (Utils.computedVerticalBorderAndPadding):
+        (Utils.computedLineHeight):
+        (Utils.hasClearLeft):
+        (Utils.hasClearRight):
+        (Utils.hasClearBoth):
+
 2018-03-15  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Should never need to go beyond the root container when asking for the containing block.

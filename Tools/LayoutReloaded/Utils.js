@@ -323,76 +323,72 @@ class Utils {
         return window.getComputedStyle(box.node()).paddingBottom != "0px";
     }
 
-    static computedMarginTop(box) {
-        return Utils.computedValue(window.getComputedStyle(box.node()).marginTop);
+    static computedMarginTop(node) {
+        return Utils.computedValue(window.getComputedStyle(node).marginTop);
     }
 
-    static computedMarginLeft(box) {
-        return Utils.computedValue(window.getComputedStyle(box.node()).marginLeft);
+    static computedMarginLeft(node) {
+        return Utils.computedValue(window.getComputedStyle(node).marginLeft);
     }
 
-    static computedMarginBottom(box) {
-        return Utils.computedValue(window.getComputedStyle(box.node()).marginBottom);
+    static computedMarginBottom(node) {
+        return Utils.computedValue(window.getComputedStyle(node).marginBottom);
     }
 
-    static computedMarginRight(box) {
-        return Utils.computedValue(window.getComputedStyle(box.node()).marginRight);
+    static computedMarginRight(node) {
+        return Utils.computedValue(window.getComputedStyle(node).marginRight);
     }
 
-    static computedBorderTopLeft(box) {
-        let node = box.node();
+    static computedBorderTopLeft(node) {
         return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).borderLeftWidth), Utils.computedValue(window.getComputedStyle(node).borderTopWidth));
     }
 
-    static computedBorderBottomRight(box) {
-        let node = box.node();
+    static computedBorderBottomRight(node) {
         return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).borderRightWidth), Utils.computedValue(window.getComputedStyle(node).borderBottomWidth));
     }
 
-    static computedPaddingTopLeft(box) {
-        let node = box.node();
+    static computedPaddingTopLeft(node) {
         return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).paddingLeft), Utils.computedValue(window.getComputedStyle(node).paddingTop));
     }
 
-    static computedPaddingBottomRight(box) {
-        let node = box.node();
+    static computedPaddingBottomRight(node) {
         return new LayoutSize(Utils.computedValue(window.getComputedStyle(node).paddingRight), Utils.computedValue(window.getComputedStyle(node).paddingBottom));
     }
 
-    static computedBorderAndPaddingTop(box) {
-        return Utils.computedBorderTopLeft(box).height() + Utils.computedPaddingTopLeft(box).height();
+    static computedBorderAndPaddingTop(node) {
+        return Utils.computedBorderTopLeft(node).height() + Utils.computedPaddingTopLeft(node).height();
     }
 
-    static computedBorderAndPaddingLeft(box) {
-        return Utils.computedBorderTopLeft(box).width() + Utils.computedPaddingTopLeft(box).width();
+    static computedBorderAndPaddingLeft(node) {
+        return Utils.computedBorderTopLeft(node).width() + Utils.computedPaddingTopLeft(node).width();
     }
 
-    static computedBorderAndPaddingTop(box) {
-        return Utils.computedBorderTopLeft(box).height() + Utils.computedPaddingTopLeft(box).height();
+    static computedBorderAndPaddingTop(node) {
+        return Utils.computedBorderTopLeft(node).height() + Utils.computedPaddingTopLeft(node).height();
     }
 
-    static computedBorderAndPaddingLeft(box) {
-        return Utils.computedBorderTopLeft(box).width() + Utils.computedPaddingTopLeft(box).width();
+    static computedBorderAndPaddingLeft(node) {
+        return Utils.computedBorderTopLeft(node).width() + Utils.computedPaddingTopLeft(node).width();
     }
 
-    static computedBorderAndPaddingBottom(box) {
-        return Utils.computedBorderBottomRight(box).height() + Utils.computedPaddingBottomRight(box).height();
+    static computedBorderAndPaddingBottom(node) {
+        return Utils.computedBorderBottomRight(node).height() + Utils.computedPaddingBottomRight(node).height();
     }
 
-    static computedBorderAndPaddingRight(box) {
-        return Utils.computedBorderBottomRight(box).width() + Utils.computedPaddingBottomRight(box).width();
+    static computedBorderAndPaddingRight(node) {
+        return Utils.computedBorderBottomRight(node).width() + Utils.computedPaddingBottomRight(node).width();
     }
 
-    static computedHorizontalBorderAndPadding(box) {
-        return this.computedBorderAndPaddingLeft(box) + this.computedBorderAndPaddingRight(box);
+    static computedHorizontalBorderAndPadding(node) {
+        return this.computedBorderAndPaddingLeft(node) + this.computedBorderAndPaddingRight(node);
     }
 
-    static computedVerticalBorderAndPadding(box) {
-        return this.computedBorderAndPaddingTop(box) + this.computedBorderAndPaddingBottom(box);
+    static computedVerticalBorderAndPadding(node) {
+        return this.computedBorderAndPaddingTop(node) + this.computedBorderAndPaddingBottom(node);
     }
 
-    static computedLineHeight(box) {
-        return Utils.computedValue(window.getComputedStyle(box.node()).lineHeight);
+    static computedLineHeight(node) {
+        return Utils.computedValue(window.getComputedStyle(node).lineHeight);
     }
 
     static hasClear(box) {
@@ -400,17 +396,14 @@ class Utils {
     }
 
     static hasClearLeft(box) {
-        let node = box.node();
         return window.getComputedStyle(box.node()).clear == "left";
     }
 
     static hasClearRight(box) {
-        let node = box.node();
         return window.getComputedStyle(box.node()).clear == "right";
     }
 
     static hasClearBoth(box) {
-        let node = box.node();
         return window.getComputedStyle(box.node()).clear == "both";
     }
 

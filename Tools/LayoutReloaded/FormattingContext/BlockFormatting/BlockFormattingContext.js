@@ -158,19 +158,19 @@ class BlockFormattingContext extends FormattingContext {
             width = Utils.width(layoutBox); // 6
         else
             ASSERT_NOT_REACHED();
-        width += Utils.computedHorizontalBorderAndPadding(layoutBox);
+        width += Utils.computedHorizontalBorderAndPadding(layoutBox.node());
         layoutBox.setWidth(width);
     }
 
     _computeFloatingWidth(layoutBox) {
         // FIXME: missing cases
-        layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox));
+        layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
     }
 
     _computeInFlowWidth(layoutBox) {
         if (Utils.isWidthAuto(layoutBox))
             return layoutBox.setWidth(this._horizontalConstraint(layoutBox));
-        return layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox));
+        return layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
     }
 
     _computeOutOfFlowHeight(layoutBox) {
@@ -206,13 +206,13 @@ class BlockFormattingContext extends FormattingContext {
             height = Utils.height(layoutBox); // 8
         else
             ASSERT_NOT_REACHED();
-        height += Utils.computedVerticalBorderAndPadding(layoutBox);
+        height += Utils.computedVerticalBorderAndPadding(layoutBox.node());
         layoutBox.setHeight(height);
     }
 
     _computeFloatingHeight(layoutBox) {
         // FIXME: missing cases
-        layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox));
+        layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
     }
 
     _computeInFlowHeight(layoutBox) {
@@ -222,9 +222,9 @@ class BlockFormattingContext extends FormattingContext {
 
             // The element's height is the distance from its top content edge to the first applicable of the following:
             // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
-            return layoutBox.setHeight(this._contentHeight(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox));
+            return layoutBox.setHeight(this._contentHeight(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
         }
-        return layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox));
+        return layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
     }
 
     _horizontalConstraint(layoutBox) {
@@ -323,7 +323,7 @@ class BlockFormattingContext extends FormattingContext {
         let width = 0;
         for (let inFlowChild = layoutBox.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
             let widthCandidate = Utils.isWidthAuto(inFlowChild) ? this._shrinkToFitWidth(inFlowChild) : Utils.width(inFlowChild);
-            width = Math.max(width, widthCandidate + Utils.computedHorizontalBorderAndPadding(inFlowChild));
+            width = Math.max(width, widthCandidate + Utils.computedHorizontalBorderAndPadding(inFlowChild.node()));
         }
         return width;
     }

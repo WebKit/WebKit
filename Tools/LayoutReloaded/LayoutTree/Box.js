@@ -239,19 +239,19 @@ Layout.Box = class Box {
 
     paddingBox() {
         let paddingBox = this.borderBox();
-        let borderSize = Utils.computedBorderTopLeft(this);
+        let borderSize = Utils.computedBorderTopLeft(this.node());
         paddingBox.moveBy(borderSize);
         paddingBox.shrinkBy(borderSize);
-        paddingBox.shrinkBy(Utils.computedBorderBottomRight(this));
+        paddingBox.shrinkBy(Utils.computedBorderBottomRight(this.node()));
         return paddingBox;
     }
 
     contentBox() {
         let contentBox = this.paddingBox();
-        let paddingSize = Utils.computedPaddingTopLeft(this);
+        let paddingSize = Utils.computedPaddingTopLeft(this.node());
         contentBox.moveBy(paddingSize);
         contentBox.shrinkBy(paddingSize);
-        contentBox.shrinkBy(Utils.computedPaddingBottomRight(this));
+        contentBox.shrinkBy(Utils.computedPaddingBottomRight(this.node()));
         return contentBox;
     }
 }
