@@ -38,17 +38,7 @@ class TextureMapperLayer {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperLayer()
-        : m_parent(0)
-        , m_effectTarget(0)
-        , m_contentsLayer(0)
-        , m_currentOpacity(1)
-        , m_centerZ(0)
-        , m_textureMapper(0)
-        , m_fixedToViewport(false)
-        , m_id(0)
-    { }
-
+    WEBCORE_EXPORT TextureMapperLayer();
     virtual ~TextureMapperLayer();
 
     void setID(uint32_t id) { m_id = id; }
@@ -156,14 +146,14 @@ private:
     }
 
     Vector<TextureMapperLayer*> m_children;
-    TextureMapperLayer* m_parent;
-    TextureMapperLayer* m_effectTarget;
+    TextureMapperLayer* m_parent { nullptr };
+    TextureMapperLayer* m_effectTarget { nullptr };
     RefPtr<TextureMapperBackingStore> m_backingStore;
-    TextureMapperPlatformLayer* m_contentsLayer;
     GraphicsLayerTransform m_currentTransform;
-    float m_currentOpacity;
+    TextureMapperPlatformLayer* m_contentsLayer { nullptr };
+    float m_currentOpacity { 1.0 };
     FilterOperations m_currentFilters;
-    float m_centerZ;
+    float m_centerZ { 0 };
 
     struct State {
         FloatPoint pos;
@@ -213,11 +203,11 @@ private:
     };
 
     State m_state;
-    TextureMapper* m_textureMapper;
+    TextureMapper* m_textureMapper { nullptr };
     TextureMapperAnimations m_animations;
     FloatSize m_scrollPositionDelta;
-    bool m_fixedToViewport;
-    uint32_t m_id;
+    bool m_fixedToViewport { false };
+    uint32_t m_id { 0 };
 };
 
 }

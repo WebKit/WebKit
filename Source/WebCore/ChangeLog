@@ -1,3 +1,24 @@
+2018-03-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Clean up TextureMapperLayer constructor
+        https://bugs.webkit.org/show_bug.cgi?id=183634
+
+        Reviewed by Michael Catanzaro.
+
+        In the TextureMapperLayer header, only declare the constructor, and move
+        all the previous member initialization to the point of declaration of
+        these member variables.
+
+        In the TextureMapperLayer implementation file, the constructor and
+        destructor are moved into proper order at the top of the file. The
+        former is defaulted, and the latter remains unchanged.
+
+        No change in behavior.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::~TextureMapperLayer):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2018-03-16  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] When using EGL, request an OpenGL core profile when possible
