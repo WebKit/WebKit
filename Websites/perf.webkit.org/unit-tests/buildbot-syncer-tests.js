@@ -1305,7 +1305,7 @@ describe('BuildbotSyncer', () => {
             assert.ok(entry.isPending());
             assert.ok(!entry.isInProgress());
             assert.ok(!entry.hasFinished());
-            assert.equal(entry.url(), 'http://build.webkit.org/#/buildrequests/16733');
+            assert.equal(entry.url(), 'http://build.webkit.org/#/buildrequests/17');
         });
 
         it('should create BuildbotBuildEntry for in-progress build', () => {

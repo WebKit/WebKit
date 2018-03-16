@@ -1,3 +1,15 @@
+2018-03-15  Aakash Jain  <aakash_jain@apple.com>
+
+        BuildbotBuildEntry creates an incorrect url for pending builds
+        https://bugs.webkit.org/show_bug.cgi?id=183670
+
+        Reviewed by Ryosuke Niwa.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry.prototype.initialize): Fetch buildrequestid from Buildbot.
+        (BuildbotBuildEntry.prototype.url): Construct url for pending build using buildrequestid from Buildbot.
+        * unit-tests/buildbot-syncer-tests.js: Updated unit-test.
+
 2018-03-14  Aakash Jain  <aakash_jain@apple.com>
 
         Add support for boolean properties in BuildbotSyncer while submitting build request to Buildbot 0.9 server

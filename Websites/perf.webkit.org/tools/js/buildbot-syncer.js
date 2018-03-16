@@ -15,6 +15,7 @@ class BuildbotBuildEntry {
         assert.equal(syncer.builderID(), rawData['builderid']);
 
         this._syncer = syncer;
+        this._buildbotBuildRequestId = rawData['buildrequestid']
         this._hasFinished = rawData['complete'];
         this._isPending = 'claimed' in rawData && !rawData['claimed'];
         this._isInProgress = !this._isPending && !this._hasFinished;
@@ -32,7 +33,7 @@ class BuildbotBuildEntry {
     isPending() { return this._isPending; }
     isInProgress() { return this._isInProgress; }
     hasFinished() { return this._hasFinished; }
-    url() { return this.isPending() ? this._syncer.urlForPendingBuild(this._buildRequestId) : this._syncer.urlForBuildNumber(this._buildNumber); }
+    url() { return this.isPending() ? this._syncer.urlForPendingBuild(this._buildbotBuildRequestId) : this._syncer.urlForBuildNumber(this._buildNumber); }
 
     buildRequestStatusIfUpdateIsNeeded(request)
     {
