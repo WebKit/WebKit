@@ -1,3 +1,21 @@
+2018-03-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Improve error message when Gigacage cannot allocate virtual memory
+        https://bugs.webkit.org/show_bug.cgi?id=183329
+
+        Reviewed by Filip Pizlo.
+
+        We've discovered that Deja Dup monitor sets a virtual memory limit, breaking Gigacage. Since
+        it runs in the background on a fresh out-of-the-box install of Ubuntu, this is not good.
+        That will have to be fixed by Deja Dup, but there is concern that other applications might
+        try this, or that users will set a virtual memory limit for the entire desktop session. Of
+        particular concern is the possibility that users might have copypasted a ulimit line into
+        a session startup script without understanding it. Let's try to make it slightly easier to
+        understand what's going wrong.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+
 2018-03-13  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in WTF and bmalloc
