@@ -35,16 +35,24 @@
 namespace WebCore {
 
 inline FormState::FormState(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger)
-    : m_form(form)
+    : FrameDestructionObserver(sourceDocument.frame())
+    , m_form(form)
     , m_textFieldValues(WTFMove(textFieldValues))
     , m_sourceDocument(sourceDocument)
     , m_formSubmissionTrigger(formSubmissionTrigger)
 {
+    RELEASE_ASSERT(sourceDocument.frame());
 }
 
 Ref<FormState> FormState::create(HTMLFormElement& form, StringPairVector&& textFieldValues, Document& sourceDocument, FormSubmissionTrigger formSubmissionTrigger)
 {
     return adoptRef(*new FormState(form, WTFMove(textFieldValues), sourceDocument, formSubmissionTrigger));
+}
+
+void FormState::willDetachPage()
+{
+    // Beartrap for <rdar://problem/37579354>
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 }

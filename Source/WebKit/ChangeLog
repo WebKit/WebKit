@@ -1,3 +1,16 @@
+2018-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Set a trap to catch an infrequent form-related nullptr crash
+        https://bugs.webkit.org/show_bug.cgi?id=183704
+        <rdar://problem/37579354>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a RELEASE_ASSERT to see if we ever encounter a nullptr WebCore frame.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+
 2018-03-16  Jer Noble  <jer.noble@apple.com>
 
         Make Fullscreen API an Experimental Feature

@@ -1,3 +1,20 @@
+2018-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Set a trap to catch an infrequent form-related nullptr crash
+        https://bugs.webkit.org/show_bug.cgi?id=183704
+        <rdar://problem/37579354>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make FormState a FrameDestructionObserver. We expect all relevant FormState objects to have been
+        cleaned up prior to the frame being destroyed. If we find such a case, we'd like to see the
+        stack trace to see what's going on.
+
+        * loader/FormState.cpp:
+        (WebCore::FormState::FormState):
+        (WebCore::FormState::willDetachPage): RELEASE_ASSERT_NOT_REACHED if we ever get here.
+        * loader/FormState.h:
+
 2018-03-16  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: AccessibilityNodeObject::textForLabelElement() doesn't follow AccName calculation rules

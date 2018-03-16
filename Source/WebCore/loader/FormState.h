@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "FrameDestructionObserver.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ enum FormSubmissionTrigger { SubmittedByJavaScript, NotSubmittedByJavaScript };
 
 using StringPairVector = Vector<std::pair<String, String>>;
 
-class FormState : public RefCounted<FormState> {
+class FormState : public RefCounted<FormState>, public FrameDestructionObserver {
 public:
     static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
 
@@ -50,6 +51,7 @@ public:
 
 private:
     FormState(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger);
+    void willDetachPage() override;
 
     Ref<HTMLFormElement> m_form;
     StringPairVector m_textFieldValues;
