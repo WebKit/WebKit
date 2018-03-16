@@ -213,7 +213,7 @@ Layout.Box = class Box {
         return this.isFloatingPositioned() || this.isOutOfFlowPositioned();
     }
 
-    isRootElement() {
+    isRootBox() {
         // FIXME: This should just be a simple instanceof check, but we are in the mainframe while the test document is in an iframe
         // Let's just return root for both the RenderView and the <html> element.
         return !this.parent() || !this.parent().parent();

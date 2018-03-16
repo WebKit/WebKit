@@ -94,7 +94,7 @@ class BlockMarginCollapse {
         if (parent.establishesBlockFormattingContext())
             return false;
         // Margins of the root element's box do not collapse.
-        if (parent.isRootElement())
+        if (parent.isRootBox())
             return false;
         if (Utils.hasBorderTop(parent))
             return false;
@@ -117,7 +117,7 @@ class BlockMarginCollapse {
         if (parent.establishesBlockFormattingContext())
             return false;
         // Margins of the root element's box do not collapse.
-        if (parent.isRootElement())
+        if (parent.isRootBox())
             return false;
         if (Utils.hasBorderTop(parent))
             return false;

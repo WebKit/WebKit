@@ -54,7 +54,7 @@ class Box {
     
     void setIsAnonymous(bool);
     bool isAnonymous() const;
-    virtual bool isRootElement() const;
+    bool isRootBox() const;
     virtual bool isContainer() const;
 
     bool isBlockLevelBox() const;

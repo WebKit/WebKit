@@ -486,8 +486,12 @@ class Utils {
         return new LayoutRect(topLeft, box.rect().size());
     }
 
-    static mapStaticToAbsolute(box) {
-        return Utils.mapToContainer(box, box.containingBlock());
+    static isDescendantOf(layoutBox, container) {
+        ASSERT(container);
+        let ascendant = layoutBox.parent();
+        while (ascendant && ascendant != container)
+            ascendant = ascendant.parent();
+        return !!ascendant;
     }
 
     static collectOutOfFlowDescendants(containtBlock) {

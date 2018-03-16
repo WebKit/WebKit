@@ -1,3 +1,30 @@
+2018-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Should never need to go beyond the root container when asking for the containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=183691
+
+        Reviewed by Antti Koivisto.
+
+        While laying out the boxes in a block formatting context, if we happen to need
+        to get to the containing block of a box to compute geometry, it should always be a
+        descendant of the root container (or the root container itself).
+        Nothing outside of the formatting context should be able to impact the boxes inside.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        (BlockFormattingContext.prototype._toAbsolutePosition):
+        (BlockFormattingContext):
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockMarginCollapse.js:
+        (BlockMarginCollapse._isMarginTopCollapsedWithParent):
+        (BlockMarginCollapse._isMarginBottomCollapsedWithParent):
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box.prototype.isRootBox):
+        (Layout.Box.prototype.isRootElement): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils.isDescendantOf):
+        (Utils.mapStaticToAbsolute): Deleted.
+        * LayoutReloaded/misc/headers/Box.h:
+
 2018-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Hit-testing fails when specifying a large top content inset

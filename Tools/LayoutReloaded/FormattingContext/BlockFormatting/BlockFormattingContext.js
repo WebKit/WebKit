@@ -294,7 +294,7 @@ class BlockFormattingContext extends FormattingContext {
         let top = Number.NaN;
         if (Utils.isTopAuto(layoutBox) && Utils.isBottomAuto(layoutBox)) {
             // Convert static position to absolute.
-            top = Utils.mapStaticToAbsolute(layoutBox).top();
+            top = this._toAbsolutePosition(layoutBox).top();
         } else if (!Utils.isTopAuto(layoutBox))
             top = Utils.top(layoutBox) + this.marginTop(layoutBox);
         else if (!Utils.isBottomAuto(layoutBox))
@@ -305,7 +305,7 @@ class BlockFormattingContext extends FormattingContext {
         let left = Number.NaN;
         if (Utils.isLeftAuto(layoutBox) && Utils.isRightAuto(layoutBox)) {
             // Convert static position to absolute.
-            left = Utils.mapStaticToAbsolute(layoutBox).left();
+            left = this._toAbsolutePosition(layoutBox).left();
         } else if (!Utils.isLeftAuto(layoutBox))
             left = Utils.left(layoutBox) + this.marginLeft(layoutBox);
         else if (!Utils.isRightAuto(layoutBox))
@@ -326,6 +326,19 @@ class BlockFormattingContext extends FormattingContext {
             width = Math.max(width, widthCandidate + Utils.computedHorizontalBorderAndPadding(inFlowChild));
         }
         return width;
+    }
+
+    _toAbsolutePosition(layoutBox) {
+        // We should never need to go beyond the root container.
+        let containingBlock = layoutBox.containingBlock();
+        ASSERT(containingBlock == this.rootContainer() || Utils.isDescendantOf(containingBlock, this.rootContainer()));
+        let topLeft = layoutBox.rect().topLeft();
+        let ascendant = layoutBox.parent();
+        while (ascendant && ascendant != containingBlock) {
+            topLeft.moveBy(ascendant.rect().topLeft());
+            ascendant = ascendant.parent();
+        }
+        return new LayoutRect(topLeft, layoutBox.rect().size());
     }
 }
 
