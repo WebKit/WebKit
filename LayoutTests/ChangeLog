@@ -1,3 +1,11 @@
+2018-03-15  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined test on macOS WK1 after r229642.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/fast/forms/file/entries-api/webkitdirectory-open-panel-expected.txt:
+
 2018-03-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark location-protocol-setter-non-broken-async-delegate.html as flaky on all platforms, not just WK1

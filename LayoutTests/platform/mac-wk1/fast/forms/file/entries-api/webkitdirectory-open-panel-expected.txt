@@ -6,16 +6,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS inputElement.webkitdirectory is true
 PASS fileList.length is 5
-PASS fileList[0].name is "file1.txt"
-PASS fileList[0].webkitRelativePath is "testFiles/file1.txt"
-PASS fileList[1].name is "file2.txt"
-PASS fileList[1].webkitRelativePath is "testFiles/file2.txt"
-PASS fileList[2].name is "file3.txt"
-PASS fileList[2].webkitRelativePath is "testFiles/subfolder1/file3.txt"
-PASS fileList[3].name is "file4.txt"
-PASS fileList[3].webkitRelativePath is "testFiles/subfolder2/file4.txt"
-PASS fileList[4].name is "file5.txt"
-PASS fileList[4].webkitRelativePath is "testFiles/subfolder2/subfolder2a/file5.txt"
+PASS fileList contains file file1.txt
+PASS file.webkitRelativePath is "testFiles/file1.txt"
+PASS fileList contains file file2.txt
+PASS file.webkitRelativePath is "testFiles/file2.txt"
+PASS fileList contains file file3.txt
+PASS file.webkitRelativePath is "testFiles/subfolder1/file3.txt"
+PASS fileList contains file file4.txt
+PASS file.webkitRelativePath is "testFiles/subfolder2/file4.txt"
+PASS fileList contains file file5.txt
+PASS file.webkitRelativePath is "testFiles/subfolder2/subfolder2a/file5.txt"
 PASS successfullyParsed is true
 
 TEST COMPLETE
