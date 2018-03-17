@@ -1,3 +1,16 @@
+2018-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Ensure Document::responseReceived and clearResource are called on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=183709
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::clearMainResource):
+
 2018-03-16  Chris Dumez  <cdumez@apple.com>
 
         WebKit.WebsitePoliciesAutoplayQuirks API test times out with async policy delegates
