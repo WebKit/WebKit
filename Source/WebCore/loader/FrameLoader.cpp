@@ -1542,6 +1542,13 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         continueLoadAfterNavigationPolicy(request, formState, shouldContinue, allowNavigationToInvalidURL);
         completionHandler();
     });
+
+    if (policyChecker().delegateIsDecidingNavigationPolicy()) {
+        if (m_provisionalDocumentLoader) {
+            m_provisionalDocumentLoader->stopLoading();
+            setProvisionalDocumentLoader(nullptr);
+        }
+    }
 }
 
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)

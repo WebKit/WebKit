@@ -1,3 +1,30 @@
+2018-03-16  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.WebsitePoliciesAutoplayQuirks API test times out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183702
+
+        Reviewed by Alex Christensen.
+
+        The issue is that the test calls loadHTMLString then loadRequest right after, without
+        waiting for the first load to complete first. loadHTMLString is special as it relies
+        on substitute data and which schedules a timer to commit the data. When doing the
+        navigation policy check for the following loadRequest(), the substitute data timer
+        would fire and commit its data and load. This would in turn cancel the pending
+        navigation policy check for the loadRequest().
+
+        With sync policy delegates, this is not an issue because we take care of stopping
+        all loaders when receiving the policy decision, which happens synchronously. However,
+        when the policy decision happens asynchronously, the pending substitute data load
+        does not get cancelled in time and it gets committed.
+
+        To address the issue, this patch updates loadWithDocumentLoader() to cancel any
+        provisional load when there is an asynchronous navigation policy decision pending.
+
+        Change covered by new API test.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
 2018-03-16  Brent Fulgham  <bfulgham@apple.com>
 
         Set a trap to catch an infrequent form-related nullptr crash
