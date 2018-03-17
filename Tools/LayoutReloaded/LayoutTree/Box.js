@@ -177,7 +177,7 @@ Layout.Box = class Box {
         // Floats, absolutely positioned elements, block containers (such as inline-blocks, table-cells, and table-captions)
         // that are not block boxes, and block boxes with 'overflow' other than 'visible' (except when that value has been propagated to the viewport)
         // establish new block formatting contexts for their contents.
-        return this.isFloatingPositioned() || this.isAbsolutePositioned() || (this.isBlockContainerBox() && !this.isBlockLevelBox())
+        return this.isFloatingPositioned() || this.isAbsolutelyPositioned() || (this.isBlockContainerBox() && !this.isBlockLevelBox())
             || (this.isBlockLevelBox() && !Utils.isOverflowVisible(this));
     }
 
@@ -186,15 +186,15 @@ Layout.Box = class Box {
     }
 
     isPositioned() {
-        return this.isOutOfFlowPositioned() || this.isRelativePositioned();
+        return this.isOutOfFlowPositioned() || this.isRelativelyPositioned();
     }
 
-    isRelativePositioned() {
-        return Utils.isRelativePositioned(this);
+    isRelativelyPositioned() {
+        return Utils.isRelativelyPositioned(this);
     }
 
-    isAbsolutePositioned() {
-        return Utils.isAbsolutePositioned(this);
+    isAbsolutelyPositioned() {
+        return Utils.isAbsolutelyPositioned(this) || this.isFixedPositioned();
     }
 
     isFixedPositioned() {
@@ -208,7 +208,7 @@ Layout.Box = class Box {
     }
 
     isOutOfFlowPositioned() {
-        return this.isAbsolutePositioned() || this.isFixedPositioned();
+        return this.isAbsolutelyPositioned() || this.isFixedPositioned();
     }
 
     isInFlowPositioned() {
@@ -234,13 +234,20 @@ Layout.Box = class Box {
             return null;
         if (!this.isPositioned() || this.isInFlowPositioned())
             return this.parent();
-        let parent = this.parent();
-        while (parent.parent()) {
-            if (this.isAbsolutePositioned() && parent.isPositioned())
-                return parent;
-            parent = parent.parent();
+        if (this.isAbsolutelyPositioned() && !this.isFixedPositioned()) {
+            let ascendant = this.parent();
+            while (ascendant.parent() && !ascendant.isPositioned())
+                ascendant = ascendant.parent();
+            return ascendant;
         }
-        return parent;
+        if (this.isFixedPositioned()) {
+            let ascendant = this.parent();
+            while (ascendant.parent())
+                ascendant = ascendant.parent();
+            return ascendant;
+        }
+        ASSERT_NOT_REACHED();
+        return null;
     }
 
     borderBox() {

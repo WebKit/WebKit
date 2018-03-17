@@ -68,8 +68,8 @@ class Box {
 
     bool isInFlow() const;
     bool isPositioned() const;
-    bool isRelativePositioned() const;
-    bool isAbsolutePositioned() const;
+    bool isRelativelyPositioned() const;
+    bool isAbsolutelyPositioned() const;
     bool isFixedPositioned() const;
     bool isOutOfFlowPositioned() const;
     bool isInFlowPositioned() const;

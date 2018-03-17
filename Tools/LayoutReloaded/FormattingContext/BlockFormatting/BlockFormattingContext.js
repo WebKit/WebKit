@@ -65,12 +65,9 @@ class BlockFormattingContext extends FormattingContext {
                 this.computeHeight(layoutBox);
                 // Adjust position now that we have all the previous floats placed in this context -if needed.
                 this.floatingContext().computePosition(layoutBox);
-                // Move positioned children to their final position.
-                if (layoutBox.isContainer()) {
+                // Move in-flow positioned children to their final position. If this layoutBox also establishes a formatting context, then positioning already has happend.
+                if (layoutBox.isContainer() && !layoutBox.establishesFormattingContext())
                     this._placeInFlowPositionedChildren(layoutBox);
-                    // Place the out of flow content.
-                    this._placeOutOfFlowDescendants(layoutBox);
-                }
                 // We are done with laying out this box.
                 this._removeFromLayoutQueue(layoutBox);
                 if (layoutBox.nextSibling()) {
@@ -79,7 +76,8 @@ class BlockFormattingContext extends FormattingContext {
                 }
             }
         }
-        // And finally place the out of flow descendants for the root.
+        // And finally place the in- and out-of-flow descendants.
+        this._placeInFlowPositionedChildren(this.rootContainer());
         this._placeOutOfFlowDescendants(this.rootContainer());
    }
 
@@ -121,8 +119,11 @@ class BlockFormattingContext extends FormattingContext {
     }
 
     _placeInFlowPositionedChildren(container) {
-        for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling())
-            this._computeInFlowPositionedPosition(inFlowChild);
+        for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
+            if (!inFlowChild.isInFlowPositioned())
+                continue;
+             this._computeInFlowPositionedPosition(inFlowChild);
+        }
     }
 
     _placeOutOfFlowDescendants(container) {

@@ -1,3 +1,32 @@
+2018-03-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Ensure that positioning happens within the formatting context
+        https://bugs.webkit.org/show_bug.cgi?id=183722
+
+        Reviewed by Antti Koivisto.
+
+        All sizing and positioning need to happen in the formatting context that the box lives in
+        including the final position of in- and out-of-flow descendants.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype.layout):
+        (BlockFormattingContext.prototype._placeInFlowPositionedChildren):
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box.prototype.establishesBlockFormattingContext):
+        (Layout.Box.prototype.isPositioned):
+        (Layout.Box.prototype.isRelativelyPositioned):
+        (Layout.Box.prototype.isAbsolutelyPositioned):
+        (Layout.Box.prototype.isOutOfFlowPositioned):
+        (Layout.Box.prototype.containingBlock):
+        (Layout.Box.prototype.isRelativePositioned): Deleted.
+        (Layout.Box.prototype.isAbsolutePositioned): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils.isRelativelyPositioned):
+        (Utils.isAbsolutelyPositioned):
+        (Utils.isRelativePositioned): Deleted.
+        (Utils.isAbsolutePositioned): Deleted.
+        * LayoutReloaded/misc/headers/Box.h:
+
 2018-03-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, rolling out r229688.

@@ -431,14 +431,14 @@ class Utils {
         return  display == "table" || display == "inline-table";
     }
 
-    static isRelativePositioned(box) {
+    static isRelativelyPositioned(box) {
         if (box.isAnonymous())
             return false;
         let node = box.node();
         return window.getComputedStyle(node).position == "relative";
     }
 
-    static isAbsolutePositioned(box) {
+    static isAbsolutelyPositioned(box) {
         if (box.isAnonymous())
             return false;
         let node = box.node();
