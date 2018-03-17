@@ -1,3 +1,14 @@
+2018-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct debug assertion in Range::borderAndTextRects
+        https://bugs.webkit.org/show_bug.cgi?id=183710
+        <rdar://problem/38466976>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/Range/range-selection-empty-body-expected.txt: Added.
+        * fast/dom/Range/range-selection-empty-body.html: Added.
+
 2018-03-16  Youenn Fablet  <youenn@apple.com>
 
         Add a test verifying that an AppCache manifest request includes credentials

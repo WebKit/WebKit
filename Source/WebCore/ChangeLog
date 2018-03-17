@@ -1,3 +1,20 @@
+2018-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct debug assertion in Range::borderAndTextRects
+        https://bugs.webkit.org/show_bug.cgi?id=183710
+        <rdar://problem/38466976>
+
+        Reviewed by Ryosuke Niwa.
+
+        A debug assertion will fire if Range::borderAndTextRects is asked to evaluate a set of selected elements, where one of the elements does not have a parent.
+
+        We should consider a nullptr parent as satisfying the condition of a parent not being present in the selection set.
+
+        Tests: fast/dom/range/range-selection-empty-body.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::borderAndTextRects const):
+
 2018-03-15  Filip Pizlo  <fpizlo@apple.com>
 
         Put the DOM in IsoHeaps

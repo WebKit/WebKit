@@ -1823,7 +1823,7 @@ Vector<FloatRect> Range::borderAndTextRects(CoordinateSpace space, RespectClippi
         selectedElementsSet.remove(parent);
 
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(*node)) {
-        if (is<Element>(*node) && selectedElementsSet.contains(node) && !selectedElementsSet.contains(node->parentNode())) {
+        if (is<Element>(*node) && selectedElementsSet.contains(node) && (!node->parentNode() || !selectedElementsSet.contains(node->parentNode()))) {
             if (auto* renderer = downcast<Element>(*node).renderBoxModelObject()) {
                 Vector<FloatQuad> elementQuads;
                 renderer->absoluteQuads(elementQuads);
