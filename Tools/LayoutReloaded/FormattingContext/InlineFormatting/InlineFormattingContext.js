@@ -45,26 +45,27 @@ class InlineFormattingContext extends FormattingContext {
         if (!this.rootContainer().firstChild())
             return;
         // This is a post-order tree traversal layout.
-        let layoutStack = new Array();
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-        layoutStack.push(this.rootContainer().firstChild());
+        this._addToLayoutQueue(this.rootContainer().firstChild());
         while (layoutStack.length) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
-                let layoutBox = layoutStack[layoutStack.length - 1];
+                let layoutBox = this._nextInLayoutQueue();
                 if (layoutBox.establishesFormattingContext()) {
                     layoutContext.layoutFormattingContext(layoutBox.establishedFormattingContext());
                     break;
                 }
                 if (!layoutBox.isContainer() || !layoutBox.hasChild())
                     break;
-                layoutStack.push(box.firstChild());
+                this._addToLayoutQueue(layoutBox.firstChild());
             }
             while (layoutStack.length) {
-                let layoutBox = layoutStack.pop();
+                let layoutBox = this._nextInLayoutQueue();
                 this._handleInlineBox(layoutBox);
+                // We are done with laying out this box.
+                this._removeFromLayoutQueue(layoutBox);
                 if (layoutBox.nextSibling()) {
-                    layoutStack.push(layoutBox.nextSibling());
+                    this._addToLayoutQueue(layoutBox.nextSibling());
                     break;
                 }
             }

@@ -27,9 +27,6 @@ class BlockFormattingContext extends FormattingContext {
         super(root);
         // New block formatting context always establishes a new floating context.
         this.m_floatingContext = new FloatingContext(this);
-        this.m_displayToLayout = new Map();
-        this.m_layoutToDisplay = new Map();
-        this.m_layoutStack = new Array();
     }
 
     layout(layoutContext) {
@@ -46,7 +43,7 @@ class BlockFormattingContext extends FormattingContext {
         // 2. Compute static position and width as we travers down
         // 3. As we climb back on the tree, compute height and finialize position
         // (Any subtrees with new formatting contexts need to layout synchronously)
-        while (this._needsLayout()) {
+        while (this._descendantNeedsLayout()) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
                 let layoutBox = this._nextInLayoutQueue();
@@ -62,7 +59,7 @@ class BlockFormattingContext extends FormattingContext {
             }
 
             // Climb back on the ancestors and compute height/final position.
-            while (this._needsLayout()) {
+            while (this._descendantNeedsLayout()) {
                 // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height.
                 let layoutBox = this._nextInLayoutQueue();
                 this.computeHeight(layoutBox);
@@ -330,60 +327,5 @@ class BlockFormattingContext extends FormattingContext {
             width = Math.max(width, widthCandidate + Utils.computedHorizontalBorderAndPadding(inFlowChild.node()));
         }
         return width;
-    }
-
-    _toAbsolutePosition(layoutBox) {
-        // We should never need to go beyond the root container.
-        let containingBlock = layoutBox.containingBlock();
-        ASSERT(containingBlock == this.rootContainer() || Utils.isDescendantOf(containingBlock, this.rootContainer()));
-        let topLeft = layoutBox.rect().topLeft();
-        let ascendant = layoutBox.parent();
-        while (ascendant && ascendant != containingBlock) {
-            topLeft.moveBy(ascendant.rect().topLeft());
-            ascendant = ascendant.parent();
-        }
-        return new LayoutRect(topLeft, layoutBox.rect().size());
-    }
-
-    _needsLayout() {
-        return this.m_layoutStack.length;
-    }
-
-    _addToLayoutQueue(layoutBox) {
-        // Initialize the corresponding display box.
-        this._createDisplayBox(layoutBox);
-        this.m_layoutStack.push(layoutBox);
-    }
-
-    _nextInLayoutQueue() {
-        ASSERT(this.m_layoutStack.length);
-        return this.m_layoutStack[this.m_layoutStack.length - 1];
-    }
-
-    _removeFromLayoutQueue(layoutBox) {
-        // With the current layout logic, the layoutBox should be at the top (this.m_layoutStack.pop() should do).
-        ASSERT(this.m_layoutStack.length);
-        ASSERT(this.m_layoutStack[this.m_layoutStack.length - 1] == layoutBox);
-        this.m_layoutStack.splice(this.m_layoutStack.indexOf(layoutBox), 1);
-    }
-
-    _createDisplayBox(layoutBox) {
-        let displayBox = new Display.Box(layoutBox.node());
-        this.m_displayToLayout.set(displayBox, layoutBox);
-        this.m_layoutToDisplay.set(layoutBox, displayBox);
-        // This is temporary.
-        layoutBox.setDisplayBox(displayBox);
-    }
-
-    _toDisplayBox(layoutBox) {
-        ASSERT(layoutBox);
-        ASSERT(this.m_layoutToDisplay.has(layoutBox));
-        return this.m_layoutToDisplay.get(layout);
-    }
-
-    _toLayoutBox(displayBox) {
-        ASSERT(displayBox);
-        ASSERT(this.m_displayToLayout.has(displayBox));
-        return this.m_displayToLayout.get(layout);
     }
 }

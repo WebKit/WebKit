@@ -1,3 +1,35 @@
+2018-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Move move functions to the base class from BlockFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=183719
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext):
+        (BlockFormattingContext.prototype.layout):
+        (BlockFormattingContext.prototype._shrinkToFitWidth):
+        (BlockFormattingContext.prototype._toAbsolutePosition): Deleted.
+        (BlockFormattingContext.prototype._needsLayout): Deleted.
+        (BlockFormattingContext.prototype._addToLayoutQueue): Deleted.
+        (BlockFormattingContext.prototype._nextInLayoutQueue): Deleted.
+        (BlockFormattingContext.prototype._removeFromLayoutQueue): Deleted.
+        (BlockFormattingContext.prototype._createDisplayBox): Deleted.
+        (BlockFormattingContext.prototype._toDisplayBox): Deleted.
+        (BlockFormattingContext.prototype._toLayoutBox): Deleted.
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext):
+        (FormattingContext.prototype._toAbsolutePosition):
+        (FormattingContext.prototype._descendantNeedsLayout):
+        (FormattingContext.prototype._addToLayoutQueue):
+        (FormattingContext.prototype._nextInLayoutQueue):
+        (FormattingContext.prototype._removeFromLayoutQueue):
+        (FormattingContext.prototype._createDisplayBox):
+        (FormattingContext.prototype._toDisplayBox):
+        (FormattingContext.prototype._toLayoutBox):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+
 2018-03-16  Chris Dumez  <cdumez@apple.com>
 
         WebKit.WebsitePoliciesAutoplayQuirks API test times out with async policy delegates
