@@ -35,8 +35,11 @@
 #include "RenderImage.h"
 #include "RenderQuote.h"
 #include "StyleResolver.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(PseudoElement);
 
 const QualifiedName& pseudoElementTagName()
 {

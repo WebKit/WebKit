@@ -34,9 +34,12 @@
 #include "SVGRect.h"
 #include "SVGTextQuery.h"
 #include "XMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextContentElement);
  
 // Define custom animated property 'textLength'.
 const SVGPropertyInfo* SVGTextContentElement::textLengthPropertyInfo()

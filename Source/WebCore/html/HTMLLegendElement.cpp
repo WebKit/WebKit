@@ -28,8 +28,11 @@
 #include "ElementIterator.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLLegendElement);
 
 inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)

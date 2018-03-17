@@ -25,8 +25,11 @@
 #include "Event.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "XLinkNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGScriptElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGScriptElement, XLinkNames::hrefAttr, Href, href)

@@ -33,9 +33,12 @@
 #include "NodeRareData.h"
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFieldSetElement);
 
 using namespace HTMLNames;
 

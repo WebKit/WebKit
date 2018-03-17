@@ -40,8 +40,11 @@
 #include "MouseEvent.h"
 #include "RenderFrameSet.h"
 #include "Text.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameSetElement);
 
 using namespace HTMLNames;
 

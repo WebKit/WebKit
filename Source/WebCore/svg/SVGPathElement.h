@@ -54,6 +54,7 @@ class SVGPathSegList;
 class SVGPoint;
 
 class SVGPathElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGPathElement);
 public:
     static Ref<SVGPathElement> create(const QualifiedName&, Document&);
     

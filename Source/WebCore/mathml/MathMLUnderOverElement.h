@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class MathMLUnderOverElement final : public MathMLScriptsElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLUnderOverElement);
 public:
     static Ref<MathMLUnderOverElement> create(const QualifiedName& tagName, Document&);
     const BooleanValue& accent();

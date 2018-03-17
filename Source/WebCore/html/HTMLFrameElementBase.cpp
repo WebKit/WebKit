@@ -38,8 +38,11 @@
 #include "Settings.h"
 #include "SubframeLoader.h"
 #include "URL.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFrameElementBase);
 
 using namespace HTMLNames;
 

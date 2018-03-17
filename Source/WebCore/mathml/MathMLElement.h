@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
@@ -37,6 +36,7 @@
 namespace WebCore {
 
 class MathMLElement : public StyledElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLElement);
 public:
     static Ref<MathMLElement> create(const QualifiedName& tagName, Document&);
 

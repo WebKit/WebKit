@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLDListElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLDListElement);
 public:
     static Ref<HTMLDListElement> create(const QualifiedName&, Document&);
 

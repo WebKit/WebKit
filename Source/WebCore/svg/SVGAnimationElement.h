@@ -53,6 +53,7 @@ enum AnimatedPropertyValueType { RegularPropertyValue, CurrentColorValue, Inheri
 enum class CalcMode { Discrete, Linear, Paced, Spline };
 
 class SVGAnimationElement : public SVGSMILElement, public SVGTests, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGAnimationElement);
 public:
     float getStartTime() const;
     float getCurrentTime() const;

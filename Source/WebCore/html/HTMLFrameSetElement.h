@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class HTMLFrameSetElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFrameSetElement);
 public:
     static Ref<HTMLFrameSetElement> create(const QualifiedName&, Document&);
 

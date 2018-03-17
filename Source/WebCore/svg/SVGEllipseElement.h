@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-class SVGEllipseElement final : public SVGGraphicsElement,
-                                public SVGExternalResourcesRequired {
+class SVGEllipseElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGEllipseElement);
 public:
     static Ref<SVGEllipseElement> create(const QualifiedName&, Document&);
 

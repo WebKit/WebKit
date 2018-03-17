@@ -32,9 +32,12 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLButtonElement);
 
 using namespace HTMLNames;
 

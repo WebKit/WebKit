@@ -80,6 +80,7 @@ struct SVGPropertyTraits<CompositeOperationType> {
 };
 
 class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFECompositeElement);
 public:
     static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
 

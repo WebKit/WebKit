@@ -30,8 +30,11 @@
 #if ENABLE(MATHML)
 
 #include "RenderMathMLScripts.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLScriptsElement);
 
 using namespace MathMLNames;
 

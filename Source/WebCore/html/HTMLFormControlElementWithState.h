@@ -30,6 +30,7 @@ namespace WebCore {
 using FormControlState = Vector<String>;
 
 class HTMLFormControlElementWithState : public HTMLFormControlElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFormControlElementWithState);
 public:
     virtual ~HTMLFormControlElementWithState();
 

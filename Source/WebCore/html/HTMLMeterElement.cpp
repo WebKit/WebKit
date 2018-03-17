@@ -35,8 +35,11 @@
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include "UserAgentStyleSheets.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMeterElement);
 
 using namespace HTMLNames;
 

@@ -40,6 +40,7 @@ enum class Relation {
 };
 
 class HTMLAnchorElement : public HTMLElement, public URLUtils<HTMLAnchorElement> {
+    WTF_MAKE_ISO_ALLOCATED(HTMLAnchorElement);
 public:
     static Ref<HTMLAnchorElement> create(Document&);
     static Ref<HTMLAnchorElement> create(const QualifiedName&, Document&);

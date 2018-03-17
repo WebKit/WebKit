@@ -42,6 +42,7 @@ class FloatPoint;
 class TouchEvent;
 
 class SliderThumbElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(SliderThumbElement);
 public:
     static Ref<SliderThumbElement> create(Document&);
 
@@ -128,6 +129,7 @@ private:
 // --------------------------------
 
 class SliderContainerElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(SliderContainerElement);
 public:
     static Ref<SliderContainerElement> create(Document&);
 

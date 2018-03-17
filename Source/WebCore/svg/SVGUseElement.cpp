@@ -40,8 +40,11 @@
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "XLinkNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGUseElement);
 
 DEFINE_ANIMATED_LENGTH(SVGUseElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGUseElement, SVGNames::yAttr, Y, y)

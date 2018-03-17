@@ -25,6 +25,7 @@
 namespace WebCore {
 
 class SVGFETileElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFETileElement);
 public:
     static Ref<SVGFETileElement> create(const QualifiedName&, Document&);
 

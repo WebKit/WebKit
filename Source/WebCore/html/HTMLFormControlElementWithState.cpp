@@ -28,8 +28,11 @@
 #include "FormController.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlElementWithState);
 
 HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)

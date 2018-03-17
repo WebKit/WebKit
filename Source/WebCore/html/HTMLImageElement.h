@@ -36,6 +36,7 @@ class HTMLFormElement;
 struct ImageCandidate;
 
 class HTMLImageElement : public HTMLElement, public FormNamedItem {
+    WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
     friend class HTMLFormElement;
 public:
     static Ref<HTMLImageElement> create(Document&);

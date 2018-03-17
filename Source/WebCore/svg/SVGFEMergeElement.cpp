@@ -27,8 +27,11 @@
 #include "SVGFEMergeNodeElement.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEMergeElement);
 
 inline SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)

@@ -33,6 +33,7 @@ class SVGRect;
 class SVGMatrix;
 
 class SVGGraphicsElement : public SVGElement, public SVGTransformable, public SVGTests {
+    WTF_MAKE_ISO_ALLOCATED(SVGGraphicsElement);
 public:
     virtual ~SVGGraphicsElement();
 

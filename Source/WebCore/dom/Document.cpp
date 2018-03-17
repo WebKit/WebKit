@@ -222,6 +222,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/VM.h>
 #include <ctime>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -307,6 +308,9 @@
 
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Document);
+
 using namespace PAL;
 using namespace WTF;
 using namespace Unicode;

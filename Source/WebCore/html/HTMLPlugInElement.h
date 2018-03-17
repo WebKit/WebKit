@@ -39,6 +39,7 @@ class RenderWidget;
 class Widget;
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLPlugInElement);
 public:
     virtual ~HTMLPlugInElement();
 

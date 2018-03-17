@@ -39,6 +39,7 @@ namespace WebCore {
 struct PatternAttributes;
  
 class SVGPatternElement final : public SVGElement, public SVGURIReference, public SVGTests, public SVGExternalResourcesRequired, public SVGFitToViewBox {
+    WTF_MAKE_ISO_ALLOCATED(SVGPatternElement);
 public:
     static Ref<SVGPatternElement> create(const QualifiedName&, Document&);
 

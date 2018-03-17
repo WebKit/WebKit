@@ -59,6 +59,7 @@ using AsTextFlags = unsigned;
 }
 
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase {
+    WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
 public:
     static Ref<HTMLCanvasElement> create(Document&);
     static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);

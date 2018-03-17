@@ -38,6 +38,7 @@ class DocumentFragment;
 class TemplateContentDocumentFragment;
 
 class HTMLTemplateElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTemplateElement);
 public:
     static Ref<HTMLTemplateElement> create(const QualifiedName&, Document&);
     virtual ~HTMLTemplateElement();

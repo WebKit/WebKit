@@ -33,6 +33,7 @@ namespace WebCore {
 class HTMLOptionsCollection;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState, private TypeAheadDataSource {
+    WTF_MAKE_ISO_ALLOCATED(HTMLSelectElement);
 public:
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

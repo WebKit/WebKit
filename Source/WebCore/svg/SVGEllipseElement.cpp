@@ -27,8 +27,11 @@
 #include "RenderSVGResource.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGEllipseElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGEllipseElement, SVGNames::cxAttr, Cx, cx)

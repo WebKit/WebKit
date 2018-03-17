@@ -58,6 +58,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(SliderThumbElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(SliderContainerElement);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSliderThumb);
 
 inline static Decimal sliderPosition(HTMLInputElement& element)

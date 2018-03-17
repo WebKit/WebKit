@@ -47,6 +47,7 @@ class SVGUseElement;
 void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
 
 class SVGElement : public StyledElement, public SVGLangSpace {
+    WTF_MAKE_ISO_ALLOCATED(SVGElement);
 public:
     bool isOutermostSVGSVGElement() const;
 

@@ -29,9 +29,12 @@
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFilterPrimitiveStandardAttributes);
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGFilterPrimitiveStandardAttributes, SVGNames::xAttr, X, x)

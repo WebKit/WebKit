@@ -33,6 +33,7 @@
 #include "TreeScope.h"
 #include "URLHash.h"
 #include <wtf/Forward.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
 
@@ -78,7 +79,7 @@ private:
 };
 
 class Node : public EventTarget {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;
     friend class TreeScope;

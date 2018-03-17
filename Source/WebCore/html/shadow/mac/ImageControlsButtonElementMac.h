@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class ImageControlsButtonElementMac final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(ImageControlsButtonElementMac);
 public:
     virtual ~ImageControlsButtonElementMac();
 

@@ -31,9 +31,12 @@
 #include "SVGStringList.h"
 #include "SVGUnitTypes.h"
 #include "StyleResolver.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMaskElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_ENUMERATION(SVGMaskElement, SVGNames::maskUnitsAttr, MaskUnits, maskUnits, SVGUnitTypes::SVGUnitType)

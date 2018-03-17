@@ -33,6 +33,7 @@ class HitTestResult;
 class Path;
 
 class HTMLAreaElement final : public HTMLAnchorElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLAreaElement);
 public:
     static Ref<HTMLAreaElement> create(const QualifiedName&, Document&);
 

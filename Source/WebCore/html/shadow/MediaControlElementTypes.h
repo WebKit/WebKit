@@ -106,6 +106,7 @@ private:
 // ----------------------------
 
 class MediaControlDivElement : public HTMLDivElement, public MediaControlElement {
+    WTF_MAKE_ISO_ALLOCATED(MediaControlDivElement);
 protected:
     explicit MediaControlDivElement(Document&, MediaControlElementType);
 
@@ -116,6 +117,7 @@ private:
 // ----------------------------
 
 class MediaControlInputElement : public HTMLInputElement, public MediaControlElement {
+    WTF_MAKE_ISO_ALLOCATED(MediaControlInputElement);
 protected:
     explicit MediaControlInputElement(Document&, MediaControlElementType);
 
@@ -127,6 +129,7 @@ private:
 // ----------------------------
 
 class MediaControlTimeDisplayElement : public MediaControlDivElement {
+    WTF_MAKE_ISO_ALLOCATED(MediaControlTimeDisplayElement);
 public:
     void setCurrentValue(double);
     double currentValue() const { return m_currentValue; }
@@ -141,6 +144,7 @@ private:
 // ----------------------------
 
 class MediaControlMuteButtonElement : public MediaControlInputElement {
+    WTF_MAKE_ISO_ALLOCATED(MediaControlMuteButtonElement);
 public:
     void changedMute();
 
@@ -158,6 +162,7 @@ private:
 // ----------------------------
 
 class MediaControlSeekButtonElement : public MediaControlInputElement {
+    WTF_MAKE_ISO_ALLOCATED(MediaControlSeekButtonElement);
 public:
     bool willRespondToMouseClickEvents() override { return true; }
 
@@ -174,6 +179,7 @@ private:
 // ----------------------------
 
 class MediaControlVolumeSliderElement : public MediaControlInputElement {
+    WTF_MAKE_ISO_ALLOCATED(MediaControlVolumeSliderElement);
 public:
     bool willRespondToMouseMoveEvents() override;
     bool willRespondToMouseClickEvents() override;

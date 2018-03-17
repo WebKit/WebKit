@@ -63,6 +63,7 @@ template<> struct SVGPropertyTraits<SVGLengthAdjustType> {
 };
 
 class SVGTextContentElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGTextContentElement);
 public:
     enum {
         LENGTHADJUST_UNKNOWN = SVGLengthAdjustUnknown,

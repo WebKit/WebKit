@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class MathMLSelectElement final : public MathMLRowElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLSelectElement);
 public:
     static Ref<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
     static bool isMathMLEncoding(const AtomicString& value);

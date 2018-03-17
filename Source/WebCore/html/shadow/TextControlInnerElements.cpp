@@ -43,9 +43,17 @@
 #include "StyleResolver.h"
 #include "TextEvent.h"
 #include "TextEventInputType.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlInnerContainer);
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlInnerElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlInnerTextElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextControlPlaceholderElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(SearchFieldResultsButtonElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(SearchFieldCancelButtonElement);
 
 using namespace HTMLNames;
 

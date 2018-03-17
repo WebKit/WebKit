@@ -50,6 +50,7 @@ struct SVGPropertyTraits<BlendMode> {
 };
 
 class SVGFEBlendElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEBlendElement);
 public:
     static Ref<SVGFEBlendElement> create(const QualifiedName&, Document&);
 

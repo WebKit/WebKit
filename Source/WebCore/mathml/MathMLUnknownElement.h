@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class MathMLUnknownElement final : public MathMLElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLUnknownElement);
 public:
     static Ref<MathMLUnknownElement> create(const QualifiedName& tagName, Document& document)
     {

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class HTMLTableCaptionElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTableCaptionElement);
 public:
     static Ref<HTMLTableCaptionElement> create(const QualifiedName&, Document&);
 

@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLEmbedElement final : public HTMLPlugInImageElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLEmbedElement);
 public:
     static Ref<HTMLEmbedElement> create(Document&);
     static Ref<HTMLEmbedElement> create(const QualifiedName&, Document&);

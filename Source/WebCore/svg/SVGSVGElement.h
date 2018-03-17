@@ -43,6 +43,7 @@ class SVGTransform;
 class SVGViewSpec;
 
 class SVGSVGElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
+    WTF_MAKE_ISO_ALLOCATED(SVGSVGElement);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGSVGElement)
         DECLARE_ANIMATED_LENGTH(X, x)

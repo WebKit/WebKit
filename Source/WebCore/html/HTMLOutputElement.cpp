@@ -33,9 +33,12 @@
 
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLOutputElement);
 
 using namespace HTMLNames;
 

@@ -26,9 +26,12 @@
 #include "SVGNames.h"
 #include "SVGStringList.h"
 #include "XLinkNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGCursorElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGCursorElement, SVGNames::xAttr, X, x)

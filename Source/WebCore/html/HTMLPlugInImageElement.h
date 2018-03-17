@@ -32,6 +32,7 @@ enum class CreatePlugins { No, Yes };
 // Base class for HTMLAppletElement, HTMLEmbedElement, and HTMLObjectElement.
 // FIXME: Perhaps HTMLAppletElement should inherit from HTMLPlugInElement directly instead.
 class HTMLPlugInImageElement : public HTMLPlugInElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLPlugInImageElement);
 public:
     virtual ~HTMLPlugInImageElement();
 

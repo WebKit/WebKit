@@ -56,6 +56,7 @@ struct SVGPropertyTraits<MorphologyOperatorType> {
 };
 
 class SVGFEMorphologyElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEMorphologyElement);
 public:
     static Ref<SVGFEMorphologyElement> create(const QualifiedName&, Document&);
 

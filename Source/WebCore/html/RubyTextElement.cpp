@@ -29,8 +29,11 @@
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
 #include "RenderTreePosition.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RubyTextElement);
 
 using namespace HTMLNames;
 

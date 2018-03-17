@@ -32,8 +32,11 @@
 #include "HTMLMenuElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMenuItemElement);
 
 using namespace HTMLNames;
     

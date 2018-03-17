@@ -32,6 +32,7 @@ class RenderWidget;
 class SVGDocument;
 
 class HTMLFrameOwnerElement : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFrameOwnerElement);
 public:
     virtual ~HTMLFrameOwnerElement();
 

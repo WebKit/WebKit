@@ -32,8 +32,11 @@
 
 #include "MathMLNames.h"
 #include "RenderMathMLToken.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLTokenElement);
 
 using namespace MathMLNames;
 

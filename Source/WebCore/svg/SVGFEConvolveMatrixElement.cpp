@@ -28,8 +28,11 @@
 #include "SVGNames.h"
 #include "SVGNumberListValues.h"
 #include "SVGParserUtilities.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEConvolveMatrixElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGFEConvolveMatrixElement, SVGNames::inAttr, In1, in1)

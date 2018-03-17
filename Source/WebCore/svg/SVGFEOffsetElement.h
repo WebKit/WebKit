@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class SVGFEOffsetElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEOffsetElement);
 public:
     static Ref<SVGFEOffsetElement> create(const QualifiedName&, Document&);
 

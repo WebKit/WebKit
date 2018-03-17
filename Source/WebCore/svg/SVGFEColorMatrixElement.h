@@ -65,6 +65,7 @@ struct SVGPropertyTraits<ColorMatrixType> {
 };
 
 class SVGFEColorMatrixElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEColorMatrixElement);
 public:
     static Ref<SVGFEColorMatrixElement> create(const QualifiedName&, Document&);
 

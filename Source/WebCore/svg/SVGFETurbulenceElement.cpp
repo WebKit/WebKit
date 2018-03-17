@@ -23,8 +23,11 @@
 
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFETurbulenceElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, baseFrequencyXIdentifier(), BaseFrequencyX, baseFrequencyX)

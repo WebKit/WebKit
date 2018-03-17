@@ -25,8 +25,11 @@
 
 #include "Document.h"
 #include "NamedNodeMap.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentType);
 
 DocumentType::DocumentType(Document& document, const String& name, const String& publicId, const String& systemId)
     : Node(document, CreateOther)

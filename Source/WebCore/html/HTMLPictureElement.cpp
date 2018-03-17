@@ -29,8 +29,11 @@
 #include "ElementChildIterator.h"
 #include "HTMLImageElement.h"
 #include "Logging.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPictureElement);
 
 HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)

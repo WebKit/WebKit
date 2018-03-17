@@ -30,6 +30,7 @@ class MeterValueElement;
 class RenderMeter;
 
 class HTMLMeterElement final : public LabelableElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLMeterElement);
 public:
     static Ref<HTMLMeterElement> create(const QualifiedName&, Document&);
 

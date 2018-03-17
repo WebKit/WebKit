@@ -28,7 +28,11 @@
 
 #if ENABLE(SERVICE_CONTROLS)
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ImageControlsRootElement);
 
 #if !PLATFORM(MAC)
 Ref<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)

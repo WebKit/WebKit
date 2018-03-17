@@ -33,8 +33,11 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "StyleProperties.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTablePartElement);
 
 using namespace HTMLNames;
 

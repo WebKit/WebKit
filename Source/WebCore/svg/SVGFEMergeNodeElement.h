@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class SVGFEMergeNodeElement final : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEMergeNodeElement);
 public:
     static Ref<SVGFEMergeNodeElement> create(const QualifiedName&, Document&);
 

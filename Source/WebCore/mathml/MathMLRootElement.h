@@ -34,6 +34,7 @@ namespace WebCore {
 enum class RootType;
 
 class MathMLRootElement final : public MathMLRowElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLRootElement);
 public:
     static Ref<MathMLRootElement> create(const QualifiedName& tagName, Document&);
     RootType rootType() const { return m_rootType; }

@@ -108,10 +108,13 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "markup.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Element);
 
 using namespace HTMLNames;
 using namespace XMLNames;

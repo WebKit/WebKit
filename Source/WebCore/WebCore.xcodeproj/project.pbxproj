@@ -5506,6 +5506,12 @@
 		0F15ED5A1B7EC7C500EDDFEB /* WillChangeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WillChangeData.h; sourceTree = "<group>"; };
 		0F17747E1378B771009DA76A /* ScrollAnimatorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorIOS.h; sourceTree = "<group>"; };
 		0F17747F1378B772009DA76A /* ScrollAnimatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollAnimatorIOS.mm; sourceTree = "<group>"; };
+		0F26A7A72054C2270090A141 /* TemplateContentDocumentFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemplateContentDocumentFragment.cpp; sourceTree = "<group>"; };
+		0F26A7A92054C3CF0090A141 /* HTMLBDIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLBDIElement.cpp; sourceTree = "<group>"; };
+		0F26A7AA2054EC5A0090A141 /* HTMLUnknownElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLUnknownElement.cpp; sourceTree = "<group>"; };
+		0F26A7AB2054FCE10090A141 /* MathMLUnknownElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLUnknownElement.cpp; sourceTree = "<group>"; };
+		0F26A7AC2055C8D70090A141 /* XMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocument.cpp; sourceTree = "<group>"; };
+		0F26A7AD205626100090A141 /* SVGUnknownElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGUnknownElement.cpp; sourceTree = "<group>"; };
 		0F36E7361BD1837A002DB891 /* LayoutPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutPoint.cpp; sourceTree = "<group>"; };
 		0F36E7381BD184B9002DB891 /* LayoutSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutSize.cpp; sourceTree = "<group>"; };
 		0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowBlur.cpp; sourceTree = "<group>"; };
@@ -20121,6 +20127,7 @@
 				A871DC1E0A15205700B12A68 /* HTMLBaseElement.cpp */,
 				A871DC130A15205700B12A68 /* HTMLBaseElement.h */,
 				A80E7AAF0A19D1F1007FB8C5 /* HTMLBaseElement.idl */,
+				0F26A7A92054C3CF0090A141 /* HTMLBDIElement.cpp */,
 				9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */,
 				A871DE1D0A152AC800B12A68 /* HTMLBodyElement.cpp */,
 				A871DE200A152AC800B12A68 /* HTMLBodyElement.h */,
@@ -20359,6 +20366,7 @@
 				A8EA79E70A1916DF00A8EF5F /* HTMLUListElement.cpp */,
 				A8EA79E60A1916DF00A8EF5F /* HTMLUListElement.h */,
 				1A85B1D50A1B236C00D8C87C /* HTMLUListElement.idl */,
+				0F26A7AA2054EC5A0090A141 /* HTMLUnknownElement.cpp */,
 				AD49914118F0815100BF0092 /* HTMLUnknownElement.h */,
 				AD49914218F0815100BF0092 /* HTMLUnknownElement.idl */,
 				E44613980CD6331000FADA75 /* HTMLVideoElement.cpp */,
@@ -23052,6 +23060,7 @@
 				B22279500D00BF210071B782 /* SVGTSpanElement.idl */,
 				B22279510D00BF210071B782 /* SVGUnitTypes.h */,
 				B22279520D00BF210071B782 /* SVGUnitTypes.idl */,
+				0F26A7AD205626100090A141 /* SVGUnknownElement.cpp */,
 				37C738EC1EDBD5B7003F2B0B /* SVGUnknownElement.h */,
 				B22279530D00BF210071B782 /* SVGURIReference.cpp */,
 				B22279540D00BF210071B782 /* SVGURIReference.h */,
@@ -26129,6 +26138,7 @@
 				C99058121E32B7340073BDDA /* SuccessOr.h */,
 				463EB6201B8789CB0096ED51 /* TagCollection.cpp */,
 				463EB6211B8789CB0096ED51 /* TagCollection.h */,
+				0F26A7A72054C2270090A141 /* TemplateContentDocumentFragment.cpp */,
 				C65046A8167BFB5500CC2A4D /* TemplateContentDocumentFragment.h */,
 				6550B69B099DF0270090D781 /* Text.cpp */,
 				6550B69C099DF0270090D781 /* Text.h */,
@@ -26191,6 +26201,7 @@
 				85031B3A0A44EFC700F992E0 /* WheelEvent.cpp */,
 				85031B3B0A44EFC700F992E0 /* WheelEvent.h */,
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
+				0F26A7AC2055C8D70090A141 /* XMLDocument.cpp */,
 				830784B11C52EE1900104D1D /* XMLDocument.h */,
 				830784B01C52EE1900104D1D /* XMLDocument.idl */,
 			);
@@ -26235,6 +26246,7 @@
 				FA654A6A1108ABED002615E0 /* MathMLTokenElement.h */,
 				FA654A691108ABED002626F1 /* MathMLUnderOverElement.cpp */,
 				FA654A6A1108ABED002626F1 /* MathMLUnderOverElement.h */,
+				0F26A7AB2054FCE10090A141 /* MathMLUnknownElement.cpp */,
 				37C738EE1EDBD718003F2B0B /* MathMLUnknownElement.h */,
 				FABE72F31059C1EB00D999DD /* mathtags.in */,
 			);

@@ -31,8 +31,11 @@
 #include "HitTestResult.h"
 #include "IntSize.h"
 #include "NodeRareData.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMapElement);
 
 using namespace HTMLNames;
 

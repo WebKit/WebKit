@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class MathMLSpaceElement final : public MathMLPresentationElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLSpaceElement);
 public:
     static Ref<MathMLSpaceElement> create(const QualifiedName& tagName, Document&);
     const Length& width();

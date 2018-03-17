@@ -35,6 +35,7 @@ namespace WebCore {
 class Document;
 
 class HTMLAudioElement final : public HTMLMediaElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLAudioElement);
 public:
     static Ref<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
     static Ref<HTMLAudioElement> createForJSConstructor(Document&, const AtomicString& src);

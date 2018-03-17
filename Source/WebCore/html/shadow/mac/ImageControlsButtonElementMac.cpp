@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(ImageControlsButtonElementMac);
+
 class RenderImageControlsButton final : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED_INLINE(RenderImageControlsButton);
 public:

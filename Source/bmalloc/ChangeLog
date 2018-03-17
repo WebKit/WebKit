@@ -1,3 +1,20 @@
+2018-03-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Put the DOM in IsoHeaps
+        https://bugs.webkit.org/show_bug.cgi?id=183546
+
+        Reviewed by Simon Fraser.
+        
+        Make it easy to runtime-disable IsoHeaps.
+
+        * bmalloc/Allocator.h:
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::determineMallocFallbackState):
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::allocateSlow):
+        (bmalloc::IsoTLS::deallocateSlow):
+
 2018-03-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Improve error message when Gigacage cannot allocate virtual memory

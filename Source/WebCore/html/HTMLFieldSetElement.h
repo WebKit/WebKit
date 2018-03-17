@@ -32,6 +32,7 @@ class FormAssociatedElement;
 class HTMLFormControlsCollection;
 
 class HTMLFieldSetElement final : public HTMLFormControlElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFieldSetElement);
 public:
     static Ref<HTMLFieldSetElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class HTMLModElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLModElement);
 public:
     static Ref<HTMLModElement> create(const QualifiedName&, Document&);
 

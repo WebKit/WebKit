@@ -42,10 +42,13 @@
 #include "RenderTheme.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlElement);
 
 using namespace HTMLNames;
 

@@ -32,6 +32,7 @@ class RenderTextControlMultiLine;
 class VisibleSelection;
 
 class HTMLTextAreaElement final : public HTMLTextFormControlElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTextAreaElement);
 public:
     static Ref<HTMLTextAreaElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

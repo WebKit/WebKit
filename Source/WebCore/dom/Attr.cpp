@@ -30,9 +30,12 @@
 #include "StyledElement.h"
 #include "TextNodeTraversal.h"
 #include "XMLNSNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Attr);
 
 using namespace HTMLNames;
 

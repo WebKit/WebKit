@@ -30,9 +30,12 @@
 #if ENABLE(MATHML)
 
 #include "RenderMathMLOperator.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLOperatorElement);
 
 using namespace MathMLNames;
 using namespace MathMLOperatorDictionary;

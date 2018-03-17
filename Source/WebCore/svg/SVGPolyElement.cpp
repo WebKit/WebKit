@@ -30,8 +30,11 @@
 #include "SVGParserUtilities.h"
 #include "SVGPoint.h"
 #include "SVGPointList.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPolyElement);
 
 // Define custom animated property 'points'.
 const SVGPropertyInfo* SVGPolyElement::pointsPropertyInfo()

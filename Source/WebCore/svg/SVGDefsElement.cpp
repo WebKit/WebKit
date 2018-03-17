@@ -23,8 +23,11 @@
 
 #include "RenderSVGHiddenContainer.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGDefsElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_BOOLEAN(SVGDefsElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)

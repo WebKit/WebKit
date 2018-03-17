@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,16 @@ private:
     
     template<typename Func>
     void forEachEntry(const Func&);
+    
+    enum class MallocFallbackState : uint8_t {
+        Undecided,
+        FallBackToMalloc,
+        DoNotFallBack
+    };
+    
+    BEXPORT static MallocFallbackState s_mallocFallbackState;
+    
+    BEXPORT static void determineMallocFallbackState();
     
     static bool isUsingDebugHeap();
     

@@ -77,9 +77,12 @@
 #include "HashTools.h"
 #include "ScriptController.h"
 #include "StyleResolver.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDocument);
 
 using namespace HTMLNames;
 

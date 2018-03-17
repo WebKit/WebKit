@@ -32,6 +32,7 @@ class ImageDocumentElement;
 class HTMLImageElement;
 
 class ImageDocument final : public HTMLDocument {
+    WTF_MAKE_ISO_ALLOCATED(ImageDocument);
 public:
     static Ref<ImageDocument> create(Frame& frame, const URL& url)
     {

@@ -26,7 +26,11 @@
 #include "config.h"
 #include "SVGAnimateElement.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimateElement);
 
 SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document& document)
     : SVGAnimateElementBase(tagName, document)

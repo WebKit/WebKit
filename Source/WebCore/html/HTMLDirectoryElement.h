@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLDirectoryElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLDirectoryElement);
 public:
     static Ref<HTMLDirectoryElement> create(const QualifiedName& tagName, Document&);
 

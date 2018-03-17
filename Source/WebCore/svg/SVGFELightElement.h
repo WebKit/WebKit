@@ -30,6 +30,7 @@ namespace WebCore {
 class SVGFilterBuilder;
 
 class SVGFELightElement : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGFELightElement);
 public:
     virtual Ref<LightSource> lightSource(SVGFilterBuilder&) const = 0;
     static SVGFELightElement* findLightElement(const SVGElement*);

@@ -35,6 +35,7 @@
 #include "SSLKeyGenerator.h"
 #include "ShadowRoot.h"
 #include "Text.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
@@ -42,9 +43,12 @@ using namespace WebCore;
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLKeygenElement);
+
 using namespace HTMLNames;
 
 class KeygenSelectElement final : public HTMLSelectElement {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(KeygenSelectElement);
 public:
     static Ref<KeygenSelectElement> create(Document& document)
     {

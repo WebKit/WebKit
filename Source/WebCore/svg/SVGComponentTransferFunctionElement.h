@@ -70,6 +70,7 @@ struct SVGPropertyTraits<ComponentTransferType> {
 };
 
 class SVGComponentTransferFunctionElement : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGComponentTransferFunctionElement);
 public:
     ComponentTransferFunction transferFunction() const;
 

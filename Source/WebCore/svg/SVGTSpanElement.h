@@ -25,6 +25,7 @@
 namespace WebCore {
 
 class SVGTSpanElement final : public SVGTextPositioningElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGTSpanElement);
 public:
     static Ref<SVGTSpanElement> create(const QualifiedName&, Document&);
 

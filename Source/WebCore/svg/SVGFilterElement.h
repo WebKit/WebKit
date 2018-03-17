@@ -33,9 +33,8 @@
 
 namespace WebCore {
 
-class SVGFilterElement final : public SVGElement,
-                               public SVGURIReference,
-                               public SVGExternalResourcesRequired {
+class SVGFilterElement final : public SVGElement, public SVGURIReference, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGFilterElement);
 public:
     static Ref<SVGFilterElement> create(const QualifiedName&, Document&);
 

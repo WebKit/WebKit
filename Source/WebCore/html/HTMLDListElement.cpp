@@ -24,8 +24,11 @@
 #include "HTMLDListElement.h"
 
 #include "HTMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDListElement);
 
 using namespace HTMLNames;
 

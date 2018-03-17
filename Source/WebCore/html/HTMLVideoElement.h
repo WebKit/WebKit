@@ -36,6 +36,7 @@ class HTMLImageLoader;
 class RenderVideo;
 
 class HTMLVideoElement final : public HTMLMediaElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLVideoElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLVideoElement> create(Document&);
     static Ref<HTMLVideoElement> create(const QualifiedName&, Document&, bool createdByParser);

@@ -41,11 +41,14 @@
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "XLinkNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSMILElement);
 
 static SMILEventSender& smilBeginEventSender()
 {

@@ -34,6 +34,7 @@ namespace WebCore {
 class Document;
 
 class ImageControlsRootElement : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(ImageControlsRootElement);
 public:
     virtual ~ImageControlsRootElement();
 

@@ -25,6 +25,7 @@
 namespace WebCore {
 
 class SVGFEComponentTransferElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEComponentTransferElement);
 public:
     static Ref<SVGFEComponentTransferElement> create(const QualifiedName&, Document&);
 

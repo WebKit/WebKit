@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class SVGTextPositioningElement : public SVGTextContentElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGTextPositioningElement);
 public:
     static SVGTextPositioningElement* elementFromRenderer(RenderBoxModelObject&);
 

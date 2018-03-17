@@ -22,8 +22,11 @@
 #include "SVGPolygonElement.h"
 
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPolygonElement);
 
 inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Document& document)
     : SVGPolyElement(tagName, document)

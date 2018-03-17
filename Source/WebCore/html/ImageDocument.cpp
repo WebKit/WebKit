@@ -47,8 +47,11 @@
 #include "RawDataDocumentParser.h"
 #include "RenderElement.h"
 #include "Settings.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ImageDocument);
 
 using namespace HTMLNames;
 
@@ -91,6 +94,7 @@ private:
 };
 
 class ImageDocumentElement final : public HTMLImageElement {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(ImageDocumentElement);
 public:
     static Ref<ImageDocumentElement> create(ImageDocument&);
 

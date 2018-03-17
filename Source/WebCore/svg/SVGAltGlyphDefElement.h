@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class SVGAltGlyphDefElement final : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGAltGlyphDefElement);
 public:
     static Ref<SVGAltGlyphDefElement> create(const QualifiedName&, Document&);
 

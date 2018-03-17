@@ -37,9 +37,12 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "StyleProperties.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLBodyElement);
 
 using namespace HTMLNames;
 

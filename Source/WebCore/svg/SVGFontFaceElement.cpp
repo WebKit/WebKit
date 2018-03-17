@@ -43,8 +43,11 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include <math.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFontFaceElement);
 
 using namespace SVGNames;
 

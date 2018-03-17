@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,15 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
 
-namespace WebCore {
-
 #if PLATFORM(COCOA)
 #ifndef __OBJC__
 typedef struct objc_object *id;
 #endif
+#endif
+
+namespace WebCore {
+
+#if PLATFORM(COCOA)
 typedef id PlatformControlInstance;
 #endif
 

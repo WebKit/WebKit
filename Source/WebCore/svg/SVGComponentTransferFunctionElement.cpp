@@ -24,9 +24,12 @@
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
 #include "SVGNumberListValues.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGComponentTransferFunctionElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_ENUMERATION(SVGComponentTransferFunctionElement, SVGNames::typeAttr, Type, type, ComponentTransferType)

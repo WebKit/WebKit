@@ -35,8 +35,11 @@
 #include "MathMLSelectElement.h"
 #include "RenderMathMLBlock.h"
 #include "SVGSVGElement.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLAnnotationElement);
 
 using namespace MathMLNames;
 

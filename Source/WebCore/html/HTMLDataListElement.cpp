@@ -30,15 +30,20 @@
  */
 
 #include "config.h"
+
 #if ENABLE(DATALIST_ELEMENT)
+
 #include "HTMLDataListElement.h"
 
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
 #include "IdTargetObserverRegistry.h"
 #include "NodeRareData.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDataListElement);
 
 inline HTMLDataListElement::HTMLDataListElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -61,4 +66,5 @@ void HTMLDataListElement::optionElementChildrenChanged()
 }
 
 } // namespace WebCore
+
 #endif // ENABLE(DATALIST_ELEMENT)

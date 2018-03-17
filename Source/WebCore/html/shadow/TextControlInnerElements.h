@@ -34,6 +34,7 @@ namespace WebCore {
 class RenderTextControlInnerBlock;
 
 class TextControlInnerContainer final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(TextControlInnerContainer);
 public:
     static Ref<TextControlInnerContainer> create(Document&);
 protected:
@@ -42,6 +43,7 @@ protected:
 };
 
 class TextControlInnerElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(TextControlInnerElement);
 public:
     static Ref<TextControlInnerElement> create(Document&);
 
@@ -54,6 +56,7 @@ private:
 };
 
 class TextControlInnerTextElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(TextControlInnerTextElement);
 public:
     static Ref<TextControlInnerTextElement> create(Document&);
 
@@ -70,6 +73,7 @@ private:
 };
 
 class TextControlPlaceholderElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(TextControlPlaceholderElement);
 public:
     static Ref<TextControlPlaceholderElement> create(Document& document) { return adoptRef(*new TextControlPlaceholderElement(document)); }
 
@@ -80,6 +84,7 @@ private:
 };
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(SearchFieldResultsButtonElement);
 public:
     static Ref<SearchFieldResultsButtonElement> create(Document&);
 
@@ -94,6 +99,7 @@ private:
 };
 
 class SearchFieldCancelButtonElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(SearchFieldCancelButtonElement);
 public:
     static Ref<SearchFieldCancelButtonElement> create(Document&);
 

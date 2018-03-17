@@ -40,6 +40,7 @@ class RenderAttachment;
 class SharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLAttachmentElement);
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
 

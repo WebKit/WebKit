@@ -26,9 +26,12 @@
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGStyleElement);
 
 inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : SVGElement(tagName, document)

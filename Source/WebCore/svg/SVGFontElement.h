@@ -42,8 +42,8 @@ struct SVGKerningPair {
     float kerning { 0 };
 };
 
-class SVGFontElement final : public SVGElement
-                           , public SVGExternalResourcesRequired {
+class SVGFontElement final : public SVGElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGFontElement);
 public:
     static Ref<SVGFontElement> create(const QualifiedName&, Document&);
 

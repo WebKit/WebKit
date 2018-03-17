@@ -26,6 +26,7 @@
 namespace WebCore {
     
 class SVGFEDropShadowElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEDropShadowElement);
 public:
     static Ref<SVGFEDropShadowElement> create(const QualifiedName&, Document&);
     

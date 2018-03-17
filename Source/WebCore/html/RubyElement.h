@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RubyElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(RubyElement);
 public:
     static Ref<RubyElement> create(Document&);
     static Ref<RubyElement> create(const QualifiedName&, Document&);

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class HTMLSpanElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLSpanElement);
 public:
     static Ref<HTMLSpanElement> create(Document&);
     static Ref<HTMLSpanElement> create(const QualifiedName&, Document&);

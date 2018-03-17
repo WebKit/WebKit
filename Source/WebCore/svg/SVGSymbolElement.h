@@ -29,9 +29,8 @@
 
 namespace WebCore {
 
-class SVGSymbolElement final : public SVGElement,
-                               public SVGExternalResourcesRequired,
-                               public SVGFitToViewBox {
+class SVGSymbolElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGFitToViewBox {
+    WTF_MAKE_ISO_ALLOCATED(SVGSymbolElement);
 public:
     static Ref<SVGSymbolElement> create(const QualifiedName&, Document&);
 

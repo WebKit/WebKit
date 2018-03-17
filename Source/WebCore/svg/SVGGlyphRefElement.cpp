@@ -26,9 +26,12 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "XLinkNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGGlyphRefElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGGlyphRefElement, XLinkNames::hrefAttr, Href, href)

@@ -33,6 +33,7 @@ namespace WebCore {
 class CSSCursorImageValue;
 
 class SVGCursorElement final : public SVGElement, public SVGTests, public SVGExternalResourcesRequired, public SVGURIReference {
+    WTF_MAKE_ISO_ALLOCATED(SVGCursorElement);
 public:
     static Ref<SVGCursorElement> create(const QualifiedName&, Document&);
 

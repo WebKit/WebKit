@@ -37,9 +37,12 @@
 #include "ShadowRoot.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLStyleElement);
 
 using namespace HTMLNames;
 

@@ -50,6 +50,7 @@
 #include "ShadowRoot.h"
 #include "SubframeLoader.h"
 #include "Widget.h"
+#include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "npruntime_impl.h"
@@ -61,6 +62,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPlugInElement);
 
 using namespace HTMLNames;
 

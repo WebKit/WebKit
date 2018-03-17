@@ -26,11 +26,16 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "ElementChildIterator.h"
 #include "HTMLMenuItemElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
+#include "RuntimeEnabledFeatures.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMenuElement);
 
 using namespace HTMLNames;
 

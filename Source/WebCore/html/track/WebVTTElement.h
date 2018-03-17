@@ -45,6 +45,7 @@ enum WebVTTNodeType {
 };
 
 class WebVTTElement final : public Element {
+    WTF_MAKE_ISO_ALLOCATED(WebVTTElement);
 public:
     static Ref<WebVTTElement> create(const WebVTTNodeType, Document&);
     Ref<HTMLElement> createEquivalentHTMLElement(Document&);

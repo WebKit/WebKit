@@ -25,8 +25,11 @@
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEMergeNodeElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGFEMergeNodeElement, SVGNames::inAttr, In1, in1)

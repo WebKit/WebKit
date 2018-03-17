@@ -30,6 +30,7 @@ namespace WebCore {
 class RenderButton;
 
 class HTMLButtonElement final : public HTMLFormControlElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLButtonElement);
 public:
     static Ref<HTMLButtonElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

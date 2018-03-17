@@ -34,6 +34,7 @@ class FilterEffect;
 class SVGFilterBuilder;
 
 class SVGFilterPrimitiveStandardAttributes : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGFilterPrimitiveStandardAttributes);
 public:
     void setStandardAttributes(FilterEffect*) const;
 

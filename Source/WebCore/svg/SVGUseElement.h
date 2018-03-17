@@ -35,6 +35,7 @@ class CachedSVGDocument;
 class SVGGElement;
 
 class SVGUseElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGURIReference, private CachedSVGDocumentClient {
+    WTF_MAKE_ISO_ALLOCATED(SVGUseElement);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGUseElement)
         DECLARE_ANIMATED_LENGTH(X, x)

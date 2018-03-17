@@ -39,8 +39,16 @@
 #include "RenderMedia.h"
 #include "RenderMediaControlElements.h"
 #include "StyleProperties.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlDivElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlInputElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlTimeDisplayElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlMuteButtonElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlSeekButtonElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControlVolumeSliderElement);
 
 using namespace HTMLNames;
 

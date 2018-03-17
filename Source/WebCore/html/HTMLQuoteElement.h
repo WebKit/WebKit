@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class HTMLQuoteElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLQuoteElement);
 public:
     static Ref<HTMLQuoteElement> create(const QualifiedName&, Document&);
 

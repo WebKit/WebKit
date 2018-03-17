@@ -61,6 +61,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
@@ -70,6 +71,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLInputElement);
 
 using namespace HTMLNames;
 

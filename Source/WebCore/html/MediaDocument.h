@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class MediaDocument final : public HTMLDocument {
+    WTF_MAKE_ISO_ALLOCATED(MediaDocument);
 public:
     static Ref<MediaDocument> create(Frame* frame, const URL& url)
     {

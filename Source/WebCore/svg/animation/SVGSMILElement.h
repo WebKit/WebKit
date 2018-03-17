@@ -41,6 +41,7 @@ using SMILEventSender = EventSender<SVGSMILElement>;
 
 // This class implements SMIL interval timing model as needed for SVG animation.
 class SVGSMILElement : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGSMILElement);
 public:
     SVGSMILElement(const QualifiedName&, Document&);
     virtual ~SVGSMILElement();

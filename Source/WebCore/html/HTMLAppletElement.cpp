@@ -35,8 +35,11 @@
 #include "Settings.h"
 #include "SubframeLoader.h"
 #include "Widget.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAppletElement);
 
 using namespace HTMLNames;
 

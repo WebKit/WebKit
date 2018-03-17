@@ -49,6 +49,7 @@ class WebVTTCueData;
 // ----------------------------
 
 class VTTCueBox : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(VTTCueBox);
 public:
     static Ref<VTTCueBox> create(Document&, VTTCue&);
 

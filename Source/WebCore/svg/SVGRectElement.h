@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-class SVGRectElement final : public SVGGraphicsElement,
-                             public SVGExternalResourcesRequired {
+class SVGRectElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGRectElement);
 public:
     static Ref<SVGRectElement> create(const QualifiedName&, Document&);
 

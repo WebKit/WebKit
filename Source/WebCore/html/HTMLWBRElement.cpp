@@ -28,8 +28,11 @@
 
 #include "HTMLNames.h"
 #include "RenderLineBreak.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLWBRElement);
 
 using namespace HTMLNames;
 

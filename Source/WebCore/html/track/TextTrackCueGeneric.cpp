@@ -39,6 +39,7 @@
 #include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
 #include "TextTrackCue.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -47,6 +48,7 @@ namespace WebCore {
 const static int DEFAULTCAPTIONFONTSIZE = 10;
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);
 public:
     static Ref<TextTrackCueGenericBoxElement> create(Document& document, TextTrackCueGeneric& cue)
     {

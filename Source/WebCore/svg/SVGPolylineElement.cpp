@@ -22,8 +22,11 @@
 #include "SVGPolylineElement.h"
 
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPolylineElement);
 
 inline SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Document& document)
     : SVGPolyElement(tagName, document)

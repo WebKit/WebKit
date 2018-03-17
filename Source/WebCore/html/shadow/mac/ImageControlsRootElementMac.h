@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class ImageControlsRootElementMac final : public ImageControlsRootElement {
+    WTF_MAKE_ISO_ALLOCATED(ImageControlsRootElementMac);
     friend class ImageControlsRootElement;
 public:
     virtual ~ImageControlsRootElementMac();

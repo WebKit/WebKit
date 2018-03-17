@@ -30,9 +30,8 @@
 
 namespace WebCore {
 
-class SVGImageElement final : public SVGGraphicsElement,
-                              public SVGExternalResourcesRequired,
-                              public SVGURIReference {
+class SVGImageElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired, public SVGURIReference {
+    WTF_MAKE_ISO_ALLOCATED(SVGImageElement);
 public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 

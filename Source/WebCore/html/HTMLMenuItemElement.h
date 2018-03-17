@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class HTMLMenuItemElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLMenuItemElement);
 public:
     static Ref<HTMLMenuItemElement> create(const QualifiedName&, Document&);
     

@@ -30,8 +30,11 @@
 #include "HTMLParserIdioms.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMarqueeElement);
 
 using namespace HTMLNames;
 

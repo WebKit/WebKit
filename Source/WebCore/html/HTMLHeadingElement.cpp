@@ -23,7 +23,11 @@
 #include "config.h"
 #include "HTMLHeadingElement.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLHeadingElement);
 
 inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)

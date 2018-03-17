@@ -55,6 +55,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <math.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/RAMSize.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -82,6 +83,9 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLCanvasElement);
+
 using namespace PAL;
 using namespace HTMLNames;
 

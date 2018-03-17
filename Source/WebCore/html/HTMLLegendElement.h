@@ -30,6 +30,7 @@ namespace WebCore {
 class HTMLFormControlElement;
 
 class HTMLLegendElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLLegendElement);
 public:
     static Ref<HTMLLegendElement> create(const QualifiedName&, Document&);
 

@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class SVGPolyElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGPolyElement);
 public:
     Ref<SVGPointList> points();
     Ref<SVGPointList> animatedPoints();

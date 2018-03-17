@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLAppletElement final : public HTMLPlugInImageElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLAppletElement);
 public:
     static Ref<HTMLAppletElement> create(const QualifiedName&, Document&);
 

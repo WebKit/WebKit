@@ -72,9 +72,8 @@ struct SVGPropertyTraits<SVGSpreadMethodType> {
     }
 };
 
-class SVGGradientElement : public SVGElement,
-                           public SVGURIReference,
-                           public SVGExternalResourcesRequired {
+class SVGGradientElement : public SVGElement, public SVGURIReference, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGGradientElement);
 public:
     enum {
         SVG_SPREADMETHOD_UNKNOWN = SVGSpreadMethodUnknown,

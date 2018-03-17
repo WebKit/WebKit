@@ -25,8 +25,11 @@
 #include "RenderStyle.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEFloodElement);
 
 inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)

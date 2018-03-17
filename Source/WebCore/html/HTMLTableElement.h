@@ -35,6 +35,7 @@ class HTMLTableRowsCollection;
 class HTMLTableSectionElement;
 
 class HTMLTableElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTableElement);
 public:
     static Ref<HTMLTableElement> create(Document&);
     static Ref<HTMLTableElement> create(const QualifiedName&, Document&);

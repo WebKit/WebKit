@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class SVGFEGaussianBlurElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEGaussianBlurElement);
 public:
     static Ref<SVGFEGaussianBlurElement> create(const QualifiedName&, Document&);
 

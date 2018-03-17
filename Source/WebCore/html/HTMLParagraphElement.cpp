@@ -27,8 +27,11 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLParagraphElement);
 
 using namespace HTMLNames;
 

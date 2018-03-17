@@ -64,6 +64,7 @@ struct SVGPropertyTraits<ChannelSelectorType> {
 };
 
 class SVGFEDisplacementMapElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEDisplacementMapElement);
 public:
     static Ref<SVGFEDisplacementMapElement> create(const QualifiedName&, Document&);
 

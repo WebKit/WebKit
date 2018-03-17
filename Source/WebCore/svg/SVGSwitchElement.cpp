@@ -24,8 +24,11 @@
 #include "ElementIterator.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSwitchElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_BOOLEAN(SVGSwitchElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)

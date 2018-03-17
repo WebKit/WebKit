@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLDocument : public Document {
+    WTF_MAKE_ISO_ALLOCATED(HTMLDocument);
 public:
     static Ref<HTMLDocument> create(Frame* frame, const URL& url)
     {

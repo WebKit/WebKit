@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "IsoHeapImpl.h"
 #include "IsoTLS.h"
+#include "bmalloc.h"
 
 namespace bmalloc {
 
@@ -80,6 +81,19 @@ void* IsoTLS::allocateFast(unsigned offset, bool abortOnFailure)
 template<typename Config, typename Type>
 BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFailure)
 {
+    for (;;) {
+        switch (s_mallocFallbackState) {
+        case MallocFallbackState::Undecided:
+            determineMallocFallbackState();
+            continue;
+        case MallocFallbackState::FallBackToMalloc:
+            return api::tryMalloc(Config::objectSize);
+        case MallocFallbackState::DoNotFallBack:
+            break;
+        }
+        break;
+    }
+    
     auto debugMallocResult = debugMalloc(Config::objectSize);
     if (debugMallocResult.usingDebugHeap)
         return debugMallocResult.ptr;
@@ -111,6 +125,19 @@ void IsoTLS::deallocateFast(unsigned offset, void* p)
 template<typename Config, typename Type>
 BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeap<Type>& handle, void* p)
 {
+    for (;;) {
+        switch (s_mallocFallbackState) {
+        case MallocFallbackState::Undecided:
+            determineMallocFallbackState();
+            continue;
+        case MallocFallbackState::FallBackToMalloc:
+            return api::free(p);
+        case MallocFallbackState::DoNotFallBack:
+            break;
+        }
+        break;
+    }
+    
     if (debugFree(p))
         return;
     

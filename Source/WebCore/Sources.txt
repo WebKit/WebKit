@@ -809,6 +809,7 @@ dom/StaticRange.cpp
 dom/StringCallback.cpp
 dom/StyledElement.cpp
 dom/TagCollection.cpp
+dom/TemplateContentDocumentFragment.cpp
 dom/Text.cpp
 dom/TextDecoder.cpp
 dom/TextEncoder.cpp
@@ -832,6 +833,7 @@ dom/VisitedLinkState.cpp
 dom/WebKitAnimationEvent.cpp
 dom/WebKitTransitionEvent.cpp
 dom/WheelEvent.cpp
+dom/XMLDocument.cpp
 
 dom/messageports/MessagePortChannel.cpp
 dom/messageports/MessagePortChannelProvider.cpp
@@ -953,6 +955,7 @@ html/HTMLAppletElement.cpp
 html/HTMLAreaElement.cpp
 html/HTMLAttachmentElement.cpp
 html/HTMLAudioElement.cpp
+html/HTMLBDIElement.cpp
 html/HTMLBRElement.cpp
 html/HTMLBaseElement.cpp
 html/HTMLBodyElement.cpp
@@ -1036,6 +1039,7 @@ html/HTMLTimeElement.cpp
 html/HTMLTitleElement.cpp
 html/HTMLTrackElement.cpp
 html/HTMLUListElement.cpp
+html/HTMLUnknownElement.cpp
 html/HTMLVideoElement.cpp
 html/HTMLWBRElement.cpp
 html/HiddenInputType.cpp
@@ -1304,6 +1308,7 @@ mathml/MathMLSelectElement.cpp
 mathml/MathMLSpaceElement.cpp
 mathml/MathMLTokenElement.cpp
 mathml/MathMLUnderOverElement.cpp
+mathml/MathMLUnknownElement.cpp
 
 page/AutoscrollController.cpp
 page/BarProp.cpp
@@ -2200,6 +2205,7 @@ svg/SVGTransformListValues.cpp
 svg/SVGTransformValue.cpp
 svg/SVGTransformable.cpp
 svg/SVGURIReference.cpp
+svg/SVGUnknownElement.cpp
 svg/SVGUseElement.cpp
 svg/SVGVKernElement.cpp
 svg/SVGViewElement.cpp

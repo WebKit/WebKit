@@ -27,8 +27,11 @@
 #include "RubyElement.h"
 
 #include "RenderRuby.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RubyElement);
 
 using namespace HTMLNames;
 

@@ -30,6 +30,7 @@ namespace WebCore {
 class CSSFontFaceSrcValue;
 
 class SVGFontFaceUriElement final : public SVGElement, public CachedFontClient {
+    WTF_MAKE_ISO_ALLOCATED(SVGFontFaceUriElement);
 public:
     static Ref<SVGFontFaceUriElement> create(const QualifiedName&, Document&);
 

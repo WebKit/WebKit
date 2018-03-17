@@ -31,9 +31,12 @@
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
 #include "SVGUnitTypes.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGLinearGradientElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGLinearGradientElement, SVGNames::x1Attr, X1, x1)

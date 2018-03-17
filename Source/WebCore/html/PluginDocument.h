@@ -32,6 +32,7 @@ class HTMLPlugInElement;
 class Widget;
 
 class PluginDocument final : public HTMLDocument {
+    WTF_MAKE_ISO_ALLOCATED(PluginDocument);
 public:
     static Ref<PluginDocument> create(Frame* frame, const URL& url)
     {

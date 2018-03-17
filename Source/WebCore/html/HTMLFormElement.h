@@ -42,6 +42,7 @@ class HTMLFormControlsCollection;
 class HTMLImageElement;
 
 class HTMLFormElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFormElement);
 public:
     static Ref<HTMLFormElement> create(Document&);
     static Ref<HTMLFormElement> create(const QualifiedName&, Document&);

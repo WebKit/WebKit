@@ -58,11 +58,14 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "SubresourceIntegrity.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLLinkElement);
 
 using namespace HTMLNames;
 

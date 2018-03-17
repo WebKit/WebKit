@@ -35,8 +35,11 @@
 #include "HTMLDocument.h"
 #include "TemplateContentDocumentFragment.h"
 #include "markup.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTemplateElement);
 
 using namespace HTMLNames;
 

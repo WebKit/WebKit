@@ -38,9 +38,12 @@
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
 #include "WheelEvent.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SpinButtonElement);
 
 using namespace HTMLNames;
 

@@ -33,9 +33,8 @@
 
 namespace WebCore {
 
-class SVGMarkerElement final : public SVGElement,
-                               public SVGExternalResourcesRequired,
-                               public SVGFitToViewBox {
+class SVGMarkerElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGFitToViewBox {
+    WTF_MAKE_ISO_ALLOCATED(SVGMarkerElement);
 public:
     // Forward declare enumerations in the W3C naming scheme, for IDL generation.
     enum {

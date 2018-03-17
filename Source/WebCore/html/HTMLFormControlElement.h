@@ -43,6 +43,7 @@ class ValidationMessage;
 // and form-associated element implementations should use HTMLFormControlElement
 // unless there is a special reason.
 class HTMLFormControlElement : public LabelableElement, public FormAssociatedElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFormControlElement);
 public:
     virtual ~HTMLFormControlElement();
 

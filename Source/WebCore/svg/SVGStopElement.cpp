@@ -26,8 +26,11 @@
 #include "RenderSVGResource.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGStopElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_NUMBER(SVGStopElement, SVGNames::offsetAttr, Offset, offset)

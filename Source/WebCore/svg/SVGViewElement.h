@@ -34,6 +34,7 @@ namespace WebCore {
 class SVGStringList;
 
 class SVGViewElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
+    WTF_MAKE_ISO_ALLOCATED(SVGViewElement);
 public:
     static Ref<SVGViewElement> create(const QualifiedName&, Document&);
 

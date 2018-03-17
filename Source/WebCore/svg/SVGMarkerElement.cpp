@@ -25,10 +25,13 @@
 #include "RenderSVGResourceMarker.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
- 
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGMarkerElement);
+
 // Define custom animated property 'orientType'.
 const SVGPropertyInfo* SVGMarkerElement::orientTypePropertyInfo()
 {

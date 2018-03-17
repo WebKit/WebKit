@@ -32,6 +32,7 @@ namespace WebCore {
 class HTMLTableElement;
 
 class HTMLTablePartElement : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTablePartElement);
 protected:
     HTMLTablePartElement(const QualifiedName& tagName, Document& document)
         : HTMLElement(tagName, document)

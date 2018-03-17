@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class DocumentFragment : public ContainerNode {
+    WTF_MAKE_ISO_ALLOCATED(DocumentFragment);
 public:
     static Ref<DocumentFragment> create(Document&);
 

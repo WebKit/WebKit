@@ -37,8 +37,11 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "markup.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRoot);
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];

@@ -33,8 +33,11 @@
 #include "SVGNames.h"
 #include "SVGVKernElement.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFontElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_BOOLEAN(SVGFontElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)

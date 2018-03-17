@@ -36,8 +36,11 @@
 #include "StyleInheritedData.h"
 #include "Text.h"
 #include "XLinkNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTRefElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGTRefElement, XLinkNames::hrefAttr, Href, href)

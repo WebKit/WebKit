@@ -35,8 +35,11 @@
 #include "HTMLNames.h"
 #include "HTMLSummaryElement.h"
 #include "RenderDetailsMarker.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DetailsMarkerControl);
 
 Ref<DetailsMarkerControl> DetailsMarkerControl::create(Document& document)
 {

@@ -32,6 +32,7 @@ class HTMLDataListElement;
 class HTMLSelectElement;
 
 class HTMLOptionElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLOptionElement);
 public:
     static Ref<HTMLOptionElement> create(Document&);
     static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);

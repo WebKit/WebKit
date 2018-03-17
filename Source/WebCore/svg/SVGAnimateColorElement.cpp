@@ -23,8 +23,11 @@
 #include "SVGAnimateColorElement.h"
 
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAnimateColorElement);
     
 inline SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagName, Document& document)
     : SVGAnimateElementBase(tagName, document)

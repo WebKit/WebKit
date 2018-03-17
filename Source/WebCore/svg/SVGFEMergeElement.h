@@ -25,6 +25,7 @@
 namespace WebCore {
 
 class SVGFEMergeElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFEMergeElement);
 public:
     static Ref<SVGFEMergeElement> create(const QualifiedName&, Document&);
 

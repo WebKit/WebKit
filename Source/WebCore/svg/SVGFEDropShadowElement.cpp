@@ -25,8 +25,11 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFEDropShadowElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGFEDropShadowElement, SVGNames::inAttr, In1, in1)

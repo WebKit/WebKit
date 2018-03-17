@@ -27,8 +27,11 @@
 #include "SinkDocument.h"
 
 #include "RawDataDocumentParser.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SinkDocument);
 
 class SinkDocumentParser final : public RawDataDocumentParser {
 public:

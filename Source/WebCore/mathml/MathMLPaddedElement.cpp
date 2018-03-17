@@ -30,8 +30,11 @@
 #if ENABLE(MATHML)
 
 #include "RenderMathMLPadded.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLPaddedElement);
 
 using namespace MathMLNames;
 

@@ -28,6 +28,7 @@ class ProgressValueElement;
 class RenderProgress;
 
 class HTMLProgressElement final : public LabelableElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLProgressElement);
 public:
     static const double IndeterminatePosition;
     static const double InvalidPosition;

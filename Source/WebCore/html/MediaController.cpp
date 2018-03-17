@@ -36,7 +36,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomicString.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 Ref<MediaController> MediaController::create(ScriptExecutionContext& context)
 {
@@ -681,5 +681,7 @@ void MediaController::scheduleTimeupdateEvent()
     scheduleEvent(eventNames().timeupdateEvent);
     m_previousTimeupdateTime = now;
 }
+
+} // namespace WebCore
 
 #endif

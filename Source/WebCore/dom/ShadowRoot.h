@@ -37,6 +37,7 @@ class HTMLSlotElement;
 class SlotAssignment;
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
+    WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
 public:
     static Ref<ShadowRoot> create(Document& document, ShadowRootMode type)
     {

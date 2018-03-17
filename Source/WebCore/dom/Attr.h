@@ -34,6 +34,7 @@ class CSSStyleDeclaration;
 class MutableStyleProperties;
 
 class Attr final : public Node {
+    WTF_MAKE_ISO_ALLOCATED(Attr);
 public:
     static Ref<Attr> create(Element&, const QualifiedName&);
     static Ref<Attr> create(Document&, const QualifiedName&, const AtomicString& value);

@@ -30,6 +30,7 @@ namespace WebCore {
 class HTMLSelectElement;
 
 class HTMLOptGroupElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLOptGroupElement);
 public:
     static Ref<HTMLOptGroupElement> create(const QualifiedName&, Document&);
 

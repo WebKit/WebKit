@@ -24,8 +24,11 @@
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTSpanElement);
 
 inline SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document& document)
     : SVGTextPositioningElement(tagName, document)

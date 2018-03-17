@@ -27,8 +27,11 @@
 #include "ProgressShadowElement.h"
 #include "RenderProgress.h"
 #include "ShadowRoot.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLProgressElement);
 
 using namespace HTMLNames;
 

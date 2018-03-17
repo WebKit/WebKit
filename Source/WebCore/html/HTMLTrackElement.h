@@ -36,6 +36,7 @@ namespace WebCore {
 class HTMLMediaElement;
 
 class HTMLTrackElement final : public HTMLElement, public TextTrackClient {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTrackElement);
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
 

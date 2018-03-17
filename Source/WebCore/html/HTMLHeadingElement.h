@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLHeadingElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLHeadingElement);
 public:
     static Ref<HTMLHeadingElement> create(const QualifiedName&, Document&);
 

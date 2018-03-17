@@ -26,8 +26,11 @@
 #include "TextDocument.h"
 
 #include "TextDocumentParser.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextDocument);
 
 TextDocument::TextDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, TextDocumentClass)

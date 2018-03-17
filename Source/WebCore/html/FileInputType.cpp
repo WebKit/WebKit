@@ -43,6 +43,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "UserGestureIndicator.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -60,6 +61,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 class UploadButtonElement final : public HTMLInputElement {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(UploadButtonElement);
 public:
     static Ref<UploadButtonElement> create(Document&);
     static Ref<UploadButtonElement> createForMultiple(Document&);

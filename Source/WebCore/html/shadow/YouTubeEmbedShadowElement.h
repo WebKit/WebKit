@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class YouTubeEmbedShadowElement final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(YouTubeEmbedShadowElement);
 public:
     static Ref<YouTubeEmbedShadowElement> create(Document&);
 

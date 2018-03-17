@@ -31,6 +31,7 @@ class SVGFontElement;
 class StyleRuleFontFace;
 
 class SVGFontFaceElement final : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGFontFaceElement);
 public:
     static Ref<SVGFontFaceElement> create(const QualifiedName&, Document&);
 

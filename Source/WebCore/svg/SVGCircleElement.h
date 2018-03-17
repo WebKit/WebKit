@@ -27,8 +27,8 @@
 
 namespace WebCore {
 
-class SVGCircleElement final : public SVGGraphicsElement,
-                               public SVGExternalResourcesRequired {
+class SVGCircleElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGCircleElement);
 public:
     static Ref<SVGCircleElement> create(const QualifiedName&, Document&);
 

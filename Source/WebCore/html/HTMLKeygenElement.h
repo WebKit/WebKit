@@ -30,6 +30,7 @@ namespace WebCore {
 class HTMLSelectElement;
 
 class HTMLKeygenElement final : public HTMLFormControlElementWithState {
+    WTF_MAKE_ISO_ALLOCATED(HTMLKeygenElement);
 public:
     static Ref<HTMLKeygenElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class HTMLPictureElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLPictureElement);
 public:
     static Ref<HTMLPictureElement> create(const QualifiedName&, Document&);
     virtual ~HTMLPictureElement();

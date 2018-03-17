@@ -48,7 +48,8 @@ class RenderMedia;
 
 // An abstract class with the media control elements that all ports support.
 class MediaControls : public HTMLDivElement {
-  public:
+    WTF_MAKE_ISO_ALLOCATED(MediaControls);
+public:
     virtual ~MediaControls() = default;
 
     // This function is to be implemented in your port-specific media

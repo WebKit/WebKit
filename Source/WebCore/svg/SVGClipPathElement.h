@@ -30,8 +30,8 @@ namespace WebCore {
 
 class RenderObject;
 
-class SVGClipPathElement final : public SVGGraphicsElement,
-                                 public SVGExternalResourcesRequired {
+class SVGClipPathElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGClipPathElement);
 public:
     static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);
 

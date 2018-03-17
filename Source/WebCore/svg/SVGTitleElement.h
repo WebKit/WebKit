@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class SVGTitleElement final : public SVGElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGTitleElement);
 public:
     static Ref<SVGTitleElement> create(const QualifiedName&, Document&);
 

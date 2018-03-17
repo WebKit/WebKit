@@ -24,8 +24,11 @@
 
 #include "Document.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTitleElement);
 
 inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)

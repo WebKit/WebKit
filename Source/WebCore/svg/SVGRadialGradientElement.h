@@ -29,6 +29,7 @@ namespace WebCore {
 struct RadialGradientAttributes;
 
 class SVGRadialGradientElement final : public SVGGradientElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGRadialGradientElement);
 public:
     static Ref<SVGRadialGradientElement> create(const QualifiedName&, Document&);
 

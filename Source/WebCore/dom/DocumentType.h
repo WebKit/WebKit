@@ -30,6 +30,7 @@ namespace WebCore {
 class NamedNodeMap;
 
 class DocumentType final : public Node {
+    WTF_MAKE_ISO_ALLOCATED(DocumentType);
 public:
     static Ref<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)
     {

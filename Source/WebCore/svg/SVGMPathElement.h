@@ -31,6 +31,7 @@ namespace WebCore {
 class SVGPathElement;
 
 class SVGMPathElement final : public SVGElement, public SVGURIReference, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGMPathElement);
 public:
     static Ref<SVGMPathElement> create(const QualifiedName&, Document&);
 

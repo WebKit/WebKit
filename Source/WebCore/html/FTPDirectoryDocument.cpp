@@ -39,10 +39,13 @@
 #include "SharedBuffer.h"
 #include "Text.h"
 #include <wtf/GregorianDateTime.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FTPDirectoryDocument);
 
 using namespace HTMLNames;
     

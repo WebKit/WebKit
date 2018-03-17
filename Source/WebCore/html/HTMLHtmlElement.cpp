@@ -31,8 +31,11 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLHtmlElement);
 
 using namespace HTMLNames;
 

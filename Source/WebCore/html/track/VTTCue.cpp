@@ -51,10 +51,13 @@
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
 #include "WebVTTParser.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
 
 // This constant should correspond with the percentage returned by CaptionUserPreferences::captionFontSizeScaleAndImportance.
 const static double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;

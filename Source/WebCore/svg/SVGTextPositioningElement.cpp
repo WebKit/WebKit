@@ -32,8 +32,11 @@
 #include "SVGTRefElement.h"
 #include "SVGTSpanElement.h"
 #include "SVGTextElement.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextPositioningElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH_LIST(SVGTextPositioningElement, SVGNames::xAttr, X, x)

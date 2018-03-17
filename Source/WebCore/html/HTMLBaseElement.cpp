@@ -27,8 +27,11 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "TextResourceDecoder.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLBaseElement);
 
 using namespace HTMLNames;
 

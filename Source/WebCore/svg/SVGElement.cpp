@@ -54,12 +54,15 @@
 #include "XMLNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGElement, HTMLNames::classAttr, ClassName, className)

@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class HTMLScriptElement final : public HTMLElement, public ScriptElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLScriptElement);
 public:
     static Ref<HTMLScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
 

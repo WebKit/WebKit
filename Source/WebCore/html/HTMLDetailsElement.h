@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +31,7 @@ template<typename T> class EventSender;
 typedef EventSender<HTMLDetailsElement> DetailEventSender;
 
 class HTMLDetailsElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLDetailsElement);
 public:
     static Ref<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);
     ~HTMLDetailsElement();

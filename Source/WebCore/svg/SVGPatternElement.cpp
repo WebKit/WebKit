@@ -38,9 +38,12 @@
 #include "SVGStringList.h"
 #include "SVGTransformable.h"
 #include "XLinkNames.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPatternElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGPatternElement, SVGNames::xAttr, X, x)

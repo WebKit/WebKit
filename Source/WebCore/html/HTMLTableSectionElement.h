@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class HTMLTableSectionElement final : public HTMLTablePartElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTableSectionElement);
 public:
     static Ref<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 

@@ -40,9 +40,12 @@
 #include "NodeRareData.h"
 #include "RenderTable.h"
 #include "StyleProperties.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTableElement);
 
 using namespace HTMLNames;
 

@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class DetailsMarkerControl final : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(DetailsMarkerControl);
 public:
     static Ref<DetailsMarkerControl> create(Document&);
 

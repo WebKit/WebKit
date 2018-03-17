@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class MathMLRowElement : public MathMLPresentationElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLRowElement);
 public:
     static Ref<MathMLRowElement> create(const QualifiedName& tagName, Document&);
 

@@ -51,10 +51,13 @@
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <limits>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormElement);
 
 using namespace HTMLNames;
 

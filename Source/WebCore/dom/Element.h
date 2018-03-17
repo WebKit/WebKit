@@ -69,6 +69,7 @@ enum class SelectionRevealMode {
 };
 
 class Element : public ContainerNode {
+    WTF_MAKE_ISO_ALLOCATED(Element);
 public:
     static Ref<Element> create(const QualifiedName&, Document&);
     virtual ~Element();

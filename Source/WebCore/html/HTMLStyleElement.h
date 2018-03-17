@@ -35,6 +35,7 @@ template<typename T> class EventSender;
 using StyleEventSender = EventSender<HTMLStyleElement>;
 
 class HTMLStyleElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLStyleElement);
 public:
     static Ref<HTMLStyleElement> create(Document&);
     static Ref<HTMLStyleElement> create(const QualifiedName&, Document&, bool createdByParser);

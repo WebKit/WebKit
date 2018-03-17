@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLMetaElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLMetaElement);
 public:
     static Ref<HTMLMetaElement> create(Document&);
     static Ref<HTMLMetaElement> create(const QualifiedName&, Document&);

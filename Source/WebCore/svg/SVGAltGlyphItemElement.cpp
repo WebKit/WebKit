@@ -25,8 +25,11 @@
 #include "ElementIterator.h"
 #include "SVGGlyphRefElement.h"
 #include "SVGNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGAltGlyphItemElement);
 
 inline SVGAltGlyphItemElement::SVGAltGlyphItemElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)

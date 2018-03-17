@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class SVGScriptElement final : public SVGElement, public SVGURIReference, public SVGExternalResourcesRequired, public ScriptElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGScriptElement);
 public:
     static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
 

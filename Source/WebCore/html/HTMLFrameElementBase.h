@@ -33,6 +33,7 @@ class ExecState;
 namespace WebCore {
 
 class HTMLFrameElementBase : public HTMLFrameOwnerElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFrameElementBase);
 public:
     WEBCORE_EXPORT URL location() const;
     WEBCORE_EXPORT void setLocation(const String&);

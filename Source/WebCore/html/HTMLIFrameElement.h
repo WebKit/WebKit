@@ -31,6 +31,7 @@ class DOMTokenList;
 class RenderIFrame;
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
+    WTF_MAKE_ISO_ALLOCATED(HTMLIFrameElement);
 public:
     static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);
 

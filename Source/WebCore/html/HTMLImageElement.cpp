@@ -43,6 +43,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SizesAttributeParser.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -50,6 +51,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
 
 using namespace HTMLNames;
 

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class HTMLLabelElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLLabelElement);
 public:
     static Ref<HTMLLabelElement> create(const QualifiedName&, Document&);
 

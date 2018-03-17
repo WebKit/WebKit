@@ -29,9 +29,12 @@
 #include "SVGRect.h"
 #include "SVGSVGElement.h"
 #include "SVGStringList.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGGraphicsElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_TRANSFORM_LIST(SVGGraphicsElement, SVGNames::transformAttr, Transform, transform)

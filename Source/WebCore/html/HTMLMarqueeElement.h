@@ -30,6 +30,7 @@ namespace WebCore {
 class RenderMarquee;
 
 class HTMLMarqueeElement final : public HTMLElement, private ActiveDOMObject {
+    WTF_MAKE_ISO_ALLOCATED(HTMLMarqueeElement);
 public:
     static Ref<HTMLMarqueeElement> create(const QualifiedName&, Document&);
 

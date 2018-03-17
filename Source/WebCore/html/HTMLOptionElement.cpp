@@ -40,9 +40,12 @@
 #include "ScriptElement.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLOptionElement);
 
 using namespace HTMLNames;
 

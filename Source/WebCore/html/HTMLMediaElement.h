@@ -144,6 +144,7 @@ class HTMLMediaElement
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_ISO_ALLOCATED(HTMLMediaElement);
 public:
     WeakPtr<HTMLMediaElement> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
     RefPtr<MediaPlayer> player() const { return m_player; }

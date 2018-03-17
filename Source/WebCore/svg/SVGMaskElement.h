@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class SVGMaskElement final : public SVGElement, public SVGTests, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGMaskElement);
 public:
     static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
 

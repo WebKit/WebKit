@@ -36,9 +36,12 @@
 #include "HTMLNames.h"
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-    
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(PluginDocument);
+
 using namespace HTMLNames;
 
 // FIXME: Share more code with MediaDocumentParser.

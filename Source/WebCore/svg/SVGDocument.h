@@ -28,6 +28,7 @@ namespace WebCore {
 class SVGSVGElement;
 
 class SVGDocument final : public XMLDocument {
+    WTF_MAKE_ISO_ALLOCATED(SVGDocument);
 public:
     static Ref<SVGDocument> create(Frame*, const URL&);
 

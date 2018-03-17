@@ -51,9 +51,12 @@
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIterator.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaDocument);
 
 using namespace HTMLNames;
 

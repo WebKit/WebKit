@@ -319,6 +319,7 @@ class Document
     , public FrameDestructionObserver
     , public Supplementable<Document>
     , public Logger::Observer {
+    WTF_MAKE_ISO_ALLOCATED(Document);
 public:
     static Ref<Document> create(Frame* frame, const URL& url)
     {

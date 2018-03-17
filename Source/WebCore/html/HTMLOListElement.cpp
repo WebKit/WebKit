@@ -28,6 +28,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "RenderListItem.h"
+#include <wtf/IsoMallocInlines.h>
 
 // FIXME: There should be a standard way to turn a std::expected into a std::optional.
 // Maybe we should put this into the header file for Expected and give it a better name.
@@ -37,6 +38,8 @@ template<typename T, typename E> inline std::optional<T> optionalValue(Expected<
 }
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLOListElement);
 
 using namespace HTMLNames;
 

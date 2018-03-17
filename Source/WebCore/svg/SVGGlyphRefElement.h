@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class SVGGlyphRefElement final : public SVGElement, public SVGURIReference {
+    WTF_MAKE_ISO_ALLOCATED(SVGGlyphRefElement);
 public:
     static Ref<SVGGlyphRefElement> create(const QualifiedName&, Document&);
 

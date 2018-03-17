@@ -49,9 +49,12 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "URLUtils.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAnchorElement);
 
 using namespace HTMLNames;
 

@@ -53,8 +53,11 @@
 #include "TypedElementDescendantIterator.h"
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/CatchScope.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPlugInImageElement);
 
 static const int sizingTinyDimensionThreshold = 40;
 static const float sizingFullPageAreaRatioThreshold = 0.96;

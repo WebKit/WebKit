@@ -25,8 +25,11 @@
 
 #include "Document.h"
 #include "HTMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLQuoteElement);
 
 using namespace HTMLNames;
 

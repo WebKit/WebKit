@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class MathMLFractionElement final : public MathMLPresentationElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLFractionElement);
 public:
     static Ref<MathMLFractionElement> create(const QualifiedName& tagName, Document&);
     const Length& lineThickness();

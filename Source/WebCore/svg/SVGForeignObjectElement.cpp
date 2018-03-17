@@ -29,9 +29,12 @@
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include <wtf/Assertions.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGForeignObjectElement);
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGForeignObjectElement, SVGNames::xAttr, X, x)

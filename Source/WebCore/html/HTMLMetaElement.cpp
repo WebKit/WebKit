@@ -27,8 +27,11 @@
 #include "Document.h"
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMetaElement);
 
 using namespace HTMLNames;
 

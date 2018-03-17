@@ -39,6 +39,7 @@ namespace WebCore {
 class HTMLProgressElement;
 
 class ProgressShadowElement : public HTMLDivElement {
+    WTF_MAKE_ISO_ALLOCATED(ProgressShadowElement);
 public:
     HTMLProgressElement* progressElement() const;
 
@@ -48,6 +49,9 @@ protected:
 private:
     bool rendererIsNeeded(const RenderStyle&) override;
 };
+
+// The subclasses of ProgressShadowElement share the same isoheap, because they don't add any more
+// fields to the class.
 
 class ProgressInnerElement final : public ProgressShadowElement {
 public:

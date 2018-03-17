@@ -26,8 +26,8 @@
 
 namespace WebCore {
 
-class SVGSwitchElement final : public SVGGraphicsElement,
-                               public SVGExternalResourcesRequired {
+class SVGSwitchElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+    WTF_MAKE_ISO_ALLOCATED(SVGSwitchElement);
 public:
     static Ref<SVGSwitchElement> create(const QualifiedName&, Document&);
 

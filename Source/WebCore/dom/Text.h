@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +30,7 @@ namespace WebCore {
 class RenderText;
 
 class Text : public CharacterData {
+    WTF_MAKE_ISO_ALLOCATED(Text);
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
 

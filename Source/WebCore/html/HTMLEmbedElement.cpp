@@ -37,9 +37,12 @@
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLEmbedElement);
 
 using namespace HTMLNames;
 

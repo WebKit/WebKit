@@ -48,9 +48,12 @@
 #include "SVGPathSegMovetoRel.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGPathElement);
 
 // Define custom animated property 'd'.
 const SVGPropertyInfo* SVGPathElement::dPropertyInfo()

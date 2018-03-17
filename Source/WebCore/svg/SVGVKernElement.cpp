@@ -26,8 +26,11 @@
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SVGVKernElement);
 
 inline SVGVKernElement::SVGVKernElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)

@@ -35,8 +35,11 @@
 #include "RenderElement.h"
 #include "RenderTheme.h"
 #include "Settings.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaControls);
 
 MediaControls::MediaControls(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)

@@ -38,6 +38,7 @@ enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardD
 enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent, DispatchInputAndChangeEvent };
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
+    WTF_MAKE_ISO_ALLOCATED(HTMLTextFormControlElement);
 public:
     // Common flag for HTMLInputElement::tooLong() / tooShort() and HTMLTextAreaElement::tooLong() / tooShort().
     enum NeedsToCheckDirtyFlag {CheckDirtyFlag, IgnoreDirtyFlag};

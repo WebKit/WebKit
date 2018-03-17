@@ -30,6 +30,7 @@ namespace WebCore {
 class HTMLFormElement;
 
 class HTMLObjectElement final : public HTMLPlugInImageElement, public FormAssociatedElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLObjectElement);
 public:
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 

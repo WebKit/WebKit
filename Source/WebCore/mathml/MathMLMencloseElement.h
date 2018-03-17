@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class MathMLMencloseElement final: public MathMLRowElement {
+    WTF_MAKE_ISO_ALLOCATED(MathMLMencloseElement);
 public:
     static Ref<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
 

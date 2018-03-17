@@ -93,6 +93,7 @@ struct SVGPropertyTraits<TurbulenceType> {
 };
 
 class SVGFETurbulenceElement final : public SVGFilterPrimitiveStandardAttributes {
+    WTF_MAKE_ISO_ALLOCATED(SVGFETurbulenceElement);
 public:
     static Ref<SVGFETurbulenceElement> create(const QualifiedName&, Document&);
 

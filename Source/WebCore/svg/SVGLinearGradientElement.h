@@ -29,6 +29,7 @@ namespace WebCore {
 struct LinearGradientAttributes;
 
 class SVGLinearGradientElement final : public SVGGradientElement {
+    WTF_MAKE_ISO_ALLOCATED(SVGLinearGradientElement);
 public:
     static Ref<SVGLinearGradientElement> create(const QualifiedName&, Document&);
 

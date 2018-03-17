@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class HTMLLIElement final : public HTMLElement {
+    WTF_MAKE_ISO_ALLOCATED(HTMLLIElement);
 public:
     static Ref<HTMLLIElement> create(Document&);
     static Ref<HTMLLIElement> create(const QualifiedName&, Document&);
