@@ -27,17 +27,10 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
-#import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS)
-#import "UIKitSPI.h"
-#endif
-
-#if WK_API_ENABLED
-
-#if PLATFORM(MAC)
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 static bool didInvalidateIntrinsicContentSize;
 static bool didEvaluateJavaScript;
@@ -211,54 +204,4 @@ TEST(WebKit, AutoLayoutRenderingProgressRelativeOrdering)
     [webView setNavigationDelegate:nil];
 }
 
-#endif // PLATFORM(MAC)
-
-#if PLATFORM(IOS)
-
-static void checkCGRect(CGRect expected, CGRect observed)
-{
-    bool success = CGRectEqualToRect(expected, observed);
-    EXPECT_TRUE(success);
-    if (!success)
-        NSLog(@"Expected rect: %@ but got: %@", NSStringFromCGRect(expected), NSStringFromCGRect(observed));
-}
-
-TEST(WebKit, AutoLayoutPositionHeaderAndFooterViewsInScrollView)
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    UIScrollView *scrollView = [webView scrollView];
-    scrollView.contentInset = UIEdgeInsetsMake(100, 0, 100, 0);
-
-    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><body style='width: 100%; height: 5000px; margin: 0'>"];
-
-    auto headerLabel = adoptNS([[UILabel alloc] init]);
-    [headerLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [scrollView addSubview:headerLabel.get()];
-
-    auto footerLabel = adoptNS([[UILabel alloc] init]);
-    [footerLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [scrollView addSubview:footerLabel.get()];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [[headerLabel widthAnchor] constraintEqualToConstant:320],
-        [[headerLabel heightAnchor] constraintEqualToConstant:100],
-        [[headerLabel leftAnchor] constraintEqualToAnchor:scrollView.contentLayoutGuide.leftAnchor],
-        [[headerLabel bottomAnchor] constraintEqualToAnchor:scrollView.contentLayoutGuide.topAnchor],
-        [[footerLabel widthAnchor] constraintEqualToConstant:320],
-        [[footerLabel heightAnchor] constraintEqualToConstant:100],
-        [[footerLabel leftAnchor] constraintEqualToAnchor:scrollView.contentLayoutGuide.leftAnchor],
-        [[footerLabel topAnchor] constraintEqualToAnchor:scrollView.contentLayoutGuide.bottomAnchor],
-        [[webView _contentWidthAnchor] constraintEqualToAnchor:scrollView.contentLayoutGuide.widthAnchor],
-        [[webView _contentHeightAnchor] constraintEqualToAnchor:scrollView.contentLayoutGuide.heightAnchor]
-    ]];
-
-    [webView layoutSubviews];
-    [webView waitForNextPresentationUpdate];
-
-    checkCGRect(CGRectMake(0, -100, 320, 100), [headerLabel frame]);
-    checkCGRect(CGRectMake(0, 5000, 320, 100), [footerLabel frame]);
-}
-
-#endif // PLATFORM(IOS)
-
-#endif // WK_API_ENABLED
+#endif

@@ -254,9 +254,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_accessibilityRetrieveSpeakSelectionContent WK_API_AVAILABLE(ios(11.0));
 - (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content WK_API_AVAILABLE(ios(11.0));
 
-@property (nonatomic, readonly) NSLayoutDimension *_contentWidthAnchor WK_API_AVAILABLE(ios(WK_IOS_TBA));
-@property (nonatomic, readonly) NSLayoutDimension *_contentHeightAnchor WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
 #else
 
 @property (nonatomic, readonly) _WKRectEdge _pinnedState WK_API_AVAILABLE(macosx(WK_MAC_TBA));

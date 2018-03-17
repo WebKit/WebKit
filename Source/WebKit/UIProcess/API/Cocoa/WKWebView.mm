@@ -4948,16 +4948,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #if PLATFORM(IOS)
 
-- (NSLayoutDimension *)_contentWidthAnchor
-{
-    return [_contentView widthAnchor];
-}
-
-- (NSLayoutDimension *)_contentHeightAnchor
-{
-    return [_contentView heightAnchor];
-}
-
 #if ENABLE(FULLSCREEN_API)
 - (void)removeFromSuperview
 {
