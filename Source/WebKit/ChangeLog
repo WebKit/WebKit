@@ -1,3 +1,15 @@
+2018-03-17  Daniel Bates  <dabates@apple.com>
+
+        Tests fail in messages_unittest.py
+        https://bugs.webkit.org/show_bug.cgi?id=183725
+
+        Partial revert of r222113. The messages generator machinery does not know when
+        it is sufficient to emit an include for wtf/Forward.h as opposed to a concrete
+        header.
+
+        * Scripts/webkit/LegacyMessages-expected.h:
+        * Scripts/webkit/Messages-expected.h:
+
 2018-03-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, rolling out r229688.
