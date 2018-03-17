@@ -1,3 +1,15 @@
+2018-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Add a test verifying that an AppCache manifest request includes credentials
+        https://bugs.webkit.org/show_bug.cgi?id=183716
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/appcache/appcache-cookies-expected.txt: Added.
+        * http/tests/appcache/appcache-cookies.html: Added.
+        * http/tests/appcache/resources/appcache-cookies-test.html: Added.
+        * http/tests/appcache/resources/manifest-if-cookie.php: Added.
+
 2018-03-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html on iOS.
