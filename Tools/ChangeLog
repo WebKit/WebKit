@@ -1,5 +1,22 @@
 2018-03-17  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] BlockFormattingContext::placePositionedDescendants takes care of both in- and out-of-flow placement
+        https://bugs.webkit.org/show_bug.cgi?id=183727
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype.layout):
+        (BlockFormattingContext.prototype._placePositionedDescendants):
+        (BlockFormattingContext.prototype._placeInFlowPositionedChildren):
+        (BlockFormattingContext.prototype._placeOutOfFlowDescendants):
+        * LayoutReloaded/test/absolute-position-when-containing-block-is-not-in-the-formatting-context.html: Added.
+        * LayoutReloaded/test/absolute-position-when-containing-block-is-not-in-the-formatting-context2.html: Added.
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/relative-position-when-containing-block-is-not-in-the-formatting-context.html: Added.
+
+2018-03-17  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Ensure that positioning happens within the formatting context
         https://bugs.webkit.org/show_bug.cgi?id=183722
 

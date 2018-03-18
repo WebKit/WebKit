@@ -65,9 +65,8 @@ class BlockFormattingContext extends FormattingContext {
                 this.computeHeight(layoutBox);
                 // Adjust position now that we have all the previous floats placed in this context -if needed.
                 this.floatingContext().computePosition(layoutBox);
-                // Move in-flow positioned children to their final position. If this layoutBox also establishes a formatting context, then positioning already has happend.
-                if (layoutBox.isContainer() && !layoutBox.establishesFormattingContext())
-                    this._placeInFlowPositionedChildren(layoutBox);
+                // Move positioned children to their final position.
+                this._placePositionedDescendants(layoutBox);
                 // We are done with laying out this box.
                 this._removeFromLayoutQueue(layoutBox);
                 if (layoutBox.nextSibling()) {
@@ -77,8 +76,7 @@ class BlockFormattingContext extends FormattingContext {
             }
         }
         // And finally place the in- and out-of-flow descendants.
-        this._placeInFlowPositionedChildren(this.rootContainer());
-        this._placeOutOfFlowDescendants(this.rootContainer());
+        this._placePositionedDescendants(this.rootContainer());
    }
 
     computeWidth(layoutBox) {
@@ -118,15 +116,27 @@ class BlockFormattingContext extends FormattingContext {
         layoutBox.setTopLeft(position);
     }
 
+    _placePositionedDescendants(layoutBox) {
+        if (!layoutBox.isContainer())
+            return;
+        // If this layoutBox also establishes a formatting context, then positioning already has happend at the formatting context.
+        if (layoutBox.establishesFormattingContext() && layoutBox != this.rootContainer())
+            return;
+        this._placeInFlowPositionedChildren(layoutBox);
+        this._placeOutOfFlowDescendants(layoutBox);
+    }
+
     _placeInFlowPositionedChildren(container) {
+        ASSERT(container.isContainer());
         for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
             if (!inFlowChild.isInFlowPositioned())
                 continue;
-             this._computeInFlowPositionedPosition(inFlowChild);
+            this._computeInFlowPositionedPosition(inFlowChild);
         }
     }
 
     _placeOutOfFlowDescendants(container) {
+        ASSERT(container.isContainer());
         let outOfFlowDescendants = Utils.collectOutOfFlowDescendants(container);
         for (let outOfFlowBox of outOfFlowDescendants)
             this._computeOutOfFlowPosition(outOfFlowBox);
