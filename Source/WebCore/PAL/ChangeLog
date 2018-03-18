@@ -1,3 +1,14 @@
+2018-03-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement authenticatorMakeCredential
+        https://bugs.webkit.org/show_bug.cgi?id=183527
+        <rdar://problem/35275886>
+
+        Reviewed by Brent Fulgham.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/DeviceIdentitySPI.h: Copied from Source/WebKit/UIProcess/CredentialManagement/WebCredentialsMessengerProxy.h.
+
 2018-03-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229567

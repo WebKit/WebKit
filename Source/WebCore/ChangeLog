@@ -1,3 +1,83 @@
+2018-03-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement authenticatorMakeCredential
+        https://bugs.webkit.org/show_bug.cgi?id=183527
+        <rdar://problem/35275886>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does the following few things:
+        1) It implements the authenticatorMakeCredential logic from the spec: https://www.w3.org/TR/webauthn/#op-make-cred.
+        2) It tweaks enocding and deocding of PublicKeyCredentialCreationOptions between UIProccess and WebProcess.
+        3) It soft links LocalAuthentication.Framework to WebCore, which was linked to WebKit.
+        4) It creates SPI header for DeviceIdentity.Framework, and provides stubs to link it to WebCore.
+
+        Here is a detailed explanantion of 1):
+        1. A helper class called LocalAuthenticator is crafted to represent Apple platform attached authenticator, i.e.
+        the devices themselves. All operations are currently restricted to iOS at this moment as macOS lacks attestation
+        support.
+        2. To do testing, this helper class is then moved from WebKit to WebCore even though all operations can only happens
+        in the UIProcess. We currently lack the ability to pretend a https environment in TestWebKitAPI which is required by
+        the WebAuthN API, and thus it is moved to WebCore to perform unit tesing flavor API tests. This is not enough as it
+        can't test message exchange between the UI and Web processes. We will address this in a subsequent patch.
+        3. More on testing: The attestation process is abstracted into a protected method such that the testing enviroment can
+        override it with self attestation as network access is restricted in the WebKit testing enviroment. Also, swizzlers of
+        LocalAuthentication API are provided to override the behavoir of LAContext.
+        4. More on testing: The actual Apple attestation can only happen in real device and with network access, therefore
+        it can only be covered by manual tests at this moment.
+        5. Back to LocalAuthenticator, it currently has two public methods:
+                5.1. makeCredential(): This method is the one does all the magic.
+                + It first checks some parameters.
+                + It then invokes LAContext to get user consent.
+                + It then talks to Apple Attestation Privacy CA to do attestations.
+                + It then stores necessary information into the Keychain.
+                + Finally it generates the attestation object.
+                5.2 isAvailable():
+                To check if a LocalAuthenticator is available or not.
+        6. Even though files are of .mm format, they are written in a way that mixes NS, CF and C++ types. Here is the rule:
+                6.1 Use CF type only if it is requested by APIs.
+                6.2 Use NS type to manipulate all Objc objects.
+                6.3 Use C++ otherwise.
+
+        Covered by API tests.
+
+        * Configurations/WebCore.xcconfig:
+        * Modules/credentialmanagement/CredentialsMessenger.cpp:
+        (WebCore::getIdFromAttestationObject): Deleted.
+        Decoding attestation object is tedious. UIProcess will instead return credential ID and attestation object
+        at the same time. Therefore, this method is removed.
+        * Modules/credentialmanagement/CredentialsMessenger.h:
+        (WebCore::CreationReturnBundle::CreationReturnBundle): Deleted.
+        (WebCore::AssertionReturnBundle::AssertionReturnBundle): Deleted.
+        * Modules/webauthn/COSEConstants.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialType.h.
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        (WebCore::PublicKeyCredentialCreationOptions::isolatedPartialCopyPtr const):
+        (WebCore::PublicKeyCredentialCreationOptions::Parameters::encode const):
+        (WebCore::PublicKeyCredentialCreationOptions::Parameters::decode):
+        (WebCore::PublicKeyCredentialCreationOptions::encode const):
+        (WebCore::PublicKeyCredentialCreationOptions::decode):
+        * Modules/webauthn/PublicKeyCredentialDescriptor.h:
+        (WebCore::PublicKeyCredentialDescriptor::encode const):
+        (WebCore::PublicKeyCredentialDescriptor::decode):
+        * Modules/webauthn/PublicKeyCredentialType.h:
+        * Modules/webauthn/cocoa/LocalAuthenticator.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialCreationOptions.h.
+        * Modules/webauthn/cocoa/LocalAuthenticator.mm: Added.
+        (WebCore::LocalAuthenticatorInternal::freePtrs):
+        (WebCore::LocalAuthenticator::makeCredential const):
+        (WebCore::LocalAuthenticator::isAvailable const):
+        (WebCore::LocalAuthenticator::issueClientCertificate const):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/LocalAuthenticationSoftLink.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialType.h.
+        * platform/cocoa/LocalAuthenticationSoftLink.mm: Added.
+        * testing/MockCredentialsMessenger.cpp:
+        (WebCore::MockCredentialsMessenger::setCreationReturnBundle):
+        (WebCore::MockCredentialsMessenger::makeCredential):
+        (WebCore::MockCredentialsMessenger::makeCredentialReply):
+        (WebCore::MockCredentialsMessenger::setAttestationObject): Deleted.
+        * testing/MockCredentialsMessenger.h:
+        * testing/MockCredentialsMessenger.idl:
+
 2018-03-16  Brent Fulgham  <bfulgham@apple.com>
 
         Correct debug assertion in Range::borderAndTextRects

@@ -35,12 +35,6 @@ namespace CredentialsMessengerInternal {
 const uint64_t maxMessageId = 0xFFFFFFFFFFFFFF; // 56 bits
 const size_t callBackClassifierOffset = 56;
 
-// The layout of attestation object: https://www.w3.org/TR/webauthn/#attestation-object as of 5 December 2017.
-// Here is a summary before CredentialID in the layout. All lengths are fixed.
-// RP ID hash (32) || FLAGS (1) || COUNTER (4) || AAGUID (16) || L (2) || CREDENTIAL ID (?) || ...
-const size_t credentialIdLengthOffset = 43;
-const size_t credentialIdLengthLength = 2;
-
 }
 
 void CredentialsMessenger::exceptionReply(uint64_t messageId, const ExceptionData& exception)
@@ -108,19 +102,6 @@ uint64_t CredentialsMessenger::addQueryCompletionHandler(QueryCompletionHandler&
 QueryCompletionHandler CredentialsMessenger::takeQueryCompletionHandler(uint64_t messageId)
 {
     return m_pendingQueryCompletionHandlers.take(messageId);
-}
-
-RefPtr<ArrayBuffer> getIdFromAttestationObject(const Vector<uint8_t>& attestationObject)
-{
-    using namespace CredentialsMessengerInternal;
-
-    if (attestationObject.size() < credentialIdLengthOffset + credentialIdLengthLength)
-        return nullptr;
-    // The byte length of L is 2.
-    size_t length = (attestationObject[credentialIdLengthOffset] << 8) + attestationObject[credentialIdLengthOffset + 1];
-    if (attestationObject.size() < credentialIdLengthOffset + credentialIdLengthLength + length)
-        return nullptr;
-    return ArrayBuffer::create(attestationObject.data() + credentialIdLengthOffset + credentialIdLengthLength, length);
 }
 
 } // namespace WebCore

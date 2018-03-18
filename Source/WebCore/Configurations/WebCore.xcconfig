@@ -78,7 +78,7 @@ LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_NO = $(WEBCORE_FRAMEWORKS_DIR)
 LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(WK_OVERRIDE_FRAMEWORKS_DIR);
 
 OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(WK_UNDEFINED_SYMBOLS_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM);
-OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -framework CoreAudio -framework Metal -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a;
+OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -framework CoreAudio -framework Metal -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a $(WK_DEVICE_IDENTITY_LDFLAGS);
 // FIXME: Reduce the number of allowable_client <rdar://problem/31823969>
 OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework MobileCoreServices -framework OpenGLES -lMobileGestalt $(WK_IOS_BINCOMPAT_LDFLAGS) -allowable_client WebKit -allowable_client iTunesU -allowable_client Casablanca -allowable_client Remote -allowable_client TVBooks -allowable_client DumpRenderTree -allowable_client WebKitTestRunner -allowable_client TestWebKitAPI;
 OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOSurface -framework IOSurfaceAccelerator -framework GraphicsServices $(LIBWEBRTC_LDFLAGS);
@@ -136,3 +136,9 @@ WK_RELOCATABLE_FRAMEWORK_LDFLAGS_YES = -Wl,-not_for_dyld_shared_cache;
 SUPPORTS_TEXT_BASED_API = $(SUPPORTS_TEXT_BASED_API_$(TARGET_NAME))
 SUPPORTS_TEXT_BASED_API_WebCore = $(WEBCORE_ENABLE_INSTALLAPI)
 TEXT_BASED_API_FILE = WebCore.tbd
+
+WK_HAVE_DEVICE_IDENTITY = $(WK_HAVE_DEVICE_IDENTITY_$(PLATFORM_NAME));
+WK_HAVE_DEVICE_IDENTITY_iphoneos = YES;
+
+WK_DEVICE_IDENTITY_LDFLAGS = $(WK_DEVICE_IDENTITY_LDFLAGS_$(WK_HAVE_DEVICE_IDENTITY));
+WK_DEVICE_IDENTITY_LDFLAGS_YES = -framework DeviceIdentity;

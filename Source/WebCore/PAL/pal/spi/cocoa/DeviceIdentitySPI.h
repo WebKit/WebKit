@@ -23,13 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-    NoInterfaceObject,
-] interface MockCredentialsMessenger {
-    void setDidTimeOut();
-    void setDidUserCancel();
-    void setDidUserVerifyingPlatformAuthenticatorPresent();
-    void setCreationReturnBundle(BufferSource credentialId, BufferSource attestationObject);
-    void setAssertionReturnBundle(BufferSource credentialId, BufferSource authenticatorData, BufferSource signature, BufferSource userHandle);
-};
+#pragma once
+
+#if ENABLE(WEB_AUTHN)
+
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+
+extern "C" {
+#import <DeviceIdentity/DeviceIdentity.h>
+}
+
+#else
+
+typedef void (^MABAACompletionBlock)(_Nullable SecKeyRef referenceKey, NSArray * _Nullable certificates, NSError * _Nullable error);
+
+extern NSString * _Nonnull const kMAOptionsBAAAccessControls;
+extern NSString * _Nonnull const kMAOptionsBAAIgnoreExistingKeychainItems;
+extern NSString * _Nonnull const kMAOptionsBAAKeychainAccessGroup;
+extern NSString * _Nonnull const kMAOptionsBAAKeychainLabel;
+extern NSString * _Nonnull const kMAOptionsBAANonce;
+extern NSString * _Nonnull const kMAOptionsBAAOIDNonce;
+extern NSString * _Nonnull const kMAOptionsBAAOIDSToInclude;
+extern NSString * _Nonnull const kMAOptionsBAASCRTAttestation;
+extern NSString * _Nonnull const kMAOptionsBAAValidity;
+
+extern "C"
+void DeviceIdentityIssueClientCertificateWithCompletion(dispatch_queue_t _Nullable, NSDictionary * _Nullable options, MABAACompletionBlock _Nonnull);
+
+#endif // USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+
+#endif // ENABLE(WEB_AUTHN)

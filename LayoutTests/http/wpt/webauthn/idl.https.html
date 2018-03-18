@@ -50,7 +50,7 @@ promise_test(async () => {
         }
     };
     // A mock attestation object
-    internals.mockCredentialsMessenger.setAttestationObject(hexStringToUint8Array('000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001ff'));
+    internals.mockCredentialsMessenger.setCreationReturnBundle(hexStringToUint8Array('00'), hexStringToUint8Array('01'));
     createdCredential = await navigator.credentials.create(creationOptions);
 
 

@@ -25,6 +25,7 @@ Modules/mediasession/WebMediaSessionManager.cpp
 
 Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
+Modules/webauthn/cocoa/LocalAuthenticator.mm
 
 accessibility/ios/AccessibilityObjectIOS.mm
 accessibility/ios/AXObjectCacheIOS.mm
@@ -194,6 +195,7 @@ platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/FileSystemCocoa.mm
 platform/cocoa/KeyEventCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
+platform/cocoa/LocalAuthenticationSoftLink.mm
 platform/cocoa/MachSendRight.cpp
 platform/cocoa/MIMETypeRegistryCocoa.mm
 platform/cocoa/NetworkExtensionContentFilter.mm

@@ -23,13 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-    NoInterfaceObject,
-] interface MockCredentialsMessenger {
-    void setDidTimeOut();
-    void setDidUserCancel();
-    void setDidUserVerifyingPlatformAuthenticatorPresent();
-    void setCreationReturnBundle(BufferSource credentialId, BufferSource attestationObject);
-    void setAssertionReturnBundle(BufferSource credentialId, BufferSource authenticatorData, BufferSource signature, BufferSource userHandle);
-};
+#pragma once
+
+namespace COSE {
+
+// See RFC 8152 - CBOR Object Signing and Encryption <https://tools.ietf.org/html/rfc8152>
+// Labels
+const int64_t alg = 3;
+const int64_t crv = -1;
+const int64_t kty = 1;
+const int64_t x = -2;
+const int64_t y = -3;
+
+// Values
+const int64_t EC2 = 2;
+const int64_t ES256 = -7;
+const int64_t P_256 = 1;
+
+} // namespace COSE

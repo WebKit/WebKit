@@ -72,15 +72,18 @@ using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
 class CredentialsMessenger {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CredentialsMessenger);
 public:
-    // sender
+    CredentialsMessenger() = default;
+
+    // Senders.
     virtual void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, CreationCompletionHandler&&) = 0;
     virtual void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) = 0;
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) = 0;
 
-    // receiver
+    // Receivers.
     WEBCORE_EXPORT void exceptionReply(uint64_t messageId, const ExceptionData&);
-    virtual void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&) = 0;
+    virtual void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject) = 0;
     virtual void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) = 0;
     virtual void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool) = 0;
 
@@ -110,10 +113,6 @@ private:
     HashMap<uint64_t, RequestCompletionHandler> m_pendingRequestCompletionHandlers;
     HashMap<uint64_t, QueryCompletionHandler> m_pendingQueryCompletionHandlers;
 };
-
-// FIXME: We shouldn't expose this into the messenger. Since the receivers can only be passed with const references, we couldn't
-// construct an ExceptionOr wrapper and pass it to AuthenticatorManager's callback.
-WEBCORE_EXPORT RefPtr<ArrayBuffer> getIdFromAttestationObject(const Vector<uint8_t>& attestationObject);
 
 } // namespace WebCore
 

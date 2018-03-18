@@ -23,39 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebCredentialsMessengerProxy.h"
+#pragma once
 
 #if ENABLE(WEB_AUTHN)
 
-#import <LocalAuthentication/LocalAuthentication.h>
-#import <WebCore/NotImplemented.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/SoftLinking.h>
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
-SOFT_LINK_FRAMEWORK(LocalAuthentication)
-SOFT_LINK_CLASS(LocalAuthentication, LAContext);
+namespace WebCore {
 
-namespace WebKit {
+struct ExceptionData;
+struct PublicKeyCredentialCreationOptions;
 
-void WebCredentialsMessengerProxy::platformIsUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId)
-{
-#if defined(__i386__)
-    ASSERT_UNUSED(messageId, messageId);
-    notImplemented();
-#else
-    auto context = adoptNS([allocLAContextInstance() init]);
-    NSError *error = nil;
+using CreationCallback = Function<void(const Vector<uint8_t>&, const Vector<uint8_t>&)>;
+using ExceptionCallback = Function<void(const WebCore::ExceptionData&)>;
 
-    if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error])
-        isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, true);
-    else {
-        LOG_ERROR("Couldn't evaluate authentication with biometrics policy: %@", error);
-        isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, false);
-    }
-#endif // defined(__i386__)
-}
+typedef void (^CompletionBlock)(SecKeyRef _Nullable referenceKey, NSArray * _Nullable certificates, NSError * _Nullable error);
 
-} // namespace WebKit
+// FIXME(182769): LocalAuthenticator should belongs to WebKit. However, we need unit tests.
+class WEBCORE_EXPORT LocalAuthenticator {
+    WTF_MAKE_NONCOPYABLE(LocalAuthenticator);
+public:
+    LocalAuthenticator() = default;
+    virtual ~LocalAuthenticator() = default;
+
+    void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, CreationCallback&&, ExceptionCallback&&);
+    bool isAvailable() const;
+
+protected:
+    // Apple Attestation is moved into this virtual method such that it can be overrided by self attestation for testing.
+    virtual void issueClientCertificate(const String& rpId, const String& username, const Vector<uint8_t>& hash, CompletionBlock _Nonnull) const;
+
+    WeakPtrFactory<LocalAuthenticator> m_weakFactory;
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

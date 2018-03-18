@@ -29,6 +29,7 @@
 
 #include "BufferSource.h"
 #include "PublicKeyCredentialType.h"
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -40,10 +41,49 @@ struct PublicKeyCredentialDescriptor {
     };
 
     PublicKeyCredentialType type;
-    BufferSource id;
+    BufferSource id; // id becomes idVector once it is passed to UIProcess.
+    Vector<uint8_t> idVector;
     Vector<AuthenticatorTransport> transports;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<PublicKeyCredentialDescriptor> decode(Decoder&);
 };
 
+template<class Encoder>
+void PublicKeyCredentialDescriptor::encode(Encoder& encoder) const
+{
+    encoder << type;
+    Vector<uint8_t> idVector;
+    idVector.append(id.data(), id.length());
+    encoder << idVector << transports;
+}
+
+template<class Decoder>
+std::optional<PublicKeyCredentialDescriptor> PublicKeyCredentialDescriptor::decode(Decoder& decoder)
+{
+    PublicKeyCredentialDescriptor result;
+    if (!decoder.decodeEnum(result.type))
+        return std::nullopt;
+    if (!decoder.decode(result.idVector))
+        return std::nullopt;
+    if (!decoder.decode(result.transports))
+        return std::nullopt;
+    return result;
+}
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PublicKeyCredentialDescriptor::AuthenticatorTransport> {
+    using values = EnumValues<
+        WebCore::PublicKeyCredentialDescriptor::AuthenticatorTransport,
+        WebCore::PublicKeyCredentialDescriptor::AuthenticatorTransport::Usb,
+        WebCore::PublicKeyCredentialDescriptor::AuthenticatorTransport::Nfc,
+        WebCore::PublicKeyCredentialDescriptor::AuthenticatorTransport::Ble
+    >;
+};
+
+}
 
 #endif // ENABLE(WEB_AUTHN)

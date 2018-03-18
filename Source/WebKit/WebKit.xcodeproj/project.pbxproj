@@ -1224,7 +1224,6 @@
 		5760829D202D2C4000116678 /* WebCredentialsMessengerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 5760828F20298FBD00116678 /* WebCredentialsMessengerMessages.h */; };
 		5760829E202D2C4300116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5760829A202BEE5A00116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp */; };
 		5760829F202D2C4600116678 /* WebCredentialsMessengerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 5760829B202BEE5A00116678 /* WebCredentialsMessengerProxyMessages.h */; };
-		57B90AAD203637F4000E61FA /* WebCredentialsMessengerProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57B90AAC203637F4000E61FA /* WebCredentialsMessengerProxyCocoa.mm */; };
 		5C0B17781E7C880E00E9123C /* NetworkSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */; };
 		5C0B17791E7C882100E9123C /* WebSocketStreamMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */; };
 		5C0B177C1E7C885400E9123C /* WebSocketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C0B177A1E7C884F00E9123C /* WebSocketStream.cpp */; };
@@ -3671,7 +3670,6 @@
 		57608299202BDAE200116678 /* WebCredentialsMessengerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCredentialsMessengerProxy.messages.in; sourceTree = "<group>"; };
 		5760829A202BEE5A00116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCredentialsMessengerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		5760829B202BEE5A00116678 /* WebCredentialsMessengerProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCredentialsMessengerProxyMessages.h; sourceTree = "<group>"; };
-		57B90AAC203637F4000E61FA /* WebCredentialsMessengerProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCredentialsMessengerProxyCocoa.mm; sourceTree = "<group>"; };
 		5C0B17741E7C879C00E9123C /* NetworkSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSocketStreamMessageReceiver.cpp; sourceTree = "<group>"; };
 		5C0B17751E7C879C00E9123C /* NetworkSocketStreamMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSocketStreamMessages.h; sourceTree = "<group>"; };
 		5C0B17761E7C879C00E9123C /* WebSocketStreamMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketStreamMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -6756,20 +6754,11 @@
 		57608294202BD84900116678 /* CredentialManagement */ = {
 			isa = PBXGroup;
 			children = (
-				57B90AAB20363758000E61FA /* cocoa */,
 				57608296202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp */,
 				57608295202BD8BA00116678 /* WebCredentialsMessengerProxy.h */,
 				57608299202BDAE200116678 /* WebCredentialsMessengerProxy.messages.in */,
 			);
 			path = CredentialManagement;
-			sourceTree = "<group>";
-		};
-		57B90AAB20363758000E61FA /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				57B90AAC203637F4000E61FA /* WebCredentialsMessengerProxyCocoa.mm */,
-			);
-			path = cocoa;
 			sourceTree = "<group>";
 		};
 		5C1426F11C23F81700D41183 /* Downloads */ = {
@@ -10932,7 +10921,6 @@
 				5760828E2029895E00116678 /* WebCredentialsMessenger.cpp in Sources */,
 				5760829C202D2C3C00116678 /* WebCredentialsMessengerMessageReceiver.cpp in Sources */,
 				57608298202BD8BA00116678 /* WebCredentialsMessengerProxy.cpp in Sources */,
-				57B90AAD203637F4000E61FA /* WebCredentialsMessengerProxyCocoa.mm in Sources */,
 				5760829E202D2C4300116678 /* WebCredentialsMessengerProxyMessageReceiver.cpp in Sources */,
 				1AA83F6C1A5B63FF00026EC6 /* WebDatabaseProvider.cpp in Sources */,
 				CD19A26D1A13E82A008D650E /* WebDiagnosticLoggingClient.cpp in Sources */,

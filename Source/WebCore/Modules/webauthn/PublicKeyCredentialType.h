@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 enum class PublicKeyCredentialType {
@@ -34,5 +36,16 @@ enum class PublicKeyCredentialType {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PublicKeyCredentialType> {
+    using values = EnumValues<
+        WebCore::PublicKeyCredentialType,
+        WebCore::PublicKeyCredentialType::PublicKey
+    >;
+};
+
+}
 
 #endif // ENABLE(WEB_AUTHN)

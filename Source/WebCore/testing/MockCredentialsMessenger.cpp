@@ -28,7 +28,6 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "Exception.h"
 #include "Internals.h"
 #include <wtf/Vector.h>
 
@@ -46,9 +45,10 @@ MockCredentialsMessenger::~MockCredentialsMessenger()
         exceptionReply(messageId, ExceptionData { NotAllowedError, ASCIILiteral("Operation timed out.") });
 }
 
-void MockCredentialsMessenger::setAttestationObject(const BufferSource& attestationObject)
+void MockCredentialsMessenger::setCreationReturnBundle(const BufferSource& credentialId, const BufferSource& attestationObject)
 {
-    ASSERT(m_attestationObject.isEmpty());
+    ASSERT(m_credentialId.isEmpty() && m_attestationObject.isEmpty());
+    m_credentialId.append(credentialId.data(), credentialId.length());
     m_attestationObject.append(attestationObject.data(), attestationObject.length());
 }
 
@@ -84,8 +84,10 @@ void MockCredentialsMessenger::makeCredential(const Vector<uint8_t>&, const Publ
         exceptionReply(messageId, ExceptionData { NotAllowedError, ASCIILiteral("User cancelled.") });
         return;
     }
-    if (!m_attestationObject.isEmpty()) {
-        makeCredentialReply(messageId, m_attestationObject);
+    if (!m_credentialId.isEmpty()) {
+        ASSERT(!m_attestationObject.isEmpty());
+        makeCredentialReply(messageId, m_credentialId, m_attestationObject);
+        m_credentialId.clear();
         m_attestationObject.clear();
         return;
     }
@@ -127,10 +129,10 @@ void MockCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailable(Que
         isUserVerifyingPlatformAuthenticatorAvailableReply(messageId, false);
 }
 
-void MockCredentialsMessenger::makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& attestationObject)
+void MockCredentialsMessenger::makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject)
 {
     auto handler = takeCreationCompletionHandler(messageId);
-    handler(CreationReturnBundle(getIdFromAttestationObject(attestationObject).releaseNonNull(), ArrayBuffer::create(attestationObject.data(), attestationObject.size())));
+    handler(CreationReturnBundle(ArrayBuffer::create(credentialId.data(), credentialId.size()), ArrayBuffer::create(attestationObject.data(), attestationObject.size())));
 }
 
 void MockCredentialsMessenger::getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle)

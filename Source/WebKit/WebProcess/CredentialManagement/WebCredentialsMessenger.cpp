@@ -32,6 +32,7 @@
 #include "WebCredentialsMessengerProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/PublicKeyCredentialCreationOptions.h>
 
 namespace WebKit {
 
@@ -46,8 +47,10 @@ WebCredentialsMessenger::~WebCredentialsMessenger()
     WebProcess::singleton().removeMessageReceiver(*this);
 }
 
-void WebCredentialsMessenger::makeCredential(const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::CreationCompletionHandler&&)
+void WebCredentialsMessenger::makeCredential(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions& options, WebCore::CreationCompletionHandler&& handler)
 {
+    auto messageId = addCreationCompletionHandler(WTFMove(handler));
+    m_webPage.send(Messages::WebCredentialsMessengerProxy::MakeCredential(messageId, hash, options));
 }
 
 void WebCredentialsMessenger::getAssertion(const Vector<uint8_t>&, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::RequestCompletionHandler&&)
@@ -60,8 +63,10 @@ void WebCredentialsMessenger::isUserVerifyingPlatformAuthenticatorAvailable(WebC
     m_webPage.send(Messages::WebCredentialsMessengerProxy::IsUserVerifyingPlatformAuthenticatorAvailable(messageId));
 }
 
-void WebCredentialsMessenger::makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&)
+void WebCredentialsMessenger::makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject)
 {
+    auto handler = takeCreationCompletionHandler(messageId);
+    handler(WebCore::CreationReturnBundle(ArrayBuffer::create(credentialId.data(), credentialId.size()), ArrayBuffer::create(attestationObject.data(), attestationObject.size())));
 }
 
 void WebCredentialsMessenger::getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle)

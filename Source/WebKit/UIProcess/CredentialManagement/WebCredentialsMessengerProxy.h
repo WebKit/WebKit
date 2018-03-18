@@ -28,12 +28,23 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "MessageReceiver.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class LocalAuthenticator;
+
+struct ExceptionData;
+struct PublicKeyCredentialCreationOptions;
+}
 
 namespace WebKit {
 
 class WebPageProxy;
 
 class WebCredentialsMessengerProxy : private IPC::MessageReceiver {
+    WTF_MAKE_NONCOPYABLE(WebCredentialsMessengerProxy);
 public:
     explicit WebCredentialsMessengerProxy(WebPageProxy&);
     ~WebCredentialsMessengerProxy();
@@ -43,19 +54,18 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void makeCredential(uint64_t messageId);
+    void makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&);
     void getAssertion(uint64_t messageId);
     void isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
 
     // Senders.
+    void exceptionReply(uint64_t messageId, const WebCore::ExceptionData&);
+    void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject);
     void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
 
-    // Platform specific procedures.
-    // FIXME(182768): Might change to some forms of delegates later on.
-    // FIXME(182769): Figure out a way to auto-test the followings.
-    void platformIsUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
-
     WebPageProxy& m_webPageProxy;
+    std::unique_ptr<WebCore::LocalAuthenticator> m_authenticator;
+    WeakPtrFactory<WebCredentialsMessengerProxy> m_weakFactory;
 };
 
 } // namespace WebKit

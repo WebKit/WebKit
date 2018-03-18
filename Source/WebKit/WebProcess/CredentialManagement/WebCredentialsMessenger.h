@@ -41,13 +41,13 @@ public:
 
 private:
     // WebCore::CredentialsMessenger
-    // sender
+    // Senders.
     void makeCredential(const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::CreationCompletionHandler&&) final;
     void getAssertion(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::RequestCompletionHandler&&) final;
     void isUserVerifyingPlatformAuthenticatorAvailable(WebCore::QueryCompletionHandler&&) final;
 
-    // receiver
-    void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>&) final;
+    // Receivers.
+    void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject) final;
     void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) final;
     void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool) final;
 

@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-    NoInterfaceObject,
-] interface MockCredentialsMessenger {
-    void setDidTimeOut();
-    void setDidUserCancel();
-    void setDidUserVerifyingPlatformAuthenticatorPresent();
-    void setCreationReturnBundle(BufferSource credentialId, BufferSource attestationObject);
-    void setAssertionReturnBundle(BufferSource credentialId, BufferSource authenticatorData, BufferSource signature, BufferSource userHandle);
-};
+#pragma once
+
+#import <LocalAuthentication/LocalAuthentication.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, LocalAuthentication)
+
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, LocalAuthentication, LAContext)
