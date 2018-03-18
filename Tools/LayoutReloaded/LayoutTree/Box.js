@@ -72,6 +72,16 @@ Layout.Box = class Box {
         return null;
     }
 
+    nextInFlowOrFloatSibling() {
+        let nextInFlowSibling = this.nextSibling();
+        while (nextInFlowSibling) {
+            if (nextInFlowSibling.isInFlow() || nextInFlowSibling.isFloatingPositioned())
+                return nextInFlowSibling;
+            nextInFlowSibling = nextInFlowSibling.nextSibling();
+        }
+        return null;
+    }
+
     previousSibling() {
         return this.m_previousSibling;
     }
@@ -248,6 +258,14 @@ Layout.Box = class Box {
         }
         ASSERT_NOT_REACHED();
         return null;
+    }
+
+    isDescendantOf(container) {
+        ASSERT(container);
+        let ascendant = this.parent();
+        while (ascendant && ascendant != container)
+            ascendant = ascendant.parent();
+        return !!ascendant;
     }
 
     borderBox() {

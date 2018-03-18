@@ -479,31 +479,6 @@ class Utils {
         return new LayoutRect(topLeft, box.rect().size());
     }
 
-    static isDescendantOf(layoutBox, container) {
-        ASSERT(container);
-        let ascendant = layoutBox.parent();
-        while (ascendant && ascendant != container)
-            ascendant = ascendant.parent();
-        return !!ascendant;
-    }
-
-    static collectOutOfFlowDescendants(containtBlock) {
-        let outOfFlowBoxes = new Array();
-        let descendants = new Array();
-        for (let child = containtBlock.firstChild(); child; child = child.nextSibling())
-            descendants.push(child);
-        while (descendants.length) {
-            let descendant = descendants.pop();
-            if (descendant.isOutOfFlowPositioned() && descendant.containingBlock() == containtBlock)
-                outOfFlowBoxes.push(descendant);
-            if (!descendant.isContainer())
-                continue;
-            for (let child = descendant.lastChild(); child; child = child.previousSibling())
-                descendants.push(child);
-        }
-        return outOfFlowBoxes;
-    }
-
     static nextBreakingOpportunity(textBox, currentPosition)
     {
         return window.nextBreakingOpportunity(textBox.content(), currentPosition);

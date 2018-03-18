@@ -34,11 +34,11 @@ class BlockFormattingContext extends FormattingContext {
         // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
         // The vertical distance between two sibling boxes is determined by the 'margin' properties.
         // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
-        if (!this.rootContainer().firstChild())
-            return;
+
         // This is a post-order tree traversal layout.
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-        this._addToLayoutQueue(this.rootContainer().firstChild());
+        if (this.rootContainer().firstInFlowOrFloatChild())
+            this._addToLayoutQueue(this.rootContainer().firstInFlowOrFloatChild());
         // 1. Go all the way down to the leaf node
         // 2. Compute static position and width as we travers down
         // 3. As we climb back on the tree, compute height and finialize position
@@ -53,9 +53,9 @@ class BlockFormattingContext extends FormattingContext {
                     layoutContext.layoutFormattingContext(layoutBox.establishedFormattingContext());
                     break;
                 }
-                if (!layoutBox.isContainer() || !layoutBox.hasChild())
+                if (!layoutBox.isContainer() || !layoutBox.hasInFlowOrFloatChild())
                     break;
-                this._addToLayoutQueue(layoutBox.firstChild());
+                this._addToLayoutQueue(layoutBox.firstInFlowOrFloatChild());
             }
 
             // Climb back on the ancestors and compute height/final position.
@@ -65,18 +65,20 @@ class BlockFormattingContext extends FormattingContext {
                 this.computeHeight(layoutBox);
                 // Adjust position now that we have all the previous floats placed in this context -if needed.
                 this.floatingContext().computePosition(layoutBox);
-                // Move positioned children to their final position.
-                this._placePositionedDescendants(layoutBox);
+                // Move in-flow positioned children to their final position.
+                this._placeInFlowPositionedChildren(layoutBox);
                 // We are done with laying out this box.
                 this._removeFromLayoutQueue(layoutBox);
-                if (layoutBox.nextSibling()) {
-                    this._addToLayoutQueue(layoutBox.nextSibling());
+                if (layoutBox.nextInFlowOrFloatSibling()) {
+                    this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
                     break;
                 }
             }
         }
-        // And finally place the in- and out-of-flow descendants.
-        this._placePositionedDescendants(this.rootContainer());
+        // Place the inflow positioned children.
+        this._placeInFlowPositionedChildren(this.rootContainer());
+        // And take care of out-of-flow boxes as the final step.
+        this._layoutOutOfFlowDescendants(layoutContext);
    }
 
     computeWidth(layoutBox) {
@@ -116,17 +118,12 @@ class BlockFormattingContext extends FormattingContext {
         layoutBox.setTopLeft(position);
     }
 
-    _placePositionedDescendants(layoutBox) {
-        if (!layoutBox.isContainer())
+    _placeInFlowPositionedChildren(container) {
+        if (!container.isContainer())
             return;
         // If this layoutBox also establishes a formatting context, then positioning already has happend at the formatting context.
-        if (layoutBox.establishesFormattingContext() && layoutBox != this.rootContainer())
+        if (container.establishesFormattingContext() && container != this.rootContainer())
             return;
-        this._placeInFlowPositionedChildren(layoutBox);
-        this._placeOutOfFlowDescendants(layoutBox);
-    }
-
-    _placeInFlowPositionedChildren(container) {
         ASSERT(container.isContainer());
         for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
             if (!inFlowChild.isInFlowPositioned())
@@ -135,11 +132,19 @@ class BlockFormattingContext extends FormattingContext {
         }
     }
 
-    _placeOutOfFlowDescendants(container) {
-        ASSERT(container.isContainer());
-        let outOfFlowDescendants = Utils.collectOutOfFlowDescendants(container);
-        for (let outOfFlowBox of outOfFlowDescendants)
+    _layoutOutOfFlowDescendants(layoutContext) {
+        // This lays out all the out-of-flow boxes that belong to this formatting context even if
+        // the root container is not the containing block.
+        let outOfFlowDescendants = this._outOfFlowDescendants();
+        for (let outOfFlowBox of outOfFlowDescendants) {
+            this._addToLayoutQueue(outOfFlowBox);
+            this.computeWidth(outOfFlowBox);
+            this._computeStaticPosition(outOfFlowBox);
+            layoutContext.layoutFormattingContext(outOfFlowBox.establishedFormattingContext());
+            this.computeHeight(outOfFlowBox);
             this._computeOutOfFlowPosition(outOfFlowBox);
+            this._removeFromLayoutQueue(outOfFlowBox);
+        }
     }
 
     _computeOutOfFlowWidth(layoutBox) {

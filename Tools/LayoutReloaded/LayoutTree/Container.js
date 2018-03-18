@@ -55,6 +55,15 @@ Layout.Container = class Container extends Layout.Box {
         return firstChild.nextInFlowSibling();
     }
 
+    firstInFlowOrFloatChild() {
+        if (!this.hasChild())
+            return null;
+        let firstChild = this.firstChild();
+        if (firstChild.isInFlow() || firstChild.isFloatingPositioned())
+            return firstChild;
+        return firstChild.nextInFlowOrFloatSibling();
+    }
+
     lastChild() {
         return this.m_lastChild;
     }
@@ -75,4 +84,29 @@ Layout.Container = class Container extends Layout.Box {
     hasInFlowChild() {
         return !!this.firstInFlowChild();
     }
+
+    hasInFlowOrFloatChild() {
+        return !!this.firstInFlowOrFloatChild();
+    }
+
+    outOfFlowDescendants() {
+        if (!this.isPositioned())
+            return new Array();
+        let outOfFlowBoxes = new Array();
+        let descendants = new Array();
+        for (let child = this.firstChild(); child; child = child.nextSibling())
+            descendants.push(child);
+        while (descendants.length) {
+            let descendant = descendants.pop();
+            if (descendant.isOutOfFlowPositioned() && descendant.containingBlock() == this)
+                outOfFlowBoxes.push(descendant);
+            if (!descendant.isContainer())
+                continue;
+            for (let child = descendant.lastChild(); child; child = child.previousSibling())
+                descendants.push(child);
+        }
+        return outOfFlowBoxes;
+    }
+
+
 }

@@ -96,7 +96,7 @@ class FormattingContext {
     _toAbsolutePosition(layoutBox) {
         // We should never need to go beyond the root container.
         let containingBlock = layoutBox.containingBlock();
-        ASSERT(containingBlock == this.rootContainer() || Utils.isDescendantOf(containingBlock, this.rootContainer()));
+        ASSERT(containingBlock == this.rootContainer() || containingBlock.isDescendantOf(this.rootContainer()));
         let topLeft = layoutBox.rect().topLeft();
         let ascendant = layoutBox.parent();
         while (ascendant && ascendant != containingBlock) {
@@ -147,4 +147,39 @@ class FormattingContext {
         ASSERT(this.m_displayToLayout.has(displayBox));
         return this.m_displayToLayout.get(layout);
     }
+
+    _outOfFlowDescendants() {
+        // FIXME: This is highly inefficient but will do for now.
+        // 1. Collect all the out-of-flow descendants first.
+        // 2. Check if they are all belong to this formatting context.
+        //    - either the root container is the containing block.
+        //    - or a descendant of the root container is the containing block
+        //      and there is not other formatting context inbetween.
+        let allOutOfFlowBoxes = new Array();
+        let descendants = new Array();
+        for (let child = this.rootContainer().firstChild(); child; child = child.nextSibling())
+            descendants.push(child);
+        while (descendants.length) {
+            let descendant = descendants.pop();
+            if (descendant.isOutOfFlowPositioned())
+                allOutOfFlowBoxes.push(descendant);
+            if (!descendant.isContainer())
+                continue;
+            for (let child = descendant.lastChild(); child; child = child.previousSibling())
+                descendants.push(child);
+        }
+        let outOfFlowBoxes = new Array();
+        for (let outOfFlowBox of allOutOfFlowBoxes) {
+            let containingBlock = outOfFlowBox.containingBlock();
+            // Collect the out-of-flow descendant that belong to this formatting context.
+            if (containingBlock == this.rootContainer())
+                outOfFlowBoxes.push(outOfFlowBox);
+            else if (containingBlock.isDescendantOf(this.rootContainer())) {
+                if (!containingBlock.establishedFormattingContext() || !containingBlock.isPositioned())
+                    outOfFlowBoxes.push(outOfFlowBox);
+            }
+        }
+        return outOfFlowBoxes;
+    }
+
 }

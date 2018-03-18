@@ -1,3 +1,34 @@
+2018-03-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Collect out-of-flow positioned boxes for a given formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=183730
+
+        Reviewed by Antti Koivisto.
+
+        Collect and layout out-of-flow positioned boxes as the final step of the formatting context layout.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype.layout):
+        (BlockFormattingContext.prototype._placeInFlowPositionedChildren):
+        (BlockFormattingContext.prototype._layoutOutOfFlowDescendants):
+        (BlockFormattingContext.prototype._placePositionedDescendants): Deleted.
+        (BlockFormattingContext.prototype._placeOutOfFlowDescendants): Deleted.
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype._toAbsolutePosition):
+        (FormattingContext.prototype._outOfFlowDescendants):
+        (FormattingContext):
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box.prototype.nextInFlowOrFloatSibling):
+        (Layout.Box.prototype.isDescendantOf):
+        * LayoutReloaded/LayoutTree/Container.js:
+        (Layout.Container.prototype.firstInFlowOrFloatChild):
+        (Layout.Container.prototype.hasInFlowOrFloatChild):
+        (Layout.Container.prototype.outOfFlowDescendants):
+        (Layout.Container):
+        * LayoutReloaded/Utils.js:
+        (Utils.isDescendantOf): Deleted.
+        (Utils.collectOutOfFlowDescendants): Deleted.
+
 2018-03-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorMakeCredential
