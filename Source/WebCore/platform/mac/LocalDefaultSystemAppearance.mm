@@ -34,10 +34,8 @@ namespace WebCore {
 LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useSystemAppearance)
     : m_savedSystemAppearance()
 {
-    if (!useSystemAppearance) {
-        m_savedSystemAppearance = [NSAppearance currentAppearance];
-        [NSAppearance setCurrentAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
-    }
+    m_savedSystemAppearance = [NSAppearance currentAppearance];
+    [NSAppearance setCurrentAppearance:useSystemAppearance ? [NSApp effectiveAppearance] : [NSAppearance appearanceNamed:NSAppearanceNameAqua]];
 }
 
 LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance()
