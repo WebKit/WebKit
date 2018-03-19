@@ -637,7 +637,7 @@ String AXAutoFillStrongConfirmationPasswordLabel()
 
 String autoFillStrongPasswordLabel()
 {
-    return WEB_UI_STRING("strong password", "Label for strong password.");
+    return WEB_UI_STRING("Strong Password", "Label for strong password.");
 }
 
 String missingPluginText()

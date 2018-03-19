@@ -1202,7 +1202,7 @@
 "strong confirmation password auto fill" = "strong confirmation password auto fill";
 
 /* Label for strong password. */
-"strong password" = "strong password";
+"Strong Password" = "Strong Password";
 
 /* Label for the strong password auto fill button inside a text field. */
 "strong password auto fill" = "strong password auto fill";

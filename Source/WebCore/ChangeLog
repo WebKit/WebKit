@@ -1,3 +1,11 @@
+2018-03-19  Daniel Bates  <dabates@apple.com>
+
+        Fix case of Strong Password localized string
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::autoFillStrongPasswordLabel):
+
 2018-03-19  Chris Dumez  <cdumez@apple.com>
 
         WebKit.WebsitePoliciesAutoplayQuirks API test times out with async policy delegates
