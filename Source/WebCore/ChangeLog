@@ -1,3 +1,19 @@
+2018-03-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r229689.
+        https://bugs.webkit.org/show_bug.cgi?id=183735
+
+        Causes fast/loader/inner-iframe-loads-data-url-into-parent-on-
+        unload-crash.html to fail with async delegates (Requested by
+        cdumez_ on #webkit).
+
+        Reverted changeset:
+
+        "WebKit.WebsitePoliciesAutoplayQuirks API test times out with
+        async policy delegates"
+        https://bugs.webkit.org/show_bug.cgi?id=183702
+        https://trac.webkit.org/changeset/229689
+
 2018-03-17  Tim Horton  <timothy_horton@apple.com>
 
         Correct redefined fnfErr type
