@@ -1007,39 +1007,39 @@ public:
 #endif
 
     // These methods add call instructions, optionally setting results, and optionally rolling back the call frame on an exception.
-    JITCompiler::Call appendCall(const FunctionPtr& function)
+    JITCompiler::Call appendCall(const FunctionPtr function)
     {
         prepareForExternalCall();
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
         return m_jit.appendCall(function);
     }
-    JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr& function)
+    JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr function)
     {
         JITCompiler::Call call = appendCall(function);
         m_jit.exceptionCheckWithCallFrameRollback();
         return call;
     }
-    JITCompiler::Call appendCallWithCallFrameRollbackOnExceptionSetResult(const FunctionPtr& function, GPRReg result)
+    JITCompiler::Call appendCallWithCallFrameRollbackOnExceptionSetResult(const FunctionPtr function, GPRReg result)
     {
         JITCompiler::Call call = appendCallWithCallFrameRollbackOnException(function);
         if ((result != InvalidGPRReg) && (result != GPRInfo::returnValueGPR))
             m_jit.move(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, GPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result)
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidGPRReg)
             m_jit.move(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, GPRReg result1, GPRReg result2)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result1, GPRReg result2)
     {
         JITCompiler::Call call = appendCall(function);
         m_jit.setupResults(result1, result2);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, JSValueRegs resultRegs)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, JSValueRegs resultRegs)
     {
 #if USE(JSVALUE64)
         return appendCallSetResult(function, resultRegs.gpr());
@@ -1048,7 +1048,7 @@ public:
 #endif
     }
 #if CPU(X86)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg) {
@@ -1058,7 +1058,7 @@ public:
         return call;
     }
 #elif CPU(ARM) && !CPU(ARM_HARDFP)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg)
@@ -1066,7 +1066,7 @@ public:
         return call;
     }
 #else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
     {
         JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg)

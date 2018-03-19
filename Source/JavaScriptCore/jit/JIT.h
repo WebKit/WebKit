@@ -267,7 +267,7 @@ namespace JSC {
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         // Add a call out from JIT code, without an exception check.
-        Call appendCall(const FunctionPtr& function)
+        Call appendCall(const FunctionPtr function)
         {
             Call functionCall = call(NoPtrTag);
             m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.value()));
@@ -275,7 +275,7 @@ namespace JSC {
         }
 
 #if OS(WINDOWS) && CPU(X86_64)
-        Call appendCallWithSlowPathReturnType(const FunctionPtr& function)
+        Call appendCallWithSlowPathReturnType(const FunctionPtr function)
         {
             Call functionCall = callWithSlowPathReturnType();
             m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.value()));
@@ -704,13 +704,13 @@ namespace JSC {
             linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
         }
 
-        MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
+        MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr);
 #if OS(WINDOWS) && CPU(X86_64)
-        MacroAssembler::Call appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr&);
+        MacroAssembler::Call appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr);
 #endif
-        MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr&);
-        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
-        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr&, int);
+        MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr);
+        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr, int);
+        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr, int);
         
         template<typename OperationType, typename... Args>
         std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>

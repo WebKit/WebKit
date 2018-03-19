@@ -149,7 +149,7 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const FunctionPtr& function)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const FunctionPtr function)
 {
     updateTopCallFrame();
     MacroAssembler::Call call = appendCall(function);
@@ -158,7 +158,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const Funct
 }
 
 #if OS(WINDOWS) && CPU(X86_64)
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr& function)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr function)
 {
     updateTopCallFrame();
     MacroAssembler::Call call = appendCallWithSlowPathReturnType(function);
@@ -167,7 +167,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathR
 }
 #endif
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr& function)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr function)
 {
     updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
     MacroAssembler::Call call = appendCall(function);
@@ -175,7 +175,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnExcepti
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr& function, int dst)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr function, int dst)
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
 #if USE(JSVALUE64)
@@ -186,7 +186,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr& function, int dst)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr function, int dst)
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
     emitValueProfilingSite();
