@@ -59,6 +59,18 @@ Display.Box = class Box {
         return this.rect().bottomRight();
     }
 
+    size() {
+        return this.rect().size();
+    }
+
+    height() {
+        return this.rect().height();
+    }
+
+    width() {
+        return this.rect().width();
+    }
+
     setTopLeft(topLeft) {
         this.m_rect.setTopLeft(topLeft);
     }

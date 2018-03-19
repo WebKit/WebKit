@@ -118,18 +118,6 @@ Layout.Box = class Box {
         return this.m_displayBox;
     }
 
-    rect() {
-        return this.displayBox().rect();
-    }
-
-    topLeft() {
-        return this.rect().topLeft();
-    }
-
-    bottomRight() {
-        return this.rect().bottomRight();
-    }
-
     isContainer() {
         return false;
     }

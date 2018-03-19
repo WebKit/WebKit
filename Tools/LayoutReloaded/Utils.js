@@ -468,17 +468,6 @@ class Utils {
         return window.getComputedStyle(node).float == "left";
     }
 
-    static mapToContainer(box, container) {
-        let topLeft = box.rect().topLeft();
-        let ascendant = box.parent();
-        while (ascendant && ascendant != container) {
-            topLeft.moveBy(ascendant.rect().topLeft());
-            ascendant = ascendant.parent();
-        }
-        ASSERT(ascendant);
-        return new LayoutRect(topLeft, box.rect().size());
-    }
-
     static nextBreakingOpportunity(textBox, currentPosition)
     {
         return window.nextBreakingOpportunity(textBox.content(), currentPosition);
@@ -509,7 +498,8 @@ class Utils {
         }
         if (box.isAnonymous())
             return "";
-        let boxRect = box.rect();
+        let displayBox = box.displayBox();
+        let boxRect = displayBox.rect();
         return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + boxRect.left() + "," + boxRect.top() + ") size " + boxRect.width() + "x" + boxRect.height() + "\n";
     }
 

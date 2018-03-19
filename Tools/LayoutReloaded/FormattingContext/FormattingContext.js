@@ -66,7 +66,7 @@ class FormattingContext {
     }
 
     absoluteMarginBox(layoutBox) {
-        let absoluteContentBox = Utils.mapToContainer(layoutBox, this.rootContainer());
+        let absoluteContentBox = this._toRootAbsolutePosition(layoutBox);
         absoluteContentBox.moveBy(new LayoutSize(-this.marginLeft(layoutBox), -this.marginTop(layoutBox)));
         absoluteContentBox.growBy(new LayoutSize(this.marginLeft(layoutBox) + this.marginRight(layoutBox), this.marginTop(layoutBox) + this.marginBottom(layoutBox)));
         return absoluteContentBox;
@@ -74,21 +74,21 @@ class FormattingContext {
 
     absoluteBorderBox(layoutBox) {
         let borderBox = layoutBox.borderBox();
-        let absoluteRect = new LayoutRect(Utils.mapToContainer(layoutBox, this.rootContainer()).topLeft(), borderBox.size());
+        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox).topLeft(), borderBox.size());
         absoluteRect.moveBy(borderBox.topLeft());
         return absoluteRect;
     }
 
     absolutePaddingBox(layoutBox) {
         let paddingBox = layoutBox.paddingBox();
-        let absoluteRect = new LayoutRect(Utils.mapToContainer(layoutBox, this.rootContainer()).topLeft(), paddingBox.size());
+        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox).topLeft(), paddingBox.size());
         absoluteRect.moveBy(paddingBox.topLeft());
         return absoluteRect;
     }
 
     absoluteContentBox(layoutBox) {
         let contentBox = layoutBox.contentBox();
-        let absoluteRect = new LayoutRect(Utils.mapToContainer(layoutBox, this.rootContainer()).topLeft(), contentBox.size());
+        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox).topLeft(), contentBox.size());
         absoluteRect.moveBy(contentBox.topLeft());
         return absoluteRect;
     }
@@ -97,14 +97,27 @@ class FormattingContext {
         // We should never need to go beyond the root container.
         let containingBlock = layoutBox.containingBlock();
         ASSERT(containingBlock == this.rootContainer() || containingBlock.isDescendantOf(this.rootContainer()));
-        let topLeft = layoutBox.rect().topLeft();
+        let topLeft = this.toDisplayBox(layoutBox).topLeft();
         let ascendant = layoutBox.parent();
         while (ascendant && ascendant != containingBlock) {
-            topLeft.moveBy(ascendant.rect().topLeft());
+            topLeft.moveBy(this.toDisplayBox(ascendant).topLeft());
             ascendant = ascendant.parent();
         }
-        return new LayoutRect(topLeft, layoutBox.rect().size());
+        return new LayoutRect(topLeft, this.toDisplayBox(layoutBox).size());
     }
+
+    _toRootAbsolutePosition(layoutBox) {
+        let displayBox = this.toDisplayBox(layoutBox);
+        let topLeft = displayBox.topLeft();
+        let ascendant = layoutBox.parent();
+        while (ascendant && ascendant != this.rootContainer()) {
+            topLeft.moveBy(this.toDisplayBox(ascendant).topLeft());
+            ascendant = ascendant.parent();
+        }
+        ASSERT(ascendant);
+        return new LayoutRect(topLeft, displayBox.size());
+    }
+
 
     _descendantNeedsLayout() {
         return this.m_layoutStack.length;

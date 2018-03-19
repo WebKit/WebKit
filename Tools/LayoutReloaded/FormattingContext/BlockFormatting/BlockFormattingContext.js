@@ -112,7 +112,9 @@ class BlockFormattingContext extends FormattingContext {
         let parent = layoutBox.parent();
         // Start from the top of the container's content box.
         let previousInFlowSibling = layoutBox.previousInFlowSibling();
-        let contentBottom = previousInFlowSibling ? previousInFlowSibling.bottomRight().top() + this.marginBottom(previousInFlowSibling) : parent.contentBox().top();
+        let contentBottom = parent.contentBox().top()
+        if (previousInFlowSibling)
+            contentBottom = this.toDisplayBox(previousInFlowSibling).bottomRight().top() + this.marginBottom(previousInFlowSibling);
         let position = new LayoutPoint(contentBottom, parent.contentBox().left());
         position.moveBy(new LayoutSize(this.marginLeft(layoutBox), this.marginTop(layoutBox)));
         this.toDisplayBox(layoutBox).setTopLeft(position);
@@ -275,8 +277,10 @@ class BlockFormattingContext extends FormattingContext {
     }
 
     _adjustBottomWithFIXME(layoutBox) {
+        // FIXME: This function is a big FIXME.
         let lastInFlowChild = layoutBox.lastInFlowChild();
-        let bottom = lastInFlowChild.rect().bottom() + this.marginBottom(lastInFlowChild);
+        let lastInFlowDisplayBox = lastInFlowChild.displayBox();
+        let bottom = lastInFlowDisplayBox.bottom() + this.marginBottom(lastInFlowChild);
         // FIXME: margin for body
         if (lastInFlowChild.name() == "RenderBody" && Utils.isHeightAuto(lastInFlowChild) && !lastInFlowChild.contentBox().height())
             bottom -= this.marginBottom(lastInFlowChild);
@@ -291,7 +295,8 @@ class BlockFormattingContext extends FormattingContext {
 
     _computeInFlowPositionedPosition(layoutBox) {
         // Start with the original, static position.
-        let relativePosition = layoutBox.topLeft();
+        let displayBox = this.toDisplayBox(layoutBox);
+        let relativePosition = displayBox.topLeft();
         // Top/bottom
         if (!Utils.isTopAuto(layoutBox))
             relativePosition.shiftTop(Utils.top(layoutBox));
@@ -302,10 +307,11 @@ class BlockFormattingContext extends FormattingContext {
             relativePosition.shiftLeft(Utils.left(layoutBox));
         else if (!Utils.isRightAuto(layoutBox))
             relativePosition.shiftLeft(-Utils.right(layoutBox));
-        this.toDisplayBox(layoutBox).setTopLeft(relativePosition);
+        displayBox.setTopLeft(relativePosition);
     }
 
     _computeOutOfFlowPosition(layoutBox) {
+        let displayBox = this.toDisplayBox(layoutBox);
         let containerSize = layoutBox.containingBlock().contentBox().size();
         // Top/bottom
         let top = Number.NaN;
@@ -315,7 +321,7 @@ class BlockFormattingContext extends FormattingContext {
         } else if (!Utils.isTopAuto(layoutBox))
             top = Utils.top(layoutBox) + this.marginTop(layoutBox);
         else if (!Utils.isBottomAuto(layoutBox))
-            top = containerSize.height() - Utils.bottom(layoutBox) - layoutBox.rect().height() - this.marginBottom(layoutBox);
+            top = containerSize.height() - Utils.bottom(layoutBox) - displayBox.height() - this.marginBottom(layoutBox);
         else
             ASSERT_NOT_REACHED();
         // Left/right
@@ -326,10 +332,10 @@ class BlockFormattingContext extends FormattingContext {
         } else if (!Utils.isLeftAuto(layoutBox))
             left = Utils.left(layoutBox) + this.marginLeft(layoutBox);
         else if (!Utils.isRightAuto(layoutBox))
-            left = containerSize.width() - Utils.right(layoutBox) - layoutBox.rect().width() - this.marginRight(layoutBox);
+            left = containerSize.width() - Utils.right(layoutBox) - displayBox.width() - this.marginRight(layoutBox);
         else
             ASSERT_NOT_REACHED();
-        this.toDisplayBox(layoutBox).setTopLeft(new LayoutPoint(top, left));
+        displayBox.setTopLeft(new LayoutPoint(top, left));
     }
 
     _shrinkToFitWidth(layoutBox) {

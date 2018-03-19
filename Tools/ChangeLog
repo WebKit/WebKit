@@ -1,5 +1,43 @@
 2018-03-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Remove left/right width/height getters from Layout.Box
+        https://bugs.webkit.org/show_bug.cgi?id=183734
+
+        Reviewed by Antti Koivisto.
+
+        ...and use Display.Box instead.
+
+        * LayoutReloaded/DisplayTree/Box.js:
+        (Display.Box.prototype.bottomRight):
+        (Display.Box.prototype.size):
+        (Display.Box.prototype.height):
+        (Display.Box.prototype.width):
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeStaticPosition):
+        (BlockFormattingContext.prototype._adjustBottomWithFIXME):
+        (BlockFormattingContext.prototype._computeInFlowPositionedPosition):
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype._positionForClear):
+        (FloatingContext.prototype._computePositionToAvoidIntrudingFloats):
+        (FloatingContext.prototype._adjustedFloatingPosition):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype.absoluteMarginBox):
+        (FormattingContext.prototype.absoluteBorderBox):
+        (FormattingContext.prototype.absolutePaddingBox):
+        (FormattingContext.prototype.absoluteContentBox):
+        (FormattingContext.prototype._toAbsolutePosition):
+        (FormattingContext.prototype._toRootAbsolutePosition):
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box.prototype.rect): Deleted.
+        (Layout.Box.prototype.topLeft): Deleted.
+        (Layout.Box.prototype.bottomRight): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils._dumpBox):
+        (Utils.mapToContainer): Deleted.
+
+2018-03-18  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Remove left/right width/height setters from Layout.Box
         https://bugs.webkit.org/show_bug.cgi?id=183731
 
