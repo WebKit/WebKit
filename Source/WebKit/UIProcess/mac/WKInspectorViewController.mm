@@ -37,8 +37,8 @@
 #import "WKPreferencesPrivate.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUIDelegatePrivate.h"
-#import "WKWebView.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WKWebViewPrivate.h"
 #import "WeakObjCPtr.h"
 #import "WebInspectorProxy.h"
 #import "WebInspectorUtilities.h"
@@ -93,6 +93,7 @@ using namespace WebKit;
         [_webView setNavigationDelegate:self];
         [_webView setInspectorWKWebViewDelegate:self];
         [_webView _setAutomaticallyAdjustsContentInsets:NO];
+        [_webView _setUseSystemAppearance:YES];
         [_webView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     }
 

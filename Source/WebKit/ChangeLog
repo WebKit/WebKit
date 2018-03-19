@@ -1,3 +1,15 @@
+2018-03-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: clean up WKWebView configuration code
+        https://bugs.webkit.org/show_bug.cgi?id=183747
+        <rdar://problem/38629343>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webView]): Always use system
+        appearance for Inspector's web content.
+
 2018-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         [Extra zoom mode] Require fullscreen for video playback
