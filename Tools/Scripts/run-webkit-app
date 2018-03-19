@@ -48,4 +48,5 @@ my $appPath = shift(@ARGV);
 if (isIOSWebKit()) {
     exit exitStatus(runIOSWebKitApp($appPath));
 }
-exit exitStatus(runMacWebKitApp($appPath, USE_OPEN_COMMAND));
+my $isExecutable = -f $appPath && -x $appPath;
+exit exitStatus(runMacWebKitApp($appPath, $isExecutable ? DO_NOT_USE_OPEN_COMMAND : USE_OPEN_COMMAND));

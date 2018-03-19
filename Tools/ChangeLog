@@ -1,5 +1,22 @@
 2018-03-19  Daniel Bates  <dabates@apple.com>
 
+        Make run-webkit-app work for non-GUI apps
+        https://bugs.webkit.org/show_bug.cgi?id=183701
+
+        Reviewed by Lucas Forschler.
+
+        Launch the app directly if it is an executable file. Otherwise, assume it is an app bundle
+        and launch it using open(1) as we currently do.
+
+        Note that open(1) is meant for launching GUI apps. Standard output and standard error are
+        not sent to the tty when using open(1) to launch a non-GUI app.
+
+        * Scripts/run-webkit-app: We make the assumption that 
+        * Scripts/webkitdirs.pm:
+            - Define and export constant DO_NOT_USE_OPEN_COMMAND.
+
+2018-03-19  Daniel Bates  <dabates@apple.com>
+
         run-webkit-app -g does not work
         https://bugs.webkit.org/show_bug.cgi?id=183699
 
