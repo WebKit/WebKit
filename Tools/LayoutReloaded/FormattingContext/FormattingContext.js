@@ -66,7 +66,8 @@ class FormattingContext {
     }
 
     absoluteMarginBox(layoutBox) {
-        let absoluteContentBox = this._toRootAbsolutePosition(layoutBox);
+        let displayBox = this.toDisplayBox(layoutBox);
+        let absoluteContentBox = new LayoutRect(this._toRootAbsolutePosition(layoutBox), displayBox.size());
         absoluteContentBox.moveBy(new LayoutSize(-this.marginLeft(layoutBox), -this.marginTop(layoutBox)));
         absoluteContentBox.growBy(new LayoutSize(this.marginLeft(layoutBox) + this.marginRight(layoutBox), this.marginTop(layoutBox) + this.marginBottom(layoutBox)));
         return absoluteContentBox;
@@ -74,50 +75,41 @@ class FormattingContext {
 
     absoluteBorderBox(layoutBox) {
         let borderBox = layoutBox.borderBox();
-        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox).topLeft(), borderBox.size());
+        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), borderBox.size());
         absoluteRect.moveBy(borderBox.topLeft());
         return absoluteRect;
     }
 
     absolutePaddingBox(layoutBox) {
         let paddingBox = layoutBox.paddingBox();
-        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox).topLeft(), paddingBox.size());
+        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), paddingBox.size());
         absoluteRect.moveBy(paddingBox.topLeft());
         return absoluteRect;
     }
 
     absoluteContentBox(layoutBox) {
         let contentBox = layoutBox.contentBox();
-        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox).topLeft(), contentBox.size());
+        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), contentBox.size());
         absoluteRect.moveBy(contentBox.topLeft());
         return absoluteRect;
     }
 
-    _toAbsolutePosition(layoutBox) {
+    _toAbsolutePosition(position, layoutBox, container) {
         // We should never need to go beyond the root container.
-        let containingBlock = layoutBox.containingBlock();
-        ASSERT(containingBlock == this.rootContainer() || containingBlock.isDescendantOf(this.rootContainer()));
-        let topLeft = this.toDisplayBox(layoutBox).topLeft();
-        let ascendant = layoutBox.parent();
-        while (ascendant && ascendant != containingBlock) {
-            topLeft.moveBy(this.toDisplayBox(ascendant).topLeft());
-            ascendant = ascendant.parent();
+        ASSERT(container == this.rootContainer() || container.isDescendantOf(this.rootContainer()));
+        let absolutePosition = position;
+        let ascendant = layoutBox.containingBlock();
+        while (ascendant && ascendant != container) {
+            ASSERT(ascendant.isDescendantOf(this.rootContainer()));
+            absolutePosition.moveBy(this.toDisplayBox(ascendant).topLeft());
+            ascendant = ascendant.containingBlock();
         }
-        return new LayoutRect(topLeft, this.toDisplayBox(layoutBox).size());
+        return absolutePosition;
     }
 
     _toRootAbsolutePosition(layoutBox) {
-        let displayBox = this.toDisplayBox(layoutBox);
-        let topLeft = displayBox.topLeft();
-        let ascendant = layoutBox.parent();
-        while (ascendant && ascendant != this.rootContainer()) {
-            topLeft.moveBy(this.toDisplayBox(ascendant).topLeft());
-            ascendant = ascendant.parent();
-        }
-        ASSERT(ascendant);
-        return new LayoutRect(topLeft, displayBox.size());
+        return this._toAbsolutePosition(this.toDisplayBox(layoutBox).topLeft(), layoutBox, this.rootContainer());
     }
-
 
     _descendantNeedsLayout() {
         return this.m_layoutStack.length;
@@ -151,7 +143,9 @@ class FormattingContext {
 
     toDisplayBox(layoutBox) {
         ASSERT(layoutBox);
-        ASSERT(this.m_layoutToDisplay.has(layoutBox));
+        ASSERT(this.m_layoutToDisplay.has(layoutBox) || layoutBox.establishedFormattingContext() == this);
+        if (layoutBox.establishedFormattingContext() == this)
+            return layoutBox.displayBox();
         return this.m_layoutToDisplay.get(layoutBox);
     }
 

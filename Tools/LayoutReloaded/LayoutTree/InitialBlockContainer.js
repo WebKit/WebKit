@@ -32,12 +32,4 @@ Layout.InitialBlockContainer = class InitialBlockContainer extends Layout.BlockC
         // ICB always creates a new (inital) block formatting context.
         return true;
     }
-
-    paddingBox() {
-        return this.borderBox();
-    }
-
-    contentBox() {
-        return this.borderBox();
-    }
 }

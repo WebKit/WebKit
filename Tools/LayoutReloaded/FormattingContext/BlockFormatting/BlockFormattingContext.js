@@ -109,13 +109,13 @@ class BlockFormattingContext extends FormattingContext {
         // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
         // The vertical distance between two sibling boxes is determined by the 'margin' properties.
         // Vertical margins between adjacent block-level boxes in a block formatting context collapse.
-        let parent = layoutBox.parent();
+        let containingBlockContentBox = this.toDisplayBox(layoutBox.containingBlock()).contentBox();
         // Start from the top of the container's content box.
         let previousInFlowSibling = layoutBox.previousInFlowSibling();
-        let contentBottom = parent.contentBox().top()
+        let contentBottom = containingBlockContentBox.top()
         if (previousInFlowSibling)
-            contentBottom = this.toDisplayBox(previousInFlowSibling).bottomRight().top() + this.marginBottom(previousInFlowSibling);
-        let position = new LayoutPoint(contentBottom, parent.contentBox().left());
+            contentBottom = this.toDisplayBox(previousInFlowSibling).bottom() + this.marginBottom(previousInFlowSibling);
+        let position = new LayoutPoint(contentBottom, containingBlockContentBox.left());
         position.moveBy(new LayoutSize(this.marginLeft(layoutBox), this.marginTop(layoutBox)));
         this.toDisplayBox(layoutBox).setTopLeft(position);
     }
@@ -141,7 +141,6 @@ class BlockFormattingContext extends FormattingContext {
         for (let outOfFlowBox of outOfFlowDescendants) {
             this._addToLayoutQueue(outOfFlowBox);
             this.computeWidth(outOfFlowBox);
-            this._computeStaticPosition(outOfFlowBox);
             layoutContext.layoutFormattingContext(outOfFlowBox.establishedFormattingContext());
             this.computeHeight(outOfFlowBox);
             this._computeOutOfFlowPosition(outOfFlowBox);
@@ -312,12 +311,21 @@ class BlockFormattingContext extends FormattingContext {
 
     _computeOutOfFlowPosition(layoutBox) {
         let displayBox = this.toDisplayBox(layoutBox);
+        let top = Number.NaN;
         let containerSize = layoutBox.containingBlock().contentBox().size();
         // Top/bottom
-        let top = Number.NaN;
         if (Utils.isTopAuto(layoutBox) && Utils.isBottomAuto(layoutBox)) {
-            // Convert static position to absolute.
-            top = this._toAbsolutePosition(layoutBox).top();
+            ASSERT(Utils.isStaticallyPositioned(layoutBox));
+            // Vertically statically positioned.
+            // FIXME: Figure out if it is actually valid that we use the parent box as the container (which is not even in this formatting context).
+            let parent = layoutBox.parent();
+            let parentDisplayBox = parent.displayBox();
+            let previousInFlowSibling = layoutBox.previousInFlowSibling();
+            let contentBottom = previousInFlowSibling ? previousInFlowSibling.displayBox().bottom() : parentDisplayBox.contentBox().top();
+            top = contentBottom + this.marginTop(layoutBox);
+            // Convert static position (in parent coordinate system) to absolute (in containing block coordindate system).
+            if (parent != layoutBox.containingBlock())
+                top += this._toAbsolutePosition(parentDisplayBox.topLeft(), parent, layoutBox.containingBlock()).top();
         } else if (!Utils.isTopAuto(layoutBox))
             top = Utils.top(layoutBox) + this.marginTop(layoutBox);
         else if (!Utils.isBottomAuto(layoutBox))
@@ -327,8 +335,15 @@ class BlockFormattingContext extends FormattingContext {
         // Left/right
         let left = Number.NaN;
         if (Utils.isLeftAuto(layoutBox) && Utils.isRightAuto(layoutBox)) {
-            // Convert static position to absolute.
-            left = this._toAbsolutePosition(layoutBox).left();
+            ASSERT(Utils.isStaticallyPositioned(layoutBox));
+            // Horizontally statically positioned.
+            // FIXME: Figure out if it is actually valid that we use the parent box as the container (which is not even in this formatting context).
+            let parent = layoutBox.parent();
+            let parentDisplayBox = parent.displayBox();
+            left = parentDisplayBox.contentBox().left() + this.marginLeft(layoutBox);
+            // Convert static position (in parent coordinate system) to absolute (in containing block coordindate system).
+            if (parent != layoutBox.containingBlock())
+                left += this._toAbsolutePosition(parentDisplayBox.rect(), parent, layoutBox.containingBlock()).left();
         } else if (!Utils.isLeftAuto(layoutBox))
             left = Utils.left(layoutBox) + this.marginLeft(layoutBox);
         else if (!Utils.isRightAuto(layoutBox))

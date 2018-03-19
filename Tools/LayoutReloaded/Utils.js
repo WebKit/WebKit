@@ -452,6 +452,13 @@ class Utils {
         return window.getComputedStyle(node).position == "fixed";
     }
 
+    static isStaticallyPositioned(box) {
+        if (box.isAnonymous())
+            return true;
+        let node = box.node();
+        return (Utils.propertyIsAuto("top", box) && Utils.propertyIsAuto("bottom", box)) || (Utils.propertyIsAuto("left", box) && Utils.propertyIsAuto("right", box));
+    }
+
     static isOverflowVisible(box) {
         return window.getComputedStyle(box.node()).overflow == "visible";
     }

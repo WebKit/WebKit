@@ -1,3 +1,35 @@
+2018-03-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Move statically positioned absolute box positioning to _computeOutOfFlowPosition
+        https://bugs.webkit.org/show_bug.cgi?id=183750
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/DisplayTree/Box.js:
+        (Display.Box.prototype.setTop):
+        (Display.Box.prototype.paddingBox):
+        (Display.Box.prototype.contentBox):
+        (Display.Box):
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeStaticPosition):
+        (BlockFormattingContext.prototype._layoutOutOfFlowDescendants):
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype.absoluteMarginBox):
+        (FormattingContext.prototype.absoluteBorderBox):
+        (FormattingContext.prototype.absolutePaddingBox):
+        (FormattingContext.prototype.absoluteContentBox):
+        (FormattingContext.prototype._toAbsolutePosition):
+        (FormattingContext.prototype._toRootAbsolutePosition):
+        (FormattingContext.prototype.toDisplayBox):
+        * LayoutReloaded/LayoutTree/InitialBlockContainer.js:
+        (Layout.InitialBlockContainer.prototype.establishesBlockFormattingContext):
+        (Layout.InitialBlockContainer):
+        (Layout.InitialBlockContainer.prototype.paddingBox): Deleted.
+        (Layout.InitialBlockContainer.prototype.contentBox): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils.isStaticallyPositioned):
+
 2018-03-19  Chris Dumez  <cdumez@apple.com>
 
         WebKit.WebsitePoliciesAutoplayQuirks API test times out with async policy delegates

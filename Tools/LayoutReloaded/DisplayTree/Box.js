@@ -75,6 +75,10 @@ Display.Box = class Box {
         this.m_rect.setTopLeft(topLeft);
     }
 
+    setTop(top) {
+        this.m_rect.setTop(top);
+    }
+
     setSize(size) {
         this.m_rect.setSize(size);
     }
@@ -92,6 +96,9 @@ Display.Box = class Box {
     }
 
     paddingBox() {
+        // ICB does not have associated node.
+        if (!this.m_node)
+            return this.borderBox();
         let paddingBox = this.borderBox();
         let borderSize = Utils.computedBorderTopLeft(this.m_node);
         paddingBox.moveBy(borderSize);
@@ -101,6 +108,9 @@ Display.Box = class Box {
     }
 
     contentBox() {
+        // ICB does not have associated node.
+        if (!this.m_node)
+            return this.borderBox();
         let contentBox = this.paddingBox();
         let paddingSize = Utils.computedPaddingTopLeft(this.m_node);
         contentBox.moveBy(paddingSize);
