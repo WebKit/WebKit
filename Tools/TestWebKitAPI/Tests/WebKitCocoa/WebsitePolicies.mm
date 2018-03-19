@@ -200,6 +200,42 @@ TEST(WebKit, WebsitePoliciesContentBlockersEnabled)
 
 @end
 
+@interface AsyncAutoplayPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
+@property (nonatomic, copy) _WKWebsiteAutoplayPolicy(^autoplayPolicyForURL)(NSURL *);
+@property (nonatomic, copy) _WKWebsiteAutoplayQuirk(^allowedAutoplayQuirksForURL)(NSURL *);
+@end
+
+@implementation AsyncAutoplayPoliciesDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    // _webView:decidePolicyForNavigationAction:decisionHandler: should be called instead if it is implemented.
+    EXPECT_TRUE(false);
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+        if (_allowedAutoplayQuirksForURL)
+            websitePolicies.allowedAutoplayQuirks = _allowedAutoplayQuirksForURL(navigationAction.request.URL);
+        if (_autoplayPolicyForURL)
+            websitePolicies.autoplayPolicy = _autoplayPolicyForURL(navigationAction.request.URL);
+        decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+    });
+}
+
+#if PLATFORM(MAC)
+- (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags
+{
+    receivedAutoplayEventFlags = flags;
+    receivedAutoplayEvent = event;
+}
+#endif
+
+@end
+
 TEST(WebKit, WebsitePoliciesAutoplayEnabled)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -657,6 +693,49 @@ TEST(WebKit, WebsitePoliciesAutoplayQuirks)
 
     [webView stringByEvaluatingJavaScript:@"play()"];
     [webView waitForMessage:@"playing"];
+}
+
+TEST(WebKit, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[AsyncAutoplayPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
+    WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
+
+    NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [delegate setAllowedAutoplayQuirksForURL:^_WKWebsiteAutoplayQuirk(NSURL *url) {
+        return _WKWebsiteAutoplayQuirkSynthesizedPauseEvents;
+    }];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+    [webView loadRequest:requestWithAudio];
+    [webView waitForMessage:@"did-not-play"];
+    [webView waitForMessage:@"on-pause"];
+
+    receivedAutoplayEvent = std::nullopt;
+    [webView loadHTMLString:@"" baseURL:nil];
+
+    NSURLRequest *requestWithAudioInFrame = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check-in-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [delegate setAllowedAutoplayQuirksForURL:^_WKWebsiteAutoplayQuirk(NSURL *url) {
+        if ([url.lastPathComponent isEqualToString:@"autoplay-check-frame.html"])
+            return _WKWebsiteAutoplayQuirkInheritedUserGestures;
+
+        return _WKWebsiteAutoplayQuirkSynthesizedPauseEvents | _WKWebsiteAutoplayQuirkInheritedUserGestures;
+    }];
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+    [webView loadRequest:requestWithAudioInFrame];
+    [webView waitForMessage:@"did-not-play"];
+    [webView waitForMessage:@"on-pause"];
 }
 #endif // PLATFORM(MAC)
 

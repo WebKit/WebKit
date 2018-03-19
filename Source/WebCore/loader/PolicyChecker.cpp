@@ -144,6 +144,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
     m_contentFilterUnblockHandler = { };
 #endif
 
+    m_frame.loader().clearProvisionalLoadForPolicyCheck();
+
     m_delegateIsDecidingNavigationPolicy = true;
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
     ResourceRequest requestCopy = request;

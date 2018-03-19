@@ -1,3 +1,42 @@
+2018-03-19  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.WebsitePoliciesAutoplayQuirks API test times out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183702
+        <rdar://problem/38566060>
+
+        Reviewed by Alex Christensen.
+
+        The issue is that the test calls loadHTMLString then loadRequest right after, without
+        waiting for the first load to complete first. loadHTMLString is special as it relies
+        on substitute data and which schedules a timer to commit the data. When doing the
+        navigation policy check for the following loadRequest(), the substitute data timer
+        would fire and commit its data and load. This would in turn cancel the pending
+        navigation policy check for the loadRequest().
+
+        With sync policy delegates, this is not an issue because we take care of stopping
+        all loaders when receiving the policy decision, which happens synchronously. However,
+        when the policy decision happens asynchronously, the pending substitute data load
+        does not get cancelled in time and it gets committed.
+
+        To address the issue, we now cancel any pending provisional load before doing the
+        navigation policy check.
+
+        Test: fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash-async-delegate.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clearProvisionalLoadForPolicyCheck):
+        * loader/FrameLoader.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        Cancel any pending provisional load before starting the navigation policy check. This call
+        needs to be here rather than in the call site of policyChecker().checkNavigationPolicy()
+        because there is code in PolicyChecker::checkNavigationPolicy() which relies on
+        FrameLoader::activeDocumentLoader().
+        Also, we only cancel the provisional load if there is a policy document loader. In some
+        rare cases (when we receive a redirect after navigation policy has been decided for the
+        initial request), the provisional document loader needs to receive navigation policy
+        decisions so we cannot clear the provisional document loader in such case.
+
 2018-03-19  Eric Carlson  <eric.carlson@apple.com>
 
         [Extra zoom mode] Require fullscreen for video playback

@@ -1,3 +1,17 @@
+2018-03-19  Chris Dumez  <cdumez@apple.com>
+
+        WebKit.WebsitePoliciesAutoplayQuirks API test times out with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183702
+        <rdar://problem/38566060>
+
+        Reviewed by Alex Christensen.
+
+        Add variant of fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash.html with async navigation
+        delegate since the previous iteration of this patch broke this test case.
+
+        * fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash-async-delegate-expected.txt: Added.
+        * fast/loader/inner-iframe-loads-data-url-into-parent-on-unload-crash-async-delegate.html: Added.
+
 2018-03-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorMakeCredential

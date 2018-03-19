@@ -1544,6 +1544,15 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     });
 }
 
+void FrameLoader::clearProvisionalLoadForPolicyCheck()
+{
+    if (!m_policyDocumentLoader || !m_provisionalDocumentLoader)
+        return;
+
+    m_provisionalDocumentLoader->stopLoading();
+    setProvisionalDocumentLoader(nullptr);
+}
+
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
 {
     ASSERT(!url.isEmpty());
