@@ -53,7 +53,7 @@ def main():
 
     # There is no WebKit2 on Windows, so we don't need to run WebKit2 unittests on it.
     if not (sys.platform.startswith('win') or sys.platform == 'cygwin'):
-        tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'), 'webkit2')
+        tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform.startswith('win'):

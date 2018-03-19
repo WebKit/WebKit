@@ -32,6 +32,8 @@ from webkit import parser
 
 script_directory = os.path.dirname(os.path.realpath(__file__))
 
+reset_results = False
+
 with open(os.path.join(script_directory, 'test-messages.in')) as in_file:
     _messages_file_contents = in_file.read()
 
@@ -383,7 +385,6 @@ def parse_sys_argv():
 
 
 if __name__ == '__main__':
-    reset_results = False
     add_reset_results_to_unittest_help()
     parse_sys_argv()
     unittest.main()

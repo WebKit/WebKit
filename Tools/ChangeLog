@@ -1,5 +1,17 @@
 2018-03-19  Daniel Bates  <dabates@apple.com>
 
+        test-webkitpy no longer runs WebKit2 tests
+        https://bugs.webkit.org/show_bug.cgi?id=183724
+
+        Reviewed by Alexey Proskuryakov.
+
+        The WebKit2 tests have seen been moved from Source/WebKit2/Scripts/webkit2 to Source/WebKit/Scripts/webkit.
+
+        * Scripts/webkitpy/test/main.py:
+        (main):
+
+2018-03-19  Daniel Bates  <dabates@apple.com>
+
         Make run-webkit-app work for non-GUI apps
         https://bugs.webkit.org/show_bug.cgi?id=183701
 
