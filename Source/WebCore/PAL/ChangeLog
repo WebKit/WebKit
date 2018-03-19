@@ -1,3 +1,9 @@
+2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a quick fix for r229699
+
+        * pal/spi/cocoa/DeviceIdentitySPI.h:
+
 2018-03-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorMakeCredential

@@ -27,7 +27,13 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#if USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 110300
+extern NSString * _Nonnull const kMAOptionsBAAAccessControls;
+#endif
 
 extern "C" {
 #import <DeviceIdentity/DeviceIdentity.h>
@@ -50,6 +56,8 @@ extern NSString * _Nonnull const kMAOptionsBAAValidity;
 extern "C"
 void DeviceIdentityIssueClientCertificateWithCompletion(dispatch_queue_t _Nullable, NSDictionary * _Nullable options, MABAACompletionBlock _Nonnull);
 
-#endif // USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 
 #endif // ENABLE(WEB_AUTHN)
