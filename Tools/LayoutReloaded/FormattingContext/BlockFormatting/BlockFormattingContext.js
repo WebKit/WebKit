@@ -115,7 +115,7 @@ class BlockFormattingContext extends FormattingContext {
         let contentBottom = previousInFlowSibling ? previousInFlowSibling.bottomRight().top() + this.marginBottom(previousInFlowSibling) : parent.contentBox().top();
         let position = new LayoutPoint(contentBottom, parent.contentBox().left());
         position.moveBy(new LayoutSize(this.marginLeft(layoutBox), this.marginTop(layoutBox)));
-        layoutBox.setTopLeft(position);
+        this.toDisplayBox(layoutBox).setTopLeft(position);
     }
 
     _placeInFlowPositionedChildren(container) {
@@ -176,18 +176,18 @@ class BlockFormattingContext extends FormattingContext {
         else
             ASSERT_NOT_REACHED();
         width += Utils.computedHorizontalBorderAndPadding(layoutBox.node());
-        layoutBox.setWidth(width);
+        this.toDisplayBox(layoutBox).setWidth(width);
     }
 
     _computeFloatingWidth(layoutBox) {
         // FIXME: missing cases
-        layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
+        this.toDisplayBox(layoutBox).setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
     }
 
     _computeInFlowWidth(layoutBox) {
         if (Utils.isWidthAuto(layoutBox))
-            return layoutBox.setWidth(this._horizontalConstraint(layoutBox));
-        return layoutBox.setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
+            return this.toDisplayBox(layoutBox).setWidth(this._horizontalConstraint(layoutBox));
+        return this.toDisplayBox(layoutBox).setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
     }
 
     _computeOutOfFlowHeight(layoutBox) {
@@ -224,12 +224,12 @@ class BlockFormattingContext extends FormattingContext {
         else
             ASSERT_NOT_REACHED();
         height += Utils.computedVerticalBorderAndPadding(layoutBox.node());
-        layoutBox.setHeight(height);
+        this.toDisplayBox(layoutBox).setHeight(height);
     }
 
     _computeFloatingHeight(layoutBox) {
         // FIXME: missing cases
-        layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
+        this.toDisplayBox(layoutBox).setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
     }
 
     _computeInFlowHeight(layoutBox) {
@@ -239,9 +239,9 @@ class BlockFormattingContext extends FormattingContext {
 
             // The element's height is the distance from its top content edge to the first applicable of the following:
             // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
-            return layoutBox.setHeight(this._contentHeight(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
+            return this.toDisplayBox(layoutBox).setHeight(this._contentHeight(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
         }
-        return layoutBox.setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
+        return this.toDisplayBox(layoutBox).setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
     }
 
     _horizontalConstraint(layoutBox) {
@@ -302,7 +302,7 @@ class BlockFormattingContext extends FormattingContext {
             relativePosition.shiftLeft(Utils.left(layoutBox));
         else if (!Utils.isRightAuto(layoutBox))
             relativePosition.shiftLeft(-Utils.right(layoutBox));
-        layoutBox.setTopLeft(relativePosition);
+        this.toDisplayBox(layoutBox).setTopLeft(relativePosition);
     }
 
     _computeOutOfFlowPosition(layoutBox) {
@@ -329,7 +329,7 @@ class BlockFormattingContext extends FormattingContext {
             left = containerSize.width() - Utils.right(layoutBox) - layoutBox.rect().width() - this.marginRight(layoutBox);
         else
             ASSERT_NOT_REACHED();
-        layoutBox.setTopLeft(new LayoutPoint(top, left));
+        this.toDisplayBox(layoutBox).setTopLeft(new LayoutPoint(top, left));
     }
 
     _shrinkToFitWidth(layoutBox) {

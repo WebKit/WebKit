@@ -34,15 +34,16 @@ class FloatingContext {
     computePosition(layoutBox) {
         if (layoutBox.isOutOfFlowPositioned())
             return;
+        let displayBox = this._formattingContext().toDisplayBox(layoutBox);
         if (layoutBox.isFloatingPositioned()) {
             let position = this._positionForFloating(layoutBox);
             this._addFloating(layoutBox);
-            return layoutBox.setTopLeft(position);
+            return displayBox.setTopLeft(position);
         }
         if (Utils.hasClear(layoutBox))
-            return layoutBox.setTopLeft(this._positionForClear(layoutBox));
+            return displayBox.setTopLeft(this._positionForClear(layoutBox));
         // Intruding floats might force this box move.
-        return layoutBox.setTopLeft(this._computePositionToAvoidIntrudingFloats(layoutBox));
+        displayBox.setTopLeft(this._computePositionToAvoidIntrudingFloats(layoutBox));
     }
 
     bottom() {

@@ -136,16 +136,16 @@ class FormattingContext {
         layoutBox.setDisplayBox(displayBox);
     }
 
-    _toDisplayBox(layoutBox) {
+    toDisplayBox(layoutBox) {
         ASSERT(layoutBox);
         ASSERT(this.m_layoutToDisplay.has(layoutBox));
-        return this.m_layoutToDisplay.get(layout);
+        return this.m_layoutToDisplay.get(layoutBox);
     }
 
-    _toLayoutBox(displayBox) {
+    toLayoutBox(displayBox) {
         ASSERT(displayBox);
         ASSERT(this.m_displayToLayout.has(displayBox));
-        return this.m_displayToLayout.get(layout);
+        return this.m_displayToLayout.get(displayBox);
     }
 
     _outOfFlowDescendants() {

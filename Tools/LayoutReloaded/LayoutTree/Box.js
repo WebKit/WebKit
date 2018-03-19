@@ -130,22 +130,6 @@ Layout.Box = class Box {
         return this.rect().bottomRight();
     }
 
-    setTopLeft(topLeft) {
-        this.displayBox().setTopLeft(topLeft);
-    }
-
-    setSize(size) {
-        this.displayBox().setSize(size);
-    }
-
-    setWidth(width) {
-        this.displayBox().setWidth(width);
-    }
-
-    setHeight(height) {
-        this.displayBox().setHeight(height);
-    }
-
     isContainer() {
         return false;
     }
