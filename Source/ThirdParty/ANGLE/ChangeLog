@@ -1,3 +1,15 @@
+2018-03-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r225340): WPE port should not be getting EGL X11 types on ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=183749
+
+        Reviewed by Alex Christensen.
+
+        Add back the USE_WPE ifdef.
+
+        * changes.diff:
+        * include/EGL/eglplatform.h:
+
 2018-03-15  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_ALTERNATE_FRAMEWORKS_DIR in ANGLE
