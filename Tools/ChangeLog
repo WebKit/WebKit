@@ -1,3 +1,12 @@
+2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, another quick fix for r229699
+
+        Restricts ENABLE_WEB_AUTHN to only macOS and iOS.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/Tests/ios/LocalAuthenticator.mm:
+
 2018-03-19  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Move statically positioned absolute box positioning to _computeOutOfFlowPosition

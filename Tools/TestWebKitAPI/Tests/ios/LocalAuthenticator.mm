@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #if PLATFORM(IOS)
 
 #import "InstanceMethodSwizzler.h"
@@ -504,3 +506,5 @@ TEST(LocalAuthenticator, MakeCredentialPassedWithSelfAttestation)
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS)
+
+#endif // ENABLE(WEB_AUTHN)

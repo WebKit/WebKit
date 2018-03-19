@@ -1,3 +1,11 @@
+2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, another quick fix for r229699
+
+        Restricts ENABLE_WEB_AUTHN to only macOS and iOS.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-03-16  Megan Gardner  <megan_gardner@apple.com>
 
         Ensure that style is updated when the effective appearance changes
