@@ -1,3 +1,13 @@
+2018-03-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GCC 4.9 build-fix after r229672.
+
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::createCommand): Don't depend on implicit conversion of the
+        returning std::unique_ptr<> object, and instead only wrap the
+        heap-allocated PaintingOperation-derived in a std::unique_ptr<> at the
+        point of return.
+
 2018-03-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r229689.
