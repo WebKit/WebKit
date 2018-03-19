@@ -37,6 +37,7 @@ use webkitdirs;
 printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
 
 setConfiguration();
+setUpGuardMallocIfNeeded();
 
 die "Did not specify an application to open (e.g. run-webkit-app AppName).\n" unless length($ARGV[0]) > 0;
 
