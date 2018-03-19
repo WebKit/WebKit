@@ -120,6 +120,10 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#include "DisplayLink.h"
+#endif
+
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -1721,6 +1725,11 @@ private:
     void didRemoveAttachment(const String& identifier);
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    void startDisplayLink(unsigned observerID);
+    void stopDisplayLink(unsigned observerID);
+#endif
+
     void reportPageLoadResult(const WebCore::ResourceError& = { });
 
     PageClient& m_pageClient;
@@ -2121,6 +2130,10 @@ private:
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
     HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;
+        
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    std::unique_ptr<DisplayLink> m_displayLink;
+#endif
 
     std::optional<MonotonicTime> m_pageLoadStart;
 };

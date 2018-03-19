@@ -1,3 +1,29 @@
+2018-03-19  Per Arne Vollan  <pvollan@apple.com>
+
+        When the WebContent process is blocked from accessing the WindowServer, the call CVDisplayLinkCreateWithCGDisplay will fail.
+        https://bugs.webkit.org/show_bug.cgi?id=183604
+        <rdar://problem/38305109>
+
+        Reviewed by Brent Fulgham.
+
+        The call to CVDisplayLinkCreateWithCGDisplay can instead be made in the UIProcess. Notify the WebContent process
+        about display updates by sending a message from the UIProcess on each screen update. This patch adds an extra
+        IPC step when notifying the WebContent process about display updates. However, the MotionMark benchmark shows no
+        performance regression when running it with this patch. A possible explanation for this is that the high priority
+        display link thread is now running in the UIProcess instead of the WebContent process, which means there will be
+        more available CPU resources for the WebContent process. A run loop observer is added to make sure that only one
+        display callback (for each display observer) is executed in a single iteration of the run loop. This will make
+        sure we are not filling the IPC message queue with unhandled display link messages.
+
+        No new tests, covered by existing tests. 
+
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.h:
+
 2018-03-19  Megan Gardner  <megan_gardner@apple.com>
 
         Ensure local appearance actually mirrors the app's appearance

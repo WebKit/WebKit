@@ -605,6 +605,27 @@ _WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
 }
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+void WebPageProxy::startDisplayLink(unsigned observerID)
+{
+    if (!m_displayLink) {
+        uint32_t displayID = [[[[platformWindow() screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
+        m_displayLink = std::make_unique<DisplayLink>(displayID, *this);
+    }
+    m_displayLink->addObserver(observerID);
+}
+
+void WebPageProxy::stopDisplayLink(unsigned observerID)
+{
+    if (!m_displayLink)
+        return;
+    
+    m_displayLink->removeObserver(observerID);
+    if (!m_displayLink->hasObservers())
+        m_displayLink = nullptr;
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

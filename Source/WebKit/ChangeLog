@@ -1,3 +1,35 @@
+2018-03-19  Per Arne Vollan  <pvollan@apple.com>
+
+        When the WebContent process is blocked from accessing the WindowServer, the call CVDisplayLinkCreateWithCGDisplay will fail.
+        https://bugs.webkit.org/show_bug.cgi?id=183604
+        <rdar://problem/38305109>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/DisplayLink.cpp: Added.
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::~DisplayLink):
+        (WebKit::DisplayLink::displayLinkCallback):
+        * UIProcess/mac/DisplayLink.h: Added.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::startDisplayRefreshMonitor):
+        (WebKit::WebPageProxy::stopDisplayRefreshMonitor):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::createDisplayRefreshMonitor):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/mac/DrawingAreaMac.cpp: Added.
+        (WebKit::DisplayRefreshMonitorMac::create):
+        (WebKit::DisplayRefreshMonitorMac::DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac):
+        (WebKit::DisplayRefreshMonitorMac::requestRefreshCallback):
+        (WebKit::DisplayRefreshMonitorMac::displayLinkFired):
+        (WebKit::DrawingArea::screenWasRefreshed):
+        (WebKit::DrawingArea::createDisplayRefreshMonitor):
+
 2018-03-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorMakeCredential

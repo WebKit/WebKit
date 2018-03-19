@@ -125,6 +125,14 @@ void DisplayRefreshMonitorManager::windowScreenDidChange(PlatformDisplayID displ
         scheduleAnimation(client);
 }
 
+void DisplayRefreshMonitorManager::displayWasUpdated()
+{
+    for (auto monitor : m_monitors) {
+        if (monitor->isScheduled())
+            monitor->displayLinkFired();
+    }
+}
+
 }
 
 #endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
