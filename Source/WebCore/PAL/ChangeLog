@@ -1,3 +1,13 @@
+2018-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [Extra zoom mode] Require fullscreen for video playback
+        https://bugs.webkit.org/show_bug.cgi?id=183742
+        <rdar://problem/38235862>
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
 2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a quick fix for r229699

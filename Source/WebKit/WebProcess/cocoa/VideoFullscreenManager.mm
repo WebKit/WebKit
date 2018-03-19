@@ -439,11 +439,15 @@ void VideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
     interface->setIsAnimating(false);
     interface->setIsFullscreen(false);
 
-    if (interface->targetIsFullscreen())
-        return;
-
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
     if (!videoElement)
+        return;
+
+    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), videoElement] {
+        videoElement->didBecomeFullscreenElement();
+    });
+
+    if (interface->targetIsFullscreen())
         return;
 
     // exit fullscreen now if it was previously requested during an animation.

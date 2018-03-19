@@ -47,9 +47,9 @@ class PlaybackSupport extends MediaControllerSupport
     {
         const isPaused = this.mediaController.media.paused;
 
-        // We always show the play button when the media is paused with compact layout.
+        // We always show the play button with compact layout.
         if (this.mediaController.layoutTraits & LayoutTraits.Compact)
-            this.control.visible = isPaused;
+            this.control.visible = true;
         else
             this.control.playing = !isPaused;
     }

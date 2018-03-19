@@ -85,6 +85,10 @@ private:
     bool isVisible() const override;
     bool hasVideo() const override { return m_hasVideo; }
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
+#if PLATFORM(IOS)
+    UIViewController *presentingViewController() final;
+    UIViewController *createVideoFullscreenViewController(AVPlayerViewController*) final;
+#endif
 
     // VideoFullscreenChangeObserver
     void requestUpdateInlineRect() override;

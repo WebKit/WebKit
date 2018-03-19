@@ -5255,6 +5255,14 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
 
     INFO_LOG(LOGIDENTIFIER, "shouldBePlaying = ", shouldBePlaying, ", playerPaused = ", playerPaused);
 
+    if (shouldBePlaying && playerPaused && m_mediaSession->requiresFullscreenForVideoPlayback(*this) && !isFullscreen()) {
+        enterFullscreen();
+#if ENABLE(EXTRA_ZOOM_MODE)
+        // FIXME: Investigate doing this for all builds.
+        return;
+#endif
+    }
+
     if (shouldBePlaying) {
         scheduleUpdatePlaybackControlsManager();
 
@@ -5263,9 +5271,6 @@ void HTMLMediaElement::updatePlayState(UpdateState updateState)
 
         if (playerPaused) {
             m_mediaSession->clientWillBeginPlayback();
-
-            if (m_mediaSession->requiresFullscreenForVideoPlayback(*this) && !isFullscreen())
-                enterFullscreen();
 
             // Set rate, muted before calling play in case they were set before the media engine was setup.
             // The media engine should just stash the rate and muted values since it isn't already playing.
@@ -5967,6 +5972,7 @@ void HTMLMediaElement::didBecomeFullscreenElement()
 {
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
+    updatePlayState(UpdateState::Asynchronously);
 }
 
 void HTMLMediaElement::willStopBeingFullscreenElement()

@@ -553,6 +553,8 @@ public:
 
     bool isSuspended() const final;
 
+    WEBCORE_EXPORT void didBecomeFullscreenElement() override;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual void finishInitialization();
@@ -603,7 +605,6 @@ private:
     void didRecalcStyle(Style::Change) override;
 
     void willBecomeFullscreenElement() override;
-    void didBecomeFullscreenElement() override;
     void willStopBeingFullscreenElement() override;
 
     // ActiveDOMObject API.

@@ -128,6 +128,7 @@ void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& time
 {
     RetainPtr<NSMutableArray> seekableRanges = adoptNS([[NSMutableArray alloc] init]);
 
+#if !ENABLE(EXTRA_ZOOM_MODE)
     for (unsigned i = 0; i < timeRanges.length(); i++) {
         double start = timeRanges.start(i).releaseReturnValue();
         double end = timeRanges.end(i).releaseReturnValue();
@@ -135,6 +136,9 @@ void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& time
         CMTimeRange range = CMTimeRangeMake(CMTimeMakeWithSeconds(start, 1000), CMTimeMakeWithSeconds(end-start, 1000));
         [seekableRanges addObject:[NSValue valueWithCMTimeRange:range]];
     }
+#else
+    UNUSED_PARAM(timeRanges);
+#endif
 
     [m_playerController setSeekableTimeRanges:seekableRanges.get()];
     [m_playerController setSeekableTimeRangesLastModifiedTime: lastModifiedTime];

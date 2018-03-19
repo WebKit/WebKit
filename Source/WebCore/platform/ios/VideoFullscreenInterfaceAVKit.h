@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 
-OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
 OBJC_CLASS UIView;
@@ -48,6 +47,7 @@ OBJC_CLASS CALayer;
 OBJC_CLASS WebAVPlayerController;
 OBJC_CLASS WebAVPlayerLayerView;
 OBJC_CLASS WebAVPlayerLayer;
+OBJC_CLASS WebAVPlayerViewController;
 OBJC_CLASS WebAVPlayerViewControllerDelegate;
 OBJC_CLASS NSError;
 
@@ -157,6 +157,12 @@ public:
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
     bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_currentMode.hasMode(mode); }
 
+#if PLATFORM(IOS)
+    UIViewController *presentingViewController();
+    UIViewController *fullscreenViewController() const { return m_viewController.get(); }
+    WebAVPlayerLayerView* playerLayerView() const { return m_playerLayerView.get(); }
+#endif
+
 protected:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 
@@ -175,7 +181,7 @@ protected:
 
     Ref<PlaybackSessionInterfaceAVKit> m_playbackSessionInterface;
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
-    RetainPtr<AVPlayerViewController> m_playerViewController;
+    RetainPtr<WebAVPlayerViewController> m_playerViewController;
     VideoFullscreenModel* m_videoFullscreenModel { nullptr };
     VideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
 

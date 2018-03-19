@@ -1,3 +1,21 @@
+2018-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [Extra zoom mode] Require fullscreen for video playback
+        https://bugs.webkit.org/show_bug.cgi?id=183742
+        <rdar://problem/38235862>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (-[WKVideoFullScreenViewController initWithAVPlayerViewController:]):
+        (-[WKVideoFullScreenViewController viewDidLoad]):
+        (-[WKVideoFullScreenViewController prefersStatusBarHidden]):
+        (WebKit::VideoFullscreenModelContext::presentingViewController):
+        (WebKit::VideoFullscreenModelContext::createVideoFullscreenViewController):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+
 2018-03-19  Daniel Bates  <dabates@apple.com>
 
         test-webkitpy no longer runs WebKit2 tests

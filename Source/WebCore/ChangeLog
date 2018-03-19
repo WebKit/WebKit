@@ -1,3 +1,58 @@
+2018-03-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [Extra zoom mode] Require fullscreen for video playback
+        https://bugs.webkit.org/show_bug.cgi?id=183742
+        <rdar://problem/38235862>
+
+        Reviewed by Jer Noble.
+
+        * Modules/modern-media-controls/media/playback-support.js:
+        (PlaybackSupport.prototype.syncControl): Always show the play button.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState): Return immediately if playback requires fullscreen
+        (WebCore::HTMLMediaElement::didBecomeFullscreenElement): Call updatePlayState in case 
+        playback is pending.
+        * html/HTMLMediaElement.h:
+        * platform/cocoa/VideoFullscreenModel.h:
+        (WebCore::VideoFullscreenModel::presentingViewController): New.
+        (WebCore::VideoFullscreenModel::createVideoFullscreenViewController): New.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode):
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::seekableRangesChanged):
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm: Wrap AVPlayerLayerView so we can change its
+        behavior.
+        (WebAVPlayerLayerView_playerLayer):
+        (WebAVPlayerLayerView_videoView):
+        (allocWebAVPlayerLayerViewInstance):
+        (-[WebAVPlayerViewController initWithFullscreenInterface:]):
+        (-[WebAVPlayerViewController playerViewControllerShouldHandleDoneButtonTap:]):
+        (-[WebAVPlayerViewController enterFullScreenAnimated:completionHandler:]):
+        (-[WebAVPlayerViewController exitFullScreenAnimated:completionHandler:]):
+        (-[WebAVPlayerViewController NO_RETURN_DUE_TO_ASSERT]):
+        (-[WebAVPlayerViewController isPictureInPicturePossible]):
+        (-[WebAVPlayerViewController isPictureInPictureActive]):
+        (-[WebAVPlayerViewController isPictureInPictureSuspended]):
+        (-[WebAVPlayerViewController pictureInPictureActive]):
+        (-[WebAVPlayerViewController pictureInPictureWasStartedWhenEnteringBackground]):
+        (-[WebAVPlayerViewController view]):
+        (-[WebAVPlayerViewController showsPlaybackControls]):
+        (-[WebAVPlayerViewController setShowsPlaybackControls:]):
+        (-[WebAVPlayerViewController setAllowsPictureInPicturePlayback:]):
+        (-[WebAVPlayerViewController setDelegate:]):
+        (-[WebAVPlayerViewController setPlayerController:]):
+        (-[WebAVPlayerViewController avPlayerViewController]):
+        (-[WebAVPlayerViewController removeFromParentViewController]):
+        (VideoFullscreenInterfaceAVKit::setupFullscreen):
+        (fallbackViewController):
+        (VideoFullscreenInterfaceAVKit::presentingViewController):
+        (VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+        (VideoFullscreenInterfaceAVKit::doSetup):
+        (WebCore::supportsPictureInPicture):
+
 2018-03-19  Per Arne Vollan  <pvollan@apple.com>
 
         When the WebContent process is blocked from accessing the WindowServer, the call CVDisplayLinkCreateWithCGDisplay will fail.

@@ -32,6 +32,11 @@
 #include "HTMLMediaElementEnums.h"
 #include "PlaybackSessionModel.h"
 
+#if PLATFORM(IOS)
+OBJC_CLASS AVPlayerViewController;
+OBJC_CLASS UIViewController;
+#endif
+
 namespace WebCore {
 
 class VideoFullscreenModelClient;
@@ -51,6 +56,11 @@ public:
     virtual bool isVisible() const = 0;
     virtual FloatSize videoDimensions() const = 0;
     virtual bool hasVideo() const = 0;
+
+#if PLATFORM(IOS)
+    virtual UIViewController *presentingViewController() { return nullptr; }
+    virtual UIViewController *createVideoFullscreenViewController(AVPlayerViewController *) { return nullptr; }
+#endif
 };
 
 class VideoFullscreenModelClient {

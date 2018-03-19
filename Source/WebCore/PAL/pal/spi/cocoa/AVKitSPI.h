@@ -41,6 +41,53 @@
 #import <AVKit/AVPlayerViewController_Private.h>
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+
+#import <AVFoundation/AVPlayerLayer.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AVPictureInPicturePlayerLayerView : UIView
+@property (nonatomic, readonly) AVPlayerLayer *playerLayer;
+@end
+
+@interface __AVPlayerLayerView  (Details)
+@property (nonatomic, readonly) AVPlayerLayer *playerLayer;
+- (AVPictureInPicturePlayerLayerView*) pictureInPicturePlayerLayerView;
+- (void)startRoutingVideoToPictureInPicturePlayerLayerView;
+- (void)stopRoutingVideoToPictureInPicturePlayerLayerView;
+@end
+
+@class AVPlayerLayerView;
+@interface AVPlayerViewController (AVPlayerViewController_WebKitOnly_Internal)
+- (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler;
+- (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler;
+- (void)startPictureInPicture;
+- (void)stopPictureInPicture;
+
+@property (nonatomic) BOOL showsExitFullScreenButton;
+@property (nonatomic, readonly, getter=isPictureInPicturePossible) BOOL pictureInPicturePossible;
+@property (nonatomic, readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
+@property (nonatomic, readonly, getter=isPictureInPictureSuspended) BOOL pictureInPictureSuspended;
+@property (nonatomic, readonly) BOOL pictureInPictureWasStartedWhenEnteringBackground;
+@end
+
+@protocol AVPlayerViewControllerDelegate_WebKitOnly <AVPlayerViewControllerDelegate>
+@optional
+typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
+    AVPlayerViewControllerExitFullScreenReasonDoneButtonTapped,
+    AVPlayerViewControllerExitFullScreenReasonFullScreenButtonTapped,
+    AVPlayerViewControllerExitFullScreenReasonPinchGestureHandled,
+    AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived,
+    AVPlayerViewControllerExitFullScreenReasonPictureInPictureStarted
+};
+- (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif
+
 #else
 
 @interface AVPlayerController : UIResponder
