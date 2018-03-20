@@ -1,3 +1,48 @@
+2018-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Add vectorLengthHint for NewArray
+        https://bugs.webkit.org/show_bug.cgi?id=183694
+
+        Reviewed by Saam Barati.
+
+        While the following code is a common, it is not so efficient.
+
+        var array = [];
+        for (...) {
+            ...
+            array.push(...);
+        }
+
+        The array is always allocated with 0 vector length. And it is eventually grown.
+
+        We have ArrayAllocationProfile, and it tells us that the vector length hint for
+        the allocated arrays. This hint is already used for NewArrayBuffer. This patch
+        extends this support for NewArray DFG node.
+
+        This patch improves Kraken/stanford-crypto-aes 4%.
+
+                                      baseline                  patched
+
+        stanford-crypto-aes        64.069+-1.352             61.589+-1.274           might be 1.0403x faster
+
+        NewArray can be optimized.
+
+                                                       baseline                  patched
+
+        vector-length-hint-new-array               21.8157+-0.0882     ^     13.1764+-0.0942        ^ definitely 1.6557x faster
+        vector-length-hint-array-constructor       21.9076+-0.0987     ?     22.1168+-0.4814        ?
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasVectorLengthHint):
+        (JSC::DFG::Node::vectorLengthHint):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+
 2018-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Make ArraySlice(0) code tight

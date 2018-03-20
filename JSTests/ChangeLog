@@ -1,3 +1,17 @@
+2018-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Add vectorLengthHint for NewArray
+        https://bugs.webkit.org/show_bug.cgi?id=183694
+
+        Reviewed by Saam Barati.
+
+        * stress/vector-length-hint-array-constructor.js: Added.
+        (shouldBe):
+        (test):
+        * stress/vector-length-hint-new-array.js: Added.
+        (shouldBe):
+        (test):
+
 2018-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Make ArraySlice(0) code tight

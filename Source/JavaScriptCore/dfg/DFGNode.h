@@ -1121,12 +1121,21 @@ public:
 
     unsigned hasVectorLengthHint()
     {
-        return op() == NewArrayBuffer || op() == PhantomNewArrayBuffer;
+        switch (op()) {
+        case NewArray:
+        case NewArrayBuffer:
+        case PhantomNewArrayBuffer:
+            return true;
+        default:
+            return false;
+        }
     }
     
     unsigned vectorLengthHint()
     {
         ASSERT(hasVectorLengthHint());
+        if (op() == NewArray)
+            return m_opInfo2.as<unsigned>();
         return newArrayBufferData().vectorLengthHint;
     }
     

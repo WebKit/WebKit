@@ -5411,9 +5411,11 @@ private:
 
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(m_node->indexingType())) {
             unsigned numElements = m_node->numChildren();
+            unsigned vectorLengthHint = m_node->vectorLengthHint();
+            ASSERT(vectorLengthHint >= numElements);
             
             ArrayValues arrayValues =
-                allocateUninitializedContiguousJSArray(m_out.constInt32(numElements), structure);
+                allocateUninitializedContiguousJSArray(numElements, vectorLengthHint, structure);
             
             for (unsigned operandIndex = 0; operandIndex < m_node->numChildren(); ++operandIndex) {
                 Edge edge = m_graph.varArgChild(m_node, operandIndex);

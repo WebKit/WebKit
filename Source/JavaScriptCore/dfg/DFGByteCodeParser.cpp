@@ -3455,7 +3455,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         for (int i = 1; i < argumentCountIncludingThis; ++i)
             addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
         set(VirtualRegister(resultOperand),
-            addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithUndecided), OpInfo(0)));
+            addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithUndecided), OpInfo(argumentCountIncludingThis - 1)));
         return true;
     }
 
@@ -4510,7 +4510,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             ArrayAllocationProfile* profile = currentInstruction[4].u.arrayAllocationProfile;
             for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
                 addVarArgChild(get(VirtualRegister(operandIdx)));
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(Node::VarArg, NewArray, OpInfo(profile->selectIndexingType()), OpInfo(0)));
+            unsigned vectorLengthHint = std::max<unsigned>(profile->vectorLengthHint(), numOperands);
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(Node::VarArg, NewArray, OpInfo(profile->selectIndexingType()), OpInfo(vectorLengthHint)));
             NEXT_OPCODE(op_new_array);
         }
 
