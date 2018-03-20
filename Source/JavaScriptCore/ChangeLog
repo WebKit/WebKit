@@ -1,3 +1,40 @@
+2018-03-20  Stanislav Ocovaj  <stanislav.ocovaj@rt-rk.com>
+
+        [MIPS] Optimize generated JIT code for loads/stores
+        https://bugs.webkit.org/show_bug.cgi?id=183243
+
+        Reviewed by Yusuke Suzuki.
+
+        JIT generates three MIPS instructions for a load/store from/to an absolute address:
+
+          lui adrTmpReg, address >> 16
+          ori adrTmpReg, address & 0xffff
+          lw dataReg, 0(adrTmpReg)
+
+        Since load/store instructions on MIPS have a 16-bit offset, lower 16 bits of the address can
+        be encoded into the load/store and ori instruction can be removed:
+
+          lui adrTmpReg, (address + 0x8000) >> 16
+          lw dataReg, (address & 0xffff)(adrTmpReg)
+
+        Also, in loads/stores with BaseIndex address, the left shift can be omitted if address.scale is 0.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::add32):
+        (JSC::MacroAssemblerMIPS::add64):
+        (JSC::MacroAssemblerMIPS::or32):
+        (JSC::MacroAssemblerMIPS::sub32):
+        (JSC::MacroAssemblerMIPS::convertibleLoadPtr):
+        (JSC::MacroAssemblerMIPS::load8):
+        (JSC::MacroAssemblerMIPS::load8SignedExtendTo32):
+        (JSC::MacroAssemblerMIPS::load32):
+        (JSC::MacroAssemblerMIPS::store8):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::branchTest8):
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::storeDouble):
+
 2018-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Add vectorLengthHint for NewArray
