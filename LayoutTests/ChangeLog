@@ -1,3 +1,12 @@
+2018-03-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip http/tests/storageAccess/grant-storage-access-under-opener.html on iOS debug.
+        https://bugs.webkit.org/show_bug.cgi?id=183714
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2018-03-19  Brady Eidson  <beidson@apple.com>
 
         Add a layout test verifying AppCache resource fetches have the document's cookie in place.
