@@ -442,6 +442,12 @@ void ApplicationCacheGroup::update(Frame& frame, ApplicationCacheUpdateOption up
     ASSERT(!m_currentResource);
     ASSERT(m_completionType == None);
 
+    if (auto* document = m_frame->document()) {
+        auto documentCookie = document->cookie();
+         if (!documentCookie.hasException())
+             m_cookieStringFromDocument = documentCookie.releaseReturnValue();
+    }
+
     // FIXME: Handle defer loading
     m_manifestHandle = createResourceHandle(m_manifestURL, m_newestCache ? m_newestCache->manifestResource() : 0);
 }
@@ -464,6 +470,9 @@ RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& ur
     ResourceRequest request(url);
     m_frame->loader().applyUserAgentIfNeeded(request);
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
+
+    if (!m_cookieStringFromDocument.isEmpty())
+        request.setHTTPHeaderField(HTTPHeaderName::Cookie, m_cookieStringFromDocument);
 
     if (newestCachedResource) {
         const String& lastModified = newestCachedResource->response().httpHeaderField(HTTPHeaderName::LastModified);
