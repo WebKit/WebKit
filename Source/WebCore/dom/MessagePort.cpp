@@ -217,22 +217,20 @@ void MessagePort::start()
 void MessagePort::close()
 {
     m_mightBeEligibleForGC = true;
+
     if (m_closed)
         return;
+    m_closed = true;
 
     MessagePortChannelProvider::singleton().messagePortClosed(m_identifier);
-
-    m_closed = true;
+    removeAllEventListeners();
 }
 
 void MessagePort::contextDestroyed()
 {
     ASSERT(m_scriptExecutionContext);
 
-    m_mightBeEligibleForGC = true;
-    if (!m_closed)
-        close();
-
+    close();
     m_scriptExecutionContext = nullptr;
 }
 
