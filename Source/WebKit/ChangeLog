@@ -1,5 +1,23 @@
 2018-03-19  Chris Dumez  <cdumez@apple.com>
 
+        WKWebView.ClearAppCache is a flaky API test failure on High Sierra.
+        https://bugs.webkit.org/show_bug.cgi?id=181546
+        <rdar://problem/36444327>
+
+        Reviewed by Ryosuke Niwa.
+
+        in LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(), add origin
+        to originIdentifiersToDelete if we cannot determine the last modification
+        time of the database file. This likely means the database file does not
+        exist. However, we still needs to make sure the origin gets removed from
+        the origins database and there may be *.wal / *.shm variants of the database
+        that are still on disk and need to be deleted.
+
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabasesModifiedSince):
+
+2018-03-19  Chris Dumez  <cdumez@apple.com>
+
         Have one service worker process per security origin
         https://bugs.webkit.org/show_bug.cgi?id=183600
         <rdar://problem/35280128>

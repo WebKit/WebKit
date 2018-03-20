@@ -152,10 +152,7 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::deleteDatabasesModifiedS
         String filePath = pathForDatabaseWithOriginIdentifier(origin);
 
         auto modificationTime = FileSystem::getFileModificationTime(filePath);
-        if (!modificationTime)
-            continue;
-
-        if (modificationTime.value() >= time)
+        if (!modificationTime || modificationTime.value() >= time)
             originIdentifiersToDelete.append(origin);
     }
 
