@@ -239,16 +239,4 @@ Layout.Box = class Box {
             ascendant = ascendant.parent();
         return !!ascendant;
     }
-
-    borderBox() {
-        return this.displayBox().borderBox();
-    }
-
-    paddingBox() {
-        return this.displayBox().paddingBox();
-    }
-
-    contentBox() {
-        return this.displayBox().contentBox();
-    }
 }

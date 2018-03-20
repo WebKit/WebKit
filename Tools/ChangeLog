@@ -1,3 +1,32 @@
+2018-03-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Remove border/padding/contentBox() functions from Layout.Box
+        https://bugs.webkit.org/show_bug.cgi?id=183761
+
+        Reviewed by Antti Koivisto.
+
+        Display.Box has them.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeOutOfFlowWidth):
+        (BlockFormattingContext.prototype._computeOutOfFlowHeight):
+        (BlockFormattingContext.prototype._horizontalConstraint):
+        (BlockFormattingContext.prototype._contentHeight):
+        (BlockFormattingContext.prototype._adjustBottomWithFIXME):
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype._availableSpace):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype.absoluteBorderBox):
+        (FormattingContext.prototype.absolutePaddingBox):
+        (FormattingContext.prototype.absoluteContentBox):
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box.prototype.isDescendantOf):
+        (Layout.Box):
+        (Layout.Box.prototype.borderBox): Deleted.
+        (Layout.Box.prototype.paddingBox): Deleted.
+        (Layout.Box.prototype.contentBox): Deleted.
+
 2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, another quick fix for r229699

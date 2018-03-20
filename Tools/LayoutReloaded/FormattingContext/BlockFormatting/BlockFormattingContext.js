@@ -171,7 +171,7 @@ class BlockFormattingContext extends FormattingContext {
         else if (Utils.isLeftAuto(layoutBox) && !Utils.isWidthAuto(layoutBox) && !Utils.isRightAuto(layoutBox))
             width = Utils.width(layoutBox); // 4
         else if (Utils.isWidthAuto(layoutBox) && !Utils.isLeftAuto(layoutBox) && !Utils.isRightAuto(layoutBox))
-            width = Math.max(0, layoutBox.containingBlock().contentBox().width() - Utils.right(layoutBox) - Utils.left(layoutBox)); // 5
+            width = Math.max(0, this.toDisplayBox(layoutBox.containingBlock()).contentBox().width() - Utils.right(layoutBox) - Utils.left(layoutBox)); // 5
         else if (Utils.isRightAuto(layoutBox) && !Utils.isLeftAuto(layoutBox) && !Utils.isWidthAuto(layoutBox))
             width = Utils.width(layoutBox); // 6
         else
@@ -219,7 +219,7 @@ class BlockFormattingContext extends FormattingContext {
         else if (Utils.isTopAuto((layoutBox)) && !Utils.isHeightAuto((layoutBox)) && !Utils.isBottomAuto((layoutBox)))
             height = Utils.height(layoutBox); // 6
         else if (Utils.isHeightAuto((layoutBox)) && !Utils.isTopAuto((layoutBox)) && !Utils.isBottomAuto((layoutBox)))
-            height = Math.max(0, layoutBox.containingBlock().contentBox().height() - Utils.bottom(layoutBox) - Utils.top(layoutBox)); // 7
+            height = Math.max(0, this.toDisplayBox(layoutBox.containingBlock()).contentBox().height() - Utils.bottom(layoutBox) - Utils.top(layoutBox)); // 7
         else if (Utils.isBottomAuto((layoutBox)) && !Utils.isTopAuto((layoutBox)) && !Utils.isHeightAuto((layoutBox)))
             height = Utils.height(layoutBox); // 8
         else
@@ -246,7 +246,7 @@ class BlockFormattingContext extends FormattingContext {
     }
 
     _horizontalConstraint(layoutBox) {
-        let horizontalConstraint = layoutBox.containingBlock().contentBox().width();
+        let horizontalConstraint = this.toDisplayBox(layoutBox.containingBlock()).contentBox().width();
         horizontalConstraint -= this.marginLeft(layoutBox) + this.marginRight(layoutBox);
         return horizontalConstraint;
     }
@@ -270,7 +270,7 @@ class BlockFormattingContext extends FormattingContext {
             let lastLine = lines[lines.length - 1];
             return lastLine.rect().bottom();
         }
-        let top = layoutBox.contentBox().top();
+        let top = this.toDisplayBox(layoutBox).contentBox().top();
         let bottom = this._adjustBottomWithFIXME(layoutBox);
         return bottom - top;
     }
@@ -281,7 +281,7 @@ class BlockFormattingContext extends FormattingContext {
         let lastInFlowDisplayBox = lastInFlowChild.displayBox();
         let bottom = lastInFlowDisplayBox.bottom() + this.marginBottom(lastInFlowChild);
         // FIXME: margin for body
-        if (lastInFlowChild.name() == "RenderBody" && Utils.isHeightAuto(lastInFlowChild) && !lastInFlowChild.contentBox().height())
+        if (lastInFlowChild.name() == "RenderBody" && Utils.isHeightAuto(lastInFlowChild) && !this.toDisplayBox(lastInFlowChild).contentBox().height())
             bottom -= this.marginBottom(lastInFlowChild);
         // FIXME: figure out why floatings part of the initial block formatting context get propagated to HTML
         if (layoutBox.node().tagName == "HTML") {
@@ -312,7 +312,7 @@ class BlockFormattingContext extends FormattingContext {
     _computeOutOfFlowPosition(layoutBox) {
         let displayBox = this.toDisplayBox(layoutBox);
         let top = Number.NaN;
-        let containerSize = layoutBox.containingBlock().contentBox().size();
+        let containerSize = this.toDisplayBox(layoutBox.containingBlock()).contentBox().size();
         // Top/bottom
         if (Utils.isTopAuto(layoutBox) && Utils.isBottomAuto(layoutBox)) {
             ASSERT(Utils.isStaticallyPositioned(layoutBox));

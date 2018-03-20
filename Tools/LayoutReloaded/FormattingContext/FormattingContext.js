@@ -74,21 +74,21 @@ class FormattingContext {
     }
 
     absoluteBorderBox(layoutBox) {
-        let borderBox = layoutBox.borderBox();
+        let borderBox = this.toDisplayBox(layoutBox).borderBox();
         let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), borderBox.size());
         absoluteRect.moveBy(borderBox.topLeft());
         return absoluteRect;
     }
 
     absolutePaddingBox(layoutBox) {
-        let paddingBox = layoutBox.paddingBox();
+        let paddingBox = this.toDisplayBox(layoutBox).paddingBox();
         let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), paddingBox.size());
         absoluteRect.moveBy(paddingBox.topLeft());
         return absoluteRect;
     }
 
     absoluteContentBox(layoutBox) {
-        let contentBox = layoutBox.contentBox();
+        let contentBox = this.toDisplayBox(layoutBox).contentBox();
         let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), contentBox.size());
         absoluteRect.moveBy(contentBox.topLeft());
         return absoluteRect;

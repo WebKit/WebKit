@@ -132,13 +132,14 @@ class FloatingContext {
     }
 
     _availableSpace(containingBlock, floatingPair) {
+        let containingBlockContentBox = this._formattingContext().toDisplayBox(containingBlock);
         if (floatingPair.left && floatingPair.right)
             return this._formattingContext().absoluteMarginBox(floatingPair.right).left() - this._formattingContext().absoluteMarginBox(floatingPair.left).right();
         if (floatingPair.left)
-            return containingBlock.contentBox().width() - (this._formattingContext().absoluteMarginBox(floatingPair.left).right() - this._formattingContext().absoluteBorderBox(containingBlock).left());
+            return containingBlockContentBox.width() - (this._formattingContext().absoluteMarginBox(floatingPair.left).right() - this._formattingContext().absoluteBorderBox(containingBlock).left());
         if (floatingPair.right)
             return this._formattingContext().absoluteMarginBox(floatingPair.right).left();
-        return containingBlock.contentBox().width();
+        return containingBlockContentBox.width();
     }
 
     _findFloatingAtVerticalPosition(verticalPosition, floatingStack) {
