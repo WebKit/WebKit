@@ -1,5 +1,14 @@
 2018-03-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Rebaseline a test after the case of the 'Strong Password' localized string was changed in r229724.
+
+        Unreviewed test gardening.
+
+        * platform/ios/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+        * platform/mac/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+
+2018-03-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip http/tests/storageAccess/grant-storage-access-under-opener.html on iOS debug.
         https://bugs.webkit.org/show_bug.cgi?id=183714
 
