@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 class BlockFormattingContext extends FormattingContext {
-    constructor(root, layoutContext) {
-        super(root, layoutContext);
+    constructor(root, layoutState) {
+        super(root, layoutState);
         // New block formatting context always establishes a new floating context.
         this.m_floatingContext = new FloatingContext(this);
     }

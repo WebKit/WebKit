@@ -24,8 +24,8 @@
  */
 
 class InlineFormattingContext extends FormattingContext {
-    constructor(root, layoutContext) {
-        super(root, layoutContext);
+    constructor(root, layoutState) {
+        super(root, layoutState);
         // If the block container box that initiates this inline formatting contex also establishes a block context, create a new float for us.
         ASSERT(root.isBlockContainerBox());
         if (root.establishesBlockFormattingContext())

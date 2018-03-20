@@ -1,3 +1,38 @@
+2018-03-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Introduce FormattingState (Block/Inline/etc)
+        https://bugs.webkit.org/show_bug.cgi?id=183777
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for moving out states from the formatting contexts.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext):
+        (FormattingContext.prototype.layoutState):
+        (FormattingContext.prototype.layoutContext):
+        (FormattingContext.prototype.layout):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext):
+        * LayoutReloaded/FormattingState/BlockFormattingState.js: Copied from Tools/LayoutReloaded/LayoutContext.js.
+        (BlockFormattingState):
+        * LayoutReloaded/FormattingState/FormattingState.js: Copied from Tools/LayoutReloaded/LayoutContext.js.
+        (FormattingState):
+        (FormattingState.prototype.formattingContext):
+        (FormattingState.prototype.layoutContext):
+        (FormattingState.prototype._setFormattingContext):
+        * LayoutReloaded/FormattingState/InlineFormattingState.js: Copied from Tools/LayoutReloaded/LayoutContext.js.
+        (InlineFormattingState):
+        * LayoutReloaded/LayoutContext.js:
+        (LayoutContext):
+        (LayoutContext.prototype.layout):
+        (LayoutContext.prototype._createFormattingState):
+        (LayoutContext.prototype._createFormattingContext): Deleted.
+        * LayoutReloaded/LayoutReloaded.xcworkspace/contents.xcworkspacedata:
+        * LayoutReloaded/test/index.html:
+
 2018-03-19  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Layout.Box should not create the formatting context.

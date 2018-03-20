@@ -24,9 +24,9 @@
  */
 
 class FormattingContext {
-    constructor(rootContainer, layoutContext) {
+    constructor(rootContainer, layoutState) {
         this.m_rootContainer = rootContainer;
-        this.m_layoutContext = layoutContext;
+        this.m_layoutState = layoutState;
         this.m_floatingContext = null;
         this.m_displayToLayout = new Map();
         this.m_layoutToDisplay = new Map();
@@ -37,15 +37,20 @@ class FormattingContext {
         return this.m_rootContainer;
     }
 
+    layoutState() {
+        return this.m_layoutState;
+    }
+
     layoutContext() {
-        return this.m_layoutContext;
+        return this.layoutState().layoutContext();
     }
 
     floatingContext() {
         return this.m_floatingContext;
     }
 
-    layout(layoutContext) {
+    layout() {
+        ASSERT_NOT_REACHED();
     }
 
     computeWidth(layoutBox) {

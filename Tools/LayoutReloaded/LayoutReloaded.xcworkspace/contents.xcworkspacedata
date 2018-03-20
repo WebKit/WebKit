@@ -5,13 +5,10 @@
       location = "group:DisplayTree">
    </FileRef>
    <FileRef
-      location = "group:test">
-   </FileRef>
-   <FileRef
-      location = "group:misc">
-   </FileRef>
-   <FileRef
       location = "group:FormattingContext">
+   </FileRef>
+   <FileRef
+      location = "group:FormattingState">
    </FileRef>
    <FileRef
       location = "group:LayoutTree">
@@ -30,5 +27,11 @@
    </FileRef>
    <FileRef
       location = "group:TreeBuilder.js">
+   </FileRef>
+   <FileRef
+      location = "group:test">
+   </FileRef>
+   <FileRef
+      location = "group:misc">
    </FileRef>
 </Workspace>
