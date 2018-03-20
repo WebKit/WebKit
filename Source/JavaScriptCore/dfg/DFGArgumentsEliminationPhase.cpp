@@ -919,7 +919,6 @@ private:
                                     }
 
                                     if (candidate->op() == PhantomNewArrayBuffer) {
-                                        bool canExit = true;
                                         auto* array = candidate->castOperand<JSFixedArray*>();
                                         for (unsigned index = 0; index < array->length(); ++index) {
                                             JSValue constant;

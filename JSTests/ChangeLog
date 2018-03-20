@@ -1,3 +1,15 @@
+2018-03-20  Saam Barati  <sbarati@apple.com>
+
+        We need to do proper bookkeeping of exitOK when inserting constants when sinking NewArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=183795
+        <rdar://problem/38298694>
+
+        Reviewed by JF Bastien.
+
+        * stress/sink-phantom-new-array-buffer-exit-ok.js: Added.
+        (foo):
+        (bar):
+
 2018-03-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Add vectorLengthHint for NewArray

@@ -1,3 +1,19 @@
+2018-03-20  Saam Barati  <sbarati@apple.com>
+
+        We need to do proper bookkeeping of exitOK when inserting constants when sinking NewArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=183795
+        <rdar://problem/38298694>
+
+        Reviewed by JF Bastien.
+
+        We were just assuming that the constants we were inserting were
+        always exitOK=true. However, this breaks validation. The exitOK
+        we emit for the constants in the NewArrayBuffer should respect
+        the current exit state of the IR we've emitted. This is just IR
+        bookkeeping since JSConstant is a non-exiting node.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2018-03-20  Guillaume Emont  <guijemont@igalia.com>
 
         MIPS+Armv7 builds are broken since r229391
