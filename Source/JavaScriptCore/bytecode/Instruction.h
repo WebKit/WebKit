@@ -55,11 +55,11 @@ typedef OpcodeID Opcode;
 #endif
 
 struct Instruction {
-    Instruction()
+    constexpr Instruction()
+        : u({ nullptr })
     {
-        u.jsCell.clear();
     }
-        
+
     Instruction(Opcode opcode)
     {
 #if !ENABLE(COMPUTED_GOTO_OPCODES)
@@ -119,6 +119,7 @@ struct Instruction {
     Instruction(bool* predicatePointer) { u.predicatePointer = predicatePointer; }
 
     union {
+        void* pointer;
         Opcode opcode;
         int operand;
         unsigned unsignedValue;
@@ -137,7 +138,6 @@ struct Instruction {
         ArrayAllocationProfile* arrayAllocationProfile;
         ObjectAllocationProfile* objectAllocationProfile;
         WatchpointSet* watchpointSet;
-        void* pointer;
         bool* predicatePointer;
         ToThisStatus toThisStatus;
         TypeLocation* location;
@@ -149,6 +149,7 @@ private:
     Instruction(StructureChain*);
     Instruction(Structure*);
 };
+static_assert(sizeof(Instruction) == sizeof(void*), "");
 
 } // namespace JSC
 

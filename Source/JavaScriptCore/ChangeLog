@@ -1,3 +1,16 @@
+2018-03-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Drop s_exceptionInstructions static initializer
+        https://bugs.webkit.org/show_bug.cgi?id=183732
+
+        Reviewed by Darin Adler.
+
+        Make Instruction constructor constexpr to drop the static constructor
+        of LLInt::Data::s_exceptionInstructions.
+
+        * bytecode/Instruction.h:
+        (JSC::Instruction::Instruction):
+
 2018-03-19  Dan Bernstein  <mitz@apple.com>
 
         Investigate why __cpu_indicator_init is used
