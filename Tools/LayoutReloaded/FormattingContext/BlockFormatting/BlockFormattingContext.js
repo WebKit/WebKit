@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 class BlockFormattingContext extends FormattingContext {
-    constructor(root) {
-        super(root);
+    constructor(root, layoutContext) {
+        super(root, layoutContext);
         // New block formatting context always establishes a new floating context.
         this.m_floatingContext = new FloatingContext(this);
     }
 
-    layout(layoutContext) {
+    layout() {
         // 9.4.1 Block formatting contexts
         // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
         // The vertical distance between two sibling boxes is determined by the 'margin' properties.
@@ -50,7 +50,7 @@ class BlockFormattingContext extends FormattingContext {
                 this.computeWidth(layoutBox);
                 this._computeStaticPosition(layoutBox);
                 if (layoutBox.establishesFormattingContext()) {
-                    layoutContext.layoutFormattingContext(layoutBox.establishedFormattingContext());
+                    this.layoutContext().layout(layoutBox);
                     break;
                 }
                 if (!layoutBox.isContainer() || !layoutBox.hasInFlowOrFloatChild())
@@ -78,7 +78,7 @@ class BlockFormattingContext extends FormattingContext {
         // Place the inflow positioned children.
         this._placeInFlowPositionedChildren(this.rootContainer());
         // And take care of out-of-flow boxes as the final step.
-        this._layoutOutOfFlowDescendants(layoutContext);
+        this._layoutOutOfFlowDescendants();
    }
 
     computeWidth(layoutBox) {
@@ -134,14 +134,14 @@ class BlockFormattingContext extends FormattingContext {
         }
     }
 
-    _layoutOutOfFlowDescendants(layoutContext) {
+    _layoutOutOfFlowDescendants() {
         // This lays out all the out-of-flow boxes that belong to this formatting context even if
         // the root container is not the containing block.
         let outOfFlowDescendants = this._outOfFlowDescendants();
         for (let outOfFlowBox of outOfFlowDescendants) {
             this._addToLayoutQueue(outOfFlowBox);
             this.computeWidth(outOfFlowBox);
-            layoutContext.layoutFormattingContext(outOfFlowBox.establishedFormattingContext());
+            this.layoutContext().layout(outOfFlowBox);
             this.computeHeight(outOfFlowBox);
             this._computeOutOfFlowPosition(outOfFlowBox);
             this._removeFromLayoutQueue(outOfFlowBox);
@@ -263,7 +263,6 @@ class BlockFormattingContext extends FormattingContext {
         if (!layoutBox.isContainer() || !layoutBox.hasInFlowChild())
             return 0;
         if (layoutBox.establishesInlineFormattingContext()) {
-            ASSERT(layoutBox.establishedFormattingContext());
             let lines = layoutBox.establishedFormattingContext().lines();
             if (!lines.length)
                 return 0;

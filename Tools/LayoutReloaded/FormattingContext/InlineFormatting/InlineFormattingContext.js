@@ -24,8 +24,8 @@
  */
 
 class InlineFormattingContext extends FormattingContext {
-    constructor(root) {
-        super(root);
+    constructor(root, layoutContext) {
+        super(root, layoutContext);
         // If the block container box that initiates this inline formatting contex also establishes a block context, create a new float for us.
         ASSERT(root.isBlockContainerBox());
         if (root.establishesBlockFormattingContext())
@@ -39,7 +39,7 @@ class InlineFormattingContext extends FormattingContext {
         return this.m_lines;
     }
 
-    layout(layoutContext) {
+    layout() {
         // 9.4.2 Inline formatting contexts
         // In an inline formatting context, boxes are laid out horizontally, one after the other, beginning at the top of a containing block.
         if (!this.rootContainer().firstChild())
@@ -52,7 +52,7 @@ class InlineFormattingContext extends FormattingContext {
             while (true) {
                 let layoutBox = this._nextInLayoutQueue();
                 if (layoutBox.establishesFormattingContext()) {
-                    layoutContext.layoutFormattingContext(layoutBox.establishedFormattingContext());
+                    this.layoutContext().layout(layoutBox);
                     break;
                 }
                 if (!layoutBox.isContainer() || !layoutBox.hasChild())

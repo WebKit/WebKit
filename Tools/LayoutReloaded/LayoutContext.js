@@ -27,7 +27,18 @@ class LayoutContext {
     constructor() {
     }
 
-    layoutFormattingContext(formattingContext) {
-        formattingContext.layout(this);
+    layout(formattingRoot) {
+        let formattingContext = this._createFormattingContext(formattingRoot);
+        formattingContext.layout();
+    }
+
+    _createFormattingContext(formattingRoot) {
+        ASSERT(formattingRoot.establishesFormattingContext());
+        if (formattingRoot.establishesBlockFormattingContext())
+            return new BlockFormattingContext(formattingRoot, this);
+        if (formattingRoot.establishesInlineFormattingContext())
+            return new InlineFormattingContext(formattingRoot, this);
+        ASSERT_NOT_REACHED();
+        return null;
     }
 }

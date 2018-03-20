@@ -34,7 +34,6 @@ Layout.Box = class Box {
         this.m_nextSibling = null;
         this.m_previousSibling = null;
         this.m_isAnonymous = false;
-        this.m_establishedFormattingContext = null;
         this.m_displayBox = null;
     }
 
@@ -146,12 +145,6 @@ Layout.Box = class Box {
         if (this.isAnonymous())
             return false;
         return this.establishesBlockFormattingContext() || this.establishesInlineFormattingContext();
-    }
-
-    establishedFormattingContext() {
-        if (this.establishesFormattingContext() && !this.m_establishedFormattingContext)
-            this.m_establishedFormattingContext = this.establishesBlockFormattingContext() ? new BlockFormattingContext(this) : new InlineFormattingContext(this);
-        return this.m_establishedFormattingContext;
     }
 
     establishesBlockFormattingContext() {

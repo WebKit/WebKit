@@ -64,8 +64,6 @@ class Box {
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;
 
-    FormattingContext* establishedFormattingContext();
-
     bool isInFlow() const;
     bool isPositioned() const;
     bool isRelativelyPositioned() const;
@@ -91,7 +89,6 @@ private:
     Box* m_previousSibling { nullptr };
     bool m_isAnonymous { false };
     LayoutRect m_rect;
-    FormattingContext* m_establishedFormattingContext { nullptr };
 };
 
 }

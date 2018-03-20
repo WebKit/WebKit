@@ -24,8 +24,9 @@
  */
 
 class FormattingContext {
-    constructor(rootContainer) {
+    constructor(rootContainer, layoutContext) {
         this.m_rootContainer = rootContainer;
+        this.m_layoutContext = layoutContext;
         this.m_floatingContext = null;
         this.m_displayToLayout = new Map();
         this.m_layoutToDisplay = new Map();
@@ -34,6 +35,10 @@ class FormattingContext {
 
     rootContainer() {
         return this.m_rootContainer;
+    }
+
+    layoutContext() {
+        return this.m_layoutContext;
     }
 
     floatingContext() {
@@ -143,10 +148,7 @@ class FormattingContext {
 
     toDisplayBox(layoutBox) {
         ASSERT(layoutBox);
-        ASSERT(this.m_layoutToDisplay.has(layoutBox) || layoutBox.establishedFormattingContext() == this);
-        if (layoutBox.establishedFormattingContext() == this)
-            return layoutBox.displayBox();
-        return this.m_layoutToDisplay.get(layoutBox);
+        return layoutBox.displayBox();
     }
 
     toLayoutBox(displayBox) {
@@ -182,7 +184,7 @@ class FormattingContext {
             if (containingBlock == this.rootContainer())
                 outOfFlowBoxes.push(outOfFlowBox);
             else if (containingBlock.isDescendantOf(this.rootContainer())) {
-                if (!containingBlock.establishedFormattingContext() || !containingBlock.isPositioned())
+                if (!containingBlock.establishesFormattingContext() || !containingBlock.isPositioned())
                     outOfFlowBoxes.push(outOfFlowBox);
             }
         }

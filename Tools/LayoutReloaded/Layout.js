@@ -31,6 +31,6 @@ function layout(window, viewportSize) {
     initialContainingBlock.setDisplayBox(displayBox);
 
     let layoutContext = new LayoutContext(initialContainingBlock);
-    layoutContext.layoutFormattingContext(initialContainingBlock.establishedFormattingContext());
+    layoutContext.layout(initialContainingBlock);
     return Utils.layoutTreeDump(initialContainingBlock);
 }
