@@ -30,6 +30,7 @@
 
 #include "SWServer.h"
 #include "SWServerWorker.h"
+#include "SecurityOriginHash.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -39,37 +40,29 @@ static SWServerToContextConnectionIdentifier generateServerToContextConnectionId
     return generateObjectIdentifier<SWServerToContextConnectionIdentifierType>();
 }
 
-static HashMap<SWServerToContextConnectionIdentifier, SWServerToContextConnection*>& allConnections()
+static HashMap<RefPtr<SecurityOrigin>, SWServerToContextConnection*>& allConnectionsByOrigin()
 {
-    static NeverDestroyed<HashMap<SWServerToContextConnectionIdentifier, SWServerToContextConnection*>> connections;
-    return connections;
+    static NeverDestroyed<HashMap<RefPtr<SecurityOrigin>, SWServerToContextConnection*>> connectionsByOrigin;
+    return connectionsByOrigin;
 }
 
-SWServerToContextConnection::SWServerToContextConnection()
+SWServerToContextConnection::SWServerToContextConnection(Ref<SecurityOrigin>&& origin)
     : m_identifier(generateServerToContextConnectionIdentifier())
+    , m_origin(WTFMove(origin))
 {
-    auto result = allConnections().add(m_identifier, this);
+    auto result = allConnectionsByOrigin().add(m_origin.copyRef(), this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 SWServerToContextConnection::~SWServerToContextConnection()
 {
-    auto result = allConnections().remove(m_identifier);
+    auto result = allConnectionsByOrigin().remove(m_origin.ptr());
     ASSERT_UNUSED(result, result);
 }
 
-SWServerToContextConnection* SWServerToContextConnection::connectionForIdentifier(SWServerToContextConnectionIdentifier identifier)
+SWServerToContextConnection* SWServerToContextConnection::connectionForOrigin(const SecurityOrigin& origin)
 {
-    return allConnections().get(identifier);
-}
-
-SWServerToContextConnection* SWServerToContextConnection::globalServerToContextConnection()
-{
-    if (allConnections().isEmpty())
-        return nullptr;
-    
-    ASSERT(allConnections().size() == 1);
-    return allConnections().begin()->value;
+    return allConnectionsByOrigin().get(&const_cast<SecurityOrigin&>(origin));
 }
 
 void SWServerToContextConnection::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)

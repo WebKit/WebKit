@@ -43,6 +43,7 @@ struct SecurityOriginData;
 namespace WebKit {
 
 class WebProcessPool;
+class WebProcessProxy;
 enum class WebsiteDataType;
 struct WebsiteData;
 
@@ -55,7 +56,7 @@ public:
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, WTF::Function<void()>&& completionHandler);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, WTF::Function<void()>&& completionHandler);
 
-    void getStorageProcessConnection(bool isServiceWorkerProcess, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
+    void getStorageProcessConnection(WebProcessProxy&, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
 
 private:
     StorageProcessProxy(WebProcessPool&);
@@ -80,8 +81,8 @@ private:
     void getSandboxExtensionsForBlobFiles(uint64_t requestID, const Vector<String>& paths);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToStorageProcess();
-    void establishWorkerContextConnectionToStorageProcessForExplicitSession(PAL::SessionID);
+    void establishWorkerContextConnectionToStorageProcess(WebCore::SecurityOriginData&&);
+    void establishWorkerContextConnectionToStorageProcessForExplicitSession(WebCore::SecurityOriginData&&, PAL::SessionID);
 #endif
 
     // ProcessLauncher::Client

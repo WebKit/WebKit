@@ -236,7 +236,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_processSuppressionDisabledForPageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
     , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
-    , m_serviceWorkerProcessTerminationTimer(RunLoop::main(), this, &WebProcessPool::terminateServiceWorkerProcess)
+    , m_serviceWorkerProcessesTerminationTimer(RunLoop::main(), this, &WebProcessPool::terminateServiceWorkerProcesses)
 #if PLATFORM(IOS)
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
@@ -569,11 +569,11 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
     m_storageProcess->send(Messages::StorageProcess::InitializeWebsiteDataStore(relevantDataStore->storageProcessParameters()), 0);
 }
 
-void WebProcessPool::getStorageProcessConnection(bool isServiceWorkerProcess, PAL::SessionID initialSessionID, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
+void WebProcessPool::getStorageProcessConnection(WebProcessProxy& webProcessProxy, PAL::SessionID initialSessionID, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
 {
     ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore::existingNonDefaultDataStoreForSessionID(initialSessionID));
 
-    m_storageProcess->getStorageProcessConnection(isServiceWorkerProcess, WTFMove(reply));
+    m_storageProcess->getStorageProcessConnection(webProcessProxy, WTFMove(reply));
 }
 
 void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessProxy)
@@ -589,11 +589,12 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy, std::optional<PAL::SessionID> sessionID)
+void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy, SecurityOriginData&& originData, std::optional<PAL::SessionID> sessionID)
 {
     ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
 
-    if (m_serviceWorkerProcess)
+    auto origin = originData.securityOrigin();
+    if (m_serviceWorkerProcesses.contains(origin.ptr()))
         return;
 
     m_mayHaveRegisteredServiceWorkers.clear();
@@ -608,20 +609,22 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
         websiteDataStore = &m_websiteDataStore->websiteDataStore();
     }
 
-    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, *websiteDataStore);
-    m_serviceWorkerProcess = serviceWorkerProcessProxy.ptr();
+    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, origin.copyRef(), *websiteDataStore);
+    m_serviceWorkerProcesses.add(origin.copyRef(), serviceWorkerProcessProxy.ptr());
+
     ASSERT(websiteDataStore->sessionID().isValid());
     if (websiteDataStore->sessionID().isValid())
         sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { websiteDataStore->sessionID() });
 
     updateProcessAssertions();
-    initializeNewWebProcess(serviceWorkerProcessProxy.get(), *websiteDataStore);
+    initializeNewWebProcess(serviceWorkerProcessProxy, *websiteDataStore);
 
+    auto* serviceWorkerProcessProxyPtr = serviceWorkerProcessProxy.ptr();
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
 
-    m_serviceWorkerProcess->start(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), sessionID);
+    serviceWorkerProcessProxyPtr->start(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), sessionID);
     if (!m_serviceWorkerUserAgent.isNull())
-        m_serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
+        serviceWorkerProcessProxyPtr->setUserAgent(m_serviceWorkerUserAgent);
 }
 #endif
 
@@ -709,8 +712,8 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
     initializeNewWebProcess(process, websiteDataStore);
     m_processes.append(WTFMove(processProxy));
 
-    if (m_serviceWorkerProcessTerminationTimer.isActive())
-        m_serviceWorkerProcessTerminationTimer.stop();
+    if (m_serviceWorkerProcessesTerminationTimer.isActive())
+        m_serviceWorkerProcessesTerminationTimer.stop();
 
     return process;
 }
@@ -970,9 +973,11 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
     RefPtr<WebProcessProxy> protect(process);
     if (m_processWithPageCache == process)
         m_processWithPageCache = nullptr;
+
 #if ENABLE(SERVICE_WORKER)
-    if (m_serviceWorkerProcess == process) {
-        m_serviceWorkerProcess = nullptr;
+    if (is<ServiceWorkerProcessProxy>(*process)) {
+        auto* removedProcess = m_serviceWorkerProcesses.take(&downcast<ServiceWorkerProcessProxy>(*process).origin());
+        ASSERT_UNUSED(removedProcess, removedProcess == process);
         updateProcessAssertions();
     }
 #endif
@@ -989,9 +994,9 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 #if ENABLE(SERVICE_WORKER)
     // FIXME: We should do better than this. For now, we just destroy the ServiceWorker process
     // whenever there is no regular WebContent process remaining.
-    if (m_processes.size() == 1 && m_processes[0] == m_serviceWorkerProcess) {
-        if (!m_serviceWorkerProcessTerminationTimer.isActive())
-            m_serviceWorkerProcessTerminationTimer.startOneShot(serviceWorkerTerminationDelay);
+    if (m_processes.size() == m_serviceWorkerProcesses.size()) {
+        if (!m_serviceWorkerProcessesTerminationTimer.isActive())
+            m_serviceWorkerProcessesTerminationTimer.startOneShot(serviceWorkerTerminationDelay);
     }
 #endif
 }
@@ -1015,7 +1020,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
         if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
             continue;
 #if ENABLE(SERVICE_WORKER)
-        if (process.get() == m_serviceWorkerProcess)
+        if (is<ServiceWorkerProcessProxy>(*process))
             continue;
 #endif
         // Choose the process with fewest pages.
@@ -1058,7 +1063,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         process = &createNewWebProcessRespectingProcessCountLimit(pageConfiguration->websiteDataStore()->websiteDataStore());
 
 #if ENABLE(SERVICE_WORKER)
-    ASSERT(process.get() != m_serviceWorkerProcess);
+    ASSERT(!is<ServiceWorkerProcessProxy>(*process));
 #endif
 
     return process->createWebPage(pageClient, WTFMove(pageConfiguration));
@@ -1070,13 +1075,13 @@ void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
     if (m_serviceWorkerUserAgent == userAgent)
         return;
     m_serviceWorkerUserAgent = userAgent;
-    if (m_serviceWorkerProcess)
-        m_serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
+    for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
+        serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
 }
 
 bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& store)
 {
-    if (serviceWorkerProxy())
+    if (!m_serviceWorkerProcesses.isEmpty())
         return true;
 
     String serviceWorkerRegistrationDirectory = store.resolvedServiceWorkerRegistrationDirectory();
@@ -1113,8 +1118,8 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
 #if ENABLE(SERVICE_WORKER)
     if (!m_serviceWorkerPreferences) {
         m_serviceWorkerPreferences = page.preferencesStore();
-        if (m_serviceWorkerProcess)
-            m_serviceWorkerProcess->updatePreferencesStore(m_serviceWorkerPreferences.value());
+        for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values())
+            serviceWorkerProcess->updatePreferencesStore(*m_serviceWorkerPreferences);
     }
 #endif
 }
@@ -1497,18 +1502,14 @@ void WebProcessPool::terminateNetworkProcess()
     m_didNetworkProcessCrash = true;
 }
 
-void WebProcessPool::terminateServiceWorkerProcess()
+void WebProcessPool::terminateServiceWorkerProcesses()
 {
 #if ENABLE(SERVICE_WORKER)
-    if (!m_serviceWorkerProcess)
+    if (m_serviceWorkerProcesses.isEmpty())
         return;
 
-#ifndef NDEBUG
-    auto protectedThis = makeRef(*this);
-#endif
-    m_serviceWorkerProcess->requestTermination(ProcessTerminationReason::RequestedByClient);
-    ASSERT(!m_processes.contains(m_serviceWorkerProcess));
-    ASSERT(!m_serviceWorkerProcess);
+    while (!m_serviceWorkerProcesses.isEmpty())
+        m_serviceWorkerProcesses.begin()->value->requestTermination(ProcessTerminationReason::RequestedByClient);
 #endif
 }
 
@@ -1856,20 +1857,28 @@ void WebProcessPool::updateProcessAssertions()
 #if PLATFORM(IOS)
 #if ENABLE(SERVICE_WORKER)
     auto updateServiceWorkerProcessAssertion = [&] {
-        if (m_serviceWorkerProcess && m_foregroundWebProcessCounter.value()) {
-            if (!m_foregroundTokenForServiceWorkerProcess)
-                m_foregroundTokenForServiceWorkerProcess = m_serviceWorkerProcess->throttler().foregroundActivityToken();
-            m_backgroundTokenForServiceWorkerProcess = nullptr;
+        if (!m_serviceWorkerProcesses.isEmpty() && m_foregroundWebProcessCounter.value()) {
+            // FIXME: We can do better than this once we have process per origin.
+            for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
+                auto& origin = serviceWorkerProcess->origin();
+                if (!m_foregroundTokensForServiceWorkerProcesses.contains(&origin))
+                    m_foregroundTokensForServiceWorkerProcesses.add(&origin, serviceWorkerProcess->throttler().foregroundActivityToken());
+            }
+            m_backgroundTokensForServiceWorkerProcesses.clear();
             return;
         }
-        if (m_serviceWorkerProcess && m_backgroundWebProcessCounter.value()) {
-            if (!m_backgroundTokenForServiceWorkerProcess)
-                m_backgroundTokenForServiceWorkerProcess = m_serviceWorkerProcess->throttler().backgroundActivityToken();
-            m_foregroundTokenForServiceWorkerProcess = nullptr;
+        if (!m_serviceWorkerProcesses.isEmpty() && m_backgroundWebProcessCounter.value()) {
+            // FIXME: We can do better than this once we have process per origin.
+            for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
+                auto& origin = serviceWorkerProcess->origin();
+                if (!m_backgroundTokensForServiceWorkerProcesses.contains(&origin))
+                    m_backgroundTokensForServiceWorkerProcesses.add(&origin, serviceWorkerProcess->throttler().backgroundActivityToken());
+            }
+            m_foregroundTokensForServiceWorkerProcesses.clear();
             return;
         }
-        m_foregroundTokenForServiceWorkerProcess = nullptr;
-        m_backgroundTokenForServiceWorkerProcess = nullptr;
+        m_foregroundTokensForServiceWorkerProcesses.clear();
+        m_backgroundTokensForServiceWorkerProcesses.clear();
     };
     updateServiceWorkerProcessAssertion();
 #endif
@@ -1918,5 +1927,17 @@ void WebProcessPool::reinstateNetworkProcessAssertionState(NetworkProcessProxy& 
     UNUSED_PARAM(newNetworkProcessProxy);
 #endif
 }
+
+#if ENABLE(SERVICE_WORKER)
+ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(uint64_t pageID) const
+{
+    // FIXME: This is inefficient.
+    for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
+        if (serviceWorkerProcess->pageID() == pageID)
+            return serviceWorkerProcess;
+    }
+    return nullptr;
+}
+#endif
 
 } // namespace WebKit

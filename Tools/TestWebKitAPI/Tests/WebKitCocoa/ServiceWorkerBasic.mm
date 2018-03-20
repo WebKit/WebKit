@@ -210,7 +210,8 @@ navigator.serviceWorker.addEventListener("message", function(event) {
 try {
 
 navigator.serviceWorker.register('/sw.js').then(function(reg) {
-    reg.installing.postMessage("Hello from the web page");
+    worker = reg.installing ? reg.installing : reg.active;
+    worker.postMessage("Hello from the web page");
 }).catch(function(error) {
     log("Registration failed with: " + error);
 });
@@ -1279,6 +1280,66 @@ TEST(ServiceWorkers, NonDefaultSessionID)
 
     TestWebKitAPI::Util::run(&done);
     done = false;
+}
+
+TEST(ServiceWorkers, ProcessPerOrigin)
+{
+    ASSERT(mainBytes);
+    ASSERT(scriptBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    RetainPtr<SWSchemes> handler1 = adoptNS([[SWSchemes alloc] init]);
+    handler1->resources.set("sw1://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw1://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler1.get() forURLScheme:@"sw1"];
+
+    RetainPtr<SWSchemes> handler2 = adoptNS([[SWSchemes alloc] init]);
+    handler2->resources.set("sw2://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler2->resources.set("sw2://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler2.get() forURLScheme:@"sw2"];
+
+    [configuration.get().processPool _registerURLSchemeServiceWorkersCanHandle:@"sw1"];
+    [configuration.get().processPool _registerURLSchemeServiceWorkersCanHandle:@"sw2"];
+
+    RetainPtr<WKWebView> webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSURLRequest *request1 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw1://host/main.html"]];
+    [webView1 loadRequest:request1];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(1U, webView1.get().configuration.processPool._serviceWorkerProcessCount);
+
+    RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView2 loadRequest:request1];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(1U, webView2.get().configuration.processPool._serviceWorkerProcessCount);
+
+    RetainPtr<WKWebView> webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request2 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw2://host/main.html"]];
+    [webView3 loadRequest:request2];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(2U, webView3.get().configuration.processPool._serviceWorkerProcessCount);
 }
 
 #endif // WK_API_ENABLED

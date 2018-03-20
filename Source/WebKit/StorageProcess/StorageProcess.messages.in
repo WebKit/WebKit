@@ -25,7 +25,7 @@ messages -> StorageProcess LegacyReceiver {
     InitializeWebsiteDataStore(struct WebKit::StorageProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
-    CreateStorageToWebProcessConnection(bool isServiceWorkerProcess)
+    CreateStorageToWebProcessConnection(bool isServiceWorkerProcess, struct WebCore::SecurityOriginData origin)
 
     FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, uint64_t callbackID)
     DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)

@@ -79,8 +79,6 @@ public:
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
 
-    void setContextConnectionIdentifier(std::optional<SWServerToContextConnectionIdentifier> identifier) { m_contextConnectionIdentifier = identifier; }
-
     ServiceWorkerState state() const { return m_data.state; }
     void setState(ServiceWorkerState);
 
@@ -104,18 +102,19 @@ public:
 
     const ServiceWorkerData& data() const { return m_data; }
     ServiceWorkerContextData contextData() const;
+
     const ClientOrigin& origin() const;
+    WEBCORE_EXPORT Ref<SecurityOrigin> securityOrigin() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
 
 private:
-    SWServerWorker(SWServer&, SWServerRegistration&, std::optional<SWServerToContextConnectionIdentifier>, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&,  WorkerType, ServiceWorkerIdentifier);
+    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&,  WorkerType, ServiceWorkerIdentifier);
 
     void callWhenActivatedHandler(bool success);
 
     SWServer& m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
-    std::optional<SWServerToContextConnectionIdentifier> m_contextConnectionIdentifier;
     ServiceWorkerData m_data;
     String m_script;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;

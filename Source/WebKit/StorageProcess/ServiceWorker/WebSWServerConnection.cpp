@@ -151,8 +151,14 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRe
             return;
         }
 
-        if (!StorageProcess::singleton().globalServerToContextConnection())
-            StorageProcess::singleton().createServerToContextConnection(server().sessionID());
+        auto* worker = server().workerByID(serviceWorkerIdentifier);
+        if (!worker) {
+            m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
+            return;
+        }
+
+        if (!worker->contextConnection())
+            StorageProcess::singleton().createServerToContextConnection(worker->securityOrigin(), server().sessionID());
 
         server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](auto* contextConnection) {
             if (!weakThis)
@@ -178,15 +184,15 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRe
 
 void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)
 {
+    auto* destinationWorker = server().workerByID(destinationIdentifier);
+    if (!destinationWorker)
+        return;
+
     std::optional<ServiceWorkerOrClientData> sourceData;
     WTF::switchOn(sourceIdentifier, [&](ServiceWorkerIdentifier identifier) {
         if (auto* sourceWorker = server().workerByID(identifier))
             sourceData = ServiceWorkerOrClientData { sourceWorker->data() };
     }, [&](ServiceWorkerClientIdentifier identifier) {
-        auto* destinationWorker = server().workerByID(destinationIdentifier);
-        if (!destinationWorker)
-            return;
-
         if (auto clientData = destinationWorker->findClientByIdentifier(identifier))
             sourceData = ServiceWorkerOrClientData { *clientData };
     });
@@ -194,8 +200,8 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     if (!sourceData)
         return;
 
-    if (!StorageProcess::singleton().globalServerToContextConnection())
-        StorageProcess::singleton().createServerToContextConnection(server().sessionID());
+    if (!destinationWorker->contextConnection())
+        StorageProcess::singleton().createServerToContextConnection(destinationWorker->securityOrigin(), server().sessionID());
 
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
     server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](auto* contextConnection) mutable {
@@ -206,8 +212,9 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
-    if (!StorageProcess::singleton().globalServerToContextConnection())
-        StorageProcess::singleton().createServerToContextConnection(server().sessionID());
+    auto securityOrigin = SecurityOrigin::create(jobData.scriptURL);
+    if (!StorageProcess::singleton().serverToContextConnectionForOrigin(securityOrigin))
+        StorageProcess::singleton().createServerToContextConnection(securityOrigin, server().sessionID());
 
     SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     ASSERT(identifier() == jobData.connectionIdentifier());

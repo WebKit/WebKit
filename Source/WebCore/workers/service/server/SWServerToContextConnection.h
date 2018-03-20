@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SecurityOrigin.h"
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
@@ -73,17 +74,16 @@ public:
     WEBCORE_EXPORT void matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&);
     WEBCORE_EXPORT void claim(uint64_t requestIdentifier, ServiceWorkerIdentifier);
 
-    static SWServerToContextConnection* connectionForIdentifier(SWServerToContextConnectionIdentifier);
+    static SWServerToContextConnection* connectionForOrigin(const SecurityOrigin&);
 
-    // FIXME: While we only ever have one SW context process this method makes sense.
-    // Once we have multiple ones this method should go away forcing use of connectionForIdentifier()
-    WEBCORE_EXPORT static SWServerToContextConnection* globalServerToContextConnection();
+    SecurityOrigin& origin() { return m_origin.get(); }
 
 protected:
-    WEBCORE_EXPORT SWServerToContextConnection();
+    WEBCORE_EXPORT explicit SWServerToContextConnection(Ref<SecurityOrigin>&&);
 
 private:
     SWServerToContextConnectionIdentifier m_identifier;
+    Ref<SecurityOrigin> m_origin;
 };
 
 } // namespace WebCore

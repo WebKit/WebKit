@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "WebProcessProxy.h"
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
@@ -35,7 +36,7 @@ struct WebPreferencesStore;
 
 class ServiceWorkerProcessProxy final : public WebProcessProxy {
 public:
-    static Ref<ServiceWorkerProcessProxy> create(WebProcessPool&, WebsiteDataStore&);
+    static Ref<ServiceWorkerProcessProxy> create(WebProcessPool&, Ref<WebCore::SecurityOrigin>&&, WebsiteDataStore&);
     ~ServiceWorkerProcessProxy();
 
     static bool hasRegisteredServiceWorkers(const String& serviceWorkerDirectory);
@@ -46,6 +47,7 @@ public:
     void setUserAgent(const String&);
     void updatePreferencesStore(const WebPreferencesStore&);
 
+    WebCore::SecurityOrigin& origin() { return m_origin.get(); }
     uint64_t pageID() const { return m_serviceWorkerPageID; }
 
 private:
@@ -54,10 +56,16 @@ private:
 
     bool isServiceWorkerProcess() const final { return true; }
 
-    ServiceWorkerProcessProxy(WebProcessPool&, WebsiteDataStore&);
+    ServiceWorkerProcessProxy(WebProcessPool&, Ref<WebCore::SecurityOrigin>&&, WebsiteDataStore&);
+
+    Ref<WebCore::SecurityOrigin> m_origin;
     uint64_t m_serviceWorkerPageID { 0 };
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ServiceWorkerProcessProxy)
+    static bool isType(const WebKit::WebProcessProxy& webProcessProxy) { return webProcessProxy.isServiceWorkerProcess(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SERVICE_WORKER)

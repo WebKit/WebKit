@@ -1,3 +1,75 @@
+2018-03-19  Chris Dumez  <cdumez@apple.com>
+
+        Have one service worker process per security origin
+        https://bugs.webkit.org/show_bug.cgi?id=183600
+        <rdar://problem/35280128>
+
+        Reviewed by Brady Eidson.
+
+        Split service workers from different origins into their own processes
+        for security reasons.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::connectionToContextProcessFromIPCConnection):
+        (WebKit::StorageProcess::didClose):
+        (WebKit::StorageProcess::connectionToContextProcessWasClosed):
+        (WebKit::StorageProcess::needsServerToContextConnectionForOrigin const):
+        (WebKit::StorageProcess::didReceiveMessage):
+        (WebKit::StorageProcess::createStorageToWebProcessConnection):
+        (WebKit::StorageProcess::serverToContextConnectionForOrigin):
+        (WebKit::StorageProcess::createServerToContextConnection):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::didReceiveMessage):
+        (WebKit::StorageToWebProcessConnection::didClose):
+        * StorageProcess/StorageToWebProcessConnection.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateServiceWorkerProcess):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateServiceWorkerProcesses]):
+        (-[WKProcessPool _webPageContentProcessCount]):
+        (-[WKProcessPool _serviceWorkerProcessCount]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkProcessProxy::canAuthenticateAgainstProtectionSpace):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::create):
+        (WebKit::ServiceWorkerProcessProxy::ServiceWorkerProcessProxy):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        (isType):
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::getStorageProcessConnection):
+        (WebKit::StorageProcessProxy::didFinishLaunching):
+        (WebKit::StorageProcessProxy::establishWorkerContextConnectionToStorageProcess):
+        (WebKit::StorageProcessProxy::establishWorkerContextConnectionToStorageProcessForExplicitSession):
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getStorageProcessConnection):
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::updateServiceWorkerUserAgent):
+        (WebKit::WebProcessPool::mayHaveRegisteredServiceWorkers):
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::terminateServiceWorkerProcesses):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        (WebKit::WebProcessPool::serviceWorkerProcessProxyFromPageID const):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getStorageProcessConnection):
+
 2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, another quick fix for r229699

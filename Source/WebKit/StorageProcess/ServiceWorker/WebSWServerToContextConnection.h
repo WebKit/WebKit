@@ -48,7 +48,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
-    explicit WebSWServerToContextConnection(Ref<IPC::Connection>&&);
+    explicit WebSWServerToContextConnection(Ref<WebCore::SecurityOrigin>&&, Ref<IPC::Connection>&&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() final;

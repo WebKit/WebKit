@@ -31,6 +31,7 @@
 #include "DocumentIdentifier.h"
 #include "RegistrationStore.h"
 #include "SWServerWorker.h"
+#include "SecurityOriginHash.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJob.h"
@@ -224,8 +225,8 @@ private:
 
     UniqueRef<SWOriginStore> m_originStore;
     RegistrationStore m_registrationStore;
-    Vector<ServiceWorkerContextData> m_pendingContextDatas;
-    HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> m_serviceWorkerRunRequests;
+    HashMap<RefPtr<SecurityOrigin>, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
+    HashMap<RefPtr<SecurityOrigin>, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
     bool m_importCompleted { false };
     Vector<CompletionHandler<void()>> m_clearCompletionCallbacks;

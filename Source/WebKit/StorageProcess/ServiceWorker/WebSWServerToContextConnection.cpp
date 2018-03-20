@@ -36,8 +36,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(Ref<IPC::Connection>&& connection)
-    : m_ipcConnection(WTFMove(connection))
+WebSWServerToContextConnection::WebSWServerToContextConnection(Ref<SecurityOrigin>&& origin, Ref<IPC::Connection>&& connection)
+    : SWServerToContextConnection(WTFMove(origin))
+    , m_ipcConnection(WTFMove(connection))
 {
 }
 

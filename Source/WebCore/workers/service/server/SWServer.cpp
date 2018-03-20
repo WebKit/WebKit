@@ -138,8 +138,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
     auto registrationPtr = registration.get();
     addRegistration(WTFMove(registration));
 
-    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
-    auto worker = SWServerWorker::create(*this, *registrationPtr, connection ? std::make_optional(connection->identifier()) : std::nullopt, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+    auto worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
     registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
     worker->setState(ServiceWorkerState::Activated);
 }
@@ -226,9 +225,11 @@ void SWServer::clear(const SecurityOrigin& origin, CompletionHandler<void()>&& c
             registrationsToRemove.append(keyAndValue.value.get());
     }
 
-    m_pendingContextDatas.removeAllMatching([&](auto& contextData) {
-        return contextData.registration.key.relatesToOrigin(origin);
-    });
+    for (auto& contextDatas : m_pendingContextDatas.values()) {
+        contextDatas.removeAllMatching([&](auto& contextData) {
+            return contextData.registration.key.relatesToOrigin(origin);
+        });
+    }
 
     if (registrationsToRemove.isEmpty()) {
         completionHandler();
@@ -497,11 +498,12 @@ void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& j
 
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
 {
-    // Right now we only ever keep up to one connection to one SW context process.
-    // And it should always exist if we're trying to install context data.
-    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
+    auto origin = SecurityOrigin::create(data.scriptURL);
+    auto* connection = SWServerToContextConnection::connectionForOrigin(origin);
     if (!connection) {
-        m_pendingContextDatas.append(WTFMove(data));
+        m_pendingContextDatas.ensure(WTFMove(origin), [] {
+            return Vector<ServiceWorkerContextData> { };
+        }).iterator->value.append(WTFMove(data));
         return;
     }
     
@@ -510,15 +512,11 @@ void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
 
 void SWServer::serverToContextConnectionCreated(SWServerToContextConnection& contextConnection)
 {
-    // FIXME: This will need to update only workers using this connection once we use several context connections.
-    for (auto* worker : SWServerWorker::allWorkers().values())
-        worker->setContextConnectionIdentifier(contextConnection.identifier());
-
-    auto pendingContextDatas = WTFMove(m_pendingContextDatas);
+    auto pendingContextDatas = m_pendingContextDatas.take(&contextConnection.origin());
     for (auto& data : pendingContextDatas)
         installContextData(data);
 
-    auto serviceWorkerRunRequests = WTFMove(m_serviceWorkerRunRequests);
+    auto serviceWorkerRunRequests = m_serviceWorkerRunRequests.take(&contextConnection.origin());
     for (auto& item : serviceWorkerRunRequests) {
         bool success = runServiceWorker(item.key);
         for (auto& callback : item.value)
@@ -537,13 +535,13 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
             return;
     }
 
-    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
-    ASSERT(connection);
-
     auto* registration = m_registrations.get(data.registration.key);
     RELEASE_ASSERT(registration);
 
-    auto worker = SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+    auto worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+
+    auto* connection = worker->contextConnection();
+    ASSERT(connection);
 
     registration->setPreInstallationWorker(worker.ptr());
     worker->setState(SWServerWorker::State::Running);
@@ -569,7 +567,10 @@ void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, R
     }
 
     if (!contextConnection) {
-        m_serviceWorkerRunRequests.ensure(identifier, [&] {
+        auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker->securityOrigin(), [] {
+            return HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> { };
+        }).iterator->value;
+        serviceWorkerRunRequestsForOrigin.ensure(identifier, [&] {
             return Vector<RunServiceWorkerCallback> { };
         }).iterator->value.append(WTFMove(callback));
         return;
@@ -642,11 +643,8 @@ void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode m
 
 void SWServer::markAllWorkersAsTerminated()
 {
-    while (!m_runningOrTerminatingWorkers.isEmpty()) {
-        auto& worker = m_runningOrTerminatingWorkers.begin()->value;
-        worker->setContextConnectionIdentifier(std::nullopt);
-        workerContextTerminated(worker);
-    }
+    while (!m_runningOrTerminatingWorkers.isEmpty())
+        workerContextTerminated(m_runningOrTerminatingWorkers.begin()->value);
 }
 
 void SWServer::workerContextTerminated(SWServerWorker& worker)

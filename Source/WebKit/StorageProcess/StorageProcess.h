@@ -29,6 +29,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
+#include <WebCore/SecurityOriginHash.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/UniqueIDBDatabase.h>
@@ -93,10 +94,8 @@ public:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    // For now we just have one global connection to service worker context processes.
-    // This will change in the future.
-    WebSWServerToContextConnection* globalServerToContextConnection();
-    void createServerToContextConnection(std::optional<PAL::SessionID>);
+    WebSWServerToContextConnection* serverToContextConnectionForOrigin(const WebCore::SecurityOrigin&);
+    void createServerToContextConnection(const WebCore::SecurityOrigin&, std::optional<PAL::SessionID>);
 
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
@@ -106,7 +105,8 @@ public:
     void didReceiveStorageProcessMessage(IPC::Connection&, IPC::Decoder&);
 
 #if ENABLE(SERVICE_WORKER)
-    void connectionToContextProcessWasClosed();
+    WebSWServerToContextConnection* connectionToContextProcessFromIPCConnection(IPC::Connection&);
+    void connectionToContextProcessWasClosed(Ref<WebSWServerToContextConnection>&&);
 #endif
 
 private:
@@ -125,7 +125,7 @@ private:
 
     // Message Handlers
     void initializeWebsiteDataStore(const StorageProcessCreationParameters&);
-    void createStorageToWebProcessConnection(bool isServiceWorkerProcess);
+    void createStorageToWebProcessConnection(bool isServiceWorkerProcess, WebCore::SecurityOriginData&&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID);
@@ -146,7 +146,7 @@ private:
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, WebCore::SWServerConnectionIdentifier);
 
     WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
-    bool needsServerToContextConnection() const;
+    bool needsServerToContextConnectionForOrigin(WebCore::SecurityOrigin&) const;
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
@@ -173,7 +173,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
 
-    RefPtr<WebSWServerToContextConnection> m_serverToContextConnection;
+    HashMap<RefPtr<WebCore::SecurityOrigin>, Ref<WebSWServerToContextConnection>> m_serverToContextConnections;
     bool m_waitingForServerToContextProcessConnection { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;

@@ -608,7 +608,7 @@ void WKContextTerminateNetworkProcess(WKContextRef context)
 
 void WKContextTerminateServiceWorkerProcess(WKContextRef context)
 {
-    toImpl(context)->terminateServiceWorkerProcess();
+    toImpl(context)->terminateServiceWorkerProcesses();
 }
 
 ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)

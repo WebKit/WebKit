@@ -32,7 +32,7 @@ messages -> StorageProcessProxy LegacyReceiver {
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishWorkerContextConnectionToStorageProcess()
-    EstablishWorkerContextConnectionToStorageProcessForExplicitSession(PAL::SessionID explicitSession)
+    EstablishWorkerContextConnectionToStorageProcess(struct WebCore::SecurityOriginData origin)
+    EstablishWorkerContextConnectionToStorageProcessForExplicitSession(struct WebCore::SecurityOriginData origin, PAL::SessionID explicitSession)
 #endif
 }

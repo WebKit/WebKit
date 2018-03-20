@@ -607,7 +607,7 @@ void WebProcessProxy::getNetworkProcessConnection(Ref<Messages::WebProcessProxy:
 
 void WebProcessProxy::getStorageProcessConnection(PAL::SessionID initialSessionID, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&& reply)
 {
-    m_processPool->getStorageProcessConnection(isServiceWorkerProcess(), initialSessionID, WTFMove(reply));
+    m_processPool->getStorageProcessConnection(*this, initialSessionID, WTFMove(reply));
 }
 
 #if !PLATFORM(COCOA)

@@ -84,11 +84,22 @@ bool StorageProcess::shouldTerminate()
     return true;
 }
 
+#if ENABLE(SERVICE_WORKER)
+WebSWServerToContextConnection* StorageProcess::connectionToContextProcessFromIPCConnection(IPC::Connection& connection)
+{
+    for (auto& serverToContextConnection : m_serverToContextConnections.values()) {
+        if (serverToContextConnection->ipcConnection() == &connection)
+            return serverToContextConnection.ptr();
+    }
+    return nullptr;
+}
+#endif
+
 void StorageProcess::didClose(IPC::Connection& connection)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (m_serverToContextConnection && m_serverToContextConnection->ipcConnection() == &connection) {
-        connectionToContextProcessWasClosed();
+    if (RefPtr<WebSWServerToContextConnection> serverToContextConnection = connectionToContextProcessFromIPCConnection(connection)) {
+        connectionToContextProcessWasClosed(serverToContextConnection.releaseNonNull());
         return;
     }
 #else
@@ -98,31 +109,31 @@ void StorageProcess::didClose(IPC::Connection& connection)
 }
 
 #if ENABLE(SERVICE_WORKER)
-void StorageProcess::connectionToContextProcessWasClosed()
+void StorageProcess::connectionToContextProcessWasClosed(Ref<WebSWServerToContextConnection>&& serverToContextConnection)
 {
-    if (!m_serverToContextConnection)
-        return;
+    Ref<SecurityOrigin> origin = serverToContextConnection->origin();
+    bool shouldRelaunch = needsServerToContextConnectionForOrigin(origin);
 
-    bool shouldRelaunch = needsServerToContextConnection();
-
-    m_serverToContextConnection->connectionClosed();
-    m_serverToContextConnection = nullptr;
+    serverToContextConnection->connectionClosed();
+    m_serverToContextConnections.remove(origin.ptr());
 
     for (auto& swServer : m_swServers.values())
         swServer->markAllWorkersAsTerminated();
 
     if (shouldRelaunch)
-        createServerToContextConnection(std::nullopt);
+        createServerToContextConnection(origin, std::nullopt);
 }
 
 // The rule is that we need a context process (and a connection to it) as long as we have SWServerConnections to regular WebProcesses.
-bool StorageProcess::needsServerToContextConnection() const
+bool StorageProcess::needsServerToContextConnectionForOrigin(SecurityOrigin& origin) const
 {
     if (m_swServerConnections.isEmpty())
         return false;
 
+    auto* contextConnection = m_serverToContextConnections.get(&origin);
+
     // If the last SWServerConnection is to the context process, then we no longer need the context connection.
-    if (m_swServerConnections.size() == 1 && m_serverToContextConnection && &m_swServerConnections.begin()->value->ipcConnection() == m_serverToContextConnection->ipcConnection())
+    if (m_swServerConnections.size() == 1 && contextConnection && &m_swServerConnections.begin()->value->ipcConnection() == contextConnection->ipcConnection())
         return false;
 
     return true;
@@ -149,8 +160,7 @@ void StorageProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
         ASSERT(parentProcessHasServiceWorkerEntitlement());
         if (!parentProcessHasServiceWorkerEntitlement())
             return;
-        if (auto* swConnection = SWServerToContextConnection::globalServerToContextConnection()) {
-            auto* webSWConnection = static_cast<WebSWServerToContextConnection*>(swConnection);
+        if (auto* webSWConnection = connectionToContextProcessFromIPCConnection(connection)) {
             webSWConnection->didReceiveMessage(connection, decoder);
             return;
         }
@@ -244,7 +254,7 @@ void StorageProcess::performNextStorageTask()
     task.performTask();
 }
 
-void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerProcess)
+void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerProcess, WebCore::SecurityOriginData&& originData)
 {
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
@@ -268,11 +278,15 @@ void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerPro
     if (isServiceWorkerProcess && !m_storageToWebProcessConnections.isEmpty()) {
         ASSERT(parentProcessHasServiceWorkerEntitlement());
         ASSERT(m_waitingForServerToContextProcessConnection);
-        m_serverToContextConnection = WebSWServerToContextConnection::create(m_storageToWebProcessConnections.last()->connection());
+        auto origin = originData.securityOrigin();
+        auto contextConnection = WebSWServerToContextConnection::create(origin.copyRef(), m_storageToWebProcessConnections.last()->connection());
+        auto addResult = m_serverToContextConnections.add(WTFMove(origin), contextConnection.copyRef());
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
         m_waitingForServerToContextProcessConnection = false;
 
         for (auto* server : SWServer::allServers())
-            server->serverToContextConnectionCreated(*m_serverToContextConnection);
+            server->serverToContextConnectionCreated(contextConnection);
     }
 #else
     UNUSED_PARAM(isServiceWorkerProcess);
@@ -438,21 +452,21 @@ WebSWOriginStore& StorageProcess::swOriginStoreForSession(PAL::SessionID session
     return static_cast<WebSWOriginStore&>(swServerForSession(sessionID).originStore());
 }
 
-WebSWServerToContextConnection* StorageProcess::globalServerToContextConnection()
+WebSWServerToContextConnection* StorageProcess::serverToContextConnectionForOrigin(const WebCore::SecurityOrigin& origin)
 {
-    return m_serverToContextConnection.get();
+    return m_serverToContextConnections.get(&const_cast<SecurityOrigin&>(origin));
 }
 
-void StorageProcess::createServerToContextConnection(std::optional<PAL::SessionID> sessionID)
+void StorageProcess::createServerToContextConnection(const SecurityOrigin& origin, std::optional<PAL::SessionID> sessionID)
 {
     if (m_waitingForServerToContextProcessConnection)
         return;
     
     m_waitingForServerToContextProcessConnection = true;
     if (sessionID)
-        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcessForExplicitSession(*sessionID), 0);
+        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcessForExplicitSession(SecurityOriginData::fromSecurityOrigin(origin), *sessionID), 0);
     else
-        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcess(), 0);
+        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcess(SecurityOriginData::fromSecurityOrigin(origin)), 0);
 }
 
 void StorageProcess::didFailFetch(SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)

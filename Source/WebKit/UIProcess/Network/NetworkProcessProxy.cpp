@@ -276,9 +276,9 @@ void NetworkProcessProxy::didCreateNetworkConnectionToWebProcess(const IPC::Atta
 void NetworkProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge& coreChallenge, uint64_t challengeID)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (m_processPool.isServiceWorker(pageID)) {
+    if (auto* serviceWorkerProcessProxy = m_processPool.serviceWorkerProcessProxyFromPageID(pageID)) {
         auto authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, connection());
-        m_processPool.serviceWorkerProxy()->didReceiveAuthenticationChallenge(pageID, frameID, WTFMove(authenticationChallenge));
+        serviceWorkerProcessProxy->didReceiveAuthenticationChallenge(pageID, frameID, WTFMove(authenticationChallenge));
         return;
     }
 #endif
@@ -394,7 +394,7 @@ void NetworkProcessProxy::canAuthenticateAgainstProtectionSpace(uint64_t loaderI
             return;
         }
 #if ENABLE(SERVICE_WORKER)
-    } else if (m_processPool.isServiceWorker(pageID)) {
+    } else if (m_processPool.serviceWorkerProcessProxyFromPageID(pageID)) {
         send(Messages::NetworkProcess::ContinueCanAuthenticateAgainstProtectionSpace(loaderID, true), 0);
         return;
 #endif

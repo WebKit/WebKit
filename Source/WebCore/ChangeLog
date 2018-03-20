@@ -1,3 +1,35 @@
+2018-03-19  Chris Dumez  <cdumez@apple.com>
+
+        Have one service worker process per security origin
+        https://bugs.webkit.org/show_bug.cgi?id=183600
+        <rdar://problem/35280128>
+
+        Reviewed by Brady Eidson.
+
+        Split service workers from different origins into their own processes
+        for security reasons.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+        (WebCore::SWServer::clear):
+        (WebCore::SWServer::tryInstallContextData):
+        (WebCore::SWServer::serverToContextConnectionCreated):
+        (WebCore::SWServer::installContextData):
+        (WebCore::SWServer::runServiceWorkerIfNecessary):
+        (WebCore::SWServer::markAllWorkersAsTerminated):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.cpp:
+        (WebCore::SWServerToContextConnection::SWServerToContextConnection):
+        (WebCore::SWServerToContextConnection::~SWServerToContextConnection):
+        (WebCore::SWServerToContextConnection::connectionForOrigin):
+        * workers/service/server/SWServerToContextConnection.h:
+        (WebCore::SWServerToContextConnection::origin):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        (WebCore::SWServerWorker::securityOrigin const):
+        (WebCore::SWServerWorker::contextConnection):
+        * workers/service/server/SWServerWorker.h:
+
 2018-03-19  Megan Gardner  <megan_gardner@apple.com>
 
         Have select element respect current appearance

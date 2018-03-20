@@ -424,9 +424,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->terminateNetworkProcess();
 }
 
-- (void)_terminateServiceWorkerProcess
+- (void)_terminateServiceWorkerProcesses
 {
-    _processPool->terminateServiceWorkerProcess();
+    _processPool->terminateServiceWorkerProcesses();
 }
 
 - (pid_t)_networkProcessIdentifier
@@ -453,24 +453,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 {
     auto allWebProcesses = _processPool->processes();
 #if ENABLE(SERVICE_WORKER)
-    auto* serviceWorkerProcess = _processPool->serviceWorkerProxy();
-    if (!serviceWorkerProcess)
+    auto& serviceWorkerProcesses = _processPool->serviceWorkerProxies();
+    if (serviceWorkerProcesses.isEmpty())
         return allWebProcesses.size();
 
-#if !ASSERT_DISABLED
-    bool serviceWorkerProcessWasFound = false;
-    for (auto& process : allWebProcesses) {
-        if (process == serviceWorkerProcess) {
-            serviceWorkerProcessWasFound = true;
-            break;
-        }
-    }
-
-    ASSERT(serviceWorkerProcessWasFound);
-    ASSERT(allWebProcesses.size() > 1);
-#endif
-
-    return allWebProcesses.size() - 1;
+    return allWebProcesses.size() - serviceWorkerProcesses.size();
 #else
     return allWebProcesses.size();
 #endif
@@ -485,6 +472,15 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 {
 #if !PLATFORM(IOS)
     return WebKit::PluginProcessManager::singleton().pluginProcesses().size();
+#else
+    return 0;
+#endif
+}
+
+- (size_t)_serviceWorkerProcessCount
+{
+#if ENABLE(SERVICE_WORKER)
+    return _processPool->serviceWorkerProxies().size();
 #else
     return 0;
 #endif
