@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var activeWorker;
+async function doTest()
+{
+    registration = await navigator.serviceWorker.getRegistration(".");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("third-party-worker.js", { scope : "." });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}
+window.onmessage = async (e) => {
+    await doTest();
+    navigator.serviceWorker.onmessage = (e) => {
+        parent.postMessage(e.data, '*');
+    }
+    activeWorker.postMessage(e.data);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>Service Worker third party registration</title>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var shouldTest = !!window.location.hash;
+async function doTest()
+{
+    var iframe = await with_iframe("http://127.0.0.1:8801/WebKit/service-workers/resources/third-party-registration-frame.html");
+    var result = await new Promise((resolve) => {
+        window.onmessage = (e) => {
+            resolve(e.data);
+        };
+        iframe.contentWindow.postMessage(shouldTest ? "read" : "write", '*');
+    });
+    if (shouldTest) {
+        var expected = '{\"cache\":[],\"db\":null}';
+        document.body.innerHTML = result === expected ? "PASS" : ("FAIL: got " + result);
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    iframe.remove();
+    window.location = "http://localhost:8801/WebKit/service-workers/third-party-registration.html#second";
+}
+doTest();
+
+</script>
+</body>
+</html>
