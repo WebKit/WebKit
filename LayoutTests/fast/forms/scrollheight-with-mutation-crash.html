@@ -1,0 +1,20 @@
+<style>
+input:enabled { 
+    content: url(#foo);
+    width: 10vmin;
+}
+
+keygen {
+    -webkit-transform: scale(12, 125);
+}
+</style>
+PASS if no crash.
+<keygen id=keygen>
+<input id=input type="search">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+keygen.remove();
+input.scrollHeight;
+</script>
