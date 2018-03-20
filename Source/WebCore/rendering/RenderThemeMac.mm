@@ -1345,8 +1345,12 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver& styleResolver, RenderSty
     style.setWhiteSpace(PRE);
 
     // Set the foreground color to black or gray when we have the aqua look.
-    // Cast to RGB32 is to work around a compiler bug.
-    style.setColor(e && !e->isDisabledFormControl() ? static_cast<RGBA32>(Color::black) : Color::darkGray);
+    Color c = Color::darkGray;
+    if (e) {
+        bool useSystemAppearance = e->document().page()->useSystemAppearance();
+        c = !e->isDisabledFormControl() ? systemColor(CSSValueButtontext, useSystemAppearance) : systemColor(CSSValueGraytext, useSystemAppearance);
+    }
+    style.setColor(c);
 
     // Set the button's vertical size.
     setSizeFromFont(style, menuListButtonSizes());

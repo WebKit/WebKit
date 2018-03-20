@@ -1,3 +1,17 @@
+2018-03-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Have select element respect current appearance
+        https://bugs.webkit.org/show_bug.cgi?id=183753
+
+        Reviewed by Tim Horton.
+
+        Not currently testable, will add tests in a later patch.
+
+        Have the menu lists/select elements follow the system colors.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMenuListStyle const):
+
 2018-03-19  Nan Wang  <n_wang@apple.com>
 
         AX: embedded attachments do not work correctly with text marker APIs on macOS
