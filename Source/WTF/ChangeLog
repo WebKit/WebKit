@@ -1,3 +1,13 @@
+2018-03-20  Brian Burg  <bburg@apple.com>
+
+        SLEEP_THREAD_FOR_DEBUGGER should not use fancy number literals
+        https://bugs.webkit.org/show_bug.cgi?id=183792
+
+        Reviewed by Timothy Hatcher.
+
+        * wtf/DebugUtilities.h: Remove the '_s' since this won't
+        compile when included by files compiled as Objective-C++.
+
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_PLATFORM_NAME and adjust default feature defines

@@ -32,7 +32,7 @@
 #define SLEEP_THREAD_FOR_DEBUGGER() \
 do { \
     do { \
-        sleep(1_s); \
+        sleep(1); \
         if (WTFIsDebuggerAttached()) \
             break; \
     } while (1); \
