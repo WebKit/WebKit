@@ -1,3 +1,13 @@
+2018-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add and adopt WK_PLATFORM_NAME and adjust default feature defines
+        https://bugs.webkit.org/show_bug.cgi?id=183758
+        <rdar://problem/38017644>
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-03-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r229726 and r229763.

@@ -230,7 +230,11 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #if PLATFORM(COCOA)
 
 #if !defined(ENABLE_LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(MINIMAL_SIMULATOR)
+#define ENABLE_LEGACY_ENCRYPTED_MEDIA 0
+#else
 #define ENABLE_LEGACY_ENCRYPTED_MEDIA 1
+#endif
 #endif
 
 #if !defined(ENABLE_FILE_REPLACEMENT)

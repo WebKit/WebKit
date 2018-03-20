@@ -30851,7 +30851,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\ncase $PLATFORM_NAME in\niphone*)\n    TBD_PLATFORM=ios\n    ;;\nappletv*)\n    TBD_PLATFORM=tvos\n    ;;\nesac\n\nif [[ -n $TBD_PLATFORM ]]; then\n    sed -E s/\\TBD_PLATFORM/$TBD_PLATFORM/ \"${SCRIPT_INPUT_FILE_0}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nfi\n";
+			shellScript = "set -e\n\ncase $WK_PLATFORM_NAME in\niphone*)\n    TBD_PLATFORM=ios\n    ;;\nappletv*)\n    TBD_PLATFORM=tvos\n    ;;\nesac\n\nif [[ -n $TBD_PLATFORM ]]; then\n    sed -E s/\\TBD_PLATFORM/$TBD_PLATFORM/ \"${SCRIPT_INPUT_FILE_0}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nfi\n";
 		};
 		37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -30880,7 +30880,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\ncd $SRCROOT\n\nif [ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]; then\nBUILD_SCRIPTS_DIR=\"${SDKROOT}/usr/local/include/wtf/Scripts\"\nelse\nBUILD_SCRIPTS_DIR=\"${BUILT_PRODUCTS_DIR}/usr/local/include/wtf/Scripts\"\nfi\n\nUnifiedSourceCppFileCount=530\nUnifiedSourceMmFileCount=60\n\necho \"Using unified source list files: Sources.txt, SourcesCocoa.txt, Sources${PLATFORM_NAME}.txt\"\n\n/usr/bin/env ruby \"${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb\" \"--derived-sources-path\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\" \"--source-tree-path\" \"${SRCROOT}\" \"--feature-flags\" \"${FEATURE_DEFINES}\" \"--max-cpp-bundle-count\" \"${UnifiedSourceCppFileCount}\" \"--max-obj-c-bundle-count\" \"${UnifiedSourceMmFileCount}\" \"Sources.txt\" \"SourcesCocoa.txt\" > /dev/null\n";
+			shellScript = "set -e\n\ncd $SRCROOT\n\nif [ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]; then\nBUILD_SCRIPTS_DIR=\"${SDKROOT}/usr/local/include/wtf/Scripts\"\nelse\nBUILD_SCRIPTS_DIR=\"${BUILT_PRODUCTS_DIR}/usr/local/include/wtf/Scripts\"\nfi\n\nUnifiedSourceCppFileCount=530\nUnifiedSourceMmFileCount=60\n\necho \"Using unified source list files: Sources.txt, SourcesCocoa.txt\"\n\n/usr/bin/env ruby \"${BUILD_SCRIPTS_DIR}/generate-unified-source-bundles.rb\" \"--derived-sources-path\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\" \"--source-tree-path\" \"${SRCROOT}\" \"--feature-flags\" \"${FEATURE_DEFINES}\" \"--max-cpp-bundle-count\" \"${UnifiedSourceCppFileCount}\" \"--max-obj-c-bundle-count\" \"${UnifiedSourceMmFileCount}\" \"Sources.txt\" \"SourcesCocoa.txt\" > /dev/null\n";
 		};
 		5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -30954,7 +30954,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${PLATFORM_NAME}\" == \"macosx\" ]; then\n    IMG_OS_PREFIX=\"macOS\"\nelse\n    IMG_OS_PREFIX=\"iOS\"\nfi\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX/\" \"$DST_DIR/images\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\n             cat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"\n";
+			shellScript = "SRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${WK_PLATFORM_NAME}\" == \"macosx\" ]; then\n    IMG_OS_PREFIX=\"macOS\"\nelse\n    IMG_OS_PREFIX=\"iOS\"\nfi\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\nrsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX/\" \"$DST_DIR/images\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\n             cat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"\n";
 		};
 		A5E79CEC1E67F2CF00FB8153 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -30968,7 +30968,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} != \"macosx\" ]]; then\n    exit 0\nfi\n\nif [[ ${WK_USE_OVERRIDE_FRAMEWORKS_DIR} == \"YES\" ]]; then\n    exit 0\nfi\n\n# ENABLE_WEB_RTC cannot be relied on because of its conditionals.\nif [[ ${CONFIGURATION} == \"Production\" && ${TARGET_MAC_OS_X_VERSION_MAJOR} < 101300 ]]; then\n    exit 0\nfi\n\nln -shf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebCore.framework/Frameworks\"\n";
+			shellScript = "if [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    exit 0\nfi\n\nif [[ ${WK_USE_OVERRIDE_FRAMEWORKS_DIR} == \"YES\" ]]; then\n    exit 0\nfi\n\n# ENABLE_WEB_RTC cannot be relied on because of its conditionals.\nif [[ ${CONFIGURATION} == \"Production\" && ${TARGET_MAC_OS_X_VERSION_MAJOR} < 101300 ]]; then\n    exit 0\nfi\n\nln -shf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebCore.framework/Frameworks\"\n";
 		};
 		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
