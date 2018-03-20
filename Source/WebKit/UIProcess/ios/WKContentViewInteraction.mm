@@ -43,6 +43,7 @@
 #import "WKDatePickerViewController.h"
 #import "WKError.h"
 #import "WKFocusedFormControlViewController.h"
+#import "WKFormControlListViewController.h"
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKImagePreviewViewController.h"
@@ -53,7 +54,7 @@
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
 #import "WKSelectMenuViewController.h"
-#import "WKTextInputViewController.h"
+#import "WKTextInputListViewController.h"
 #import "WKTimePickerViewController.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
@@ -125,7 +126,7 @@
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuViewControllerDelegate>
+@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuViewControllerDelegate, WKFormControlListViewControllerDelegate>
 @end
 
 #endif
@@ -4279,24 +4280,20 @@ static bool isAssistableInputType(InputType type)
 
 - (void)presentTextInputViewController:(BOOL)animated
 {
-    if (_textInputViewController)
+    if (_textInputListViewController)
         return;
 
-    _textInputViewController = adoptNS([[WKTextInputViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
-    [_textInputViewController setDelegate:self];
-    [_textInputViewController setUsesPasswordEntryMode:_assistedNodeInformation.elementType == InputType::Password || [_formInputSession forceSecureTextEntry]];
-    [_focusedFormControlViewController presentViewController:_textInputViewController.get() animated:animated completion:nil];
-
-    [_textInputViewController setSuggestions:[_focusedFormControlViewController suggestions]];
+    _textInputListViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
+    [_focusedFormControlViewController presentViewController:_textInputListViewController.get() animated:animated completion:nil];
 }
 
 - (void)dismissTextInputViewController:(BOOL)animated
 {
-    if (!_textInputViewController)
+    if (!_textInputListViewController)
         return;
 
-    auto textInputViewController = WTFMove(_textInputViewController);
-    [textInputViewController dismissViewControllerAnimated:animated completion:nil];
+    auto textInputListViewController = WTFMove(_textInputListViewController);
+    [textInputListViewController dismissViewControllerAnimated:animated completion:nil];
 }
 
 - (void)textInputController:(WKTextFormControlViewController *)controller didCommitText:(NSString *)text
@@ -4396,7 +4393,7 @@ static bool isAssistableInputType(InputType type)
 
 - (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlViewController *)controller
 {
-    [_textInputViewController setSuggestions:controller.suggestions];
+    [_textInputListViewController reloadTextSuggestions];
 }
 
 #pragma mark - WKSelectMenuViewControllerDelegate
@@ -4481,9 +4478,6 @@ static bool isAssistableInputType(InputType type)
 {
 #if ENABLE(EXTRA_ZOOM_MODE)
     if ([_numberPadViewController handleWheelEvent:event])
-        return;
-
-    if ([_textInputViewController handleWheelEvent:event])
         return;
 
     if ([_selectMenuViewController handleWheelEvent:event])
@@ -5479,6 +5473,10 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _page->dragEnded(roundedIntPoint(client), roundedIntPoint(global), DragOperationNone);
 }
 
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #endif
 
 @end

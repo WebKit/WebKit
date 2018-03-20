@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKTextInputViewController.h"
+#import "config.h"
+#import "WKTextInputListViewController.h"
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKTextInputViewControllerAdditions.mm>)
-#import <WebKitAdditions/WKTextInputViewControllerAdditions.mm>
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKTextInputListViewControllerAdditions.mm>
 #endif

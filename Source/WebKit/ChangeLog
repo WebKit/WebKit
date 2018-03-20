@@ -1,3 +1,28 @@
+2018-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Adopt updated input view controller machinery for text input
+        https://bugs.webkit.org/show_bug.cgi?id=183765
+        <rdar://problem/36926269>
+
+        Reviewed by Tim Horton.
+
+        Adopt new classes for extra zoomed text inputs. Massage WKTextInputViewController into WKTextInputListView-
+        Controller and introduce WKFormControlListViewController, the eventual replacement for the base class
+        WKTextFormControlViewController that will act as the base class of all list-view-controller-based input UI in
+        extra zoom mode.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentTextInputViewController:]):
+        (-[WKContentView dismissTextInputViewController:]):
+        (-[WKContentView focusedFormControllerDidUpdateSuggestions:]):
+        (-[WKContentView _wheelChangedWithEvent:]):
+        * UIProcess/ios/forms/WKFormControlListViewController.h: Copied from Source/WebKit/UIProcess/ios/forms/WKTextInputViewController.h.
+        * UIProcess/ios/forms/WKFormControlListViewController.mm: Renamed from Source/WebKit/UIProcess/ios/forms/WKTextInputViewController.mm.
+        * UIProcess/ios/forms/WKTextInputListViewController.h: Copied from Source/WebKit/UIProcess/ios/forms/WKTextInputViewController.h.
+        * UIProcess/ios/forms/WKTextInputListViewController.mm: Renamed from Source/WebKit/UIProcess/ios/forms/WKTextInputViewController.h.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-03-19  Megan Gardner  <megan_gardner@apple.com>
 
         Clear style colors when setting default appearance

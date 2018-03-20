@@ -25,6 +25,6 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKTextInputViewControllerAdditions.h>)
-#import <WebKitAdditions/WKTextInputViewControllerAdditions.h>
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKFormControlListViewControllerAdditions.h>
 #endif
