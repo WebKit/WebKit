@@ -1,3 +1,15 @@
+2018-03-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Clear style colors when setting default appearance
+        https://bugs.webkit.org/show_bug.cgi?id=183759
+
+        Reviewed by Tim Horton.
+
+        Colors are cached and need to be cleared and recalculated.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDefaultAppearance):
+
 2018-03-19  Chris Dumez  <cdumez@apple.com>
 
         WKWebView.ClearAppCache is a flaky API test failure on High Sierra.

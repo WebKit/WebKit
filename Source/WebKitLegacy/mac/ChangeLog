@@ -1,3 +1,18 @@
+2018-03-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Clear style colors when setting default appearance
+        https://bugs.webkit.org/show_bug.cgi?id=183759
+
+        Reviewed by Tim Horton.
+
+        Colors are cached and need to be cleared and recalculated.
+        Refactor to do all style recalcs together.
+
+        * WebView/WebView.mm:
+        (-[WebView _setDefaultAppearanceAndClearStyle]):
+        (-[WebView _setUseSystemAppearance:]):
+        (-[WebView effectiveAppearanceDidChange]):
+
 2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, another quick fix for r229699

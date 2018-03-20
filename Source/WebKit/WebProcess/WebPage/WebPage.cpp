@@ -183,6 +183,7 @@
 #include <WebCore/PromisedBlobInfo.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderLayer.h>
+#include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ResourceRequest.h>
@@ -4130,6 +4131,7 @@ void WebPage::setUseSystemAppearance(bool useSystemAppearance)
 void WebPage::setDefaultAppearance(bool defaultAppearance)
 {
     corePage()->setDefaultAppearance(defaultAppearance);
+    RenderTheme::singleton().platformColorsDidChange();
     corePage()->setNeedsRecalcStyleInAllFrames();
 }
 #endif
