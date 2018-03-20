@@ -1,3 +1,25 @@
+2018-03-19  Dan Bernstein  <mitz@apple.com>
+
+        Investigate why __cpu_indicator_init is used
+        https://bugs.webkit.org/show_bug.cgi?id=183736
+
+        Reviewed by Tim Horton.
+
+        __cpu_indicator_init, which is a global initializer, was included in JavaScriptCore because
+        we were passing the -all_load option to the linker, causing it to bring in all members of
+        every static library being linked in, including the compiler runtime library. We only need
+        to load all members of WTF. The linker option for doing that is -force_load, and it requires
+        a path to the library. To support building against libWTF.a built locally as well as against
+        the copy that is in the SDK, we add a script build phase that palces a symbolic link to the
+        appropriate libWTF.a under the DerivedSources directory, and pass the path to that symlink
+        to the linker. Also, while cleaning up linker flags, make OTHER_LDFLAGS_HIDE_SYMBOLS less
+        verbose by eliminating every other -Wl, remove redundant -lobjc (libobjc is already listed
+        in the Link Binary With Libraries build phase), remove long-unsupported -Y,3, and stop
+        reexporting libobjc.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, another quick fix for r229699

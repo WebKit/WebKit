@@ -65,6 +65,7 @@
 			buildConfigurationList = 65FB3F7709D11EBD00F49DEB /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
 				65FB3F6509D11E9100F49DEB /* Generate Derived Sources */,
+				374F95C9205F9975002BF68F /* Make libWTF.a Symbolic Link */,
 			);
 			dependencies = (
 			);
@@ -4219,7 +4220,7 @@
 		A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescriptor.cpp; sourceTree = "<group>"; };
 		A7FCC26C17A0B6AA00786D1A /* FTLSwitchCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSwitchCase.h; path = ftl/FTLSwitchCase.h; sourceTree = "<group>"; };
 		A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpillRegistersMode.h; sourceTree = "<group>"; };
-		A8A4748D151A8306004123FF /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8A4748D151A8306004123FF /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; name = libWTF.a; path = DerivedSources/JavaScriptCore/libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		AD00659D1ECAC7FE000CA926 /* WasmLimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmLimits.h; sourceTree = "<group>"; };
@@ -9891,6 +9892,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "exec ${SRCROOT}/postprocess-headers.sh";
+		};
+		374F95C9205F9975002BF68F /* Make libWTF.a Symbolic Link */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Make libWTF.a Symbolic Link";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nif [[ -f \"${BUILT_PRODUCTS_DIR}/libWTF.a\" ]]; then\n    ln -s -f -h \"${BUILT_PRODUCTS_DIR}/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nelse\n    ln -s -f -h \"${SDK_DIR}/usr/local/lib/libWTF.a\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/libWTF.a\"\nfi";
 		};
 		53B4BD091F68AF8900D2BEA3 /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;
