@@ -42,7 +42,9 @@ public:
     LocalDefaultSystemAppearance(bool useSystemAppearance);
     ~LocalDefaultSystemAppearance();
 private:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     RetainPtr<NSAppearance> m_savedSystemAppearance;
+#endif
 };
     
 }
