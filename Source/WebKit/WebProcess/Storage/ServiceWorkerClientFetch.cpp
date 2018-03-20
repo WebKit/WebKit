@@ -175,7 +175,7 @@ void ServiceWorkerClientFetch::didReceiveData(const IPC::DataReference& dataRefe
         return;
 
     callOnMainThread([this, protectedThis = makeRef(*this)] {
-        if (!m_loader)
+        if (!m_loader || !m_encodedDataLength)
             return;
 
         m_loader->didReceiveBuffer(m_buffer.releaseNonNull(), m_encodedDataLength, DataPayloadBytes);

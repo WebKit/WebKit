@@ -1,3 +1,19 @@
+2018-03-20  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerClientFetch::didReceiveData should check for m_encodedDataLength
+        https://bugs.webkit.org/show_bug.cgi?id=183668
+
+        Reviewed by Chris Dumez.
+
+        Crash happens when releasing a RefPtr<SharedBuffer> buffer that is null.
+        It happens because ServiceWorkerClientFetch can call m_loader->didReceiveBuffer at two different places.
+        Either when receiving an IPC call or as part of completion handler for the response validation check.
+        At each call site, we release the buffer to pass it to the loader and we set m_encodedLength to zero.
+        The fix is to add the m_encodedLength check like done in the case of response validation check completion handler.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveData):
+
 2018-03-20  Jeff Miller  <jeffm@apple.com>
 
         Expose aggressiveTileRetentionEnabled in WKPreferences SPI to match C SPI
