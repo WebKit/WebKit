@@ -48,6 +48,10 @@ using namespace WebCore;
     std::unique_ptr<PreviewConverter> _converter;
     RetainPtr<NSMutableArray> _bufferedDataArray;
     BOOL _hasSentDidReceiveResponse;
+    BOOL _hasProcessedResponse;
+    RefPtr<SharedBuffer> _bufferedData;
+    long long _lengthReceived;
+    BOOL _needsToCallDidFinishLoading;
 }
 
 - (instancetype)initWithResourceLoader:(ResourceLoader&)resourceLoader resourceResponse:(const ResourceResponse&)resourceResponse;
@@ -130,7 +134,26 @@ static PreviewLoaderClient& emptyClient()
     _resourceLoader->documentLoader()->setPreviewConverter(WTFMove(_converter));
 
     _hasSentDidReceiveResponse = YES;
-    _resourceLoader->didReceiveResponse(response, nullptr);
+    _hasProcessedResponse = NO;
+    _resourceLoader->didReceiveResponse(response, [self, retainedSelf = retainPtr(self)] {
+        _hasProcessedResponse = YES;
+
+        if (_resourceLoader->reachedTerminalState())
+            return;
+
+        if (auto bufferedData = WTFMove(_bufferedData)) {
+            _resourceLoader->didReceiveData(bufferedData->data(), bufferedData->size(), _lengthReceived, DataPayloadBytes);
+            _lengthReceived = 0;
+        }
+
+        if (_resourceLoader->reachedTerminalState())
+            return;
+
+        if (_needsToCallDidFinishLoading) {
+            _needsToCallDidFinishLoading = NO;
+            _resourceLoader->didFinishLoading(NetworkLoadMetrics { });
+        }
+    });
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
@@ -141,10 +164,23 @@ static PreviewLoaderClient& emptyClient()
     
     [self _sendDidReceiveResponseIfNecessary];
 
+    auto dataLength = data.length;
+
     // QuickLook code sends us a nil data at times. The check below is the same as the one in
     // ResourceHandleMac.cpp added for a different bug.
-    if (auto dataLength = data.length)
+    if (!dataLength)
+        return;
+
+    if (_hasProcessedResponse) {
         _resourceLoader->didReceiveData(reinterpret_cast<const char*>(data.bytes), dataLength, lengthReceived, DataPayloadBytes);
+        return;
+    }
+
+    if (!_bufferedData)
+        _bufferedData = SharedBuffer::create(data);
+    else
+        _bufferedData->append(data);
+    _lengthReceived += lengthReceived;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -155,8 +191,12 @@ static PreviewLoaderClient& emptyClient()
     
     ASSERT(_hasSentDidReceiveResponse);
 
-    NetworkLoadMetrics emptyMetrics;
-    _resourceLoader->didFinishLoading(emptyMetrics);
+    if (!_hasProcessedResponse) {
+        _needsToCallDidFinishLoading = YES;
+        return;
+    }
+
+    _resourceLoader->didFinishLoading(NetworkLoadMetrics { });
 }
 
 static inline bool isQuickLookPasswordError(NSError *error)

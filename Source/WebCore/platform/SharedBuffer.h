@@ -66,6 +66,7 @@ public:
     RetainPtr<NSData> createNSData() const;
     RetainPtr<NSArray> createNSDataArray() const;
     static Ref<SharedBuffer> create(NSData *);
+    void append(NSData *);
 #endif
 #if USE(CF)
     RetainPtr<CFDataRef> createCFData() const;

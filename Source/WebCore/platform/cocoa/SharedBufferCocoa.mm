@@ -88,6 +88,11 @@ Ref<SharedBuffer> SharedBuffer::create(NSData *nsData)
     return adoptRef(*new SharedBuffer((CFDataRef)nsData));
 }
 
+void SharedBuffer::append(NSData *nsData)
+{
+    return append((CFDataRef)nsData);
+}
+
 RetainPtr<NSData> SharedBuffer::createNSData() const
 {
     return adoptNS((NSData *)createCFData().leakRef());

@@ -1,3 +1,18 @@
+2018-03-20  Chris Dumez  <cdumez@apple.com>
+
+        QuickLook.NavigationDelegate API test is failing on iOS with async policy delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183791
+
+        Reviewed by Alex Christensen.
+
+        Update PreviewLoader to not send data (or call finishFinishLoading) until
+        the resource response has been processed.
+
+        * loader/ios/PreviewLoader.mm:
+        (-[WebPreviewLoader _sendDidReceiveResponseIfNecessary]):
+        (-[WebPreviewLoader connection:didReceiveData:lengthReceived:]):
+        (-[WebPreviewLoader connectionDidFinishLoading:]):
+
 2018-03-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update the timing model when pending tasks schedule changes

@@ -74,6 +74,41 @@ static NSURLRequest * const pagesDocumentRequest = [[NSURLRequest requestWithURL
 
 @end
 
+@interface QuickLookAsyncNavigationDelegate : NSObject <WKNavigationDelegatePrivate>
+@end
+
+@implementation QuickLookAsyncNavigationDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
+    dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
+
+    dispatch_after(when, dispatch_get_main_queue(), ^{
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    });
+}
+
+- (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti
+{
+    EXPECT_WK_STREQ(expectedFileName, fileName);
+    EXPECT_WK_STREQ(expectedUTI, uti);
+    didStartQuickLookLoad = true;
+}
+
+- (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData
+{
+    EXPECT_EQ(expectedFileSize, documentData.length);
+    didFinishQuickLookLoad = true;
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    isDone = true;
+}
+
+@end
+
 static void runTest(Class navigationDelegateClass, NSURLRequest *request)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
@@ -88,6 +123,13 @@ static void runTest(Class navigationDelegateClass, NSURLRequest *request)
 TEST(QuickLook, NavigationDelegate)
 {
     runTest([QuickLookNavigationDelegate class], pagesDocumentRequest);
+    EXPECT_TRUE(didStartQuickLookLoad);
+    EXPECT_TRUE(didFinishQuickLookLoad);
+}
+
+TEST(QuickLook, AsyncNavigationDelegate)
+{
+    runTest([QuickLookAsyncNavigationDelegate class], pagesDocumentRequest);
     EXPECT_TRUE(didStartQuickLookLoad);
     EXPECT_TRUE(didFinishQuickLookLoad);
 }
