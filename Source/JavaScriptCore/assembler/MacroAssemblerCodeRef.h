@@ -65,9 +65,10 @@ public:
     FunctionPtr() { }
 
     template<typename ReturnType, typename... Arguments>
-    FunctionPtr(ReturnType(*value)(Arguments...), PtrTag tag = SlowPathPtrTag)
+    FunctionPtr(ReturnType(*value)(Arguments...), PtrTag tag = CFunctionPtrTag)
         : m_value(tagCFunctionPtr<void*>(value, tag))
     {
+        assertIsCFunctionPtr(value);
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
@@ -77,9 +78,10 @@ public:
 #if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
 
     template<typename ReturnType, typename... Arguments>
-    FunctionPtr(ReturnType(CDECL *value)(Arguments...), PtrTag tag = SlowPathPtrTag)
+    FunctionPtr(ReturnType(CDECL *value)(Arguments...), PtrTag tag = CFunctionPtrTag)
         : m_value(tagCFunctionPtr<void*>(value, tag))
     {
+        assertIsCFunctionPtr(value);
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
@@ -89,38 +91,46 @@ public:
 #if COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
 
     template<typename ReturnType, typename... Arguments>
-    FunctionPtr(ReturnType(FASTCALL *value)(Arguments...), PtrTag tag = SlowPathPtrTag)
+    FunctionPtr(ReturnType(FASTCALL *value)(Arguments...), PtrTag tag = CFunctionPtrTag)
         : m_value(tagCFunctionPtr<void*>(value, tag))
     {
+        assertIsCFunctionPtr(value);
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
 #endif // COMPILER_SUPPORTS(FASTCALL_CALLING_CONVENTION)
 
-    template<typename FunctionType>
-    explicit FunctionPtr(FunctionType* value, PtrTag tag = SlowPathPtrTag)
+    template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_function<typename std::remove_pointer<PtrType>::type>::value>>
+    explicit FunctionPtr(PtrType value, PtrTag tag)
         // Using a C-ctyle cast here to avoid compiler error on RVTC:
         // Error:  #694: reinterpret_cast cannot cast away const or other type qualifiers
         // (I guess on RVTC function pointers have a different constness to GCC/MSVC?)
-        : m_value(tagCodePtr<void*>(value, tag))
+        : m_value(tagCFunctionPtr<void*>(value, tag))
     {
+        assertIsCFunctionPtr(value);
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
+    explicit FunctionPtr(FunctionPtr other, PtrTag tag)
+        : m_value(tagCFunctionPtr<void*>(other.executableAddress(), tag))
+    {
+        assertIsCFunctionPtr(other.executableAddress());
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     explicit FunctionPtr(MacroAssemblerCodePtr);
 
-    void* value() const
-    {
-        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-        return removeCodePtrTag(m_value);
-    }
     void* executableAddress() const
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         return m_value;
     }
+
+    explicit operator bool() const { return !!m_value; }
+    bool operator!() const { return !m_value; }
 
 private:
     void* m_value { nullptr };
@@ -147,7 +157,7 @@ public:
     }
 
     explicit ReturnAddressPtr(FunctionPtr function)
-        : m_value(function.value())
+        : m_value(function.executableAddress())
     {
         PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
@@ -209,6 +219,11 @@ public:
     }
 
     PoisonedMasmPtr poisonedPtr() const { return m_value; }
+
+    MacroAssemblerCodePtr retagged(PtrTag oldTag, PtrTag newTag) const
+    {
+        return MacroAssemblerCodePtr(retagCodePtr(executableAddress(), oldTag, newTag));
+    }
 
     template<typename T = void*>
     T executableAddress() const
@@ -351,7 +366,7 @@ public:
 
     MacroAssemblerCodePtr retaggedCode(PtrTag oldTag, PtrTag newTag) const
     {
-        return MacroAssemblerCodePtr(retagCodePtr(m_codePtr.executableAddress(), oldTag, newTag));
+        return m_codePtr.retagged(oldTag, newTag);
     }
 
     size_t size() const
@@ -380,7 +395,6 @@ inline FunctionPtr::FunctionPtr(MacroAssemblerCodePtr ptr)
     : m_value(ptr.executableAddress())
 {
     PoisonedMasmPtr::assertIsNotPoisoned(m_value);
-    ASSERT_VALID_CODE_POINTER(m_value);
 }
 
 } // namespace JSC

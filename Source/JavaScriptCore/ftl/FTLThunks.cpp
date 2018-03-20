@@ -125,15 +125,17 @@ static MacroAssemblerCodeRef genericGenerationThunkGenerator(
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 {
     unsigned extraPopsToRestore = 0;
+    PtrTag tag = ptrTag(JITThunkPtrTag, nextPtrTagID());
     return genericGenerationThunkGenerator(
-        vm, FunctionPtr(compileFTLOSRExit, NoPtrTag), "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
+        vm, FunctionPtr(compileFTLOSRExit, tag), "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
 }
 
 MacroAssemblerCodeRef lazySlowPathGenerationThunkGenerator(VM* vm)
 {
     unsigned extraPopsToRestore = 1;
+    PtrTag tag = ptrTag(JITThunkPtrTag, nextPtrTagID());
     return genericGenerationThunkGenerator(
-        vm, FunctionPtr(compileFTLLazySlowPath, NoPtrTag), "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
+        vm, FunctionPtr(compileFTLLazySlowPath, tag), "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
 }
 
 static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
@@ -197,7 +199,8 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(const SlowPathCallKey& key)
     
     registerClobberCheck(jit, key.argumentRegisters());
     
-    AssemblyHelpers::Call call = jit.call(NoPtrTag);
+    PtrTag callTag = ptrTag(JITThunkPtrTag, nextPtrTagID());
+    AssemblyHelpers::Call call = jit.call(callTag);
 
     jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()), GPRInfo::nonPreservedNonReturnGPR);
     jit.restoreReturnAddressBeforeReturn(GPRInfo::nonPreservedNonReturnGPR);
@@ -223,7 +226,7 @@ MacroAssemblerCodeRef slowPathCallThunkGenerator(const SlowPathCallKey& key)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    patchBuffer.link(call, FunctionPtr(key.callTarget()));
+    patchBuffer.link(call, FunctionPtr(key.callTarget(), callTag));
     return FINALIZE_CODE(patchBuffer, NoPtrTag, "FTL slow path call thunk for %s", toCString(key).data());
 }
 

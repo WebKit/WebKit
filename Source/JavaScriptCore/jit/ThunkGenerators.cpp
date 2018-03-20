@@ -415,8 +415,9 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, ThunkFunctionType thunkF
 #endif
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR0);
 #endif
-    jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(operationVMHandleException, NoPtrTag).value()), JSInterfaceJIT::regT3);
-    jit.call(JSInterfaceJIT::regT3, NoPtrTag);
+    PtrTag tag = ptrTag(ExceptionHandlerPtrTag, nextPtrTagID());
+    jit.move(JSInterfaceJIT::TrustedImmPtr(tagCFunctionPtr(operationVMHandleException, tag)), JSInterfaceJIT::regT3);
+    jit.call(JSInterfaceJIT::regT3, tag);
 #if CPU(X86) && USE(JSVALUE32_64)
     jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::stackPointerRegister);
 #elif OS(WINDOWS)

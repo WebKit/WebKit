@@ -1614,9 +1614,9 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         if (call.isFlagSet(Call::Tail))
-            ARMAssembler::linkJump(code, call.m_label, function.value());
+            ARMAssembler::linkJump(code, call.m_label, function.executableAddress());
         else
-            ARMAssembler::linkCall(code, call.m_label, function.value());
+            ARMAssembler::linkCall(code, call.m_label, function.executableAddress());
     }
 
     static const bool s_isVFPPresent;

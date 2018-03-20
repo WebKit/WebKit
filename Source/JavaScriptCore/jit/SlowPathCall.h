@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,11 +34,12 @@ namespace JSC {
 
 class JITSlowPathCall {
 public:
-    JITSlowPathCall(JIT* jit, Instruction* pc, SlowPathFunction stub)
+    JITSlowPathCall(JIT* jit, Instruction* pc, SlowPathFunction slowPathFunction)
         : m_jit(jit)
-        , m_stub(stub)
+        , m_slowPathFunction(slowPathFunction)
         , m_pc(pc)
     {
+        assertIsCFunctionPtr(slowPathFunction);
     }
 
     JIT::Call call()
@@ -61,8 +62,9 @@ public:
         m_jit->move(JIT::callFrameRegister, JIT::argumentGPR0);
         m_jit->move(JIT::TrustedImmPtr(m_pc), JIT::argumentGPR1);
 #endif
-        JIT::Call call = m_jit->call(NoPtrTag);
-        m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, m_stub.value()));
+        PtrTag tag = ptrTag(SlowPathPtrTag, nextPtrTagID());
+        JIT::Call call = m_jit->call(tag);
+        m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, FunctionPtr(m_slowPathFunction, tag)));
 
 #if CPU(X86) && USE(JSVALUE32_64)
         m_jit->addPtr(MacroAssembler::TrustedImm32(16), MacroAssembler::stackPointerRegister);
@@ -82,7 +84,7 @@ public:
 
 private:
     JIT* m_jit;
-    FunctionPtr m_stub;
+    SlowPathFunction m_slowPathFunction;
     Instruction* m_pc;
 };
 

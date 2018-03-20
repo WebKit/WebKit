@@ -42,6 +42,8 @@ enum PtrTag : uintptr_t {
     CodeEntryWithArityCheckPtrTag,
     ExceptionHandlerPtrTag,
     JITCodePtrTag,
+    JITOperationPtrTag,
+    JITThunkPtrTag,
     NativeCodePtrTag,
     SlowPathPtrTag,
 
@@ -52,8 +54,10 @@ enum PtrTag : uintptr_t {
     YarrBacktrackPtrTag,
 };
 
+uintptr_t nextPtrTagID();
+
 #if !USE(POINTER_PROFILING)
-inline uintptr_t uniquePtrTagID() { return 0; }
+inline uintptr_t nextPtrTagID() { return 0; }
 
 template<typename... Arguments>
 inline constexpr PtrTag ptrTag(Arguments&&...) { return NoPtrTag; }
@@ -93,6 +97,16 @@ inline T untagCFunctionPtr(PtrType ptr, PtrTag) { return bitwise_cast<T>(ptr); }
 
 template<typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value>>
 inline PtrType untagCFunctionPtr(PtrType ptr, PtrTag) { return ptr; }
+
+template<typename PtrType> void assertIsCFunctionPtr(PtrType) { }
+template<typename PtrType> void assertIsNullOrCFunctionPtr(PtrType) { }
+
+template<typename PtrType> void assertIsNotTagged(PtrType) { }
+template<typename PtrType> void assertIsTagged(PtrType) { }
+template<typename PtrType> void assertIsNullOrTagged(PtrType) { }
+
+template<typename PtrType> void assertIsTaggedWith(PtrType, PtrTag) { }
+template<typename PtrType> void assertIsNullOrTaggedWith(PtrType, PtrTag) { }
 
 #endif // !USE(POINTER_PROFILING)
 

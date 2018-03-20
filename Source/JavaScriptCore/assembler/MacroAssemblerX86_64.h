@@ -152,7 +152,7 @@ public:
     }
 
 #if OS(WINDOWS)
-    Call callWithSlowPathReturnType()
+    Call callWithSlowPathReturnType(PtrTag)
     {
         // On Win64, when the return type is larger than 8 bytes, we need to allocate space on the stack for the return value.
         // On entry, rcx should contain a pointer to this stack space. The other parameters are shifted to the right,
@@ -177,7 +177,7 @@ public:
         add64(TrustedImm32(4 * sizeof(int64_t)), X86Registers::ecx);
 
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
-        Call result = Call(m_assembler.call(scratchRegister()), Call::Linkable);
+        Call result = Call(m_assembler.call(scratchRegister(), tag), Call::Linkable);
 
         add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
 
@@ -1953,11 +1953,11 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         if (!call.isFlagSet(Call::Near))
-            X86Assembler::linkPointer(code, call.m_label.labelAtOffset(-REPATCH_OFFSET_CALL_R11), function.value());
+            X86Assembler::linkPointer(code, call.m_label.labelAtOffset(-REPATCH_OFFSET_CALL_R11), function.executableAddress());
         else if (call.isFlagSet(Call::Tail))
-            X86Assembler::linkJump(code, call.m_label, function.value());
+            X86Assembler::linkJump(code, call.m_label, function.executableAddress());
         else
-            X86Assembler::linkCall(code, call.m_label, function.value());
+            X86Assembler::linkCall(code, call.m_label, function.executableAddress());
     }
 };
 

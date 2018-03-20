@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012-2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +120,8 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
     Call nakedCall = nearCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, function.executableAddress()));
+    assertIsNullOrTaggedWith(function.executableAddress(), NearCallPtrTag);
+    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr(function)));
     return nakedCall;
 }
 
@@ -128,7 +129,8 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr function)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
     Call nakedCall = nearTailCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, function.executableAddress()));
+    assertIsNullOrTaggedWith(function.executableAddress(), NearCallPtrTag);
+    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr(function)));
     return nakedCall;
 }
 
@@ -149,35 +151,35 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const FunctionPtr function)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const FunctionPtr function, PtrTag tag)
 {
     updateTopCallFrame();
-    MacroAssembler::Call call = appendCall(function);
+    MacroAssembler::Call call = appendCall(function, tag);
     exceptionCheck();
     return call;
 }
 
 #if OS(WINDOWS) && CPU(X86_64)
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr function)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr function, PtrTag  tag)
 {
     updateTopCallFrame();
-    MacroAssembler::Call call = appendCallWithSlowPathReturnType(function);
+    MacroAssembler::Call call = appendCallWithSlowPathReturnType(function, tag);
     exceptionCheck();
     return call;
 }
 #endif
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr function)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr function, PtrTag tag)
 {
     updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
-    MacroAssembler::Call call = appendCall(function);
+    MacroAssembler::Call call = appendCall(function, tag);
     exceptionCheckWithCallFrameRollback();
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr function, int dst)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr function, PtrTag tag, int dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
+    MacroAssembler::Call call = appendCallWithExceptionCheck(function, tag);
 #if USE(JSVALUE64)
     emitPutVirtualRegister(dst, returnValueGPR);
 #else
@@ -186,9 +188,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr function, int dst)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr function, PtrTag tag, int dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
+    MacroAssembler::Call call = appendCallWithExceptionCheck(function, tag);
     emitValueProfilingSite();
 #if USE(JSVALUE64)
     emitPutVirtualRegister(dst, returnValueGPR);

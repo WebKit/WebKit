@@ -804,8 +804,8 @@ CompilationResult JIT::link()
     }
 
     for (auto& record : m_calls) {
-        if (record.to)
-            patchBuffer.link(record.from, FunctionPtr(record.to, SlowPathPtrTag));
+        if (record.callee)
+            patchBuffer.link(record.from, record.callee);
     }
 
     for (unsigned i = m_getByIds.size(); i--;)
@@ -917,7 +917,8 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallRecord(call(SlowPathPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandlerFromCallerFrame, SlowPathPtrTag).value()));
+        PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
+        m_calls.append(CallRecord(call(tag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandlerFromCallerFrame, tag)));
         jumpToExceptionHandler(*vm());
     }
 
@@ -936,7 +937,8 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallRecord(call(SlowPathPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler, SlowPathPtrTag).value()));
+        PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
+        m_calls.append(CallRecord(call(tag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler, tag)));
         jumpToExceptionHandler(*vm());
     }
 }

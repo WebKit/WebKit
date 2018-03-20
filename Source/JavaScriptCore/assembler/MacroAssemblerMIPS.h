@@ -3320,9 +3320,9 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         if (call.isFlagSet(Call::Tail))
-            MIPSAssembler::linkJump(code, call.m_label, function.value());
+            MIPSAssembler::linkJump(code, call.m_label, function.executableAddress());
         else
-            MIPSAssembler::linkCall(code, call.m_label, function.value());
+            MIPSAssembler::linkCall(code, call.m_label, function.executableAddress());
     }
 
 };

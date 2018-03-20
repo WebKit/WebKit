@@ -1,3 +1,114 @@
+2018-03-20  Mark Lam  <mark.lam@apple.com>
+
+        Improve FunctionPtr and use it in the JIT CallRecord.
+        https://bugs.webkit.org/show_bug.cgi?id=183756
+        <rdar://problem/38641335>
+
+        Reviewed by JF Bastien.
+
+        1. FunctionPtr hold a C/C++ function pointer by default.  Change its default
+           PtrTag to reflect that.
+
+        2. Delete the FunctionPtr::value() method.  It is effectively a duplicate of
+           executableAddress().
+
+        3. Fix the FunctionPtr constructor that takes arbitrary pointers to be able to
+           take "any" pointer.  "any" in this case means that the pointer may not be typed
+           as a C/C++ function to the C++ compiler (due to upstream casting or usage of
+           void* as a storage type), but it is still expected to be pointing to a C/C++
+           function.
+
+        4. Added a FunctionPtr constructor that takes another FunctionPtr.  This is a
+           convenience constructor that lets us retag the underlying pointer.  The other
+           FunctionPtr is still expected to point to a C/C++ function.
+
+        5. Added PtrTag assertion placeholder functions to be implemented later.
+
+        6. Change the JIT CallRecord to embed a FunctionPtr callee instead of a void* to
+           pointer.  This improves type safety, and assists in getting pointer tagging
+           right later.
+
+        7. Added versions of JIT callOperations methods that will take a PtrTag.
+           This is preparation for more more pointer tagging work later.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::linkCall):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+        (JSC::FunctionPtr::operator bool const):
+        (JSC::FunctionPtr::operator! const):
+        (JSC::ReturnAddressPtr::ReturnAddressPtr):
+        (JSC::MacroAssemblerCodePtr::retagged const):
+        (JSC::MacroAssemblerCodeRef::retaggedCode const):
+        (JSC::FunctionPtr::value const): Deleted.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::linkCall):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::linkCall):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::callWithSlowPathReturnType):
+        (JSC::MacroAssemblerX86_64::linkCall):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::lazySlowPathGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::JIT::appendCall):
+        (JSC::JIT::appendCallWithSlowPathReturnType):
+        (JSC::JIT::callOperation):
+        (JSC::JIT::callOperationWithProfile):
+        (JSC::JIT::callOperationWithResult):
+        (JSC::JIT::callOperationNoExceptionCheck):
+        (JSC::JIT::callOperationWithCallFrameRollbackOnException):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitNakedTailCall):
+        (JSC::JIT::appendCallWithExceptionCheck):
+        (JSC::JIT::appendCallWithExceptionCheckAndSlowPathReturnType):
+        (JSC::JIT::appendCallWithCallFrameRollbackOnException):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResult):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::JITSlowPathCall):
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * runtime/PtrTag.h:
+        (JSC::nextPtrTagID):
+        (JSC::assertIsCFunctionPtr):
+        (JSC::assertIsNullOrCFunctionPtr):
+        (JSC::assertIsNotTagged):
+        (JSC::assertIsTagged):
+        (JSC::assertIsNullOrTagged):
+        (JSC::assertIsTaggedWith):
+        (JSC::assertIsNullOrTaggedWith):
+        (JSC::uniquePtrTagID): Deleted.
+
 2018-03-20  Stanislav Ocovaj  <stanislav.ocovaj@rt-rk.com>
 
         [MIPS] Optimize generated JIT code for loads/stores

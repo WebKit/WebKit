@@ -2128,9 +2128,9 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         if (call.isFlagSet(Call::Tail))
-            ARMv7Assembler::linkJump(code, call.m_label, function.value());
+            ARMv7Assembler::linkJump(code, call.m_label, function.executableAddress());
         else
-            ARMv7Assembler::linkCall(code, call.m_label, function.value());
+            ARMv7Assembler::linkCall(code, call.m_label, function.executableAddress());
     }
 
     bool m_makeJumpPatchable;
