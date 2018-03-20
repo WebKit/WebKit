@@ -194,6 +194,11 @@
     (allow iokit-get-properties
         (iokit-property "client")))
 
+;; Home Button
+(with-filter (iokit-registry-entry-class "IOPlatformDevice")
+    (allow iokit-get-properties
+        (iokit-property "home-button-type")))
+
 ;; Common preferences read by UIKit.
 (mobile-preferences-read "com.apple.Accessibility"
     "com.apple.UIKit"

@@ -1,3 +1,13 @@
+2018-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Grant IOKit preference access for the Home button
+        https://bugs.webkit.org/show_bug.cgi?id=183754
+        <rdar://problem/38179704>
+
+        Reviewed by Eric Carlson.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2018-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Adopt updated input view controller machinery for text input
