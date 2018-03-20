@@ -1,4 +1,4 @@
 
 PASS effect is set correctly. 
-FAIL Clearing and setting Animation.effect should update the computed style of the target element assert_equals: animation no longer has an effect expected "auto" but got "100px"
+PASS Clearing and setting Animation.effect should update the computed style of the target element 
 

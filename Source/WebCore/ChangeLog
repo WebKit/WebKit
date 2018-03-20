@@ -1,3 +1,19 @@
+2018-03-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update the timing model when pending tasks schedule changes
+        https://bugs.webkit.org/show_bug.cgi?id=183785
+
+        Reviewed by Dean Jackson.
+
+        Changing the time at which a pending play or pause task is scheduled changes the pending
+        state of the animation and thus should notify that the timing model has changed and invalidate
+        the effect.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setTimeToRunPendingPlayTask):
+        (WebCore::WebAnimation::setTimeToRunPendingPauseTask):
+        (WebCore::WebAnimation::updatePendingTasks):
+
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_PLATFORM_NAME and adjust default feature defines

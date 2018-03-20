@@ -784,6 +784,9 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 
 void WebAnimation::setTimeToRunPendingPlayTask(TimeToRunPendingTask timeToRunPendingTask)
 {
+    if (m_timeToRunPendingPlayTask == timeToRunPendingTask)
+        return;
+
     m_timeToRunPendingPlayTask = timeToRunPendingTask;
     updatePendingTasks();
 }
@@ -909,6 +912,9 @@ ExceptionOr<void> WebAnimation::reverse()
 
 void WebAnimation::setTimeToRunPendingPauseTask(TimeToRunPendingTask timeToRunPendingTask)
 {
+    if (m_timeToRunPendingPauseTask == timeToRunPendingTask)
+        return;
+
     m_timeToRunPendingPauseTask = timeToRunPendingTask;
     updatePendingTasks();
 }
@@ -964,6 +970,8 @@ void WebAnimation::updatePendingTasks()
             });
         }
     }
+
+    timingModelDidChange();
 }
 
 Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const
