@@ -1,3 +1,18 @@
+2018-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Can't add a new class by editing class attribute in DOM outline
+        https://bugs.webkit.org/show_bug.cgi?id=180890
+
+        Reviewed by Ryosuke Niwa.
+
+        Typing "my-foo my-bar" creates a single "my-foo\xA0my-bar" class name because
+        contentEditable-based attribute editor sometimes inserts non-breaking space characters (\xA0).
+
+        Replace all non-breaking space characters with the regular space characters when
+        commiting attribute change.
+
+        * UserInterface/Views/DOMTreeElement.js:
+
 2018-03-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Elements: "Force Print Media Styles" should not persist across Web Inspector sessions

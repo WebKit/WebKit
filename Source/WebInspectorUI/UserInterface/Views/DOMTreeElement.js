@@ -1065,6 +1065,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (!moveDirection && newText === oldText)
             return;
 
+        // FIXME: Workaround for <https://webkit.org/b/123163> &nbsp; is forced on SPACE between text nodes.
+        const nbspRegex = /\xA0/g;
+        newText = newText.replace(nbspRegex, " ");
+
         var treeOutline = this.treeOutline;
         function moveToNextAttributeIfNeeded(error)
         {
