@@ -1,3 +1,23 @@
+2018-03-19  Nan Wang  <n_wang@apple.com>
+
+        AX: embedded attachments do not work correctly with text marker APIs on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=183751
+
+        Reviewed by Chris Fleizach.
+
+        In WebKit1, embedded attachments are not working well with text marker APIs.
+        We should use the corresponding attachment view in the following cases:
+        1. Hit testing on an attachment object.
+        2. Getting the attachment object at a text marker position.
+        3. Asking for the associated element with NSAccessibilityAttachmentTextAttribute. 
+
+        Not able to construct a layout test because it relies on embedded attachments.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetElement):
+        (-[WebAccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2018-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, another quick fix for r229699
