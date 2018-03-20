@@ -116,9 +116,8 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorBackToBack)
 
         isDone = false;
         TestWebKitAPI::Util::run(&isDone);
-        // In success, we should only start 2 provisional loads: 1 for the second loadRequest, and 1 for the _loadAlternateHTMLString.
-        // The second loadRequest cancels the first one before its provisional load starts.
-        EXPECT_EQ(2, provisionalLoadCount);
+        // In success, we should only start 3 provisional loads: 2 for the loadRequest, and *only 1* for the _loadAlternateHTMLString.
+        EXPECT_EQ(3, provisionalLoadCount);
     }
 }
 

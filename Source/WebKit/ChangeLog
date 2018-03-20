@@ -1,3 +1,19 @@
+2018-03-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r229726 and r229763.
+
+        Caused some API test failures on iOS
+
+        Reverted changesets:
+
+        "Make policy decisions asynchronous"
+        https://bugs.webkit.org/show_bug.cgi?id=180568
+        https://trac.webkit.org/changeset/229726
+
+        "Rebaseline three webarchive tests for WK2 after r229726."
+        https://bugs.webkit.org/show_bug.cgi?id=180568
+        https://trac.webkit.org/changeset/229763
+
 2018-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Grant IOKit preference access for the Home button
