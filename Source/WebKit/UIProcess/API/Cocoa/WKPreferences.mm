@@ -1202,6 +1202,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->webAudioEnabled();
 }
 
+- (void)_setAggressiveTileRetentionEnabled:(BOOL)enabled
+{
+    _preferences->setAggressiveTileRetentionEnabled(enabled);
+}
+
+- (BOOL)_aggressiveTileRetentionEnabled
+{
+    return _preferences->aggressiveTileRetentionEnabled();
+}
+
 #endif // PLATFORM(MAC)
 
 - (BOOL)_javaScriptCanAccessClipboard
