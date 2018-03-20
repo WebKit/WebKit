@@ -2917,7 +2917,7 @@ public:
         convertInt32ToDouble(MIPSRegisters::zero, reg);
     }
 
-    void swapDouble(FPRegisterID fr1, FPRegisterID fr2)
+    void swap(FPRegisterID fr1, FPRegisterID fr2)
     {
         moveDouble(fr1, fpTempRegister);
         moveDouble(fr2, fr1);

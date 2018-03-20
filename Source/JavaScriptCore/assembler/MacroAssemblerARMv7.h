@@ -1339,6 +1339,13 @@ public:
         move(dataTempRegister, reg2);
     }
 
+    void swap(FPRegisterID fr1, FPRegisterID fr2)
+    {
+        moveDouble(fr1, fpTempRegister);
+        moveDouble(fr2, fr1);
+        moveDouble(fpTempRegister, fr2);
+    }
+
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
     {
         move(src, dest);

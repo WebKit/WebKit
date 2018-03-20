@@ -256,6 +256,7 @@ class FPRInfo {
 public:
     typedef FPRReg RegisterType;
     static const unsigned numberOfRegisters = 7;
+    static const unsigned numberOfArgumentRegisters = 2;
 
     // Temporary registers.
     static const FPRReg fpRegT0 = MIPSRegisters::f0;

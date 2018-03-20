@@ -355,14 +355,6 @@ public:
         store64(src, addressForPoke(index));
     }
 #endif
-    
-#if CPU(MIPS)
-    void poke(FPRegisterID src, int index = 0)
-    {
-        ASSERT(!(index & 1));
-        storeDouble(src, addressForPoke(index));
-    }
-#endif
 
     // Immediate shifts only have 5 controllable bits
     // so we'll consider them safe for now.

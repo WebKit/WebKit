@@ -4976,7 +4976,7 @@ void SpeculativeJIT::compile(Node* node)
 
         done.link(&m_jit);
 
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, resultRegs, baseGPR, propertyGPR));
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, resultRegs, baseGPR, JSValue::JSCellType, propertyGPR));
 #endif
 
         jsValueResult(resultRegs, node);

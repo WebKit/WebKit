@@ -1,3 +1,24 @@
+2018-03-20  Guillaume Emont  <guijemont@igalia.com>
+
+        MIPS+Armv7 builds are broken since r229391
+        https://bugs.webkit.org/show_bug.cgi?id=183474
+
+        Reviewed by Yusuke Suzuki.
+
+        Add missing armv7 and mips operations and fix arguments to a call to
+        operationGetByValCell. This should fix compilation on MIPS and Armv7
+        (though it does not implement the missing setupArguments stuff in
+        CCallHelpers).
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::swap):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::swap):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/FPRInfo.h:
+
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_PLATFORM_NAME and adjust default feature defines
