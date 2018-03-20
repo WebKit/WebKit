@@ -760,6 +760,9 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
+    if (m_pageLoadStart)
+        reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
+
     if (m_activePopupMenu)
         m_activePopupMenu->cancelTracking();
 
@@ -3228,6 +3231,9 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
         navigation = &navigationState().navigation(navigationID);
 
     if (frame->isMainFrame()) {
+        if (m_pageLoadStart)
+            reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
+        m_pageLoadStart = MonotonicTime::now();
         m_pageLoadState.didStartProvisionalLoad(transaction, url, unreachableURL);
         m_pageClient.didStartProvisionalLoadForMainFrame();
         hideValidationMessage();
@@ -3334,6 +3340,7 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const Securi
     auto transaction = m_pageLoadState.transaction();
 
     if (frame->isMainFrame()) {
+        reportPageLoadResult(error);
         m_pageLoadState.didFailProvisionalLoad(transaction);
         m_pageClient.didFailProvisionalLoadForMainFrame();
     }
@@ -3503,8 +3510,10 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID
     } else
         m_loaderClient->didFinishLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
 
-    if (isMainFrame)
+    if (isMainFrame) {
+        reportPageLoadResult();
         m_pageClient.didFinishLoadForMainFrame();
+    }
 
     m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = false;
 }
@@ -3544,8 +3553,10 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, 
     } else
         m_loaderClient->didFailLoadWithErrorForFrame(*this, *frame, navigation.get(), error, m_process->transformHandlesToObjects(userData.object()).get());
 
-    if (isMainFrame)
+    if (isMainFrame) {
+        reportPageLoadResult(error);
         m_pageClient.didFailLoadForMainFrame();
+    }
 }
 
 void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t opaqueSameDocumentNavigationType, WebCore::URL&& url, const UserData& userData)
@@ -7311,5 +7322,62 @@ void WebPageProxy::getApplicationManifest(Function<void(const std::optional<WebC
     m_process->send(Messages::WebPage::GetApplicationManifest(callbackID), m_pageID);
 }
 #endif
+
+namespace {
+enum class CompletionCondition {
+    Cancellation,
+    Error,
+    Success,
+    Timeout,
+};
+struct MessageType {
+    CompletionCondition condition;
+    Seconds seconds;
+    String message;
+};
+}
+
+void WebPageProxy::reportPageLoadResult(const ResourceError& error)
+{
+    static const NeverDestroyed<Vector<MessageType>> messages(std::initializer_list<MessageType> {
+        { CompletionCondition::Cancellation, 2_s, DiagnosticLoggingKeys::canceledLessThan2SecondsKey() },
+        { CompletionCondition::Cancellation, 5_s, DiagnosticLoggingKeys::canceledLessThan5SecondsKey() },
+        { CompletionCondition::Cancellation, 20_s, DiagnosticLoggingKeys::canceledLessThan20SecondsKey() },
+        { CompletionCondition::Cancellation, Seconds::infinity(), DiagnosticLoggingKeys::canceledMoreThan20SecondsKey() },
+
+        { CompletionCondition::Error, 2_s, DiagnosticLoggingKeys::failedLessThan2SecondsKey() },
+        { CompletionCondition::Error, 5_s, DiagnosticLoggingKeys::failedLessThan5SecondsKey() },
+        { CompletionCondition::Error, 20_s, DiagnosticLoggingKeys::failedLessThan20SecondsKey() },
+        { CompletionCondition::Error, Seconds::infinity(), DiagnosticLoggingKeys::failedMoreThan20SecondsKey() },
+
+        { CompletionCondition::Success, 2_s, DiagnosticLoggingKeys::succeededLessThan2SecondsKey() },
+        { CompletionCondition::Success, 5_s, DiagnosticLoggingKeys::succeededLessThan5SecondsKey() },
+        { CompletionCondition::Success, 20_s, DiagnosticLoggingKeys::succeededLessThan20SecondsKey() },
+        { CompletionCondition::Success, Seconds::infinity(), DiagnosticLoggingKeys::succeededMoreThan20SecondsKey() },
+
+        { CompletionCondition::Timeout, Seconds::infinity(), DiagnosticLoggingKeys::timedOutKey() }
+        });
+
+    ASSERT(m_pageLoadStart);
+
+    auto pageLoadTime = MonotonicTime::now() - *m_pageLoadStart;
+    m_pageLoadStart = std::nullopt;
+
+    CompletionCondition condition { CompletionCondition::Success };
+    if (error.isCancellation())
+        condition = CompletionCondition::Cancellation;
+    else if (error.isTimeout())
+        condition = CompletionCondition::Timeout;
+    else if (!error.isNull() || error.errorCode())
+        condition = CompletionCondition::Error;
+
+    for (auto& messageItem : messages.get()) {
+        if (condition == messageItem.condition && pageLoadTime < messageItem.seconds) {
+            logDiagnosticMessage(DiagnosticLoggingKeys::telemetryPageLoadKey(), messageItem.message, ShouldSample::No);
+            logDiagnosticMessage(DiagnosticLoggingKeys::telemetryPageLoadKey(), DiagnosticLoggingKeys::occurredKey(), ShouldSample::No);
+            break;
+        }
+    }
+}
 
 } // namespace WebKit

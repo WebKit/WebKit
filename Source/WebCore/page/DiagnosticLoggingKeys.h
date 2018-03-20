@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,10 @@ public:
     static String cachedResourceRevalidationKey();
     static String cachedResourceRevalidationReasonKey();
     static String canCacheKey();
+    WEBCORE_EXPORT static String canceledLessThan2SecondsKey();
+    WEBCORE_EXPORT static String canceledLessThan5SecondsKey();
+    WEBCORE_EXPORT static String canceledLessThan20SecondsKey();
+    WEBCORE_EXPORT static String canceledMoreThan20SecondsKey();
     static String cannotSuspendActiveDOMObjectsKey();
     WEBCORE_EXPORT static String cpuUsageKey();
     WEBCORE_EXPORT static String createSharedBufferFailedKey();
@@ -64,6 +68,10 @@ public:
     WEBCORE_EXPORT static String entryRightlyNotWarmedUpKey();
     WEBCORE_EXPORT static String entryWronglyNotWarmedUpKey();
     static String expiredKey();
+    WEBCORE_EXPORT static String failedLessThan2SecondsKey();
+    WEBCORE_EXPORT static String failedLessThan5SecondsKey();
+    WEBCORE_EXPORT static String failedLessThan20SecondsKey();
+    WEBCORE_EXPORT static String failedMoreThan20SecondsKey();
     static String fontKey();
     static String hasPluginsKey();
     static String httpsNoStoreKey();
@@ -105,6 +113,7 @@ public:
     WEBCORE_EXPORT static String nonVisibleStateKey();
     WEBCORE_EXPORT static String notHTTPFamilyKey();
     static String notInMemoryCacheKey();
+    WEBCORE_EXPORT static String occurredKey();
     WEBCORE_EXPORT static String otherKey();
     static String pageCacheKey();
     static String pageCacheFailureKey();
@@ -142,10 +151,16 @@ public:
     static String serviceWorkerKey();
     WEBCORE_EXPORT static String streamingMedia();
     static String styleSheetKey();
+    WEBCORE_EXPORT static String succeededLessThan2SecondsKey();
+    WEBCORE_EXPORT static String succeededLessThan5SecondsKey();
+    WEBCORE_EXPORT static String succeededLessThan20SecondsKey();
+    WEBCORE_EXPORT static String succeededMoreThan20SecondsKey();
     WEBCORE_EXPORT static String successfulSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String successfulSpeculativeWarmupWithoutRevalidationKey();
     static String svgDocumentKey();
     WEBCORE_EXPORT static String synchronousMessageFailedKey();
+    WEBCORE_EXPORT static String telemetryPageLoadKey();
+    WEBCORE_EXPORT static String timedOutKey();
     WEBCORE_EXPORT static String uncacheableStatusCodeKey();
     static String underMemoryPressureKey();
     WEBCORE_EXPORT static String unknownEntryRequestKey();
