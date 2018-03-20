@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+This tests that cookies set on the main document are used when accessing resources in the manifest.
+PASSED: Cookie is set to 'bar'
