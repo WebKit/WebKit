@@ -1,5 +1,49 @@
 2018-03-20  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Move Display.Box handling from FormattingContext to FormattingState
+        https://bugs.webkit.org/show_bug.cgi?id=183779
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeStaticPosition):
+        (BlockFormattingContext.prototype._computeOutOfFlowWidth):
+        (BlockFormattingContext.prototype._computeFloatingWidth):
+        (BlockFormattingContext.prototype._computeInFlowWidth):
+        (BlockFormattingContext.prototype._computeOutOfFlowHeight):
+        (BlockFormattingContext.prototype._computeFloatingHeight):
+        (BlockFormattingContext.prototype._computeInFlowHeight):
+        (BlockFormattingContext.prototype._horizontalConstraint):
+        (BlockFormattingContext.prototype._contentHeight):
+        (BlockFormattingContext.prototype._adjustBottomWithFIXME):
+        (BlockFormattingContext.prototype._computeInFlowPositionedPosition):
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype.computePosition):
+        (FloatingContext.prototype._positionForClear):
+        (FloatingContext.prototype._computePositionToAvoidIntrudingFloats):
+        (FloatingContext.prototype._availableSpace):
+        (FloatingContext.prototype._adjustedFloatingPosition):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext):
+        (FormattingContext.prototype.absoluteMarginBox):
+        (FormattingContext.prototype.absoluteBorderBox):
+        (FormattingContext.prototype.absolutePaddingBox):
+        (FormattingContext.prototype.absoluteContentBox):
+        (FormattingContext.prototype._toAbsolutePosition):
+        (FormattingContext.prototype._toRootAbsolutePosition):
+        (FormattingContext.prototype._addToLayoutQueue):
+        (FormattingContext.prototype.displayBox):
+        (FormattingContext.prototype._createDisplayBox): Deleted.
+        (FormattingContext.prototype.toDisplayBox): Deleted.
+        (FormattingContext.prototype.toLayoutBox): Deleted.
+        * LayoutReloaded/FormattingState/FormattingState.js:
+        (FormattingState):
+        (FormattingState.prototype.createDisplayBox):
+        (FormattingState.prototype.displayBox):
+
+2018-03-20  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Introduce FormattingState (Block/Inline/etc)
         https://bugs.webkit.org/show_bug.cgi?id=183777
 

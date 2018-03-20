@@ -27,6 +27,7 @@ class FormattingState {
     constructor(layoutContext) {
         this.m_layoutContext = layoutContext;
         this.m_formattingContext = null;
+        this.m_displayToLayout = new Map();
     }
 
     formattingContext() {
@@ -35,6 +36,18 @@ class FormattingState {
 
     layoutContext() {
         return this.m_layoutContext;
+    }
+
+    createDisplayBox(layoutBox) {
+        let displayBox = new Display.Box(layoutBox.node());
+        this.m_displayToLayout.set(layoutBox, displayBox);
+        // This is temporary.
+        layoutBox.setDisplayBox(displayBox);
+    }
+
+    displayBox(layoutBox) {
+        ASSERT(layoutBox);
+        return layoutBox.displayBox();
     }
 
     _setFormattingContext(formattingContext) {

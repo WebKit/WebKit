@@ -34,7 +34,7 @@ class FloatingContext {
     computePosition(layoutBox) {
         if (layoutBox.isOutOfFlowPositioned())
             return;
-        let displayBox = this._formattingContext().toDisplayBox(layoutBox);
+        let displayBox = this._formattingContext().displayBox(layoutBox);
         if (layoutBox.isFloatingPositioned()) {
             let position = this._positionForFloating(layoutBox);
             this._addFloating(layoutBox);
@@ -74,7 +74,7 @@ class FloatingContext {
 
     _positionForClear(layoutBox) {
         ASSERT(Utils.hasClear(layoutBox));
-        let displayBox = this._formattingContext().toDisplayBox(layoutBox);
+        let displayBox = this._formattingContext().displayBox(layoutBox);
         if (this._isEmpty())
             return displayBox.topLeft();
 
@@ -96,7 +96,7 @@ class FloatingContext {
 
     _computePositionToAvoidIntrudingFloats(layoutBox) {
         if (!layoutBox.establishesBlockFormattingContext() || this._isEmpty())
-            return this._formattingContext().toDisplayBox(layoutBox).topLeft();
+            return this._formattingContext().displayBox(layoutBox).topLeft();
         // The border box of a table, a block-level replaced element, or an element in the normal flow that establishes
         // a new block formatting context (such as an element with 'overflow' other than 'visible') must not overlap the
         // margin box of any floats in the same block formatting context as the element itself.
@@ -132,7 +132,7 @@ class FloatingContext {
     }
 
     _availableSpace(containingBlock, floatingPair) {
-        let containingBlockContentBox = this._formattingContext().toDisplayBox(containingBlock);
+        let containingBlockContentBox = this._formattingContext().displayBox(containingBlock);
         if (floatingPair.left && floatingPair.right)
             return this._formattingContext().absoluteMarginBox(floatingPair.right).left() - this._formattingContext().absoluteMarginBox(floatingPair.left).right();
         if (floatingPair.left)
@@ -182,7 +182,7 @@ class FloatingContext {
 
         if (Utils.isFloatingLeft(floatingBox) || !Utils.isFloatingPositioned(floatingBox))
             return new LayoutPoint(verticalPosition, left);
-        return new LayoutPoint(verticalPosition, right - this._formattingContext().toDisplayBox(floatingBox).rect().width());
+        return new LayoutPoint(verticalPosition, right - this._formattingContext().displayBox(floatingBox).rect().width());
     }
 
     _bottom(floatingStack) {

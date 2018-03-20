@@ -28,8 +28,6 @@ class FormattingContext {
         this.m_rootContainer = rootContainer;
         this.m_layoutState = layoutState;
         this.m_floatingContext = null;
-        this.m_displayToLayout = new Map();
-        this.m_layoutToDisplay = new Map();
         this.m_layoutStack = new Array();
     }
 
@@ -76,7 +74,7 @@ class FormattingContext {
     }
 
     absoluteMarginBox(layoutBox) {
-        let displayBox = this.toDisplayBox(layoutBox);
+        let displayBox = this.displayBox(layoutBox);
         let absoluteContentBox = new LayoutRect(this._toRootAbsolutePosition(layoutBox), displayBox.size());
         absoluteContentBox.moveBy(new LayoutSize(-this.marginLeft(layoutBox), -this.marginTop(layoutBox)));
         absoluteContentBox.growBy(new LayoutSize(this.marginLeft(layoutBox) + this.marginRight(layoutBox), this.marginTop(layoutBox) + this.marginBottom(layoutBox)));
@@ -84,21 +82,21 @@ class FormattingContext {
     }
 
     absoluteBorderBox(layoutBox) {
-        let borderBox = this.toDisplayBox(layoutBox).borderBox();
+        let borderBox = this.displayBox(layoutBox).borderBox();
         let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), borderBox.size());
         absoluteRect.moveBy(borderBox.topLeft());
         return absoluteRect;
     }
 
     absolutePaddingBox(layoutBox) {
-        let paddingBox = this.toDisplayBox(layoutBox).paddingBox();
+        let paddingBox = this.displayBox(layoutBox).paddingBox();
         let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), paddingBox.size());
         absoluteRect.moveBy(paddingBox.topLeft());
         return absoluteRect;
     }
 
     absoluteContentBox(layoutBox) {
-        let contentBox = this.toDisplayBox(layoutBox).contentBox();
+        let contentBox = this.displayBox(layoutBox).contentBox();
         let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), contentBox.size());
         absoluteRect.moveBy(contentBox.topLeft());
         return absoluteRect;
@@ -111,14 +109,14 @@ class FormattingContext {
         let ascendant = layoutBox.containingBlock();
         while (ascendant && ascendant != container) {
             ASSERT(ascendant.isDescendantOf(this.rootContainer()));
-            absolutePosition.moveBy(this.toDisplayBox(ascendant).topLeft());
+            absolutePosition.moveBy(this.displayBox(ascendant).topLeft());
             ascendant = ascendant.containingBlock();
         }
         return absolutePosition;
     }
 
     _toRootAbsolutePosition(layoutBox) {
-        return this._toAbsolutePosition(this.toDisplayBox(layoutBox).topLeft(), layoutBox, this.rootContainer());
+        return this._toAbsolutePosition(this.displayBox(layoutBox).topLeft(), layoutBox, this.rootContainer());
     }
 
     _descendantNeedsLayout() {
@@ -127,7 +125,7 @@ class FormattingContext {
 
     _addToLayoutQueue(layoutBox) {
         // Initialize the corresponding display box.
-        this._createDisplayBox(layoutBox);
+        this.layoutState().createDisplayBox(layoutBox);
         this.m_layoutStack.push(layoutBox);
     }
 
@@ -143,23 +141,8 @@ class FormattingContext {
         this.m_layoutStack.splice(this.m_layoutStack.indexOf(layoutBox), 1);
     }
 
-    _createDisplayBox(layoutBox) {
-        let displayBox = new Display.Box(layoutBox.node());
-        this.m_displayToLayout.set(displayBox, layoutBox);
-        this.m_layoutToDisplay.set(layoutBox, displayBox);
-        // This is temporary.
-        layoutBox.setDisplayBox(displayBox);
-    }
-
-    toDisplayBox(layoutBox) {
-        ASSERT(layoutBox);
-        return layoutBox.displayBox();
-    }
-
-    toLayoutBox(displayBox) {
-        ASSERT(displayBox);
-        ASSERT(this.m_displayToLayout.has(displayBox));
-        return this.m_displayToLayout.get(displayBox);
+    displayBox(layoutBox) {
+        return this.layoutState().displayBox(layoutBox);
     }
 
     _outOfFlowDescendants() {
