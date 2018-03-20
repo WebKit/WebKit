@@ -28,7 +28,7 @@ layer at (0,0) size 800x486
               text run at (8,2) width 17: "foo"
         RenderText {#text} at (193,40) size 8x18
           text run at (193,40) width 8: "a"
-        RenderMenuList {SELECT} at (202,41) size 50x18 [color=#808080] [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (202,41) size 50x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 49x18
             RenderText at (8,2) size 17x13
               text run at (8,2) width 17: "foo"
@@ -44,7 +44,7 @@ layer at (0,0) size 800x486
               text run at (8,2) width 17: "foo"
         RenderText {#text} at (250,78) size 8x18
           text run at (250,78) width 8: "a"
-        RenderMenuList {SELECT} at (259,79) size 50x18 [color=#808080] [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (259,79) size 50x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 49x18
             RenderText at (8,2) size 18x13
               text run at (8,2) width 18: "bar"
@@ -60,7 +60,7 @@ layer at (0,0) size 800x486
               text run at (8,2) width 17: "foo"
         RenderText {#text} at (494,116) size 8x18
           text run at (494,116) width 8: "a"
-        RenderMenuList {SELECT} at (503,117) size 49x18 [color=#808080] [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (503,117) size 49x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 48x18
             RenderText at (8,2) size 17x13
               text run at (8,2) width 17: "foo"
@@ -108,7 +108,7 @@ layer at (0,0) size 800x486
               text run at (8,2) width 17: "foo"
         RenderText {#text} at (543,248) size 8x18
           text run at (543,248) width 8: "a"
-        RenderMenuList {SELECT} at (552,249) size 49x18 [color=#808080] [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (552,249) size 49x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 48x18
             RenderText at (8,2) size 17x13
               text run at (8,2) width 17: "foo"

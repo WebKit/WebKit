@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderMenuList {SELECT} at (2,2) size 60x18 [color=#808080] [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,2) size 60x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 60x18
           RenderText at (8,2) size 29x13
             text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (64,15) size 0x0
-      RenderMenuList {SELECT} at (2,24) size 60x18 [color=#808080] [bgcolor=#FFFFFF]
+      RenderMenuList {SELECT} at (2,24) size 60x18 [color=#7F7F7F] [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (0,0) size 60x18
           RenderText at (8,2) size 29x13
             text run at (8,2) width 29: "PASS"
