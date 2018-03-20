@@ -936,6 +936,7 @@ void Heap::clearUnmarkedExecutables()
 void Heap::deleteUnmarkedCompiledCode()
 {
     clearUnmarkedExecutables();
+    vm()->forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); }); // Sweeping must occur before deleting stubs, otherwise the stubs might still think they're alive as they get deleted.
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
 
@@ -2084,7 +2085,6 @@ void Heap::waitForCollection(Ticket ticket)
 void Heap::sweepInFinalize()
 {
     m_objectSpace.sweepLargeAllocations();
-    vm()->forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); });
     vm()->eagerlySweptDestructibleObjectSpace.sweep();
 }
 
