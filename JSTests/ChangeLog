@@ -1,3 +1,18 @@
+2018-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Make ArraySlice(0) code tight
+        https://bugs.webkit.org/show_bug.cgi?id=183590
+
+        Reviewed by Saam Barati.
+
+        * stress/array-slice-with-zero.js: Added.
+        (shouldBe):
+        (test):
+        (test2):
+        * stress/array-slice-zero-args.js: Added.
+        (shouldBe):
+        (test):
+
 2018-03-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] fix order of evaluation for ClassDefinitionEvaluation

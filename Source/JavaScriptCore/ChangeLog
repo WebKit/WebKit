@@ -1,3 +1,33 @@
+2018-03-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Make ArraySlice(0) code tight
+        https://bugs.webkit.org/show_bug.cgi?id=183590
+
+        Reviewed by Saam Barati.
+
+        This patch tightens ArraySlice code, in particular, startIndex = 0 case.
+
+        1. We support array.slice() call. This is a well-used way to clone array.
+        For example, underscore.js uses this technique.
+
+        2. We remove several checks if the given index value is a proven constant.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitPopulateSliceIndex):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        We can skip some of checks if the given value is a proven constant.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        Change below to belowOrEqual. It does not change meaning in the code. But it allows us
+        to fold BelowEqual(0, x) to true.
+
 2018-03-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Drop s_exceptionInstructions static initializer

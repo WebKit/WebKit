@@ -7619,9 +7619,32 @@ void SpeculativeJIT::compileGetRestLength(Node* node)
 
 void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, GPRReg length, GPRReg result)
 {
+    if (target->isInt32Constant()) {
+        int32_t value = target->asInt32();
+        if (value == 0) {
+            m_jit.move(TrustedImm32(0), result);
+            return;
+        }
+
+        MacroAssembler::JumpList done;
+        if (value > 0) {
+            m_jit.move(TrustedImm32(value), result);
+            done.append(m_jit.branch32(MacroAssembler::BelowOrEqual, result, length));
+            m_jit.move(length, result);
+        } else {
+            ASSERT(value != 0);
+            m_jit.move(length, result);
+            done.append(m_jit.branchAdd32(MacroAssembler::PositiveOrZero, TrustedImm32(value), result));
+            m_jit.move(TrustedImm32(0), result);
+        }
+        done.link(&m_jit);
+        return;
+    }
+
     SpeculateInt32Operand index(this, target);
     GPRReg indexGPR = index.gpr();
     MacroAssembler::JumpList done;
+
     auto isPositive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, indexGPR, TrustedImm32(0));
     m_jit.move(length, result);
     done.append(m_jit.branchAdd32(MacroAssembler::PositiveOrZero, indexGPR, result));
@@ -7643,14 +7666,17 @@ void SpeculativeJIT::compileArraySlice(Node* node)
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
 
     GPRTemporary temp(this);
-    StorageOperand storage(this, node->numChildren() == 3 ? m_jit.graph().varArgChild(node, 2) : m_jit.graph().varArgChild(node, 3));
+    StorageOperand storage(this, m_jit.graph().varArgChild(node, node->numChildren() - 1));
     GPRTemporary result(this);
     
     GPRReg storageGPR = storage.gpr();
     GPRReg resultGPR = result.gpr();
     GPRReg tempGPR = temp.gpr();
 
-    {
+    if (node->numChildren() == 2)
+        m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), tempGPR);
+    else {
+        ASSERT(node->numChildren() == 3 || node->numChildren() == 4);
         GPRTemporary tempLength(this);
         GPRReg lengthGPR = tempLength.gpr();
         m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
@@ -7660,17 +7686,22 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         else
             m_jit.move(lengthGPR, tempGPR);
 
-        GPRTemporary tempStartIndex(this);
-        GPRReg startGPR = tempStartIndex.gpr();
-        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), lengthGPR, startGPR);
+        if (m_jit.graph().varArgChild(node, 1)->isInt32Constant() && m_jit.graph().varArgChild(node, 1)->asInt32() == 0) {
+            // Do nothing for array.slice(0, end) or array.slice(0) cases.
+            // `tempGPR` already points to the size of a newly created array.
+        } else {
+            GPRTemporary tempStartIndex(this);
+            GPRReg startGPR = tempStartIndex.gpr();
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), lengthGPR, startGPR);
 
-        auto tooBig = m_jit.branch32(MacroAssembler::Above, startGPR, tempGPR);
-        m_jit.sub32(startGPR, tempGPR); // the size of the array we'll make.
-        auto done = m_jit.jump();
+            auto tooBig = m_jit.branch32(MacroAssembler::Above, startGPR, tempGPR);
+            m_jit.sub32(startGPR, tempGPR); // the size of the array we'll make.
+            auto done = m_jit.jump();
 
-        tooBig.link(&m_jit);
-        m_jit.move(TrustedImm32(0), tempGPR);
-        done.link(&m_jit);
+            tooBig.link(&m_jit);
+            m_jit.move(TrustedImm32(0), tempGPR);
+            done.link(&m_jit);
+        }
     }
 
 
@@ -7757,12 +7788,17 @@ void SpeculativeJIT::compileArraySlice(Node* node)
     GPRTemporary temp4(this);
     GPRReg loadIndex = temp4.gpr();
 
-    m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), tempValue);
-    if (node->numChildren() == 4)
-        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), tempValue, tempGPR);
-    else
-        m_jit.move(tempValue, tempGPR);
-    emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), tempValue, loadIndex);
+    if (node->numChildren() == 2) {
+        m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), tempGPR);
+        m_jit.move(TrustedImm32(0), loadIndex);
+    } else {
+        m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), tempValue);
+        if (node->numChildren() == 4)
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), tempValue, tempGPR);
+        else
+            m_jit.move(tempValue, tempGPR);
+        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), tempValue, loadIndex);
+    }
 
     GPRTemporary temp5(this);
     GPRReg storeIndex = temp5.gpr();

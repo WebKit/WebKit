@@ -238,10 +238,14 @@ private:
 
         case ArraySlice: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
-            m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
-            if (node->numChildren() == 3)
+
+            if (node->numChildren() == 2)
+                m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsValue);
+            else if (node->numChildren() == 3) {
+                m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
                 m_graph.varArgChild(node, 2)->mergeFlags(NodeBytecodeUsesAsValue);
-            else {
+            } else if (node->numChildren() == 4) {
+                m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
                 m_graph.varArgChild(node, 2)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
                 m_graph.varArgChild(node, 3)->mergeFlags(NodeBytecodeUsesAsValue);
             }

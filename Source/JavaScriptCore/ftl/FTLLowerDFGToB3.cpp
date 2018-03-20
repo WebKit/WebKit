@@ -4690,20 +4690,28 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
 
-        LValue sourceStorage = lowStorage(m_node->numChildren() == 3 ? m_graph.varArgChild(m_node, 2) : m_graph.varArgChild(m_node, 3));
+        LValue sourceStorage = lowStorage(m_graph.varArgChild(m_node, m_node->numChildren() - 1));
         LValue inputLength = m_out.load32(sourceStorage, m_heaps.Butterfly_publicLength);
-        LValue start = lowInt32(m_graph.varArgChild(m_node, 1));
-        LValue end = nullptr;
-        if (m_node->numChildren() != 3)
-            end = lowInt32(m_graph.varArgChild(m_node, 2));
 
-        auto range = populateSliceRange(start, end, inputLength);
-        LValue startIndex = range.first;
-        LValue endBoundary = range.second;
+        LValue startIndex = nullptr;
+        LValue resultLength = nullptr;
+        if (m_node->numChildren() == 2) {
+            startIndex = m_out.constInt32(0);
+            resultLength = inputLength;
+        } else {
+            LValue start = lowInt32(m_graph.varArgChild(m_node, 1));
+            LValue end = nullptr;
+            if (m_node->numChildren() != 3)
+                end = lowInt32(m_graph.varArgChild(m_node, 2));
 
-        LValue resultLength = m_out.select(m_out.below(startIndex, endBoundary),
-            m_out.sub(endBoundary, startIndex),
-            m_out.constInt32(0));
+            auto range = populateSliceRange(start, end, inputLength);
+            startIndex = range.first;
+            LValue endBoundary = range.second;
+
+            resultLength = m_out.select(m_out.belowOrEqual(startIndex, endBoundary),
+                m_out.sub(endBoundary, startIndex),
+                m_out.constInt32(0));
+        }
 
         ArrayValues arrayResult;
         {
