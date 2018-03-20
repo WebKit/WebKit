@@ -55,7 +55,7 @@ class BuildbotTriggerable {
 
     initSyncers()
     {
-        return this.getBuilderNameToIDMapDeprecated().then((builderNameToIDMap) => {
+        return this.getBuilderNameToIDMap().then((builderNameToIDMap) => {
             this._syncers = BuildbotSyncer._loadConfig(this._buildbotRemote, this._config, builderNameToIDMap);
         });
     }

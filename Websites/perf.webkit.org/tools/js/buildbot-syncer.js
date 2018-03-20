@@ -151,7 +151,7 @@ class BuildbotSyncer {
             properties[this._platformPropertyName] = newRequest.platform().name();
 
         this._slavesWithNewRequests.add(slaveName);
-        return this.scheduleBuildOnBuildbotDeprecated(properties);
+        return this.scheduleBuildOnBuildbot(properties);
     }
 
     scheduleBuildOnBuildbotDeprecated(properties)
@@ -211,9 +211,9 @@ class BuildbotSyncer {
 
     pullBuildbot(count)
     {
-        return this._remote.getJSON(this.pathForPendingBuildsJSONDeprecated()).then((content) => {
-            let pendingEntries = content.map((entry) => new BuildbotBuildEntryDeprecated(this, entry));
-            return this._pullRecentBuildsDeprecated(count).then((entries) => {
+        return this._remote.getJSON(this.pathForPendingBuilds()).then((content) => {
+            const pendingEntries = (content.buildrequests || []).map((entry) => new BuildbotBuildEntry(this, entry));
+            return this._pullRecentBuilds(count).then((entries) => {
                 let entryByRequest = {};
 
                 for (let entry of pendingEntries)

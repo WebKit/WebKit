@@ -19,6 +19,18 @@ MockData = {
     sharedRepositoryId() { return 14; },
     buildbotBuildersURLDeprecated() {return '/json/builders'},
     buildbotBuildersURL() {return '/api/v2/builders'},
+    pendingBuildsUrl: function (builderName) {
+        const builderId = this.builderIDForName(builderName);
+        return `/api/v2/builders/${builderId}/buildrequests?complete=false&claimed=false&property=*`;
+    },
+    recentBuildsUrl: function (builderName, count) {
+        const builderId = this.builderIDForName(builderName);
+        return `/api/v2/builders/${builderId}/builds?limit=${count}&order=-number&property=*`; 
+    },
+    statusUrl: function (builderName, buildId) {
+        const builderId = this.builderIDForName(builderName);
+        return `http://build.webkit.org/#/builders/${builderId}/builds/${buildId}`; 
+    },
     addMockConfiguration: function (db)
     {
         return Promise.all([
@@ -197,7 +209,7 @@ MockData = {
             },
             'builders': {
                 'builder-1': {'builder': 'some-builder-1',
-                     properties: {forcescheduler: 'force-some-builder-1'}} 
+                     properties: {forcescheduler: 'force-some-builder-1'}}
             },
             'testConfigurations': [
                 {
@@ -293,7 +305,47 @@ MockData = {
             ]
         }
     },
+    builderIDForName: function(builderName)
+    {
+        for (let builder of this.mockBuildbotBuilders().builders) {
+            if (builder.name == builderName)
+                return builder.builderid;
+        }
+        return -1;
+    },
+    pendingBuildData(options)
+    {
+        return {
+            "builderid": options.builderId || 2,
+            "buildrequestid": options.buildbotBuildRequestId || 18,
+            "buildsetid": 894720,
+            "claimed": false,
+            "claimed_at": null,
+            "claimed_by_masterid": null,
+            "complete": false,
+            "complete_at": null,
+            "priority": 0,
+            "results": -1,
+            "submitted_at": options.buildTime || (new Date('2016-03-23T03:49:43Z') / 1000),
+            "waited_for": false,
+            "properties": {
+                "build-request-id": [(options.buildRequestId || 702).toString(), "Force Build Form"],
+                "scheduler": ["ABTest-iPad-RunBenchmark-Tests-ForceScheduler", "Scheduler"],
+                "wk": [options.webkitRevision || '191622', "Unknown"],
+                "os": [options.osxRevision || '10.11 15A284', "Unknown"],
+                "slavename": [options.workerName || "bot202", "Worker (deprecated)"],
+                "workername": [options.workerName || "bot202", "Worker"]
+            }
+        };
+    },
     pendingBuild(options)
+    {
+        options = options || {};
+        return {
+            "buildrequests": [this.pendingBuildData(options)]
+        };
+    },
+    pendingBuildDeprecated(options)
     {
         options = options || {};
         return {
@@ -315,7 +367,45 @@ MockData = {
             },
         };
     },
+    sampleBuildData(options, overrides)
+    {
+        options = options || {};
+        overrides = overrides || {};
+        return {
+            "builderid": options.builderId || 2,
+            "number":  options.buildNumber || 124, 
+            "buildrequestid": options.buildbotBuildRequestId || 19,
+            "complete": 'isComplete' in overrides ? overrides.isComplete : (options.isComplete || false),
+            "complete_at": null,
+            "buildid": options.buildid || 418744,
+            "masterid": 1,
+            "results": null,
+            "started_at": new Date('2017-12-19T23:11:49Z') / 1000,
+            "state_string": "building",
+            "workerid": 41,
+            "properties": {
+                "build-request-id": [(options.buildRequestId || 701).toString(), "Force Build Form"],
+                "os": [options.osxRevision || '10.11 15A284', "Unknown"],
+                "wk": [options.webkitRevision || '192736', "Unknown"],
+                "project": ['', "Unknown"],
+                "repository": ['', "Unknown"],
+                "revision": ['', "Unknown"],
+                "slavename": [options.workerName || "bot202", "Worker (deprecated)"],
+                "workername": [options.workerName || "bot202", "Worker"]
+            }
+        };   
+    },
+    runningBuildData(options)
+    {
+        return this.sampleBuildData(options);
+    },
     runningBuild(options)
+    {
+        return {
+            "builds": [this.runningBuildData(options)]
+        };
+    },
+    runningBuildDeprecated(options)
     {
         options = options || {};
         return {
@@ -340,7 +430,24 @@ MockData = {
             },
         };
     },
+    finishedBuildData(options)
+    {
+        options = options || {};
+        if (!options.buildRequestId)
+            options.buildRequestId = 700;
+        if (!options.buildNumber)
+            options.buildNumber = 123;
+        if (!options.webkitRevision)
+            options.webkitRevision = '191622';
+        return this.sampleBuildData(options, {isComplete: true});
+    },
     finishedBuild(options)
+    {
+        return {
+            "builds": [this.finishedBuildData(options)]
+        };
+    },
+    finishedBuildDeprecated(options)
     {
         options = options || {};
         return {
