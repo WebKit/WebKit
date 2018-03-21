@@ -176,7 +176,8 @@ class FileSystem(object):
         methods. If you need a string, coerce the object to a string and go from there.
         """
         class TemporaryDirectory(object):
-            def __init__(self, **kwargs):
+            def __init__(self, filesystem, **kwargs):
+                self._filesystem = filesystem
                 self._kwargs = kwargs
                 self._directory_path = tempfile.mkdtemp(**self._kwargs)
 
@@ -187,13 +188,10 @@ class FileSystem(object):
                 return self._directory_path
 
             def __exit__(self, type, value, traceback):
-                # Only self-delete if necessary.
+                if self._filesystem.exists(self._directory_path):
+                    self._filesystem.rmtree(self._directory_path)
 
-                # FIXME: Should we delete non-empty directories?
-                if os.path.exists(self._directory_path):
-                    os.rmdir(self._directory_path)
-
-        return TemporaryDirectory(**kwargs)
+        return TemporaryDirectory(self, **kwargs)
 
     def maybe_make_directory(self, *path):
         """Create the specified directory if it doesn't already exist."""

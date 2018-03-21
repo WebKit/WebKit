@@ -32,11 +32,12 @@ from __future__ import print_function
 import optparse
 import subprocess
 import sys
-import tempfile
+import time
 
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.run_webkit_tests import EXCEPTIONAL_EXIT_STATUS
+from webkitpy.port import platform_options
 
 
 def parse_args(args):
@@ -47,6 +48,11 @@ def parse_args(args):
     parser.add_option("--no-wpt", help="Do not start web-platform-tests server", action="store_false", default=True, dest="web_platform_test_server")
     parser.add_option("-D", "--additional-dir", help="Additional directory and alias", action="append", default=[], type="string", nargs=2, dest="additional_dirs")
     parser.add_option("-u", "--open-url", help="Open an URL", action="store", default=[], type="string", dest="url")
+
+    option_group = optparse.OptionGroup(parser, "Platform options")
+    option_group.add_options(platform_options())
+    parser.add_option_group(option_group)
+
     return parser.parse_args(args)
 
 
@@ -57,10 +63,14 @@ def main(argv, stdout, stderr):
 
 def run_server(options, args, stdout, stderr):
     host = Host()
-    log_file = tempfile.NamedTemporaryFile()
-    options.http_access_log = log_file.name
-    options.http_error_log = log_file.name
-    options.platform = None
+    with host.filesystem.mkdtemp(prefix='webkit-httpd-') as temporary_directory:
+        log_file = host.filesystem.join(temporary_directory, 'access_log')
+        run_server_with_log_file(host, options, stdout, stderr, log_file)
+
+
+def run_server_with_log_file(host, options, stdout, stderr, log_file):
+    options.http_access_log = log_file
+    options.http_error_log = log_file
 
     try:
         port = host.port_factory.get(options.platform, options)
@@ -90,15 +100,25 @@ def run_server(options, args, stdout, stderr):
         subprocess.Popen(['open', options.url], stdout=subprocess.PIPE)
 
     try:
-        tail = subprocess.Popen(['tail', '-F', log_file.name], stdout=subprocess.PIPE)
-        while True:
-            sys.stdout.write(tail.stdout.readline())
+        for line in follow_file(log_file):
+            stdout.write(line)
     except KeyboardInterrupt:
         if options.web_platform_test_server:
             port.stop_web_platform_test_server()
         if options.httpd_server:
             port.stop_http_server()
             port.stop_websocket_server()
+
+
+def follow_file(path):
+    """Python equivalent of TAIL(1)"""
+    with open(path) as file_handle:
+        while True:
+            line = file_handle.readline()
+            if not line:
+                time.sleep(0.1)
+                continue
+            yield line
 
 
 if __name__ == '__main__':

@@ -1,3 +1,27 @@
+2018-03-20  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Fix to run-webkit-httpd from native Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=183605
+
+        Reviewed by Daniel Bates.
+
+        This fix is to run Apache HTTP server from native Windows. The environment is different
+        from cygwin, which is used for AppleWin, in following points:
+        - A temporary file behaves differently. It cannot reopen by anybody when indicated as 
+          delete on close. To solve this situation, filesystem.mkdtemp() is used instead.
+        - It's not unix so that `tail` command is not available. Replaced with python equivalent
+          function.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.mkdtemp.TemporaryDirectory.__init__):
+        (FileSystem.mkdtemp.TemporaryDirectory.__exit__): The existing contents would be deleted.
+        (FileSystem.mkdtemp):
+        * Scripts/webkitpy/layout_tests/servers/run_webkit_httpd.py:
+        (parse_args):
+        (run_server):
+        (run_server_with_log_file):
+        (follow_file):
+
 2018-03-20  Brady Eidson  <beidson@apple.com>
 
         First piece of process swapping on navigation.
