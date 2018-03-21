@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoTextureCopierCV_h
-#define VideoTextureCopierCV_h
+#pragma once
+
+#if HAVE(CORE_VIDEO)
 
 #import "GraphicsContext3D.h"
 #import <wtf/UnsafePointer.h>
@@ -102,4 +103,4 @@ private:
 
 }
 
-#endif // VideoTextureCopierCV_h
+#endif // HAVE(CORE_VIDEO)

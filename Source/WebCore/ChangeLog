@@ -1,5 +1,36 @@
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
+        Introduce HAVE_MEDIA_PLAYER and HAVE_CORE_VIDEO
+        https://bugs.webkit.org/show_bug.cgi?id=183803
+        <rdar://problem/38690487>
+
+        Reviewed by Sam Weinig.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::configureWireLessTargetMonitoring):
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo):
+        (-[WebMediaSessionHelper initWithCallback:]):
+        (-[WebMediaSessionHelper dealloc]):
+        (-[WebMediaSessionHelper hasWirelessTargetsAvailable]):
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/cocoa/CoreVideoSoftLink.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::getRGBAImageData const):
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        * platform/graphics/cv/PixelBufferConformerCV.h:
+        * platform/graphics/cv/TextureCacheCV.h:
+        * platform/graphics/cv/TextureCacheCV.mm:
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        * platform/graphics/cv/VideoTextureCopierCV.h:
+        Make it possible to disable our dependency on MediaPlayer and CoreVideo.
+
+2018-03-20  Tim Horton  <timothy_horton@apple.com>
+
         Enable the minimal simulator feature flag when appropriate
         https://bugs.webkit.org/show_bug.cgi?id=183807
 

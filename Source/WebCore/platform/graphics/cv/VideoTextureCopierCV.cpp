@@ -26,6 +26,8 @@
 #include "config.h"
 #include "VideoTextureCopierCV.h"
 
+#if HAVE(CORE_VIDEO)
+
 #include "FourCC.h"
 #include "Logging.h"
 #include "TextureCacheCV.h"
@@ -945,3 +947,5 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(Platform3DObject vi
 }
 
 }
+
+#endif // HAVE(CORE_VIDEO)

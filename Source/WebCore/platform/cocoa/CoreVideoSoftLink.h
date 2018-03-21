@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CoreVideoSoftLink_h
-#define CoreVideoSoftLink_h
+#pragma once
+
+#if HAVE(CORE_VIDEO)
 
 #include <CoreVideo/CoreVideo.h>
 #include <wtf/SoftLinking.h>
@@ -142,4 +143,4 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferOpenGLCompatibil
 #define kCVPixelBufferOpenGLCompatibilityKey get_CoreVideo_kCVPixelBufferOpenGLCompatibilityKey()
 #endif
 
-#endif // CoreVideoSoftLink_h
+#endif // HAVE(CORE_VIDEO)

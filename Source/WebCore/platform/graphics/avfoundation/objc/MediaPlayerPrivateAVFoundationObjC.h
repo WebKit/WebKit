@@ -368,7 +368,9 @@ private:
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
 #endif
 
+#if HAVE(CORE_VIDEO)
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
+#endif
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     friend class WebCoreAVFResourceLoader;

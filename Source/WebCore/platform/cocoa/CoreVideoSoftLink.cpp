@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if HAVE(CORE_VIDEO)
+
 #include <CoreVideo/CoreVideo.h>
 #include <wtf/SoftLinking.h>
 
@@ -89,3 +91,4 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferExtendedPixelsBo
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferOpenGLCompatibilityKey, CFStringRef)
 #endif
 
+#endif // HAVE(CORE_VIDEO)

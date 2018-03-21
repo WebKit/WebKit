@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PixelBufferConformerCV.h"
 
+#if HAVE(CORE_VIDEO)
+
 #include "GraphicsContextCG.h"
 #include <wtf/SoftLinking.h>
 
@@ -118,3 +120,5 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
 }
 
 }
+
+#endif // HAVE(CORE_VIDEO)

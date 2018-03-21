@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextureCacheCV_h
-#define TextureCacheCV_h
+#pragma once
+
+#if HAVE(CORE_VIDEO)
 
 #include "GraphicsTypes3D.h"
 #include <wtf/Ref.h>
@@ -67,4 +68,4 @@ private:
 
 }
 
-#endif // TextureCacheCV_h
+#endif // HAVE(CORE_VIDEO)
