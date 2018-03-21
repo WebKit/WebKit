@@ -177,7 +177,7 @@ public:
         add64(TrustedImm32(4 * sizeof(int64_t)), X86Registers::ecx);
 
         DataLabelPtr label = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
-        Call result = Call(m_assembler.call(scratchRegister(), tag), Call::Linkable);
+        Call result = Call(m_assembler.call(scratchRegister()), Call::Linkable);
 
         add64(TrustedImm32(8 * sizeof(int64_t)), X86Registers::esp);
 

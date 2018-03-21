@@ -1,3 +1,14 @@
+2018-03-21  Christopher Reid  <chris.reid@sony.com>
+
+        Windows 64-bit build fix after r229767
+        https://bugs.webkit.org/show_bug.cgi?id=183810
+
+        Reviewed by Mark Lam.
+
+        Removing an extra parameter in the call to m_assember::call.
+
+        * assembler/MacroAssemblerX86_64.h:
+
 2018-03-20  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] JSVALUE_MODEL is unused
