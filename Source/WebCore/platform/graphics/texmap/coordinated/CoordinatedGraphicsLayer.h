@@ -216,6 +216,11 @@ private:
     std::unique_ptr<TiledBackingStore> m_mainBackingStore;
     std::unique_ptr<TiledBackingStore> m_previousBackingStore;
 
+    struct {
+        bool completeLayer { false };
+        Vector<FloatRect, 32> rects;
+    } m_needsDisplay;
+
     RefPtr<Image> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;
     RefPtr<CoordinatedImageBacking> m_coordinatedImageBacking;

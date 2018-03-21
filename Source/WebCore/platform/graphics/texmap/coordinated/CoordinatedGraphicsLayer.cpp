@@ -534,16 +534,40 @@ void CoordinatedGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
 
 void CoordinatedGraphicsLayer::setNeedsDisplay()
 {
-    setNeedsDisplayInRect(FloatRect(FloatPoint(), size()));
-}
+    if (!drawsContent() || !contentsAreVisible() || m_size.isEmpty() || m_needsDisplay.completeLayer)
+        return;
 
-void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect, ShouldClipToLayer)
-{
-    if (m_mainBackingStore)
-        m_mainBackingStore->invalidate(enclosingIntRect(rect));
+    m_needsDisplay.completeLayer = true;
+    m_needsDisplay.rects.clear();
 
     didChangeLayerState();
+    addRepaintRect({ { }, m_size });
+}
 
+void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& initialRect, ShouldClipToLayer shouldClip)
+{
+    if (!drawsContent() || !contentsAreVisible() || m_size.isEmpty() || m_needsDisplay.completeLayer)
+        return;
+
+    auto rect = initialRect;
+    if (shouldClip == ClipToLayer)
+        rect.intersect({ { }, m_size });
+
+    if (rect.isEmpty())
+        return;
+
+    auto& rects = m_needsDisplay.rects;
+    bool alreadyRecorded = std::any_of(rects.begin(), rects.end(),
+        [&](auto& dirtyRect) { return dirtyRect.contains(rect); });
+    if (alreadyRecorded)
+        return;
+
+    if (rects.size() < 32)
+        rects.append(rect);
+    else
+        rects[0].unite(rect);
+
+    didChangeLayerState();
     addRepaintRect(rect);
 }
 
@@ -923,6 +947,18 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
         m_pendingVisibleRectAdjustment = true;
     }
 
+    if (!m_pendingVisibleRectAdjustment && !m_needsDisplay.completeLayer && m_needsDisplay.rects.isEmpty())
+        return;
+
+    if (!m_needsDisplay.completeLayer) {
+        for (auto& rect : m_needsDisplay.rects)
+            m_mainBackingStore->invalidate(IntRect { rect });
+    } else
+        m_mainBackingStore->invalidate({ { }, IntSize { m_size } });
+
+    m_needsDisplay.completeLayer = false;
+    m_needsDisplay.rects.clear();
+
     if (m_pendingVisibleRectAdjustment) {
         m_pendingVisibleRectAdjustment = false;
         m_mainBackingStore->createTilesIfNeeded(transformedVisibleRect(), IntRect(0, 0, size().width(), size().height()));
@@ -968,7 +1004,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     // The previous backing store is kept around to avoid flickering between
     // removing the existing tiles and painting the new ones. The first time
     // the visibleRect is full painted we remove the previous backing store.
-    if (m_mainBackingStore->visibleAreaIsCovered())
+    if (m_previousBackingStore && m_mainBackingStore->visibleAreaIsCovered())
         m_previousBackingStore = nullptr;
 }
 

@@ -1,3 +1,30 @@
+2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Track dirty rects that need update in CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=175376
+
+        Reviewed by Carlos Garcia Campos.
+
+        Follow the GraphicsLayerCA class and track rectangles in need of display
+        in a Vector object. In case the whole layer needs updating, it's marked
+        separately, and further rects are ignored.
+
+        During layer flush, all the rects are used to invalidate the backing
+        store, or a single layer-sized rect is used in case the whole layer has
+        to be updated. We can also bail early from updateContentBuffers() if
+        there are no dirty rects recorded and there's no pending visible rect
+        adjustment.
+
+        At the end of updateContentBuffers() we now test for an existing
+        previous backing store before inquiring the backing store if the visible
+        area is already covered, enabling deletion of this backing store.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffers):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2018-03-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Build failure with ENABLE_VIDEO=OFF when GStreamer is not available
