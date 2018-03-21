@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jonas Witt <jonas.witt@gmail.com>
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
@@ -35,11 +35,13 @@
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreeFileDraggingSource.h"
+#import "DumpRenderTreePasteboard.h"
 #import "WebCoreTestSupport.h"
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 #import <functional>
+#import <wtf/RetainPtr.h>
 
 #if !PLATFORM(IOS)
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
@@ -255,6 +257,7 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
             || aSelector == @selector(callAfterScrollingCompletes:)
 #if PLATFORM(MAC)
             || aSelector == @selector(beginDragWithFiles:)
+            || aSelector == @selector(beginDragWithFilePromises:)
 #endif
 #if PLATFORM(IOS)
             || aSelector == @selector(addTouchAtX:y:)
@@ -286,6 +289,8 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
 #if PLATFORM(MAC)
     if (aSelector == @selector(beginDragWithFiles:))
         return @"beginDragWithFiles";
+    if (aSelector == @selector(beginDragWithFilePromises:))
+        return @"beginDragWithFilePromises";
 #endif
     if (aSelector == @selector(contextClick))
         return @"contextClick";
@@ -457,6 +462,43 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
 
     dragMode = NO; // dragMode saves events and then replays them later.  We don't need/want that.
     leftMouseButtonDown = YES; // Make the rest of eventSender think a drag is in progress
+}
+
+- (void)beginDragWithFilePromises:(WebScriptObject *)filePaths
+{
+    assert(!draggingInfo);
+
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard declareTypes:@[NSFilesPromisePboardType] owner:nil];
+
+    NSURL *currentTestURL = [NSURL URLWithString:mainFrame.webView.mainFrameURL];
+
+    size_t i = 0;
+    NSMutableArray *fileURLs = [NSMutableArray array];
+    NSMutableArray *fileUTIs = [NSMutableArray array];
+    while (true) {
+        id filePath = [filePaths webScriptValueAtIndex:i++];
+        if (![filePath isKindOfClass:NSString.class])
+            break;
+
+        NSURL *fileURL = [NSURL fileURLWithPath:(NSString *)filePath relativeToURL:currentTestURL];
+        [fileURLs addObject:fileURL];
+
+        NSString *fileUTI;
+        if (![fileURL getResourceValue:&fileUTI forKey:NSURLTypeIdentifierKey error:nil])
+            break;
+        [fileUTIs addObject:fileUTI];
+    }
+
+    [pasteboard setPropertyList:fileUTIs forType:NSFilesPromisePboardType];
+    assert([pasteboard propertyListForType:NSFilesPromisePboardType]);
+
+    auto source = adoptNS([[DumpRenderTreeFileDraggingSource alloc] initWithPromisedFileURLs:fileURLs]);
+    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pasteboard source:source.get()];
+    [mainFrame.webView draggingEntered:draggingInfo];
+
+    dragMode = NO;
+    leftMouseButtonDown = YES;
 }
 #endif // !PLATFORM(IOS)
 

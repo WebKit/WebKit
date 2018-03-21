@@ -1,3 +1,20 @@
+2018-03-21  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r229297. rdar://problem/38682578
+
+    2018-03-05  Andy Estes  <aestes@apple.com>
+
+            [Mac] Teach WebCore::Pasteboard about file promise drags
+            https://bugs.webkit.org/show_bug.cgi?id=183314
+            <rdar://problem/38105493>
+
+            Reviewed by Darin Adler.
+
+            Added a FIXME comment.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::performDragOperation):
+
 2018-03-20  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229643. rdar://problem/38651639

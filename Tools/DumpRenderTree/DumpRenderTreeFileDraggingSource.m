@@ -1,4 +1,5 @@
 // Copyright (c) 2009, Google Inc. All rights reserved.
+// Copyright (C) 2018 Apple Inc. All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -30,6 +31,24 @@
 #import "DumpRenderTreeFileDraggingSource.h"
 
 @implementation DumpRenderTreeFileDraggingSource
+
+@synthesize promisedFileURLs=_promisedFileURLs;
+
+- (instancetype)initWithPromisedFileURLs:(NSArray<NSURL *> *)promisedFileURLs
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _promisedFileURLs = [promisedFileURLs copy];
+    return self;
+}
+
+- (void)dealloc
+{
+    [_promisedFileURLs release];
+    [super dealloc];
+}
 
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)flag
 {
