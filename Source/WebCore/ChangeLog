@@ -1,3 +1,22 @@
+2018-03-20  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTreeNeedsLayoutChecker fails with absolutely positioned svg and <use>
+        https://bugs.webkit.org/show_bug.cgi?id=183718
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensures after resolving the style for an SVG element with a corresponding element (<use>),
+        we adjust this style for the cloned SVG element too.
+
+        Test: svg/in-html/path-with-absolute-positioned-svg-and-use-crash.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustSVGElementStyle):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/StyleResolver.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::resolveCustomStyle):
+
 2018-03-20  Brady Eidson  <beidson@apple.com>
 
         First piece of process swapping on navigation.

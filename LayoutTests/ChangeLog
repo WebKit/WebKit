@@ -1,3 +1,13 @@
+2018-03-20  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTreeNeedsLayoutChecker fails with absolutely positioned svg and <use>
+        https://bugs.webkit.org/show_bug.cgi?id=183718
+
+        Reviewed by Antti Koivisto.
+
+        * svg/in-html/path-with-absolute-positioned-svg-and-use-crash-expected.txt: Added.
+        * svg/in-html/path-with-absolute-positioned-svg-and-use-crash.html: Added.
+
 2018-03-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/appcache/abort-cache-onprogress.html as flaky.

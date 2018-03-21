@@ -732,8 +732,11 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
 std::optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
-    if (auto styleElement = makeRefPtr(this->correspondingElement()))
-        return styleElement->resolveStyle(&parentStyle);
+    if (auto styleElement = makeRefPtr(this->correspondingElement())) {
+        std::optional<ElementStyle> style = styleElement->resolveStyle(&parentStyle);
+        StyleResolver::adjustSVGElementStyle(*this, *style->renderStyle);
+        return style;
+    }
 
     return resolveStyle(&parentStyle);
 }

@@ -810,6 +810,23 @@ static void adjustDisplayContentsStyle(RenderStyle& style, const Element* elemen
         style.setDisplay(NONE);
 }
 
+void StyleResolver::adjustSVGElementStyle(const SVGElement& svgElement, RenderStyle& style)
+{
+    // Only the root <svg> element in an SVG document fragment tree honors css position
+    auto isPositioningAllowed = svgElement.hasTagName(SVGNames::svgTag) && svgElement.parentNode() && !svgElement.parentNode()->isSVGElement() && !svgElement.correspondingElement();
+    if (!isPositioningAllowed)
+        style.setPosition(RenderStyle::initialPosition());
+
+    // RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
+    // not be scaled again.
+    if (svgElement.hasTagName(SVGNames::foreignObjectTag))
+        style.setEffectiveZoom(RenderStyle::initialZoom());
+
+    // SVG text layout code expects us to be a block-level style element.
+    if ((svgElement.hasTagName(SVGNames::foreignObjectTag) || svgElement.hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
+        style.setDisplay(BLOCK);
+}
+
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, const Element* element)
 {
     // If the composed tree parent has display:contents, the parent box style will be different from the parent style.
@@ -1048,20 +1065,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         || style.hasBlendMode()))
         style.setTransformStyle3D(TransformStyle3DFlat);
 
-    if (is<SVGElement>(element)) {
-        // Only the root <svg> element in an SVG document fragment tree honors css position
-        if (!(element->hasTagName(SVGNames::svgTag) && element->parentNode() && !element->parentNode()->isSVGElement()))
-            style.setPosition(RenderStyle::initialPosition());
-
-        // RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
-        // not be scaled again.
-        if (element->hasTagName(SVGNames::foreignObjectTag))
-            style.setEffectiveZoom(RenderStyle::initialZoom());
-
-        // SVG text layout code expects us to be a block-level style element.
-        if ((element->hasTagName(SVGNames::foreignObjectTag) || element->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
-            style.setDisplay(BLOCK);
-    }
+    if (is<SVGElement>(element))
+        adjustSVGElementStyle(downcast<SVGElement>(*element), style);
 
     // If the inherited value of justify-items includes the 'legacy' keyword (plus 'left', 'right' or
     // 'center'), 'legacy' computes to the the inherited value. Otherwise, 'auto' computes to 'normal'.
