@@ -27,9 +27,9 @@ namespace LayoutReloaded {
 
 class FormattingContext;
 
-class LayoutContext {
+class LayoutState {
 public:
-    LayoutContext();
+    LayoutState();
     
     void layoutFormattingContext(FormattingContext&);
 };

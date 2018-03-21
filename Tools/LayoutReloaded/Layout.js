@@ -28,9 +28,7 @@ function layout(window, viewportSize) {
     let initialContainingBlock = treeBuilder.createTree(window.document, window.renderTreeStructure);
     let displayBox = new Display.Box();
     displayBox.setSize(viewportSize);
-    initialContainingBlock.setDisplayBox(displayBox);
-
-    let layoutContext = new LayoutContext(initialContainingBlock);
-    layoutContext.layout(initialContainingBlock);
-    return Utils.layoutTreeDump(initialContainingBlock);
+    let layoutState = new LayoutState(displayBox);
+    layoutState.layout(initialContainingBlock);
+    return Utils.layoutTreeDump(initialContainingBlock, layoutState);
 }

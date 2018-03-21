@@ -30,14 +30,14 @@ namespace LayoutReloaded {
 class BlockContainer;
 class Box;
 class FloatingContext;
-class LayoutContext;
+class LayoutState;
 
 class BlockFormattingContext : public FormattingContext {
 public:
     BlockFormattingContext(BlockContainer& root);
     virtual ~BlockFormattingContext();
 
-    void layout(LayoutContext&) final;
+    void layout(LayoutState&) final;
 
 private:
     LayoutUnit computeWidth(const Box&) const final;

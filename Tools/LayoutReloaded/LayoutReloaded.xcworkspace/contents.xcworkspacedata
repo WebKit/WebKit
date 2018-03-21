@@ -20,7 +20,7 @@
       location = "group:Layout.js">
    </FileRef>
    <FileRef
-      location = "group:LayoutContext.js">
+      location = "group:LayoutState.js">
    </FileRef>
    <FileRef
       location = "group:Utils.js">

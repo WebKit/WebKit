@@ -24,8 +24,8 @@
  */
 
 class InlineFormattingContext extends FormattingContext {
-    constructor(root, layoutState) {
-        super(root, layoutState);
+    constructor(inlineFormattingState) {
+        super(inlineFormattingState);
         // If the block container box that initiates this inline formatting contex also establishes a block context, create a new float for us.
         ASSERT(root.isBlockContainerBox());
         if (root.establishesBlockFormattingContext())
@@ -42,17 +42,17 @@ class InlineFormattingContext extends FormattingContext {
     layout() {
         // 9.4.2 Inline formatting contexts
         // In an inline formatting context, boxes are laid out horizontally, one after the other, beginning at the top of a containing block.
-        if (!this.rootContainer().firstChild())
+        if (!this.formattingRoot().firstChild())
             return;
         // This is a post-order tree traversal layout.
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-        this._addToLayoutQueue(this.rootContainer().firstChild());
+        this._addToLayoutQueue(this.formattingRoot().firstChild());
         while (layoutStack.length) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
                 let layoutBox = this._nextInLayoutQueue();
                 if (layoutBox.establishesFormattingContext()) {
-                    this.layoutContext().layout(layoutBox);
+                    this.layoutState().layout(layoutBox);
                     break;
                 }
                 if (!layoutBox.isContainer() || !layoutBox.hasChild())
@@ -70,7 +70,7 @@ class InlineFormattingContext extends FormattingContext {
                 }
             }
         }
-        //this._placeOutOfFlowDescendants(this.rootContainer());
+        //this._placeOutOfFlowDescendants(this.formattingRoot());
         this._commitLine();
    }
 
@@ -106,8 +106,8 @@ class InlineFormattingContext extends FormattingContext {
 
     _initializeLine() {
         // TODO: Floats need to be taken into account.
-        let contentBoxRect = this.rootContainer().contentBox();
-        this.m_line = new Line(contentBoxRect.topLeft(), Utils.computedLineHeight(this.rootContainer()), contentBoxRect.width());
+        let contentBoxRect = this.formattingRoot().contentBox();
+        this.m_line = new Line(contentBoxRect.topLeft(), Utils.computedLineHeight(this.formattingRoot()), contentBoxRect.width());
     }
 }
 

@@ -24,8 +24,8 @@
  */
 
 class InlineFormattingState extends FormattingState {
-    constructor(formattingRoot, layoutContext) {
-        super(layoutContext);
-        this._setFormattingContext(new InlineFormattingContext(formattingRoot, this));
+    constructor(formattingRoot, layoutState) {
+        super(layoutState, formattingRoot);
+        this._setFormattingContext(new InlineFormattingContext(this));
     }
 }

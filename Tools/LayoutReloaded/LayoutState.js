@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class LayoutContext {
-    constructor() {
-        this.m_layoutStates = new Map();
+class LayoutState {
+    constructor(initialDisplayBox) {
+        this.m_formattingStates = new Map();
+        this.m_initialDisplayBox = initialDisplayBox;
     }
 
     layout(formattingRoot) {
         let formattingState = this._createFormattingState(formattingRoot);
-        this.m_layoutStates.set(formattingRoot, formattingState);
+        this.m_formattingStates.set(formattingRoot, formattingState);
         formattingState.formattingContext().layout();
     }
 
@@ -42,5 +43,13 @@ class LayoutContext {
             return new InlineFormattingState(formattingRoot, this);
         ASSERT_NOT_REACHED();
         return null;
+    }
+
+    formattingStates() {
+        return this.m_formattingStates;
+    }
+
+    initialDisplayBox() {
+        return this.m_initialDisplayBox;
     }
 }

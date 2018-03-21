@@ -28,16 +28,16 @@ namespace LayoutReloaded {
 class Box;
 class Container;
 class FloatingContext;
-class LayoutContext;
+class LayoutState;
 
 class FormattingContext {
 public:
-    FormattingContext(Container& rootContainer);
+    FormattingContext();
 
-    Container& rootContainer() const;
+    Container& formattingRoot() const;
     FloatingContext& floatingContext() const;
 
-    virtual void layout(const LayoutContext&) = 0;
+    virtual void layout(const LayoutState&) = 0;
 
 protected:
     virtual LayoutUnit computeWidth(const Box&) const;

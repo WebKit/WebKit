@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 class BlockFormattingContext extends FormattingContext {
-    constructor(root, layoutState) {
-        super(root, layoutState);
+    constructor(blockFormattingState) {
+        super(blockFormattingState);
         // New block formatting context always establishes a new floating context.
         this.m_floatingContext = new FloatingContext(this);
     }
@@ -37,8 +37,8 @@ class BlockFormattingContext extends FormattingContext {
 
         // This is a post-order tree traversal layout.
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-        if (this.rootContainer().firstInFlowOrFloatChild())
-            this._addToLayoutQueue(this.rootContainer().firstInFlowOrFloatChild());
+        if (this.formattingRoot().firstInFlowOrFloatChild())
+            this._addToLayoutQueue(this.formattingRoot().firstInFlowOrFloatChild());
         // 1. Go all the way down to the leaf node
         // 2. Compute static position and width as we travers down
         // 3. As we climb back on the tree, compute height and finialize position
@@ -50,7 +50,7 @@ class BlockFormattingContext extends FormattingContext {
                 this.computeWidth(layoutBox);
                 this._computeStaticPosition(layoutBox);
                 if (layoutBox.establishesFormattingContext()) {
-                    this.layoutContext().layout(layoutBox);
+                    this.layoutState().layout(layoutBox);
                     break;
                 }
                 if (!layoutBox.isContainer() || !layoutBox.hasInFlowOrFloatChild())
@@ -76,7 +76,7 @@ class BlockFormattingContext extends FormattingContext {
             }
         }
         // Place the inflow positioned children.
-        this._placeInFlowPositionedChildren(this.rootContainer());
+        this._placeInFlowPositionedChildren(this.formattingRoot());
         // And take care of out-of-flow boxes as the final step.
         this._layoutOutOfFlowDescendants();
    }
@@ -124,7 +124,7 @@ class BlockFormattingContext extends FormattingContext {
         if (!container.isContainer())
             return;
         // If this layoutBox also establishes a formatting context, then positioning already has happend at the formatting context.
-        if (container.establishesFormattingContext() && container != this.rootContainer())
+        if (container.establishesFormattingContext() && container != this.formattingRoot())
             return;
         ASSERT(container.isContainer());
         for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
@@ -141,7 +141,7 @@ class BlockFormattingContext extends FormattingContext {
         for (let outOfFlowBox of outOfFlowDescendants) {
             this._addToLayoutQueue(outOfFlowBox);
             this.computeWidth(outOfFlowBox);
-            this.layoutContext().layout(outOfFlowBox);
+            this.layoutState().layout(outOfFlowBox);
             this.computeHeight(outOfFlowBox);
             this._computeOutOfFlowPosition(outOfFlowBox);
             this._removeFromLayoutQueue(outOfFlowBox);
@@ -277,7 +277,7 @@ class BlockFormattingContext extends FormattingContext {
     _adjustBottomWithFIXME(layoutBox) {
         // FIXME: This function is a big FIXME.
         let lastInFlowChild = layoutBox.lastInFlowChild();
-        let lastInFlowDisplayBox = lastInFlowChild.displayBox();
+        let lastInFlowDisplayBox = this.displayBox(lastInFlowChild);
         let bottom = lastInFlowDisplayBox.bottom() + this.marginBottom(lastInFlowChild);
         // FIXME: margin for body
         if (lastInFlowChild.name() == "RenderBody" && Utils.isHeightAuto(lastInFlowChild) && !this.displayBox(lastInFlowChild).contentBox().height())
@@ -318,9 +318,9 @@ class BlockFormattingContext extends FormattingContext {
             // Vertically statically positioned.
             // FIXME: Figure out if it is actually valid that we use the parent box as the container (which is not even in this formatting context).
             let parent = layoutBox.parent();
-            let parentDisplayBox = parent.displayBox();
+            let parentDisplayBox = this.displayBox(parent);
             let previousInFlowSibling = layoutBox.previousInFlowSibling();
-            let contentBottom = previousInFlowSibling ? previousInFlowSibling.displayBox().bottom() : parentDisplayBox.contentBox().top();
+            let contentBottom = previousInFlowSibling ? this.displayBox(previousInFlowSibling).bottom() : parentDisplayBox.contentBox().top();
             top = contentBottom + this.marginTop(layoutBox);
             // Convert static position (in parent coordinate system) to absolute (in containing block coordindate system).
             if (parent != layoutBox.containingBlock())
@@ -338,7 +338,7 @@ class BlockFormattingContext extends FormattingContext {
             // Horizontally statically positioned.
             // FIXME: Figure out if it is actually valid that we use the parent box as the container (which is not even in this formatting context).
             let parent = layoutBox.parent();
-            let parentDisplayBox = parent.displayBox();
+            let parentDisplayBox = this.displayBox(parent);
             left = parentDisplayBox.contentBox().left() + this.marginLeft(layoutBox);
             // Convert static position (in parent coordinate system) to absolute (in containing block coordindate system).
             if (parent != layoutBox.containingBlock())

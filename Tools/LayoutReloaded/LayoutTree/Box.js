@@ -107,16 +107,6 @@ Layout.Box = class Box {
         this.m_previousSibling = previousSibling;
     }
 
-    setDisplayBox(displayBox) {
-        ASSERT(!this.m_displayBox);
-        this.m_displayBox = displayBox;
-    }
-
-    displayBox() {
-        ASSERT(this.m_displayBox);
-        return this.m_displayBox;
-    }
-
     isContainer() {
         return false;
     }
@@ -183,7 +173,7 @@ Layout.Box = class Box {
     }
 
     isOutOfFlowPositioned() {
-        return this.isAbsolutelyPositioned() || this.isFixedPositioned();
+        return this.isAbsolutelyPositioned();
     }
 
     isInFlowPositioned() {
@@ -209,7 +199,7 @@ Layout.Box = class Box {
             return null;
         if (!this.isPositioned() || this.isInFlowPositioned())
             return this.parent();
-        if (this.isAbsolutelyPositioned() && !this.isFixedPositioned()) {
+        if (this.isOutOfFlowPositioned() && !this.isFixedPositioned()) {
             let ascendant = this.parent();
             while (ascendant.parent() && !ascendant.isPositioned())
                 ascendant = ascendant.parent();

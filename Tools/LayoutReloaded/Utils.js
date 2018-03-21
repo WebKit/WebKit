@@ -491,11 +491,21 @@ class Utils {
     }
 
     // "RenderView at (0,0) size 1317x366\n HTML RenderBlock at (0,0) size 1317x116\n  BODY RenderBody at (8,8) size 1301x100\n   DIV RenderBlock at (0,0) size 100x100\n";
-    static layoutTreeDump(initialContainingBlock) {
-        return this._dumpBox(initialContainingBlock, 1) + this._dumpTree(initialContainingBlock, 2);
+    static layoutTreeDump(initialContainingBlock, layoutState) {
+        return this._dumpBox(layoutState, initialContainingBlock, 1) + this._dumpTree(layoutState, initialContainingBlock, 2);
     }
 
-    static _dumpBox(box, level) {
+    static _findDisplayBox(layoutState, box) {
+        for (let formattingState of layoutState.formattingStates()) {
+            let displayBox = formattingState[1].displayBoxMap().get(box);
+            if (displayBox)
+                return displayBox;
+        }
+        ASSERT(!box.parent());
+        return layoutState.initialDisplayBox();
+    }
+
+    static _dumpBox(layoutState, box, level) {
         // Skip anonymous boxes for now -This is the case where WebKit does not generate an anon inline container for text content where the text is a direct child
         // of a block container.
         let indentation = " ".repeat(level);
@@ -505,7 +515,7 @@ class Utils {
         }
         if (box.isAnonymous())
             return "";
-        let displayBox = box.displayBox();
+        let displayBox = Utils._findDisplayBox(layoutState, box);
         let boxRect = displayBox.rect();
         return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + boxRect.left() + "," + boxRect.top() + ") size " + boxRect.width() + "x" + boxRect.height() + "\n";
     }
@@ -527,14 +537,14 @@ class Utils {
         return content;
     }
 
-    static _dumpTree(root, level) {
+    static _dumpTree(layoutState, root, level) {
         let content = "";
         if (root.isBlockContainerBox() && root.establishesInlineFormattingContext())
             content += this._dumpLines(root, level);
         for (let child = root.firstChild(); child; child = child.nextSibling()) {
-            content += this._dumpBox(child, level);
+            content += this._dumpBox(layoutState, child, level);
             if (child.isContainer())
-                content += this._dumpTree(child, level + 1, content);
+                content += this._dumpTree(layoutState, child, level + 1, content);
         }
         return content;
     }

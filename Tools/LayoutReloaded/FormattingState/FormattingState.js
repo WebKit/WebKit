@@ -24,9 +24,10 @@
  */
 
 class FormattingState {
-    constructor(layoutContext) {
-        this.m_layoutContext = layoutContext;
+    constructor(layoutState, formattingRoot) {
+        this.m_layoutState = layoutState;
         this.m_formattingContext = null;
+        this.m_formattingRoot = formattingRoot;
         this.m_displayToLayout = new Map();
     }
 
@@ -34,20 +35,43 @@ class FormattingState {
         return this.m_formattingContext;
     }
 
-    layoutContext() {
-        return this.m_layoutContext;
+    formattingRoot() {
+        return this.m_formattingRoot;
+    }
+
+    layoutState() {
+        return this.m_layoutState;
     }
 
     createDisplayBox(layoutBox) {
         let displayBox = new Display.Box(layoutBox.node());
         this.m_displayToLayout.set(layoutBox, displayBox);
-        // This is temporary.
-        layoutBox.setDisplayBox(displayBox);
+    }
+
+    displayBoxMap() {
+        return this.m_displayToLayout;
     }
 
     displayBox(layoutBox) {
         ASSERT(layoutBox);
-        return layoutBox.displayBox();
+        // 1. Normally we only need to access boxes within the same formatting context
+        // 2. In some cases we need size information about the root container -which is in the parent formatting context
+        // 3. In rare cases (statically positioned out-of-flow box), we need position information on sibling formatting context
+        // but in all cases it needs to be a descendant of the root container (or the container itself)
+        ASSERT(layoutBox == this.formattingRoot() || layoutBox.isDescendantOf(this.formattingRoot()));
+        let displayBox = this.m_displayToLayout.get(layoutBox);
+        if (displayBox)
+            return displayBox;
+
+        let formattingStates = this.layoutState().formattingStates();
+        for (let formattingState of formattingStates) {
+            let displayBox = formattingState[1].displayBoxMap().get(layoutBox);
+            if (displayBox)
+                return displayBox;
+        }
+        // It must be the ICB.
+        ASSERT(!layoutBox.parent());
+        return this.layoutState().initialDisplayBox();
     }
 
     _setFormattingContext(formattingContext) {

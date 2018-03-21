@@ -24,23 +24,22 @@
  */
 
 class FormattingContext {
-    constructor(rootContainer, layoutState) {
-        this.m_rootContainer = rootContainer;
-        this.m_layoutState = layoutState;
+    constructor(formattingState) {
+        this.m_formattingState = formattingState;
         this.m_floatingContext = null;
         this.m_layoutStack = new Array();
     }
 
-    rootContainer() {
-        return this.m_rootContainer;
+    formattingRoot() {
+        return this.m_formattingState.formattingRoot();
+    }
+
+    formattingState() {
+        return this.m_formattingState;
     }
 
     layoutState() {
-        return this.m_layoutState;
-    }
-
-    layoutContext() {
-        return this.layoutState().layoutContext();
+        return this.formattingState().layoutState();
     }
 
     floatingContext() {
@@ -104,11 +103,11 @@ class FormattingContext {
 
     _toAbsolutePosition(position, layoutBox, container) {
         // We should never need to go beyond the root container.
-        ASSERT(container == this.rootContainer() || container.isDescendantOf(this.rootContainer()));
+        ASSERT(container == this.formattingRoot() || container.isDescendantOf(this.formattingRoot()));
         let absolutePosition = position;
         let ascendant = layoutBox.containingBlock();
         while (ascendant && ascendant != container) {
-            ASSERT(ascendant.isDescendantOf(this.rootContainer()));
+            ASSERT(ascendant.isDescendantOf(this.formattingRoot()));
             absolutePosition.moveBy(this.displayBox(ascendant).topLeft());
             ascendant = ascendant.containingBlock();
         }
@@ -116,7 +115,7 @@ class FormattingContext {
     }
 
     _toRootAbsolutePosition(layoutBox) {
-        return this._toAbsolutePosition(this.displayBox(layoutBox).topLeft(), layoutBox, this.rootContainer());
+        return this._toAbsolutePosition(this.displayBox(layoutBox).topLeft(), layoutBox, this.formattingRoot());
     }
 
     _descendantNeedsLayout() {
@@ -125,7 +124,7 @@ class FormattingContext {
 
     _addToLayoutQueue(layoutBox) {
         // Initialize the corresponding display box.
-        this.layoutState().createDisplayBox(layoutBox);
+        this.formattingState().createDisplayBox(layoutBox);
         this.m_layoutStack.push(layoutBox);
     }
 
@@ -142,7 +141,7 @@ class FormattingContext {
     }
 
     displayBox(layoutBox) {
-        return this.layoutState().displayBox(layoutBox);
+        return this.formattingState().displayBox(layoutBox);
     }
 
     _outOfFlowDescendants() {
@@ -154,7 +153,7 @@ class FormattingContext {
         //      and there is not other formatting context inbetween.
         let allOutOfFlowBoxes = new Array();
         let descendants = new Array();
-        for (let child = this.rootContainer().firstChild(); child; child = child.nextSibling())
+        for (let child = this.formattingRoot().firstChild(); child; child = child.nextSibling())
             descendants.push(child);
         while (descendants.length) {
             let descendant = descendants.pop();
@@ -169,9 +168,9 @@ class FormattingContext {
         for (let outOfFlowBox of allOutOfFlowBoxes) {
             let containingBlock = outOfFlowBox.containingBlock();
             // Collect the out-of-flow descendant that belong to this formatting context.
-            if (containingBlock == this.rootContainer())
+            if (containingBlock == this.formattingRoot())
                 outOfFlowBoxes.push(outOfFlowBox);
-            else if (containingBlock.isDescendantOf(this.rootContainer())) {
+            else if (containingBlock.isDescendantOf(this.formattingRoot())) {
                 if (!containingBlock.establishesFormattingContext() || !containingBlock.isPositioned())
                     outOfFlowBoxes.push(outOfFlowBox);
             }
