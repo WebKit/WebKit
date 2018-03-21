@@ -151,12 +151,8 @@ static void drawPatternToCairoContext(cairo_t* cr, cairo_pattern_t* pattern, con
     cairo_translate(cr, destRect.x(), destRect.y());
     cairo_set_source(cr, pattern);
     cairo_rectangle(cr, 0, 0, destRect.width(), destRect.height());
-
-    if (alpha < 1) {
-        cairo_clip(cr);
-        cairo_paint_with_alpha(cr, alpha);
-    } else
-        cairo_fill(cr);
+    cairo_clip(cr);
+    cairo_paint_with_alpha(cr, std::max<float>(0, std::min<float>(1.0, alpha)));
 }
 
 static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const Color& color)

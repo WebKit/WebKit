@@ -1,5 +1,23 @@
 2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Cairo] Draw Cairo patterns with cairo_paint_with_alpha()
+        https://bugs.webkit.org/show_bug.cgi?id=183774
+
+        Reviewed by Carlos Garcia Campos.
+
+        In the drawPatternToCairoContext() helper in CairoOperations.cpp source
+        file, always clip the painting region to the specified rectangle and
+        then use cairo_paint_with_alpha() to paint the passed-in pattern object,
+        not relaying rasterization to cairo_fill() when using opaque alpha. We
+        still clamp the alpha value to the 0.0 - 1.0 range.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawPatternToCairoContext):
+
+2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Have TextureMapperLayer::applyAnimationsRecursively() return running animation status
         https://bugs.webkit.org/show_bug.cgi?id=183771
 
