@@ -1,3 +1,24 @@
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 13551)
-FAIL: Timed out waiting for notifyDone to be called
+
+PASS getAnimations for non-animated content 
+PASS getAnimations for CSS Animations 
+PASS getAnimations returns CSSAnimation objects for CSS Animations 
+PASS getAnimations for multi-property animations 
+FAIL getAnimations for both CSS Animations and CSS Transitions at once assert_equals: getAnimations returns Animations for both animations and transitions that run simultaneously expected 2 but got 1
+PASS getAnimations for CSS Animations that have finished 
+PASS getAnimations for CSS Animations that have finished but are forwards filling 
+FAIL getAnimations for CSS Animations with animation-name: none assert_equals: getAnimations returns an empty sequence for an element with animation-name: none expected 0 but got 1
+FAIL getAnimations for CSS Animations with animation-name: missing assert_equals: getAnimations returns an empty sequence for an element with animation-name: missing expected 0 but got 1
+FAIL getAnimations for CSS Animations where the @keyframes rule is added later assert_equals: getAnimations initally only returns Animations for CSS Animations whose animation-name is found expected 1 but got 2
+PASS getAnimations for CSS Animations with duplicated animation-name 
+PASS getAnimations for CSS Animations with empty keyframes rule 
+PASS getAnimations for CSS animations in delay phase 
+PASS getAnimations for zero-duration CSS Animations 
+PASS getAnimations returns objects with the same identity 
+PASS getAnimations for CSS Animations that are cancelled 
+FAIL getAnimations for CSS Animations follows animation-name order assert_equals: animation order after prepending to list expected "anim1" but got "anim2"
+PASS Test AnimationFilter{ subtree: false } with single element 
+FAIL Test AnimationFilter{ subtree: true } with single element assert_equals: getAnimations({ subtree: true }) should return animations on pseudo-elements expected 3 but got 1
+PASS Test AnimationFilter{ subtree: false } with element that has a child 
+FAIL Test AnimationFilter{ subtree: true } with element that has a child assert_equals: Should find all elements, pesudo-elements that parent has expected 6 but got 1
+FAIL Test AnimationFilter{ subtree: true } with element that has many descendant assert_equals: Should find all descendants of the element expected 5 but got 1
 

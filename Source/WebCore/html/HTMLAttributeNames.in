@@ -193,6 +193,7 @@ onabort
 onanimationstart
 onanimationiteration
 onanimationend
+onanimationcancel
 onautocomplete
 onautocompleteerror
 onbeforecopy
@@ -282,7 +283,10 @@ ontouchstart
 ontouchmove
 ontouchend
 ontouchcancel
+ontransitioncancel
 ontransitionend
+ontransitionrun
+ontransitionstart
 onunload
 onvolumechange
 onwaiting

@@ -1,3 +1,22 @@
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 13542)
-FAIL: Timed out waiting for notifyDone to be called
+
+PASS startTime of a newly created (play-pending) animation is unresolved 
+FAIL startTime of a newly created (pause-pending) animation is unresolved undefined is not an object (evaluating 'animation.startTime')
+PASS startTime is resolved when running 
+FAIL startTime is unresolved when paused undefined is not an object (evaluating 'animation.ready')
+PASS startTime while pause-pending and play-pending 
+PASS startTime while play-pending from finished state 
+PASS startTime while play-pending from finished state using finish() 
+FAIL Pausing should make the startTime become null assert_true: After the animation has started, startTime is greater than the time when it was started expected true got false
+PASS Sanity test to check round-tripping assigning to a new animation's startTime 
+PASS Skipping forward through animation 
+PASS Skipping backwards through animation 
+PASS Redundant change, before -> active, then back 
+PASS Redundant change, before -> after, then back 
+PASS Redundant change, active -> before, then back 
+PASS Redundant change, active -> after, then back 
+PASS Redundant change, after -> before, then back 
+PASS Redundant change, after -> active, then back 
+PASS Setting startTime to null 
+FAIL Animation.startTime after pausing assert_equals: Animation.playState is "paused" after pause() call expected "paused" but got "running"
+PASS Animation.startTime after cancelling 
 

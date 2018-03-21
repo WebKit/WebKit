@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "AnimationEffectReadOnly.h"
+#include "GenericEventQueue.h"
 #include "WebAnimation.h"
 #include <wtf/Ref.h>
 
@@ -35,22 +37,30 @@ class Element;
 
 class DeclarativeAnimation : public WebAnimation {
 public:
-    ~DeclarativeAnimation() = default;
+    ~DeclarativeAnimation();
 
     bool isDeclarativeAnimation() const final { return true; }
 
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
+    void invalidateDOMEvents();
 
 protected:
-    DeclarativeAnimation(Document&, const Animation&);
+    DeclarativeAnimation(Element&, const Animation&);
 
     virtual void initialize(const Element&);
     virtual void syncPropertiesWithBackingAnimation();
 
 private:
-    Ref<Animation> m_backingAnimation;
+    AnimationEffectReadOnly::Phase phaseWithoutEffect() const;
+    void enqueueDOMEvent(const AtomicString&, Seconds);
 
+    Element& m_target;
+    Ref<Animation> m_backingAnimation;
+    bool m_wasPending { false };
+    AnimationEffectReadOnly::Phase m_previousPhase { AnimationEffectReadOnly::Phase::Idle };
+    double m_previousIteration;
+    GenericEventQueue m_eventQueue;
 };
 
 } // namespace WebCore

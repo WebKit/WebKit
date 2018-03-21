@@ -30,6 +30,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
+#include "DeclarativeAnimation.h"
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorManager.h"
 #include "Document.h"
@@ -109,6 +110,12 @@ void DocumentTimeline::scheduleInvalidationTaskIfNeeded()
 
 void DocumentTimeline::performInvalidationTask()
 {
+    // Now that the timing model has changed we can see if there are DOM events to dispatch for declarative animations.
+    for (auto& animation : animations()) {
+        if (is<DeclarativeAnimation>(animation))
+            downcast<DeclarativeAnimation>(*animation).invalidateDOMEvents();
+    }
+
     updateAnimationSchedule();
     m_cachedCurrentTime = std::nullopt;
 }

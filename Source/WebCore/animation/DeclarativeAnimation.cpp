@@ -28,15 +28,26 @@
 
 #include "Animation.h"
 #include "AnimationEffectTimingReadOnly.h"
+#include "AnimationEvent.h"
 #include "Element.h"
+#include "EventNames.h"
 #include "KeyframeEffectReadOnly.h"
+#include "PseudoElement.h"
+#include "TransitionEvent.h"
 
 namespace WebCore {
 
-DeclarativeAnimation::DeclarativeAnimation(Document& document, const Animation& backingAnimation)
-    : WebAnimation(document)
+DeclarativeAnimation::DeclarativeAnimation(Element& target, const Animation& backingAnimation)
+    : WebAnimation(target.document())
+    , m_target(target)
     , m_backingAnimation(const_cast<Animation&>(backingAnimation))
+    , m_eventQueue(target)
 {
+}
+
+DeclarativeAnimation::~DeclarativeAnimation()
+{
+    m_eventQueue.close();
 }
 
 void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation)
@@ -71,6 +82,108 @@ void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
     timing->setTimingFunction(m_backingAnimation->timingFunction());
 
     unsuspendEffectInvalidation();
+}
+
+AnimationEffectReadOnly::Phase DeclarativeAnimation::phaseWithoutEffect() const
+{
+    // This shouldn't be called if we actually have an effect.
+    ASSERT(!effect());
+
+    auto animationCurrentTime = currentTime();
+    if (!animationCurrentTime)
+        return AnimationEffectReadOnly::Phase::Idle;
+
+    // Since we don't have an effect, the duration will be zero so the phase is 'before' if the current time is less than zero.
+    return animationCurrentTime.value() < 0_s ? AnimationEffectReadOnly::Phase::Before : AnimationEffectReadOnly::Phase::After;
+}
+
+void DeclarativeAnimation::invalidateDOMEvents()
+{
+    auto* animationEffect = effect();
+
+    auto isPending = pending();
+    auto iteration = animationEffect ? animationEffect->currentIteration().value() : 0;
+    auto currentPhase = animationEffect ? animationEffect->phase() : phaseWithoutEffect();
+
+    bool wasActive = m_previousPhase == AnimationEffectReadOnly::Phase::Active;
+    bool wasAfter = m_previousPhase == AnimationEffectReadOnly::Phase::After;
+    bool wasBefore = m_previousPhase == AnimationEffectReadOnly::Phase::Before;
+    bool wasIdle = m_previousPhase == AnimationEffectReadOnly::Phase::Idle;
+
+    bool isActive = currentPhase == AnimationEffectReadOnly::Phase::Active;
+    bool isAfter = currentPhase == AnimationEffectReadOnly::Phase::After;
+    bool isBefore = currentPhase == AnimationEffectReadOnly::Phase::Before;
+    bool isIdle = currentPhase == AnimationEffectReadOnly::Phase::Idle;
+
+    auto* effectTiming = animationEffect ? animationEffect->timing() : nullptr;
+    auto intervalStart = effectTiming ? std::max(0_s, std::min(-effectTiming->delay(), effectTiming->activeDuration())) : 0_s;
+    auto intervalEnd = effectTiming ? std::max(0_s, std::min(effectTiming->endTime() - effectTiming->delay(), effectTiming->activeDuration())) : 0_s;
+
+    if (is<CSSAnimation>(this)) {
+        // https://drafts.csswg.org/css-animations-2/#events
+        if ((wasIdle || wasBefore) && isActive)
+            enqueueDOMEvent(eventNames().animationstartEvent, intervalStart);
+        else if ((wasIdle || wasBefore) && isAfter) {
+            enqueueDOMEvent(eventNames().animationstartEvent, intervalStart);
+            enqueueDOMEvent(eventNames().animationendEvent, intervalEnd);
+        } else if (wasActive && isBefore)
+            enqueueDOMEvent(eventNames().animationendEvent, intervalStart);
+        else if (wasActive && isActive && m_previousIteration != iteration) {
+            auto iterationBoundary = iteration;
+            if (m_previousIteration > iteration)
+                iterationBoundary++;
+            auto elapsedTime = effectTiming ? effectTiming->iterationDuration() * (iterationBoundary - effectTiming->iterationStart()) : 0_s;
+            enqueueDOMEvent(eventNames().animationiterationEvent, elapsedTime);
+        } else if (wasActive && isAfter)
+            enqueueDOMEvent(eventNames().animationendEvent, intervalEnd);
+        else if (wasAfter && isActive)
+            enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd);
+        else if (wasAfter && isBefore) {
+            enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd);
+            enqueueDOMEvent(eventNames().animationendEvent, intervalStart);
+        } else if ((!wasIdle && !wasAfter) && isIdle)
+            enqueueDOMEvent(eventNames().animationcancelEvent, 0_s);
+    } else if (is<CSSTransition>(this)) {
+        // https://drafts.csswg.org/css-transitions-2/#transition-events
+        if (wasIdle && (isPending || isBefore))
+            enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart);
+        else if (wasIdle && isActive) {
+            enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart);
+            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart);
+        } else if (wasIdle && isAfter) {
+            enqueueDOMEvent(eventNames().transitionrunEvent, intervalStart);
+            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart);
+            enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd);
+        } else if ((m_wasPending || wasBefore) && isActive)
+            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart);
+        else if ((m_wasPending || wasBefore) && isAfter) {
+            enqueueDOMEvent(eventNames().transitionstartEvent, intervalStart);
+            enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd);
+        } else if (wasActive && isAfter)
+            enqueueDOMEvent(eventNames().transitionendEvent, intervalEnd);
+        else if (wasActive && isBefore)
+            enqueueDOMEvent(eventNames().transitionendEvent, intervalStart);
+        else if (wasAfter && isActive)
+            enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd);
+        else if (wasAfter && isBefore) {
+            enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd);
+            enqueueDOMEvent(eventNames().transitionendEvent, intervalStart);
+        } else if ((!wasIdle && !wasAfter) && isIdle)
+            enqueueDOMEvent(eventNames().transitioncancelEvent, 0_s);
+    }
+
+    m_wasPending = isPending;
+    m_previousPhase = currentPhase;
+    m_previousIteration = iteration;
+}
+
+void DeclarativeAnimation::enqueueDOMEvent(const AtomicString& eventType, Seconds elapsedTime)
+{
+    auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
+    if (is<CSSAnimation>(this))
+        m_eventQueue.enqueueEvent(AnimationEvent::create(eventType, downcast<CSSAnimation>(this)->animationName(), time));
+    else if (is<CSSTransition>(this))
+        m_eventQueue.enqueueEvent(TransitionEvent::create(eventType, downcast<CSSTransition>(this)->transitionProperty(), time, PseudoElement::pseudoElementNameForEvents(m_target.pseudoId())));
 }
 
 } // namespace WebCore

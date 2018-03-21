@@ -46,7 +46,7 @@ protected:
     void syncPropertiesWithBackingAnimation() final;
 
 private:
-    CSSAnimation(Document&, const Animation&);
+    CSSAnimation(Element&, const Animation&);
 
     String m_animationName;
 

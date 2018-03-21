@@ -33,14 +33,14 @@ namespace WebCore {
 
 Ref<CSSAnimation> CSSAnimation::create(Element& target, const Animation& backingAnimation)
 {
-    auto result = adoptRef(*new CSSAnimation(target.document(), backingAnimation));
+    auto result = adoptRef(*new CSSAnimation(target, backingAnimation));
     result->m_animationName = backingAnimation.name();
     result->initialize(target);
     return result;
 }
 
-CSSAnimation::CSSAnimation(Document& document, const Animation& backingAnimation)
-    : DeclarativeAnimation(document, backingAnimation)
+CSSAnimation::CSSAnimation(Element& element, const Animation& backingAnimation)
+    : DeclarativeAnimation(element, backingAnimation)
 {
 }
 

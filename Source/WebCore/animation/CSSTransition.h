@@ -47,7 +47,7 @@ public:
     bool canBeListed() const final;
 
 private:
-    CSSTransition(Document&, const Animation&);
+    CSSTransition(Element&, const Animation&);
 
     CSSPropertyID m_transitionProperty;
 

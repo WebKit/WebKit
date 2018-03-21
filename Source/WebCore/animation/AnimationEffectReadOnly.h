@@ -53,6 +53,7 @@ public:
     std::optional<Seconds> localTime() const;
     std::optional<Seconds> activeTime() const;
     std::optional<double> iterationProgress() const;
+    std::optional<double> currentIteration() const;
 
     enum class Phase { Before, Active, After, Idle };
     Phase phase() const;
@@ -76,7 +77,6 @@ private:
 
     std::optional<double> overallProgress() const;
     std::optional<double> simpleIterationProgress() const;
-    std::optional<double> currentIteration() const;
     AnimationEffectReadOnly::ComputedDirection currentDirection() const;
     std::optional<double> directedProgress() const;
     std::optional<double> transformedProgress() const;

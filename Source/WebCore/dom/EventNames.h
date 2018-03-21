@@ -59,6 +59,7 @@ namespace WebCore {
     macro(addsourcebuffer) \
     macro(addstream) \
     macro(addtrack) \
+    macro(animationcancel) \
     macro(animationend) \
     macro(animationiteration) \
     macro(animationstart) \
@@ -249,7 +250,10 @@ namespace WebCore {
     macro(touchmove) \
     macro(touchstart) \
     macro(track) \
+    macro(transitioncancel) \
     macro(transitionend) \
+    macro(transitionrun) \
+    macro(transitionstart) \
     macro(unhandledrejection) \
     macro(unload) \
     macro(unmute) \

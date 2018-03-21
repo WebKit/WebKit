@@ -1,3 +1,47 @@
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Dispatch DOM events for CSS Transitions and CSS Animations implemented as Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183781
+
+        Reviewed by Dean Jackson.
+
+        Now that we've implemented CSS Animations and CSS Transitions as Web Animations (webkit.org/b/183504) we can dispatch DOM events
+        for targets of DeclarativeAnimation objects. To do that, we add a new invalidateDOMEvents() method on DeclarativeAnimations which
+        is called when the timer scheduled after the timing model has been invalidated fires in DocumentTimeline::performInvalidationTask().
+        When we check for DOM events to dispatch, we look at the last recorded phase and iteration and determine whether the state of the
+        animation has changed. We use a GenericEventQueue to enqueue the events such that they are dispatched asynchronously at a moment
+        when it is safe to evaluate script.
+
+        * animation/AnimationEffectReadOnly.h: Make currentIteration() public since we now need it in DeclarativeAnimation::invalidateDOMEvents().
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::create): Pass the animation target to the constructor instead of its document.
+        (WebCore::CSSAnimation::CSSAnimation): Pass the animation target to the superclass instead of its document.
+        * animation/CSSAnimation.h:
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::create): Pass the animation target to the constructor instead of its document.
+        (WebCore::CSSTransition::CSSTransition): Pass the animation target to the superclass instead of its document.
+        * animation/CSSTransition.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::DeclarativeAnimation): Expect an Element instead of a Document and use that element as the target of the
+        GenericEventQueue that we initialize. We also register this element as our m_target.
+        (WebCore::DeclarativeAnimation::~DeclarativeAnimation): Close the GenericEventQueue member upon destruction.
+        (WebCore::DeclarativeAnimation::initialize): We need to call pause() for declarative animations that aren't playing so that the animation's
+        playState is set correctly and the animation is not idle.
+        (WebCore::DeclarativeAnimation::phaseWithoutEffect const): Because we may need to get an animation's current phase in invalidateDOMEvents()
+        after an animation's effect has been removed, we provide an alternate way to compute the phase just by looking at the animation's current time.
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents): Based on the previous and current pending state, iteration and phase, we enqueue animation
+        and transition DOM events as specified by the CSS Animations Level 2 and CSS Transitions Level 2 specifications.
+        (WebCore::DeclarativeAnimation::enqueueDOMEvent): Enqueue an event on the GenericEventQueue based on the animation type.
+        * animation/DeclarativeAnimation.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::performInvalidationTask): We call invalidateDOMEvents() on all declarative animations registered with this timeline
+        now that the timing model has been invalidated.
+        * dom/EventNames.h: Add the names of newly-implemented events (animationcancel, transitioncancel, transitionrun and transitionstart).
+        * dom/GlobalEventHandlers.idl: Add new attribute-based event handlers for the newly-implemented events.
+        * html/HTMLAttributeNames.in: Add new attribute-based event handlers for the newly-implemented events.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap): Add new attribute-based event handlers for the newly-implemented events.
+
 2018-03-21  Per Arne Vollan  <pvollan@apple.com>
 
         Compile error when not using IOSurface canvas backing store.

@@ -1,5 +1,16 @@
 2018-03-21  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Dispatch DOM events for CSS Transitions and CSS Animations implemented as Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183781
+
+        Reviewed by Dean Jackson.
+
+        New attribute-based event handlers are now exposed, update the expectations for those.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Import CSS Animations and CSS Transitions as Web Animations tests from Mozilla
         https://bugs.webkit.org/show_bug.cgi?id=183851
 
