@@ -207,6 +207,8 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
             normalizedValue = normalizedAnimationValueForFillsForwards(m_animation->iterationCount(), m_animation->direction());
     }
 
+    applicationResults.hasRunningAnimations |= (m_state == AnimationState::Playing);
+
     if (!normalizedValue) {
         applyInternal(applicationResults, m_keyframes.at(0), m_keyframes.at(1), 0);
         return;

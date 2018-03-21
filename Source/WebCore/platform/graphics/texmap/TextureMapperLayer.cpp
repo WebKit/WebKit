@@ -630,14 +630,15 @@ bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
         });
 }
 
-void TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
+bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 {
-    syncAnimations(time);
+    bool hasRunningAnimations = syncAnimations(time);
     for (auto* child : m_children)
-        child->applyAnimationsRecursively(time);
+        hasRunningAnimations |= child->applyAnimationsRecursively(time);
+    return hasRunningAnimations;
 }
 
-void TextureMapperLayer::syncAnimations(MonotonicTime time)
+bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 {
     TextureMapperAnimation::ApplicationResult applicationResults;
     m_animations.apply(applicationResults, time);
@@ -645,6 +646,8 @@ void TextureMapperLayer::syncAnimations(MonotonicTime time)
     m_currentTransform.setLocalTransform(applicationResults.transform.value_or(m_state.transform));
     m_currentOpacity = applicationResults.opacity.value_or(m_state.opacity);
     m_currentFilters = applicationResults.filters.value_or(m_state.filters);
+
+    return applicationResults.hasRunningAnimations;
 }
 
 bool TextureMapperLayer::isAncestorFixedToViewport() const

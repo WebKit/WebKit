@@ -1,5 +1,32 @@
 2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Have TextureMapperLayer::applyAnimationsRecursively() return running animation status
+        https://bugs.webkit.org/show_bug.cgi?id=183771
+
+        Reviewed by Carlos Garcia Campos.
+
+        TextureMapperLayer::applyAnimationsRecursively() should return true when
+        the TextureMapperLayer tree has currently-running animations that
+        require continuous scene update.
+
+        TextureMapperAnimation::ApplicationResult gains the hasRunningAnimation
+        member that's set to true if any of the applied animations are still in
+        playing state. That information is then returned in syncAnimations(),
+        and the result is accumulated in the top applyAnimationsRecursively()
+        call and returned there to the caller.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimation::apply):
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::applyAnimationsRecursively):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
+2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
+
         Use-after-move in SWContextManager::terminateWorker() with Linux x86_64 calling convention
         https://bugs.webkit.org/show_bug.cgi?id=183783
 

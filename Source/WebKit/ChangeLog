@@ -1,3 +1,20 @@
+2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Have TextureMapperLayer::applyAnimationsRecursively() return running animation status
+        https://bugs.webkit.org/show_bug.cgi?id=183771
+
+        Reviewed by Carlos Garcia Campos.
+
+        In CoordinatedGraphicsScene::paintToCurrentGLContext(), retrieve
+        information about any running animation in the scene via the
+        TextureMapperLayer::applyAnimationsRecursively() call. Use that boolean
+        value at the end up the method, instead of again traversing the
+        TextureMapperLayer tree to determine whether any running animations are
+        present.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Enable the minimal simulator feature flag when appropriate

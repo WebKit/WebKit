@@ -92,14 +92,14 @@ public:
     bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(RefPtr<TextureMapperBackingStore>&&);
 
-    void syncAnimations(MonotonicTime);
+    bool applyAnimationsRecursively(MonotonicTime);
+    bool syncAnimations(MonotonicTime);
     bool descendantsOrSelfHaveRunningAnimations() const;
 
     void paint();
 
     void setScrollPositionDeltaIfNeeded(const FloatSize&);
 
-    void applyAnimationsRecursively(MonotonicTime);
     void addChild(TextureMapperLayer*);
 
 private:

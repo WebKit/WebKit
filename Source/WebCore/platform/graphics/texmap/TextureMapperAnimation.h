@@ -34,6 +34,7 @@ public:
         std::optional<TransformationMatrix> transform;
         std::optional<double> opacity;
         std::optional<FilterOperations> filters;
+        bool hasRunningAnimations { false };
     };
 
     TextureMapperAnimation()
