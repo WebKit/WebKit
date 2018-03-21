@@ -884,3 +884,5 @@ webkit.org/b/183164 fast/dom/Window/window-focus-self.html [ Pass Failure ]
 webkit.org/b/180982 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Slow ]
 
 webkit.org/b/182176 imported/w3c/web-platform-tests/service-workers/service-worker/appcache-ordering-main.https.html [ Skip ]
+
+webkit.org/b/183869 [ HighSierra+ ] media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Failure ]
