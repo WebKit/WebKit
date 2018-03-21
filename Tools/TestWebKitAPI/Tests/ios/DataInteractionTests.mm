@@ -1169,7 +1169,7 @@ TEST(DataInteractionTests, InjectedBundleAllowPerformTwoStepDrop)
     [configuration.processPool _setObject:@NO forBundleParameter:@"BundleOverridePerformTwoStepDrop"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
-    [webView loadTestPageNamed:@"autofocus-contenteditable"];
+    [webView synchronouslyLoadTestPageNamed:@"autofocus-contenteditable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
 
     auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);

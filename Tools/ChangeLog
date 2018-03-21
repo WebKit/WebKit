@@ -1,3 +1,16 @@
+2018-03-21  Chris Dumez  <cdumez@apple.com>
+
+        Fix DataInteractionTests.InjectedBundleAllowPerformTwoStepDrop to use synchronouslyLoadTestPageNamed
+        https://bugs.webkit.org/show_bug.cgi?id=183858
+
+        Reviewed by Wenson Hsieh.
+
+        Fix DataInteractionTests.InjectedBundleAllowPerformTwoStepDrop to use synchronouslyLoadTestPageNamed
+        instead of loadTestPageNamed because injecting script.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-03-21  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Enable formatting state for InlineFormattingContext
