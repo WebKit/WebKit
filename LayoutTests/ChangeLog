@@ -1,3 +1,16 @@
+2018-03-21  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r226059?): [macOS WK2] Layout Test fast/mediastream/MediaStream-MediaElement-setObject-null.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181069
+        <rdar://problem/36188221>
+
+        Reviewed by Youenn Fablet.
+
+        Pass the function into the play() promise handler rather than calling it immediately.
+
+        * fast/mediastream/MediaStream-MediaElement-setObject-null.html:
+        * platform/mac-wk2/TestExpectations:
+
 2018-03-21  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Dispatch DOM events for CSS Transitions and CSS Animations implemented as Web Animations

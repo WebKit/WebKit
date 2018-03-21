@@ -17,7 +17,7 @@ function setStream(stream)
 function loadedMetadata(event)
 {
     shouldBe('video.duration', 'Number.POSITIVE_INFINITY');
-    video.play().then(clearStream());
+    video.play().then(clearStream);
 }
 
 function clearStream()
