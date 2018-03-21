@@ -1,3 +1,14 @@
+2018-03-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Work towards rdar://problem/38714892.
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/fast/forms/input-table-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-table-expected.txt.
+        * platform/mac-sierra/tables/mozilla/bugs/bug30692-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug30692-expected.txt.
+        * platform/mac/fast/forms/input-table-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.txt:
+
 2018-03-20  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229733. rdar://problem/38651613
