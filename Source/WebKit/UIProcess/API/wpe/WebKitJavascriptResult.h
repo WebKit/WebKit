@@ -24,8 +24,8 @@
 #ifndef WebKitJavascriptResult_h
 #define WebKitJavascriptResult_h
 
-#include <JavaScriptCore/JSBase.h>
 #include <glib-object.h>
+#include <jsc/jsc.h>
 #include <wpe/WebKitDefines.h>
 
 G_BEGIN_DECLS
@@ -44,11 +44,8 @@ webkit_javascript_result_ref                (WebKitJavascriptResult *js_result);
 WEBKIT_API void
 webkit_javascript_result_unref              (WebKitJavascriptResult *js_result);
 
-WEBKIT_API JSGlobalContextRef
-webkit_javascript_result_get_global_context (WebKitJavascriptResult *js_result);
-
-WEBKIT_API JSValueRef
-webkit_javascript_result_get_value          (WebKitJavascriptResult *js_result);
+WEBKIT_API JSCValue *
+webkit_javascript_result_get_js_value       (WebKitJavascriptResult *js_result);
 
 G_END_DECLS
 

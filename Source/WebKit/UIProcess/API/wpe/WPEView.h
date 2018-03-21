@@ -60,7 +60,6 @@ public:
     void setClient(std::unique_ptr<API::ViewClient>&&);
     void frameDisplayed();
     void handleDownloadRequest(WebKit::DownloadProxy&);
-    JSGlobalContextRef javascriptGlobalContext();
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }
 

@@ -232,6 +232,7 @@ webkit_javascript_result_ref
 webkit_javascript_result_unref
 webkit_javascript_result_get_global_context
 webkit_javascript_result_get_value
+webkit_javascript_result_get_js_value
 
 <SUBSECTION WebKitScriptDialog>
 WebKitScriptDialog
@@ -1487,6 +1488,8 @@ webkit_frame_is_main_frame
 webkit_frame_get_uri
 webkit_frame_get_javascript_global_context
 webkit_frame_get_javascript_context_for_script_world
+webkit_frame_get_js_context
+webkit_frame_get_js_context_for_script_world
 
 <SUBSECTION Standard>
 WebKitFrameClass

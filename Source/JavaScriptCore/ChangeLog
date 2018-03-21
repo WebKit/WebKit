@@ -1,5 +1,22 @@
 2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] JSC bindings not introspectable
+        https://bugs.webkit.org/show_bug.cgi?id=136989
+
+        Reviewed by Michael Catanzaro.
+
+        Make it possible to include individual headers when building WebKit layer.
+
+        * API/glib/JSCAutocleanups.h:
+        * API/glib/JSCClass.h:
+        * API/glib/JSCContext.h:
+        * API/glib/JSCException.h:
+        * API/glib/JSCValue.h:
+        * API/glib/JSCVersion.h.in:
+        * API/glib/JSCVirtualMachine.h:
+
+2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Initial implementation of JavaScriptCore glib bindings
         https://bugs.webkit.org/show_bug.cgi?id=164061
 

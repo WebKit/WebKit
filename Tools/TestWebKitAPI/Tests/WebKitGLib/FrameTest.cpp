@@ -49,7 +49,15 @@ private:
     {
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
         g_assert(WEBKIT_IS_FRAME(frame));
+#if PLATFORM(GTK)
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_assert(webkit_frame_get_javascript_global_context(frame));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
+
+        GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
+        g_assert(JSC_IS_CONTEXT(jsContext.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
         return true;
     }

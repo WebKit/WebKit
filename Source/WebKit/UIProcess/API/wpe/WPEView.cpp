@@ -35,7 +35,6 @@
 #include "NativeWebWheelEvent.h"
 #include "WebPageGroup.h"
 #include "WebProcessPool.h"
-#include <JavaScriptCore/JSBase.h>
 #include <wpe/view-backend.h>
 
 using namespace WebKit;
@@ -154,11 +153,6 @@ void View::frameDisplayed()
 void View::handleDownloadRequest(DownloadProxy& download)
 {
     m_client->handleDownloadRequest(*this, download);
-}
-
-JSGlobalContextRef View::javascriptGlobalContext()
-{
-    return m_client->javascriptGlobalContext();
 }
 
 void View::setSize(const WebCore::IntSize& size)

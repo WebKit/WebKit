@@ -28,7 +28,6 @@
 #include "cmakeconfig.h"
 
 #include "BrowserWindow.h"
-#include <JavaScriptCore/JavaScript.h>
 #include <errno.h>
 #include <gst/gst.h>
 #include <gtk/gtk.h>
@@ -297,17 +296,7 @@ static void websiteDataClearedCallback(WebKitWebsiteDataManager *manager, GAsync
 
 static void aboutDataScriptMessageReceivedCallback(WebKitUserContentManager *userContentManager, WebKitJavascriptResult *message, WebKitWebContext *webContext)
 {
-    JSValueRef jsValue = webkit_javascript_result_get_value(message);
-    JSStringRef jsString = JSValueToStringCopy(webkit_javascript_result_get_global_context(message), jsValue, NULL);
-    size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString);
-    if (!maxSize) {
-        JSStringRelease(jsString);
-        return;
-    }
-    char *messageString = g_malloc(maxSize);
-    JSStringGetUTF8CString(jsString, messageString, maxSize);
-    JSStringRelease(jsString);
-
+    char *messageString = jsc_value_to_string(webkit_javascript_result_get_js_value(message));
     char **tokens = g_strsplit(messageString, ":", 3);
     g_free(messageString);
 

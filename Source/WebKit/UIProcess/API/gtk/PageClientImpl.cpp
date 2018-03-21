@@ -474,14 +474,6 @@ bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(
 }
 #endif
 
-JSGlobalContextRef PageClientImpl::javascriptGlobalContext()
-{
-    if (!WEBKIT_IS_WEB_VIEW(m_viewWidget))
-        return nullptr;
-
-    return webkit_web_view_get_javascript_global_context(WEBKIT_WEB_VIEW(m_viewWidget));
-}
-
 void PageClientImpl::zoom(double zoomLevel)
 {
     if (WEBKIT_IS_WEB_VIEW(m_viewWidget)) {

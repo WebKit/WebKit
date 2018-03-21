@@ -149,8 +149,6 @@ private:
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override { return WebCore::UserInterfaceLayoutDirection::LTR; }
 
-    JSGlobalContextRef javascriptGlobalContext() override;
-
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

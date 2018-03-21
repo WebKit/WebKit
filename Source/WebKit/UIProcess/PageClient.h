@@ -387,10 +387,6 @@ public:
     virtual void didInsertAttachment(const String& identifier, const String& source) { }
     virtual void didRemoveAttachment(const String& identifier) { }
 #endif
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    virtual JSGlobalContextRef javascriptGlobalContext() { return nullptr; }
-#endif
 };
 
 } // namespace WebKit

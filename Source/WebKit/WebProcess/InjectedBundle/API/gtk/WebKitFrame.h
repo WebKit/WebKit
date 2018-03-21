@@ -26,6 +26,7 @@
 
 #include <JavaScriptCore/JSBase.h>
 #include <glib-object.h>
+#include <jsc/jsc.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitScriptWorld.h>
 
@@ -61,11 +62,18 @@ webkit_frame_is_main_frame                           (WebKitFrame       *frame);
 WEBKIT_API const gchar *
 webkit_frame_get_uri                                 (WebKitFrame       *frame);
 
-WEBKIT_API JSGlobalContextRef
+WEBKIT_DEPRECATED_FOR(webkit_frame_get_js_context) JSGlobalContextRef
 webkit_frame_get_javascript_global_context           (WebKitFrame       *frame);
 
-WEBKIT_API JSGlobalContextRef
+WEBKIT_DEPRECATED_FOR(webkit_frame_get_js_context_for_script_world) JSGlobalContextRef
 webkit_frame_get_javascript_context_for_script_world (WebKitFrame       *frame,
+                                                      WebKitScriptWorld *world);
+
+WEBKIT_API JSCContext *
+webkit_frame_get_js_context                          (WebKitFrame       *frame);
+
+WEBKIT_API JSCContext *
+webkit_frame_get_js_context_for_script_world         (WebKitFrame       *frame,
                                                       WebKitScriptWorld *world);
 
 G_END_DECLS

@@ -22,6 +22,7 @@
 
 #include "WebKitFramePrivate.h"
 #include "WebKitScriptWorldPrivate.h"
+#include <jsc/JSCContextPrivate.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -90,6 +91,7 @@ const gchar* webkit_frame_get_uri(WebKitFrame* frame)
     return frame->priv->uri.data();
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_frame_get_javascript_global_context:
  * @frame: a #WebKitFrame
@@ -100,6 +102,8 @@ const gchar* webkit_frame_get_uri(WebKitFrame* frame)
  * Returns: (transfer none): the global JavaScript context of @frame
  *
  * Since: 2.2
+ *
+ * Deprecated: 2.22: Use webkit_frame_get_js_context() instead.
  */
 JSGlobalContextRef webkit_frame_get_javascript_global_context(WebKitFrame* frame)
 {
@@ -118,6 +122,8 @@ JSGlobalContextRef webkit_frame_get_javascript_global_context(WebKitFrame* frame
  * Returns: (transfer none): the JavaScript context of @frame for @world
  *
  * Since: 2.2
+ *
+ * Deprecated: 2.22: Use webkit_frame_get_js_context_for_script_world() instead.
  */
 JSGlobalContextRef webkit_frame_get_javascript_context_for_script_world(WebKitFrame* frame, WebKitScriptWorld* world)
 {
@@ -125,4 +131,42 @@ JSGlobalContextRef webkit_frame_get_javascript_context_for_script_world(WebKitFr
     g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), 0);
 
     return frame->priv->webFrame->jsContextForWorld(webkitScriptWorldGetInjectedBundleScriptWorld(world));
+}
+#endif
+
+/**
+ * webkit_frame_get_js_context:
+ * @frame: a #WebKitFrame
+ *
+ * Get the JavaScript execution context of @frame. Use this function to bridge
+ * between the WebKit and JavaScriptCore APIs.
+ *
+ * Returns: (transfer full): the #JSCContext for the JavaScript execution context of @frame.
+ *
+ * Since: 2.22
+ */
+JSCContext* webkit_frame_get_js_context(WebKitFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), nullptr);
+
+    return jscContextGetOrCreate(frame->priv->webFrame->jsContext()).leakRef();
+}
+
+/**
+ * webkit_frame_get_js_context_for_script_world:
+ * @frame: a #WebKitFrame
+ * @world: a #WebKitScriptWorld
+ *
+ * Get the JavaScript execution context of @frame for the given #WebKitScriptWorld.
+ *
+ * Returns: (transfer full): the #JSCContext for the JavaScript execution context of @frame for @world.
+ *
+ * Since: 2.22
+ */
+JSCContext* webkit_frame_get_js_context_for_script_world(WebKitFrame* frame, WebKitScriptWorld* world)
+{
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), nullptr);
+    g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), nullptr);
+
+    return jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(webkitScriptWorldGetInjectedBundleScriptWorld(world))).leakRef();
 }

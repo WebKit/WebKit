@@ -28,7 +28,6 @@
 #ifndef WebKitWebView_h
 #define WebKitWebView_h
 
-#include <JavaScriptCore/JSBase.h>
 #include <wpe/WebKitAuthenticationRequest.h>
 #include <wpe/WebKitBackForwardList.h>
 #include <wpe/WebKitContextMenu.h>
@@ -399,9 +398,6 @@ webkit_web_view_execute_editing_command_with_argument(WebKitWebView             
 
 WEBKIT_API WebKitFindController *
 webkit_web_view_get_find_controller                  (WebKitWebView             *web_view);
-
-WEBKIT_API JSGlobalContextRef
-webkit_web_view_get_javascript_global_context        (WebKitWebView             *web_view);
 
 WEBKIT_API void
 webkit_web_view_run_javascript                       (WebKitWebView             *web_view,

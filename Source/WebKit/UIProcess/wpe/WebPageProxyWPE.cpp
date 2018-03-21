@@ -38,11 +38,6 @@ void WebPageProxy::platformInitialize()
     notImplemented();
 }
 
-JSGlobalContextRef WebPageProxy::javascriptGlobalContext()
-{
-    return m_pageClient.javascriptGlobalContext();
-}
-
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);

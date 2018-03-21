@@ -366,6 +366,9 @@ list(INSERT WebKit_INCLUDE_DIRECTORIES 0
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}"
+    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/"
+    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
     "${WEBKIT_DIR}/PluginProcess/unix"
     "${WEBKIT_DIR}/NetworkProcess/CustomProtocols/soup"
     "${WEBKIT_DIR}/NetworkProcess/Downloads/soup"
@@ -762,7 +765,9 @@ if (ENABLE_INTROSPECTION)
             -I${WEBKIT_DIR}
             -I${DERIVED_SOURCES_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
+            -I${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}
             -I${FORWARDING_HEADERS_DIR}
+            -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
             -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
             ${WebKit2GTK_INSTALLED_HEADERS}
             ${WEBKIT_DIR}/Shared/API/glib/*.cpp
@@ -806,7 +811,9 @@ if (ENABLE_INTROSPECTION)
             -I${WEBKIT_DIR}
             -I${DERIVED_SOURCES_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
+            -I${DERIVED_SOURCES_JAVASCRIPCOREGTK_DIR}
             -I${FORWARDING_HEADERS_DIR}
+            -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
             -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
             -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk

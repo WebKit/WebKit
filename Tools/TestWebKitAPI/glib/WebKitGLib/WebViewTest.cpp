@@ -312,67 +312,42 @@ WebKitJavascriptResult* WebViewTest::runJavaScriptFromGResourceAndWaitUntilFinis
     return m_javascriptResult;
 }
 
-static char* jsValueToCString(JSGlobalContextRef context, JSValueRef value)
-{
-    g_assert(value);
-    g_assert(JSValueIsString(context, value));
-
-    JSRetainPtr<JSStringRef> stringValue(Adopt, JSValueToStringCopy(context, value, 0));
-    g_assert(stringValue);
-
-    size_t cStringLength = JSStringGetMaximumUTF8CStringSize(stringValue.get());
-    char* cString = static_cast<char*>(g_malloc(cStringLength));
-    JSStringGetUTF8CString(stringValue.get(), cString, cStringLength);
-    return cString;
-}
-
 char* WebViewTest::javascriptResultToCString(WebKitJavascriptResult* javascriptResult)
 {
-    JSGlobalContextRef context = webkit_javascript_result_get_global_context(javascriptResult);
-    g_assert(context);
-    return jsValueToCString(context, webkit_javascript_result_get_value(javascriptResult));
+    auto* value = webkit_javascript_result_get_js_value(javascriptResult);
+    g_assert(JSC_IS_VALUE(value));
+    g_assert(jsc_value_is_string(value));
+    return jsc_value_to_string(value);
 }
 
 double WebViewTest::javascriptResultToNumber(WebKitJavascriptResult* javascriptResult)
 {
-    JSGlobalContextRef context = webkit_javascript_result_get_global_context(javascriptResult);
-    g_assert(context);
-    JSValueRef value = webkit_javascript_result_get_value(javascriptResult);
-    g_assert(value);
-    g_assert(JSValueIsNumber(context, value));
-
-    return JSValueToNumber(context, value, 0);
+    auto* value = webkit_javascript_result_get_js_value(javascriptResult);
+    g_assert(JSC_IS_VALUE(value));
+    g_assert(jsc_value_is_number(value));
+    return jsc_value_to_double(value);
 }
 
 bool WebViewTest::javascriptResultToBoolean(WebKitJavascriptResult* javascriptResult)
 {
-    JSGlobalContextRef context = webkit_javascript_result_get_global_context(javascriptResult);
-    g_assert(context);
-    JSValueRef value = webkit_javascript_result_get_value(javascriptResult);
-    g_assert(value);
-    g_assert(JSValueIsBoolean(context, value));
-
-    return JSValueToBoolean(context, value);
+    auto* value = webkit_javascript_result_get_js_value(javascriptResult);
+    g_assert(JSC_IS_VALUE(value));
+    g_assert(jsc_value_is_boolean(value));
+    return jsc_value_to_boolean(value);
 }
 
 bool WebViewTest::javascriptResultIsNull(WebKitJavascriptResult* javascriptResult)
 {
-    JSGlobalContextRef context = webkit_javascript_result_get_global_context(javascriptResult);
-    g_assert(context);
-    JSValueRef value = webkit_javascript_result_get_value(javascriptResult);
-    g_assert(value);
-
-    return JSValueIsNull(context, value);
+    auto* value = webkit_javascript_result_get_js_value(javascriptResult);
+    g_assert(JSC_IS_VALUE(value));
+    return jsc_value_is_null(value);
 }
 
 bool WebViewTest::javascriptResultIsUndefined(WebKitJavascriptResult* javascriptResult)
 {
-    JSGlobalContextRef context = webkit_javascript_result_get_global_context(javascriptResult);
-    g_assert(context);
-    JSValueRef value = webkit_javascript_result_get_value(javascriptResult);
-    g_assert(value);
-
-    return JSValueIsUndefined(context, value);
+    auto* value = webkit_javascript_result_get_js_value(javascriptResult);
+    g_assert(JSC_IS_VALUE(value));
+    return jsc_value_is_undefined(value);
 }
 
 #if PLATFORM(GTK)

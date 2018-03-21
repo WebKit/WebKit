@@ -21,8 +21,8 @@
 #include "WebProcessTest.h"
 
 #include "WebKitWebExtensionPrivate.h"
-#include <JavaScriptCore/JSRetainPtr.h>
 #include <gio/gio.h>
+#include <jsc/jsc.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -55,31 +55,19 @@ std::unique_ptr<WebProcessTest> WebProcessTest::create(const String& testName)
     return testsMap().get(testName)();
 }
 
-static JSValueRef runTest(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static gboolean runTest(WebKitWebPage* webPage, const char* testPath)
 {
-    JSRetainPtr<JSStringRef> stringValue(Adopt, JSValueToStringCopy(context, arguments[0], nullptr));
-    g_assert(stringValue);
-    size_t testPathLength = JSStringGetMaximumUTF8CStringSize(stringValue.get());
-    GUniquePtr<char> testPath(static_cast<char*>(g_malloc(testPathLength)));
-    JSStringGetUTF8CString(stringValue.get(), testPath.get(), testPathLength);
-
-    WebKitWebPage* webPage = WEBKIT_WEB_PAGE(JSObjectGetPrivate(thisObject));
     g_assert(WEBKIT_IS_WEB_PAGE(webPage));
     WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
+    g_assert(testPath);
 
-    std::unique_ptr<WebProcessTest> test = WebProcessTest::create(String::fromUTF8(testPath.get()));
-    return JSValueMakeBoolean(context, test->runTest(g_strrstr(testPath.get(), "/") + 1, webPage));
+    std::unique_ptr<WebProcessTest> test = WebProcessTest::create(String::fromUTF8(testPath));
+    return test->runTest(g_strrstr(testPath, "/") + 1, webPage);
 }
 
-static const JSStaticFunction webProcessTestRunnerStaticFunctions[] =
+static void webProcessTestRunnerFinalize(WebKitWebPage* webPage)
 {
-    { "runTest", runTest, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-    { nullptr, nullptr, 0 }
-};
-
-static void webProcessTestRunnerFinalize(JSObjectRef object)
-{
-    g_object_unref(JSObjectGetPrivate(object));
+    g_object_unref(webPage);
 
     if (s_watchedObjects.isEmpty())
         return;
@@ -97,19 +85,14 @@ static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage*
     if (g_strcmp0(webkit_web_page_get_uri(webPage), "webprocess://test"))
         return;
 
-    JSGlobalContextRef context = webkit_frame_get_javascript_context_for_script_world(frame, world);
-    JSObjectRef globalObject = JSContextGetGlobalObject(context);
-
-    JSClassDefinition classDefinition = kJSClassDefinitionEmpty;
-    classDefinition.className = "WebProcessTestRunner";
-    classDefinition.staticFunctions = webProcessTestRunnerStaticFunctions;
-    classDefinition.finalize = webProcessTestRunnerFinalize;
-
-    JSClassRef jsClass = JSClassCreate(&classDefinition);
-    JSObjectRef classObject = JSObjectMake(context, jsClass, g_object_ref(webPage));
-    JSRetainPtr<JSStringRef> propertyString(Adopt, JSStringCreateWithUTF8CString("WebProcessTestRunner"));
-    JSObjectSetProperty(context, globalObject, propertyString.get(), classObject, kJSPropertyAttributeNone, nullptr);
-    JSClassRelease(jsClass);
+    GRefPtr<JSCContext> context = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
+    WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    auto* jsClass = jsc_context_register_class(context.get(), "WebProcessTestRunner", nullptr, reinterpret_cast<GDestroyNotify>(webProcessTestRunnerFinalize));
+    WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsClass));
+    jsc_class_add_method(jsClass, "runTest", G_CALLBACK(runTest), NULL, NULL, G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
+    GRefPtr<JSCValue> testRunner = adoptGRef(jsc_value_new_object(context.get(), g_object_ref(webPage), jsClass));
+    WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(testRunner.get()));
+    jsc_context_set_value(context.get(), "WebProcessTestRunner", testRunner.get());
 }
 
 extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)

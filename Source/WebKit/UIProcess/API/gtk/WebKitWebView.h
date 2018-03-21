@@ -430,7 +430,7 @@ webkit_web_view_execute_editing_command_with_argument(WebKitWebView             
 WEBKIT_API WebKitFindController *
 webkit_web_view_get_find_controller                  (WebKitWebView             *web_view);
 
-WEBKIT_API JSGlobalContextRef
+WEBKIT_DEPRECATED JSGlobalContextRef
 webkit_web_view_get_javascript_global_context        (WebKitWebView             *web_view);
 
 WEBKIT_API void

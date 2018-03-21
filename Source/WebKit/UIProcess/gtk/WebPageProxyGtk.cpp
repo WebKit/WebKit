@@ -50,11 +50,6 @@ GtkWidget* WebPageProxy::viewWidget()
     return static_cast<PageClientImpl&>(m_pageClient).viewWidget();
 }
 
-JSGlobalContextRef WebPageProxy::javascriptGlobalContext()
-{
-    return m_pageClient.javascriptGlobalContext();
-}
-
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     return WebCore::standardUserAgent(applicationNameForUserAgent);

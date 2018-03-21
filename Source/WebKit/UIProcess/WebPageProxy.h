@@ -687,10 +687,6 @@ public:
     void setBackgroundColor(const WebCore::Color& color) { m_backgroundColor = color; }
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    JSGlobalContextRef javascriptGlobalContext();
-#endif
-
     void handleMouseEvent(const NativeWebMouseEvent&);
     void handleWheelEvent(const NativeWebWheelEvent&);
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);

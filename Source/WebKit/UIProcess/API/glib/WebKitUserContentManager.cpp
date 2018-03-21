@@ -188,9 +188,9 @@ public:
     {
     }
 
-    void didPostMessage(WebPageProxy& page, const FrameInfoData&, WebCore::SerializedScriptValue& serializedScriptValue) override
+    void didPostMessage(WebPageProxy&, const FrameInfoData&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
-        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(page.javascriptGlobalContext(), serializedScriptValue);
+        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
     }

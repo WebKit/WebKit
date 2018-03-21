@@ -25,6 +25,7 @@
 #if USE(GSTREAMER)
 #include <gst/gst.h>
 #endif
+#include <jsc/jsc.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Deque.h>
@@ -299,9 +300,8 @@ static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMess
     }
     *dest = '\0';
     GUniquePtr<char> script(g_strdup_printf("window.webkit.messageHandlers.console.postMessage(\"%s\");", escapedMessageString.get()));
-    JSGlobalContextRef jsContext = webkit_frame_get_javascript_global_context(webkit_web_page_get_main_frame(webPage));
-    JSRetainPtr<JSStringRef> jsScript(Adopt, JSStringCreateWithUTF8CString(script.get()));
-    JSEvaluateScript(jsContext, jsScript.get(), nullptr, nullptr, 1, nullptr);
+    GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(webPage)));
+    GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(jsContext.get(), script.get()));
 #endif
 }
 
@@ -409,25 +409,17 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
 #endif
 }
 
-static JSValueRef echoCallback(JSContextRef jsContext, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
+static char* echoCallback(const char* message)
 {
-    if (argumentCount <= 0)
-        return JSValueMakeUndefined(jsContext);
-
-    JSRetainPtr<JSStringRef> string(Adopt, JSValueToStringCopy(jsContext, arguments[0], 0));
-    return JSValueMakeString(jsContext, string.get());
+    return g_strdup(message);
 }
 
 static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, gpointer)
 {
-    JSGlobalContextRef jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
-    g_assert(jsContext);
-    JSObjectRef globalObject = JSContextGetGlobalObject(jsContext);
-    g_assert(globalObject);
-
-    JSRetainPtr<JSStringRef> functionName(Adopt, JSStringCreateWithUTF8CString("echo"));
-    JSObjectRef function = JSObjectMakeFunctionWithCallback(jsContext, functionName.get(), echoCallback);
-    JSObjectSetProperty(jsContext, globalObject, functionName.get(), function, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly, 0);
+    GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
+    g_assert(JSC_IS_CONTEXT(jsContext.get()));
+    GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(jsContext.get(), "echo", G_CALLBACK(echoCallback), NULL, NULL, G_TYPE_STRING, 1, G_TYPE_STRING));
+    jsc_context_set_value(jsContext.get(), "echo", function.get());
 }
 
 static WebKitWebPage* getWebPage(WebKitWebExtension* extension, uint64_t pageID, GDBusMethodInvocation* invocation)
@@ -475,9 +467,8 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         GRefPtr<WebKitScriptWorld> world = adoptGRef(webkit_script_world_new());
         g_assert(webkit_script_world_get_default() != world.get());
         WebKitFrame* frame = webkit_web_page_get_main_frame(page);
-        JSGlobalContextRef jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world.get());
-        JSRetainPtr<JSStringRef> jsScript(Adopt, JSStringCreateWithUTF8CString(script));
-        JSEvaluateScript(jsContext, jsScript.get(), 0, 0, 0, 0);
+        GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world.get()));
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(jsContext.get(), script));
         g_dbus_method_invocation_return_value(invocation, 0);
     } else if (!g_strcmp0(methodName, "AbortProcess")) {
         abort();

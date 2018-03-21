@@ -1,5 +1,57 @@
 2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] JSC bindings not introspectable
+        https://bugs.webkit.org/show_bug.cgi?id=136989
+
+        Reviewed by Michael Catanzaro.
+
+        Deprecate the functions that are not introspectable due to JSC C API in GTK+ port and remove them in WPE
+        port. Add alternative functions using the new JSC GLib API. We no longer need to keep a global context attached
+        to every view. We can simply create a temporary global context on demand and release it after 1 second. This
+        also allows us to remove WebPageProxy::javascriptGlobalContext() and all the related code.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * UIProcess/API/glib/WebKitJavascriptResult.cpp:
+        (_WebKitJavascriptResult::_WebKitJavascriptResult):
+        (webkitJavascriptResultCreate):
+        (webkit_javascript_result_get_global_context):
+        (webkit_javascript_result_get_value):
+        (webkit_javascript_result_get_js_value):
+        * UIProcess/API/glib/WebKitJavascriptResultPrivate.h:
+        (SharedJavascriptContext::singleton):
+        (SharedJavascriptContext::SharedJavascriptContext):
+        (SharedJavascriptContext::getOrCreateContext):
+        (SharedJavascriptContext::releaseContext):
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_get_javascript_global_context):
+        (webkitWebViewRunJavaScriptCallback):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitJavascriptResult.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/APIViewClient.h:
+        (API::ViewClient::handleDownloadRequest):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/API/wpe/WebKitJavascriptResult.h:
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        * WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp:
+        (webkit_frame_get_js_context):
+        (webkit_frame_get_js_context_for_script_world):
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.h:
+        * WebProcess/InjectedBundle/API/wpe/WebKitFrame.h:
+
+2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Initial implementation of JavaScriptCore glib bindings
         https://bugs.webkit.org/show_bug.cgi?id=164061
 

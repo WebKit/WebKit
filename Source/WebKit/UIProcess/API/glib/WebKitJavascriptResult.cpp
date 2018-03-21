@@ -22,29 +22,27 @@
 
 #include "APISerializedScriptValue.h"
 #include "WebKitJavascriptResultPrivate.h"
-#include <JavaScriptCore/JSRetainPtr.h>
-#include <wtf/glib/GRefPtr.h>
+#include <jsc/JSCContextPrivate.h>
+#include <jsc/JSCValuePrivate.h>
 
 struct _WebKitJavascriptResult {
-    _WebKitJavascriptResult(JSGlobalContextRef jsContext, WebCore::SerializedScriptValue& serializedScriptValue)
-        : javascriptGlobalContext(jsContext)
-        , referenceCount(1)
+    explicit _WebKitJavascriptResult(WebCore::SerializedScriptValue& serializedScriptValue)
     {
-        value = serializedScriptValue.deserialize(javascriptGlobalContext.get(), nullptr);
+        auto* jsContext = SharedJavascriptContext::singleton().getOrCreateContext();
+        jsValue = jscContextGetOrCreateValue(jsContext, serializedScriptValue.deserialize(jscContextGetJSContext(jsContext), nullptr));
     }
 
-    JSRetainPtr<JSGlobalContextRef> javascriptGlobalContext;
-    JSValueRef value;
+    GRefPtr<JSCValue> jsValue;
 
-    int referenceCount;
+    int referenceCount { 1 };
 };
 
 G_DEFINE_BOXED_TYPE(WebKitJavascriptResult, webkit_javascript_result, webkit_javascript_result_ref, webkit_javascript_result_unref)
 
-WebKitJavascriptResult* webkitJavascriptResultCreate(JSGlobalContextRef javascriptGlobalContext, WebCore::SerializedScriptValue& serializedScriptValue)
+WebKitJavascriptResult* webkitJavascriptResultCreate(WebCore::SerializedScriptValue& serializedScriptValue)
 {
     WebKitJavascriptResult* result = static_cast<WebKitJavascriptResult*>(fastMalloc(sizeof(WebKitJavascriptResult)));
-    new (result) WebKitJavascriptResult(javascriptGlobalContext, serializedScriptValue);
+    new (result) WebKitJavascriptResult(serializedScriptValue);
     return result;
 }
 
@@ -80,6 +78,7 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
     }
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_javascript_result_get_global_context:
  * @js_result: a #WebKitJavascriptResult
@@ -88,10 +87,13 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
  * <function>JSValueRef</function> returned by webkit_javascript_result_get_value().
  *
  * Returns: the <function>JSGlobalContextRef</function> for the #WebKitJavascriptResult
+ *
+ * Deprecated: 2.22: Use jsc_value_get_context() instead.
  */
 JSGlobalContextRef webkit_javascript_result_get_global_context(WebKitJavascriptResult* javascriptResult)
 {
-    return javascriptResult->javascriptGlobalContext.get();
+    g_return_val_if_fail(javascriptResult, nullptr);
+    return jscContextGetJSContext(jsc_value_get_context(javascriptResult->jsValue.get()));
 }
 
 /**
@@ -102,8 +104,28 @@ JSGlobalContextRef webkit_javascript_result_get_global_context(WebKitJavascriptR
  * returned by webkit_javascript_result_get_global_context() to use the <function>JSValueRef</function>.
  *
  * Returns: the <function>JSValueRef</function> of the #WebKitJavascriptResult
+ *
+ * Deprecated: 2.22: Use webkit_javascript_result_get_js_value() instead.
  */
 JSValueRef webkit_javascript_result_get_value(WebKitJavascriptResult* javascriptResult)
 {
-    return javascriptResult->value;
+    g_return_val_if_fail(javascriptResult, nullptr);
+    return jscValueGetJSValue(javascriptResult->jsValue.get());
+}
+#endif
+
+/**
+ * webkit_javascript_result_get_js_value:
+ * @js_result: a #WebKitJavascriptResult
+ *
+ * Get the #JSCValue of @js_result.
+ *
+ * Returns: (transfer none): the #JSCValue of the #WebKitJavascriptResult
+ *
+ * Since: 2.22
+ */
+JSCValue* webkit_javascript_result_get_js_value(WebKitJavascriptResult* javascriptResult)
+{
+    g_return_val_if_fail(javascriptResult, nullptr);
+    return javascriptResult->jsValue.get();
 }
