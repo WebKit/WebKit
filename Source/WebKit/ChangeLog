@@ -1,3 +1,17 @@
+2018-03-21  Frederic Wang  <fwang@igalia.com>
+
+        [iOS] Text highlighted by the Find UI overlaps with NBC news header on google.com
+        https://bugs.webkit.org/show_bug.cgi?id=183658
+
+        Reviewed by Tim Horton.
+
+        On Mobile, many sites have overlay headers or footers that may overlap with the highlighted
+        text inside a scrollable overflow node. To workaround that issue, this commit changes the
+        behavior so that the text is revealed at the center of the overflow node.
+
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::didFindString): Use alignCenterAlways instead of alignToEdgeIfNeeded.
+
 2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] JSC bindings not introspectable

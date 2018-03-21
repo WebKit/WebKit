@@ -7,6 +7,9 @@
     <script src="../../../../resources/testharnessreport.js"></script>
     <script type="text/javascript">
       setup({ "explicit_done": true });
+      function height(id) {
+        return document.getElementById(id).getBoundingClientRect().height;
+      }
       function run() {
         if (!window.testRunner || !testRunner.runUIScript)
           return;
@@ -29,6 +32,8 @@
             uiController.uiScriptComplete("Done");
           `, afterMatch4.step_func_done(function() {
               assert_greater_than(node.scrollTop, 0);
+              var expectedScrollTop = height("divBefore") + height("match4") / 2 - height("scrollable") / 2;
+              assert_approx_equals(node.scrollTop, expectedScrollTop, 2);
           }));
         }));
 
@@ -47,12 +52,13 @@
     </style>
   </head>
   <body onload="run()">
-    <p>Use iOS Find UI to search for the text "match". The following overflow node should scroll to show the fourth result.</p>
+    <p>Use iOS Find UI to search for the text "match". The following overflow node should scroll to show the fourth result at its center.</p>
     <p>match 2</p>
     <p>match 3</p>
     <div id="scrollable">
-      <div style="height: 200px; background: linear-gradient(135deg, blue, cyan);"></div>
-      <p>match 4</p>
+      <div id="divBefore" style="height: 300px; background: linear-gradient(135deg, blue, cyan);"></div>
+      <div id="match4">match 4</div>
+      <div style="height: 300px; background: linear-gradient(135deg, blue, cyan);"></div>
     </div>
   </body>
 </html>

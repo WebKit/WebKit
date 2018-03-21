@@ -1,3 +1,18 @@
+2018-03-21  Frederic Wang  <fwang@igalia.com>
+
+        [iOS] Text highlighted by the Find UI overlaps with NBC news header on google.com
+        https://bugs.webkit.org/show_bug.cgi?id=183658
+
+        Reviewed by Tim Horton.
+
+        Improve the test added in r224284, so that we test when a result is revealed at
+        the center of the overflow node.
+
+        * platform/ios/fast/scrolling/find-text-in-overflow-node.html: Put some content after
+        'match 4' so that the overflow node can scroll and make the text appear at the center.
+        Perform more accurate testing of the scrollTop of the overflow node.
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-expected.txt: Update expectation.
+
 2018-03-20  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeNeedsLayoutChecker fails with absolutely positioned svg and <use>

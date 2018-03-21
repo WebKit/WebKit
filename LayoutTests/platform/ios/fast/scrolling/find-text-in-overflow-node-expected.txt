@@ -1,11 +1,10 @@
-Use iOS Find UI to search for the text "match". The following overflow node should scroll to show the fourth result.
+Use iOS Find UI to search for the text "match". The following overflow node should scroll to show the fourth result at its center.
 
 match 2
 
 match 3
 
 match 4
-
 
 PASS Initial position of overflow node 
 PASS Position of overflow node after the three first results 
