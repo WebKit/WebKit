@@ -118,7 +118,8 @@ void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Secon
 
     m_pendingServiceWorkerTerminationRequests.add(identifier, std::make_unique<ServiceWorkerTerminationRequest>(*this, identifier, timeout));
 
-    serviceWorker->thread().stop([this, identifier, serviceWorker = WTFMove(serviceWorker), completionHandler = WTFMove(completionHandler)]() mutable {
+    auto& thread = serviceWorker->thread();
+    thread.stop([this, identifier, serviceWorker = WTFMove(serviceWorker), completionHandler = WTFMove(completionHandler)]() mutable {
         m_pendingServiceWorkerTerminationRequests.remove(identifier);
 
         if (auto* connection = SWContextManager::singleton().connection())

@@ -1,3 +1,22 @@
+2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use-after-move in SWContextManager::terminateWorker() with Linux x86_64 calling convention
+        https://bugs.webkit.org/show_bug.cgi?id=183783
+
+        Reviewed by Chris Dumez.
+
+        In SWContextManager::terminateWorker(), some calling conventions can
+        end up moving the ServiceWorkerThreadProxy RefPtr into the lambda struct
+        before that proxy's thread (on which the lambda is bound to execute) is
+        retrieved.
+
+        Avoid this by taking a reference to the thread in a separate earlier
+        expression, before the RefPtr is moved into the lambda in the following
+        one.
+
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::terminateWorker):
+
 2018-03-21  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build
