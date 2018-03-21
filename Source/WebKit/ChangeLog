@@ -1,3 +1,19 @@
+2018-03-21  Chris Dumez  <cdumez@apple.com>
+
+        WebKitTestRunner crashed in com.apple.WebKit: WebKit::WebProcessPool::terminateServiceWorkerProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=183875
+
+        Reviewed by Brent Fulgham.
+
+        Protect |this| while we're iterating over m_serviceWorkerProcesses and terminating
+        each service worker process. It is possible for the WebProcess pool to get destroyed
+        as a result of terminating a service worker process.
+
+        This change is covered by layout tests that are currently crashing on the ASAN bots.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::terminateServiceWorkerProcesses):
+
 2018-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         Fix typo in inactive media stream timeout default value

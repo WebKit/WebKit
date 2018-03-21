@@ -1505,9 +1505,7 @@ void WebProcessPool::terminateNetworkProcess()
 void WebProcessPool::terminateServiceWorkerProcesses()
 {
 #if ENABLE(SERVICE_WORKER)
-    if (m_serviceWorkerProcesses.isEmpty())
-        return;
-
+    auto protectedThis = makeRef(*this);
     while (!m_serviceWorkerProcesses.isEmpty())
         m_serviceWorkerProcesses.begin()->value->requestTermination(ProcessTerminationReason::RequestedByClient);
 #endif
