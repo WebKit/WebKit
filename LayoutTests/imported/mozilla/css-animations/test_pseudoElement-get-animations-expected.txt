@@ -1,0 +1,4 @@
+
+PASS getAnimations returns CSSAnimation objects 
+FAIL getAnimations returns css transitions/animations, and script-generated animations in the expected order assert_equals: Got expected number of animations/trnasitions running on ::after pseudo element expected 5 but got 2
+

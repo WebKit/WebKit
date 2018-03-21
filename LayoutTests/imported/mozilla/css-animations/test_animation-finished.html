@@ -1,0 +1,95 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+@keyframes abc {
+  to { transform: translate(10px) }
+}
+@keyframes def {}
+</style>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+const ANIM_PROP_VAL = 'abc 100s';
+const ANIM_DURATION = 100 * MS_PER_SEC;
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  // Set up pending animation
+  div.style.animation = ANIM_PROP_VAL;
+  var animation = div.getAnimations()[0];
+  var previousFinishedPromise = animation.finished;
+  // Set up listeners on finished promise
+  var retPromise = animation.finished.then(function() {
+    assert_unreached('finished promise is fulfilled');
+  }).catch(function(err) {
+    assert_equals(err.name, 'AbortError',
+                  'finished promise is rejected with AbortError');
+    assert_not_equals(animation.finished, previousFinishedPromise,
+                      'Finished promise should change after the original is ' +
+                      'rejected');
+  });
+
+  // Now cancel the animation and flush styles
+  div.style.animation = '';
+  getComputedStyle(div).animation;
+
+  return retPromise;
+}, 'finished promise is rejected when an animation is cancelled by resetting ' +
+   'the animation property');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  // As before, but this time instead of removing all animations, simply update
+  // the list of animations. At least for Firefox, updating is a different
+  // code path.
+
+  // Set up pending animation
+  div.style.animation = ANIM_PROP_VAL;
+  var animation = div.getAnimations()[0];
+  var previousFinishedPromise = animation.finished;
+
+  // Set up listeners on finished promise
+  var retPromise = animation.finished.then(function() {
+    assert_unreached('finished promise was fulfilled');
+  }).catch(function(err) {
+    assert_equals(err.name, 'AbortError',
+                  'finished promise is rejected with AbortError');
+    assert_not_equals(animation.finished, previousFinishedPromise,
+                      'Finished promise should change after the original is ' +
+                      'rejected');
+  });
+
+  // Now update the animation and flush styles
+  div.style.animation = 'def 100s';
+  getComputedStyle(div).animation;
+
+  return retPromise;
+}, 'finished promise is rejected when an animation is cancelled by changing ' +
+   'the animation property');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = ANIM_PROP_VAL;
+  var animation = div.getAnimations()[0];
+  var previousFinishedPromise = animation.finished;
+  animation.currentTime = ANIM_DURATION;
+  return animation.finished.then(function() {
+    div.style.animationPlayState = 'running';
+    return waitForAnimationFrames(2);
+  }).then(function() {
+    assert_equals(animation.finished, previousFinishedPromise,
+                  'Should not replay when animation-play-state changes to ' +
+                  '"running" on finished animation');
+    assert_equals(animation.currentTime, ANIM_DURATION,
+                  'currentTime should not change when animation-play-state ' +
+                  'changes to "running" on finished animation');
+  });
+}, 'Test finished promise changes when animationPlayState set to running');
+
+</script>
+</body>

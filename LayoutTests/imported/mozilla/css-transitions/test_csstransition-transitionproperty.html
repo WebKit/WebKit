@@ -1,0 +1,26 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(function(t) {
+  var div = addDiv(t);
+
+  // Add a transition
+  div.style.left = '0px';
+  getComputedStyle(div).transitionProperty;
+  div.style.transition = 'all 100s';
+  div.style.left = '100px';
+
+  assert_equals(div.getAnimations()[0].transitionProperty, 'left',
+                'The transitionProperty for the corresponds to the specific ' +
+                'property being transitioned');
+}, 'CSSTransition.transitionProperty');
+
+</script>
+</body>

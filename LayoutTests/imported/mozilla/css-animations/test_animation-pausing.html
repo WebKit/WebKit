@@ -1,0 +1,168 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+@keyframes anim {
+  0% { margin-left: 0px }
+  100% { margin-left: 10000px }
+}
+</style>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+function getMarginLeft(cs) {
+  return parseFloat(cs.marginLeft);
+}
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s paused';
+  var animation = div.getAnimations()[0];
+  assert_equals(getMarginLeft(cs), 0,
+                'Initial value of margin-left is zero');
+  animation.play();
+
+  return animation.ready.then(waitForNextFrame).then(function() {
+    assert_greater_than(getMarginLeft(cs), 0,
+                        'Playing value of margin-left is greater than zero');
+  });
+}, 'play() overrides animation-play-state');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s paused';
+  var animation = div.getAnimations()[0];
+  assert_equals(getMarginLeft(cs), 0,
+                'Initial value of margin-left is zero');
+
+  animation.pause();
+  div.style.animationPlayState = 'running';
+
+  return animation.ready.then(waitForNextFrame).then(function() {
+    assert_equals(cs.animationPlayState, 'running',
+                  'animation-play-state is running');
+    assert_equals(getMarginLeft(cs), 0,
+                  'Paused value of margin-left is zero');
+  });
+}, 'pause() overrides animation-play-state');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s paused';
+  var animation = div.getAnimations()[0];
+  assert_equals(getMarginLeft(cs), 0,
+                'Initial value of margin-left is zero');
+  animation.play();
+  var previousAnimVal;
+
+  return animation.ready.then(function() {
+    div.style.animationPlayState = 'running';
+    cs.animationPlayState; // Trigger style resolution
+    return waitForNextFrame();
+  }).then(function() {
+    assert_equals(cs.animationPlayState, 'running',
+                  'animation-play-state is running');
+    div.style.animationPlayState = 'paused';
+    return animation.ready;
+  }).then(function() {
+    assert_equals(cs.animationPlayState, 'paused',
+                  'animation-play-state is paused');
+    previousAnimVal = getMarginLeft(cs);
+    return waitForNextFrame();
+  }).then(function() {
+    assert_equals(getMarginLeft(cs), previousAnimVal,
+                  'Animated value of margin-left does not change when'
+                  + ' paused by style');
+  });
+}, 'play() is overridden by later setting "animation-play-state: paused"');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s';
+  var animation = div.getAnimations()[0];
+  assert_equals(getMarginLeft(cs), 0,
+                'Initial value of margin-left is zero');
+
+  // Set the specified style first. If implementations fail to
+  // apply the style changes first, they will ignore the redundant
+  // call to play() and fail to correctly override the pause style.
+  div.style.animationPlayState = 'paused';
+  animation.play();
+  var previousAnimVal = getMarginLeft(cs);
+
+  return animation.ready.then(waitForNextFrame).then(function() {
+    assert_equals(cs.animationPlayState, 'paused',
+                  'animation-play-state is paused');
+    assert_greater_than(getMarginLeft(cs), previousAnimVal,
+                        'Playing value of margin-left is increasing');
+  });
+}, 'play() flushes pending changes to animation-play-state first');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s paused';
+  var animation = div.getAnimations()[0];
+  assert_equals(getMarginLeft(cs), 0,
+                'Initial value of margin-left is zero');
+
+  // Unlike the previous test for play(), since calling pause() is sticky,
+  // we'll apply it even if the underlying style also says we're paused.
+  //
+  // We would like to test that implementations flush styles before running
+  // pause() but actually there's no style we can currently set that will
+  // change the behavior of pause(). That may change in the future
+  // (e.g. if we introduce animation-timeline or animation-playback-rate etc.).
+  //
+  // For now this just serves as a sanity check that we do the same thing
+  // even if we set style before calling the API.
+  div.style.animationPlayState = 'running';
+  animation.pause();
+  var previousAnimVal = getMarginLeft(cs);
+
+  return animation.ready.then(waitForNextFrame).then(function() {
+    assert_equals(cs.animationPlayState, 'running',
+                  'animation-play-state is running');
+    assert_equals(getMarginLeft(cs), previousAnimVal,
+                  'Paused value of margin-left does not change');
+  });
+}, 'pause() applies pending changes to animation-play-state first');
+// (Note that we can't actually test for this; see comment above, in test-body.)
+
+promise_test(function(t) {
+  var div = addDiv(t, { style: 'animation: anim 1000s' });
+  var animation = div.getAnimations()[0];
+  var readyPromiseRun = false;
+
+  return animation.ready.then(function() {
+    div.style.animationPlayState = 'paused';
+    assert_true(animation.pending && animation.playState === 'paused',
+                'Animation is pause-pending');
+
+    // Set current time
+    animation.currentTime = 5 * MS_PER_SEC;
+    assert_equals(animation.playState, 'paused',
+                  'Animation is paused immediately after setting currentTime');
+    assert_equals(animation.startTime, null,
+                  'Animation startTime is unresolved immediately after ' +
+                  'setting currentTime');
+    assert_equals(animation.currentTime, 5 * MS_PER_SEC,
+                  'Animation currentTime does not change when forcing a ' +
+                  'pause operation to complete');
+
+    // The ready promise should now be resolved. If it's not then test will
+    // probably time out before anything else happens that causes it to resolve.
+    return animation.ready;
+  });
+}, 'Setting the current time completes a pending pause');
+
+</script>
+</body>

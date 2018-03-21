@@ -1,0 +1,61 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+@keyframes anim { }
+</style>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s';
+  var animation = div.getAnimations()[0];
+  assert_equals(animation.playState, 'running');
+}, 'Animation returns correct playState when running');
+
+test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s paused';
+  var animation = div.getAnimations()[0];
+  assert_equals(animation.playState, 'paused');
+}, 'Animation returns correct playState when paused');
+
+test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s';
+  var animation = div.getAnimations()[0];
+  animation.pause();
+  assert_equals(animation.playState, 'paused');
+}, 'Animation.playState updates when paused by script');
+
+test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+  div.style.animation = 'anim 1000s paused';
+  var animation = div.getAnimations()[0];
+  div.style.animationPlayState = 'running';
+
+  // This test also checks that calling playState flushes style
+  assert_equals(animation.playState, 'running',
+                'Animation.playState reports running after updating'
+                + ' animation-play-state (got: ' + animation.playState + ')');
+}, 'Animation.playState updates when resumed by setting style');
+
+test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = 'anim 1000s';
+  var animation = div.getAnimations()[0];
+  animation.cancel();
+  assert_equals(animation.playState, 'idle');
+}, 'Animation returns correct playState when cancelled');
+
+</script>
+</body>

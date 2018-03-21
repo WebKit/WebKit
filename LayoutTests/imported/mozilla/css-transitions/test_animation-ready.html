@@ -1,0 +1,98 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+async_test(function(t) {
+  var div = addDiv(t);
+  div.style.transform = 'translate(0px)';
+  getComputedStyle(div).transform;
+  div.style.transition = 'transform 100s';
+  div.style.transform = 'translate(10px)';
+  getComputedStyle(div).transform;
+
+  var animation = div.getAnimations()[0];
+  var originalReadyPromise = animation.ready;
+
+  animation.ready.then(t.step_func(function() {
+    assert_equals(animation.ready, originalReadyPromise,
+                  'Ready promise is the same object when playing completes');
+    animation.pause();
+    assert_not_equals(animation.ready, originalReadyPromise,
+                      'Ready promise object identity differs when pausing');
+    t.done();
+  }));
+}, 'A new ready promise is created each time play() is called'
+   + ' the animation property');
+
+async_test(function(t) {
+  var div = addDiv(t);
+
+  // Set up pending transition
+  div.style.transform = 'translate(0px)';
+  getComputedStyle(div).transform;
+  div.style.transition = 'transform 100s';
+  div.style.transform = 'translate(10px)';
+  getComputedStyle(div).transform;
+
+  var animation = div.getAnimations()[0];
+  assert_true(animation.pending, 'Animation is initially pending');
+
+  // Set up listeners on ready promise
+  animation.ready.then(t.step_func(function() {
+    assert_unreached('ready promise was fulfilled');
+  })).catch(t.step_func(function(err) {
+    assert_equals(err.name, 'AbortError',
+                  'ready promise is rejected with AbortError');
+    assert_equals(animation.playState, 'idle',
+                  'Animation is idle after transition was cancelled');
+  })).then(t.step_func(function() {
+    t.done();
+  }));
+
+  // Now remove transform from transition-property and flush styles
+  div.style.transitionProperty = 'none';
+  getComputedStyle(div).transitionProperty;
+
+}, 'ready promise is rejected when a transition is cancelled by updating'
+   + ' transition-property');
+
+async_test(function(t) {
+  var div = addDiv(t);
+
+  // Set up pending transition
+  div.style.marginLeft = '0px';
+  getComputedStyle(div).marginLeft;
+  div.style.transition = 'margin-left 100s';
+  div.style.marginLeft = '100px';
+  getComputedStyle(div).marginLeft;
+
+  var animation = div.getAnimations()[0];
+  assert_true(animation.pending, 'Animation is initially pending');
+
+  // Set up listeners on ready promise
+  animation.ready.then(t.step_func(function() {
+    assert_unreached('ready promise was fulfilled');
+  })).catch(t.step_func(function(err) {
+    assert_equals(err.name, 'AbortError',
+                  'ready promise is rejected with AbortError');
+    assert_equals(animation.playState, 'idle',
+                  'Animation is idle after transition was cancelled');
+  })).then(t.step_func(function() {
+    t.done();
+  }));
+
+  // Now update the transition to animate to something not-interpolable
+  div.style.marginLeft = 'auto';
+  getComputedStyle(div).marginLeft;
+
+}, 'ready promise is rejected when a transition is cancelled by changing'
+   + ' the transition property to something not interpolable');
+
+</script>
+</body>

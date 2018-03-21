@@ -1,0 +1,3 @@
+
+FAIL CSSTransition.transitionProperty undefined is not an object (evaluating 'div.getAnimations()[0].transitionProperty')
+

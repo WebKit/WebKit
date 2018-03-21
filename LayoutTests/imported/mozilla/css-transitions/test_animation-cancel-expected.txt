@@ -1,0 +1,13 @@
+
+FAIL Animated style is cleared after cancelling a running CSS transition assert_equals: transform style is no longer animated after cancelling expected "1000px" but got "0.0030002400744706392px"
+FAIL After canceling a transition, it can still be re-used assert_equals: margin-left style is animated after re-starting transition expected "0px" but got "1000px"
+FAIL After cancelling a finished transition, it can still be re-used assert_equals: margin-left style is not animated after cancelling expected "1000px" but got "0.044057685881853104px"
+PASS After cancelling a transition, updating transition properties doesn't make it live again 
+FAIL Setting display:none on an element cancels its transitions assert_equals: expected "idle" but got "finished"
+FAIL Setting display:none cancels transitions on a child element assert_equals: expected "idle" but got "running"
+FAIL Removing a property from transition-property cancels transitions on that property assert_equals: expected "idle" but got "finished"
+FAIL Setting zero combined duration assert_equals: expected "idle" but got "finished"
+FAIL Changing style to another interpolable value cancels the original transition assert_equals: expected "idle" but got "finished"
+FAIL An after-change style value can't be interpolated assert_equals: expected "idle" but got "finished"
+FAIL Reversing a running transition cancels the original transition assert_equals: expected "idle" but got "finished"
+

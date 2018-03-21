@@ -1,0 +1,477 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<title>Tests for CSS-Transition events</title>
+<link rel="help" href="https://drafts.csswg.org/css-transitions-2/#transition-events">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+/**
+ * Helper class to record the elapsedTime member of each event.
+ * The EventWatcher class in testharness.js allows us to wait on
+ * multiple events in a certain order but only records the event
+ * parameters of the most recent event.
+ */
+function TransitionEventHandler(target) {
+  this.target = target;
+  this.target.ontransitionrun = evt => {
+    this.transitionrun = evt.elapsedTime;
+  };
+  this.target.ontransitionstart = evt => {
+    this.transitionstart = evt.elapsedTime;
+  };
+  this.target.ontransitionend = evt => {
+    this.transitionend = evt.elapsedTime;
+  };
+  this.target.ontransitioncancel = evt => {
+    this.transitioncancel = evt.elapsedTime;
+  };
+}
+
+TransitionEventHandler.prototype.clear = () => {
+  this.transitionrun    = undefined;
+  this.transitionstart  = undefined;
+  this.transitionend    = undefined;
+  this.transitioncancel = undefined;
+};
+
+function setupTransition(t, transitionStyle) {
+  const div = addDiv(t, { style: 'transition: ' + transitionStyle });
+  // Note that this TransitionEventHandler should be created before EventWatcher
+  // to capture all events in the handler prior to the EventWatcher since
+  // testharness.js proceeds when the EventWatcher received watching events.
+  const handler = new TransitionEventHandler(div);
+  const watcher = new EventWatcher(t, div, [ 'transitionrun',
+                                           'transitionstart',
+                                           'transitionend',
+                                           'transitioncancel' ]);
+  flushComputedStyle(div);
+
+  div.style.marginLeft = '100px';
+  const transition = div.getAnimations()[0];
+
+  return { transition, watcher, div, handler };
+}
+
+// On the next frame (i.e. when events are queued), whether or not the
+// transition is still pending depends on the implementation.
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+  return watcher.wait_for('transitionrun').then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Idle -> Pending or Before');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+  // Force the transition to leave the idle phase
+  transition.startTime = document.timeline.currentTime;
+  return watcher.wait_for('transitionrun').then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Idle -> Before');
+
+promise_test(t => {
+  const { transition, watcher, div, handler } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  // Seek to Active phase.
+  transition.currentTime = 100 * MS_PER_SEC;
+  // transition.pause();
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    assert_equals(handler.transitionrun, 0.0);
+    assert_equals(handler.transitionstart, 0.0);
+  });
+}, 'Idle or Pending -> Active');
+
+promise_test(t => {
+  const { transition, watcher, div, handler } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  // Seek to After phase.
+  transition.finish();
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart',
+                            'transitionend' ]).then(evt => {
+    assert_equals(handler.transitionrun, 0.0);
+    assert_equals(handler.transitionstart, 0.0);
+    assert_equals(handler.transitionend, 100.0);
+  });
+}, 'Idle or Pending -> After');
+
+// Timeout
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return Promise.all([ watcher.wait_for('transitionrun'),
+                       transition.ready ]).then(() => {
+    // Make idle
+    div.style.display = 'none';
+    flushComputedStyle(div);
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Before -> Idle (display: none)');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return Promise.all([ watcher.wait_for('transitionrun'),
+                       transition.ready ]).then(() => {
+    // Make idle
+    transition.timeline = null;
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Before -> Idle (Animation.timeline = null)');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return Promise.all([ watcher.wait_for('transitionrun'),
+                       transition.ready ]).then(() => {
+    transition.currentTime = 100 * MS_PER_SEC;
+    return watcher.wait_for('transitionstart');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Before -> Active');
+
+promise_test(t => {
+  const { transition, watcher, div, handler } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return Promise.all([ watcher.wait_for('transitionrun'),
+                       transition.ready ]).then(() => {
+    // Seek to After phase.
+    transition.currentTime = 200 * MS_PER_SEC;
+    return watcher.wait_for([ 'transitionstart', 'transitionend' ]);
+  }).then(evt => {
+    assert_equals(handler.transitionstart, 0.0);
+    assert_equals(handler.transitionend, 100.0);
+  });
+}, 'Before -> After');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s');
+
+  // Seek to Active start position.
+  transition.pause();
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Make idle
+    div.style.display = 'none';
+    flushComputedStyle(div);
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Active -> Idle, no delay (display: none)');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s');
+
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Make idle
+    transition.currentTime = 0;
+    transition.timeline = null;
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Active -> Idle, no delay (Animation.timeline = null)');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s 100s');
+  // Pause so the currentTime is fixed and we can accurately compare the event
+  // time in transition cancel events.
+  transition.pause();
+
+  // Seek to Active phase.
+  transition.currentTime = 100 * MS_PER_SEC;
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Make idle
+    div.style.display = 'none';
+    flushComputedStyle(div);
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Active -> Idle, with positive delay (display: none)');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  // Seek to Active phase.
+  transition.currentTime = 100 * MS_PER_SEC;
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Make idle
+    transition.currentTime = 100 * MS_PER_SEC;
+    transition.timeline = null;
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Active -> Idle, with positive delay (Animation.timeline = null)');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s -50s');
+
+  // Pause so the currentTime is fixed and we can accurately compare the event
+  // time in transition cancel events.
+  transition.pause();
+
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Make idle
+    div.style.display = 'none';
+    flushComputedStyle(div);
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 50.0);
+  });
+}, 'Active -> Idle, with negative delay (display: none)');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s -50s');
+
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Make idle
+    transition.currentTime = 50 * MS_PER_SEC;
+    transition.timeline = null;
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Active -> Idle, with negative delay (Animation.timeline = null)');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+  // Seek to Active phase.
+  transition.currentTime = 100 * MS_PER_SEC;
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Seek to Before phase.
+    transition.currentTime = 0;
+    return watcher.wait_for('transitionend');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 0.0);
+  });
+}, 'Active -> Before');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+  // Seek to Active phase.
+  transition.currentTime = 100 * MS_PER_SEC;
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Seek to After phase.
+    transition.currentTime = 200 * MS_PER_SEC;
+    return watcher.wait_for('transitionend');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 100.0);
+  });
+}, 'Active -> After');
+
+promise_test(t => {
+  const { transition, watcher, div, handler } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  // Seek to After phase.
+  transition.finish();
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart',
+                            'transitionend' ]).then(evt => {
+    // Seek to Before phase.
+    transition.currentTime = 0;
+    return watcher.wait_for([ 'transitionstart', 'transitionend' ]);
+  }).then(evt => {
+    assert_equals(handler.transitionstart, 100.0);
+    assert_equals(handler.transitionend, 0.0);
+  });
+}, 'After -> Before');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s 100s');
+  // Seek to After phase.
+  transition.finish();
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart',
+                            'transitionend' ]).then(evt => {
+    // Seek to Active phase.
+    transition.currentTime = 100 * MS_PER_SEC;
+    return watcher.wait_for('transitionstart');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 100.0);
+  });
+}, 'After -> Active');
+
+promise_test(t => {
+  const { transition, watcher, div, handler } =
+    setupTransition(t, 'margin-left 100s -50s');
+
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(() => {
+    assert_equals(handler.transitionrun, 50.0);
+    assert_equals(handler.transitionstart, 50.0);
+    transition.finish();
+    return watcher.wait_for('transitionend');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 100.0);
+  });
+}, 'Calculating the interval start and end time with negative start delay.');
+
+promise_test(t => {
+  const { transition, watcher, div, handler } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return watcher.wait_for('transitionrun').then(evt => {
+    // We can't set the end delay via generated effect timing.
+    // Because CSS-Transition use the AnimationEffectTimingReadOnly.
+    transition.effect = new KeyframeEffect(div,
+                                           { marginleft: [ '0px', '100px' ]},
+                                           { duration: 100 * MS_PER_SEC,
+                                             endDelay: -50 * MS_PER_SEC });
+    // Seek to Before and play.
+    transition.cancel();
+    transition.play();
+    return watcher.wait_for([ 'transitioncancel',
+                              'transitionrun',
+                              'transitionstart' ]);
+  }).then(() => {
+    assert_equals(handler.transitionstart, 0.0);
+
+    // Seek to After phase.
+    transition.finish();
+    return watcher.wait_for('transitionend');
+  }).then(evt => {
+    assert_equals(evt.elapsedTime, 50.0);
+  });
+}, 'Calculating the interval start and end time with negative end delay.');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return watcher.wait_for('transitionrun').then(() => {
+    // Make idle
+    div.style.display = 'none';
+    flushComputedStyle(div);
+    return watcher.wait_for('transitioncancel');
+  }).then(() => {
+    transition.cancel();
+    // Then wait a couple of frames and check that no event was dispatched
+    return waitForAnimationFrames(2);
+  });
+}, 'Call Animation.cancel after cancelling transition.');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return watcher.wait_for('transitionrun').then(evt => {
+    // Make idle
+    div.style.display = 'none';
+    flushComputedStyle(div);
+    transition.play();
+    watcher.wait_for([ 'transitioncancel',
+                       'transitionrun',
+                       'transitionstart' ]);
+  });
+}, 'Restart transition after cancelling transition immediately');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s 100s');
+
+  return watcher.wait_for('transitionrun').then(evt => {
+    // Make idle
+    div.style.display = 'none';
+    flushComputedStyle(div);
+    transition.play();
+    transition.cancel();
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    // Then wait a couple of frames and check that no event was dispatched
+    return waitForAnimationFrames(2);
+  });
+}, 'Call Animation.cancel after restarting transition immediately');
+
+promise_test(t => {
+  const { transition, watcher } =
+    setupTransition(t, 'margin-left 100s');
+
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    // Make idle
+    transition.timeline = null;
+    return watcher.wait_for('transitioncancel');
+  }).then(evt => {
+    transition.timeline = document.timeline;
+    transition.play();
+
+    return watcher.wait_for(['transitionrun', 'transitionstart']);
+  });
+}, 'Set timeline and play transition after clear the timeline');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s');
+
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(() => {
+    transition.cancel();
+    return watcher.wait_for('transitioncancel');
+  }).then(() => {
+    // Make After phase
+    transition.effect = null;
+
+    // Then wait a couple of frames and check that no event was dispatched
+    return waitForAnimationFrames(2);
+  });
+}, 'Set null target effect after cancel the transition');
+
+promise_test(t => {
+  const { transition, watcher, div } =
+    setupTransition(t, 'margin-left 100s');
+
+  return watcher.wait_for([ 'transitionrun',
+                            'transitionstart' ]).then(evt => {
+    transition.effect = null;
+    return watcher.wait_for('transitionend');
+  }).then(evt => {
+    transition.cancel();
+
+    // Then wait a couple of frames and check that no event was dispatched
+    return waitForAnimationFrames(2);
+  });
+}, 'Cancel the transition after clearing the target effect');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+@keyframes abc { }
+</style>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = 'abc 100s';
+  var animation = div.getAnimations()[0];
+  assert_equals(animation.id, '', 'id for CSS Animation is initially empty');
+  animation.id = 'anim'
+
+  assert_equals(animation.id, 'anim', 'animation.id reflects the value set');
+}, 'Animation.id for CSS Animations');
+
+</script>
+</body>
+</html>

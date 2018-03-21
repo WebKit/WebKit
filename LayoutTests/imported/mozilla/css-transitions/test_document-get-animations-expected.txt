@@ -1,0 +1,6 @@
+
+PASS getAnimations for non-animated content 
+FAIL getAnimations for CSS Transitions assert_equals: getAnimations returns two running CSS Transitions expected 2 but got 0
+FAIL CSS Transitions targetting (pseudo-)elements should have correct order after sorting assert_equals: CSS transition on both pseudo-elements and elements are returned expected 4 but got 2
+FAIL Transitions are not returned after they have finished assert_equals: Got transition expected 1 but got 0
+

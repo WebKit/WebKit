@@ -1,3 +1,83 @@
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Import CSS Animations and CSS Transitions as Web Animations tests from Mozilla
+        https://bugs.webkit.org/show_bug.cgi?id=183851
+
+        Reviewed by Jon Lee.
+
+        Import a series of tests created by Mozilla contributors for CSS Animations and CSS Transitions as Web Animations.
+
+        * css-animations/test_animation-cancel-expected.txt: Added.
+        * css-animations/test_animation-cancel.html: Added.
+        * css-animations/test_animation-computed-timing-expected.txt: Added.
+        * css-animations/test_animation-computed-timing.html: Added.
+        * css-animations/test_animation-currenttime-expected.txt: Added.
+        * css-animations/test_animation-currenttime.html: Added.
+        * css-animations/test_animation-finish-expected.txt: Added.
+        * css-animations/test_animation-finish.html: Added.
+        * css-animations/test_animation-finished-expected.txt: Added.
+        * css-animations/test_animation-finished.html: Added.
+        * css-animations/test_animation-id-expected.txt: Added.
+        * css-animations/test_animation-id.html: Added.
+        * css-animations/test_animation-pausing-expected.txt: Added.
+        * css-animations/test_animation-pausing.html: Added.
+        * css-animations/test_animation-playstate-expected.txt: Added.
+        * css-animations/test_animation-playstate.html: Added.
+        * css-animations/test_animation-ready-expected.txt: Added.
+        * css-animations/test_animation-ready.html: Added.
+        * css-animations/test_animation-reverse-expected.txt: Added.
+        * css-animations/test_animation-reverse.html: Added.
+        * css-animations/test_animation-starttime-expected.txt: Added.
+        * css-animations/test_animation-starttime.html: Added.
+        * css-animations/test_animations-dynamic-changes-expected.txt: Added.
+        * css-animations/test_animations-dynamic-changes.html: Added.
+        * css-animations/test_cssanimation-animationname-expected.txt: Added.
+        * css-animations/test_cssanimation-animationname.html: Added.
+        * css-animations/test_document-get-animations-expected.txt: Added.
+        * css-animations/test_document-get-animations.html: Added.
+        * css-animations/test_effect-target-expected.txt: Added.
+        * css-animations/test_effect-target.html: Added.
+        * css-animations/test_element-get-animations-expected.txt: Added.
+        * css-animations/test_element-get-animations.html: Added.
+        * css-animations/test_event-dispatch-expected.txt: Added.
+        * css-animations/test_event-dispatch.html: Added.
+        * css-animations/test_event-order-expected.txt: Added.
+        * css-animations/test_event-order.html: Added.
+        * css-animations/test_keyframeeffect-getkeyframes.html: Added.
+        * css-animations/test_pseudoElement-get-animations-expected.txt: Added.
+        * css-animations/test_pseudoElement-get-animations.html: Added.
+        * css-animations/test_setting-effect.html: Added.
+        * css-transitions/test_animation-cancel-expected.txt: Added.
+        * css-transitions/test_animation-cancel.html: Added.
+        * css-transitions/test_animation-computed-timing-expected.txt: Added.
+        * css-transitions/test_animation-computed-timing.html: Added.
+        * css-transitions/test_animation-currenttime-expected.txt: Added.
+        * css-transitions/test_animation-currenttime.html: Added.
+        * css-transitions/test_animation-finished-expected.txt: Added.
+        * css-transitions/test_animation-finished.html: Added.
+        * css-transitions/test_animation-pausing-expected.txt: Added.
+        * css-transitions/test_animation-pausing.html: Added.
+        * css-transitions/test_animation-ready-expected.txt: Added.
+        * css-transitions/test_animation-ready.html: Added.
+        * css-transitions/test_animation-starttime-expected.txt: Added.
+        * css-transitions/test_animation-starttime.html: Added.
+        * css-transitions/test_csstransition-transitionproperty-expected.txt: Added.
+        * css-transitions/test_csstransition-transitionproperty.html: Added.
+        * css-transitions/test_document-get-animations-expected.txt: Added.
+        * css-transitions/test_document-get-animations.html: Added.
+        * css-transitions/test_effect-target-expected.txt: Added.
+        * css-transitions/test_effect-target.html: Added.
+        * css-transitions/test_element-get-animations-expected.txt: Added.
+        * css-transitions/test_element-get-animations.html: Added.
+        * css-transitions/test_event-dispatch-expected.txt: Added.
+        * css-transitions/test_event-dispatch.html: Added.
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt: Added.
+        * css-transitions/test_keyframeeffect-getkeyframes.html: Added.
+        * css-transitions/test_pseudoElement-get-animations-expected.txt: Added.
+        * css-transitions/test_pseudoElement-get-animations.html: Added.
+        * css-transitions/test_setting-effect.html: Added.
+        * resources/testcommon.js: Added.
+
 2015-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         An SVG with no intrinsic size does not draw correct slices when used as a border-image for an HTML element.

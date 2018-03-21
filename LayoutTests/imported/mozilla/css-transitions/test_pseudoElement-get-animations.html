@@ -1,0 +1,47 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+.init::before {
+  content: '';
+  height: 0px;
+  width: 0px;
+  opacity: 0;
+  transition: all 100s;
+}
+.change::before {
+  height: 100px;
+  width: 100px;
+  opacity: 1;
+}
+</style>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(function(t) {
+  var div = addDiv(t, { class: 'init' });
+  flushComputedStyle(div);
+  div.classList.add('change');
+
+  // Sanity checks
+  assert_equals(document.getAnimations().length, 3,
+                'Got expected number of animations on document');
+  var pseudoTarget = document.getAnimations()[0].effect.target;
+  assert_class_string(pseudoTarget, 'CSSPseudoElement',
+                      'Got pseudo-element target');
+
+  // Check animations returned from the pseudo element are in correct order
+  var anims = pseudoTarget.getAnimations();
+  assert_equals(anims.length, 3,
+                'Got expected number of animations on pseudo-element');
+  assert_equals(anims[0].transitionProperty, 'height');
+  assert_equals(anims[1].transitionProperty, 'opacity');
+  assert_equals(anims[2].transitionProperty, 'width');
+}, 'getAnimations sorts simultaneous transitions by name');
+
+</script>
+</body>

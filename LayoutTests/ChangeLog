@@ -1,3 +1,15 @@
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Import CSS Animations and CSS Transitions as Web Animations tests from Mozilla
+        https://bugs.webkit.org/show_bug.cgi?id=183851
+
+        Reviewed by Jon Lee.
+
+        Mark all imported tests as flaky failures or timeouts while we work on making them pass reliably.
+        Each test has a dedicated bug tracking progress.
+
+        * TestExpectations:
+
 2018-03-21  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Mark fast/forms/file/entries-api/webkitdirectory-open-panel.html as passing.

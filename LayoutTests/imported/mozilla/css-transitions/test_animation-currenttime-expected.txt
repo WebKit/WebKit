@@ -1,0 +1,8 @@
+
+PASS currentTime of a newly created transition is zero 
+PASS Sanity test to check round-tripping assigning to new animation's currentTime 
+FAIL Skipping forward through transition assert_equals: Animation.playState should be "running" on the first paint tick after animation creation expected "running" but got "finished"
+PASS Skipping backwards through transition 
+PASS Setting currentTime to null 
+PASS Animation.currentTime after pausing 
+

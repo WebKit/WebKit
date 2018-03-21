@@ -1,0 +1,50 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+async_test(function(t) {
+  var div = addDiv(t);
+  var cs = getComputedStyle(div);
+
+  div.style.marginLeft = '0px';
+  cs.marginLeft; // Flush style to set up transition start point
+  div.style.transition = 'margin-left 100s';
+  div.style.marginLeft = '10000px';
+  cs.marginLeft;
+
+  var animation = div.getAnimations()[0];
+  var previousProgress = animation.effect.getComputedTiming().progress;
+  assert_equals(previousProgress, 0, 'Initial value of progress is zero');
+
+  animation.ready.then(waitForNextFrame).then(t.step_func(function() {
+    assert_greater_than(animation.effect.getComputedTiming().progress,
+                        previousProgress,
+                        'Iteration progress is initially increasing');
+    animation.pause();
+    return animation.ready;
+  })).then(t.step_func(function() {
+    previousProgress = animation.effect.getComputedTiming().progress;
+    return waitForNextFrame();
+  })).then(t.step_func(function() {
+    assert_equals(animation.effect.getComputedTiming().progress,
+                  previousProgress,
+                  'Iteration progress does not increase after calling pause()');
+    previousProgress = animation.effect.getComputedTiming().progress;
+    animation.play();
+    return animation.ready.then(waitForNextFrame);
+  })).then(t.step_func(function() {
+    assert_greater_than(animation.effect.getComputedTiming().progress,
+                        previousProgress,
+                        'Iteration progress increases after calling play()');
+    t.done();
+  }));
+}, 'pause() and play() a transition');
+
+</script>
+</body>

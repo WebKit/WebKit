@@ -1,0 +1,158 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+@keyframes anim1 {
+  to { left: 100px }
+}
+@keyframes anim2 { }
+</style>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = 'anim1 100s';
+  var originalAnimation = div.getAnimations()[0];
+  var originalStartTime;
+  var originalCurrentTime;
+
+  // Wait a moment so we can confirm the startTime doesn't change (and doesn't
+  // simply reflect the current time).
+  return originalAnimation.ready.then(function() {
+    originalStartTime = originalAnimation.startTime;
+    originalCurrentTime = originalAnimation.currentTime;
+
+    // Wait a moment so we can confirm the startTime doesn't change (and
+    // doesn't simply reflect the current time).
+    return waitForNextFrame();
+  }).then(function() {
+    div.style.animationDuration = '200s';
+    var animation = div.getAnimations()[0];
+    assert_equals(animation, originalAnimation,
+                  'The same Animation is returned after updating'
+                  + ' animation duration');
+    assert_equals(animation.startTime, originalStartTime,
+                  'Animations returned by getAnimations preserve'
+                  + ' their startTime even when they are updated');
+    // Sanity check
+    assert_not_equals(animation.currentTime, originalCurrentTime,
+                      'Animation.currentTime has updated in next'
+                      + ' requestAnimationFrame callback');
+  });
+}, 'Animations preserve their startTime when changed');
+
+test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = 'anim1 100s, anim1 100s';
+
+  // Store original state
+  var animations = div.getAnimations();
+  var animation1 = animations[0];
+  var animation2 = animations[1];
+
+  // Update first in list
+  div.style.animationDuration = '200s, 100s';
+  animations = div.getAnimations();
+  assert_equals(animations[0], animation1,
+                'First Animation is in same position after update');
+  assert_equals(animations[1], animation2,
+                'Second Animation is in same position after update');
+}, 'Updated Animations maintain their order in the list');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = 'anim1 200s, anim1 100s';
+
+  // Store original state
+  var animations = div.getAnimations();
+  var animation1 = animations[0];
+  var animation2 = animations[1];
+
+  // Wait before continuing so we can compare start times (otherwise the
+  // new Animation objects and existing Animation objects will all have the same
+  // start time).
+  return waitForAllAnimations(animations).then(waitForFrame).then(function() {
+    // Swap duration of first and second in list and prepend animation at the
+    // same time
+    div.style.animation = 'anim1 100s, anim1 100s, anim1 200s';
+    animations = div.getAnimations();
+    assert_true(animations[0] !== animation1 && animations[0] !== animation2,
+                'New Animation is prepended to start of list');
+    assert_equals(animations[1], animation1,
+                  'First Animation is in second position after update');
+    assert_equals(animations[2], animation2,
+                  'Second Animation is in third position after update');
+    assert_equals(animations[1].startTime, animations[2].startTime,
+                  'Old Animations have the same start time');
+    // TODO: Check that animations[0].startTime === null
+    return animations[0].ready;
+  }).then(function() {
+    assert_greater_than(animations[0].startTime, animations[1].startTime,
+                        'New Animation has later start time');
+  });
+}, 'Only the startTimes of existing animations are preserved');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = 'anim1 100s, anim1 100s';
+  var secondAnimation = div.getAnimations()[1];
+
+  // Wait before continuing so we can compare start times
+  return secondAnimation.ready.then(waitForNextFrame).then(function() {
+    // Trim list of animations
+    div.style.animationName = 'anim1';
+    var animations = div.getAnimations();
+    assert_equals(animations.length, 1, 'List of Animations was trimmed');
+    assert_equals(animations[0], secondAnimation,
+                  'Remaining Animation is the second one in the list');
+    assert_equals(typeof(animations[0].startTime), 'number',
+                  'Remaining Animation has resolved startTime');
+    assert_less_than(animations[0].startTime,
+                     animations[0].timeline.currentTime,
+                     'Remaining Animation preserves startTime');
+  });
+}, 'Animations are removed from the start of the list while preserving'
+   + ' the state of existing Animations');
+
+promise_test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = 'anim1 100s';
+  var firstAddedAnimation = div.getAnimations()[0],
+      secondAddedAnimation,
+      animations;
+
+  // Wait and add second Animation
+  return firstAddedAnimation.ready.then(waitForFrame).then(function() {
+    div.style.animation = 'anim1 100s, anim1 100s';
+    secondAddedAnimation = div.getAnimations()[0];
+
+    // Wait again and add another Animation
+    return secondAddedAnimation.ready.then(waitForFrame);
+  }).then(function() {
+    div.style.animation = 'anim1 100s, anim2 100s, anim1 100s';
+    animations = div.getAnimations();
+    assert_not_equals(firstAddedAnimation, secondAddedAnimation,
+                      'New Animations are added to start of the list');
+    assert_equals(animations[0], secondAddedAnimation,
+                  'Second Animation remains in same position after'
+                  + ' interleaving');
+    assert_equals(animations[2], firstAddedAnimation,
+                  'First Animation remains in same position after'
+                  + ' interleaving');
+    return animations[1].ready;
+  }).then(function() {
+    assert_greater_than(animations[1].startTime, animations[0].startTime,
+                        'Interleaved animation starts later than existing ' +
+                        'animations');
+    assert_greater_than(animations[0].startTime, animations[2].startTime,
+                        'Original animations retain their start time');
+  });
+}, 'Animation state is preserved when interleaving animations in list');
+
+</script>
+</body>

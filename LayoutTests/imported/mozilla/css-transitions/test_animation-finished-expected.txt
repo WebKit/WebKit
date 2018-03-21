@@ -1,0 +1,4 @@
+
+PASS Test restarting a finished transition 
+FAIL Test restarting a reversed finished transition assert_equals: Replaying a finished reversed transition should reset its currentTime to the end of the effect expected 2000000 but got 0
+

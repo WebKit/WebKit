@@ -1,0 +1,8 @@
+
+PASS startTime of a newly created transition is unresolved 
+PASS Sanity test to check round-tripping assigning to new animation's startTime 
+FAIL Skipping forward through animation assert_equals: Animation.playState should be "running" on the first paint tick after animation creation expected "running" but got "finished"
+FAIL Skipping backwards through transition assert_equals: the computed value of margin-left should be half way through the animation at the midpoint of the active interval expected 150 but got 200
+PASS Setting startTime to null 
+PASS Animation.startTime after paused 
+

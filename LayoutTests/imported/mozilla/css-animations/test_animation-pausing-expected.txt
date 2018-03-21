@@ -1,0 +1,8 @@
+
+FAIL play() overrides animation-play-state undefined is not an object (evaluating 'animation.play')
+FAIL pause() overrides animation-play-state undefined is not an object (evaluating 'animation.pause')
+FAIL play() is overridden by later setting "animation-play-state: paused" undefined is not an object (evaluating 'animation.play')
+FAIL play() flushes pending changes to animation-play-state first assert_greater_than: Playing value of margin-left is increasing expected a number greater than 0 but got 0
+FAIL pause() applies pending changes to animation-play-state first undefined is not an object (evaluating 'animation.pause')
+FAIL Setting the current time completes a pending pause assert_true: Animation is pause-pending expected true got false
+

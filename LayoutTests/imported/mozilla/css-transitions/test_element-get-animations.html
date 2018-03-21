@@ -1,0 +1,149 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+async_test(function(t) {
+  var div = addDiv(t);
+
+  // FIXME: This test does too many things. It should be split up.
+
+  // Add a couple of transitions
+  div.style.left = '0px';
+  div.style.top = '0px';
+  getComputedStyle(div).transitionProperty;
+
+  div.style.transition = 'all 100s';
+  div.style.left = '100px';
+  div.style.top = '100px';
+
+  var animations = div.getAnimations();
+  assert_equals(animations.length, 2,
+    'getAnimations() returns one Animation per transitioning property');
+  waitForAllAnimations(animations).then(t.step_func(function() {
+    var startTime = animations[0].startTime;
+    assert_true(startTime > 0 && startTime <= document.timeline.currentTime,
+                'CSS transitions have sensible start times');
+    assert_equals(animations[0].startTime, animations[1].startTime,
+      'CSS transitions started together have the same start time');
+    // Wait a moment then add a third transition
+    return waitForFrame();
+  })).then(t.step_func(function() {
+    div.style.backgroundColor = 'green';
+    animations = div.getAnimations();
+    assert_equals(animations.length, 3,
+      'getAnimations returns Animations for all running CSS Transitions');
+    return waitForAllAnimations(animations);
+  })).then(t.step_func(function() {
+    assert_less_than(animations[1].startTime, animations[2].startTime,
+      'Animation for additional CSS transition starts after the original'
+      + ' transitions and appears later in the list');
+    t.done();
+  }));
+}, 'getAnimations for CSS Transitions');
+
+test(function(t) {
+  var div = addDiv(t, { style: 'left: 0px; transition: all 100s' });
+
+  flushComputedStyle(div);
+  div.style.left = '100px';
+
+  assert_class_string(div.getAnimations()[0], 'CSSTransition',
+                      'Interface of returned animation is CSSTransition');
+}, 'getAnimations returns CSSTransition objects for CSS Transitions');
+
+async_test(function(t) {
+  var div = addDiv(t);
+
+  // Set up event listener
+  div.addEventListener('transitionend', t.step_func(function() {
+    assert_equals(div.getAnimations().length, 0,
+      'getAnimations does not return finished CSS Transitions');
+    t.done();
+  }));
+
+  // Add a very short transition
+  div.style.left = '0px';
+  getComputedStyle(div).left;
+
+  div.style.transition = 'all 0.01s';
+  div.style.left = '100px';
+  getComputedStyle(div).left;
+}, 'getAnimations for CSS Transitions that have finished');
+
+test(function(t) {
+  var div = addDiv(t);
+
+  // Try to transition non-animatable property animation-duration
+  div.style.animationDuration = '10s';
+  getComputedStyle(div).animationDuration;
+
+  div.style.transition = 'all 100s';
+  div.style.animationDuration = '100s';
+
+  assert_equals(div.getAnimations().length, 0,
+    'getAnimations returns an empty sequence for a transition'
+    + ' of a non-animatable property');
+}, 'getAnimations for transition on non-animatable property');
+
+test(function(t) {
+  var div = addDiv(t);
+
+  div.style.setProperty('-vendor-unsupported', '0px', '');
+  getComputedStyle(div).transitionProperty;
+  div.style.transition = 'all 100s';
+  div.style.setProperty('-vendor-unsupported', '100px', '');
+
+  assert_equals(div.getAnimations().length, 0,
+    'getAnimations returns an empty sequence for a transition'
+    + ' of an unsupported property');
+}, 'getAnimations for transition on unsupported property');
+
+test(function(t) {
+  var div = addDiv(t, { style: 'transform: translate(0px); ' +
+                               'opacity: 0; ' +
+                               'border-width: 0px; ' + // Shorthand
+                               'border-style: solid' });
+  getComputedStyle(div).transform;
+
+  div.style.transition = 'all 100s';
+  div.style.transform = 'translate(100px)';
+  div.style.opacity = '1';
+  div.style.borderWidth = '1px';
+
+  var animations = div.getAnimations();
+  assert_equals(animations.length, 6,
+                'Generated expected number of transitions');
+  assert_equals(animations[0].transitionProperty, 'border-bottom-width');
+  assert_equals(animations[1].transitionProperty, 'border-left-width');
+  assert_equals(animations[2].transitionProperty, 'border-right-width');
+  assert_equals(animations[3].transitionProperty, 'border-top-width');
+  assert_equals(animations[4].transitionProperty, 'opacity');
+  assert_equals(animations[5].transitionProperty, 'transform');
+}, 'getAnimations sorts simultaneous transitions by name');
+
+test(function(t) {
+  var div = addDiv(t, { style: 'transform: translate(0px); ' +
+                               'opacity: 0' });
+  getComputedStyle(div).transform;
+
+  div.style.transition = 'all 100s';
+  div.style.transform = 'translate(100px)';
+  assert_equals(div.getAnimations().length, 1,
+                'Initially there is only one (transform) transition');
+  div.style.opacity = '1';
+  assert_equals(div.getAnimations().length, 2,
+                'Then a second (opacity) transition is added');
+
+  var animations = div.getAnimations();
+  assert_equals(animations[0].transitionProperty, 'transform');
+  assert_equals(animations[1].transitionProperty, 'opacity');
+}, 'getAnimations sorts transitions by when they were generated');
+
+</script>
+</body>

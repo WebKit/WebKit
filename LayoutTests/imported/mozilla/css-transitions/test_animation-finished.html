@@ -1,0 +1,63 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+
+.animated-div {
+  margin-left: 100px;
+  transition: margin-left 1000s linear 1000s;
+}
+
+</style>
+<body>
+<div id="log"></div>
+<script>
+
+'use strict';
+
+const ANIM_DELAY_MS = 1000000; // 1000s
+const ANIM_DUR_MS = 1000000; // 1000s
+
+async_test(function(t) {
+  var div = addDiv(t, {'class': 'animated-div'});
+  flushComputedStyle(div);
+  div.style.marginLeft = '200px'; // initiate transition
+
+  var animation = div.getAnimations()[0];
+
+  animation.finish();
+
+  animation.finished.then(t.step_func(function() {
+    animation.play();
+    assert_equals(animation.currentTime, 0,
+                  'Replaying a finished transition should reset its ' +
+                  'currentTime');
+    t.done();
+  }));
+}, 'Test restarting a finished transition');
+
+async_test(function(t) {
+  var div = addDiv(t, {'class': 'animated-div'});
+  flushComputedStyle(div);
+  div.style.marginLeft = '200px'; // initiate transition
+
+  var animation = div.getAnimations()[0];
+
+  animation.ready.then(function() {
+    animation.playbackRate = -1;
+    return animation.finished;
+  }).then(t.step_func(function() {
+    animation.play();
+    // FIXME: once animation.effect.computedTiming.endTime is available (bug
+    // 1108055) we should use that here.
+    assert_equals(animation.currentTime, ANIM_DELAY_MS + ANIM_DUR_MS,
+                  'Replaying a finished reversed transition should reset ' +
+                  'its currentTime to the end of the effect');
+    t.done();
+  }));
+}, 'Test restarting a reversed finished transition');
+
+</script>
+</body>

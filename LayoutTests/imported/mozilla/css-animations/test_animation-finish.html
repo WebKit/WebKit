@@ -1,0 +1,97 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+@keyframes anim {
+  from { margin-left: 100px; }
+  to { margin-left: 200px; }
+}
+</style>
+<body>
+<div id="log"></div>
+<script>
+
+'use strict';
+
+const ANIM_PROP_VAL = 'anim 100s';
+const ANIM_DURATION = 100000; // ms
+
+test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = ANIM_PROP_VAL;
+  div.style.animationIterationCount = 'infinite';
+  var animation = div.getAnimations()[0];
+
+  var threw = false;
+  try {
+    animation.finish();
+  } catch (e) {
+    threw = true;
+    assert_equals(e.name, 'InvalidStateError',
+                  'Exception should be an InvalidStateError exception when ' +
+                  'trying to finish an infinite animation');
+  }
+  assert_true(threw,
+              'Expect InvalidStateError exception trying to finish an ' +
+              'infinite animation');
+}, 'Test exceptions when finishing infinite animation');
+
+async_test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = ANIM_PROP_VAL + ' paused';
+  var animation = div.getAnimations()[0];
+
+  animation.ready.then(t.step_func(function() {
+    animation.finish();
+    assert_equals(animation.playState, 'finished',
+                  'The play state of a paused animation should become ' +
+                  '"finished" after finish() is called');
+    assert_times_equal(animation.startTime,
+                       animation.timeline.currentTime - ANIM_DURATION,
+                       'The start time of a paused animation should be set ' +
+                       'after calling finish()');
+    t.done();
+  }));
+}, 'Test finish() while paused');
+
+test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = ANIM_PROP_VAL + ' paused';
+  var animation = div.getAnimations()[0];
+
+  // Update playbackRate so we can test that the calculated startTime
+  // respects it
+  animation.playbackRate = 2;
+
+  // While animation is still pause-pending call finish()
+  animation.finish();
+
+  assert_equals(animation.playState, 'finished',
+                'The play state of a pause-pending animation should become ' +
+                '"finished" after finish() is called');
+  assert_times_equal(animation.startTime,
+                     animation.timeline.currentTime - ANIM_DURATION / 2,
+                     'The start time of a pause-pending animation should ' +
+                     'be set after calling finish()');
+}, 'Test finish() while pause-pending with positive playbackRate');
+
+test(function(t) {
+  var div = addDiv(t);
+  div.style.animation = ANIM_PROP_VAL + ' paused';
+  var animation = div.getAnimations()[0];
+
+  animation.playbackRate = -2;
+  animation.finish();
+
+  assert_equals(animation.playState, 'finished',
+                'The play state of a pause-pending animation should become ' +
+                '"finished" after finish() is called');
+  assert_equals(animation.startTime, animation.timeline.currentTime,
+                'The start time of a pause-pending animation should be ' +
+                'set after calling finish()');
+}, 'Test finish() while pause-pending with negative playbackRate');
+
+</script>
+</body>

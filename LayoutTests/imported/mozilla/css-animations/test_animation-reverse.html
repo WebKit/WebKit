@@ -1,0 +1,30 @@
+<!doctype html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
+<meta charset=utf-8>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/testcommon.js"></script>
+<style>
+@keyframes anim {
+  to { transform: translate(100px) }
+}
+</style>
+<body>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(function(t) {
+  var div = addDiv(t, { style: 'animation: anim 100s' });
+  var animation = div.getAnimations()[0];
+  div.style.animation = "";
+  flushComputedStyle(div);
+
+  assert_equals(animation.currentTime, null);
+  animation.reverse();
+
+  assert_equals(animation.currentTime, 100 * MS_PER_SEC,
+    'animation.currentTime should be its effect end');
+}, 'reverse() from idle state starts playing the animation');
+
+</script>
+</body>
