@@ -1,3 +1,16 @@
+2018-03-21  Per Arne Vollan  <pvollan@apple.com>
+
+        Compile error when not using IOSurface canvas backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=183855
+
+        Reviewed by Brent Fulgham.
+
+        The method IOSurface::createFromImageBuffer is only referenced when IOSurface
+        is used as canvas backing store.
+
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+
 2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Track dirty rects that need update in CoordinatedGraphicsLayer

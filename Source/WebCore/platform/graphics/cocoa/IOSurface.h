@@ -88,7 +88,9 @@ public:
     static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, CGColorSpaceRef);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
     
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     static std::unique_ptr<IOSurface> createFromImageBuffer(std::unique_ptr<ImageBuffer>);
+#endif
 
     WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&);
 
