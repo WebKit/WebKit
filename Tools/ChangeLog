@@ -1,3 +1,12 @@
+2018-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        Enable the minimal simulator feature flag when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=183807
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-03-20  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Disconnect Display.Box from Layout.Box
