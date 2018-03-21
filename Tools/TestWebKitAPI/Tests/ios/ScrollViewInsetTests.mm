@@ -33,6 +33,44 @@
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
 
+@interface AsyncPolicyDelegateForInsetTest : NSObject<WKNavigationDelegate> {
+    @public BOOL _navigationComplete;
+}
+@property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *);
+@end
+
+@implementation AsyncPolicyDelegateForInsetTest
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+{
+    _navigationComplete = YES;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
+    dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
+    dispatch_after(when, dispatch_get_main_queue(), ^{
+        decisionHandler(WKNavigationActionPolicyAllow);
+    });
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
+    dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
+    dispatch_after(when, dispatch_get_main_queue(), ^{
+        decisionHandler(WKNavigationResponsePolicyAllow);
+    });
+}
+
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+{
+    if (_webContentProcessDidTerminate)
+        _webContentProcessDidTerminate(webView);
+}
+@end
+
 namespace TestWebKitAPI {
 
 static const CGFloat viewHeight = 500;
@@ -107,6 +145,34 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrash)
     [webView scrollView].contentInset = UIEdgeInsetsMake(400, 0, 0, 0);
     [webView synchronouslyLoadHTMLString:veryTallDocumentMarkup];
     [webView setNavigationDelegate:delegate.get()];
+
+    CGPoint initialContentOffset = [webView scrollView].contentOffset;
+    __block CGPoint contentOffsetAfterCrash = CGPointZero;
+    __block bool done = false;
+    [delegate setWebContentProcessDidTerminate:^(WKWebView *webView) {
+        contentOffsetAfterCrash = webView.scrollView.contentOffset;
+        done = true;
+    }];
+
+    [webView _killWebContentProcessAndResetState];
+    Util::run(&done);
+
+    EXPECT_EQ(initialContentOffset.x, contentOffsetAfterCrash.x);
+    EXPECT_EQ(initialContentOffset.y, contentOffsetAfterCrash.y);
+    EXPECT_EQ(0, initialContentOffset.x);
+    EXPECT_EQ(-400, initialContentOffset.y);
+}
+
+TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrashWithAsyncPolicyDelegates)
+{
+    auto delegate = adoptNS([[AsyncPolicyDelegateForInsetTest alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, viewHeight)]);
+    [webView scrollView].contentInset = UIEdgeInsetsMake(400, 0, 0, 0);
+    [webView setNavigationDelegate:delegate.get()];
+    delegate->_navigationComplete = NO;
+    NSURL *testResourceURL = [[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    [webView loadHTMLString:veryTallDocumentMarkup baseURL:testResourceURL];
+    Util::run(&delegate->_navigationComplete);
 
     CGPoint initialContentOffset = [webView scrollView].contentOffset;
     __block CGPoint contentOffsetAfterCrash = CGPointZero;

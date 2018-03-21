@@ -3167,6 +3167,8 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     // through this method already, nested; otherwise, policyDataSource should still be set.
     ASSERT(m_policyDocumentLoader || !m_provisionalDocumentLoader->unreachableURL().isEmpty());
 
+    m_client.didDecidePolicyForNavigationAction();
+
     bool isTargetItem = history().provisionalItem() ? history().provisionalItem()->isTargetItem() : false;
 
     bool urlIsDisallowed = allowNavigationToInvalidURL == AllowNavigationToInvalidURL::No && !request.url().isValid();

@@ -1,5 +1,21 @@
 2018-03-21  Chris Dumez  <cdumez@apple.com>
 
+        ScrollViewInsetTests.RestoreInitialContentOffsetAfterCrash API test is failing with async delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183787
+
+        Reviewed by Wenson Hsieh.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (-[AsyncPolicyDelegateForInsetTest webView:didFinishNavigation:]):
+        (-[AsyncPolicyDelegateForInsetTest webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[AsyncPolicyDelegateForInsetTest webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[AsyncPolicyDelegateForInsetTest webViewWebContentProcessDidTerminate:]):
+        (TestWebKitAPI::TEST):
+
+2018-03-21  Chris Dumez  <cdumez@apple.com>
+
         Fix DataInteractionTests.InjectedBundleAllowPerformTwoStepDrop to use synchronouslyLoadTestPageNamed
         https://bugs.webkit.org/show_bug.cgi?id=183858
 

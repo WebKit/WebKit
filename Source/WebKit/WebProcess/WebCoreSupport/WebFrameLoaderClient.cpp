@@ -825,6 +825,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
 
+    m_isDecidingNavigationPolicyDecision = true;
+    if (m_frame->isMainFrame())
+        webPage->didStartNavigationPolicyCheck();
+
     // Always ignore requests with empty URLs. 
     if (request.isEmpty()) {
         function(PolicyAction::Ignore);
@@ -896,8 +900,25 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         m_frame->didReceivePolicyDecision(listenerID, policyAction, newNavigationID, downloadID, WTFMove(websitePolicies));
 }
 
+void WebFrameLoaderClient::didDecidePolicyForNavigationAction()
+{
+    if (!m_isDecidingNavigationPolicyDecision)
+        return;
+
+    m_isDecidingNavigationPolicyDecision = false;
+
+    if (!m_frame || !m_frame->isMainFrame())
+        return;
+
+    if (auto* webPage = m_frame->page())
+        webPage->didCompleteNavigationPolicyCheck();
+}
+
 void WebFrameLoaderClient::cancelPolicyCheck()
 {
+    if (m_isDecidingNavigationPolicyDecision)
+        didDecidePolicyForNavigationAction();
+
     m_frame->invalidatePolicyListener();
 }
 
@@ -1310,6 +1331,8 @@ void WebFrameLoaderClient::provisionalLoadStarted()
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
+
+    ASSERT(!m_isDecidingNavigationPolicyDecision);
 
     if (m_frame->isMainFrame()) {
         webPage->didStartPageTransition();

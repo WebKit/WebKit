@@ -1,3 +1,40 @@
+2018-03-21  Chris Dumez  <cdumez@apple.com>
+
+        ScrollViewInsetTests.RestoreInitialContentOffsetAfterCrash API test is failing with async delegates
+        https://bugs.webkit.org/show_bug.cgi?id=183787
+
+        Reviewed by Wenson Hsieh.
+
+        Without asynchronous policy delegates, when the client requests a navigation, we would:
+        1. Do a synchronous navigation policy check
+        2. If the client allows the navigation, start the provisional load
+
+        Starting the provisional load would freeze the layer tree until first meaningful
+        layout via WebFrameLoaderClient::provisionalLoadStarted() -> WebPage::didStartPageTransition().
+
+        When constructing a WebView and then requesting a load right away. This would make sure
+        we do not commit a layer tree for the initial about:blank page because the layer tree
+        would be frozen until we have something meaningful to show for the following load.
+
+        However, with asynchronous policy delegates, we are able to do a layer tree commit
+        during the asynchronous navigation policy check because the layer tree is not frozen
+        yet (provisional load has not started) and the process is not stuck on synchronous
+        IPC. When constructing a WebView and then requesting a load right away, this would
+        allow a layer tree commit for about:blank to happen before we've even started the
+        load. This would cause some API tests to fail on iOS.
+
+        To address the issue, we try and maintain pre-existing behavior by freezing the
+        layer tree during navigation policy decision.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::didDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartNavigationPolicyCheck):
+        (WebKit::WebPage::didCompleteNavigationPolicyCheck):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Allow the WebContent process to read ViewBridge preferences
