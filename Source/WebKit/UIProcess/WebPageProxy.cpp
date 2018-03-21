@@ -2357,8 +2357,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
     DownloadID downloadID = { };
     if (action == PolicyAction::Download) {
         // Create a download proxy.
-        const ResourceRequest& downloadRequest = m_decidePolicyForResponseRequest ? *m_decidePolicyForResponseRequest : ResourceRequest();
-        DownloadProxy* download = m_process->processPool().createDownloadProxy(downloadRequest, this);
+        auto* download = m_process->processPool().createDownloadProxy(m_decidePolicyForResponseRequest, this);
         if (navigation) {
             download->setWasUserInitiated(navigation->wasUserInitiated());
             download->setRedirectChain(navigation->takeRedirectChain());
@@ -2366,15 +2365,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
 
         downloadID = download->downloadID();
         handleDownloadRequest(download);
-    }
-
-    // If we received a policy decision while in decidePolicyForResponse the decision will
-    // be sent back to the web process by decidePolicyForResponse.
-    if (m_inDecidePolicyForResponseSync) {
-        m_syncMimeTypePolicyActionIsValid = true;
-        m_syncMimeTypePolicyAction = action;
-        m_syncMimeTypePolicyDownloadID = downloadID;
-        return;
+        m_decidePolicyForResponseRequest = { };
     }
 
     auto* activePolicyListener = frame.activePolicyListenerProxy();
@@ -2392,16 +2383,6 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
         }
     }
 
-    // If we received a policy decision while in decidePolicyForNavigationAction the decision will 
-    // be sent back to the web process by decidePolicyForNavigationAction. 
-    if (m_inDecidePolicyForNavigationAction) {
-        m_syncNavigationActionPolicyActionIsValid = true;
-        m_syncNavigationActionPolicyAction = action;
-        m_syncNavigationActionPolicyDownloadID = downloadID;
-        m_syncNavigationActionPolicyWebsitePolicies = WTFMove(websitePolicies);
-        return;
-    }
-    
     m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame.frameID(), listenerID, action, navigation ? navigation->navigationID() : 0, downloadID, websitePolicies), m_pageID);
 }
 
@@ -3813,7 +3794,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
         m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, ResourceRequest&& request, uint64_t listenerID, const UserData& userData, bool& receivedPolicyAction, uint64_t& newNavigationID, WebCore::PolicyAction& policyAction, DownloadID& downloadID, std::optional<WebsitePoliciesData>& websitePolicies)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, ResourceRequest&& request, uint64_t listenerID, const UserData& userData)
 {
     LOG(Loading, "WebPageProxy::didStartProvisionalLoadForFrame - Target url %s", originalRequest.url().string().utf8().data());
 
@@ -3830,6 +3811,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(originalRequest.url());
     
+    uint64_t newNavigationID { 0 };
     Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NavigationAction);
     if (!navigationID) {
         auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
@@ -3839,23 +3821,16 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
         listener->setNavigation(WTFMove(navigation));
     } else {
         auto& navigation = m_navigationState->navigation(navigationID);
+        newNavigationID = navigationID;
         navigation.setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
         navigation.setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
         listener->setNavigation(navigation);
     }
 
 #if ENABLE(CONTENT_FILTERING)
-    if (frame->didHandleContentFilterUnblockNavigation(request)) {
-        receivedPolicyAction = true;
-        policyAction = PolicyAction::Ignore;
-        return;
-    }
+    if (frame->didHandleContentFilterUnblockNavigation(request))
+        return receivedPolicyDecision(PolicyAction::Ignore, *frame, listenerID, &m_navigationState->navigation(newNavigationID), { });
 #endif
-
-    ASSERT(!m_inDecidePolicyForNavigationAction);
-    
-    m_inDecidePolicyForNavigationAction = true;
-    m_syncNavigationActionPolicyActionIsValid = false;
 
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameInfoData.frameID);
 
@@ -3877,15 +3852,6 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
         m_policyClient->decidePolicyForNavigationAction(*this, frame, WTFMove(navigationActionData), originatingFrame, originalRequest, WTFMove(request), WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
 
     m_shouldSuppressAppLinksInNextNavigationPolicyDecision = false;
-    m_inDecidePolicyForNavigationAction = false;
-
-    // Check if we received a policy decision already. If we did, we can just pass it back.
-    receivedPolicyAction = m_syncNavigationActionPolicyActionIsValid;
-    if (m_syncNavigationActionPolicyActionIsValid) {
-        policyAction = m_syncNavigationActionPolicyAction;
-        downloadID = m_syncNavigationActionPolicyDownloadID;
-        websitePolicies = WTFMove(m_syncNavigationActionPolicyWebsitePolicies);
-    }
 }
 
 void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, NavigationActionData&& navigationActionData, ResourceRequest&& request, const String& frameName, uint64_t listenerID, const UserData& userData)
@@ -3917,6 +3883,8 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const SecurityOrigi
 {
     PageClientProtector protector(m_pageClient);
 
+    m_decidePolicyForResponseRequest = request;
+
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
@@ -3933,29 +3901,6 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const SecurityOrigi
         m_navigationClient->decidePolicyForNavigationResponse(*this, WTFMove(navigationResponse), WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
     } else
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
-}
-
-void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, const UserData& userData, bool& receivedPolicyAction, WebCore::PolicyAction& policyAction, DownloadID& downloadID)
-{
-    PageClientProtector protector(m_pageClient);
-
-    ASSERT(!m_inDecidePolicyForResponseSync);
-
-    m_inDecidePolicyForResponseSync = true;
-    m_decidePolicyForResponseRequest = &request;
-    m_syncMimeTypePolicyActionIsValid = false;
-    
-    decidePolicyForResponse(frameID, frameSecurityOrigin, navigationID, response, request, canShowMIMEType, listenerID, userData);
-    
-    m_inDecidePolicyForResponseSync = false;
-    m_decidePolicyForResponseRequest = nullptr;
-    
-    // Check if we received a policy decision already. If we did, we can just pass it back.
-    receivedPolicyAction = m_syncMimeTypePolicyActionIsValid;
-    if (m_syncMimeTypePolicyActionIsValid) {
-        policyAction = m_syncMimeTypePolicyAction;
-        downloadID = m_syncMimeTypePolicyDownloadID;
-    }
 }
 
 void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const ResourceError& error, const UserData& userData)

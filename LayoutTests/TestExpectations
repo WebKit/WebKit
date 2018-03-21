@@ -1759,6 +1759,9 @@ imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Fa
 
 webkit.org/b/183390 http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 
+# We sometimes get 2 console log messages about CSP instead of 1 due to preloading.
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame.html [ DumpJSConsoleLogInStdErr ]
+
 media/event-queue-crash.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/172243 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order.htm [ Pass Failure ]
