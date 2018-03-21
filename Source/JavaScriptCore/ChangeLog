@@ -1,5 +1,33 @@
 2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK and WPE debug build after r229798.
+
+        Fix a typo in an ASSERT. Also convert several RELEASE_ASSERT to ASSERT that I forgot to do before landing.
+
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::JSCCallbackFunction):
+        * API/glib/JSCContext.cpp:
+        (jscContextSetVirtualMachine):
+        (jscContextGetJSContext):
+        (wrapperMap):
+        (jscContextHandleExceptionIfNeeded):
+        * API/glib/JSCValue.cpp:
+        (jscValueCallFunction):
+        * API/glib/JSCVirtualMachine.cpp:
+        (addWrapper):
+        (removeWrapper):
+        (jscVirtualMachineSetContextGroup):
+        (jscVirtualMachineAddContext):
+        (jscVirtualMachineRemoveContext):
+        * API/glib/JSCWrapperMap.cpp:
+        (JSC::WrapperMap::gobjectWrapper):
+        (JSC::WrapperMap::unwrap):
+        (JSC::WrapperMap::registerClass):
+        (JSC::WrapperMap::createJSWrappper):
+        (JSC::WrapperMap::wrappedObject const):
+
+2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] JSC bindings not introspectable
         https://bugs.webkit.org/show_bug.cgi?id=136989
 

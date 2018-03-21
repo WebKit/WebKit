@@ -58,21 +58,21 @@ static HashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap()
 static void addWrapper(JSContextGroupRef group, JSCVirtualMachine* vm)
 {
     std::lock_guard<StaticLock> lock(wrapperCacheMutex);
-    RELEASE_ASSERT(!wrapperMap().contains(group));
+    ASSERT(!wrapperMap().contains(group));
     wrapperMap().set(group, vm);
 }
 
 static void removeWrapper(JSContextGroupRef group)
 {
     std::lock_guard<StaticLock> lock(wrapperCacheMutex);
-    RELEASE_ASSERT(wrapperMap().contains(group));
+    ASSERT(wrapperMap().contains(group));
     wrapperMap().remove(group);
 }
 
 static void jscVirtualMachineSetContextGroup(JSCVirtualMachine *vm, JSContextGroupRef group)
 {
     if (group) {
-        RELEASE_ASSERT(!vm->priv->jsContextGroup);
+        ASSERT(!vm->priv->jsContextGroup);
         vm->priv->jsContextGroup = group;
         JSContextGroupRetain(vm->priv->jsContextGroup);
         addWrapper(vm->priv->jsContextGroup, vm);
@@ -125,19 +125,19 @@ JSContextGroupRef jscVirtualMachineGetContextGroup(JSCVirtualMachine* vm)
 
 void jscVirtualMachineAddContext(JSCVirtualMachine* vm, JSCContext* context)
 {
-    RELEASE_ASSERT(vm->priv->jsContextGroup);
+    ASSERT(vm->priv->jsContextGroup);
     auto jsContext = jscContextGetJSContext(context);
-    RELEASE_ASSERT(JSContextGetGroup(jsContext) == vm->priv->jsContextGroup);
-    RELEASE_ASSERT(!vm->priv->contextCache.contains(jsContext));
+    ASSERT(JSContextGetGroup(jsContext) == vm->priv->jsContextGroup);
+    ASSERT(!vm->priv->contextCache.contains(jsContext));
     vm->priv->contextCache.set(jsContext, context);
 }
 
 void jscVirtualMachineRemoveContext(JSCVirtualMachine* vm, JSCContext* context)
 {
-    RELEASE_ASSERT(vm->priv->jsContextGroup);
+    ASSERT(vm->priv->jsContextGroup);
     auto jsContext = jscContextGetJSContext(context);
-    RELEASE_ASSERT(JSContextGetGroup(jsContext) == vm->priv->jsContextGroup);
-    RELEASE_ASSERT(vm->priv->contextCache.contains(jsContext));
+    ASSERT(JSContextGetGroup(jsContext) == vm->priv->jsContextGroup);
+    ASSERT(vm->priv->contextCache.contains(jsContext));
     vm->priv->contextCache.remove(jsContext);
 }
 

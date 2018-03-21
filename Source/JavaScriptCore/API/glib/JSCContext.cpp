@@ -93,9 +93,9 @@ static void jscContextSetVirtualMachine(JSCContext* context, GRefPtr<JSCVirtualM
 {
     JSCContextPrivate* priv = context->priv;
     if (vm) {
-        RELEASE_ASSERT(!priv->vm);
+        ASSERT(!priv->vm);
         priv->vm = WTFMove(vm);
-        RELEASE_ASSERT(!priv->jsContext);
+        ASSERT(!priv->jsContext);
         GUniquePtr<char> name(g_strdup_printf("%p-jsContext", &Thread::current()));
         if (auto* data = g_object_get_data(G_OBJECT(priv->vm.get()), name.get())) {
             priv->jsContext = static_cast<JSGlobalContextRef>(data);
@@ -107,7 +107,7 @@ static void jscContextSetVirtualMachine(JSCContext* context, GRefPtr<JSCVirtualM
             globalObject->setWrapperMap(std::make_unique<JSC::WrapperMap>(priv->jsContext.get()));
         jscVirtualMachineAddContext(priv->vm.get(), context);
     } else if (priv->vm) {
-        RELEASE_ASSERT(priv->jsContext);
+        ASSERT(priv->jsContext);
         jscVirtualMachineRemoveContext(priv->vm.get(), context);
         priv->jsContext = nullptr;
         priv->vm = nullptr;
@@ -198,7 +198,7 @@ GRefPtr<JSCContext> jscContextGetOrCreate(JSGlobalContextRef jsContext)
 
 JSGlobalContextRef jscContextGetJSContext(JSCContext* context)
 {
-    ASSERT(JSC_IS_CONTET(context));
+    ASSERT(JSC_IS_CONTEXT(context));
 
     JSCContextPrivate* priv = context->priv;
     return priv->jsContext.get();
@@ -207,7 +207,7 @@ JSGlobalContextRef jscContextGetJSContext(JSCContext* context)
 static JSC::WrapperMap& wrapperMap(JSCContext* context)
 {
     auto* map = toJSGlobalObject(context->priv->jsContext.get())->wrapperMap();
-    RELEASE_ASSERT(map);
+    ASSERT(map);
     return *map;
 }
 
@@ -641,7 +641,7 @@ bool jscContextHandleExceptionIfNeeded(JSCContext* context, JSValueRef jsExcepti
         return false;
 
     auto exception = jscExceptionCreate(context, jsException);
-    RELEASE_ASSERT(!context->priv->exceptionHandlers.isEmpty());
+    ASSERT(!context->priv->exceptionHandlers.isEmpty());
     const auto& exceptionHandler = context->priv->exceptionHandlers.last();
     exceptionHandler.handler(context, exception.get(), exceptionHandler.userData);
 

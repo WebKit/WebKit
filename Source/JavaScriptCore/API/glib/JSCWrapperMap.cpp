@@ -46,7 +46,7 @@ GRefPtr<JSCValue> WrapperMap::gobjectWrapper(JSCContext* jscContext, JSValueRef 
 {
     auto* jsContext = jscContextGetJSContext(jscContext);
     JSC::JSLockHolder locker(toJS(jsContext));
-    RELEASE_ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
+    ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     GRefPtr<JSCValue> value = m_cachedGObjectWrappers.get(jsValue);
     if (!value) {
         value = adoptGRef(jscValueCreate(jscContext, jsValue));
@@ -57,20 +57,20 @@ GRefPtr<JSCValue> WrapperMap::gobjectWrapper(JSCContext* jscContext, JSValueRef 
 
 void WrapperMap::unwrap(JSValueRef jsValue)
 {
-    RELEASE_ASSERT(m_cachedGObjectWrappers.contains(jsValue));
+    ASSERT(m_cachedGObjectWrappers.contains(jsValue));
     m_cachedGObjectWrappers.remove(jsValue);
 }
 
 void WrapperMap::registerClass(JSCClass* jscClass)
 {
     auto* jsClass = jscClassGetJSClass(jscClass);
-    RELEASE_ASSERT(!m_classMap.contains(jsClass));
+    ASSERT(!m_classMap.contains(jsClass));
     m_classMap.set(jsClass, jscClass);
 }
 
 JSObject* WrapperMap::createJSWrappper(JSGlobalContextRef jsContext, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
 {
-    RELEASE_ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
+    ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     ExecState* exec = toJS(jsContext);
     VM& vm = exec->vm();
     JSLockHolder locker(vm);
@@ -95,7 +95,7 @@ JSObject* WrapperMap::jsWrapper(gpointer wrappedObject) const
 
 gpointer WrapperMap::wrappedObject(JSGlobalContextRef jsContext, JSObjectRef jsObject) const
 {
-    RELEASE_ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
+    ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     JSLockHolder locker(toJS(jsContext));
     VM& vm = toJS(jsContext)->vm();
     auto* object = toJS(jsObject);

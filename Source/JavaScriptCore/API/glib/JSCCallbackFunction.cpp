@@ -69,7 +69,7 @@ JSCCallbackFunction::JSCCallbackFunction(VM& vm, Structure* structure, Type type
     , m_returnType(returnType)
     , m_parameters(WTFMove(parameters))
 {
-    RELEASE_ASSERT(type != Type::Constructor || jscClass);
+    ASSERT(type != Type::Constructor || jscClass);
     if (G_CLOSURE_NEEDS_MARSHAL(m_closure.get()))
         g_closure_set_marshal(m_closure.get(), g_cclosure_marshal_generic);
 }

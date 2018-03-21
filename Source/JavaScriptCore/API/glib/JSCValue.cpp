@@ -697,7 +697,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
         result = JSObjectCallAsConstructor(jsContext, function, arguments.size(), arguments.data(), &exception);
         break;
     case JSC::JSCCallbackFunction::Type::Method:
-        RELEASE_ASSERT(thisObject);
+        ASSERT(thisObject);
         FALLTHROUGH;
     case JSC::JSCCallbackFunction::Type::Function:
         result = JSObjectCallAsFunction(jsContext, function, thisObject, arguments.size(), arguments.data(), &exception);
