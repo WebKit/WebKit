@@ -252,6 +252,9 @@ void NetworkDataTaskReplay::didReceiveResponse(WebCore::ResourceResponse&& respo
         case WebCore::PolicyAction::Use:
             enqueueEventHandler();
             break;
+        case WebCore::PolicyAction::Suspend:
+            LOG_ERROR("PolicyAction::Suspend encountered - Treating as PolicyAction::Ignore for now");
+            FALLTHROUGH;
         case WebCore::PolicyAction::Ignore:
             complete();
             break;

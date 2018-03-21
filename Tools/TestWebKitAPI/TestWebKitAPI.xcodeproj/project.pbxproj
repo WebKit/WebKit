@@ -183,6 +183,7 @@
 		51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
 		5182C22E1F2BCE540059BA7C /* WKURLSchemeHandler-leaks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */; };
+		518C1153205B0504001FF4AE /* ProcessSwapOnNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518C1152205B04F9001FF4AE /* ProcessSwapOnNavigation.mm */; };
 		5198A2401EA7E59F008910B7 /* InitialWarmedProcessUsed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5198A23F1EA7E595008910B7 /* InitialWarmedProcessUsed.mm */; };
 		51A5877D1D1B49CD004BA9AF /* IndexedDBMultiProcess-3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */; };
 		51A587851D2739E3004BA9AF /* IndexedDBDatabaseProcessKill-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */; };
@@ -1363,6 +1364,7 @@
 		517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCachePruneWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCachePruneWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
 		5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "WKURLSchemeHandler-leaks.mm"; sourceTree = "<group>"; };
+		518C1152205B04F9001FF4AE /* ProcessSwapOnNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSwapOnNavigation.mm; sourceTree = "<group>"; };
 		5198A23F1EA7E595008910B7 /* InitialWarmedProcessUsed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InitialWarmedProcessUsed.mm; sourceTree = "<group>"; };
 		51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBMultiProcess-3.html"; sourceTree = "<group>"; };
 		51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBDatabaseProcessKill-1.html"; sourceTree = "<group>"; };
@@ -2177,6 +2179,7 @@
 				83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
 				7C1AF7931E8DCBAB002645B9 /* PrepareForMoveToWindow.mm */,
+				518C1152205B04F9001FF4AE /* ProcessSwapOnNavigation.mm */,
 				5798E2AF1CAF5C2800C5CBA0 /* ProvisionalURLNotChange.mm */,
 				A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */,
 				1A4F81D01BDFFDCF004E672E /* RemoteObjectRegistry.h */,
@@ -3736,6 +3739,7 @@
 				7CCE7F2F1A411B1000447C4C /* WKBrowsingContextLoadDelegateTest.mm in Sources */,
 				7C54A4BE1AA11CCA00380F78 /* WKBundleFileHandle.cpp in Sources */,
 				5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */,
+				518C1153205B0504001FF4AE /* ProcessSwapOnNavigation.mm in Sources */,
 				2D838B1F1EEF3A5C009B980E /* WKContentViewEditingActions.mm in Sources */,
 				370CE22A1F57343400E7410B /* WKContentViewTargetForAction.mm in Sources */,
 				51D124981E763B02002B2820 /* WKHTTPCookieStore.mm in Sources */,

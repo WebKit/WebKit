@@ -187,12 +187,20 @@ void WebFrameProxy::receivedPolicyDecision(PolicyAction action, uint64_t listene
     m_page->receivedPolicyDecision(action, *this, listenerID, navigation, WTFMove(data));
 }
 
-WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID)
+WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID, PolicyListenerType policyListenerType)
 {
     if (m_activeListener)
         m_activeListener->invalidate();
-    m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID);
+    m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID, policyListenerType);
     return *static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
+}
+
+WebFramePolicyListenerProxy* WebFrameProxy::activePolicyListenerProxy()
+{
+    if (!m_activeListener || m_activeListener->type() != WebFramePolicyListenerProxy::APIType)
+        return nullptr;
+
+    return static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
 }
 
 void WebFrameProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)

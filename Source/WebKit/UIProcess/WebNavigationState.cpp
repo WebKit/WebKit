@@ -79,13 +79,15 @@ Ref<API::Navigation> WebNavigationState::createLoadDataNavigation()
 API::Navigation& WebNavigationState::navigation(uint64_t navigationID)
 {
     ASSERT(navigationID);
-    
+    ASSERT(m_navigations.contains(navigationID));
+
     return *m_navigations.get(navigationID);
 }
 
 Ref<API::Navigation> WebNavigationState::takeNavigation(uint64_t navigationID)
 {
     ASSERT(navigationID);
+    ASSERT(m_navigations.contains(navigationID));
     
     return m_navigations.take(navigationID).releaseNonNull();
 }

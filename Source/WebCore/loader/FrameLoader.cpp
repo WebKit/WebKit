@@ -123,6 +123,7 @@
 #include "XMLDocumentParser.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/CString.h>
@@ -1403,6 +1404,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(request.resourceRequest(), request.substituteData());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
+    SetForScope<bool> currentLoadShouldCheckNavigationPolicyGuard(m_currentLoadShouldCheckNavigationPolicy, request.shouldCheckNavigationPolicy());
     load(loader.ptr());
 }
 
@@ -1537,6 +1539,11 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     }
 
     m_frame.navigationScheduler().cancel(true);
+
+    if (!m_currentLoadShouldCheckNavigationPolicy) {
+        continueLoadAfterNavigationPolicy(loader->request(), formState, true, allowNavigationToInvalidURL);
+        return;
+    }
 
     policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, loader, formState, [this, protectedFrame = makeRef(m_frame), allowNavigationToInvalidURL, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, FormState* formState, bool shouldContinue) {
         continueLoadAfterNavigationPolicy(request, formState, shouldContinue, allowNavigationToInvalidURL);

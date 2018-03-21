@@ -1305,9 +1305,10 @@ private:
     enum class ResetStateReason {
         PageInvalidated,
         WebProcessExited,
+        NavigationSwap,
     };
     void resetState(ResetStateReason);
-    void resetStateAfterProcessExited();
+    void resetStateAfterProcessExited(ProcessTerminationReason);
 
     void setUserAgent(String&&);
 
@@ -1441,8 +1442,17 @@ private:
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
     void reattachToWebProcess();
+    void attachToProcessForNavigation(Ref<WebProcessProxy>&&);
+    void reattachToWebProcess(Ref<WebProcessProxy>&&);
+
     RefPtr<API::Navigation> reattachToWebProcessForReload();
     RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem*);
+
+    enum class NavigationPolicyCheck {
+        Require,
+        Bypass,
+    };
+    void loadRequestWithNavigation(API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, NavigationPolicyCheck);
 
     void requestNotificationPermission(uint64_t notificationID, const String& originString);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
@@ -1685,7 +1695,6 @@ private:
     void contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler&, uint64_t frameID);
 #endif
 
-    uint64_t generateNavigationID();
     API::DiagnosticLoggingClient* effectiveDiagnosticLoggingClient(WebCore::ShouldSample);
 
     void dispatchActivityStateChange();
@@ -1731,6 +1740,8 @@ private:
 #endif
 
     void reportPageLoadResult(const WebCore::ResourceError& = { });
+
+    void continueNavigationInNewProcess(API::Navigation&, Ref<WebProcessProxy>&&);
 
     PageClient& m_pageClient;
     Ref<API::PageConfiguration> m_configuration;

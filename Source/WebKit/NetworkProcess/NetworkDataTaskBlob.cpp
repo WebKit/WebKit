@@ -317,6 +317,9 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
             m_buffer.resize(bufferSize);
             read();
             break;
+        case PolicyAction::Suspend:
+            LOG_ERROR("PolicyAction::Suspend encountered - Treating as PolicyAction::Ignore for now");
+            FALLTHROUGH;
         case PolicyAction::Ignore:
             break;
         case PolicyAction::Download:

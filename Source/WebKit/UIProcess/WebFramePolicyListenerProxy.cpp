@@ -32,8 +32,9 @@
 
 namespace WebKit {
 
-WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, uint64_t listenerID)
+WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, uint64_t listenerID, PolicyListenerType policyType)
     : WebFrameListenerProxy(frame, listenerID)
+    , m_policyType(policyType)
 {
 }
 

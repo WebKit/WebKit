@@ -50,6 +50,7 @@ extern "C" {
     M(IPC) \
     M(KeyHandling) \
     M(Layers) \
+    M(Loading) \
     M(Network) \
     M(NetworkCache) \
     M(NetworkCacheSpeculativePreloading) \

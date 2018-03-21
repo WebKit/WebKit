@@ -60,6 +60,9 @@ public:
     void setShouldCheckNewWindowPolicy(bool checkPolicy) { m_shouldCheckNewWindowPolicy = checkPolicy; }
     bool shouldCheckNewWindowPolicy() const { return m_shouldCheckNewWindowPolicy; }
 
+    void setShouldCheckNavigationPolicy(bool checkPolicy) { m_shouldCheckNavigationPolicy = checkPolicy; }
+    bool shouldCheckNavigationPolicy() const { return m_shouldCheckNavigationPolicy; }
+
     const SubstituteData& substituteData() const { return m_substituteData; }
     void setSubstituteData(const SubstituteData& data) { m_substituteData = data; }
     bool hasSubstituteData() { return m_substituteData.isValid(); }
@@ -89,6 +92,7 @@ private:
     SubstituteData m_substituteData;
 
     bool m_shouldCheckNewWindowPolicy { false };
+    bool m_shouldCheckNavigationPolicy { true };
     LockHistory m_lockHistory;
     LockBackForwardList m_lockBackForwardList;
     ShouldSendReferrer m_shouldSendReferrer;

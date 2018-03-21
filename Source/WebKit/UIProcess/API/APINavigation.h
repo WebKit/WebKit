@@ -36,6 +36,7 @@ class WebNavigationState;
 namespace API {
 
 class Navigation : public ObjectImpl<Object::Type::Navigation> {
+    WTF_MAKE_NONCOPYABLE(Navigation);
 public:
     static Ref<Navigation> create(WebKit::WebNavigationState& state)
     {
@@ -64,7 +65,7 @@ public:
 
 private:
     explicit Navigation(WebKit::WebNavigationState&);
-    explicit Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&);
+    Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&);
 
     uint64_t m_navigationID;
     WebCore::ResourceRequest m_request;

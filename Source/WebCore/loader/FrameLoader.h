@@ -461,6 +461,7 @@ private:
     std::optional<ResourceRequestCachePolicy> m_overrideCachePolicyForTesting;
     std::optional<ResourceLoadPriority> m_overrideResourceLoadPriorityForTesting;
     bool m_isStrictRawResourceValidationPolicyDisabledForTesting { false };
+    bool m_currentLoadShouldCheckNavigationPolicy { true };
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;

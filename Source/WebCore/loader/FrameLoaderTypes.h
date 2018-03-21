@@ -41,7 +41,8 @@ enum FrameState {
 enum class PolicyAction {
     Use,
     Download,
-    Ignore
+    Ignore,
+    Suspend,
 };
 
 enum class ReloadOption {
@@ -158,7 +159,8 @@ template<> struct EnumTraits<WebCore::PolicyAction> {
         WebCore::PolicyAction,
         WebCore::PolicyAction::Use,
         WebCore::PolicyAction::Download,
-        WebCore::PolicyAction::Ignore
+        WebCore::PolicyAction::Ignore,
+        WebCore::PolicyAction::Suspend
     >;
 };
 

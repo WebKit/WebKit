@@ -35,27 +35,37 @@
 
 namespace WebKit {
 
+enum class PolicyListenerType {
+    NavigationAction,
+    NewWindowAction,
+    Response,
+};
+
 class WebFramePolicyListenerProxy : public WebFrameListenerProxy {
 public:
     static const Type APIType = Type::FramePolicyListener;
 
-    static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
+    static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID, PolicyListenerType policyType)
     {
-        return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID));
+        return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID, policyType));
     }
 
     void use(std::optional<WebsitePoliciesData>&&);
     void download();
     void ignore();
 
+    PolicyListenerType policyListenerType() const { return m_policyType; }
+
 private:
-    WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID);
+    WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID, PolicyListenerType);
 
     Type type() const override { return APIType; }
 
 #if DELEGATE_REF_COUNTING_TO_COCOA
     void* operator new(size_t size) { return newObject(size, APIType); }
 #endif
+
+    PolicyListenerType m_policyType;
 };
 
 } // namespace WebKit

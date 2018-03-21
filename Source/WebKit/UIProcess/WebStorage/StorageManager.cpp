@@ -425,8 +425,6 @@ StorageManager::SessionStorageNamespace::~SessionStorageNamespace()
 
 void StorageManager::SessionStorageNamespace::setAllowedConnection(IPC::Connection* allowedConnection)
 {
-    ASSERT(!allowedConnection || !m_allowedConnection);
-
     m_allowedConnection = allowedConnection;
 }
 

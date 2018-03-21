@@ -1940,4 +1940,16 @@ ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(u
 }
 #endif
 
+Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const URL& targetURL)
+{
+    if (!m_configuration->processSwapsOnNavigation())
+        return page.process();
+
+    auto url = URL { ParsedURLString, page.pageLoadState().url() };
+    if (protocolHostAndPortAreEqual(url, targetURL) || url.isBlankURL())
+        return page.process();
+
+    return createNewWebProcess(page.websiteDataStore());
+}
+
 } // namespace WebKit

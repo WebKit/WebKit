@@ -639,15 +639,31 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 
 void WebPageProxy::reattachToWebProcess()
 {
+    auto process = makeRef(m_process->processPool().createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get()));
+    reattachToWebProcess(WTFMove(process));
+}
+
+void WebPageProxy::attachToProcessForNavigation(Ref<WebProcessProxy>&& process)
+{
+    // FIXME: If this WebPageProxy is the only one hosted in its WebProcess, does this make it go away?
+    // We need to be prepared to reuse it later.
+    processDidTerminate(ProcessTerminationReason::NavigationSwap);
+
+    // FIXME: this is to fix the ASSERT(isValid()) inside reattachToWebProcess, some other way to fix this is needed.
+    m_isValid = false;
+    reattachToWebProcess(WTFMove(process));
+}
+
+void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process)
+{
     ASSERT(!m_isClosed);
     ASSERT(!isValid());
-    ASSERT(m_process->state() == WebProcessProxy::State::Terminated);
 
     m_isValid = true;
     m_process->removeWebPage(*this, m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
-    m_process = m_process->processPool().createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get());
+    m_process = WTFMove(process);
 
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
     if (m_process->state() == ChildProcessProxy::State::Running)
@@ -874,6 +890,13 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
         return nullptr;
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
+    loadRequestWithNavigation(navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, NavigationPolicyCheck::Require);
+    return WTFMove(navigation);
+}
+
+void WebPageProxy::loadRequestWithNavigation(API::Navigation& navigation, ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, NavigationPolicyCheck navigationPolicyCheck)
+{
+    ASSERT(!m_isClosed);
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -884,10 +907,11 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
         reattachToWebProcess();
 
     LoadParameters loadParameters;
-    loadParameters.navigationID = navigation->navigationID();
+    loadParameters.navigationID = navigation.navigationID();
     loadParameters.request = WTFMove(request);
     loadParameters.shouldOpenExternalURLsPolicy = (uint64_t)shouldOpenExternalURLsPolicy;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
+    loadParameters.shouldCheckNavigationPolicy = navigationPolicyCheck == NavigationPolicyCheck::Require;
     bool createdExtension = maybeInitializeSandboxExtensionHandle(url, loadParameters.sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
@@ -895,8 +919,6 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
 
     m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
     m_process->responsivenessTimer().start();
-
-    return WTFMove(navigation);
 }
 
 RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, API::Object* userData)
@@ -2355,6 +2377,21 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
         return;
     }
 
+    auto* activePolicyListener = frame.activePolicyListenerProxy();
+    if (activePolicyListener) {
+        ASSERT(activePolicyListener->listenerID() == listenerID);
+
+        if (action == PolicyAction::Use && navigation) {
+            auto proposedProcess = process().processPool().processForNavigation(*this, navigation->request().url());
+            if (proposedProcess.ptr() != &process()) {
+                action = PolicyAction::Suspend;
+                RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
+                    continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
+                });
+            }
+        }
+    }
+
     // If we received a policy decision while in decidePolicyForNavigationAction the decision will 
     // be sent back to the web process by decidePolicyForNavigationAction. 
     if (m_inDecidePolicyForNavigationAction) {
@@ -2366,6 +2403,16 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
     }
     
     m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame.frameID(), listenerID, action, navigation ? navigation->navigationID() : 0, downloadID, websitePolicies), m_pageID);
+}
+
+void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, Ref<WebProcessProxy>&& process)
+{
+    LOG(Loading, "Continuing navigation %" PRIu64 " to URL %s in a new web process", navigation.navigationID(), navigation.request().url().string().utf8().data());
+
+    attachToProcessForNavigation(WTFMove(process));
+
+    // FIXME: Work out timing of responding with the last policy delegate, etc
+    loadRequestWithNavigation(navigation, ResourceRequest { navigation.request() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, NavigationPolicyCheck::Bypass);
 }
 
 void WebPageProxy::setUserAgent(String&& userAgent)
@@ -3768,6 +3815,8 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 
 void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, ResourceRequest&& request, uint64_t listenerID, const UserData& userData, bool& receivedPolicyAction, uint64_t& newNavigationID, WebCore::PolicyAction& policyAction, DownloadID& downloadID, std::optional<WebsitePoliciesData>& websitePolicies)
 {
+    LOG(Loading, "WebPageProxy::didStartProvisionalLoadForFrame - Target url %s", originalRequest.url().string().utf8().data());
+
     PageClientProtector protector(m_pageClient);
 
     auto transaction = m_pageLoadState.transaction();
@@ -3781,7 +3830,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(originalRequest.url());
     
-    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
+    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NavigationAction);
     if (!navigationID) {
         auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
         newNavigationID = navigation->navigationID();
@@ -3847,7 +3896,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const Securi
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
 
-    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
+    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NewWindowAction);
 
     if (m_navigationClient) {
         RefPtr<API::FrameInfo> sourceFrameInfo;
@@ -3873,9 +3922,11 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const SecurityOrigi
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(response.url());
 
-    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
-    if (navigationID)
-        listener->setNavigation(m_navigationState->navigation(navigationID));
+    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::Response);
+    if (navigationID) {
+        auto& navigation = m_navigationState->navigation(navigationID);
+        listener->setNavigation(navigation);
+    }
 
     if (m_navigationClient) {
         auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin()).get(), request, response, canShowMIMEType);
@@ -5590,14 +5641,19 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     // There is a nested transaction in resetStateAfterProcessExited() that we don't want to commit before the client call.
     PageLoadState::Transaction transaction = m_pageLoadState.transaction();
 
-    resetStateAfterProcessExited();
+    resetStateAfterProcessExited(reason);
 
-    navigationState().clearAllNavigations();
+    // For bringup of process swapping, NavigationSwap termination will not go out to clients.
+    // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.
+    // FIXME: This might have to change
+    if (reason != ProcessTerminationReason::NavigationSwap) {
+        navigationState().clearAllNavigations();
 
-    if (m_navigationClient)
-        m_navigationClient->processDidTerminate(*this, reason);
-    else if (reason != ProcessTerminationReason::RequestedByClient)
-        m_loaderClient->processDidCrash(*this);
+        if (m_navigationClient)
+            m_navigationClient->processDidTerminate(*this, reason);
+        else if (reason != ProcessTerminationReason::RequestedByClient)
+            m_loaderClient->processDidCrash(*this);
+    }
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
@@ -5737,10 +5793,11 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     CallbackBase::Error error;
     switch (resetStateReason) {
+    case ResetStateReason::NavigationSwap:
+        FALLTHROUGH;
     case ResetStateReason::PageInvalidated:
         error = CallbackBase::Error::OwnerWasInvalidated;
         break;
-
     case ResetStateReason::WebProcessExited:
         error = CallbackBase::Error::ProcessExited;
         break;
@@ -5763,13 +5820,16 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 }
 
-void WebPageProxy::resetStateAfterProcessExited()
+void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
 {
     if (!isValid())
         return;
 
+#if !ASSERT_DISABLED
     // FIXME: It's weird that resetStateAfterProcessExited() is called even though the process is launching.
-    ASSERT(m_process->state() == WebProcessProxy::State::Launching || m_process->state() == WebProcessProxy::State::Terminated);
+    if (terminationReason != ProcessTerminationReason::NavigationSwap)
+        ASSERT(m_process->state() == WebProcessProxy::State::Launching || m_process->state() == WebProcessProxy::State::Terminated);
+#endif
 
 #if PLATFORM(IOS)
     m_activityToken = nullptr;
@@ -5786,7 +5846,8 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_pageClient.processDidExit();
 
-    resetState(ResetStateReason::WebProcessExited);
+    auto resetStateReason = terminationReason == ProcessTerminationReason::NavigationSwap ? ResetStateReason::NavigationSwap : ResetStateReason::WebProcessExited;
+    resetState(resetStateReason);
 
     m_pageClient.clearAllEditCommands();
     m_pendingLearnOrIgnoreWordMessageCount = 0;

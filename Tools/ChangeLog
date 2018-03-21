@@ -1,3 +1,29 @@
+2018-03-20  Brady Eidson  <beidson@apple.com>
+
+        First piece of process swapping on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=183665
+
+        Reviewed by Andy Estes.
+
+        Expose the "swaps processes on navigation" setting in MiniBrowser UI for testing:
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController processSwapOnNavigationEnabled]):
+        (-[SettingsController toggleProcessSwapOnNavigation:]):
+
+        Makes sure the current behavior is tested:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm: Added.
+        (-[PSONNavigationDelegate webView:didFinishNavigation:]):
+        (-[PSONScheme webView:startURLSchemeTask:]):
+        (-[PSONScheme webView:stopURLSchemeTask:]):
+        (TEST):
+
 2018-03-20  Chris Dumez  <cdumez@apple.com>
 
         QuickLook.NavigationDelegate API test is failing on iOS with async policy delegates

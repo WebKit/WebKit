@@ -159,6 +159,9 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
             FALLTHROUGH;
         case PolicyAction::Ignore:
             return function({ }, nullptr, false);
+        case PolicyAction::Suspend:
+            LOG(Loading, "PolicyAction::Suspend encountered - Treating as PolicyAction::Ignore for now");
+            return function({ }, nullptr, false);
         case PolicyAction::Use:
             if (!m_frame.loader().client().canHandleRequest(request)) {
                 handleUnimplementablePolicy(m_frame.loader().client().cannotShowURLError(request));
@@ -186,6 +189,9 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, co
         case PolicyAction::Ignore:
             function({ }, nullptr, { }, { }, false);
             return;
+        case PolicyAction::Suspend:
+            // It is invalid to get a "Suspend" policy for new windows, as the old document is not going away.
+            RELEASE_ASSERT_NOT_REACHED();
         case PolicyAction::Use:
             function(request, formState.get(), frameName, navigationAction, true);
             return;

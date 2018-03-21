@@ -1,3 +1,35 @@
+2018-03-20  Brady Eidson  <beidson@apple.com>
+
+        First piece of process swapping on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=183665
+
+        Reviewed by Andy Estes.
+
+        Covered by API test(s)
+
+        This patch:
+        - A new PolicyAction::Suspend for future use in this feature
+        - Makes sure that loads triggered as part of a process swap do *not* re-consult the policy delegate
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setShouldCheckNavigationPolicy):
+        (WebCore::FrameLoadRequest::shouldCheckNavigationPolicy const):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        * loader/FrameLoader.h:
+
+        * loader/FrameLoaderTypes.h: Add a new Policy type "Suspend" to be used in the future
+          by the process-swap-on-navigation mechanism.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+
 2018-03-20  Chris Dumez  <cdumez@apple.com>
 
         QuickLook.NavigationDelegate API test is failing on iOS with async policy delegates

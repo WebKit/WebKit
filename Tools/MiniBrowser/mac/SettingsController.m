@@ -70,6 +70,7 @@ static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2Us
 
 static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
 static NSString * const NetworkCacheSpeculativeRevalidationDisabledKey = @"NetworkCacheSpeculativeRevalidationDisabled";
+static NSString * const ProcessSwapOnNavigationKey = @"ProcessSwapOnNavigation";
 
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
@@ -179,6 +180,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Load All Site Icons Per-Page" action:@selector(toggleLoadsAllSiteIcons:) indented:YES];
     [self _addItemWithTitle:@"Use GameController.framework on macOS (Restart required)" action:@selector(toggleUsesGameControllerFramework:) indented:YES];
     [self _addItemWithTitle:@"Disable network cache speculative revalidation" action:@selector(toggleNetworkCacheSpeculativeRevalidationDisabled:) indented:YES];
+    [self _addItemWithTitle:@"Enable Process Swap on Navigation" action:@selector(toggleProcessSwapOnNavigation:) indented:YES];
 
     NSMenuItem *debugOverlaysSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Debug Overlays" action:nil keyEquivalent:@""];
     NSMenu *debugOverlaysMenu = [[NSMenu alloc] initWithTitle:@"Debug Overlays"];
@@ -270,6 +272,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self usesGameControllerFramework] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:))
         [menuItem setState:[self networkCacheSpeculativeRevalidationDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleProcessSwapOnNavigation:))
+        [menuItem setState:[self processSwapOnNavigationEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseUISideCompositing:))
         [menuItem setState:[self useUISideCompositing] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePerWindowWebProcessesDisabled:))
@@ -483,6 +487,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (void)toggleNetworkCacheSpeculativeRevalidationDisabled:(id)sender
 {
     [self _toggleBooleanDefault:NetworkCacheSpeculativeRevalidationDisabledKey];
+}
+
+- (BOOL)processSwapOnNavigationEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:ProcessSwapOnNavigationKey];
+}
+
+- (void)toggleProcessSwapOnNavigation:(id)sender
+{
+    [self _toggleBooleanDefault:ProcessSwapOnNavigationKey];
 }
 
 - (BOOL)isSpaceReservedForBanners

@@ -1,3 +1,94 @@
+2018-03-20  Brady Eidson  <beidson@apple.com>
+
+        First piece of process swapping on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=183665
+
+        Reviewed by Andy Estes.
+
+        This patch adds the first pieces of the following feature:
+        "When a navigation originating inside a WKWebView goes to a different origin,
+         swap to a new WebProcess for that navigation"
+
+        There are significant bugs to be resolved and significant optimizations to be made.
+        Which is why the feature is disabled by default.
+
+        Besides the core logic implementing the feature, this patch does a lot of related 
+        work such as:
+        - Removing some now-invalid ASSERTs
+        - Adding some ASSERTs
+        - Update various switch states to handle the new "Suspend" policy and "NavigationSwap"
+          process termination reason
+
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+
+        * NetworkProcess/capture/NetworkDataTaskReplay.cpp:
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::didReceiveResponse):
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (toNSURLSessionResponseDisposition):
+
+        * Platform/Logging.h:
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+
+        * Shared/ProcessTerminationReason.h: Add "NavigationSwap" as a process termination reason.
+
+        * UIProcess/API/APINavigation.h:
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::wkProcessTerminationReason):
+
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::WebFramePolicyListenerProxy):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::create):
+        (WebKit::WebFramePolicyListenerProxy::policyListenerType const):
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::setUpPolicyListenerProxy):
+        (WebKit::WebFrameProxy::activePolicyListenerProxy):
+        * UIProcess/WebFrameProxy.h:
+
+        * UIProcess/WebNavigationState.cpp:
+        (WebKit::WebNavigationState::navigation):
+        (WebKit::WebNavigationState::takeNavigation):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::attachToProcessForNavigation): Pretend that the existing process 
+          terminated using the new "NavigationSwap" reason, then manually start the next load.
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadRequestWithNavigation):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::processDidTerminate):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation): Determine which process should be used
+          for a proposed navigation, creating a new one if necessary.
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::SessionStorageNamespace::setAllowedConnection):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+
 2018-03-20  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerClientFetch::didReceiveData should check for m_encodedDataLength

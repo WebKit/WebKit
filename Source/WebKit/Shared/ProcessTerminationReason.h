@@ -31,7 +31,8 @@ enum class ProcessTerminationReason {
     ExceededMemoryLimit,
     ExceededCPULimit,
     RequestedByClient,
-    Crash
+    Crash,
+    NavigationSwap,
 };
 
 }
