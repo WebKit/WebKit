@@ -944,6 +944,8 @@ webkit.org/b/147520 http/tests/appcache/fail-on-update-2.html [ Pass Failure ]
 
 webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass Failure ]
 
+webkit.org/b/183684 http/tests/appcache/abort-cache-onprogress.html [ Pass Failure ]
+
 # The current expectations for this test only make sense for WebKit on iOS; other platforms can have very different behaviors.
 webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
