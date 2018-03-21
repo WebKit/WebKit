@@ -66,7 +66,7 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker&, CodeB
     }
 #endif
 
-    Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
+    Instruction* instruction = &profiledBlock->instructions()[bytecodeIndex];
     OpcodeID op = Interpreter::getOpcodeID(instruction[0].u.opcode);
     if (op != op_call && op != op_construct && op != op_tail_call)
         return CallLinkStatus();

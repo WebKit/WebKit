@@ -138,7 +138,7 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
 #if USE(JSVALUE32_64)
-    Instruction* instruction = m_codeBlock->instructions().begin() + m_bytecodeOffset; 
+    Instruction* instruction = &m_codeBlock->instructions()[m_bytecodeOffset]; 
     uint32_t locationBits = CallSiteIndex(instruction).bits();
 #else
     uint32_t locationBits = CallSiteIndex(m_bytecodeOffset).bits();
@@ -740,8 +740,7 @@ ALWAYS_INLINE void JIT::emitTagBool(RegisterID reg)
 
 inline Instruction* JIT::copiedInstruction(Instruction* inst)
 {
-    ASSERT(inst >= m_codeBlock->instructions().begin() && inst < m_codeBlock->instructions().end());
-    return m_instructions.begin() + (inst - m_codeBlock->instructions().begin());
+    return &m_instructions[m_codeBlock->bytecodeOffset(inst)];
 }
 
 #endif // USE(JSVALUE32_64)

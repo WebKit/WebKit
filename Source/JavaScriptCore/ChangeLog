@@ -1,3 +1,74 @@
+2018-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Use CodeBlock::instructions()[] and CodeBlock::bytecodeOffset() instead of doing own pointer math.
+        https://bugs.webkit.org/show_bug.cgi?id=183857
+        <rdar://problem/38712184>
+
+        Reviewed by JF Bastien.
+
+        We should avoid doing pointer math with CodeBlock::instructions().begin().
+        Instead, we should use the operator[] that comes with CodeBlock::instructions()
+        for computing an Instruction*, and use CodeBlock::bytecodeOffset() for computing
+        the bytecode offset of a given Instruction*.  These methods will do assertions
+        which helps catch bugs sooner, plus they are more descriptive of the operation
+        we're trying to do.
+
+        * bytecode/BytecodeKills.h:
+        (JSC::BytecodeKills::operandIsKilled const):
+        (JSC::BytecodeKills::forEachOperandKilledAt const):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::arithProfileForBytecodeOffset):
+        (JSC::CodeBlock::bytecodeOffsetFromCallSiteIndex):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callSiteBitsAsBytecodeOffset const):
+        (JSC::CallFrame::currentVPC const):
+        (JSC::CallFrame::setCurrentVPC):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::updateTopCallFrame):
+        (JSC::JIT::copiedInstruction):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_trace_operand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setupGetByIdPrototypeCache): Deleted.
+        (JSC::LLInt::getByVal): Deleted.
+        (JSC::LLInt::handleHostCall): Deleted.
+        (JSC::LLInt::setUpCall): Deleted.
+        (JSC::LLInt::genericCall): Deleted.
+        (JSC::LLInt::varargsSetup): Deleted.
+        (JSC::LLInt::llint_throw_stack_overflow_error): Deleted.
+        (JSC::LLInt::llint_stack_check_at_vm_entry): Deleted.
+        (JSC::LLInt::llint_write_barrier_slow): Deleted.
+        (JSC::LLInt::llint_crash): Deleted.
+        * runtime/SamplingProfiler.cpp:
+        (JSC::tryGetBytecodeIndex):
+
 2018-03-21  Keith Miller  <keith_miller@apple.com>
 
         btjs should print the bytecode offset in the stack trace for JS frames

@@ -46,7 +46,7 @@ public:
     {
 #if ENABLE(OPCODE_SAMPLING)
         if (m_jit->m_bytecodeOffset != std::numeric_limits<unsigned>::max())
-            m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeOffset, true);
+            m_jit->sampleInstruction(&m_jit->m_codeBlock->instructions()[m_jit->m_bytecodeOffset], true);
 #endif
         m_jit->updateTopCallFrame();
 #if CPU(X86) && USE(JSVALUE32_64)
@@ -75,7 +75,7 @@ public:
 
 #if ENABLE(OPCODE_SAMPLING)
         if (m_jit->m_bytecodeOffset != std::numeric_limits<unsigned>::max())
-            m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeOffset, false);
+            m_jit->sampleInstruction(&m_jit->m_codeBlock->instructions()[m_jit->m_bytecodeOffset], false);
 #endif
         
         m_jit->exceptionCheck();

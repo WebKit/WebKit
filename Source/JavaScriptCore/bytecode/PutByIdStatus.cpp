@@ -72,7 +72,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
     VM& vm = *profiledBlock->vm();
     
-    Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
+    Instruction* instruction = &profiledBlock->instructions()[bytecodeIndex];
 
     StructureID structureID = instruction[4].u.structureID;
     if (!structureID)

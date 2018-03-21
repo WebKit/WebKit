@@ -82,7 +82,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
     VM& vm = *profiledBlock->vm();
     
-    Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
+    Instruction* instruction = &profiledBlock->instructions()[bytecodeIndex];
 
     Opcode opcode = instruction[0].u.opcode;
 

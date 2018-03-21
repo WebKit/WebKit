@@ -196,7 +196,7 @@ extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* 
             &Thread::current(),
             exec->codeBlock(),
             exec,
-            static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
+            static_cast<intptr_t>(exec->codeBlock()->bytecodeOffset(pc)),
             Interpreter::getOpcodeID(pc[0].u.opcode),
             fromWhere,
             operand,
@@ -220,7 +220,7 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
         &Thread::current(),
         exec->codeBlock(),
         exec,
-        static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
+        static_cast<intptr_t>(exec->codeBlock()->bytecodeOffset(pc)),
         Interpreter::getOpcodeID(pc[0].u.opcode),
         fromWhere,
         operand,
@@ -280,7 +280,7 @@ LLINT_SLOW_PATH_DECL(trace)
             &Thread::current(),
             exec->codeBlock(),
             exec,
-            static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
+            static_cast<intptr_t>(exec->codeBlock()->bytecodeOffset(pc)),
             opcodeNames[opcodeID], pc);
     if (opcodeID == op_enter) {
         dataLogF("Frame will eventually return to %p\n", exec->returnPC().value());
@@ -299,7 +299,7 @@ LLINT_SLOW_PATH_DECL(special_trace)
             &Thread::current(),
             exec->codeBlock(),
             exec,
-            static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
+            static_cast<intptr_t>(exec->codeBlock()->bytecodeOffset(pc)),
             Interpreter::getOpcodeID(pc[0].u.opcode),
             exec->returnPC().value());
     LLINT_END_IMPL();
@@ -429,7 +429,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
             codeBlock->llintExecuteCounter(), "\n");
     }
     
-    unsigned loopOSREntryBytecodeOffset = pc - codeBlock->instructions().begin();
+    unsigned loopOSREntryBytecodeOffset = codeBlock->bytecodeOffset(pc);
 
     if (!shouldJIT(codeBlock)) {
         codeBlock->dontJITAnytimeSoon();
@@ -439,15 +439,15 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     if (!jitCompileAndSetHeuristics(codeBlock, exec, loopOSREntryBytecodeOffset))
         LLINT_RETURN_TWO(0, 0);
     
-    CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at bc#", pc - codeBlock->instructions().begin()));
+    CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at bc#", loopOSREntryBytecodeOffset));
 
     ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
     
     Vector<BytecodeAndMachineOffset> map;
     codeBlock->jitCodeMap()->decode(map);
-    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(map, map.size(), pc - codeBlock->instructions().begin(), BytecodeAndMachineOffset::getBytecodeIndex);
+    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(map, map.size(), loopOSREntryBytecodeOffset, BytecodeAndMachineOffset::getBytecodeIndex);
     ASSERT(mapping);
-    ASSERT(mapping->m_bytecodeIndex == static_cast<unsigned>(pc - codeBlock->instructions().begin()));
+    ASSERT(mapping->m_bytecodeIndex == loopOSREntryBytecodeOffset);
     
     void* jumpTarget = codeBlock->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
     ASSERT(jumpTarget);
@@ -714,7 +714,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         && isJSArray(baseValue)
         && ident == vm.propertyNames->length) {
         pc[0].u.opcode = LLInt::getOpcode(op_get_array_length);
-        ArrayProfile* arrayProfile = codeBlock->getOrAddArrayProfile(pc - codeBlock->instructions().begin());
+        ArrayProfile* arrayProfile = codeBlock->getOrAddArrayProfile(codeBlock->bytecodeOffset(pc));
         arrayProfile->observeStructure(baseValue.asCell()->structure());
         pc[4].u.arrayProfile = arrayProfile;
 

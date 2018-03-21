@@ -52,7 +52,7 @@ public:
     
     bool operandIsKilled(Instruction* instruction, int operand) const
     {
-        return operandIsKilled(instruction - m_codeBlock->instructions().begin(), operand);
+        return operandIsKilled(m_codeBlock->bytecodeOffset(instruction), operand);
     }
     
     template<typename Functor>
@@ -68,7 +68,7 @@ public:
     template<typename Functor>
     void forEachOperandKilledAt(Instruction* pc, const Functor& functor) const
     {
-        forEachOperandKilledAt(pc - m_codeBlock->instructions().begin(), functor);
+        forEachOperandKilledAt(m_codeBlock->bytecodeOffset(pc), functor);
     }
     
 private:

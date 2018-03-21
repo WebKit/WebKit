@@ -253,7 +253,7 @@ void CodeBlock::dumpBytecode(
     PrintStream& out, unsigned bytecodeOffset,
     const StubInfoMap& stubInfos, const CallLinkInfoMap& callLinkInfos)
 {
-    const Instruction* it = instructions().begin() + bytecodeOffset;
+    const Instruction* it = &instructions()[bytecodeOffset];
     dumpBytecode(out, instructions().begin(), it, stubInfos, callLinkInfos);
 }
 
@@ -2874,7 +2874,7 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
 
 ArithProfile* CodeBlock::arithProfileForBytecodeOffset(int bytecodeOffset)
 {
-    return arithProfileForPC(instructions().begin() + bytecodeOffset);
+    return arithProfileForPC(&instructions()[bytecodeOffset]);
 }
 
 ArithProfile* CodeBlock::arithProfileForPC(Instruction* pc)
@@ -3021,7 +3021,7 @@ std::optional<unsigned> CodeBlock::bytecodeOffsetFromCallSiteIndex(CallSiteIndex
         bytecodeOffset = callSiteIndex.bits();
 #else
         Instruction* instruction = bitwise_cast<Instruction*>(callSiteIndex.bits());
-        bytecodeOffset = instruction - instructions().begin();
+        bytecodeOffset = this->bytecodeOffset(instruction);
 #endif
     } else if (jitType == JITCode::DFGJIT || jitType == JITCode::FTLJIT) {
 #if ENABLE(DFG_JIT)
