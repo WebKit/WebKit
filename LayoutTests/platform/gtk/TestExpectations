@@ -3231,8 +3231,6 @@ webkit.org/b/175931 fast/canvas/webgl/no-info-log-for-simple-shaders.html [ Fail
 
 webkit.org/b/176021 fast/events/overflow-viewport-renderer-deleted.html [ Missing ]
 
-webkit.org/b/176024 fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Failure ]
-
 webkit.org/b/176025 inspector/canvas/recording-webgl-snapshots.html [ Failure ]
 webkit.org/b/176025 inspector/canvas/recording-webgl.html [ Failure ]
 
