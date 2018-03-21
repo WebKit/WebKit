@@ -1,3 +1,12 @@
+2018-03-20  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] JSVALUE_MODEL is unused
+        https://bugs.webkit.org/show_bug.cgi?id=183809
+
+        Reviewed by Tim Horton.
+
+        * Configurations/JavaScriptCore.xcconfig: Removed the unused definition.
+
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Update the install name for JavaScriptCore when built with WK_ALTERNATE_FRAMEWORKS_DIR

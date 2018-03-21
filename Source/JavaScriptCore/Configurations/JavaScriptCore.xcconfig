@@ -24,16 +24,6 @@
 #include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 
-JSVALUE_MODEL = $(JSVALUE_MODEL_$(CURRENT_ARCH));
-JSVALUE_MODEL_ = UNKNOWN_JSVALUE_MODEL;
-JSVALUE_MODEL_armv7 = 32_64;
-JSVALUE_MODEL_armv7k = 32_64;
-JSVALUE_MODEL_armv7s = 32_64;
-JSVALUE_MODEL_arm64 = 64;
-JSVALUE_MODEL_arm64e = 64;
-JSVALUE_MODEL_i386 = 32_64;
-JSVALUE_MODEL_x86_64 = 64;
-
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
 OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol,__ZTISt9bad_alloc -Wl,-unexported_symbol,__ZTISt9exception -Wl,-unexported_symbol,__ZTSSt9bad_alloc -Wl,-unexported_symbol,__ZTSSt9exception -Wl,-unexported_symbol,__ZdlPvS_ -Wl,-unexported_symbol,__ZnwmPv -Wl,-unexported_symbol,__ZNKSt3__18functionIFvvEEclEv -Wl,-unexported_symbol,__ZNSt3__18functionIFvvEEC1EOS2_ -Wl,-unexported_symbol,__ZNSt3__18functionIFvvEEC2EOS2_ -Wl,-unexported_symbol,__ZNKSt3__18functionIFvRN3JSC17BytecodeGeneratorEPNS1_10RegisterIDEEEclES3_S5_ -Wl,-unexported_symbol,__ZNSt3__18functionIFvRN3JSC17BytecodeGeneratorEPNS1_10RegisterIDEEED1Ev -Wl,-unexported_symbol,__ZNSt3__18functionIFvRN3JSC17BytecodeGeneratorEPNS1_10RegisterIDEEED2Ev -Wl,-unexported_symbol,__ZNSt3__18functionIFvvEED1Ev -Wl,-unexported_symbol,__ZNSt3__18functionIFvvEED2Ev -Wl,-unexported_symbol,__ZTVNSt3__117bad_function_callE;
 
