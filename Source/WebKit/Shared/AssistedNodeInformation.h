@@ -113,6 +113,8 @@ struct AssistedNodeInformation {
     bool acceptsAutofilledLoginCredentials { false };
     WebCore::URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
+    String placeholder;
+    String label;
 
     uint64_t assistedNodeIdentifier { 0 };
 

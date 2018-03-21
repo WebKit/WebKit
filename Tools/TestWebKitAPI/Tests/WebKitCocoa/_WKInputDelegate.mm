@@ -27,8 +27,12 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFocusedElementInfo.h>
+#import <WebKit/_WKFormInputSession.h>
 #import <WebKit/_WKInputDelegate.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
@@ -36,10 +40,13 @@
 static bool done;
 static bool willSubmitFormValuesCalled;
 
-@interface FormSubmissionDelegate : NSObject <_WKInputDelegate, WKURLSchemeHandler>
+@interface InputDelegate : NSObject <_WKInputDelegate, WKURLSchemeHandler>
+@property (nonatomic, copy) BOOL(^shouldStartInputSessionHandler)(id <_WKFocusedElementInfo>);
 @end
 
-@implementation FormSubmissionDelegate
+@implementation InputDelegate {
+    BlockPtr<BOOL(id <_WKFocusedElementInfo>)> _shouldStartInputSessionHandler;
+}
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
@@ -64,11 +71,28 @@ static bool willSubmitFormValuesCalled;
     submissionHandler();
 }
 
+- (BOOL)_webView:(WKWebView *)webView focusShouldStartInputSession:(id <_WKFocusedElementInfo>)info
+{
+    if (_shouldStartInputSessionHandler)
+        return _shouldStartInputSessionHandler(info);
+    return [info isUserInitiated];
+}
+
+- (BOOL(^)(id <_WKFocusedElementInfo>))shouldStartInputSessionHandler
+{
+    return _shouldStartInputSessionHandler.get();
+}
+
+- (void)setShouldStartInputSessionHandler:(BOOL(^)(id <_WKFocusedElementInfo>))handler
+{
+    _shouldStartInputSessionHandler = makeBlockPtr(handler);
+}
+
 @end
 
 TEST(WebKit, FormSubmission)
 {
-    auto delegate = adoptNS([[FormSubmissionDelegate alloc] init]);
+    auto delegate = adoptNS([[InputDelegate alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -80,6 +104,47 @@ TEST(WebKit, FormSubmission)
     "</form></body>" baseURL:nil];
     TestWebKitAPI::Util::run(&done);
 }
+
+#if PLATFORM(IOS)
+
+TEST(WebKit, FocusedElementInfo)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[InputDelegate alloc] init]);
+    [webView _setInputDelegate:delegate.get()];
+
+    __block RetainPtr<id <_WKFocusedElementInfo>> currentElement;
+    [delegate setShouldStartInputSessionHandler:^BOOL(id<_WKFocusedElementInfo> element) {
+        currentElement = element;
+        return NO;
+    }];
+
+    [webView synchronouslyLoadHTMLString:@"<label for='foo'>bar</label><input id='foo'>"];
+    [webView stringByEvaluatingJavaScript:@"foo.focus()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("", [currentElement placeholder]);
+    EXPECT_WK_STREQ("bar", [currentElement label]);
+
+    [webView synchronouslyLoadHTMLString:@"<input placeholder='bar'>"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("bar", [currentElement placeholder]);
+    EXPECT_WK_STREQ("", [currentElement label]);
+
+    [webView synchronouslyLoadHTMLString:@"<label for='baz'>garply</label><select id='baz'></select>"];
+    [webView stringByEvaluatingJavaScript:@"baz.focus()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("", [currentElement placeholder]);
+    EXPECT_WK_STREQ("garply", [currentElement label]);
+
+    [webView synchronouslyLoadHTMLString:@"<label for='foo' style='display: none'>bar</label><label for='foo'></label><input id='foo'><label for='foo'>garply</label>"];
+    [webView stringByEvaluatingJavaScript:@"foo.focus()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("", [currentElement placeholder]);
+    EXPECT_WK_STREQ("garply", [currentElement label]);
+}
+
+#endif // PLATFORM(IOS)
 
 #endif // WK_API_ENABLED
 

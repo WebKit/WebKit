@@ -407,6 +407,8 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     RetainPtr<NSString> _value;
     BOOL _isUserInitiated;
     RetainPtr<NSObject <NSSecureCoding>> _userObject;
+    RetainPtr<NSString> _placeholder;
+    RetainPtr<NSString> _label;
 }
 
 - (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject
@@ -473,6 +475,8 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     _value = information.value;
     _isUserInitiated = isUserInitiated;
     _userObject = userObject;
+    _placeholder = information.placeholder;
+    _label = information.label;
     return self;
 }
 
@@ -495,6 +499,17 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 {
     return _userObject.get();
 }
+
+- (NSString *)label
+{
+    return _label.get();
+}
+
+- (NSString *)placeholder
+{
+    return _placeholder.get();
+}
+
 @end
 
 #if ENABLE(DRAG_SUPPORT)

@@ -68,6 +68,12 @@ typedef NS_ENUM(NSInteger, WKInputType) {
 /* The value of the input at the time it was focused. */
 @property (nonatomic, readonly, copy) NSString *value;
 
+/* The placeholder text of the input. */
+@property (nonatomic, readonly, copy) NSString *placeholder;
+
+/* The text of a label element associated with the input. */
+@property (nonatomic, readonly, copy) NSString *label;
+
 /**
  * Whether the element was focused due to user interaction. NO indicates that
  * the element was focused programmatically, e.g. by calling focus() in JavaScript

@@ -91,6 +91,7 @@
 #import <WebCore/MainFrame.h>
 #import <WebCore/MediaSessionManagerIOS.h>
 #import <WebCore/Node.h>
+#import <WebCore/NodeList.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
@@ -2749,6 +2750,22 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.hasPreviousNode = hasAssistableElement(m_assistedNode.get(), *m_page, false);
     information.assistedNodeIdentifier = m_currentAssistedNodeIdentifier;
 
+    if (is<LabelableElement>(*m_assistedNode)) {
+        auto labels = downcast<LabelableElement>(*m_assistedNode).labels();
+        Vector<Ref<Element>> associatedLabels;
+        for (unsigned index = 0; index < labels->length(); ++index) {
+            if (is<Element>(labels->item(index)) && labels->item(index)->renderer())
+                associatedLabels.append(downcast<Element>(*labels->item(index)));
+        }
+        for (auto& labelElement : associatedLabels) {
+            auto text = labelElement->innerText();
+            if (!text.isEmpty()) {
+                information.label = WTFMove(text);
+                break;
+            }
+        }
+    }
+
     if (is<HTMLSelectElement>(*m_assistedNode)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);
         information.elementType = InputType::Select;
@@ -2779,6 +2796,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
+        information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
     } else if (is<HTMLInputElement>(*m_assistedNode)) {
         HTMLInputElement& element = downcast<HTMLInputElement>(*m_assistedNode);
         HTMLFormElement* form = element.form();
@@ -2788,6 +2806,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.representingPageURL = element.document().urlForBindings();
         information.autocapitalizeType = element.autocapitalizeType();
         information.isAutocorrect = element.shouldAutocorrect();
+        information.placeholder = element.attributeWithoutSynchronization(HTMLNames::placeholderAttr);
         if (element.isPasswordField())
             information.elementType = InputType::Password;
         else if (element.isSearchField())

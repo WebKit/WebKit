@@ -1,3 +1,22 @@
+2018-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add AssistedNodeInformation plumbing for form control placeholder text and label text
+        https://bugs.webkit.org/show_bug.cgi?id=183802
+        <rdar://problem/38686273>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test to exercise new placeholder and label SPI on _WKFocusedFormElement.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKInputDelegate.mm:
+        (-[InputDelegate _webView:focusShouldStartInputSession:]):
+        (-[InputDelegate shouldStartInputSessionHandler]):
+        (-[InputDelegate setShouldStartInputSessionHandler:]):
+        (TEST):
+        (-[FormSubmissionDelegate webView:startURLSchemeTask:]): Deleted.
+        (-[FormSubmissionDelegate webView:stopURLSchemeTask:]): Deleted.
+        (-[FormSubmissionDelegate _webView:willSubmitFormValues:userObject:submissionHandler:]): Deleted.
+
 2018-03-20  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Fix to run-webkit-httpd from native Windows.
