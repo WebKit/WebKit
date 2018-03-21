@@ -1,5 +1,23 @@
 2018-03-21  Mark Lam  <mark.lam@apple.com>
 
+        Refactor the PtrTag list as a macro so that we can auto-generate code that enumerates each PtrTag.
+        https://bugs.webkit.org/show_bug.cgi?id=183861
+        <rdar://problem/38716822>
+
+        Reviewed by Filip Pizlo.
+
+        Also added ptrTagName() to aid debugging.  ptrTagName() is implemented using this
+        new PtrTag macro list.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/PtrTag.cpp: Added.
+        (JSC::ptrTagName):
+        * runtime/PtrTag.h:
+
+2018-03-21  Mark Lam  <mark.lam@apple.com>
+
         Use CodeBlock::instructions()[] and CodeBlock::bytecodeOffset() instead of doing own pointer math.
         https://bugs.webkit.org/show_bug.cgi?id=183857
         <rdar://problem/38712184>

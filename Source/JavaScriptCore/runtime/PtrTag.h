@@ -29,30 +29,41 @@
 
 namespace JSC {
 
+#define FOR_EACH_PTRTAG_ENUM(v) \
+    v(NoPtrTag) \
+    v(NearCallPtrTag) \
+    v(NearJumpPtrTag) \
+    v(CFunctionPtrTag) \
+    \
+    v(BytecodePtrTag) \
+    v(BytecodeHelperPtrTag) \
+    v(CodeEntryPtrTag) \
+    v(CodeEntryWithArityCheckPtrTag) \
+    v(ExceptionHandlerPtrTag) \
+    v(JITCodePtrTag) \
+    v(JITOperationPtrTag) \
+    v(JITThunkPtrTag) \
+    v(NativeCodePtrTag) \
+    v(SlowPathPtrTag) \
+    \
+    v(Yarr8BitPtrTag) \
+    v(Yarr16BitPtrTag) \
+    v(YarrMatchOnly8BitPtrTag) \
+    v(YarrMatchOnly16BitPtrTag) \
+    v(YarrBacktrackPtrTag) \
+
+
 enum PtrTag : uintptr_t {
-    NoPtrTag = 0,
-    NearCallPtrTag,
-    NearJumpPtrTag,
-
-    CFunctionPtrTag,
-
-    BytecodePtrTag,
-    BytecodeHelperPtrTag,
-    CodeEntryPtrTag,
-    CodeEntryWithArityCheckPtrTag,
-    ExceptionHandlerPtrTag,
-    JITCodePtrTag,
-    JITOperationPtrTag,
-    JITThunkPtrTag,
-    NativeCodePtrTag,
-    SlowPathPtrTag,
-
-    Yarr8BitPtrTag,
-    Yarr16BitPtrTag,
-    YarrMatchOnly8BitPtrTag,
-    YarrMatchOnly16BitPtrTag,
-    YarrBacktrackPtrTag,
+#define DECLARE_PTRTAG_ENUM(tag)  tag,
+    FOR_EACH_PTRTAG_ENUM(DECLARE_PTRTAG_ENUM)
+#undef DECLARE_PTRTAG_ENUM
 };
+
+static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0), "");
+static_assert(static_cast<uintptr_t>(NearCallPtrTag) == static_cast<uintptr_t>(1), "");
+static_assert(static_cast<uintptr_t>(NearJumpPtrTag) == static_cast<uintptr_t>(2), "");
+
+JS_EXPORT_PRIVATE const char* ptrTagName(PtrTag);
 
 uintptr_t nextPtrTagID();
 

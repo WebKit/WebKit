@@ -872,6 +872,7 @@ runtime/ObjectInitializationScope.cpp
 runtime/ObjectPrototype.cpp
 runtime/Operations.cpp
 runtime/Options.cpp
+runtime/PtrTag.cpp
 runtime/ProgramExecutable.cpp
 runtime/PromiseDeferredTimer.cpp
 runtime/PropertyDescriptor.cpp
