@@ -102,7 +102,7 @@ add_filter('query_vars', function( $query_vars ) {
 add_filter('the_title', function( $title ) {
     if ( is_admin() ) return $title;
     if ( is_feed() ) return $title;
-    
+
     $title = str_replace(": ", ": <br>", $title);
 
     $nowrap_strings = array();
@@ -114,7 +114,7 @@ add_filter('the_title', function( $title ) {
         $nobreak = str_replace(" ", " ", trim($token));
         $title = str_replace(trim($token), $nobreak, $title);
     }
-    
+
     return $title;
 });
 
@@ -168,6 +168,13 @@ add_action('the_post', function($post) {
 
     $post->post_content = '<div class="foreword">' . $foreword . '</div>' . $content;
     $pages = array($post->post_content);
+});
+
+add_filter('the_author', function($display_name) {
+    $post = get_post();
+    if (!(is_single() || is_page())) return;
+    $byline = get_post_meta(get_the_ID(), 'byline', true);
+    return empty($byline) ? $display_name : $byline;
 });
 
 function before_the_title() {
@@ -553,7 +560,7 @@ class WebKit_Nightly_Survey {
         } else {
             update_option(self::DATA_SETTING_NAME, $score);
         }
-        
+
         $httponly = false;
         $secure = false;
         setcookie(self::cookie_name(), 1, time() + YEAR_IN_SECONDS, '/', WP_HOST, $secure, $httponly );

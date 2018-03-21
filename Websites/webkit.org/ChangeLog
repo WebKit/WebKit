@@ -1,3 +1,12 @@
+2018-03-21  Jon Davis  <jond@apple.com>
+
+        Add support for an overridable byline in blog posts
+        https://bugs.webkit.org/show_bug.cgi?id=183799
+
+        Reviewed by Timothy Hatcher.
+
+        * wp-content/themes/webkit/functions.php:
+
 2018-02-20  Jon Davis  <jond@apple.com>
 
         Add widescreen layout class for the Downloads page
