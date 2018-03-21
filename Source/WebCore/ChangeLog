@@ -1,3 +1,16 @@
+2018-03-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Build failure with ENABLE_VIDEO=OFF when GStreamer is not available
+        https://bugs.webkit.org/show_bug.cgi?id=183811
+
+        Reviewed by Philippe Normand.
+
+        Add build guards for USE_GSTREAMER.
+
+        No new tests, it is a build fix.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+
 2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Draw Cairo patterns with cairo_paint_with_alpha()
