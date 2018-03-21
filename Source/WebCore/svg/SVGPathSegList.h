@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -72,7 +73,6 @@ public:
 
     ExceptionOr<RefPtr<SVGPathSeg>> initialize(Ref<SVGPathSeg>&& newItem)
     {
-        clearContextAndRoles();
         return Base::initializeValues(WTFMove(newItem));
     }
 
@@ -101,9 +101,6 @@ private:
     }
 
     SVGPathElement* contextElement() const;
-
-    void clearContextAndRoles();
-
     using Base::m_role;
 
     bool isReadOnly() const final

@@ -1,3 +1,14 @@
+2018-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Disconnect the SVGPathSegList items from their SVGPathElement before rebuilding a new list
+        https://bugs.webkit.org/show_bug.cgi?id=183723
+        <rdar://problem/38517871>
+
+        Reviewed by Daniel Bates.
+
+        * svg/dom/reuse-pathseg-after-changing-d-expected.txt: Added.
+        * svg/dom/reuse-pathseg-after-changing-d.html: Added.
+
 2018-03-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip imported/w3c/web-platform-tests/service-workers/service-worker/appcache-ordering-main.https.html.

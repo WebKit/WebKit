@@ -1,3 +1,35 @@
+2018-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Disconnect the SVGPathSegList items from their SVGPathElement before rebuilding a new list
+        https://bugs.webkit.org/show_bug.cgi?id=183723
+        <rdar://problem/38517871>
+
+        Reviewed by Daniel Bates.
+
+        When setting the "d" attribute directly on a path, we rebuild the list
+        of path segments held for creating the property tear off. The old path
+        segments need to get disconnected from the path element. We already do 
+        that when a path segment is replaced or removed.
+
+        Test: svg/dom/reuse-pathseg-after-changing-d.html
+
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::clear): SVGPathSegListValues::clearContextAndRoles()
+        will now be called from SVGPathSegListValues::clear() via SVGListProperty::clearValues().
+        (WebCore::SVGPathSegList::replaceItem):
+        (WebCore::SVGPathSegList::removeItem):
+        (WebCore::SVGPathSegList::clearContextAndRoles): Deleted.
+        * svg/SVGPathSegList.h: SVGPathSegListValues::clearContextAndRoles() will
+        now be called from SVGPathSegListValues::clear() via SVGListProperty::initializeValues().
+        * svg/SVGPathSegListValues.cpp:
+        (WebCore::SVGPathSegListValues::clearItemContextAndRole):
+        (WebCore::SVGPathSegListValues::clearContextAndRoles):
+        * svg/SVGPathSegListValues.h:
+        (WebCore::SVGPathSegListValues::operator=):
+        (WebCore::SVGPathSegListValues::clear):
+
 2018-03-21  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Ensure animationcancel and transitioncancel events are dispatched
