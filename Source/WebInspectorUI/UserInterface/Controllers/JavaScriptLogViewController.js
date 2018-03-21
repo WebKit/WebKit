@@ -49,6 +49,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         this._repeatCountWasInterrupted = false;
 
         this._sessions = [];
+        this._currentSessionOrGroup = null;
 
         this.messagesAlternateClearKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, "L", this.requestClearMessages.bind(this), this._element);
 
@@ -59,23 +60,13 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         this._promptFindNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._handleFindNextShortcut.bind(this), this._prompt.element);
         this._promptFindPreviousKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "G", this._handleFindPreviousShortcut.bind(this), this._prompt.element);
 
-        this._pendingMessages = [];
+        this._pendingMessagesForSessionOrGroup = new Map;
         this._scheduledRenderIdentifier = 0;
 
         this.startNewSession();
     }
 
     // Public
-
-    get prompt()
-    {
-        return this._prompt;
-    }
-
-    get currentConsoleGroup()
-    {
-        return this._currentConsoleGroup;
-    }
 
     clear()
     {
@@ -87,12 +78,16 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
     startNewSession(clearPreviousSessions = false, data = {})
     {
-        if (this._sessions.length && clearPreviousSessions) {
-            for (var i = 0; i < this._sessions.length; ++i)
-                this._element.removeChild(this._sessions[i].element);
+        if (clearPreviousSessions) {
+            this._pendingMessagesForSessionOrGroup.clear();
 
-            this._sessions = [];
-            this._currentConsoleGroup = null;
+            if (this._sessions.length) {
+                for (let session of this._sessions)
+                    session.element.remove();
+
+                this._sessions = [];
+                this._currentSessionOrGroup = null;
+            }
         }
 
         // First session shows the time when the console was opened.
@@ -102,7 +97,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         let lastSession = this._sessions.lastValue;
 
         // Remove empty session.
-        if (lastSession && !lastSession.hasMessages()) {
+        if (lastSession && !lastSession.hasMessages() && !this._pendingMessagesForSessionOrGroup.has(lastSession)) {
             this._sessions.pop();
             lastSession.element.remove();
         }
@@ -114,7 +109,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         this._repeatCountWasInterrupted = false;
 
         this._sessions.push(consoleSession);
-        this._currentConsoleGroup = consoleSession;
+        this._currentSessionOrGroup = consoleSession;
 
         this._element.appendChild(consoleSession.element);
 
@@ -200,7 +195,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
     consolePromptHistoryDidChange(prompt)
     {
-        this._promptHistorySetting.value = this.prompt.history;
+        this._promptHistorySetting.value = this._prompt.history;
     }
 
     consolePromptShouldCommitText(prompt, text, cursorIsAtLastPosition, handler)
@@ -267,7 +262,12 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
     _appendConsoleMessageView(messageView, repeatCountWasInterrupted)
     {
-        this._pendingMessages.push(messageView);
+        let pendingMessagesForSession = this._pendingMessagesForSessionOrGroup.get(this._currentSessionOrGroup);
+        if (!pendingMessagesForSession) {
+            pendingMessagesForSession = [];
+            this._pendingMessagesForSessionOrGroup.set(this._currentSessionOrGroup, pendingMessagesForSession);
+        }
+        pendingMessagesForSession.push(messageView);
 
         this._cleared = false;
         this._repeatCountWasInterrupted = repeatCountWasInterrupted || false;
@@ -292,27 +292,42 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             this._scheduledRenderIdentifier = 0;
         }
 
-        if (this._pendingMessages.length === 0)
+        if (!this._pendingMessagesForSessionOrGroup.size)
             return;
 
+        let wasScrolledToBottom = this.isScrolledToBottom();
+        let savedCurrentConsoleGroup = this._currentSessionOrGroup;
+        let lastMessageView = null;
+
         const maxMessagesPerFrame = 100;
-        let messages = this._pendingMessages.splice(0, maxMessagesPerFrame);
+        let renderedMessages = 0;
+        for (let [session, messages] of this._pendingMessagesForSessionOrGroup) {
+            this._currentSessionOrGroup = session;
 
-        let lastMessageView = messages.lastValue;
-        let isCommandView = lastMessageView instanceof WI.ConsoleCommandView;
-        let shouldScrollToBottom = isCommandView || lastMessageView.message.type === WI.ConsoleMessage.MessageType.Result || this.isScrolledToBottom();
+            let messagesToRender = messages.splice(0, maxMessagesPerFrame - renderedMessages);
+            for (let message of messagesToRender) {
+                message.render();
+                this._didRenderConsoleMessageView(message);
+            }
 
-        for (let messageView of messages) {
-            messageView.render();
-            this._didRenderConsoleMessageView(messageView);
+            lastMessageView = messagesToRender.lastValue;
+
+            if (!messages.length)
+                this._pendingMessagesForSessionOrGroup.delete(session);
+
+            renderedMessages += messagesToRender.length;
+            if (renderedMessages >= maxMessagesPerFrame)
+                break;
         }
 
-        if (shouldScrollToBottom)
+        this._currentSessionOrGroup = savedCurrentConsoleGroup;
+
+        if (wasScrolledToBottom || lastMessageView instanceof WI.ConsoleCommandView || lastMessageView.message.type === WI.ConsoleMessage.MessageType.Result)
             this.scrollToBottom();
 
         WI.quickConsole.needsLayout();
 
-        if (this._pendingMessages.length > 0)
+        if (this._pendingMessagesForSessionOrGroup.size)
             this.renderPendingMessagesSoon();
     }
 
@@ -328,17 +343,17 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
     {
         var type = messageView instanceof WI.ConsoleCommandView ? null : messageView.message.type;
         if (type === WI.ConsoleMessage.MessageType.EndGroup) {
-            var parentGroup = this._currentConsoleGroup.parentGroup;
+            var parentGroup = this._currentSessionOrGroup.parentGroup;
             if (parentGroup)
-                this._currentConsoleGroup = parentGroup;
+                this._currentSessionOrGroup = parentGroup;
         } else {
             if (type === WI.ConsoleMessage.MessageType.StartGroup || type === WI.ConsoleMessage.MessageType.StartGroupCollapsed) {
-                var group = new WI.ConsoleGroup(this._currentConsoleGroup);
+                var group = new WI.ConsoleGroup(this._currentSessionOrGroup);
                 var groupElement = group.render(messageView);
-                this._currentConsoleGroup.append(groupElement);
-                this._currentConsoleGroup = group;
+                this._currentSessionOrGroup.append(groupElement);
+                this._currentSessionOrGroup = group;
             } else
-                this._currentConsoleGroup.addMessageView(messageView);
+                this._currentSessionOrGroup.addMessageView(messageView);
         }
 
         if (this.delegate && typeof this.delegate.didAppendConsoleMessageView === "function")

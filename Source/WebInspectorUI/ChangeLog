@@ -1,3 +1,23 @@
+2018-03-20  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Session dividers are not added when Console tab is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=168622
+
+        Reviewed by Matt Baker.
+
+        Restructure `_pendingMessages` to be a `Map [ConsoleSession, ConsoleMessageView]`. Instead
+        of rendering to the `_currentConsoleGroup`, we now render to the saved `ConsoleSession`.
+        Also ensure that `_pendingMessages` is cleared when navigating and "Preserve Log" is off.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WI.JavaScriptLogViewController):
+        (WI.JavaScriptLogViewController.prototype.startNewSession):
+        (WI.JavaScriptLogViewController.prototype.consolePromptHistoryDidChange):
+        (WI.JavaScriptLogViewController.prototype._appendConsoleMessageView):
+        (WI.JavaScriptLogViewController.prototype.renderPendingMessages):
+        (WI.JavaScriptLogViewController.prototype.get prompt): Deleted.
+        (WI.JavaScriptLogViewController.prototype.get currentConsoleGroup): Deleted.
+
 2018-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Can't add a new class by editing class attribute in DOM outline
