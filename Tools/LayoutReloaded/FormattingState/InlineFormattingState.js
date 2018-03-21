@@ -27,5 +27,14 @@ class InlineFormattingState extends FormattingState {
     constructor(formattingRoot, layoutState) {
         super(layoutState, formattingRoot);
         this._setFormattingContext(new InlineFormattingContext(this));
+        this.m_lines = new Array();
+    }
+
+    lines() {
+        return this.m_lines;
+    }
+
+    appendLine(line) {
+        this.m_lines.push(line);
     }
 }

@@ -1,3 +1,23 @@
+2018-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Move inline lines to InlineFormattingState.
+        https://bugs.webkit.org/show_bug.cgi?id=183814
+
+        Reviewed by Antti Koivisto.
+
+        InlineFormattingContext is not supposed to hold state.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext):
+        (InlineFormattingContext.prototype._commitLine):
+        (InlineFormattingContext.prototype._createNewLine):
+        (InlineFormattingContext.prototype.lines): Deleted.
+        (InlineFormattingContext.prototype._initializeLine): Deleted.
+        * LayoutReloaded/FormattingState/InlineFormattingState.js:
+        (InlineFormattingState):
+        (InlineFormattingState.prototype.lines):
+        (InlineFormattingState.prototype.appendLine):
+
 2018-03-21  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Disable most of TestWebKitFaviconDatabase.

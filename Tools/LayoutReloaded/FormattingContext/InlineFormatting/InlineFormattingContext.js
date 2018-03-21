@@ -30,13 +30,7 @@ class InlineFormattingContext extends FormattingContext {
         ASSERT(root.isBlockContainerBox());
         if (root.establishesBlockFormattingContext())
             this.m_floatingContext = new FloatingContext(this);
-        this._initializeLine();
-        this.m_lines = new Array();
-    }
-
-    lines() {
-        // TODO: this is temporary. Line boxes will live off of the BoxTree.
-        return this.m_lines;
+        this.m_line = this._createNewLine();
     }
 
     layout() {
@@ -96,15 +90,15 @@ class InlineFormattingContext extends FormattingContext {
     }
 
     _commitLine() {
-        this.m_lines.push(this._line());
-        this._initializeLine();
+        this.formattingState().appendLine(this._line());
+        this.m_line = this._createNewLine();
     }
 
     _line() {
         return this.m_line;
     }
 
-    _initializeLine() {
+    _createNewLine() {
         // TODO: Floats need to be taken into account.
         let contentBoxRect = this.formattingRoot().contentBox();
         this.m_line = new Line(contentBoxRect.topLeft(), Utils.computedLineHeight(this.formattingRoot()), contentBoxRect.width());
