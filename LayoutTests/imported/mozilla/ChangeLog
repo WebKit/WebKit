@@ -1,5 +1,22 @@
 2018-03-21  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Ensure animationcancel and transitioncancel events are dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=183864
+
+        Reviewed by Dean Jackson.
+
+        Record progressions of Mozilla tests.
+
+        * css-animations/test_animation-cancel-expected.txt:
+        * css-animations/test_animation-currenttime-expected.txt:
+        * css-animations/test_animation-finished-expected.txt:
+        * css-animations/test_animation-reverse-expected.txt:
+        * css-transitions/test_animation-cancel-expected.txt:
+        * css-transitions/test_animation-pausing-expected.txt:
+        * css-transitions/test_animation-ready-expected.txt:
+
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Dispatch DOM events for CSS Transitions and CSS Animations implemented as Web Animations
         https://bugs.webkit.org/show_bug.cgi?id=183781
 

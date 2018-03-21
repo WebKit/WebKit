@@ -84,6 +84,25 @@ void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
     unsuspendEffectInvalidation();
 }
 
+void DeclarativeAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
+{
+    if (timeline() && !newTimeline)
+        cancel();
+
+    WebAnimation::setTimeline(WTFMove(newTimeline));
+}
+
+void DeclarativeAnimation::cancel()
+{
+    auto cancelationTime = 0_s;
+    if (auto animationEffect = effect())
+        cancelationTime = animationEffect->activeTime().value_or(0_s);
+
+    WebAnimation::cancel();
+
+    invalidateDOMEvents(cancelationTime);
+}
+
 AnimationEffectReadOnly::Phase DeclarativeAnimation::phaseWithoutEffect() const
 {
     // This shouldn't be called if we actually have an effect.
@@ -97,7 +116,7 @@ AnimationEffectReadOnly::Phase DeclarativeAnimation::phaseWithoutEffect() const
     return animationCurrentTime.value() < 0_s ? AnimationEffectReadOnly::Phase::Before : AnimationEffectReadOnly::Phase::After;
 }
 
-void DeclarativeAnimation::invalidateDOMEvents()
+void DeclarativeAnimation::invalidateDOMEvents(Seconds elapsedTime)
 {
     auto* animationEffect = effect();
 
@@ -142,7 +161,7 @@ void DeclarativeAnimation::invalidateDOMEvents()
             enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd);
             enqueueDOMEvent(eventNames().animationendEvent, intervalStart);
         } else if ((!wasIdle && !wasAfter) && isIdle)
-            enqueueDOMEvent(eventNames().animationcancelEvent, 0_s);
+            enqueueDOMEvent(eventNames().animationcancelEvent, elapsedTime);
     } else if (is<CSSTransition>(this)) {
         // https://drafts.csswg.org/css-transitions-2/#transition-events
         if (wasIdle && (isPending || isBefore))
@@ -169,7 +188,7 @@ void DeclarativeAnimation::invalidateDOMEvents()
             enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd);
             enqueueDOMEvent(eventNames().transitionendEvent, intervalStart);
         } else if ((!wasIdle && !wasAfter) && isIdle)
-            enqueueDOMEvent(eventNames().transitioncancelEvent, 0_s);
+            enqueueDOMEvent(eventNames().transitioncancelEvent, elapsedTime);
     }
 
     m_wasPending = isPending;

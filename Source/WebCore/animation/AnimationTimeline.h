@@ -41,6 +41,7 @@ namespace WebCore {
 
 class CSSAnimation;
 class CSSTransition;
+class DeclarativeAnimation;
 class Element;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline> {
@@ -80,9 +81,11 @@ protected:
     const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToAnimationsMap() { return m_elementToAnimationsMap; }
     const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToCSSAnimationsMap() { return m_elementToCSSAnimationsMap; }
     const HashMap<Element*, Vector<RefPtr<WebAnimation>>>& elementToCSSTransitionsMap() { return m_elementToCSSTransitionsMap; }
+    void removeDeclarativeAnimation(RefPtr<DeclarativeAnimation>);
 
 private:
     HashMap<Element*, Vector<RefPtr<WebAnimation>>>& relevantMapForAnimation(WebAnimation&);
+    void cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation>);
 
     ClassType m_classType;
     std::optional<Seconds> m_currentTime;

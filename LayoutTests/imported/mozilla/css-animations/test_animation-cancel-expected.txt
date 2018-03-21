@@ -5,7 +5,7 @@ PASS After canceling an animation, it can still be seeked
 PASS After cancelling an animation, it can still be re-used 
 PASS After cancelling an animation, updating animation properties doesn't make it live again 
 PASS After cancelling an animation, updating animation-play-state doesn't make it live again 
-FAIL Setting animation-name to 'none' cancels the animation assert_equals: expected "idle" but got "finished"
-FAIL Setting display:none on an element cancel its animations assert_equals: expected "idle" but got "running"
+PASS Setting animation-name to 'none' cancels the animation 
+PASS Setting display:none on an element cancel its animations 
 FAIL Setting display:none on an ancestor element cancels animations on descendants assert_equals: expected "idle" but got "running"
 

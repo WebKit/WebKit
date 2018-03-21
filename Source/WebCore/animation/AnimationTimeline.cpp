@@ -28,6 +28,7 @@
 #include "AnimationTimeline.h"
 
 #include "Animation.h"
+#include "AnimationEffectReadOnly.h"
 #include "AnimationList.h"
 #include "CSSAnimation.h"
 #include "CSSPropertyAnimation.h"
@@ -134,6 +135,15 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
     if (element.document().renderView()->printing())
         return;
 
+    // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
+    if (oldStyle && oldStyle->hasAnimations() && oldStyle->display() != NONE && newStyle.display() == NONE) {
+        if (m_elementToCSSAnimationByName.contains(&element)) {
+            for (const auto& cssAnimationsByNameMapItem : m_elementToCSSAnimationByName.take(&element))
+                cancelOrRemoveDeclarativeAnimation(cssAnimationsByNameMapItem.value);
+        }
+        return;
+    }
+
     // First, compile the list of animation names that were applied to this element up to this point.
     HashSet<String> namesOfPreviousAnimations;
     if (oldStyle && oldStyle->hasAnimations()) {
@@ -170,11 +180,8 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
 
     // The animations names left in namesOfPreviousAnimations are now known to no longer apply so we need to
     // remove the CSSAnimation object created for them.
-    for (const auto& nameOfAnimationToRemove : namesOfPreviousAnimations) {
-        auto cssAnimationToRemove = cssAnimationsByName.take(nameOfAnimationToRemove);
-        cssAnimationToRemove->setEffect(nullptr);
-        removeAnimation(cssAnimationToRemove.releaseNonNull());
-    }
+    for (const auto& nameOfAnimationToRemove : namesOfPreviousAnimations)
+        cancelOrRemoveDeclarativeAnimation(cssAnimationsByName.take(nameOfAnimationToRemove));
 
     // Remove the map of CSSAnimations by animation name for this element if it's now empty.
     if (cssAnimationsByName.isEmpty())
@@ -188,6 +195,15 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
 
     if (element.document().renderView()->printing())
         return;
+
+    // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
+    if (oldStyle && oldStyle->hasTransitions() && oldStyle->display() != NONE && newStyle.display() == NONE) {
+        if (m_elementToCSSTransitionByCSSPropertyID.contains(&element)) {
+            for (const auto& cssTransitionsByCSSPropertyIDMapItem : m_elementToCSSTransitionByCSSPropertyID.take(&element))
+                cancelOrRemoveDeclarativeAnimation(cssTransitionsByCSSPropertyIDMapItem.value);
+        }
+        return;
+    }
 
     // FIXME: We do not handle "all" transitions yet.
 
@@ -226,9 +242,7 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
                 if (cssTransitionsByProperty.contains(property)) {
                     if (cssTransitionsByProperty.get(property)->matchesBackingAnimationAndStyles(backingAnimation, oldStyle, newStyle))
                         continue;
-                    auto cssTransitionToRemove = cssTransitionsByProperty.take(property);
-                    cssTransitionToRemove->setEffect(nullptr);
-                    removeAnimation(cssTransitionToRemove.releaseNonNull());
+                    removeDeclarativeAnimation(cssTransitionsByProperty.take(property));
                 }
                 // Now we can create a new CSSTransition with the new backing animation provided it has a valid
                 // duration and the from and to values are distinct.
@@ -240,16 +254,28 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
 
     // Remaining properties are no longer current and must be removed.
     for (const auto transitionPropertyToRemove : previousProperties) {
-        if (!cssTransitionsByProperty.contains(transitionPropertyToRemove))
-            continue;
-        auto cssTransitionToRemove = cssTransitionsByProperty.take(transitionPropertyToRemove);
-        cssTransitionToRemove->setEffect(nullptr);
-        removeAnimation(cssTransitionToRemove.releaseNonNull());
+        if (cssTransitionsByProperty.contains(transitionPropertyToRemove))
+            cancelOrRemoveDeclarativeAnimation(cssTransitionsByProperty.take(transitionPropertyToRemove));
     }
 
     // Remove the map of CSSTransitions by property for this element if it's now empty.
     if (cssTransitionsByProperty.isEmpty())
         m_elementToCSSTransitionByCSSPropertyID.remove(&element);
+}
+
+void AnimationTimeline::removeDeclarativeAnimation(RefPtr<DeclarativeAnimation> animation)
+{
+    animation->setEffect(nullptr);
+    removeAnimation(animation.releaseNonNull());
+}
+
+void AnimationTimeline::cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation> animation)
+{
+    auto phase = animation->effect()->phase();
+    if (phase != AnimationEffectReadOnly::Phase::Idle && phase != AnimationEffectReadOnly::Phase::After)
+        animation->cancel();
+    else
+        removeDeclarativeAnimation(animation);
 }
 
 String AnimationTimeline::description()

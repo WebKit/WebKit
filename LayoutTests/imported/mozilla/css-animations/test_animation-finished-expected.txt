@@ -1,3 +1,5 @@
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 13527)
-FAIL: Timed out waiting for notifyDone to be called
+
+PASS finished promise is rejected when an animation is cancelled by resetting the animation property 
+PASS finished promise is rejected when an animation is cancelled by changing the animation property 
+PASS Test finished promise changes when animationPlayState set to running 
 

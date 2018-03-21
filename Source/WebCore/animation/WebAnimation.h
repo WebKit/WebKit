@@ -64,7 +64,7 @@ public:
     AnimationEffectReadOnly* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffectReadOnly>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
-    void setTimeline(RefPtr<AnimationTimeline>&&);
+    virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
     std::optional<double> bindingsStartTime() const;
     void setBindingsStartTime(std::optional<double>);
@@ -91,7 +91,7 @@ public:
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise.get(); }
 
-    void cancel();
+    virtual void cancel();
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
     ExceptionOr<void> pause();

@@ -1,3 +1,38 @@
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure animationcancel and transitioncancel events are dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=183864
+
+        Reviewed by Dean Jackson.
+
+        In order to correctly dispatch animationcancel and transitioncancel events, we must call cancel() on CSSAnimation and CSSTransitions
+        objects that are removed while in a play or pause phase. Additionally, we cancel declarative animations that are moving from a valid
+        to a null timeline. Finally, when cancel() is called on a declarative animation, we record the timestamp and manually call
+        invalidateDOMEvents() passing that timestamp in to ensure that the right phase change is recorded and results in the queuing of
+        animationcancel and transitioncancel events.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): Make sure we cancel all recorded CSS Animations when we newly get a
+        "display: none" style. We also call the new cancelOrRemoveDeclarativeAnimation() method, instead of removing animations outright,
+        for all animations that previously existed but are no longer listed in the current style.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): Like in updateCSSAnimationsForElement(), we cancel all recorded CSS
+        Transitions when we newly get a "display: none" style. We now use the refactored removeDeclarativeAnimation() method to remove an
+        a transition for a property that was already transitioned in the previous style but has a new backing Animation object. Finally,
+        like in updateCSSAnimationsForElement(), we call the new cancelOrRemoveDeclarativeAnimation() method, instead of removing transitions
+        outright, for all transitions that previously existed but are no longer listed in the current style.
+        (WebCore::AnimationTimeline::removeDeclarativeAnimation): Refactor code into this new method to remove a declarative animation.
+        (WebCore::AnimationTimeline::cancelOrRemoveDeclarativeAnimation): Cancels a DeclarativeAnimation if it's active or removes it right away.
+        * animation/AnimationTimeline.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::setTimeline): If we're moving from a valid timeline to a null timeline, call cancel() on this animation
+        such that an animationcancel or transitioncancel event can be dispatched.
+        (WebCore::DeclarativeAnimation::cancel): Cancelations require the computation of the time at which a declarative animation was canceled,
+        so we record the animation's active time as it's canceled and manually call invalidateDOMEvents() with that time after the general cancel()
+        code has run.
+        (WebCore::DeclarativeAnimation::invalidateDOMEvents): Accept an explicit timestamp for cancel events.
+        * animation/DeclarativeAnimation.h:
+        * animation/WebAnimation.h:
+
 2018-03-21  Chris Dumez  <cdumez@apple.com>
 
         ScrollViewInsetTests.RestoreInitialContentOffsetAfterCrash API test is failing with async delegates
