@@ -59,7 +59,6 @@ class CoordinatedBackingStore;
 class CoordinatedGraphicsSceneClient {
 public:
     virtual ~CoordinatedGraphicsSceneClient() { }
-    virtual void renderNextFrame() = 0;
     virtual void updateViewport() = 0;
 };
 
@@ -81,10 +80,9 @@ public:
     void purgeGLResources();
 
     bool isActive() const { return m_isActive; }
-    void setActive(bool);
+    void setActive(bool active) { m_isActive = active; }
 
     void commitSceneState(const WebCore::CoordinatedGraphicsState&);
-    void renderNextFrame();
 
     void setViewBackgroundColor(const WebCore::Color& color) { m_viewBackgroundColor = color; }
     WebCore::Color viewBackgroundColor() const { return m_viewBackgroundColor; }
@@ -135,8 +133,6 @@ private:
 
     void adjustPositionForFixedLayers(const WebCore::FloatPoint& contentPosition);
 
-    void dispatchOnMainThread(Function<void()>&&);
-    void dispatchOnClientRunLoop(Function<void()>&&);
     void updateViewport();
 
     void createLayer(WebCore::CoordinatedLayerID);
@@ -180,8 +176,6 @@ private:
     WebCore::Color m_viewBackgroundColor;
 
     WebCore::TextureMapperFPSCounter m_fpsCounter;
-
-    RunLoop& m_clientRunLoop;
 };
 
 } // namespace WebKit

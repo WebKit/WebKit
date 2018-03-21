@@ -78,7 +78,7 @@ private:
     void layerFlushTimerFired();
 
     CompositingCoordinator m_coordinator;
-    bool m_isWaitingForRenderer { true };
+    bool m_isWaitingForRenderer { false };
     bool m_scheduledWhileWaitingForRenderer { false };
     struct {
         OptionalCallbackID callbackID;

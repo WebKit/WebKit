@@ -94,7 +94,6 @@ private:
     ThreadedCompositor(Client&, WebPage&, const WebCore::IntSize&, float scaleFactor, ShouldDoFrameSync, WebCore::TextureMapper::PaintFlags);
 
     // CoordinatedGraphicsSceneClient
-    void renderNextFrame() override;
     void updateViewport() override;
 
     void renderLayerTree();

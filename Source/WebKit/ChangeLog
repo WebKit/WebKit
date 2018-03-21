@@ -1,5 +1,40 @@
 2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Simplify CoordinatedGraphicsScene activation
+        https://bugs.webkit.org/show_bug.cgi?id=183772
+
+        Reviewed by Carlos Garcia Campos.
+
+        Simplify CoordinatedGraphicsScene::setActive() into a simple setter of
+        the m_isActive member variable. We don't have to call renderNextFrame()
+        anymore as that was only necessary to unblock CoordinatedLayerTreeHost,
+        but that can be avoided if m_isWaitingForRenderer in that class is
+        initialized to false.
+
+        CoordinatedGraphicsSceneClient::renderNextFrame() virtual method and its
+        ThreadedCompositor implementation are removed. renderNextFrame() in the
+        CoordinatedGraphicsScene class can also be removed, along with the
+        unused dispatchOnMainThread() and dispatchOnClientRunLoop() methods and
+        the associated m_clientRunLoop member variable.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::CoordinatedGraphicsScene):
+        (WebKit::CoordinatedGraphicsScene::dispatchOnMainThread): Deleted.
+        (WebKit::CoordinatedGraphicsScene::dispatchOnClientRunLoop): Deleted.
+        (WebKit::CoordinatedGraphicsScene::renderNextFrame): Deleted.
+        (WebKit::CoordinatedGraphicsScene::setActive): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        (WebKit::CoordinatedGraphicsSceneClient::~CoordinatedGraphicsSceneClient):
+        (WebKit::CoordinatedGraphicsScene::setActive):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::m_displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::setNativeSurfaceHandleForCompositing):
+        (WebKit::ThreadedCompositor::renderNextFrame): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
+2018-03-21  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Have TextureMapperLayer::applyAnimationsRecursively() return running animation status
         https://bugs.webkit.org/show_bug.cgi?id=183771
 
