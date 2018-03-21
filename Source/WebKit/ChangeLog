@@ -1,3 +1,13 @@
+2018-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Allow the WebContent process to read ViewBridge preferences
+        https://bugs.webkit.org/show_bug.cgi?id=183862
+        <rdar://problem/38459456>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-03-21  Frederic Wang  <fwang@igalia.com>
 
         [iOS] Text highlighted by the Find UI overlaps with NBC news header on google.com
