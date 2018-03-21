@@ -1,3 +1,20 @@
+2018-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Expose content attributes on _WKLinkIconParameters
+        https://bugs.webkit.org/show_bug.cgi?id=183768
+
+        Reviewed by Alex Christensen.
+
+        Added _WKLinkIconParameters.attributes to expose content attributes of a link element
+        which defined a favicon, touch icon, or pre-compressed touch icon.
+
+        * UIProcess/API/Cocoa/_WKLinkIconParameters.h:
+        (_WKLinkIconParameters.attributes): Added.
+        * UIProcess/API/Cocoa/_WKLinkIconParameters.mm:
+        (_WKLinkIconParameters._attributes): Added.
+        (-[_WKLinkIconParameters _initWithLinkIcon:]): Convert the hash map from WebCore to a NSDictionary.
+        (-[_WKLinkIconParameters attributes]): Added.
+
 2018-03-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add AssistedNodeInformation plumbing for form control placeholder text and label text

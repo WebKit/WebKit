@@ -1,3 +1,22 @@
+2018-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Expose content attributes on _WKLinkIconParameters
+        https://bugs.webkit.org/show_bug.cgi?id=183768
+
+        Reviewed by Alex Christensen.
+
+        Collect a vector of content attributes upon finding touch and fav-icons in order to expose it in a WebKit API.
+
+        Tests: IconLoading.DefaultFavicon
+
+        * html/LinkIconCollector.cpp:
+        (WebCore::LinkIconCollector::iconsOfTypes): Collect attributes.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startIconLoading): Use an empty vector for /favicon.ico.
+        * platform/LinkIcon.h:
+        (WebCore::LinkIcon::encode const): Encode the vector of content attributes.
+        (WebCore::LinkIcon::decode): Ditto for decoding.
+
 2018-03-20  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeNeedsLayoutChecker fails with absolutely positioned svg and <use>

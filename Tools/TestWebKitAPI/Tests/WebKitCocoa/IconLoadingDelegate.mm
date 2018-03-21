@@ -48,14 +48,14 @@ static bool alreadyProvidedIconData;
     bool shouldSaveCallback;
     bool didSaveCallback;
     void (^savedCallback)(void (^)(NSData*));
-}
-@end
 
-@implementation IconLoadingDelegate {
     RetainPtr<_WKLinkIconParameters> favicon;
     RetainPtr<_WKLinkIconParameters> touch;
     RetainPtr<_WKLinkIconParameters> touchPrecomposed;
 }
+@end
+
+@implementation IconLoadingDelegate
 
 - (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData*)))completionHandler
 {
@@ -156,7 +156,7 @@ static bool alreadyProvidedIconData;
 
 static const char mainBytes[] =
 "<head>" \
-"<link rel=\"apple-touch-icon\" sizes=\"57x57\" href=\"http://example.com/my-apple-touch-icon.png\">" \
+"<link rel=\"apple-touch-icon\" sizes=\"57x57\" non-standard-attribute href=\"http://example.com/my-apple-touch-icon.png\">" \
 "<link rel=\"apple-touch-icon-precomposed\" sizes=\"57x57\" href=\"http://example.com/my-apple-touch-icon-precomposed.png\">" \
 "</head>";
 
@@ -177,6 +177,21 @@ TEST(IconLoading, DefaultFavicon)
 
     TestWebKitAPI::Util::run(&doneWithIcons);
     TestWebKitAPI::Util::run(&iconDelegate.get()->receivedFaviconDataCallback);
+
+    auto* faviconParameters = iconDelegate.get()->favicon.get();
+    EXPECT_WK_STREQ("testing:///favicon.ico", faviconParameters.url.absoluteString);
+    EXPECT_EQ(WKLinkIconTypeFavicon, faviconParameters.iconType);
+    EXPECT_EQ(static_cast<unsigned long>(0), faviconParameters.attributes.count);
+
+    auto* touchParameters = iconDelegate.get()->touch.get();
+    EXPECT_WK_STREQ("http://example.com/my-apple-touch-icon.png", touchParameters.url.absoluteString);
+    EXPECT_EQ(WKLinkIconTypeTouchIcon, touchParameters.iconType);
+    EXPECT_EQ(static_cast<unsigned long>(4), touchParameters.attributes.count);
+    EXPECT_WK_STREQ("apple-touch-icon", [touchParameters.attributes valueForKey:@"rel"]);
+    EXPECT_WK_STREQ("57x57", [touchParameters.attributes valueForKey:@"sizes"]);
+    EXPECT_WK_STREQ("http://example.com/my-apple-touch-icon.png", [touchParameters.attributes valueForKey:@"href"]);
+    EXPECT_TRUE([touchParameters.attributes.allKeys containsObject:@"non-standard-attribute"]);
+    EXPECT_FALSE([touchParameters.attributes.allKeys containsObject:@"nonexistent-attribute"]);
 }
 
 static const char mainBytes2[] =
