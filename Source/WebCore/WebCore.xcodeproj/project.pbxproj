@@ -126,6 +126,7 @@
 		074E82BB18A69F0E007EF54C /* PlatformTimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E82B918A69F0E007EF54C /* PlatformTimeRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedTextTrack.cpp */; };
 		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
+		075BA84920618AA500FCB4AD /* VideoFullscreenLayerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 075BA84720618AA500FCB4AD /* VideoFullscreenLayerManager.h */; };
 		07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07638A971884487200E15A1B /* MediaSessionManagerIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */; };
 		076970861463AD8700F502CF /* TextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076970841463AD8700F502CF /* TextTrackList.cpp */; };
@@ -1525,7 +1526,7 @@
 		52B0D4BE1C57FD1E0077CE53 /* PlatformView.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B0D4C01C57FD660077CE53 /* VideoFullscreenChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B0D4C21C57FF910077CE53 /* VideoFullscreenInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */; };
+		52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManagerObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */; };
 		52D5A1A71C57489D00DE34A3 /* VideoFullscreenModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52D5A1A81C5748A300DE34A3 /* VideoFullscreenModelVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52E2CAFC19FF0207001EEB4F /* MediaProducer.h in Headers */ = {isa = PBXBuildFile; fileRef = 52E2CAFB19FF0207001EEB4F /* MediaProducer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5262,6 +5263,7 @@
 		074E82B918A69F0E007EF54C /* PlatformTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformTimeRanges.h; sourceTree = "<group>"; };
 		0753860014489E9800B78452 /* CachedTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedTextTrack.cpp; sourceTree = "<group>"; };
 		0753860114489E9800B78452 /* CachedTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTextTrack.h; sourceTree = "<group>"; };
+		075BA84720618AA500FCB4AD /* VideoFullscreenLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManager.h; sourceTree = "<group>"; };
 		07638A971884487200E15A1B /* MediaSessionManagerIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSessionManagerIOS.h; sourceTree = "<group>"; };
 		07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionManagerIOS.mm; sourceTree = "<group>"; };
 		076970841463AD8700F502CF /* TextTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackList.cpp; sourceTree = "<group>"; };
@@ -8086,8 +8088,8 @@
 		52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformView.h; sourceTree = "<group>"; };
 		52B0D4BF1C57FD660077CE53 /* VideoFullscreenChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenChangeObserver.h; sourceTree = "<group>"; };
 		52B0D4C11C57FF910077CE53 /* VideoFullscreenInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenInterfaceMac.h; sourceTree = "<group>"; };
-		52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenLayerManager.mm; sourceTree = "<group>"; };
-		52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManager.h; sourceTree = "<group>"; };
+		52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenLayerManagerObjC.mm; sourceTree = "<group>"; };
+		52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenLayerManagerObjC.h; sourceTree = "<group>"; };
 		52D5A1A41C57488900DE34A3 /* VideoFullscreenModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModel.h; sourceTree = "<group>"; };
 		52D5A1A51C57488900DE34A3 /* VideoFullscreenModelVideoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFullscreenModelVideoElement.h; sourceTree = "<group>"; };
 		52D5A1A61C57488900DE34A3 /* VideoFullscreenModelVideoElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoFullscreenModelVideoElement.mm; sourceTree = "<group>"; };
@@ -23411,6 +23413,7 @@
 				076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */,
 				BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
+				075BA84720618AA500FCB4AD /* VideoFullscreenLayerManager.h */,
 				BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */,
 				1411DCB0164C39A800D49BC1 /* WidthCache.h */,
 				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,
@@ -24628,8 +24631,8 @@
 				7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */,
 				CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */,
 				CDC8B5A818047FF10016E685 /* SourceBufferPrivateAVFObjC.mm */,
-				52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManager.h */,
-				52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManager.mm */,
+				52D5A18E1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.h */,
+				52D5A18D1C54590300DE34A3 /* VideoFullscreenLayerManagerObjC.mm */,
 				CD336F6517FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp */,
 				CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */,
 				CD8B5A41180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.h */,
@@ -30398,6 +30401,7 @@
 				52B0D4C01C57FD660077CE53 /* VideoFullscreenChangeObserver.h in Headers */,
 				3FBC4AF4189881560046EE38 /* VideoFullscreenInterfaceAVKit.h in Headers */,
 				52B0D4C21C57FF910077CE53 /* VideoFullscreenInterfaceMac.h in Headers */,
+				075BA84920618AA500FCB4AD /* VideoFullscreenLayerManager.h in Headers */,
 				52D5A1A71C57489D00DE34A3 /* VideoFullscreenModel.h in Headers */,
 				52D5A1A81C5748A300DE34A3 /* VideoFullscreenModelVideoElement.h in Headers */,
 				CDE83DB2183C44060031EAA3 /* VideoPlaybackQuality.h in Headers */,
@@ -31769,7 +31773,7 @@
 				7C73FB07191EF417007DE061 /* UserMessageHandlersNamespace.cpp in Sources */,
 				837B7D201DC3F55000D051FC /* ValidationBubbleIOS.mm in Sources */,
 				3FBC4AF3189881560046EE38 /* VideoFullscreenInterfaceAVKit.mm in Sources */,
-				52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManager.mm in Sources */,
+				52D5A18F1C54592300DE34A3 /* VideoFullscreenLayerManagerObjC.mm in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,

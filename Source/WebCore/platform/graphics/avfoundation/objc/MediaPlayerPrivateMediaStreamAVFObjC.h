@@ -54,11 +54,8 @@ class AudioTrackPrivateMediaStreamCocoa;
 class AVVideoCaptureSource;
 class MediaSourcePrivateClient;
 class PixelBufferConformerCV;
+class VideoFullscreenLayerManagerObjC;
 class VideoTrackPrivateMediaStream;
-
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-class VideoFullscreenLayerManager;
-#endif
 
 class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer
 #if !RELEASE_LOG_DISABLED
@@ -223,10 +220,8 @@ private:
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) override;
     void readyStateChanged(MediaStreamTrackPrivate&) override;
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
-#endif
 
     MediaTime streamTime() const;
 
@@ -269,6 +264,13 @@ private:
     PlaybackState m_playbackState { PlaybackState::None };
     MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
     CGAffineTransform m_videoTransform;
+    std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
+
     bool m_videoMirrored { false };
     bool m_playing { false };
     bool m_muted { false };
@@ -279,16 +281,6 @@ private:
     bool m_transformIsValid { false };
     bool m_visible { false };
     bool m_haveSeenMetadata { false };
-
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;
-#endif
-
-#if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
-#endif
-
 };
     
 }

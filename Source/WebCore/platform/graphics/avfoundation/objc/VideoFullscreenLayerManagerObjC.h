@@ -25,37 +25,40 @@
 
 #pragma once
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-
 #include "FloatRect.h"
 #include "IntSize.h"
 #include "PlatformLayer.h"
+#include "VideoFullscreenLayerManager.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-class VideoFullscreenLayerManager {
-    WTF_MAKE_NONCOPYABLE(VideoFullscreenLayerManager);
+class VideoFullscreenLayerManagerObjC final : public VideoFullscreenLayerManager {
 public:
-    VideoFullscreenLayerManager();
+    VideoFullscreenLayerManagerObjC();
 
-    PlatformLayer *videoInlineLayer() const { return m_videoInlineLayer.get(); }
-    PlatformLayer *videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
-    FloatRect videoFullscreenFrame() const { return m_videoFullscreenFrame; }
-    void setVideoLayer(PlatformLayer *, IntSize contentSize);
-    void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler);
-    void setVideoFullscreenFrame(FloatRect);
-    void didDestroyVideoLayer();
+    PlatformLayer *videoInlineLayer() const final { return m_videoInlineLayer.get(); }
+    PlatformLayer *videoFullscreenLayer() const final { return m_videoFullscreenLayer.get(); }
+    FloatRect videoFullscreenFrame() const final { return m_videoFullscreenFrame; }
+    void setVideoLayer(PlatformLayer *, IntSize contentSize) final;
+    void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler) final;
+    void setVideoFullscreenFrame(FloatRect) final;
+    void didDestroyVideoLayer() final;
+
+    bool requiresTextTrackRepresentation() const final;
+    void setTextTrackRepresentation(TextTrackRepresentation*) final;
+    void syncTextTrackBounds() final;
 
 private:
+    RetainPtr<PlatformLayer> m_textTrackRepresentationLayer;
     RetainPtr<PlatformLayer> m_videoInlineLayer;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     RetainPtr<PlatformLayer> m_videoLayer;
     FloatRect m_videoFullscreenFrame;
+    FloatRect m_videoInlineFrame;
 };
 
 }
 
-#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))

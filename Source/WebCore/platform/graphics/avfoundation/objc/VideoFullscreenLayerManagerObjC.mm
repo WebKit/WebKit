@@ -24,11 +24,10 @@
  */
 
 #import "config.h"
-#import "VideoFullscreenLayerManager.h"
-
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+#import "VideoFullscreenLayerManagerObjC.h"
 
 #import "Color.h"
+#import "TextTrackRepresentation.h"
 #import "WebCoreCALayerExtras.h"
 #import <mach/mach_init.h>
 #import <mach/mach_port.h>
@@ -59,20 +58,22 @@
 
 namespace WebCore {
 
-VideoFullscreenLayerManager::VideoFullscreenLayerManager()
+VideoFullscreenLayerManagerObjC::VideoFullscreenLayerManagerObjC()
+    : VideoFullscreenLayerManager()
 {
 }
 
-void VideoFullscreenLayerManager::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
+void VideoFullscreenLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
 {
     m_videoLayer = videoLayer;
+    m_videoInlineFrame = CGRectMake(0, 0, contentSize.width(), contentSize.height());
 
     [m_videoLayer web_disableAllActions];
     m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
 #ifndef NDEBUG
     [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
 #endif
-    [m_videoInlineLayer setFrame:CGRectMake(0, 0, contentSize.width(), contentSize.height())];
+    [m_videoInlineLayer setFrame:m_videoInlineFrame];
     if (m_videoFullscreenLayer) {
         [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
@@ -82,7 +83,7 @@ void VideoFullscreenLayerManager::setVideoLayer(PlatformLayer *videoLayer, IntSi
     }
 }
 
-void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
+void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     if (m_videoFullscreenLayer == videoFullscreenLayer) {
         completionHandler();
@@ -125,16 +126,16 @@ void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFu
     [CATransaction commit];
 }
 
-void VideoFullscreenLayerManager::setVideoFullscreenFrame(FloatRect videoFullscreenFrame)
+void VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame(FloatRect videoFullscreenFrame)
 {
     m_videoFullscreenFrame = videoFullscreenFrame;
     if (!m_videoFullscreenLayer)
         return;
 
-    [m_videoLayer setFrame:CGRectMake(0, 0, videoFullscreenFrame.width(), videoFullscreenFrame.height())];
+    [m_videoLayer setFrame:m_videoFullscreenFrame];
 }
 
-void VideoFullscreenLayerManager::didDestroyVideoLayer()
+void VideoFullscreenLayerManagerObjC::didDestroyVideoLayer()
 {
     [m_videoLayer removeFromSuperlayer];
 
@@ -142,6 +143,49 @@ void VideoFullscreenLayerManager::didDestroyVideoLayer()
     m_videoLayer = nil;
 }
 
+bool VideoFullscreenLayerManagerObjC::requiresTextTrackRepresentation() const
+{
+    return m_videoFullscreenLayer;
 }
 
-#endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+void VideoFullscreenLayerManagerObjC::syncTextTrackBounds()
+{
+    if (!m_videoFullscreenLayer || !m_textTrackRepresentationLayer)
+        return;
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    CGRect textFrame = m_videoLayer ? m_videoInlineFrame : m_videoFullscreenFrame;
+    [m_textTrackRepresentationLayer setFrame:textFrame];
+
+    [CATransaction commit];
+}
+
+void VideoFullscreenLayerManagerObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
+{
+    PlatformLayer* representationLayer = representation ? representation->platformLayer() : nil;
+    if (representationLayer == m_textTrackRepresentationLayer) {
+        syncTextTrackBounds();
+        return;
+    }
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    if (m_textTrackRepresentationLayer)
+        [m_textTrackRepresentationLayer removeFromSuperlayer];
+
+    m_textTrackRepresentationLayer = representationLayer;
+
+    if (m_videoFullscreenLayer && m_textTrackRepresentationLayer) {
+        syncTextTrackBounds();
+        [m_videoFullscreenLayer addSublayer:m_textTrackRepresentationLayer.get()];
+    }
+
+    [CATransaction commit];
+
+}
+
+}
+

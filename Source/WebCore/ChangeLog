@@ -1,3 +1,60 @@
+2018-03-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Clean up platform VideoFullscreenLayerManager
+        https://bugs.webkit.org/show_bug.cgi?id=183859
+        <rdar://problem/38715419>
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/VideoFullscreenLayerManager.h: Copied from Source/WebCore/platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.h.
+        (WebCore::VideoFullscreenLayerManager::~VideoFullscreenLayerManager):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformLayer const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::requiresTextTrackRepresentation const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::syncTextTrackBounds):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setTextTrackRepresentation):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::platformLayer const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::requiresTextTrackRepresentation const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::platformLayer const):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame):
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.h: Renamed from Source/WebCore/platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.h.
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.mm: Renamed from Source/WebCore/platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.mm.
+        (-[WebVideoContainerLayer setBounds:]):
+        (-[WebVideoContainerLayer setPosition:]):
+        (WebCore::VideoFullscreenLayerManagerObjC::VideoFullscreenLayerManagerObjC):
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoLayer):
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer):
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoFullscreenFrame):
+        (WebCore::VideoFullscreenLayerManagerObjC::didDestroyVideoLayer):
+        (WebCore::VideoFullscreenLayerManagerObjC::requiresTextTrackRepresentation const):
+        (WebCore::VideoFullscreenLayerManagerObjC::syncTextTrackBounds):
+        (WebCore::VideoFullscreenLayerManagerObjC::setTextTrackRepresentation):
+
 2018-03-21  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Dispatch DOM events for CSS Transitions and CSS Animations implemented as Web Animations

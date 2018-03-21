@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
+#import "VideoFullscreenLayerManagerObjC.h"
 #import "VideoTrackPrivateMediaStream.h"
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
@@ -45,9 +46,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-#import "VideoFullscreenLayerManager.h"
-#endif
 
 #pragma mark - Soft Linking
 
@@ -191,9 +189,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     : m_player(player)
     , m_statusChangeListener(adoptNS([[WebAVSampleBufferStatusChangeListener alloc] initWithParent:this]))
     , m_clock(PAL::Clock::create())
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManager>())
-#endif
+    , m_videoFullscreenLayerManager(std::make_unique<VideoFullscreenLayerManagerObjC>())
 #if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
@@ -500,9 +496,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     updateRenderingMode();
     updateDisplayLayer();
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_videoFullscreenLayerManager->setVideoLayer(m_backgroundLayer.get(), snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
-#endif
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
@@ -518,9 +512,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
 
     updateRenderingMode();
     
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     m_videoFullscreenLayerManager->didDestroyVideoLayer();
-#endif
 }
 
 #pragma mark -
@@ -586,11 +578,7 @@ PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
     if (!m_backgroundLayer || m_displayMode == None)
         return nullptr;
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     return m_videoFullscreenLayerManager->videoInlineLayer();
-#else
-    return m_backgroundLayer.get();
-#endif
 }
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::displayLayer()
@@ -909,14 +897,8 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture() const
     return true;
 }
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
-    if (m_videoFullscreenLayerManager->videoFullscreenLayer() == videoFullscreenLayer) {
-        completionHandler();
-        return;
-    }
-
     m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler));
 }
 
@@ -924,7 +906,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect fra
 {
     m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
 }
-#endif
 
 typedef enum {
     Add,
