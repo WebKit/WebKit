@@ -1,3 +1,15 @@
+2018-03-21  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Disable most of TestWebKitFaviconDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=183813
+
+        Unreviewed test gardening.
+
+        The relevant APIs were mostly removed in r223953, making this test
+        time out consistently.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+
 2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] JSC bindings not introspectable
