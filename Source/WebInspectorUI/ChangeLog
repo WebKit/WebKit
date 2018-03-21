@@ -1,3 +1,23 @@
+2018-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Loses focus when editing a property while page is being loaded
+        https://bugs.webkit.org/show_bug.cgi?id=182619
+        <rdar://problem/37363185>
+
+        Reviewed by Matt Baker.
+
+        Adding or removing a stylesheet causes SpreadsheetRulesStyleDetailsPanel to refresh, triggering a layout
+        of all SpreadsheetCSSStyleDeclarationSection child views. This resets the focus, selection, and
+        auto-completion state.
+
+        This patch prevents SpreadsheetCSSStyleDeclarationSection from performing a layout when a property is being edited.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        Allow re-layout after creating a blank CSS property and pasting CSS code.
+        - _pendingAddBlankPropertyIndexOffset is a number after pasting CSS rules.
+        - _propertyPendingStartEditing is a property model after creating a new property.
+
 2018-03-20  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Session dividers are not added when Console tab is not visible

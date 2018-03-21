@@ -62,6 +62,11 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     layout()
     {
+        // Prevent layout of properties when one of them is being edited. A full layout resets
+        // the focus, text selection, and completion state <http://webkit.org/b/182619>.
+        if (this.editing && !this._propertyPendingStartEditing && isNaN(this._pendingAddBlankPropertyIndexOffset))
+            return;
+
         super.layout();
 
         this.element.removeChildren();
