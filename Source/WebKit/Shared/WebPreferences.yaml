@@ -950,7 +950,7 @@ InspectorWindowFrame:
 
 InactiveMediaCaptureSteamRepromptIntervalInMinutes:
   type: double
-  defaultValue: DEFAULT_INTERACTIVE_MNEDIA_CAPTURE_STREAM_REPROMPT_INTERVAL_IN_MINUTES
+  defaultValue: DEFAULT_INTERACTIVE_MEDIA_CAPTURE_STREAM_REPROMPT_INTERVAL_IN_MINUTES
   webcoreBinding: none
 
 LongRunningMediaCaptureStreamRepromptIntervalInHours:
