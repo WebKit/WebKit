@@ -116,6 +116,10 @@ class VariableEnvironment;
 struct ActivationStackNode;
 struct HashTable;
 
+#ifdef JSC_GLIB_API_ENABLED
+class WrapperMap;
+#endif
+
 template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
 
 #define DEFINE_STANDARD_BUILTIN(macro, upperName, lowerName) macro(upperName, lowerName, lowerName, JS ## upperName, upperName, object)
@@ -324,6 +328,10 @@ public:
 #if JSC_OBJC_API_ENABLED
     LazyProperty<JSGlobalObject, Structure> m_objcCallbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_objcWrapperObjectStructure;
+#endif
+#ifdef JSC_GLIB_API_ENABLED
+    LazyProperty<JSGlobalObject, Structure> m_glibCallbackFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_glibWrapperObjectStructure;
 #endif
     LazyProperty<JSGlobalObject, Structure> m_nullPrototypeObjectStructure;
     WriteBarrier<Structure> m_calleeStructure;
@@ -636,6 +644,10 @@ public:
     Structure* objcCallbackFunctionStructure() const { return m_objcCallbackFunctionStructure.get(this); }
     Structure* objcWrapperObjectStructure() const { return m_objcWrapperObjectStructure.get(this); }
 #endif
+#ifdef JSC_GLIB_API_ENABLED
+    Structure* glibCallbackFunctionStructure() const { return m_glibCallbackFunctionStructure.get(this); }
+    Structure* glibWrapperObjectStructure() const { return m_glibWrapperObjectStructure.get(this); }
+#endif
     Structure* dateStructure() const { return m_dateStructure.get(this); }
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(this); }
     Structure* errorStructure() const { return m_errorStructure.get(); }
@@ -888,7 +900,11 @@ public:
     JSWrapperMap* wrapperMap() const { return m_wrapperMap.get(); }
     void setWrapperMap(JSWrapperMap* map) { m_wrapperMap = map; }
 #endif
-    
+#ifdef JSC_GLIB_API_ENABLED
+    WrapperMap* wrapperMap() const { return m_wrapperMap.get(); }
+    void setWrapperMap(std::unique_ptr<WrapperMap>&&);
+#endif
+
     ThreadLocalCache& threadLocalCache() const { return *m_threadLocalCache.get(); }
 
 protected:
@@ -921,7 +937,9 @@ private:
 #if JSC_OBJC_API_ENABLED
     RetainPtr<JSWrapperMap> m_wrapperMap;
 #endif
-    
+#ifdef JSC_GLIB_API_ENABLED
+    std::unique_ptr<WrapperMap> m_wrapperMap;
+#endif
     RefPtr<ThreadLocalCache> m_threadLocalCache;
 };
 

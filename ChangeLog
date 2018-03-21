@@ -1,3 +1,15 @@
+2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Initial implementation of JavaScriptCore glib bindings
+        https://bugs.webkit.org/show_bug.cgi?id=164061
+
+        Reviewed by Michael Catanzaro.
+
+        Set global variables used by the makefiles.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2018-03-15  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Enable service workers

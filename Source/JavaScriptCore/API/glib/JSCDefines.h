@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSAPIWrapperObject_h
-#define JSAPIWrapperObject_h
+#if !defined(__JSC_H_INSIDE__) && !defined(JSC_COMPILATION)
+#error "Only <jsc/jsc.h> can be included directly."
+#endif
 
-#include "JSBase.h"
-#include "JSCPoison.h"
-#include "JSDestructibleObject.h"
-#include "WeakReferenceHarvester.h"
-#include <wtf/Poisoned.h>
+#ifndef JSCDefines_h
+#define JSCDefines_h
 
-#if JSC_OBJC_API_ENABLED || defined(JSC_GLIB_API_ENABLED)
+#include <glib.h>
 
-namespace JSC {
-    
-class JSAPIWrapperObject : public JSDestructibleObject {
-public:
-    typedef JSDestructibleObject Base;
-    
-    void finishCreation(VM&);
-    static void visitChildren(JSCell*, JSC::SlotVisitor&);
-    
-    void* wrappedObject() { return m_wrappedObject.unpoisoned(); }
-    void setWrappedObject(void*);
+#ifdef G_OS_WIN32
+#    if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
+#        define JSC_API __declspec(dllexport)
+#    else
+#        define JSC_API __declspec(dllimport)
+#    endif
+#else
+#    define JSC_API __attribute__((visibility("default")))
+#endif
 
-protected:
-    JSAPIWrapperObject(VM&, Structure*);
+#define JSC_DEPRECATED JSC_API G_DEPRECATED
+#define JSC_DEPRECATED_FOR(f) JSC_API G_DEPRECATED_FOR(f)
 
-private:
-    Poisoned<JSAPIWrapperObjectPoison, void*> m_wrappedObject;
-};
-
-} // namespace JSC
-
-#endif // JSC_OBJC_API_ENABLED || defined(JSC_GLIB_API_ENABLED)
-
-#endif // JSAPIWrapperObject_h
+#endif /* JSCDefines_h */

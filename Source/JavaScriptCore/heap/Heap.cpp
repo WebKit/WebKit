@@ -98,6 +98,10 @@ extern "C" void objc_autoreleasePoolPop(void *context);
 #endif
 #endif // USE(FOUNDATION)
 
+#if USE(GLIB)
+#include "JSCGLibWrapperObject.h"
+#endif
+
 using namespace std;
 
 namespace JSC {
@@ -461,7 +465,7 @@ void Heap::lastChanceToFinalize()
 
 void Heap::releaseDelayedReleasedObjects()
 {
-#if USE(FOUNDATION)
+#if USE(FOUNDATION) || USE(GLIB)
     // We need to guard against the case that releasing an object can create more objects due to the
     // release calling into JS. When those JS call(s) exit and all locks are being dropped we end up
     // back here and could try to recursively release objects. We guard that with a recursive entry
@@ -473,15 +477,19 @@ void Heap::releaseDelayedReleasedObjects()
         while (!m_delayedReleaseObjects.isEmpty()) {
             ASSERT(m_vm->currentThreadIsHoldingAPILock());
 
-            Vector<RetainPtr<CFTypeRef>> objectsToRelease = WTFMove(m_delayedReleaseObjects);
+            auto objectsToRelease = WTFMove(m_delayedReleaseObjects);
 
             {
                 // We need to drop locks before calling out to arbitrary code.
                 JSLock::DropAllLocks dropAllLocks(m_vm);
 
+#if USE(FOUNDATION)
                 void* context = objc_autoreleasePoolPush();
+#endif
                 objectsToRelease.clear();
+#if USE(FOUNDATION)
                 objc_autoreleasePoolPop(context);
+#endif
             }
         }
     }

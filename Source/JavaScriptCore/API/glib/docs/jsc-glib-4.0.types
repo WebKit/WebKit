@@ -1,0 +1,6 @@
+#include <jsc/jsc.h>
+jsc_virtual_machine_get_type
+jsc_context_get_type
+jsc_value_get_type
+jsc_exception_get_type
+jsc_class_get_type

@@ -1,0 +1,380 @@
+/*
+ * Copyright (C) 2018 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "JSCClass.h"
+
+#include "JSCCallbackFunction.h"
+#include "JSCClassPrivate.h"
+#include "JSCContextPrivate.h"
+#include "JSCInlines.h"
+#include "JSCValuePrivate.h"
+#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/WTFGType.h>
+
+/**
+ * SECTION: JSCClass
+ * @short_description: JavaScript custom class
+ * @title: JSCClass
+ * @see_also: JSCContext
+ *
+ * A JSSClass represents a custom JavaScript class registered by the user in a #JSCContext.
+ * It allows to create new JavaScripts objects whose instances are created by the user using
+ * this API.
+ * It's possible to add constructors, properties and methods for a JSSClass by providing
+ * #GCallback<!-- -->s to implement them.
+ */
+
+enum {
+    PROP_0,
+
+    PROP_CONTEXT,
+    PROP_NAME,
+    PROP_PARENT
+};
+
+typedef struct _JSCClassPrivate {
+    JSCContext* context;
+    CString name;
+    JSClassRef jsClass;
+    GDestroyNotify destroyFunction;
+    JSCClass* parentClass;
+    JSC::Weak<JSC::JSObject> prototype;
+    HashMap<CString, JSC::Weak<JSC::JSObject>> constructors;
+} JSCClassPrivate;
+
+struct _JSCClass {
+    GObject parent;
+
+    JSCClassPrivate* priv;
+};
+
+struct _JSCClassClass {
+    GObjectClass parent_class;
+};
+
+WEBKIT_DEFINE_TYPE(JSCClass, jsc_class, G_TYPE_OBJECT)
+
+static void jscClassGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
+{
+    JSCClass* jscClass = JSC_CLASS(object);
+
+    switch (propID) {
+    case PROP_CONTEXT:
+        g_value_set_object(value, jscClass->priv->context);
+        break;
+    case PROP_NAME:
+        g_value_set_string(value, jscClass->priv->name.data());
+        break;
+    case PROP_PARENT:
+        g_value_set_object(value, jscClass->priv->parentClass);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
+    }
+}
+
+static void jscClassSetProperty(GObject* object, guint propID, const GValue* value, GParamSpec* paramSpec)
+{
+    JSCClass* jscClass = JSC_CLASS(object);
+
+    switch (propID) {
+    case PROP_CONTEXT:
+        jscClass->priv->context = JSC_CONTEXT(g_value_get_object(value));
+        break;
+    case PROP_NAME:
+        jscClass->priv->name = g_value_get_string(value);
+        break;
+    case PROP_PARENT:
+        if (auto* parent = g_value_get_object(value))
+            jscClass->priv->parentClass = JSC_CLASS(parent);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
+    }
+}
+
+static void jscClassDispose(GObject* object)
+{
+    JSCClass* jscClass = JSC_CLASS(object);
+    if (jscClass->priv->jsClass) {
+        JSClassRelease(jscClass->priv->jsClass);
+        jscClass->priv->jsClass = nullptr;
+    }
+
+    G_OBJECT_CLASS(jsc_class_parent_class)->dispose(object);
+}
+
+static void jscClassConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(jsc_class_parent_class)->constructed(object);
+
+    JSCClassPrivate* priv = JSC_CLASS(object)->priv;
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    definition.className = priv->name.data();
+    priv->jsClass = JSClassCreate(&definition);
+
+    GUniquePtr<char> prototypeName(g_strdup_printf("%sPrototype", priv->name.data()));
+    JSClassDefinition prototypeDefinition = kJSClassDefinitionEmpty;
+    prototypeDefinition.className = prototypeName.get();
+    JSClassRef prototypeClass = JSClassCreate(&prototypeDefinition);
+    priv->prototype = jscContextGetOrCreateJSWrapper(priv->context, prototypeClass);
+    JSClassRelease(prototypeClass);
+
+    if (priv->parentClass)
+        JSObjectSetPrototype(jscContextGetJSContext(priv->context), toRef(priv->prototype.get()), toRef(priv->parentClass->priv->prototype.get()));
+}
+
+static void jsc_class_class_init(JSCClassClass* klass)
+{
+    GObjectClass* objClass = G_OBJECT_CLASS(klass);
+    objClass->constructed = jscClassConstructed;
+    objClass->dispose = jscClassDispose;
+    objClass->get_property = jscClassGetProperty;
+    objClass->set_property = jscClassSetProperty;
+
+    /**
+     * JSCClass:context:
+     *
+     * The #JSCContext in which the class was registered.
+     */
+    g_object_class_install_property(objClass,
+        PROP_CONTEXT,
+        g_param_spec_object(
+            "context",
+            "JSCContext",
+            "JSC Context",
+            JSC_TYPE_CONTEXT,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * JSCClass:name:
+     *
+     * The name of the class.
+     */
+    g_object_class_install_property(objClass,
+        PROP_NAME,
+        g_param_spec_string(
+            "name",
+            "Name",
+            "The class name",
+            nullptr,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * JSCClass:parent:
+     *
+     * The parent class or %NULL in case of final classes.
+     */
+    g_object_class_install_property(objClass,
+        PROP_PARENT,
+        g_param_spec_object(
+            "parent",
+            "Partent",
+            "The parent class",
+            JSC_TYPE_CLASS,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+}
+
+GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass* parentClass, GDestroyNotify destroyFunction)
+{
+    GRefPtr<JSCClass> jscClass = adoptGRef(JSC_CLASS(g_object_new(JSC_TYPE_CLASS, "context", context, "name", name, "parent", parentClass, nullptr)));
+    jscClass->priv->destroyFunction = destroyFunction;
+    return jscClass;
+}
+
+JSClassRef jscClassGetJSClass(JSCClass* jscClass)
+{
+    return jscClass->priv->jsClass;
+}
+
+JSC::JSObject* jscClassGetOrCreateJSWrapper(JSCClass* jscClass, gpointer wrappedObject)
+{
+    JSCClassPrivate* priv = jscClass->priv;
+    return jscContextGetOrCreateJSWrapper(priv->context, priv->jsClass, toRef(priv->prototype.get()), wrappedObject, priv->destroyFunction);
+}
+
+void jscClassInvalidate(JSCClass* jscClass)
+{
+    jscClass->priv->context = nullptr;
+}
+
+/**
+ * jsc_class_get_name:
+ * @jsc_class: a @JSCClass
+ *
+ * Get the class name of @jsc_class
+ *
+ * Returns: (transfer none): the name of @jsc_class
+ */
+const char* jsc_class_get_name(JSCClass* jscClass)
+{
+    g_return_val_if_fail(JSC_IS_CLASS(jscClass), nullptr);
+
+    return jscClass->priv->name.data();
+}
+
+/**
+ * jsc_class_get_parent:
+ * @jsc_class: a @JSCClass
+ *
+ * Get the parent class of @jsc_class
+ *
+ * Returns: (transfer none): the parent class of @jsc_class
+ */
+JSCClass* jsc_class_get_parent(JSCClass* jscClass)
+{
+    g_return_val_if_fail(JSC_IS_CLASS(jscClass), nullptr);
+
+    return jscClass->priv->parentClass;
+}
+
+/**
+ * jsc_class_add_constructor:
+ * @jsc_class: a #JSCClass
+ * @name: (nullable): the constructor name or %NULL
+ * @callback: (scope async): a #GCallback to be called to create an instance of @jsc_class
+ * @user_data: (closure): user data to pass to @callback
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ * @return_type: the #GType of the constructor return value
+ * @n_params: the number of parameter types to follow or 0 if constructor doesn't receive parameters.
+ * @...: a list of #GType<!-- -->s, one for each parameter.
+ *
+ * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When <function>new</function>
+ * is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving the
+ * parameters and @user_data as the last parameter. When the constructor object is cleared in the #JSCClass context,
+ * @destroy_notify is called with @user_data as parameter.
+ *
+ * This function creates the constructor, that needs to be added to an object as a property to be able to use it. Use
+ * jsc_context_set_value() to make the constructor available in the global object.
+ *
+ * Returns: (transfer full): a #JSCValue representing the class constructor.
+ */
+JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned paramCount, ...)
+{
+    g_return_val_if_fail(JSC_IS_CLASS(jscClass), nullptr);
+    g_return_val_if_fail(callback, nullptr);
+
+    JSCClassPrivate* priv = jscClass->priv;
+    g_return_val_if_fail(priv->context, nullptr);
+
+    if (!name)
+        name = priv->name.data();
+
+    va_list args;
+    va_start(args, paramCount);
+    Vector<GType> parameters;
+    if (paramCount) {
+        parameters.reserveInitialCapacity(paramCount);
+        for (unsigned i = 0; i < paramCount; ++i)
+            parameters.uncheckedAppend(va_arg(args, GType));
+    }
+    va_end(args);
+
+    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(destroyNotify)));
+    JSC::ExecState* exec = toJS(jscContextGetJSContext(priv->context));
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+    auto* functionObject = JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), String::fromUTF8(name),
+        JSC::JSCCallbackFunction::Type::Constructor, jscClass, WTFMove(closure), returnType, WTFMove(parameters));
+    auto constructor = jscContextGetOrCreateValue(priv->context, toRef(functionObject));
+    GRefPtr<JSCValue> prototype = jscContextGetOrCreateValue(priv->context, toRef(priv->prototype.get()));
+    auto nonEnumerable = static_cast<JSCValuePropertyFlags>(JSC_VALUE_PROPERTY_CONFIGURABLE | JSC_VALUE_PROPERTY_WRITABLE);
+    jsc_value_object_define_property_data(constructor.get(), "prototype", nonEnumerable, prototype.get());
+    jsc_value_object_define_property_data(prototype.get(), "constructor", nonEnumerable, constructor.get());
+    priv->constructors.set(name, functionObject);
+    return constructor.leakRef();
+}
+
+/**
+ * jsc_class_add_method:
+ * @jsc_class: a #JSCClass
+ * @name: the method name
+ * @callback: (scope async): a #GCallback to be called to invoke method @name of @jsc_class
+ * @user_data: (closure): user data to pass to @callback
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ * @return_type: the #GType of the method return value, or %G_TYPE_NONE if the method is void.
+ * @n_params: the number of parameter types to follow or 0 if the method doesn't receive parameters.
+ * @...: a list of #GType<!-- -->s, one for each parameter.
+ *
+ * Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
+ * @callback is called receiving the class instance as first parameter, followed by the method parameters and then
+ * @user_data as last parameter. When the method is cleared in the #JSCClass context, @destroy_notify is called with
+ * @user_data as parameter.
+ */
+void jsc_class_add_method(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned paramCount, ...)
+{
+    g_return_if_fail(JSC_IS_CLASS(jscClass));
+    g_return_if_fail(name);
+    g_return_if_fail(callback);
+
+    JSCClassPrivate* priv = jscClass->priv;
+    g_return_if_fail(priv->context);
+
+    va_list args;
+    va_start(args, paramCount);
+    Vector<GType> parameters;
+    if (paramCount) {
+        parameters.reserveInitialCapacity(paramCount);
+        for (unsigned i = 0; i < paramCount; ++i)
+            parameters.uncheckedAppend(va_arg(args, GType));
+    }
+    va_end(args);
+
+    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(destroyNotify)));
+    JSC::ExecState* exec = toJS(jscContextGetJSContext(priv->context));
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+    auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), String::fromUTF8(name),
+        JSC::JSCCallbackFunction::Type::Method, jscClass, WTFMove(closure), returnType, WTFMove(parameters)));
+    auto method = jscContextGetOrCreateValue(priv->context, functionObject);
+    GRefPtr<JSCValue> prototype = jscContextGetOrCreateValue(priv->context, toRef(priv->prototype.get()));
+    auto nonEnumerable = static_cast<JSCValuePropertyFlags>(JSC_VALUE_PROPERTY_CONFIGURABLE | JSC_VALUE_PROPERTY_WRITABLE);
+    jsc_value_object_define_property_data(prototype.get(), name, nonEnumerable, method.get());
+}
+
+/**
+ * jsc_class_add_property:
+ * @jsc_class: a #JSCClass
+ * @name: the property name
+ * @property_type: the #GType of the property value
+ * @getter: (scope async) (nullable): a #GCallback to be called to get the property value
+ * @setter: (scope async) (nullable): a #GCallback to be called to set the property value
+ * @user_data: (closure): user data to pass to @getter and @setter
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ *
+ * Add a property with @name to @jsc_class. When the property value needs to be getted, @getter is called
+ * receiving the the class instance as first parameter and @user_data as last parameter. When the property
+ * value needs to be set, @setter is called receiving the the class instance as first parameter, followed
+ * by the value to be set and then @user_data as the last parameter. When the property is cleared in the
+ * #JSCClass context, @destroy_notify is called with @user_data as parameter.
+ */
+void jsc_class_add_property(JSCClass* jscClass, const char* name, GType propertyType, GCallback getter, GCallback setter, gpointer userData, GDestroyNotify destroyNotify)
+{
+    g_return_if_fail(JSC_IS_CLASS(jscClass));
+    g_return_if_fail(name);
+    g_return_if_fail(propertyType != G_TYPE_INVALID && propertyType != G_TYPE_NONE);
+    g_return_if_fail(getter || setter);
+
+    JSCClassPrivate* priv = jscClass->priv;
+    g_return_if_fail(priv->context);
+
+    GRefPtr<JSCValue> prototype = jscContextGetOrCreateValue(priv->context, toRef(priv->prototype.get()));
+    jsc_value_object_define_property_accessor(prototype.get(), name, JSC_VALUE_PROPERTY_CONFIGURABLE, propertyType, getter, setter, userData, destroyNotify);
+}

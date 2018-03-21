@@ -1,0 +1,109 @@
+/*
+ * Copyright (C) 2018 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "JSCWrapperMap.h"
+
+#include "APICast.h"
+#include "JSAPIWrapperObject.h"
+#include "JSCClassPrivate.h"
+#include "JSCContextPrivate.h"
+#include "JSCGLibWrapperObject.h"
+#include "JSCInlines.h"
+#include "JSCValuePrivate.h"
+#include "JSCallbackObject.h"
+
+namespace JSC {
+
+WrapperMap::WrapperMap(JSGlobalContextRef jsContext)
+    : m_cachedJSWrappers(std::make_unique<JSC::WeakGCMap<gpointer, JSC::JSObject>>(toJS(jsContext)->vm()))
+{
+}
+
+WrapperMap::~WrapperMap()
+{
+    for (const auto& jscClass : m_classMap.values())
+        jscClassInvalidate(jscClass.get());
+}
+
+GRefPtr<JSCValue> WrapperMap::gobjectWrapper(JSCContext* jscContext, JSValueRef jsValue)
+{
+    auto* jsContext = jscContextGetJSContext(jscContext);
+    JSC::JSLockHolder locker(toJS(jsContext));
+    RELEASE_ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
+    GRefPtr<JSCValue> value = m_cachedGObjectWrappers.get(jsValue);
+    if (!value) {
+        value = adoptGRef(jscValueCreate(jscContext, jsValue));
+        m_cachedGObjectWrappers.set(jsValue, value.get());
+    }
+    return value;
+}
+
+void WrapperMap::unwrap(JSValueRef jsValue)
+{
+    RELEASE_ASSERT(m_cachedGObjectWrappers.contains(jsValue));
+    m_cachedGObjectWrappers.remove(jsValue);
+}
+
+void WrapperMap::registerClass(JSCClass* jscClass)
+{
+    auto* jsClass = jscClassGetJSClass(jscClass);
+    RELEASE_ASSERT(!m_classMap.contains(jsClass));
+    m_classMap.set(jsClass, jscClass);
+}
+
+JSObject* WrapperMap::createJSWrappper(JSGlobalContextRef jsContext, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
+{
+    RELEASE_ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
+    ExecState* exec = toJS(jsContext);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    auto* object = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->glibWrapperObjectStructure(), jsClass, nullptr);
+    if (wrappedObject) {
+        object->setWrappedObject(new JSC::JSCGLibWrapperObject(wrappedObject, destroyFunction));
+        m_cachedJSWrappers->set(wrappedObject, object);
+    }
+    if (prototype)
+        JSObjectSetPrototype(jsContext, toRef(object), prototype);
+    else if (auto* jsPrototype = jsClass->prototype(exec))
+        object->setPrototypeDirect(vm, jsPrototype);
+    return object;
+}
+
+JSObject* WrapperMap::jsWrapper(gpointer wrappedObject) const
+{
+    if (!wrappedObject)
+        return nullptr;
+    return m_cachedJSWrappers->get(wrappedObject);
+}
+
+gpointer WrapperMap::wrappedObject(JSGlobalContextRef jsContext, JSObjectRef jsObject) const
+{
+    RELEASE_ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
+    JSLockHolder locker(toJS(jsContext));
+    VM& vm = toJS(jsContext)->vm();
+    auto* object = toJS(jsObject);
+    if (object->inherits(vm, JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::info())) {
+        if (auto* wrapper = JSC::jsCast<JSC::JSAPIWrapperObject*>(object)->wrappedObject())
+            return static_cast<JSC::JSCGLibWrapperObject*>(wrapper)->object();
+    }
+    return nullptr;
+}
+
+} // namespace JSC

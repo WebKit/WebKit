@@ -1,3 +1,206 @@
+2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Initial implementation of JavaScriptCore glib bindings
+        https://bugs.webkit.org/show_bug.cgi?id=164061
+
+        Reviewed by Michael Catanzaro.
+
+        Add initial GLib API for JavaScriptCore.
+
+        * API/JSAPIWrapperObject.h:
+        * API/glib/JSAPIWrapperObjectGLib.cpp: Added.
+        (jsAPIWrapperObjectHandleOwner):
+        (JSAPIWrapperObjectHandleOwner::finalize):
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::createStructure):
+        (JSC::JSAPIWrapperObject::JSAPIWrapperObject):
+        (JSC::JSAPIWrapperObject::finishCreation):
+        (JSC::JSAPIWrapperObject::setWrappedObject):
+        (JSC::JSAPIWrapperObject::visitChildren):
+        * API/glib/JSCAutocleanups.h: Added.
+        * API/glib/JSCCallbackFunction.cpp: Added.
+        (JSC::callAsFunction):
+        (JSC::callAsConstructor):
+        (JSC::JSCCallbackFunction::create):
+        (JSC::JSCCallbackFunction::JSCCallbackFunction):
+        (JSC::JSCCallbackFunction::call):
+        (JSC::JSCCallbackFunction::construct):
+        (JSC::JSCCallbackFunction::destroy):
+        * API/glib/JSCCallbackFunction.h: Added.
+        (JSC::JSCCallbackFunction::createStructure):
+        (JSC::JSCCallbackFunction::functionCallback):
+        (JSC::JSCCallbackFunction::constructCallback):
+        * API/glib/JSCClass.cpp: Added.
+        (jscClassGetProperty):
+        (jscClassSetProperty):
+        (jscClassDispose):
+        (jscClassConstructed):
+        (jsc_class_class_init):
+        (jscClassCreate):
+        (jscClassGetJSClass):
+        (jscClassGetOrCreateJSWrapper):
+        (jscClassInvalidate):
+        (jsc_class_get_name):
+        (jsc_class_get_parent):
+        (jsc_class_add_constructor):
+        (jsc_class_add_method):
+        (jsc_class_add_property):
+        * API/glib/JSCClass.h: Added.
+        * API/glib/JSCClassPrivate.h: Added.
+        * API/glib/JSCContext.cpp: Added.
+        (ExceptionHandler::ExceptionHandler):
+        (ExceptionHandler::~ExceptionHandler):
+        (jscContextSetVirtualMachine):
+        (jscContextGetProperty):
+        (jscContextSetProperty):
+        (jscContextConstructed):
+        (jscContextDispose):
+        (jsc_context_class_init):
+        (jscContextGetOrCreate):
+        (jscContextGetJSContext):
+        (wrapperMap):
+        (jscContextGetOrCreateValue):
+        (jscContextValueDestroyed):
+        (jscContextGetJSWrapper):
+        (jscContextGetOrCreateJSWrapper):
+        (jscContextWrappedObject):
+        (jscContextPushCallback):
+        (jscContextPopCallback):
+        (jscContextGArrayToJSArray):
+        (jscContextJSArrayToGArray):
+        (jscContextGValueToJSValue):
+        (jscContextJSValueToGValue):
+        (jsc_context_new):
+        (jsc_context_new_with_virtual_machine):
+        (jsc_context_get_virtual_machine):
+        (jsc_context_get_exception):
+        (jsc_context_throw):
+        (jsc_context_throw_exception):
+        (jsc_context_push_exception_handler):
+        (jsc_context_pop_exception_handler):
+        (jscContextHandleExceptionIfNeeded):
+        (jsc_context_get_current):
+        (jsc_context_evaluate):
+        (jsc_context_evaluate_with_source_uri):
+        (jsc_context_set_value):
+        (jsc_context_get_value):
+        (jsc_context_register_class):
+        * API/glib/JSCContext.h: Added.
+        * API/glib/JSCContextPrivate.h: Added.
+        * API/glib/JSCDefines.h: Copied from Source/JavaScriptCore/API/JSAPIWrapperObject.h.
+        * API/glib/JSCException.cpp: Added.
+        (jscExceptionDispose):
+        (jsc_exception_class_init):
+        (jscExceptionCreate):
+        (jscExceptionGetJSValue):
+        (jscExceptionEnsureProperties):
+        (jsc_exception_new):
+        (jsc_exception_get_message):
+        (jsc_exception_get_line_number):
+        (jsc_exception_get_source_uri):
+        * API/glib/JSCException.h: Added.
+        * API/glib/JSCExceptionPrivate.h: Added.
+        * API/glib/JSCGLibWrapperObject.h: Added.
+        (JSC::JSCGLibWrapperObject::JSCGLibWrapperObject):
+        (JSC::JSCGLibWrapperObject::~JSCGLibWrapperObject):
+        (JSC::JSCGLibWrapperObject::object const):
+        * API/glib/JSCValue.cpp: Added.
+        (jscValueGetProperty):
+        (jscValueSetProperty):
+        (jscValueDispose):
+        (jsc_value_class_init):
+        (jscValueGetJSValue):
+        (jscValueCreate):
+        (jsc_value_get_context):
+        (jsc_value_new_undefined):
+        (jsc_value_is_undefined):
+        (jsc_value_new_null):
+        (jsc_value_is_null):
+        (jsc_value_new_number):
+        (jsc_value_is_number):
+        (jsc_value_to_double):
+        (jsc_value_to_int32):
+        (jsc_value_new_boolean):
+        (jsc_value_is_boolean):
+        (jsc_value_to_boolean):
+        (jsc_value_new_string):
+        (jsc_value_is_string):
+        (jsc_value_to_string):
+        (jsc_value_new_array):
+        (jsc_value_new_array_from_garray):
+        (jsc_value_is_array):
+        (jsc_value_new_object):
+        (jsc_value_is_object):
+        (jsc_value_object_is_instance_of):
+        (jsc_value_object_set_property):
+        (jsc_value_object_get_property):
+        (jsc_value_object_set_property_at_index):
+        (jsc_value_object_get_property_at_index):
+        (jscValueCallFunction):
+        (jsc_value_object_invoke_method):
+        (jsc_value_object_define_property_data):
+        (jsc_value_object_define_property_accessor):
+        (jsc_value_new_function):
+        (jsc_value_is_function):
+        (jsc_value_function_call):
+        (jsc_value_is_constructor):
+        (jsc_value_constructor_call):
+        * API/glib/JSCValue.h: Added.
+        * API/glib/JSCValuePrivate.h: Added.
+        * API/glib/JSCVersion.cpp: Added.
+        (jsc_get_major_version):
+        (jsc_get_minor_version):
+        (jsc_get_micro_version):
+        * API/glib/JSCVersion.h.in: Added.
+        * API/glib/JSCVirtualMachine.cpp: Added.
+        (addWrapper):
+        (removeWrapper):
+        (jscVirtualMachineSetContextGroup):
+        (jscVirtualMachineEnsureContextGroup):
+        (jscVirtualMachineDispose):
+        (jsc_virtual_machine_class_init):
+        (jscVirtualMachineGetOrCreate):
+        (jscVirtualMachineGetContextGroup):
+        (jscVirtualMachineAddContext):
+        (jscVirtualMachineRemoveContext):
+        (jscVirtualMachineGetContext):
+        (jsc_virtual_machine_new):
+        * API/glib/JSCVirtualMachine.h: Added.
+        * API/glib/JSCVirtualMachinePrivate.h: Added.
+        * API/glib/JSCWrapperMap.cpp: Added.
+        (JSC::WrapperMap::WrapperMap):
+        (JSC::WrapperMap::~WrapperMap):
+        (JSC::WrapperMap::gobjectWrapper):
+        (JSC::WrapperMap::unwrap):
+        (JSC::WrapperMap::registerClass):
+        (JSC::WrapperMap::createJSWrappper):
+        (JSC::WrapperMap::jsWrapper const):
+        (JSC::WrapperMap::wrappedObject const):
+        * API/glib/JSCWrapperMap.h: Added.
+        * API/glib/docs/jsc-glib-4.0-sections.txt: Added.
+        * API/glib/docs/jsc-glib-4.0.types: Added.
+        * API/glib/docs/jsc-glib-docs.sgml: Added.
+        * API/glib/jsc.h: Added.
+        * CMakeLists.txt:
+        * GLib.cmake: Added.
+        * JavaScriptCore.gir.in: Removed.
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * heap/Heap.cpp:
+        (JSC::Heap::releaseDelayedReleasedObjects):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::releaseSoon):
+        * javascriptcoregtk.pc.in:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::setWrapperMap):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::glibCallbackFunctionStructure const):
+        (JSC::JSGlobalObject::glibWrapperObjectStructure const):
+        (JSC::JSGlobalObject::wrapperMap const):
+
 2018-03-21  Christopher Reid  <chris.reid@sony.com>
 
         Windows 64-bit build fix after r229767

@@ -118,8 +118,8 @@ def get_generator_for_config(config_file, virtual_root, cross_reference_deps = [
     source_dirs = config.get(module_name, 'source_dirs').replace(';', ' ').split()
     headers = [os.path.abspath(f) for f in config.get(module_name, 'headers').replace(';', ' ').split()]
     return gtkdoc.PkgConfigGTKDoc(pkgconfig_file, {
-        'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
-        'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
+        'decorator': config.get(module_name, 'decorator'),
+        'deprecation_guard': config.get(module_name, 'deprecation_guard'),
         'library_path': common.library_build_path(),
         'virtual_root': virtual_root,
         'module_name': module_name,
@@ -195,6 +195,14 @@ if __name__ == "__main__":
     configure_logging(arguments.verbose)
 
     prepare_environment_for_gtkdoc_generation()
+
+    jsc_generator = get_generator_for_config(common.build_path('gtkdoc-jsc-glib.cfg'), arguments.virtual_root)
+    if not jsc_generator:
+        print("gtkdoc-jsc-glib.cfg does not exist! Skipping that documentation")
+        sys.exit(1)
+    saw_warnings = generate_documentation(jsc_generator)
+    if saw_warnings:
+        sys.exit(saw_warnings)
 
     webkitdom_generator = get_generator_for_config(common.build_path('gtkdoc-webkitdom.cfg'), arguments.virtual_root)
     if not webkitdom_generator:

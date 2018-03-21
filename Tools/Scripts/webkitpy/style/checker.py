@@ -151,6 +151,7 @@ _PATH_RULES_SPECIFIER = [
     ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
+      os.path.join('Source', 'JavaScriptCore', 'API', 'glib'),
       os.path.join('Source', 'WebKit', 'Shared', 'API', 'glib'),
       os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'glib'),
       os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk'),
@@ -335,7 +336,8 @@ _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
 _SKIPPED_FILES_WITH_WARNING = [
     os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKitGtk'),
 
-    # WebKit*.h files in Source/WebKit/UIProcess/API/[gtk|wpe], except those ending in Private.h are API headers, which do not follow WebKit coding style.
+    # WebKit*.h and JSC*.h files in, except those ending in Private.h are API headers, which do not follow WebKit coding style.
+    re.compile(re.escape(os.path.join('Source', 'JavaScriptCore', 'API', 'glib') + os.path.sep) + r'JSC(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
@@ -344,6 +346,7 @@ _SKIPPED_FILES_WITH_WARNING = [
     # GObject DOM bindings copied from generated code using different coding style.
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'DOM'),
 
+    os.path.join('Source', 'JavaScriptCore', 'API', 'glib', 'jsc.h'),
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'webkit.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'webkit-web-extension.h'),

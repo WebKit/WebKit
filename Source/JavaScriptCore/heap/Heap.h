@@ -89,6 +89,10 @@ class VM;
 class WeakGCMapBase;
 struct CurrentThreadState;
 
+#if USE(GLIB)
+class JSCGLibWrapperObject;
+#endif
+
 namespace DFG {
 class SpeculativeJIT;
 class Worklist;
@@ -271,6 +275,9 @@ public:
 
 #if USE(FOUNDATION)
     template<typename T> void releaseSoon(RetainPtr<T>&&);
+#endif
+#if USE(GLIB)
+    void releaseSoon(std::unique_ptr<JSCGLibWrapperObject>&&);
 #endif
 
     JS_EXPORT_PRIVATE void registerWeakGCMap(WeakGCMapBase* weakGCMap);
@@ -641,6 +648,10 @@ private:
 #if USE(FOUNDATION)
     Vector<RetainPtr<CFTypeRef>> m_delayedReleaseObjects;
     unsigned m_delayedReleaseRecursionCount;
+#endif
+#if USE(GLIB)
+    Vector<std::unique_ptr<JSCGLibWrapperObject>> m_delayedReleaseObjects;
+    unsigned m_delayedReleaseRecursionCount { 0 };
 #endif
 
     HashSet<WeakGCMapBase*> m_weakGCMaps;

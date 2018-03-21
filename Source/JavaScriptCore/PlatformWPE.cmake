@@ -1,3 +1,5 @@
+include(GLib.cmake)
+
 list(APPEND JavaScriptCore_LIBRARIES
     ${GLIB_LIBRARIES}
 )
@@ -29,3 +31,10 @@ install(FILES ${JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS}
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/wpe-${WPE_API_VERSION}/WPE/JavaScriptCore"
     COMPONENT "Development"
 )
+
+install(FILES ${JavaScriptCore_INSTALLED_HEADERS}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/wpe-${WPE_API_VERSION}/WPE/jsc"
+    COMPONENT "Development"
+)
+
+add_definitions(-DJSC_COMPILATION)

@@ -185,6 +185,11 @@
 #include "JSGlobalObjectInspectorController.h"
 #endif
 
+#ifdef JSC_GLIB_API_ENABLED
+#include "JSCCallbackFunction.h"
+#include "JSCWrapperMap.h"
+#endif
+
 namespace JSC {
 
     static JSValue createProxyProperty(VM& vm, JSObject* object)
@@ -567,7 +572,16 @@ void JSGlobalObject::init(VM& vm)
             init.set(JSCallbackObject<JSAPIWrapperObject>::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get()));
         });
 #endif
-    
+#ifdef JSC_GLIB_API_ENABLED
+    m_glibCallbackFunctionStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(JSCCallbackFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+        });
+    m_glibWrapperObjectStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(JSCallbackObject<JSAPIWrapperObject>::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get()));
+        });
+#endif
     m_arrayPrototype.set(vm, this, ArrayPrototype::create(vm, this, ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
     
     m_originalArrayStructureForIndexingShape[UndecidedShape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithUndecided));
@@ -1381,6 +1395,10 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_objcCallbackFunctionStructure.visit(visitor);
     thisObject->m_objcWrapperObjectStructure.visit(visitor);
 #endif
+#ifdef JSC_GLIB_API_ENABLED
+    thisObject->m_glibCallbackFunctionStructure.visit(visitor);
+    thisObject->m_glibWrapperObjectStructure.visit(visitor);
+#endif
     thisObject->m_nullPrototypeObjectStructure.visit(visitor);
     visitor.append(thisObject->m_errorStructure);
     visitor.append(thisObject->m_calleeStructure);
@@ -1611,5 +1629,12 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
     setGlobalThis(vm, thisValue);
     ASSERT(type() == GlobalObjectType);
 }
+
+#ifdef JSC_GLIB_API_ENABLED
+void JSGlobalObject::setWrapperMap(std::unique_ptr<WrapperMap>&& map)
+{
+    m_wrapperMap = WTFMove(map);
+}
+#endif
 
 } // namespace JSC

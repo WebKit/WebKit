@@ -871,6 +871,8 @@ endif ()
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
     "[webkit2gtk-${WEBKITGTK_API_VERSION}]\n"
     "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
+    "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
+    "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
     "namespace=webkit\n"
     "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
     "       -I${WEBKIT_DIR}/Shared/API/glib\n"
@@ -892,6 +894,8 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
     "[webkitdomgtk-${WEBKITGTK_API_VERSION}]\n"
     "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
+    "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
+    "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
     "namespace=webkit_dom\n"
     "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
     "       -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM\n"
