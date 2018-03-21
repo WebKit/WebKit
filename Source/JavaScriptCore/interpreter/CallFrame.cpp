@@ -148,6 +148,7 @@ unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
     
 unsigned CallFrame::bytecodeOffset()
 {
+    ASSERT(!callee().isWasm());
     if (!codeBlock())
         return 0;
 #if ENABLE(DFG_JIT)
@@ -329,7 +330,7 @@ String CallFrame::friendlyFunctionName()
 void CallFrame::dump(PrintStream& out)
 {
     if (CodeBlock* codeBlock = this->codeBlock()) {
-        out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), "]");
+        out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " bc#", bytecodeOffset(), "]");
 
         out.print("(");
         thisValue().dumpForBacktrace(out);

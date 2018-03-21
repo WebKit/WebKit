@@ -1,3 +1,14 @@
+2018-03-21  Keith Miller  <keith_miller@apple.com>
+
+        btjs should print the bytecode offset in the stack trace for JS frames
+        https://bugs.webkit.org/show_bug.cgi?id=183856
+
+        Reviewed by Filip Pizlo.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::bytecodeOffset):
+        (JSC::CallFrame::dump):
+
 2018-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK and WPE debug build after r229798.
