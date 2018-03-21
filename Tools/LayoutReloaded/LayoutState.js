@@ -49,6 +49,10 @@ class LayoutState {
         return this.m_formattingStates;
     }
 
+    formattingState(formattingRoot) {
+        return this.m_formattingStates.get(formattingRoot);
+    }
+
     initialDisplayBox() {
         return this.m_initialDisplayBox;
     }

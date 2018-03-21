@@ -27,8 +27,8 @@ class InlineFormattingContext extends FormattingContext {
     constructor(inlineFormattingState) {
         super(inlineFormattingState);
         // If the block container box that initiates this inline formatting contex also establishes a block context, create a new float for us.
-        ASSERT(root.isBlockContainerBox());
-        if (root.establishesBlockFormattingContext())
+        ASSERT(this.formattingRoot().isBlockContainerBox());
+        if (this.formattingRoot().establishesBlockFormattingContext())
             this.m_floatingContext = new FloatingContext(this);
         this.m_line = this._createNewLine();
     }
@@ -41,7 +41,7 @@ class InlineFormattingContext extends FormattingContext {
         // This is a post-order tree traversal layout.
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
         this._addToLayoutQueue(this.formattingRoot().firstChild());
-        while (layoutStack.length) {
+        while (this._descendantNeedsLayout()) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
                 let layoutBox = this._nextInLayoutQueue();
@@ -53,7 +53,7 @@ class InlineFormattingContext extends FormattingContext {
                     break;
                 this._addToLayoutQueue(layoutBox.firstChild());
             }
-            while (layoutStack.length) {
+            while (this._descendantNeedsLayout()) {
                 let layoutBox = this._nextInLayoutQueue();
                 this._handleInlineBox(layoutBox);
                 // We are done with laying out this box.
@@ -100,8 +100,8 @@ class InlineFormattingContext extends FormattingContext {
 
     _createNewLine() {
         // TODO: Floats need to be taken into account.
-        let contentBoxRect = this.formattingRoot().contentBox();
-        this.m_line = new Line(contentBoxRect.topLeft(), Utils.computedLineHeight(this.formattingRoot()), contentBoxRect.width());
+        let contentBoxRect = this.displayBox(this.formattingRoot()).contentBox();
+        return new Line(contentBoxRect.topLeft(), Utils.computedLineHeight(this.formattingRoot().node()), contentBoxRect.width());
     }
 }
 

@@ -263,7 +263,7 @@ class BlockFormattingContext extends FormattingContext {
         if (!layoutBox.isContainer() || !layoutBox.hasInFlowChild())
             return 0;
         if (layoutBox.establishesInlineFormattingContext()) {
-            let lines = layoutBox.establishedFormattingContext().lines();
+            let lines = this.layoutState().formattingState(layoutBox).lines();
             if (!lines.length)
                 return 0;
             let lastLine = lines[lines.length - 1];

@@ -1,5 +1,26 @@
 2018-03-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Enable formatting state for InlineFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=183853
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._contentHeight):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext):
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._createNewLine):
+        * LayoutReloaded/LayoutState.js:
+        (LayoutState.prototype.formattingState):
+        * LayoutReloaded/README.md:
+        * LayoutReloaded/Utils.js:
+        (Utils._dumpTree):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/simple-inline-text.html: Added.
+
+2018-03-21  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Move inline lines to InlineFormattingState.
         https://bugs.webkit.org/show_bug.cgi?id=183814
 

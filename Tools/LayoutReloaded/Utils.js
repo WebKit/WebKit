@@ -520,10 +520,10 @@ class Utils {
         return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + boxRect.left() + "," + boxRect.top() + ") size " + boxRect.width() + "x" + boxRect.height() + "\n";
     }
 
-    static _dumpLines(root, level) {
+    static _dumpLines(layoutState, root, level) {
         ASSERT(root.establishesInlineFormattingContext());
-        let inlineFormattingContext = root.establishedFormattingContext();
-        let lines = inlineFormattingContext.lines();
+        let inlineFormattingState = layoutState.formattingState(root);
+        let lines = inlineFormattingState.lines();
         let content = "";
         let indentation = " ".repeat(level);
         lines.forEach(function(line) {
@@ -540,7 +540,7 @@ class Utils {
     static _dumpTree(layoutState, root, level) {
         let content = "";
         if (root.isBlockContainerBox() && root.establishesInlineFormattingContext())
-            content += this._dumpLines(root, level);
+            content += this._dumpLines(layoutState, root, level);
         for (let child = root.firstChild(); child; child = child.nextSibling()) {
             content += this._dumpBox(layoutState, child, level);
             if (child.isContainer())
