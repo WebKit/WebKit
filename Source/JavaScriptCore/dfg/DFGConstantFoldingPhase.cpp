@@ -706,6 +706,7 @@ private:
                     if (2 <= radix && radix <= 36) {
                         if (radix == 10) {
                             node->setOpAndDefaultFlags(ToString);
+                            node->clearFlags(NodeMustGenerate);
                             node->child2() = Edge();
                         } else
                             node->convertToNumberToStringWithValidRadixConstant(radix);

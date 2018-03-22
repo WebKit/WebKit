@@ -1,3 +1,17 @@
+2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Clear MustGenerate for ToString(Number) converted from NumberToStringWithRadix
+        https://bugs.webkit.org/show_bug.cgi?id=183559
+
+        Reviewed by Mark Lam.
+
+        * stress/double-to-string-in-loop-removed.js: Added.
+        (test):
+        * stress/int32-to-string-in-loop-removed.js: Added.
+        (test):
+        * stress/int52-to-string-in-loop-removed.js: Added.
+        (test):
+
 2018-03-22  Michael Saboff  <msaboff@apple.com>
 
         Race Condition in arrayProtoFuncReverse() causes wrong results or crash
