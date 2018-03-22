@@ -1781,5 +1781,3 @@ webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeou
 webkit.org/b/182928 http/tests/cache-storage/cache-representation.https.html [ Pass Failure ]
 
 webkit.org/b/183572 imported/blink/svg/css/path-layout-crash.html [ Skip ]
-webkit.org/b/183572 imported/mozilla/svg/foreignObject-ancestor-style-change-01.svg [ Skip ]
-webkit.org/b/183572 imported/mozilla/svg/mask-transformed-01.svg [ Skip ]

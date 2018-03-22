@@ -1,3 +1,12 @@
+2018-03-22  Zalan Bujtas  <zalan@apple.com>
+
+        SVG root is skipped while marking percentage height descendants dirty.
+        https://bugs.webkit.org/show_bug.cgi?id=183877
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+
 2018-03-22  Frederic Wang  <fwang@igalia.com>
 
         [MathML] Import WPT test to replace mathml/opentype/large-operators-italic-correction.html

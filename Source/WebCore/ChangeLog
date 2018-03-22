@@ -1,3 +1,25 @@
+2018-03-22  Zalan Bujtas  <zalan@apple.com>
+
+        SVG root is skipped while marking percentage height descendants dirty.
+        https://bugs.webkit.org/show_bug.cgi?id=183877
+
+        Reviewed by Antti Koivisto.
+
+        Calling continingBlock() to get to the correct container works as long as the ancestor inline element
+        renderers are wrapped in anonymous blocks (continuation for example).
+
+        While the SVG root renderer is an inline renderer, it is not wrapped or normalized in any way,
+        so containingBlock() will elegantly skip it and return an SVG root ancestor.
+        dirtyForLayoutFromPercentageHeightDescendants calls containingBlock() to walk up
+        on the ancestor chain to mark elements dirty. This fails when there's an SVG subtree in the block chain.
+        This patch marks the SVG subtree chain dirty to ensure that layout will get to all the dirty leaf renderers 
+        (note that the SVG subtree is supposed to have only statically positioned elements so parent == containing block).
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dirtyForLayoutFromPercentageHeightDescendants):
+
 2018-03-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Build failure when ENABLE_VIDEO, ENABLE_WEB_AUDIO and ENABLE_XSLT are disabled

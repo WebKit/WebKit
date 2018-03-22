@@ -58,12 +58,14 @@
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGRoot.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreePosition.h"
 #include "RenderView.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShapeOutsideInfo.h"
@@ -819,7 +821,7 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
         return;
 
     for (auto it = descendants->begin(), end = descendants->end(); it != end; ++it) {
-        RenderBox* box = *it;
+        auto* box = *it;
         while (box != this) {
             if (box->normalChildNeedsLayout())
                 break;
@@ -830,8 +832,20 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
             // (A horizontal flexbox that contains an inline image wrapped in an anonymous block for example.)
             if (box->hasAspectRatio()) 
                 box->setPreferredLogicalWidthsDirty(true);
-            
-            box = box->containingBlock();
+            auto* containingBlock = box->containingBlock();
+            // Mark the svg ancestor chain dirty as we walk to the containing block. containingBlock() just skips them. See webkit.org/b/183874.
+            if (is<SVGElement>(box->element()) && containingBlock != box->parent()) {
+                auto* ancestor = box->parent();
+                ASSERT(ancestor->isDescendantOf(containingBlock));
+                while (ancestor != containingBlock) {
+                    ancestor->setChildNeedsLayout(MarkOnlyThis);
+                    // This is the topmost SVG root, no need to go any further.
+                    if (is<SVGSVGElement>(ancestor->element()) && !downcast<SVGSVGElement>(*ancestor->element()).ownerSVGElement())
+                        break;
+                    ancestor = ancestor->parent();
+                }
+            }
+            box = containingBlock;
             ASSERT(box);
             if (!box)
                 break;
