@@ -2369,7 +2369,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
     }
 
     auto* activePolicyListener = frame.activePolicyListenerProxy();
-    if (activePolicyListener) {
+    if (activePolicyListener && activePolicyListener->policyListenerType() == PolicyListenerType::NavigationAction) {
         ASSERT(activePolicyListener->listenerID() == listenerID);
 
         if (action == PolicyAction::Use && navigation) {
