@@ -31,12 +31,12 @@
 
 #include "GraphicsContext3D.h"
 
-#if PLATFORM(IOS)
-#include <OpenGLES/ES2/glext.h>
-#elif PLATFORM(MAC)
-#include <OpenGL/gl.h>
-#elif PLATFORM(GTK) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(WIN)
 #include "OpenGLShims.h"
+#elif USE(OPENGL_ES)
+#include <OpenGLES/ES2/glext.h>
+#elif USE(OPENGL)
+#include <OpenGL/gl.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -55,7 +55,7 @@ Extensions3DOpenGL::~Extensions3DOpenGL() = default;
 
 void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
     UNUSED_PARAM(srcX0);
     UNUSED_PARAM(srcY0);
     UNUSED_PARAM(srcX1);
@@ -81,7 +81,7 @@ Platform3DObject Extensions3DOpenGL::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
     GLuint array = 0;
-#if (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
     if (isVertexArrayObjectSupported())
         glGenVertexArrays(1, &array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -96,7 +96,7 @@ void Extensions3DOpenGL::deleteVertexArrayOES(Platform3DObject array)
         return;
 
     m_context->makeContextCurrent();
-#if (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
     if (isVertexArrayObjectSupported())
         glDeleteVertexArrays(1, &array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -110,7 +110,7 @@ GC3Dboolean Extensions3DOpenGL::isVertexArrayOES(Platform3DObject array)
         return GL_FALSE;
 
     m_context->makeContextCurrent();
-#if (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
     if (isVertexArrayObjectSupported())
         return glIsVertexArray(array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -122,7 +122,7 @@ GC3Dboolean Extensions3DOpenGL::isVertexArrayOES(Platform3DObject array)
 void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
 {
     m_context->makeContextCurrent();
-#if (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
     if (isVertexArrayObjectSupported())
         glBindVertexArray(array);
 #elif defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
@@ -298,7 +298,7 @@ String Extensions3DOpenGL::getExtensions()
     return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
-#if (PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(IOS))
+#if PLATFORM(GTK) || PLATFORM(WIN) || (PLATFORM(COCOA) && USE(OPENGL_ES))
 bool Extensions3DOpenGL::isVertexArrayObjectSupported()
 {
     static const bool supportsVertexArrayObject = supports("GL_OES_vertex_array_object");

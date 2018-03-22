@@ -1144,17 +1144,17 @@ public:
 
 #if PLATFORM(COCOA)
     bool texImageIOSurface2D(GC3Denum target, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, IOSurfaceRef, GC3Duint plane);
-#endif
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
     void presentRenderbuffer();
 #endif
 
-#if PLATFORM(MAC)
+#if USE(OPENGL)
     void allocateIOSurfaceBackingStore(IntSize);
     void updateFramebufferTextureBackingStoreFromLayer();
     void updateCGLContext();
 #endif
+#endif // PLATFORM(COCOA)
 
     void setContextVisibility(bool);
 

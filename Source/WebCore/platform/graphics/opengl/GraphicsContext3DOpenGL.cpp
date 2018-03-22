@@ -47,18 +47,18 @@
 #include <Accelerate/Accelerate.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(GTK) || PLATFORM(WIN)
+#include "OpenGLShims.h"
+#elif USE(OPENGL_ES)
 #import <OpenGLES/ES2/glext.h>
 // From <OpenGLES/glext.h>
 #define GL_RGBA32F_ARB                      0x8814
 #define GL_RGB32F_ARB                       0x8815
-#elif PLATFORM(MAC)
+#elif USE(OPENGL)
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include <OpenGL/gl.h>
 #include <OpenGL/gl3.h>
 #undef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
-#elif PLATFORM(GTK) || PLATFORM(WIN)
-#include "OpenGLShims.h"
 #endif
 
 namespace WebCore {
@@ -141,7 +141,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         if (extensions.supports("GL_EXT_packed_depth_stencil"))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
         else
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
             internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
 #else
             internalDepthStencilFormat = GL_DEPTH_COMPONENT;
@@ -157,7 +157,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         GLint sampleCount = std::min(4, maxSampleCount);
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
         ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, GL_RGBA8_OES, width, height);
 #else
         ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, m_internalColorFormat, width, height);
@@ -181,14 +181,16 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     // resize regular FBO
     ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     ASSERT(m_texture);
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA)
+#if USE(OPENGL_ES)
     ::glBindRenderbuffer(GL_RENDERBUFFER, m_texture);
     ::glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_texture);
     setRenderbufferStorageFromDrawable(m_currentWidth, m_currentHeight);
-#elif PLATFORM(MAC)
+#else
     allocateIOSurfaceBackingStore(IntSize(width, height));
     updateFramebufferTextureBackingStoreFromLayer();
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, m_texture, 0);
+#endif // !USE(OPENGL_ES))
 #else
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
@@ -246,14 +248,14 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
     TemporaryOpenGLSetting scopedDepth(GL_DEPTH_TEST, GL_FALSE);
     TemporaryOpenGLSetting scopedStencil(GL_STENCIL_TEST, GL_FALSE);
 
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
     GLint boundFrameBuffer;
     ::glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFrameBuffer);
 #endif
 
     ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
     ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
     UNUSED_PARAM(rect);
     ::glFlush();
     ::glResolveMultisampleFramebufferAPPLE();
@@ -272,7 +274,7 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     makeContextCurrent();
-#if !PLATFORM(IOS)
+#if USE(OPENGL)
     switch (internalformat) {
     case DEPTH_STENCIL:
         internalformat = GL_DEPTH24_STENCIL8_EXT;
@@ -300,7 +302,7 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
     // Therefore, the value returned by desktop GL needs to be divided by 4.
     makeContextCurrent();
     switch (pname) {
-#if !PLATFORM(IOS)
+#if USE(OPENGL)
     case MAX_FRAGMENT_UNIFORM_VECTORS:
         ::glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value);
         *value /= 4;
@@ -392,7 +394,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
 
     GC3Denum openGLFormat = format;
     GC3Denum openGLInternalFormat = internalformat;
-#if !PLATFORM(IOS)
+#if USE(OPENGL)
     if (type == GL_FLOAT) {
         if (format == GL_RGBA)
             openGLInternalFormat = GL_RGBA32F_ARB;
@@ -452,7 +454,7 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
 void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 {
     makeContextCurrent();
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
     ::glDepthRangef(static_cast<float>(zNear), static_cast<float>(zFar));
 #else
     ::glDepthRange(zNear, zFar);
@@ -462,7 +464,7 @@ void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 {
     makeContextCurrent();
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
     ::glClearDepthf(static_cast<float>(depth));
 #else
     ::glClearDepth(depth);

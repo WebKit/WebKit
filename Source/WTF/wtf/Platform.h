@@ -1151,6 +1151,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#define HAVE_APPLE_GRAPHICS_CONTROL 1
 #define USE_COREAUDIO 1
 #endif
 

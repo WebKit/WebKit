@@ -1,3 +1,13 @@
+2018-03-22  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt USE(OPENGL[_ES]) in more places
+        https://bugs.webkit.org/show_bug.cgi?id=183882
+        <rdar://problem/37912195>
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Platform.h:
+
 2018-03-20  Brent Fulgham  <bfulgham@apple.com>
 
         Create an assertion mechanism to ensure proper WebCore use in each WebKit Process

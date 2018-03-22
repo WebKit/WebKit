@@ -1,3 +1,45 @@
+2018-03-22  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt USE(OPENGL[_ES]) in more places
+        https://bugs.webkit.org/show_bug.cgi?id=183882
+        <rdar://problem/37912195>
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::hasMuxableGPU):
+        (WebCore::GraphicsContext3DManager::updateHighPerformanceState):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::checkGPUStatus):
+        (WebCore::GraphicsContext3D::texImageIOSurface2D):
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]):
+        (-[WebGLLayer copyImageSnapshotWithColorSpace:]):
+        (-[WebGLLayer display]):
+        * platform/graphics/ios/GraphicsContext3DIOS.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::blitFramebuffer):
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary):
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::depthRange):
+        (WebCore::GraphicsContext3D::clearDepth):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        Make it a bit more clear which code is platform-dependent and which code is GL/GLES-dependent.
+
 2018-03-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Make TextureMapperContextAttributes thread-specific

@@ -186,7 +186,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer)
 
     paintToCanvas(pixels.get(), IntSize(m_currentWidth, m_currentHeight), imageBuffer->internalSize(), imageBuffer->context());
 
-#if PLATFORM(IOS)
+#if PLATFORM(COCOA) && USE(OPENGL_ES)
     presentRenderbuffer();
 #endif
 }

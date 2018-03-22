@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS)
+#if USE(OPENGL_ES)
 
 #define glBindFramebufferEXT glBindFramebuffer
 #define glBindRenderbufferEXT glBindRenderbuffer
@@ -71,4 +71,4 @@
 #define GL_STENCIL_ATTACHMENT_EXT GL_STENCIL_ATTACHMENT
 #define GL_UNSIGNED_INT_8_8_8_8_REV GL_UNSIGNED_BYTE
 
-#endif // PLATFORM(IOS)
+#endif // USE(OPENGL_ES)
