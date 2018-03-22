@@ -417,9 +417,11 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     for (; n; n = n->next()) {
         if (n->value()->isSpreadExpression())
             goto handleSpread;
-        RegisterID* value = generator.emitNode(n->value());
+        RefPtr<RegisterID> value = generator.emitNode(n->value());
         length += n->elision();
-        generator.emitPutByIndex(array.get(), length++, value);
+
+        RefPtr<RegisterID> index = generator.emitLoad(nullptr, jsNumber(length++));
+        generator.emitDirectPutByVal(array.get(), index.get(), value.get());
     }
 
     if (m_elision) {
@@ -4141,8 +4143,10 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
         generator.emitNode(registers.last().get(), elements[i]);
         if (m_targetPatterns[i].defaultValue)
             assignDefaultValueIfUndefined(generator, registers.last().get(), m_targetPatterns[i].defaultValue);
-        if (resultRegister)
-            generator.emitPutByIndex(resultRegister.get(), i, registers.last().get());
+        if (resultRegister) {
+            RefPtr<RegisterID> index = generator.emitLoad(nullptr, jsNumber(i));
+            generator.emitDirectPutByVal(resultRegister.get(), index.get(), registers.last().get());
+        }
     }
     
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {

@@ -1,3 +1,39 @@
+2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop op_put_by_index
+        https://bugs.webkit.org/show_bug.cgi?id=183899
+
+        Reviewed by Mark Lam.
+
+        This patch drops op_put_by_index.
+
+        1. This functionality can be just covered by direct put_by_val.
+        2. put_by_index is not well optimized. It is just calling a C
+        function. And it does not have DFG handling.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutByIndex): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_index): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_index): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+
 2018-03-22  Michael Saboff  <msaboff@apple.com>
 
         Race Condition in arrayProtoFuncReverse() causes wrong results or crash

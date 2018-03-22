@@ -995,15 +995,6 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
     LLINT_RETURN(jsBoolean(couldDelete));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_put_by_index)
-{
-    LLINT_BEGIN();
-    JSValue arrayValue = LLINT_OP_C(1).jsValue();
-    ASSERT(isJSArray(arrayValue));
-    asArray(arrayValue)->putDirectIndex(exec, pc[2].u.operand, LLINT_OP_C(3).jsValue());
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_id)
 {
     LLINT_BEGIN();

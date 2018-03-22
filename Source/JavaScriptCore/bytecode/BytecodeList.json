@@ -96,7 +96,6 @@
             { "name" : "op_put_by_val_with_this", "length" : 5 },
             { "name" : "op_put_by_val_direct", "length" : 5 },
             { "name" : "op_del_by_val", "length" : 4 },
-            { "name" : "op_put_by_index", "length" : 4 },
             { "name" : "op_put_getter_by_id", "length" : 5 },
             { "name" : "op_put_setter_by_id", "length" : 5 },
             { "name" : "op_put_getter_setter_by_id", "length" : 6 },

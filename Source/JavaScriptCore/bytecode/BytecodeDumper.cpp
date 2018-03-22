@@ -1187,14 +1187,6 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
         break;
     }
-    case op_put_by_index: {
-        int r0 = (++it)->u.operand;
-        unsigned n0 = (++it)->u.operand;
-        int r1 = (++it)->u.operand;
-        printLocationAndOp(out, location, it, "put_by_index");
-        out.printf("%s, %u, %s", registerName(r0).data(), n0, registerName(r1).data());
-        break;
-    }
     case op_jmp: {
         int offset = (++it)->u.operand;
         printLocationAndOp(out, location, it, "jmp");

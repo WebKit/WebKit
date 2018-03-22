@@ -102,7 +102,6 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
         return;
     }
-    case op_put_by_index:
     case op_put_by_id:
     case op_put_to_scope:
     case op_put_to_arguments: {
@@ -364,7 +363,6 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_put_setter_by_val:
     case op_put_by_val:
     case op_put_by_val_direct:
-    case op_put_by_index:
     case op_define_data_property:
     case op_define_accessor_property:
     case op_profile_type:

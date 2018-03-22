@@ -46,17 +46,6 @@
 
 namespace JSC {
     
-void JIT::emit_op_put_by_index(Instruction* currentInstruction)
-{
-    int base = currentInstruction[1].u.operand;
-    int property = currentInstruction[2].u.operand;
-    int value = currentInstruction[3].u.operand;
-
-    emitLoad(base, regT1, regT0);
-    emitLoad(value, regT3, regT2);
-    callOperation(operationPutByIndex, JSValueRegs(regT1, regT0), property, JSValueRegs(regT3, regT2));
-}
-
 void JIT::emit_op_put_getter_by_id(Instruction* currentInstruction)
 {
     int base = currentInstruction[1].u.operand;

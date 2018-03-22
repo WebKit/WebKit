@@ -2951,15 +2951,6 @@ RegisterID* BytecodeGenerator::emitDeleteByVal(RegisterID* dst, RegisterID* base
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitPutByIndex(RegisterID* base, unsigned index, RegisterID* value)
-{
-    emitOpcode(op_put_by_index);
-    instructions().append(base->index());
-    instructions().append(index);
-    instructions().append(value->index());
-    return value;
-}
-
 void BytecodeGenerator::emitSuperSamplerBegin()
 {
     emitOpcode(op_super_sampler_begin);

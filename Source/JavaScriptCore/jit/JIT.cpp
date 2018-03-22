@@ -391,7 +391,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_profile_control_flow)
         DEFINE_OP(op_get_parent_scope)
         DEFINE_OP(op_put_by_id)
-        DEFINE_OP(op_put_by_index)
         case op_put_by_val_direct:
         DEFINE_OP(op_put_by_val)
         DEFINE_OP(op_put_getter_by_id)

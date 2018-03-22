@@ -1520,12 +1520,6 @@ _llint_op_del_by_val:
     dispatch(constexpr op_del_by_val_length)
 
 
-_llint_op_put_by_index:
-    traceExecution()
-    callSlowPath(_llint_slow_path_put_by_index)
-    dispatch(constexpr op_put_by_index_length)
-
-
 _llint_op_put_getter_by_id:
     traceExecution()
     callSlowPath(_llint_slow_path_put_getter_by_id)

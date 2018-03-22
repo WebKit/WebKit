@@ -558,7 +558,6 @@ namespace JSC {
         void emit_op_profile_control_flow(Instruction*);
         void emit_op_get_parent_scope(Instruction*);
         void emit_op_put_by_id(Instruction*);
-        void emit_op_put_by_index(Instruction*);
         void emit_op_put_by_val(Instruction*);
         void emit_op_put_getter_by_id(Instruction*);
         void emit_op_put_setter_by_id(Instruction*);
