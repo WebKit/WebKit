@@ -1,3 +1,12 @@
+2018-03-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r229831): fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=183885
+
+        Unreviewed, temporarily mark the test as flaky while I investigate.
+
+        * TestExpectations:
+
 2018-03-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark fast/scrolling/latching/scroll-div-no-latching.html as flaky.
