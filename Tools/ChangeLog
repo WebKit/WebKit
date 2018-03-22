@@ -1,3 +1,9 @@
+2018-03-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        Unreviewed, make the email address of Yoshiaki Jitsukawa all lower case.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-03-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         Unreviewed, add myself as a WebKit committer.
