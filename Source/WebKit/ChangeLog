@@ -1,3 +1,10 @@
+2018-03-21  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed, update comment added in r229801.
+
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::didFindString): Remove "On Mobile" and mention bug 183889.
+
 2018-03-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r229831): ProcessSwap.Basic API test is crashing
