@@ -1,3 +1,40 @@
+2018-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Make TextureMapperContextAttributes thread-specific
+        https://bugs.webkit.org/show_bug.cgi?id=183895
+
+        Reviewed by Carlos Garcia Campos.
+
+        Store the TextureMapperContextAttributes in a thread-specific manner.
+        The TextureMapperContextAttributes::get() method is now used to retrieve
+        a reference to that thread-specific object. If it's not been initialized
+        yet, then the current GL context is used for the initialization, as it
+        used to be done in the now-removed initialize() method.
+
+        TextureMapperPlatformLayerBuffer::clone() method now doesn't need to
+        be passed a TextureMapperGL object, since the texture can be created
+        directly by calling BitmapTextureGL::create(), passing the
+        TextureMapperContextAttributes object that's retrieved from the
+        thread-specific storage. This further simplifies the
+        TextureMapperPlatformLayerProxy::Compositor interface, removing the
+        texmapGL() getter from it.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        * platform/graphics/texmap/TextureMapperContextAttributes.cpp:
+        (WebCore::threadSpecificAttributes):
+        (WebCore::TextureMapperContextAttributes::get):
+        (WebCore::TextureMapperContextAttributes::initialize): Deleted.
+        * platform/graphics/texmap/TextureMapperContextAttributes.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::TextureMapperGL):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::clone):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+
 2018-03-22  Zalan Bujtas  <zalan@apple.com>
 
         SVG root is skipped while marking percentage height descendants dirty.

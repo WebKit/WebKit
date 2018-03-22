@@ -63,7 +63,7 @@ public:
     void setUnmanagedBufferDataHolder(std::unique_ptr<UnmanagedBufferDataHolder> holder) { m_unmanagedBufferDataHolder = WTFMove(holder); }
     void setExtraFlags(TextureMapperGL::Flags flags) { m_extraFlags = flags; }
 
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> clone(TextureMapperGL&);
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> clone();
 
 private:
 

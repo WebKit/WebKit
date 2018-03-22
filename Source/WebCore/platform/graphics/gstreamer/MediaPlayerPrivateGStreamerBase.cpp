@@ -764,10 +764,7 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
     IntSize size = IntSize(GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo));
     std::unique_ptr<TextureMapperPlatformLayerBuffer> buffer = m_platformLayerProxy->getAvailableBuffer(size, GL_DONT_CARE);
     if (UNLIKELY(!buffer)) {
-        TextureMapperContextAttributes contextAttributes;
-        contextAttributes.initialize();
-
-        auto texture = BitmapTextureGL::create(contextAttributes);
+        auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get());
         texture->reset(size, GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
         buffer = std::make_unique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
     }

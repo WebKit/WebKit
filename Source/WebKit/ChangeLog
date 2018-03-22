@@ -1,3 +1,19 @@
+2018-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Make TextureMapperContextAttributes thread-specific
+        https://bugs.webkit.org/show_bug.cgi?id=183895
+
+        Reviewed by Carlos Garcia Campos.
+
+        CoordinatedGraphicsScene, as an implementor of the
+        TextureMapperPlatformLayerProxy::Compositor interface, doesn't have to
+        implement the texmapGL() method anymore.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::onNewBufferAvailable):
+        (WebKit::CoordinatedGraphicsScene::texmapGL): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+
 2018-03-21  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed, update comment added in r229801.

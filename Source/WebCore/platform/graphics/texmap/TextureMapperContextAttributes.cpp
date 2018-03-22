@@ -29,25 +29,43 @@
 #if USE(TEXTURE_MAPPER_GL)
 
 #include "TextureMapperGLHeaders.h"
+#include <mutex>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void TextureMapperContextAttributes::initialize()
+static WTF::ThreadSpecific<TextureMapperContextAttributes>& threadSpecificAttributes()
 {
-#if USE(OPENGL_ES)
-    isGLES2Compliant = true;
+    static WTF::ThreadSpecific<TextureMapperContextAttributes>* s_textureMapperContextAttributes;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag,
+        [] {
+            s_textureMapperContextAttributes = new WTF::ThreadSpecific<TextureMapperContextAttributes>;
+        });
+    return *s_textureMapperContextAttributes;
+}
 
-    String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
-    supportsNPOTTextures = extensionsString.contains(ASCIILiteral("GL_OES_texture_npot"));
-    supportsBGRA8888 = extensionsString.contains(ASCIILiteral("GL_EXT_texture_format_BGRA8888"));
-    supportsUnpackSubimage = extensionsString.contains(ASCIILiteral("GL_EXT_unpack_subimage"));
+const TextureMapperContextAttributes& TextureMapperContextAttributes::get()
+{
+    auto& attributes = *threadSpecificAttributes();
+    if (!attributes.initialized) {
+        attributes.initialized = true;
+#if USE(OPENGL_ES)
+        attributes.isGLES2Compliant = true;
+
+        String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
+        attributes.supportsNPOTTextures = extensionsString.contains(ASCIILiteral("GL_OES_texture_npot"));
+        attributes.supportsBGRA8888 = extensionsString.contains(ASCIILiteral("GL_EXT_texture_format_BGRA8888"));
+        attributes.supportsUnpackSubimage = extensionsString.contains(ASCIILiteral("GL_EXT_unpack_subimage"));
 #else
-    isGLES2Compliant = false;
-    supportsNPOTTextures = true;
-    supportsBGRA8888 = true;
-    supportsUnpackSubimage = true;
+        attributes.isGLES2Compliant = false;
+        attributes.supportsNPOTTextures = true;
+        attributes.supportsBGRA8888 = true;
+        attributes.supportsUnpackSubimage = true;
 #endif
+    }
+    return attributes;
 }
 
 } // namespace WebCore

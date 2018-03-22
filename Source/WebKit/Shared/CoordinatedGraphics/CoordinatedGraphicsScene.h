@@ -148,7 +148,6 @@ private:
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     void onNewBufferAvailable() override;
-    WebCore::TextureMapperGL* texmapGL() override;
 #endif
 
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;

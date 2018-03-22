@@ -52,7 +52,6 @@ public:
     class Compositor {
     public:
         virtual void onNewBufferAvailable() = 0;
-        virtual TextureMapperGL* texmapGL() = 0;
     };
 
     TextureMapperPlatformLayerProxy();

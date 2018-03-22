@@ -178,10 +178,9 @@ Ref<TextureMapperShaderProgram> TextureMapperGLData::getShaderProgram(TextureMap
 }
 
 TextureMapperGL::TextureMapperGL()
-    : m_enableEdgeDistanceAntialiasing(false)
+    : m_contextAttributes(TextureMapperContextAttributes::get())
+    , m_enableEdgeDistanceAntialiasing(false)
 {
-    m_contextAttributes.initialize();
-
     void* platformContext = GLContext::current()->platformContext();
     ASSERT(platformContext);
 
