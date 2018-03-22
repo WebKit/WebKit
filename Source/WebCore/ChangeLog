@@ -1,3 +1,20 @@
+2018-03-22  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Unreviewed, fix format string warnings in service worker code
+
+        On Linux x86_64, uint64_t is unsigned long, not unsigned long long.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::removeRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::startScriptFetchForJob):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+
 2018-03-22  Daniel Bates  <dabates@apple.com>
 
         Expose SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest() as WebKit SPI

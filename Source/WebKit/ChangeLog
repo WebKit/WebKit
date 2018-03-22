@@ -1,3 +1,15 @@
+2018-03-22  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Unreviewed, fix format string warnings in service worker code
+
+        On Linux x86_64, uint64_t is unsigned long, not unsigned long long.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::didFinishFetch):
+        (WebKit::WebSWServerConnection::didFailFetch):
+        (WebKit::WebSWServerConnection::didNotHandleFetch):
+
 2018-03-22  Daniel Bates  <dabates@apple.com>
 
         Expose SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest() as WebKit SPI
