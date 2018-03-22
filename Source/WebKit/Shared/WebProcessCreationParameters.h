@@ -108,6 +108,7 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
     Vector<String> urlSchemesRegisteredAsCachePartitioned;
     Vector<String> urlSchemesServiceWorkersCanHandle;
+    Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
     Vector<String> fontWhitelist;
     Vector<String> languages;

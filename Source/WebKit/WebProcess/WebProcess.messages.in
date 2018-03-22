@@ -28,6 +28,7 @@ messages -> WebProcess LegacyReceiver {
 
     # Global preferences.
     SetCacheModel(uint32_t cacheModel)
+
     RegisterURLSchemeAsEmptyDocument(String scheme)
     RegisterURLSchemeAsSecure(String scheme)
     RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
@@ -37,6 +38,8 @@ messages -> WebProcess LegacyReceiver {
     RegisterURLSchemeAsDisplayIsolated(String scheme)
     RegisterURLSchemeAsCORSEnabled(String scheme)
     RegisterURLSchemeAsCachePartitioned(String scheme)
+    RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
+
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetShouldUseFontSmoothing(bool useFontSmoothing)

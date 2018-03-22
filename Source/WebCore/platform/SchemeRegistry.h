@@ -66,7 +66,7 @@ public:
     // Such schemes should delegate to SecurityOrigin::canRequest for any URL
     // passed to SecurityOrigin::canDisplay.
     static bool canDisplayOnlyIfCanRequest(const String& scheme);
-    static void registerAsCanDisplayOnlyIfCanRequest(const String& scheme);
+    WEBCORE_EXPORT static void registerAsCanDisplayOnlyIfCanRequest(const String& scheme);
 
     // Schemes against which javascript: URLs should not be allowed to run (stop
     // bookmarklets from running on sensitive pages). 

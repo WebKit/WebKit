@@ -1,5 +1,17 @@
 2018-03-22  Daniel Bates  <dabates@apple.com>
 
+        Expose SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest() as WebKit SPI
+        https://bugs.webkit.org/show_bug.cgi?id=183907
+        <rdar://problem/38759127>
+
+        Reviewed by Alex Christensen.
+
+        Exports SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest() so that we can use it from WebKit.
+
+        * platform/SchemeRegistry.h:
+
+2018-03-22  Daniel Bates  <dabates@apple.com>
+
         CSS mask images should be retrieved using potentially CORS-enabled fetch
         https://bugs.webkit.org/show_bug.cgi?id=179983
         <rdar://problem/35678149>

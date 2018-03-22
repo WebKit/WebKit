@@ -1,3 +1,29 @@
+2018-03-22  Daniel Bates  <dabates@apple.com>
+
+        Expose SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest() as WebKit SPI
+        https://bugs.webkit.org/show_bug.cgi?id=183907
+        <rdar://problem/38759127>
+
+        Reviewed by Alex Christensen.
+
+        Adds unit tests for the modern Objective-C and C SPI to ensure we do not regress it.
+
+        We use the deprecated -[WKBrowsingContextController registerSchemeForCustomProtocol:]
+        in both the modern Objective-C API and C API tests to share code. Once we no longer
+        need to support the C API we should remove the tests and transition the modern Objective-
+        C tests to use -[WKWebViewConfiguration setURLSchemeHandler:forURLScheme:].
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/SchemeRegistry.mm: Added.
+        (+[EchoURLProtocol canInitWithRequest:]):
+        (+[EchoURLProtocol canonicalRequestForRequest:]):
+        (+[EchoURLProtocol requestIsCacheEquivalent:toRequest:]):
+        (-[EchoURLProtocol startLoading]):
+        (-[EchoURLProtocol stopLoading]):
+        (-[WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequestLoadDelegate browsingContextController:didFailProvisionalLoadWithError:]):
+        (-[WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequestLoadDelegate browsingContextControllerDidFinishLoad:]):
+        (TestWebKitAPI::TEST):
+
 2018-03-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Enable WOFF2 support

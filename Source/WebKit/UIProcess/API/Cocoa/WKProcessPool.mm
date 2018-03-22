@@ -187,6 +187,11 @@ static WKProcessPool *sharedProcessPool;
     _processPool->registerURLSchemeServiceWorkersCanHandle(scheme);
 }
 
+- (void)_registerURLSchemeAsCanDisplayOnlyIfCanRequest:(NSString *)scheme
+{
+    _processPool->registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
+}
+
 - (void)_setMaximumNumberOfProcesses:(NSUInteger)value
 {
     _processPool->setMaximumNumberOfProcesses(value);
