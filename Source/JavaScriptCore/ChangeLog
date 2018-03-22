@@ -1,3 +1,17 @@
+2018-03-22  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Thumb: Do not decorate bottom bit twice
+        https://bugs.webkit.org/show_bug.cgi?id=183906
+
+        Reviewed by Mark Lam.
+
+        Use MacroAssemblerCodePtr::createFromExecutableAddress instead of
+        MacroAssemblerCodePtr(void*) to avoid decorating the pointer twice as
+        a thumb pointer.
+
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+
 2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Clear MustGenerate for ToString(Number) converted from NumberToStringWithRadix

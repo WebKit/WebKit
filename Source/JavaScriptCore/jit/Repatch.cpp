@@ -1072,7 +1072,7 @@ void linkPolymorphicCall(
         // with a non-decorated bottom bit but a normal call calls an address with a decorated bottom bit.
         bool isTailCall = callToCodePtr.call.isFlagSet(CCallHelpers::Call::Tail);
         void* target = isTailCall ? callToCodePtr.codePtr.dataLocation() : callToCodePtr.codePtr.executableAddress();
-        patchBuffer.link(callToCodePtr.call, FunctionPtr(MacroAssemblerCodePtr(target)));
+        patchBuffer.link(callToCodePtr.call, FunctionPtr(MacroAssemblerCodePtr::createFromExecutableAddress(target)));
 #else
         patchBuffer.link(callToCodePtr.call, FunctionPtr(callToCodePtr.codePtr.retagged(CodeEntryPtrTag, NearCallPtrTag)));
 #endif
