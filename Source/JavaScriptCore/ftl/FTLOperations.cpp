@@ -336,7 +336,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             unsigned capacity = std::max(length, static_cast<unsigned>(codeBlock->numParameters() - 1));
             DirectArguments* result = DirectArguments::create(
                 vm, codeBlock->globalObject()->directArgumentsStructure(), length, capacity);
-            result->callee().set(vm, result, callee);
+            result->setCallee(vm, callee);
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];
                 if (property.location().kind() != ArgumentPLoc)

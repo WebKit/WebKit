@@ -102,10 +102,11 @@ namespace JSC { namespace FTL {
     macro(ShadowChicken_Packet_scope, OBJECT_OFFSETOF(ShadowChicken::Packet, scope)) \
     macro(ShadowChicken_Packet_codeBlock, OBJECT_OFFSETOF(ShadowChicken::Packet, codeBlock)) \
     macro(ShadowChicken_Packet_callSiteIndex, OBJECT_OFFSETOF(ShadowChicken::Packet, callSiteIndex)) \
-    macro(ScopedArguments_overrodeThings, ScopedArguments::offsetOfOverrodeThings()) \
+    macro(ScopedArguments_Storage_overrodeThings, ScopedArguments::offsetOfOverrodeThingsInStorage()) \
+    macro(ScopedArguments_Storage_totalLength, ScopedArguments::offsetOfTotalLengthInStorage()) \
+    macro(ScopedArguments_storage, ScopedArguments::offsetOfStorage()) \
     macro(ScopedArguments_scope, ScopedArguments::offsetOfScope()) \
     macro(ScopedArguments_table, ScopedArguments::offsetOfTable()) \
-    macro(ScopedArguments_totalLength, ScopedArguments::offsetOfTotalLength()) \
     macro(ScopedArgumentsTable_arguments, ScopedArgumentsTable::offsetOfArguments()) \
     macro(ScopedArgumentsTable_length, ScopedArgumentsTable::offsetOfLength()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
@@ -138,7 +139,7 @@ namespace JSC { namespace FTL {
     macro(JSLexicalEnvironment_variables, JSLexicalEnvironment::offsetOfVariables(), sizeof(EncodedJSValue)) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, 0, sizeof(WriteBarrier<JSString>)) \
     macro(JSRopeString_fibers, JSRopeString::offsetOfFibers(), sizeof(WriteBarrier<JSString>)) \
-    macro(ScopedArguments_overflowStorage, ScopedArguments::overflowStorageOffset(), sizeof(EncodedJSValue)) \
+    macro(ScopedArguments_Storage_storage, 0, sizeof(EncodedJSValue)) \
     macro(WriteBarrierBuffer_bufferContents, 0, sizeof(JSCell*)) \
     macro(characters8, 0, sizeof(LChar)) \
     macro(characters16, 0, sizeof(UChar)) \

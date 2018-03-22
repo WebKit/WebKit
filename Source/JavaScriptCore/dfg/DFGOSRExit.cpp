@@ -217,7 +217,7 @@ static JSCell* createDirectArgumentsDuringExit(Context& context, CodeBlock* code
     DirectArguments* result = DirectArguments::create(
         vm, codeBlock->globalObject()->directArgumentsStructure(), length, capacity);
 
-    result->callee().set(vm, result, callee);
+    result->setCallee(vm, callee);
 
     void* frameBase = context.fp<Register*>() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0);
     Frame frame(frameBase, context.stack());

@@ -1,3 +1,30 @@
+2018-03-21  Filip Pizlo  <fpizlo@apple.com>
+
+        ScopedArguments should do poisoning and index masking
+        https://bugs.webkit.org/show_bug.cgi?id=183863
+
+        Reviewed by Mark Lam.
+        
+        This outlines the ScopedArguments overflow storage and adds poisoning.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        * runtime/JSCPoison.h:
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::ScopedArguments):
+        (JSC::ScopedArguments::createUninitialized):
+        (JSC::ScopedArguments::visitChildren):
+        * runtime/ScopedArguments.h:
+
 2018-03-21  Mark Lam  <mark.lam@apple.com>
 
         Refactor the PtrTag list as a macro so that we can auto-generate code that enumerates each PtrTag.

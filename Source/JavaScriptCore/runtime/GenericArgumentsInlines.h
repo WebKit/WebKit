@@ -52,7 +52,7 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, ExecState* exe
             return true;
         }
         if (ident == vm.propertyNames->callee) {
-            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->callee().get());
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->callee());
             return true;
         }
         if (ident == vm.propertyNames->iteratorSymbol) {

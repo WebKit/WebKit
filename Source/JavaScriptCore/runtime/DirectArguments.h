@@ -110,9 +110,14 @@ public:
         preciseIndexMaskPtr(i, storageHeader(storage).length, ptr)->set(vm, this, value);
     }
     
-    WriteBarrier<JSFunction>& callee()
+    JSFunction* callee()
     {
-        return m_callee;
+        return m_callee.get();
+    }
+    
+    void setCallee(VM& vm, JSFunction* function)
+    {
+        m_callee.set(vm, this, function);
     }
     
     WriteBarrier<Unknown>& argument(DirectArgumentsOffset offset)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -271,6 +271,8 @@ ArrayMode ArrayMode::refine(
                     return ArrayMode(type, Array::NonArray, Array::OutOfBounds, Array::AsIs);
                 return ArrayMode(Array::Generic);
             }
+            if (isX86() && is32Bit() && isScopedArgumentsSpeculation(base))
+                return ArrayMode(Array::Generic);
             return withType(type);
         }
         

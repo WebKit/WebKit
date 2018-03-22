@@ -50,6 +50,7 @@ namespace JSC {
     v(JSWebAssemblyModule) \
     v(JSWebAssemblyTable) \
     v(NativeCode) \
+    v(ScopedArguments) \
     v(StructureTransitionTable) \
     v(UnlinkedSourceCode) \
     v(WebAssemblyFunctionBase) \

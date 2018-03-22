@@ -403,12 +403,16 @@ void AccessCase::generateWithGuard(
                 CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()),
                 CCallHelpers::TrustedImm32(ScopedArgumentsType)));
 
+        jit.loadPtr(
+            CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfStorage()),
+            scratchGPR);
+        jit.xorPtr(CCallHelpers::TrustedImmPtr(ScopedArgumentsPoison::key()), scratchGPR);
         fallThrough.append(
             jit.branchTest8(
                 CCallHelpers::NonZero,
-                CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfOverrodeThings())));
+                CCallHelpers::Address(scratchGPR, ScopedArguments::offsetOfOverrodeThingsInStorage())));
         jit.load32(
-            CCallHelpers::Address(baseGPR, ScopedArguments::offsetOfTotalLength()),
+            CCallHelpers::Address(scratchGPR, ScopedArguments::offsetOfTotalLengthInStorage()),
             valueRegs.payloadGPR());
         jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         state.succeed();

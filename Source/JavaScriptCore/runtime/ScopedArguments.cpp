@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ScopedArguments);
 
 const ClassInfo ScopedArguments::s_info = { "Arguments", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArguments) };
 
-ScopedArguments::ScopedArguments(VM& vm, Structure* structure, unsigned totalLength)
+ScopedArguments::ScopedArguments(VM& vm, Structure* structure, WriteBarrier<Unknown>* storage)
     : GenericArguments(vm, structure)
-    , m_overrodeThings(false)
-    , m_totalLength(totalLength)
+    , m_storage(vm, this, storage)
 {
+    ASSERT(!storageHeader(storage).overrodeThings);
 }
 
 void ScopedArguments::finishCreation(VM& vm, JSFunction* callee, ScopedArgumentsTable* table, JSLexicalEnvironment* scope)
@@ -57,10 +57,17 @@ ScopedArguments* ScopedArguments::createUninitialized(VM& vm, Structure* structu
         overflowLength = totalLength - table->length();
     else
         overflowLength = 0;
+    
+    void* rawStoragePtr = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
+        vm, storageSize(overflowLength), nullptr, AllocationFailureMode::Assert);
+    WriteBarrier<Unknown>* storage = static_cast<WriteBarrier<Unknown>*>(rawStoragePtr) + 1;
+    storageHeader(storage).overrodeThings = false;
+    storageHeader(storage).totalLength = totalLength;
+    
     ScopedArguments* result = new (
         NotNull,
-        allocateCell<ScopedArguments>(vm.heap, allocationSize(overflowLength)))
-        ScopedArguments(vm, structure, totalLength);
+        allocateCell<ScopedArguments>(vm.heap))
+        ScopedArguments(vm, structure, storage);
     result->finishCreation(vm, callee, table, scope);
     return result;
 }
@@ -107,9 +114,11 @@ void ScopedArguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_table);
     visitor.append(thisObject->m_scope);
     
-    if (thisObject->m_totalLength > thisObject->m_table->length()) {
+    visitor.markAuxiliary(&thisObject->storageHeader());
+    
+    if (thisObject->storageHeader().totalLength > thisObject->m_table->length()) {
         visitor.appendValues(
-            thisObject->overflowStorage(), thisObject->m_totalLength - thisObject->m_table->length());
+            thisObject->overflowStorage(), thisObject->storageHeader().totalLength - thisObject->m_table->length());
     }
 
     GenericArguments<ScopedArguments>::visitChildren(cell, visitor);
@@ -122,24 +131,24 @@ Structure* ScopedArguments::createStructure(VM& vm, JSGlobalObject* globalObject
 
 void ScopedArguments::overrideThings(VM& vm)
 {
-    RELEASE_ASSERT(!m_overrodeThings);
+    RELEASE_ASSERT(!storageHeader().overrodeThings);
     
     putDirect(vm, vm.propertyNames->length, jsNumber(m_table->length()), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
-    m_overrodeThings = true;
+    storageHeader().overrodeThings = true;
 }
 
 void ScopedArguments::overrideThingsIfNecessary(VM& vm)
 {
-    if (!m_overrodeThings)
+    if (!storageHeader().overrodeThings)
         overrideThings(vm);
 }
 
 void ScopedArguments::unmapArgument(VM& vm, uint32_t i)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(i < m_totalLength);
+    ASSERT_WITH_SECURITY_IMPLICATION(i < storageHeader().totalLength);
     unsigned namedLength = m_table->length();
     if (i < namedLength)
         m_table.set(vm, this, m_table->set(vm, i, ScopeOffset()));

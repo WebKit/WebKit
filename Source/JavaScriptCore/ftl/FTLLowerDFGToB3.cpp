@@ -3682,10 +3682,13 @@ private:
             
         case Array::ScopedArguments: {
             LValue arguments = lowCell(m_node->child1());
+            LValue storage = m_out.bitXor(
+                m_out.loadPtr(arguments, m_heaps.ScopedArguments_storage),
+                m_out.constIntPtr(ScopedArgumentsPoison::key()));
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.notZero32(m_out.load8ZeroExt32(arguments, m_heaps.ScopedArguments_overrodeThings)));
-            setInt32(m_out.load32NonNegative(arguments, m_heaps.ScopedArguments_totalLength));
+                m_out.notZero32(m_out.load8ZeroExt32(storage, m_heaps.ScopedArguments_Storage_overrodeThings)));
+            setInt32(m_out.load32NonNegative(storage, m_heaps.ScopedArguments_Storage_totalLength));
             return;
         }
             
@@ -3883,13 +3886,18 @@ private:
             LValue base = lowCell(m_graph.varArgChild(m_node, 0));
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             
+            LValue storage = m_out.loadPtr(base, m_heaps.ScopedArguments_storage);
+            storage = m_out.bitXor(storage, m_out.constIntPtr(ScopedArgumentsPoison::key()));
+            
+            LValue totalLength = m_out.load32NonNegative(
+                storage, m_heaps.ScopedArguments_Storage_totalLength);
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.aboveOrEqual(
-                    index,
-                    m_out.load32NonNegative(base, m_heaps.ScopedArguments_totalLength)));
+                m_out.aboveOrEqual(index, totalLength));
             
             LValue table = m_out.loadPtr(base, m_heaps.ScopedArguments_table);
+            table = m_out.bitXor(table, m_out.constIntPtr(ScopedArgumentsPoison::key()));
+            
             LValue namedLength = m_out.load32(table, m_heaps.ScopedArgumentsTable_length);
             
             LBasicBlock namedCase = m_out.newBlock();
@@ -3902,6 +3910,8 @@ private:
             LBasicBlock lastNext = m_out.appendTo(namedCase, overflowCase);
             
             LValue scope = m_out.loadPtr(base, m_heaps.ScopedArguments_scope);
+            scope = m_out.bitXor(scope, m_out.constIntPtr(ScopedArgumentsPoison::key()));
+            
             LValue arguments = m_out.loadPtr(table, m_heaps.ScopedArgumentsTable_arguments);
             
             TypedPointer address = m_out.baseIndex(
@@ -3920,7 +3930,7 @@ private:
             m_out.appendTo(overflowCase, continuation);
             
             address = m_out.baseIndex(
-                m_heaps.ScopedArguments_overflowStorage, base,
+                m_heaps.ScopedArguments_Storage_storage, storage,
                 m_out.zeroExtPtr(m_out.sub(index, namedLength)));
             LValue overflowValue = m_out.load64(address);
             speculate(ExoticObjectMode, noValue(), nullptr, m_out.isZero64(overflowValue));
@@ -3928,7 +3938,11 @@ private:
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(Int64, namedResult, overflowResult));
+            
+            LValue result = m_out.phi(Int64, namedResult, overflowResult);
+            result = preciseIndexMask32(result, index, totalLength);
+            
+            setJSValue(result);
             return;
         }
             

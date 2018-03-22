@@ -85,7 +85,7 @@ DirectArguments* DirectArguments::createByCopying(ExecState* exec)
     for (unsigned i = capacity; i--;)
         storage[i].set(vm, result, exec->getArgumentUnsafe(i));
     
-    result->callee().set(vm, result, jsCast<JSFunction*>(exec->jsCallee()));
+    result->setCallee(vm, jsCast<JSFunction*>(exec->jsCallee()));
     
     return result;
 }

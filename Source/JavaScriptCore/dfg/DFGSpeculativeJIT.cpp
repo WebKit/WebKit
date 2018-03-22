@@ -6488,6 +6488,7 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
 #endif
     GPRTemporary scratch(this);
     GPRTemporary scratch2(this);
+    GPRTemporary indexMask(this);
     
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
@@ -6500,19 +6501,29 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
 #endif
     GPRReg scratchReg = scratch.gpr();
     GPRReg scratch2Reg = scratch2.gpr();
+    GPRReg indexMaskReg = indexMask.gpr();
     
     if (!m_compileOkay)
         return;
     
     ASSERT(ArrayMode(Array::ScopedArguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(m_graph.varArgChild(node, 0))));
     
+    m_jit.loadPtr(
+        MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultReg);
+    m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), resultReg);
+    
+    m_jit.load32(
+        MacroAssembler::Address(resultReg, ScopedArguments::offsetOfTotalLengthInStorage()),
+        scratchReg);
+    
     speculationCheck(
         ExoticObjectMode, JSValueSource(), nullptr,
-        m_jit.branch32(
-            MacroAssembler::AboveOrEqual, propertyReg,
-            MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTotalLength())));
+        m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, scratchReg));
+    
+    m_jit.emitPreparePreciseIndexMask32(propertyReg, scratchReg, indexMaskReg);
     
     m_jit.loadPtr(MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTable()), scratchReg);
+    m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), scratchReg);
     m_jit.load32(
         MacroAssembler::Address(scratchReg, ScopedArgumentsTable::offsetOfLength()), scratch2Reg);
     
@@ -6520,6 +6531,7 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
         MacroAssembler::AboveOrEqual, propertyReg, scratch2Reg);
     
     m_jit.loadPtr(MacroAssembler::Address(baseReg, ScopedArguments::offsetOfScope()), scratch2Reg);
+    m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), scratch2Reg);
 
     m_jit.loadPtr(
         MacroAssembler::Address(scratchReg, ScopedArgumentsTable::offsetOfArguments()),
@@ -6547,12 +6559,13 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     
     m_jit.loadValue(
         MacroAssembler::BaseIndex(
-            baseReg, scratch2Reg, MacroAssembler::TimesEight,
-            ScopedArguments::overflowStorageOffset()),
+            resultReg, scratch2Reg, MacroAssembler::TimesEight),
         resultRegs);
     speculationCheck(ExoticObjectMode, JSValueSource(), nullptr, m_jit.branchIfEmpty(resultRegs));
     
     done.link(&m_jit);
+    
+    m_jit.andPtr(indexMaskReg, resultReg);
     
     jsValueResult(resultRegs, node);
 }
@@ -6650,8 +6663,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         
         m_jit.loadPtr(
             MacroAssembler::Address(baseReg, DirectArguments::offsetOfStorage()), resultReg);
-        m_jit.xorPtr(
-            TrustedImmPtr(DirectArgumentsPoison::key()), resultReg);
+        m_jit.xorPtr(TrustedImmPtr(DirectArgumentsPoison::key()), resultReg);
         m_jit.load32(
             MacroAssembler::Address(resultReg, DirectArguments::offsetOfLengthInStorage()), resultReg);
         
@@ -6660,7 +6672,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
     }
     case Array::ScopedArguments: {
         SpeculateCellOperand base(this, node->child1());
-        GPRTemporary result(this, Reuse, base);
+        GPRTemporary result(this);
         
         GPRReg baseReg = base.gpr();
         GPRReg resultReg = result.gpr();
@@ -6670,14 +6682,18 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         
         ASSERT(ArrayMode(Array::ScopedArguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
         
+        m_jit.loadPtr(
+            MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultReg);
+        m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), resultReg);
+        
         speculationCheck(
             ExoticObjectMode, JSValueSource(), 0,
             m_jit.branchTest8(
                 MacroAssembler::NonZero,
-                MacroAssembler::Address(baseReg, ScopedArguments::offsetOfOverrodeThings())));
+                MacroAssembler::Address(resultReg, ScopedArguments::offsetOfOverrodeThingsInStorage())));
         
         m_jit.load32(
-            MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTotalLength()), resultReg);
+            MacroAssembler::Address(resultReg, ScopedArguments::offsetOfTotalLengthInStorage()), resultReg);
         
         int32Result(resultReg, node);
         break;
