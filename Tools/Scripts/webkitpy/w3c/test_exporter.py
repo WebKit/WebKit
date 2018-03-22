@@ -154,7 +154,7 @@ class TestExporter(object):
             self._git.delete_branch(self._branch_name)
             self._git.checkout_new_branch(self._branch_name)
         try:
-            self._git.apply_mail_patch([patch, '--exclude', '*-expected.txt'])
+            self._git.apply_mail_patch([patch, '--exclude', '*-expected.txt', '--exclude', '*.worker.html', '--exclude', '*.any.html', '--exclude', '*.any.worker.html'])
         except Exception as e:
             _log.warning(e)
             self._git.apply_mail_patch(['--abort'])
