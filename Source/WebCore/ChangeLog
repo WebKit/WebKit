@@ -1,3 +1,14 @@
+2018-03-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Build failure when ENABLE_VIDEO, ENABLE_WEB_AUDIO and ENABLE_XSLT are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=183896
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests needed.
+
+        * bindings/js/JSWebAnimationCustom.cpp: Add missing #include of Document.h
+
 2018-03-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r229828): WebKit.NoHistoryItemScrollToFragment API test is failing on iOS
