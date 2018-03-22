@@ -1,0 +1,780 @@
+# These are the layout test expectations for the WinCairo port of WebKit.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Platform-specific directories. Skipped here, then re-enabled on the appropriate platform.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+# ACCELERATED_OVERFLOW_SCROLLING is disabled
+fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
+
+# CONTENT_FILTERING is disabled
+contentfiltering [ Skip ]
+
+# CSS_COMPOSITING is disabled
+css3/blending/ [ Skip ]
+imported/blink/css3/blending [ Skip ]
+imported/mozilla/svg/blend-color-burn.svg [ Skip ]
+imported/mozilla/svg/blend-color-dodge.svg [ Skip ]
+imported/mozilla/svg/blend-color.svg [ Skip ]
+imported/mozilla/svg/blend-darken.svg [ Skip ]
+imported/mozilla/svg/blend-difference-stacking.html [ Skip ]
+imported/mozilla/svg/blend-difference.svg [ Skip ]
+imported/mozilla/svg/blend-exclusion.svg [ Skip ]
+imported/mozilla/svg/blend-hard-light.svg [ Skip ]
+imported/mozilla/svg/blend-hue.svg [ Skip ]
+imported/mozilla/svg/blend-lighten.svg [ Skip ]
+imported/mozilla/svg/blend-luminosity.svg [ Skip ]
+imported/mozilla/svg/blend-multiply.svg [ Skip ]
+imported/mozilla/svg/blend-overlay.svg [ Skip ]
+imported/mozilla/svg/blend-saturation.svg [ Skip ]
+imported/mozilla/svg/blend-screen.svg [ Skip ]
+inspector/layers/layers-blending-compositing-reasons.html [ Skip ]
+transitions/blendmode-transitions.html [ Skip ]
+
+# CSS_DEVICE_ADAPTATION is disabled
+webkit.org/b/95959 css3/device-adapt [ Skip ]
+
+# CSS_IMAGE_ORIENTATION is disabled
+fast/css/image-orientation [ Skip ]
+imported/blink/fast/css/image-orientation [ Skip ]
+
+# CSS_IMAGE_RESOLUTION is disabled
+fast/css/image-resolution [ Skip ]
+
+# CSS_SCROLL_SNAP is disabled
+css3/scroll-snap [ Skip ]
+
+# CSS3_TEXT is disabled
+fast/css3-text/css3-text-justify [ Skip ]
+fast/css3-text/css3-text-align-last [ Skip ]
+
+# CUSTOM_SCHEME_HANDLER is disabled
+fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
+
+# DEVICE_ORIENTATION is disabled
+fast/dom/DeviceOrientation [ Skip ]
+fast/dom/DeviceMotion [ Skip ]
+fast/dom/Window/window-properties-device-orientation.html [ Skip ]
+
+# DOWNLOAD_ATTRIBUTE is disabled
+fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
+
+# ENABLE_INPUT_TYPE_* are disabled.
+# See: webkit.org/b/29359
+fast/forms/date [ Skip ]
+fast/forms/datetime [ Skip ]
+fast/forms/datetimelocal [ Skip ]
+fast/forms/month [ Skip ]
+fast/forms/time [ Skip ]
+fast/forms/week [ Skip ]
+fast/forms/datalist/ [ Skip ]
+
+# FILTERS_LEVEL_2 is disabled
+css3/filters/backdrop [ Skip ]
+compositing/layer-creation/will-change-on-normal-flow-content.html [ Skip ]
+media/modern-media-controls/background-tint/background-tint.html [ Skip ]
+media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-start-button-style.html [ Skip ]
+
+# GAMEPAD is disabled
+gamepad [ Skip ]
+
+# GEOLOCATION is disabled
+fast/dom/Geolocation [ Skip ]
+
+# LEGACY_ENCRYPTED_MEDIA is disabled
+fast/events/webkit-media-key-events-constructor.html [ Skip ]
+media/encrypted-media [ Skip ]
+
+# LINK_PREFETCH is disabled
+fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html [ Skip ]
+fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]
+fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Skip ]
+fast/dom/HTMLLinkElement/prefetch-detached.html [ Skip ]
+fast/dom/HTMLLinkElement/prefetch-onerror.html [ Skip ]
+fast/dom/HTMLLinkElement/prefetch-onload.html [ Skip ]
+fast/dom/HTMLLinkElement/prefetch.html [ Skip ]
+fast/dom/HTMLLinkElement/subresource.html [ Skip ]
+fast/dom/HTMLLinkElement/prefetch-too-many-clients.html [ Skip ]
+
+# MEDIA_CAPTURE is disabled
+fast/forms/file/file-input-capture.html [ Skip ]
+
+# MEDIA_SOURCE is disabled
+webkit.org/b/64731 fast/history/page-cache-media-source-opened.html [ Skip ]
+webkit.org/b/64731 fast/history/page-cache-media-source-closed.html [ Skip ]
+webkit.org/b/64731 fast/history/page-cache-media-source-closed-2.html  [ Skip ]
+webkit.org/b/64731 fast/history/page-cache-removed-source-buffer.html [ Skip ]
+fast/dom/collection-iterators.html [ Skip ]
+webkit.org/b/161906 imported/w3c/web-platform-tests/media-source [ Skip ]
+media/media-source [ Skip ]
+
+# MEDIA_STREAM is disabled
+fast/mediastream [ Skip ]
+fast/events/constructors/media-stream-event-constructor.html [ Skip ]
+fast/events/constructors/overconstrained-error-event-constructor.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-clone-track.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-creation.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-exceptions.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-framerate-0.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Skip ]
+fast/dom/Window/window-lookup-precedence.html [ Skip ]
+imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
+
+# MHTML is disabled
+mhtml/ [ Skip ]
+
+# NETSCAPE_PLUGIN_API is disabled
+plugins/npruntime [ Skip ]
+plugins/destroy-during-npp-new-object-with-fallback-content.html [ Skip ]
+plugins/destroy-during-npp-new.html [ Skip ]
+plugins/destroy-plugin-from-callback.html [ Skip ]
+plugins/destroy-stream-twice.html [ Skip ]
+plugins/document-open.html [ Skip ]
+plugins/embed-attributes-setting.html  [ Skip ]
+plugins/embed-inside-object.html [ Skip ]
+plugins/evaluate-js-after-removing-plugin-element.html [ Skip ]
+plugins/form-value.html [ Skip ]
+plugins/get-empty-url.html [ Skip ]
+plugins/get-file-url.html [ Skip ]
+plugins/get-javascript-url.html [ Skip ]
+plugins/get-targeted-javascript-url.html [ Skip ]
+plugins/get-url-notify-with-url-that-fails-to-load.html [ Skip ]
+plugins/geturl-replace-query.html [ Skip ]
+plugins/get-url-that-the-resource-load-delegate-will-disallow.html [ Skip ]
+plugins/get-url-with-blank-target.html [ Skip ]
+plugins/get-url-with-iframe-target.html [ Skip ]
+plugins/get-url-with-javascript-destroying-plugin.html [ Skip ]
+plugins/get-url-with-javascript-url.html [ Skip ]
+plugins/get-user-agent-with-null-npp-from-npp-new.html [ Skip ]
+plugins/geturlnotify-during-document-teardown.html [ Skip ]
+plugins/iframe-plugin-bgcolor.html [ Skip ]
+plugins/inner-html-display-none.html [ Skip ]
+plugins/instance-available-before-stylesheets-loaded.html [ Skip ]
+plugins/instance-available-before-stylesheets-loaded-object.html [ Skip ]
+plugins/keyboard-events.html [ Skip ]
+plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Skip ]
+plugins/multiple-plugins.html [ Skip ]
+plugins/nested-plugin-objects.html [ Skip ]
+plugins/netscape-destroy-plugin-script-objects.html [ Skip ]
+plugins/netscape-dom-access-and-reload.html [ Skip ]
+plugins/netscape-plugin-property-access-exception.html [ Skip ]
+plugins/netscape-plugin-setwindow-size.html [ Skip ]
+plugins/netscape-plugin-setwindow-size-2.html [ Skip ]
+plugins/npp-set-window-called-during-destruction.html [ Skip ]
+plugins/object-embed-plugin-scripting.html [ Skip ]
+plugins/open-and-close-window-with-plugin.html [ Skip ]
+plugins/override-node-method.html [ Skip ]
+plugins/pass-different-npp-struct.html [ Skip ]
+plugins/plugin-clip-subframe.html [ Skip ]
+plugins/plugin-remove-subframe.html [ Skip ]
+plugins/private-browsing-mode.html [ Skip ]
+plugins/private-browsing-mode-2.html [ Skip ]
+plugins/reentrant-update-widget-positions.html [ Skip ]
+plugins/refcount-leaks.html [ Skip ]
+plugins/reloadplugins-and-pages.html [ Skip ]
+plugins/reloadplugins-no-pages.html [ Skip ]
+plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html [ Skip ]
+plugins/return-negative-one-from-write.html [ Skip ]
+plugins/return-npobject.html [ Skip ]
+plugins/script-object-invoke.html [ Skip ]
+plugins/set-status.html [ Skip ]
+plugins/update-widgets-crash.html [ Skip ]
+plugins/windowless_plugin_paint_test.html [ Skip ]
+plugins/window-open.html [ Skip ]
+
+# NOTIFICATIONS is disabled
+fast/history/page-cache-notification-non-suspendable.html [ Skip ]
+fast/history/page-cache-notification-suspendable.html [ Skip ]
+
+# POINTER_LOCK is disabled
+fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
+fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
+pointer-lock [ Skip ]
+
+# QUOTA is disabled
+fast/workers/worker-storagequota-query-usage.html [ Skip ]
+storage/storageinfo-missing-arguments.html [ Skip ]
+storage/storageinfo-no-callbacks.html [ Skip ]
+storage/storageinfo-query-usage.html [ Skip ]
+storage/storageinfo-request-quota.html [ Skip ]
+storage/storagequota-query-usage.html [ Skip ]
+storage/storagequota-request-quota.html [ Skip ]
+
+# SPEECH_SYNTHESIS is disabled
+fast/speechsynthesis [ Skip ]
+
+# SUBTLE_CRYPTO is disabled
+crypto/subtle/ [ Skip ]
+crypto/workers/subtle/ [ Skip ]
+crypto/crypto-key-algorithm-gc.html [ Skip ]
+crypto/crypto-key-usages-gc.html [ Skip ]
+
+# TOUCH_EVENTS is disabled
+fast/events/touch/ [ Skip ]
+fast/shadow-dom/touch-event-ios.html [ Skip ]
+imported/w3c/web-platform-tests/touch-events [ Skip ]
+imported/blink/fast/events/touch/touch-action-double-remove.html [ Skip ]
+
+# VIDEO is disabled
+media/audio-data-url.html [ Skip ]
+media/audio-mpeg-supported.html [ Skip ]
+media/media-fragments [ Skip ]
+media/track/audio/audio-track-mkv-vorbis-enabled.html [ Skip ]
+media/track/audio/audio-track-mkv-vorbis-language.html [ Skip ]
+media/track/in-band/track-in-band-kate-ogg-cues-added-once.html [ Skip ]
+media/track/in-band/track-in-band-kate-ogg-kind.html [ Skip ]
+media/track/in-band/track-in-band-kate-ogg-language.html [ Skip ]
+media/track/in-band/track-in-band-kate-ogg-mode.html [ Skip ]
+media/track/in-band/track-in-band-kate-ogg-style.html [ Skip ]
+media/track/in-band/track-in-band-kate-ogg-track-order.html [ Skip ]
+media/track/in-band/track-in-band-mkv-chapters.html [ Skip ]
+media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Skip ]
+media/track/in-band/track-in-band-srt-mkv-kind.html [ Skip ]
+media/track/in-band/track-in-band-srt-mkv-language.html [ Skip ]
+media/track/in-band/track-in-band-srt-mkv-mode.html [ Skip ]
+media/track/in-band/track-in-band-srt-mkv-style.html [ Skip ]
+media/track/in-band/track-in-band-srt-mkv-track-order.html [ Skip ]
+media/click-volume-bar-not-pausing.html [ Skip ]
+media/invalid-media-url-crash.html [ Skip ]
+media/media-extension-with-fragment.html [ Skip ]
+
+# VIDEO_PRESENTATION_MODE is disabled
+media/media-fullscreen-not-in-document.html [ Skip ]
+
+# VIDEO_TRACK is disabled
+media/track/track-datacue-value.html [ Skip ]
+media/track/regions-webvtt [ Skip ]
+
+# WEB_ARCHIVE is disabled
+svg/webarchive [ Skip ]
+svg/custom/image-with-prefix-in-webarchive.svg [ Skip ]
+webarchive [ Skip ]
+
+# WEB_AUDIO is disabled
+webkit.org/b/86914 fast/history/page-cache-closed-audiocontext.html [ Skip ]
+webkit.org/b/86914 fast/history/page-cache-running-audiocontext.html [ Skip ]
+webkit.org/b/86914 fast/history/page-cache-suspended-audiocontext.html [ Skip ]
+webkit.org/b/86914 media/W3C/audio [ Skip ]
+webaudio [ Skip ]
+
+# WEB_RTC is disabled
+webrtc [ Skip ]
+
+# WEBGL2 is disabled
+fast/canvas/webgl/webgl2 [ Skip ]
+fast/canvas/webgl/bufferData-offset-length.html [ Skip ]
+fast/canvas/webgl/copyBufferSubData.html [ Skip ]
+fast/canvas/webgl/getBufferSubData-webgl1.html [ Skip ]
+fast/canvas/webgl/webgl2-buffer-targets.html [ Skip ]
+fast/canvas/webgl/webgl2-buffers.html [ Skip ]
+fast/canvas/webgl/webgl2-context-creation.html [ Skip ]
+fast/canvas/webgl/webgl2-getActiveUniforms.html [ Skip ]
+fast/canvas/webgl/webgl2-runtime-flag.html [ Skip ]
+fast/canvas/webgl/webgl2-texStorage.html [ Skip ]
+fast/canvas/webgl/webgl2-texture-upload-enums.html [ Skip ]
+inspector/canvas/requestContent-webgl2.html [ Skip ]
+inspector/canvas/create-context-webgl2.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
+inspector/canvas/shaderProgram-add-remove-webgl2.html [ Skip ]
+webgl/webgl2-rendering-context-defined.html [ Skip ]
+webgl/webgl2-rendering-context-obtain.html [ Skip ]
+
+# WEBGPU is disabled
+fast/canvas/webgpu [ Skip ]
+inspector/canvas/create-context-webgpu.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
+
+# WIRELESS_PLAYBACK_TARGET is disabled
+media/airplay-target-availability.html [ Skip ]
+media/airplay-autoplay.html [ Skip ]
+media/controls/airplay-controls.html [ Skip ]
+media/controls/airplay-picker.html [ Skip ]
+
+
+
+# USE(AUTOMATIC_TEXT_REPLACEMENT)
+# GTK does not implement setAutomaticLinkDetectionEnabled
+editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
+editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
+editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
+
+# USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) is disabled
+fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Skip ]
+fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Skip ]
+fast/animation/request-animation-frame-throttle-subframe-zero-size.html [ Skip ]
+fast/animation/request-animation-frame-throttle-subframe.html [ Skip ]
+fast/animation/request-animation-frame-throttling-detached-iframe.html [ Skip ]
+fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Skip ]
+
+# PLATFORM(MAC), internals.rangeForDictionaryLookupAtLocation()
+fast/layers/prevent-hit-test-during-layout.html [ Skip ]
+
+
+
+accessibility/gtk [ Skip ]
+accessibility/mac [ Skip ]
+accessibility/win [ Skip ]
+
+# Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
+accessibility/aria-checkbox-sends-notification.html [ Skip ]
+accessibility/aria-invalid.html [ Skip ]
+accessibility/aria-switch-sends-notification.html [ Skip ]
+accessibility/children-changed-sends-notification.html [ Skip ]
+accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
+accessibility/content-editable-as-textarea.html [ Skip ]
+accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Skip ]
+accessibility/loading-iframe-sends-notification.html [ Skip ]
+accessibility/menu-list-sends-change-notification.html [ Skip ]
+accessibility/multiselect-list-reports-active-option.html [ Skip ]
+accessibility/notification-listeners.html [ Skip ]
+
+# Animation triggers not supported
+animations/trigger-computed-style.html [ Skip ]
+animations/trigger-container-scroll-boundaries.html [ Skip ]
+animations/trigger-container-scroll-empty.html [ Skip ]
+animations/trigger-container-scroll-simple.html [ Skip ]
+animations/trigger-parsing.html [ Skip ]
+
+# DataTransferItems is not yet implemented
+editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Skip ]
+editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Skip ]
+editing/pasteboard/data-transfer-items-drag-drop-file.html [ Skip ]
+editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]
+editing/pasteboard/data-transfer-set-data-sanitize-html-when-dragging-in-null-origin.html [ Skip ]
+editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html [ Skip ]
+editing/pasteboard/datatransfer-items-drop-plaintext-file.html [ Skip ]
+editing/pasteboard/datatransfer-items-paste-plaintext.html [ Skip ]
+editing/pasteboard/drag-end-crash-accessing-item-list.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-directoryReader-error.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-directoryReader-root.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-directoryReader.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-fileEntry-file.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-getAsEntry.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-getDirectory.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-getFile.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-getParent-root.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-getParent.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-getParent2.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-hidden-file.html [ Skip ]
+fast/events/clipboard-dataTransferItemList.html [ Skip ]
+fast/events/drag-dataTransferItemList.html [ Skip ]
+fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
+
+# Drag & Drop doesn't work correctly in DRT <rdar://5621244>
+# Drag and drop can't be tested with WebKitTestRunner
+# [GTK] https://bugs.webkit.org/show_bug.cgi?id=157179
+# Implement EditingCallbacks deletegates in the WebKitTestRunner
+webkit.org/b/157179 editing/pasteboard/4947130.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/dataTransfer-setData-getData.html [ Failure Timeout ]
+webkit.org/b/157179 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Failure Timeout ]
+webkit.org/b/157179 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html [ Failure Timeout ]
+webkit.org/b/157179 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Failure Timeout ]
+webkit.org/b/157179 editing/pasteboard/drag-drop-copy-content.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drag-drop-input-textarea.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drag-drop-modifies-page.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drag-drop-url-text.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drag-image-in-about-blank-frame.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drag-selected-image-to-contenteditable.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drop-file-svg.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drop-inputtext-acquires-style.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drop-link.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drag-link-with-data-transfer-adds-trusted-link-to-pasteboard.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drop-text-without-selection.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/smart-drag-drop.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/subframe-dragndrop-1.html [ Failure ]
+webkit.org/b/157179 editing/selection/4895428-1.html [ Failure ]
+webkit.org/b/157179 editing/selection/4895428-4.html [ Failure ]
+webkit.org/b/157179 editing/selection/contains-boundaries.html [ Failure ]
+webkit.org/b/157179 editing/selection/drag-text-delay.html [ Failure ]
+webkit.org/b/157179 fast/block/float/float-in-float-hit-testing.html [ Failure ]
+webkit.org/b/157179 fast/events/before-input-events-prevent-drag-and-drop.html [ Failure ]
+webkit.org/b/157179 fast/events/bogus-dropEffect-effectAllowed.html [ Failure ]
+webkit.org/b/157179 fast/events/content-changed-during-drop.html [ Failure ]
+webkit.org/b/157179 fast/events/crash-on-mutate-during-drop.html [ Failure ]
+webkit.org/b/157179 fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Failure ]
+webkit.org/b/157179 fast/events/drag-and-drop-link-containing-block.html [ Timeout ]
+webkit.org/b/157179 fast/events/drag-and-drop-fire-drag-dragover.html [ Failure ]
+webkit.org/b/157179 fast/events/drag-and-drop.html [ Failure Timeout ]
+webkit.org/b/157179 fast/events/drag-and-drop-subframe-dataTransfer.html [ Failure Timeout ]
+webkit.org/b/42194 fast/events/drag-and-drop-link.html [ Failure ]
+webkit.org/b/157179 fast/events/drag-and-drop-link-into-focused-contenteditable.html [ Failure ]
+webkit.org/b/157179 fast/events/drag-selects-image.html [ Failure ]
+webkit.org/b/157179 fast/events/draggable-div-customdata.html [ Failure ]
+webkit.org/b/157179 fast/events/draggable-div-nodata.html [ Failure ]
+webkit.org/b/157179 fast/events/dropzone-001.html [ Failure Timeout ]
+webkit.org/b/157179 fast/events/dropzone-002.html [ Failure Timeout ]
+webkit.org/b/157179 fast/events/dropzone-003.html [ Failure Timeout ]
+webkit.org/b/157179 fast/events/input-events-drag-and-drop.html [ Failure ]
+webkit.org/b/157179 fast/events/input-events-insert-by-drop.html [ Failure ]
+webkit.org/b/157179 fast/events/ondrop-text-html.html [ Failure ]
+webkit.org/b/157179 fast/events/selectstart-by-drag.html [ Failure ]
+webkit.org/b/157179 fast/events/standalone-image-drag-to-editable.html [ Failure Timeout ]
+webkit.org/b/157179 fast/forms/drag-into-textarea.html [ Failure ]
+webkit.org/b/157179 fast/forms/drag-out-of-textarea.html [ Failure ]
+webkit.org/b/157179 fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
+webkit.org/b/157179 fast/lists/drag-into-marker.html [ Failure ]
+webkit.org/b/157179 http/tests/security/resources/drag-drop-allowed.html [ Skip ]
+webkit.org/b/157179 plugins/mouse-events-fixedpos.html [ Failure ]
+webkit.org/b/157179 plugins/mouse-events.html [ Failure Timeout ]
+webkit.org/b/157179 editing/pasteboard/cleanup-on-move.html [ Failure ]
+webkit.org/b/157179 editing/pasteboard/drag-list-item.html [ Failure ]
+webkit.org/b/157179 fast/events/ondragenter.html [ Failure ]
+webkit.org/b/157179 fast/events/drag-customData.html  [ Timeout ]
+webkit.org/b/157179 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Timeout ]
+webkit.org/b/157179 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Timeout ]
+
+# eventSender.contextClick() needs to return a JS array of the context menu items.
+webkit.org/b/62597 editing/pasteboard/copy-standalone-image-crash.html [ Skip ]
+editing/selection/context-menu-on-text.html [ Skip ]
+editing/spelling/context-menu-suggestions.html [ Skip ]
+media/context-menu-actions.html [ Skip ]
+
+# Fails because MutationObservers are not notified at end-of-task
+fast/dom/MutationObserver [ Skip ]
+
+# Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
+webkit.org/b/98925 fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
+webkit.org/b/98925 fast/viewport/viewport-legacy-mobileoptimized-2.html [ Skip ]
+webkit.org/b/98925 fast/viewport/viewport-legacy-mobileoptimized-3.html [ Skip ]
+webkit.org/b/98925 fast/viewport/viewport-legacy-mobileoptimized.html [ Skip ]
+webkit.org/b/98925 fast/viewport/viewport-legacy-ordering-5.html [ Skip ]
+webkit.org/b/98925 fast/viewport/viewport-legacy-ordering-6.html [ Skip ]
+webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Skip ]
+webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp.html [ Skip ]
+
+# Need to call Settings::setInteractiveFormValidationEnabled(true).
+fast/forms/interactive-validation-prevented.html [ Skip ]
+fast/forms/interactive-validation-attach-assertion.html [ Skip ]
+fast/forms/interactive-validation-assertion-by-validate-twice.html [ Skip ]
+fast/forms/interactive-validation-select-crash.html [ Skip ]
+fast/forms/interactive-validation-crash-by-style-override.html [ Skip ]
+
+# Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT
+fast/forms/validation-message-appearance.html [ Skip ]
+fast/forms/validation-message-clone.html [ Skip ]
+fast/forms/validation-message-in-relative-body.html [ Skip ]
+fast/forms/validation-message-on-checkbox.html [ Skip ]
+fast/forms/validation-message-on-listbox.html [ Skip ]
+fast/forms/validation-message-on-menulist.html [ Skip ]
+fast/forms/validation-message-on-radio.html [ Skip ]
+fast/forms/validation-message-on-range.html [ Skip ]
+fast/forms/validation-message-on-textarea.html [ Skip ]
+
+# No support for QuickTime/YouTube plugin replacement.
+security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
+security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
+
+# Opera-submitted tests to W3C for <track>, a lot of failures still.
+webkit.org/b/103926 media/track/opera [ Skip ]
+
+# Snapshotted plugins not enabled
+webkit.org/b/98696 plugins/snapshotting [ Skip ]
+
+# TODO Impossible to test text-only-zoom from DRT on Windows
+webkit.org/b/35013 svg/zoom/text/ [ Skip ]
+
+# We don't support Wasm.
+workers/wasm-hashset-many-2.html [ Skip ]
+workers/wasm-hashset-many.html [ Skip ]
+workers/wasm-hashset.html [ Skip ]
+workers/wasm-long-compile-many.html [ Skip ]
+workers/wasm-long-compile.html [ Skip ]
+workers/wasm-mem-post-message.html [ Skip ]
+wasm/iframe-postmessage.html [ Skip ]
+wasm/iframe-parent-postmessage.html [ Skip ]
+wasm/window-postmessage.html [ Skip ]
+
+
+
+# Media controls tests are OS X only
+media/controls [ Skip ]
+
+# These are Mac specific for now.
+fast/url/user-visible [ Skip ]
+
+# This test relies on Mac-specific quirks
+media/document-level-media-user-gesture-quirk.html [ Skip ]
+
+# These tests reference specific fonts on Mac port.
+Bug(GTK) fast/text/font-weights.html [ WontFix ]
+Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
+
+# This requires a specific font on Mac
+fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
+
+# DASHBOARD_SUPPORT is mac only
+http/tests/xmlhttprequest/default-content-type-dashboard.html [ Skip ]
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Skip ]
+svg/custom/embedded-svg-allowed-in-dashboard.xml [ Skip ]
+svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Skip ]
+svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html [ Skip ]
+svg/custom/svg-allowed-in-dashboard-object.html [ Skip ]
+mathml/mathml-in-dashboard.html [ Skip ]
+
+# Secure text input mode (Mac only)
+# testRunner.secureEventInputIsEnabled is always false
+editing/secure-input/password-input-changed-type.html [ Skip ]
+editing/secure-input/password-input-focusing.html [ Skip ]
+editing/secure-input/password-input-focusing-to-different-frame.html [ Skip ]
+editing/secure-input/removed-password-input.html [ Skip ]
+editing/secure-input/reset-state-on-navigation.html [ Skip ]
+
+# This test relies on iOS-specific font fallback.
+fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
+
+# the test that uses these methods is Cocoa-specific, see webkit.org/b/152247
+fast/forms/attributed-strings.html [ Failure ]
+fast/forms/focus-option-control-on-page.html [ Failure ]
+fast/forms/indeterminate-progress-inline-height.html [ Failure ]
+fast/forms/input-appearance-spinbutton-up.html [ Failure ]
+fast/forms/input-appearance-spinbutton.html [ Failure ]
+fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
+
+# the tests run correctly in Firefox.
+fast/url/standard-url.html [ Failure ]
+fast/url/tab-and-newline-stripping.html [ Failure ]
+
+# Uses testRunner.titleTextDirection, which is Chromium-only
+webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
+webkit.org/b/58845 fast/dom/title-directionality.html [ Skip ]
+
+# Tests that fail across all platforms.
+# Even though some platforms don't skip these tests, there are platform-specific
+# results generated that make these tests 'pass'.
+canvas/philip/tests/2d.composite.operation.clear.html [ Skip ]
+canvas/philip/tests/2d.composite.operation.darker.html [ Skip ]
+canvas/philip/tests/2d.drawImage.broken.html [ Skip ]
+canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Skip ]
+canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Skip ]
+canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Skip ]
+canvas/philip/tests/2d.text.draw.baseline.middle.html [ Skip ]
+canvas/philip/tests/2d.text.draw.baseline.top.html [ Skip ]
+canvas/philip/tests/2d.text.draw.space.collapse.end.html [ Skip ]
+canvas/philip/tests/2d.text.draw.space.collapse.other.html [ Skip ]
+canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Skip ]
+canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Skip ]
+canvas/philip/tests/2d.text.measure.width.space.html [ Skip ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End platform-specific directories.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# These areas are not implemented well on WinCairo
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+### TestRunner
+
+# TestRunner::isCommandEnabled() not implemented
+editing/execCommand/enabling-and-selection-2.html [ Skip ]
+
+# testRunner.enableAutoResizeMode() not implemented
+fast/autoresize/ [ Skip ]
+
+# TestRunner::copyEncodedHostName(JSStringRef) not implemented
+fast/encoding/idn-security.html [ Skip ]
+
+# TestRunner::setMockGeolocationPosition() not implemented
+fast/history/page-cache-geolocation-active-oneshot.html [ Skip ]
+fast/history/page-cache-geolocation-active-watcher.html [ Skip ]
+
+# TestRunner::setSpatialNavigationEnabled(bool) not implemented
+fast/spatial-navigation [ Skip ]
+
+# dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
+fast/loader/iframe-src-invalid-url.html [ Skip ]
+
+# testRunner.installFakeHelvetica() is not a function
+fast/text/user-installed-fonts/shadow-family.html [ Skip ]
+fast/text/user-installed-fonts/shadow-postscript-family.html [ Skip ]
+fast/text/user-installed-fonts/shadow-postscript.html [ Skip ]
+fast/text/user-installed-fonts/shadow.html [ Skip ]
+
+# testRunner.dumpPolicyDelegateCallbacks is not a function
+loader/navigation-policy/should-open-external-urls [ Skip ]
+
+# testRunner.setBlockAllPlugins is not a function.
+plugins/unavailable-plugin-indicator-obscurity.html [ Skip ]
+
+# testRunner.setPluginSupportedMode is not a function
+plugins/unsupported-plugin.html [ Skip ]
+
+# TestRunner::closeIdleLocalStorageDatabases(double) not implemented
+storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Skip ]
+
+# TestRunner::setStorageDatabaseIdleInterval(double) not implemented
+storage/domstorage/storage-close-database-on-idle.html [ Skip ]
+
+### TestRunner end
+
+# AccessibilityUIElement::clearSelectedChildren() is not implemented
+accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
+accessibility/listbox-clear-selection.html [ Skip ]
+
+# eventSender.clearKillRing() is not implemented
+editing/pasteboard/emacs-cntl-y-001.html [ Skip ]
+editing/pasteboard/emacs-ctrl-k-y-001.html [ Skip ]
+
+# EventSender::dumpFilenameBeingDragged not implemented.
+webkit.org/b/61829 fast/events/drag-image-filename.html [ Skip ]
+
+# textInputController.setComposition() is not implementation.
+fast/forms/input-set-composition-scroll.html [ Skip ]
+
+# Can't find variable: HTMLMenuItemElement
+webkit.org/b/179299 fast/html/menuitem-element.html [ Failure ]
+
+# Can't find variable: IntersectionObserverEntry
+intersection-observer/intersection-observer-entry-interface.html [ Failure ]
+intersection-observer/intersection-observer-interface.html [ Failure ]
+
+# Can't find variable: WritableStream
+js/dom/builtin-getter-name.html [ Failure ]
+streams/pipe-to.html [ Failure ]
+streams/reference-implementation/bad-strategies.html [ Failure ]
+streams/reference-implementation/bad-underlying-sinks.html [ Failure ]
+streams/reference-implementation/brand-checks.html [ Failure ]
+streams/reference-implementation/byte-length-queuing-strategy.html [ Failure ]
+streams/reference-implementation/count-queuing-strategy.html [ Failure ]
+streams/reference-implementation/pipe-through.html [ Failure ]
+streams/reference-implementation/pipe-to-options.html [ Failure ]
+streams/reference-implementation/pipe-to.html [ Failure ]
+streams/reference-implementation/readable-stream-templated.html [ Failure ]
+streams/reference-implementation/writable-stream-abort.html [ Failure ]
+streams/reference-implementation/writable-stream.html [ Failure ]
+streams/shadowing-Promise.html [ Failure ]
+
+# UIScriptController::zoomToScale() is not implemented.
+webkit.org/b/180424 fast/visual-viewport/resize-event-fired.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/scroll-event-fired.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-iframe.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-under-page-zoom.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/viewport-dimensions.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-fixed-header-and-footer.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-fixed.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/zoomed-rects.html [ Skip ]
+webkit.org/b/180424 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
+webkit.org/b/180424 fast/zooming/uiscript-zooming.html [ Skip ]
+
+# eventSender.scheduleAsynchronousClick is not a function.
+fast/events/popup-blocking-click-in-iframe.html [ Skip ]
+
+# testScriptObjectInvoke is not a function
+imported/blink/plugins/empty-per-context-data.html [ Skip ]
+
+# ReadableByteStreamController is not implemented
+streams/readable-byte-stream-controller.html [ Skip ]
+streams/readable-stream-byob-reader.html [ Skip ]
+streams/readable-stream-byob-request.html [ Skip ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Following tests are labeled "Skip" because not working well and causes crash or timeout
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+# BUG: internals.markerCountForNode, not correct
+editing/spelling/spelling-insert-html.html [ Timeout ]
+editing/spelling/markers.html [ Timeout ]
+editing/spelling/spellcheck-async.html [ Timeout ]
+editing/spelling/spellcheck-async-mutation.html [ Timeout ]
+editing/spelling/grammar-paste.html [ Timeout ]
+editing/spelling/spellcheck-queue.html [ Timeout ]
+
+# BUG: internals.hasSpellingMarker, not correct
+editing/spelling/design-mode-spellcheck-off.html [ Timeout ]
+editing/spelling/inline-spelling-markers-hidpi.html [ Timeout ]
+editing/spelling/inline-spelling-markers.html [ Timeout ]
+editing/spelling/spelling-backspace-between-lines.html [ Timeout ]
+editing/spelling/spelling-backward.html [ Timeout ]
+editing/spelling/spellcheck-paste-continuous-disabled.html [ Timeout ]
+editing/spelling/spellcheck-paste-disabled.html [ Timeout ]
+editing/spelling/spelling-hasspellingmarker.html [ Timeout ]
+editing/spelling/spelling-linebreak.html [ Timeout ]
+editing/spelling/delete-into-misspelled-word.html [ Timeout ]
+editing/spelling/editing-word-with-marker-2.html [ Timeout ]
+editing/spelling/move-cursor-around-misspelled-word.html [ Timeout ]
+editing/spelling/spelling-attribute-at-child.html [ Timeout ]
+editing/spelling/spelling-attribute-change.html [ Timeout ]
+editing/spelling/spellcheck-paste.html [ Timeout ]
+editing/spelling/spellcheck-attribute.html [ Timeout ]
+
+# LayoutTest/fast/loader tests that fail or time out.
+fast/loader/local-CSS-from-local.html [ Failure Timeout ]
+fast/loader/local-JavaScript-from-local.html [ Failure Timeout ]
+fast/loader/local-image-from-local.html [ Failure Timeout ]
+fast/loader/local-iFrame-source-from-local.html [ Failure Timeout ]
+
+# These are expected mismatches, so they should fail, and the bug is they sometimes pass.
+fast/text/control-characters/visible-control-characters-1.html [ ImageOnlyFailure Pass ]
+fast/text/control-characters/visible-control-characters-2.html [ ImageOnlyFailure Pass ]
+fast/text/control-characters/visible-control-characters-2.xhtml [ ImageOnlyFailure Pass ]
+fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
+fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure Pass ]
+
+# If this does crash, the test has passed.
+fast/loader/cancel-load-during-port-block-timer.html [ Crash ]
+
+webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
+webkit.org/b/172270 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
+
+# This is because Cairo is claiming to only support encoding PNG images.
+fast/canvas/toDataURL-supportedTypes.html [ Failure ] # [ Skip ]
+fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ] # [ Skip ]
+
+# File Upload Test
+accessibility/axpress-on-aria-button.html [ Timeout ]
+accessibility/file-upload-button-with-axpress.html [ Timeout ]
+fast/dom/FileList-iterator-using-open-panel.html [ Timeout ]
+fast/files/apply-blob-url-to-img-using-open-panel.html [ Timeout ]
+fast/files/apply-blob-url-to-img.html [ Timeout ]
+fast/files/apply-blob-url-to-xhr-using-open-panel.html [ Timeout ]
+fast/files/file-list-test-using-open-panel.html [ Timeout ]
+fast/files/file-reader-abort-using-open-panel.html [ Timeout ]
+fast/files/file-reader-directory-crash-using-open-panel.html [ Timeout ]
+fast/files/filereader-zip-bundle-using-open-panel.html [ Timeout ]
+fast/forms/file/file-input-reset-using-open-panel.html [ Timeout ]
+fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Timeout ]
+fast/forms/file/file-reset-in-change-using-open-panel.html [ Timeout ]
+fast/forms/file/get-file-upload-using-open-panel.html [ Timeout ]
+fast/forms/file/input-file-value-using-open-panel.html [ Timeout ]
+fast/forms/file/input-file-write-files-using-open-panel.html [ Timeout ]
+fast/forms/file/open-file-panel.html [ Timeout ]
+fast/history/page-cache-createObjectURL-using-open-panel.html [ Timeout ]
+fast/history/page-cache-createObjectURL.html [ Timeout ]
+
+# resizeTO, resizeBy
+css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
+css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
+css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
+css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]
+fast/css-grid-layout/flex-content-sized-columns-resize.html [ Timeout ]
+fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Timeout ]
+fast/dom/Window/window-resize-contents.html [ Timeout ]
+fast/dom/Window/window-resize-update-scrollbars.html [ Timeout ]
+fast/dynamic/window-resize-scrollbars-test.html [ Timeout ]
+fast/fixed-layout/fixed-layout.html [ Timeout ]
+fast/images/animated-gif-window-resizing.html [ Timeout ]
+fast/picture/viewport-resize.html [ Timeout ]
