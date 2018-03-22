@@ -1,3 +1,29 @@
+2018-03-22  Daniel Bates  <dabates@apple.com>
+
+        CSS mask images should be retrieved using potentially CORS-enabled fetch
+        https://bugs.webkit.org/show_bug.cgi?id=179983
+        <rdar://problem/35678149>
+
+        Reviewed by Brent Fulgham.
+
+        As per <https://drafts.fxtf.org/css-masking-1/#priv-sec> (Editor's Draft, 23 December 2017)
+        we should fetch CSS mask images using a potentially CORS-enabled fetch.
+
+        Both cross-origin CSS shape-outside images and CSS mask images may be sensitive to timing
+        attacks that can be used to reveal their pixel data when retrieved without regard to CORS.
+        For the same reason that we fetch CSS shape-outside images using a potentially CORS-enabled
+        fetch we should fetch CSS mask the same way. This also makes the behavior of WebKit more
+        closely align with the behavior in the spec.
+
+        Test: http/tests/security/css-mask-image.html
+
+        * style/StylePendingResources.cpp: Substitute LoadPolicy::NoCORS and LoadPolicy::Anonymous for
+        LoadPolicy::Normal and LoadPolicy::ShapeOutside, respectively, to match the terminology used
+        in the HTML, CSS Shapes Module Level 1, and CSS Masking Module Level 1 specs.
+        (WebCore::Style::loadPendingImage): Ditto.
+        (WebCore::Style::loadPendingResources): Use load policy LoadPolicy::Anonymous when fetching
+        a mask image or shape-outside image.
+
 2018-03-22  Zalan Bujtas  <zalan@apple.com>
 
         [Simple line layout] Text with letter spacing is not positioned properly.
