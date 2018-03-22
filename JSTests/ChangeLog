@@ -1,3 +1,17 @@
+2018-03-22  Michael Saboff  <msaboff@apple.com>
+
+        Race Condition in arrayProtoFuncReverse() causes wrong results or crash
+        https://bugs.webkit.org/show_bug.cgi?id=183901
+
+        Reviewed by Keith Miller.
+
+        New test.
+
+        * stress/array-reverse-doesnt-clobber.js: Added.
+        (testArrayReverse):
+        (createArrayOfArrays):
+        (createArrayStorage):
+
 2018-03-21  Filip Pizlo  <fpizlo@apple.com>
 
         ScopedArguments should do poisoning and index masking

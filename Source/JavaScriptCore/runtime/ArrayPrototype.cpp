@@ -839,6 +839,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (containsHole(data, length) && holesMustForwardToPrototype(vm, thisObject))
             break;
         std::reverse(data, data + length);
+        if (!hasInt32(thisObject->indexingType()))
+            vm.heap.writeBarrier(thisObject);
         return JSValue::encode(thisObject);
     }
     case ALL_DOUBLE_INDEXING_TYPES: {
@@ -859,6 +861,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             break;
         auto data = storage.vector().data();
         std::reverse(data, data + length);
+        vm.heap.writeBarrier(thisObject);
         return JSValue::encode(thisObject);
     }
     }
