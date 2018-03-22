@@ -45,6 +45,8 @@
 @property (nonatomic) BOOL accessoryViewShouldNotShow WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic) BOOL forceSecureTextEntry WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic, readonly) BOOL requiresStrongPasswordAssistance WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+- (void)reloadFocusedElementContextView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 @end

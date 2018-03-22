@@ -400,6 +400,11 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     _contentView = nil;
 }
 
+- (void)reloadFocusedElementContextView
+{
+    [_contentView reloadContextViewForPresentedListViewController];
+}
+
 @end
 
 @implementation WKFocusedElementInfo {
@@ -664,6 +669,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _showDebugTapHighlightsForFastClicking = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitShowFastClickDebugTapHighlights"];
     _needsDeferredEndScrollingSelectionUpdate = NO;
     _isChangingFocus = NO;
+    _isBlurringFocusedNode = NO;
 }
 
 - (void)cleanupInteraction
@@ -4103,6 +4109,8 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_stopAssistingNode
 {
+    SetForScope<BOOL> isBlurringFocusedNodeForScope { _isBlurringFocusedNode, YES };
+
     [_formInputSession invalidate];
     _formInputSession = nil;
 
@@ -4146,6 +4154,13 @@ static bool isAssistableInputType(InputType type)
         weakSelf.get()->_assistedNodeInformation = info;
         callback(true);
     });
+}
+
+- (void)reloadContextViewForPresentedListViewController
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    [_textInputListViewController reloadContextView];
+#endif
 }
 
 #if ENABLE(EXTRA_ZOOM_MODE)
@@ -4408,7 +4423,8 @@ static bool isAssistableInputType(InputType type)
 
 - (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlViewController *)controller
 {
-    [_textInputListViewController reloadTextSuggestions];
+    if (!_isBlurringFocusedNode)
+        [_textInputListViewController reloadTextSuggestions];
 }
 
 #pragma mark - WKSelectMenuViewControllerDelegate

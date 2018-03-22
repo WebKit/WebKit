@@ -1,3 +1,41 @@
+2018-03-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add new SPI hooks for clients to vend an input session context view
+        https://bugs.webkit.org/show_bug.cgi?id=183866
+        <rdar://problem/38692256>
+
+        Reviewed by Tim Horton.
+
+        Add new SPI hooks to _WKInputDelegate allowing internal clients to provide a view that gives additional context
+        when editing form controls, on top of the default label or placeholder text displayed by WebKit. The height
+        delegate is invoked first, giving the client an opportunity to lay out the context view to fit the given size;
+        the actual view is then queried.
+
+        If the view changes, clients may tell WebKit to reload the context view via SPI on WKFormInputSession; this call
+        to reload is plumbed through to the currently presented list view controller (at the moment, this is only the
+        text input list view controller).
+
+        * UIProcess/API/Cocoa/_WKFormInputSession.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+
+        Add the new SPI hooks, described above.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession reloadFocusedElementContextView]):
+
+        Plumb the context view reload hook through WKContentView to WKTextInputListViewController.
+
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView reloadContextViewForPresentedListViewController]):
+        (-[WKContentView focusedFormControllerDidUpdateSuggestions:]):
+
+        Slight tweak to only reload text suggestions if we are not blurring the focused element. Without this extra
+        condition, the list view controller's inner table view would get reloaded when the form input session's text
+        suggestions are set to nil when the list view controller is dismissed, causing a visible stutter in the
+        dismissal animation of view controller.
+
 2018-03-21  Chris Dumez  <cdumez@apple.com>
 
         WebKitTestRunner crashed in com.apple.WebKit: WebKit::WebProcessPool::terminateServiceWorkerProcesses
