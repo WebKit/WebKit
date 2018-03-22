@@ -1779,5 +1779,3 @@ webkit.org/b/182311 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
 
 webkit.org/b/182928 http/tests/cache-storage/cache-representation.https.html [ Pass Failure ]
-
-webkit.org/b/183572 imported/blink/svg/css/path-layout-crash.html [ Skip ]
