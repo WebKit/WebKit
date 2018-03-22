@@ -1,5 +1,14 @@
 2018-03-21  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark fast/scrolling/latching/scroll-div-no-latching.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=183879
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-03-21  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark inspector/console/messageAdded-from-named-evaluations.html as slow.
         https://bugs.webkit.org/show_bug.cgi?id=183880
 
