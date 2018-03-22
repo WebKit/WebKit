@@ -974,26 +974,31 @@ void WebAnimation::updatePendingTasks()
     timingModelDidChange();
 }
 
-Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const
+Seconds WebAnimation::timeToNextRequiredTick() const
 {
-    if (!m_timeline || !m_startTime || !m_effect || !m_playbackRate)
+    // If we don't have a timeline, an effect, a start time or a playback rate other than 0,
+    // there is no value to apply so we don't need to schedule invalidation.
+    if (!m_timeline || !m_effect || !m_startTime || !m_playbackRate)
         return Seconds::infinity();
 
-    auto startTime = m_startTime.value();
-    auto endTime = startTime + (m_effect->timing()->iterationDuration() / m_playbackRate);
+    // If we're in the running state, we need to schedule invalidation as soon as possible.
+    if (playState() == PlayState::Running)
+        return 0_s;
 
-    // If we haven't started yet, return the interval until our active start time.
-    auto activeStartTime = std::min(startTime, endTime);
-    if (timelineTime <= activeStartTime)
-        return activeStartTime - timelineTime;
+    // If our current time is negative, we need to be scheduled to be resolved at the inverse
+    // of our current time, unless we fill backwards, in which case we want to invalidate as
+    // soon as possible.
+    auto localTime = currentTime().value();
+    if (localTime < 0_s)
+        return -localTime;
 
-    // If we're in the middle of our active duration, we want to be called as soon as possible.
-    auto activeEndTime = std::max(startTime, endTime);
-    if (timelineTime <= activeEndTime)
-        return 0_ms;
+    // If our current time is just at the acthive duration threshold we want to invalidate as
+    // soon as possible to restore a non-animated value.
+    if (std::abs(localTime.microseconds() - m_effect->timing()->activeDuration().microseconds()) < timeEpsilon.microseconds())
+        return 0_s;
 
-    // If none of the previous cases match, then we're already past our active duration
-    // and do not need scheduling.
+    // In any other case, we're idle or already outside our active duration and have no need
+    // to schedule an invalidation.
     return Seconds::infinity();
 }
 

@@ -1,7 +1,7 @@
 
 PASS Animation returns correct playState when running 
-FAIL Animation returns correct playState when paused undefined is not an object (evaluating 'animation.playState')
+PASS Animation returns correct playState when paused 
 PASS Animation.playState updates when paused by script 
-FAIL Animation.playState updates when resumed by setting style undefined is not an object (evaluating 'animation.playState')
+FAIL Animation.playState updates when resumed by setting style assert_equals: Animation.playState reports running after updating animation-play-state (got: paused) expected "running" but got "paused"
 PASS Animation returns correct playState when cancelled 
 

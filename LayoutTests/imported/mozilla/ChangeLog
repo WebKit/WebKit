@@ -1,5 +1,31 @@
 2018-03-21  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Make imported/mozilla/css-animations/test_event-dispatch.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183845
+
+        Reviewed by Dean Jackson.
+
+        Add test expectations for previously crashing tests, update other expectations with progressions, including
+        the two event dispatch tests which now pass all assertions.
+
+        * css-animations/test_animation-finish-expected.txt:
+        * css-animations/test_animation-pausing-expected.txt:
+        * css-animations/test_animation-playstate-expected.txt:
+        * css-animations/test_animation-ready-expected.txt:
+        * css-animations/test_animation-starttime-expected.txt:
+        * css-animations/test_event-dispatch-expected.txt:
+        * css-animations/test_event-order-expected.txt:
+        * css-animations/test_setting-effect-expected.txt: Added.
+        * css-transitions/test_animation-cancel-expected.txt:
+        * css-transitions/test_animation-computed-timing-expected.txt:
+        * css-transitions/test_animation-currenttime-expected.txt:
+        * css-transitions/test_animation-pausing-expected.txt:
+        * css-transitions/test_animation-starttime-expected.txt:
+        * css-transitions/test_event-dispatch-expected.txt:
+        * css-transitions/test_setting-effect-expected.txt: Added.
+
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Ensure animationcancel and transitioncancel events are dispatched
         https://bugs.webkit.org/show_bug.cgi?id=183864
 

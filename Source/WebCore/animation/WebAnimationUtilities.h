@@ -40,5 +40,7 @@ inline double secondsToWebAnimationsAPITime(const Seconds time)
     return std::round(time.microseconds()) / 1000;
 }
 
+const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
+
 } // namespace WebCore
 

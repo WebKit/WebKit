@@ -1,6 +1,6 @@
 
 FAIL Test exceptions when finishing infinite animation assert_true: Expect InvalidStateError exception trying to finish an infinite animation expected true got false
-FAIL Test finish() while paused undefined is not an object (evaluating 'animation.ready')
-FAIL Test finish() while pause-pending with positive playbackRate undefined is not an object (evaluating 'animation.playbackRate = 2')
-FAIL Test finish() while pause-pending with negative playbackRate undefined is not an object (evaluating 'animation.playbackRate = -2')
+PASS Test finish() while paused 
+PASS Test finish() while pause-pending with positive playbackRate 
+PASS Test finish() while pause-pending with negative playbackRate 
 

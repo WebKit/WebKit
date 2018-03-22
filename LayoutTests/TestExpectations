@@ -1733,15 +1733,13 @@ webkit.org/b/183839 imported/mozilla/css-transitions/test_effect-target.html [ P
 webkit.org/b/183840 imported/mozilla/css-animations/test_document-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183841 imported/mozilla/css-transitions/test_element-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183842 imported/mozilla/css-animations/test_effect-target.html [ Pass Failure Timeout ]
-webkit.org/b/183843 imported/mozilla/css-transitions/test_event-dispatch.html [ Pass Failure Timeout ]
 webkit.org/b/183844 imported/mozilla/css-animations/test_element-get-animations.html [ Pass Failure Timeout ]
-webkit.org/b/183845 imported/mozilla/css-animations/test_event-dispatch.html [ Pass Failure Timeout ]
 webkit.org/b/183846 imported/mozilla/css-transitions/test_pseudoElement-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183847 imported/mozilla/css-animations/test_event-order.html [ Pass Failure Timeout ]
+webkit.org/b/183849 imported/mozilla/css-animations/test_setting-effect.html [ Pass Failure Timeout ]
+webkit.org/b/183850 imported/mozilla/css-transitions/test_setting-effect.html [ Pass Failure Timeout ]
 
 webkit.org/b/183848 imported/mozilla/css-animations/test_keyframeeffect-getkeyframes.html [ Crash ]
-webkit.org/b/183849 imported/mozilla/css-animations/test_setting-effect.html [ Crash ]
-webkit.org/b/183850 imported/mozilla/css-transitions/test_setting-effect.html [ Crash ]
 
 webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_setter_null.tentative.html [ Pass Failure ]
 

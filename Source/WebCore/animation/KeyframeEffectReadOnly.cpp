@@ -748,15 +748,13 @@ bool KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes(
     ASSERT(is<CSSTransition>(animation()));
     auto property = downcast<CSSTransition>(animation())->backingAnimation().property();
 
-    // If we didn't have blending keyframes yet, we would create new blending keyframes provided
-    // the start and end styles hold different values for this property.
-    if (!hasBlendingKeyframes())
-        return !CSSPropertyAnimation::propertiesEqual(property, &oldStyle, &newStyle);
+    // There cannot be new keyframes if the start and to values are the same.
+    if (CSSPropertyAnimation::propertiesEqual(property, &oldStyle, &newStyle))
+        return false;
 
-    // Otherwise, we would create new blending keyframes provided the current start keyframe holds
-    // a different value than the new start style or the current end keyframe holds a different value
-    // than the new end style for this property.
-    return !CSSPropertyAnimation::propertiesEqual(property, m_blendingKeyframes[0].style(), &oldStyle) || !CSSPropertyAnimation::propertiesEqual(property, m_blendingKeyframes[1].style(), &newStyle);
+    // Otherwise, we would create new blending keyframes provided the current end keyframe holds a different
+    // value than the new end style for this property.
+    return !CSSPropertyAnimation::propertiesEqual(property, m_blendingKeyframes[1].style(), &newStyle);
 }
 
 void KeyframeEffectReadOnly::computeStackingContextImpact()

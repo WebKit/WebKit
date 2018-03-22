@@ -127,11 +127,10 @@ void DocumentTimeline::updateAnimationSchedule()
 
     m_needsUpdateAnimationSchedule = false;
 
-    Seconds now = currentTime().value();
     Seconds scheduleDelay = Seconds::infinity();
 
     for (const auto& animation : animations()) {
-        auto animationTimeToNextRequiredTick = animation->timeToNextRequiredTick(now);
+        auto animationTimeToNextRequiredTick = animation->timeToNextRequiredTick();
         if (animationTimeToNextRequiredTick < animationInterval) {
             scheduleAnimationResolution();
             return;
@@ -180,7 +179,7 @@ void DocumentTimeline::updateAnimations()
         m_document->updateStyleIfNeeded();
     }
 
-    for (auto animation : m_acceleratedAnimationsPendingRunningStateChange)
+    for (auto& animation : m_acceleratedAnimationsPendingRunningStateChange)
         animation->startOrStopAccelerated();
     m_acceleratedAnimationsPendingRunningStateChange.clear();
 

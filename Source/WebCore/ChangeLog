@@ -1,3 +1,39 @@
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_event-dispatch.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183845
+
+        Reviewed by Dean Jackson.
+
+        Finish the work to get DOM events for CSS Animations and CSS Transitions dispatching as specified.
+
+        * animation/AnimationEffectReadOnly.cpp: Move timeEpsilon to be shared as part of WebAnimationUtilities.h since we now need it in
+        WebAnimation::timeToNextRequiredTick().
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): We add a pre-emptive return clause when we know that the AnimationList
+        for previous and current styles are a match.
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::matchesBackingAnimationAndStyles const): Ensure we have a valid effect before downcasting it.
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::initialize): We need to call pause() for declarative animations that aren't playing so that the animation's
+        playState is set correctly and the animation is not idle.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::updateAnimationSchedule): We no longer need to pass the current time to timeToNextRequiredTick() since the method has
+        been reworked to use the animation's current time, which is based on the timeline's current time.
+        (WebCore::DocumentTimeline::updateAnimations): Avoid creating a copy when iterating over pending hardware animations.
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes const): We should never generate new blending keyframes if the
+        old and new styles contain the same value, since there would be no transition between two equal values, and we should only look at whether the new
+        style value and the recorded target value differ to determine if new blending keyframes are necessary.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::timeToNextRequiredTick const): We correct our scheduling code which was shown to be broken in several of the newly-imported
+        Mozilla tests. Any running animation is now scheduled to invalidate again on the next tick, and we use timeEpsilon from WebAnimationUtilities.h to
+        correctly check if we're right at the active threshold, when we also invalidate on the next tick. If our current time is negative, in other words
+        when the animation has not yet started, we schedule this animation's next tick to be the negative of that value. In all other cases, no invalidation
+        needs to be scheduled.
+        * animation/WebAnimation.h: We move updateFinishedState() to private since this method is not actually used outside of WebAnimation.cpp.
+        * animation/WebAnimationUtilities.h: Move timeEpsilon to be shared as part of WebAnimationUtilities.h.
+
 2018-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Improve readability of WebCore's OTHER_LDFLAGS

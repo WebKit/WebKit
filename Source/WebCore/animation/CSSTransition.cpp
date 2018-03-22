@@ -49,7 +49,7 @@ CSSTransition::CSSTransition(Element& element, const Animation& backingAnimation
 bool CSSTransition::matchesBackingAnimationAndStyles(const Animation& newBackingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle) const
 {
     bool backingAnimationsMatch = backingAnimation() == newBackingAnimation;
-    if (!oldStyle)
+    if (!oldStyle || !effect())
         return backingAnimationsMatch;
     return backingAnimationsMatch && !downcast<KeyframeEffectReadOnly>(effect())->stylesWouldYieldNewCSSTransitionsBlendingKeyframes(*oldStyle, newStyle);
 }

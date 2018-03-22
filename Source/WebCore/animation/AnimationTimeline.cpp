@@ -144,6 +144,9 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         return;
     }
 
+    if (oldStyle && oldStyle->hasAnimations() && newStyle.hasAnimations() && *(oldStyle->animations()) == *(newStyle.animations()))
+        return;
+
     // First, compile the list of animation names that were applied to this element up to this point.
     HashSet<String> namesOfPreviousAnimations;
     if (oldStyle && oldStyle->hasAnimations()) {

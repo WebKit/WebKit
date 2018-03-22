@@ -68,6 +68,8 @@ void DeclarativeAnimation::initialize(const Element& target)
     syncPropertiesWithBackingAnimation();
     if (backingAnimation().playState() == AnimPlayStatePlaying)
         play();
+    else
+        pause();
 
     unsuspendEffectInvalidation();
 }
