@@ -40,7 +40,7 @@ FRAMEWORK_SEARCH_PATHS_ios_Release = $(FRAMEWORK_SEARCH_PATHS_ios_Debug);
 FRAMEWORK_SEARCH_PATHS_ios_Production = $(PRODUCTION_FRAMEWORKS_DIR);
 FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR) $(inherited) $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 
-LIBRARY_SEARCH_PATHS = $(inherited) "$(LIBWEBRTC_LIBRARY_DIR)";
+LIBRARY_SEARCH_PATHS = $(inherited) "$(WK_LIBWEBRTC_LIBRARY_DIR)";
 ADDITIONAL_CFLAGS = -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CFLAGS = $(inherited) $(ADDITIONAL_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(inherited) $(ADDITIONAL_CFLAGS);
@@ -68,22 +68,63 @@ WK_IOS_BINCOMPAT_LDFLAGS_V9_0 = -Wl,-reexport_library,$(BUILT_PRODUCTS_DIR)/Deri
 WK_IOS_BINCOMPAT_LDFLAGS_V9_3 = $(WK_IOS_BINCOMPAT_LDFLAGS_V9_0);
 WK_IOS_BINCOMPAT_LDFLAGS_V10_0 = $(WK_IOS_BINCOMPAT_LDFLAGS_V9_3);
 
-LIBWEBRTC_LDFLAGS = $(LIBWEBRTC_LDFLAGS_$(ENABLE_WEB_RTC));
-LIBWEBRTC_LDFLAGS_ = ;
-LIBWEBRTC_LDFLAGS_ENABLE_WEB_RTC = -framework VideoToolbox -framework CoreMedia -weak-lwebrtc;
+WK_LIBWEBRTC_LIBRARY_DIR = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks
+WK_LIBWEBRTC_LIBRARY_DIR[sdk=macosx*] = $(WK_LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
+WK_LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_NO = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Versions/A/Frameworks;
+WK_LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(WK_OVERRIDE_FRAMEWORKS_DIR);
 
-LIBWEBRTC_LIBRARY_DIR = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Frameworks
-LIBWEBRTC_LIBRARY_DIR[sdk=macosx*] = $(LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
-LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_NO = $(WEBCORE_FRAMEWORKS_DIR)/WebCore.framework/Versions/A/Frameworks;
-LIBWEBRTC_LIBRARY_DIR_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(WK_OVERRIDE_FRAMEWORKS_DIR);
+WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
 
-OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(WK_UNDEFINED_SYMBOLS_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM);
-OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE -framework CoreAudio -framework Metal -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a $(WK_DEVICE_IDENTITY_LDFLAGS);
-// FIXME: Reduce the number of allowable_client <rdar://problem/31823969>
-OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework MobileCoreServices -framework OpenGLES -lMobileGestalt $(WK_IOS_BINCOMPAT_LDFLAGS) -allowable_client WebKit -allowable_client iTunesU -allowable_client Casablanca -allowable_client Remote -allowable_client TVBooks -allowable_client DumpRenderTree -allowable_client WebKitTestRunner -allowable_client TestWebKitAPI;
-OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOSurface -framework IOSurfaceAccelerator -framework GraphicsServices $(LIBWEBRTC_LDFLAGS);
-OTHER_LDFLAGS_PLATFORM[sdk=iphonesimulator*] = $(OTHER_LDFLAGS_BASE_ios) $(LIBWEBRTC_LDFLAGS);
-OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -framework AudioUnit -framework Carbon -framework Cocoa -framework DataDetectorsCore -framework IOSurface -framework OpenGL -framework SystemConfiguration $(LIBWEBRTC_LDFLAGS);
+WK_AUDIO_UNIT_LDFLAGS = $(WK_AUDIO_UNIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_AUDIO_UNIT_LDFLAGS_macosx = -framework AudioUnit;
+
+WK_CARBON_LDFLAGS = $(WK_CARBON_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_CARBON_LDFLAGS_macosx = -framework Carbon;
+
+WK_DATA_DETECTORS_CORE_LDFLAGS = $(WK_DATA_DETECTORS_CORE_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_DATA_DETECTORS_CORE_LDFLAGS_macosx = -framework DataDetectorsCore;
+
+WK_DEVICE_IDENTITY_LDFLAGS = $(WK_DEVICE_IDENTITY_LDFLAGS_$(WK_HAVE_DEVICE_IDENTITY));
+WK_DEVICE_IDENTITY_LDFLAGS_YES = -framework DeviceIdentity;
+
+WK_GRAPHICS_SERVICES_LDFLAGS = $(WK_GRAPHICS_SERVICES_LDFLAGS_$(WK_COCOA_TOUCH));
+WK_GRAPHICS_SERVICES_LDFLAGS_cocoatouch = -framework GraphicsServices;
+
+WK_IOSURFACE_LDFLAGS = $(WK_IOSURFACE_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_IOSURFACE_LDFLAGS_iphoneos = -framework IOSurface -framework IOSurfaceAccelerator;
+WK_IOSURFACE_LDFLAGS_iphoneminimalsimulator = -framework IOSurface;
+WK_IOSURFACE_LDFLAGS_watchos = $(WK_IOSURFACE_LDFLAGS_iphoneos);
+WK_IOSURFACE_LDFLAGS_appletvos = $(WK_IOSURFACE_LDFLAGS_iphoneos);
+WK_IOSURFACE_LDFLAGS_macosx = -framework IOSurface;
+
+WK_LIBWEBRTC_LDFLAGS = $(WK_LIBWEBRTC_LDFLAGS_$(ENABLE_WEB_RTC));
+WK_LIBWEBRTC_LDFLAGS_ENABLE_WEB_RTC = -framework VideoToolbox -framework CoreMedia -weak-lwebrtc;
+
+WK_MOBILE_CORE_SERVICES_LDFLAGS = $(WK_MOBILE_CORE_SERVICES_LDFLAGS_$(WK_COCOA_TOUCH));
+WK_MOBILE_CORE_SERVICES_LDFLAGS_cocoatouch = -framework MobileCoreServices;
+
+WK_MOBILE_GESTALT_LDFLAGS = $(WK_MOBILE_GESTALT_LDFLAGS_$(WK_COCOA_TOUCH));
+WK_MOBILE_GESTALT_LDFLAGS_cocoatouch = -lMobileGestalt;
+
+WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_OPENGL_LDFLAGS_iphoneos = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_iphoneminimalsimulator = -framework OpenGL;
+WK_OPENGL_LDFLAGS_iphonesimulator = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_watchos = $(WK_OPENGL_LDFLAGS_iphoneos);
+WK_OPENGL_LDFLAGS_watchsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
+WK_OPENGL_LDFLAGS_appletvos = $(WK_OPENGL_LDFLAGS_iphoneos);
+WK_OPENGL_LDFLAGS_appletvsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
+WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
+
+WK_SYSTEM_CONFIGURATION_LDFLAGS = $(WK_SYSTEM_CONFIGURATION_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_SYSTEM_CONFIGURATION_LDFLAGS_macosx = -framework SystemConfiguration;
+
+// FIXME: Reduce the number of allowable_clients <rdar://problem/31823969>
+OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(WK_UNDEFINED_SYMBOLS_LDFLAGS) -lsqlite3 -lobjc -lANGLE -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a -framework CFNetwork -framework CoreAudio -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework Metal $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) $(OTHER_LDFLAGS_PLATFORM_$(WK_PLATFORM_NAME)) $(WK_APPKIT_LDFLAGS) $(WK_AUDIO_UNIT_LDFLAGS) $(WK_CARBON_LDFLAGS)  $(WK_DATA_DETECTORS_CORE_LDFLAGS) $(WK_DEVICE_IDENTITY_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_IOSURFACE_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_SYSTEM_CONFIGURATION_LDFLAGS);
+
+OTHER_LDFLAGS_PLATFORM_cocoatouch = $(WK_IOS_BINCOMPAT_LDFLAGS) -allowable_client WebKit -allowable_client iTunesU -allowable_client Casablanca -allowable_client Remote -allowable_client TVBooks -allowable_client DumpRenderTree -allowable_client WebKitTestRunner -allowable_client TestWebKitAPI;
+OTHER_LDFLAGS_PLATFORM_macosx = -sub_library libobjc -umbrella WebKit;
 
 WK_UNDEFINED_SYMBOLS_LDFLAGS[sdk=macosx*] = $(WK_UNDEFINED_SYMBOLS_LDFLAGS$(WK_MACOS_1013));
 WK_UNDEFINED_SYMBOLS_LDFLAGS_MACOS_BEFORE_1013 = -Wl,-U,_CTFontCreatePhysicalFontForCharactersWithLanguage;
@@ -139,6 +180,3 @@ TEXT_BASED_API_FILE = WebCore.tbd
 
 WK_HAVE_DEVICE_IDENTITY = $(WK_HAVE_DEVICE_IDENTITY_$(PLATFORM_NAME));
 WK_HAVE_DEVICE_IDENTITY_iphoneos = YES;
-
-WK_DEVICE_IDENTITY_LDFLAGS = $(WK_DEVICE_IDENTITY_LDFLAGS_$(WK_HAVE_DEVICE_IDENTITY));
-WK_DEVICE_IDENTITY_LDFLAGS_YES = -framework DeviceIdentity;

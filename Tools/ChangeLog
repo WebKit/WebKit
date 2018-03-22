@@ -1,3 +1,14 @@
+2018-03-22  Tim Horton  <timothy_horton@apple.com>
+
+        Improve readability of WebCore's OTHER_LDFLAGS
+        https://bugs.webkit.org/show_bug.cgi?id=183909
+        <rdar://problem/38760992>
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-03-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed. Marked myself as a committer.

@@ -33,15 +33,6 @@
 
 #include "WebKitTargetConditionals.xcconfig"
 
-WK_COCOA_TOUCH = $(WK_COCOA_TOUCH_$(WK_PLATFORM_NAME));
-WK_COCOA_TOUCH_iphoneos = cocoatouch;
-WK_COCOA_TOUCH_iphoneminimalsimulator = cocoatouch;
-WK_COCOA_TOUCH_iphonesimulator = cocoatouch;
-WK_COCOA_TOUCH_watchos = cocoatouch;
-WK_COCOA_TOUCH_watchsimulator = cocoatouch;
-WK_COCOA_TOUCH_appletvos = cocoatouch;
-WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
-
 ENABLE_3D_TRANSFORMS = ENABLE_3D_TRANSFORMS;
 
 ENABLE_ACCELERATED_2D_CANVAS = ;
