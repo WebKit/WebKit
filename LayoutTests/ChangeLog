@@ -1,3 +1,12 @@
+2018-03-22  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r229847.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/loading/simple-subframe-expected.txt:
+        * platform/gtk/http/tests/navigation/redirect-to-fragment2-expected.txt: Added.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2018-03-22  Zalan Bujtas  <zalan@apple.com>
 
         SVG root is skipped while marking percentage height descendants dirty.

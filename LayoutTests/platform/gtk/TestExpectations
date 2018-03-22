@@ -1940,6 +1940,10 @@ webkit.org/b/183609 inspector/unit-tests/throttle.html [ Pass Failure ]
 
 webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/183903 http/tests/media/video-buffered-range-contains-currentTime.html [ Crash Pass ]
+
+webkit.org/b/183904 imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3333,6 +3337,8 @@ webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibili
 webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/183613 imported/w3c/web-platform-tests/media-source/interfaces.html [ Failure ]
+
+webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
