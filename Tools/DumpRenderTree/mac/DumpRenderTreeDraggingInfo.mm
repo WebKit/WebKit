@@ -42,6 +42,8 @@
 - (void)setItem:(id)item;
 @end
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+
 @interface DumpRenderTreeFilePromiseReceiver : NSFilePromiseReceiver {
     RetainPtr<NSArray<NSString *>> _promisedUTIs;
     RetainPtr<NSMutableArray<NSURL *>> _destinationURLs;
@@ -139,6 +141,8 @@ static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError *&
 }
 
 @end
+
+#endif
 
 @implementation DumpRenderTreeDraggingInfo
 
@@ -255,6 +259,7 @@ static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
 
 - (void)enumerateDraggingItemsWithOptions:(NSEnumerationOptions)enumOptions forView:(NSView *)view classes:(NSArray *)classArray searchOptions:(NSDictionary *)searchOptions usingBlock:(void (^)(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop))block
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     assert(!enumOptions);
     assert(!searchOptions.count);
 
@@ -283,6 +288,7 @@ static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
         if (stop)
             return;
     }
+#endif
 }
 
 -(NSSpringLoadingHighlight)springLoadingHighlight
