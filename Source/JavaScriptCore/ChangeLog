@@ -1,3 +1,35 @@
+2018-03-22  Mark Lam  <mark.lam@apple.com>
+
+        Add placeholder call and jump MacroAssembler emitters that take PtrTag in a register.
+        https://bugs.webkit.org/show_bug.cgi?id=183914
+        <rdar://problem/38763536>
+
+        Reviewed by Saam Barati and JF Bastien.
+
+        This is in preparation for supporting pointer profiling work.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::jump):
+        (JSC::MacroAssemblerARM::call):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::call):
+        (JSC::MacroAssemblerARM64::jump):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::call):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::jump):
+        (JSC::MacroAssemblerMIPS::call):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::call):
+        (JSC::MacroAssemblerX86::jump):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::jump):
+        (JSC::MacroAssemblerX86Common::call):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::jump):
+
 2018-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Improve readability of WebCore's OTHER_LDFLAGS

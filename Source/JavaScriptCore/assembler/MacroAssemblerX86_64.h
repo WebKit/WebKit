@@ -223,12 +223,16 @@ public:
         return result;
     }
 
+    ALWAYS_INLINE Call call(RegisterID callTag) { return UNUSED_PARAM(callTag), call(NoPtrTag); }
+
     // Address is a memory location containing the address to jump to
     void jump(AbsoluteAddress address, PtrTag tag)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
         jump(Address(scratchRegister()), tag);
     }
+
+    ALWAYS_INLINE void jump(AbsoluteAddress address, RegisterID jumpTag) { UNUSED_PARAM(jumpTag), jump(address, NoPtrTag); }
 
     Call tailRecursiveCall()
     {
