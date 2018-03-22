@@ -1373,8 +1373,7 @@ webkit.org/b/160161 mathml/opentype/large-operators.html [ Skip ]
 webkit.org/b/160161 mathml/opentype/horizontal.html [ Skip ]
 webkit.org/b/160161 mathml/opentype/horizontal-munderover.html [ Skip ]
 
-# These tests require the Latin Modern Math font.
-webkit.org/b/160161 mathml/opentype/large-operators-italic-correction.html [ Skip ]
+# This test requires the Latin Modern Math font.
 webkit.org/b/160161 mathml/presentation/bug159513.html [ Skip ]
 
 # This test fails because the USE_TYPO_METRICS flag is ignored for non-math font

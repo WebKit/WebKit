@@ -1,3 +1,19 @@
+2018-03-22  Frederic Wang  <fwang@igalia.com>
+
+        [MathML] Import WPT test to replace mathml/opentype/large-operators-italic-correction.html
+        https://bugs.webkit.org/show_bug.cgi?id=183891
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Remove large-operators-italic-correction.html. Italic correction is tested more completely by
+        a new WPT test that does not require Latin Modern Math to be installed on the try bots.
+
+        * mathml/opentype/large-operators-italic-correction-expected.txt: Removed.
+        * mathml/opentype/large-operators-italic-correction.html: Removed.
+        * platform/ios/TestExpectations: Remove test expectation.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+
 2018-03-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r229831): fast/loader/javascript-url-iframe-remove-on-navigate-async-delegate.html is flaky

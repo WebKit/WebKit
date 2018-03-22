@@ -1,3 +1,19 @@
+2018-03-22  Frederic Wang  <fwang@igalia.com>
+
+        [MathML] Import WPT test to replace mathml/opentype/large-operators-italic-correction.html
+        https://bugs.webkit.org/show_bug.cgi?id=183891
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import WPT test added in https://github.com/w3c/web-platform-tests/pull/9993.
+
+        * web-platform-tests/fonts/math/largeop-displayoperatorminheight2000-2AFF-italiccorrection3000.woff: Added.
+        * web-platform-tests/fonts/math/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2-expected.txt: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2.html: Added.
+        * web-platform-tests/mathml/presentation-markup/scripts/w3c-import.log:
+        * web-platform-tests/mathml/tools/largeop.py:
+
 2018-03-20  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update the timing model when pending tasks schedule changes

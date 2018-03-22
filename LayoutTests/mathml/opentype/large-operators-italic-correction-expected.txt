@@ -1,6 +1,0 @@
-This test passes if the difference of horizontal positions between the subscript and superscript corresponds to the italic correction of the integral operator.
-
-∫
-
-PASS Large Operators Italic Correction 
-
