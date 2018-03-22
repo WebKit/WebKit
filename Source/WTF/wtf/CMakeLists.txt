@@ -165,6 +165,7 @@ set(WTF_PUBLIC_HEADERS
     PrintStream.h
     PriorityQueue.h
     ProcessID.h
+    ProcessPrivilege.h
     RAMSize.h
     RandomDevice.h
     RandomNumber.h
@@ -359,6 +360,7 @@ set(WTF_SOURCES
     ParkingLot.cpp
     Poisoned.cpp
     PrintStream.cpp
+    ProcessPrivilege.cpp
     RAMSize.cpp
     RandomDevice.cpp
     RandomNumber.cpp

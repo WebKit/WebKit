@@ -1,3 +1,52 @@
+2018-03-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Create an assertion mechanism to ensure proper WebCore use in each WebKit Process
+        https://bugs.webkit.org/show_bug.cgi?id=183806
+        <rdar://problem/38694251>
+
+        Reviewed by Ryosuke Niwa.
+
+        Part of our security improvements involve better isolation between the different WebKit
+        processes (UIProcess, WebContent, Networking, Storage, etc.).
+
+        We need an assertion language we can use to protect certain critical APIs and code paths
+        against accidental misuse.
+
+        This patch adds a new enum type meant to represent different categories of program logic
+        that we do not want used in the wrong process.
+
+        This first patch just creates these types and makes them available. New assertions using
+        these values will be added as we complete our work ensuring proper process isolation.
+
+        In a method we want to protect, we can add an assertion describing the process privileges
+        needed to execute the code. For example, for cookie access we might use this:
+
+            ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
+
+        At the launch of the UIProcess we would use this method to ensure all privileges are available:
+
+            setProcessPrivileges(allPrivileges());
+
+        In the network process, during platform initialization, we would use something like this:
+
+            setProcessPrivileges({ ProcessPrivilege::CanAccessRawCookies, ProcessPrivilege::CanAccessCredentials });
+
+        In the WebContent process, we would not set any privileges. We could just leave it as the
+        default initialization, or use this:
+
+            setProcessPrivileges({ });
+
+        Later, when we attempt to execute the initial code, we would expect an assertion for the
+        WebContent process, while Network and UIProcess pass the assertion.
+
+        * WTF.xcodeproj/project.pbxproj: Add new files.
+        * wtf/CMakeLists.txt: Ditto.
+        * wtf/ProcessPrivilege.cpp: Added.
+        (WTF::processPrivileges):
+        (WTF::setProcessPrivileges):
+        (WTF::hasProcessPrivilege):
+        * wtf/ProcessPrivilege.h: Added.
+
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Introduce HAVE_MEDIA_PLAYER and HAVE_CORE_VIDEO
