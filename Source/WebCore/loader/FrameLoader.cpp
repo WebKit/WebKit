@@ -2922,6 +2922,8 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error)
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
+    m_client.didDecidePolicyForNavigationAction();
+
     m_quickRedirectComing = false;
 
     if (!shouldContinue)

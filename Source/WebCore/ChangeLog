@@ -1,3 +1,19 @@
+2018-03-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r229828): WebKit.NoHistoryItemScrollToFragment API test is failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183886
+
+        Reviewed by Wenson Hsieh.
+
+        Since r229828, the FrameLoader needs to call FrameLoaderClient::didDecidePolicyForNavigationAction()
+        whenever a navigation policy decision is made. I added such a call r229828 to
+        FrameLoader::continueLoadAfterNavigationPolicy() but forgot to add one to
+        FrameLoader::continueFragmentScrollAfterNavigationPolicy(), which is the equivalent
+        for fragment navigations.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+
 2018-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Disconnect the SVGPathSegList items from their SVGPathElement before rebuilding a new list
