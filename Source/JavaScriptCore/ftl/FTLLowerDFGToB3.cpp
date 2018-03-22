@@ -4129,7 +4129,8 @@ private:
         Edge child4 = m_graph.varArgChild(m_node, 3);
         Edge child5 = m_graph.varArgChild(m_node, 4);
         
-        switch (m_node->arrayMode().type()) {
+        ArrayMode arrayMode = m_node->arrayMode().modeForPut();
+        switch (arrayMode.type()) {
         case Array::Generic: {
             if (child1.useKind() == CellUse) {
                 V_JITOperation_ECCJ operation = nullptr;
@@ -4193,23 +4194,23 @@ private:
         LValue index = lowInt32(child2);
         LValue storage = lowStorage(child4);
         
-        switch (m_node->arrayMode().type()) {
+        switch (arrayMode.type()) {
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous: {
             LBasicBlock continuation = m_out.newBlock();
             LBasicBlock outerLastNext = m_out.appendTo(m_out.m_block, continuation);
             
-            switch (m_node->arrayMode().type()) {
+            switch (arrayMode.type()) {
             case Array::Int32:
             case Array::Contiguous: {
                 LValue value = lowJSValue(child3, ManualOperandSpeculation);
                 
-                if (m_node->arrayMode().type() == Array::Int32)
+                if (arrayMode.type() == Array::Int32)
                     FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32Only, isNotInt32(value));
                 
                 TypedPointer elementPointer = m_out.baseIndex(
-                    m_node->arrayMode().type() == Array::Int32 ?
+                    arrayMode.type() == Array::Int32 ?
                     m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
                     storage, m_out.zeroExtPtr(index), provenValue(child2));
                 
@@ -4276,7 +4277,7 @@ private:
                 return;
             }
 
-            if (m_node->arrayMode().isInBounds()) {
+            if (arrayMode.isInBounds()) {
                 speculate(StoreToHole, noValue(), 0, m_out.isZero64(m_out.load64(elementPointer)));
                 m_out.store64(value, elementPointer);
                 return;
@@ -4288,7 +4289,7 @@ private:
             auto slowPathFunction = codeBlock()->isStrictMode()
                 ? (m_node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict)
                 : (m_node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict);
-            if (!m_node->arrayMode().isOutOfBounds()) {
+            if (!arrayMode.isOutOfBounds()) {
                 speculate(OutOfBounds, noValue(), 0, isOutOfBounds);
                 isOutOfBounds = m_out.booleanFalse;
             }
@@ -4309,7 +4310,7 @@ private:
             m_out.jump(continuation);
 
 
-            if (m_node->arrayMode().isSlowPut()) {
+            if (arrayMode.isSlowPut()) {
                 m_out.appendTo(inBoundCase, doStoreCase);
                 m_out.branch(m_out.isZero64(m_out.load64(elementPointer)), rarely(slowCase), usually(doStoreCase));
             } else {
@@ -4341,7 +4342,7 @@ private:
         }
             
         default: {
-            TypedArrayType type = m_node->arrayMode().typedArrayType();
+            TypedArrayType type = arrayMode.typedArrayType();
             
             if (isTypedView(type)) {
                 TypedPointer pointer = TypedPointer(
@@ -4372,7 +4373,7 @@ private:
                     }
                 }
 
-                if (m_node->arrayMode().isInBounds() || m_node->op() == PutByValAlias)
+                if (arrayMode.isInBounds() || m_node->op() == PutByValAlias)
                     m_out.store(valueToStore, pointer, storeType(type));
                 else {
                     LBasicBlock isInBounds = m_out.newBlock();

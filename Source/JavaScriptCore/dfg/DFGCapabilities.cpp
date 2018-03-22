@@ -265,15 +265,33 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_resolve_scope_for_hoisting_func_decl_in_eval:
     case op_new_regexp:
     case op_unreachable:
+    case op_super_sampler_begin:
+    case op_super_sampler_end:
         return CanCompileAndInline;
 
     case op_switch_string: // Don't inline because we don't want to copy string tables in the concurrent JIT.
     case op_call_eval:
         return CanCompile;
 
-    default:
+    case op_yield:
+    case llint_program_prologue:
+    case llint_eval_prologue:
+    case llint_module_program_prologue:
+    case llint_function_for_call_prologue:
+    case llint_function_for_construct_prologue:
+    case llint_function_for_call_arity_check:
+    case llint_function_for_construct_arity_check:
+    case llint_generic_return_point:
+    case llint_throw_from_slow_path_trampoline:
+    case llint_throw_during_call_trampoline:
+    case llint_native_call_trampoline:
+    case llint_native_construct_trampoline:
+    case llint_internal_function_call_trampoline:
+    case llint_internal_function_construct_trampoline:
+    case handleUncaughtException:
         return CannotCompile;
     }
+    return CannotCompile;
 }
 
 CapabilityLevel capabilityLevel(CodeBlock* codeBlock)

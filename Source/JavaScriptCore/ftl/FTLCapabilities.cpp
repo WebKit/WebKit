@@ -175,6 +175,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ConstantStoragePointer:
     case Check:
     case CheckVarargs:
+    case CheckArray:
     case CountExecution:
     case SuperSamplerBegin:
     case SuperSamplerEnd:
@@ -337,6 +338,14 @@ inline CapabilityLevel canCompile(Node* node)
     case InitializeEntrypointArguments:
     case CPUIntrinsic:
     case GetArrayMask:
+    case GetArrayLength:
+    case GetVectorLength:
+    case GetByVal:
+    case GetByValWithThis:
+    case PutByVal:
+    case PutByValAlias:
+    case PutByValDirect:
+    case PutByValWithThis:
         // These are OK.
         break;
 
@@ -346,94 +355,17 @@ inline CapabilityLevel canCompile(Node* node)
         // case because it would prevent us from catching bugs where the FTL backend
         // pipeline failed to optimize out an Identity.
         break;
-    case CheckArray:
-        switch (node->arrayMode().type()) {
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-        case Array::Undecided:
-        case Array::ArrayStorage:
-        case Array::SlowPutArrayStorage:
-        case Array::DirectArguments:
-        case Array::ScopedArguments:
-            break;
-        default:
-            if (isTypedView(node->arrayMode().typedArrayType()))
-                break;
-            return CannotCompile;
-        }
-        break;
-    case GetArrayLength:
-        switch (node->arrayMode().type()) {
-        case Array::Undecided:
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-        case Array::ArrayStorage:
-        case Array::SlowPutArrayStorage:
-        case Array::String:
-        case Array::DirectArguments:
-        case Array::ScopedArguments:
-            break;
-        default:
-            if (node->arrayMode().isSomeTypedArrayView())
-                break;
-            return CannotCompile;
-        }
-        break;
-    case GetVectorLength:
-        switch (node->arrayMode().type()) {
-        case Array::ArrayStorage:
-        case Array::SlowPutArrayStorage:
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        break;
-    case GetByVal:
-        switch (node->arrayMode().type()) {
-        case Array::ForceExit:
-        case Array::Generic:
-        case Array::String:
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-        case Array::Undecided:
-        case Array::DirectArguments:
-        case Array::ScopedArguments:
-        case Array::ArrayStorage:
-        case Array::SlowPutArrayStorage:
-            break;
-        default:
-            if (isTypedView(node->arrayMode().typedArrayType()))
-                return CanCompileAndOSREnter;
-            return CannotCompile;
-        }
-        break;
-    case GetByValWithThis:
-        break;
-    case PutByVal:
-    case PutByValAlias:
-    case PutByValDirect:
-        switch (node->arrayMode().type()) {
-        case Array::ForceExit:
-        case Array::Generic:
-        case Array::Int32:
-        case Array::Double:
-        case Array::Contiguous:
-        case Array::ArrayStorage:
-        case Array::SlowPutArrayStorage:
-            break;
-        default:
-            if (isTypedView(node->arrayMode().typedArrayType()))
-                return CanCompileAndOSREnter;
-            return CannotCompile;
-        }
-        break;
-    case PutByValWithThis:
-        break;
-    default:
-        // Don't know how to handle anything else.
+
+    case IdentityWithProfile:
+    case CreateThis:
+    case CheckTierUpInLoop:
+    case CheckTierUpAndOSREnter:
+    case CheckTierUpAtReturn:
+    case FiatInt52:
+    case ArithIMul:
+    case ProfileType:
+    case ProfileControlFlow:
+    case LastNodeType:
         return CannotCompile;
     }
     return CanCompileAndOSREnter;

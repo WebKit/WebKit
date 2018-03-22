@@ -1,5 +1,31 @@
 2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] List up all candidates in DFGCapabilities and FTLCapabilities
+        https://bugs.webkit.org/show_bug.cgi?id=183897
+
+        Reviewed by Mark Lam.
+
+        We should not use `default:` clause here since it accidentally catches
+        the opcode and DFG nodes which should be optimized. For example,
+        op_super_sampler_begin and op_super_sampler_end are not listed while
+        they have DFG and FTL backend.
+
+        This patch lists up all candiates in DFGCapabilities and FTLCapabilities.
+        And we also clean up unnecessary checks in FTLCapabilities. Since we
+        already handles all the possible array types for these nodes (which can
+        be checked in DFG's code), we do not need to check array types.
+
+        We also fix FTLLowerDFGToB3' PutByVal code to use modeForPut.
+
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+
+2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Drop op_put_by_index
         https://bugs.webkit.org/show_bug.cgi?id=183899
 
