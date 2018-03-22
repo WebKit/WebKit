@@ -35,6 +35,11 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SMOOTH_SCROLLING PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_EVENTS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL2 PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
 
+# Public options specific to the WPE port. Do not add any options here unless
+# there is a strong reason we should support changing the value of the option,
+# and the option is not relevant to any other WebKit ports.
+WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
+
 # Private options specific to the WPE port.
 WEBKIT_OPTION_DEFINE(USE_OPENVR "Whether to use OpenVR as WebVR backend." PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
 
@@ -72,6 +77,13 @@ find_package(Threads REQUIRED)
 find_package(WebP REQUIRED)
 find_package(WPEBackend REQUIRED)
 find_package(ZLIB REQUIRED)
+
+if (USE_WOFF2)
+    find_package(WOFF2Dec 1.0.2)
+    if (NOT WOFF2DEC_FOUND)
+        message(FATAL_ERROR "liwoff2dec is needed for USE_WOFF2.")
+    endif ()
+endif ()
 
 if (ENABLE_ACCELERATED_2D_CANVAS)
     find_package(CairoGL 1.10.2 REQUIRED COMPONENTS cairo-egl)

@@ -1,3 +1,12 @@
+2018-03-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Enable WOFF2 support
+        https://bugs.webkit.org/show_bug.cgi?id=178158
+
+        Reviewed by Frédéric Wang.
+
+        * platform/wpe/TestExpectations: Unskip the fast/text/woff2.html and fast/text/woff2-totalsfntsize.html
+
 2018-03-21  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_event-dispatch.html pass reliably

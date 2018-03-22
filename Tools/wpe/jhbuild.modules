@@ -7,6 +7,7 @@
 
   <metamodule id="webkitwpe-testing-dependencies">
     <dependencies>
+      <dep package="brotli"/>
       <dep package="glib"/>
       <dep package="libsoup"/>
       <dep package="cairo"/>
@@ -17,6 +18,7 @@
       <dep package="harfbuzz"/>
       <dep package="xkbcommon"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
+      <dep package="woff2"/>
       <dep package="wpe"/>
       <dep package="wpe-mesa"/>
       <dep package="libgpg-error"/>
@@ -45,6 +47,17 @@
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
+
+  <cmake id="brotli">
+    <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.1"/>
+  </cmake>
+
+  <cmake id="woff2">
+    <branch repo="github.com" module="google/woff2.git" checkoutdir="woff2" tag="v1.0.2"/>
+    <dependencies>
+      <dep package="brotli"/>
+    </dependencies>
+  </cmake>
 
   <autotools id="libffi" autogen-sh="configure">
     <branch module="libffi/libffi-3.0.10.tar.gz" version="3.0.10"
