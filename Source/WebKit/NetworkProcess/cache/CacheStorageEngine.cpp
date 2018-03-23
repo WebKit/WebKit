@@ -66,10 +66,24 @@ Engine::~Engine()
 {
     for (auto& caches : m_caches.values())
         caches->detach();
+
+    if (m_initializationCallback)
+        m_initializationCallback(Error::Internal);
+
+    auto writeCallbacks = WTFMove(m_pendingWriteCallbacks);
+    for (auto& callback : writeCallbacks.values())
+        callback(Error::Internal);
+
+    auto readCallbacks = WTFMove(m_pendingReadCallbacks);
+    for (auto& callback : readCallbacks.values())
+        callback(Data { }, 1);
 }
 
 Engine& Engine::from(PAL::SessionID sessionID)
 {
+    if (sessionID.isEphemeral())
+        sessionID = PAL::SessionID::legacyPrivateSessionID();
+
     auto addResult = globalEngineMap().add(sessionID, nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = Engine::create(NetworkProcess::singleton().cacheStorageDirectory(sessionID));
@@ -178,7 +192,7 @@ void Engine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRe
     });
 }
 
-void Engine::initialize(Function<void(std::optional<Error>&&)>&& callback)
+void Engine::initialize(CompletionCallback&& callback)
 {
     if (m_salt) {
         callback(std::nullopt);
@@ -190,16 +204,21 @@ void Engine::initialize(Function<void(std::optional<Error>&&)>&& callback)
         return;
     }
 
+    m_initializationCallback = WTFMove(callback);
+
     String saltPath = WebCore::FileSystem::pathByAppendingComponent(m_rootPath, ASCIILiteral("salt"));
-    m_ioQueue->dispatch([protectedThis = makeRef(*this), this, callback = WTFMove(callback), saltPath = WTFMove(saltPath)] () mutable {
+    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), saltPath = WTFMove(saltPath)] () mutable {
         WebCore::FileSystem::makeAllDirectories(m_rootPath);
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), this, salt = readOrMakeSalt(saltPath), callback = WTFMove(callback)]() mutable {
+        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = readOrMakeSalt(saltPath)]() mutable {
+            if (!weakThis)
+                return;
+
             if (!salt) {
-                callback(Error::WriteDisk);
+                m_initializationCallback(Error::WriteDisk);
                 return;
             }
             m_salt = WTFMove(salt);
-            callback(std::nullopt);
+            m_initializationCallback(std::nullopt);
         });
     });
 }
@@ -277,10 +296,15 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
         return;
     }
 
-    m_ioQueue->dispatch([callback = WTFMove(callback), data = WTFMove(data), filename = filename.isolatedCopy()] () mutable {
+    m_pendingWriteCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
+    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, data = WTFMove(data), filename = filename.isolatedCopy()] () mutable {
         auto channel = IOChannel::open(filename, IOChannel::Type::Create);
-        channel->write(0, data, nullptr, [callback = WTFMove(callback)](int error) mutable {
+        channel->write(0, data, nullptr, [this, weakThis = WTFMove(weakThis), identifier](int error) mutable {
             ASSERT(RunLoop::isMain());
+            if (!weakThis)
+                return;
+
+            auto callback = m_pendingWriteCallbacks.take(identifier);
             if (error) {
                 RELEASE_LOG_ERROR(CacheStorage, "CacheStorage::Engine::writeFile failed with error %d", error);
 
@@ -292,28 +316,36 @@ void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCor
     });
 }
 
-void Engine::readFile(const String& filename, WTF::Function<void(const NetworkCache::Data&, int error)>&& callback)
+void Engine::readFile(const String& filename, CompletionHandler<void(const NetworkCache::Data&, int error)>&& callback)
 {
     if (!shouldPersist()) {
         callback(Data { }, 0);
         return;
     }
 
-    m_ioQueue->dispatch([callback = WTFMove(callback), filename = filename.isolatedCopy()]() mutable {
+    m_pendingReadCallbacks.add(++m_pendingCallbacksCounter, WTFMove(callback));
+    m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), identifier = m_pendingCallbacksCounter, filename = filename.isolatedCopy()]() mutable {
         auto channel = IOChannel::open(filename, IOChannel::Type::Read);
         if (channel->fileDescriptor() < 0) {
-            RunLoop::main().dispatch([callback = WTFMove(callback)]() mutable {
-                callback(Data { }, 0);
+            RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), identifier]() mutable {
+                if (!weakThis)
+                    return;
+
+                m_pendingReadCallbacks.take(identifier)(Data { }, 0);
             });
             return;
         }
 
-        channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [callback = WTFMove(callback)](const Data& data, int error) mutable {
+        channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [this, weakThis = WTFMove(weakThis), identifier](const Data& data, int error) mutable {
             RELEASE_LOG_ERROR_IF(error, CacheStorage, "CacheStorage::Engine::readFile failed with error %d", error);
 
             // FIXME: We should do the decoding in the background thread.
             ASSERT(RunLoop::isMain());
-            callback(data, error);
+
+            if (!weakThis)
+                return;
+
+            m_pendingReadCallbacks.take(identifier)(data, error);
         });
     });
 }

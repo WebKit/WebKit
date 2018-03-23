@@ -1,3 +1,27 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorage::Engine should not ref itself when hopping to a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=183925
+        <rdar://problem/38580483>
+
+        Reviewed by Chris Dumez.
+
+        Add support for weak pointers to CacheStorage Engine.
+        Use weak pointer when hopping to background threads.
+        Store callbacks in CacheStorage::Engine maps to keep them being destroyed in the main thread only.
+        Made some callbacks CompletionHandler as a bonus.
+
+        Made sure to use just one Engine for all private sessions.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::~Engine):
+        (WebKit::CacheStorage::Engine::from):
+        (WebKit::CacheStorage::Engine::initialize):
+        (WebKit::CacheStorage::Engine::writeFile):
+        (WebKit::CacheStorage::Engine::readFile):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        (WebKit::CacheStorage::Engine::weakPtrFactory):
+
 2018-03-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed build fix.

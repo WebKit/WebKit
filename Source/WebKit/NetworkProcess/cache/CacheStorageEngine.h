@@ -30,7 +30,8 @@
 #include "WebsiteData.h"
 #include <WebCore/ClientOrigin.h>
 #include <wtf/HashMap.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
 namespace IPC {
@@ -52,7 +53,7 @@ namespace CacheStorage {
 using CacheIdentifier = uint64_t;
 using LockCount = uint64_t;
 
-class Engine : public ThreadSafeRefCounted<Engine> {
+class Engine : public RefCounted<Engine> {
 public:
     ~Engine();
 
@@ -76,7 +77,7 @@ public:
     void unlock(uint64_t cacheIdentifier);
 
     void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCacheEngine::CompletionCallback&&);
-    void readFile(const String& filename, WTF::Function<void(const NetworkCache::Data&, int error)>&&);
+    void readFile(const String& filename, CompletionHandler<void(const NetworkCache::Data&, int error)>&&);
     void removeFile(const String& filename);
 
     const String& rootPath() const { return m_rootPath; }
@@ -89,6 +90,8 @@ public:
     void clearAllCaches(WTF::CallbackAggregator&);
     void clearCachesForOrigin(const WebCore::SecurityOriginData&, WTF::CallbackAggregator&);
 
+    WeakPtrFactory<Engine>& weakPtrFactory() { return m_weakFactory; }
+
 private:
     static Engine& defaultEngine();
     explicit Engine(String&& rootPath);
@@ -97,7 +100,7 @@ private:
 
     void fetchEntries(bool /* shouldComputeSize */, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
 
-    void initialize(WTF::Function<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
+    void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
 
     using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCacheEngine::Error>;
     using CachesCallback = WTF::Function<void(CachesOrError&&)>;
@@ -115,6 +118,11 @@ private:
     RefPtr<WorkQueue> m_ioQueue;
     std::optional<NetworkCache::Salt> m_salt;
     HashMap<CacheIdentifier, LockCount> m_cacheLocks;
+    WebCore::DOMCacheEngine::CompletionCallback m_initializationCallback;
+    WeakPtrFactory<Engine> m_weakFactory;
+    HashMap<uint64_t, WebCore::DOMCacheEngine::CompletionCallback> m_pendingWriteCallbacks;
+    HashMap<uint64_t, CompletionHandler<void(const NetworkCache::Data&, int error)>> m_pendingReadCallbacks;
+    uint64_t m_pendingCallbacksCounter { 0 };
 };
 
 } // namespace CacheStorage
