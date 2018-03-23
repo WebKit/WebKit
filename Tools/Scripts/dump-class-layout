@@ -58,8 +58,8 @@ def import_lldb():
 
 def verify_type(target, type):
     typename = type.GetName()
-    seenBefore = Set()
-    (end_offset, padding) = verify_type_recursive(target, type, None, 0, 0, 0, seenBefore)
+    seenOffset = Set()
+    (end_offset, padding) = verify_type_recursive(target, type, None, 0, 0, 0, seenOffset)
     byte_size = type.GetByteSize()
     print 'Total byte size: %u' % (byte_size)
     print 'Total pad bytes: %u' % (padding)
@@ -67,7 +67,7 @@ def verify_type(target, type):
         print 'Padding percentage: %2.2f %%' % ((float(padding) / float(byte_size)) * 100.0)
     print
 
-def verify_type_recursive(target, type, member_name, depth, base_offset, padding, seenBefore):
+def verify_type_recursive(target, type, member_name, depth, base_offset, padding, seenOffset):
     prev_end_offset = base_offset
     typename = type.GetName()
     byte_size = type.GetByteSize()
@@ -105,7 +105,7 @@ def verify_type_recursive(target, type, member_name, depth, base_offset, padding
                     print '%+4u <%3u> %s<PADDING>' % (prev_end_offset, member_padding, '    ' * (depth + 1))
 
             if member_is_class_or_struct:
-                (prev_end_offset, padding) = verify_type_recursive(target, member_canonical_type, member_name, depth + 1, member_total_offset, padding, seenBefore)
+                (prev_end_offset, padding) = verify_type_recursive(target, member_canonical_type, member_name, depth + 1, member_total_offset, padding, seenOffset)
             else:
                 prev_end_offset = member_total_offset + member_byte_size
                 member_typename = member_type.GetName()

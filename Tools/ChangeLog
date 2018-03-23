@@ -1,3 +1,17 @@
+2018-03-23  JF Bastien  <jfbastien@apple.com>
+
+        dump-class-layout is just wrong
+        https://bugs.webkit.org/show_bug.cgi?id=183939
+
+        Reviewed by Yusuke Suzuki.
+
+        Looks like r229291 contained a half-renamed variable in it, so it
+        just doesn't work.
+
+        * Scripts/dump-class-layout:
+        (verify_type):
+        (verify_type_recursive):
+
 2018-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Run JSC GLib API tests in GTK+ and WPE bots.
