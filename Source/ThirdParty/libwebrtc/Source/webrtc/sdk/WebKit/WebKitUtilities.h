@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,24 @@
 
 #pragma once
 
-#include "LibWebRTCProvider.h"
+#include "api/video_codecs/video_encoder_factory.h"
 
-#if USE(LIBWEBRTC)
+typedef struct __CVBuffer* CVPixelBufferRef;
 
-#include <webrtc/sdk/WebKit/VideoToolBoxDecoderFactory.h>
-#include <webrtc/sdk/WebKit/VideoToolBoxEncoderFactory.h>
+namespace webrtc {
 
-namespace WebCore {
+class VideoDecoderFactory;
+class VideoEncoderFactory;
+class VideoFrame;
 
-class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
-public:
-    LibWebRTCProviderCocoa() = default;
-    ~LibWebRTCProviderCocoa();
+std::unique_ptr<webrtc::VideoEncoderFactory> createVideoToolboxEncoderFactory();
+std::unique_ptr<webrtc::VideoDecoderFactory> createVideoToolboxDecoderFactory();
 
-private:
-    void setActive(bool) final;
-    std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory() final;
-    std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
+void setApplicationStatus(bool isActive);
 
-    void setH264HardwareEncoderAllowed(bool allowed) final;
-};
+void setH264HardwareEncoderAllowed(bool);
+bool isH264HardwareEncoderAllowed();
 
-} // namespace WebCore
+CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&);
 
-#endif
+}

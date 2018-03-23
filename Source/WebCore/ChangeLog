@@ -1,5 +1,31 @@
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
+        Use libwebrtc ObjectiveC H264 encoder and decoder
+        https://bugs.webkit.org/show_bug.cgi?id=183912
+
+        Reviewed by Eric Carlson.
+
+        No observable change of behavior.
+        Made use of libwebrtc WebKit utilities.
+        Updated RealtimeINcomingVideoSourceCocoa as it now receives ObjcVideoFrame.
+
+        * Configurations/WebCore.xcconfig:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+        (WebCore::LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa):
+        (WebCore::LibWebRTCProviderCocoa::setH264HardwareEncoderAllowed):
+        (WebCore::LibWebRTCProviderCocoa::createDecoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::createEncoderFactory):
+        (WebCore::LibWebRTCProviderCocoa::setActive):
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm: Renamed from Source/WebCore/platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.cpp.
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame):
+        (WebCore::RealtimeIncomingVideoSourceCocoa::OnFrame):
+        * testing/Internals.cpp: Removed commented out include.
+
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
         DocumentThreadableLoader should send credentials after redirections and preflight if fetch option credentials is include
         https://bugs.webkit.org/show_bug.cgi?id=183928
 

@@ -1,3 +1,49 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Use libwebrtc ObjectiveC H264 encoder and decoder
+        https://bugs.webkit.org/show_bug.cgi?id=183912
+
+        Reviewed by Eric Carlson.
+
+        Add utilities inside libwebrtc to be used by WebKit:
+        - Create ObjectiveC encoder/decoder factories
+        - Notify of application status to invalidate encoders/decoders when in background
+        Implement RTCUIApplicationStatusObserver as a simple boolean that is set by WebCore.
+        This allows limiting the changes made to libwebrtc codec implementations.
+
+        Minor modifications done to libwebrtc to fix compilation.
+        Add Block_copy/Block_release to codec callbacks.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h: Added.
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm: Added.
+        (+[RTCUIApplicationStatusObserver sharedInstance]):
+        (+[RTCUIApplicationStatusObserver prepareForUse]):
+        (-[RTCUIApplicationStatusObserver setActive]):
+        (-[RTCUIApplicationStatusObserver setInactive]):
+        (-[RTCUIApplicationStatusObserver isApplicationActive]):
+        (webrtc::setApplicationStatus):
+        (webrtc::createVideoToolboxEncoderFactory):
+        (webrtc::createVideoToolboxDecoderFactory):
+        (webrtc::setH264HardwareEncoderAllowed):
+        (webrtc::isH264HardwareEncoderAllowed):
+        (webrtc::pixelBufferFromFrame):
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/RTCCVPixelBuffer.mm:
+        (-[RTCCVPixelBuffer dealloc]):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoDecoderH264.mm:
+        (-[RTCVideoDecoderH264 dealloc]):
+        (-[RTCVideoDecoderH264 setCallback:]):
+        (-[RTCVideoDecoderH264 releaseDecoder]):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 dealloc]):
+        (-[RTCVideoEncoderH264 setCallback:]):
+        (-[RTCVideoEncoderH264 releaseEncoder]):
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        * WebKit/0001-Adapting-libwebrtc-H264-codec.patch: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-03-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r229876.

@@ -1,0 +1,118 @@
+From c5debd83bb3933413d0a3dd2417f5fd9d64a3205 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 22 Mar 2018 16:38:14 -0700
+Subject: [PATCH] Adapting-libwebrtc-H264-codec
+
+---
+ .../sdk/objc/Framework/Classes/Video/RTCCVPixelBuffer.mm      |  1 +
+ .../Framework/Classes/VideoToolbox/RTCVideoDecoderH264.mm     | 11 +++++++----
+ .../Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm     | 10 ++++++++--
+ 3 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCCVPixelBuffer.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCCVPixelBuffer.mm
+index 203896758e8..537a65e17d3 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCCVPixelBuffer.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/Video/RTCCVPixelBuffer.mm
+@@ -73,6 +73,7 @@ - (instancetype)initWithPixelBuffer:(CVPixelBufferRef)pixelBuffer
+ 
+ - (void)dealloc {
+   CVBufferRelease(_pixelBuffer);
++  [super dealloc];
+ }
+ 
+ - (int)width {
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoDecoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoDecoderH264.mm
+index 2f4b6bd72c6..34d08db0e3b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoDecoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoDecoderH264.mm
+@@ -90,6 +90,10 @@ - (instancetype)init {
+ - (void)dealloc {
+   [self destroyDecompressionSession];
+   [self setVideoFormat:nullptr];
++  if (_callback) {
++    Block_release(_callback);
++  }
++  [super dealloc];
+ }
+ 
+ - (NSInteger)startDecodeWithSettings:(RTCVideoEncoderSettings *)settings
+@@ -178,7 +182,7 @@ - (NSInteger)decode:(RTCEncodedImage *)inputImage
+ }
+ 
+ - (void)setCallback:(RTCVideoDecoderCallback)callback {
+-  _callback = callback;
++  _callback = Block_copy(callback);
+ }
+ 
+ - (void)setError:(OSStatus)error {
+@@ -190,6 +194,7 @@ - (NSInteger)releaseDecoder {
+   // is safe to null out the callback.
+   [self destroyDecompressionSession];
+   [self setVideoFormat:nullptr];
++  Block_release(_callback);
+   _callback = nullptr;
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+@@ -260,9 +265,7 @@ - (void)configureDecompressionSession {
+ - (void)destroyDecompressionSession {
+   if (_decompressionSession) {
+ #if defined(WEBRTC_IOS)
+-    if ([UIDevice isIOS11OrLater]) {
+-      VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+-    }
++    VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+ #endif
+     VTDecompressionSessionInvalidate(_decompressionSession);
+     CFRelease(_decompressionSession);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
+index a818c27d1e6..809948011a6 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
+@@ -34,6 +34,7 @@
+ #include "sdk/objc/Framework/Classes/VideoToolbox/nalu_rewriter.h"
+ #include "system_wrappers/include/clock.h"
+ #include "third_party/libyuv/include/libyuv/convert_from.h"
++#include "sdk/WebKit/WebKitUtilities.h"
+ 
+ @interface RTCVideoEncoderH264 ()
+ 
+@@ -318,6 +319,10 @@ - (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo {
+ 
+ - (void)dealloc {
+   [self destroyCompressionSession];
++  if (_callback) {
++    Block_release(_callback);
++  }
++  [super dealloc];
+ }
+ 
+ - (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings
+@@ -463,7 +468,7 @@ - (NSInteger)encode:(RTCVideoFrame *)frame
+ }
+ 
+ - (void)setCallback:(RTCVideoEncoderCallback)callback {
+-  _callback = callback;
++  _callback = Block_copy(callback);
+ }
+ 
+ - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
+@@ -480,6 +485,7 @@ - (NSInteger)releaseEncoder {
+   // callback anymore. Do not remove callback until the session is invalidated
+   // since async encoder callbacks can occur until invalidation.
+   [self destroyCompressionSession];
++  Block_release(_callback);
+   _callback = nullptr;
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+@@ -573,7 +579,7 @@ - (int)resetCompressionSessionWithPixelFormat:(OSType)framePixelFormat {
+       nullptr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+   CFDictionarySetValue(encoder_specs,
+                        kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder,
+-                       kCFBooleanTrue);
++                       webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse);
+ #endif
+   OSStatus status =
+       VTCompressionSessionCreate(nullptr,  // use default allocator
+-- 
+2.15.1 (Apple Git-101)
+

@@ -220,10 +220,6 @@
 #include "MockMediaPlayerMediaSource.h"
 #endif
 
-#if USE(LIBWEBRTC) && PLATFORM(COCOA)
-//#include "H264VideoToolboxEncoder.h"
-#endif
-
 #if PLATFORM(MAC)
 #include "DictionaryLookup.h"
 #endif

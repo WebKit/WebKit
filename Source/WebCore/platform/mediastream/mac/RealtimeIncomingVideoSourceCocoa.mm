@@ -32,10 +32,10 @@
 
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
-#include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
+#include <pal/cf/CoreMediaSoftLink.h>
+#include <webrtc/sdk/WebKit/WebKitUtilities.h>
 #include <wtf/cf/TypeCastsCF.h>
 
-#include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
@@ -58,33 +58,36 @@ RealtimeIncomingVideoSourceCocoa::RealtimeIncomingVideoSourceCocoa(rtc::scoped_r
 {
 }
 
+static inline CVPixelBufferRef createBlackFrame(int width, int height)
+{
+    CVPixelBufferRef pixelBuffer = nullptr;
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8Planar, nullptr, &pixelBuffer);
+    ASSERT_UNUSED(status, status == noErr);
+
+    status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    ASSERT(status == noErr);
+    void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
+    size_t yLength = width * height;
+    memset(data, 0, yLength);
+    memset(static_cast<uint8_t*>(data) + yLength, 128, yLength / 2);
+
+    status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    ASSERT(!status);
+    return pixelBuffer;
+}
+
 CVPixelBufferRef RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame(const webrtc::VideoFrame& frame)
 {
     if (muted()) {
         if (!m_blackFrame || m_blackFrameWidth != frame.width() || m_blackFrameHeight != frame.height()) {
-            CVPixelBufferRef pixelBuffer = nullptr;
-            auto status = CVPixelBufferCreate(kCFAllocatorDefault, frame.width(), frame.height(), kCVPixelFormatType_420YpCbCr8Planar, nullptr, &pixelBuffer);
-            ASSERT_UNUSED(status, status == noErr);
-
-            m_blackFrame = adoptCF(pixelBuffer);
             m_blackFrameWidth = frame.width();
             m_blackFrameHeight = frame.height();
-
-            status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-            ASSERT(status == noErr);
-            void* data = CVPixelBufferGetBaseAddress(pixelBuffer);
-            size_t yLength = frame.width() * frame.height();
-            memset(data, 0, yLength);
-            memset(static_cast<uint8_t*>(data) + yLength, 128, yLength / 2);
-
-            status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
-            ASSERT(!status);
+            m_blackFrame = adoptCF(createBlackFrame(m_blackFrameWidth, m_blackFrameHeight));
         }
         return m_blackFrame.get();
     }
-    auto buffer = frame.video_frame_buffer();
-    ASSERT(buffer->type() == webrtc::VideoFrameBuffer::Type::kNative);
-    return static_cast<webrtc::CoreVideoFrameBuffer&>(*buffer).pixel_buffer();
+    ASSERT(frame.video_frame_buffer()->type() == webrtc::VideoFrameBuffer::Type::kNative);
+    return webrtc::pixelBufferFromFrame(frame);
 }
 
 void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
@@ -98,6 +101,10 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
 #endif
 
     auto pixelBuffer = pixelBufferFromVideoFrame(frame);
+    if (!pixelBuffer) {
+        LOG_ERROR("Failed to get a pixel buffer from a frame");
+        return;
+    }
 
     // FIXME: Convert timing information from VideoFrame to CMSampleTimingInfo.
     // For the moment, we will pretend that frames should be rendered asap.
@@ -150,7 +157,6 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
         break;
     }
 
-    RefPtr<RealtimeIncomingVideoSourceCocoa> protectedThis(this);
     callOnMainThread([protectedThis = makeRef(*this), sample = WTFMove(sample), width, height, rotation] {
         protectedThis->processNewSample(sample.get(), width, height, rotation);
     });
