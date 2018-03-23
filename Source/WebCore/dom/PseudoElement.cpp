@@ -30,10 +30,12 @@
 
 #include "CSSAnimationController.h"
 #include "ContentData.h"
+#include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
+#include "RuntimeEnabledFeatures.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -88,7 +90,10 @@ void PseudoElement::clearHostElement()
 {
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
 
-    if (auto* frame = document().frame())
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        if (auto* timeline = document().existingTimeline())
+            timeline->cancelAnimationsForElement(*this);
+    } else if (auto* frame = document().frame())
         frame->animation().cancelAnimations(*this);
 
     m_hostElement = nullptr;

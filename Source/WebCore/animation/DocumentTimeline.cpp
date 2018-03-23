@@ -192,7 +192,7 @@ std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderEl
     std::unique_ptr<RenderStyle> result;
 
     if (auto* element = renderer.element()) {
-        for (auto animation : animationsForElement(*element)) {
+        for (const auto& animation : animationsForElement(*element)) {
             if (is<KeyframeEffectReadOnly>(animation->effect()))
                 downcast<KeyframeEffectReadOnly>(animation->effect())->getAnimatedStyle(result);
         }

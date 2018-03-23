@@ -1,3 +1,31 @@
+2018-03-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correctly cancel animations when a parent gets a "display: none" style or when an element is removed
+        https://bugs.webkit.org/show_bug.cgi?id=183919
+
+        Reviewed by Dean Jackson.
+
+        The old CSSAnimationController provided a cancelAnimations(Element&) method that allowed for animations for a given element
+        to be canceled when a parent element in the hierarchy gets a "display: none" style or if an element with animations is removed.
+        We add a similar cancelAnimationsForElement(Element&) method on AnimationTimeline and update CSSAnimationController::cancelAnimations()
+        call sites to use AnimationTimeline::cancelAnimationsForElement() when the flag to use Web Animations is on.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::cancelAnimationsForElement): Iterate over all animations for the provided element and call cancel() on them.
+        * animation/AnimationTimeline.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::animatedStyleForRenderer): Drive-by fix while I was reviewed call sites to animationsForElement() to make
+        sure we don't create extra RefPtr<> objects.
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor): Call AnimationTimeline::cancelAnimationsForElement() if the Web Animations flag is on when an
+        element is removed.
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement): Call AnimationTimeline::cancelAnimationsForElement() if the Web Animations flag is on when
+        a pseudo-element is removed.
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers): Call AnimationTimeline::cancelAnimationsForElement() if the Web Animations flag is on
+        for all children elements when an element gets a "display: none" style.
+
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Animated transform styles are ignored when calling getComputedStyle()

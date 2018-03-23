@@ -127,6 +127,12 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
     return animations;
 }
 
+void AnimationTimeline::cancelAnimationsForElement(Element& element)
+{
+    for (const auto& animation : animationsForElement(element))
+        animation->cancel();
+}
+
 void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const RenderStyle& newStyle, const RenderStyle* oldStyle)
 {
     if (element.document().pageCacheState() != Document::NotInPageCache)

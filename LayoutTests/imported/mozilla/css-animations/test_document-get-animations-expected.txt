@@ -3,7 +3,7 @@ PASS getAnimations for non-animated content
 PASS getAnimations for CSS Animations 
 PASS Order of CSS Animations - within an element 
 FAIL Order of CSS Animations - across elements assert_equals: Order of first animation returned after tree surgery expected Element node <div style="animation: animLeft 100s"><div style="animati... but got Element node <div style="animation: animLeft 100s"></div>
-FAIL Order of CSS Animations - across and within elements assert_equals: getAnimations returns all running CSS Animations after making changes expected 4 but got 6
+PASS Order of CSS Animations - across and within elements 
 FAIL Order of CSS Animations - markup-bound vs free animations assert_equals: getAnimations returns markup-bound and free animations expected 2 but got 1
 FAIL Order of CSS Animations - free animations assert_equals: getAnimations returns free animations expected 2 but got 0
 FAIL Order of CSS Animations and CSS Transitions assert_equals: Both CSS animations and transitions are returned expected 2 but got 1

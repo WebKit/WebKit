@@ -1795,7 +1795,10 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         document().accessSVGExtensions().removeElementFromPendingResources(this);
 
     RefPtr<Frame> frame = document().frame();
-    if (frame)
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        if (auto* timeline = document().existingTimeline())
+            timeline->cancelAnimationsForElement(*this);
+    } else if (frame)
         frame->animation().cancelAnimations(*this);
 
 #if PLATFORM(MAC)

@@ -1,5 +1,5 @@
 
 PASS Returned CSS animations have the correct effect target 
 PASS effect.target should return the same CSSPseudoElement object each time 
-FAIL effect.target from the script-generated animation should return the same CSSPseudoElement object as that from the CSS generated animation assert_equals: Got animations running on ::after pseudo element expected 2 but got 4
+PASS effect.target from the script-generated animation should return the same CSSPseudoElement object as that from the CSS generated animation 
 

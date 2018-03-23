@@ -31,6 +31,7 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "Document.h"
+#include "DocumentTimeline.h"
 #include "Element.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
@@ -41,6 +42,7 @@
 #include "RenderFullScreen.h"
 #include "RenderInline.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
+#include "RuntimeEnabledFeatures.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include <wtf/SystemTracing.h>
@@ -542,14 +544,21 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         teardownStack.append(&element);
     };
 
-    auto& animationController = root.document().frame()->animation();
+    auto& document = root.document();
+    auto* timeline = document.existingTimeline();
+    auto& animationController = document.frame()->animation();    
 
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
 
-            if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations)
-                animationController.cancelAnimations(element);
+            if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations) {
+                if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+                    if (timeline)
+                        timeline->cancelAnimationsForElement(element);
+                } else
+                    animationController.cancelAnimations(element);
+            }
 
             if (teardownType == TeardownType::Full)
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
