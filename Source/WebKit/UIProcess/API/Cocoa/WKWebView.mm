@@ -5731,6 +5731,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return _impl->ignoresAllEvents();
 }
 
+- (NSInteger)_spellCheckerDocumentTag
+{
+    return _impl->spellCheckerDocumentTag();
+}
+
 #endif
 
 @end

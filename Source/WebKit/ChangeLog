@@ -1,3 +1,15 @@
+2018-03-22  Dan Bernstein  <mitz@apple.com>
+
+        WKWebView doesn’t expose its spellCheckerDocumentTag
+        https://bugs.webkit.org/show_bug.cgi?id=183797
+        <rdar://problem/38678089>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _spellCheckerDocumentTag]): Added this getter which calls through to the WebViewImpl.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Declared _spellCheckerDocumentTag property.
+
 2018-03-22  Chris Dumez  <cdumez@apple.com>
 
         Use the same SWServer for all ephemeral sessions

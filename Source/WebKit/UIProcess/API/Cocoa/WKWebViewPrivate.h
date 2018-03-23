@@ -270,6 +270,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
 
+@property (nonatomic, readonly) NSInteger _spellCheckerDocumentTag WK_API_AVAILABLE(WK_MAC_TBA);
+
 - (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress;
 
 // Clients that want to maintain default behavior can return nil. To disable the immediate action entirely, return NSNull. And to
