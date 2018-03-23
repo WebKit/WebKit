@@ -149,6 +149,10 @@ class TextCheckingRequest;
 class URL;
 class VisiblePosition;
 
+enum SyntheticClickType : int8_t;
+enum class NavigationPolicyCheck;
+enum class TextIndicatorPresentationTransition : uint8_t;
+
 struct CompositionUnderline;
 struct DictationAlternative;
 struct Highlight;
@@ -157,9 +161,7 @@ struct PromisedBlobInfo;
 struct TextCheckingResult;
 struct ViewportArguments;
 
-enum SyntheticClickType : int8_t;
 
-enum class TextIndicatorPresentationTransition : uint8_t;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 class HTMLAttachmentElement;
@@ -214,6 +216,9 @@ class WebTouchEvent;
 class WebCredentialsMessenger;
 class RemoteLayerTreeTransaction;
 
+enum FindOptions : uint16_t;
+enum class DragControllerAction;
+
 struct AssistedNodeInformation;
 struct AttributedString;
 struct BackForwardListItemState;
@@ -226,9 +231,6 @@ struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebSelectionData;
 struct WebsitePoliciesData;
-
-enum class DragControllerAction;
-enum FindOptions : uint16_t;
 
 using SnapshotOptions = uint32_t;
 using WKEventModifiers = uint32_t;
@@ -1148,9 +1150,7 @@ private:
     void loadAlternateHTMLString(const LoadParameters&);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExtension::Handle&&);
-    void goForward(uint64_t navigationID, uint64_t);
-    void goBack(uint64_t navigationID, uint64_t);
-    void goToBackForwardItem(uint64_t navigationID, uint64_t);
+    void goToBackForwardItem(uint64_t navigationID, uint64_t, WebCore::FrameLoadType, WebCore::NavigationPolicyCheck);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CallbackID);
     void updateIsInWindow(bool isInitialState = false);

@@ -1,3 +1,83 @@
+2018-03-23  Brady Eidson  <beidson@apple.com>
+
+        Go to back/forward list items after a process-swapped navigation.
+        <rdar://problem/38690544> and https://bugs.webkit.org/show_bug.cgi?id=183920
+
+        Reviewed by Andy Estes.
+
+        This takes the initial work of "process swap a normal navigation" and extends it to
+        process swapping for back/forward item navigations.
+
+        * Scripts/webkit/messages.py:
+
+        Make sure state objects are serialized to the UI Process back/forward list items, as otherwise
+        they will be lost in process-swap scenarios:
+        * Shared/SessionState.cpp:
+        (WebKit::PageState::encode const):
+        (WebKit::PageState::decode):
+        * Shared/SessionState.h:
+
+        Make a new variant of APINavigation specifically for back/forward list items.
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::Navigation):
+        (API::Navigation::loggingURL const):
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::create):
+        (API::Navigation::backForwardListItem):
+        (API::Navigation::backForwardFrameLoadType const):
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGoToBackForwardListItem):
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController goToBackForwardListItem:]):
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView goToBackForwardListItem:]):
+
+        * UIProcess/WebNavigationState.cpp:
+        (WebKit::WebNavigationState::createLoadRequestNavigation):
+        (WebKit::WebNavigationState::createBackForwardNavigation):
+        * UIProcess/WebNavigationState.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessForReload):
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess): Handle back/forward navigations differently than others.
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addOrUpdateBackForwardItem): Renamed from "addBackForwardItem" for clarity
+        (WebKit::WebProcessProxy::addBackForwardItem): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toPageState):
+        (WebKit::toHistoryItem):
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goToBackForwardItem): Combined "goBack" and "goForward" with this method,
+          passing the appropriate FrameLoadType around as needed to remember the specific type.
+        (WebKit::WebPage::goForward): Deleted.
+        (WebKit::WebPage::goBack): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-03-23  Megan Gardner  <megan_gardner@apple.com>
 
         Don't use the presence of a textSelectionAssistant as a proxy for if we are in content editable.

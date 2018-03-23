@@ -164,4 +164,20 @@ template<> struct EnumTraits<WebCore::PolicyAction> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::FrameLoadType> {
+    using values = EnumValues<
+        WebCore::FrameLoadType,
+        WebCore::FrameLoadType::Standard,
+        WebCore::FrameLoadType::Back,
+        WebCore::FrameLoadType::Forward,
+        WebCore::FrameLoadType::IndexedBackForward,
+        WebCore::FrameLoadType::Reload,
+        WebCore::FrameLoadType::Same,
+        WebCore::FrameLoadType::RedirectWithLockedBackForwardList,
+        WebCore::FrameLoadType::Replace,
+        WebCore::FrameLoadType::ReloadFromOrigin,
+        WebCore::FrameLoadType::ReloadExpiredOnly
+    >;
+};
+
 } // namespace WTF

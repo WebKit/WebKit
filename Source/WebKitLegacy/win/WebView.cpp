@@ -3433,7 +3433,7 @@ HRESULT WebView::goToBackForwardItem(_In_opt_ IWebHistoryItem* item, _Out_ BOOL*
     if (FAILED(hr))
         return hr;
 
-    m_page->goToItem(*webHistoryItem->historyItem(), FrameLoadType::IndexedBackForward);
+    m_page->goToItem(*webHistoryItem->historyItem(), FrameLoadType::IndexedBackForward, NavigationPolicyCheck::Require);
     *succeeded = TRUE;
 
     return S_OK;
@@ -5960,7 +5960,7 @@ HRESULT WebView::loadBackForwardListFromOtherView(_In_opt_ IWebView* otherView)
     }
     
     ASSERT(newItemToGoTo);
-    m_page->goToItem(*newItemToGoTo, FrameLoadType::IndexedBackForward);
+    m_page->goToItem(*newItemToGoTo, FrameLoadType::IndexedBackForward, NavigationPolicyCheck::Require);
     return S_OK;
 }
 

@@ -241,7 +241,7 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
 
 - (void)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
-    _page->goToBackForwardItem(&item._item);
+    _page->goToBackForwardItem(item._item);
 }
 
 - (WKBackForwardList *)backForwardList

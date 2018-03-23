@@ -311,6 +311,7 @@ void HistoryItem::setIsTargetItem(bool flag)
 void HistoryItem::setStateObject(RefPtr<SerializedScriptValue>&& object)
 {
     m_stateObject = WTFMove(object);
+    notifyHistoryItemChanged(this);
 }
 
 void HistoryItem::addChildItem(Ref<HistoryItem>&& child)

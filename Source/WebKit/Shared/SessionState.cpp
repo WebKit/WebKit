@@ -28,6 +28,8 @@
 
 #include "WebCoreArgumentCoders.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy policy)
@@ -184,8 +186,11 @@ std::optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
 
 void PageState::encode(IPC::Encoder& encoder) const
 {
-    encoder << title;
-    encoder << mainFrameState;
+    encoder << title << mainFrameState << !!sessionStateObject;
+
+    if (sessionStateObject)
+        encoder << sessionStateObject->toWireBytes();
+
     encoder.encodeEnum(shouldOpenExternalURLsPolicy);
 }
 
@@ -198,6 +203,19 @@ bool PageState::decode(IPC::Decoder& decoder, PageState& result)
     if (!mainFrameState)
         return false;
     result.mainFrameState = WTFMove(*mainFrameState);
+
+    bool hasSessionState;
+    if (!decoder.decode(hasSessionState))
+        return false;
+
+    if (hasSessionState) {
+        Vector<uint8_t> wireBytes;
+        if (!decoder.decode(wireBytes))
+            return false;
+
+        result.sessionStateObject = SerializedScriptValue::createFromWireBytes(WTFMove(wireBytes));
+    }
+
     if (!decoder.decodeEnum(result.shouldOpenExternalURLsPolicy) || !isValidEnum(result.shouldOpenExternalURLsPolicy))
         return false;
 

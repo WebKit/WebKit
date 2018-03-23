@@ -1,3 +1,14 @@
+2018-03-23  Brady Eidson  <beidson@apple.com>
+
+        Go to back/forward list items after a process-swapped navigation.
+        <rdar://problem/38690544> and https://bugs.webkit.org/show_bug.cgi?id=183920
+
+        Reviewed by Andy Estes.
+
+        * WebView.cpp:
+        (WebView::goToBackForwardItem):
+        (WebView::loadBackForwardListFromOtherView):
+
 2018-03-23  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Avoid software color conversion inside BitmapTextureGL

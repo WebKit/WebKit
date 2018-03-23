@@ -164,6 +164,14 @@ class SharedBuffer;
 class TextIndicator;
 class ValidationBubble;
 
+enum SelectionDirection : uint8_t;
+
+enum class AutoplayEvent;
+enum class HasInsecureContent;
+enum class NavigationPolicyCheck;
+enum class NotificationDirection;
+enum class ShouldSample;
+
 struct ApplicationManifest;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
@@ -174,13 +182,6 @@ struct TextAlternativeWithRange;
 struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
-
-enum SelectionDirection : uint8_t;
-
-enum class AutoplayEvent;
-enum class HasInsecureContent;
-enum class NotificationDirection;
-enum class ShouldSample;
 
 template <typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
@@ -440,7 +441,7 @@ public:
     RefPtr<API::Navigation> goForward();
     RefPtr<API::Navigation> goBack();
 
-    RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem*);
+    RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&);
     void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removed);
     void willGoToBackForwardListItem(uint64_t itemID, bool inPageCache, const UserData&);
@@ -1294,6 +1295,8 @@ private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
 
+    RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&, WebCore::FrameLoadType);
+
     void updateActivityState(WebCore::ActivityState::Flags flagsToUpdate = WebCore::ActivityState::AllFlags);
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
@@ -1441,13 +1444,9 @@ private:
     void reattachToWebProcess(Ref<WebProcessProxy>&&);
 
     RefPtr<API::Navigation> reattachToWebProcessForReload();
-    RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem*);
+    RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem&);
 
-    enum class NavigationPolicyCheck {
-        Require,
-        Bypass,
-    };
-    void loadRequestWithNavigation(API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, NavigationPolicyCheck);
+    void loadRequestWithNavigation(API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::NavigationPolicyCheck);
 
     void requestNotificationPermission(uint64_t notificationID, const String& originString);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);

@@ -80,6 +80,8 @@ class SharedBuffer;
 class SubframeLoader;
 class SubstituteData;
 
+enum class NavigationPolicyCheck;
+
 struct WindowFeatures;
 
 WEBCORE_EXPORT bool isBackForwardLoadType(FrameLoadType);
@@ -125,7 +127,7 @@ public:
     WEBCORE_EXPORT void reloadWithOverrideEncoding(const String& overrideEncoding);
 
     void open(CachedFrameBase&);
-    void loadItem(HistoryItem&, FrameLoadType);
+    void loadItem(HistoryItem&, FrameLoadType, NavigationPolicyCheck);
     HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
     void retryAfterFailedCacheOnlyMainResourceLoad();
@@ -317,7 +319,7 @@ private:
     void checkTimerFired();
 
     void loadSameDocumentItem(HistoryItem&);
-    void loadDifferentDocumentItem(HistoryItem&, FrameLoadType, FormSubmissionCacheLoadPolicy);
+    void loadDifferentDocumentItem(HistoryItem&, FrameLoadType, FormSubmissionCacheLoadPolicy, NavigationPolicyCheck);
 
     void loadProvisionalItemFromCachedPage();
 

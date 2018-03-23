@@ -294,7 +294,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     if (&m_webPageProxy != m_webPageProxyForBackForwardListForCurrentSwipe)
         m_webPageProxy.navigationGestureDidEnd();
 
-    m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
+    m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(*targetItem);
 
     if (auto drawingArea = m_webPageProxy.drawingArea()) {
         uint64_t pageID = m_webPageProxy.pageID();

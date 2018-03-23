@@ -29,7 +29,12 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Ref.h>
 
+namespace WebCore {
+enum class FrameLoadType;
+};
+
 namespace WebKit {
+class WebBackForwardListItem;
 class WebNavigationState;
 }
 
@@ -43,6 +48,11 @@ public:
         return adoptRef(*new Navigation(state));
     }
 
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebKit::WebBackForwardListItem& item, WebCore::FrameLoadType backForwardFrameLoadType)
+    {
+        return adoptRef(*new Navigation(state, item, backForwardFrameLoadType));
+    }
+
     static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& request)
     {
         return adoptRef(*new Navigation(state, WTFMove(request)));
@@ -53,6 +63,8 @@ public:
     uint64_t navigationID() const { return m_navigationID; }
 
     const WebCore::ResourceRequest& request() const { return m_request; }
+    WebKit::WebBackForwardListItem* backForwardListItem() { return m_backForwardListItem.get(); }
+    std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
 
     void appendRedirectionURL(const WebCore::URL&);
     Vector<WebCore::URL> takeRedirectChain() { return WTFMove(m_redirectChain); }
@@ -63,15 +75,23 @@ public:
     void setShouldForceDownload(bool value) { m_shouldForceDownload = value; }
     bool shouldForceDownload() const { return m_shouldForceDownload; }
 
+#if !LOG_DISABLED
+    WTF::String loggingURL() const;
+#endif
+
 private:
     explicit Navigation(WebKit::WebNavigationState&);
     Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&);
+    Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem&, WebCore::FrameLoadType);
 
     uint64_t m_navigationID;
     WebCore::ResourceRequest m_request;
     Vector<WebCore::URL> m_redirectChain;
     bool m_wasUserInitiated { true };
     bool m_shouldForceDownload { false };
+
+    RefPtr<WebKit::WebBackForwardListItem> m_backForwardListItem;
+    std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
 };
 
 } // namespace API

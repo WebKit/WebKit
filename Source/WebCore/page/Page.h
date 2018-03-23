@@ -145,6 +145,7 @@ enum class EventThrottlingBehavior {
 
 enum class CanWrap : bool;
 enum class DidWrap : bool;
+enum class NavigationPolicyCheck;
 
 class Page : public Supplementable<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
@@ -180,7 +181,7 @@ public:
     bool openedByDOM() const;
     void setOpenedByDOM();
 
-    WEBCORE_EXPORT void goToItem(HistoryItem&, FrameLoadType);
+    WEBCORE_EXPORT void goToItem(HistoryItem&, FrameLoadType, NavigationPolicyCheck);
 
     WEBCORE_EXPORT void setGroupName(const String&);
     WEBCORE_EXPORT const String& groupName() const;

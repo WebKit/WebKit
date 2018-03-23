@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,25 @@
 
 #pragma once
 
-#include <wtf/HashMap.h>
-#include <wtf/Ref.h>
-
-namespace API {
-class Navigation;
-}
+#include <wtf/EnumTraits.h>
 
 namespace WebCore {
-class ResourceRequest;
 
-enum class FrameLoadType;
-}
-
-namespace WebKit {
-
-class WebPageProxy;
-class WebBackForwardListItem;
-
-class WebNavigationState {
-public:
-    explicit WebNavigationState();
-    ~WebNavigationState();
-
-    Ref<API::Navigation> createBackForwardNavigation(WebBackForwardListItem&, WebCore::FrameLoadType);
-    Ref<API::Navigation> createLoadRequestNavigation(WebCore::ResourceRequest&&);
-    Ref<API::Navigation> createReloadNavigation();
-    Ref<API::Navigation> createLoadDataNavigation();
-
-    API::Navigation& navigation(uint64_t navigationID);
-    Ref<API::Navigation> takeNavigation(uint64_t navigationID);
-    void didDestroyNavigation(uint64_t navigationID);
-    void clearAllNavigations();
-
-    uint64_t generateNavigationID()
-    {
-        return ++m_navigationID;
-    }
-
-private:
-    HashMap<uint64_t, RefPtr<API::Navigation>> m_navigations;
-    uint64_t m_navigationID { 0 };
+enum class NavigationPolicyCheck {
+    Require,
+    Bypass,
 };
 
-} // namespace WebKit
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::NavigationPolicyCheck> {
+    using values = EnumValues<
+        WebCore::NavigationPolicyCheck,
+        WebCore::NavigationPolicyCheck::Require,
+        WebCore::NavigationPolicyCheck::Bypass
+    >;
+};
+
+} // namespace WTF

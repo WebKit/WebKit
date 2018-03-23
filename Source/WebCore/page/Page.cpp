@@ -447,7 +447,7 @@ void Page::setOpenedByDOM()
     m_openedByDOM = true;
 }
 
-void Page::goToItem(HistoryItem& item, FrameLoadType type)
+void Page::goToItem(HistoryItem& item, FrameLoadType type, NavigationPolicyCheck navigationPolicyCheck)
 {
     // stopAllLoaders may end up running onload handlers, which could cause further history traversals that may lead to the passed in HistoryItem
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
@@ -456,7 +456,7 @@ void Page::goToItem(HistoryItem& item, FrameLoadType type)
     if (m_mainFrame->loader().history().shouldStopLoadingForHistoryItem(item))
         m_mainFrame->loader().stopAllLoaders();
 
-    m_mainFrame->loader().history().goToItem(item, type);
+    m_mainFrame->loader().history().goToItem(item, type, navigationPolicyCheck);
 }
 
 void Page::setGroupName(const String& name)

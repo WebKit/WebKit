@@ -30,6 +30,8 @@
 #include "WebPageProxy.h"
 #include <WebCore/ResourceRequest.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 WebNavigationState::WebNavigationState()
@@ -40,7 +42,7 @@ WebNavigationState::~WebNavigationState()
 {
 }
 
-Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(WebCore::ResourceRequest&& request)
+Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(ResourceRequest&& request)
 {
     auto navigation = API::Navigation::create(*this, WTFMove(request));
 
@@ -49,9 +51,9 @@ Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(WebCore::Re
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createBackForwardNavigation()
+Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebBackForwardListItem& item, FrameLoadType frameLoadType)
 {
-    auto navigation = API::Navigation::create(*this);
+    auto navigation = API::Navigation::create(*this, item, frameLoadType);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 

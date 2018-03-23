@@ -1,3 +1,21 @@
+2018-03-23  Brady Eidson  <beidson@apple.com>
+
+        Go to back/forward list items after a process-swapped navigation.
+        <rdar://problem/38690544> and https://bugs.webkit.org/show_bug.cgi?id=183920
+
+        Reviewed by Andy Estes.
+
+        Add a new API test that does some process-swapping navigations (including a back navigation)
+        and verifies the state of the engine afterwards.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[PSONScheme initWithBytes:]):
+        (-[PSONScheme webView:startURLSchemeTask:]):
+        (log):
+        (function):
+        (TEST): Deleted.
+
 2018-03-23  Brendan McLoughlin  <brendan@bocoup.com>
 
         Lint web-platform-tests changes with the wpt linter before exporting

@@ -551,7 +551,7 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-void WebProcessProxy::addBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState& pageState)
+void WebProcessProxy::addOrUpdateBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState& pageState)
 {
     MESSAGE_CHECK_URL(pageState.mainFrameState.originalURLString);
     MESSAGE_CHECK_URL(pageState.mainFrameState.urlString);

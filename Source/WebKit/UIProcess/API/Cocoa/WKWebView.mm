@@ -907,7 +907,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
-    auto navigation = _page->goToBackForwardItem(&item._item);
+    auto navigation = _page->goToBackForwardItem(item._item);
     if (!navigation)
         return nil;
 

@@ -1,3 +1,46 @@
+2018-03-23  Brady Eidson  <beidson@apple.com>
+
+        Go to back/forward list items after a process-swapped navigation.
+        <rdar://problem/38690544> and https://bugs.webkit.org/show_bug.cgi?id=183920
+
+        Reviewed by Andy Estes.
+
+        Covered by new API test.
+
+        Most of the changes to WebCore are teaching HistoryItem navigations to know when they should
+        do a policy check or not.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::goBackOrForward):
+        (WebCore::BackForwardController::goBack):
+        (WebCore::BackForwardController::goForward):
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setStateObject): Actually push state object changes to the UIProcess.
+          This was a long standing bug that made it difficult to effectively test this change.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::goToItem):
+        (WebCore::HistoryController::setDefersLoading):
+        (WebCore::HistoryController::recursiveGoToItem):
+        * loader/HistoryController.h:
+
+        * loader/NavigationPolicyCheck.h:
+
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+        * page/Page.h:
+
 2018-03-23  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Fix decoder key isPrevalentResource->isVeryPrevalentResource

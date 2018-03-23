@@ -119,7 +119,7 @@ PageState toPageState(const WebCore::HistoryItem& historyItem)
     pageState.title = historyItem.title();
     pageState.mainFrameState = toFrameState(historyItem);
     pageState.shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
-
+    pageState.sessionStateObject = historyItem.stateObject();
     return pageState;
 }
 
@@ -193,6 +193,7 @@ Ref<HistoryItem> toHistoryItem(const PageState& pageState)
 {
     Ref<HistoryItem> historyItem = HistoryItem::create(pageState.mainFrameState.urlString, pageState.title);
     historyItem->setShouldOpenExternalURLsPolicy(pageState.shouldOpenExternalURLsPolicy);
+    historyItem->setStateObject(pageState.sessionStateObject.get());
     applyFrameState(historyItem, pageState.mainFrameState);
 
     return historyItem;
