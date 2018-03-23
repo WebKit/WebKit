@@ -1734,3 +1734,5 @@ webkit.org/b/183490 media/modern-media-controls/start-support/start-support-full
 webkit.org/b/183490 media/video-playsinline.html [ Failure ]
 webkit.org/b/183490 media/video-webkit-playsinline.html [ Failure ]
 webkit.org/b/183490 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Failure ]
+
+webkit.org/b/183764 fast/css/apple-system-control-colors.html [ Pass ]
