@@ -1,3 +1,81 @@
+2018-03-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix auto repeat tracks computation with definite min sizes
+        https://bugs.webkit.org/show_bug.cgi?id=183933
+
+        Reviewed by Javier Fernandez.
+
+        The relevant test for this change is just grid-inline-auto-repeat-001.html. The other ones
+        were pulled in by the import. The unique change in those tests is the location of a
+        stylesheet. Since we're using it in the new test it seems sensible to use this same commit
+        to import those changes too. There is one important change in testing-utils.js which is
+        also required by the new test.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-grid/grid-definition/grid-change-fit-content-argument-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-auto-repeat-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-inline-auto-repeat-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-fit-content-001-expected.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-columns-fit-content-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001-expected.html:
+        * web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001.html:
+        * web-platform-tests/css/css-grid/grid-definition/support/grid.css: Added.
+        (.grid):
+        (.inline-grid):
+        (.firstRowFirstColumn):
+        (.onlyFirstRowOnlyFirstColumn):
+        (.firstRowSecondColumn):
+        (.onlyFirstRowOnlySecondColumn):
+        (.secondRowFirstColumn):
+        (.onlySecondRowOnlyFirstColumn):
+        (.secondRowSecondColumn):
+        (.onlySecondRowOnlySecondColumn):
+        (.endSecondRowEndSecondColumn):
+        (.thirdRowSecondColumn):
+        (.firstRowThirdColumn):
+        (.secondRowThirdColumn):
+        (.firstRowFourthColumn):
+        (.secondRowFourthColumn):
+        (.firstAutoRowSecondAutoColumn):
+        (.autoLastRowAutoLastColumn):
+        (.autoSecondRowAutoFirstColumn):
+        (.firstRowBothColumn):
+        (.secondRowBothColumn):
+        (.bothRowFirstColumn):
+        (.bothRowSecondColumn):
+        (.bothRowBothColumn):
+        (.autoRowAutoColumn):
+        (.firstRowAutoColumn):
+        (.secondRowAutoColumn):
+        (.thirdRowAutoColumn):
+        (.autoRowFirstColumn):
+        (.autoRowSecondColumn):
+        (.autoRowThirdColumn):
+        (.autoRowAutoColumnSpanning2):
+        (.autoRowSpanning2AutoColumn):
+        (.autoRowSpanning2AutoColumnSpanning3):
+        (.autoRowSpanning3AutoColumnSpanning2):
+        (.autoRowFirstColumnSpanning2):
+        (.autoRowSecondColumnSpanning2):
+        (.firstRowSpanning2AutoColumn):
+        (.secondRowSpanning2AutoColumn):
+        (.gridAutoFlowColumnSparse):
+        (.gridAutoFlowColumnDense):
+        (.gridAutoFlowRowSparse):
+        (.gridAutoFlowRowDense):
+        (.constrainedContainer):
+        (.unconstrainedContainer):
+        (.sizedToGridArea):
+        (.verticalRL):
+        (.verticalLR):
+        (.horizontalTB):
+        (.directionRTL):
+        (.directionLTR):
+        * web-platform-tests/css/css-grid/grid-definition/support/testing-utils.js:
+        (checkGridTemplateRows): Convert the passed computed style to an Array in case it is just an string.
+        * web-platform-tests/css/css-grid/grid-definition/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Animated transform styles are ignored when calling getComputedStyle()

@@ -506,12 +506,15 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
     if (freeSpace <= 0)
         return autoRepeatTrackListLength;
 
-    unsigned repetitions = 1 + (freeSpace / (autoRepeatTracksSize + gapSize)).toInt();
+    LayoutUnit autoRepeatSizeWithGap = autoRepeatTracksSize + gapSize;
+    unsigned repetitions = 1 + (freeSpace / autoRepeatSizeWithGap).toUnsigned();
+    freeSpace -= autoRepeatSizeWithGap * (repetitions - 1);
+    ASSERT(freeSpace >= 0);
 
     // Provided the grid container does not have a definite size or max-size in the relevant axis,
     // if the min size is definite then the number of repetitions is the largest possible positive
     // integer that fulfills that minimum requirement.
-    if (needsToFulfillMinimumSize)
+    if (needsToFulfillMinimumSize && freeSpace)
         ++repetitions;
 
     return repetitions * autoRepeatTrackListLength;

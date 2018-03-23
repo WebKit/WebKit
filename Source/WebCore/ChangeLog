@@ -1,3 +1,20 @@
+2018-03-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix auto repeat tracks computation with definite min sizes
+        https://bugs.webkit.org/show_bug.cgi?id=183933
+
+        Reviewed by Javier Fernandez.
+
+        Indefinitely sized containers use the specified definite min-size (if any) as available
+        space in order to compute the number of auto repeat tracks to create. A bug in that code was
+        causing the grid to be one track larger than expected. That was only happening in the case
+        of the free space being a multiple of the total size of the autorepeat tracks.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-inline-auto-repeat-001.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount const):
+
 2018-03-23  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Avoid software color conversion inside BitmapTextureGL
