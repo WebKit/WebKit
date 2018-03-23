@@ -1,3 +1,41 @@
+2018-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Adopt list view controller UI for select menus
+        https://bugs.webkit.org/show_bug.cgi?id=183944
+        <rdar://problem/38799062>
+
+        Reviewed by Andy Estes.
+
+        Rename WKSelectMenuViewController to WKSelectMenuListViewController, and also rename the relevant
+        WebKitAdditions harness files. See corresponding changes for more details.
+
+        * UIProcess/WKSelectMenuListViewController.h: Renamed from Source/WebKit/UIProcess/ios/forms/WKSelectMenuViewController.h.
+        * UIProcess/WKSelectMenuListViewController.mm: Renamed from Source/WebKit/UIProcess/ios/forms/WKSelectMenuViewController.mm.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentSelectMenuViewController:]):
+        (-[WKContentView dismissSelectMenuViewController:]):
+        (-[WKContentView selectMenu:didSelectItemAtIndex:]):
+        (-[WKContentView numberOfItemsInSelectMenu:]):
+        (-[WKContentView selectMenu:displayTextForItemAtIndex:]):
+        (-[WKContentView selectMenu:didCheckItemAtIndex:checked:]):
+        (-[WKContentView selectMenuUsesMultipleSelection:]):
+        (-[WKContentView selectMenu:hasSelectedOptionAtIndex:]):
+        (-[WKContentView _wheelChangedWithEvent:]):
+
+        Overriding wheel events and re-dispatching them is no longer needed after r229437, so we can just remove special
+        handling for select menus here.
+
+        (-[WKContentView didCancelSelectionInSelectMenu:]): Deleted.
+        (-[WKContentView selectMenuSupportsMultipleSelection:]): Deleted.
+        (-[WKContentView selectMenu:hasCheckedOptionAtIndex:]): Deleted.
+        (-[WKContentView startingIndexForSelectMenu:]): Deleted.
+
+        The starting index for a select menu is no longer relevant when using list view controllers for input, so we can
+        just remove this delegate hook altogether.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         CacheStorage::Caches should clear m_caches when clearing its representation even though it is not yet initialized

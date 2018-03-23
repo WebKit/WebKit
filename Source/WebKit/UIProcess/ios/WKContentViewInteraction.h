@@ -87,7 +87,7 @@ class WebPageProxy;
 @class WKDatePickerViewController;
 @class WKFocusedFormControlViewController;
 @class WKNumberPadViewController;
-@class WKSelectMenuViewController;
+@class WKSelectMenuListViewController;
 @class WKTextInputListViewController;
 @class WKTimePickerViewController;
 #endif
@@ -254,7 +254,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKTextInputListViewController> _textInputListViewController;
     RetainPtr<WKFocusedFormControlViewController> _focusedFormControlViewController;
     RetainPtr<WKNumberPadViewController> _numberPadViewController;
-    RetainPtr<WKSelectMenuViewController> _selectMenuViewController;
+    RetainPtr<WKSelectMenuListViewController> _selectMenuListViewController;
     RetainPtr<WKTimePickerViewController> _timePickerViewController;
 
     BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;

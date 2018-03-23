@@ -53,7 +53,7 @@
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
-#import "WKSelectMenuViewController.h"
+#import "WKSelectMenuListViewController.h"
 #import "WKTextInputListViewController.h"
 #import "WKTimePickerViewController.h"
 #import "WKUIDelegatePrivate.h"
@@ -126,7 +126,7 @@
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuViewControllerDelegate, WKFormControlListViewControllerDelegate>
+@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuListViewControllerDelegate, WKTextFormControlListViewControllerDelegate>
 @end
 
 #endif
@@ -4214,21 +4214,20 @@ static bool isAssistableInputType(InputType type)
 
 - (void)presentSelectMenuViewController:(BOOL)animated
 {
-    if (_selectMenuViewController)
+    if (_selectMenuListViewController)
         return;
 
-    _selectMenuViewController = adoptNS([[WKSelectMenuViewController alloc] init]);
-    [_selectMenuViewController setDelegate:self];
-    [_focusedFormControlViewController presentViewController:_selectMenuViewController.get() animated:animated completion:nil];
+    _selectMenuListViewController = adoptNS([[WKSelectMenuListViewController alloc] initWithDelegate:self]);
+    [_focusedFormControlViewController presentViewController:_selectMenuListViewController.get() animated:animated completion:nil];
 }
 
 - (void)dismissSelectMenuViewController:(BOOL)animated
 {
-    if (!_selectMenuViewController)
+    if (!_selectMenuListViewController)
         return;
 
-    auto selectMenuViewController = WTFMove(_selectMenuViewController);
-    [selectMenuViewController dismissViewControllerAnimated:animated completion:nil];
+    auto selectMenuListViewController = WTFMove(_selectMenuListViewController);
+    [_selectMenuListViewController dismissViewControllerAnimated:animated completion:nil];
 }
 
 - (void)presentFocusedFormControlViewController:(BOOL)animated
@@ -4427,27 +4426,20 @@ static bool isAssistableInputType(InputType type)
         [_textInputListViewController reloadTextSuggestions];
 }
 
-#pragma mark - WKSelectMenuViewControllerDelegate
+#pragma mark - WKSelectMenuListViewControllerDelegate
 
-- (void)selectMenu:(WKSelectMenuViewController *)selectMenu didSelectItemAtIndex:(NSUInteger)index
+- (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didSelectItemAtIndex:(NSUInteger)index
 {
-    if (!_assistedNodeInformation.isMultiSelect)
-        _page->setAssistedNodeSelectedIndex(index, false);
-
-    _page->blurAssistedNode();
+    ASSERT(!_assistedNodeInformation.isMultiSelect);
+    _page->setAssistedNodeSelectedIndex(index, false);
 }
 
-- (void)didCancelSelectionInSelectMenu:(WKSelectMenuViewController *)selectMenu
-{
-    _page->blurAssistedNode();
-}
-
-- (NSUInteger)numberOfItemsInSelectMenu:(WKSelectMenuViewController *)selectMenu
+- (NSUInteger)numberOfItemsInSelectMenu:(WKSelectMenuListViewController *)selectMenu
 {
     return self.assistedNodeSelectOptions.size();
 }
 
-- (NSString *)selectMenu:(WKSelectMenuViewController *)selectMenu displayTextForItemAtIndex:(NSUInteger)index
+- (NSString *)selectMenu:(WKSelectMenuListViewController *)selectMenu displayTextForItemAtIndex:(NSUInteger)index
 {
     auto& options = self.assistedNodeSelectOptions;
     if (index >= options.size()) {
@@ -4458,7 +4450,7 @@ static bool isAssistableInputType(InputType type)
     return options[index].text;
 }
 
-- (void)selectMenu:(WKSelectMenuViewController *)selectMenu didCheckItemAtIndex:(NSUInteger)index checked:(BOOL)checked
+- (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didCheckItemAtIndex:(NSUInteger)index checked:(BOOL)checked
 {
     ASSERT(_assistedNodeInformation.isMultiSelect);
     if (index >= self.assistedNodeSelectOptions.size()) {
@@ -4476,12 +4468,12 @@ static bool isAssistableInputType(InputType type)
     option.isSelected = checked;
 }
 
-- (BOOL)selectMenuSupportsMultipleSelection:(WKSelectMenuViewController *)selectMenu
+- (BOOL)selectMenuUsesMultipleSelection:(WKSelectMenuListViewController *)selectMenu
 {
     return _assistedNodeInformation.isMultiSelect;
 }
 
-- (BOOL)selectMenu:(WKSelectMenuViewController *)selectMenu hasCheckedOptionAtIndex:(NSUInteger)index
+- (BOOL)selectMenu:(WKSelectMenuListViewController *)selectMenu hasSelectedOptionAtIndex:(NSUInteger)index
 {
     if (index >= self.assistedNodeSelectOptions.size()) {
         ASSERT_NOT_REACHED();
@@ -4491,27 +4483,12 @@ static bool isAssistableInputType(InputType type)
     return self.assistedNodeSelectOptions[index].isSelected;
 }
 
-- (NSUInteger)startingIndexForSelectMenu:(WKSelectMenuViewController *)selectMenu
-{
-    if (_assistedNodeInformation.isMultiSelect)
-        return 0;
-
-    auto firstSelectedIndex = self.assistedNodeSelectOptions.findMatching([&] (auto& option) {
-        return option.isSelected;
-    });
-
-    return firstSelectedIndex == notFound ? 0 : firstSelectedIndex;
-}
-
 #endif // ENABLE(EXTRA_ZOOM_MODE)
 
 - (void)_wheelChangedWithEvent:(UIEvent *)event
 {
 #if ENABLE(EXTRA_ZOOM_MODE)
     if ([_numberPadViewController handleWheelEvent:event])
-        return;
-
-    if ([_selectMenuViewController handleWheelEvent:event])
         return;
 
     if ([_timePickerViewController handleWheelEvent:event])

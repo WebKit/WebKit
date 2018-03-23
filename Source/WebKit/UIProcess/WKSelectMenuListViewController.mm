@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "WKSelectMenuListViewController.h"
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKSelectMenuViewControllerAdditions.h>
+#import <WebKitAdditions/WKSelectMenuListViewControllerAdditions.mm>
 #endif
