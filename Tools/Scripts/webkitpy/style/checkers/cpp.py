@@ -3224,6 +3224,10 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
         error(line_number, 'security/temp_file', 5,
               'Never use mktemp.  Use mkstemp or mkostemp instead.')
 
+    if search(r'\bdispatch_set_target_queue\b', line):
+        error(line_number, 'runtime/dispatch_set_target_queue', 5,
+              'Never use dispatch_set_target_queue.  Use dispatch_queue_create_with_target instead.')
+
     # Check for suspicious usage of "if" like
     # } if (a == b) {
     if search(r'\}\s*if\s*\(', line):
@@ -3941,6 +3945,7 @@ class CppChecker(object):
         'runtime/bitfields',
         'runtime/casting',
         'runtime/ctype_function',
+        'runtime/dispatch_set_target_queue',
         'runtime/enum_bitfields',
         'runtime/explicit',
         'runtime/init',

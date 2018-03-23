@@ -1,3 +1,19 @@
+2018-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using dispatch_set_target_queue()
+        <https://webkit.org/b/183908>
+        <rdar://problem/33553533>
+
+        Reviewed by Daniel Bates.
+
+        * Source/webrtc/rtc_base/task_queue_gcd.cc: Remove use of
+        dispatch_set_target_queue() by changing dispatch_queue_create()
+        to dispatch_queue_create_with_target().
+        * WebKit/0009-Remove-dispatch_set_target_queue.patch: Add patch.
+        Filed this to track upstreaming the change:
+        <https://bugs.chromium.org/p/webrtc/issues/detail?id=9055>
+        * WebKit/patch-libwebrtc: Delete empty patch file.
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         Use libwebrtc ObjectiveC H264 encoder and decoder

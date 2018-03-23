@@ -82,16 +82,8 @@ static dispatch_queue_t targetQueueForQOSClass(WorkQueue::QOS qos)
 void WorkQueue::platformInitialize(const char* name, Type type, QOS qos)
 {
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
-#if HAVE(QOS_CLASSES)
     attr = dispatch_queue_attr_make_with_qos_class(attr, dispatchQOSClass(qos), 0);
-#else
-    UNUSED_PARAM(qos);
-#endif
     m_dispatchQueue = dispatch_queue_create(name, attr);
-#if !HAVE(QOS_CLASSES)
-    if (qos != WorkQueue::QOS::Default)
-        dispatch_set_target_queue(m_dispatchQueue, targetQueueForQOSClass(qos));
-#endif
     dispatch_set_context(m_dispatchQueue, this);
 }
 

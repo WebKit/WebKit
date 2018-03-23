@@ -1,3 +1,16 @@
+2018-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using dispatch_set_target_queue()
+        <https://webkit.org/b/183908>
+        <rdar://problem/33553533>
+
+        Reviewed by Daniel Bates.
+
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::platformInitialize): Remove !HAVE(QOS_CLASSES)
+        code path since it's never used now that HAVE(QOS_CLASSES) is
+        equivalent to PLATFORM(COCOA) in <wtf/Platform.h>.
+
 2018-03-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         WebProcess memory monitor thresholds should be better tuned for embedded systems.

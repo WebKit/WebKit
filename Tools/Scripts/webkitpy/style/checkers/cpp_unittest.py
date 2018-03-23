@@ -1588,6 +1588,15 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('mkstemp(template);', '')
         self.assert_lint('mkostemp(template);', '')
 
+    def test_dispatch_set_target_queue(self):
+        self.assert_lint(
+            '''\
+            globalQueue = dispatch_queue_create("My Serial Queue", DISPATCH_QUEUE_SERIAL);
+            dispatch_set_target_queue(globalQueue, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0));''',
+            'Never use dispatch_set_target_queue.  Use dispatch_queue_create_with_target instead.'
+            '  [runtime/dispatch_set_target_queue] [5]')
+        self.assert_lint('globalQueue = dispatch_queue_create_with_target("My Serial Queue", DISPATCH_QUEUE_SERIAL, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0));', '')
+
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):
         errmsg = ('Do not use variable-length arrays.  Use an appropriately named '

@@ -1,3 +1,18 @@
+2018-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using dispatch_set_target_queue()
+        <https://webkit.org/b/183908>
+        <rdar://problem/33553533>
+
+        Reviewed by Daniel Bates.
+
+        No new tests since no change in behavior.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::globaVideoCaptureSerialQueue): Remove use of
+        dispatch_set_target_queue() by changing dispatch_queue_create()
+        to dispatch_queue_create_with_target().
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         Use libwebrtc ObjectiveC H264 encoder and decoder

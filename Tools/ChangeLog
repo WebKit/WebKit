@@ -1,3 +1,18 @@
+2018-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using dispatch_set_target_queue()
+        <https://webkit.org/b/183908>
+        <rdar://problem/33553533>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_language): Add check for use of
+        dispatch_set_target_queue().
+        (CppChecker): Add 'runtime/dispatch_set_target_queue' category.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest): Add test.
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         Allow fully whitelisted plug-ins to match non HTTP URLs

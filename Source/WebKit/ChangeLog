@@ -1,3 +1,16 @@
+2018-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Stop using dispatch_set_target_queue()
+        <https://webkit.org/b/183908>
+        <rdar://problem/33553533>
+
+        Reviewed by Daniel Bates.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::IOChannel): Remove the call to
+        dispatch_set_target_queue() since this is handled in the
+        dispatch_io_create() call above.
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         CacheStorage::Engine should not ref itself when hopping to a background thread
