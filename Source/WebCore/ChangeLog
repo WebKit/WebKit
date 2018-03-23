@@ -1,3 +1,18 @@
+2018-03-22  Nan Wang  <n_wang@apple.com>
+
+        AX: Web table row count is incorrect when role row is added to <tr> in DOM
+        https://bugs.webkit.org/show_bug.cgi?id=183922
+
+        Reviewed by Chris Fleizach.
+
+        Although the parent table for an ARIA grid row should be an ARIA table, we
+        should return the native table if the row is native <tr>.
+
+        Test: accessibility/row-with-aria-role-in-native-table.html
+
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::parentTable const):
+
 2018-03-22  Chris Dumez  <cdumez@apple.com>
 
         Include security origin in the service worker process name

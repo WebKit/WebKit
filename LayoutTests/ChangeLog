@@ -1,3 +1,13 @@
+2018-03-22  Nan Wang  <n_wang@apple.com>
+
+        AX: Web table row count is incorrect when role row is added to <tr> in DOM
+        https://bugs.webkit.org/show_bug.cgi?id=183922
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/row-with-aria-role-in-native-table-expected.txt: Added.
+        * accessibility/row-with-aria-role-in-native-table.html: Added.
+
 2018-03-22  Daniel Bates  <dabates@apple.com>
 
         CSS mask images should be retrieved using potentially CORS-enabled fetch
