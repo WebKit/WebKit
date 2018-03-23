@@ -3937,3 +3937,5 @@ webkit.org/b/183953 imported/mozilla/css-transitions/test_effect-target.html [ F
 webkit.org/b/183953 imported/mozilla/css-animations/test_event-dispatch.html [ Skip ]
 webkit.org/b/183953 imported/mozilla/css-transitions/test_event-dispatch.html [ Skip ]
 webkit.org/b/183953 imported/mozilla/css-animations/test_keyframeeffect-getkeyframes.html [ Skip ]
+
+webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
