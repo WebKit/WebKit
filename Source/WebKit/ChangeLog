@@ -1,3 +1,10 @@
+2018-03-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence unused variable warning
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2018-03-22  Dan Bernstein  <mitz@apple.com>
 
         WKWebView doesn’t expose its spellCheckerDocumentTag
@@ -27,7 +34,7 @@
         * StorageProcess/StorageProcess.cpp:
         (WebKit::StorageProcess::swServerForSession):
 
-2018-03-22  Michael Catanzaro  <mcatanzaro@gnome.org>
+2018-03-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix format string warnings in service worker code
 
