@@ -90,7 +90,8 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
         break;
     }
 
-    timing->setIterations(animation.iterationCount());
+    auto iterationCount = animation.iterationCount();
+    timing->setIterations(iterationCount == Animation::IterationCountInfinite ? std::numeric_limits<double>::infinity() : iterationCount);
 
     // Synchronize the play state
     if (backingAnimation().playState() == AnimPlayStatePlaying && playState() == WebAnimation::PlayState::Paused)
