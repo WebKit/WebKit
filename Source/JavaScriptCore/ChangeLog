@@ -1,3 +1,19 @@
+2018-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Fix ArrayPush(ArrayStorage)'s abstract heap
+        https://bugs.webkit.org/show_bug.cgi?id=182960
+
+        Reviewed by Saam Barati.
+
+        This patch fixes ArrayPush(ArrayStorage)'s abstract heap.
+        It should always touch ArrayStorage_vector. To unify
+        vector setting code for the real ArrayStorage_vector and
+        ScratchBuffer, we use ArrayStorage_vector.atAnyIndex() to
+        annotate this.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+
 2018-03-23  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for GCC 4.9 builds.

@@ -4660,7 +4660,7 @@ private:
                 Edge& element = m_graph.varArgChild(m_node, elementIndex + elementOffset);
 
                 LValue value = lowJSValue(element);
-                m_out.store64(value, m_out.baseIndex(m_heaps.variables, buffer, m_out.constInt32(elementIndex), jsNumber(elementIndex)));
+                m_out.store64(value, m_out.baseIndex(m_heaps.ArrayStorage_vector.atAnyIndex(), buffer, m_out.constIntPtr(elementIndex), ScaleEight));
             }
             ValueFromBlock fastResult = m_out.anchor(boxInt32(newLength));
 
