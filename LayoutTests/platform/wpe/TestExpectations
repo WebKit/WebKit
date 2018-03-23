@@ -193,7 +193,6 @@ Bug(WPE) security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src
 Bug(WPE) userscripts/user-script-plugin-document.html [ Failure ]
 
 Bug(WPE) imported/blink [ Skip ]
-Bug(WPE) imported/mathml-in-html5 [ Skip ]
 Bug(WPE) imported/mozilla [ Skip ]
 
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]

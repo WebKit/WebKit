@@ -1,3 +1,12 @@
+2018-03-23  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        Removed imported/mathml-in-html5 from WPE test expectations, as the
+        path does not exit anymore after r229601
+
+        * platform/wpe/TestExpectations: Removd imported/mathml-in-html5
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         Safari WebKitWebRTCAudioModule crash during <video> tag update when audio track present in MediaStream
