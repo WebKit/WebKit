@@ -837,6 +837,9 @@
 		41ECEAE7206417E9009D5141 /* webrtcvideoencoderfactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41ECEAE5206417E8009D5141 /* webrtcvideoencoderfactory.cc */; };
 		41ECEAE8206417E9009D5141 /* webrtcvideodecoderfactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41ECEAE6206417E9009D5141 /* webrtcvideodecoderfactory.cc */; };
 		41ECEAEA20641812009D5141 /* RTCVideoEncoderSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41ECEAE920641812009D5141 /* RTCVideoEncoderSettings.mm */; };
+		41ECEAFC20646664009D5141 /* EncoderUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 41ECEAF920646663009D5141 /* EncoderUtilities.h */; };
+		41ECEAFD20646664009D5141 /* VideoProcessingSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41ECEAFA20646663009D5141 /* VideoProcessingSoftLink.cpp */; };
+		41ECEAFE20646664009D5141 /* VideoProcessingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 41ECEAFB20646664009D5141 /* VideoProcessingSoftLink.h */; };
 		41F411AD1EF8D91F00343C26 /* null_aec_dump_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41F411AC1EF8D91E00343C26 /* null_aec_dump_factory.cc */; };
 		41F411B01EF8DA0100343C26 /* rtcerror.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41F411AE1EF8DA0000343C26 /* rtcerror.cc */; };
 		41F411B11EF8DA0200343C26 /* rtcerror.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F411AF1EF8DA0000343C26 /* rtcerror.h */; };
@@ -3983,6 +3986,9 @@
 		41ECEAE6206417E9009D5141 /* webrtcvideodecoderfactory.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = webrtcvideodecoderfactory.cc; path = engine/webrtcvideodecoderfactory.cc; sourceTree = "<group>"; };
 		41ECEAE920641812009D5141 /* RTCVideoEncoderSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RTCVideoEncoderSettings.mm; path = PeerConnection/RTCVideoEncoderSettings.mm; sourceTree = "<group>"; };
 		41ECEAF620645CE6009D5141 /* UIDevice+RTCDevice.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "UIDevice+RTCDevice.mm"; path = "Common/UIDevice+RTCDevice.mm"; sourceTree = "<group>"; };
+		41ECEAF920646663009D5141 /* EncoderUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncoderUtilities.h; sourceTree = "<group>"; };
+		41ECEAFA20646663009D5141 /* VideoProcessingSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoProcessingSoftLink.cpp; sourceTree = "<group>"; };
+		41ECEAFB20646664009D5141 /* VideoProcessingSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoProcessingSoftLink.h; sourceTree = "<group>"; };
 		41F411AC1EF8D91E00343C26 /* null_aec_dump_factory.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = null_aec_dump_factory.cc; path = Source/webrtc/modules/audio_processing/aec_dump/null_aec_dump_factory.cc; sourceTree = SOURCE_ROOT; };
 		41F411AE1EF8DA0000343C26 /* rtcerror.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtcerror.cc; sourceTree = "<group>"; };
 		41F411AF1EF8DA0000343C26 /* rtcerror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtcerror.h; sourceTree = "<group>"; };
@@ -6845,6 +6851,9 @@
 				419C849A1FE2FEC00040C30F /* encoder.mm */,
 				419C849C1FE2FEC00040C30F /* encoder_vcp.h */,
 				419C84991FE2FEBF0040C30F /* encoder_vcp.mm */,
+				41ECEAF920646663009D5141 /* EncoderUtilities.h */,
+				41ECEAFA20646663009D5141 /* VideoProcessingSoftLink.cpp */,
+				41ECEAFB20646664009D5141 /* VideoProcessingSoftLink.h */,
 				419C84AF1FE304C70040C30F /* VideoToolBoxDecoderFactory.cpp */,
 				419C84AD1FE304C60040C30F /* VideoToolBoxDecoderFactory.h */,
 				419C84AE1FE304C60040C30F /* VideoToolBoxEncoderFactory.cpp */,
@@ -11201,6 +11210,7 @@
 				419C84A41FE300810040C30F /* encoder.h in Headers */,
 				5CDD85A01E43B5C000621E92 /* encoder_rtcp_feedback.h in Headers */,
 				419C84C11FE31A0B0040C30F /* encoder_vcp.h in Headers */,
+				41ECEAFC20646664009D5141 /* EncoderUtilities.h in Headers */,
 				5CDD8B991E43C2B500621E92 /* energy_inverse.h in Headers */,
 				5CDD8B9B1E43C2B500621E92 /* enh_upsample.h in Headers */,
 				5CDD8B9F1E43C2B500621E92 /* enhancer.h in Headers */,
@@ -11968,6 +11978,7 @@
 				5C4B49071E42C1E3002651C8 /* videocommon.h in Headers */,
 				5CD286251E6A666D0094FDC8 /* videodecodersoftwarefallbackwrapper.h in Headers */,
 				5C4B488A1E42C1BA002651C8 /* videoencodersoftwarefallbackwrapper.h in Headers */,
+				41ECEAFE20646664009D5141 /* VideoProcessingSoftLink.h in Headers */,
 				41F9BF892051C80100ABF0B9 /* videosinkinterface.h in Headers */,
 				5C4B490C1E42C1E3002651C8 /* videosourcebase.h in Headers */,
 				41F9BF8A2051C80100ABF0B9 /* videosourceinterface.h in Headers */,
@@ -13720,6 +13731,7 @@
 				5C4B49061E42C1E3002651C8 /* videocommon.cc in Sources */,
 				5CD286241E6A666D0094FDC8 /* videodecodersoftwarefallbackwrapper.cc in Sources */,
 				5C4B48891E42C1BA002651C8 /* videoencodersoftwarefallbackwrapper.cc in Sources */,
+				41ECEAFD20646664009D5141 /* VideoProcessingSoftLink.cpp in Sources */,
 				5C4B490B1E42C1E3002651C8 /* videosourcebase.cc in Sources */,
 				41F9BF8F2051C80100ABF0B9 /* videosourceinterface.cc in Sources */,
 				419C84B31FE304C70040C30F /* VideoToolBoxDecoderFactory.cpp in Sources */,

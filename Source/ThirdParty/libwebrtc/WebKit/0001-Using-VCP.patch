@@ -1,0 +1,77 @@
+From f6d216e76cc576b7cac5a980c74d4cf60f28cb17 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 22 Mar 2018 15:44:50 -0700
+Subject: [PATCH] Using VCP
+
+---
+ .../Classes/VideoToolbox/RTCVideoEncoderH264.mm          | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
+index d1af6e3c632..138d44573b8 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm
+@@ -34,6 +34,8 @@
+ #include "sdk/objc/Framework/Classes/VideoToolbox/nalu_rewriter.h"
+ #include "system_wrappers/include/clock.h"
+ #include "third_party/libyuv/include/libyuv/convert_from.h"
++
++#include "sdk/WebKit/EncoderUtilities.h"
+ #include "sdk/WebKit/WebKitUtilities.h"
+ 
+ @interface RTCVideoEncoderH264 ()
+@@ -286,7 +288,7 @@ @implementation RTCVideoEncoderH264 {
+   RTCVideoEncoderCallback _callback;
+   int32_t _width;
+   int32_t _height;
+-  VTCompressionSessionRef _compressionSession;
++  CompressionSessionRef _compressionSession;
+   RTCVideoCodecMode _mode;
+ 
+   webrtc::H264BitstreamParser _h264BitstreamParser;
+@@ -360,9 +362,9 @@ - (NSInteger)encode:(RTCVideoFrame *)frame
+ 
+   // Get a pixel buffer from the pool and copy frame data over.
+   CVPixelBufferPoolRef pixelBufferPool =
+-      VTCompressionSessionGetPixelBufferPool(_compressionSession);
++      CompressionSessionGetPixelBufferPool(_compressionSession);
+   if ([self resetCompressionSessionIfNeededForPool:pixelBufferPool withFrame:frame]) {
+-    pixelBufferPool = VTCompressionSessionGetPixelBufferPool(_compressionSession);
++    pixelBufferPool = CompressionSessionGetPixelBufferPool(_compressionSession);
+     isKeyframeRequired = YES;
+   }
+ 
+@@ -444,7 +446,7 @@ - (NSInteger)encode:(RTCVideoFrame *)frame
+   // Update the bitrate if needed.
+   [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps()];
+ 
+-  OSStatus status = VTCompressionSessionEncodeFrame(_compressionSession,
++  OSStatus status = CompressionSessionEncodeFrame(_compressionSession,
+                                                     pixelBuffer,
+                                                     presentationTimeStamp,
+                                                     kCMTimeInvalid,
+@@ -579,10 +581,10 @@ - (int)resetCompressionSessionWithPixelFormat:(OSType)framePixelFormat {
+                        webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse);
+ #endif
+   OSStatus status =
+-      VTCompressionSessionCreate(nullptr,  // use default allocator
++      CompressionSessionCreate(nullptr,  // use default allocator
+                                  _width,
+                                  _height,
+-                                 kCMVideoCodecType_H264,
++                                 kCodecTypeH264,
+                                  encoder_specs,  // use hardware accelerated encoder if available
+                                  sourceAttributes,
+                                  nullptr,  // use default compressed data allocator
+@@ -639,7 +641,7 @@ - (void)configureCompressionSession {
+ 
+ - (void)destroyCompressionSession {
+   if (_compressionSession) {
+-    VTCompressionSessionInvalidate(_compressionSession);
++    CompressionSessionInvalidate(_compressionSession);
+     CFRelease(_compressionSession);
+     _compressionSession = nullptr;
+   }
+-- 
+2.15.1 (Apple Git-101)
+

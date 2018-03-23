@@ -1,3 +1,25 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Add support for VCP encoder on MacOS and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183924
+
+        Reviewed by Eric Carlson.
+
+        Soft-Link VideoProcessing functions and use them in H264 encoder.
+        This is conditional on recent MacOS and iOS platforms.
+
+        * Source/webrtc/sdk/WebKit/EncoderUtilities.h: Added.
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.cpp: Added.
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h: Added.
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::createVideoToolboxEncoderFactory):
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        (-[RTCVideoEncoderH264 destroyCompressionSession]):
+        * WebKit/0001-Using-VCP.patch: Added.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Stop using dispatch_set_target_queue()

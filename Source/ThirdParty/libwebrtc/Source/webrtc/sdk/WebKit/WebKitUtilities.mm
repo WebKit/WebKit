@@ -92,6 +92,12 @@ void setApplicationStatus(bool isActive)
 
 std::unique_ptr<webrtc::VideoEncoderFactory> createVideoToolboxEncoderFactory()
 {
+#if ENABLE_VCP_ENCODER
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        webrtc::VPModuleInitialize();
+    });
+#endif
     return std::make_unique<webrtc::ObjCVideoEncoderFactory>([[RTCVideoEncoderFactoryH264 alloc] init]);
 }
 
