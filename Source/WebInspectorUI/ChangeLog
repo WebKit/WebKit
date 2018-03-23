@@ -1,3 +1,46 @@
+2018-03-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add WebKitAdditions hooks for WebInspectorUI
+        https://bugs.webkit.org/show_bug.cgi?id=183940
+        <rdar://problem/38796310>
+
+        Reviewed by Timothy Hatcher.
+
+        * Scripts/combine-resources.pl:
+        (debugLog): Added. Leave in the logging I used to debug this.
+
+        (concatenateIncludedFilesMatchingPattern):
+        (stripIncludedFilesMatchingPattern):
+        (concatenateFiles): Deleted.
+        This function tried to do too many things. Split it into
+        two functions, one for stripping includes and one for concatenating
+        files referenced by includes.
+
+        Lastly, add a negative lookahead clause for 'WebKitAdditions' so includes
+        containing that string are not combined when no input directory is passed
+        to the script.
+
+        * Scripts/copy-user-interface-resources.pl:
+        WebKitAdditions is computed either from BUILT_PRODUCTS_DIR or SDKROOT,
+        depending on the build style. Just try them in order and use the first
+        one that exists. WebInspectorUI files are in their own directory, so
+        we can assume there are files to process if that directory exists.
+
+        Copy Main.html to derived sources before doing any processing on it.
+        This makes all combining phases have the same --input-html argument.
+
+        (debugLog): Added. Leave in the logging I used to debug this.
+
+        (combineOrStripResourcesForWebKitAdditions):
+        (stripResourcesForWebKitAdditions):
+        (combineResourcesForWebKitAdditions):
+        Determine if WebKitAdditions exists and whether there are any
+        resources for WebInspectorUI present that need to be processed.
+
+        * UserInterface/Main.html:
+        Add stub .js and .css WebKitAdditions files. We can add more later
+        if it makes sense but this is good enough to validate the build machinery.
+
 2018-03-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: flashing when switching between nodes

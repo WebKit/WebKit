@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2015 Apple Inc. All rights reserved.
+# Copyright (C) 2015-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@ our $derivedSourcesDirectory;
 our $htmlDirectory;
 our $htmlFile;
 our $strip;
+our $verbose;
 
 GetOptions('output-dir=s' => \$outputDirectory,
            'output-script-name=s' => \$outputScriptName,
@@ -45,11 +46,18 @@ GetOptions('output-dir=s' => \$outputDirectory,
            'input-dir=s' => \$inputDirectory,
            'input-html-dir=s' => \$htmlDirectory,
            'input-html=s' => \$htmlFile,
+           'verbose' => \$verbose,
            'strip' => \$strip);
 
 unless (defined $htmlFile and defined $derivedSourcesDirectory and defined $outputDirectory and (defined $strip or defined $outputScriptName or defined $outputStylesheetName)) {
     print "Usage: $0 --input-html <path> --derived-sources-dir <path> --output-dir <path> [--output-script-name <name>] [--output-style-name <name>] [--strip]\n";
     exit;
+}
+
+sub debugLog($)
+{
+    my $logString = shift;
+    print "-- $logString\n" if $verbose;
 }
 
 $htmlDirectory = dirname($htmlFile) unless $htmlDirectory;
@@ -58,7 +66,7 @@ our $htmlContents;
 
 {
     local $/;
-    open HTML, $htmlFile or die;
+    open HTML, $htmlFile or die "Could not open $htmlFile";
     $htmlContents = <HTML>;
     close HTML;
 }
@@ -68,12 +76,14 @@ our $headContents = $1;
 
 mkpath $outputDirectory;
 
-sub concatenateFiles($$$)
+sub concatenateIncludedFilesMatchingPattern($$$)
 {
     my $filename = shift;
     my $tagExpression = shift;
     my $concatenatedTag = shift;
     my $fileCount = 0;
+
+    debugLog("combining files for $filename with pattern $tagExpression");
 
     open OUT, ">", "$outputDirectory/$filename" or die "Can't open $outputDirectory/$filename: $!";
 
@@ -91,24 +101,33 @@ sub concatenateFiles($$$)
     # Don't use \s so we can control the newlines we consume.
     my $replacementExpression = "([\t ]*)" . $tagExpression . "[\t ]*\n+";
 
-    if (defined $strip) {
-        # Just strip all occurrences of the pattern.
-        $headContents =~ s/$replacementExpression//gi;
-    } else {
-        # Replace the first occurrence with a token so we can inject the concatenated tag in the same place
-        # as the first file that got consolidated. This makes sure we preserve some order if there are other
-        # items in the head that we didn't consolidate.
-        $headContents =~ s/$replacementExpression/$1%CONCATENATED%\n/i;
-        $headContents =~ s/$replacementExpression//gi;
-        $headContents =~ s/%CONCATENATED%/$concatenatedTag/;
-    }
+    # Replace the first occurrence with a token so we can inject the concatenated tag in the same place
+    # as the first file that got consolidated. This makes sure we preserve some order if there are other
+    # items in the head that we didn't consolidate.
+    $headContents =~ s/$replacementExpression/$1%CONCATENATED%\n/i;
+    $headContents =~ s/$replacementExpression//gi;
+    $headContents =~ s/%CONCATENATED%/$concatenatedTag/;
 }
 
-my $inputDirectoryPattern = "(?!External\/)(?!Workers\/)[^\"]*";
+sub stripIncludedFilesMatchingPattern($)
+{
+    my $tagPattern = shift;
+
+    # Don't use \s so we can control the newlines we consume.
+    my $whitespaceConsumingTagPattern = "([\t ]*)" . $tagPattern . "[\t ]*\n+";
+    $headContents =~ s/$whitespaceConsumingTagPattern//gi;
+}
+
+my $inputDirectoryPattern = "(?!WebKitAdditions\/)(?!External\/)(?!Workers\/)[^\"]*";
 $inputDirectoryPattern = $inputDirectory . "\/[^\"]*" if $inputDirectory;
 
-concatenateFiles($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;
-concatenateFiles($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", "<script src=\"$outputScriptName\"></script>") if defined $outputScriptName;
+if (defined($strip)) {
+    stripIncludedFilesMatchingPattern("<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">");
+    stripIncludedFilesMatchingPattern("<script src=\"($inputDirectoryPattern)\"><\/script>");
+} else {
+    concatenateIncludedFilesMatchingPattern($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;
+    concatenateIncludedFilesMatchingPattern($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", "<script src=\"$outputScriptName\"></script>") if defined $outputScriptName;
+}
 
 $htmlContents =~ s/<head>.*<\/head>/<head>$headContents<\/head>/si;
 
