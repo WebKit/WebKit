@@ -1,3 +1,24 @@
+2018-03-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: flashing when switching between nodes
+        https://bugs.webkit.org/show_bug.cgi?id=179291
+        <rdar://problem/35352660>
+
+        Reviewed by Matt Baker.
+
+        Flashing was happening because the layout was a two-step process:
+        1. Append empty sections.
+        2. Layout everything inside of the section on requestAnimationFrame.
+
+        SpreadsheetRulesStyleDetailsPanel was converted to use layout method,
+        so both steps happen on requestAnimationFrame.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.refresh):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+        The removed lines from the refresh method moved to the layout method without any changes.
+
 2018-03-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Uncaught Exception: TypeError: this._textEditor.toggleUnexecutedCodeHighlights().then is not a function
