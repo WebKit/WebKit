@@ -1,3 +1,27 @@
+2018-03-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't use the presence of a textSelectionAssistant as a proxy for if we are in content editable.
+        https://bugs.webkit.org/show_bug.cgi?id=183804
+
+        Reviewed by Tim Horton.
+
+        We need to stop using the presence of a textSelectionAssistant as a proxy for if we are selecting in a content editable
+        or not. As we are planning on switching to only using a textSelectionAssistant for selection, these checks need to 
+        be more direct in checking what we actually need to know i.e. are we selecting in a content editable.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (hasAssistedNode):
+        (-[WKContentView inputView]):
+        (-[WKContentView _selectionClipRect]):
+        (-[WKContentView gestureRecognizer:canBePreventedByGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView webSelectionRects]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _autofillContext]):
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         WebProcessPool should not ask to register all clients for each service worker process creation

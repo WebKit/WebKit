@@ -585,6 +585,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)scheduleReplacementsForText:(NSString *)text;
 - (void)scheduleChineseTransliterationForText:(NSString *)text;
 
+@property (nonatomic, readonly, assign) UILongPressGestureRecognizer *forcePressGesture;
 @property (nonatomic, readonly, assign) UILongPressGestureRecognizer *loupeGesture;
 @property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;
 @end

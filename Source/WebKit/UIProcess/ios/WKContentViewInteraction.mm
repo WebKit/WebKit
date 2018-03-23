@@ -576,6 +576,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 @implementation WKContentView (WKInteraction)
 
+static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeInformation)
+{
+    return (assistedNodeInformation.elementType != InputType::None);
+}
+
 - (void)_createAndConfigureDoubleTapGestureRecognizer
 {
     _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
@@ -1266,7 +1271,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (UIView *)inputView
 {
-    if (_assistedNodeInformation.elementType == InputType::None)
+    if (!hasAssistedNode(_assistedNodeInformation))
         return nil;
 
     if (!_inputPeripheral)
@@ -1279,7 +1284,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (CGRect)_selectionClipRect
 {
-    if (_assistedNodeInformation.elementType == InputType::None)
+    if (!hasAssistedNode(_assistedNodeInformation))
         return CGRectNull;
     return _page->editorState().postLayoutData().selectionClipRect;
 }
@@ -1295,10 +1300,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer {
     // Don't allow the highlight to be prevented by a selection gesture. Press-and-hold on a link should highlight the link, not select it.
-    if ((preventingGestureRecognizer == _textSelectionAssistant.get().loupeGesture || [_webSelectionAssistant isSelectionGestureRecognizer:preventingGestureRecognizer])
-        && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer)) {
+    bool isForcePressGesture = NO;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+    isForcePressGesture = (preventingGestureRecognizer == _textSelectionAssistant.get().forcePressGesture);
+#endif
+    if ((preventingGestureRecognizer == _textSelectionAssistant.get().loupeGesture || isForcePressGesture || [_webSelectionAssistant isSelectionGestureRecognizer:preventingGestureRecognizer]) && (preventedGestureRecognizer == _highlightLongPressGestureRecognizer || preventedGestureRecognizer == _longPressGestureRecognizer))
         return NO;
-    }
 
     return YES;
 }
@@ -1315,7 +1322,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _webSelectionAssistant.get().selectionLongPressRecognizer))
         return YES;
-
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _textSelectionAssistant.get().forcePressGesture))
+        return YES;
+#endif
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleTapGestureRecognizer.get(), _textSelectionAssistant.get().singleTapGesture))
         return YES;
 
@@ -1518,7 +1528,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         || gestureRecognizer == _twoFingerDoubleTapGestureRecognizer
         || gestureRecognizer == _singleTapGestureRecognizer) {
 
-        if (_textSelectionAssistant) {
+        if (hasAssistedNode(_assistedNodeInformation)) {
             // Request information about the position with sync message.
             // If the assisted node is the same, prevent the gesture.
             if (![self ensurePositionInformationIsUpToDate:InteractionInformationRequest(roundedIntPoint(point))])
@@ -1529,30 +1539,30 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     }
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer) {
-        if (_textSelectionAssistant) {
+        if (hasAssistedNode(_assistedNodeInformation)) {
             // This is a different node than the assisted one.
             // Prevent the gesture if there is no node.
             // Allow the gesture if it is a node that wants highlight or if there is an action for it.
             if (!_positionInformation.isElement)
                 return NO;
             return [self _actionForLongPress] != nil;
-        } else {
-            // We still have no idea about what is at the location.
-            // Send and async message to find out.
-            _hasValidPositionInformation = NO;
-            InteractionInformationRequest request(roundedIntPoint(point));
-
-            // If 3D Touch is enabled, asynchronously collect snapshots in the hopes that
-            // they'll arrive before we have to synchronously request them in
-            // _interactionShouldBeginFromPreviewItemController.
-            if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
-                request.includeSnapshot = true;
-                request.includeLinkIndicator = true;
-            }
-
-            [self requestAsynchronousPositionInformationUpdate:request];
-            return YES;
         }
+        // We still have no idea about what is at the location.
+        // Send an async message to find out.
+        _hasValidPositionInformation = NO;
+        InteractionInformationRequest request(roundedIntPoint(point));
+
+        // If 3D Touch is enabled, asynchronously collect snapshots in the hopes that
+        // they'll arrive before we have to synchronously request them in
+        // _interactionShouldBeginFromPreviewItemController.
+        if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
+            request.includeSnapshot = true;
+            request.includeLinkIndicator = true;
+        }
+
+        [self requestAsynchronousPositionInformationUpdate:request];
+        return YES;
+
     }
 
     if (gestureRecognizer == _longPressGestureRecognizer) {
@@ -1563,7 +1573,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (![self ensurePositionInformationIsUpToDate:request])
             return NO;
 
-        if (_textSelectionAssistant) {
+        if (hasAssistedNode(_assistedNodeInformation)) {
             // Prevent the gesture if it is the same node.
             if (_positionInformation.nodeAtPositionIsAssistedNode)
                 return NO;
@@ -1650,6 +1660,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (self.isAssistingNode)
         return _positionInformation.nodeAtPositionIsAssistedNode;
 
+    // If we're selecting something, don't activate highlight.
+    if (gesture == UIWKGestureLoupe && [self hasSelectablePositionAtPoint:point])
+        [self _cancelLongPressGestureRecognizer];
+    
     // Otherwise, if we're using a text interaction assistant outside of editing purposes (e.g. the selection mode
     // is character granularity) then allow text selection.
     return YES;
@@ -1682,7 +1696,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (NSArray *)webSelectionRects
 {
-    if (_page->editorState().selectionIsNone)
+    if (_page->editorState().isMissingPostLayoutData || _page->editorState().selectionIsNone)
         return nil;
     const auto& selectionRects = _page->editorState().postLayoutData().selectionRects;
     return [self webSelectionRectsForSelectionRects:selectionRects];
@@ -4023,7 +4037,7 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
 {
-    SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, _assistedNodeInformation.elementType != InputType::None };
+    SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasAssistedNode(_assistedNodeInformation) };
     _inputViewUpdateDeferrer = nullptr;
 
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
@@ -4034,7 +4048,7 @@ static bool isAssistableInputType(InputType type)
         shouldShowKeyboard = [inputDelegate _webView:_webView focusShouldStartInputSession:focusedElementInfo.get()];
     else {
         // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
-        shouldShowKeyboard = userIsInteracting || _textSelectionAssistant || changingActivityState;
+        shouldShowKeyboard = userIsInteracting || _isChangingFocus || changingActivityState;
 #if ENABLE(DATA_INTERACTION)
         shouldShowKeyboard |= _dragDropInteractionState.isPerformingDrop();
 #endif
@@ -5150,7 +5164,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 - (NSDictionary *)_autofillContext
 {
     BOOL provideStrongPasswordAssistance = _focusRequiresStrongPasswordAssistance && _assistedNodeInformation.elementType == InputType::Password;
-    if (_assistedNodeInformation.elementType == InputType::None || (!_assistedNodeInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
+    if (!hasAssistedNode(_assistedNodeInformation) || (!_assistedNodeInformation.acceptsAutofilledLoginCredentials && !provideStrongPasswordAssistance))
         return nil;
 
     if (provideStrongPasswordAssistance)
