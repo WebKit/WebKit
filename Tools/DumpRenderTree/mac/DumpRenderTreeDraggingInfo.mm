@@ -246,15 +246,19 @@ static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError *&
     // Ignored.
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 static NSMutableArray<NSFilePromiseReceiver *> *allFilePromiseReceivers()
 {
     static NSMutableArray<NSFilePromiseReceiver *> *allReceivers = [[NSMutableArray alloc] init];
     return allReceivers;
 }
+#endif
 
 + (void)clearAllFilePromiseReceivers
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     [allFilePromiseReceivers() removeAllObjects];
+#endif
 }
 
 - (void)enumerateDraggingItemsWithOptions:(NSEnumerationOptions)enumOptions forView:(NSView *)view classes:(NSArray *)classArray searchOptions:(NSDictionary *)searchOptions usingBlock:(void (^)(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop))block
