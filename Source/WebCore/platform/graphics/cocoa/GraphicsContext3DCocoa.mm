@@ -168,7 +168,7 @@ private:
 
     Timer m_disableHighPerformanceGPUTimer;
 
-#if USE(OPENGL)
+#if PLATFORM(MAC)
     CGLPixelFormatObj m_pixelFormatObj { nullptr };
 #endif
 };
