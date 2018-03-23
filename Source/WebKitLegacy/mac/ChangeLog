@@ -1,3 +1,15 @@
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt WK_PLATFORM_NAME in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=183948
+        <rdar://problem/38803908>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * MigrateHeaders.make:
+        * postprocess-headers.sh:
+
 2018-03-23  Brady Eidson  <beidson@apple.com>
 
         Go to back/forward list items after a process-swapped navigation.

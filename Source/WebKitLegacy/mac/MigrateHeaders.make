@@ -34,7 +34,7 @@ HEADERS = \
     $(PRIVATE_HEADERS_DIR)/WebScriptObject.h \
 #
 
-ifeq ($(PLATFORM_NAME), macosx)
+ifeq ($(WK_PLATFORM_NAME), macosx)
 HEADERS += \
     $(PRIVATE_HEADERS_DIR)/npapi.h \
     $(PRIVATE_HEADERS_DIR)/npfunctions.h \
@@ -43,7 +43,7 @@ HEADERS += \
 #
 endif
 
-ifneq ($(PLATFORM_NAME), macosx)
+ifneq ($(WK_PLATFORM_NAME), macosx)
 HEADERS += \
     $(PRIVATE_HEADERS_DIR)/AbstractPasteboard.h \
     $(PRIVATE_HEADERS_DIR)/KeyEventCodesIOS.h \
@@ -76,7 +76,7 @@ WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@; tou
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)
 
-ifneq ($(PLATFORM_NAME), macosx)
+ifneq ($(WK_PLATFORM_NAME), macosx)
 REEXPORT_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/ReexportedWebCoreSymbols_$(CURRENT_ARCH).exp
 
 all : $(REEXPORT_FILE)

@@ -1,3 +1,13 @@
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt WK_PLATFORM_NAME in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=183948
+        <rdar://problem/38803908>
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2018-02-28  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of NetworkingContext in WebKit

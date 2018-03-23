@@ -14,9 +14,9 @@ postProcessInDirectory()
         USE_APPLE_INTERNAL_SDK=0
     fi
 
-    if [[ ${PLATFORM_NAME} == macosx ]]; then
+    if [[ ${WK_PLATFORM_NAME} == macosx ]]; then
         unifdefOptions="-DTARGET_OS_IPHONE=0 -DTARGET_OS_SIMULATOR=0";
-    elif [[ ${PLATFORM_NAME} == *simulator* ]]; then
+    elif [[ ${WK_PLATFORM_NAME} == *simulator* ]]; then
         unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=1 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}";
     else
         unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=0 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}";
@@ -36,7 +36,7 @@ postProcessInDirectory()
         fi
     done
 
-    if [[ ${PLATFORM_NAME} == macosx ]]; then
+    if [[ ${WK_PLATFORM_NAME} == macosx ]]; then
         sedExpression='s/WEBKIT_((CLASS_|ENUM_)?AVAILABLE|DEPRECATED)/NS_\1/g';
     else
         sedExpression='s/ *WEBKIT_((CLASS_|ENUM_)?AVAILABLE|DEPRECATED)_MAC\([^)]+\)//g';
