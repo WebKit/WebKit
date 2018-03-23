@@ -1,3 +1,18 @@
+2018-03-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Expose more system colors via CSS
+        https://bugs.webkit.org/show_bug.cgi?id=183764
+        <rdar://problem/36975898>
+
+        Reviewed by Tim Horton.
+
+        Test: fast/css/apple-system-control-colors.html
+
+        Expose Apple specific system colors via CSS.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
 2018-03-22  Nan Wang  <n_wang@apple.com>
 
         AX: Web table row count is incorrect when role row is added to <tr> in DOM

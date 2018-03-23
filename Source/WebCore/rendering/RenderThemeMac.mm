@@ -550,6 +550,22 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, bool useSystemAppearanc
                 return @selector(windowFrameColor);
             case CSSValueWindowtext:
                 return @selector(windowFrameTextColor);
+            case CSSValueAppleSystemHeaderText:
+                return @selector(headerTextColor);
+            case CSSValueAppleSystemTextBackground:
+                return @selector(textBackgroundColor);
+            case CSSValueAppleSystemAlternateSelectedText:
+                return @selector(alternateSelectedControlTextColor);
+            case CSSValueAppleSystemLabel:
+                return @selector(labelColor);
+            case CSSValueAppleSystemSecondaryLabel:
+                return @selector(secondaryLabelColor);
+            case CSSValueAppleSystemTertiaryLabel:
+                return @selector(tertiaryLabelColor);
+            case CSSValueAppleSystemQuaternaryLabel:
+                return @selector(quaternaryLabelColor);
+            case CSSValueAppleSystemGrid:
+                return @selector(gridColor);
             case CSSValueAppleWirelessPlaybackTargetActive:
                 return @selector(systemBlueColor);
             case CSSValueAppleSystemBlue:

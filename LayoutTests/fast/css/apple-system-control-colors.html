@@ -1,0 +1,32 @@
+<script>
+    
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+    
+    window.addEventListener("load", run, false);
+    
+    function run() {
+        var divs = document.querySelectorAll("div");
+        for (var i = 0; i < divs.length; i++) {
+            var div = divs[i];
+            var span = div.querySelector("span");
+            div.innerHTML += " : " + window.getComputedStyle(span).backgroundColor;
+        }
+    }
+</script>
+<style>
+    .swatch {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+    }
+</style>
+<div><span class="swatch" style="background-color: -apple-system-header-text"></span>-apple-system-header-text</div>
+<div><span class="swatch" style="background-color: -apple-system-text-background"></span>-apple-system-text-background</div>
+<div><span class="swatch" style="background-color: -apple-system-alternate-selected-text"></span>-apple-system-alternate-selected-text</div>
+<div><span class="swatch" style="background-color: -apple-system-label"></span>-apple-system-label</div>
+<div><span class="swatch" style="background-color: -apple-system-secondary-label"></span>-apple-system-secondary-label</div>
+<div><span class="swatch" style="background-color: -apple-system-tertiary-label"></span>-apple-system-tertiary-label</div>
+<div><span class="swatch" style="background-color: -apple-system-quaternary-label"></span>-apple-system-quaternary-label</div>
+<div><span class="swatch" style="background-color: -apple-system-grid"></span>-apple-system-grid</div>
+<div style="color: -apple-system-label"><span class="swatch" style="background-color: currentcolor;"></span>current-color with inherited -apple-system-label</div>
