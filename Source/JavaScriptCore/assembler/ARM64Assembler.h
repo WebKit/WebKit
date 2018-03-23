@@ -3034,7 +3034,9 @@ protected:
         ASSERT_UNUSED(isCall, (link == isCall) || disassembleNop(from));
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
-        intptr_t offset = (removeCodePtrTag<intptr_t>(to) - removeCodePtrTag<intptr_t>(fromInstruction)) >> 2;
+        assertIsNotTagged(to);
+        assertIsNotTagged(fromInstruction);
+        intptr_t offset = (reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
         int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));

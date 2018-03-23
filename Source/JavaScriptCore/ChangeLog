@@ -1,3 +1,18 @@
+2018-03-23  Mark Lam  <mark.lam@apple.com>
+
+        Add more support for pointer profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=183943
+        <rdar://problem/38799068>
+
+        Reviewed by JF Bastien.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::repatchNearCall):
+        (JSC::AbstractMacroAssembler::tagReturnAddress):
+        (JSC::AbstractMacroAssembler::untagReturnAddress):
+
 2018-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add standard containers with FastAllocator specialization

@@ -895,6 +895,7 @@ public:
 
     static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)
     {
+        assertIsTaggedWith(destination.executableAddress(), NearCallPtrTag);
         switch (nearCall.callMode()) {
         case NearCallMode::Tail:
             AssemblerType::relinkJump(nearCall.dataLocation(), destination.dataLocation());
@@ -952,6 +953,9 @@ public:
         AssemblerType::fillNops(static_cast<char*>(buffer.data()) + startCodeSize, memoryToFillWithNopsInBytes, isCopyingToExecutableMemory);
         buffer.setCodeSize(targetCodeSize);
     }
+
+    ALWAYS_INLINE void tagReturnAddress() { }
+    ALWAYS_INLINE void untagReturnAddress() { }
 
     ALWAYS_INLINE void tagPtr(RegisterID, PtrTag) { }
     ALWAYS_INLINE void tagPtr(RegisterID, RegisterID) { }
