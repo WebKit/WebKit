@@ -47,6 +47,8 @@ ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext)
 
 ActiveDOMObject::~ActiveDOMObject()
 {
+    ASSERT(canAccessThreadLocalDataForThread(m_creationThread));
+
     // ActiveDOMObject may be inherited by a sub-class whose life-cycle
     // exceeds that of the associated ScriptExecutionContext. In those cases,
     // m_scriptExecutionContext would/should have been nullified by

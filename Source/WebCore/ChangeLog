@@ -1,5 +1,22 @@
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
+        ActiveDOMObject should assert that they are destroyed in the thread they are created
+        https://bugs.webkit.org/show_bug.cgi?id=183671
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+        Moved MessagePort assertion to ActiveDOMObject.
+
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::~ActiveDOMObject):
+        * dom/ActiveDOMObject.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::~MessagePort):
+        * dom/MessagePort.h:
+
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
         Safari WebKitWebRTCAudioModule crash during <video> tag update when audio track present in MediaStream
         https://bugs.webkit.org/show_bug.cgi?id=181180
         <rdar://problem/36302375>
