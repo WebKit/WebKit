@@ -34,6 +34,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.w3c.wpt_github import WPTGitHub
+from webkitpy.w3c.wpt_linter import WPTLinter
 
 _log = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
 class TestExporter(object):
 
-    def __init__(self, host, options, gitClass=Git, bugzillaClass=Bugzilla, WPTGitHubClass=WPTGitHub):
+    def __init__(self, host, options, gitClass=Git, bugzillaClass=Bugzilla, WPTGitHubClass=WPTGitHub, WPTLinterClass=WPTLinter):
         self._host = host
         self._filesystem = host.filesystem
         self._options = options
@@ -64,6 +65,7 @@ class TestExporter(object):
             self._options.repository_directory = webkit_finder.path_from_webkit_base('WebKitBuild', 'w3c-tests', 'web-platform-tests')
 
         self._git = self._ensure_wpt_repository("https://github.com/w3c/web-platform-tests.git", self._options.repository_directory, gitClass)
+        self._linter = WPTLinterClass(self._options.repository_directory, host.filesystem)
 
         self._username = options.username
         if not self._username:
@@ -240,6 +242,13 @@ class TestExporter(object):
         if git_patch_file:
             self._filesystem.remove(git_patch_file)
 
+        lint_errors = self._linter.lint()
+        if lint_errors:
+            _log.error("The wpt linter detected %s linting error(s). Please address the above errors before attempting to export changes to the web-platform-test repository." % (lint_errors,))
+            self.delete_local_branch()
+            self.clean()
+            return
+
         try:
             if self.push_to_wpt_fork():
                 if self._options.create_pull_request:
@@ -295,7 +304,7 @@ def configure_logging():
                 return "%s: %s" % (record.levelname, record.getMessage())
             return record.getMessage()
 
-    logger = logging.getLogger()
+    logger = logging.getLogger('webkitpy.w3c.test_exporter')
     logger.setLevel(logging.INFO)
     handler = LogHandler()
     handler.setLevel(logging.INFO)

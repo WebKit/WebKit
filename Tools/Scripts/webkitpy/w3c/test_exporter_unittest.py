@@ -28,6 +28,7 @@ from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.w3c.test_exporter import TestExporter, parse_args
 from webkitpy.w3c.wpt_github_mock import MockWPTGitHub
 
+mock_linter = None
 
 class TestExporterTest(unittest.TestCase):
     maxDiff = None
@@ -105,10 +106,24 @@ class TestExporterTest(unittest.TestCase):
         def scm(self):
             return self._mockSCM
 
+    class MockWPTLinter(object):
+        def __init__(self, repository_directory, filesystem):
+            self.calls = [repository_directory]
+            # workaround to appease the style checker which thinks
+            # exporter._linter is an instance of WPTLinter and
+            # complains if we try to access the calls property which
+            # only exists on MockWPTLinter
+            global mock_linter
+            mock_linter = self
+
+        def lint(self):
+            self.calls.append('lint')
+            return 0
+
     def test_export(self):
         host = TestExporterTest.MyMockHost()
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN'])
-        exporter = TestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub)
+        exporter = TestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub, TestExporterTest.MockWPTLinter)
         exporter.do_export()
         self.assertEquals(exporter._github.calls, ['create_pr', 'add_label "webkit-export"'])
         self.assertTrue('WebKit export' in exporter._github.pull_requests_created[0][1])
@@ -131,11 +146,12 @@ class TestExporterTest(unittest.TestCase):
         self.assertEquals(exporter._bugzilla.calls, [
             'fetch bug 1234',
             'post comment to bug 1234 : Submitted web-platform-tests pull request: https://github.com/w3c/web-platform-tests/pull/5678'])
+        self.assertEquals(mock_linter.calls, ['/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests', 'lint'])
 
     def test_export_with_specific_branch(self):
         host = TestExporterTest.MyMockHost()
         options = parse_args(['test_exporter.py', '-g', 'HEAD', '-b', '1234', '-c', '-n', 'USER', '-t', 'TOKEN', '-bn', 'wpt-export-branch'])
-        exporter = TestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub)
+        exporter = TestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub, TestExporterTest.MockWPTLinter)
         exporter.do_export()
         self.assertEquals(exporter._git.calls, [
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests',

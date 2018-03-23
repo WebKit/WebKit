@@ -1,3 +1,24 @@
+2018-03-23  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Lint web-platform-tests changes with the wpt linter before exporting
+        https://bugs.webkit.org/show_bug.cgi?id=183796
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (TestExporter.__init__):
+        (TestExporter.do_export):
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py:
+        (TestExporterTest.MockWPTLinter):
+        (TestExporterTest.MockWPTLinter.__init__):
+        (TestExporterTest.MockWPTLinter.lint):
+        (TestExporterTest.test_export):
+        (TestExporterTest.test_export_with_specific_branch):
+        * Scripts/webkitpy/w3c/wpt_linter.py: Added.
+        (WPTLinter):
+        (WPTLinter.__init__):
+        (WPTLinter.lint):
+
 2018-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Stop using dispatch_set_target_queue()
