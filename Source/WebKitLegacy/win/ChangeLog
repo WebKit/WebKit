@@ -1,3 +1,9 @@
+2018-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix Windows build after r229926.
+
+        * WebView.cpp:
+
 2018-03-23  Brady Eidson  <beidson@apple.com>
 
         Go to back/forward list items after a process-swapped navigation.
