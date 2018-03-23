@@ -121,6 +121,10 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
         extraInitializationData.add(ASCIILiteral("service-worker-process"), serviceWorkerProcess);
 #endif
 
+    String securityOrigin = xpc_dictionary_get_string(extraDataInitializationDataObject, "security-origin");
+    if (!securityOrigin.isEmpty())
+        extraInitializationData.add(ASCIILiteral("security-origin"), securityOrigin);
+
     if (!isClientSandboxed()) {
         String userDirectorySuffix = xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix");
         if (!userDirectorySuffix.isEmpty())

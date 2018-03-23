@@ -1,3 +1,21 @@
+2018-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Include security origin in the service worker process name
+        https://bugs.webkit.org/show_bug.cgi?id=183913
+
+        Reviewed by Youenn Fablet.
+
+        Include security origin in the service worker process name to facilitate debugging. This way, we
+        can differentiate which service worker process is used for which origin in activity monitor.
+
+        * Shared/ChildProcess.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::getLaunchOptions):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeProcessName):
+
 2018-03-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, silence unused variable warning

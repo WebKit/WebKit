@@ -1,3 +1,14 @@
+2018-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Include security origin in the service worker process name
+        https://bugs.webkit.org/show_bug.cgi?id=183913
+
+        Reviewed by Youenn Fablet.
+
+        Updated localizable strings.
+
+        * English.lproj/Localizable.strings:
+
 2018-03-22  Youenn Fablet  <youenn@apple.com>
 
         Use libwebrtc ObjectiveC H264 encoder and decoder

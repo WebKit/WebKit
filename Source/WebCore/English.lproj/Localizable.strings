@@ -41,7 +41,7 @@
 "%@ SDH" = "%@ SDH";
 
 /* Visible name of Service Worker process. The argument is the application name. */
-"%@ Service Worker" = "%@ Service Worker";
+"%@ Service Worker (%@)" = "%@ Service Worker (%@)";
 
 /* visible name of the storage process. The argument is the application name. */
 "%@ Storage" = "%@ Storage";
@@ -114,9 +114,6 @@
 
 /* Label text to be used when an insecure plug-in version was blocked from loading */
 "Blocked Plug-In (Insecure plug-in)" = "Blocked Plug-in";
-
-/* Label text to be used when an insecure plug-in version was blocked from loading */
-"Unsupported Plug-In" = "Unsupported Plug-in";
 
 /* Bold context menu item */
 "Bold" = "Bold";
@@ -215,7 +212,10 @@
 "Cut (Undo action name)" = "Cut";
 
 /* Day label in date picker */
-"Day label in date picker" = "Day";
+"Day label in date picker" = "Day label in date picker";
+
+/* Fullscreen Deceptive Website Warning Sheet Title */
+"Deceptive Website Warning" = "Deceptive Website Warning";
 
 /* Default writing direction context menu item */
 "Default" = "Default";
@@ -229,11 +229,8 @@
 /* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
 
-/* Text of button that exits element fullscreen. */
-"Done" = "Done";
-
 /* Title of the Done button for zoomed form controls. */
-"Done (extra zoomed form controls)" = "Done";
+"Done (extra zoomed form controls)" = "Done (extra zoomed form controls)";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
@@ -273,6 +270,9 @@
 
 /* Video Exit Fullscreen context menu item */
 "Exit Full Screen (context menu)" = "Exit Full Screen";
+
+/* Fullscreen Deceptive Website Exit Action */
+"Exit Fullscreen" = "Exit Fullscreen";
 
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
@@ -416,7 +416,7 @@
 "Missing Plug-in" = "Missing Plug-in";
 
 /* Month label in date picker */
-"Month label in date picker" = "Month";
+"Month label in date picker" = "Month label in date picker";
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
@@ -643,6 +643,9 @@
 /* Start speaking context menu item */
 "Start Speaking" = "Start Speaking";
 
+/* Fullscreen Deceptive Website Stay Action */
+"Stay in Fullscreen" = "Stay in Fullscreen";
+
 /* Stop context menu item */
 "Stop" = "Stop";
 
@@ -654,6 +657,9 @@
 
 /* Stop speaking context menu item */
 "Stop Speaking" = "Stop Speaking";
+
+/* Label for strong password. */
+"Strong Password" = "Strong Password";
 
 /* Styles context menu item */
 "Styles…" = "Styles…";
@@ -724,6 +730,9 @@
 /* prompt string in authentication panel */
 "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
 
+/* Fullscreen Deceptive Website Warning Sheet Content Text */
+"The website \"%@\" may be a deceptive website. Would you like to exit fullscreen?" = "The website \"%@\" may be a deceptive website. Would you like to exit fullscreen?";
+
 /* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
 
@@ -774,6 +783,9 @@
 
 /* Undo action name */
 "Unscript (Undo action name)" = "Unscript";
+
+/* Label text to be used when an unsupported plug-in was blocked from loading */
+"Unsupported Plug-In" = "Unsupported Plug-in";
 
 /* Undo action name */
 "Use All Ligatures (Undo action name)" = "Use All Ligatures";
@@ -827,7 +839,7 @@
 "Write" = "Write";
 
 /* Year label in date picker */
-"Year label in date picker" = "Year";
+"Year label in date picker" = "Year label in date picker";
 
 /* message in authentication panel */
 "Your login information will be sent securely." = "Your login information will be sent securely.";
@@ -1200,9 +1212,6 @@
 
 /* Label for the strong confirmation password auto fill button inside a text field. */
 "strong confirmation password auto fill" = "strong confirmation password auto fill";
-
-/* Label for strong password. */
-"Strong Password" = "Strong Password";
 
 /* Label for the strong password auto fill button inside a text field. */
 "strong password auto fill" = "strong password auto fill";

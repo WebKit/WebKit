@@ -71,6 +71,7 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
     WebProcessProxy::getLaunchOptions(launchOptions);
 
     launchOptions.extraInitializationData.add(ASCIILiteral("service-worker-process"), ASCIILiteral("1"));
+    launchOptions.extraInitializationData.add(ASCIILiteral("security-origin"), origin().toString());
 }
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store, std::optional<PAL::SessionID> initialSessionID)

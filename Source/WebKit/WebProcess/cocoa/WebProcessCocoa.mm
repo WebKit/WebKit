@@ -192,7 +192,7 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
 #if ENABLE(SERVICE_WORKER)
     else if (parameters.extraInitializationData.get(ASCIILiteral("service-worker-process")) == "1")
-        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Service Worker", "Visible name of Service Worker process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Service Worker (%@)", "Visible name of Service Worker process. The argument is the application name."), (NSString *)parameters.uiProcessName, (NSString *)parameters.extraInitializationData.get(ASCIILiteral("security-origin"))];
 #endif
     else
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
