@@ -535,6 +535,11 @@
 		A8A4730E151A825B004123FF /* StackBounds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackBounds.cpp; sourceTree = "<group>"; };
 		A8A4730F151A825B004123FF /* StackBounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackBounds.h; sourceTree = "<group>"; };
 		A8A47311151A825B004123FF /* StdLibExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdLibExtras.h; sourceTree = "<group>"; };
+		FF0A436588954F3CB07DBECA /* StdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdList.h; sourceTree = "<group>"; };
+		391BD6BA4D164FD294F9A93D /* StdMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdMap.h; sourceTree = "<group>"; };
+		53F08A1BA39D49A8BAD369A1 /* StdSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdSet.h; sourceTree = "<group>"; };
+		793BFADD9CED44B8B9FBCA16 /* StdUnorderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUnorderedMap.h; sourceTree = "<group>"; };
+		132743924FC54E469F5A8E6E /* StdUnorderedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUnorderedSet.h; sourceTree = "<group>"; };
 		A8A47313151A825B004123FF /* StringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExtras.h; sourceTree = "<group>"; };
 		A8A47314151A825B004123FF /* Hasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hasher.h; sourceTree = "<group>"; };
 		A8A4731A151A825B004123FF /* SetForScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetForScope.h; sourceTree = "<group>"; };
@@ -1061,6 +1066,11 @@
 				313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */,
 				EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */,
 				A8A47311151A825B004123FF /* StdLibExtras.h */,
+				FF0A436588954F3CB07DBECA /* StdList.h */,
+				391BD6BA4D164FD294F9A93D /* StdMap.h */,
+				53F08A1BA39D49A8BAD369A1 /* StdSet.h */,
+				793BFADD9CED44B8B9FBCA16 /* StdUnorderedMap.h */,
+				132743924FC54E469F5A8E6E /* StdUnorderedSet.h */,
 				C4F8A93619C65EB400B2B15D /* Stopwatch.h */,
 				1A6BB768162F300500DD16DB /* StreamBuffer.h */,
 				A8A47313151A825B004123FF /* StringExtras.h */,

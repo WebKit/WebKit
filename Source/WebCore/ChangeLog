@@ -1,3 +1,28 @@
+2018-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add standard containers with FastAllocator specialization
+        https://bugs.webkit.org/show_bug.cgi?id=183789
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/mediasource/SampleMap.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        * Modules/webauthn/cbor/CBORValue.h:
+        It did not use FastAllocator for its container.
+
+        * page/WheelEventTestTrigger.h:
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.h:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::YCbCrToRGBMatrixForRangeAndTransferFunction):
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        * platform/wpe/PlatformPasteboardWPE.cpp:
+        * rendering/OrderIterator.h:
+
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] infinite repeat counts aren't reflected for CSS Animations

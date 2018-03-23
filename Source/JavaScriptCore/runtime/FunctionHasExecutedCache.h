@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <unordered_map>
 #include <wtf/HashMethod.h>
+#include <wtf/StdUnorderedMap.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -54,8 +54,8 @@ public:
     Vector<std::tuple<bool, unsigned, unsigned>> getFunctionRanges(intptr_t id);
 
 private:
-    using RangeMap = std::unordered_map<FunctionRange, bool, HashMethod<FunctionRange>, std::equal_to<FunctionRange>, FastAllocator<std::pair<const FunctionRange, bool>>>;
-    using SourceIDToRangeMap = std::unordered_map<intptr_t, RangeMap, std::hash<intptr_t>, std::equal_to<intptr_t>, FastAllocator<std::pair<const intptr_t, RangeMap>>>;
+    using RangeMap = StdUnorderedMap<FunctionRange, bool, HashMethod<FunctionRange>>;
+    using SourceIDToRangeMap = StdUnorderedMap<intptr_t, RangeMap>;
     SourceIDToRangeMap m_rangeMap;
 };
 

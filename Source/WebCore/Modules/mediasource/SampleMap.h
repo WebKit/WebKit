@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <map>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdMap.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class SampleMap;
 class PresentationOrderSampleMap {
     friend class SampleMap;
 public:
-    using MapType = std::map<MediaTime, RefPtr<MediaSample>, std::less<MediaTime>, FastAllocator<std::pair<const MediaTime, RefPtr<MediaSample>>>>;
+    using MapType = StdMap<MediaTime, RefPtr<MediaSample>>;
     typedef MapType::iterator iterator;
     typedef MapType::const_iterator const_iterator;
     typedef MapType::reverse_iterator reverse_iterator;
@@ -72,7 +72,7 @@ class DecodeOrderSampleMap {
     friend class SampleMap;
 public:
     typedef std::pair<MediaTime, MediaTime> KeyType;
-    using MapType = std::map<KeyType, RefPtr<MediaSample>, std::less<KeyType>, FastAllocator<std::pair<const KeyType, RefPtr<MediaSample>>>>;
+    using MapType = StdMap<KeyType, RefPtr<MediaSample>>;
     typedef MapType::iterator iterator;
     typedef MapType::const_iterator const_iterator;
     typedef MapType::reverse_iterator reverse_iterator;

@@ -67,12 +67,12 @@
 #include "LinkBuffer.h"
 #include "PureNaN.h"
 #include <cmath>
-#include <list>
 #include <string>
 #include <wtf/FastTLS.h>
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/StdList.h>
 #include <wtf/Threading.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
@@ -16022,7 +16022,7 @@ NEVER_INLINE bool doubleLte(double a, double b) { return a <= b; }
 void testDoubleLiteralComparison(double a, double b)
 {
     using Test = std::tuple<B3::Opcode, bool (*)(double, double)>;
-    std::list<Test> tests = {
+    StdList<Test> tests = {
         Test { NotEqual, doubleNeq },
         Test { Equal, doubleEq },
         Test { EqualOrUnordered, doubleEq },
@@ -16076,7 +16076,7 @@ void testFloatEqualOrUnorderedFolding()
 
 void testFloatEqualOrUnorderedFoldingNaN()
 {
-    std::list<float> nans = {
+    StdList<float> nans = {
         bitwise_cast<float>(0xfffffffd),
         bitwise_cast<float>(0xfffffffe),
         bitwise_cast<float>(0xfffffff0),

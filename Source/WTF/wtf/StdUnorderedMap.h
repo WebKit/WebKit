@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,14 @@
 
 #pragma once
 
-#include "TypeLocation.h"
+#include <unordered_map>
 #include <wtf/FastMalloc.h>
-#include <wtf/HashMethod.h>
-#include <wtf/StdUnorderedMap.h>
 
-namespace JSC {
+namespace WTF {
 
-class VM;
+template<typename Key, typename Value, typename Hash = std::hash<Key>, typename Predicate = std::equal_to<Key>, typename Allocator = FastAllocator<std::pair<const Key, Value>>>
+using StdUnorderedMap = std::unordered_map<Key, Value, Hash, Predicate, Allocator>;
 
-class TypeLocationCache {
-public:
-    struct LocationKey {
-        LocationKey() {}
-        bool operator==(const LocationKey& other) const 
-        {
-            return m_globalVariableID == other.m_globalVariableID
-                && m_sourceID == other.m_sourceID
-                && m_start == other.m_start
-                && m_end == other.m_end;
-        }
+} // namespace WTF
 
-        unsigned hash() const
-        {
-            return m_globalVariableID + m_sourceID + m_start + m_end;
-        }
-
-        GlobalVariableID m_globalVariableID;
-        intptr_t m_sourceID;
-        unsigned m_start;
-        unsigned m_end;
-    };
-
-    std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, intptr_t, unsigned start, unsigned end, RefPtr<TypeSet>&&, VM*);
-private:
-    using LocationMap = StdUnorderedMap<LocationKey, TypeLocation*, HashMethod<LocationKey>>;
-    LocationMap m_locationMap;
-};
-
-} // namespace JSC
+using WTF::StdUnorderedMap;

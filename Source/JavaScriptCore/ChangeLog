@@ -1,5 +1,24 @@
 2018-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Add standard containers with FastAllocator specialization
+        https://bugs.webkit.org/show_bug.cgi?id=183789
+
+        Reviewed by Darin Adler.
+
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testDoubleLiteralComparison):
+        (JSC::B3::testFloatEqualOrUnorderedFoldingNaN):
+        * dfg/DFGGraph.h:
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        * runtime/FunctionHasExecutedCache.h:
+        * runtime/TypeLocationCache.h:
+
+2018-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [FTL] Fix ArrayPush(ArrayStorage)'s abstract heap
         https://bugs.webkit.org/show_bug.cgi?id=182960
 

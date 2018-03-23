@@ -49,7 +49,6 @@
 #import <AVFoundation/AVAssetTrack.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
 #import <QuartzCore/CALayer.h>
-#import <map>
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>

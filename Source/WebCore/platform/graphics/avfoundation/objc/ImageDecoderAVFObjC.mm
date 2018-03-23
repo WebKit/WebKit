@@ -47,7 +47,6 @@
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVTime.h>
 #import <VideoToolbox/VTUtilities.h>
-#import <map>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>

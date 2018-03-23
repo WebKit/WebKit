@@ -29,11 +29,11 @@
 #pragma once
 
 #include <functional>
-#include <set>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
+#include <wtf/StdSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -52,7 +52,7 @@ public:
         ScrollingThreadSyncNeeded,
         ContentScrollInProgress
     };
-    using DeferTestTriggerReasonSet = std::set<DeferTestTriggerReason, std::less<DeferTestTriggerReason>, FastAllocator<DeferTestTriggerReason>>;
+    using DeferTestTriggerReasonSet = StdSet<DeferTestTriggerReason>;
     typedef const void* ScrollableAreaIdentifier;
     void WEBCORE_EXPORT deferTestsForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
     void WEBCORE_EXPORT removeTestDeferralForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);

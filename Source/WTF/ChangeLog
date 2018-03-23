@@ -1,3 +1,27 @@
+2018-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add standard containers with FastAllocator specialization
+        https://bugs.webkit.org/show_bug.cgi?id=183789
+
+        Reviewed by Darin Adler.
+
+        Sometimes we want standard containers due to various reasons.
+        For example, WTF::HashMap lacks the ability to hold all the
+        integer keys since it uses 0 for empty value and -1 for deleted
+        value. However, using std::containers use std::allocator without
+        specialization.
+
+        This patch introduces WTF::{StdMap, StdSet, StdList, StdUnorderedMap, StdUnorderedSet}.
+        They are standard containers with FastAllocator specialization.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/StdList.h: Copied from Source/JavaScriptCore/runtime/TypeLocationCache.h.
+        * wtf/StdMap.h: Copied from Source/JavaScriptCore/runtime/TypeLocationCache.h.
+        * wtf/StdSet.h: Copied from Source/JavaScriptCore/runtime/TypeLocationCache.h.
+        * wtf/StdUnorderedMap.h: Copied from Source/JavaScriptCore/runtime/TypeLocationCache.h.
+        * wtf/StdUnorderedSet.h: Copied from Source/JavaScriptCore/runtime/TypeLocationCache.h.
+
 2018-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Adopt USE(OPENGL[_ES]) in more places

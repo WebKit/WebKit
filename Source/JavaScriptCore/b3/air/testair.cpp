@@ -40,10 +40,10 @@
 #include "LinkBuffer.h"
 #include "PureNaN.h"
 #include <cmath>
-#include <map>
 #include <string>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/StdMap.h>
 #include <wtf/Threading.h>
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
@@ -124,11 +124,11 @@ template<typename T>
 void loadConstantImpl(BasicBlock* block, T value, B3::Air::Opcode move, Tmp tmp, Tmp scratch)
 {
     static StaticLock lock;
-    static std::map<T, T*>* map; // I'm not messing with HashMap's problems with integers.
+    static StdMap<T, T*>* map; // I'm not messing with HashMap's problems with integers.
 
     LockHolder locker(lock);
     if (!map)
-        map = new std::map<T, T*>();
+        map = new StdMap<T, T*>();
 
     if (!map->count(value))
         (*map)[value] = new T(value);

@@ -39,11 +39,11 @@
 #include "DFGScannable.h"
 #include "FullBytecodeLiveness.h"
 #include "MethodOfGettingAValueProfile.h"
-#include <unordered_map>
 #include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StdUnorderedMap.h>
 
 namespace WTF {
 template <typename T> class SingleRootGraph;
@@ -1080,7 +1080,7 @@ public:
     HashMap<const StringImpl*, String> m_copiedStrings;
 
 #if USE(JSVALUE32_64)
-    std::unordered_map<int64_t, double*, std::hash<int64_t>, std::equal_to<int64_t>, FastAllocator<std::pair<const int64_t, double*>>> m_doubleConstantsMap;
+    StdUnorderedMap<int64_t, double*> m_doubleConstantsMap;
     std::unique_ptr<Bag<double>> m_doubleConstants;
 #endif
     

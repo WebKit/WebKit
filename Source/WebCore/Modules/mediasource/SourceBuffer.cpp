@@ -55,7 +55,6 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VM.h>
 #include <limits>
-#include <map>
 
 namespace WebCore {
 

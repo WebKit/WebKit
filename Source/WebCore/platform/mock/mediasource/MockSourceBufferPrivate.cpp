@@ -37,7 +37,6 @@
 #include "MockTracks.h"
 #include "SourceBufferPrivateClient.h"
 #include <JavaScriptCore/ArrayBuffer.h>
-#include <map>
 #include <wtf/StringPrintStream.h>
 
 namespace WebCore {

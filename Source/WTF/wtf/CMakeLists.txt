@@ -210,6 +210,11 @@ set(WTF_PUBLIC_HEADERS
     StackStats.h
     StackTrace.h
     StdLibExtras.h
+    StdList.h
+    StdMap.h
+    StdSet.h
+    StdUnorderedMap.h
+    StdUnorderedSet.h
     Stopwatch.h
     StreamBuffer.h
     StringExtras.h

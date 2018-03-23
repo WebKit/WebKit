@@ -29,7 +29,6 @@
 
 #include "ImageDecoder.h"
 #include "SampleMap.h"
-#include <map>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

@@ -28,7 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKey.h"
-#include <set>
+#include <wtf/StdSet.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringHash.h>
 
@@ -302,7 +302,7 @@ std::optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
     return WTFMove(keyData);
 }
 
-using IDBKeyDataSet = std::set<IDBKeyData, std::less<IDBKeyData>, FastAllocator<IDBKeyData>>;
+using IDBKeyDataSet = StdSet<IDBKeyData>;
 
 } // namespace WebCore
 

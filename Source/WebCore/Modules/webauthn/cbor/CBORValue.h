@@ -29,9 +29,9 @@
 
 #pragma once
 
-#include <map>
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/StdMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -94,7 +94,7 @@ public:
 
     using BinaryValue = Vector<uint8_t>;
     using ArrayValue = Vector<CBORValue>;
-    using MapValue = std::map<CBORValue, CBORValue, CTAPLess>;
+    using MapValue = StdMap<CBORValue, CBORValue, CTAPLess>;
 
     enum class Type {
         Unsigned = 0,
