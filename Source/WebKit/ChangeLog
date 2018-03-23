@@ -1,3 +1,20 @@
+2018-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Use the same SWServer for all ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=183921
+        <rdar://problem/36873075>
+
+        Reviewed by Youenn Fablet.
+
+        Use the same SWServer for all ephemeral sessions. SWServers never go away and we create
+        one per sessionID. When browsing doing private browsing in Safari (and other fetching
+        favorite icons), the sessionID is ephemeral and keeps changing. This means that we kept
+        constructing new SWServers that would never go away. Each SWServer has a thread so we
+        would eventually hit the thread limit for the storage process.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::swServerForSession):
+
 2018-03-22  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Unreviewed, fix format string warnings in service worker code

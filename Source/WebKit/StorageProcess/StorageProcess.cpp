@@ -432,6 +432,11 @@ void StorageProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, San
 SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isValid());
+
+    // Use the same SWServer for all ephemeral sessions.
+    if (sessionID.isEphemeral())
+        sessionID = PAL::SessionID::legacyPrivateSessionID();
+
     auto result = m_swServers.add(sessionID, nullptr);
     if (!result.isNewEntry) {
         ASSERT(result.iterator->value);
