@@ -27,7 +27,7 @@
 
 #if ENABLE_VCP_ENCODER
 
-#include "webrtc/base/logging.h"
+#include "rtc_base/logging.h"
 #import <dlfcn.h>
 #import <objc/runtime.h>
 
@@ -41,7 +41,7 @@
         dispatch_once(&once, ^{ \
             frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
             if (!isOptional && !frameworkLibrary) \
-                LOG(LS_ERROR) << "Cannot open framework: " << dlerror(); \
+                RTC_LOG(LS_ERROR) << "Cannot open framework: " << dlerror(); \
         }); \
         return frameworkLibrary; \
     } \
@@ -60,7 +60,7 @@
         dispatch_once(&once, ^{ \
             softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
             if (!softLink##framework##functionName) \
-                LOG(LS_ERROR) << "Cannot find function ##functionName: " << dlerror(); \
+                RTC_LOG(LS_ERROR) << "Cannot find function ##functionName: " << dlerror(); \
         }); \
         return softLink##framework##functionName parameterNames; \
     } \
