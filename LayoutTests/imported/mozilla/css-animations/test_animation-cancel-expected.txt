@@ -1,5 +1,5 @@
 
-FAIL Animated style is cleared after cancelling a running CSS animation assert_not_equals: transform style is animated before cancelling got disallowed value "none"
+PASS Animated style is cleared after cancelling a running CSS animation 
 PASS Animated style is cleared after cancelling a filling CSS animation 
 PASS After canceling an animation, it can still be seeked 
 PASS After cancelling an animation, it can still be re-used 

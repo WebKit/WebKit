@@ -225,21 +225,21 @@ FAIL text-shadow: mismatched list length (from longer to shorter) assert_equals:
 FAIL text-shadow: mismatched list length (from shorter to longer) assert_equals: The value should be rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px at 500ms expected "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.5) 5px 5px 5px" but got "rgb(150, 150, 150) 15px 15px 15px, rgba(100, 100, 100, 0.501961) 5px 5px 5px"
 FAIL text-shadow: with currentcolor assert_equals: The value should be rgb(0, 255, 0) 5px 5px 5px at 500ms expected "rgb(0, 255, 0) 5px 5px 5px" but got "rgb(0, 0, 0) 5px 5px 5px"
 PASS transform (type: transformList) has testInterpolation function 
-FAIL transform: translate assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: rotate assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: scale assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: skew assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: rotate and translate assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: translate and rotate assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: mismatch order of translate and rotate assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: matrix assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: rotate3d assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: matrix3d assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: mismatched 3D transforms assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: rotateY assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: non-invertible matrices assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: non-invertible matrices in matched transform lists assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
-FAIL transform: non-invertible matrices in mismatched transform lists assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
+PASS transform: translate 
+PASS transform: rotate 
+PASS transform: scale 
+FAIL transform: skew assert_approx_equals: expected matrix(1,0.9999999999999999,0.9999999999999999,1,0,0) but got matrix(1.1153550716504106, 0.9659258262890682, 0.9659258262890681, 1.1153550716504106, 0, 0): The value should be matrix(1,0.9999999999999999,0.9999999999999999,1,0,0) at 500ms but got matrix(1.1153550716504106, 0.9659258262890682, 0.9659258262890681, 1.1153550716504106, 0, 0) expected 1 +/- 0.0001 but got 1.1153550716504106
+PASS transform: rotate and translate 
+FAIL transform: translate and rotate assert_approx_equals: expected matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,9.184850993605149e-15,150) but got matrix(0.00000000000000006123233995736766, 1, -1, 0.00000000000000006123233995736766, -35.35533905932736, 106.06601717798213): The value should be matrix(6.123233995736766e-17,1,-1,6.123233995736766e-17,9.184850993605149e-15,150) at 500ms but got matrix(0.00000000000000006123233995736766, 1, -1, 0.00000000000000006123233995736766, -35.35533905932736, 106.06601717798213) expected 9.184850993605149e-15 +/- 0.0001 but got -35.35533905932736
+PASS transform: mismatch order of translate and rotate 
+PASS transform: matrix 
+FAIL transform: rotate3d assert_approx_equals: expected matrix3d(0.8535533905932737,0.1464466094067262,-0.5,0,0.1464466094067262,0.8535533905932737,0.5,0,0.5,-0.5,0.7071067811865476,0,0,0,0,1) but got matrix3d(0.7499999999999999, 0.2499999999999999, -0.3535533905932737, 0, 0.24999999999999983, 0.75, 0.3535533905932737, 0, 0.35355339059327373, -0.3535533905932737, 0.5000000000000002, 0, 0, 0, 0, 1): The value should be matrix3d(0.8535533905932737,0.1464466094067262,-0.5,0,0.1464466094067262,0.8535533905932737,0.5,0,0.5,-0.5,0.7071067811865476,0,0,0,0,1) at 500ms but got matrix3d(0.7499999999999999, 0.2499999999999999, -0.3535533905932737, 0, 0.24999999999999983, 0.75, 0.3535533905932737, 0, 0.35355339059327373, -0.3535533905932737, 0.5000000000000002, 0, 0, 0, 0, 1) expected 0.8535533905932737 +/- 0.0001 but got 0.7499999999999999
+PASS transform: matrix3d 
+PASS transform: mismatched 3D transforms 
+FAIL transform: rotateY assert_approx_equals: expected matrix3d(0.8660254037844387,0,-0.49999999999999994,0,0,1,0,0,0.49999999999999994,0,0.8660254037844387,0,0,0,0,1) but got matrix3d(0.75, 0, -0.4330127018922192, 0, 0, 1, 0, 0, 0.4330127018922192, 0, 0.75, 0, 0, 0, 0, 1): The value should be matrix3d(0.8660254037844387,0,-0.49999999999999994,0,0,1,0,0,0.49999999999999994,0,0.8660254037844387,0,0,0,0,1) at 500ms but got matrix3d(0.75, 0, -0.4330127018922192, 0, 0, 1, 0, 0, 0.4330127018922192, 0, 0.75, 0, 0, 0, 0, 1) expected 0.8660254037844387 +/- 0.0001 but got 0.75
+FAIL transform: non-invertible matrices assert_approx_equals: expected matrix(-1,0,0,-1,200,0) but got matrix(-0.0706572801427673, 0.719997959550522, -0.39514637992795165, -0.26007870466007205, 87.65015, 62.44984999999999): The value should be matrix(-1,0,0,-1,200,0) at 499ms but got matrix(-0.0706572801427673, 0.719997959550522, -0.39514637992795165, -0.26007870466007205, 87.65015, 62.44984999999999) expected -1 +/- 0.0001 but got -0.0706572801427673
+FAIL transform: non-invertible matrices in matched transform lists assert_approx_equals: expected matrix(0,-1,1,0,250,0) but got matrix(-0.7873989159254222, -1.115200903528419, 0.1364810122627057, -0.19136080826235746, 112.65025, 49.89999999999999): The value should be matrix(0,-1,1,0,250,0) at 499ms but got matrix(-0.7873989159254222, -1.115200903528419, 0.1364810122627057, -0.19136080826235746, 112.65025, 49.89999999999999) expected 0 +/- 0.0001 but got -0.7873989159254222
+FAIL transform: non-invertible matrices in mismatched transform lists assert_approx_equals: expected matrix(-2,0,0,-2,250,0) but got matrix(0.457235039557905, 1.5761580466297944, -1.1176085646538838, -0.6572212090027189, 112.65025, 49.89999999999999): The value should be matrix(-2,0,0,-2,250,0) at 499ms but got matrix(0.457235039557905, 1.5761580466297944, -1.1176085646538838, -0.6572212090027189, 112.65025, 49.89999999999999) expected -2 +/- 0.0001 but got 0.457235039557905
 PASS visibility (type: visibility) has testInterpolation function 
 PASS visibility uses visibility animation when animating from "visible" to "hidden" 
 PASS visibility uses visibility animation when animating from "hidden" to "visible" 

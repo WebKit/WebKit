@@ -1,3 +1,14 @@
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animated transform styles are ignored when calling getComputedStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=183918
+
+        Reviewed by Dean Jackson.
+
+        We obtain one more PASS by correctly serializing the transform property on getComputedStyle().
+
+        * css-animations/test_animation-cancel-expected.txt:
+
 2018-03-22  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Support "transition: all" for CSS Transitions as Web Animations

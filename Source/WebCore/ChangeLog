@@ -1,3 +1,22 @@
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animated transform styles are ignored when calling getComputedStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=183918
+
+        Reviewed by Dean Jackson.
+
+        Strictly looking at whether the renderer has a transform is a bad idea when determining whether a
+        transform is applied for an element. Looking at the RenderStyle is preferable because in the case
+        of animations running on the compositor, such as a transform-only animation or transition, the
+        renderer doesn't necessarily have a transform style on it, since we don't blend properties in
+        software as the animation progresses. Instead, all of the blending is performed by the compositor,
+        and only the computed style object has the software-blended transform style on it.
+
+        We do need to account for inline renderers though as these do not support transforms.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+
 2018-03-22  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Support "transition: all" for CSS Transitions as Web Animations

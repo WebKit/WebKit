@@ -1,5 +1,5 @@
 
-FAIL Animated style is cleared after calling Animation.cancel() assert_not_equals: transform style is animated before cancelling got disallowed value "none"
+PASS Animated style is cleared after calling Animation.cancel() 
 PASS After cancelling an animation, it can still be seeked 
 PASS After cancelling an animation, it can still be re-used 
 

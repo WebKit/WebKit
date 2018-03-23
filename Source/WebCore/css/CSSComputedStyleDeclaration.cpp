@@ -62,6 +62,7 @@
 #include "Rect.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
+#include "RenderInline.h"
 #include "RenderStyle.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGElement.h"
@@ -923,7 +924,8 @@ static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& tr
 
 static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle& style)
 {
-    if (!renderer || !renderer->hasTransform())
+    // Inline renderers do not support transforms.
+    if (!renderer || is<RenderInline>(*renderer) || !style.hasTransform())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     FloatRect pixelSnappedRect;
