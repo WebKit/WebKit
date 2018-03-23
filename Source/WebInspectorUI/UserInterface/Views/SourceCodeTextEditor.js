@@ -309,7 +309,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     toggleTypeAnnotations()
     {
         if (!this._typeTokenAnnotator)
-            return false;
+            return Promise.reject(new Error("TypeTokenAnnotator is not initialized."));
 
         var newActivatedState = !this._typeTokenAnnotator.isActive();
         if (newActivatedState && this._isProbablyMinified && !this.formatted) {
@@ -325,7 +325,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     toggleUnexecutedCodeHighlights()
     {
         if (!this._basicBlockAnnotator)
-            return false;
+            return Promise.reject(new Error("BasicBlockAnnotator is not initialized."));
 
         let newActivatedState = !this._basicBlockAnnotator.isActive();
         if (newActivatedState && this._isProbablyMinified && !this.formatted) {

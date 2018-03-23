@@ -1,3 +1,18 @@
+2018-03-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Uncaught Exception: TypeError: this._textEditor.toggleUnexecutedCodeHighlights().then is not a function
+        https://bugs.webkit.org/show_bug.cgi?id=181912
+        <rdar://problem/36700022>
+
+        Reviewed by Matt Baker.
+
+        The uncaught exception was caused by returning `false` instead of a promise object.
+        This patch only fixes the exception. Further enhancements should be done in <https://webkit.org/b/183887>.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.toggleTypeAnnotations):
+        (WI.SourceCodeTextEditor.prototype.toggleUnexecutedCodeHighlights):
+
 2018-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Loses focus when editing a property while page is being loaded
