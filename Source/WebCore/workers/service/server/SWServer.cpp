@@ -726,12 +726,15 @@ SWServerRegistration* SWServer::registrationFromServiceWorkerIdentifier(ServiceW
 void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier)
 {
     auto clientIdentifier = data.identifier;
-    auto addResult = m_clientsById.add(clientIdentifier, WTFMove(data));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
+    ASSERT(!m_clientsById.contains(clientIdentifier));
+    m_clientsById.add(clientIdentifier, WTFMove(data));
 
     auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(WTFMove(clientOrigin), [] {
         return Clients { };
     }).iterator->value;
+
+    ASSERT(!clientIdentifiersForOrigin.identifiers.contains(clientIdentifier));
     clientIdentifiersForOrigin.identifiers.append(clientIdentifier);
     clientIdentifiersForOrigin.terminateServiceWorkersTimer = nullptr;
 
@@ -743,8 +746,8 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
         return;
 
     controllingRegistration->addClientUsingRegistration(clientIdentifier);
-    auto result = m_clientToControllingRegistration.add(clientIdentifier, *controllingServiceWorkerRegistrationIdentifier);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    ASSERT(!m_clientToControllingRegistration.contains(clientIdentifier));
+    m_clientToControllingRegistration.add(clientIdentifier, *controllingServiceWorkerRegistrationIdentifier);
 }
 
 void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ServiceWorkerClientIdentifier clientIdentifier)

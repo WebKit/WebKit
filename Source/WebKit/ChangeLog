@@ -1,3 +1,20 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        WebProcessPool should not ask to register all clients for each service worker process creation
+        https://bugs.webkit.org/show_bug.cgi?id=183941
+
+        Reviewed by Chris Dumez.
+
+        Call registerServiceWorkerClients when there is no service worker process.
+        Update service worker clients to register all of them no matter the session ID.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::registerServiceWorkerClients):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Adopt list view controller UI for select menus

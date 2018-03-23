@@ -54,12 +54,16 @@ bool ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin(PAL::Session
     return connection->mayHaveServiceWorkerRegisteredForOrigin(origin);
 }
 
-void ServiceWorkerProvider::registerServiceWorkerClients(PAL::SessionID sessionID)
+void ServiceWorkerProvider::registerServiceWorkerClients()
 {
-    auto& connection = serviceWorkerConnectionForSession(sessionID);
+    setMayHaveRegisteredServiceWorkers();
     for (auto* document : Document::allDocuments()) {
+        auto sessionID = document->sessionID();
+        if (!sessionID.isValid())
+            continue;
+
         if (SchemeRegistry::canServiceWorkersHandleURLScheme(document->url().protocol().toStringWithoutCopying()))
-            document->setServiceWorkerConnection(&connection);
+            document->setServiceWorkerConnection(&serviceWorkerConnectionForSession(sessionID));
     }
 }
 

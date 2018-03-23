@@ -609,12 +609,11 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
         websiteDataStore = &m_websiteDataStore->websiteDataStore();
     }
 
+    if (m_serviceWorkerProcesses.isEmpty())
+        sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
+
     auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, origin.copyRef(), *websiteDataStore);
     m_serviceWorkerProcesses.add(origin.copyRef(), serviceWorkerProcessProxy.ptr());
-
-    ASSERT(websiteDataStore->sessionID().isValid());
-    if (websiteDataStore->sessionID().isValid())
-        sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { websiteDataStore->sessionID() });
 
     updateProcessAssertions();
     initializeNewWebProcess(serviceWorkerProcessProxy, *websiteDataStore);

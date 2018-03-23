@@ -1,3 +1,25 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        WebProcessPool should not ask to register all clients for each service worker process creation
+        https://bugs.webkit.org/show_bug.cgi?id=183941
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing unit tests.
+        Register all Documents of a process no matter its session ID when asked to.
+        Make sure that whenever a WebProcess is asked to do so, any further Document will be registered
+        by calling setMayHaveRegisteredServiceWorkers().
+        This ensures that a WebProcess created before any service worker but empty at the time a service worker is created
+        will actually register all its future clients.
+
+        Add some assertions to ensure that a client is not registered twice.
+
+        * workers/service/ServiceWorkerProvider.cpp:
+        (WebCore::ServiceWorkerProvider::registerServiceWorkerClients):
+        * workers/service/ServiceWorkerProvider.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::registerServiceWorkerClient):
+
 2018-03-23  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLElement factory doesn't need to call MediaPlayer::isAvailable

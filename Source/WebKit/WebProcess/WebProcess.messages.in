@@ -120,7 +120,7 @@ messages -> WebProcess LegacyReceiver {
 
 #if ENABLE(SERVICE_WORKER)
     EstablishWorkerContextConnectionToStorageProcess(uint64_t pageGroupID, uint64_t pageID, struct WebKit::WebPreferencesStore store, PAL::SessionID initialSessionID)
-    RegisterServiceWorkerClients(PAL::SessionID sessionID)
+    RegisterServiceWorkerClients()
 #endif
 
     DidTakeAllMessagesForPort(Vector<WebCore::MessageWithMessagePorts> messages, uint64_t messageCallbackIdentifier, uint64_t messageBatchIdentifier)

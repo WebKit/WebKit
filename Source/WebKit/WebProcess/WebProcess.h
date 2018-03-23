@@ -318,7 +318,7 @@ private:
 #endif
 #if ENABLE(SERVICE_WORKER)
     void establishWorkerContextConnectionToStorageProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore&, PAL::SessionID);
-    void registerServiceWorkerClients(PAL::SessionID);
+    void registerServiceWorkerClients();
 #endif
 
     void releasePageCache();

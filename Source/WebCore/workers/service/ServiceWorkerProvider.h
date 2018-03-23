@@ -48,7 +48,7 @@ public:
     virtual SWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID) = 0;
     virtual SWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID) = 0;
 
-    WEBCORE_EXPORT void registerServiceWorkerClients(PAL::SessionID);
+    WEBCORE_EXPORT void registerServiceWorkerClients();
 
     void setMayHaveRegisteredServiceWorkers() { m_mayHaveRegisteredServiceWorkers = true; }
 
