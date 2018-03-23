@@ -1,3 +1,16 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        CacheStorage::Caches should clear m_caches when clearing its representation even though it is not yet initialized
+        https://bugs.webkit.org/show_bug.cgi?id=183945
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::clearMemoryRepresentation):
+        In case we clear Caches in the middle of the initialization, m_caches might not be empty
+        but m_isInitialized is not yet set to true since we are computing the Caches size.
+        Update the assertion and clear m_caches in that case.
+
 2018-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Stop using dispatch_set_target_queue()
