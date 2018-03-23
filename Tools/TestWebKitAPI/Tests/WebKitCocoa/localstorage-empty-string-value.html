@@ -1,0 +1,16 @@
+<html>
+<body>
+<script>
+  var key = 'EmptyString';
+  var value = '';
+  var testKey = 'TestString';
+  if (!localStorage.getItem(testKey)) {
+    localStorage.setItem(key, value);
+    localStorage.setItem(testKey, 'test');
+  }
+    
+  var result = localStorage.getItem(key);
+  window.webkit.messageHandlers.testHandler.postMessage("" + result);
+</script>
+</body>
+</html>
