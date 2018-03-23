@@ -127,12 +127,12 @@ Animation& Animation::operator=(const Animation& o)
 
 Animation::~Animation() = default;
 
-bool Animation::animationsMatch(const Animation& other, bool matchPlayStates) const
+bool Animation::animationsMatch(const Animation& other, bool matchProperties) const
 {
     bool result = m_name == other.m_name
         && m_nameStyleScopeOrdinal == other.m_nameStyleScopeOrdinal
-        && m_property == other.m_property
-        && m_mode == other.m_mode
+        && m_playState == other.m_playState
+        && m_playStateSet == other.m_playStateSet
         && m_iterationCount == other.m_iterationCount
         && m_delay == other.m_delay
         && m_duration == other.m_duration
@@ -148,7 +148,6 @@ bool Animation::animationsMatch(const Animation& other, bool matchPlayStates) co
         && m_fillModeSet == other.m_fillModeSet
         && m_iterationCountSet == other.m_iterationCountSet
         && m_nameSet == other.m_nameSet
-        && m_propertySet == other.m_propertySet
         && m_timingFunctionSet == other.m_timingFunctionSet
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         && m_triggerSet == other.m_triggerSet
@@ -158,7 +157,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchPlayStates) co
     if (!result)
         return false;
 
-    return !matchPlayStates || (m_playState == other.m_playState && m_playStateSet == other.m_playStateSet);
+    return !matchProperties || (m_mode == other.m_mode && m_property == other.m_property && m_propertySet == other.m_propertySet);
 }
 
 const String& Animation::initialName()

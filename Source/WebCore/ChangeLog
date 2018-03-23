@@ -1,3 +1,46 @@
+2018-03-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support "transition: all" for CSS Transitions as Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183917
+
+        Reviewed by Dean Jackson.
+
+        We now support "transition: all" CSS Transitions by iterating over all known CSS properties should the mode
+        of the backing animation be AnimateAll. Any property that we find to have a different value in the previous
+        and current style will have a backing CSSTransition object created for it. To support this, we now explicitly
+        provide a CSSPropertyID when creating a CSSTransition since we can no longer infer the transition property
+        from the backing animation, as Animation objects with mode AnimateAll report CSSPropertyInvalid as their
+        property.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::shouldBackingAnimationBeConsideredForCSSTransition): New method that checks whether a given backing
+        Animation object is suitable for consideration as a CSSTransition, where the mode must not be either AnimateNone
+        or AnimateUnknownProperty, and should the mode be AnimateSingleProperty, the property must not be CSSPropertyInvalid.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): We now assemble the list of previously animated
+        properties by looking at the m_elementToCSSTransitionByCSSPropertyID map and getting its keys. Then we compile
+        all backing Animation objects found in the old style that match the conditions enforced by the new method
+        shouldBackingAnimationBeConsideredForCSSTransition(). Then as we iterate over backing Animation objects found
+        in the new style, we iterate over all known CSS properties if the mode is AnimateAll, indicating that we're dealing
+        with a "transition: all" style. If we're dealing with a single property, we only process that single property.
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::create): Expect a new CSSPropertyID parameter when creating a new CSSTransition since
+        we can no longer infer it from the backing Animation object.
+        (WebCore::CSSTransition::CSSTransition): Expect a new CSSPropertyID parameter when creating a new CSSTransition
+        since we can no longer infer it from the backing Animation object.
+        (WebCore::CSSTransition::matchesBackingAnimationAndStyles const): We can no longer use the == overloaded operator
+        for backing Animation objects to determine whether their respective properties match since this would compare the
+        "property" member of both Animation objects and when going from a "transition: all" style to one targeting a single
+        property, we would falsely identify mis-matching Animation objects. Instead, we pass a false flag to animationsMatch()
+        which indicates that we don't care about matching the transition property itself.
+        * animation/CSSTransition.h: Expose a new property() accessor which returns the CSSPropertyID passed at construction.
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes): Use the new property() accessor on
+        CSSTransition to get at the transition property.
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::animationsMatch const): Replace the boolean parameter, which was not in use in WebCore, to indicate
+        whether we should match the property-related fields. We need this in CSSTransition::matchesBackingAnimationAndStyles().
+        * platform/animation/Animation.h:
+
 2018-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Adopt WK_ALTERNATE_FRAMEWORKS_DIR in WebCore

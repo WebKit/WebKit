@@ -191,6 +191,16 @@ void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const Re
         m_elementToCSSAnimationByName.remove(&element);
 }
 
+static bool shouldBackingAnimationBeConsideredForCSSTransition(const Animation& backingAnimation)
+{
+    auto mode = backingAnimation.animationMode();
+    if (mode == Animation::AnimateNone || mode == Animation::AnimateUnknownProperty)
+        return false;
+    if (mode == Animation::AnimateSingleProperty && backingAnimation.property() == CSSPropertyInvalid)
+        return false;
+    return true;
+}
+
 void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const RenderStyle& newStyle, const RenderStyle* oldStyle)
 {
     if (element.document().pageCacheState() != Document::NotInPageCache)
@@ -208,49 +218,65 @@ void AnimationTimeline::updateCSSTransitionsForElement(Element& element, const R
         return;
     }
 
-    // FIXME: We do not handle "all" transitions yet.
-
-    // First, compile the list of backing animations and properties that were applied to this element up to this point.
-    HashSet<CSSPropertyID> previousProperties;
-    HashSet<const Animation*> previousBackingAnimations;
-    if (oldStyle && oldStyle->hasTransitions()) {
-        auto* previousTransitions = oldStyle->transitions();
-        for (size_t i = 0; i < previousTransitions->size(); ++i) {
-            auto& animation = previousTransitions->animation(i);
-            auto previousTransitionProperty = animation.property();
-            if (previousTransitionProperty != CSSPropertyInvalid) {
-                previousProperties.add(previousTransitionProperty);
-                previousBackingAnimations.add(&animation);
-            }
-        }
-    }
-
     // Create or get the CSSTransitions by CSS property name map for this element.
     auto& cssTransitionsByProperty = m_elementToCSSTransitionByCSSPropertyID.ensure(&element, [] {
         return HashMap<CSSPropertyID, RefPtr<CSSTransition>> { };
     }).iterator->value;
 
+    // First, compile the list of backing animations and properties that were applied to this element up to this point.
+    auto previousProperties = copyToVector(cssTransitionsByProperty.keys());
+    HashSet<const Animation*> previousBackingAnimations;
+    if (oldStyle && oldStyle->hasTransitions()) {
+        auto* previousTransitions = oldStyle->transitions();
+        for (size_t i = 0; i < previousTransitions->size(); ++i) {
+            auto& backingAnimation = previousTransitions->animation(i);
+            if (shouldBackingAnimationBeConsideredForCSSTransition(backingAnimation))
+                previousBackingAnimations.add(&backingAnimation);
+        }
+    }
+
     if (auto* currentTransitions = newStyle.transitions()) {
         for (size_t i = 0; i < currentTransitions->size(); ++i) {
             auto& backingAnimation = currentTransitions->animation(i);
-            auto property = backingAnimation.property();
-            if (property == CSSPropertyInvalid)
+            if (!shouldBackingAnimationBeConsideredForCSSTransition(backingAnimation))
                 continue;
-            previousProperties.remove(property);
-            // We've found a backing animation that we didn't know about for a valid property.
-            if (!previousBackingAnimations.contains(&backingAnimation)) {
-                // If we already had a CSSTransition for this property, check whether its timing properties match the current backing
-                // animation's properties and whether its blending keyframes match the old and new styles. If they do, move on to the
-                // next transition, otherwise delete the previous CSSTransition object, and create a new one.
-                if (cssTransitionsByProperty.contains(property)) {
-                    if (cssTransitionsByProperty.get(property)->matchesBackingAnimationAndStyles(backingAnimation, oldStyle, newStyle))
+            auto property = backingAnimation.property();
+            bool transitionsAllProperties = backingAnimation.animationMode() == Animation::AnimateAll;
+            auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
+            // In the "transition-property: all" case, where the animation's mode is set to AnimateAll,
+            // the property will be set to CSSPropertyInvalid and we need to iterate over all known
+            // CSS properties and see if they have mis-matching values in the old and new styles, which
+            // means they should have a CSSTransition created for them.
+            // We implement a single loop which handles the "all" case and the specified property case
+            // by using the pre-set property above in the specified property case and breaking out of
+            // the loop after the first complete iteration.
+            for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
+                if (transitionsAllProperties) {
+                    bool isShorthand;
+                    property = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
+                    if (isShorthand)
                         continue;
-                    removeDeclarativeAnimation(cssTransitionsByProperty.take(property));
+                } else if (propertyIndex) {
+                    // We only go once through this loop if we are transitioning a single property.
+                    break;
                 }
-                // Now we can create a new CSSTransition with the new backing animation provided it has a valid
-                // duration and the from and to values are distinct.
-                if (backingAnimation.duration() > 0 && oldStyle && !CSSPropertyAnimation::propertiesEqual(property, oldStyle, &newStyle))
-                    cssTransitionsByProperty.set(property, CSSTransition::create(element, backingAnimation, oldStyle, newStyle));
+
+                bool hadProperty = previousProperties.removeFirst(property);
+                // We've found a backing animation that we didn't know about for a valid property.
+                if (!previousBackingAnimations.contains(&backingAnimation)) {
+                    // If we already had a CSSTransition for this property, check whether its timing properties match the current backing
+                    // animation's properties and whether its blending keyframes match the old and new styles. If they do, move on to the
+                    // next transition, otherwise delete the previous CSSTransition object, and create a new one.
+                    if (hadProperty) {
+                        if (cssTransitionsByProperty.get(property)->matchesBackingAnimationAndStyles(backingAnimation, oldStyle, newStyle))
+                            continue;
+                        removeDeclarativeAnimation(cssTransitionsByProperty.take(property));
+                    }
+                    // Now we can create a new CSSTransition with the new backing animation provided it has a valid
+                    // duration and the from and to values are distinct.
+                    if (backingAnimation.duration() > 0 && oldStyle && !CSSPropertyAnimation::propertiesEqual(property, oldStyle, &newStyle))
+                        cssTransitionsByProperty.set(property, CSSTransition::create(element, property, backingAnimation, oldStyle, newStyle));
+                }
             }
         }
     }

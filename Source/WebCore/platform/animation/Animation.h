@@ -162,7 +162,7 @@ public:
     Animation& operator=(const Animation& o);
 
     // return true if all members of this class match (excluding m_next)
-    bool animationsMatch(const Animation&, bool matchPlayStates = true) const;
+    bool animationsMatch(const Animation&, bool matchProperties = true) const;
 
     // return true every Animation in the chain (defined by m_next) match 
     bool operator==(const Animation& o) const { return animationsMatch(o); }

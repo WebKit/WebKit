@@ -32,23 +32,24 @@
 
 namespace WebCore {
 
-Ref<CSSTransition> CSSTransition::create(Element& target, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+Ref<CSSTransition> CSSTransition::create(Element& target, CSSPropertyID property, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    auto result = adoptRef(*new CSSTransition(target, backingAnimation));
-    result->m_transitionProperty = backingAnimation.property();
+    auto result = adoptRef(*new CSSTransition(target, property, backingAnimation));
     result->initialize(target);
     downcast<KeyframeEffectReadOnly>(result->effect())->computeCSSTransitionBlendingKeyframes(oldStyle, newStyle);
     return result;
 }
 
-CSSTransition::CSSTransition(Element& element, const Animation& backingAnimation)
+CSSTransition::CSSTransition(Element& element, CSSPropertyID property, const Animation& backingAnimation)
     : DeclarativeAnimation(element, backingAnimation)
+    , m_property(property)
 {
 }
 
 bool CSSTransition::matchesBackingAnimationAndStyles(const Animation& newBackingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle) const
 {
-    bool backingAnimationsMatch = backingAnimation() == newBackingAnimation;
+    // See if the animations match, excluding the property since we can move from an "all" transition to an explicit property transition.
+    bool backingAnimationsMatch = backingAnimation().animationsMatch(newBackingAnimation, false);
     if (!oldStyle || !effect())
         return backingAnimationsMatch;
     return backingAnimationsMatch && !downcast<KeyframeEffectReadOnly>(effect())->stylesWouldYieldNewCSSTransitionsBlendingKeyframes(*oldStyle, newStyle);

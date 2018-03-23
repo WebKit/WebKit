@@ -721,21 +721,21 @@ void KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes(const RenderS
     if (!oldStyle || m_blendingKeyframes.size())
         return;
 
-    auto& backingAnimation = downcast<CSSTransition>(animation())->backingAnimation();
+    auto property = downcast<CSSTransition>(animation())->property();
 
     auto toStyle = RenderStyle::clonePtr(newStyle);
     if (m_target)
         Style::loadPendingResources(*toStyle, m_target->document(), m_target.get());
 
     KeyframeList keyframeList("keyframe-effect-" + createCanonicalUUIDString());
-    keyframeList.addProperty(backingAnimation.property());
+    keyframeList.addProperty(property);
 
     KeyframeValue fromKeyframeValue(0, RenderStyle::clonePtr(*oldStyle));
-    fromKeyframeValue.addProperty(backingAnimation.property());
+    fromKeyframeValue.addProperty(property);
     keyframeList.insert(WTFMove(fromKeyframeValue));
 
     KeyframeValue toKeyframeValue(1, WTFMove(toStyle));
-    toKeyframeValue.addProperty(backingAnimation.property());
+    toKeyframeValue.addProperty(property);
     keyframeList.insert(WTFMove(toKeyframeValue));
 
     m_blendingKeyframes = WTFMove(keyframeList);

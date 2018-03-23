@@ -37,19 +37,20 @@ class RenderStyle;
 
 class CSSTransition final : public DeclarativeAnimation {
 public:
-    static Ref<CSSTransition> create(Element&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    static Ref<CSSTransition> create(Element&, CSSPropertyID, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     ~CSSTransition() = default;
 
     bool isCSSTransition() const override { return true; }
-    String transitionProperty() const { return getPropertyNameString(m_transitionProperty); }
+    String transitionProperty() const { return getPropertyNameString(m_property); }
+    CSSPropertyID property() const { return m_property; }
 
     bool matchesBackingAnimationAndStyles(const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle) const;
     bool canBeListed() const final;
 
 private:
-    CSSTransition(Element&, const Animation&);
+    CSSTransition(Element&, CSSPropertyID, const Animation&);
 
-    CSSPropertyID m_transitionProperty;
+    CSSPropertyID m_property;
 
 };
 
