@@ -402,9 +402,8 @@ end
 
 macro loadTypedArrayCaged(basePtr, mask, source, typeIndex, dest, scratch)
     if POISON
-        andp TypedArrayPoisonIndexMask, typeIndex
         leap _g_typedArrayPoisons, dest
-        loadp [dest, typeIndex, 8], dest
+        loadp (typeIndex - FirstTypedArrayType) * 8[dest], dest
         loadp source, scratch
         xorp scratch, dest
     else
@@ -1576,12 +1575,11 @@ _llint_op_get_by_val:
 .opGetByValNotIndexedStorage:
     # First lets check if we even have a typed array. This lets us do some boilerplate up front.
     loadb JSCell::m_type[t0], t2
-    subi FirstArrayType, t2
+    subi FirstTypedArrayType, t2
     biaeq t2, NumberOfTypedArrayTypesExcludingDataView, .opGetByValSlow
     
     # Sweet, now we know that we have a typed array. Do some basic things now.
     biaeq t1, JSArrayBufferView::m_length[t0], .opGetByValSlow
-    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], t2, t3, t5)
 
     # Now bisect through the various types:
     #    Int8ArrayType,
@@ -1594,49 +1592,63 @@ _llint_op_get_by_val:
     #    Float32ArrayType,
     #    Float64ArrayType,
 
-    bia t2, Uint16ArrayType - FirstArrayType, .opGetByValAboveUint16Array
+    bia t2, Uint16ArrayType - FirstTypedArrayType, .opGetByValAboveUint16Array
 
     # We have one of Int8ArrayType .. Uint16ArrayType.
-    bia t2, Uint8ClampedArrayType - FirstArrayType, .opGetByValInt16ArrayOrUint16Array
+    bia t2, Uint8ClampedArrayType - FirstTypedArrayType, .opGetByValInt16ArrayOrUint16Array
 
     # We have one of Int8ArrayType ... Uint8ClampedArrayType
-    bineq t2, Int8ArrayType - FirstArrayType, .opGetByValUint8ArrayOrUint8ClampedArray
+    bia t2, Int8ArrayType - FirstTypedArrayType, .opGetByValUint8ArrayOrUint8ClampedArray
 
-    # We have Int8ArrayType
+    # We have Int8ArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Int8ArrayType, t3, t2)
     loadbs [t3, t1], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint8ArrayOrUint8ClampedArray:
-    # We have either Uint8ArrayType or Uint8ClampedArrayType. They behave the same so that's cool.
+    bia t2, Uint8ArrayType - FirstTypedArrayType, .opGetByValUint8ClampedArray
+
+    # We have Uint8ArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Uint8ArrayType, t3, t2)
+    loadb [t3, t1], t0
+    finishIntGetByVal(t0, t1)
+
+.opGetByValUint8ClampedArray:
+    # We have Uint8ClampedArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Uint8ClampedArrayType, t3, t2)
     loadb [t3, t1], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValInt16ArrayOrUint16Array:
     # We have either Int16ArrayType or Uint16ClampedArrayType.
-    bieq t2, Uint16ArrayType - FirstArrayType, .opGetByValUint16Array
+    bia t2, Int16ArrayType - FirstTypedArrayType, .opGetByValUint16Array
 
     # We have Int16ArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Int16ArrayType, t3, t2)
     loadhs [t3, t1, 2], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint16Array:
     # We have Uint16ArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Uint16ArrayType, t3, t2)
     loadh [t3, t1, 2], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValAboveUint16Array:
     # We have one of Int32ArrayType .. Float64ArrayType.
-    bia t2, Uint32ArrayType - FirstArrayType, .opGetByValFloat32ArrayOrFloat64Array
+    bia t2, Uint32ArrayType - FirstTypedArrayType, .opGetByValFloat32ArrayOrFloat64Array
 
     # We have either Int32ArrayType or Uint32ArrayType
-    bineq t2, Int32ArrayType - FirstArrayType, .opGetByValUint32Array
+    bia t2, Int32ArrayType - FirstTypedArrayType, .opGetByValUint32Array
 
-    # We have Int32ArrayType
+    # We have Int32ArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Int32ArrayType, t3, t2)
     loadi [t3, t1, 4], t0
     finishIntGetByVal(t0, t1)
 
 .opGetByValUint32Array:
     # We have Uint32ArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Uint32ArrayType, t3, t2)
     # This is the hardest part because of large unsigned values.
     loadi [t3, t1, 4], t0
     bilt t0, 0, .opGetByValSlow # This case is still awkward to implement in LLInt.
@@ -1645,9 +1657,10 @@ _llint_op_get_by_val:
 .opGetByValFloat32ArrayOrFloat64Array:
     # We have one of Float32ArrayType or Float64ArrayType. Sadly, we cannot handle Float32Array
     # inline yet. That would require some offlineasm changes.
-    bieq t2, Float32ArrayType - FirstArrayType, .opGetByValSlow
+    bieq t2, Float32ArrayType - FirstTypedArrayType, .opGetByValSlow
 
     # We have Float64ArrayType.
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], Float64ArrayType, t3, t2)
     loadd [t3, t1, 8], ft0
     bdnequn ft0, ft0, .opGetByValSlow
     finishDoubleGetByVal(ft0, t0, t1)

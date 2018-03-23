@@ -1,5 +1,23 @@
 2018-03-23  Mark Lam  <mark.lam@apple.com>
 
+        LLInt TypeArray pointer poisoning should not pick its poison dynamically.
+        https://bugs.webkit.org/show_bug.cgi?id=183942
+        <rdar://problem/38798018>
+
+        Reviewed by JF Bastien.
+
+        1. Move the LLInt TypedArray unpoisoning to just before the array access after
+           all the branches.
+        2. Renamed FirstArrayType to FirstTypedArrayType to match the symbol in C++ code.
+        3. Remove a useless instruction in the implementation of emitX86Lea for a global
+           label.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/x86.rb:
+
+2018-03-23  Mark Lam  <mark.lam@apple.com>
+
         Add more support for pointer profiling.
         https://bugs.webkit.org/show_bug.cgi?id=183943
         <rdar://problem/38799068>

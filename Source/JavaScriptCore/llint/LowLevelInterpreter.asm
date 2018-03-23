@@ -400,7 +400,7 @@ const Uint32ArrayType = constexpr Uint32ArrayType
 const Float32ArrayType = constexpr Float32ArrayType
 const Float64ArrayType = constexpr Float64ArrayType
 
-const FirstArrayType = constexpr FirstTypedArrayType
+const FirstTypedArrayType = constexpr FirstTypedArrayType
 const NumberOfTypedArrayTypesExcludingDataView = constexpr NumberOfTypedArrayTypesExcludingDataView
 const TypedArrayPoisonIndexMask = constexpr TypedArrayPoisonIndexMask
 

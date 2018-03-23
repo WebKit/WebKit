@@ -590,7 +590,6 @@ class Instruction
     def emitX86Lea(src, dst, kind)
         if src.is_a? LabelReference
             $asm.puts "movq #{src.asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
-            $asm.puts "mov#{x86Suffix(kind)} #{orderOperands(dst.x86Operand(kind), dst.x86Operand(kind))}"
         else
             $asm.puts "lea#{x86Suffix(kind)} #{orderOperands(src.x86AddressOperand(kind), dst.x86Operand(kind))}"
         end
