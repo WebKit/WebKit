@@ -1,3 +1,15 @@
+2018-03-23  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Avoid software color conversion inside BitmapTextureGL
+        https://bugs.webkit.org/show_bug.cgi?id=183892
+
+        Remove the UpdateContentsFlag parameter when calling BitmapTexture::updateContents().
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::swapBuffers):
+
 2018-03-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Fix -Wswitch warnings after r229778

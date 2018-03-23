@@ -55,9 +55,8 @@ public:
     virtual uint32_t id() const { return m_id; }
     uint32_t textureTarget() const { return GL_TEXTURE_2D; }
     IntSize textureSize() const { return m_textureSize; }
-    void updateContents(Image*, const IntRect&, const IntPoint&, UpdateContentsFlag) override;
-    void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag) override;
-    void updateContentsNoSwizzle(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel = 4, GLuint glFormat = GL_RGBA);
+    void updateContents(Image*, const IntRect&, const IntPoint&) override;
+    void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine) override;
     bool isBackedByOpenGL() const override { return true; }
 
     RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) override;
@@ -79,6 +78,8 @@ public:
 
     void copyFromExternalTexture(GLuint textureID);
 
+    TextureMapperGL::Flags colorConvertFlags() const { return m_colorConvertFlags; }
+
 private:
     BitmapTextureGL(const TextureMapperContextAttributes&, const Flags, GLint internalFormat);
 
@@ -91,6 +92,7 @@ private:
     bool m_shouldClear { true };
     ClipStack m_clipStack;
     TextureMapperContextAttributes m_contextAttributes;
+    TextureMapperGL::Flags m_colorConvertFlags { TextureMapperGL::NoFlag };
 
     void clearIfNeeded();
     void createFboIfNeeded();

@@ -67,7 +67,6 @@ private:
 #endif
 
     Vector<Entry> m_textures;
-    Vector<Entry> m_attachmentTextures;
     RunLoop::Timer<BitmapTexturePool> m_releaseUnusedTexturesTimer;
 };
 

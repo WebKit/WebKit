@@ -40,8 +40,8 @@ public:
     void drawRepaintCounter(TextureMapper&, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
 
     void updateContentsScale(float);
-    void updateContents(TextureMapper&, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
-    void updateContents(TextureMapper&, GraphicsLayer*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
+    void updateContents(TextureMapper&, Image*, const FloatSize&, const IntRect&);
+    void updateContents(TextureMapper&, GraphicsLayer*, const FloatSize&, const IntRect&);
 
     void setContentsToImage(Image* image) { m_image = image; }
 

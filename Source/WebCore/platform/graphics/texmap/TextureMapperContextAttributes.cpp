@@ -56,12 +56,10 @@ const TextureMapperContextAttributes& TextureMapperContextAttributes::get()
 
         String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
         attributes.supportsNPOTTextures = extensionsString.contains(ASCIILiteral("GL_OES_texture_npot"));
-        attributes.supportsBGRA8888 = extensionsString.contains(ASCIILiteral("GL_EXT_texture_format_BGRA8888"));
         attributes.supportsUnpackSubimage = extensionsString.contains(ASCIILiteral("GL_EXT_unpack_subimage"));
 #else
         attributes.isGLES2Compliant = false;
         attributes.supportsNPOTTextures = true;
-        attributes.supportsBGRA8888 = true;
         attributes.supportsUnpackSubimage = true;
 #endif
     }

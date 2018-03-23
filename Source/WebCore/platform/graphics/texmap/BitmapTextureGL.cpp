@@ -56,7 +56,7 @@ BitmapTextureGL* toBitmapTextureGL(BitmapTexture* texture)
     return static_cast<BitmapTextureGL*>(texture);
 }
 
-BitmapTextureGL::BitmapTextureGL(const TextureMapperContextAttributes& contextAttributes, const Flags flags, GLint internalFormat)
+BitmapTextureGL::BitmapTextureGL(const TextureMapperContextAttributes& contextAttributes, const Flags, GLint internalFormat)
     : m_contextAttributes(contextAttributes)
 {
     if (internalFormat != GL_DONT_CARE) {
@@ -64,30 +64,7 @@ BitmapTextureGL::BitmapTextureGL(const TextureMapperContextAttributes& contextAt
         return;
     }
 
-    if (flags & FBOAttachment)
-        m_internalFormat = m_format = GL_RGBA;
-    else {
-        // If GL_EXT_texture_format_BGRA8888 is supported in the OpenGLES
-        // internal and external formats need to be BGRA
-        m_internalFormat = GL_RGBA;
-        m_format = GL_BGRA;
-        if (m_contextAttributes.isGLES2Compliant) {
-            if (m_contextAttributes.supportsBGRA8888)
-                m_internalFormat = GL_BGRA;
-            else
-                m_format = GL_RGBA;
-        }
-    }
-}
-
-static void swizzleBGRAToRGBA(uint32_t* data, const IntRect& rect, int stride = 0)
-{
-    stride = stride ? stride : rect.width();
-    for (int y = rect.y(); y < rect.maxY(); ++y) {
-        uint32_t* p = data + y * stride;
-        for (int x = rect.x(); x < rect.maxX(); ++x)
-            p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
-    }
+    m_internalFormat = m_format = GL_RGBA;
 }
 
 void BitmapTextureGL::didReset()
@@ -96,6 +73,7 @@ void BitmapTextureGL::didReset()
         glGenTextures(1, &m_id);
 
     m_shouldClear = true;
+    m_colorConvertFlags = TextureMapperGL::NoFlag;
     if (m_textureSize == contentSize())
         return;
 
@@ -109,31 +87,13 @@ void BitmapTextureGL::didReset()
     glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_textureSize.width(), m_textureSize.height(), 0, m_format, m_type, 0);
 }
 
-void BitmapTextureGL::updateContentsNoSwizzle(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel, GLuint glFormat)
+void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
 {
-    // For ES drivers that don't support sub-images.
-    bool contextSupportsUnpackSubimage = m_contextAttributes.supportsUnpackSubimage;
+    // We are updating a texture with format RGBA with content from a buffer that has BGRA format. Instead of turning BGRA
+    // into RGBA and then uploading it, we upload it as is. This causes the texture format to be RGBA but the content to be BGRA,
+    // so we mark the texture to convert the colors when painting the texture.
+    m_colorConvertFlags = TextureMapperGL::ShouldConvertTextureBGRAToRGBA;
 
-    glBindTexture(GL_TEXTURE_2D, m_id);
-
-    if (contextSupportsUnpackSubimage) {
-        // Use the OpenGL sub-image extension, now that we know it's available.
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
-        glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y());
-        glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x());
-    }
-
-    glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, m_type, srcData);
-
-    if (contextSupportsUnpackSubimage) {
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-        glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-        glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-    }
-}
-
-void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag updateContentsFlag)
-{
     glBindTexture(GL_TEXTURE_2D, m_id);
 
     const unsigned bytesPerPixel = 4;
@@ -146,7 +106,7 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
         && !(bytesPerLine == static_cast<int>(targetRect.width() * bytesPerPixel) && adjustedSourceOffset == IntPoint::zero());
 
     // prepare temporaryData if necessary
-    if ((m_format == GL_RGBA && updateContentsFlag == UpdateCannotModifyOriginalImageData) || requireSubImageBuffer) {
+    if (requireSubImageBuffer) {
         temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
         data = temporaryData.data();
         const char* bits = static_cast<const char*>(srcData);
@@ -163,13 +123,25 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
         adjustedSourceOffset = IntPoint(0, 0);
     }
 
-    if (m_format == GL_RGBA)
-        swizzleBGRAToRGBA(reinterpret_cast_ptr<uint32_t*>(data), IntRect(adjustedSourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
+    glBindTexture(GL_TEXTURE_2D, m_id);
 
-    updateContentsNoSwizzle(data, targetRect, adjustedSourceOffset, bytesPerLine, bytesPerPixel, m_format);
+    if (m_contextAttributes.supportsUnpackSubimage) {
+        // Use the OpenGL sub-image extension, now that we know it's available.
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
+        glPixelStorei(GL_UNPACK_SKIP_ROWS, adjustedSourceOffset.y());
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS, adjustedSourceOffset.x());
+    }
+
+    glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), m_format, m_type, srcData);
+
+    if (m_contextAttributes.supportsUnpackSubimage) {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    }
 }
 
-void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset, UpdateContentsFlag updateContentsFlag)
+void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset)
 {
     if (!image)
         return;
@@ -186,7 +158,7 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     bytesPerLine = cairo_image_surface_get_stride(surface);
 #endif
 
-    updateContents(imageData, targetRect, offset, bytesPerLine, updateContentsFlag);
+    updateContents(imageData, targetRect, offset, bytesPerLine);
 }
 
 static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
@@ -232,7 +204,7 @@ RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper
             bool last = (i == filters.size() - 1) && (j == numPasses - 1);
             if (!last) {
                 if (!intermediateSurface)
-                    intermediateSurface = texmapGL.acquireTextureFromPool(contentSize(), BitmapTexture::SupportsAlpha | BitmapTexture::FBOAttachment);
+                    intermediateSurface = texmapGL.acquireTextureFromPool(contentSize(), BitmapTexture::SupportsAlpha);
                 texmapGL.bindSurface(intermediateSurface.get());
             }
 

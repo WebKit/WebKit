@@ -319,8 +319,7 @@ bool AcceleratedCompositingContext::acceleratedCompositingAvailable()
     IntRect targetRect(0, 0, width, height);
     IntPoint offset(0, 0);
     int bytesPerLine = width * 4;
-    BitmapTexture::UpdateContentsFlag flags = BitmapTexture::UpdateCanModifyOriginalImageData;
-    texture->updateContents(data, targetRect, offset, bytesPerLine, flags);
+    texture->updateContents(data, targetRect, offset, bytesPerLine);
 
     // Render texture.
     textureMapper->beginPainting();

@@ -1,3 +1,15 @@
+2018-03-23  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Avoid software color conversion inside BitmapTextureGL
+        https://bugs.webkit.org/show_bug.cgi?id=183892
+
+        Remove the UpdateContentsFlag parameter as it's not used anymore.
+
+        Reviewed by Žan Doberšek.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::acceleratedCompositingAvailable):
+
 2018-03-15  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Fix build errors when ENABLE_NETSCAPE_PLUGIN_API is turned off

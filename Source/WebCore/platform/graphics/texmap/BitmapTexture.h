@@ -46,12 +46,6 @@ public:
     enum Flag {
         NoFlag = 0,
         SupportsAlpha = 0x01,
-        FBOAttachment = 0x02
-    };
-
-    enum UpdateContentsFlag {
-        UpdateCanModifyOriginalImageData,
-        UpdateCannotModifyOriginalImageData
     };
 
     typedef unsigned Flags;
@@ -65,9 +59,9 @@ public:
     virtual bool isBackedByOpenGL() const { return false; }
 
     virtual IntSize size() const = 0;
-    virtual void updateContents(Image*, const IntRect&, const IntPoint& offset, UpdateContentsFlag) = 0;
-    virtual void updateContents(TextureMapper&, GraphicsLayer*, const IntRect& target, const IntPoint& offset, UpdateContentsFlag, float scale = 1);
-    virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine, UpdateContentsFlag) = 0;
+    virtual void updateContents(Image*, const IntRect&, const IntPoint& offset) = 0;
+    virtual void updateContents(TextureMapper&, GraphicsLayer*, const IntRect& target, const IntPoint& offset, float scale = 1);
+    virtual void updateContents(const void*, const IntRect& target, const IntPoint& offset, int bytesPerLine) = 0;
     virtual bool isValid() const = 0;
     inline Flags flags() const { return m_flags; }
 

@@ -44,6 +44,7 @@ public:
     virtual ~TextureMapperGL();
 
     enum Flag {
+        NoFlag = 0x00,
         ShouldBlend = 0x01,
         ShouldFlipTexture = 0x02,
         ShouldUseARBTextureRect = 0x04,
