@@ -321,7 +321,7 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
 {
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
+    void* actualVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(*(reinterpret_cast<void**>(impl.ptr())));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(__identifier("??_7TestEnabledBySetting@WebCore@@6B@"));
 #else

@@ -1224,6 +1224,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
         generateSelectorChecker();
         break;
     case FunctionType::CannotMatchAnything:
+        m_assembler.tagReturnAddress();
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
         m_assembler.ret();
         break;
@@ -1243,10 +1244,11 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
     for (unsigned i = 0; i < m_functionCalls.size(); i++)
         linkBuffer.link(m_functionCalls[i].first, m_functionCalls[i].second);
 
+    JSC::PtrTag tag = ptrTag(&codeRef, m_selectorContext);
 #if CSS_SELECTOR_JIT_DEBUGGING
-    codeRef = linkBuffer.finalizeCodeWithDisassembly(JSC::NoPtrTag, "CSS Selector JIT for \"%s\"", m_originalSelector->selectorText().utf8().data());
+    codeRef = linkBuffer.finalizeCodeWithDisassembly(tag, "CSS Selector JIT for \"%s\"", m_originalSelector->selectorText().utf8().data());
 #else
-    codeRef = FINALIZE_CODE(linkBuffer, JSC::NoPtrTag, "CSS Selector JIT");
+    codeRef = FINALIZE_CODE(linkBuffer, tag, "CSS Selector JIT");
 #endif
 
     if (m_functionType == FunctionType::SimpleSelectorChecker || m_functionType == FunctionType::CannotMatchAnything)
@@ -1736,6 +1738,7 @@ static bool shouldMarkStyleIsAffectedByPreviousSibling(const SelectorFragment& f
 
 void SelectorCodeGenerator::generateSelectorChecker()
 {
+    m_assembler.tagReturnAddress();
     pushMacroAssemblerRegisters();
     StackAllocator earlyFailureStack = m_stackAllocator;
 

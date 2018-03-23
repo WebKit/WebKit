@@ -1,3 +1,143 @@
+2018-03-23  Mark Lam  <mark.lam@apple.com>
+
+        Add pointer profiling hooks to the CSS JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=183947
+        <rdar://problem/38803593>
+
+        Reviewed by JF Bastien.
+
+        No new tests needed.  Covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        - Added a missing application of WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION().
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+        * cssjit/SelectorCompiler.h:
+        (WebCore::SelectorCompiler::ruleCollectorSimpleSelectorCheckerFunction):
+        (WebCore::SelectorCompiler::querySelectorSimpleSelectorCheckerFunction):
+        (WebCore::SelectorCompiler::ruleCollectorSelectorCheckerFunctionWithCheckingContext):
+        (WebCore::SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeCompiledSingleMultiSelectorData const):
+        (WebCore::SelectorDataList::execute const):
+
 2018-03-23  Sihui Liu  <sihui_liu@apple.com>
 
         Local storage getItem() for an empty string returned UNDEFINED value.

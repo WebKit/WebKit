@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,28 +55,32 @@ typedef unsigned (*QuerySelectorSelectorCheckerWithCheckingContext)(const Elemen
 
 SelectorCompilationStatus compileSelector(const CSSSelector*, SelectorContext, JSC::MacroAssemblerCodeRef& outputCodeRef);
 
-inline RuleCollectorSimpleSelectorChecker ruleCollectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline RuleCollectorSimpleSelectorChecker ruleCollectorSimpleSelectorCheckerFunction(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
-    return reinterpret_cast<RuleCollectorSimpleSelectorChecker>(executableAddress);
+    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::RuleCollector);
+    return JSC::untagCFunctionPtr<RuleCollectorSimpleSelectorChecker>(executableAddress, tag);
 }
 
-inline QuerySelectorSimpleSelectorChecker querySelectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline QuerySelectorSimpleSelectorChecker querySelectorSimpleSelectorCheckerFunction(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
-    return reinterpret_cast<QuerySelectorSimpleSelectorChecker>(executableAddress);
+    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::QuerySelector);
+    return JSC::untagCFunctionPtr<QuerySelectorSimpleSelectorChecker>(executableAddress, tag);
 }
 
-inline RuleCollectorSelectorCheckerWithCheckingContext ruleCollectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline RuleCollectorSelectorCheckerWithCheckingContext ruleCollectorSelectorCheckerFunctionWithCheckingContext(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-    return reinterpret_cast<RuleCollectorSelectorCheckerWithCheckingContext>(executableAddress);
+    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::RuleCollector);
+    return JSC::untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext>(executableAddress, tag);
 }
 
-inline QuerySelectorSelectorCheckerWithCheckingContext querySelectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline QuerySelectorSelectorCheckerWithCheckingContext querySelectorSelectorCheckerFunctionWithCheckingContext(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-    return reinterpret_cast<QuerySelectorSelectorCheckerWithCheckingContext>(executableAddress);
+    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::QuerySelector);
+    return JSC::untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext>(executableAddress, tag);
 }
 
 } // namespace SelectorCompiler

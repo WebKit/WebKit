@@ -4629,7 +4629,7 @@ END
         push(@implContent, <<END) if $vtableNameGnu;
 
 #if ENABLE(BINDING_INTEGRITY)
-    void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
+    void* actualVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(*(reinterpret_cast<void**>(impl.ptr())));
 #if PLATFORM(WIN)
     void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(${vtableRefWin});
 #else
