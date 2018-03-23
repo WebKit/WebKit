@@ -1,3 +1,20 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Safari WebKitWebRTCAudioModule crash during <video> tag update when audio track present in MediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=181180
+        <rdar://problem/36302375>
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/video-update-often.html
+
+        AudioTrackPrivateMediaStreamCocoa needs to be destroyed in the main thread since it owns a Ref to its MediaStreamTrackPrivate.
+        We can still ref it on a background thread but we always deref it on the main thread.
+
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable):
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::render):
+
 2018-03-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix auto repeat tracks computation with definite min sizes

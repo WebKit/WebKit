@@ -34,6 +34,7 @@
 
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
+#include <wtf/Scope.h>
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(MEDIA_STREAM)
 
@@ -169,7 +170,10 @@ void AudioTrackPrivateMediaStreamCocoa::audioSamplesAvailable(const MediaTime& s
 {
     // This function is called on a background thread. The following protectedThis object ensures the object is not
     // destroyed on the main thread before this function exits.
-    Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
+    auto scopeExit = WTF::makeScopeExit([protectedThis = makeRef(*this)]() mutable {
+        callOnMainThread([protectedThis = WTFMove(protectedThis)] { });
+    });
+
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
 
     if (!m_inputDescription || *m_inputDescription != description) {
@@ -220,7 +224,9 @@ OSStatus AudioTrackPrivateMediaStreamCocoa::render(UInt32 sampleCount, AudioBuff
 {
     // This function is called on a high-priority background thread. The following protectedThis object ensures the object is not
     // destroyed on the main thread before this function exits.
-    Ref<AudioTrackPrivateMediaStreamCocoa> protectedThis { *this };
+    auto scopeExit = WTF::makeScopeExit([protectedThis = makeRef(*this)]() mutable {
+        callOnMainThread([protectedThis = WTFMove(protectedThis)] { });
+    });
 
     if (!m_isPlaying || m_muted || !m_dataSource || streamTrack().muted() || streamTrack().ended() || !streamTrack().enabled()) {
         AudioSampleBufferList::zeroABL(ioData, static_cast<size_t>(sampleCount * m_outputDescription->bytesPerFrame()));

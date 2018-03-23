@@ -1,3 +1,14 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Safari WebKitWebRTCAudioModule crash during <video> tag update when audio track present in MediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=181180
+        <rdar://problem/36302375>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-update-often-expected.txt: Added.
+        * webrtc/video-update-often.html: Added.
+
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] infinite repeat counts aren't reflected for CSS Animations
