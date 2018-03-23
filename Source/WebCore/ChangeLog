@@ -1,3 +1,18 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        DocumentThreadableLoader should send credentials after redirections and preflight if fetch option credentials is include
+        https://bugs.webkit.org/show_bug.cgi?id=183928
+
+        Reviewed by Chris Dumez.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html
+               imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html
+
+        In case mode is include, keep sending credentials even after redirection with preflight.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r229858

@@ -283,7 +283,8 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     if (m_options.credentials != FetchOptions::Credentials::SameOrigin && m_simpleRequest && isSimpleCrossOriginAccessRequest(request.httpMethod(), *m_originalHeaders))
         return completionHandler(WTFMove(request));
 
-    m_options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
+    if (m_options.credentials == FetchOptions::Credentials::SameOrigin)
+        m_options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
 
     clearResource();
 
