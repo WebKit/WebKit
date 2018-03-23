@@ -1,3 +1,29 @@
+2018-03-23  Chris Dumez  <cdumez@apple.com>
+
+        NetworkStateNotifier::updateStateWithoutNotifying() is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=183760
+        <rdar://problem/37093299>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update NetworkStateNotifier::updateStateWithoutNotifying() to stop calling
+        SCDynamicStoreCopyKeyList(). SCDynamicStoreCopyKeyList() is expensive as it
+        expects its key parameter to be a regular expression and it can match several
+        keys. It is also unnecessary in our case since we already have an exact key.
+        We now call the more efficient SCDynamicStoreCopyValue() instead, which is
+        the right thing to call when we have an exact key.
+
+        This change was suggested by the SC team.
+
+        This was tested manually as there is no easy way to write an automated test
+        for this.
+
+        In a follow-up, I also plan to call this code in the UIProcess (or NetworkProcess)
+        to avoid calling it once per WebProcess.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying):
+
 2018-03-23  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r229868.
