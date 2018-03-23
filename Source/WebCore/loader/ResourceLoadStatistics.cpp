@@ -151,7 +151,7 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
         return false;
 
     if (modelVersion >= 12) {
-        if (!decoder.decodeBool("isVeryPrevalentResource", isPrevalentResource))
+        if (!decoder.decodeBool("isVeryPrevalentResource", isVeryPrevalentResource))
             return false;
     }
 
