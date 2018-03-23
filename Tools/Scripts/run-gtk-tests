@@ -119,10 +119,10 @@ class GtkTestRunner(TestRunner):
         super(GtkTestRunner, self)._tear_down_testing_environment()
 
     def is_glib_test(self, test_program):
-        return os.path.basename(os.path.dirname(test_program)) == "WebKit2Gtk"
+        return os.path.basename(os.path.dirname(test_program)) in ["WebKit2Gtk", "JavaScriptCore"]
 
     def is_google_test(self, test_program):
-        return os.path.basename(os.path.dirname(test_program)) in ["WebKit", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk"]
+        return os.path.basename(os.path.dirname(test_program)) in ["WebKit", "WTF", "WebCore",  "WebCoreGtk"]
 
 if __name__ == "__main__":
     if not jhbuildutils.enter_jhbuild_environment_if_available("gtk"):

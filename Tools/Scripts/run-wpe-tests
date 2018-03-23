@@ -35,10 +35,10 @@ class WPETestRunner(TestRunner):
         super(WPETestRunner, self).__init__("wpe", options, tests)
 
     def is_glib_test(self, test_program):
-        return os.path.basename(os.path.dirname(test_program)) == "WPE"
+        return os.path.basename(os.path.dirname(test_program)) in ["WPE", "JavaScriptCore"]
 
     def is_google_test(self, test_program):
-        return os.path.basename(os.path.dirname(test_program)) in ["WebKit", "JavaScriptCore", "WTF", "WebCore"]
+        return os.path.basename(os.path.dirname(test_program)) in ["WebKit", "WTF", "WebCore"]
 
 
 if __name__ == "__main__":

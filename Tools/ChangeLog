@@ -1,3 +1,16 @@
+2018-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Run JSC GLib API tests in GTK+ and WPE bots.
+
+        The test runners were still considering the JSC tests as google tests, but they are now GLib tests.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner.is_glib_test):
+        (GtkTestRunner.is_google_test):
+        * Scripts/run-wpe-tests:
+        (WPETestRunner.is_glib_test):
+        (WPETestRunner.is_google_test):
+
 2018-03-22  Daniel Bates  <dabates@apple.com>
 
         Expose SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest() as WebKit SPI
