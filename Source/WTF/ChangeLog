@@ -1,3 +1,25 @@
+2018-03-23  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        WebProcess memory monitor thresholds should be better tuned for embedded systems.
+        https://bugs.webkit.org/show_bug.cgi?id=183773
+
+        Reviewed by Yusuke Suzuki.
+
+        Take into account the total system RAM for the thresholds calculation.
+
+        For systems with more than 3GB the conservative and strict thresholds remain as they are,
+        but for systems with less RAM the thresholds are dynamically configured as follows:
+
+        - Conservative threshold (release non critical memory) if WebProcess using more than 33% of the total RAM.
+        - Strict threshold (release all possible memory) if WebProcess using more than 50% of the total RAM.
+
+        The Kill threshold is also modified. Now it is capped at 90% of the total RAM.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillWithProcessState):
+        (WTF::thresholdForPolicy):
+        (WTF::MemoryPressureHandler::shrinkOrDie):
+
 2018-03-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add standard containers with FastAllocator specialization
