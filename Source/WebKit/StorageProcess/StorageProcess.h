@@ -100,6 +100,8 @@ public:
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);
+
+    void swContextConnectionMayNoLongerBeNeeded(WebSWServerToContextConnection&);
 #endif
 
     void didReceiveStorageProcessMessage(IPC::Connection&, IPC::Decoder&);
@@ -145,6 +147,8 @@ private:
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, WebCore::SWServerConnectionIdentifier);
 
+    void disableServiceWorkerProcessTerminationDelay();
+
     WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
     bool needsServerToContextConnectionForOrigin(WebCore::SecurityOrigin&) const;
 #endif
@@ -175,6 +179,7 @@ private:
 
     HashMap<RefPtr<WebCore::SecurityOrigin>, Ref<WebSWServerToContextConnection>> m_serverToContextConnections;
     bool m_waitingForServerToContextProcessConnection { false };
+    bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::SWServer>> m_swServers;
     HashMap<WebCore::SWServerConnectionIdentifier, WebSWServerConnection*> m_swServerConnections;

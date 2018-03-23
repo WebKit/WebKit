@@ -81,6 +81,7 @@
 - (void)_terminateStorageProcess;
 - (void)_terminateNetworkProcess;
 - (void)_terminateServiceWorkerProcesses WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_disableServiceWorkerProcessTerminationDelay WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only.
 - (pid_t)_networkProcessIdentifier WK_API_AVAILABLE(macosx(10.13), ios(11.0));

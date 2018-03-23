@@ -272,6 +272,7 @@ public:
     void terminateStorageProcess();
     void terminateNetworkProcess();
     void terminateServiceWorkerProcesses();
+    void disableServiceWorkerProcessTerminationDelay();
 
     void syncNetworkProcessCookies();
 
@@ -519,6 +520,7 @@ private:
     HashMap<RefPtr<WebCore::SecurityOrigin>, ServiceWorkerProcessProxy*> m_serviceWorkerProcesses;
     bool m_waitingForWorkerContextProcessConnection { false };
     bool m_allowsAnySSLCertificateForServiceWorker { false };
+    bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     String m_serviceWorkerUserAgent;
     std::optional<WebPreferencesStore> m_serviceWorkerPreferences;
     HashMap<String, bool> m_mayHaveRegisteredServiceWorkers;

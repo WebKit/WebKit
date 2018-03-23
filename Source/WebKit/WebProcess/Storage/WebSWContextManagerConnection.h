@@ -87,6 +87,7 @@ private:
     void claimCompleted(uint64_t claimRequestIdentifier);
     void didFinishSkipWaiting(uint64_t callbackID);
     void setUserAgent(String&& userAgent);
+    void terminateProcess();
 
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageGroupID;

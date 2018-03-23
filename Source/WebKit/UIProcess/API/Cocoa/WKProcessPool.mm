@@ -434,6 +434,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->terminateServiceWorkerProcesses();
 }
 
+- (void)_disableServiceWorkerProcessTerminationDelay
+{
+    _processPool->disableServiceWorkerProcessTerminationDelay();
+}
+
 - (pid_t)_networkProcessIdentifier
 {
     return _processPool->networkProcessIdentifier();

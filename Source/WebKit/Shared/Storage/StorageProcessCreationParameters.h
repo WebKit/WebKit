@@ -54,6 +54,7 @@ struct StorageProcessCreationParameters {
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     Vector<String> urlSchemesServiceWorkersCanHandle;
+    bool shouldDisableServiceWorkerProcessTerminationDelay { false };
 #endif
 };
 

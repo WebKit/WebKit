@@ -1,3 +1,15 @@
+2018-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Promptly terminate service worker processes when they are no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=183873
+        <rdar://problem/38676995>
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2018-03-23  Brady Eidson  <beidson@apple.com>
 
         Go to back/forward list items after a process-swapped navigation.

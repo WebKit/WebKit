@@ -1,3 +1,42 @@
+2018-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Promptly terminate service worker processes when they are no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=183873
+        <rdar://problem/38676995>
+
+        Reviewed by Youenn Fablet.
+
+        The StorageProcess now keeps track of service worker clients for each security
+        origin. When there is no longer any clients for a given security origin, the
+        StorageProcess asks the service worker process for the given origin to terminate
+        and severs its connection to it.
+
+        * Shared/Storage/StorageProcessCreationParameters.h:
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::connectionMayNoLongerBeNeeded):
+        (WebKit::WebSWServerToContextConnection::terminate):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::connectionToContextProcessWasClosed):
+        (WebKit::StorageProcess::needsServerToContextConnectionForOrigin const):
+        (WebKit::StorageProcess::initializeWebsiteDataStore):
+        (WebKit::StorageProcess::swServerForSession):
+        (WebKit::StorageProcess::swContextConnectionMayNoLongerBeNeeded):
+        (WebKit::StorageProcess::disableServiceWorkerProcessTerminationDelay):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _disableServiceWorkerProcessTerminationDelay]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::disableServiceWorkerProcessTerminationDelay):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::terminateProcess):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2018-03-23  Brady Eidson  <beidson@apple.com>
 
         Go to back/forward list items after a process-swapped navigation.

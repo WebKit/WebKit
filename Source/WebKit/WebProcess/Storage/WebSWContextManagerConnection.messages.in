@@ -36,6 +36,7 @@ messages -> WebSWContextManagerConnection {
     DidFinishSkipWaiting(uint64_t callbackID)
     SetUserAgent(String userAgent)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
+    TerminateProcess()
 }
 
 #endif

@@ -1282,6 +1282,15 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     done = false;
 }
 
+void waitUntilServiceWorkerProcessCount(WKProcessPool *processPool, unsigned processCount)
+{
+    do {
+        if (processPool._serviceWorkerProcessCount == processCount)
+            return;
+        TestWebKitAPI::Util::spinRunLoop(1);
+    } while (true);
+}
+
 TEST(ServiceWorkers, ProcessPerOrigin)
 {
     ASSERT(mainBytes);
@@ -1311,8 +1320,13 @@ TEST(ServiceWorkers, ProcessPerOrigin)
     handler2->resources.set("sw2://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
     [configuration setURLSchemeHandler:handler2.get() forURLScheme:@"sw2"];
 
-    [configuration.get().processPool _registerURLSchemeServiceWorkersCanHandle:@"sw1"];
-    [configuration.get().processPool _registerURLSchemeServiceWorkersCanHandle:@"sw2"];
+    WKProcessPool *processPool = configuration.get().processPool;
+    [processPool _registerURLSchemeServiceWorkersCanHandle:@"sw1"];
+    [processPool _registerURLSchemeServiceWorkersCanHandle:@"sw2"];
+
+    // Normally, service workers get terminated several seconds after their clients are gone.
+    // Disable this delay for the purpose of testing.
+    [processPool _disableServiceWorkerProcessTerminationDelay];
 
     RetainPtr<WKWebView> webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -1322,7 +1336,7 @@ TEST(ServiceWorkers, ProcessPerOrigin)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(1U, webView1.get().configuration.processPool._serviceWorkerProcessCount);
+    EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView2 loadRequest:request1];
@@ -1330,7 +1344,7 @@ TEST(ServiceWorkers, ProcessPerOrigin)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(1U, webView2.get().configuration.processPool._serviceWorkerProcessCount);
+    EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
     RetainPtr<WKWebView> webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSURLRequest *request2 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw2://host/main.html"]];
@@ -1339,7 +1353,21 @@ TEST(ServiceWorkers, ProcessPerOrigin)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(2U, webView3.get().configuration.processPool._serviceWorkerProcessCount);
+    EXPECT_EQ(2U, processPool._serviceWorkerProcessCount);
+
+    NSURLRequest *aboutBlankRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
+    [webView3 loadRequest:aboutBlankRequest];
+
+    waitUntilServiceWorkerProcessCount(processPool, 1);
+    EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
+
+    [webView2 loadRequest:aboutBlankRequest];
+    TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
+
+    [webView1 loadRequest:aboutBlankRequest];
+    waitUntilServiceWorkerProcessCount(processPool, 0);
+    EXPECT_EQ(0U, processPool._serviceWorkerProcessCount);
 }
 
 #endif // WK_API_ENABLED

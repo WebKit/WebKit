@@ -78,6 +78,8 @@ public:
 
     SecurityOrigin& origin() { return m_origin.get(); }
 
+    virtual void connectionMayNoLongerBeNeeded() = 0;
+
 protected:
     WEBCORE_EXPORT explicit SWServerToContextConnection(Ref<SecurityOrigin>&&);
 

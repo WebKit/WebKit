@@ -641,10 +641,15 @@ void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode m
     };
 }
 
-void SWServer::markAllWorkersAsTerminated()
+void SWServer::markAllWorkersForOriginAsTerminated(const SecurityOrigin& origin)
 {
-    while (!m_runningOrTerminatingWorkers.isEmpty())
-        workerContextTerminated(m_runningOrTerminatingWorkers.begin()->value);
+    Vector<SWServerWorker*> terminatedWorkers;
+    for (auto& worker : m_runningOrTerminatingWorkers.values()) {
+        if (origin.isSameSchemeHostPort(worker->securityOrigin()))
+            terminatedWorkers.append(worker.ptr());
+    }
+    for (auto& terminatedWorker : terminatedWorkers)
+        workerContextTerminated(*terminatedWorker);
 }
 
 void SWServer::workerContextTerminated(SWServerWorker& worker)
@@ -730,13 +735,17 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     ASSERT(!m_clientsById.contains(clientIdentifier));
     m_clientsById.add(clientIdentifier, WTFMove(data));
 
-    auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(WTFMove(clientOrigin), [] {
+    auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(clientOrigin, [] {
         return Clients { };
     }).iterator->value;
 
     ASSERT(!clientIdentifiersForOrigin.identifiers.contains(clientIdentifier));
     clientIdentifiersForOrigin.identifiers.append(clientIdentifier);
     clientIdentifiersForOrigin.terminateServiceWorkersTimer = nullptr;
+
+    m_clientsBySecurityOrigin.ensure(clientOrigin.clientOrigin, [] {
+        return HashSet<ServiceWorkerClientIdentifier> { };
+    }).iterator->value.add(clientIdentifier);
 
     if (!controllingServiceWorkerRegistrationIdentifier)
         return;
@@ -769,10 +778,22 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
                 if (worker->isRunning() && worker->origin() == clientOrigin)
                     terminateWorker(worker);
             }
+            if (!m_clientsBySecurityOrigin.contains(clientOrigin.clientOrigin)) {
+                if (auto* connection = SWServerToContextConnection::connectionForOrigin(clientOrigin.clientOrigin.securityOrigin()))
+                    connection->connectionMayNoLongerBeNeeded();
+            }
+
             m_clientIdentifiersPerOrigin.remove(clientOrigin);
         });
-        iterator->value.terminateServiceWorkersTimer->startOneShot(terminationDelay);
+        iterator->value.terminateServiceWorkersTimer->startOneShot(m_shouldDisableServiceWorkerProcessTerminationDelay ? 0_s : terminationDelay);
     }
+
+    auto clientsBySecurityOriginIterator = m_clientsBySecurityOrigin.find(clientOrigin.clientOrigin);
+    ASSERT(clientsBySecurityOriginIterator != m_clientsBySecurityOrigin.end());
+    auto& clientsForSecurityOrigin = clientsBySecurityOriginIterator->value;
+    clientsForSecurityOrigin.remove(clientIdentifier);
+    if (clientsForSecurityOrigin.isEmpty())
+        m_clientsBySecurityOrigin.remove(clientsBySecurityOriginIterator);
 
     auto registrationIterator = m_clientToControllingRegistration.find(clientIdentifier);
     if (registrationIterator == m_clientToControllingRegistration.end())
@@ -782,6 +803,11 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
         registration->removeClientUsingRegistration(clientIdentifier);
 
     m_clientToControllingRegistration.remove(registrationIterator);
+}
+
+bool SWServer::needsServerToContextConnectionForOrigin(const SecurityOrigin& origin) const
+{
+    return m_clientsBySecurityOrigin.contains(SecurityOriginData::fromSecurityOrigin(origin));
 }
 
 void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registration)

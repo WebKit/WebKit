@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "StorageProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/ServiceWorkerContextData.h>
@@ -100,6 +101,16 @@ void WebSWServerToContextConnection::claimCompleted(uint64_t requestIdentifier)
 void WebSWServerToContextConnection::didFinishSkipWaiting(uint64_t callbackID)
 {
     send(Messages::WebSWContextManagerConnection::DidFinishSkipWaiting { callbackID });
+}
+
+void WebSWServerToContextConnection::connectionMayNoLongerBeNeeded()
+{
+    StorageProcess::singleton().swContextConnectionMayNoLongerBeNeeded(*this);
+}
+
+void WebSWServerToContextConnection::terminate()
+{
+    send(Messages::WebSWContextManagerConnection::TerminateProcess());
 }
 
 } // namespace WebKit
