@@ -73,7 +73,6 @@
 
 - (void)dealloc {
   CVBufferRelease(_pixelBuffer);
-  [super dealloc];
 }
 
 - (int)width {

@@ -34,7 +34,6 @@
 #include "sdk/objc/Framework/Classes/VideoToolbox/nalu_rewriter.h"
 #include "system_wrappers/include/clock.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
-#include "sdk/WebKit/WebKitUtilities.h"
 
 @interface RTCVideoEncoderH264 ()
 
@@ -319,10 +318,6 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 
 - (void)dealloc {
   [self destroyCompressionSession];
-  if (_callback) {
-    Block_release(_callback);
-  }
-  [super dealloc];
 }
 
 - (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings
@@ -468,7 +463,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 }
 
 - (void)setCallback:(RTCVideoEncoderCallback)callback {
-  _callback = Block_copy(callback);
+  _callback = callback;
 }
 
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
@@ -485,7 +480,6 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   // callback anymore. Do not remove callback until the session is invalidated
   // since async encoder callbacks can occur until invalidation.
   [self destroyCompressionSession];
-  Block_release(_callback);
   _callback = nullptr;
   return WEBRTC_VIDEO_CODEC_OK;
 }
@@ -579,7 +573,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
       nullptr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
   CFDictionarySetValue(encoder_specs,
                        kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder,
-                       webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse);
+                       kCFBooleanTrue);
 #endif
   OSStatus status =
       VTCompressionSessionCreate(nullptr,  // use default allocator

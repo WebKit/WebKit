@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
+class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider, public webrtc::VideoToolboxVideoDecoderFactory::DestructorObserver, public webrtc::VideoToolboxVideoEncoderFactory::DestructorObserver {
 public:
     LibWebRTCProviderCocoa() = default;
     ~LibWebRTCProviderCocoa();
@@ -45,6 +45,22 @@ private:
     std::unique_ptr<webrtc::VideoEncoderFactory> createEncoderFactory() final;
 
     void setH264HardwareEncoderAllowed(bool allowed) final;
+
+    void notifyOfDecoderFactoryDestruction(webrtc::VideoToolboxVideoDecoderFactory& factory) final
+    {
+        ASSERT_UNUSED(factory, &factory == m_decoderFactory);
+        m_decoderFactory = nullptr;
+    }
+
+    void notifyOfEncoderFactoryDestruction(webrtc::VideoToolboxVideoEncoderFactory& factory) final
+    {
+        ASSERT_UNUSED(factory, &factory == m_encoderFactory);
+        m_encoderFactory = nullptr;
+    }
+
+    webrtc::VideoToolboxVideoDecoderFactory* m_decoderFactory { nullptr };
+    webrtc::VideoToolboxVideoEncoderFactory* m_encoderFactory { nullptr };
+    bool m_h264HardwareEncoderAllowed { true };
 };
 
 } // namespace WebCore
