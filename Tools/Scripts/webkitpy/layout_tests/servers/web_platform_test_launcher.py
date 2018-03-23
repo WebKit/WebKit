@@ -46,9 +46,11 @@ def main(argv, stdout, stderr):
     WebPlatformTestServer.setup_logger(config["log_level"])
     logged_servers = []
 
-    with stash.StashServer((config["host"], WebPlatformTestServer.get_port()), authkey=str(uuid.uuid4())):
+    with stash.StashServer((config["browser_host"], WebPlatformTestServer.get_port()), authkey=str(uuid.uuid4())):
         with WebPlatformTestServer.get_ssl_environment(config) as ssl_env:
-            config_, started_servers = WebPlatformTestServer.start(config, ssl_env, build_routes(config["aliases"]))
+            ports = WebPlatformTestServer.get_ports(config, ssl_env)
+            config_ = WebPlatformTestServer.normalise_config(config, ports)
+            started_servers = WebPlatformTestServer.start(config_, ssl_env, build_routes(config["aliases"]))
 
             for protocol, servers in started_servers.items():
                 for port, process in servers:

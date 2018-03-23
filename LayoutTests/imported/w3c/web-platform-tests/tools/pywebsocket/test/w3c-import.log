@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/client_for_testing.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/endtoend_with_external_server.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/mock.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/mux_client_for_testing.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/run_all.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/set_sys_path.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_dispatch.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_endtoend.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_extensions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_handshake.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_handshake_hybi.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_handshake_hybi00.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_http_header_util.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_memorizingfile.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_mock.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_msgutil.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_mux.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_stream.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_stream_hixie75.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/test/test_util.py

@@ -1,5 +1,6 @@
 {
     "css/geometry": "import", 
+    "tools": "import", 
     "web-platform-tests/2dcontext": "skip", 
     "web-platform-tests/2dcontext/imagebitmap": "import", 
     "web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001-ref.html": "import", 
@@ -303,7 +304,7 @@
     "web-platform-tests/svg": "skip", 
     "web-platform-tests/svg-aam": "skip", 
     "web-platform-tests/testharness_runner.html": "skip", 
-    "web-platform-tests/tools": "skip", 
+    "web-platform-tests/tools": "import", 
     "web-platform-tests/tools/__init__.py": "import", 
     "web-platform-tests/tools/html5lib": "import", 
     "web-platform-tests/tools/localpaths.py": "import", 

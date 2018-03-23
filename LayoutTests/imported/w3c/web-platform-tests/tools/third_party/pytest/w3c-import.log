@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/AUTHORS
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/CHANGELOG.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/CONTRIBUTING.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/HOWTORELEASE.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/LICENSE
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/README.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/appveyor.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/pyproject.toml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/pytest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/setup.cfg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/setup.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/tox.ini

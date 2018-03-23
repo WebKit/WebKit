@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/LICENSE
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/MANIFEST.in
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/README.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_chrome.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_chrome_android.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_edge.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_firefox.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_ie.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_opera.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_safari.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_sauce.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_servo.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_webkit.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/setup.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/tox.ini
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner.default.ini

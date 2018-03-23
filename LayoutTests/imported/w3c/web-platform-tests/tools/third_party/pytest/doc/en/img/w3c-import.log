@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/cramer2.png
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/freiburg2.jpg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/gaynor3.png
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/keleshev.png
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/pullrequest.png
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/pylib.png
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/pytest1.png
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/pytest1favi.ico
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/img/theuni.png

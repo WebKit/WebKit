@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/AUTHORS.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/CHANGELOG.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/CODE_OF_CONDUCT.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/CONTRIBUTING.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/LICENSE
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/MANIFEST.in
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/PULL_REQUEST_TEMPLATE.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/README.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/conftest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/dev-requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/docs-requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/pyproject.toml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/setup.cfg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/setup.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tox.ini

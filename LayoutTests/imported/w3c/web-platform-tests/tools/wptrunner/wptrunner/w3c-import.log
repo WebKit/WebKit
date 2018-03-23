@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/config.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/environment.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/expected.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/font.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestexpected.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestinclude.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestupdate.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/metadata.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/products.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/reduce.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/stability.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-extra.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-vendor.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharness_runner.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servo.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servodriver.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testloader.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testrunner.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/vcs.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/webdriver_server.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/wptcommandline.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/wptlogging.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/wptrunner.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/wpttest.py

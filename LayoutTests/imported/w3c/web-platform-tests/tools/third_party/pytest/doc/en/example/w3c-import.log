@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/attic.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/conftest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/index.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/markers.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/multipython.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/nonpython.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/parametrize.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/pythoncollection.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/pythoncollection.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/reportingdemo.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/simple.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/special.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/xfail_demo.py

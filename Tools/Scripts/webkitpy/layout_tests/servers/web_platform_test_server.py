@@ -52,7 +52,7 @@ def base_http_url(port_obj):
         _log.debug("No WPT config file found")
         return "http://localhost:8800/"
     ports = config["ports"]
-    return "http://" + config["host"] + ":" + str(ports["http"][0]) + "/"
+    return "http://" + config["browser_host"] + ":" + str(ports["http"][0]) + "/"
 
 
 def base_https_url(port_obj):
@@ -62,7 +62,7 @@ def base_https_url(port_obj):
         _log.debug("No WPT config file found")
         return "https://localhost:9443/"
     ports = config["ports"]
-    return "https://" + config["host"] + ":" + str(ports["https"][0]) + "/"
+    return "https://" + config["browser_host"] + ":" + str(ports["https"][0]) + "/"
 
 
 def is_wpt_server_running(port_obj):

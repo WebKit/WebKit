@@ -1,0 +1,205 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT tools to a1ec330
+        https://bugs.webkit.org/show_bug.cgi?id=183934
+
+        Reviewed by NOBODY (OOPS!).
+
+        fix-183934
+
+        * CHANGELOG: Added.
+        * LICENSE: Added.
+        * MANIFEST.in: Added.
+        * Makefile: Added.
+        * README.rst: Added.
+        * docs/Makefile: Added.
+        * docs/_templates/page.html: Added.
+        * docs/_templates/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/w3c-import.log.
+        * docs/conf.py: Added.
+        * docs/index.rst: Added.
+        * docs/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/serve/w3c-import.log.
+        * funcsigs/__init__.py: Added.
+        (formatannotation):
+        (_get_user_defined_method):
+        (signature):
+        (_void):
+        (_empty):
+        (_ParameterKind):
+        (_ParameterKind.__new__):
+        (_ParameterKind.__str__):
+        (_ParameterKind.__repr__):
+        (Parameter):
+        (Parameter.__init__):
+        (Parameter.name):
+        (Parameter.default):
+        (Parameter.annotation):
+        (Parameter.kind):
+        (Parameter.replace):
+        (Parameter.__str__):
+        (Parameter.__repr__):
+        (Parameter.__hash__):
+        (Parameter.__eq__):
+        (Parameter.__ne__):
+        (BoundArguments):
+        (BoundArguments.__init__):
+        (BoundArguments.signature):
+        (BoundArguments.args):
+        (BoundArguments.kwargs):
+        (BoundArguments.__hash__):
+        (BoundArguments.__eq__):
+        (BoundArguments.__ne__):
+        (Signature):
+        (Signature.__init__):
+        (Signature.from_function):
+        (Signature.parameters):
+        (Signature.return_annotation):
+        (Signature.replace):
+        (Signature.__hash__):
+        (Signature.__eq__):
+        (Signature.__ne__):
+        (Signature._bind):
+        (Signature.bind):
+        (Signature.bind_partial):
+        (Signature.__str__):
+        * funcsigs/odict.py: Added.
+        (OrderedDict):
+        (OrderedDict.__init__):
+        (OrderedDict.__setitem__):
+        (OrderedDict.__delitem__):
+        (OrderedDict.__iter__):
+        (OrderedDict.__reversed__):
+        (OrderedDict.clear):
+        (OrderedDict.popitem):
+        (OrderedDict.keys):
+        (OrderedDict.values):
+        (OrderedDict.items):
+        (OrderedDict.iterkeys):
+        (OrderedDict.itervalues):
+        (OrderedDict.iteritems):
+        (OrderedDict.update):
+        (OrderedDict.pop):
+        (OrderedDict.setdefault):
+        (OrderedDict.__repr__):
+        (OrderedDict.__reduce__):
+        (OrderedDict.copy):
+        (OrderedDict.fromkeys):
+        (OrderedDict.__eq__):
+        (OrderedDict.__ne__):
+        (OrderedDict.viewkeys):
+        (OrderedDict.viewvalues):
+        (OrderedDict.viewitems):
+        * funcsigs/version.py: Added.
+        * funcsigs/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/w3c-import.log.
+        * requirements/development.txt: Added.
+        * requirements/production.txt: Added.
+        * requirements/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/w3c-import.log.
+        * setup.cfg: Added.
+        * setup.py: Added.
+        (load_version):
+        (load_rst):
+        * tests/__init__.py: Added.
+        * tests/test_formatannotation.py: Added.
+        (TestFormatAnnotation):
+        (TestFormatAnnotation.test_string):
+        (TestFormatAnnotation.test_builtin_type):
+        (TestFormatAnnotation.test_user_type):
+        (TestFormatAnnotation.test_user_type.dummy):
+        * tests/test_funcsigs.py: Added.
+        (TestFunctionSignatures):
+        (TestFunctionSignatures.signature):
+        (TestFunctionSignatures.test_zero_arguments):
+        (TestFunctionSignatures.test_zero_arguments.test):
+        (TestFunctionSignatures.test_single_positional_argument):
+        (TestFunctionSignatures.test_single_positional_argument.test):
+        (TestFunctionSignatures.test_single_keyword_argument):
+        (TestFunctionSignatures.test_single_keyword_argument.test):
+        (TestFunctionSignatures.test_var_args):
+        (TestFunctionSignatures.test_var_args.test):
+        (TestFunctionSignatures.test_keywords_args):
+        (TestFunctionSignatures.test_keywords_args.test):
+        (TestFunctionSignatures.test_multiple_arguments):
+        (TestFunctionSignatures.test_multiple_arguments.test):
+        (TestFunctionSignatures.test_has_version):
+        (TestFunctionSignatures.test_readme):
+        (TestFunctionSignatures.test_unbound_method):
+        (TestFunctionSignatures.test_unbound_method.Test):
+        (TestFunctionSignatures.test_unbound_method.Test.method):
+        (TestFunctionSignatures.test_unbound_method.Test.method_with_args):
+        * tests/test_inspect.py: Added.
+        (TestSignatureObject):
+        (TestSignatureObject.signature):
+        (TestSignatureObject.__init__):
+        (test_signature_object):
+        (test_signature_object.test):
+        (test_signature_on_wargs):
+        (test_signature_on_wargs.test):
+        (test_signature_on_wkwonly):
+        (test_signature_on_wkwonly.test):
+        (test_signature_on_complex_args):
+        (test_signature_on_complex_args.test):
+        (test_signature_on_method):
+        (test_signature_on_method.Test):
+        (test_signature_on_method.Test.foo):
+        (test_signature_on_classmethod):
+        (test_signature_on_classmethod.Test):
+        (test_signature_on_classmethod.Test.foo):
+        (test_signature_on_staticmethod):
+        (test_signature_on_staticmethod.Test):
+        (test_signature_on_staticmethod.Test.foo):
+        (test_signature_on_partial):
+        (test_signature_on_partial.test):
+        (test_signature_on_partial.foo):
+        (test_signature_on_decorated):
+        (test_signature_on_decorated.decorator):
+        (test_signature_on_decorated.decorator.wrapper):
+        (test_signature_on_decorated.Foo):
+        (test_signature_on_decorated.Foo.bar):
+        (test_signature_on_decorated.Foo.__call__):
+        (test_signature_on_class):
+        (test_signature_on_class.C):
+        (test_signature_on_class.C.__init__):
+        (test_signature_on_class.CM):
+        (test_signature_on_class.CM.__call__):
+        (test_signature_on_class.CM.__new__):
+        (test_signature_on_class.CMM):
+        (test_signature_on_class.CMM.__new__):
+        (test_signature_on_class.CMM.__call__):
+        (test_signature_on_class.CM.__init__):
+        (test_signature_equality):
+        (test_signature_equality.foo):
+        (test_signature_equality.bar):
+        (test_signature_equality.spam):
+        (test_signature_str):
+        (test_signature_str.foo):
+        (test_signature_str_positional_only):
+        (test_signature_str_positional_only.test):
+        (test_signature_replace_anno):
+        (test_signature_replace_anno.test):
+        (test_signature_bind_kwonly):
+        (test_signature_bind_kwonly.test):
+        (test_signature_bind_arguments):
+        (test_signature_bind_arguments.test):
+        (test_signature_bind_positional_only):
+        (test_signature_bind_positional_only.test):
+        * tests/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/tools/w3c-import.log.
+        * w3c-import.log: Added.
+
+Changelog
+---------
+
+0.4 (2013-12-20)
+````````````````
+* Fix unbound methods getting their first parameter curried
+* Publish Python wheel packages
+
+0.3 (2013-05-29)
+````````````````
+* Fix annotation formatting of builtin types on Python 2.x
+
+0.2 (2012-01-07)
+````````````````
+* PyPy compatability
+
+0.1 (2012-01-06)
+````````````````
+* Initial release

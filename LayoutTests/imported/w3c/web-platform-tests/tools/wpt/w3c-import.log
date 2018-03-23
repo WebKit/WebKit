@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/browser.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/commands.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/install.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/markdown.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/paths
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/requirements.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/run.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/stability.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/testfiles.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/tox.ini
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/update.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/utils.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/virtualenv.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wpt/wpt.py

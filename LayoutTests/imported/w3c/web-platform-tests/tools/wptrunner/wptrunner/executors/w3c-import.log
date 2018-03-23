@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/base.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorchrome.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executoredge.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorinternetexplorer.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executormarionette.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executoropera.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorselenium.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorservo.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorservodriver.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorwebkit.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/process.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/protocol.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/reftest-wait_marionette.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/reftest-wait_webdriver.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/reftest.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_marionette.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_marionette_resume.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_servodriver.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_webdriver.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/testharness_webdriver_resume.js

@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/abort_handshake_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/abort_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/arraybuffer_benchmark.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/bench_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/benchmark.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/benchmark.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/benchmark_helper_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/close_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/console.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/cookie_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/echo_client.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/echo_noext_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/echo_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/eventsource.cgi
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/eventsource.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/fetch_benchmark.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/fetch_benchmark.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/fetch_performance_test_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/handler_map.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/hsts_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/internal_error_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/origin_check_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/performance_test_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/performance_test_iframe.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/pywebsocket.conf
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/special_headers.cgi
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/util.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/util_main.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/util_worker.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/xhr_benchmark.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/xhr_benchmark.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/xhr_event_logger.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/example/xhr_performance_test_iframe.html

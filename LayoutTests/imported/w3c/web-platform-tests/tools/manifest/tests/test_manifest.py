@@ -232,6 +232,52 @@ def test_reftest_computation_chain_update_remove():
     assert list(m) == [("reftest", test2.path, {test2})]
 
 
+def test_reftest_computation_chain_update_test_type():
+    m = manifest.Manifest()
+
+    s1 = SourceFileWithTest("test", "0"*40, item.RefTest, [("/test-ref", "==")])
+
+    assert m.update([s1]) is True
+
+    test1 = s1.manifest_items()[1][0]
+
+    assert list(m) == [("reftest", test1.path, {test1})]
+
+    # test becomes a testharness test (hash change because that is determined
+    # based on the file contents). The updated manifest should not includes the
+    # old reftest.
+    s2 = SourceFileWithTest("test", "1"*40, item.TestharnessTest)
+    assert m.update([s2]) is True
+
+    test2 = s2.manifest_items()[1][0]
+
+    assert list(m) == [("testharness", test2.path, {test2})]
+
+
+def test_reftest_computation_chain_update_node_change():
+    m = manifest.Manifest()
+
+    s1 = SourceFileWithTest("test1", "0"*40, item.RefTest, [("/test2", "==")])
+    s2 = SourceFileWithTest("test2", "0"*40, item.RefTestNode, [("/test3", "==")])
+
+    assert m.update([s1, s2]) is True
+
+    test1 = s1.manifest_items()[1][0]
+    test2 = s2.manifest_items()[1][0]
+
+    assert list(m) == [("reftest", test1.path, {test1}),
+                       ("reftest_node", test2.path, {test2})]
+
+    #test2 changes to support type
+    s2 = SourceFileWithTest("test2", "1"*40, item.SupportFile)
+
+    assert m.update([s1,s2]) is True
+    test3 = s2.manifest_items()[1][0]
+
+    assert list(m) == [("reftest", test1.path, {test1}),
+                       ("support", test3.path, {test3})]
+
+
 def test_iterpath():
     m = manifest.Manifest()
 

@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/_stream_base.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/_stream_hixie75.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/_stream_hybi.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/common.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/dispatch.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/extensions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/fast_masking.i
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/headerparserhandler.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/http_header_util.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/memorizingfile.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/msgutil.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/mux.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/standalone.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/stream.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/util.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/pywebsocket/mod_pywebsocket/xhr_benchmark_handler.py

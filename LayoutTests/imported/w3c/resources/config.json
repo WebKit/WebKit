@@ -1,4 +1,4 @@
-{"host": "localhost",
+{"browser_host": "localhost",
  "ports":{"http":[8800, 8801],
           "https":[9443],
           "ws":[49001]},

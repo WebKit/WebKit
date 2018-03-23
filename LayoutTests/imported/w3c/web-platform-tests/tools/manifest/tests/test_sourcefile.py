@@ -27,7 +27,6 @@ def items(s):
     "common/test.html",
     "support/test.html",
     "css21/archive/test.html",
-    "work-in-progress/test.html",
     "conformance-checkers/test.html",
     "conformance-checkers/README.md",
     "conformance-checkers/html/Makefile",
@@ -38,7 +37,6 @@ def items(s):
     "foo/test-support.html",
     "css/common/test.html",
     "css/CSS2/archive/test.html",
-    "css/work-in-progress/test.html",
 ])
 def test_name_is_non_test(rel_path):
     s = create(rel_path)
@@ -54,7 +52,6 @@ def test_name_is_non_test(rel_path):
     "foo/conformance-checkers/test.html",
     "foo/_certs/test.html",
     "foo/css21/archive/test.html",
-    "foo/work-in-progress/test.html",
     "foo/CSS2/archive/test.html",
     "css/css21/archive/test.html",
 ])
@@ -450,6 +447,26 @@ def test_testharness_ext(filename):
     assert not s.content_is_testharness
 
     assert items(s) == []
+
+
+@pytest.mark.parametrize("ext", ["htm", "html"])
+def test_testdriver(ext):
+    content = b"<script src=/resources/testdriver.js></script>"
+
+    filename = "html/test." + ext
+    s = create(filename, content)
+
+    assert s.has_testdriver
+
+
+@pytest.mark.parametrize("ext", ["htm", "html"])
+def test_relative_testdriver(ext):
+    content = b"<script src=../resources/testdriver.js></script>"
+
+    filename = "html/test." + ext
+    s = create(filename, content)
+
+    assert not s.has_testdriver
 
 
 @pytest.mark.parametrize("ext", ["htm", "html"])

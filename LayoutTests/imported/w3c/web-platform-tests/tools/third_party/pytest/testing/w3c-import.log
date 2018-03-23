@@ -1,0 +1,51 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/acceptance_test.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/deprecated_test.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_argcomplete.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_assertion.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_assertrewrite.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_cache.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_capture.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_collection.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_compat.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_config.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_conftest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_doctest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_entry_points.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_helpconfig.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_junitxml.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_mark.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_modimport.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_monkeypatch.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_nodes.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_nose.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_parseopt.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_pastebin.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_pdb.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_pluginmanager.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_pytester.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_recwarn.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_resultlog.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_runner.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_runner_xunit.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_session.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_skipping.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_terminal.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_tmpdir.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_unittest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_warnings.py

@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/before_install.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/check_stability.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_built_diff.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_lint.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_manifest.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_resources_unittest.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_stability.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_tools_unittest.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_wpt.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/ci_wptrunner_infrastructure.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/commands.json
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/install.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/jobs.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/lib.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/make_hosts_file.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/run.sh
+/LayoutTests/imported/w3c/web-platform-tests/tools/ci/tag_master.py

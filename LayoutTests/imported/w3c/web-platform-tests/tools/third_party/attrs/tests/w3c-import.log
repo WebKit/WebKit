@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_annotations.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_config.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_converters.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_dark_magic.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_dunders.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_filters.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_funcs.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_init_subclass.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_make.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_slots.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_validators.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/utils.py
