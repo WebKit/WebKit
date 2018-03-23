@@ -1,5 +1,18 @@
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
+        Allow fully whitelisted plug-ins to match non HTTP URLs
+        https://bugs.webkit.org/show_bug.cgi?id=183938
+        rdar://problem/38534312
+
+        Reviewed by Chris Dumez.
+
+        Covered by manual testing and unit testing.
+
+        * platform/URL.cpp:
+        (WebCore::URL::isMatchingDomain const):
+
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
         ActiveDOMObject should assert that they are destroyed in the thread they are created
         https://bugs.webkit.org/show_bug.cgi?id=183671
 

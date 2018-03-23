@@ -1,3 +1,14 @@
+2018-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Allow fully whitelisted plug-ins to match non HTTP URLs
+        https://bugs.webkit.org/show_bug.cgi?id=183938
+        rdar://problem/38534312
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2018-03-23  JF Bastien  <jfbastien@apple.com>
 
         dump-class-layout is just wrong

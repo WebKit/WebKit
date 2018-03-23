@@ -790,12 +790,14 @@ bool hostsAreEqual(const URL& a, const URL& b)
 
 bool URL::isMatchingDomain(const String& domain) const
 {
-    // We restrict it to HTTP for simplicity since we do not want to match data, blob or file based URLs.
-    if (isNull() || !protocolIsInHTTPFamily())
+    if (isNull())
         return false;
 
     if (domain.isEmpty())
         return true;
+
+    if (!protocolIsInHTTPFamily())
+        return false;
 
     auto host = this->host();
     if (!host.endsWith(domain))

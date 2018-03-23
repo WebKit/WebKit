@@ -383,8 +383,8 @@ TEST_F(URLTest, HostIsMatchingDomain)
 
     url = createURL("file:///www.webkit.org");
 
-    EXPECT_FALSE(url.isMatchingDomain(String { }));
-    EXPECT_FALSE(url.isMatchingDomain(emptyString()));
+    EXPECT_TRUE(url.isMatchingDomain(String { }));
+    EXPECT_TRUE(url.isMatchingDomain(emptyString()));
     EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("org")));
     EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("webkit.org")));
     EXPECT_FALSE(url.isMatchingDomain(ASCIILiteral("www.webkit.org")));
