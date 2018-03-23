@@ -1,3 +1,12 @@
+2018-03-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for GCC 4.9 builds.
+
+        * assembler/MacroAssemblerCodeRef.h: std::is_trivially_copyable<> isn't
+        supported in 4.9 libstdc++, so wrap the static assert using it in a
+        COMPILER_SUPPORTS() macro, and use __is_trivially_copyable() builtin,
+        as is done in bitwise_cast() in StdLibExtras.h.
+
 2018-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Adopt WK_ALTERNATE_FRAMEWORKS_DIR in WebCore
