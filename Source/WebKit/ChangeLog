@@ -1,3 +1,16 @@
+2018-03-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Fix -Wswitch warnings after r229778
+        https://bugs.webkit.org/show_bug.cgi?id=183927
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse): Log a warning if Suspend is
+        received as a PolicyAction
+        * UIProcess/API/glib/WebKitNavigationClient.cpp: Ignore the ProcessSwap termination reason,
+        which should be invisible to WebKit clients
+
 2018-03-22  Chris Dumez  <cdumez@apple.com>
 
         Include security origin in the service worker process name

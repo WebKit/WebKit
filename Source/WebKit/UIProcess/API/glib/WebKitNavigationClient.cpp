@@ -116,6 +116,7 @@ private:
             break;
         case ProcessTerminationReason::ExceededCPULimit:
         case ProcessTerminationReason::RequestedByClient:
+        case ProcessTerminationReason::NavigationSwap:
             break;
         }
     }
