@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 #include <webrtc/media/engine/webrtcvideodecoderfactory.h>
 #include <webrtc/media/engine/webrtcvideoencoderfactory.h>
+#include <webrtc/sdk/WebKit/WebKitUtilities.h>
 #include <wtf/darwin/WeakLinking.h>
 #endif
 
@@ -47,49 +48,26 @@ UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
 
 LibWebRTCProviderCocoa::~LibWebRTCProviderCocoa()
 {
-    if (m_encoderFactory)
-        m_encoderFactory->ClearDestructorObserver();
-    if (m_decoderFactory)
-        m_decoderFactory->ClearDestructorObserver();
 }
 
 void LibWebRTCProviderCocoa::setH264HardwareEncoderAllowed(bool allowed)
 {
-    m_h264HardwareEncoderAllowed = allowed;
-#if PLATFORM(MAC)
-    if (m_encoderFactory)
-        m_encoderFactory->setH264HardwareEncoderAllowed(allowed);
-#endif
+    webrtc::setH264HardwareEncoderAllowed(allowed);
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderCocoa::createDecoderFactory()
 {
-    ASSERT(!m_decoderFactory);
-    auto decoderFactory = std::make_unique<webrtc::VideoToolboxVideoDecoderFactory>(this);
-    m_decoderFactory = decoderFactory.get();
-
-    return WTFMove(decoderFactory);
+    return webrtc::createVideoToolboxDecoderFactory();
 }
 
 std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderCocoa::createEncoderFactory()
 {
-    ASSERT(!m_encoderFactory);
-    auto encoderFactory = std::make_unique<webrtc::VideoToolboxVideoEncoderFactory>(this);
-    m_encoderFactory = encoderFactory.get();
-
-#if PLATFORM(MAC)
-    m_encoderFactory->setH264HardwareEncoderAllowed(m_h264HardwareEncoderAllowed);
-#endif
-
-    return WTFMove(encoderFactory);
+    return webrtc::createVideoToolboxEncoderFactory();
 }
 
 void LibWebRTCProviderCocoa::setActive(bool value)
 {
-    if (m_decoderFactory)
-        m_decoderFactory->SetActive(value);
-    if (m_encoderFactory)
-        m_encoderFactory->SetActive(value);
+    webrtc::setApplicationStatus(value);
 }
 
 #endif // USE(LIBWEBRTC)
