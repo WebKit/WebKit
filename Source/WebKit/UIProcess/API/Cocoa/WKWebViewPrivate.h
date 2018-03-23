@@ -270,7 +270,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
 
-@property (nonatomic, readonly) NSInteger _spellCheckerDocumentTag WK_API_AVAILABLE(WK_MAC_TBA);
+@property (nonatomic, readonly) NSInteger _spellCheckerDocumentTag WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 - (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress;
 

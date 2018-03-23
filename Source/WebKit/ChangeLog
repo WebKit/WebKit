@@ -1,3 +1,9 @@
+2018-03-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-03-23  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Avoid software color conversion inside BitmapTextureGL
