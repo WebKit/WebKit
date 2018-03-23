@@ -1,3 +1,18 @@
+2018-03-23  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLElement factory doesn't need to call MediaPlayer::isAvailable
+        https://bugs.webkit.org/show_bug.cgi?id=183946
+        <rdar://problem/38802687>
+
+        Reviewed by Youenn Fablet.
+
+        Test: media/media-disabled.html
+
+        * dom/make_names.pl:
+        (printConstructorInterior):
+        * page/Settings.yaml:
+        * page/SettingsDefaultValues.h:
+
 2018-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Stop using dispatch_set_target_queue()

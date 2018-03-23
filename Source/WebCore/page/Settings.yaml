@@ -328,7 +328,7 @@ requestAnimationFrameEnabled:
 cookieEnabled:
   initial: true
 mediaEnabled:
-  initial: true
+  initial: defaultMediaEnabled
 DOMPasteAllowed:
   initial: false
 

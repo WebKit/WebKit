@@ -1,3 +1,14 @@
+2018-03-23  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLElement factory doesn't need to call MediaPlayer::isAvailable
+        https://bugs.webkit.org/show_bug.cgi?id=183946
+        <rdar://problem/38802687>
+
+        Reviewed by Youenn Fablet.
+
+        * media/media-disabled-expected.txt: Added.
+        * media/media-disabled.html: Added.
+
 2018-03-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Only enable LayoutTest fast/css/apple-system-control-colors.html on macOS.

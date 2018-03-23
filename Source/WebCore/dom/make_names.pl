@@ -412,7 +412,7 @@ sub printConstructorInterior
     # instead of having all the support for this here in this script?
     if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
         print F <<END
-    if (!MediaPlayer::isAvailable() || !document.settings().mediaEnabled())
+    if (!document.settings().mediaEnabled())
         return $parameters{fallbackInterfaceName}::create($constructorTagName, document);
     
 END
