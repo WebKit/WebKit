@@ -1,3 +1,25 @@
+2018-03-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening.
+
+        Add a port-specific baseline for fast/css/apple-system-control.html.
+
+        Mark http/wpt/service-workers tests as a mix of failures and passes,
+        since a lot of the tests pass now that service workers were enabled, but
+        the passing ones are still in minority and there's additionally flaky
+        tests. This should improve after necessary testing SW directories are
+        properly specified.
+
+        In contrast, a bunch of SW-reliant tests under
+        imported/w3c/web-platform-tests/streams are now passing consistently.
+        Failure expectations for these are removed.
+
+        Failue expectations for three compositing tests are also removed after
+        r229804 fixed them.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/apple-system-control-colors-expected.txt: Added.
+
 2018-03-22  Nan Wang  <n_wang@apple.com>
 
         AX: Web table row count is incorrect when role row is added to <tr> in DOM
