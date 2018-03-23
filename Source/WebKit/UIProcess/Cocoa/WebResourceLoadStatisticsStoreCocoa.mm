@@ -50,6 +50,7 @@ void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
             setGrandfatheringTime(grandfatheringTime);
 
         setDebugLogggingEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ResourceLoadStatisticsDebugLoggingEnabled"]);
+        setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalResourceLoadStatisticsDebugMode"]);
     });
 }
 
