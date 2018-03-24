@@ -1,5 +1,15 @@
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
+        Adopt WK_ALTERNATE_FRAMEWORKS_DIR in WebKitLegacy and update install name
+        https://bugs.webkit.org/show_bug.cgi?id=183960
+        <rdar://problem/38812356>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig:
+
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
         Introduce and adopt HAVE(AUDIO_TOOLBOX_AUDIO_SESSION)
         https://bugs.webkit.org/show_bug.cgi?id=183954
         <rdar://problem/38808858>
