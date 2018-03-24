@@ -1,5 +1,13 @@
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the geolocation build
+        https://bugs.webkit.org/show_bug.cgi?id=183975
+
+        * Modules/geolocation/ios/GeolocationPositionIOS.mm:
+        (WebCore::GeolocationPosition::GeolocationPosition):
+
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
         Fix the build with no pasteboard
         https://bugs.webkit.org/show_bug.cgi?id=183973
 
