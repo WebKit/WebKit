@@ -42,9 +42,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 
-#if ENABLE(MINIMAL_SIMULATOR)
-#include <MobileCoreServices/MobileCoreServices.h>
-#elif PLATFORM(IOS)
+#if PLATFORM(IOS)
 static const SInt32 fnfErr = -43;
 #elif PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
