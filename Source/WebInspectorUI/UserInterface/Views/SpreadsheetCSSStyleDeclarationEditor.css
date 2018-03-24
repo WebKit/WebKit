@@ -68,7 +68,7 @@
     margin: 0;
 }
 
-.spreadsheet-css-declaration:matches(:hover, :focus) .property-toggle,
+.spreadsheet-css-declaration:matches(:hover, :focus) .property:not(:matches(.invalid-name, .invalid-value)) .property-toggle,
 .spreadsheet-style-declaration-editor .property.disabled .property-toggle {
     visibility: visible;
 }

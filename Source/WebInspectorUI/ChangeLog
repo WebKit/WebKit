@@ -1,3 +1,18 @@
+2018-03-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: don't show checkboxes for invalid properties
+        https://bugs.webkit.org/show_bug.cgi?id=183951
+        <rdar://problem/38807602>
+
+        Reviewed by Matt Baker.
+
+        Since toggling of invalid properties isn't supported by the backend, don't show checkboxes for invalid properties.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-css-declaration:matches(:hover, :focus) .property:not(:matches(.invalid-name, .invalid-value)) .property-toggle,):
+        (.spreadsheet-css-declaration:matches(:hover, :focus) .property-toggle,): Deleted.
+        Don't show checkboxes for invalid properties but still show them for duplicate properties.
+
 2018-03-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: add WebKitAdditions hooks for WebInspectorUI
