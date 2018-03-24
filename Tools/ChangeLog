@@ -1,3 +1,13 @@
+2018-03-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Fix the run-benchmark script, properly specifying the plan directory
+        where the Skipped file is located.
+
+        Rubber-stamped by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (start):
+
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build with no pasteboard

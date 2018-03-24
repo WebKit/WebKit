@@ -86,7 +86,7 @@ def start(args):
         failed = []
         skipped = []
         planlist = BenchmarkRunner.available_plans()
-        skippedfile = os.path.join(plandir, 'Skipped')
+        skippedfile = os.path.join(BenchmarkRunner.plan_directory(), 'Skipped')
         if not planlist:
             raise Exception('Cant find any .plan file in directory %s' % BenchmarkRunner.plan_directory())
         if os.path.isfile(skippedfile):
