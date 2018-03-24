@@ -1903,6 +1903,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)useSelectionAssistantWithGranularity:(WKSelectionGranularity)selectionGranularity
 {
+#if ENABLE(UNIFIED_TEXT_SELECTION)
+    selectionGranularity = WKSelectionGranularityCharacter;
+#endif
     if (selectionGranularity == WKSelectionGranularityDynamic) {
         if (_textSelectionAssistant) {
             [_textSelectionAssistant deactivateSelection];

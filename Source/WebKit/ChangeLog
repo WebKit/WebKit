@@ -1,3 +1,17 @@
+2018-03-23  Megan Gardner  <megan_gardner@apple.com>
+
+        Enable unified text selection in select cases for gradual testing
+        https://bugs.webkit.org/show_bug.cgi?id=183967
+        <rdar://problem/38815328>
+
+        Reviewed by Tim Horton.
+        
+        Enable in select places for a more gradual switch, as this is a big change and we want to make sure
+        it works before switching completely.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView useSelectionAssistantWithGranularity:]):
+
 2018-03-23  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Pick up ITP debug mode flag from defaults
