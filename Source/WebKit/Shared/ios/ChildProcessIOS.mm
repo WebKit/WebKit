@@ -80,7 +80,10 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         if (!sandboxProfilePath.isEmpty()) {
             CString profilePath = FileSystem::fileSystemRepresentation(sandboxProfilePath);
             char* errorBuf;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             if (sandbox_init_with_parameters(profilePath.data(), SANDBOX_NAMED_EXTERNAL, sandboxParameters.namedParameterArray(), &errorBuf)) {
+#pragma clang diagnostic pop
                 WTFLogAlways("%s: Couldn't initialize sandbox profile [%s], error '%s'\n", getprogname(), profilePath.data(), errorBuf);
                 for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
                     WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));
@@ -92,7 +95,10 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
     case SandboxInitializationParameters::UseSandboxProfile: {
         char* errorBuf;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (sandbox_init_with_parameters(sandboxParameters.sandboxProfile().utf8().data(), 0, sandboxParameters.namedParameterArray(), &errorBuf)) {
+#pragma clang diagnostic pop
             WTFLogAlways("%s: Couldn't initialize sandbox profile, error '%s'\n", getprogname(), errorBuf);
             for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
                 WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));

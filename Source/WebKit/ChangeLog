@@ -1,3 +1,13 @@
+2018-03-24  Tim Horton  <timothy_horton@apple.com>
+
+        Ignore sandbox_init_with_parameters deprecation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=183979
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+
 2018-03-24  Chris Dumez  <cdumez@apple.com>
 
         Use SecurityOriginData more consistently in Service Worker code
