@@ -1,3 +1,17 @@
+2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JIT] Drop ENABLE_JIT_VERBOSE flag
+        https://bugs.webkit.org/show_bug.cgi?id=183983
+
+        Reviewed by Mark Lam.
+
+        Just use JITInternal::verbose value.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build with no pasteboard

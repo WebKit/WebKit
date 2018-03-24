@@ -57,6 +57,9 @@
 using namespace std;
 
 namespace JSC {
+namespace JITInternal {
+static constexpr const bool verbose = false;
+}
 
 Seconds totalBaselineCompileTime;
 Seconds totalDFGCompileTime;
@@ -183,7 +186,7 @@ void JIT::emitSlowCaseCall(Instruction* currentInstruction, Vector<SlowCaseEntry
 
 void JIT::privateCompileMainPass()
 {
-    if (false)
+    if (JITInternal::verbose)
         dataLog("Compiling ", *m_codeBlock, "\n");
     
     jitAssertTagsInPlace();
@@ -245,10 +248,9 @@ void JIT::privateCompileMainPass()
 
         m_labels[m_bytecodeOffset] = label();
 
-#if ENABLE(JIT_VERBOSE)
-        dataLogF("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
-#endif
-        
+        if (JITInternal::verbose)
+            dataLogF("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
+
         OpcodeID opcodeID = Interpreter::getOpcodeID(currentInstruction->u.opcode);
 
         if (UNLIKELY(m_compilation)) {
@@ -433,7 +435,7 @@ void JIT::privateCompileMainPass()
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        if (false)
+        if (JITInternal::verbose)
             dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
     }
 
@@ -484,10 +486,9 @@ void JIT::privateCompileSlowCases()
         if (shouldEmitProfiling())
             rareCaseProfile = m_codeBlock->addRareCaseProfile(m_bytecodeOffset);
 
-#if ENABLE(JIT_VERBOSE)
-        dataLogF("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
-#endif
-        
+        if (JITInternal::verbose)
+            dataLogF("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
+
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeOffset, label());
 
@@ -562,7 +563,7 @@ void JIT::privateCompileSlowCases()
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        if (false)
+        if (JITInternal::verbose)
             dataLog("At ", firstTo, " slow: ", iter - m_slowCases.begin(), "\n");
 
         RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to, "Not enough jumps linked in slow case codegen.");
@@ -885,10 +886,9 @@ CompilationResult JIT::link()
     m_codeBlock->setJITCode(
         adoptRef(*new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
 
-#if ENABLE(JIT_VERBOSE)
-    dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
-#endif
-    
+    if (JITInternal::verbose)
+        dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
+
     return CompilationSuccessful;
 }
 
