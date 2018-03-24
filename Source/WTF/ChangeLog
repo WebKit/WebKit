@@ -1,3 +1,13 @@
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Introduce and adopt HAVE(AUDIO_TOOLBOX_AUDIO_SESSION)
+        https://bugs.webkit.org/show_bug.cgi?id=183954
+        <rdar://problem/38808858>
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Platform.h:
+
 2018-03-23  David Kilzer  <ddkilzer@apple.com>
 
         Stop using dispatch_set_target_queue()

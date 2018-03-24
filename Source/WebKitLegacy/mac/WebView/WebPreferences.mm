@@ -53,8 +53,11 @@
 
 using namespace WebCore;
 
-#if PLATFORM(IOS)
+#if HAVE(AUDIO_TOOLBOX_AUDIO_SESSION)
 #import <AudioToolbox/AudioSession.h>
+#endif
+
+#if PLATFORM(IOS)
 #import <WebCore/Device.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/WebCoreThreadMessage.h>
@@ -2322,6 +2325,7 @@ static NSString *classIBCreatorID = nil;
 
 - (void)setAudioSessionCategoryOverride:(unsigned)override
 {
+#if HAVE(AUDIO_TOOLBOX_AUDIO_SESSION)
     if (override > AudioSession::AudioProcessing) {
         // Clients are passing us OSTypes values from AudioToolbox/AudioSession.h,
         // which need to be translated into AudioSession::CategoryType:
@@ -2349,6 +2353,7 @@ static NSString *classIBCreatorID = nil;
             break;
         }
     }
+#endif
 
     [self _setUnsignedIntValue:override forKey:WebKitAudioSessionCategoryOverride];
 }

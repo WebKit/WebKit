@@ -1,5 +1,16 @@
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
+        Introduce and adopt HAVE(AUDIO_TOOLBOX_AUDIO_SESSION)
+        https://bugs.webkit.org/show_bug.cgi?id=183954
+        <rdar://problem/38808858>
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setAudioSessionCategoryOverride:]):
+
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
         Adopt WK_PLATFORM_NAME in WebKitLegacy
         https://bugs.webkit.org/show_bug.cgi?id=183948
         <rdar://problem/38803908>
