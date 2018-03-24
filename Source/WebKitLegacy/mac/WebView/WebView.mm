@@ -1940,7 +1940,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     }
 }
 
-#else
+#elif __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
 {
