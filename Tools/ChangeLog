@@ -1,3 +1,31 @@
+2018-03-24  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Unrecognized mac versions always use WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=183681
+        <rdar://problem/38509162>
+
+        Reviewed by Daniel Bates.
+
+        When an unrecognized version is used, we were unconditionally adding '-wk2'
+        to the mac version name. This would mean that the port object would always
+        use WebKitTestRunner as the driver, even if DumpRenderTree was explicitly
+        requested.
+
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort.determine_full_port_name): Only add wk2 to port names if
+        WebKitTestRunner is specified.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.__init__): Compare length of split string, and do not treat wk2 as a
+        version name.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest):
+        (MacTest.test_factory_with_future_version): Confirm that future versions correctly
+        assign the driver and have undefined version names.
+        (MacTest.test_factory_with_portname_version): Confirm that general versions correctly assign
+        the driver and have defined versions.
+        (MacTest.test_factory_with_portname_wk2): Ensure that mac ports ending in 'wk2' set
+        the driver to be WebKitTestRunner even if webkit_test_runner=False.
+
 2018-03-23  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix the run-benchmark script, properly specifying the plan directory

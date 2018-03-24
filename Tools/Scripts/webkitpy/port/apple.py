@@ -55,17 +55,17 @@ class ApplePort(Port):
             if host.platform.os_name == 'mac' and 'ios-simulator' in port_name:
                 return port_name
 
+            version_name_addition = ('-' + host.platform.os_version_name().lower().replace(' ', '')) if host.platform.os_version_name() else ''
+
             # If the port_name matches the (badly named) cls.port_name, that
             # means that they passed 'mac' or 'win' and didn't specify a version.
             # That convention means that we're supposed to use the version currently
             # being run, so this won't work if you're not on mac or win (respectively).
-            # If you're not on the o/s in question, you must specify a full version or -future (cf. above).
-            if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False) and host.platform.os_version_name():
-                port_name = cls.port_name + '-' + host.platform.os_version_name().lower().replace(' ', '')
-            elif host.platform.os_version_name():
-                port_name = cls.port_name + '-' + host.platform.os_version_name().lower().replace(' ', '') + '-wk2'
+            # If you're not on the o/s in question, you must specify a full version (cf. above).
+            if port_name == cls.port_name and not getattr(options, 'webkit_test_runner', False):
+                port_name = cls.port_name + version_name_addition
             else:
-                port_name = cls.port_name + '-wk2'
+                port_name = cls.port_name + version_name_addition + '-wk2'
         elif getattr(options, 'webkit_test_runner', False) and  '-wk2' not in port_name:
             port_name += '-wk2'
 

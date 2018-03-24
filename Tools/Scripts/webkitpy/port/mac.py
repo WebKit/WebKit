@@ -57,8 +57,9 @@ class MacPort(DarwinPort):
         DarwinPort.__init__(self, host, port_name, **kwargs)
         version_name_map = VersionNameMap.map(host.platform)
         self._os_version = None
-        if port_name.split('-') > 1:
-            self._os_version = version_name_map.from_name(port_name.split('-')[1])[1]
+        split_port_name = port_name.split('-')
+        if len(split_port_name) > 1 and split_port_name[1] != 'wk2':
+            self._os_version = version_name_map.from_name(split_port_name[1])[1]
         elif self.host.platform.is_mac():
             self._os_version = self.host.platform.os_version
         if not self._os_version:
