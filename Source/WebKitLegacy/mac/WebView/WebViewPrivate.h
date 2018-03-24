@@ -483,7 +483,7 @@ Could be worth adding to the API.
 - (void)_exitedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
 - (void)_performDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
 - (BOOL)_tryToPerformDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
-- (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)clientPosition;
+- (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)globalPosition;
 
 @property (nonatomic, readonly, getter=_dataInteractionCaretRect) CGRect dataInteractionCaretRect;
 #endif

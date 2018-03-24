@@ -1,5 +1,30 @@
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the build with no pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=183973
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebView/WebView.mm:
+        (-[WebView _requestStartDataInteraction:globalPosition:]):
+        (-[WebView _getDataInteractionData]):
+        (-[WebView _dataOperationTextIndicator]):
+        (-[WebView _dragSourceAction]):
+        (-[WebView _draggedLinkTitle]):
+        (-[WebView _draggedLinkURL]):
+        (-[WebView _draggedElementBounds]):
+        (-[WebView _enteredDataInteraction:client:global:operation:]):
+        (-[WebView _updatedDataInteraction:client:global:operation:]):
+        (-[WebView _exitedDataInteraction:client:global:operation:]):
+        (-[WebView _performDataInteraction:client:global:operation:]):
+        (-[WebView _tryToPerformDataInteraction:client:global:operation:]):
+        (-[WebView _endedDataInteraction:global:]):
+        (-[WebView _dataInteractionCaretRect]):
+        * WebView/WebViewPrivate.h:
+
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
         Adopt WK_ALTERNATE_FRAMEWORKS_DIR in WebKitLegacy and update install name
         https://bugs.webkit.org/show_bug.cgi?id=183960
         <rdar://problem/38812356>

@@ -1,3 +1,13 @@
+2018-03-23  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build with no pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=183973
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * platform/ios/PlatformPasteboardIOS.mm:
+
 2018-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Fix some localizable strings after r229878
