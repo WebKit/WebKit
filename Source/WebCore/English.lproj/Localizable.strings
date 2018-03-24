@@ -212,7 +212,7 @@
 "Cut (Undo action name)" = "Cut";
 
 /* Day label in date picker */
-"Day label in date picker" = "Day label in date picker";
+"Day (Date picker for extra zoom mode)" = "Day";
 
 /* Fullscreen Deceptive Website Warning Sheet Title */
 "Deceptive Website Warning" = "Deceptive Website Warning";
@@ -230,7 +230,7 @@
 "Dictation (Undo action name)" = "Dictation";
 
 /* Title of the Done button for zoomed form controls. */
-"Done (extra zoomed form controls)" = "Done (extra zoomed form controls)";
+"Done" = "Done";
 
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
@@ -416,7 +416,7 @@
 "Missing Plug-in" = "Missing Plug-in";
 
 /* Month label in date picker */
-"Month label in date picker" = "Month label in date picker";
+"Month (Date picker for extra zoom mode)" = "Month";
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
@@ -625,9 +625,6 @@
 /* Title of the label to show on a snapshotted plug-in */
 "Snapshotted Plug-In" = "Snapshotted Plug-In";
 
-/* Title of the dictation button for zoomed form controls. */
-"Speak" = "Speak";
-
 /* Speech context sub-menu item */
 "Speech" = "Speech";
 
@@ -835,11 +832,8 @@
 /* WebKitErrorInternal description */
 "WebKit encountered an internal error" = "WebKit encountered an internal error";
 
-/* Title of the writing button for zoomed form controls. */
-"Write" = "Write";
-
 /* Year label in date picker */
-"Year label in date picker" = "Year label in date picker";
+"Year (Date picker for extra zoom mode)" = "Year";
 
 /* message in authentication panel */
 "Your login information will be sent securely." = "Your login information will be sent securely.";

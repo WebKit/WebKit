@@ -1,3 +1,24 @@
+2018-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Fix some localizable strings after r229878
+        https://bugs.webkit.org/show_bug.cgi?id=183963
+
+        Reviewed by Tim Horton.
+
+        The WEB_UI_STRING macro was incorrectly used for certain localized strings pertaining to extra zoom mode. To
+        correct this, make the "Done" string use WEB_UI_STRING with actual UI-facing text; since day, year and month
+        labels in the date picker are less generalizable to other UI, leave these as unique keys, but change them to
+        use WEB_UI_STRING_KEY instead.
+
+        Additionally, remove now-unused localizable strings for the text input view controller.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::formControlDoneButtonTitle):
+        (WebCore::datePickerDayLabelTitle):
+        (WebCore::datePickerMonthLabelTitle):
+        (WebCore::datePickerYearLabelTitle):
+
 2018-03-23  Chris Dumez  <cdumez@apple.com>
 
         NetworkStateNotifier::updateStateWithoutNotifying() is inefficient
