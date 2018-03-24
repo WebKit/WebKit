@@ -1,3 +1,15 @@
+2018-03-24  Tim Horton  <timothy_horton@apple.com>
+
+        WKFileUploadPanel shouldn't depend on WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=183981
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _uploadItemForImageData:imageName:successBlock:failureBlock:]):
+        Just use the underlying WebCore function instead of the
+        unnecessary NSFileManager category method.
+
 2018-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build with no pasteboard

@@ -42,7 +42,6 @@
 #import "WebPageProxy.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebKit/WebNSFileManagerExtras.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
@@ -608,8 +607,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     NSString * const kTemporaryDirectoryName = @"WKWebFileUpload";
 
     // Build temporary file path.
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *temporaryDirectory = [fileManager _webkit_createTemporaryDirectoryWithTemplatePrefix:kTemporaryDirectoryName];
+    NSString *temporaryDirectory = WebCore::FileSystem::createTemporaryDirectory(kTemporaryDirectoryName);
     NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:imageName];
     if (!filePath) {
         LOG_ERROR("WKFileUploadPanel: Failed to create temporary directory to save image");
