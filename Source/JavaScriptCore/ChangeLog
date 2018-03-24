@@ -1,5 +1,17 @@
 2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Improve constants and add comments for CodeBlockHash
+        https://bugs.webkit.org/show_bug.cgi?id=183982
+
+        Rubber-stamped by Mark Lam.
+
+        * bytecode/CodeBlockHash.cpp:
+        (JSC::CodeBlockHash::CodeBlockHash):
+        * bytecode/ParseHash.cpp:
+        (JSC::ParseHash::ParseHash):
+
+2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Add options to report parsing and bytecode compiling times
         https://bugs.webkit.org/show_bug.cgi?id=183982
 
