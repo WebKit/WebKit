@@ -1,3 +1,22 @@
+2018-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Use SecurityOriginData more consistently in Service Worker code
+        https://bugs.webkit.org/show_bug.cgi?id=183969
+
+        Reviewed by Darin Adler.
+
+        Use SecurityOrigin::data() instead of SecurityOriginData::fromSecurityOrigin().
+
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::databasesWithOrigin):
+        (WebDatabaseManager::deleteOrigin):
+        (WebDatabaseManager::deleteDatabase):
+        (WebDatabaseManager::setQuota):
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::usage):
+        (WebSecurityOrigin::quota):
+        (WebSecurityOrigin::setQuota):
+
 2018-03-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix Windows build after r229926.

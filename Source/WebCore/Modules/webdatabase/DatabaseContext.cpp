@@ -209,9 +209,9 @@ void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails 
     ASSERT(m_scriptExecutionContext->isWorkerGlobalScope());
 }
 
-SecurityOriginData DatabaseContext::securityOrigin() const
+const SecurityOriginData& DatabaseContext::securityOrigin() const
 {
-    return SecurityOriginData::fromSecurityOrigin(*m_scriptExecutionContext->securityOrigin());
+    return m_scriptExecutionContext->securityOrigin()->data();
 }
 
 bool DatabaseContext::isContextThread() const

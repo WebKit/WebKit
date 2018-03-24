@@ -58,7 +58,7 @@ WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef hos
 
 WKStringRef WKSecurityOriginCopyDatabaseIdentifier(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(WebCore::SecurityOriginData::fromSecurityOrigin(toImpl(securityOrigin)->securityOrigin()).databaseIdentifier());
+    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().data().databaseIdentifier());
 }
 
 WKStringRef WKSecurityOriginCopyToString(WKSecurityOriginRef securityOrigin)

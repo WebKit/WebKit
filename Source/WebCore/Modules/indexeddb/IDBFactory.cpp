@@ -91,7 +91,7 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionConte
         return Exception { SecurityError, ASCIILiteral("IDBFactory.open() called in an invalid security context") };
 
     ASSERT(context.securityOrigin());
-    IDBDatabaseIdentifier databaseIdentifier(name, SecurityOriginData::fromSecurityOrigin(*context.securityOrigin()), SecurityOriginData::fromSecurityOrigin(context.topOrigin()));
+    IDBDatabaseIdentifier databaseIdentifier(name, SecurityOriginData { context.securityOrigin()->data() }, SecurityOriginData { context.topOrigin().data() });
     if (!databaseIdentifier.isValid())
         return Exception { TypeError, ASCIILiteral("IDBFactory.open() called with an invalid security origin") };
 
@@ -111,7 +111,7 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionCon
         return Exception { SecurityError, ASCIILiteral("IDBFactory.deleteDatabase() called in an invalid security context") };
 
     ASSERT(context.securityOrigin());
-    IDBDatabaseIdentifier databaseIdentifier(name, SecurityOriginData::fromSecurityOrigin(*context.securityOrigin()), SecurityOriginData::fromSecurityOrigin(context.topOrigin()));
+    IDBDatabaseIdentifier databaseIdentifier(name, SecurityOriginData { context.securityOrigin()->data() }, SecurityOriginData { context.topOrigin().data() });
     if (!databaseIdentifier.isValid())
         return Exception { TypeError, ASCIILiteral("IDBFactory.deleteDatabase() called with an invalid security origin") };
 

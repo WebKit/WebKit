@@ -637,7 +637,7 @@ long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
 
     LockHolder locker(m_databaseMutex);
 
-    String path = databasePathForOrigin(SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier());
+    String path = databasePathForOrigin(origin->data().databaseIdentifier());
     if (path.isEmpty())
         return 0;
 

@@ -50,7 +50,7 @@ public:
     void terminate();
 
 private:
-    explicit WebSWServerToContextConnection(Ref<WebCore::SecurityOrigin>&&, Ref<IPC::Connection>&&);
+    WebSWServerToContextConnection(const WebCore::SecurityOriginData&, Ref<IPC::Connection>&&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() final;

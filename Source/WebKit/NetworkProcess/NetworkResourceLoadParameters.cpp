@@ -87,7 +87,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
     encoder << static_cast<bool>(sourceOrigin);
     if (sourceOrigin)
-        encoder << SecurityOriginData::fromSecurityOrigin(*sourceOrigin);
+        encoder << sourceOrigin->data();
     encoder.encodeEnum(mode);
     encoder << cspResponseHeaders;
 

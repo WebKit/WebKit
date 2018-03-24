@@ -49,7 +49,7 @@ public:
     const URL& scope() const { return m_scope; }
     void setScope(URL&& scope) { m_scope = WTFMove(scope); }
 
-    bool relatesToOrigin(const SecurityOrigin&) const;
+    bool relatesToOrigin(const SecurityOriginData&) const;
 
     ServiceWorkerRegistrationKey isolatedCopy() const;
 

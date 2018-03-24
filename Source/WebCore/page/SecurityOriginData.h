@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
+#include "URL.h"
 
 namespace WebCore {
 
@@ -45,8 +45,15 @@ struct SecurityOriginData {
     {
     }
     
-    WEBCORE_EXPORT static SecurityOriginData fromSecurityOrigin(const SecurityOrigin&);
     WEBCORE_EXPORT static SecurityOriginData fromFrame(Frame*);
+    static SecurityOriginData fromURL(const URL& url)
+    {
+        return SecurityOriginData {
+            url.protocol().isNull() ? emptyString() : url.protocol().toString().convertToASCIILowercase(),
+            url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase(),
+            url.port()
+        };
+    }
 
     WEBCORE_EXPORT Ref<SecurityOrigin> securityOrigin() const;
 

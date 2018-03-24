@@ -195,7 +195,7 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& error
     }
 
     if (!isLocalStorage)
-        return m_pageAgent->page().sessionStorage()->storageArea(SecurityOriginData::fromSecurityOrigin(targetFrame->document()->securityOrigin()));
+        return m_pageAgent->page().sessionStorage()->storageArea(targetFrame->document()->securityOrigin().data());
     return m_pageAgent->page().storageNamespaceProvider().localStorageArea(*targetFrame->document());
 }
 

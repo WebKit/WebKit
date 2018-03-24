@@ -212,7 +212,7 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
-    auto securityOrigin = SecurityOrigin::create(jobData.scriptURL);
+    auto securityOrigin = SecurityOriginData::fromURL(jobData.scriptURL);
     if (!StorageProcess::singleton().serverToContextConnectionForOrigin(securityOrigin))
         StorageProcess::singleton().createServerToContextConnection(securityOrigin, server().sessionID());
 
@@ -287,7 +287,7 @@ void WebSWServerConnection::getRegistrations(uint64_t registrationMatchRequestId
 
 void WebSWServerConnection::registerServiceWorkerClient(SecurityOriginData&& topOrigin, ServiceWorkerClientData&& data, const std::optional<ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier)
 {
-    auto clientOrigin = ClientOrigin { WTFMove(topOrigin), SecurityOriginData::fromSecurityOrigin(SecurityOrigin::create(data.url)) };
+    auto clientOrigin = ClientOrigin { WTFMove(topOrigin), SecurityOriginData::fromURL(data.url) };
     m_clientOrigins.add(data.identifier, clientOrigin);
     server().registerServiceWorkerClient(WTFMove(clientOrigin), WTFMove(data), controllingServiceWorkerRegistrationIdentifier);
 }

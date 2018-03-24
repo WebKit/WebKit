@@ -1273,7 +1273,7 @@ void WebProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDat
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
         for (auto& origin : MemoryCache::singleton().originsWithCache(sessionID))
-            websiteData.entries.append(WebsiteData::Entry { SecurityOriginData::fromSecurityOrigin(*origin), WebsiteDataType::MemoryCache, 0 });
+            websiteData.entries.append(WebsiteData::Entry { origin->data(), WebsiteDataType::MemoryCache, 0 });
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {

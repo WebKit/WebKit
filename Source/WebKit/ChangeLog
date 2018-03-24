@@ -1,3 +1,90 @@
+2018-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Use SecurityOriginData more consistently in Service Worker code
+        https://bugs.webkit.org/show_bug.cgi?id=183969
+
+        Reviewed by Darin Adler.
+
+        Use SecurityOriginData more consistently in Service Worker code to avoid constructing
+        SecurityOrigin objects unnecessarily.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginCopyDatabaseIdentifier):
+        * StorageProcess/ServiceWorker/WebSWOriginStore.cpp:
+        (WebKit::WebSWOriginStore::addToStore):
+        (WebKit::WebSWOriginStore::removeFromStore):
+        * StorageProcess/ServiceWorker/WebSWOriginStore.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+        (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        * StorageProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::connectionToContextProcessWasClosed):
+        (WebKit::StorageProcess::needsServerToContextConnectionForOrigin const):
+        (WebKit::StorageProcess::createStorageToWebProcessConnection):
+        (WebKit::StorageProcess::deleteWebsiteDataForOrigins):
+        (WebKit::StorageProcess::serverToContextConnectionForOrigin):
+        (WebKit::StorageProcess::createServerToContextConnection):
+        (WebKit::StorageProcess::swContextConnectionMayNoLongerBeNeeded):
+        * StorageProcess/StorageProcess.h:
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::create):
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerDeleteEntriesForOrigin):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerDeleteEntriesForOrigin):
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerClearCacheForOrigin):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveFetchCacheForOrigin):
+        (WKWebsiteDataStoreGetFetchCacheSizeForOrigin):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::create):
+        (WebKit::ServiceWorkerProcessProxy::ServiceWorkerProcessProxy):
+        (WebKit::ServiceWorkerProcessProxy::getLaunchOptions):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::getStorageProcessConnection):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::startRequestForGeolocation):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyOriginsWithApplicationCache):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::sendUserMediaRequest):
+        (WebKit::UserMediaPermissionRequestManager::enumerateMediaDevices):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::registerServiceWorkerClient):
+        (WebKit::WebSWClientConnection::matchRegistration):
+        (WebKit::WebSWClientConnection::whenRegistrationReady):
+        (WebKit::WebSWClientConnection::getRegistrations):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::fetchWebsiteData):
+        * WebProcess/WebStorage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::securityOrigin const):
+        * WebProcess/WebStorage/StorageAreaImpl.h:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::didDestroyStorageAreaMap):
+
 2018-03-24  Tim Horton  <timothy_horton@apple.com>
 
         Fix the !ENABLE(MEDIA_STREAM) build

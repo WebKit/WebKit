@@ -113,23 +113,24 @@ void StorageProcess::didClose(IPC::Connection& connection)
 #if ENABLE(SERVICE_WORKER)
 void StorageProcess::connectionToContextProcessWasClosed(Ref<WebSWServerToContextConnection>&& serverToContextConnection)
 {
+    auto& securityOrigin = serverToContextConnection->securityOrigin();
+
     serverToContextConnection->connectionClosed();
-    m_serverToContextConnections.remove(&serverToContextConnection->origin());
+    m_serverToContextConnections.remove(securityOrigin);
 
     for (auto& swServer : m_swServers.values())
-        swServer->markAllWorkersForOriginAsTerminated(serverToContextConnection->origin());
+        swServer->markAllWorkersForOriginAsTerminated(securityOrigin);
 
-    Ref<SecurityOrigin> origin = serverToContextConnection->origin();
-    if (needsServerToContextConnectionForOrigin(origin)) {
+    if (needsServerToContextConnectionForOrigin(securityOrigin)) {
         RELEASE_LOG(ServiceWorker, "Connection to service worker process was closed but is still needed, relaunching it");
-        createServerToContextConnection(origin, std::nullopt);
+        createServerToContextConnection(securityOrigin, std::nullopt);
     }
 }
 
-bool StorageProcess::needsServerToContextConnectionForOrigin(SecurityOrigin& origin) const
+bool StorageProcess::needsServerToContextConnectionForOrigin(const SecurityOriginData& securityOrigin) const
 {
     return WTF::anyOf(m_swServers.values(), [&](auto& swServer) {
-        return swServer->needsServerToContextConnectionForOrigin(origin);
+        return swServer->needsServerToContextConnectionForOrigin(securityOrigin);
     });
 }
 #endif
@@ -250,7 +251,7 @@ void StorageProcess::performNextStorageTask()
     task.performTask();
 }
 
-void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerProcess, WebCore::SecurityOriginData&& originData)
+void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerProcess, WebCore::SecurityOriginData&& securityOrigin)
 {
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
@@ -274,9 +275,8 @@ void StorageProcess::createStorageToWebProcessConnection(bool isServiceWorkerPro
     if (isServiceWorkerProcess && !m_storageToWebProcessConnections.isEmpty()) {
         ASSERT(parentProcessHasServiceWorkerEntitlement());
         ASSERT(m_waitingForServerToContextProcessConnection);
-        auto origin = originData.securityOrigin();
-        auto contextConnection = WebSWServerToContextConnection::create(origin.copyRef(), m_storageToWebProcessConnections.last()->connection());
-        auto addResult = m_serverToContextConnections.add(WTFMove(origin), contextConnection.copyRef());
+        auto contextConnection = WebSWServerToContextConnection::create(securityOrigin, m_storageToWebProcessConnections.last()->connection());
+        auto addResult = m_serverToContextConnections.add(WTFMove(securityOrigin), contextConnection.copyRef());
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
         m_waitingForServerToContextProcessConnection = false;
@@ -339,7 +339,7 @@ void StorageProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 #endif
 }
 
-void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOriginDatas, uint64_t callbackID)
+void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& securityOrigins, uint64_t callbackID)
 {
     auto callbackAggregator = CallbackAggregator::create([this, callbackID]() {
         parentProcessConnection()->send(Messages::StorageProcessProxy::DidDeleteWebsiteDataForOrigins(callbackID), 0);
@@ -348,14 +348,14 @@ void StorageProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 #if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         auto& server = swServerForSession(sessionID);
-        for (auto& originData : securityOriginDatas)
-            server.clear(originData.securityOrigin(), [callbackAggregator = callbackAggregator.copyRef()] { });
+        for (auto& securityOrigin : securityOrigins)
+            server.clear(securityOrigin, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
     if (!websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases))
-        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOriginDatas, [callbackAggregator = WTFMove(callbackAggregator)] { });
+        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(securityOrigins, [callbackAggregator = WTFMove(callbackAggregator)] { });
 #endif
 }
 
@@ -455,21 +455,21 @@ WebSWOriginStore& StorageProcess::swOriginStoreForSession(PAL::SessionID session
     return static_cast<WebSWOriginStore&>(swServerForSession(sessionID).originStore());
 }
 
-WebSWServerToContextConnection* StorageProcess::serverToContextConnectionForOrigin(const WebCore::SecurityOrigin& origin)
+WebSWServerToContextConnection* StorageProcess::serverToContextConnectionForOrigin(const SecurityOriginData& securityOrigin)
 {
-    return m_serverToContextConnections.get(&const_cast<SecurityOrigin&>(origin));
+    return m_serverToContextConnections.get(securityOrigin);
 }
 
-void StorageProcess::createServerToContextConnection(const SecurityOrigin& origin, std::optional<PAL::SessionID> sessionID)
+void StorageProcess::createServerToContextConnection(const SecurityOriginData& securityOrigin, std::optional<PAL::SessionID> sessionID)
 {
     if (m_waitingForServerToContextProcessConnection)
         return;
     
     m_waitingForServerToContextProcessConnection = true;
     if (sessionID)
-        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcessForExplicitSession(SecurityOriginData::fromSecurityOrigin(origin), *sessionID), 0);
+        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcessForExplicitSession(securityOrigin, *sessionID), 0);
     else
-        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcess(SecurityOriginData::fromSecurityOrigin(origin)), 0);
+        parentProcessConnection()->send(Messages::StorageProcessProxy::EstablishWorkerContextConnectionToStorageProcess(securityOrigin), 0);
 }
 
 void StorageProcess::didFailFetch(SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)
@@ -537,15 +537,15 @@ void StorageProcess::unregisterSWServerConnection(WebSWServerConnection& connect
 
 void StorageProcess::swContextConnectionMayNoLongerBeNeeded(WebSWServerToContextConnection& serverToContextConnection)
 {
-    auto& origin = serverToContextConnection.origin();
-    if (needsServerToContextConnectionForOrigin(origin))
+    auto& securityOrigin = serverToContextConnection.securityOrigin();
+    if (needsServerToContextConnectionForOrigin(securityOrigin))
         return;
 
     RELEASE_LOG(ServiceWorker, "Service worker process is no longer needed, terminating it");
     serverToContextConnection.terminate();
 
     serverToContextConnection.connectionClosed();
-    m_serverToContextConnections.remove(&origin);
+    m_serverToContextConnections.remove(securityOrigin);
 }
 
 void StorageProcess::disableServiceWorkerProcessTerminationDelay()

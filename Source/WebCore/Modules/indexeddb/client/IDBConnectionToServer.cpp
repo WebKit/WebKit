@@ -429,7 +429,7 @@ void IDBConnectionToServer::getAllDatabaseNames(const SecurityOrigin& mainFrameO
 
     m_getAllDatabaseNamesCallbacks.add(++callbackID, WTFMove(callback));
 
-    m_delegate->getAllDatabaseNames(SecurityOriginData::fromSecurityOrigin(mainFrameOrigin), SecurityOriginData::fromSecurityOrigin(openingOrigin), callbackID);
+    m_delegate->getAllDatabaseNames(mainFrameOrigin.data(), openingOrigin.data(), callbackID);
 }
 
 void IDBConnectionToServer::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)

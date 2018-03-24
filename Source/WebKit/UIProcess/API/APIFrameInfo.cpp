@@ -45,7 +45,7 @@ Ref<FrameInfo> FrameInfo::create(const WebKit::WebFrameProxy& frame, const WebCo
     frameInfoData.isMainFrame = frame.isMainFrame();
     // FIXME: This should use the full request of the frame, not just the URL.
     frameInfoData.request = WebCore::ResourceRequest(frame.url());
-    frameInfoData.securityOrigin = WebCore::SecurityOriginData::fromSecurityOrigin(securityOrigin);
+    frameInfoData.securityOrigin = securityOrigin.data();
     frameInfoData.frameID = frame.frameID();
 
     return create(frameInfoData, frame.page());

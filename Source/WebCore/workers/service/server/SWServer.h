@@ -31,7 +31,7 @@
 #include "DocumentIdentifier.h"
 #include "RegistrationStore.h"
 #include "SWServerWorker.h"
-#include "SecurityOriginHash.h"
+#include "SecurityOriginData.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJob.h"
@@ -122,7 +122,7 @@ public:
     WEBCORE_EXPORT ~SWServer();
 
     WEBCORE_EXPORT void clearAll(WTF::CompletionHandler<void()>&&);
-    WEBCORE_EXPORT void clear(const SecurityOrigin&, WTF::CompletionHandler<void()>&&);
+    WEBCORE_EXPORT void clear(const SecurityOriginData&, WTF::CompletionHandler<void()>&&);
 
     SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
@@ -145,7 +145,7 @@ public:
     std::optional<ServiceWorkerClientData> serviceWorkerClientWithOriginByID(const ClientOrigin&, const ServiceWorkerClientIdentifier&) const;
     WEBCORE_EXPORT SWServerWorker* activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier);
 
-    WEBCORE_EXPORT void markAllWorkersForOriginAsTerminated(const SecurityOrigin&);
+    WEBCORE_EXPORT void markAllWorkersForOriginAsTerminated(const SecurityOriginData&);
     
     Connection* getConnection(SWServerConnectionIdentifier identifier) { return m_connections.get(identifier); }
     SWOriginStore& originStore() { return m_originStore; }
@@ -177,7 +177,7 @@ public:
     WEBCORE_EXPORT void getOriginsWithRegistrations(Function<void(const HashSet<SecurityOriginData>&)>&&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-    WEBCORE_EXPORT bool needsServerToContextConnectionForOrigin(const SecurityOrigin&) const;
+    WEBCORE_EXPORT bool needsServerToContextConnectionForOrigin(const SecurityOriginData&) const;
 
     void disableServiceWorkerProcessTerminationDelay() { m_shouldDisableServiceWorkerProcessTerminationDelay = true; }
 
@@ -229,8 +229,8 @@ private:
 
     UniqueRef<SWOriginStore> m_originStore;
     RegistrationStore m_registrationStore;
-    HashMap<RefPtr<SecurityOrigin>, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
-    HashMap<RefPtr<SecurityOrigin>, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
+    HashMap<SecurityOriginData, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
+    HashMap<SecurityOriginData, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
     bool m_importCompleted { false };
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
