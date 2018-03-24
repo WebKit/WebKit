@@ -1,5 +1,33 @@
 2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Add options to report parsing and bytecode compiling times
+        https://bugs.webkit.org/show_bug.cgi?id=183982
+
+        Reviewed by Mark Lam.
+
+        This patch adds reportParseTimes and reportBytecodeCompileTimes options.
+        When they are enabled, JSC reports times consumed for parsing and bytecode
+        compiling.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/ParseHash.cpp: Added.
+        (JSC::ParseHash::ParseHash):
+        * bytecode/ParseHash.h: Added.
+        (JSC::ParseHash::hashForCall const):
+        (JSC::ParseHash::hashForConstruct const):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::generate):
+        * parser/Parser.h:
+        (JSC::parse):
+        * runtime/CodeCache.h:
+        (JSC::generateUnlinkedCodeBlock):
+        * runtime/Options.h:
+
+2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JIT] Drop ENABLE_JIT_VERBOSE flag
         https://bugs.webkit.org/show_bug.cgi?id=183983
 

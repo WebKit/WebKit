@@ -26,6 +26,7 @@
 #include "Lexer.h"
 #include "ModuleScopeData.h"
 #include "Nodes.h"
+#include "ParseHash.h"
 #include "ParserArena.h"
 #include "ParserError.h"
 #include "ParserFunctionInfo.h"
@@ -1951,22 +1952,35 @@ std::unique_ptr<ParsedNode> parse(
     DebuggerParseData* debuggerParseData = nullptr)
 {
     ASSERT(!source.provider()->source().isNull());
+
+    MonotonicTime before;
+    if (UNLIKELY(Options::reportParseTimes()))
+        before = MonotonicTime::now();
+
+    std::unique_ptr<ParsedNode> result;
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKind, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData);
-        std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, name, parseMode);
+        result = parser.parse<ParsedNode>(error, name, parseMode);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (builtinMode == JSParserBuiltinMode::Builtin) {
             if (!result)
-                WTF::dataLog("Error compiling builtin: ", error.message(), "\n");
+                dataLogLn("Error compiling builtin: ", error.message());
         }
-        return result;
+    } else {
+        ASSERT_WITH_MESSAGE(defaultConstructorKind == ConstructorKind::None, "BuiltinExecutables::createDefaultConstructor should always use a 8-bit string");
+        Parser<Lexer<UChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKind, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData);
+        result = parser.parse<ParsedNode>(error, name, parseMode);
+        if (positionBeforeLastNewline)
+            *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     }
-    ASSERT_WITH_MESSAGE(defaultConstructorKind == ConstructorKind::None, "BuiltinExecutables::createDefaultConstructor should always use a 8-bit string");
-    Parser<Lexer<UChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKind, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData);
-    std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, name, parseMode);
-    if (positionBeforeLastNewline)
-        *positionBeforeLastNewline = parser.positionBeforeLastNewline();
+
+    if (UNLIKELY(Options::reportParseTimes())) {
+        MonotonicTime after = MonotonicTime::now();
+        ParseHash hash(source);
+        dataLogLn(result ? "Parsed #" : "Failed to parse #", hash.hashForCall(), "/#", hash.hashForConstruct(), " in ", (after - before).milliseconds(), " ms.");
+    }
+
     return result;
 }
 

@@ -248,7 +248,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlock(VM& vm, ExecutableType* executa
     unlinkedCodeBlock->setSourceURLDirective(source.provider()->sourceURL());
     unlinkedCodeBlock->setSourceMappingURLDirective(source.provider()->sourceMappingURL());
 
-    error = BytecodeGenerator::generate(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, variablesUnderTDZ);
+    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, debuggerMode, variablesUnderTDZ);
 
     if (error.isValid())
         return nullptr;

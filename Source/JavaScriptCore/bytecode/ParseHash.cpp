@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,11 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "CodeBlockHash.h"
+#include "ParseHash.h"
 
 #include "SourceCode.h"
 #include <wtf/SHA1.h>
@@ -32,39 +32,26 @@
 
 namespace JSC {
 
-CodeBlockHash::CodeBlockHash(const char* string)
-    : m_hash(sixCharacterHashStringToInteger(string))
-{
-}
-
-CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKind kind)
-    : m_hash(0)
+ParseHash::ParseHash(const SourceCode& sourceCode)
 {
     SHA1 sha1;
     sha1.addBytes(sourceCode.toUTF8());
     SHA1::Digest digest;
     sha1.computeHash(digest);
-    m_hash = digest[0] | (digest[1] << 8) | (digest[2] << 16) | (digest[3] << 24);
+    unsigned hash = digest[0] | (digest[1] << 8) | (digest[2] << 16) | (digest[3] << 24);
 
     // Ensure that 0 corresponds to the hash not having been computed.
-    if (m_hash == 0 || m_hash == 1)
-        m_hash += 0xbb4472;
+    if (hash == 0 || hash == 1)
+        hash += 0xbb4472;
     static_assert(static_cast<unsigned>(CodeForCall) == 0, "");
     static_assert(static_cast<unsigned>(CodeForConstruct) == 1, "");
-    m_hash ^= static_cast<unsigned>(kind);
-    ASSERT(m_hash);
-}
+    unsigned hashForCall = hash ^ static_cast<unsigned>(CodeForCall);
+    unsigned hashForConstruct = hash ^ static_cast<unsigned>(CodeForConstruct);
 
-void CodeBlockHash::dump(PrintStream& out) const
-{
-    std::array<char, 7> buffer = integerToSixCharacterHashString(m_hash);
-    
-#if !ASSERT_DISABLED
-    CodeBlockHash recompute(buffer.data());
-    ASSERT(recompute == *this);
-#endif // !ASSERT_DISABLED
-    
-    out.print(buffer.data());
+    m_hashForCall = CodeBlockHash(hashForCall);
+    m_hashForConstruct = CodeBlockHash(hashForConstruct);
+    ASSERT(hashForCall);
+    ASSERT(hashForConstruct);
 }
 
 } // namespace JSC

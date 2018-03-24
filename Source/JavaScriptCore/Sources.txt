@@ -232,6 +232,7 @@ bytecode/ModuleProgramCodeBlock.cpp
 bytecode/ObjectPropertyCondition.cpp
 bytecode/ObjectPropertyConditionSet.cpp
 bytecode/Opcode.cpp
+bytecode/ParseHash.cpp
 bytecode/PolyProtoAccessChain.cpp
 bytecode/PolymorphicAccess.cpp
 bytecode/PreciseJumpTargets.cpp
