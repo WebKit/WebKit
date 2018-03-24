@@ -1,5 +1,18 @@
 2018-03-24  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the !ENABLE(MEDIA_STREAM) build
+        https://bugs.webkit.org/show_bug.cgi?id=183977
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
+2018-03-24  Tim Horton  <timothy_horton@apple.com>
+
         WKFileUploadPanel shouldn't depend on WebKitLegacy
         https://bugs.webkit.org/show_bug.cgi?id=183981
 

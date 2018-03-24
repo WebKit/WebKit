@@ -38,7 +38,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#if ENABLE(MEDIA_STREAM)
 static const MediaProducer::MediaStateFlags activeCaptureMask = MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice;
+#endif
 
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)

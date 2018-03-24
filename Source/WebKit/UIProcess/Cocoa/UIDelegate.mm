@@ -786,6 +786,7 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFramePr
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
 static void requestUserMediaAuthorizationForDevices(const WebFrameProxy& frame, UserMediaPermissionRequestProxy& request, id <WKUIDelegatePrivate> delegate, WKWebView& webView)
 {
     auto decisionHandler = BlockPtr<void(BOOL)>::fromCallable([protectedRequest = makeRef(request)](BOOL authorized) {
@@ -815,9 +816,11 @@ static void requestUserMediaAuthorizationForDevices(const WebFrameProxy& frame, 
     auto protectedWebView = RetainPtr<WKWebView>(&webView);
     [delegate _webView:protectedWebView.get() requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
 }
+#endif
 
 bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
 {
+#if ENABLE(MEDIA_STREAM)
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate || !m_uiDelegate.m_delegateMethods.webViewRequestUserMediaAuthorizationForDevicesURLMainFrameURLDecisionHandler) {
         request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
@@ -888,6 +891,7 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         requestCameraAuthorization();
 #else
     requestUserMediaAuthorizationForDevices(frame, request, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *m_uiDelegate.m_webView);
+#endif
 #endif
 
     return true;

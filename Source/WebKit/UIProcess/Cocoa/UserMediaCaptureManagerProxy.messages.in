@@ -21,6 +21,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(MEDIA_STREAM)
+
 messages -> UserMediaCaptureManagerProxy {
     CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, WebCore::CaptureDevice device, WebCore::RealtimeMediaSource::Type type, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings)
     StartProducingData(uint64_t id)
@@ -29,3 +31,5 @@ messages -> UserMediaCaptureManagerProxy {
     SetMuted(uint64_t id, bool muted)
     ApplyConstraints(uint64_t id, struct WebCore::MediaConstraints constraints)
 }
+
+#endif

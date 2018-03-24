@@ -21,6 +21,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(MEDIA_STREAM)
+
 messages -> UserMediaCaptureManager {
     CaptureFailed(uint64_t id)
     SourceStopped(uint64_t id)
@@ -31,3 +33,5 @@ messages -> UserMediaCaptureManager {
     ApplyConstraintsSucceeded(uint64_t id, WebCore::RealtimeMediaSourceSettings settings)
     ApplyConstraintsFailed(uint64_t id, String failedConstraint, String message)
 }
+
+#endif
