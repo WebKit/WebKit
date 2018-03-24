@@ -5737,12 +5737,6 @@ void SpeculativeJIT::compileCompareUnsigned(Node* node, MacroAssembler::Relation
 
 bool SpeculativeJIT::compileStrictEq(Node* node)
 {
-    // FIXME: Currently, we have op_jless, op_jgreater etc. But we don't have op_jeq, op_jstricteq etc.
-    // `==` and `===` operations with branching will be compiled to op_{eq,stricteq} and op_{jfalse,jtrue}.
-    // In DFG bytecodes, between op_eq and op_jfalse, we have MovHint to store the result of op_eq.
-    // As a result, detectPeepHoleBranch() never detects peep hole for that case.
-    // https://bugs.webkit.org/show_bug.cgi?id=149713
-
     if (node->isBinaryUseKind(BooleanUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {

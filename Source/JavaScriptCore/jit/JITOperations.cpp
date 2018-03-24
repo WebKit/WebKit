@@ -1170,6 +1170,17 @@ size_t JIT_OPERATION operationCompareStringEq(ExecState* exec, JSCell* left, JSC
 #endif
 }
 
+size_t JIT_OPERATION operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue src1 = JSValue::decode(encodedOp1);
+    JSValue src2 = JSValue::decode(encodedOp2);
+
+    return JSValue::strictEqual(exec, src1, src2);
+}
+
 EncodedJSValue JIT_OPERATION operationNewArrayWithProfile(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, int size)
 {
     VM* vm = &exec->vm();

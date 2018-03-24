@@ -1149,6 +1149,30 @@ LLINT_SLOW_PATH_DECL(slow_path_jngreatereq)
     LLINT_BRANCH(op_jngreatereq, !jsLessEq<false>(exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(1).jsValue()));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_jeq)
+{
+    LLINT_BEGIN();
+    LLINT_BRANCH(op_jeq, JSValue::equal(exec, LLINT_OP_C(1).jsValue(), LLINT_OP_C(2).jsValue()));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_jneq)
+{
+    LLINT_BEGIN();
+    LLINT_BRANCH(op_jneq, !JSValue::equal(exec, LLINT_OP_C(1).jsValue(), LLINT_OP_C(2).jsValue()));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_jstricteq)
+{
+    LLINT_BEGIN();
+    LLINT_BRANCH(op_jstricteq, JSValue::strictEqual(exec, LLINT_OP_C(1).jsValue(), LLINT_OP_C(2).jsValue()));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_jnstricteq)
+{
+    LLINT_BEGIN();
+    LLINT_BRANCH(op_jnstricteq, !JSValue::strictEqual(exec, LLINT_OP_C(1).jsValue(), LLINT_OP_C(2).jsValue()));
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_switch_imm)
 {
     LLINT_BEGIN();

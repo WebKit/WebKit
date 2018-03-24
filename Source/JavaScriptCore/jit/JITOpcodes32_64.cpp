@@ -469,8 +469,6 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
 void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int dst = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
 
     JumpList storeResult;
     JumpList genericCase;
@@ -488,12 +486,54 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
     // Generic case.
     genericCase.append(getSlowCase(iter)); // doubles
     genericCase.link(this);
-    emitLoad(op1, regT1, regT0);
-    emitLoad(op2, regT3, regT2);
     callOperation(operationCompareEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
 
     storeResult.link(this);
     emitStoreBool(dst, returnValueGPR);
+}
+
+void JIT::emit_op_jeq(Instruction* currentInstruction)
+{
+    int target = currentInstruction[3].u.operand;
+    int src1 = currentInstruction[1].u.operand;
+    int src2 = currentInstruction[2].u.operand;
+
+    emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
+    addSlowCase(branch32(NotEqual, regT1, regT3));
+    addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::CellTag)));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
+
+    addJump(branch32(Equal, regT0, regT2), target);
+}
+
+void JIT::compileOpEqJumpSlow(Vector<SlowCaseEntry>::iterator& iter, CompileOpEqType type, int jumpTarget)
+{
+    JumpList done;
+    JumpList genericCase;
+
+    genericCase.append(getSlowCase(iter)); // tags not equal
+
+    linkSlowCase(iter); // tags equal and JSCell
+    genericCase.append(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
+    genericCase.append(branchPtr(NotEqual, Address(regT2, JSCell::structureIDOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
+
+    // String case.
+    callOperation(operationCompareStringEq, regT0, regT2);
+    emitJumpSlowToHot(branchTest32(type == CompileOpEqType::Eq ? NonZero : Zero, returnValueGPR), jumpTarget);
+    done.append(jump());
+
+    // Generic case.
+    genericCase.append(getSlowCase(iter)); // doubles
+    genericCase.link(this);
+    callOperation(operationCompareEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    emitJumpSlowToHot(branchTest32(type == CompileOpEqType::Eq ? NonZero : Zero, returnValueGPR), jumpTarget);
+
+    done.link(this);
+}
+
+void JIT::emitSlow_op_jeq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpEqJumpSlow(iter, CompileOpEqType::Eq, currentInstruction[3].u.operand);
 }
 
 void JIT::emit_op_neq(Instruction* currentInstruction)
@@ -539,6 +579,25 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
     emitStoreBool(dst, returnValueGPR);
 }
 
+void JIT::emit_op_jneq(Instruction* currentInstruction)
+{
+    int target = currentInstruction[3].u.operand;
+    int src1 = currentInstruction[1].u.operand;
+    int src2 = currentInstruction[2].u.operand;
+
+    emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
+    addSlowCase(branch32(NotEqual, regT1, regT3));
+    addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::CellTag)));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
+
+    addJump(branch32(NotEqual, regT0, regT2), target);
+}
+
+void JIT::emitSlow_op_jneq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpEqJumpSlow(iter, CompileOpEqType::NEq, currentInstruction[3].u.operand);
+}
+
 void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqType type)
 {
     int dst = currentInstruction[1].u.operand;
@@ -559,7 +618,7 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     firstIsObject.link(this);
 
     // Simply compare the payloads.
-    if (type == OpStrictEq)
+    if (type == CompileOpStrictEqType::StrictEq)
         compare32(Equal, regT0, regT2, regT0);
     else
         compare32(NotEqual, regT0, regT2, regT0);
@@ -569,12 +628,66 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
 
 void JIT::emit_op_stricteq(Instruction* currentInstruction)
 {
-    compileOpStrictEq(currentInstruction, OpStrictEq);
+    compileOpStrictEq(currentInstruction, CompileOpStrictEqType::StrictEq);
 }
 
 void JIT::emit_op_nstricteq(Instruction* currentInstruction)
 {
-    compileOpStrictEq(currentInstruction, OpNStrictEq);
+    compileOpStrictEq(currentInstruction, CompileOpStrictEqType::NStrictEq);
+}
+
+void JIT::compileOpStrictEqJump(Instruction* currentInstruction, CompileOpStrictEqType type)
+{
+    int target = currentInstruction[3].u.operand;
+    int src1 = currentInstruction[1].u.operand;
+    int src2 = currentInstruction[2].u.operand;
+
+    emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
+
+    // Bail if the tags differ, or are double.
+    addSlowCase(branch32(NotEqual, regT1, regT3));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
+
+    // Jump to a slow case if both are strings or symbols (non object).
+    Jump notCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
+    Jump firstIsObject = emitJumpIfCellObject(regT0);
+    addSlowCase(emitJumpIfCellNotObject(regT2));
+    notCell.link(this);
+    firstIsObject.link(this);
+
+    // Simply compare the payloads.
+    if (type == CompileOpStrictEqType::StrictEq)
+        addJump(branch32(Equal, regT0, regT2), target);
+    else
+        addJump(branch32(NotEqual, regT0, regT2), target);
+}
+
+void JIT::emit_op_jstricteq(Instruction* currentInstruction)
+{
+    compileOpStrictEqJump(currentInstruction, CompileOpStrictEqType::StrictEq);
+}
+
+void JIT::emit_op_jnstricteq(Instruction* currentInstruction)
+{
+    compileOpStrictEqJump(currentInstruction, CompileOpStrictEqType::NStrictEq);
+}
+
+void JIT::emitSlow_op_jstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    unsigned target = currentInstruction[3].u.operand;
+    callOperation(operationCompareStrictEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
+}
+
+void JIT::emitSlow_op_jnstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    unsigned target = currentInstruction[3].u.operand;
+    callOperation(operationCompareStrictEq, JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
+    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 
 void JIT::emit_op_eq_null(Instruction* currentInstruction)

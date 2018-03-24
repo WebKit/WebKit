@@ -1455,6 +1455,20 @@ _llint_op_greatereq:
     dispatch(constexpr op_greatereq_length)
 
 
+_llint_op_eq:
+    traceExecution()
+    equalityComparison(
+        macro (left, right, result) cieq left, right, result end,
+        _slow_path_eq)
+
+
+_llint_op_neq:
+    traceExecution()
+    equalityComparison(
+        macro (left, right, result) cineq left, right, result end,
+        _slow_path_neq)
+
+
 _llint_op_below:
     traceExecution()
     compareUnsigned(
@@ -1578,7 +1592,7 @@ _llint_op_jfalse:
 
 _llint_op_jless:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bilt left, right, target end,
         macro (left, right, target) bdlt left, right, target end,
         _llint_slow_path_jless)
@@ -1586,7 +1600,7 @@ _llint_op_jless:
 
 _llint_op_jnless:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bigteq left, right, target end,
         macro (left, right, target) bdgtequn left, right, target end,
         _llint_slow_path_jnless)
@@ -1594,7 +1608,7 @@ _llint_op_jnless:
 
 _llint_op_jgreater:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bigt left, right, target end,
         macro (left, right, target) bdgt left, right, target end,
         _llint_slow_path_jgreater)
@@ -1602,7 +1616,7 @@ _llint_op_jgreater:
 
 _llint_op_jngreater:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bilteq left, right, target end,
         macro (left, right, target) bdltequn left, right, target end,
         _llint_slow_path_jngreater)
@@ -1610,7 +1624,7 @@ _llint_op_jngreater:
 
 _llint_op_jlesseq:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bilteq left, right, target end,
         macro (left, right, target) bdlteq left, right, target end,
         _llint_slow_path_jlesseq)
@@ -1618,7 +1632,7 @@ _llint_op_jlesseq:
 
 _llint_op_jnlesseq:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bigt left, right, target end,
         macro (left, right, target) bdgtun left, right, target end,
         _llint_slow_path_jnlesseq)
@@ -1626,7 +1640,7 @@ _llint_op_jnlesseq:
 
 _llint_op_jgreatereq:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bigteq left, right, target end,
         macro (left, right, target) bdgteq left, right, target end,
         _llint_slow_path_jgreatereq)
@@ -1634,10 +1648,24 @@ _llint_op_jgreatereq:
 
 _llint_op_jngreatereq:
     traceExecution()
-    compare(
+    compareJump(
         macro (left, right, target) bilt left, right, target end,
         macro (left, right, target) bdltun left, right, target end,
         _llint_slow_path_jngreatereq)
+
+
+_llint_op_jeq:
+    traceExecution()
+    equalityJump(
+        macro (left, right, target) bieq left, right, target end,
+        _llint_slow_path_jeq)
+
+
+_llint_op_jneq:
+    traceExecution()
+    equalityJump(
+        macro (left, right, target) bineq left, right, target end,
+        _llint_slow_path_jneq)
 
 
 _llint_op_jbelow:

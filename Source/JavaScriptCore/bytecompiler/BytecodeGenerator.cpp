@@ -1397,6 +1397,18 @@ void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
     } else if (m_lastOpcodeID == op_greatereq) {
         if (fuseCompareAndJump(op_jgreatereq))
             return;
+    } else if (m_lastOpcodeID == op_eq) {
+        if (fuseCompareAndJump(op_jeq))
+            return;
+    } else if (m_lastOpcodeID == op_stricteq) {
+        if (fuseCompareAndJump(op_jstricteq))
+            return;
+    } else if (m_lastOpcodeID == op_neq) {
+        if (fuseCompareAndJump(op_jneq))
+            return;
+    } else if (m_lastOpcodeID == op_nstricteq) {
+        if (fuseCompareAndJump(op_jnstricteq))
+            return;
     } else if (m_lastOpcodeID == op_below) {
         if (fuseCompareAndJump(op_jbelow))
             return;
@@ -1478,6 +1490,18 @@ void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
             return;
     } else if (m_lastOpcodeID == op_greatereq && target.isForward()) {
         if (fuseCompareAndJump(op_jngreatereq, false))
+            return;
+    } else if (m_lastOpcodeID == op_eq && target.isForward()) {
+        if (fuseCompareAndJump(op_jneq, false))
+            return;
+    } else if (m_lastOpcodeID == op_stricteq && target.isForward()) {
+        if (fuseCompareAndJump(op_jnstricteq, false))
+            return;
+    } else if (m_lastOpcodeID == op_neq && target.isForward()) {
+        if (fuseCompareAndJump(op_jeq, false))
+            return;
+    } else if (m_lastOpcodeID == op_nstricteq && target.isForward()) {
+        if (fuseCompareAndJump(op_jstricteq, false))
             return;
     } else if (m_lastOpcodeID == op_below && target.isForward()) {
         if (fuseCompareAndJump(op_jbeloweq, true))

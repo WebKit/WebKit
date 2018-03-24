@@ -55,6 +55,10 @@ inline void extractStoredJumpTargetsForBytecodeOffset(Block* codeBlock, Instruct
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
+    case op_jeq:
+    case op_jneq:
+    case op_jstricteq:
+    case op_jnstricteq:
     case op_jbelow:
     case op_jbeloweq:
         function(current[3].u.operand);

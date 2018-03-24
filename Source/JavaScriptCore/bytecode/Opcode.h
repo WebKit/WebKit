@@ -151,6 +151,10 @@ inline bool isBranch(OpcodeID opcodeID)
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
+    case op_jeq:
+    case op_jneq:
+    case op_jstricteq:
+    case op_jnstricteq:
     case op_jbelow:
     case op_jbeloweq:
     case op_switch_imm:

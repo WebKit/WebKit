@@ -1,3 +1,89 @@
+2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Introduces fused compare and jump
+        https://bugs.webkit.org/show_bug.cgi?id=177100
+
+        Reviewed by Mark Lam.
+
+        This patch introduces op_jeq, op_jneq, op_jstricteq, and op_jnstricteq.
+        It offers 3 benefit.
+
+        1. They are introduced due to the similar purpose to op_jless etc. It aligns
+        op_eq families to op_jless families.
+
+        2. It reduces the size of bytecode to represent the typical code sequence.
+
+        3. It offers the way to fuse check and jump in DFG code generation. Since
+        we have MovHint between Branch and CompareEq/CompareStrictEq previously,
+        we cannot do this optimization. It reduces the machine code size in DFG too.
+
+        It slightly improves Octane/boyer.
+
+            boyer  6.18038+-0.05002    ^     6.06990+-0.04176       ^ definitely 1.0182x faster
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/Opcode.h:
+        (JSC::isBranch):
+        * bytecode/PreciseJumpTargetsInlines.h:
+        (JSC::extractStoredJumpTargetsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jeq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emit_op_jneq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        (JSC::JIT::emitSlow_op_jeq):
+        (JSC::JIT::emitSlow_op_jneq):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_jeq):
+        (JSC::JIT::compileOpEqJumpSlow):
+        (JSC::JIT::emitSlow_op_jeq):
+        (JSC::JIT::emit_op_jneq):
+        (JSC::JIT::emitSlow_op_jneq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::compileOpStrictEqJump):
+        (JSC::JIT::emit_op_jstricteq):
+        (JSC::JIT::emit_op_jnstricteq):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Improve constants and add comments for CodeBlockHash

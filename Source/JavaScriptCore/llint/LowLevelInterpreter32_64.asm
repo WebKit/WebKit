@@ -755,8 +755,7 @@ _llint_op_not:
     dispatch(constexpr op_not_length)
 
 
-_llint_op_eq:
-    traceExecution()
+macro equalityComparison(integerComparison, slowPath)
     loadi 12[PC], t2
     loadi 8[PC], t0
     loadConstantOrVariable(t2, t3, t1)
@@ -765,14 +764,35 @@ _llint_op_eq:
     bieq t2, CellTag, .opEqSlow
     bib t2, LowestTag, .opEqSlow
     loadi 4[PC], t2
-    cieq t0, t1, t0
+    integerComparison(t0, t1, t0)
     storei BooleanTag, TagOffset[cfr, t2, 8]
     storei t0, PayloadOffset[cfr, t2, 8]
     dispatch(constexpr op_eq_length)
 
 .opEqSlow:
-    callSlowPath(_slow_path_eq)
+    callSlowPath(slowPath)
     dispatch(constexpr op_eq_length)
+end
+
+
+macro equalityJump(integerComparison, slowPath)
+    loadi 8[PC], t2
+    loadi 4[PC], t0
+    loadConstantOrVariable(t2, t3, t1)
+    loadConstantOrVariable2Reg(t0, t2, t0)
+    bineq t2, t3, .slow
+    bieq t2, CellTag, .slow
+    bib t2, LowestTag, .slow
+    integerComparison(t0, t1, .jumpTarget)
+    dispatch(constexpr op_jeq_length)
+
+.jumpTarget:
+    dispatchBranch(12[PC])
+
+.slow:
+    callSlowPath(slowPath)
+    dispatch(0)
+end
 
 
 _llint_op_eq_null:
@@ -801,26 +821,6 @@ _llint_op_eq_null:
     storei t1, PayloadOffset[cfr, t3, 8]
     dispatch(constexpr op_eq_null_length)
 
-
-_llint_op_neq:
-    traceExecution()
-    loadi 12[PC], t2
-    loadi 8[PC], t0
-    loadConstantOrVariable(t2, t3, t1)
-    loadConstantOrVariable2Reg(t0, t2, t0)
-    bineq t2, t3, .opNeqSlow
-    bieq t2, CellTag, .opNeqSlow
-    bib t2, LowestTag, .opNeqSlow
-    loadi 4[PC], t2
-    cineq t0, t1, t0
-    storei BooleanTag, TagOffset[cfr, t2, 8]
-    storei t0, PayloadOffset[cfr, t2, 8]
-    dispatch(constexpr op_neq_length)
-
-.opNeqSlow:
-    callSlowPath(_slow_path_neq)
-    dispatch(constexpr op_neq_length)
-    
 
 _llint_op_neq_null:
     traceExecution()
@@ -871,6 +871,30 @@ macro strictEq(equalityOperation, slowPath)
     dispatch(4)
 end
 
+
+macro strictEqualityJump(equalityOperation, slowPath)
+    loadi 8[PC], t2
+    loadi 4[PC], t0
+    loadConstantOrVariable(t2, t3, t1)
+    loadConstantOrVariable2Reg(t0, t2, t0)
+    bineq t2, t3, .slow
+    bib t2, LowestTag, .slow
+    bineq t2, CellTag, .notStringOrSymbol
+    bbaeq JSCell::m_type[t0], ObjectType, .notStringOrSymbol
+    bbb JSCell::m_type[t1], ObjectType, .slow
+.notStringOrSymbol:
+    equalityOperation(t0, t1, .jumpTarget)
+    dispatch(constexpr op_jstricteq_length)
+
+.jumpTarget:
+    dispatchBranch(12[PC])
+
+.slow:
+    callSlowPath(slowPath)
+    dispatch(0)
+end
+
+
 _llint_op_stricteq:
     traceExecution()
     strictEq(macro (left, right, result) cieq left, right, result end, _slow_path_stricteq)
@@ -879,6 +903,20 @@ _llint_op_stricteq:
 _llint_op_nstricteq:
     traceExecution()
     strictEq(macro (left, right, result) cineq left, right, result end, _slow_path_nstricteq)
+
+
+_llint_op_jstricteq:
+    traceExecution()
+    strictEqualityJump(
+        macro (left, right, target) bieq left, right, target end,
+        _llint_slow_path_jstricteq)
+
+
+_llint_op_jnstricteq:
+    traceExecution()
+    strictEqualityJump(
+        macro (left, right, target) bineq left, right, target end,
+        _llint_slow_path_jnstricteq)
 
 
 _llint_op_inc:
@@ -1826,7 +1864,7 @@ macro compareUnsigned(integerCompareAndSet)
 end
 
 
-macro compare(integerCompare, doubleCompare, slowPath)
+macro compareJump(integerCompare, doubleCompare, slowPath)
     loadi 4[PC], t2
     loadi 8[PC], t3
     loadConstantOrVariable(t2, t0, t1)

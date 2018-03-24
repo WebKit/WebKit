@@ -5328,6 +5328,24 @@ void ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jgreatereq);
         }
 
+        case op_jeq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            Node* op1 = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* condition = addToGraph(CompareEq, op1, op2);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jeq))), condition);
+            LAST_OPCODE(op_jeq);
+        }
+
+        case op_jstricteq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            Node* op1 = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* condition = addToGraph(CompareStrictEq, op1, op2);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + relativeOffset, m_currentIndex + OPCODE_LENGTH(op_jstricteq))), condition);
+            LAST_OPCODE(op_jstricteq);
+        }
+
         case op_jnless: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             Node* op1 = get(VirtualRegister(currentInstruction[1].u.operand));
@@ -5362,6 +5380,24 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* condition = addToGraph(CompareGreaterEq, op1, op2);
             addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jngreatereq), m_currentIndex + relativeOffset)), condition);
             LAST_OPCODE(op_jngreatereq);
+        }
+
+        case op_jneq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            Node* op1 = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* condition = addToGraph(CompareEq, op1, op2);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jneq), m_currentIndex + relativeOffset)), condition);
+            LAST_OPCODE(op_jneq);
+        }
+
+        case op_jnstricteq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            Node* op1 = get(VirtualRegister(currentInstruction[1].u.operand));
+            Node* op2 = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* condition = addToGraph(CompareStrictEq, op1, op2);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex + OPCODE_LENGTH(op_jnstricteq), m_currentIndex + relativeOffset)), condition);
+            LAST_OPCODE(op_jnstricteq);
         }
 
         case op_jbelow: {

@@ -722,7 +722,6 @@ _llint_op_not:
 
 
 macro equalityComparison(integerComparison, slowPath)
-    traceExecution()
     loadisFromInstruction(3, t0)
     loadisFromInstruction(2, t2)
     loadisFromInstruction(1, t3)
@@ -738,16 +737,22 @@ macro equalityComparison(integerComparison, slowPath)
     dispatch(4)
 end
 
-_llint_op_eq:
-    equalityComparison(
-        macro (left, right, result) cieq left, right, result end,
-        _slow_path_eq)
 
+macro equalityJump(integerComparison, slowPath)
+    loadisFromInstruction(1, t2)
+    loadisFromInstruction(2, t3)
+    loadConstantOrVariableInt32(t2, t0, .slow)
+    loadConstantOrVariableInt32(t3, t1, .slow)
+    integerComparison(t0, t1, .jumpTarget)
+    dispatch(constexpr op_jeq_length)
 
-_llint_op_neq:
-    equalityComparison(
-        macro (left, right, result) cineq left, right, result end,
-        _slow_path_neq)
+.jumpTarget:
+    dispatchIntIndirect(3)
+
+.slow:
+    callSlowPath(slowPath)
+    dispatch(0)
+end
 
 
 macro equalNullComparison()
@@ -788,7 +793,6 @@ _llint_op_neq_null:
 
 
 macro strictEq(equalityOperation, slowPath)
-    traceExecution()
     loadisFromInstruction(3, t0)
     loadisFromInstruction(2, t2)
     loadConstantOrVariable(t0, t1)
@@ -813,16 +817,59 @@ macro strictEq(equalityOperation, slowPath)
     dispatch(4)
 end
 
+
+macro strictEqualityJump(equalityOperation, slowPath)
+    loadisFromInstruction(1, t2)
+    loadisFromInstruction(2, t3)
+    loadConstantOrVariable(t2, t0)
+    loadConstantOrVariable(t3, t1)
+    move t0, t2
+    orq t1, t2
+    btqz t2, tagMask, .slow
+    bqaeq t0, tagTypeNumber, .leftOK
+    btqnz t0, tagTypeNumber, .slow
+.leftOK:
+    bqaeq t1, tagTypeNumber, .rightOK
+    btqnz t1, tagTypeNumber, .slow
+.rightOK:
+    equalityOperation(t0, t1, .jumpTarget)
+    dispatch(constexpr op_jstricteq_length)
+
+.jumpTarget:
+    dispatchIntIndirect(3)
+
+.slow:
+    callSlowPath(slowPath)
+    dispatch(0)
+end
+
+
 _llint_op_stricteq:
+    traceExecution()
     strictEq(
         macro (left, right, result) cqeq left, right, result end,
         _slow_path_stricteq)
 
 
 _llint_op_nstricteq:
+    traceExecution()
     strictEq(
         macro (left, right, result) cqneq left, right, result end,
         _slow_path_nstricteq)
+
+
+_llint_op_jstricteq:
+    traceExecution()
+    strictEqualityJump(
+        macro (left, right, target) bqeq left, right, target end,
+        _llint_slow_path_jstricteq)
+
+
+_llint_op_jnstricteq:
+    traceExecution()
+    strictEqualityJump(
+        macro (left, right, target) bqneq left, right, target end,
+        _llint_slow_path_jnstricteq)
 
 
 macro preOp(arithmeticOperation, slowPath)
@@ -1848,7 +1895,7 @@ _llint_op_jneq_ptr:
     dispatchIntIndirect(3)
 
 
-macro compare(integerCompare, doubleCompare, slowPath)
+macro compareJump(integerCompare, doubleCompare, slowPath)
     loadisFromInstruction(1, t2)
     loadisFromInstruction(2, t3)
     loadConstantOrVariable(t2, t0)
@@ -1904,7 +1951,6 @@ end
 
 
 macro compareUnsigned(integerCompareAndSet)
-    traceExecution()
     loadisFromInstruction(3, t0)
     loadisFromInstruction(2, t2)
     loadisFromInstruction(1, t3)

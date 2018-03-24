@@ -425,6 +425,14 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
+void JIT::emit_op_jeq(Instruction* currentInstruction)
+{
+    unsigned target = currentInstruction[3].u.operand;
+    emitGetVirtualRegisters(currentInstruction[1].u.operand, regT0, currentInstruction[2].u.operand, regT1);
+    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
+    addJump(branch32(Equal, regT0, regT1), target);
+}
+
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
 {
     unsigned target = currentInstruction[2].u.operand;
@@ -446,7 +454,14 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
     emitTagBool(regT0);
 
     emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
 
+void JIT::emit_op_jneq(Instruction* currentInstruction)
+{
+    unsigned target = currentInstruction[3].u.operand;
+    emitGetVirtualRegisters(currentInstruction[1].u.operand, regT0, currentInstruction[2].u.operand, regT1);
+    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
+    addJump(branch32(NotEqual, regT0, regT1), target);
 }
 
 void JIT::emit_op_throw(Instruction* currentInstruction)
@@ -480,7 +495,7 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     addSlowCase(emitJumpIfNumber(regT1));
     rightOK.link(this);
 
-    if (type == OpStrictEq)
+    if (type == CompileOpStrictEqType::StrictEq)
         compare64(Equal, regT1, regT0, regT0);
     else
         compare64(NotEqual, regT1, regT0, regT0);
@@ -491,12 +506,68 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
 
 void JIT::emit_op_stricteq(Instruction* currentInstruction)
 {
-    compileOpStrictEq(currentInstruction, OpStrictEq);
+    compileOpStrictEq(currentInstruction, CompileOpStrictEqType::StrictEq);
 }
 
 void JIT::emit_op_nstricteq(Instruction* currentInstruction)
 {
-    compileOpStrictEq(currentInstruction, OpNStrictEq);
+    compileOpStrictEq(currentInstruction, CompileOpStrictEqType::NStrictEq);
+}
+
+void JIT::compileOpStrictEqJump(Instruction* currentInstruction, CompileOpStrictEqType type)
+{
+    int target = currentInstruction[3].u.operand;
+    int src1 = currentInstruction[1].u.operand;
+    int src2 = currentInstruction[2].u.operand;
+
+    emitGetVirtualRegisters(src1, regT0, src2, regT1);
+
+    // Jump slow if both are cells (to cover strings).
+    move(regT0, regT2);
+    or64(regT1, regT2);
+    addSlowCase(emitJumpIfJSCell(regT2));
+
+    // Jump slow if either is a double. First test if it's an integer, which is fine, and then test
+    // if it's a double.
+    Jump leftOK = emitJumpIfInt(regT0);
+    addSlowCase(emitJumpIfNumber(regT0));
+    leftOK.link(this);
+    Jump rightOK = emitJumpIfInt(regT1);
+    addSlowCase(emitJumpIfNumber(regT1));
+    rightOK.link(this);
+
+    if (type == CompileOpStrictEqType::StrictEq)
+        addJump(branch64(Equal, regT1, regT0), target);
+    else
+        addJump(branch64(NotEqual, regT1, regT0), target);
+}
+
+void JIT::emit_op_jstricteq(Instruction* currentInstruction)
+{
+    compileOpStrictEqJump(currentInstruction, CompileOpStrictEqType::StrictEq);
+}
+
+void JIT::emit_op_jnstricteq(Instruction* currentInstruction)
+{
+    compileOpStrictEqJump(currentInstruction, CompileOpStrictEqType::NStrictEq);
+}
+
+void JIT::emitSlow_op_jstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    unsigned target = currentInstruction[3].u.operand;
+    callOperation(operationCompareStrictEq, regT0, regT1);
+    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
+}
+
+void JIT::emitSlow_op_jnstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    unsigned target = currentInstruction[3].u.operand;
+    callOperation(operationCompareStrictEq, regT0, regT1);
+    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 
 void JIT::emit_op_to_number(Instruction* currentInstruction)
@@ -816,6 +887,24 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
     xor32(TrustedImm32(0x1), regT0);
     emitTagBool(returnValueGPR);
     emitPutVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
+}
+
+void JIT::emitSlow_op_jeq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    unsigned target = currentInstruction[3].u.operand;
+    callOperation(operationCompareEq, regT0, regT1);
+    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
+}
+
+void JIT::emitSlow_op_jneq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    unsigned target = currentInstruction[3].u.operand;
+    callOperation(operationCompareEq, regT0, regT1);
+    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target);
 }
 
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

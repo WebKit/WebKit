@@ -85,6 +85,10 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_jngreater:
     case op_jngreatereq:
     case op_jless:
+    case op_jeq:
+    case op_jneq:
+    case op_jstricteq:
+    case op_jnstricteq:
     case op_jbelow:
     case op_jbeloweq:
     case op_set_function_name:
@@ -347,6 +351,10 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
+    case op_jeq:
+    case op_jneq:
+    case op_jstricteq:
+    case op_jnstricteq:
     case op_jbelow:
     case op_jbeloweq:
     case op_loop_hint:

@@ -1,5 +1,41 @@
 2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Introduces fused compare and jump
+        https://bugs.webkit.org/show_bug.cgi?id=177100
+
+        Reviewed by Mark Lam.
+
+        * stress/fused-jeq-slow.js: Added.
+        (shouldBe):
+        (testJEQ):
+        (testJNEQB):
+        (testJEQB):
+        (testJNEQF):
+        (testJEQF):
+        * stress/fused-jeq.js: Added.
+        (shouldBe):
+        (testJEQ):
+        (testJNEQB):
+        (testJEQB):
+        (testJNEQF):
+        (testJEQF):
+        * stress/fused-jstricteq-slow.js: Added.
+        (shouldBe):
+        (testJSTRICTEQ):
+        (testJNSTRICTEQB):
+        (testJSTRICTEQB):
+        (testJNSTRICTEQF):
+        (testJSTRICTEQF):
+        * stress/fused-jstricteq.js: Added.
+        (shouldBe):
+        (testJSTRICTEQ):
+        (testJNSTRICTEQB):
+        (testJSTRICTEQB):
+        (testJNSTRICTEQF):
+        (testJSTRICTEQF):
+
+2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Clear MustGenerate for ToString(Number) converted from NumberToStringWithRadix
         https://bugs.webkit.org/show_bug.cgi?id=183559
 

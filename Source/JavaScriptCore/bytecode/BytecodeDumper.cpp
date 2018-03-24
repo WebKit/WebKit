@@ -1250,6 +1250,22 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         printCompareJump(out, begin, it, location, "jngreatereq");
         break;
     }
+    case op_jeq: {
+        printCompareJump(out, begin, it, location, "jeq");
+        break;
+    }
+    case op_jneq: {
+        printCompareJump(out, begin, it, location, "jneq");
+        break;
+    }
+    case op_jstricteq: {
+        printCompareJump(out, begin, it, location, "jstricteq");
+        break;
+    }
+    case op_jnstricteq: {
+        printCompareJump(out, begin, it, location, "jnstricteq");
+        break;
+    }
     case op_jbelow: {
         printCompareJump(out, begin, it, location, "jbelow");
         break;

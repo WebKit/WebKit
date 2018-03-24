@@ -396,6 +396,7 @@ size_t JIT_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue, EncodedJ
 size_t JIT_OPERATION operationCompareGreater(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareGreaterEq(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareEq(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 #if USE(JSVALUE64)
 EncodedJSValue JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, JSCell* right) WTF_INTERNAL;
 #else
