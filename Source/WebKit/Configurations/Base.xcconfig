@@ -149,3 +149,7 @@ WK_COCOA_TOUCH_watchos = cocoatouch;
 WK_COCOA_TOUCH_watchsimulator = cocoatouch;
 WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
+
+WK_MACOS_WEAK_FRAMEWORK = $(WK_MACOS_WEAK_FRAMEWORK_$(WK_COCOA_TOUCH));
+WK_MACOS_WEAK_FRAMEWORK_cocoatouch = -framework
+WK_MACOS_WEAK_FRAMEWORK_ = -weak_framework

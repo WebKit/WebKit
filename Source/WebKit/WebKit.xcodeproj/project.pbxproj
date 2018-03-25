@@ -10092,7 +10092,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} != \"macosx\" ]]; then\nexit 0\nfi\n\nln -shf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
+			shellScript = "if [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\nexit 0\nfi\n\nln -shf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
 		};
 		1A1D2115191D96380001619F /* Postprocess Framework Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10120,7 +10120,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/WebKit.framework \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\"";
+			shellScript = "if [[ ${WK_PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/WebKit.framework \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\"";
 		};
 		1A6280C81919956B006AD9F9 /* Migrate WebKitLegacy Headers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10210,7 +10210,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${PLATFORM_NAME}\" == \"macosx\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval ENTITLEMENTS=\\${SCRIPT_INPUT_FILE_${i}}\n        ENTITLEMENTS_BASE=${ENTITLEMENTS##*/}\n        ENTITLEMENTS_BASE=${ENTITLEMENTS_BASE%.entitlements}\n        plutil -remove seatbelt-profiles -o \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2/${ENTITLEMENTS_BASE}-no-sandbox.entitlements\" \"${ENTITLEMENTS}\"\n    done\nfi";
+			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${WK_PLATFORM_NAME}\" == \"macosx\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval ENTITLEMENTS=\\${SCRIPT_INPUT_FILE_${i}}\n        ENTITLEMENTS_BASE=${ENTITLEMENTS##*/}\n        ENTITLEMENTS_BASE=${ENTITLEMENTS_BASE%.entitlements}\n        plutil -remove seatbelt-profiles -o \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2/${ENTITLEMENTS_BASE}-no-sandbox.entitlements\" \"${ENTITLEMENTS}\"\n    done\nfi";
 		};
 		375A248817E5048E00C9A086 /* Postprocess WKBase.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10242,7 +10242,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${PLATFORM_NAME}\" == \"macosx\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval SANDBOX_PROFILE=\\${SCRIPT_INPUT_FILE_${i}}\n        ditto \"${SANDBOX_PROFILE}\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${SANDBOX_PROFILE##*/}\"\n    done\nfi";
+			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${WK_PLATFORM_NAME}\" == \"macosx\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval SANDBOX_PROFILE=\\${SCRIPT_INPUT_FILE_${i}}\n        ditto \"${SANDBOX_PROFILE}\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${SANDBOX_PROFILE##*/}\"\n    done\nfi";
 		};
 		5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10317,7 +10317,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} == macosx ]]; then\n    ln -sf \"Versions/Current/XPCServices\" \"${BUILT_PRODUCTS_DIR}/WebKit.framework/XPCServices\";\nfi\n";
+			shellScript = "if [[ ${WK_PLATFORM_NAME} == macosx ]]; then\n    ln -sf \"Versions/Current/XPCServices\" \"${BUILT_PRODUCTS_DIR}/WebKit.framework/XPCServices\";\nfi\n";
 		};
 		BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10343,7 +10343,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${CONFIGURATION}\" == \"Production\" ]]; then\n    exit\nfi\n\nif [[ ${PLATFORM_NAME} != \"macosx\" ]]; then\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/XPCServices\"\nelse\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Versions/A/XPCServices\"\nfi\n\nmkdir -p \"${XPC_SERVICES_PATH}\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.WebContent.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Networking.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/${WK_STORAGE_SERVICE_PRODUCT_NAME}.xpc\" \"${XPC_SERVICES_PATH}/${WK_STORAGE_SERVICE_PRODUCT_NAME}.xpc\"\n\nif [[ ${PLATFORM_NAME} == macosx ]]; then\n    ditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.32.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.xpc\"\n    ditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.64.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.64.xpc\"\nfi\n";
+			shellScript = "if [[ \"${CONFIGURATION}\" == \"Production\" ]]; then\n    exit\nfi\n\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/XPCServices\"\nelse\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Versions/A/XPCServices\"\nfi\n\nmkdir -p \"${XPC_SERVICES_PATH}\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.WebContent.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Networking.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.xpc\"\nditto \"${BUILT_PRODUCTS_DIR}/${WK_STORAGE_SERVICE_PRODUCT_NAME}.xpc\" \"${XPC_SERVICES_PATH}/${WK_STORAGE_SERVICE_PRODUCT_NAME}.xpc\"\n\nif [[ ${WK_PLATFORM_NAME} == macosx ]]; then\n    ditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.32.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.xpc\"\n    ditto \"${BUILT_PRODUCTS_DIR}/com.apple.WebKit.Plugin.64.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.64.xpc\"\nfi\n";
 		};
 		C0CE72841247E66800BC0EC4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
