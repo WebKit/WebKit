@@ -1,5 +1,18 @@
 2018-03-25  Tim Horton  <timothy_horton@apple.com>
 
+        Add and adopt ENABLE(AIRPLAY_PICKER)
+        https://bugs.webkit.org/show_bug.cgi?id=183992
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showPlaybackTargetPicker:fromRect:]):
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.h:
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+
+2018-03-25  Tim Horton  <timothy_horton@apple.com>
+
         Move WKAnimationDelegate to its own header
         https://bugs.webkit.org/show_bug.cgi?id=183976
         <rdar://problem/38822299>

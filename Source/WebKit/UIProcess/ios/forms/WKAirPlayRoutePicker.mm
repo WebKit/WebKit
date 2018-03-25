@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKAirPlayRoutePicker.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && ENABLE(AIRPLAY_PICKER)
 
 #import "UIKitSPI.h"
 #import <pal/spi/ios/MediaPlayerSPI.h>
@@ -200,4 +200,4 @@ SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
 
 #endif
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && ENABLE(AIRPLAY_PICKER)

@@ -54,6 +54,12 @@
 /* --------- Apple IOS (but not MAC) port --------- */
 #if PLATFORM(IOS)
 
+#if !defined(ENABLE_AIRPLAY_PICKER)
+#if !ENABLE(MINIMAL_SIMULATOR)
+#define ENABLE_AIRPLAY_PICKER 1
+#endif
+#endif
+
 #if !defined(ENABLE_ASYNC_SCROLLING)
 #define ENABLE_ASYNC_SCROLLING 1
 #endif
