@@ -1,3 +1,37 @@
+2018-03-23  Brian Burg  <bburg@apple.com>
+
+        Web Automation: remove unnecessary member variable WebAutomationSession
+        https://bugs.webkit.org/show_bug.cgi?id=183971
+
+        Reviewed by Timothy Hatcher.
+
+        The concept of the "active" browsing context is something in the WebDriver
+        specification, but we were a bit too literal when first implementing this.
+        There's no actual need for this on the browser side since most commands
+        require implicitly switching to the target window passed in with the
+        Automation command. The driver, however, still needs to track the current
+        browsing context and current top-level browsing context.
+
+        For returning whether a browsing context is active,  we can just look at
+        the page's activity state to know whether the page is active or not. For
+        a normal browser, only one page is going to be visible and focused at a time.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::buildBrowsingContextForPage):
+        Consult the page's activity state to determine whether it's active.
+
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::closeBrowsingContext):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::handleRunOpenPanel):
+        Stop reading and writing the current browsing context handle.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isViewFocused const):
+        (WebKit::WebPageProxy::isViewWindowActive const):
+        Add new accessor.
+
 2018-03-25  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt ENABLE(AIRPLAY_PICKER)

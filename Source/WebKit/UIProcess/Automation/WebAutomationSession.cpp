@@ -218,11 +218,12 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
         .setHeight(windowFrame.height())
         .release();
 
+    bool isActive = page.isViewVisible() && page.isViewFocused() && page.isViewWindowActive();
     String handle = handleForWebPageProxy(page);
 
     return Inspector::Protocol::Automation::BrowsingContext::create()
         .setHandle(handle)
-        .setActive(m_activeBrowsingContextHandle == handle)
+        .setActive(isActive)
         .setUrl(page.pageLoadState().activeURL())
         .setWindowOrigin(WTFMove(originObject))
         .setWindowSize(WTFMove(sizeObject))
@@ -280,8 +281,6 @@ void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorSt
     WebPageProxy* page = m_client->didRequestNewWindow(*this);
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context.");
-
-    m_activeBrowsingContextHandle = *handle = handleForWebPageProxy(*page);
 }
 
 void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorString, const String& handle)
@@ -289,9 +288,6 @@ void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorStr
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
-
-    if (handle == m_activeBrowsingContextHandle)
-        m_activeBrowsingContextHandle = emptyString();
 
     page->closePage(false);
 }
@@ -305,9 +301,6 @@ void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& error
     std::optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
     if (!frameID)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
-
-    // FIXME: We don't need to track this in WK2. Remove in a follow up.
-    m_activeBrowsingContextHandle = browsingContextHandle;
 
     page->setFocus(true);
     page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
@@ -692,15 +685,16 @@ static bool fileCanBeAcceptedForUpload(const String& filename, const HashSet<Str
 
 void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const WebFrameProxy&, const API::OpenPanelParameters& parameters, WebOpenPanelResultListenerProxy& resultListener)
 {
+    String browsingContextHandle = handleForWebPageProxy(page);
     if (!m_filesToSelectForFileUpload.size()) {
         resultListener.cancel();
-        m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
+        m_domainNotifier->fileChooserDismissed(browsingContextHandle, true);
         return;
     }
 
     if (m_filesToSelectForFileUpload.size() > 1 && !parameters.allowMultipleFiles()) {
         resultListener.cancel();
-        m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
+        m_domainNotifier->fileChooserDismissed(browsingContextHandle, true);
         return;
     }
 
@@ -723,13 +717,13 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     for (const String& filename : m_filesToSelectForFileUpload) {
         if (!fileCanBeAcceptedForUpload(filename, allowedMIMETypes, allowedFileExtensions)) {
             resultListener.cancel();
-            m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
+            m_domainNotifier->fileChooserDismissed(browsingContextHandle, true);
             return;
         }
     }
 
     resultListener.chooseFiles(m_filesToSelectForFileUpload);
-    m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, false);
+    m_domainNotifier->fileChooserDismissed(browsingContextHandle, false);
 }
 
 void WebAutomationSession::evaluateJavaScriptFunction(const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const JSON::Array& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)

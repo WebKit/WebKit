@@ -218,7 +218,6 @@ private:
 
     HashMap<uint64_t, String> m_webPageHandleMap;
     HashMap<String, uint64_t> m_handleWebPageMap;
-    String m_activeBrowsingContextHandle;
 
     HashMap<uint64_t, String> m_webFrameHandleMap;
     HashMap<String, uint64_t> m_handleWebFrameMap;
