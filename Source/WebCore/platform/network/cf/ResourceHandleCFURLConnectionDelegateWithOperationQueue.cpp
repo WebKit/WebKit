@@ -363,15 +363,17 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToPro
     auto work = [protectedThis = makeRef(*this), protectionSpace = RetainPtr<CFURLProtectionSpaceRef>(protectionSpace)] () mutable {
         auto& handle = protectedThis->m_handle;
         
-        if (!protectedThis->hasHandle()) {
-            protectedThis->continueCanAuthenticateAgainstProtectionSpace(false);
-            return;
+        auto completionHandler = [protectedThis = WTFMove(protectedThis)] (bool result) mutable {
+            protectedThis->m_boolResult = canAuthenticate;
+            protectedThis->m_semaphore.signal();
         }
+        
+        if (!handle)
+            return completionHandler(false);
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace(handle=%p) (%s)", handle, handle->firstRequest().url().string().utf8().data());
 
-        ProtectionSpace coreProtectionSpace = ProtectionSpace(protectionSpace.get());
-        handle->canAuthenticateAgainstProtectionSpace(coreProtectionSpace);
+        handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), WTFMove(completionHandler));
     };
     
     if (m_messageQueue)

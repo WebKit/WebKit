@@ -114,12 +114,6 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
     [super dealloc];
 }
 
-- (void)continueCanAuthenticateAgainstProtectionSpace:(BOOL)canAuthenticate
-{
-    m_boolResult = canAuthenticate;
-    dispatch_semaphore_signal(m_semaphore);
-}
-
 - (void)continueWillCacheResponse:(NSCachedURLResponse *)response
 {
     m_cachedResponseResult = response;
@@ -206,7 +200,10 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
             dispatch_semaphore_signal(m_semaphore);
             return;
         }
-        m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()));
+        m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), [self, protectedSelf = WTFMove(protectedSelf)] (bool result) mutable {
+            m_boolResult = result;
+            dispatch_semaphore_signal(m_semaphore);
+        });
     };
 
     [self callFunctionOnMainThread:WTFMove(work)];

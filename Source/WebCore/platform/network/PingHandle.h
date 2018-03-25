@@ -78,9 +78,9 @@ private:
     bool shouldUseCredentialStorage(ResourceHandle*) final { return m_shouldUseCredentialStorage; }
     void timeoutTimerFired() { pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Load timed out"), ResourceError::Type::Timeout }); }
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&)
+    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&, CompletionHandler<void(bool)>&& completionHandler)
     {
-        m_handle->continueCanAuthenticateAgainstProtectionSpace(false);
+        completionHandler(false);
         pingLoadComplete(ResourceError { String { }, 0, m_currentRequest.url(), ASCIILiteral("Not allowed to authenticate"), ResourceError::Type::AccessControl });
     }
 #endif

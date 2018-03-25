@@ -1,3 +1,34 @@
+2018-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        Use completion handlers for ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync
+        https://bugs.webkit.org/show_bug.cgi?id=183966
+
+        Reviewed by Chris Dumez.
+
+        No change in behavior.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::canAuthenticateAgainstProtectionSpaceAsync):
+        * loader/ResourceLoader.h:
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/PingHandle.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::canAuthenticateAgainstProtectionSpaceAsync):
+        * platform/network/SynchronousLoaderClient.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::canAuthenticateAgainstProtectionSpace):
+        (WebCore::ResourceHandle::continueCanAuthenticateAgainstProtectionSpace): Deleted.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate continueCanAuthenticateAgainstProtectionSpace:]): Deleted.
+
 2018-03-24  Chris Dumez  <cdumez@apple.com>
 
         Use SecurityOriginData more consistently in Service Worker code

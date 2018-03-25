@@ -564,18 +564,12 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
+void ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (ResourceHandleClient* client = this->client())
-        client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
+        client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace, WTFMove(completionHandler));
     else
-        continueCanAuthenticateAgainstProtectionSpace(false);
-    return false; // Ignored by caller.
-}
-
-void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool result)
-{
-    [(id)delegate() continueCanAuthenticateAgainstProtectionSpace:result];
+        completionHandler(false);
 }
 #endif
 

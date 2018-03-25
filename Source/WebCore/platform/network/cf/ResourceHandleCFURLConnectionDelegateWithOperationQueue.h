@@ -61,7 +61,6 @@ private:
     void continueWillCacheResponse(CFCachedURLResponseRef) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     Boolean canRespondToProtectionSpace(CFURLProtectionSpaceRef) override;
-    void continueCanAuthenticateAgainstProtectionSpace(bool) override;
 #endif
 
     BinarySemaphore m_semaphore;

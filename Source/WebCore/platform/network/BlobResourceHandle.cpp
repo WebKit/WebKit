@@ -79,7 +79,7 @@ public:
     void didFail(ResourceHandle*, const ResourceError&) final;
     void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) final;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&) final;
+    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&, CompletionHandler<void(bool)>&&) final;
 #endif
 
 private:
@@ -102,10 +102,10 @@ void BlobResourceSynchronousLoader::willSendRequestAsync(ResourceHandle*, Resour
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void BlobResourceSynchronousLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace&)
+void BlobResourceSynchronousLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT_NOT_REACHED();
-    handle->continueCanAuthenticateAgainstProtectionSpace(false);
+    completionHandler(false);
 }
 #endif
 
