@@ -190,6 +190,7 @@ void BlockDirectory::prepareForAllocation()
         });
     
     m_unsweptCursor = 0;
+    m_emptyCursor = 0;
     
     m_eden.clearAll();
 

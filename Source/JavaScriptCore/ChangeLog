@@ -1,3 +1,20 @@
+2018-03-25  Saam Barati  <sbarati@apple.com>
+
+        r228149 accidentally removed code that resets m_emptyCursor at the end of a GC
+        https://bugs.webkit.org/show_bug.cgi?id=183995
+
+        Reviewed by Filip Pizlo.
+
+        The removal of this line of code was unintended and happened during some
+        refactoring Fil was doing. The consequence of removing this line of code
+        is that the m_emptyCursor became a monotonically increasing integer, leading
+        the cursor to usually being out of bounds of the block range (depending on
+        what the program is doing). This made the functionality of finding an empty
+        block to steal almost always fail.
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::prepareForAllocation):
+
 2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Introduces fused compare and jump
