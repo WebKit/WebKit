@@ -27,6 +27,7 @@
 
 #import "WebGeolocationProviderIOS.h"
 
+#import "WebDelegateImplementationCaching.h"
 #import "WebGeolocationCoreLocationProvider.h"
 #import <WebGeolocationPosition.h>
 #import <WebCore/GeolocationPosition.h>
@@ -36,10 +37,6 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
-
-#if PLATFORM(IOS)
-#import "WebDelegateImplementationCaching.h"
-#endif
 
 using namespace WebCore;
 
@@ -176,10 +173,8 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
         return;
 
     _registeredWebViews.add(webView);
-#if PLATFORM(IOS)
     if (!CallUIDelegateReturningBoolean(YES, webView, @selector(webViewCanCheckGeolocationAuthorizationStatus:)))
         return;
-#endif
 
     if (!_isSuspended) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -239,10 +234,9 @@ static inline void abortSendLastPosition(WebGeolocationProviderIOS* provider)
 {
     ASSERT(WebThreadIsLockedOrDisabled());
 
-#if PLATFORM(IOS)
     if (!CallUIDelegateReturningBoolean(YES, webView, @selector(webViewCanCheckGeolocationAuthorizationStatus:)))
         return;
-#endif
+
     _webViewsWaitingForCoreLocationAuthorization.add(webView, listener);
     _trackedWebViews.add(webView);
 

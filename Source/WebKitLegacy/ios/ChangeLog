@@ -1,3 +1,18 @@
+2018-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        Disable geolocation prompt in minimal simulator mode
+        https://bugs.webkit.org/show_bug.cgi?id=183991
+        <rdar://problem/38845774>
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider requestGeolocationAuthorization]):
+        * Misc/WebGeolocationProviderIOS.mm:
+        (-[WebGeolocationProviderIOS registerWebView:]):
+        (-[WebGeolocationProviderIOS initializeGeolocationForWebView:listener:]):
+        Also clean up some unnecessary nested #ifs.
+
 2018-02-06  Don Olmstead  <don.olmstead@sony.com>
 
         Remove WebCore/ForwardingHeaders directory
