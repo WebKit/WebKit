@@ -31,6 +31,7 @@
 #import "RemoteLayerTreePropertyApplier.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "ShareableBitmap.h"
+#import "WKAnimationDelegate.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>

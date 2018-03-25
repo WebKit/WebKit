@@ -28,6 +28,7 @@
 
 #import "ArgumentCoders.h"
 #import "RemoteLayerTreeHost.h"
+#import "WKAnimationDelegate.h"
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsLayer.h>
@@ -49,13 +50,7 @@ static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 
 static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplicitBeginTimeFlag";
 
-@interface WKAnimationDelegate : NSObject <CAAnimationDelegate> {
-    GraphicsLayer::PlatformLayerID _layerID;
-    WebKit::RemoteLayerTreeHost* _layerTreeHost;
-}
-
-- (instancetype)initWithLayerID:(GraphicsLayer::PlatformLayerID)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost;
-- (void)invalidate;
+@interface WKAnimationDelegate () <CAAnimationDelegate>
 @end
 
 @implementation WKAnimationDelegate

@@ -609,6 +609,7 @@
 		2D1087631D2C641B00B85F82 /* LoadParametersCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */; };
 		2D125C5E1857EA05003BA3CB /* ViewGestureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D125C5C1857EA05003BA3CB /* ViewGestureController.h */; };
 		2D125C5F1857EA05003BA3CB /* ViewGestureControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */; };
+		2D12DAB520662C73006F00FB /* WKAnimationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D12DAB420662C73006F00FB /* WKAnimationDelegate.h */; };
 		2D1B5D5D185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */; };
 		2D1B5D5E185869C8006C6596 /* ViewGestureControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */; };
 		2D28A4971AF965A100F190C9 /* WKViewLayoutStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28A4951AF965A100F190C9 /* WKViewLayoutStrategy.h */; };
@@ -2987,6 +2988,7 @@
 		2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadParametersCocoa.mm; sourceTree = "<group>"; };
 		2D125C5C1857EA05003BA3CB /* ViewGestureController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureController.h; sourceTree = "<group>"; };
 		2D125C5D1857EA05003BA3CB /* ViewGestureControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewGestureControllerMac.mm; sourceTree = "<group>"; };
+		2D12DAB420662C73006F00FB /* WKAnimationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKAnimationDelegate.h; sourceTree = "<group>"; };
 		2D1B5D5A18586599006C6596 /* ViewGestureController.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViewGestureController.messages.in; sourceTree = "<group>"; };
 		2D1B5D5B185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewGestureControllerMessageReceiver.cpp; sourceTree = "<group>"; };
 		2D1B5D5C185869C8006C6596 /* ViewGestureControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewGestureControllerMessages.h; sourceTree = "<group>"; };
@@ -5755,6 +5757,7 @@
 				1AF1AC691651759E00C17D7F /* RemoteLayerTreeTransaction.mm */,
 				0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */,
 				0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */,
+				2D12DAB420662C73006F00FB /* WKAnimationDelegate.h */,
 			);
 			path = RemoteLayerTree;
 			sourceTree = "<group>";
@@ -9399,6 +9402,7 @@
 				0FCB4E4818BBE044000FCFC9 /* WKActionSheet.h in Headers */,
 				0FCB4E4A18BBE044000FCFC9 /* WKActionSheetAssistant.h in Headers */,
 				C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */,
+				2D12DAB520662C73006F00FB /* WKAnimationDelegate.h in Headers */,
 				BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */,
 				512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */,
 				BC4075F4124FF0270068F20A /* WKArray.h in Headers */,

@@ -1,3 +1,20 @@
+2018-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        Move WKAnimationDelegate to its own header
+        https://bugs.webkit.org/show_bug.cgi?id=183976
+        <rdar://problem/38822299>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/RemoteLayerTree/WKAnimationDelegate.h: Added.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        RemoteLayerTreeHost uses a forward declaration of WKAnimationDelegate,
+        so we're just getting lucky that an -invalidate method exists on
+        some other object. Instead, move WKAnimationDelegate to its own
+        header, and include it in the places we use it.
+
 2018-03-24  Tim Horton  <timothy_horton@apple.com>
 
         Adopt WK_PLATFORM_NAME in WebKit
