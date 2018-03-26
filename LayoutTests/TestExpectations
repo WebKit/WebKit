@@ -1712,6 +1712,7 @@ webkit.org/b/183816 imported/mozilla/css-transitions/test_keyframeeffect-getkeyf
 webkit.org/b/183817 imported/mozilla/css-animations/test_animation-computed-timing.html [ Pass Failure Timeout ]
 webkit.org/b/183818 imported/mozilla/css-animations/test_pseudoElement-get-animations.html [ Pass Failure Timeout ]
 webkit.org/b/183819 imported/mozilla/css-animations/test_animation-currenttime.html [ Pass Failure Timeout ]
+webkit.org/b/184011 imported/mozilla/css-animations/test_animation-cancel.html [ Pass Failure ]
 webkit.org/b/183821 imported/mozilla/css-transitions/test_animation-cancel.html [ Pass Failure Timeout ]
 webkit.org/b/183822 imported/mozilla/css-animations/test_animation-finished.html [ Pass Failure Timeout ]
 webkit.org/b/183823 imported/mozilla/css-transitions/test_animation-computed-timing.html [ Pass Failure Timeout ]
