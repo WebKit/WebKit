@@ -1,3 +1,16 @@
+2018-03-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        WebProcess memory monitor: use %zu format specifier for size_t
+        https://bugs.webkit.org/show_bug.cgi?id=183997
+
+        Reviewed by Michael Catanzaro.
+
+        usse %zu format specifier for size_t instead of %lu.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::shrinkOrDie):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+
 2018-03-25  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt ENABLE(AIRPLAY_PICKER)

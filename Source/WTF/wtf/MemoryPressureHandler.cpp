@@ -141,7 +141,7 @@ void MemoryPressureHandler::shrinkOrDie()
 
     auto footprint = memoryFootprint();
     RELEASE_ASSERT(footprint);
-    RELEASE_LOG(MemoryPressure, "New memory footprint: %lu MB", footprint.value() / MB);
+    RELEASE_LOG(MemoryPressure, "New memory footprint: %zu MB", footprint.value() / MB);
 
     if (footprint.value() < thresholdForMemoryKill()) {
         RELEASE_LOG(MemoryPressure, "Shrank below memory kill threshold. Process gets to live.");
@@ -149,7 +149,7 @@ void MemoryPressureHandler::shrinkOrDie()
         return;
     }
 
-    WTFLogAlways("Unable to shrink memory footprint of process (%lu MB) below the kill thresold (%lu MB). Killed\n", footprint.value() / MB, thresholdForMemoryKill() / MB);
+    WTFLogAlways("Unable to shrink memory footprint of process (%zu MB) below the kill thresold (%zu MB). Killed\n", footprint.value() / MB, thresholdForMemoryKill() / MB);
     RELEASE_ASSERT(m_memoryKillCallback);
     m_memoryKillCallback();
 }
@@ -171,7 +171,7 @@ void MemoryPressureHandler::measurementTimerFired()
     if (!footprint)
         return;
 
-    RELEASE_LOG(MemoryPressure, "Current memory footprint: %lu MB", footprint.value() / MB);
+    RELEASE_LOG(MemoryPressure, "Current memory footprint: %zu MB", footprint.value() / MB);
     if (footprint.value() >= thresholdForMemoryKill()) {
         shrinkOrDie();
         return;
