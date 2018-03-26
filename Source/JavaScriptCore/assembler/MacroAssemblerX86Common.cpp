@@ -31,6 +31,10 @@
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
+#if COMPILER(MSVC)
+#include <intrin.h>
+#endif
+
 namespace JSC {
 
 #if ENABLE(MASM_PROBE)
@@ -757,14 +761,56 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
 }
 #endif // ENABLE(MASM_PROBE)
 
-#if CPU(X86) && !OS(MAC_OS_X)
-MacroAssemblerX86Common::SSE2CheckState MacroAssemblerX86Common::s_sse2CheckState = NotCheckedSSE2;
-#endif
+MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUID(unsigned level)
+{
+    return getCPUIDEx(level, 0);
+}
 
+MacroAssemblerX86Common::CPUID MacroAssemblerX86Common::getCPUIDEx(unsigned level, unsigned count)
+{
+    CPUID result { };
+#if COMPILER(MSVC)
+    __cpuidex(bitwise_cast<int*>(result.data()), level, count);
+#else
+    __asm__ (
+        "cpuid\n"
+        : "=a"(result[0]), "=b"(result[1]), "=c"(result[2]), "=d"(result[3])
+        : "0"(level), "2"(count)
+    );
+#endif
+    return result;
+}
+
+void MacroAssemblerX86Common::collectCPUFeatures()
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        {
+            CPUID cpuid = getCPUID(0x1);
+            s_sse2CheckState = (cpuid[3] & (1 << 26)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            s_sse4_1CheckState = (cpuid[2] & (1 << 19)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            s_sse4_2CheckState = (cpuid[2] & (1 << 20)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            s_popcntCheckState = (cpuid[2] & (1 << 23)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+            s_avxCheckState = (cpuid[2] & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        }
+        {
+            CPUID cpuid = getCPUID(0x7);
+            s_bmi1CheckState = (cpuid[2] & (1 << 3)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        }
+        {
+            CPUID cpuid = getCPUID(0x80000001);
+            s_lzcntCheckState = (cpuid[2] & (1 << 5)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        }
+    });
+}
+
+MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse2CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse4_1CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse4_2CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_avxCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_lzcntCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_bmi1CheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_popcntCheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC
 

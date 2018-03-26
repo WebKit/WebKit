@@ -305,18 +305,6 @@ inline void x86_cpuid()
 #if OS(WINDOWS)
     int info[4];
     __cpuid(info, 0);
-#elif CPU(X86)
-    // GCC 4.9 on x86 in PIC mode can't use %ebx, so we have to save and restore it manually.
-    // But since we don't care about what cpuid returns (we use it as a serializing instruction),
-    // we can simply throw away what cpuid put in %ebx.
-    intptr_t a = 0, c, d;
-    asm volatile(
-        "pushl %%ebx\n\t"
-        "cpuid\n\t"
-        "popl %%ebx\n\t"
-        : "+a"(a), "=c"(c), "=d"(d)
-        :
-        : "memory");
 #else
     intptr_t a = 0, b, c, d;
     asm volatile(

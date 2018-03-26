@@ -29,11 +29,8 @@
 
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
+#include <array>
 #include <wtf/Optional.h>
-
-#if COMPILER(MSVC)
-#include <intrin.h>
-#endif
 
 namespace JSC {
 
@@ -387,6 +384,18 @@ public:
         }
         m_assembler.bsf_rr(src, dst);
         ctzAfterBsf<32>(dst);
+    }
+
+    void countPopulation32(Address src, RegisterID dst)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcnt_mr(src.offset, src.base, dst);
+    }
+
+    void countPopulation32(RegisterID src, RegisterID dst)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcnt_rr(src, dst);
     }
 
     // Only used for testing purposes.
@@ -3882,48 +3891,21 @@ public:
     static bool supportsFloatingPointRounding()
     {
         if (s_sse4_1CheckState == CPUIDCheckState::NotChecked)
-            updateEax1EcxFlags();
+            collectCPUFeatures();
         return s_sse4_1CheckState == CPUIDCheckState::Set;
+    }
+
+    static bool supportsCountPopulation()
+    {
+        if (s_popcntCheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_popcntCheckState == CPUIDCheckState::Set;
     }
 
     static bool supportsAVX()
     {
         // AVX still causes mysterious regressions and those regressions can be massive.
         return false;
-    }
-
-    static void updateEax1EcxFlags()
-    {
-        int flags = 0;
-#if COMPILER(MSVC)
-        int cpuInfo[4];
-        __cpuid(cpuInfo, 0x1);
-        flags = cpuInfo[2];
-#elif COMPILER(GCC_OR_CLANG)
-#if CPU(X86_64)
-        asm (
-            "movl $0x1, %%eax;"
-            "cpuid;"
-            "movl %%ecx, %0;"
-            : "=g" (flags)
-            :
-            : "%eax", "%ebx", "%ecx", "%edx"
-            );
-#else
-        asm (
-            "movl $0x1, %%eax;"
-            "pushl %%ebx;"
-            "cpuid;"
-            "popl %%ebx;"
-            "movl %%ecx, %0;"
-            : "=g" (flags)
-            :
-            : "%eax", "%ecx", "%edx"
-            );
-#endif
-#endif // COMPILER(GCC_OR_CLANG)
-        s_sse4_1CheckState = (flags & (1 << 19)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-        s_avxCheckState = (flags & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
     }
 
     void lfence()
@@ -4007,62 +3989,15 @@ protected:
 
     static bool supportsLZCNT()
     {
-        if (s_lzcntCheckState == CPUIDCheckState::NotChecked) {
-            int flags = 0;
-#if COMPILER(MSVC)
-            int cpuInfo[4];
-            __cpuid(cpuInfo, 0x80000001);
-            flags = cpuInfo[2];
-#elif COMPILER(GCC_OR_CLANG)
-#if CPU(X86_64)
-            asm (
-                "movl $0x80000001, %%eax;"
-                "cpuid;"
-                "movl %%ecx, %0;"
-                : "=g" (flags)
-                :
-                : "%eax", "%ebx", "%ecx", "%edx"
-                );
-#else
-            asm (
-                "movl $0x80000001, %%eax;"
-                "pushl %%ebx;"
-                "cpuid;"
-                "popl %%ebx;"
-                "movl %%ecx, %0;"
-                : "=g" (flags)
-                :
-                : "%eax", "%ecx", "%edx"
-                );
-#endif
-#endif // COMPILER(GCC_OR_CLANG)
-            s_lzcntCheckState = (flags & 0x20) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-        }
+        if (s_lzcntCheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
         return s_lzcntCheckState == CPUIDCheckState::Set;
     }
 
     static bool supportsBMI1()
     {
-        if (s_bmi1CheckState == CPUIDCheckState::NotChecked) {
-            int flags = 0;
-#if COMPILER(MSVC)
-            int cpuInfo[4];
-            __cpuid(cpuInfo, 0x80000001);
-            flags = cpuInfo[2];
-#elif COMPILER(GCC_OR_CLANG)
-            asm (
-                 "movl $0x7, %%eax;"
-                 "movl $0x0, %%ecx;"
-                 "cpuid;"
-                 "movl %%ebx, %0;"
-                 : "=g" (flags)
-                 :
-                 : "%eax", "%ebx", "%ecx", "%edx"
-                 );
-#endif // COMPILER(GCC_OR_CLANG)
-            static int BMI1FeatureBit = 1 << 3;
-            s_bmi1CheckState = (flags & BMI1FeatureBit) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
-        }
+        if (s_bmi1CheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
         return s_bmi1CheckState == CPUIDCheckState::Set;
     }
 
@@ -4215,47 +4150,12 @@ private:
     }
 
 #else // OS(MAC_OS_X)
-
-    enum SSE2CheckState {
-        NotCheckedSSE2,
-        HasSSE2,
-        NoSSE2
-    };
-
     static bool isSSE2Present()
     {
-        if (s_sse2CheckState == NotCheckedSSE2) {
-            // Default the flags value to zero; if the compiler is
-            // not MSVC or GCC we will read this as SSE2 not present.
-            int flags = 0;
-#if COMPILER(MSVC)
-            _asm {
-                mov eax, 1 // cpuid function 1 gives us the standard feature set
-                cpuid;
-                mov flags, edx;
-            }
-#elif COMPILER(GCC_OR_CLANG)
-            asm (
-                 "movl $0x1, %%eax;"
-                 "pushl %%ebx;"
-                 "cpuid;"
-                 "popl %%ebx;"
-                 "movl %%edx, %0;"
-                 : "=g" (flags)
-                 :
-                 : "%eax", "%ecx", "%edx"
-                 );
-#endif
-            static const int SSE2FeatureBit = 1 << 26;
-            s_sse2CheckState = (flags & SSE2FeatureBit) ? HasSSE2 : NoSSE2;
-        }
-        // Only check once.
-        ASSERT(s_sse2CheckState != NotCheckedSSE2);
-
-        return s_sse2CheckState == HasSSE2;
+        if (s_sse2CheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+        return s_sse2CheckState == CPUIDCheckState::Set;
     }
-    
-    JS_EXPORTDATA static SSE2CheckState s_sse2CheckState;
 
 #endif // OS(MAC_OS_X)
 #elif !defined(NDEBUG) // CPU(X86)
@@ -4269,15 +4169,23 @@ private:
 
 #endif
 
+    using CPUID = std::array<unsigned, 4>;
+    static CPUID getCPUID(unsigned level);
+    static CPUID getCPUIDEx(unsigned level, unsigned count);
+    JS_EXPORT_PRIVATE static void collectCPUFeatures();
+
     enum class CPUIDCheckState {
         NotChecked,
         Clear,
         Set
     };
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_sse2CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_1CheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_2CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_avxCheckState;
-    static CPUIDCheckState s_bmi1CheckState;
-    static CPUIDCheckState s_lzcntCheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_lzcntCheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_bmi1CheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_popcntCheckState;
 };
 
 } // namespace JSC

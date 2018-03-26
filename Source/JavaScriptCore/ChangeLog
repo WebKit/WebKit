@@ -1,3 +1,40 @@
+2018-03-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        We should have SSE4 detection in the X86 MacroAssembler.
+        https://bugs.webkit.org/show_bug.cgi?id=165363
+
+        Reviewed by JF Bastien.
+
+        This patch adds popcnt support to WASM in x86_64 environment.
+        To use it, we refactor our CPUID feature detection in MacroAssemblerX86Common.
+        Our spec-tests already cover popcnt.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::supportsCountPopulation):
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::MacroAssemblerX86Common::getCPUID):
+        (JSC::MacroAssemblerX86Common::getCPUIDEx):
+        (JSC::MacroAssemblerX86Common::collectCPUFeatures):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::countPopulation32):
+        (JSC::MacroAssemblerX86Common::supportsFloatingPointRounding):
+        (JSC::MacroAssemblerX86Common::supportsCountPopulation):
+        (JSC::MacroAssemblerX86Common::supportsAVX):
+        (JSC::MacroAssemblerX86Common::supportsLZCNT):
+        (JSC::MacroAssemblerX86Common::supportsBMI1):
+        (JSC::MacroAssemblerX86Common::isSSE2Present):
+        (JSC::MacroAssemblerX86Common::updateEax1EcxFlags): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::countPopulation64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::popcnt_rr):
+        (JSC::X86Assembler::popcnt_mr):
+        (JSC::X86Assembler::popcntq_rr):
+        (JSC::X86Assembler::popcntq_mr):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Popcnt>):
+
 2018-03-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should know that CreateThis can be effectful

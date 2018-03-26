@@ -472,6 +472,18 @@ public:
         ctzAfterBsf<64>(dst);
     }
 
+    void countPopulation64(RegisterID src, RegisterID dst)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcntq_rr(src, dst);
+    }
+
+    void countPopulation64(Address src, RegisterID dst)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcntq_mr(src.offset, src.base, dst);
+    }
+
     void lshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shlq_i8r(imm.m_value, dest);

@@ -1567,8 +1567,19 @@ auto B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType arg, ExpressionType& re
 template<>
 auto B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    // FIXME: This should use the popcnt instruction if SSE4 is available but we don't have code to detect SSE4 yet.
-    // see: https://bugs.webkit.org/show_bug.cgi?id=165363
+#if CPU(X86_64)
+    if (MacroAssembler::supportsCountPopulation()) {
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, origin());
+        patchpoint->append(arg, ValueRep::SomeRegister);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.countPopulation32(params[1].gpr(), params[0].gpr());
+        });
+        patchpoint->effects = Effects::none();
+        result = patchpoint;
+        return { };
+    }
+#endif
+
     uint32_t (*popcount)(int32_t) = [] (int32_t value) -> uint32_t { return __builtin_popcount(value); };
     Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(popcount));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(), Effects::none(), funcAddress, arg);
@@ -1578,8 +1589,19 @@ auto B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType arg, ExpressionType&
 template<>
 auto B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    // FIXME: This should use the popcnt instruction if SSE4 is available but we don't have code to detect SSE4 yet.
-    // see: https://bugs.webkit.org/show_bug.cgi?id=165363
+#if CPU(X86_64)
+    if (MacroAssembler::supportsCountPopulation()) {
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
+        patchpoint->append(arg, ValueRep::SomeRegister);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.countPopulation64(params[1].gpr(), params[0].gpr());
+        });
+        patchpoint->effects = Effects::none();
+        result = patchpoint;
+        return { };
+    }
+#endif
+
     uint64_t (*popcount)(int64_t) = [] (int64_t value) -> uint64_t { return __builtin_popcountll(value); };
     Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(popcount));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int64, origin(), Effects::none(), funcAddress, arg);

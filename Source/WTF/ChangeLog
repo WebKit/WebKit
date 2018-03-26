@@ -1,3 +1,18 @@
+2018-03-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        We should have SSE4 detection in the X86 MacroAssembler.
+        https://bugs.webkit.org/show_bug.cgi?id=165363
+
+        Reviewed by JF Bastien.
+
+        GCC 5 supports clobbering PIC registers in inline ASM [1,2].
+
+        [1]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47602
+        [2]: https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=216154
+
+        * wtf/Atomics.h:
+        (WTF::x86_cpuid):
+
 2018-03-26  Antoine Quint  <graouts@apple.com>
 
         [ASan] Allow Ref<> to be swapped
