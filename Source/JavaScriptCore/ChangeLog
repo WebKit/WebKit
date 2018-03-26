@@ -1,3 +1,25 @@
+2018-03-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JIT callOperation() needs to support operations that return SlowPathReturnType differently on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=183655
+
+        Reviewed by Keith Miller.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::ArgCollection::argCount):
+        (JSC::CCallHelpers::marshallArgumentRegister):
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        On Win64, ensure that argCount always includes GPRs and FPRs and that counting starts from 1 for SlowPathReturnType.
+
+        * jit/JIT.h:
+        (JSC::JIT::callOperation):
+        (JSC::JIT::is64BitType):
+        (JSC::JIT::is64BitType<void>):
+        On Win64, ensure special call is used for SlowPathReturnType.
+
+        * jit/JITOperations.h:
+        Update changed type.
+
 2018-03-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         We should have SSE4 detection in the X86 MacroAssembler.

@@ -716,7 +716,7 @@ namespace JSC {
 
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr, PtrTag);
 #if OS(WINDOWS) && CPU(X86_64)
-        MacroAssembler::Call appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr, PtrTag = NoPtrTag);
+        MacroAssembler::Call appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr, PtrTag);
 #endif
         MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr, PtrTag);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr, PtrTag, int);
@@ -738,12 +738,37 @@ namespace JSC {
             return callOperation(operation, tag, result, args...);
         }
 
+#if OS(WINDOWS) && CPU(X86_64)
+        template<typename OperationType, typename... Args>
+        std::enable_if_t<std::is_same<typename FunctionTraits<OperationType>::ResultType, SlowPathReturnType>::value, MacroAssembler::Call>
+        callOperation(OperationType operation, PtrTag tag, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            return appendCallWithExceptionCheckAndSlowPathReturnType(operation, tag);
+        }
+
+        template<typename Type>
+        static constexpr bool is64BitType() { return sizeof(Type) <= 8; }
+
+        template<>
+        static constexpr bool is64BitType<void>() { return true; }
+
+        template<typename OperationType, typename... Args>
+        std::enable_if_t<!std::is_same<typename FunctionTraits<OperationType>::ResultType, SlowPathReturnType>::value, MacroAssembler::Call>
+        callOperation(OperationType operation, PtrTag tag, Args... args)
+        {
+            static_assert(is64BitType<typename FunctionTraits<OperationType>::ResultType>(), "Win64 cannot use standard call when return type is larger than 64 bits.");
+            setupArguments<OperationType>(args...);
+            return appendCallWithExceptionCheck(operation, tag);
+        }
+#else // OS(WINDOWS) && CPU(X86_64)
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callOperation(OperationType operation, PtrTag tag, Args... args)
         {
             setupArguments<OperationType>(args...);
             return appendCallWithExceptionCheck(operation, tag);
         }
+#endif // OS(WINDOWS) && CPU(X86_64)
 
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callOperation(OperationType operation, Args... args)

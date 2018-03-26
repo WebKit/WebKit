@@ -260,7 +260,7 @@ typedef size_t (JIT_OPERATION *S_JITOperation_EOJss)(ExecState*, JSObject*, JSSt
 typedef size_t (JIT_OPERATION *S_JITOperation_EReoJ)(ExecState*, RegExpObject*, EncodedJSValue);
 typedef size_t (JIT_OPERATION *S_JITOperation_EReoJss)(ExecState*, RegExpObject*, JSString*);
 typedef size_t (JIT_OPERATION *S_JITOperation_J)(EncodedJSValue);
-typedef SlowPathReturnType (JIT_OPERATION *Sprt_JITOperation_EZ)(ExecState*, int32_t);
+typedef SlowPathReturnType (JIT_OPERATION *Sprt_JITOperation_EUi)(ExecState*, uint32_t);
 typedef void (JIT_OPERATION *V_JITOperation)();
 typedef void (JIT_OPERATION *V_JITOperation_E)(ExecState*);
 typedef void (JIT_OPERATION *V_JITOperation_EC)(ExecState*, JSCell*);

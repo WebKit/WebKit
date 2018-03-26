@@ -238,9 +238,13 @@ private:
             return ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, extraPoke + 1>(*this);
         }
 
-
+#if OS(WINDOWS) && CPU(X86_64)
+        unsigned argCount(GPRReg) { return numGPRArgs + numFPRArgs; }
+        unsigned argCount(FPRReg) { return numGPRArgs + numFPRArgs; }
+#else
         unsigned argCount(GPRReg) { return numGPRArgs; }
         unsigned argCount(FPRReg) { return numFPRArgs; }
+#endif
 
         std::array<GPRReg, GPRInfo::numberOfRegisters> gprSources;
         std::array<GPRReg, GPRInfo::numberOfRegisters> gprDestinations;
@@ -287,6 +291,7 @@ private:
     // recursion we can fill immediates.
 
 #define CURRENT_ARGUMENT_TYPE typename FunctionTraits<OperationType>::template ArgumentType<numGPRArgs + numFPRArgs>
+#define RESULT_TYPE typename FunctionTraits<OperationType>::ResultType
 
 #if USE(JSVALUE64)
 
@@ -295,7 +300,11 @@ private:
     {
         using InfoType = InfoTypeForReg<RegType>;
         unsigned numArgRegisters = InfoType::numberOfArgumentRegisters;
+#if OS(WINDOWS) && CPU(X86_64)
+        unsigned currentArgCount = argSourceRegs.argCount(arg) + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+#else
         unsigned currentArgCount = argSourceRegs.argCount(arg);
+#endif
         if (currentArgCount < numArgRegisters) {
             auto updatedArgSourceRegs = argSourceRegs.pushRegArg(arg, InfoType::toArgumentRegister(currentArgCount));
             setupArgumentsImpl<OperationType>(updatedArgSourceRegs, args...);
@@ -385,9 +394,14 @@ private:
         // gross so it's probably better to do that marshalling before the call operation...
         static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
         auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
-        if (numGPRArgs < numArgRegisters) {
+#if OS(WINDOWS) && CPU(X86_64)
+        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+#else
+        auto currentArgCount = numGPRArgs;
+#endif
+        if (currentArgCount < numArgRegisters) {
             setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
-            move(arg, GPRInfo::toArgumentRegister(numGPRArgs));
+            move(arg, GPRInfo::toArgumentRegister(currentArgCount));
             return;
         }
 
@@ -436,6 +450,7 @@ private:
     }
 
 #undef CURRENT_ARGUMENT_TYPE
+#undef RESULT_TYPE
 
     // Base case; set up the argument registers.
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned extraPoke>
