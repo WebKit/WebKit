@@ -211,14 +211,6 @@ public:
     WEBCORE_EXPORT ResourceHandleClient* client() const;
     WEBCORE_EXPORT void clearClient();
 
-    // Called in response to ResourceHandleClient::willCacheResponseAsync().
-#if USE(CFURLCONNECTION)
-    WEBCORE_EXPORT void continueWillCacheResponse(CFCachedURLResponseRef);
-#endif
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT void continueWillCacheResponse(NSCachedURLResponse *);
-#endif
-
     WEBCORE_EXPORT void setDefersLoading(bool);
 
     WEBCORE_EXPORT ResourceRequest& firstRequest();

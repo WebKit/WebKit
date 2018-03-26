@@ -81,7 +81,7 @@ private:
     void didRetrieveDerivedDataFromCache(const String& type, SharedBuffer&) override;
 
 #if PLATFORM(COCOA)
-    NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
+    void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) override;
 #endif
 
     void releaseResources() override;

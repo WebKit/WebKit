@@ -652,11 +652,6 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& c
     clearAuthentication();
 }
 
-void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
-{
-    [(id)delegate() continueWillCacheResponse:response];
-}
-
 void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, NetworkLoadMetrics& timing)
 {
     copyTimingData([connection _timingData], timing);

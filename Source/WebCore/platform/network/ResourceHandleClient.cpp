@@ -36,18 +36,6 @@ ResourceHandleClient::ResourceHandleClient() = default;
 
 ResourceHandleClient::~ResourceHandleClient() = default;
 
-#if USE(CFURLCONNECTION)
-void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResponseRef response)
-{
-    handle->continueWillCacheResponse(response);
-}
-#elif PLATFORM(COCOA)
-void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *response)
-{
-    handle->continueWillCacheResponse(response);
-}
-#endif
-
 void ResourceHandleClient::didReceiveBuffer(ResourceHandle* handle, Ref<SharedBuffer>&& buffer, int encodedDataLength)
 {
     didReceiveData(handle, buffer->data(), buffer->size(), encodedDataLength);

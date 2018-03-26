@@ -1,3 +1,45 @@
+2018-03-26  Alex Christensen  <achristensen@webkit.org>
+
+        Merge ResourceHandleClient::willCacheResponseAsync with ResourceHandleClient::willCacheResponse
+        https://bugs.webkit.org/show_bug.cgi?id=183965
+
+        Reviewed by Chris Dumez.
+
+        It turns out that ResourceHandleClient::willCacheResponseAsync didn't do anything and the logic in
+        ResourceHandleClient::willCacheResponse was not being called.  This makes it so there is one code
+        path and it executes the logic in ResourceHandleClient::willCacheResponse.
+
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/cocoa/SubresourceLoaderCocoa.mm:
+        (WebCore::SubresourceLoader::willCacheResponseAsync):
+        (WebCore::SubresourceLoader::willCacheResponse): Deleted.
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willCacheResponseAsync):
+        (WebCore::ResourceLoader::willCacheResponse): Deleted.
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.cpp:
+        (WebCore::ResourceHandleClient::willCacheResponseAsync): Deleted.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::willCacheResponseAsync):
+        (WebCore::ResourceHandleClient::shouldCacheResponse):
+        (WebCore::ResourceHandleClient::willCacheResponse): Deleted.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::continueWillCacheResponse): Deleted.
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willCacheResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueWillCacheResponse): Deleted.
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::continueWillCacheResponse): Deleted.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willCacheResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate continueWillCacheResponse:]): Deleted.
+
 2018-03-26  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Upload correct buffer in BitmapTextureGL::updateContents()

@@ -663,11 +663,6 @@ void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool canAuthe
     d->m_connectionDelegate->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
 }
 #endif
-
-void ResourceHandle::continueWillCacheResponse(CFCachedURLResponseRef response)
-{
-    d->m_connectionDelegate->continueWillCacheResponse(response);
-}
 #endif // USE(CFURLCONNECTION)
 
 } // namespace WebCore

@@ -114,12 +114,6 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
     [super dealloc];
 }
 
-- (void)continueWillCacheResponse:(NSCachedURLResponse *)response
-{
-    m_cachedResponseResult = response;
-    dispatch_semaphore_signal(m_semaphore);
-}
-
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     ASSERT(!isMainThread());
@@ -361,7 +355,10 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
             return;
         }
 
-        m_handle->client()->willCacheResponseAsync(m_handle, cachedResponse.get());
+        m_handle->client()->willCacheResponseAsync(m_handle, cachedResponse.get(), [self, protectedSelf = WTFMove(protectedSelf)] (NSCachedURLResponse * response) mutable {
+            m_cachedResponseResult = response;
+            dispatch_semaphore_signal(m_semaphore);
+        });
     };
 
     [self callFunctionOnMainThread:WTFMove(work)];

@@ -51,7 +51,6 @@ class ResourceHandle;
 
 - (void)detachHandle;
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(MessageQueue<Function<void()>>*)messageQueue;
-- (void)continueWillCacheResponse:(NSCachedURLResponse *)response;
 @end
 
 @interface WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate : WebCoreResourceHandleAsOperationQueueDelegate

@@ -31,14 +31,15 @@
 
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
-NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCachedURLResponse* response)
+void ResourceLoader::willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler)
 {
     if (m_options.sendLoadCallbacks == DoNotSendCallbacks)
-        return nullptr;
-    return frameLoader()->client().willCacheResponse(documentLoader(), identifier(), response);
+        return completionHandler(nullptr);
+    frameLoader()->client().willCacheResponse(documentLoader(), identifier(), response, WTFMove(completionHandler));
 }
 
 }

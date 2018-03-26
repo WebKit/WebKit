@@ -46,8 +46,6 @@ public:
     virtual void setupConnectionScheduling(CFURLConnectionRef) = 0;
     virtual void releaseHandle();
 
-    virtual void continueWillCacheResponse(CFCachedURLResponseRef) = 0;
-
 protected:
     RetainPtr<CFURLResponseRef> synthesizeRedirectResponseIfNecessary(CFURLRequestRef, CFURLResponseRef);
     ResourceRequest createResourceRequest(CFURLRequestRef, CFURLResponseRef);
