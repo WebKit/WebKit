@@ -1,3 +1,26 @@
+2018-03-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Clean up CoordinatedGraphicsScene construct-time initializations
+        https://bugs.webkit.org/show_bug.cgi?id=184002
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the CoordinatedGraphicsScene constant-expression initializations
+        from constructor to the point of declaration.
+
+        Default the CoordinatedGraphicsScene destructor.
+
+        The m_scrollPosition member variable is unused in this class, while the
+        similarly-named m_renderedContentsScrollPosition tracks scroll position
+        of the scene. Remove the latter and use m_scrollPosition in its place.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::CoordinatedGraphicsScene):
+        (WebKit::CoordinatedGraphicsScene::adjustPositionForFixedLayers):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        (WebKit::CoordinatedGraphicsScene::~CoordinatedGraphicsScene): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+
 2018-03-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] WebKitWebProcessEnumTypes.h missing from webkit-web-extension.h

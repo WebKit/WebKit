@@ -42,15 +42,10 @@ static bool layerShouldHaveBackingStore(TextureMapperLayer* layer)
 
 CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient* client)
     : m_client(client)
-    , m_isActive(false)
-    , m_rootLayerID(InvalidCoordinatedLayerID)
-    , m_viewBackgroundColor(Color::white)
 {
 }
 
-CoordinatedGraphicsScene::~CoordinatedGraphicsScene()
-{
-}
+CoordinatedGraphicsScene::~CoordinatedGraphicsScene() = default;
 
 void CoordinatedGraphicsScene::applyStateChanges(const Vector<CoordinatedGraphicsState>& states)
 {
@@ -118,7 +113,7 @@ void CoordinatedGraphicsScene::adjustPositionForFixedLayers(const FloatPoint& co
     // Fixed layer positions are updated by the web process when we update the visible contents rect / scroll position.
     // If we want those layers to follow accurately the viewport when we move between the web process updates, we have to offset
     // them by the delta between the current position and the position of the viewport used for the last layout.
-    FloatSize delta = contentPosition - m_renderedContentsScrollPosition;
+    FloatSize delta = contentPosition - m_scrollPosition;
 
     for (auto& fixedLayer : m_fixedLayers.values())
         fixedLayer->setScrollPositionDeltaIfNeeded(delta);
@@ -491,7 +486,7 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
 
     CommitScope commitScope;
 
-    m_renderedContentsScrollPosition = state.scrollPosition;
+    m_scrollPosition = state.scrollPosition;
 
     createLayers(state.layersToCreate);
     deleteLayers(state.layersToRemove);

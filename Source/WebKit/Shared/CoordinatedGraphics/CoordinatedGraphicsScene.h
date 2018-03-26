@@ -163,16 +163,15 @@ private:
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     CoordinatedGraphicsSceneClient* m_client;
-    bool m_isActive;
+    bool m_isActive { false };
 
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
     HashMap<WebCore::CoordinatedLayerID, std::unique_ptr<WebCore::TextureMapperLayer>> m_layers;
     HashMap<WebCore::CoordinatedLayerID, WebCore::TextureMapperLayer*> m_fixedLayers;
-    WebCore::CoordinatedLayerID m_rootLayerID;
+    WebCore::CoordinatedLayerID m_rootLayerID { WebCore::InvalidCoordinatedLayerID };
     WebCore::FloatPoint m_scrollPosition;
-    WebCore::FloatPoint m_renderedContentsScrollPosition;
-    WebCore::Color m_viewBackgroundColor;
+    WebCore::Color m_viewBackgroundColor { WebCore::Color::white };
 
     WebCore::TextureMapperFPSCounter m_fpsCounter;
 };
