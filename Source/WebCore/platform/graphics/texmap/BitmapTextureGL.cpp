@@ -132,7 +132,7 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, adjustedSourceOffset.x());
     }
 
-    glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), m_format, m_type, srcData);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), m_format, m_type, data);
 
     if (m_contextAttributes.supportsUnpackSubimage) {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
