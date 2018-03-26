@@ -71,7 +71,7 @@ public:
     std::optional<Seconds> startTime() const;
     void setStartTime(std::optional<Seconds>);
 
-    std::optional<double> bindingsCurrentTime() const;
+    virtual std::optional<double> bindingsCurrentTime() const;
     ExceptionOr<void> setBindingsCurrentTime(std::optional<double>);
     std::optional<Seconds> currentTime() const;
     ExceptionOr<void> setCurrentTime(std::optional<Seconds>);

@@ -102,4 +102,12 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     unsuspendEffectInvalidation();
 }
 
+std::optional<double> CSSAnimation::bindingsCurrentTime() const
+{
+    auto currentTime = WebAnimation::bindingsCurrentTime();
+    if (currentTime)
+        return std::max(0.0, std::min(currentTime.value(), effect()->timing()->activeDuration().milliseconds()));
+    return currentTime;
+}
+
 } // namespace WebCore

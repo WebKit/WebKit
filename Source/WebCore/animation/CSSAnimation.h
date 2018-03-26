@@ -41,6 +41,8 @@ public:
     bool isCSSAnimation() const override { return true; }
     const String& animationName() const { return m_animationName; }
 
+    std::optional<double> bindingsCurrentTime() const final;
+
 protected:
     void initialize(const Element&) final;
     void syncPropertiesWithBackingAnimation() final;
