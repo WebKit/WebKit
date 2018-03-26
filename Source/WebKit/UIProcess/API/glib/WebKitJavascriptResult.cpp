@@ -80,7 +80,7 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
 
 #if PLATFORM(GTK)
 /**
- * webkit_javascript_result_get_global_context:
+ * webkit_javascript_result_get_global_context: (skip)
  * @js_result: a #WebKitJavascriptResult
  *
  * Get the global Javascript context that should be used with the
@@ -97,7 +97,7 @@ JSGlobalContextRef webkit_javascript_result_get_global_context(WebKitJavascriptR
 }
 
 /**
- * webkit_javascript_result_get_value:
+ * webkit_javascript_result_get_value: (skip)
  * @js_result: a #WebKitJavascriptResult
  *
  * Get the value of @js_result. You should use the <function>JSGlobalContextRef</function>

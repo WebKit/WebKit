@@ -93,7 +93,7 @@ const gchar* webkit_frame_get_uri(WebKitFrame* frame)
 
 #if PLATFORM(GTK)
 /**
- * webkit_frame_get_javascript_global_context:
+ * webkit_frame_get_javascript_global_context: (skip)
  * @frame: a #WebKitFrame
  *
  * Gets the global JavaScript execution context. Use this function to bridge
@@ -113,7 +113,7 @@ JSGlobalContextRef webkit_frame_get_javascript_global_context(WebKitFrame* frame
 }
 
 /**
- * webkit_frame_get_javascript_context_for_script_world:
+ * webkit_frame_get_javascript_context_for_script_world: (skip)
  * @frame: a #WebKitFrame
  * @world: a #WebKitScriptWorld
  *

@@ -3249,7 +3249,7 @@ WebKitFindController* webkit_web_view_get_find_controller(WebKitWebView* webView
 
 #if PLATFORM(GTK)
 /**
- * webkit_web_view_get_javascript_global_context:
+ * webkit_web_view_get_javascript_global_context: (skip)
  * @web_view: a #WebKitWebView
  *
  * Get the global JavaScript context used by @web_view to deserialize the
