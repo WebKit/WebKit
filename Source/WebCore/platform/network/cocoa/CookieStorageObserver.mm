@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/ProcessPrivilege.h>
 
 @interface WebNSHTTPCookieStorageInternal : NSObject {
 @public
@@ -79,6 +80,7 @@ CookieStorageObserver::CookieStorageObserver(NSHTTPCookieStorage *cookieStorage)
 {
     ASSERT(isMainThread());
     ASSERT(m_cookieStorage);
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 }
 
 CookieStorageObserver::~CookieStorageObserver()
@@ -96,6 +98,7 @@ void CookieStorageObserver::startObserving(WTF::Function<void()>&& callback)
     ASSERT(isMainThread());
     ASSERT(!m_cookieChangeCallback);
     ASSERT(!m_observerAdapter);
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     m_cookieChangeCallback = WTFMove(callback);
     m_observerAdapter = adoptNS([[WebCookieObserverAdapter alloc] initWithObserver:*this]);
@@ -119,6 +122,7 @@ void CookieStorageObserver::stopObserving()
     ASSERT(isMainThread());
     ASSERT(m_cookieChangeCallback);
     ASSERT(m_observerAdapter);
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_observerAdapter.get() name:NSHTTPCookieManagerCookiesChangedNotification object:nil];
 

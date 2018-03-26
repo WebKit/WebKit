@@ -38,6 +38,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
+#include <wtf/ProcessPrivilege.h>
 
 using namespace WebCore;
 
@@ -45,6 +46,7 @@ namespace WebKit {
 
 void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
+    ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     auto sessionID = parameters.networkSessionParameters.sessionID;
     if (NetworkStorageSession::storageSession(sessionID))
         return;
@@ -88,6 +90,7 @@ ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& req
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(RunLoop::isMain());
+    ASSERT(!hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     if (frame()) {
         if (auto* storageSession = WebCore::NetworkStorageSession::storageSession(frame()->page()->sessionID()))
             return *storageSession;

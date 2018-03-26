@@ -29,6 +29,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
+#include <wtf/ProcessPrivilege.h>
 
 #if PLATFORM(COCOA)
 #include "PublicSuffix.h"
@@ -58,6 +59,11 @@ static RetainPtr<CFURLStorageSessionRef> createCFStorageSessionForIdentifier(CFS
     auto sharedCache = adoptCF(CFURLCacheCopySharedURLCache());
     CFURLCacheSetMemoryCapacity(cache.get(), CFURLCacheMemoryCapacity(sharedCache.get()));
 
+    if (!NetworkStorageSession::processMayUseCookieAPI())
+        return storageSession;
+
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     if (!cookieStorage)
         return nullptr;
@@ -73,8 +79,15 @@ NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, RetainPtr
     : m_sessionID(sessionID)
     , m_platformSession(WTFMove(platformSession))
 {
+    ASSERT(processMayUseCookieAPI() || !platformCookieStorage);
     m_platformCookieStorage = platformCookieStorage ? WTFMove(platformCookieStorage) : cookieStorage();
 }
+
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
+    : m_sessionID(sessionID)
+{
+}
+
 
 static std::unique_ptr<NetworkStorageSession>& defaultNetworkStorageSession()
 {
@@ -96,8 +109,11 @@ void NetworkStorageSession::switchToNewTestingSession()
 #endif
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
-    if (session)
-        cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
+    if (NetworkStorageSession::processMayUseCookieAPI()) {
+        ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+        if (session)
+            cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, session.get()));
+    }
 
     defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
 }
@@ -105,7 +121,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 {
     if (!defaultNetworkStorageSession())
-        defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr, nullptr);
+        defaultNetworkStorageSession() = std::make_unique<NetworkStorageSession>(PAL::SessionID::defaultSessionID());
     return *defaultNetworkStorageSession();
 }
 
@@ -127,8 +143,11 @@ void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String
     } else
         storageSession = createCFStorageSessionForIdentifier(cfIdentifier.get());
 
-    if (!cookieStorage && storageSession)
-        cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
+    if (NetworkStorageSession::processMayUseCookieAPI()) {
+        ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+        if (!cookieStorage && storageSession)
+            cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
+    }
 
     addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
 }
@@ -140,6 +159,11 @@ void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String
 
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
 {
+    if (!processMayUseCookieAPI())
+        return nullptr;
+
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     if (m_platformCookieStorage)
         return m_platformCookieStorage;
 

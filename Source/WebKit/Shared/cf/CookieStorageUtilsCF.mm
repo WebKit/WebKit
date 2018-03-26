@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CookieStorageUtilsCF.h"
+#import "config.h"
+#import "CookieStorageUtilsCF.h"
 
-#include <pal/spi/cocoa/NSURLConnectionSPI.h>
+#import <pal/spi/cocoa/NSURLConnectionSPI.h>
+#import <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
 
 RetainPtr<CFHTTPCookieStorageRef> cookieStorageFromIdentifyingData(const Vector<uint8_t>& data)
 {
     ASSERT(!data.isEmpty());
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     auto cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size()));
     auto cookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
@@ -45,6 +47,8 @@ RetainPtr<CFHTTPCookieStorageRef> cookieStorageFromIdentifyingData(const Vector<
 
 Vector<uint8_t> identifyingDataFromCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     Vector<uint8_t> result;
 
     auto cfData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, cookieStorage));

@@ -59,6 +59,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <JavaScriptCore/TestRunnerUtils.h>
 #import <WebCore/LogInitialization.h>
+#import <WebCore/NetworkStorageSession.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
@@ -92,6 +93,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/LoggingAccumulator.h>
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/text/WTFString.h>
@@ -1349,6 +1351,9 @@ void atexitFunction()
 int DumpRenderTreeMain(int argc, const char *argv[])
 {
     atexit(atexitFunction);
+
+    WTF::setProcessPrivileges(allPrivileges());
+    WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
 
 #if PLATFORM(IOS)
     _UIApplicationLoadWebKit();

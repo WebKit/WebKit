@@ -1,3 +1,16 @@
+2018-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Warn against cookie access in the WebContent process using ProcessPrivilege assertions
+        https://bugs.webkit.org/show_bug.cgi?id=183911
+        <rdar://problem/38762306>
+
+        Reviewed by Youenn Fablet.
+
+        Initialize the ProcessPrivilege and Cookie API access levels for single-process use.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]):
+
 2018-03-26  Alex Christensen  <achristensen@webkit.org>
 
         Merge ResourceHandleClient::willCacheResponseAsync with ResourceHandleClient::willCacheResponse

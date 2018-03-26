@@ -55,4 +55,14 @@ bool hasProcessPrivilege(ProcessPrivilege privilege)
     return processPrivileges().contains(privilege);
 }
 
+void addProcessPrivilege(ProcessPrivilege privilege)
+{
+    processPrivileges() |= privilege;
+}
+
+void removeProcessPrivilege(ProcessPrivilege privilege)
+{
+    processPrivileges() = processPrivileges() - privilege;
+}
+
 } // namespace WTF

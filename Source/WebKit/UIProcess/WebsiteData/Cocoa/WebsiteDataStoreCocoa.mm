@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ProcessPrivilege.h>
 
 #if PLATFORM(IOS)
 #import <UIKit/UIApplication.h>
@@ -52,6 +53,8 @@ static Vector<WebsiteDataStore*>& dataStoresWithStorageManagers()
 
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     resolveDirectoriesIfNecessary();
 
     WebsiteDataStoreParameters parameters;

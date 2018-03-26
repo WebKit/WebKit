@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,14 @@
 #import "URL.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/ProcessPrivilege.h>
 
 namespace WebCore {
 
 void NetworkStorageSession::setCookie(const Cookie& cookie)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [nsCookieStorage() setCookie:(NSHTTPCookie *)cookie];
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -43,6 +46,8 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
 
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     RetainPtr<NSMutableArray> nsCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookies.size()]);
     for (const auto& cookie : cookies)
         [nsCookies addObject:(NSHTTPCookie *)cookie];
@@ -54,11 +59,15 @@ void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&
 
 void NetworkStorageSession::deleteCookie(const Cookie& cookie)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     [nsCookieStorage() deleteCookie:(NSHTTPCookie *)cookie];
 }
 
 static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     Vector<Cookie> cookies;
     cookies.reserveInitialCapacity(nsCookies.count);
     for (NSHTTPCookie *nsCookie in nsCookies)
@@ -69,21 +78,25 @@ static Vector<Cookie> nsCookiesToCookieVector(NSArray<NSHTTPCookie *> *nsCookies
 
 Vector<Cookie> NetworkStorageSession::getAllCookies()
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     return nsCookiesToCookieVector(nsCookieStorage().cookies);
 }
 
 Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     return nsCookiesToCookieVector([nsCookieStorage() cookiesForURL:(NSURL *)url]);
 }
 
 void NetworkStorageSession::flushCookieStore()
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     [nsCookieStorage() _saveCookies];
 }
 
 NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     auto cfCookieStorage = cookieStorage();
     if (!cfCookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cfCookieStorage)
         return [NSHTTPCookieStorage sharedHTTPCookieStorage];
@@ -122,6 +135,11 @@ CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
 
     CFURLCacheSetDiskCapacity(cache.get(), 0); // Setting disk cache size should not be necessary once <rdar://problem/12656814> is fixed.
     CFURLCacheSetMemoryCapacity(cache.get(), [[NSURLCache sharedURLCache] memoryCapacity]);
+
+    if (!NetworkStorageSession::processMayUseCookieAPI())
+        return storageSession.leakRef();
+
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
     if (!cookieStorage)

@@ -27,6 +27,7 @@
 #include "TestsController.h"
 
 #include <wtf/MainThread.h>
+#include <wtf/ProcessPrivilege.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomicString.h>
 
@@ -70,6 +71,7 @@ TestsController::TestsController()
     // ThreadSafeRefCounted so that we don't have to initialize threading at all here.
     WTF::initializeThreading();
     WTF::initializeMainThread();
+    WTF::setProcessPrivileges(allPrivileges());
     AtomicString::init();
 }
 

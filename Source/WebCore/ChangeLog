@@ -1,3 +1,65 @@
+2018-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Warn against cookie access in the WebContent process using ProcessPrivilege assertions
+        https://bugs.webkit.org/show_bug.cgi?id=183911
+        <rdar://problem/38762306>
+
+        Reviewed by Youenn Fablet.
+
+        Add a set of ProcessPrivilege assertions to enforce the rule that the WebContent process
+        should never call Cookie API directly. That should only happen in the Networking or
+        UIProcess. 
+
+        Add a new static flag to NetworkStorageSession that indicates if the current process has
+        permission to interact with the Cookie API.
+
+        No new tests since there is no change in behavior.
+
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::processMayUseCookieAPI): Added.
+        (WebCore::NetworkStorageSession::permitProcessToUseCookieAPI): Added. This also adds
+        the appropriate flag to the ProcessPrivileges data for the current process.
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::createCFStorageSessionForIdentifier): Do not create cookie storage if the current
+        process is prohibited from interacting with the Cookie API.
+        (WebCore::NetworkStorageSession::NetworkStorageSession): Add assertions.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Do not create cookie storage if
+        the current process is prohibited from interacting with the Cookie API.
+        (WebCore::NetworkStorageSession::defaultStorageSession): Ditto.
+        (WebCore::NetworkStorageSession::ensureSession): Ditto.
+        (WebCore::NetworkStorageSession::cookieStorage const): Ditto.
+        * platform/network/cocoa/CookieStorageObserver.mm:
+        (WebCore::CookieStorageObserver::CookieStorageObserver): Assert if accessed from untrusted process.
+        (WebCore::CookieStorageObserver::startObserving): Ditto.
+        (WebCore::CookieStorageObserver::stopObserving): Ditto.
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::setCookie):
+        (WebCore::NetworkStorageSession::setCookies):
+        (WebCore::NetworkStorageSession::deleteCookie):
+        (WebCore::nsCookiesToCookieVector):
+        (WebCore::NetworkStorageSession::getAllCookies):
+        (WebCore::NetworkStorageSession::getCookies):
+        (WebCore::NetworkStorageSession::flushCookieStore):
+        (WebCore::NetworkStorageSession::nsCookieStorage const):
+        (WebCore::createPrivateStorageSession):
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::httpCookies):
+        (WebCore::deleteHTTPCookie):
+        (WebCore::httpCookiesForURL):
+        (WebCore::filterCookies):
+        (WebCore::applyPartitionToCookies):
+        (WebCore::cookiesInPartitionForURL):
+        (WebCore::cookiesForSession):
+        (WebCore::setHTTPCookiesForURL):
+        (WebCore::deleteAllHTTPCookies):
+        (WebCore::setCookiesFromDOM):
+        (WebCore::httpCookieAcceptPolicy):
+        (WebCore::deleteCookie):
+        (WebCore::deleteCookiesForHostnames):
+        (WebCore::deleteAllCookiesModifiedSince):
+
 2018-03-26  Alex Christensen  <achristensen@webkit.org>
 
         Merge ResourceHandleClient::willCacheResponseAsync with ResourceHandleClient::willCacheResponse

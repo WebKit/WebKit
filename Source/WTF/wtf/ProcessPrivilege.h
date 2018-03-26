@@ -36,6 +36,8 @@ enum class ProcessPrivilege {
 };
 
 WTF_EXPORT void setProcessPrivileges(OptionSet<ProcessPrivilege>);
+WTF_EXPORT void addProcessPrivilege(ProcessPrivilege);
+WTF_EXPORT void removeProcessPrivilege(ProcessPrivilege);
 WTF_EXPORT bool hasProcessPrivilege(ProcessPrivilege);
 WTF_EXPORT OptionSet<ProcessPrivilege> allPrivileges();
 

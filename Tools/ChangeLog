@@ -1,3 +1,22 @@
+2018-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Warn against cookie access in the WebContent process using ProcessPrivilege assertions
+        https://bugs.webkit.org/show_bug.cgi?id=183911
+        <rdar://problem/38762306>
+
+        Reviewed by Youenn Fablet.
+
+        Add a set of ProcessPrivilege assertions to enforce the rule that the WebContent process
+        should never call Cookie API directly. That should only happen in the Networking or
+        UIProcess. 
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (DumpRenderTreeMain):
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::TestsController::TestsController):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2018-03-26  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Add InlineText DOM interface and dependencies

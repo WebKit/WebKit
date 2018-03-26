@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,14 @@
 #import "WebCookieManagerProxy.h"
 
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/ProcessPrivilege.h>
 
 namespace WebKit {
 
 void WebCookieManagerProxy::persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     // FIXME: The sandbox appears to prevent persisting the new policy to disk, so we must set the
     // policy in the UI Process as well as in the Web Process (to make sure it gets set on any
     // Private Browsing Cookie Storage).

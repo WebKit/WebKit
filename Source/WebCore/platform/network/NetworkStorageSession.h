@@ -73,6 +73,8 @@ public:
     WEBCORE_EXPORT static void ensureSession(PAL::SessionID, const String& identifierBase = String());
     WEBCORE_EXPORT static void destroySession(PAL::SessionID);
     WEBCORE_EXPORT static void forEach(const WTF::Function<void(const WebCore::NetworkStorageSession&)>&);
+    WEBCORE_EXPORT static void permitProcessToUseCookieAPI(bool);
+    WEBCORE_EXPORT static bool processMayUseCookieAPI();
 
     WEBCORE_EXPORT static void switchToNewTestingSession();
 
@@ -91,6 +93,7 @@ public:
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     WEBCORE_EXPORT static void ensureSession(PAL::SessionID, const String& identifierBase, RetainPtr<CFHTTPCookieStorageRef>&&);
     NetworkStorageSession(PAL::SessionID, RetainPtr<CFURLStorageSessionRef>&&, RetainPtr<CFHTTPCookieStorageRef>&&);
+    explicit NetworkStorageSession(PAL::SessionID);
 
     // May be null, in which case a Foundation default should be used.
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
@@ -193,6 +196,7 @@ public:
 private:
     mutable RefPtr<CookieStorageObserver> m_cookieStorageObserver;
 #endif
+    static bool m_processMayUseCookieAPI;
 };
 
 #if PLATFORM(COCOA)

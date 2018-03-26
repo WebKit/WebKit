@@ -1,3 +1,19 @@
+2018-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        Warn against cookie access in the WebContent process using ProcessPrivilege assertions
+        https://bugs.webkit.org/show_bug.cgi?id=183911
+        <rdar://problem/38762306>
+
+        Reviewed by Youenn Fablet.
+
+        Extend the ProcessPrivilege API with the ability to add and remove individual
+        privileges.
+
+        * wtf/ProcessPrivilege.cpp:
+        (WTF::addProcessPrivilege):
+        (WTF::removeProcessPrivilege):
+        * wtf/ProcessPrivilege.h:
+
 2018-03-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         WebProcess memory monitor: use %zu format specifier for size_t

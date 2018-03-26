@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,11 @@
 
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ProcessPrivilege.h>
 
 namespace WebCore {
+
+bool NetworkStorageSession::m_processMayUseCookieAPI = false;
 
 HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>>& NetworkStorageSession::globalSessionMap()
 {
@@ -55,6 +58,20 @@ void NetworkStorageSession::forEach(const WTF::Function<void(const WebCore::Netw
     functor(defaultStorageSession());
     for (auto& storageSession : globalSessionMap().values())
         functor(*storageSession);
+}
+
+bool NetworkStorageSession::processMayUseCookieAPI()
+{
+    return m_processMayUseCookieAPI;
+};
+
+void NetworkStorageSession::permitProcessToUseCookieAPI(bool value)
+{
+    m_processMayUseCookieAPI = value;
+    if (m_processMayUseCookieAPI)
+        addProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
+    else
+        removeProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
 }
 
 }

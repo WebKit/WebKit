@@ -41,6 +41,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -120,6 +121,8 @@ NSHTTPCookieStorage *NetworkDataTaskCocoa::statelessCookieStorage()
 
 void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
 {
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
     if (shouldBlock == m_hasBeenSetToUseStatelessCookieStorage)
         return;
 
