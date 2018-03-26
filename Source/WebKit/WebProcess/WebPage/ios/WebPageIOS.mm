@@ -2691,11 +2691,6 @@ static inline Element* nextAssistableElement(Node* startNode, Page& page, bool i
     return nextElement;
 }
 
-static inline bool hasAssistableElement(Node* startNode, Page& page, bool isForward)
-{
-    return nextAssistableElement(startNode, page, isForward);
-}
-
 void WebPage::focusNextAssistedNode(bool isForward, CallbackID callbackID)
 {
     Element* nextElement = nextAssistableElement(m_assistedNode.get(), *m_page, isForward);
@@ -2704,6 +2699,19 @@ void WebPage::focusNextAssistedNode(bool isForward, CallbackID callbackID)
         nextElement->focus();
     m_userIsInteracting = false;
     send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
+static IntRect elementRectInRootViewCoordinates(const Node& node, const Frame& frame)
+{
+    auto* view = frame.view();
+    if (!view)
+        return { };
+
+    auto* renderer = node.renderer();
+    if (!renderer)
+        return { };
+
+    return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
 void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
@@ -2716,7 +2724,7 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
 
     if (RenderObject* renderer = m_assistedNode->renderer()) {
         Frame& elementFrame = m_page->focusController().focusedOrMainFrame();
-        information.elementRect = elementFrame.view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
+        information.elementRect = elementRectInRootViewCoordinates(*m_assistedNode, elementFrame);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
 
         bool inFixed = false;
@@ -2746,8 +2754,16 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
     information.maximumScaleFactorIgnoringAlwaysScalable = maximumPageScaleFactorIgnoringAlwaysScalable();
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
     information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
-    information.hasNextNode = hasAssistableElement(m_assistedNode.get(), *m_page, true);
-    information.hasPreviousNode = hasAssistableElement(m_assistedNode.get(), *m_page, false);
+    if (auto* nextElement = nextAssistableElement(m_assistedNode.get(), *m_page, true)) {
+        if (auto* frame = nextElement->document().frame())
+            information.nextNodeRect = elementRectInRootViewCoordinates(*nextElement, *frame);
+        information.hasNextNode = true;
+    }
+    if (auto* previousElement = nextAssistableElement(m_assistedNode.get(), *m_page, false)) {
+        if (auto* frame = previousElement->document().frame())
+            information.previousNodeRect = elementRectInRootViewCoordinates(*previousElement, *frame);
+        information.hasPreviousNode = true;
+    }
     information.assistedNodeIdentifier = m_currentAssistedNodeIdentifier;
 
     if (is<LabelableElement>(*m_assistedNode)) {

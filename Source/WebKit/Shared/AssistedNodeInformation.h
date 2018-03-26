@@ -94,7 +94,9 @@ struct AssistedNodeInformation {
     double maximumScaleFactorIgnoringAlwaysScalable { INFINITY };
     double nodeFontSize { 0 };
     bool hasNextNode { false };
+    WebCore::IntRect nextNodeRect;
     bool hasPreviousNode { false };
+    WebCore::IntRect previousNodeRect;
     bool isAutocorrect { false };
     bool isRTL { false };
     bool isMultiSelect { false };
