@@ -82,14 +82,14 @@ private:
         return String::fromUTF8(m_session->priv->id.data());
     }
 
-    WebPageProxy* didRequestNewWindow(WebAutomationSession&) override
+    void requestNewPageWithOptions(WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebPageProxy*)>&& completionHandler) override
     {
         WebKitWebView* webView = nullptr;
         g_signal_emit(m_session, signals[CREATE_WEB_VIEW], 0, &webView);
         if (!webView || !webkit_web_view_is_controlled_by_automation(webView))
-            return nullptr;
-
-        return &webkitWebViewGetPage(webView);
+            completionHandler(nullptr);
+        else
+            completionHandler(&webkitWebViewGetPage(webView));
     }
 
     bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy& page) override

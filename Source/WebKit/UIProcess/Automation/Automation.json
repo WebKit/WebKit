@@ -269,9 +269,13 @@
         {
             "name": "createBrowsingContext",
             "description": "Opens a new browsing context in the automation session and makes it the active browsing context for user interaction. This command creates a browsing context in a new window rather than adding a tab to an existing window.",
+            "parameters": [
+                { "name": "preferNewTab", "type": "boolean", "optional": true, "description": "Create the new browsing context as a tab in an existing Automation window, if possible."}
+            ],
             "returns": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "An opaque handle for the newly created browsing context." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "closeBrowsingContext",

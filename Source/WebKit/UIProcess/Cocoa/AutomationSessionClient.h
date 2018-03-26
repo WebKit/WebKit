@@ -43,9 +43,9 @@ public:
 
 private:
     // From API::AutomationSessionClient
-    WebPageProxy* didRequestNewWindow(WebAutomationSession&) override;
     void didDisconnectFromRemote(WebAutomationSession&) override;
 
+    void requestNewPageWithOptions(WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebPageProxy*)>&&) override;
     bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void dismissCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void acceptCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
@@ -58,7 +58,7 @@ private:
     struct {
         bool didDisconnectFromRemote : 1;
 
-        bool didRequestNewWebView : 1;
+        bool requestNewWebViewWithOptions : 1;
         bool isShowingJavaScriptDialogForWebView : 1;
         bool dismissCurrentJavaScriptDialogForWebView : 1;
         bool acceptCurrentJavaScriptDialogForWebView : 1;
@@ -67,7 +67,7 @@ private:
         bool typeOfCurrentJavaScriptDialogForWebView : 1;
 
         // FIXME 37408718: these delegate methods should be removed.
-        bool didRequestNewWindow : 1;
+        bool requestNewPageWithOptions : 1;
         bool isShowingJavaScriptDialogOnPage : 1;
         bool dismissCurrentJavaScriptDialogOnPage : 1;
         bool acceptCurrentJavaScriptDialogOnPage : 1;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016, 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef APIAutomationSessionClient_h
 #define APIAutomationSessionClient_h
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -34,6 +35,10 @@ class WebPageProxy;
 }
 
 namespace API {
+
+enum AutomationSessionBrowsingContextOptions : uint16_t {
+    AutomationSessionBrowsingContextOptionsPreferNewTab = 1 << 0,
+};
 
 class AutomationSessionClient {
 public:
@@ -48,7 +53,7 @@ public:
 
     virtual String sessionIdentifier() const { return String(); }
     virtual void didDisconnectFromRemote(WebKit::WebAutomationSession&) { }
-    virtual WebKit::WebPageProxy* didRequestNewWindow(WebKit::WebAutomationSession&) { return nullptr; }
+    virtual void requestNewPageWithOptions(WebKit::WebAutomationSession&, AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler) { completionHandler(nullptr); }
     virtual bool isShowingJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { return false; }
     virtual void dismissCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { }
     virtual void acceptCurrentJavaScriptDialogOnPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&) { }

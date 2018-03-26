@@ -272,15 +272,22 @@ void WebAutomationSession::getBrowsingContext(const String& handle, Ref<GetBrows
     });
 }
 
-void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorString, String* handle)
+void WebAutomationSession::createBrowsingContext(const bool* preferNewTab, Ref<CreateBrowsingContextCallback>&& callback)
 {
     ASSERT(m_client);
     if (!m_client)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session could not request a new browsing context.");
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session could not request a new browsing context.");
 
-    WebPageProxy* page = m_client->didRequestNewWindow(*this);
-    if (!page)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context.");
+    uint16_t options = 0;
+    if (preferNewTab && *preferNewTab)
+        options |= API::AutomationSessionBrowsingContextOptionsPreferNewTab;
+
+    m_client->requestNewPageWithOptions(*this, static_cast<API::AutomationSessionBrowsingContextOptions>(options), [protectedThis = makeRef(*this), callback = WTFMove(callback)](WebPageProxy* page) {
+        if (page)
+            callback->sendSuccess(protectedThis->handleForWebPageProxy(*page));
+        else
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context.");
+    });
 }
 
 void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorString, const String& handle)

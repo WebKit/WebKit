@@ -1,3 +1,50 @@
+2018-03-06  Brian Burg  <bburg@apple.com>
+
+        Web Automation: provide a way to ask clients for a new tab or window
+        https://bugs.webkit.org/show_bug.cgi?id=183381
+        <rdar://problem/38167301>
+
+        Reviewed by Timothy Hatcher.
+
+        Add support for specifying browsing context options when requesting
+        a new browsing context from the automation session client/delegate.
+        This is currently just used for specifying tab vs window, but could
+        also be used for things like toggling certain browser chrome or features.
+
+        There is no guarantee that the client has a notion of tabs vs windows,
+        so this option is purely advisory and should not cause the command to
+        fail if it cannot be honored.
+
+        This behavior caused by specifying this option is client-specific, so no
+        new tests are included in WebKit for this change.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::didRequestNewPageWithOptions):
+        (API::AutomationSessionClient::didRequestNewWindow): Deleted.
+        Add options parameter.
+
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        Adjust to new signature. More work is needed to plumb this information
+        to the public API for GTK/WPE and support it in WebKitGTK driver.
+
+        * UIProcess/Automation/Automation.json: Add new optional parameter.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        Convert the protocol option to an API option.
+
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::toAPI):
+        (WebKit::AutomationSessionClient::didRequestNewPageWithOptions):
+        (WebKit::AutomationSessionClient::didRequestNewWindow): Deleted.
+        Convert the internal option to a Cocoa SPI option and pass it along.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        Adjust delegate methods to include options. Clients need to adopt the new signature(s).
+
 2018-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add plumbing for next and previous focusable element rects

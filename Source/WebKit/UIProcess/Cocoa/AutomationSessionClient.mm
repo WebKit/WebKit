@@ -34,6 +34,7 @@
 #import "WebPageProxy.h"
 #import "_WKAutomationSessionDelegate.h"
 #import "_WKAutomationSessionInternal.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
 {
     m_delegateMethods.didDisconnectFromRemote = [delegate respondsToSelector:@selector(_automationSessionDidDisconnectFromRemote:)];
 
-    m_delegateMethods.didRequestNewWebView = [delegate respondsToSelector:@selector(_automationSessionDidRequestNewWebView:)];
+    m_delegateMethods.requestNewWebViewWithOptions = [delegate respondsToSelector:@selector(_automationSession:requestNewWebViewWithOptions:completionHandler:)];
     m_delegateMethods.isShowingJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:isShowingJavaScriptDialogForWebView:)];
     m_delegateMethods.dismissCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:dismissCurrentJavaScriptDialogForWebView:)];
     m_delegateMethods.acceptCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:acceptCurrentJavaScriptDialogForWebView:)];
@@ -51,7 +52,7 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
     m_delegateMethods.typeOfCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:typeOfCurrentJavaScriptDialogForWebView:)];
 
     // FIXME 37408718: these delegate methods should be removed.
-    m_delegateMethods.didRequestNewWindow = [delegate respondsToSelector:@selector(_automationSessionDidRequestNewWindow:)];
+    m_delegateMethods.requestNewPageWithOptions = [delegate respondsToSelector:@selector(_automationSession:requestNewPageWithOptions:completionHandler:)];
     m_delegateMethods.isShowingJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:isShowingJavaScriptDialogOnPage:)];
     m_delegateMethods.dismissCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:dismissCurrentJavaScriptDialogOnPage:)];
     m_delegateMethods.acceptCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:acceptCurrentJavaScriptDialogOnPage:)];
@@ -66,17 +67,29 @@ void AutomationSessionClient::didDisconnectFromRemote(WebAutomationSession& sess
         [m_delegate.get() _automationSessionDidDisconnectFromRemote:wrapper(session)];
 }
 
+static inline _WKAutomationSessionBrowsingContextOptions toAPI(API::AutomationSessionBrowsingContextOptions options)
+{
+    uint16_t wkOptions = 0;
+
+    if (options & API::AutomationSessionBrowsingContextOptionsPreferNewTab)
+        wkOptions |= _WKAutomationSessionBrowsingContextOptionsPreferNewTab;
+
+    return static_cast<_WKAutomationSessionBrowsingContextOptions>(wkOptions);
+}
+
 // FIXME 37408718: support for WKPageRef-based delegate methods should be removed.
 // Until these are removed, prefer to use the WKWebView delegate methods if implemented.
-WebPageProxy* AutomationSessionClient::didRequestNewWindow(WebAutomationSession& session)
+void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
 {
-    if (m_delegateMethods.didRequestNewWebView)
-        return [m_delegate.get() _automationSessionDidRequestNewWebView:wrapper(session)]->_page.get();
-
-    if (m_delegateMethods.didRequestNewWindow)
-        return toImpl([m_delegate.get() _automationSessionDidRequestNewWindow:wrapper(session)]);
-
-    return nullptr;
+    if (m_delegateMethods.requestNewWebViewWithOptions) {
+        [m_delegate.get() _automationSession:wrapper(session) requestNewWebViewWithOptions:toAPI(options) completionHandler:BlockPtr<void(WKWebView *)>::fromCallable([completionHandler = WTFMove(completionHandler)](WKWebView *webView) {
+            completionHandler(webView->_page.get());
+        }).get()];
+    } else if (m_delegateMethods.requestNewPageWithOptions) {
+        [m_delegate.get() _automationSession:wrapper(session) requestNewPageWithOptions:toAPI(options) completionHandler:BlockPtr<void(WKPageRef)>::fromCallable([completionHandler = WTFMove(completionHandler)](WKPageRef page) {
+            completionHandler(toImpl(page));
+        }).get()];
+    }
 }
 
 bool AutomationSessionClient::isShowingJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
