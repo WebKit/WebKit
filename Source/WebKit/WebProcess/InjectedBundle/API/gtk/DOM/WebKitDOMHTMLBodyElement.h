@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLBodyElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_body_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_body_element_get_type(void);
  * @self: A #WebKitDOMHTMLBodyElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_body_element_get_a_link(WebKitDOMHTMLBodyElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_body_element_get_a_link(WebKitDOMHTMLBodyElement* self);
  * @self: A #WebKitDOMHTMLBodyElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_body_element_set_a_link(WebKitDOMHTMLBodyElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_body_element_set_a_link(WebKitDOMHTMLBodyElement* self, const gc
  * @self: A #WebKitDOMHTMLBodyElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_body_element_get_background(WebKitDOMHTMLBodyElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_body_element_get_background(WebKitDOMHTMLBodyElement* self);
  * @self: A #WebKitDOMHTMLBodyElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_body_element_set_background(WebKitDOMHTMLBodyElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_body_element_set_background(WebKitDOMHTMLBodyElement* self, cons
  * @self: A #WebKitDOMHTMLBodyElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_body_element_get_bg_color(WebKitDOMHTMLBodyElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_body_element_get_bg_color(WebKitDOMHTMLBodyElement* self);
  * @self: A #WebKitDOMHTMLBodyElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_body_element_set_bg_color(WebKitDOMHTMLBodyElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_body_element_set_bg_color(WebKitDOMHTMLBodyElement* self, const 
  * @self: A #WebKitDOMHTMLBodyElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_body_element_get_link(WebKitDOMHTMLBodyElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_body_element_get_link(WebKitDOMHTMLBodyElement* self);
  * @self: A #WebKitDOMHTMLBodyElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_body_element_set_link(WebKitDOMHTMLBodyElement* self, const gchar* value);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_body_element_set_link(WebKitDOMHTMLBodyElement* self, const gcha
  * @self: A #WebKitDOMHTMLBodyElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_body_element_get_text(WebKitDOMHTMLBodyElement* self);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_body_element_get_text(WebKitDOMHTMLBodyElement* self);
  * @self: A #WebKitDOMHTMLBodyElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_body_element_set_text(WebKitDOMHTMLBodyElement* self, const gchar* value);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_body_element_set_text(WebKitDOMHTMLBodyElement* self, const gcha
  * @self: A #WebKitDOMHTMLBodyElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_body_element_get_v_link(WebKitDOMHTMLBodyElement* self);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_body_element_get_v_link(WebKitDOMHTMLBodyElement* self);
  * @self: A #WebKitDOMHTMLBodyElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_body_element_set_v_link(WebKitDOMHTMLBodyElement* self, const gchar* value);
 
 G_END_DECLS

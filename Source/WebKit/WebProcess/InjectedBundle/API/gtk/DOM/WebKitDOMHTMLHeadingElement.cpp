@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLHeadingElement* kit(WebCore::HTMLHeadingElement* obj)
@@ -168,3 +170,4 @@ void webkit_dom_html_heading_element_set_align(WebKitDOMHTMLHeadingElement* self
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

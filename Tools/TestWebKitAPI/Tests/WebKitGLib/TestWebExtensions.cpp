@@ -32,7 +32,6 @@ static GUniquePtr<char> scriptDialogResult;
 
 #define FORM_SUBMISSION_TEST_ID "form-submission-test-id"
 
-#if PLATFORM(GTK)
 static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
@@ -52,6 +51,59 @@ static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
     const char* title;
     g_variant_get(result.get(), "(&s)", &title);
     g_assert_cmpstr(title, ==, "WebKitGTK+ Web Extensions Test");
+}
+
+#if PLATFORM(GTK)
+static gboolean inputElementIsUserEdited(GDBusProxy* proxy, uint64_t pageID, const char* elementID)
+{
+    GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
+        proxy,
+        "InputElementIsUserEdited",
+        g_variant_new("(t&s)", pageID, elementID),
+        G_DBUS_CALL_FLAGS_NONE,
+        -1, nullptr, nullptr));
+    g_assert_nonnull(result);
+
+    gboolean retval;
+    g_variant_get(result.get(), "(b)", &retval);
+    return retval;
+}
+
+static void testWebExtensionInputElementIsUserEdited(WebViewTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+    test->loadHtml("<html><body id='body'><input id='input'></input><textarea id='textarea'></textarea></body></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    GUniquePtr<char> extensionBusName(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy(extensionBusName.get(),
+        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+
+    uint64_t pageID = webkit_web_view_get_page_id(test->m_webView);
+    g_assert_false(inputElementIsUserEdited(proxy.get(), pageID, "input"));
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('input').focus()", nullptr);
+    test->keyStroke(GDK_KEY_a);
+    while (gtk_events_pending())
+        gtk_main_iteration();
+    GUniquePtr<char> resultString;
+    do {
+        auto* result = test->runJavaScriptAndWaitUntilFinished("document.getElementById('input').value", nullptr);
+        resultString.reset(WebViewTest::javascriptResultToCString(result));
+    } while (g_strcmp0(resultString.get(), "a"));
+    g_assert_true(inputElementIsUserEdited(proxy.get(), pageID, "input"));
+
+    g_assert_false(inputElementIsUserEdited(proxy.get(), pageID, "textarea"));
+    test->runJavaScriptAndWaitUntilFinished("document.getElementById('textarea').focus()", nullptr);
+    test->keyStroke(GDK_KEY_b);
+    while (gtk_events_pending())
+        gtk_main_iteration();
+    do {
+        auto* result = test->runJavaScriptAndWaitUntilFinished("document.getElementById('textarea').value", nullptr);
+        resultString.reset(WebViewTest::javascriptResultToCString(result));
+    } while (g_strcmp0(resultString.get(), "b"));
+    g_assert_true(inputElementIsUserEdited(proxy.get(), pageID, "textarea"));
+
+    g_assert_false(inputElementIsUserEdited(proxy.get(), pageID, "body"));
 }
 #endif
 
@@ -220,6 +272,7 @@ static void testInstallMissingPluginsPermissionRequest(WebViewTest* test, gconst
     g_main_loop_run(test->m_mainLoop);
     g_signal_handler_disconnect(test->m_webView, permissionRequestSignalID);
 }
+#endif // PLATFORM(GTK)
 
 static void didAssociateFormControlsCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant* result, WebViewTest* test)
 {
@@ -399,7 +452,6 @@ static void testWebExtensionFormSubmissionSteps(FormSubmissionTest* test, gconst
         "<iframe name=\"target_frame\"></iframe>", nullptr);
     test->waitUntilLoadFinished();
 }
-#endif // PLATFORM(GTK)
 
 void beforeAll()
 {
@@ -407,9 +459,9 @@ void beforeAll()
     if (!bus->run())
         return;
 
-    // FIXME: Use JSC API in the extension to get the title from JavaScript.
-#if PLATFORM(GTK)
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
+#if PLATFORM(GTK)
+    WebViewTest::add("WebKitWebExtension", "dom-input-element-is-user-edited", testWebExtensionInputElementIsUserEdited);
 #endif
     WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
     WebViewTest::add("WebKitWebView", "web-process-crashed", testWebKitWebViewProcessCrashed);
@@ -417,9 +469,9 @@ void beforeAll()
     WebViewTest::add("WebKitWebExtension", "isolated-world", testWebExtensionIsolatedWorld);
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitWebView", "install-missing-plugins-permission-request", testInstallMissingPluginsPermissionRequest);
+#endif
     WebViewTest::add("WebKitWebExtension", "form-controls-associated-signal", testWebExtensionFormControlsAssociated);
     FormSubmissionTest::add("WebKitWebExtension", "form-submission-steps", testWebExtensionFormSubmissionSteps);
-#endif
 }
 
 void afterAll()

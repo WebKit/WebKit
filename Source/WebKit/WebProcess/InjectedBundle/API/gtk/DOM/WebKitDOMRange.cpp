@@ -40,6 +40,8 @@ typedef struct _WebKitDOMRangePrivate {
     RefPtr<WebCore::Range> coreObject;
 } WebKitDOMRangePrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMRange* kit(WebCore::Range* obj)
@@ -635,3 +637,4 @@ gchar* webkit_dom_range_get_text(WebKitDOMRange* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

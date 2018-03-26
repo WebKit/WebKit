@@ -45,7 +45,7 @@ struct _WebKitDOMXPathExpressionClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_xpath_expression_get_type(void);
 
 /**
@@ -57,8 +57,10 @@ webkit_dom_xpath_expression_get_type(void);
  * @error: #GError
  *
  * Returns: (transfer full): A #WebKitDOMXPathResult
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMXPathResult*
+WEBKIT_DEPRECATED WebKitDOMXPathResult*
 webkit_dom_xpath_expression_evaluate(WebKitDOMXPathExpression* self, WebKitDOMNode* contextNode, gushort type, WebKitDOMXPathResult* inResult, GError** error);
 
 G_END_DECLS

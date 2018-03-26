@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLPreElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_pre_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_pre_element_get_type(void);
  * @self: A #WebKitDOMHTMLPreElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_pre_element_get_width(WebKitDOMHTMLPreElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_pre_element_get_width(WebKitDOMHTMLPreElement* self);
  * @self: A #WebKitDOMHTMLPreElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_pre_element_set_width(WebKitDOMHTMLPreElement* self, glong value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_pre_element_set_width(WebKitDOMHTMLPreElement* self, glong value
  * @self: A #WebKitDOMHTMLPreElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_pre_element_get_wrap(WebKitDOMHTMLPreElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_pre_element_get_wrap(WebKitDOMHTMLPreElement* self);
  * @self: A #WebKitDOMHTMLPreElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_pre_element_set_wrap(WebKitDOMHTMLPreElement* self, gboolean value);
 
 G_END_DECLS

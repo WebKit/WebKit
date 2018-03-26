@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLTableCellElement* kit(WebCore::HTMLTableCellElement* obj)
@@ -653,3 +655,4 @@ void webkit_dom_html_table_cell_element_set_scope(WebKitDOMHTMLTableCellElement*
     item->setScope(convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

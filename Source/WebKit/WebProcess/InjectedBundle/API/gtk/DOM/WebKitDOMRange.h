@@ -37,45 +37,65 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_RANGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_RANGE))
 #define WEBKIT_DOM_RANGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_RANGE, WebKitDOMRangeClass))
 
+#ifndef WEBKIT_DISABLE_DEPRECATED
+
 /**
  * WEBKIT_DOM_RANGE_START_TO_START:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_START_TO_START 0
 
 /**
  * WEBKIT_DOM_RANGE_START_TO_END:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_START_TO_END 1
 
 /**
  * WEBKIT_DOM_RANGE_END_TO_END:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_END_TO_END 2
 
 /**
  * WEBKIT_DOM_RANGE_END_TO_START:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_END_TO_START 3
 
 /**
  * WEBKIT_DOM_RANGE_NODE_BEFORE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_NODE_BEFORE 0
 
 /**
  * WEBKIT_DOM_RANGE_NODE_AFTER:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_NODE_AFTER 1
 
 /**
  * WEBKIT_DOM_RANGE_NODE_BEFORE_AND_AFTER:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_NODE_BEFORE_AND_AFTER 2
 
 /**
  * WEBKIT_DOM_RANGE_NODE_INSIDE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_RANGE_NODE_INSIDE 3
+
+#endif /* WEBKIT_DISABLE_DEPRECATED */
 
 struct _WebKitDOMRange {
     WebKitDOMObject parent_instance;
@@ -85,7 +105,7 @@ struct _WebKitDOMRangeClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_range_get_type(void);
 
 /**
@@ -95,8 +115,10 @@ webkit_dom_range_get_type(void);
  * @offset: A #glong
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_set_start(WebKitDOMRange* self, WebKitDOMNode* refNode, glong offset, GError** error);
 
 /**
@@ -106,8 +128,10 @@ webkit_dom_range_set_start(WebKitDOMRange* self, WebKitDOMNode* refNode, glong o
  * @offset: A #glong
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_set_end(WebKitDOMRange* self, WebKitDOMNode* refNode, glong offset, GError** error);
 
 /**
@@ -116,8 +140,10 @@ webkit_dom_range_set_end(WebKitDOMRange* self, WebKitDOMNode* refNode, glong off
  * @refNode: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_set_start_before(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -126,8 +152,10 @@ webkit_dom_range_set_start_before(WebKitDOMRange* self, WebKitDOMNode* refNode, 
  * @refNode: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_set_start_after(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -136,8 +164,10 @@ webkit_dom_range_set_start_after(WebKitDOMRange* self, WebKitDOMNode* refNode, G
  * @refNode: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_set_end_before(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -146,8 +176,10 @@ webkit_dom_range_set_end_before(WebKitDOMRange* self, WebKitDOMNode* refNode, GE
  * @refNode: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_set_end_after(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -156,8 +188,10 @@ webkit_dom_range_set_end_after(WebKitDOMRange* self, WebKitDOMNode* refNode, GEr
  * @toStart: A #gboolean
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_collapse(WebKitDOMRange* self, gboolean toStart, GError** error);
 
 /**
@@ -166,8 +200,10 @@ webkit_dom_range_collapse(WebKitDOMRange* self, gboolean toStart, GError** error
  * @refNode: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_select_node(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -176,8 +212,10 @@ webkit_dom_range_select_node(WebKitDOMRange* self, WebKitDOMNode* refNode, GErro
  * @refNode: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_select_node_contents(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -188,8 +226,10 @@ webkit_dom_range_select_node_contents(WebKitDOMRange* self, WebKitDOMNode* refNo
  * @error: #GError
  *
  * Returns: A #gshort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gshort
+WEBKIT_DEPRECATED gshort
 webkit_dom_range_compare_boundary_points(WebKitDOMRange* self, gushort how, WebKitDOMRange* sourceRange, GError** error);
 
 /**
@@ -197,8 +237,10 @@ webkit_dom_range_compare_boundary_points(WebKitDOMRange* self, gushort how, WebK
  * @self: A #WebKitDOMRange
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_delete_contents(WebKitDOMRange* self, GError** error);
 
 /**
@@ -207,8 +249,10 @@ webkit_dom_range_delete_contents(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMDocumentFragment
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDocumentFragment*
+WEBKIT_DEPRECATED WebKitDOMDocumentFragment*
 webkit_dom_range_extract_contents(WebKitDOMRange* self, GError** error);
 
 /**
@@ -217,8 +261,10 @@ webkit_dom_range_extract_contents(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMDocumentFragment
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDocumentFragment*
+WEBKIT_DEPRECATED WebKitDOMDocumentFragment*
 webkit_dom_range_clone_contents(WebKitDOMRange* self, GError** error);
 
 /**
@@ -227,8 +273,10 @@ webkit_dom_range_clone_contents(WebKitDOMRange* self, GError** error);
  * @newNode: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_insert_node(WebKitDOMRange* self, WebKitDOMNode* newNode, GError** error);
 
 /**
@@ -237,8 +285,10 @@ webkit_dom_range_insert_node(WebKitDOMRange* self, WebKitDOMNode* newNode, GErro
  * @newParent: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_surround_contents(WebKitDOMRange* self, WebKitDOMNode* newParent, GError** error);
 
 /**
@@ -247,8 +297,10 @@ webkit_dom_range_surround_contents(WebKitDOMRange* self, WebKitDOMNode* newParen
  * @error: #GError
  *
  * Returns: (transfer full): A #WebKitDOMRange
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMRange*
+WEBKIT_DEPRECATED WebKitDOMRange*
 webkit_dom_range_clone_range(WebKitDOMRange* self, GError** error);
 
 /**
@@ -257,8 +309,10 @@ webkit_dom_range_clone_range(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_range_to_string(WebKitDOMRange* self, GError** error);
 
 /**
@@ -266,8 +320,10 @@ webkit_dom_range_to_string(WebKitDOMRange* self, GError** error);
  * @self: A #WebKitDOMRange
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_detach(WebKitDOMRange* self, GError** error);
 
 /**
@@ -277,8 +333,10 @@ webkit_dom_range_detach(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMDocumentFragment
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDocumentFragment*
+WEBKIT_DEPRECATED WebKitDOMDocumentFragment*
 webkit_dom_range_create_contextual_fragment(WebKitDOMRange* self, const gchar* html, GError** error);
 
 /**
@@ -288,8 +346,10 @@ webkit_dom_range_create_contextual_fragment(WebKitDOMRange* self, const gchar* h
  * @error: #GError
  *
  * Returns: A #gshort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gshort
+WEBKIT_DEPRECATED gshort
 webkit_dom_range_compare_node(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -299,8 +359,10 @@ webkit_dom_range_compare_node(WebKitDOMRange* self, WebKitDOMNode* refNode, GErr
  * @error: #GError
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_range_intersects_node(WebKitDOMRange* self, WebKitDOMNode* refNode, GError** error);
 
 /**
@@ -311,8 +373,10 @@ webkit_dom_range_intersects_node(WebKitDOMRange* self, WebKitDOMNode* refNode, G
  * @error: #GError
  *
  * Returns: A #gshort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gshort
+WEBKIT_DEPRECATED gshort
 webkit_dom_range_compare_point(WebKitDOMRange* self, WebKitDOMNode* refNode, glong offset, GError** error);
 
 /**
@@ -323,8 +387,10 @@ webkit_dom_range_compare_point(WebKitDOMRange* self, WebKitDOMNode* refNode, glo
  * @error: #GError
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_range_is_point_in_range(WebKitDOMRange* self, WebKitDOMNode* refNode, glong offset, GError** error);
 
 /**
@@ -333,8 +399,10 @@ webkit_dom_range_is_point_in_range(WebKitDOMRange* self, WebKitDOMNode* refNode,
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_range_get_start_container(WebKitDOMRange* self, GError** error);
 
 /**
@@ -343,8 +411,10 @@ webkit_dom_range_get_start_container(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_range_get_start_offset(WebKitDOMRange* self, GError** error);
 
 /**
@@ -353,8 +423,10 @@ webkit_dom_range_get_start_offset(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_range_get_end_container(WebKitDOMRange* self, GError** error);
 
 /**
@@ -363,8 +435,10 @@ webkit_dom_range_get_end_container(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_range_get_end_offset(WebKitDOMRange* self, GError** error);
 
 /**
@@ -373,8 +447,10 @@ webkit_dom_range_get_end_offset(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_range_get_collapsed(WebKitDOMRange* self, GError** error);
 
 /**
@@ -383,8 +459,10 @@ webkit_dom_range_get_collapsed(WebKitDOMRange* self, GError** error);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_range_get_common_ancestor_container(WebKitDOMRange* self, GError** error);
 
 /**
@@ -392,8 +470,10 @@ webkit_dom_range_get_common_ancestor_container(WebKitDOMRange* self, GError** er
  * @self: A #WebKitDOMRange
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_range_get_text(WebKitDOMRange* self);
 
 /**
@@ -403,8 +483,10 @@ webkit_dom_range_get_text(WebKitDOMRange* self);
  * @error: #GError
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_range_expand(WebKitDOMRange* self, const gchar* unit, GError** error);
 
 G_END_DECLS

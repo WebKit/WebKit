@@ -45,7 +45,7 @@ struct _WebKitDOMCSSRuleListClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_css_rule_list_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_css_rule_list_get_type(void);
  * @index: A #gulong
  *
  * Returns: (transfer full): A #WebKitDOMCSSRule
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMCSSRule*
+WEBKIT_DEPRECATED WebKitDOMCSSRule*
 webkit_dom_css_rule_list_item(WebKitDOMCSSRuleList* self, gulong index);
 
 /**
@@ -63,8 +65,10 @@ webkit_dom_css_rule_list_item(WebKitDOMCSSRuleList* self, gulong index);
  * @self: A #WebKitDOMCSSRuleList
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_css_rule_list_get_length(WebKitDOMCSSRuleList* self);
 
 G_END_DECLS

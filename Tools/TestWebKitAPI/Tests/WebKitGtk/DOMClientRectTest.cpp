@@ -23,6 +23,8 @@
 #include <gio/gio.h>
 #include <webkit2/webkit-web-extension.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 class WebKitDOMClientRectTest : public WebProcessTest {
 public:
     static std::unique_ptr<WebProcessTest> create() { return std::unique_ptr<WebKitDOMClientRectTest>(new WebKitDOMClientRectTest()); }
@@ -103,3 +105,5 @@ static void __attribute__((constructor)) registerTests()
     REGISTER_TEST(WebKitDOMClientRectTest, "WebKitDOMClientRect/div-bounding-client-rect-position");
     REGISTER_TEST(WebKitDOMClientRectTest, "WebKitDOMClientRect/div-client-rects-position-and-length");
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS;

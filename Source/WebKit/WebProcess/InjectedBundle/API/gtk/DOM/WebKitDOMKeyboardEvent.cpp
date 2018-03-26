@@ -33,6 +33,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMKeyboardEvent* kit(WebCore::KeyboardEvent* obj)
@@ -268,3 +270,4 @@ gboolean webkit_dom_keyboard_event_get_alt_graph_key(WebKitDOMKeyboardEvent* sel
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

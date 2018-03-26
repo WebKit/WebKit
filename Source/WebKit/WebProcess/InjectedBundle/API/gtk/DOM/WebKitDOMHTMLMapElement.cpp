@@ -37,6 +37,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLMapElement* kit(WebCore::HTMLMapElement* obj)
@@ -192,3 +194,4 @@ void webkit_dom_html_map_element_set_name(WebKitDOMHTMLMapElement* self, const g
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

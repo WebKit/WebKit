@@ -42,13 +42,17 @@ private:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
         // Transfer full
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_autoptr(WebKitDOMDOMWindow) window = webkit_dom_document_get_default_view(document);
         g_assert(WEBKIT_DOM_IS_DOM_WINDOW(window));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(window));
 
         // Transfer full
+        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         g_autoptr(WebKitDOMRange) range = webkit_dom_document_create_range(document);
         g_assert(WEBKIT_DOM_IS_RANGE(range));
+        G_GNUC_END_IGNORE_DEPRECATIONS;
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(range));
 
         return true;

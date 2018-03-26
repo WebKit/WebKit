@@ -600,6 +600,10 @@ WebKitDOMElement
 
 WEBKIT_DOM_ELEMENT_ALLOW_KEYBOARD_INPUT
 
+webkit_dom_element_html_input_element_is_user_edited
+webkit_dom_element_html_input_element_get_auto_filled
+webkit_dom_element_html_input_element_set_auto_filled
+webkit_dom_element_html_input_element_set_editing_value
 webkit_dom_element_get_attribute
 webkit_dom_element_set_attribute
 webkit_dom_element_remove_attribute
@@ -897,6 +901,7 @@ webkit_dom_node_get_namespace_uri
 webkit_dom_node_get_prefix
 webkit_dom_node_set_prefix
 webkit_dom_node_get_local_name
+webkit_dom_node_for_js_value
 
 <SUBSECTION Standard>
 WebKitDOMNodeClass

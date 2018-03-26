@@ -35,6 +35,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMMouseEvent* kit(WebCore::MouseEvent* obj)
@@ -466,3 +468,4 @@ WebKitDOMNode* webkit_dom_mouse_event_get_to_element(WebKitDOMMouseEvent* self)
     return WebKit::kit(gobjectResult.get());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -37,55 +37,79 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_XPATH_RESULT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_XPATH_RESULT))
 #define WEBKIT_DOM_XPATH_RESULT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_XPATH_RESULT, WebKitDOMXPathResultClass))
 
+#ifndef WEBKIT_DISABLE_DEPRECATED
+
 /**
  * WEBKIT_DOM_XPATH_RESULT_ANY_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_ANY_TYPE 0
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_NUMBER_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_NUMBER_TYPE 1
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_STRING_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_STRING_TYPE 2
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_BOOLEAN_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_BOOLEAN_TYPE 3
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_UNORDERED_NODE_ITERATOR_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_UNORDERED_NODE_ITERATOR_TYPE 4
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_ITERATOR_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_ITERATOR_TYPE 5
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_UNORDERED_NODE_SNAPSHOT_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_UNORDERED_NODE_SNAPSHOT_TYPE 6
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_SNAPSHOT_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_ORDERED_NODE_SNAPSHOT_TYPE 7
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_ANY_UNORDERED_NODE_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_ANY_UNORDERED_NODE_TYPE 8
 
 /**
  * WEBKIT_DOM_XPATH_RESULT_FIRST_ORDERED_NODE_TYPE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_XPATH_RESULT_FIRST_ORDERED_NODE_TYPE 9
+
+#endif /* WEBKIT_DISABLE_DEPRECATED */
 
 struct _WebKitDOMXPathResult {
     WebKitDOMObject parent_instance;
@@ -95,7 +119,7 @@ struct _WebKitDOMXPathResultClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_xpath_result_get_type(void);
 
 /**
@@ -104,8 +128,10 @@ webkit_dom_xpath_result_get_type(void);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_xpath_result_iterate_next(WebKitDOMXPathResult* self, GError** error);
 
 /**
@@ -115,8 +141,10 @@ webkit_dom_xpath_result_iterate_next(WebKitDOMXPathResult* self, GError** error)
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_xpath_result_snapshot_item(WebKitDOMXPathResult* self, gulong index, GError** error);
 
 /**
@@ -124,8 +152,10 @@ webkit_dom_xpath_result_snapshot_item(WebKitDOMXPathResult* self, gulong index, 
  * @self: A #WebKitDOMXPathResult
  *
  * Returns: A #gushort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gushort
+WEBKIT_DEPRECATED gushort
 webkit_dom_xpath_result_get_result_type(WebKitDOMXPathResult* self);
 
 /**
@@ -134,8 +164,10 @@ webkit_dom_xpath_result_get_result_type(WebKitDOMXPathResult* self);
  * @error: #GError
  *
  * Returns: A #gdouble
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gdouble
+WEBKIT_DEPRECATED gdouble
 webkit_dom_xpath_result_get_number_value(WebKitDOMXPathResult* self, GError** error);
 
 /**
@@ -144,8 +176,10 @@ webkit_dom_xpath_result_get_number_value(WebKitDOMXPathResult* self, GError** er
  * @error: #GError
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_xpath_result_get_string_value(WebKitDOMXPathResult* self, GError** error);
 
 /**
@@ -154,8 +188,10 @@ webkit_dom_xpath_result_get_string_value(WebKitDOMXPathResult* self, GError** er
  * @error: #GError
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_xpath_result_get_boolean_value(WebKitDOMXPathResult* self, GError** error);
 
 /**
@@ -164,8 +200,10 @@ webkit_dom_xpath_result_get_boolean_value(WebKitDOMXPathResult* self, GError** e
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_xpath_result_get_single_node_value(WebKitDOMXPathResult* self, GError** error);
 
 /**
@@ -173,8 +211,10 @@ webkit_dom_xpath_result_get_single_node_value(WebKitDOMXPathResult* self, GError
  * @self: A #WebKitDOMXPathResult
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_xpath_result_get_invalid_iterator_state(WebKitDOMXPathResult* self);
 
 /**
@@ -183,8 +223,10 @@ webkit_dom_xpath_result_get_invalid_iterator_state(WebKitDOMXPathResult* self);
  * @error: #GError
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_xpath_result_get_snapshot_length(WebKitDOMXPathResult* self, GError** error);
 
 G_END_DECLS

@@ -30,7 +30,6 @@ list(APPEND WebKitGLibAPIWebProcessTests
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/DOMNodeTest.cpp
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/DOMNodeFilterTest.cpp
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/DOMXPathNSResolverTest.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/EditorTest.cpp
 )
 
 ADD_WK2_TEST(InspectorTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/InspectorTestServer.cpp)
@@ -40,7 +39,6 @@ ADD_WK2_TEST(TestDOMClientRect ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDO
 ADD_WK2_TEST(TestDOMNode ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMNode.cpp)
 ADD_WK2_TEST(TestDOMNodeFilter ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMNodeFilter.cpp)
 ADD_WK2_TEST(TestDOMXPathNSResolver ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMXPathNSResolver.cpp)
-ADD_WK2_TEST(TestEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestEditor.cpp)
 ADD_WK2_TEST(TestInspector ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestInspector.cpp)
 ADD_WK2_TEST(TestInspectorServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestInspectorServer.cpp)
 ADD_WK2_TEST(TestOptionMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestOptionMenu.cpp)

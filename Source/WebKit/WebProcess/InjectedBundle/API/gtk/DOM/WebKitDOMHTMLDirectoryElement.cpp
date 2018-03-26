@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLDirectoryElement* kit(WebCore::HTMLDirectoryElement* obj)
@@ -166,3 +168,4 @@ void webkit_dom_html_directory_element_set_compact(WebKitDOMHTMLDirectoryElement
     item->setBooleanAttribute(WebCore::HTMLNames::compactAttr, value);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

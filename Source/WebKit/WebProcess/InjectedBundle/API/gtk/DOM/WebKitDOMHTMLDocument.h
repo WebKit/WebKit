@@ -45,39 +45,47 @@ struct _WebKitDOMHTMLDocumentClass {
     WebKitDOMDocumentClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_document_get_type(void);
 
 /**
  * webkit_dom_html_document_close:
  * @self: A #WebKitDOMHTMLDocument
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_close(WebKitDOMHTMLDocument* self);
 
 /**
  * webkit_dom_html_document_clear:
  * @self: A #WebKitDOMHTMLDocument
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_clear(WebKitDOMHTMLDocument* self);
 
 /**
  * webkit_dom_html_document_capture_events:
  * @self: A #WebKitDOMHTMLDocument
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_capture_events(WebKitDOMHTMLDocument* self);
 
 /**
  * webkit_dom_html_document_release_events:
  * @self: A #WebKitDOMHTMLDocument
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_release_events(WebKitDOMHTMLDocument* self);
 
 /**
@@ -85,8 +93,10 @@ webkit_dom_html_document_release_events(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_document_get_width(WebKitDOMHTMLDocument* self);
 
 /**
@@ -94,8 +104,10 @@ webkit_dom_html_document_get_width(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_document_get_height(WebKitDOMHTMLDocument* self);
 
 /**
@@ -103,8 +115,10 @@ webkit_dom_html_document_get_height(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_document_get_dir(WebKitDOMHTMLDocument* self);
 
 /**
@@ -112,8 +126,10 @@ webkit_dom_html_document_get_dir(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_set_dir(WebKitDOMHTMLDocument* self, const gchar* value);
 
 /**
@@ -121,8 +137,10 @@ webkit_dom_html_document_set_dir(WebKitDOMHTMLDocument* self, const gchar* value
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_document_get_bg_color(WebKitDOMHTMLDocument* self);
 
 /**
@@ -130,8 +148,10 @@ webkit_dom_html_document_get_bg_color(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_set_bg_color(WebKitDOMHTMLDocument* self, const gchar* value);
 
 /**
@@ -139,8 +159,10 @@ webkit_dom_html_document_set_bg_color(WebKitDOMHTMLDocument* self, const gchar* 
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_document_get_fg_color(WebKitDOMHTMLDocument* self);
 
 /**
@@ -148,8 +170,10 @@ webkit_dom_html_document_get_fg_color(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_set_fg_color(WebKitDOMHTMLDocument* self, const gchar* value);
 
 /**
@@ -157,8 +181,10 @@ webkit_dom_html_document_set_fg_color(WebKitDOMHTMLDocument* self, const gchar* 
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_document_get_alink_color(WebKitDOMHTMLDocument* self);
 
 /**
@@ -166,8 +192,10 @@ webkit_dom_html_document_get_alink_color(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_set_alink_color(WebKitDOMHTMLDocument* self, const gchar* value);
 
 /**
@@ -175,8 +203,10 @@ webkit_dom_html_document_set_alink_color(WebKitDOMHTMLDocument* self, const gcha
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_document_get_link_color(WebKitDOMHTMLDocument* self);
 
 /**
@@ -184,8 +214,10 @@ webkit_dom_html_document_get_link_color(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_set_link_color(WebKitDOMHTMLDocument* self, const gchar* value);
 
 /**
@@ -193,8 +225,10 @@ webkit_dom_html_document_set_link_color(WebKitDOMHTMLDocument* self, const gchar
  * @self: A #WebKitDOMHTMLDocument
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_document_get_vlink_color(WebKitDOMHTMLDocument* self);
 
 /**
@@ -202,8 +236,10 @@ webkit_dom_html_document_get_vlink_color(WebKitDOMHTMLDocument* self);
  * @self: A #WebKitDOMHTMLDocument
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_document_set_vlink_color(WebKitDOMHTMLDocument* self, const gchar* value);
 
 G_END_DECLS

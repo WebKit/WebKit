@@ -401,6 +401,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/linux"
     "${WEBKIT_DIR}/UIProcess/soup"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM"
     "${WEBKIT_DIR}/WebProcess/Plugins/Netscape/unix"
@@ -831,6 +832,7 @@ if (ENABLE_INTROSPECTION)
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
             ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIResponse.h
             ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/*.cpp
+            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM/*.cpp
     )
 
     add_custom_command(
@@ -888,7 +890,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
     "       -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}\n"
     "       -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}\n"
     "doc_dir=${WEBKIT_DIR}/UIProcess/API/gtk/docs\n"
-    "source_dirs=${WEBKIT_DIR}/Shared/API/glib"
+    "source_dirs=${WEBKIT_DIR}/Shared/API/glib\n"
     "            ${WEBKIT_DIR}/UIProcess/API/glib\n"
     "            ${WEBKIT_DIR}/UIProcess/API/gtk\n"
     "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib\n"
@@ -909,7 +911,8 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
     "       -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}\n"
     "       -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}\n"
     "doc_dir=${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM/docs\n"
-    "source_dirs=${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM\n"
+    "source_dirs=${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM\n"
+    "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk/DOM\n"
     "headers=${WebKitDOM_GTKDOC_HEADERS}\n"
     "main_sgml_file=webkitdomgtk-docs.sgml\n"
 )

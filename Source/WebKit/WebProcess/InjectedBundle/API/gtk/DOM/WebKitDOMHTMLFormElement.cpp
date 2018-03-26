@@ -37,6 +37,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLFormElement* kit(WebCore::HTMLFormElement* obj)
@@ -445,3 +447,4 @@ glong webkit_dom_html_form_element_get_length(WebKitDOMHTMLFormElement* self)
     glong result = item->length();
     return result;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

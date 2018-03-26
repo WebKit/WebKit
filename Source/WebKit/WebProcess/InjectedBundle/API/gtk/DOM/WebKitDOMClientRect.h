@@ -45,7 +45,7 @@ struct _WebKitDOMClientRectClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_client_rect_get_type(void);
 
 /**
@@ -57,8 +57,10 @@ webkit_dom_client_rect_get_type(void);
  * Returns: A #gfloat
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gfloat
+WEBKIT_DEPRECATED gfloat
 webkit_dom_client_rect_get_top(WebKitDOMClientRect* self);
 
 /**
@@ -70,8 +72,10 @@ webkit_dom_client_rect_get_top(WebKitDOMClientRect* self);
  * Returns: A #gfloat
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gfloat
+WEBKIT_DEPRECATED gfloat
 webkit_dom_client_rect_get_right(WebKitDOMClientRect* self);
 
 /**
@@ -83,8 +87,10 @@ webkit_dom_client_rect_get_right(WebKitDOMClientRect* self);
  * Returns: A #gfloat
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gfloat
+WEBKIT_DEPRECATED gfloat
 webkit_dom_client_rect_get_bottom(WebKitDOMClientRect* self);
 
 /**
@@ -96,8 +102,10 @@ webkit_dom_client_rect_get_bottom(WebKitDOMClientRect* self);
  * Returns: A #gfloat
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gfloat
+WEBKIT_DEPRECATED gfloat
 webkit_dom_client_rect_get_left(WebKitDOMClientRect* self);
 
 /**
@@ -109,8 +117,10 @@ webkit_dom_client_rect_get_left(WebKitDOMClientRect* self);
  * Returns: A #gfloat
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gfloat
+WEBKIT_DEPRECATED gfloat
 webkit_dom_client_rect_get_width(WebKitDOMClientRect* self);
 
 /**
@@ -122,8 +132,10 @@ webkit_dom_client_rect_get_width(WebKitDOMClientRect* self);
  * Returns: A #gfloat
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gfloat
+WEBKIT_DEPRECATED gfloat
 webkit_dom_client_rect_get_height(WebKitDOMClientRect* self);
 
 G_END_DECLS

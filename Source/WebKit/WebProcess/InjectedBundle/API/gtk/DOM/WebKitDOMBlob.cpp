@@ -36,6 +36,8 @@ typedef struct _WebKitDOMBlobPrivate {
     RefPtr<WebCore::Blob> coreObject;
 } WebKitDOMBlobPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMBlob* kit(WebCore::Blob* obj)
@@ -137,3 +139,4 @@ guint64 webkit_dom_blob_get_size(WebKitDOMBlob* self)
     guint64 result = item->size();
     return result;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

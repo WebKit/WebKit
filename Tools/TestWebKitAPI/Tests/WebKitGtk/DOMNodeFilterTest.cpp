@@ -24,6 +24,8 @@
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/glib/GUniquePtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 typedef struct _WebKitNodeFilter {
     GObject parent;
 } WebKitNodeFilter;
@@ -201,4 +203,4 @@ static void __attribute__((constructor)) registerTests()
     REGISTER_TEST(WebKitDOMNodeFilterTest, "WebKitDOMNodeFilter/node-iterator");
 }
 
-
+G_GNUC_END_IGNORE_DEPRECATIONS;

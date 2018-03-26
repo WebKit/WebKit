@@ -37,6 +37,8 @@ typedef struct _WebKitDOMDOMTokenListPrivate {
     RefPtr<WebCore::DOMTokenList> coreObject;
 } WebKitDOMDOMTokenListPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMDOMTokenList* kit(WebCore::DOMTokenList* obj)
@@ -280,3 +282,4 @@ void webkit_dom_dom_token_list_set_value(WebKitDOMDOMTokenList* self, const gcha
     item->setValue(convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -38,6 +38,8 @@
 #include "WebKitDOMPrivate.h"
 #include <wtf/glib/GRefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 typedef WebKitDOMEventTargetIface WebKitDOMEventTargetInterface;
 
 G_DEFINE_INTERFACE(WebKitDOMEventTarget, webkit_dom_event_target, G_TYPE_OBJECT)
@@ -112,3 +114,4 @@ WebCore::EventTarget* core(WebKitDOMEventTarget* request)
 
 } // namespace WebKit
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

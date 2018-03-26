@@ -45,7 +45,7 @@ struct _WebKitDOMCDATASectionClass {
     WebKitDOMTextClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_cdata_section_get_type(void);
 
 G_END_DECLS

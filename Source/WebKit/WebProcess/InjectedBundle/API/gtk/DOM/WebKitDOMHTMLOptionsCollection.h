@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLOptionsCollectionClass {
     WebKitDOMHTMLCollectionClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_options_collection_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_html_options_collection_get_type(void);
  * @name: A #gchar
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_html_options_collection_named_item(WebKitDOMHTMLOptionsCollection* self, const gchar* name);
 
 /**
@@ -63,8 +65,10 @@ webkit_dom_html_options_collection_named_item(WebKitDOMHTMLOptionsCollection* se
  * @self: A #WebKitDOMHTMLOptionsCollection
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_options_collection_get_selected_index(WebKitDOMHTMLOptionsCollection* self);
 
 /**
@@ -72,8 +76,10 @@ webkit_dom_html_options_collection_get_selected_index(WebKitDOMHTMLOptionsCollec
  * @self: A #WebKitDOMHTMLOptionsCollection
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_options_collection_set_selected_index(WebKitDOMHTMLOptionsCollection* self, glong value);
 
 /**
@@ -81,8 +87,10 @@ webkit_dom_html_options_collection_set_selected_index(WebKitDOMHTMLOptionsCollec
  * @self: A #WebKitDOMHTMLOptionsCollection
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_html_options_collection_get_length(WebKitDOMHTMLOptionsCollection* self);
 
 G_END_DECLS

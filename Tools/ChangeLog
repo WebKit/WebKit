@@ -1,3 +1,62 @@
+2018-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to convert between DOM and JSCValue
+        https://bugs.webkit.org/show_bug.cgi?id=183448
+
+        Reviewed by Michael Catanzaro.
+
+        Add unit tests for non-deprecated DOM API and switch existing tests to use non-deprecated API except for the
+        ones that test the deprecated API.
+
+        * TestWebKitAPI/Tests/WebKitGLib/DOMElementTest.cpp: Added.
+        (DOMElementTest::create):
+        (DOMElementTest::testAutoFill):
+        (registerTests):
+        * TestWebKitAPI/Tests/WebKitGLib/EditorTest.cpp: Added.
+        (WebKitWebEditorTest::create):
+        (WebKitWebEditorTest::selectionChangedCallback):
+        (WebKitWebEditorTest::testSelectionchanged):
+        (registerTests):
+        * TestWebKitAPI/Tests/WebKitGLib/FrameTest.cpp:
+        (WebKitFrameTest::testJavaScriptValues):
+        (registerTests):
+        * TestWebKitAPI/Tests/WebKitGLib/TestDOMElement.cpp: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObjectPrivate.h.
+        (testWebKitDOMElementAutoFill):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestEditor.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKitGtk/TestEditor.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp:
+        (testWebKitFrameJavaScriptValues):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (inputElementIsUserEdited):
+        (testWebExtensionInputElementIsUserEdited):
+        (testWebExtensionFormSubmissionSteps):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (documentLoadedCallback):
+        (serializeNode):
+        (contextMenuCallback):
+        (consoleMessageSentCallback):
+        (formControlsAssociatedCallback):
+        (willSubmitFormCallback):
+        (pageCreatedCallback):
+        (methodCallCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.cpp:
+        (checkLeaks):
+        (webProcessTestRunnerFinalize):
+        (checkLeaksAtExit):
+        * TestWebKitAPI/Tests/WebKitGtk/AutocleanupsTest.cpp:
+        (AutocleanupsTest::testWebProcessAutocleanups):
+        * TestWebKitAPI/Tests/WebKitGtk/DOMClientRectTest.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/DOMNodeFilterTest.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/DOMNodeTest.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/DOMXPathNSResolverTest.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/EditorTest.cpp: Removed.
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * TestWebKitAPI/glib/PlatformGTK.cmake:
+        * TestWebKitAPI/glib/PlatformWPE.cmake:
+
 2018-03-24  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Unrecognized mac versions always use WebKitTestRunner

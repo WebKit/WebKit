@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLHRElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_hr_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_hr_element_get_type(void);
  * @self: A #WebKitDOMHTMLHRElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_hr_element_get_align(WebKitDOMHTMLHRElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_hr_element_get_align(WebKitDOMHTMLHRElement* self);
  * @self: A #WebKitDOMHTMLHRElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_hr_element_set_align(WebKitDOMHTMLHRElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_hr_element_set_align(WebKitDOMHTMLHRElement* self, const gchar* 
  * @self: A #WebKitDOMHTMLHRElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_hr_element_get_no_shade(WebKitDOMHTMLHRElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_hr_element_get_no_shade(WebKitDOMHTMLHRElement* self);
  * @self: A #WebKitDOMHTMLHRElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_hr_element_set_no_shade(WebKitDOMHTMLHRElement* self, gboolean value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_hr_element_set_no_shade(WebKitDOMHTMLHRElement* self, gboolean v
  * @self: A #WebKitDOMHTMLHRElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_hr_element_get_size(WebKitDOMHTMLHRElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_hr_element_get_size(WebKitDOMHTMLHRElement* self);
  * @self: A #WebKitDOMHTMLHRElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_hr_element_set_size(WebKitDOMHTMLHRElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_hr_element_set_size(WebKitDOMHTMLHRElement* self, const gchar* v
  * @self: A #WebKitDOMHTMLHRElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_hr_element_get_width(WebKitDOMHTMLHRElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_hr_element_get_width(WebKitDOMHTMLHRElement* self);
  * @self: A #WebKitDOMHTMLHRElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_hr_element_set_width(WebKitDOMHTMLHRElement* self, const gchar* value);
 
 G_END_DECLS

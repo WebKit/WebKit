@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLFrameElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_frame_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_frame_element_get_type(void);
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_frame_element_get_frame_border(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_frame_element_get_frame_border(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_frame_border(WebKitDOMHTMLFrameElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_frame_element_set_frame_border(WebKitDOMHTMLFrameElement* self, 
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_frame_element_get_long_desc(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_frame_element_get_long_desc(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_long_desc(WebKitDOMHTMLFrameElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_frame_element_set_long_desc(WebKitDOMHTMLFrameElement* self, con
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_frame_element_get_margin_height(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_frame_element_get_margin_height(WebKitDOMHTMLFrameElement* self)
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_margin_height(WebKitDOMHTMLFrameElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_frame_element_set_margin_height(WebKitDOMHTMLFrameElement* self,
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_frame_element_get_margin_width(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_frame_element_get_margin_width(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_margin_width(WebKitDOMHTMLFrameElement* self, const gchar* value);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_frame_element_set_margin_width(WebKitDOMHTMLFrameElement* self, 
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_frame_element_get_name(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_frame_element_get_name(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_name(WebKitDOMHTMLFrameElement* self, const gchar* value);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_frame_element_set_name(WebKitDOMHTMLFrameElement* self, const gc
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_frame_element_get_no_resize(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_frame_element_get_no_resize(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_no_resize(WebKitDOMHTMLFrameElement* self, gboolean value);
 
 /**
@@ -161,8 +185,10 @@ webkit_dom_html_frame_element_set_no_resize(WebKitDOMHTMLFrameElement* self, gbo
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_frame_element_get_scrolling(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -170,8 +196,10 @@ webkit_dom_html_frame_element_get_scrolling(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_scrolling(WebKitDOMHTMLFrameElement* self, const gchar* value);
 
 /**
@@ -179,8 +207,10 @@ webkit_dom_html_frame_element_set_scrolling(WebKitDOMHTMLFrameElement* self, con
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_frame_element_get_src(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -188,8 +218,10 @@ webkit_dom_html_frame_element_get_src(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_frame_element_set_src(WebKitDOMHTMLFrameElement* self, const gchar* value);
 
 /**
@@ -197,8 +229,10 @@ webkit_dom_html_frame_element_set_src(WebKitDOMHTMLFrameElement* self, const gch
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: (transfer none): A #WebKitDOMDocument
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDocument*
+WEBKIT_DEPRECATED WebKitDOMDocument*
 webkit_dom_html_frame_element_get_content_document(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -206,8 +240,10 @@ webkit_dom_html_frame_element_get_content_document(WebKitDOMHTMLFrameElement* se
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: (transfer full): A #WebKitDOMDOMWindow
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDOMWindow*
+WEBKIT_DEPRECATED WebKitDOMDOMWindow*
 webkit_dom_html_frame_element_get_content_window(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -215,8 +251,10 @@ webkit_dom_html_frame_element_get_content_window(WebKitDOMHTMLFrameElement* self
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_frame_element_get_width(WebKitDOMHTMLFrameElement* self);
 
 /**
@@ -224,8 +262,10 @@ webkit_dom_html_frame_element_get_width(WebKitDOMHTMLFrameElement* self);
  * @self: A #WebKitDOMHTMLFrameElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_frame_element_get_height(WebKitDOMHTMLFrameElement* self);
 
 G_END_DECLS

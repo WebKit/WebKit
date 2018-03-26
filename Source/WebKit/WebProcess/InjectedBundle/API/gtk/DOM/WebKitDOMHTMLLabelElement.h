@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLLabelElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_label_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_label_element_get_type(void);
  * @self: A #WebKitDOMHTMLLabelElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLFormElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLFormElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLFormElement*
 webkit_dom_html_label_element_get_form(WebKitDOMHTMLLabelElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_label_element_get_form(WebKitDOMHTMLLabelElement* self);
  * @self: A #WebKitDOMHTMLLabelElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_label_element_get_html_for(WebKitDOMHTMLLabelElement* self);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_label_element_get_html_for(WebKitDOMHTMLLabelElement* self);
  * @self: A #WebKitDOMHTMLLabelElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_label_element_set_html_for(WebKitDOMHTMLLabelElement* self, const gchar* value);
 
 G_END_DECLS

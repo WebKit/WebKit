@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMCharacterData* kit(WebCore::CharacterData* obj)
@@ -256,3 +258,4 @@ gulong webkit_dom_character_data_get_length(WebKitDOMCharacterData* self)
     gulong result = item->length();
     return result;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -36,11 +36,18 @@ static void testWebKitFrameJavaScriptContext(WebViewTest* test, gconstpointer)
     g_assert(test->runWebProcessTest("WebKitFrame", "javascript-context"));
 }
 
+static void testWebKitFrameJavaScriptValues(WebViewTest* test, gconstpointer)
+{
+    static const char* testHTML = "<html><body><p id='paragraph'>This is a test</p><img id='image' src='foo.png'></body></html>";
+    g_assert(test->runWebProcessTest("WebKitFrame", "javascript-values", testHTML));
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitFrame", "main-frame", testWebKitFrameMainFrame);
     WebViewTest::add("WebKitFrame", "uri", testWebKitFrameURI);
     WebViewTest::add("WebKitFrame", "javascript-context", testWebKitFrameJavaScriptContext);
+    WebViewTest::add("WebKitFrame", "javascript-values", testWebKitFrameJavaScriptValues);
 }
 
 void afterAll()

@@ -30,6 +30,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_NODE_FILTER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_DOM_TYPE_NODE_FILTER))
 #define WEBKIT_DOM_NODE_FILTER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), WEBKIT_DOM_TYPE_NODE_FILTER, WebKitDOMNodeFilterIface))
 
+#ifndef WEBKIT_DISABLE_DEPRECATED
+
 /**
  * WEBKIT_DOM_NODE_FILTER_ACCEPT:
  *
@@ -37,6 +39,8 @@ G_BEGIN_DECLS
  * implementation to accept the given #WebKitDOMNode
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_ACCEPT 1
 
@@ -48,6 +52,8 @@ G_BEGIN_DECLS
  * be rejected too.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_REJECT 2
 
@@ -59,6 +65,8 @@ G_BEGIN_DECLS
  * not be skipped.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SKIP   3
 
@@ -68,6 +76,8 @@ G_BEGIN_DECLS
  * Show all nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_ALL                    0xFFFFFFFF
 
@@ -77,6 +87,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMElement nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_ELEMENT                0x00000001
 
@@ -86,6 +98,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMAttr nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_ATTRIBUTE              0x00000002
 
@@ -95,6 +109,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMText nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_TEXT                   0x00000004
 
@@ -104,6 +120,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMCDataSection nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_CDATA_SECTION          0x00000008
 
@@ -113,6 +131,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMEntityReference nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_ENTITY_REFERENCE       0x00000010
 
@@ -122,6 +142,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMEntity nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_ENTITY                 0x00000020
 
@@ -131,6 +153,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMProcessingInstruction nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_PROCESSING_INSTRUCTION 0x00000040
 
@@ -140,6 +164,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMComment nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_COMMENT                0x00000080
 
@@ -149,6 +175,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMDocument nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_DOCUMENT               0x00000100
 
@@ -158,6 +186,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMDocumentType nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_DOCUMENT_TYPE          0x00000200
 
@@ -167,6 +197,8 @@ G_BEGIN_DECLS
  * Show #WebKitDOMDocumentFragment nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_DOCUMENT_FRAGMENT      0x00000400
 
@@ -176,8 +208,12 @@ G_BEGIN_DECLS
  * Show #WebKitDOMNotation nodes.
  *
  * Since: 2.6
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_NODE_FILTER_SHOW_NOTATION               0x00000800
+
+#endif /* WEBKIT_DISABLE_DEPRECATED */
 
 struct _WebKitDOMNodeFilterIface {
     GTypeInterface gIface;
@@ -193,7 +229,7 @@ struct _WebKitDOMNodeFilterIface {
 };
 
 
-WEBKIT_API GType webkit_dom_node_filter_get_type(void) G_GNUC_CONST;
+WEBKIT_DEPRECATED GType webkit_dom_node_filter_get_type(void) G_GNUC_CONST;
 
 /**
  * webkit_dom_node_filter_accept_node:
@@ -201,8 +237,10 @@ WEBKIT_API GType webkit_dom_node_filter_get_type(void) G_GNUC_CONST;
  * @node: A #WebKitDOMNode
  *
  * Returns: a #gshort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gshort webkit_dom_node_filter_accept_node(WebKitDOMNodeFilter *filter,
+WEBKIT_DEPRECATED gshort webkit_dom_node_filter_accept_node(WebKitDOMNodeFilter *filter,
                                                      WebKitDOMNode       *node);
 
 G_END_DECLS

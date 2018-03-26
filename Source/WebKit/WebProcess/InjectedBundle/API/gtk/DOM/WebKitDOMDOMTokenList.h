@@ -45,7 +45,7 @@ struct _WebKitDOMDOMTokenListClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_dom_token_list_get_type(void);
 
 /**
@@ -56,8 +56,10 @@ webkit_dom_dom_token_list_get_type(void);
  * Returns: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_dom_token_list_item(WebKitDOMDOMTokenList* self, gulong index);
 
 /**
@@ -68,8 +70,10 @@ webkit_dom_dom_token_list_item(WebKitDOMDOMTokenList* self, gulong index);
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_dom_token_list_contains(WebKitDOMDOMTokenList* self, const gchar* token);
 
 /**
@@ -79,8 +83,10 @@ webkit_dom_dom_token_list_contains(WebKitDOMDOMTokenList* self, const gchar* tok
  * @...: list of #gchar ended by %NULL.
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_token_list_add(WebKitDOMDOMTokenList* self, GError** error, ...);
 
 /**
@@ -90,8 +96,10 @@ webkit_dom_dom_token_list_add(WebKitDOMDOMTokenList* self, GError** error, ...);
  * @...: list of #gchar ended by %NULL.
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** error, ...);
 
 /**
@@ -104,8 +112,10 @@ webkit_dom_dom_token_list_remove(WebKitDOMDOMTokenList* self, GError** error, ..
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_dom_token_list_toggle(WebKitDOMDOMTokenList* self, const gchar* token, gboolean force, GError** error);
 
 /**
@@ -116,8 +126,10 @@ webkit_dom_dom_token_list_toggle(WebKitDOMDOMTokenList* self, const gchar* token
  * @error: #GError
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_token_list_replace(WebKitDOMDOMTokenList* self, const gchar* token, const gchar* newToken, GError** error);
 
 /**
@@ -127,8 +139,10 @@ webkit_dom_dom_token_list_replace(WebKitDOMDOMTokenList* self, const gchar* toke
  * Returns: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_dom_token_list_get_length(WebKitDOMDOMTokenList* self);
 
 /**
@@ -138,8 +152,10 @@ webkit_dom_dom_token_list_get_length(WebKitDOMDOMTokenList* self);
  * Returns: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_dom_token_list_get_value(WebKitDOMDOMTokenList* self);
 
 /**
@@ -148,8 +164,10 @@ webkit_dom_dom_token_list_get_value(WebKitDOMDOMTokenList* self);
  * @value: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_token_list_set_value(WebKitDOMDOMTokenList* self, const gchar* value);
 
 G_END_DECLS

@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLTableColElement* kit(WebCore::HTMLTableColElement* obj)
@@ -346,3 +348,4 @@ void webkit_dom_html_table_col_element_set_width(WebKitDOMHTMLTableColElement* s
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

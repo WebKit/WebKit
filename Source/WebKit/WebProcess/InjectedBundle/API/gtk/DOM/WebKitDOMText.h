@@ -45,7 +45,7 @@ struct _WebKitDOMTextClass {
     WebKitDOMCharacterDataClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_text_get_type(void);
 
 /**
@@ -55,8 +55,10 @@ webkit_dom_text_get_type(void);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMText
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMText*
+WEBKIT_DEPRECATED WebKitDOMText*
 webkit_dom_text_split_text(WebKitDOMText* self, gulong offset, GError** error);
 
 /**
@@ -64,8 +66,10 @@ webkit_dom_text_split_text(WebKitDOMText* self, gulong offset, GError** error);
  * @self: A #WebKitDOMText
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_text_get_whole_text(WebKitDOMText* self);
 
 G_END_DECLS

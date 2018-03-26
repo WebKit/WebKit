@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLBRElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_br_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_br_element_get_type(void);
  * @self: A #WebKitDOMHTMLBRElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_br_element_get_clear(WebKitDOMHTMLBRElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_br_element_get_clear(WebKitDOMHTMLBRElement* self);
  * @self: A #WebKitDOMHTMLBRElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_br_element_set_clear(WebKitDOMHTMLBRElement* self, const gchar* value);
 
 G_END_DECLS

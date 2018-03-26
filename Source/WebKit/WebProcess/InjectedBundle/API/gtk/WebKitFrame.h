@@ -29,6 +29,7 @@
 #include <jsc/jsc.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitScriptWorld.h>
+#include <webkitdom/webkitdom.h>
 
 G_BEGIN_DECLS
 
@@ -54,27 +55,36 @@ struct _WebKitFrameClass {
 };
 
 WEBKIT_API GType
-webkit_frame_get_type                                (void);
+webkit_frame_get_type                                    (void);
 
 WEBKIT_API gboolean
-webkit_frame_is_main_frame                           (WebKitFrame       *frame);
+webkit_frame_is_main_frame                               (WebKitFrame       *frame);
 
 WEBKIT_API const gchar *
-webkit_frame_get_uri                                 (WebKitFrame       *frame);
+webkit_frame_get_uri                                     (WebKitFrame       *frame);
 
 WEBKIT_DEPRECATED_FOR(webkit_frame_get_js_context) JSGlobalContextRef
-webkit_frame_get_javascript_global_context           (WebKitFrame       *frame);
+webkit_frame_get_javascript_global_context               (WebKitFrame       *frame);
 
 WEBKIT_DEPRECATED_FOR(webkit_frame_get_js_context_for_script_world) JSGlobalContextRef
-webkit_frame_get_javascript_context_for_script_world (WebKitFrame       *frame,
-                                                      WebKitScriptWorld *world);
+webkit_frame_get_javascript_context_for_script_world     (WebKitFrame       *frame,
+                                                          WebKitScriptWorld *world);
 
 WEBKIT_API JSCContext *
-webkit_frame_get_js_context                          (WebKitFrame       *frame);
+webkit_frame_get_js_context                              (WebKitFrame       *frame);
 
 WEBKIT_API JSCContext *
-webkit_frame_get_js_context_for_script_world         (WebKitFrame       *frame,
-                                                      WebKitScriptWorld *world);
+webkit_frame_get_js_context_for_script_world             (WebKitFrame       *frame,
+                                                          WebKitScriptWorld *world);
+
+WEBKIT_API JSCValue *
+webkit_frame_get_js_value_for_dom_object                 (WebKitFrame       *frame,
+                                                          WebKitDOMObject   *dom_object);
+
+WEBKIT_API JSCValue *
+webkit_frame_get_js_value_for_dom_object_in_script_world (WebKitFrame       *frame,
+                                                          WebKitDOMObject   *dom_object,
+                                                          WebKitScriptWorld *world);
 
 G_END_DECLS
 

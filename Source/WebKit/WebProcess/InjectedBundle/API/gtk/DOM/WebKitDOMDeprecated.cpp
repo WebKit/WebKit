@@ -38,6 +38,8 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 gchar* webkit_dom_html_element_get_inner_html(WebKitDOMHTMLElement* self)
 {
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self), nullptr);
@@ -325,3 +327,4 @@ gchar* webkit_dom_element_get_webkit_region_overset(WebKitDOMElement*)
     g_warning("%s: CSS Regions support has been removed, this function does nothing.", __func__);
     return nullptr;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

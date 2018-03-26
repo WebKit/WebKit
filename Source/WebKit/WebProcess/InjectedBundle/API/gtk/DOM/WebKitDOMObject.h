@@ -21,7 +21,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef WebKitDOMObject_h
 #define WebKitDOMObject_h
 
@@ -36,8 +35,6 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_OBJECT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_DOM_TYPE_OBJECT))
 #define WEBKIT_DOM_IS_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_OBJECT))
 #define WEBKIT_DOM_OBJECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_OBJECT, WebKitDOMObjectClass))
-
-typedef struct _WebKitDOMObjectPrivate WebKitDOMObjectPrivate;
 
 struct _WebKitDOMObject {
     GObject parentInstance;

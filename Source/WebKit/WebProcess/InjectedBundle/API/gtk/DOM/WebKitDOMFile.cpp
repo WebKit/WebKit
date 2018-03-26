@@ -32,6 +32,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMFile* kit(WebCore::File* obj)
@@ -102,3 +104,4 @@ gchar* webkit_dom_file_get_name(WebKitDOMFile* self)
     gchar* result = convertToUTF8String(item->name());
     return result;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

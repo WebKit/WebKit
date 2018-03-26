@@ -38,6 +38,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLLinkElement* kit(WebCore::HTMLLinkElement* obj)
@@ -508,3 +510,4 @@ void webkit_dom_html_link_element_set_sizes(WebKitDOMHTMLLinkElement* linkElemen
 
     WebKit::core(linkElement)->sizes().setValue(String::fromUTF8(value));
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

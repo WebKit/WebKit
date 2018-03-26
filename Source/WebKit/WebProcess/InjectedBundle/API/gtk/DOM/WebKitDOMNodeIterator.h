@@ -45,7 +45,7 @@ struct _WebKitDOMNodeIteratorClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_node_iterator_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_node_iterator_get_type(void);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_iterator_next_node(WebKitDOMNodeIterator* self, GError** error);
 
 /**
@@ -64,16 +66,20 @@ webkit_dom_node_iterator_next_node(WebKitDOMNodeIterator* self, GError** error);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_iterator_previous_node(WebKitDOMNodeIterator* self, GError** error);
 
 /**
  * webkit_dom_node_iterator_detach:
  * @self: A #WebKitDOMNodeIterator
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_node_iterator_detach(WebKitDOMNodeIterator* self);
 
 /**
@@ -81,8 +87,10 @@ webkit_dom_node_iterator_detach(WebKitDOMNodeIterator* self);
  * @self: A #WebKitDOMNodeIterator
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_iterator_get_root(WebKitDOMNodeIterator* self);
 
 /**
@@ -90,8 +98,10 @@ webkit_dom_node_iterator_get_root(WebKitDOMNodeIterator* self);
  * @self: A #WebKitDOMNodeIterator
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_node_iterator_get_what_to_show(WebKitDOMNodeIterator* self);
 
 /**
@@ -99,8 +109,10 @@ webkit_dom_node_iterator_get_what_to_show(WebKitDOMNodeIterator* self);
  * @self: A #WebKitDOMNodeIterator
  *
  * Returns: (transfer full): A #WebKitDOMNodeFilter
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNodeFilter*
+WEBKIT_DEPRECATED WebKitDOMNodeFilter*
 webkit_dom_node_iterator_get_filter(WebKitDOMNodeIterator* self);
 
 /**
@@ -108,8 +120,10 @@ webkit_dom_node_iterator_get_filter(WebKitDOMNodeIterator* self);
  * @self: A #WebKitDOMNodeIterator
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_iterator_get_reference_node(WebKitDOMNodeIterator* self);
 
 /**
@@ -117,8 +131,10 @@ webkit_dom_node_iterator_get_reference_node(WebKitDOMNodeIterator* self);
  * @self: A #WebKitDOMNodeIterator
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_node_iterator_get_pointer_before_reference_node(WebKitDOMNodeIterator* self);
 
 G_END_DECLS

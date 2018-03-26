@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLScriptElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_script_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_script_element_get_type(void);
  * @self: A #WebKitDOMHTMLScriptElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_script_element_get_text(WebKitDOMHTMLScriptElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_script_element_get_text(WebKitDOMHTMLScriptElement* self);
  * @self: A #WebKitDOMHTMLScriptElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_script_element_set_text(WebKitDOMHTMLScriptElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_script_element_set_text(WebKitDOMHTMLScriptElement* self, const 
  * @self: A #WebKitDOMHTMLScriptElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_script_element_get_html_for(WebKitDOMHTMLScriptElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_script_element_get_html_for(WebKitDOMHTMLScriptElement* self);
  * @self: A #WebKitDOMHTMLScriptElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_script_element_set_html_for(WebKitDOMHTMLScriptElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_script_element_set_html_for(WebKitDOMHTMLScriptElement* self, co
  * @self: A #WebKitDOMHTMLScriptElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_script_element_get_event(WebKitDOMHTMLScriptElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_script_element_get_event(WebKitDOMHTMLScriptElement* self);
  * @self: A #WebKitDOMHTMLScriptElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_script_element_set_event(WebKitDOMHTMLScriptElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_script_element_set_event(WebKitDOMHTMLScriptElement* self, const
  * @self: A #WebKitDOMHTMLScriptElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_script_element_get_charset(WebKitDOMHTMLScriptElement* self);
 
 /**
@@ -117,8 +131,10 @@ webkit_dom_html_script_element_get_charset(WebKitDOMHTMLScriptElement* self);
  * @value: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_script_element_set_charset(WebKitDOMHTMLScriptElement* self, const gchar* value);
 
 /**
@@ -126,8 +142,10 @@ webkit_dom_html_script_element_set_charset(WebKitDOMHTMLScriptElement* self, con
  * @self: A #WebKitDOMHTMLScriptElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_script_element_get_defer(WebKitDOMHTMLScriptElement* self);
 
 /**
@@ -135,8 +153,10 @@ webkit_dom_html_script_element_get_defer(WebKitDOMHTMLScriptElement* self);
  * @self: A #WebKitDOMHTMLScriptElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_script_element_set_defer(WebKitDOMHTMLScriptElement* self, gboolean value);
 
 /**
@@ -144,8 +164,10 @@ webkit_dom_html_script_element_set_defer(WebKitDOMHTMLScriptElement* self, gbool
  * @self: A #WebKitDOMHTMLScriptElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_script_element_get_src(WebKitDOMHTMLScriptElement* self);
 
 /**
@@ -153,8 +175,10 @@ webkit_dom_html_script_element_get_src(WebKitDOMHTMLScriptElement* self);
  * @self: A #WebKitDOMHTMLScriptElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_script_element_set_src(WebKitDOMHTMLScriptElement* self, const gchar* value);
 
 /**
@@ -162,8 +186,10 @@ webkit_dom_html_script_element_set_src(WebKitDOMHTMLScriptElement* self, const g
  * @self: A #WebKitDOMHTMLScriptElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_script_element_get_type_attr(WebKitDOMHTMLScriptElement* self);
 
 /**
@@ -171,8 +197,10 @@ webkit_dom_html_script_element_get_type_attr(WebKitDOMHTMLScriptElement* self);
  * @self: A #WebKitDOMHTMLScriptElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_script_element_set_type_attr(WebKitDOMHTMLScriptElement* self, const gchar* value);
 
 G_END_DECLS

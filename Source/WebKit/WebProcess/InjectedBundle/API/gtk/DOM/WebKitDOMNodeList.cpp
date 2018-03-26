@@ -38,6 +38,8 @@ typedef struct _WebKitDOMNodeListPrivate {
     RefPtr<WebCore::NodeList> coreObject;
 } WebKitDOMNodeListPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMNodeList* kit(WebCore::NodeList* obj)
@@ -150,3 +152,4 @@ gulong webkit_dom_node_list_get_length(WebKitDOMNodeList* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

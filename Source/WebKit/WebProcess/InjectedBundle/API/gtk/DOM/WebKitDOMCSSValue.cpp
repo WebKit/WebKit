@@ -37,6 +37,8 @@ typedef struct _WebKitDOMCSSValuePrivate {
     RefPtr<WebCore::DeprecatedCSSOMValue> coreObject;
 } WebKitDOMCSSValuePrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMCSSValue* kit(WebCore::DeprecatedCSSOMValue* obj)
@@ -193,3 +195,4 @@ gushort webkit_dom_css_value_get_css_value_type(WebKitDOMCSSValue* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

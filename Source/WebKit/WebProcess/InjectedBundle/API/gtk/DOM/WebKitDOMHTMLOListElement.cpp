@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLOListElement* kit(WebCore::HTMLOListElement* obj)
@@ -236,3 +238,4 @@ void webkit_dom_html_o_list_element_set_type_attr(WebKitDOMHTMLOListElement* sel
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

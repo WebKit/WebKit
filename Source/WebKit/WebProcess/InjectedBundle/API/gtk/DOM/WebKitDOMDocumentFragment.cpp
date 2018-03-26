@@ -39,6 +39,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMDocumentFragment* kit(WebCore::DocumentFragment* obj)
@@ -260,3 +262,4 @@ gulong webkit_dom_document_fragment_get_child_element_count(WebKitDOMDocumentFra
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

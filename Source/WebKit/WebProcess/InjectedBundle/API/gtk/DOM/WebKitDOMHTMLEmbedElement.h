@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLEmbedElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_embed_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_embed_element_get_type(void);
  * @self: A #WebKitDOMHTMLEmbedElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_embed_element_get_align(WebKitDOMHTMLEmbedElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_embed_element_get_align(WebKitDOMHTMLEmbedElement* self);
  * @self: A #WebKitDOMHTMLEmbedElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_embed_element_set_align(WebKitDOMHTMLEmbedElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_embed_element_set_align(WebKitDOMHTMLEmbedElement* self, const g
  * @self: A #WebKitDOMHTMLEmbedElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_embed_element_get_height(WebKitDOMHTMLEmbedElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_embed_element_get_height(WebKitDOMHTMLEmbedElement* self);
  * @self: A #WebKitDOMHTMLEmbedElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_embed_element_set_height(WebKitDOMHTMLEmbedElement* self, glong value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_embed_element_set_height(WebKitDOMHTMLEmbedElement* self, glong 
  * @self: A #WebKitDOMHTMLEmbedElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_embed_element_get_name(WebKitDOMHTMLEmbedElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_embed_element_get_name(WebKitDOMHTMLEmbedElement* self);
  * @self: A #WebKitDOMHTMLEmbedElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_embed_element_set_name(WebKitDOMHTMLEmbedElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_embed_element_set_name(WebKitDOMHTMLEmbedElement* self, const gc
  * @self: A #WebKitDOMHTMLEmbedElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_embed_element_get_src(WebKitDOMHTMLEmbedElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_embed_element_get_src(WebKitDOMHTMLEmbedElement* self);
  * @self: A #WebKitDOMHTMLEmbedElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_embed_element_set_src(WebKitDOMHTMLEmbedElement* self, const gchar* value);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_embed_element_set_src(WebKitDOMHTMLEmbedElement* self, const gch
  * @self: A #WebKitDOMHTMLEmbedElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_embed_element_get_type_attr(WebKitDOMHTMLEmbedElement* self);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_embed_element_get_type_attr(WebKitDOMHTMLEmbedElement* self);
  * @self: A #WebKitDOMHTMLEmbedElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_embed_element_set_type_attr(WebKitDOMHTMLEmbedElement* self, const gchar* value);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_embed_element_set_type_attr(WebKitDOMHTMLEmbedElement* self, con
  * @self: A #WebKitDOMHTMLEmbedElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_embed_element_get_width(WebKitDOMHTMLEmbedElement* self);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_embed_element_get_width(WebKitDOMHTMLEmbedElement* self);
  * @self: A #WebKitDOMHTMLEmbedElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_embed_element_set_width(WebKitDOMHTMLEmbedElement* self, glong value);
 
 G_END_DECLS

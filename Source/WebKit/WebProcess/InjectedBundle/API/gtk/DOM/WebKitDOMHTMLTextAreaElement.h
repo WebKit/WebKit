@@ -45,15 +45,17 @@ struct _WebKitDOMHTMLTextAreaElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_text_area_element_get_type(void);
 
 /**
  * webkit_dom_html_text_area_element_select:
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_select(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -63,8 +65,10 @@ webkit_dom_html_text_area_element_select(WebKitDOMHTMLTextAreaElement* self);
  * @end: A #glong
  * @direction: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_selection_range(WebKitDOMHTMLTextAreaElement* self, glong start, glong end, const gchar* direction);
 
 /**
@@ -72,8 +76,10 @@ webkit_dom_html_text_area_element_set_selection_range(WebKitDOMHTMLTextAreaEleme
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_text_area_element_get_autofocus(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -81,8 +87,10 @@ webkit_dom_html_text_area_element_get_autofocus(WebKitDOMHTMLTextAreaElement* se
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_autofocus(WebKitDOMHTMLTextAreaElement* self, gboolean value);
 
 /**
@@ -90,8 +98,10 @@ webkit_dom_html_text_area_element_set_autofocus(WebKitDOMHTMLTextAreaElement* se
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_text_area_element_get_disabled(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -99,8 +109,10 @@ webkit_dom_html_text_area_element_get_disabled(WebKitDOMHTMLTextAreaElement* sel
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_disabled(WebKitDOMHTMLTextAreaElement* self, gboolean value);
 
 /**
@@ -108,8 +120,10 @@ webkit_dom_html_text_area_element_set_disabled(WebKitDOMHTMLTextAreaElement* sel
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLFormElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLFormElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLFormElement*
 webkit_dom_html_text_area_element_get_form(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -117,8 +131,10 @@ webkit_dom_html_text_area_element_get_form(WebKitDOMHTMLTextAreaElement* self);
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_text_area_element_get_name(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -126,8 +142,10 @@ webkit_dom_html_text_area_element_get_name(WebKitDOMHTMLTextAreaElement* self);
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_name(WebKitDOMHTMLTextAreaElement* self, const gchar* value);
 
 /**
@@ -135,8 +153,10 @@ webkit_dom_html_text_area_element_set_name(WebKitDOMHTMLTextAreaElement* self, c
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_text_area_element_get_read_only(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -144,8 +164,10 @@ webkit_dom_html_text_area_element_get_read_only(WebKitDOMHTMLTextAreaElement* se
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_read_only(WebKitDOMHTMLTextAreaElement* self, gboolean value);
 
 /**
@@ -153,8 +175,10 @@ webkit_dom_html_text_area_element_set_read_only(WebKitDOMHTMLTextAreaElement* se
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_text_area_element_get_rows(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -162,8 +186,10 @@ webkit_dom_html_text_area_element_get_rows(WebKitDOMHTMLTextAreaElement* self);
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_rows(WebKitDOMHTMLTextAreaElement* self, glong value);
 
 /**
@@ -171,8 +197,10 @@ webkit_dom_html_text_area_element_set_rows(WebKitDOMHTMLTextAreaElement* self, g
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_text_area_element_get_cols(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -180,8 +208,10 @@ webkit_dom_html_text_area_element_get_cols(WebKitDOMHTMLTextAreaElement* self);
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_cols(WebKitDOMHTMLTextAreaElement* self, glong value);
 
 /**
@@ -189,8 +219,10 @@ webkit_dom_html_text_area_element_set_cols(WebKitDOMHTMLTextAreaElement* self, g
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_text_area_element_get_area_type(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -198,8 +230,10 @@ webkit_dom_html_text_area_element_get_area_type(WebKitDOMHTMLTextAreaElement* se
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_text_area_element_get_default_value(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -207,8 +241,10 @@ webkit_dom_html_text_area_element_get_default_value(WebKitDOMHTMLTextAreaElement
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_default_value(WebKitDOMHTMLTextAreaElement* self, const gchar* value);
 
 /**
@@ -216,8 +252,10 @@ webkit_dom_html_text_area_element_set_default_value(WebKitDOMHTMLTextAreaElement
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_text_area_element_get_value(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -225,8 +263,10 @@ webkit_dom_html_text_area_element_get_value(WebKitDOMHTMLTextAreaElement* self);
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_value(WebKitDOMHTMLTextAreaElement* self, const gchar* value);
 
 /**
@@ -234,8 +274,10 @@ webkit_dom_html_text_area_element_set_value(WebKitDOMHTMLTextAreaElement* self, 
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_text_area_element_get_will_validate(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -243,8 +285,10 @@ webkit_dom_html_text_area_element_get_will_validate(WebKitDOMHTMLTextAreaElement
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_text_area_element_get_selection_start(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -252,8 +296,10 @@ webkit_dom_html_text_area_element_get_selection_start(WebKitDOMHTMLTextAreaEleme
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_selection_start(WebKitDOMHTMLTextAreaElement* self, glong value);
 
 /**
@@ -261,8 +307,10 @@ webkit_dom_html_text_area_element_set_selection_start(WebKitDOMHTMLTextAreaEleme
  * @self: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_text_area_element_get_selection_end(WebKitDOMHTMLTextAreaElement* self);
 
 /**
@@ -270,8 +318,10 @@ webkit_dom_html_text_area_element_get_selection_end(WebKitDOMHTMLTextAreaElement
  * @self: A #WebKitDOMHTMLTextAreaElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_text_area_element_set_selection_end(WebKitDOMHTMLTextAreaElement* self, glong value);
 
 /**
@@ -279,8 +329,10 @@ webkit_dom_html_text_area_element_set_selection_end(WebKitDOMHTMLTextAreaElement
  * @input: A #WebKitDOMHTMLTextAreaElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement* input);
+WEBKIT_DEPRECATED gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement* input);
 
 G_END_DECLS
 

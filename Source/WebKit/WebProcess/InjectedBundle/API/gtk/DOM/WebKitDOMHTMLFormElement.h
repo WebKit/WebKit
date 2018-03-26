@@ -45,23 +45,27 @@ struct _WebKitDOMHTMLFormElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_form_element_get_type(void);
 
 /**
  * webkit_dom_html_form_element_submit:
  * @self: A #WebKitDOMHTMLFormElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_submit(WebKitDOMHTMLFormElement* self);
 
 /**
  * webkit_dom_html_form_element_reset:
  * @self: A #WebKitDOMHTMLFormElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_reset(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -69,8 +73,10 @@ webkit_dom_html_form_element_reset(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_form_element_get_accept_charset(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -78,8 +84,10 @@ webkit_dom_html_form_element_get_accept_charset(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_set_accept_charset(WebKitDOMHTMLFormElement* self, const gchar* value);
 
 /**
@@ -87,8 +95,10 @@ webkit_dom_html_form_element_set_accept_charset(WebKitDOMHTMLFormElement* self, 
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_form_element_get_action(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -96,8 +106,10 @@ webkit_dom_html_form_element_get_action(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_set_action(WebKitDOMHTMLFormElement* self, const gchar* value);
 
 /**
@@ -105,8 +117,10 @@ webkit_dom_html_form_element_set_action(WebKitDOMHTMLFormElement* self, const gc
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_form_element_get_enctype(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -114,8 +128,10 @@ webkit_dom_html_form_element_get_enctype(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_set_enctype(WebKitDOMHTMLFormElement* self, const gchar* value);
 
 /**
@@ -123,8 +139,10 @@ webkit_dom_html_form_element_set_enctype(WebKitDOMHTMLFormElement* self, const g
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_form_element_get_encoding(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -132,8 +150,10 @@ webkit_dom_html_form_element_get_encoding(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_set_encoding(WebKitDOMHTMLFormElement* self, const gchar* value);
 
 /**
@@ -141,8 +161,10 @@ webkit_dom_html_form_element_set_encoding(WebKitDOMHTMLFormElement* self, const 
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_form_element_get_method(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -150,8 +172,10 @@ webkit_dom_html_form_element_get_method(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_set_method(WebKitDOMHTMLFormElement* self, const gchar* value);
 
 /**
@@ -159,8 +183,10 @@ webkit_dom_html_form_element_set_method(WebKitDOMHTMLFormElement* self, const gc
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_form_element_get_name(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -168,8 +194,10 @@ webkit_dom_html_form_element_get_name(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_set_name(WebKitDOMHTMLFormElement* self, const gchar* value);
 
 /**
@@ -177,8 +205,10 @@ webkit_dom_html_form_element_set_name(WebKitDOMHTMLFormElement* self, const gcha
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_form_element_get_target(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -186,8 +216,10 @@ webkit_dom_html_form_element_get_target(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_form_element_set_target(WebKitDOMHTMLFormElement* self, const gchar* value);
 
 /**
@@ -195,8 +227,10 @@ webkit_dom_html_form_element_set_target(WebKitDOMHTMLFormElement* self, const gc
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: (transfer full): A #WebKitDOMHTMLCollection
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLCollection*
+WEBKIT_DEPRECATED WebKitDOMHTMLCollection*
 webkit_dom_html_form_element_get_elements(WebKitDOMHTMLFormElement* self);
 
 /**
@@ -204,8 +238,10 @@ webkit_dom_html_form_element_get_elements(WebKitDOMHTMLFormElement* self);
  * @self: A #WebKitDOMHTMLFormElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_form_element_get_length(WebKitDOMHTMLFormElement* self);
 
 G_END_DECLS

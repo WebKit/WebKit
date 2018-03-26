@@ -20,8 +20,13 @@
 #include "config.h"
 #include "WebKitFrame.h"
 
+#include "WebKitDOMNodePrivate.h"
 #include "WebKitFramePrivate.h"
 #include "WebKitScriptWorldPrivate.h"
+#include <JavaScriptCore/JSLock.h>
+#include <WebCore/Frame.h>
+#include <WebCore/JSNode.h>
+#include <WebCore/ScriptController.h>
 #include <jsc/JSCContextPrivate.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -169,4 +174,54 @@ JSCContext* webkit_frame_get_js_context_for_script_world(WebKitFrame* frame, Web
     g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), nullptr);
 
     return jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(webkitScriptWorldGetInjectedBundleScriptWorld(world))).leakRef();
+}
+
+/**
+ * webkit_frame_get_js_value_for_dom_object:
+ * @frame: a #WebKitFrame
+ * @dom_object: a #WebKitDOMObject
+ *
+ * Get a #JSCValue referencing the given DOM object. The value is created in the JavaScript execution
+ * context of @frame.
+ *
+ * Returns: (transfer full): the #JSCValue referencing @dom_object.
+ *
+ * Since: 2.22
+ */
+JSCValue* webkit_frame_get_js_value_for_dom_object(WebKitFrame* frame, WebKitDOMObject* domObject)
+{
+    return webkit_frame_get_js_value_for_dom_object_in_script_world(frame, domObject, webkit_script_world_get_default());
+}
+
+/**
+ * webkit_frame_get_js_value_for_dom_object_in_script_world:
+ * @frame: a #WebKitFrame
+ * @dom_object: a #WebKitDOMObject
+ * @world: a #WebKitScriptWorld
+ *
+ * Get a #JSCValue referencing the given DOM object. The value is created in the JavaScript execution
+ * context of @frame for the given #WebKitScriptWorld.
+ *
+ * Returns: (transfer full): the #JSCValue referencing @dom_object
+ *
+ * Since: 2.22
+ */
+JSCValue* webkit_frame_get_js_value_for_dom_object_in_script_world(WebKitFrame* frame, WebKitDOMObject* domObject, WebKitScriptWorld* world)
+{
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), nullptr);
+    g_return_val_if_fail(WEBKIT_DOM_IS_OBJECT(domObject), nullptr);
+    g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), nullptr);
+
+    auto* wkWorld = webkitScriptWorldGetInjectedBundleScriptWorld(world);
+    auto jsContext = jscContextGetOrCreate(frame->priv->webFrame->jsContextForWorld(wkWorld));
+    JSDOMWindow* globalObject = frame->priv->webFrame->coreFrame()->script().globalObject(wkWorld->coreWorld());
+    JSC::ExecState* exec = globalObject->globalExec();
+    JSValueRef jsValue = nullptr;
+    {
+        JSC::JSLockHolder lock(exec);
+        if (WEBKIT_DOM_IS_NODE(domObject))
+            jsValue = toRef(exec, toJS(exec, globalObject, WebKit::core(WEBKIT_DOM_NODE(domObject))));
+    }
+
+    return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue).leakRef() : nullptr;
 }

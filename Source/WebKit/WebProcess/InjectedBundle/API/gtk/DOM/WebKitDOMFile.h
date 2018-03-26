@@ -45,7 +45,7 @@ struct _WebKitDOMFileClass {
     WebKitDOMBlobClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_file_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_file_get_type(void);
  * @self: A #WebKitDOMFile
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_file_get_name(WebKitDOMFile* self);
 
 G_END_DECLS

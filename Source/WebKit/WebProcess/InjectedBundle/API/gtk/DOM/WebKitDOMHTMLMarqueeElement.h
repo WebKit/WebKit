@@ -45,23 +45,27 @@ struct _WebKitDOMHTMLMarqueeElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_marquee_element_get_type(void);
 
 /**
  * webkit_dom_html_marquee_element_start:
  * @self: A #WebKitDOMHTMLMarqueeElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_marquee_element_start(WebKitDOMHTMLMarqueeElement* self);
 
 /**
  * webkit_dom_html_marquee_element_stop:
  * @self: A #WebKitDOMHTMLMarqueeElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_marquee_element_stop(WebKitDOMHTMLMarqueeElement* self);
 
 G_END_DECLS

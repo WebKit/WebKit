@@ -45,7 +45,7 @@ struct _WebKitDOMFileListClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_file_list_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_file_list_get_type(void);
  * @index: A #gulong
  *
  * Returns: (transfer full): A #WebKitDOMFile
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMFile*
+WEBKIT_DEPRECATED WebKitDOMFile*
 webkit_dom_file_list_item(WebKitDOMFileList* self, gulong index);
 
 /**
@@ -63,8 +65,10 @@ webkit_dom_file_list_item(WebKitDOMFileList* self, gulong index);
  * @self: A #WebKitDOMFileList
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_file_list_get_length(WebKitDOMFileList* self);
 
 G_END_DECLS

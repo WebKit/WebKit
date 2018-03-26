@@ -54,7 +54,7 @@ struct _WebKitDOMEventTargetIface {
 };
 
 
-WEBKIT_API GType     webkit_dom_event_target_get_type(void) G_GNUC_CONST;
+WEBKIT_DEPRECATED GType     webkit_dom_event_target_get_type(void) G_GNUC_CONST;
 
 /**
  * webkit_dom_event_target_dispatch_event:
@@ -63,8 +63,10 @@ WEBKIT_API GType     webkit_dom_event_target_get_type(void) G_GNUC_CONST;
  * @error: return location for an error or %NULL
  *
  * Returns: a #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean  webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget *target,
+WEBKIT_DEPRECATED gboolean  webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget *target,
                                                             WebKitDOMEvent       *event,
                                                             GError              **error);
 
@@ -77,8 +79,10 @@ WEBKIT_API gboolean  webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget
  * @user_data: A #gpointer
  *
  * Returns: a #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean  webkit_dom_event_target_add_event_listener(WebKitDOMEventTarget *target,
+WEBKIT_DEPRECATED gboolean  webkit_dom_event_target_add_event_listener(WebKitDOMEventTarget *target,
                                                                 const char           *event_name,
                                                                 GCallback             handler,
                                                                 gboolean              use_capture,
@@ -92,8 +96,10 @@ WEBKIT_API gboolean  webkit_dom_event_target_add_event_listener(WebKitDOMEventTa
  * @use_capture: A #gboolean
  *
  * Returns: a #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean  webkit_dom_event_target_remove_event_listener(WebKitDOMEventTarget *target,
+WEBKIT_DEPRECATED gboolean  webkit_dom_event_target_remove_event_listener(WebKitDOMEventTarget *target,
                                                                    const char           *event_name,
                                                                    GCallback             handler,
                                                                    gboolean              use_capture);
@@ -109,8 +115,10 @@ WEBKIT_API gboolean  webkit_dom_event_target_remove_event_listener(WebKitDOMEven
  * instead of a callbacks for easier binding in other languages.
  *
  * Returns: a #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean webkit_dom_event_target_add_event_listener_with_closure(WebKitDOMEventTarget *target,
+WEBKIT_DEPRECATED gboolean webkit_dom_event_target_add_event_listener_with_closure(WebKitDOMEventTarget *target,
                                                                             const char           *event_name,
                                                                             GClosure             *handler,
                                                                             gboolean              use_capture);
@@ -126,8 +134,10 @@ WEBKIT_API gboolean webkit_dom_event_target_add_event_listener_with_closure(WebK
  * instead of a callbacks for easier binding in other languages.
  *
  * Returns: a #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean webkit_dom_event_target_remove_event_listener_with_closure(WebKitDOMEventTarget *target,
+WEBKIT_DEPRECATED gboolean webkit_dom_event_target_remove_event_listener_with_closure(WebKitDOMEventTarget *target,
                                                                                const char           *event_name,
                                                                                GClosure             *handler,
                                                                                gboolean              use_capture);

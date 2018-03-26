@@ -29,6 +29,8 @@
 
 typedef WebKitDOMNodeFilterIface WebKitDOMNodeFilterInterface;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 G_DEFINE_INTERFACE(WebKitDOMNodeFilter, webkit_dom_node_filter, G_TYPE_OBJECT)
 
 static void webkit_dom_node_filter_default_init(WebKitDOMNodeFilterIface*)
@@ -82,3 +84,4 @@ RefPtr<WebCore::NodeFilter> core(WebCore::Document* document, WebKitDOMNodeFilte
 }
 
 } // namespace WebKit
+G_GNUC_END_IGNORE_DEPRECATIONS;

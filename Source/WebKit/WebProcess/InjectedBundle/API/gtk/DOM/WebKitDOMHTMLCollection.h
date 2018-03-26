@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLCollectionClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_collection_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_html_collection_get_type(void);
  * @index: A #gulong
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_html_collection_item(WebKitDOMHTMLCollection* self, gulong index);
 
 /**
@@ -64,8 +66,10 @@ webkit_dom_html_collection_item(WebKitDOMHTMLCollection* self, gulong index);
  * @name: A #gchar
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_html_collection_named_item(WebKitDOMHTMLCollection* self, const gchar* name);
 
 /**
@@ -73,8 +77,10 @@ webkit_dom_html_collection_named_item(WebKitDOMHTMLCollection* self, const gchar
  * @self: A #WebKitDOMHTMLCollection
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_html_collection_get_length(WebKitDOMHTMLCollection* self);
 
 G_END_DECLS

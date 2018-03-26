@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLParamElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_param_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_param_element_get_type(void);
  * @self: A #WebKitDOMHTMLParamElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_param_element_get_name(WebKitDOMHTMLParamElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_param_element_get_name(WebKitDOMHTMLParamElement* self);
  * @self: A #WebKitDOMHTMLParamElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_param_element_set_name(WebKitDOMHTMLParamElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_param_element_set_name(WebKitDOMHTMLParamElement* self, const gc
  * @self: A #WebKitDOMHTMLParamElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_param_element_get_type_attr(WebKitDOMHTMLParamElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_param_element_get_type_attr(WebKitDOMHTMLParamElement* self);
  * @self: A #WebKitDOMHTMLParamElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_param_element_set_type_attr(WebKitDOMHTMLParamElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_param_element_set_type_attr(WebKitDOMHTMLParamElement* self, con
  * @self: A #WebKitDOMHTMLParamElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_param_element_get_value(WebKitDOMHTMLParamElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_param_element_get_value(WebKitDOMHTMLParamElement* self);
  * @self: A #WebKitDOMHTMLParamElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_param_element_set_value(WebKitDOMHTMLParamElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_param_element_set_value(WebKitDOMHTMLParamElement* self, const g
  * @self: A #WebKitDOMHTMLParamElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_param_element_get_value_type(WebKitDOMHTMLParamElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_param_element_get_value_type(WebKitDOMHTMLParamElement* self);
  * @self: A #WebKitDOMHTMLParamElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_param_element_set_value_type(WebKitDOMHTMLParamElement* self, const gchar* value);
 
 G_END_DECLS

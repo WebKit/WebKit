@@ -45,7 +45,7 @@ struct _WebKitDOMDocumentFragmentClass {
     WebKitDOMNodeClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_document_fragment_get_type(void);
 
 /**
@@ -56,8 +56,10 @@ webkit_dom_document_fragment_get_type(void);
  * Returns: (transfer none): A #WebKitDOMElement
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMElement*
+WEBKIT_DEPRECATED WebKitDOMElement*
 webkit_dom_document_fragment_get_element_by_id(WebKitDOMDocumentFragment* self, const gchar* elementId);
 
 /**
@@ -69,8 +71,10 @@ webkit_dom_document_fragment_get_element_by_id(WebKitDOMDocumentFragment* self, 
  * Returns: (transfer none): A #WebKitDOMElement
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMElement*
+WEBKIT_DEPRECATED WebKitDOMElement*
 webkit_dom_document_fragment_query_selector(WebKitDOMDocumentFragment* self, const gchar* selectors, GError** error);
 
 /**
@@ -82,8 +86,10 @@ webkit_dom_document_fragment_query_selector(WebKitDOMDocumentFragment* self, con
  * Returns: (transfer full): A #WebKitDOMNodeList
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMNodeList*
+WEBKIT_DEPRECATED WebKitDOMNodeList*
 webkit_dom_document_fragment_query_selector_all(WebKitDOMDocumentFragment* self, const gchar* selectors, GError** error);
 
 /**
@@ -93,8 +99,10 @@ webkit_dom_document_fragment_query_selector_all(WebKitDOMDocumentFragment* self,
  * Returns: (transfer full): A #WebKitDOMHTMLCollection
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMHTMLCollection*
+WEBKIT_DEPRECATED WebKitDOMHTMLCollection*
 webkit_dom_document_fragment_get_children(WebKitDOMDocumentFragment* self);
 
 /**
@@ -104,8 +112,10 @@ webkit_dom_document_fragment_get_children(WebKitDOMDocumentFragment* self);
  * Returns: (transfer none): A #WebKitDOMElement
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMElement*
+WEBKIT_DEPRECATED WebKitDOMElement*
 webkit_dom_document_fragment_get_first_element_child(WebKitDOMDocumentFragment* self);
 
 /**
@@ -115,8 +125,10 @@ webkit_dom_document_fragment_get_first_element_child(WebKitDOMDocumentFragment* 
  * Returns: (transfer none): A #WebKitDOMElement
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMElement*
+WEBKIT_DEPRECATED WebKitDOMElement*
 webkit_dom_document_fragment_get_last_element_child(WebKitDOMDocumentFragment* self);
 
 /**
@@ -126,8 +138,10 @@ webkit_dom_document_fragment_get_last_element_child(WebKitDOMDocumentFragment* s
  * Returns: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_document_fragment_get_child_element_count(WebKitDOMDocumentFragment* self);
 
 G_END_DECLS

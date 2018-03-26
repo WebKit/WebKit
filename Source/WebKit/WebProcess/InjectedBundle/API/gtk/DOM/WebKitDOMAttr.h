@@ -45,7 +45,7 @@ struct _WebKitDOMAttrClass {
     WebKitDOMNodeClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_attr_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_attr_get_type(void);
  * @self: A #WebKitDOMAttr
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_attr_get_name(WebKitDOMAttr* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_attr_get_name(WebKitDOMAttr* self);
  * @self: A #WebKitDOMAttr
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_attr_get_specified(WebKitDOMAttr* self);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_attr_get_specified(WebKitDOMAttr* self);
  * @self: A #WebKitDOMAttr
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_attr_get_value(WebKitDOMAttr* self);
 
 /**
@@ -81,8 +87,10 @@ webkit_dom_attr_get_value(WebKitDOMAttr* self);
  * @value: A #gchar
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_attr_set_value(WebKitDOMAttr* self, const gchar* value, GError** error);
 
 /**
@@ -90,8 +98,10 @@ webkit_dom_attr_set_value(WebKitDOMAttr* self, const gchar* value, GError** erro
  * @self: A #WebKitDOMAttr
  *
  * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMElement*
+WEBKIT_DEPRECATED WebKitDOMElement*
 webkit_dom_attr_get_owner_element(WebKitDOMAttr* self);
 
 /**
@@ -101,8 +111,10 @@ webkit_dom_attr_get_owner_element(WebKitDOMAttr* self);
  * Returns: A #gchar
  *
  * Since: 2.14
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_attr_get_namespace_uri(WebKitDOMAttr* self);
 
 /**
@@ -112,8 +124,10 @@ webkit_dom_attr_get_namespace_uri(WebKitDOMAttr* self);
  * Returns: A #gchar
  *
  * Since: 2.14
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_attr_get_prefix(WebKitDOMAttr* self);
 
 /**
@@ -123,8 +137,10 @@ webkit_dom_attr_get_prefix(WebKitDOMAttr* self);
  * Returns: A #gchar
  *
  * Since: 2.14
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_attr_get_local_name(WebKitDOMAttr* self);
 
 G_END_DECLS

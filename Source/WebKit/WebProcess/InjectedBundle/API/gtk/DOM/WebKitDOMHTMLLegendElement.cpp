@@ -37,6 +37,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLLegendElement* kit(WebCore::HTMLLegendElement* obj)
@@ -192,3 +194,4 @@ void webkit_dom_html_legend_element_set_align(WebKitDOMHTMLLegendElement* self, 
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

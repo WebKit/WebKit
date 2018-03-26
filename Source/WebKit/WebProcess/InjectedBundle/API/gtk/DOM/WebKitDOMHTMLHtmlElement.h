@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLHtmlElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_html_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_html_element_get_type(void);
  * @self: A #WebKitDOMHTMLHtmlElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_html_element_get_version(WebKitDOMHTMLHtmlElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_html_element_get_version(WebKitDOMHTMLHtmlElement* self);
  * @self: A #WebKitDOMHTMLHtmlElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_html_element_set_version(WebKitDOMHTMLHtmlElement* self, const gchar* value);
 
 G_END_DECLS

@@ -22,6 +22,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 GObjectXPathNSResolver::~GObjectXPathNSResolver()
@@ -34,3 +36,4 @@ String GObjectXPathNSResolver::lookupNamespaceURI(const String& prefix)
 }
 
 } // namespace WebKit
+G_GNUC_END_IGNORE_DEPRECATIONS;

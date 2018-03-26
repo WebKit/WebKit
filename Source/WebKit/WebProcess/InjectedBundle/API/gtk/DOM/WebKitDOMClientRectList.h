@@ -45,7 +45,7 @@ struct _WebKitDOMClientRectListClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_client_rect_list_get_type(void);
 
 /**
@@ -57,8 +57,10 @@ webkit_dom_client_rect_list_get_type(void);
  * Returns: A #gulong
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_client_rect_list_get_length(WebKitDOMClientRectList* self);
 
 /**
@@ -71,8 +73,10 @@ webkit_dom_client_rect_list_get_length(WebKitDOMClientRectList* self);
  * Returns: (transfer full): A #WebKitDOMClientRect
  *
  * Since: 2.18
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMClientRect* webkit_dom_client_rect_list_item(WebKitDOMClientRectList* self, gulong index);
+WEBKIT_DEPRECATED WebKitDOMClientRect* webkit_dom_client_rect_list_item(WebKitDOMClientRectList* self, gulong index);
 
 G_END_DECLS
 

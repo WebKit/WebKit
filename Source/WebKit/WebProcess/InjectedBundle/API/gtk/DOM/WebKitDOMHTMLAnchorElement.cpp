@@ -37,6 +37,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLAnchorElement* kit(WebCore::HTMLAnchorElement* obj)
@@ -781,3 +783,4 @@ void webkit_dom_html_anchor_element_set_hash(WebKitDOMHTMLAnchorElement* self, c
     item->setHash(convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

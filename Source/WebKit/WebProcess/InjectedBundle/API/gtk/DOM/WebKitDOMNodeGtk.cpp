@@ -21,7 +21,6 @@
 #include "WebKitDOMNode.h"
 
 #include "ConvertToUTF8String.h"
-#include "DOMObjectCache.h"
 #include "GObjectEventListener.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
@@ -34,41 +33,12 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/JSNode.h>
 #include <WebCore/SVGTests.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-#define WEBKIT_DOM_NODE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_NODE, WebKitDOMNodePrivate)
-
-typedef struct _WebKitDOMNodePrivate {
-    RefPtr<WebCore::Node> coreObject;
-} WebKitDOMNodePrivate;
-
-namespace WebKit {
-
-WebKitDOMNode* kit(WebCore::Node* obj)
-{
-    if (!obj)
-        return 0;
-
-    if (gpointer ret = DOMObjectCache::get(obj))
-        return WEBKIT_DOM_NODE(ret);
-
-    return wrap(obj);
-}
-
-WebCore::Node* core(WebKitDOMNode* request)
-{
-    return request ? static_cast<WebCore::Node*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
-}
-
-WebKitDOMNode* wrapNode(WebCore::Node* coreObject)
-{
-    ASSERT(coreObject);
-    return WEBKIT_DOM_NODE(g_object_new(WEBKIT_DOM_TYPE_NODE, "core-object", coreObject, nullptr));
-}
-
-}
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 
 static gboolean webkit_dom_node_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
@@ -98,14 +68,12 @@ static gboolean webkit_dom_node_remove_event_listener(WebKitDOMEventTarget* targ
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_node_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+void webkitDOMNodeDOMEventTargetInit(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_node_dispatch_event;
     iface->add_event_listener = webkit_dom_node_add_event_listener;
     iface->remove_event_listener = webkit_dom_node_remove_event_listener;
 }
-
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMNode, webkit_dom_node, WEBKIT_DOM_TYPE_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_node_dom_event_target_init))
 
 enum {
     DOM_NODE_PROP_0,
@@ -123,16 +91,6 @@ enum {
     DOM_NODE_PROP_TEXT_CONTENT,
     DOM_NODE_PROP_PARENT_ELEMENT,
 };
-
-static void webkit_dom_node_finalize(GObject* object)
-{
-    WebKitDOMNodePrivate* priv = WEBKIT_DOM_NODE_GET_PRIVATE(object);
-
-    WebKit::DOMObjectCache::forget(priv->coreObject.get());
-
-    priv->~WebKitDOMNodePrivate();
-    G_OBJECT_CLASS(webkit_dom_node_parent_class)->finalize(object);
-}
 
 static void webkit_dom_node_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
@@ -201,23 +159,8 @@ static void webkit_dom_node_get_property(GObject* object, guint propertyId, GVal
     }
 }
 
-static GObject* webkit_dom_node_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
+void webkitDOMNodeInstallProperties(GObjectClass* gobjectClass)
 {
-    GObject* object = G_OBJECT_CLASS(webkit_dom_node_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
-
-    WebKitDOMNodePrivate* priv = WEBKIT_DOM_NODE_GET_PRIVATE(object);
-    priv->coreObject = static_cast<WebCore::Node*>(WEBKIT_DOM_OBJECT(object)->coreObject);
-    WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
-
-    return object;
-}
-
-static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
-{
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    g_type_class_add_private(gobjectClass, sizeof(WebKitDOMNodePrivate));
-    gobjectClass->constructor = webkit_dom_node_constructor;
-    gobjectClass->finalize = webkit_dom_node_finalize;
     gobjectClass->set_property = webkit_dom_node_set_property;
     gobjectClass->get_property = webkit_dom_node_get_property;
 
@@ -351,12 +294,6 @@ static void webkit_dom_node_class_init(WebKitDOMNodeClass* requestClass)
             WEBKIT_DOM_TYPE_ELEMENT,
             WEBKIT_PARAM_READABLE));
 
-}
-
-static void webkit_dom_node_init(WebKitDOMNode* request)
-{
-    WebKitDOMNodePrivate* priv = WEBKIT_DOM_NODE_GET_PRIVATE(request);
-    new (priv) WebKitDOMNodePrivate();
 }
 
 WebKitDOMNode* webkit_dom_node_insert_before(WebKitDOMNode* self, WebKitDOMNode* newChild, WebKitDOMNode* refChild, GError** error)
@@ -697,3 +634,4 @@ WebKitDOMElement* webkit_dom_node_get_parent_element(WebKitDOMNode* self)
     return WebKit::kit(gobjectResult.get());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

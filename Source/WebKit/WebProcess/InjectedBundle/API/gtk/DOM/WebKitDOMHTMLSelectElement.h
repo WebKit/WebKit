@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLSelectElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_select_element_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_html_select_element_get_type(void);
  * @index: A #gulong
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_html_select_element_item(WebKitDOMHTMLSelectElement* self, gulong index);
 
 /**
@@ -64,8 +66,10 @@ webkit_dom_html_select_element_item(WebKitDOMHTMLSelectElement* self, gulong ind
  * @name: A #gchar
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_html_select_element_named_item(WebKitDOMHTMLSelectElement* self, const gchar* name);
 
 /**
@@ -75,8 +79,10 @@ webkit_dom_html_select_element_named_item(WebKitDOMHTMLSelectElement* self, cons
  * @before: A #WebKitDOMHTMLElement
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_add(WebKitDOMHTMLSelectElement* self, WebKitDOMHTMLElement* element, WebKitDOMHTMLElement* before, GError** error);
 
 /**
@@ -84,8 +90,10 @@ webkit_dom_html_select_element_add(WebKitDOMHTMLSelectElement* self, WebKitDOMHT
  * @self: A #WebKitDOMHTMLSelectElement
  * @index: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_remove(WebKitDOMHTMLSelectElement* self, glong index);
 
 /**
@@ -93,8 +101,10 @@ webkit_dom_html_select_element_remove(WebKitDOMHTMLSelectElement* self, glong in
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_select_element_get_autofocus(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -102,8 +112,10 @@ webkit_dom_html_select_element_get_autofocus(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_autofocus(WebKitDOMHTMLSelectElement* self, gboolean value);
 
 /**
@@ -111,8 +123,10 @@ webkit_dom_html_select_element_set_autofocus(WebKitDOMHTMLSelectElement* self, g
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_select_element_get_disabled(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -120,8 +134,10 @@ webkit_dom_html_select_element_get_disabled(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_disabled(WebKitDOMHTMLSelectElement* self, gboolean value);
 
 /**
@@ -129,8 +145,10 @@ webkit_dom_html_select_element_set_disabled(WebKitDOMHTMLSelectElement* self, gb
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLFormElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLFormElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLFormElement*
 webkit_dom_html_select_element_get_form(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -138,8 +156,10 @@ webkit_dom_html_select_element_get_form(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_select_element_get_multiple(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -147,8 +167,10 @@ webkit_dom_html_select_element_get_multiple(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_multiple(WebKitDOMHTMLSelectElement* self, gboolean value);
 
 /**
@@ -156,8 +178,10 @@ webkit_dom_html_select_element_set_multiple(WebKitDOMHTMLSelectElement* self, gb
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_select_element_get_name(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -165,8 +189,10 @@ webkit_dom_html_select_element_get_name(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_name(WebKitDOMHTMLSelectElement* self, const gchar* value);
 
 /**
@@ -174,8 +200,10 @@ webkit_dom_html_select_element_set_name(WebKitDOMHTMLSelectElement* self, const 
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_select_element_get_size(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -183,8 +211,10 @@ webkit_dom_html_select_element_get_size(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_size(WebKitDOMHTMLSelectElement* self, glong value);
 
 /**
@@ -192,8 +222,10 @@ webkit_dom_html_select_element_set_size(WebKitDOMHTMLSelectElement* self, glong 
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_select_element_get_select_type(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -201,8 +233,10 @@ webkit_dom_html_select_element_get_select_type(WebKitDOMHTMLSelectElement* self)
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: (transfer full): A #WebKitDOMHTMLOptionsCollection
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLOptionsCollection*
+WEBKIT_DEPRECATED WebKitDOMHTMLOptionsCollection*
 webkit_dom_html_select_element_get_options(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -210,8 +244,10 @@ webkit_dom_html_select_element_get_options(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_html_select_element_get_length(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -220,8 +256,10 @@ webkit_dom_html_select_element_get_length(WebKitDOMHTMLSelectElement* self);
  * @value: A #gulong
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_length(WebKitDOMHTMLSelectElement* self, gulong value, GError** error);
 
 /**
@@ -229,8 +267,10 @@ webkit_dom_html_select_element_set_length(WebKitDOMHTMLSelectElement* self, gulo
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_select_element_get_selected_index(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -238,8 +278,10 @@ webkit_dom_html_select_element_get_selected_index(WebKitDOMHTMLSelectElement* se
  * @self: A #WebKitDOMHTMLSelectElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_selected_index(WebKitDOMHTMLSelectElement* self, glong value);
 
 /**
@@ -247,8 +289,10 @@ webkit_dom_html_select_element_set_selected_index(WebKitDOMHTMLSelectElement* se
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_select_element_get_value(WebKitDOMHTMLSelectElement* self);
 
 /**
@@ -256,8 +300,10 @@ webkit_dom_html_select_element_get_value(WebKitDOMHTMLSelectElement* self);
  * @self: A #WebKitDOMHTMLSelectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_select_element_set_value(WebKitDOMHTMLSelectElement* self, const gchar* value);
 
 /**
@@ -265,8 +311,10 @@ webkit_dom_html_select_element_set_value(WebKitDOMHTMLSelectElement* self, const
  * @self: A #WebKitDOMHTMLSelectElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_select_element_get_will_validate(WebKitDOMHTMLSelectElement* self);
 
 G_END_DECLS

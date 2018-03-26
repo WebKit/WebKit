@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLAnchorElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_anchor_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_anchor_element_get_type(void);
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_charset(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_anchor_element_get_charset(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_charset(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_anchor_element_set_charset(WebKitDOMHTMLAnchorElement* self, con
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_coords(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_anchor_element_get_coords(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_coords(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_anchor_element_set_coords(WebKitDOMHTMLAnchorElement* self, cons
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_hreflang(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_anchor_element_get_hreflang(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_hreflang(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_anchor_element_set_hreflang(WebKitDOMHTMLAnchorElement* self, co
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_name(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_anchor_element_get_name(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_name(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_anchor_element_set_name(WebKitDOMHTMLAnchorElement* self, const 
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_rel(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_anchor_element_get_rel(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_rel(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_anchor_element_set_rel(WebKitDOMHTMLAnchorElement* self, const g
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_rev(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_anchor_element_get_rev(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_rev(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -161,8 +185,10 @@ webkit_dom_html_anchor_element_set_rev(WebKitDOMHTMLAnchorElement* self, const g
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_shape(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -170,8 +196,10 @@ webkit_dom_html_anchor_element_get_shape(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_shape(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -179,8 +207,10 @@ webkit_dom_html_anchor_element_set_shape(WebKitDOMHTMLAnchorElement* self, const
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_target(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -188,8 +218,10 @@ webkit_dom_html_anchor_element_get_target(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_target(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -197,8 +229,10 @@ webkit_dom_html_anchor_element_set_target(WebKitDOMHTMLAnchorElement* self, cons
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_type_attr(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -206,8 +240,10 @@ webkit_dom_html_anchor_element_get_type_attr(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_type_attr(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -215,8 +251,10 @@ webkit_dom_html_anchor_element_set_type_attr(WebKitDOMHTMLAnchorElement* self, c
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_text(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -225,8 +263,10 @@ webkit_dom_html_anchor_element_get_text(WebKitDOMHTMLAnchorElement* self);
  * @value: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_text(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -234,8 +274,10 @@ webkit_dom_html_anchor_element_set_text(WebKitDOMHTMLAnchorElement* self, const 
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_href(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -243,8 +285,10 @@ webkit_dom_html_anchor_element_get_href(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_href(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -252,8 +296,10 @@ webkit_dom_html_anchor_element_set_href(WebKitDOMHTMLAnchorElement* self, const 
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_protocol(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -261,8 +307,10 @@ webkit_dom_html_anchor_element_get_protocol(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_protocol(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -270,8 +318,10 @@ webkit_dom_html_anchor_element_set_protocol(WebKitDOMHTMLAnchorElement* self, co
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_host(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -279,8 +329,10 @@ webkit_dom_html_anchor_element_get_host(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_host(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -288,8 +340,10 @@ webkit_dom_html_anchor_element_set_host(WebKitDOMHTMLAnchorElement* self, const 
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_hostname(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -297,8 +351,10 @@ webkit_dom_html_anchor_element_get_hostname(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_hostname(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -306,8 +362,10 @@ webkit_dom_html_anchor_element_set_hostname(WebKitDOMHTMLAnchorElement* self, co
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_port(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -315,8 +373,10 @@ webkit_dom_html_anchor_element_get_port(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_port(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -324,8 +384,10 @@ webkit_dom_html_anchor_element_set_port(WebKitDOMHTMLAnchorElement* self, const 
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_pathname(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -333,8 +395,10 @@ webkit_dom_html_anchor_element_get_pathname(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_pathname(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -342,8 +406,10 @@ webkit_dom_html_anchor_element_set_pathname(WebKitDOMHTMLAnchorElement* self, co
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_search(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -351,8 +417,10 @@ webkit_dom_html_anchor_element_get_search(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_search(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 /**
@@ -360,8 +428,10 @@ webkit_dom_html_anchor_element_set_search(WebKitDOMHTMLAnchorElement* self, cons
  * @self: A #WebKitDOMHTMLAnchorElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_anchor_element_get_hash(WebKitDOMHTMLAnchorElement* self);
 
 /**
@@ -369,8 +439,10 @@ webkit_dom_html_anchor_element_get_hash(WebKitDOMHTMLAnchorElement* self);
  * @self: A #WebKitDOMHTMLAnchorElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_anchor_element_set_hash(WebKitDOMHTMLAnchorElement* self, const gchar* value);
 
 G_END_DECLS

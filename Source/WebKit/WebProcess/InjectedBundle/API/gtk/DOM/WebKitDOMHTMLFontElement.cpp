@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLFontElement* kit(WebCore::HTMLFontElement* obj)
@@ -240,3 +242,4 @@ void webkit_dom_html_font_element_set_size(WebKitDOMHTMLFontElement* self, const
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::sizeAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

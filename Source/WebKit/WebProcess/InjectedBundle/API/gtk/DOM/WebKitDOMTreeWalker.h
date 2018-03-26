@@ -45,7 +45,7 @@ struct _WebKitDOMTreeWalkerClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_tree_walker_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_tree_walker_get_type(void);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_parent_node(WebKitDOMTreeWalker* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_tree_walker_parent_node(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_first_child(WebKitDOMTreeWalker* self);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_tree_walker_first_child(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_last_child(WebKitDOMTreeWalker* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_tree_walker_last_child(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_previous_sibling(WebKitDOMTreeWalker* self);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_tree_walker_previous_sibling(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_next_sibling(WebKitDOMTreeWalker* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_tree_walker_next_sibling(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_previous_node(WebKitDOMTreeWalker* self);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_tree_walker_previous_node(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_next_node(WebKitDOMTreeWalker* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_tree_walker_next_node(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_get_root(WebKitDOMTreeWalker* self);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_tree_walker_get_root(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_tree_walker_get_what_to_show(WebKitDOMTreeWalker* self);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_tree_walker_get_what_to_show(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer full): A #WebKitDOMNodeFilter
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNodeFilter*
+WEBKIT_DEPRECATED WebKitDOMNodeFilter*
 webkit_dom_tree_walker_get_filter(WebKitDOMTreeWalker* self);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_tree_walker_get_filter(WebKitDOMTreeWalker* self);
  * @self: A #WebKitDOMTreeWalker
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_tree_walker_get_current_node(WebKitDOMTreeWalker* self);
 
 /**
@@ -153,8 +175,10 @@ webkit_dom_tree_walker_get_current_node(WebKitDOMTreeWalker* self);
  * @value: A #WebKitDOMNode
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_tree_walker_set_current_node(WebKitDOMTreeWalker* self, WebKitDOMNode* value, GError** error);
 
 G_END_DECLS

@@ -36,7 +36,9 @@
 #include <wpe/WebKitURIResponse.h>
 #include <wpe/WebKitWebEditor.h>
 #include <wpe/WebKitWebExtension.h>
+#include <wpe/WebKitWebHitTestResult.h>
 #include <wpe/WebKitWebPage.h>
+#include <wpe/WebKitWebProcessEnumTypes.h>
 
 #undef __WEBKIT_WEB_EXTENSION_H_INSIDE__
 

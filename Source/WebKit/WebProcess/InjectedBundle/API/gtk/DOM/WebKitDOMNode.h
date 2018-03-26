@@ -25,6 +25,7 @@
 #define WebKitDOMNode_h
 
 #include <glib-object.h>
+#include <jsc/jsc.h>
 #include <webkitdom/WebKitDOMObject.h>
 #include <webkitdom/webkitdomdefines.h>
 
@@ -37,91 +38,6 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_NODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_NODE))
 #define WEBKIT_DOM_NODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_NODE, WebKitDOMNodeClass))
 
-/**
- * WEBKIT_DOM_NODE_ELEMENT_NODE:
- */
-#define WEBKIT_DOM_NODE_ELEMENT_NODE 1
-
-/**
- * WEBKIT_DOM_NODE_ATTRIBUTE_NODE:
- */
-#define WEBKIT_DOM_NODE_ATTRIBUTE_NODE 2
-
-/**
- * WEBKIT_DOM_NODE_TEXT_NODE:
- */
-#define WEBKIT_DOM_NODE_TEXT_NODE 3
-
-/**
- * WEBKIT_DOM_NODE_CDATA_SECTION_NODE:
- */
-#define WEBKIT_DOM_NODE_CDATA_SECTION_NODE 4
-
-/**
- * WEBKIT_DOM_NODE_ENTITY_REFERENCE_NODE:
- */
-#define WEBKIT_DOM_NODE_ENTITY_REFERENCE_NODE 5
-
-/**
- * WEBKIT_DOM_NODE_ENTITY_NODE:
- */
-#define WEBKIT_DOM_NODE_ENTITY_NODE 6
-
-/**
- * WEBKIT_DOM_NODE_PROCESSING_INSTRUCTION_NODE:
- */
-#define WEBKIT_DOM_NODE_PROCESSING_INSTRUCTION_NODE 7
-
-/**
- * WEBKIT_DOM_NODE_COMMENT_NODE:
- */
-#define WEBKIT_DOM_NODE_COMMENT_NODE 8
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_NODE:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_NODE 9
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_TYPE_NODE:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_TYPE_NODE 10
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_FRAGMENT_NODE:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_FRAGMENT_NODE 11
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_POSITION_DISCONNECTED:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_DISCONNECTED 0x01
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_POSITION_PRECEDING:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_PRECEDING 0x02
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_POSITION_FOLLOWING:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_FOLLOWING 0x04
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINS:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINS 0x08
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINED_BY:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINED_BY 0x10
-
-/**
- * WEBKIT_DOM_NODE_DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC:
- */
-#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC 0x20
-
 struct _WebKitDOMNode {
     WebKitDOMObject parent_instance;
 };
@@ -129,6 +45,129 @@ struct _WebKitDOMNode {
 struct _WebKitDOMNodeClass {
     WebKitDOMObjectClass parent_class;
 };
+
+#ifndef WEBKIT_DISABLE_DEPRECATED
+
+/**
+ * WEBKIT_DOM_NODE_ELEMENT_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_ELEMENT_NODE 1
+
+/**
+ * WEBKIT_DOM_NODE_ATTRIBUTE_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_ATTRIBUTE_NODE 2
+
+/**
+ * WEBKIT_DOM_NODE_TEXT_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_TEXT_NODE 3
+
+/**
+ * WEBKIT_DOM_NODE_CDATA_SECTION_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_CDATA_SECTION_NODE 4
+
+/**
+ * WEBKIT_DOM_NODE_ENTITY_REFERENCE_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_ENTITY_REFERENCE_NODE 5
+
+/**
+ * WEBKIT_DOM_NODE_ENTITY_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_ENTITY_NODE 6
+
+/**
+ * WEBKIT_DOM_NODE_PROCESSING_INSTRUCTION_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_PROCESSING_INSTRUCTION_NODE 7
+
+/**
+ * WEBKIT_DOM_NODE_COMMENT_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_COMMENT_NODE 8
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_NODE 9
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_TYPE_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_TYPE_NODE 10
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_FRAGMENT_NODE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_FRAGMENT_NODE 11
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_POSITION_DISCONNECTED:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_DISCONNECTED 0x01
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_POSITION_PRECEDING:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_PRECEDING 0x02
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_POSITION_FOLLOWING:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_FOLLOWING 0x04
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINS:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINS 0x08
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINED_BY:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_CONTAINED_BY 0x10
+
+/**
+ * WEBKIT_DOM_NODE_DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
+ */
+#define WEBKIT_DOM_NODE_DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC 0x20
+
+#endif /* WEBKIT_DISABLE_DEPRECATED */
 
 WEBKIT_API GType
 webkit_dom_node_get_type(void);
@@ -141,8 +180,10 @@ webkit_dom_node_get_type(void);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_insert_before(WebKitDOMNode* self, WebKitDOMNode* newChild, WebKitDOMNode* refChild, GError** error);
 
 /**
@@ -153,8 +194,10 @@ webkit_dom_node_insert_before(WebKitDOMNode* self, WebKitDOMNode* newChild, WebK
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_replace_child(WebKitDOMNode* self, WebKitDOMNode* newChild, WebKitDOMNode* oldChild, GError** error);
 
 /**
@@ -164,8 +207,10 @@ webkit_dom_node_replace_child(WebKitDOMNode* self, WebKitDOMNode* newChild, WebK
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_remove_child(WebKitDOMNode* self, WebKitDOMNode* oldChild, GError** error);
 
 /**
@@ -175,8 +220,10 @@ webkit_dom_node_remove_child(WebKitDOMNode* self, WebKitDOMNode* oldChild, GErro
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_append_child(WebKitDOMNode* self, WebKitDOMNode* newChild, GError** error);
 
 /**
@@ -184,8 +231,10 @@ webkit_dom_node_append_child(WebKitDOMNode* self, WebKitDOMNode* newChild, GErro
  * @self: A #WebKitDOMNode
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_node_has_child_nodes(WebKitDOMNode* self);
 
 /**
@@ -197,16 +246,20 @@ webkit_dom_node_has_child_nodes(WebKitDOMNode* self);
  * Returns: (transfer none): A #WebKitDOMNode
  *
  * Since: 2.14
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_clone_node_with_error(WebKitDOMNode* self, gboolean deep, GError** error);
 
 /**
  * webkit_dom_node_normalize:
  * @self: A #WebKitDOMNode
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_node_normalize(WebKitDOMNode* self);
 
 /**
@@ -216,8 +269,10 @@ webkit_dom_node_normalize(WebKitDOMNode* self);
  * @version: A #gchar
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_node_is_supported(WebKitDOMNode* self, const gchar* feature, const gchar* version);
 
 /**
@@ -226,8 +281,10 @@ webkit_dom_node_is_supported(WebKitDOMNode* self, const gchar* feature, const gc
  * @other: A #WebKitDOMNode
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_node_is_same_node(WebKitDOMNode* self, WebKitDOMNode* other);
 
 /**
@@ -236,8 +293,10 @@ webkit_dom_node_is_same_node(WebKitDOMNode* self, WebKitDOMNode* other);
  * @other: A #WebKitDOMNode
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_node_is_equal_node(WebKitDOMNode* self, WebKitDOMNode* other);
 
 /**
@@ -246,8 +305,10 @@ webkit_dom_node_is_equal_node(WebKitDOMNode* self, WebKitDOMNode* other);
  * @namespaceURI: A #gchar
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_node_lookup_prefix(WebKitDOMNode* self, const gchar* namespaceURI);
 
 /**
@@ -256,8 +317,10 @@ webkit_dom_node_lookup_prefix(WebKitDOMNode* self, const gchar* namespaceURI);
  * @prefix: A #gchar
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_node_lookup_namespace_uri(WebKitDOMNode* self, const gchar* prefix);
 
 /**
@@ -266,8 +329,10 @@ webkit_dom_node_lookup_namespace_uri(WebKitDOMNode* self, const gchar* prefix);
  * @namespaceURI: A #gchar
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_node_is_default_namespace(WebKitDOMNode* self, const gchar* namespaceURI);
 
 /**
@@ -276,8 +341,10 @@ webkit_dom_node_is_default_namespace(WebKitDOMNode* self, const gchar* namespace
  * @other: A #WebKitDOMNode
  *
  * Returns: A #gushort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gushort
+WEBKIT_DEPRECATED gushort
 webkit_dom_node_compare_document_position(WebKitDOMNode* self, WebKitDOMNode* other);
 
 /**
@@ -286,8 +353,10 @@ webkit_dom_node_compare_document_position(WebKitDOMNode* self, WebKitDOMNode* ot
  * @other: A #WebKitDOMNode
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_node_contains(WebKitDOMNode* self, WebKitDOMNode* other);
 
 /**
@@ -295,8 +364,10 @@ webkit_dom_node_contains(WebKitDOMNode* self, WebKitDOMNode* other);
  * @self: A #WebKitDOMNode
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_node_get_node_name(WebKitDOMNode* self);
 
 /**
@@ -304,8 +375,10 @@ webkit_dom_node_get_node_name(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_node_get_node_value(WebKitDOMNode* self);
 
 /**
@@ -314,8 +387,10 @@ webkit_dom_node_get_node_value(WebKitDOMNode* self);
  * @value: A #gchar
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_node_set_node_value(WebKitDOMNode* self, const gchar* value, GError** error);
 
 /**
@@ -323,8 +398,10 @@ webkit_dom_node_set_node_value(WebKitDOMNode* self, const gchar* value, GError**
  * @self: A #WebKitDOMNode
  *
  * Returns: A #gushort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gushort
+WEBKIT_DEPRECATED gushort
 webkit_dom_node_get_node_type(WebKitDOMNode* self);
 
 /**
@@ -332,8 +409,10 @@ webkit_dom_node_get_node_type(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_get_parent_node(WebKitDOMNode* self);
 
 /**
@@ -341,8 +420,10 @@ webkit_dom_node_get_parent_node(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer full): A #WebKitDOMNodeList
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNodeList*
+WEBKIT_DEPRECATED WebKitDOMNodeList*
 webkit_dom_node_get_child_nodes(WebKitDOMNode* self);
 
 /**
@@ -350,8 +431,10 @@ webkit_dom_node_get_child_nodes(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_get_first_child(WebKitDOMNode* self);
 
 /**
@@ -359,8 +442,10 @@ webkit_dom_node_get_first_child(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_get_last_child(WebKitDOMNode* self);
 
 /**
@@ -368,8 +453,10 @@ webkit_dom_node_get_last_child(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_get_previous_sibling(WebKitDOMNode* self);
 
 /**
@@ -377,8 +464,10 @@ webkit_dom_node_get_previous_sibling(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_get_next_sibling(WebKitDOMNode* self);
 
 /**
@@ -386,8 +475,10 @@ webkit_dom_node_get_next_sibling(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer none): A #WebKitDOMDocument
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDocument*
+WEBKIT_DEPRECATED WebKitDOMDocument*
 webkit_dom_node_get_owner_document(WebKitDOMNode* self);
 
 /**
@@ -395,8 +486,10 @@ webkit_dom_node_get_owner_document(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_node_get_base_uri(WebKitDOMNode* self);
 
 /**
@@ -404,8 +497,10 @@ webkit_dom_node_get_base_uri(WebKitDOMNode* self);
  * @self: A #WebKitDOMNode
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_node_get_text_content(WebKitDOMNode* self);
 
 /**
@@ -414,8 +509,10 @@ webkit_dom_node_get_text_content(WebKitDOMNode* self);
  * @value: A #gchar
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, GError** error);
 
 /**
@@ -423,9 +520,14 @@ webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, GError
  * @self: A #WebKitDOMNode
  *
  * Returns: (transfer none): A #WebKitDOMElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMElement*
+WEBKIT_DEPRECATED WebKitDOMElement*
 webkit_dom_node_get_parent_element(WebKitDOMNode* self);
+
+WEBKIT_API WebKitDOMNode *
+webkit_dom_node_for_js_value(JSCValue* value);
 
 G_END_DECLS
 

@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLMetaElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_meta_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_meta_element_get_type(void);
  * @self: A #WebKitDOMHTMLMetaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_meta_element_get_content(WebKitDOMHTMLMetaElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_meta_element_get_content(WebKitDOMHTMLMetaElement* self);
  * @self: A #WebKitDOMHTMLMetaElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_meta_element_set_content(WebKitDOMHTMLMetaElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_meta_element_set_content(WebKitDOMHTMLMetaElement* self, const g
  * @self: A #WebKitDOMHTMLMetaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_meta_element_get_http_equiv(WebKitDOMHTMLMetaElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_meta_element_get_http_equiv(WebKitDOMHTMLMetaElement* self);
  * @self: A #WebKitDOMHTMLMetaElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_meta_element_set_http_equiv(WebKitDOMHTMLMetaElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_meta_element_set_http_equiv(WebKitDOMHTMLMetaElement* self, cons
  * @self: A #WebKitDOMHTMLMetaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_meta_element_get_name(WebKitDOMHTMLMetaElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_meta_element_get_name(WebKitDOMHTMLMetaElement* self);
  * @self: A #WebKitDOMHTMLMetaElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_meta_element_set_name(WebKitDOMHTMLMetaElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_meta_element_set_name(WebKitDOMHTMLMetaElement* self, const gcha
  * @self: A #WebKitDOMHTMLMetaElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_meta_element_get_scheme(WebKitDOMHTMLMetaElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_meta_element_get_scheme(WebKitDOMHTMLMetaElement* self);
  * @self: A #WebKitDOMHTMLMetaElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_meta_element_set_scheme(WebKitDOMHTMLMetaElement* self, const gchar* value);
 
 G_END_DECLS

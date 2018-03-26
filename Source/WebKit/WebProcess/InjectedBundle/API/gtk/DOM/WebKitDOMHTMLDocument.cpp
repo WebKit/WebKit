@@ -35,6 +35,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLDocument* kit(WebCore::HTMLDocument* obj)
@@ -425,3 +427,4 @@ void webkit_dom_html_document_set_vlink_color(WebKitDOMHTMLDocument* self, const
     item->setVlinkColor(convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

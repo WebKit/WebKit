@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLFrameSetElement* kit(WebCore::HTMLFrameSetElement* obj)
@@ -204,3 +206,4 @@ void webkit_dom_html_frame_set_element_set_rows(WebKitDOMHTMLFrameSetElement* se
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::rowsAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

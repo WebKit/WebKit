@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLScriptElement* kit(WebCore::HTMLScriptElement* obj)
@@ -380,3 +382,4 @@ void webkit_dom_html_script_element_set_type_attr(WebKitDOMHTMLScriptElement* se
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

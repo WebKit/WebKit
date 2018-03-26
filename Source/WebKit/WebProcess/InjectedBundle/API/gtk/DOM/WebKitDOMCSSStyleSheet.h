@@ -45,7 +45,7 @@ struct _WebKitDOMCSSStyleSheetClass {
     WebKitDOMStyleSheetClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_css_style_sheet_get_type(void);
 
 /**
@@ -56,8 +56,10 @@ webkit_dom_css_style_sheet_get_type(void);
  * @error: #GError
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_css_style_sheet_insert_rule(WebKitDOMCSSStyleSheet* self, const gchar* rule, gulong index, GError** error);
 
 /**
@@ -66,8 +68,10 @@ webkit_dom_css_style_sheet_insert_rule(WebKitDOMCSSStyleSheet* self, const gchar
  * @index: A #gulong
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_css_style_sheet_delete_rule(WebKitDOMCSSStyleSheet* self, gulong index, GError** error);
 
 /**
@@ -79,8 +83,10 @@ webkit_dom_css_style_sheet_delete_rule(WebKitDOMCSSStyleSheet* self, gulong inde
  * @error: #GError
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_css_style_sheet_add_rule(WebKitDOMCSSStyleSheet* self, const gchar* selector, const gchar* style, gulong index, GError** error);
 
 /**
@@ -89,8 +95,10 @@ webkit_dom_css_style_sheet_add_rule(WebKitDOMCSSStyleSheet* self, const gchar* s
  * @index: A #gulong
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_css_style_sheet_remove_rule(WebKitDOMCSSStyleSheet* self, gulong index, GError** error);
 
 /**
@@ -98,8 +106,10 @@ webkit_dom_css_style_sheet_remove_rule(WebKitDOMCSSStyleSheet* self, gulong inde
  * @self: A #WebKitDOMCSSStyleSheet
  *
  * Returns: (transfer full): A #WebKitDOMCSSRule
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMCSSRule*
+WEBKIT_DEPRECATED WebKitDOMCSSRule*
 webkit_dom_css_style_sheet_get_owner_rule(WebKitDOMCSSStyleSheet* self);
 
 /**
@@ -107,8 +117,10 @@ webkit_dom_css_style_sheet_get_owner_rule(WebKitDOMCSSStyleSheet* self);
  * @self: A #WebKitDOMCSSStyleSheet
  *
  * Returns: (transfer full): A #WebKitDOMCSSRuleList
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMCSSRuleList*
+WEBKIT_DEPRECATED WebKitDOMCSSRuleList*
 webkit_dom_css_style_sheet_get_css_rules(WebKitDOMCSSStyleSheet* self);
 
 /**
@@ -116,8 +128,10 @@ webkit_dom_css_style_sheet_get_css_rules(WebKitDOMCSSStyleSheet* self);
  * @self: A #WebKitDOMCSSStyleSheet
  *
  * Returns: (transfer full): A #WebKitDOMCSSRuleList
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMCSSRuleList*
+WEBKIT_DEPRECATED WebKitDOMCSSRuleList*
 webkit_dom_css_style_sheet_get_rules(WebKitDOMCSSStyleSheet* self);
 
 G_END_DECLS

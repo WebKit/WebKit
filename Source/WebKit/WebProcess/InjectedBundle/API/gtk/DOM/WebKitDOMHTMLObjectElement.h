@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLObjectElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_object_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_object_element_get_type(void);
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLFormElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLFormElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLFormElement*
 webkit_dom_html_object_element_get_form(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_object_element_get_form(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_code(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_object_element_get_code(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_code(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_object_element_set_code(WebKitDOMHTMLObjectElement* self, const 
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_align(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_object_element_get_align(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_align(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_object_element_set_align(WebKitDOMHTMLObjectElement* self, const
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_archive(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_object_element_get_archive(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_archive(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_object_element_set_archive(WebKitDOMHTMLObjectElement* self, con
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_border(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_object_element_get_border(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_border(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_object_element_set_border(WebKitDOMHTMLObjectElement* self, cons
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_code_base(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_object_element_get_code_base(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_code_base(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_object_element_set_code_base(WebKitDOMHTMLObjectElement* self, c
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_code_type(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -161,8 +185,10 @@ webkit_dom_html_object_element_get_code_type(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_code_type(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -170,8 +196,10 @@ webkit_dom_html_object_element_set_code_type(WebKitDOMHTMLObjectElement* self, c
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_data(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -179,8 +207,10 @@ webkit_dom_html_object_element_get_data(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_data(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -188,8 +218,10 @@ webkit_dom_html_object_element_set_data(WebKitDOMHTMLObjectElement* self, const 
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_object_element_get_declare(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -197,8 +229,10 @@ webkit_dom_html_object_element_get_declare(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_declare(WebKitDOMHTMLObjectElement* self, gboolean value);
 
 /**
@@ -206,8 +240,10 @@ webkit_dom_html_object_element_set_declare(WebKitDOMHTMLObjectElement* self, gbo
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_height(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -215,8 +251,10 @@ webkit_dom_html_object_element_get_height(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_height(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -224,8 +262,10 @@ webkit_dom_html_object_element_set_height(WebKitDOMHTMLObjectElement* self, cons
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_object_element_get_hspace(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -233,8 +273,10 @@ webkit_dom_html_object_element_get_hspace(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_hspace(WebKitDOMHTMLObjectElement* self, glong value);
 
 /**
@@ -242,8 +284,10 @@ webkit_dom_html_object_element_set_hspace(WebKitDOMHTMLObjectElement* self, glon
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_name(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -251,8 +295,10 @@ webkit_dom_html_object_element_get_name(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_name(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -260,8 +306,10 @@ webkit_dom_html_object_element_set_name(WebKitDOMHTMLObjectElement* self, const 
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_standby(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -269,8 +317,10 @@ webkit_dom_html_object_element_get_standby(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_standby(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -278,8 +328,10 @@ webkit_dom_html_object_element_set_standby(WebKitDOMHTMLObjectElement* self, con
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_type_attr(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -287,8 +339,10 @@ webkit_dom_html_object_element_get_type_attr(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_type_attr(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -296,8 +350,10 @@ webkit_dom_html_object_element_set_type_attr(WebKitDOMHTMLObjectElement* self, c
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_use_map(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -305,8 +361,10 @@ webkit_dom_html_object_element_get_use_map(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_use_map(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -314,8 +372,10 @@ webkit_dom_html_object_element_set_use_map(WebKitDOMHTMLObjectElement* self, con
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_object_element_get_vspace(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -323,8 +383,10 @@ webkit_dom_html_object_element_get_vspace(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_vspace(WebKitDOMHTMLObjectElement* self, glong value);
 
 /**
@@ -332,8 +394,10 @@ webkit_dom_html_object_element_set_vspace(WebKitDOMHTMLObjectElement* self, glon
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_object_element_get_width(WebKitDOMHTMLObjectElement* self);
 
 /**
@@ -341,8 +405,10 @@ webkit_dom_html_object_element_get_width(WebKitDOMHTMLObjectElement* self);
  * @self: A #WebKitDOMHTMLObjectElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_object_element_set_width(WebKitDOMHTMLObjectElement* self, const gchar* value);
 
 /**
@@ -350,8 +416,10 @@ webkit_dom_html_object_element_set_width(WebKitDOMHTMLObjectElement* self, const
  * @self: A #WebKitDOMHTMLObjectElement
  *
  * Returns: (transfer none): A #WebKitDOMDocument
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDocument*
+WEBKIT_DEPRECATED WebKitDOMDocument*
 webkit_dom_html_object_element_get_content_document(WebKitDOMHTMLObjectElement* self);
 
 G_END_DECLS

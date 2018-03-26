@@ -45,7 +45,7 @@ struct _WebKitDOMMouseEventClass {
     WebKitDOMUIEventClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_mouse_event_get_type(void);
 
 /**
@@ -67,8 +67,10 @@ webkit_dom_mouse_event_get_type(void);
  * @button: A #gushort
  * @relatedTarget: A #WebKitDOMEventTarget
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_mouse_event_init_mouse_event(WebKitDOMMouseEvent* self, const gchar* type, gboolean canBubble, gboolean cancelable, WebKitDOMDOMWindow* view, glong detail, glong screenX, glong screenY, glong clientX, glong clientY, gboolean ctrlKey, gboolean altKey, gboolean shiftKey, gboolean metaKey, gushort button, WebKitDOMEventTarget* relatedTarget);
 
 /**
@@ -76,8 +78,10 @@ webkit_dom_mouse_event_init_mouse_event(WebKitDOMMouseEvent* self, const gchar* 
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_screen_x(WebKitDOMMouseEvent* self);
 
 /**
@@ -85,8 +89,10 @@ webkit_dom_mouse_event_get_screen_x(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_screen_y(WebKitDOMMouseEvent* self);
 
 /**
@@ -94,8 +100,10 @@ webkit_dom_mouse_event_get_screen_y(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_client_x(WebKitDOMMouseEvent* self);
 
 /**
@@ -103,8 +111,10 @@ webkit_dom_mouse_event_get_client_x(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_client_y(WebKitDOMMouseEvent* self);
 
 /**
@@ -112,8 +122,10 @@ webkit_dom_mouse_event_get_client_y(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_mouse_event_get_ctrl_key(WebKitDOMMouseEvent* self);
 
 /**
@@ -121,8 +133,10 @@ webkit_dom_mouse_event_get_ctrl_key(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_mouse_event_get_shift_key(WebKitDOMMouseEvent* self);
 
 /**
@@ -130,8 +144,10 @@ webkit_dom_mouse_event_get_shift_key(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_mouse_event_get_alt_key(WebKitDOMMouseEvent* self);
 
 /**
@@ -139,8 +155,10 @@ webkit_dom_mouse_event_get_alt_key(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_mouse_event_get_meta_key(WebKitDOMMouseEvent* self);
 
 /**
@@ -148,8 +166,10 @@ webkit_dom_mouse_event_get_meta_key(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #gushort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gushort
+WEBKIT_DEPRECATED gushort
 webkit_dom_mouse_event_get_button(WebKitDOMMouseEvent* self);
 
 /**
@@ -157,8 +177,10 @@ webkit_dom_mouse_event_get_button(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: (transfer full): A #WebKitDOMEventTarget
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMEventTarget*
+WEBKIT_DEPRECATED WebKitDOMEventTarget*
 webkit_dom_mouse_event_get_related_target(WebKitDOMMouseEvent* self);
 
 /**
@@ -166,8 +188,10 @@ webkit_dom_mouse_event_get_related_target(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_offset_x(WebKitDOMMouseEvent* self);
 
 /**
@@ -175,8 +199,10 @@ webkit_dom_mouse_event_get_offset_x(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_offset_y(WebKitDOMMouseEvent* self);
 
 /**
@@ -184,8 +210,10 @@ webkit_dom_mouse_event_get_offset_y(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_x(WebKitDOMMouseEvent* self);
 
 /**
@@ -193,8 +221,10 @@ webkit_dom_mouse_event_get_x(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_mouse_event_get_y(WebKitDOMMouseEvent* self);
 
 /**
@@ -202,8 +232,10 @@ webkit_dom_mouse_event_get_y(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_mouse_event_get_from_element(WebKitDOMMouseEvent* self);
 
 /**
@@ -211,8 +243,10 @@ webkit_dom_mouse_event_get_from_element(WebKitDOMMouseEvent* self);
  * @self: A #WebKitDOMMouseEvent
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_mouse_event_get_to_element(WebKitDOMMouseEvent* self);
 
 G_END_DECLS

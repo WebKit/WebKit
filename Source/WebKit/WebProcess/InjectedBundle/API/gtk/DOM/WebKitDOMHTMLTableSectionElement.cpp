@@ -38,6 +38,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLTableSectionElement* kit(WebCore::HTMLTableSectionElement* obj)
@@ -328,3 +330,4 @@ WebKitDOMHTMLCollection* webkit_dom_html_table_section_element_get_rows(WebKitDO
     return WebKit::kit(gobjectResult.get());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

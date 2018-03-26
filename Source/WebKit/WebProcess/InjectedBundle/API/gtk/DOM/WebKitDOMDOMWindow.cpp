@@ -48,6 +48,8 @@ typedef struct _WebKitDOMDOMWindowPrivate {
     RefPtr<WebCore::DOMWindow> coreObject;
 } WebKitDOMDOMWindowPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMDOMWindow* kit(WebCore::DOMWindow* obj)
@@ -1057,3 +1059,4 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
 
     return TRUE;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

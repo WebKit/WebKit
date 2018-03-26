@@ -21,7 +21,6 @@
 #include "WebKitDOMElement.h"
 
 #include <WebCore/CSSImportRule.h>
-#include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
 #include <WebCore/DOMRect.h>
 #include <WebCore/Document.h>
@@ -47,25 +46,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebKit {
-
-WebKitDOMElement* kit(WebCore::Element* obj)
-{
-    return WEBKIT_DOM_ELEMENT(kit(static_cast<WebCore::Node*>(obj)));
-}
-
-WebCore::Element* core(WebKitDOMElement* request)
-{
-    return request ? static_cast<WebCore::Element*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
-}
-
-WebKitDOMElement* wrapElement(WebCore::Element* coreObject)
-{
-    ASSERT(coreObject);
-    return WEBKIT_DOM_ELEMENT(g_object_new(WEBKIT_DOM_TYPE_ELEMENT, "core-object", coreObject, nullptr));
-}
-
-} // namespace WebKit
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 
 static gboolean webkit_dom_element_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
@@ -95,14 +76,12 @@ static gboolean webkit_dom_element_remove_event_listener(WebKitDOMEventTarget* t
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_element_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+void webkitDOMElementDOMEventTargetInit(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_element_dispatch_event;
     iface->add_event_listener = webkit_dom_element_add_event_listener;
     iface->remove_event_listener = webkit_dom_element_remove_event_listener;
 }
-
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMElement, webkit_dom_element, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_element_dom_event_target_init))
 
 enum {
     DOM_ELEMENT_PROP_0,
@@ -273,9 +252,8 @@ static void webkit_dom_element_get_property(GObject* object, guint propertyId, G
     }
 }
 
-static void webkit_dom_element_class_init(WebKitDOMElementClass* requestClass)
+void webkitDOMElementInstallProperties(GObjectClass* gobjectClass)
 {
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->set_property = webkit_dom_element_set_property;
     gobjectClass->get_property = webkit_dom_element_get_property;
 
@@ -596,11 +574,6 @@ static void webkit_dom_element_class_init(WebKitDOMElementClass* requestClass)
             0, G_MAXULONG, 0,
             WEBKIT_PARAM_READABLE));
 
-}
-
-static void webkit_dom_element_init(WebKitDOMElement* request)
-{
-    UNUSED_PARAM(request);
 }
 
 gchar* webkit_dom_element_get_attribute(WebKitDOMElement* self, const gchar* name)
@@ -1388,3 +1361,4 @@ gulong webkit_dom_element_get_child_element_count(WebKitDOMElement* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

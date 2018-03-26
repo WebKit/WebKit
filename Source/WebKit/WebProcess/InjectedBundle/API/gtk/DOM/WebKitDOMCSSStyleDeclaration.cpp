@@ -38,6 +38,8 @@ typedef struct _WebKitDOMCSSStyleDeclarationPrivate {
     RefPtr<WebCore::CSSStyleDeclaration> coreObject;
 } WebKitDOMCSSStyleDeclarationPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMCSSStyleDeclaration* kit(WebCore::CSSStyleDeclaration* obj)
@@ -303,3 +305,4 @@ WebKitDOMCSSRule* webkit_dom_css_style_declaration_get_parent_rule(WebKitDOMCSSS
     return WebKit::kit(gobjectResult.get());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

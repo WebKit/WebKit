@@ -45,7 +45,7 @@ struct _WebKitDOMUIEventClass {
     WebKitDOMEventClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_ui_event_get_type(void);
 
 /**
@@ -57,8 +57,10 @@ webkit_dom_ui_event_get_type(void);
  * @view: A #WebKitDOMDOMWindow
  * @detail: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_ui_event_init_ui_event(WebKitDOMUIEvent* self, const gchar* type, gboolean canBubble, gboolean cancelable, WebKitDOMDOMWindow* view, glong detail);
 
 /**
@@ -66,8 +68,10 @@ webkit_dom_ui_event_init_ui_event(WebKitDOMUIEvent* self, const gchar* type, gbo
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: (transfer full): A #WebKitDOMDOMWindow
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMDOMWindow*
+WEBKIT_DEPRECATED WebKitDOMDOMWindow*
 webkit_dom_ui_event_get_view(WebKitDOMUIEvent* self);
 
 /**
@@ -75,8 +79,10 @@ webkit_dom_ui_event_get_view(WebKitDOMUIEvent* self);
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_ui_event_get_detail(WebKitDOMUIEvent* self);
 
 /**
@@ -84,8 +90,10 @@ webkit_dom_ui_event_get_detail(WebKitDOMUIEvent* self);
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_ui_event_get_key_code(WebKitDOMUIEvent* self);
 
 /**
@@ -93,8 +101,10 @@ webkit_dom_ui_event_get_key_code(WebKitDOMUIEvent* self);
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_ui_event_get_char_code(WebKitDOMUIEvent* self);
 
 /**
@@ -102,8 +112,10 @@ webkit_dom_ui_event_get_char_code(WebKitDOMUIEvent* self);
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_ui_event_get_layer_x(WebKitDOMUIEvent* self);
 
 /**
@@ -111,8 +123,10 @@ webkit_dom_ui_event_get_layer_x(WebKitDOMUIEvent* self);
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_ui_event_get_layer_y(WebKitDOMUIEvent* self);
 
 /**
@@ -120,8 +134,10 @@ webkit_dom_ui_event_get_layer_y(WebKitDOMUIEvent* self);
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_ui_event_get_page_x(WebKitDOMUIEvent* self);
 
 /**
@@ -129,8 +145,10 @@ webkit_dom_ui_event_get_page_x(WebKitDOMUIEvent* self);
  * @self: A #WebKitDOMUIEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_ui_event_get_page_y(WebKitDOMUIEvent* self);
 
 G_END_DECLS

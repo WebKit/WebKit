@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMAttr* kit(WebCore::Attr* obj)
@@ -307,3 +309,4 @@ gchar* webkit_dom_attr_get_local_name(WebKitDOMAttr* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

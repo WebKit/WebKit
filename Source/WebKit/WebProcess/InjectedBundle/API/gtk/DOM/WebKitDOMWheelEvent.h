@@ -45,7 +45,7 @@ struct _WebKitDOMWheelEventClass {
     WebKitDOMMouseEventClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_wheel_event_get_type(void);
 
 /**
@@ -63,8 +63,10 @@ webkit_dom_wheel_event_get_type(void);
  * @shiftKey: A #gboolean
  * @metaKey: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_wheel_event_init_wheel_event(WebKitDOMWheelEvent* self, glong wheelDeltaX, glong wheelDeltaY, WebKitDOMDOMWindow* view, glong screenX, glong screenY, glong clientX, glong clientY, gboolean ctrlKey, gboolean altKey, gboolean shiftKey, gboolean metaKey);
 
 /**
@@ -72,8 +74,10 @@ webkit_dom_wheel_event_init_wheel_event(WebKitDOMWheelEvent* self, glong wheelDe
  * @self: A #WebKitDOMWheelEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_wheel_event_get_wheel_delta_x(WebKitDOMWheelEvent* self);
 
 /**
@@ -81,8 +85,10 @@ webkit_dom_wheel_event_get_wheel_delta_x(WebKitDOMWheelEvent* self);
  * @self: A #WebKitDOMWheelEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_wheel_event_get_wheel_delta_y(WebKitDOMWheelEvent* self);
 
 /**
@@ -90,8 +96,10 @@ webkit_dom_wheel_event_get_wheel_delta_y(WebKitDOMWheelEvent* self);
  * @self: A #WebKitDOMWheelEvent
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_wheel_event_get_wheel_delta(WebKitDOMWheelEvent* self);
 
 G_END_DECLS

@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLBaseElement* kit(WebCore::HTMLBaseElement* obj)
@@ -204,3 +206,4 @@ void webkit_dom_html_base_element_set_target(WebKitDOMHTMLBaseElement* self, con
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

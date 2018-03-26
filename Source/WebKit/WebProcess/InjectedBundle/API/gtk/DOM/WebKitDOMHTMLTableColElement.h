@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLTableColElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_table_col_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_table_col_element_get_type(void);
  * @self: A #WebKitDOMHTMLTableColElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_col_element_get_align(WebKitDOMHTMLTableColElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_table_col_element_get_align(WebKitDOMHTMLTableColElement* self);
  * @self: A #WebKitDOMHTMLTableColElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_col_element_set_align(WebKitDOMHTMLTableColElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_table_col_element_set_align(WebKitDOMHTMLTableColElement* self, 
  * @self: A #WebKitDOMHTMLTableColElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_col_element_get_ch(WebKitDOMHTMLTableColElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_table_col_element_get_ch(WebKitDOMHTMLTableColElement* self);
  * @self: A #WebKitDOMHTMLTableColElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_col_element_set_ch(WebKitDOMHTMLTableColElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_table_col_element_set_ch(WebKitDOMHTMLTableColElement* self, con
  * @self: A #WebKitDOMHTMLTableColElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_col_element_get_ch_off(WebKitDOMHTMLTableColElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_table_col_element_get_ch_off(WebKitDOMHTMLTableColElement* self)
  * @self: A #WebKitDOMHTMLTableColElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_col_element_set_ch_off(WebKitDOMHTMLTableColElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_table_col_element_set_ch_off(WebKitDOMHTMLTableColElement* self,
  * @self: A #WebKitDOMHTMLTableColElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_table_col_element_get_span(WebKitDOMHTMLTableColElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_table_col_element_get_span(WebKitDOMHTMLTableColElement* self);
  * @self: A #WebKitDOMHTMLTableColElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_col_element_set_span(WebKitDOMHTMLTableColElement* self, glong value);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_table_col_element_set_span(WebKitDOMHTMLTableColElement* self, g
  * @self: A #WebKitDOMHTMLTableColElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_col_element_get_v_align(WebKitDOMHTMLTableColElement* self);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_table_col_element_get_v_align(WebKitDOMHTMLTableColElement* self
  * @self: A #WebKitDOMHTMLTableColElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_col_element_set_v_align(WebKitDOMHTMLTableColElement* self, const gchar* value);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_table_col_element_set_v_align(WebKitDOMHTMLTableColElement* self
  * @self: A #WebKitDOMHTMLTableColElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_col_element_get_width(WebKitDOMHTMLTableColElement* self);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_table_col_element_get_width(WebKitDOMHTMLTableColElement* self);
  * @self: A #WebKitDOMHTMLTableColElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_col_element_set_width(WebKitDOMHTMLTableColElement* self, const gchar* value);
 
 G_END_DECLS

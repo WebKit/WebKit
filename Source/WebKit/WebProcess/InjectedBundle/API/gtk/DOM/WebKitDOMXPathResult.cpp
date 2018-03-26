@@ -38,6 +38,8 @@ typedef struct _WebKitDOMXPathResultPrivate {
     RefPtr<WebCore::XPathResult> coreObject;
 } WebKitDOMXPathResultPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMXPathResult* kit(WebCore::XPathResult* obj)
@@ -335,3 +337,4 @@ gulong webkit_dom_xpath_result_get_snapshot_length(WebKitDOMXPathResult* self, G
     return result.releaseReturnValue();
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

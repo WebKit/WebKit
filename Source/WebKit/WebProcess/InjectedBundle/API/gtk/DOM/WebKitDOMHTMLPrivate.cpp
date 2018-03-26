@@ -139,6 +139,8 @@
 #include "WebKitDOMHTMLTitleElementPrivate.h"
 #include "WebKitDOMHTMLUListElementPrivate.h"
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -241,3 +243,4 @@ WebKitDOMHTMLElement* wrap(HTMLElement* element)
 }
 
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

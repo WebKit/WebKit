@@ -39,6 +39,8 @@ typedef struct _WebKitDOMXPathExpressionPrivate {
     RefPtr<WebCore::XPathExpression> coreObject;
 } WebKitDOMXPathExpressionPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMXPathExpression* kit(WebCore::XPathExpression* obj)
@@ -121,3 +123,4 @@ WebKitDOMXPathResult* webkit_dom_xpath_expression_evaluate(WebKitDOMXPathExpress
     return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

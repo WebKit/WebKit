@@ -45,7 +45,7 @@ struct _WebKitDOMNodeListClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_node_list_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_node_list_get_type(void);
  * @index: A #gulong
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_node_list_item(WebKitDOMNodeList* self, gulong index);
 
 /**
@@ -63,8 +65,10 @@ webkit_dom_node_list_item(WebKitDOMNodeList* self, gulong index);
  * @self: A #WebKitDOMNodeList
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_node_list_get_length(WebKitDOMNodeList* self);
 
 G_END_DECLS

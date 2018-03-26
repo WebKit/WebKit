@@ -21,13 +21,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WebKitDOMPrivate_h
-#define WebKitDOMPrivate_h
+#pragma once
 
-#include <webkitdom/webkitdomdefines.h>
+#include "webkitdomdefines.h"
 
-#define WEBKIT_PARAM_READABLE ((GParamFlags)(G_PARAM_READABLE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB))
-#define WEBKIT_PARAM_READWRITE ((GParamFlags)(G_PARAM_READWRITE | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB))
 #define WEBKIT_WARN_FEATURE_NOT_PRESENT(Feature) g_warning("WebKitGTK+ was not compiled with support for " Feature);
 
 namespace WebCore {
@@ -40,12 +37,10 @@ class Blob;
 } // namespace WebCore
 
 namespace WebKit {
-WebKitDOMNode* wrap(WebCore::Node*);
+WebKitDOMNode* wrapNodeGtk(WebCore::Node*);
 WebKitDOMEvent* wrap(WebCore::Event*);
 WebKitDOMStyleSheet* wrap(WebCore::StyleSheet*);
 WebKitDOMHTMLCollection* wrap(WebCore::HTMLCollection*);
 WebKitDOMEventTarget* wrap(WebCore::EventTarget*);
 WebKitDOMBlob* wrap(WebCore::Blob*);
 } // namespace WebKit
-
-#endif // WebKitDOMPrivate_h

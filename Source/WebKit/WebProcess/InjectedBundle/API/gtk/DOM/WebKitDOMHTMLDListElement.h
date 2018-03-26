@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLDListElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_d_list_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_d_list_element_get_type(void);
  * @self: A #WebKitDOMHTMLDListElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_d_list_element_get_compact(WebKitDOMHTMLDListElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_d_list_element_get_compact(WebKitDOMHTMLDListElement* self);
  * @self: A #WebKitDOMHTMLDListElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_d_list_element_set_compact(WebKitDOMHTMLDListElement* self, gboolean value);
 
 G_END_DECLS

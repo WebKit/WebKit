@@ -34,6 +34,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMUIEvent* kit(WebCore::UIEvent* obj)
@@ -277,3 +279,4 @@ glong webkit_dom_ui_event_get_page_y(WebKitDOMUIEvent* self)
     glong result = item->pageY();
     return result;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

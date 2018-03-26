@@ -38,6 +38,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLFieldSetElement* kit(WebCore::HTMLFieldSetElement* obj)
@@ -143,3 +145,4 @@ WebKitDOMHTMLFormElement* webkit_dom_html_field_set_element_get_form(WebKitDOMHT
     RefPtr<WebCore::HTMLFormElement> gobjectResult = WTF::getPtr(item->form());
     return WebKit::kit(gobjectResult.get());
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

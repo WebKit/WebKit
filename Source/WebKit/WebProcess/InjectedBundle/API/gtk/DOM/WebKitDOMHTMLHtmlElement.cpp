@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLHtmlElement* kit(WebCore::HTMLHtmlElement* obj)
@@ -166,3 +168,4 @@ void webkit_dom_html_html_element_set_version(WebKitDOMHTMLHtmlElement* self, co
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::versionAttr, convertedValue);
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -38,6 +38,8 @@ typedef struct _WebKitDOMStyleSheetListPrivate {
     RefPtr<WebCore::StyleSheetList> coreObject;
 } WebKitDOMStyleSheetListPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMStyleSheetList* kit(WebCore::StyleSheetList* obj)
@@ -150,3 +152,4 @@ gulong webkit_dom_style_sheet_list_get_length(WebKitDOMStyleSheetList* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

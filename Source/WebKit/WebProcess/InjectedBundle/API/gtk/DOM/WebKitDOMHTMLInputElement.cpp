@@ -40,6 +40,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLInputElement* kit(WebCore::HTMLInputElement* obj)
@@ -1007,3 +1009,4 @@ void webkit_dom_html_input_element_set_editing_value(WebKitDOMHTMLInputElement* 
 
   WebKit::core(self)->setEditingValue(WTF::String::fromUTF8(value));
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

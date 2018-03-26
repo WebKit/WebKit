@@ -1,5 +1,5 @@
 /*
- *  This file is part of the WebKit open source project.
+ *  Copyright (C) 2018 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -17,11 +17,10 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitDOMDocumentPrivate_h
-#define WebKitDOMDocumentPrivate_h
+#pragma once
 
+#include "WebKitDOMDocument.h"
 #include <WebCore/Document.h>
-#include <webkitdom/WebKitDOMDocument.h>
 
 namespace WebKit {
 WebKitDOMDocument* wrapDocument(WebCore::Document*);
@@ -29,4 +28,7 @@ WebKitDOMDocument* kit(WebCore::Document*);
 WebCore::Document* core(WebKitDOMDocument*);
 } // namespace WebKit
 
-#endif /* WebKitDOMDocumentPrivate_h */
+#if PLATFORM(GTK)
+void webkitDOMDocumentDOMEventTargetInit(WebKitDOMEventTargetIface*);
+void webkitDOMDocumentInstallProperties(GObjectClass*);
+#endif

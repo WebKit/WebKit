@@ -34,6 +34,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLOptionsCollection* kit(WebCore::HTMLOptionsCollection* obj)
@@ -163,3 +165,4 @@ gulong webkit_dom_html_options_collection_get_length(WebKitDOMHTMLOptionsCollect
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -34,6 +34,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMCSSStyleSheet* kit(WebCore::CSSStyleSheet* obj)
@@ -214,3 +216,4 @@ WebKitDOMCSSRuleList* webkit_dom_css_style_sheet_get_rules(WebKitDOMCSSStyleShee
     return WebKit::kit(gobjectResult.get());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

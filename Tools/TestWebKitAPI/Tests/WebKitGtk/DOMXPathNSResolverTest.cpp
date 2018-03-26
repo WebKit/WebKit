@@ -24,6 +24,8 @@
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/glib/GUniquePtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 typedef struct _WebKitXPathNSResolver {
     GObject parent;
 } WebKitXPathNSResolver;
@@ -122,3 +124,5 @@ static void __attribute__((constructor)) registerTests()
     REGISTER_TEST(WebKitDOMXPathNSResolverTest, "WebKitDOMXPathNSResolver/native");
     REGISTER_TEST(WebKitDOMXPathNSResolverTest, "WebKitDOMXPathNSResolver/custom");
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS;

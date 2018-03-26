@@ -45,7 +45,7 @@ struct _WebKitDOMDOMSelectionClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_dom_selection_get_type(void);
 
 /**
@@ -55,8 +55,10 @@ webkit_dom_dom_selection_get_type(void);
  * @offset: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_collapse(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gulong offset);
 
 /**
@@ -65,8 +67,10 @@ webkit_dom_dom_selection_collapse(WebKitDOMDOMSelection* self, WebKitDOMNode* no
  * @error: #GError
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_collapse_to_end(WebKitDOMDOMSelection* self, GError** error);
 
 /**
@@ -75,8 +79,10 @@ webkit_dom_dom_selection_collapse_to_end(WebKitDOMDOMSelection* self, GError** e
  * @error: #GError
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_collapse_to_start(WebKitDOMDOMSelection* self, GError** error);
 
 /**
@@ -84,8 +90,10 @@ webkit_dom_dom_selection_collapse_to_start(WebKitDOMDOMSelection* self, GError**
  * @self: A #WebKitDOMDOMSelection
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_delete_from_document(WebKitDOMDOMSelection* self);
 
 /**
@@ -97,8 +105,10 @@ webkit_dom_dom_selection_delete_from_document(WebKitDOMDOMSelection* self);
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_dom_selection_contains_node(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gboolean allowPartial);
 
 /**
@@ -107,8 +117,10 @@ webkit_dom_dom_selection_contains_node(WebKitDOMDOMSelection* self, WebKitDOMNod
  * @node: A #WebKitDOMNode
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_select_all_children(WebKitDOMDOMSelection* self, WebKitDOMNode* node);
 
 /**
@@ -119,8 +131,10 @@ webkit_dom_dom_selection_select_all_children(WebKitDOMDOMSelection* self, WebKit
  * @error: #GError
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_extend(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gulong offset, GError** error);
 
 /**
@@ -132,8 +146,10 @@ webkit_dom_dom_selection_extend(WebKitDOMDOMSelection* self, WebKitDOMNode* node
  * Returns: (transfer full): A #WebKitDOMRange
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMRange*
+WEBKIT_DEPRECATED WebKitDOMRange*
 webkit_dom_dom_selection_get_range_at(WebKitDOMDOMSelection* self, gulong index, GError** error);
 
 /**
@@ -141,8 +157,10 @@ webkit_dom_dom_selection_get_range_at(WebKitDOMDOMSelection* self, gulong index,
  * @self: A #WebKitDOMDOMSelection
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_remove_all_ranges(WebKitDOMDOMSelection* self);
 
 /**
@@ -151,8 +169,10 @@ webkit_dom_dom_selection_remove_all_ranges(WebKitDOMDOMSelection* self);
  * @range: A #WebKitDOMRange
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_add_range(WebKitDOMDOMSelection* self, WebKitDOMRange* range);
 
 /**
@@ -164,8 +184,10 @@ webkit_dom_dom_selection_add_range(WebKitDOMDOMSelection* self, WebKitDOMRange* 
  * @extentOffset: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_set_base_and_extent(WebKitDOMDOMSelection* self, WebKitDOMNode* baseNode, gulong baseOffset, WebKitDOMNode* extentNode, gulong extentOffset);
 
 /**
@@ -175,8 +197,10 @@ webkit_dom_dom_selection_set_base_and_extent(WebKitDOMDOMSelection* self, WebKit
  * @offset: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_set_position(WebKitDOMDOMSelection* self, WebKitDOMNode* node, gulong offset);
 
 /**
@@ -184,8 +208,10 @@ webkit_dom_dom_selection_set_position(WebKitDOMDOMSelection* self, WebKitDOMNode
  * @self: A #WebKitDOMDOMSelection
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_empty(WebKitDOMDOMSelection* self);
 
 /**
@@ -196,8 +222,10 @@ webkit_dom_dom_selection_empty(WebKitDOMDOMSelection* self);
  * @granularity: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_dom_selection_modify(WebKitDOMDOMSelection* self, const gchar* alter, const gchar* direction, const gchar* granularity);
 
 /**
@@ -207,8 +235,10 @@ webkit_dom_dom_selection_modify(WebKitDOMDOMSelection* self, const gchar* alter,
  * Returns: (transfer none): A #WebKitDOMNode
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_dom_selection_get_anchor_node(WebKitDOMDOMSelection* self);
 
 /**
@@ -218,8 +248,10 @@ webkit_dom_dom_selection_get_anchor_node(WebKitDOMDOMSelection* self);
  * Returns: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_dom_selection_get_anchor_offset(WebKitDOMDOMSelection* self);
 
 /**
@@ -229,8 +261,10 @@ webkit_dom_dom_selection_get_anchor_offset(WebKitDOMDOMSelection* self);
  * Returns: (transfer none): A #WebKitDOMNode
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_dom_selection_get_focus_node(WebKitDOMDOMSelection* self);
 
 /**
@@ -240,8 +274,10 @@ webkit_dom_dom_selection_get_focus_node(WebKitDOMDOMSelection* self);
  * Returns: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_dom_selection_get_focus_offset(WebKitDOMDOMSelection* self);
 
 /**
@@ -251,8 +287,10 @@ webkit_dom_dom_selection_get_focus_offset(WebKitDOMDOMSelection* self);
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_dom_selection_get_is_collapsed(WebKitDOMDOMSelection* self);
 
 /**
@@ -262,8 +300,10 @@ webkit_dom_dom_selection_get_is_collapsed(WebKitDOMDOMSelection* self);
  * Returns: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_dom_selection_get_range_count(WebKitDOMDOMSelection* self);
 
 /**
@@ -273,8 +313,10 @@ webkit_dom_dom_selection_get_range_count(WebKitDOMDOMSelection* self);
  * Returns: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_dom_selection_get_selection_type(WebKitDOMDOMSelection* self);
 
 /**
@@ -284,8 +326,10 @@ webkit_dom_dom_selection_get_selection_type(WebKitDOMDOMSelection* self);
  * Returns: (transfer none): A #WebKitDOMNode
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_dom_selection_get_base_node(WebKitDOMDOMSelection* self);
 
 /**
@@ -295,8 +339,10 @@ webkit_dom_dom_selection_get_base_node(WebKitDOMDOMSelection* self);
  * Returns: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_dom_selection_get_base_offset(WebKitDOMDOMSelection* self);
 
 /**
@@ -306,8 +352,10 @@ webkit_dom_dom_selection_get_base_offset(WebKitDOMDOMSelection* self);
  * Returns: (transfer none): A #WebKitDOMNode
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_dom_selection_get_extent_node(WebKitDOMDOMSelection* self);
 
 /**
@@ -317,8 +365,10 @@ webkit_dom_dom_selection_get_extent_node(WebKitDOMDOMSelection* self);
  * Returns: A #gulong
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_dom_selection_get_extent_offset(WebKitDOMDOMSelection* self);
 
 G_END_DECLS

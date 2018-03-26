@@ -36,6 +36,8 @@ set(WebKitGLibAPITestExtension_LIBRARIES
 )
 
 set(WebKitGLibAPIWebProcessTests
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/DOMElementTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/EditorTest.cpp
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/FrameTest.cpp
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.cpp
 )
@@ -122,6 +124,7 @@ ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestC
 ADD_WK2_TEST(TestDownloads ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp)
 ADD_WK2_TEST(TestWebKitFaviconDatabase ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp)
 ADD_WK2_TEST(TestWebKitFindController ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp)
+ADD_WK2_TEST(TestEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestEditor.cpp)
 ADD_WK2_TEST(TestFrame ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp)
 ADD_WK2_TEST(TestLoaderClient ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp)
 ADD_WK2_TEST(TestMultiprocess ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp)
@@ -137,3 +140,4 @@ ADD_WK2_TEST(TestWebKitWebView ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestW
 ADD_WK2_TEST(TestWebKitUserContentManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp)
 ADD_WK2_TEST(TestWebsiteData ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp)
 ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp)
+ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDOMElement.cpp)

@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLMenuElement* kit(WebCore::HTMLMenuElement* obj)
@@ -166,3 +168,4 @@ void webkit_dom_html_menu_element_set_compact(WebKitDOMHTMLMenuElement* self, gb
     item->setBooleanAttribute(WebCore::HTMLNames::compactAttr, value);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

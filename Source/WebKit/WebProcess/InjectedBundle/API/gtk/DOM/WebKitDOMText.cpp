@@ -35,6 +35,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMText* kit(WebCore::Text* obj)
@@ -157,3 +159,4 @@ gchar* webkit_dom_text_get_whole_text(WebKitDOMText* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

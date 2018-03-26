@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLEmbedElement* kit(WebCore::HTMLEmbedElement* obj)
@@ -344,3 +346,4 @@ void webkit_dom_html_embed_element_set_width(WebKitDOMHTMLEmbedElement* self, gl
     item->setIntegralAttribute(WebCore::HTMLNames::widthAttr, value);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

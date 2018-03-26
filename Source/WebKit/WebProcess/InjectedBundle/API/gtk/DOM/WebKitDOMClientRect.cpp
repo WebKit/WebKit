@@ -37,6 +37,8 @@ typedef struct _WebKitDOMClientRectPrivate {
     RefPtr<WebCore::DOMRect> coreObject;
 } WebKitDOMClientRectPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMClientRect* kit(WebCore::DOMRect* obj)
@@ -240,3 +242,4 @@ gfloat webkit_dom_client_rect_get_height(WebKitDOMClientRect* self)
     g_return_val_if_fail(WEBKIT_DOM_IS_CLIENT_RECT(self), 0);
     return WebKit::core(self)->height();
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -204,7 +204,7 @@ if __name__ == "__main__":
     if saw_warnings:
         sys.exit(saw_warnings)
 
-    webkitdom_generator = get_generator_for_config(common.build_path('gtkdoc-webkitdom.cfg'), arguments.virtual_root)
+    webkitdom_generator = get_generator_for_config(common.build_path('gtkdoc-webkitdom.cfg'), arguments.virtual_root, [jsc_generator.module_name])
     if not webkitdom_generator:
         print("gtkdoc-webkitdom.cfg does not exist! Skipping that documentation")
         sys.exit(1)
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     if saw_warnings:
         sys.exit(saw_warnings)
 
-    webkit2_generator = get_generator_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'), arguments.virtual_root, [webkitdom_generator.module_name])
+    webkit2_generator = get_generator_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'), arguments.virtual_root, [webkitdom_generator.module_name, jsc_generator.module_name])
     if not webkit2_generator:
         print("gtkdoc-webkit2gtk.cfg does not exist! Skipping that documentation")
         sys.exit(1)

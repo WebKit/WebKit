@@ -45,7 +45,7 @@ struct _WebKitDOMNamedNodeMapClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_named_node_map_get_type(void);
 
 /**
@@ -54,8 +54,10 @@ webkit_dom_named_node_map_get_type(void);
  * @name: A #gchar
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_named_node_map_get_named_item(WebKitDOMNamedNodeMap* self, const gchar* name);
 
 /**
@@ -65,8 +67,10 @@ webkit_dom_named_node_map_get_named_item(WebKitDOMNamedNodeMap* self, const gcha
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_named_node_map_set_named_item(WebKitDOMNamedNodeMap* self, WebKitDOMNode* node, GError** error);
 
 /**
@@ -76,8 +80,10 @@ webkit_dom_named_node_map_set_named_item(WebKitDOMNamedNodeMap* self, WebKitDOMN
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_named_node_map_remove_named_item(WebKitDOMNamedNodeMap* self, const gchar* name, GError** error);
 
 /**
@@ -86,8 +92,10 @@ webkit_dom_named_node_map_remove_named_item(WebKitDOMNamedNodeMap* self, const g
  * @index: A #gulong
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_named_node_map_item(WebKitDOMNamedNodeMap* self, gulong index);
 
 /**
@@ -97,8 +105,10 @@ webkit_dom_named_node_map_item(WebKitDOMNamedNodeMap* self, gulong index);
  * @localName: A #gchar
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_named_node_map_get_named_item_ns(WebKitDOMNamedNodeMap* self, const gchar* namespaceURI, const gchar* localName);
 
 /**
@@ -108,8 +118,10 @@ webkit_dom_named_node_map_get_named_item_ns(WebKitDOMNamedNodeMap* self, const g
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_named_node_map_set_named_item_ns(WebKitDOMNamedNodeMap* self, WebKitDOMNode* node, GError** error);
 
 /**
@@ -120,8 +132,10 @@ webkit_dom_named_node_map_set_named_item_ns(WebKitDOMNamedNodeMap* self, WebKitD
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMNode
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMNode*
+WEBKIT_DEPRECATED WebKitDOMNode*
 webkit_dom_named_node_map_remove_named_item_ns(WebKitDOMNamedNodeMap* self, const gchar* namespaceURI, const gchar* localName, GError** error);
 
 /**
@@ -129,8 +143,10 @@ webkit_dom_named_node_map_remove_named_item_ns(WebKitDOMNamedNodeMap* self, cons
  * @self: A #WebKitDOMNamedNodeMap
  *
  * Returns: A #gulong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gulong
+WEBKIT_DEPRECATED gulong
 webkit_dom_named_node_map_get_length(WebKitDOMNamedNodeMap* self);
 
 G_END_DECLS

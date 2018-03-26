@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLCanvasElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_canvas_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_canvas_element_get_type(void);
  * @self: A #WebKitDOMHTMLCanvasElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_canvas_element_get_width(WebKitDOMHTMLCanvasElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_canvas_element_get_width(WebKitDOMHTMLCanvasElement* self);
  * @self: A #WebKitDOMHTMLCanvasElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_canvas_element_set_width(WebKitDOMHTMLCanvasElement* self, glong value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_canvas_element_set_width(WebKitDOMHTMLCanvasElement* self, glong
  * @self: A #WebKitDOMHTMLCanvasElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_canvas_element_get_height(WebKitDOMHTMLCanvasElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_canvas_element_get_height(WebKitDOMHTMLCanvasElement* self);
  * @self: A #WebKitDOMHTMLCanvasElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_canvas_element_set_height(WebKitDOMHTMLCanvasElement* self, glong value);
 
 G_END_DECLS

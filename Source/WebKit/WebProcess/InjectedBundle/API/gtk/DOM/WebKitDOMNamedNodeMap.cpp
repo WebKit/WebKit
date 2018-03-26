@@ -39,6 +39,8 @@ typedef struct _WebKitDOMNamedNodeMapPrivate {
     RefPtr<WebCore::NamedNodeMap> coreObject;
 } WebKitDOMNamedNodeMapPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMNamedNodeMap* kit(WebCore::NamedNodeMap* obj)
@@ -238,3 +240,4 @@ gulong webkit_dom_named_node_map_get_length(WebKitDOMNamedNodeMap* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

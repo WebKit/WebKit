@@ -24,6 +24,8 @@
 
 using namespace WebCore;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 GObjectNodeFilterCondition::~GObjectNodeFilterCondition()
@@ -37,3 +39,4 @@ unsigned short GObjectNodeFilterCondition::acceptNode(Node& node) const
 }
 
 } // namespace WebKit
+G_GNUC_END_IGNORE_DEPRECATIONS;

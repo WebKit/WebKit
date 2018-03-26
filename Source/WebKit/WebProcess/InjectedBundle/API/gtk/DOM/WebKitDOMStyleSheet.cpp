@@ -39,6 +39,8 @@ typedef struct _WebKitDOMStyleSheetPrivate {
     RefPtr<WebCore::StyleSheet> coreObject;
 } WebKitDOMStyleSheetPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMStyleSheet* kit(WebCore::StyleSheet* obj)
@@ -303,3 +305,4 @@ WebKitDOMMediaList* webkit_dom_style_sheet_get_media(WebKitDOMStyleSheet* self)
     return WebKit::kit(gobjectResult.get());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

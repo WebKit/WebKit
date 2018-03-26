@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMProcessingInstruction* kit(WebCore::ProcessingInstruction* obj)
@@ -166,3 +168,4 @@ WebKitDOMStyleSheet* webkit_dom_processing_instruction_get_sheet(WebKitDOMProces
     return WebKit::kit(gobjectResult.get());
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

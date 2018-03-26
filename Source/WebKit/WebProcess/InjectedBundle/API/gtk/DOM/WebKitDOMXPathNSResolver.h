@@ -44,7 +44,7 @@ struct _WebKitDOMXPathNSResolverIface {
 };
 
 
-WEBKIT_API GType webkit_dom_xpath_ns_resolver_get_type(void) G_GNUC_CONST;
+WEBKIT_DEPRECATED GType webkit_dom_xpath_ns_resolver_get_type(void) G_GNUC_CONST;
 
 /**
  * webkit_dom_xpath_ns_resolver_lookup_namespace_uri:
@@ -52,8 +52,10 @@ WEBKIT_API GType webkit_dom_xpath_ns_resolver_get_type(void) G_GNUC_CONST;
  * @prefix: The prefix to lookup
  *
  * Returns: (transfer full): a #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
-WEBKIT_API gchar *webkit_dom_xpath_ns_resolver_lookup_namespace_uri(WebKitDOMXPathNSResolver *resolver,
+WEBKIT_DEPRECATED gchar *webkit_dom_xpath_ns_resolver_lookup_namespace_uri(WebKitDOMXPathNSResolver *resolver,
                                                                     const gchar              *prefix);
 
 G_END_DECLS

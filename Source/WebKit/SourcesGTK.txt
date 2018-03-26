@@ -281,6 +281,13 @@ WebProcess/gtk/WebProcessMainGtk.cpp
 WebProcess/soup/WebKitSoupRequestInputStream.cpp
 WebProcess/soup/WebProcessSoup.cpp
 
+WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMElement.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNode.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMObject.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMPrivate.cpp @no-unify
+
 WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp @no-unify
@@ -291,7 +298,6 @@ WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp @no-unify
 WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp @no-unify
 
 WebProcess/InjectedBundle/API/gtk/DOM/ConvertToUTF8String.cpp
-WebProcess/InjectedBundle/API/gtk/DOM/DOMObjectCache.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/GObjectEventListener.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/GObjectNodeFilterCondition.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/GObjectXPathNSResolver.cpp
@@ -312,10 +318,10 @@ WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.cpp
-WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp
+WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.cpp
-WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp
+WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElementGtk.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventTarget.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.cpp
@@ -382,12 +388,11 @@ WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyboardEvent.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.cpp
-WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp
+WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeGtk.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeFilter.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeList.cpp
-WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.cpp
-WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivate.cpp
+WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivateGtk.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.cpp

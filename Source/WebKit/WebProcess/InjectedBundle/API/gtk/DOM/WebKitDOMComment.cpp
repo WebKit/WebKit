@@ -35,6 +35,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMComment* kit(WebCore::Comment* obj)
@@ -102,3 +104,4 @@ static void webkit_dom_comment_init(WebKitDOMComment* request)
     UNUSED_PARAM(request);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

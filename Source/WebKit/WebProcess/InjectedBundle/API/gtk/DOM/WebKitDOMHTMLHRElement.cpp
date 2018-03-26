@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLHRElement* kit(WebCore::HTMLHRElement* obj)
@@ -274,3 +276,4 @@ void webkit_dom_html_hr_element_set_width(WebKitDOMHTMLHRElement* self, const gc
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLTableCellElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_table_cell_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_table_cell_element_get_type(void);
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_table_cell_element_get_cell_index(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_table_cell_element_get_cell_index(WebKitDOMHTMLTableCellElement*
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_align(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_table_cell_element_get_align(WebKitDOMHTMLTableCellElement* self
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_align(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_table_cell_element_set_align(WebKitDOMHTMLTableCellElement* self
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_axis(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_table_cell_element_get_axis(WebKitDOMHTMLTableCellElement* self)
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_axis(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_table_cell_element_set_axis(WebKitDOMHTMLTableCellElement* self,
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_bg_color(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_table_cell_element_get_bg_color(WebKitDOMHTMLTableCellElement* s
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_bg_color(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_table_cell_element_set_bg_color(WebKitDOMHTMLTableCellElement* s
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_ch(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_table_cell_element_get_ch(WebKitDOMHTMLTableCellElement* self);
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_ch(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_table_cell_element_set_ch(WebKitDOMHTMLTableCellElement* self, c
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_ch_off(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_table_cell_element_get_ch_off(WebKitDOMHTMLTableCellElement* sel
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_ch_off(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_table_cell_element_set_ch_off(WebKitDOMHTMLTableCellElement* sel
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_table_cell_element_get_col_span(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -161,8 +185,10 @@ webkit_dom_html_table_cell_element_get_col_span(WebKitDOMHTMLTableCellElement* s
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_col_span(WebKitDOMHTMLTableCellElement* self, glong value);
 
 /**
@@ -170,8 +196,10 @@ webkit_dom_html_table_cell_element_set_col_span(WebKitDOMHTMLTableCellElement* s
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_table_cell_element_get_row_span(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -179,8 +207,10 @@ webkit_dom_html_table_cell_element_get_row_span(WebKitDOMHTMLTableCellElement* s
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_row_span(WebKitDOMHTMLTableCellElement* self, glong value);
 
 /**
@@ -188,8 +218,10 @@ webkit_dom_html_table_cell_element_set_row_span(WebKitDOMHTMLTableCellElement* s
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_headers(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -197,8 +229,10 @@ webkit_dom_html_table_cell_element_get_headers(WebKitDOMHTMLTableCellElement* se
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_headers(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -206,8 +240,10 @@ webkit_dom_html_table_cell_element_set_headers(WebKitDOMHTMLTableCellElement* se
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_height(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -215,8 +251,10 @@ webkit_dom_html_table_cell_element_get_height(WebKitDOMHTMLTableCellElement* sel
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_height(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -224,8 +262,10 @@ webkit_dom_html_table_cell_element_set_height(WebKitDOMHTMLTableCellElement* sel
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_table_cell_element_get_no_wrap(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -233,8 +273,10 @@ webkit_dom_html_table_cell_element_get_no_wrap(WebKitDOMHTMLTableCellElement* se
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_no_wrap(WebKitDOMHTMLTableCellElement* self, gboolean value);
 
 /**
@@ -242,8 +284,10 @@ webkit_dom_html_table_cell_element_set_no_wrap(WebKitDOMHTMLTableCellElement* se
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_v_align(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -251,8 +295,10 @@ webkit_dom_html_table_cell_element_get_v_align(WebKitDOMHTMLTableCellElement* se
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_v_align(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -260,8 +306,10 @@ webkit_dom_html_table_cell_element_set_v_align(WebKitDOMHTMLTableCellElement* se
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_width(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -269,8 +317,10 @@ webkit_dom_html_table_cell_element_get_width(WebKitDOMHTMLTableCellElement* self
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_width(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -278,8 +328,10 @@ webkit_dom_html_table_cell_element_set_width(WebKitDOMHTMLTableCellElement* self
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_abbr(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -287,8 +339,10 @@ webkit_dom_html_table_cell_element_get_abbr(WebKitDOMHTMLTableCellElement* self)
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_abbr(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 /**
@@ -296,8 +350,10 @@ webkit_dom_html_table_cell_element_set_abbr(WebKitDOMHTMLTableCellElement* self,
  * @self: A #WebKitDOMHTMLTableCellElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_cell_element_get_scope(WebKitDOMHTMLTableCellElement* self);
 
 /**
@@ -305,8 +361,10 @@ webkit_dom_html_table_cell_element_get_scope(WebKitDOMHTMLTableCellElement* self
  * @self: A #WebKitDOMHTMLTableCellElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_cell_element_set_scope(WebKitDOMHTMLTableCellElement* self, const gchar* value);
 
 G_END_DECLS

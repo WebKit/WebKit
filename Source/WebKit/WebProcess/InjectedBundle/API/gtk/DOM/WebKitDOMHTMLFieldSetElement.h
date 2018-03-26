@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLFieldSetElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_field_set_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_field_set_element_get_type(void);
  * @self: A #WebKitDOMHTMLFieldSetElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLFormElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLFormElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLFormElement*
 webkit_dom_html_field_set_element_get_form(WebKitDOMHTMLFieldSetElement* self);
 
 G_END_DECLS

@@ -1,5 +1,5 @@
 /*
- *  This file is part of the WebKit open source project.
+ *  Copyright (C) 2018 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -17,16 +17,18 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitDOMNodePrivate_h
-#define WebKitDOMNodePrivate_h
+#pragma once
 
-#include <WebCore/Node.h>
-#include <webkitdom/WebKitDOMNode.h>
+#include "WebKitDOMElement.h"
+#include <WebCore/Element.h>
 
 namespace WebKit {
-WebKitDOMNode* wrapNode(WebCore::Node*);
-WebKitDOMNode* kit(WebCore::Node*);
-WebCore::Node* core(WebKitDOMNode*);
+WebKitDOMElement* wrapElement(WebCore::Element*);
+WebKitDOMElement* kit(WebCore::Element*);
+WebCore::Element* core(WebKitDOMElement*);
 } // namespace WebKit
 
-#endif /* WebKitDOMNodePrivate_h */
+#if PLATFORM(GTK)
+void webkitDOMElementDOMEventTargetInit(WebKitDOMEventTargetIface*);
+void webkitDOMElementInstallProperties(GObjectClass*);
+#endif

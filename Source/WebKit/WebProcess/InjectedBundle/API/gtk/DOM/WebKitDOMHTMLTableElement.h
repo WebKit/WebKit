@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLTableElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_table_element_get_type(void);
 
 /**
@@ -53,16 +53,20 @@ webkit_dom_html_table_element_get_type(void);
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLElement*
 webkit_dom_html_table_element_create_t_head(WebKitDOMHTMLTableElement* self);
 
 /**
  * webkit_dom_html_table_element_delete_t_head:
  * @self: A #WebKitDOMHTMLTableElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_delete_t_head(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -70,16 +74,20 @@ webkit_dom_html_table_element_delete_t_head(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLElement*
 webkit_dom_html_table_element_create_t_foot(WebKitDOMHTMLTableElement* self);
 
 /**
  * webkit_dom_html_table_element_delete_t_foot:
  * @self: A #WebKitDOMHTMLTableElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_delete_t_foot(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -87,16 +95,20 @@ webkit_dom_html_table_element_delete_t_foot(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLElement*
 webkit_dom_html_table_element_create_caption(WebKitDOMHTMLTableElement* self);
 
 /**
  * webkit_dom_html_table_element_delete_caption:
  * @self: A #WebKitDOMHTMLTableElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_delete_caption(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -106,8 +118,10 @@ webkit_dom_html_table_element_delete_caption(WebKitDOMHTMLTableElement* self);
  * @error: #GError
  *
  * Returns: (transfer none): A #WebKitDOMHTMLElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLElement*
 webkit_dom_html_table_element_insert_row(WebKitDOMHTMLTableElement* self, glong index, GError** error);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_table_element_insert_row(WebKitDOMHTMLTableElement* self, glong 
  * @index: A #glong
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_delete_row(WebKitDOMHTMLTableElement* self, glong index, GError** error);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_table_element_delete_row(WebKitDOMHTMLTableElement* self, glong 
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLTableCaptionElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLTableCaptionElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLTableCaptionElement*
 webkit_dom_html_table_element_get_caption(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -135,8 +153,10 @@ webkit_dom_html_table_element_get_caption(WebKitDOMHTMLTableElement* self);
  * @value: A #WebKitDOMHTMLTableCaptionElement
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_caption(WebKitDOMHTMLTableElement* self, WebKitDOMHTMLTableCaptionElement* value, GError** error);
 
 /**
@@ -144,8 +164,10 @@ webkit_dom_html_table_element_set_caption(WebKitDOMHTMLTableElement* self, WebKi
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLTableSectionElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLTableSectionElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLTableSectionElement*
 webkit_dom_html_table_element_get_t_head(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -154,8 +176,10 @@ webkit_dom_html_table_element_get_t_head(WebKitDOMHTMLTableElement* self);
  * @value: A #WebKitDOMHTMLTableSectionElement
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_t_head(WebKitDOMHTMLTableElement* self, WebKitDOMHTMLTableSectionElement* value, GError** error);
 
 /**
@@ -163,8 +187,10 @@ webkit_dom_html_table_element_set_t_head(WebKitDOMHTMLTableElement* self, WebKit
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLTableSectionElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLTableSectionElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLTableSectionElement*
 webkit_dom_html_table_element_get_t_foot(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -173,8 +199,10 @@ webkit_dom_html_table_element_get_t_foot(WebKitDOMHTMLTableElement* self);
  * @value: A #WebKitDOMHTMLTableSectionElement
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_t_foot(WebKitDOMHTMLTableElement* self, WebKitDOMHTMLTableSectionElement* value, GError** error);
 
 /**
@@ -182,8 +210,10 @@ webkit_dom_html_table_element_set_t_foot(WebKitDOMHTMLTableElement* self, WebKit
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer full): A #WebKitDOMHTMLCollection
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLCollection*
+WEBKIT_DEPRECATED WebKitDOMHTMLCollection*
 webkit_dom_html_table_element_get_rows(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -191,8 +221,10 @@ webkit_dom_html_table_element_get_rows(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: (transfer full): A #WebKitDOMHTMLCollection
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLCollection*
+WEBKIT_DEPRECATED WebKitDOMHTMLCollection*
 webkit_dom_html_table_element_get_t_bodies(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -200,8 +232,10 @@ webkit_dom_html_table_element_get_t_bodies(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_align(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -209,8 +243,10 @@ webkit_dom_html_table_element_get_align(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_align(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 /**
@@ -218,8 +254,10 @@ webkit_dom_html_table_element_set_align(WebKitDOMHTMLTableElement* self, const g
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_bg_color(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -227,8 +265,10 @@ webkit_dom_html_table_element_get_bg_color(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_bg_color(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 /**
@@ -236,8 +276,10 @@ webkit_dom_html_table_element_set_bg_color(WebKitDOMHTMLTableElement* self, cons
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_border(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -245,8 +287,10 @@ webkit_dom_html_table_element_get_border(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_border(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 /**
@@ -254,8 +298,10 @@ webkit_dom_html_table_element_set_border(WebKitDOMHTMLTableElement* self, const 
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_cell_padding(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -263,8 +309,10 @@ webkit_dom_html_table_element_get_cell_padding(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_cell_padding(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 /**
@@ -272,8 +320,10 @@ webkit_dom_html_table_element_set_cell_padding(WebKitDOMHTMLTableElement* self, 
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_cell_spacing(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -281,8 +331,10 @@ webkit_dom_html_table_element_get_cell_spacing(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_cell_spacing(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 /**
@@ -290,8 +342,10 @@ webkit_dom_html_table_element_set_cell_spacing(WebKitDOMHTMLTableElement* self, 
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_rules(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -299,8 +353,10 @@ webkit_dom_html_table_element_get_rules(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_rules(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 /**
@@ -308,8 +364,10 @@ webkit_dom_html_table_element_set_rules(WebKitDOMHTMLTableElement* self, const g
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_summary(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -317,8 +375,10 @@ webkit_dom_html_table_element_get_summary(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_summary(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 /**
@@ -326,8 +386,10 @@ webkit_dom_html_table_element_set_summary(WebKitDOMHTMLTableElement* self, const
  * @self: A #WebKitDOMHTMLTableElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_table_element_get_width(WebKitDOMHTMLTableElement* self);
 
 /**
@@ -335,8 +397,10 @@ webkit_dom_html_table_element_get_width(WebKitDOMHTMLTableElement* self);
  * @self: A #WebKitDOMHTMLTableElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_table_element_set_width(WebKitDOMHTMLTableElement* self, const gchar* value);
 
 G_END_DECLS

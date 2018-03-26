@@ -37,6 +37,8 @@ typedef struct _WebKitDOMMediaListPrivate {
     RefPtr<WebCore::MediaList> coreObject;
 } WebKitDOMMediaListPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMMediaList* kit(WebCore::MediaList* obj)
@@ -232,3 +234,4 @@ gulong webkit_dom_media_list_get_length(WebKitDOMMediaList* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

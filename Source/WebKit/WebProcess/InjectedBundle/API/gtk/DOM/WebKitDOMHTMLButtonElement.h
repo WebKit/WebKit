@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLButtonElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_button_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_button_element_get_type(void);
  * @self: A #WebKitDOMHTMLButtonElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_button_element_get_autofocus(WebKitDOMHTMLButtonElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_button_element_get_autofocus(WebKitDOMHTMLButtonElement* self);
  * @self: A #WebKitDOMHTMLButtonElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_button_element_set_autofocus(WebKitDOMHTMLButtonElement* self, gboolean value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_button_element_set_autofocus(WebKitDOMHTMLButtonElement* self, g
  * @self: A #WebKitDOMHTMLButtonElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_button_element_get_disabled(WebKitDOMHTMLButtonElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_button_element_get_disabled(WebKitDOMHTMLButtonElement* self);
  * @self: A #WebKitDOMHTMLButtonElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_button_element_set_disabled(WebKitDOMHTMLButtonElement* self, gboolean value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_button_element_set_disabled(WebKitDOMHTMLButtonElement* self, gb
  * @self: A #WebKitDOMHTMLButtonElement
  *
  * Returns: (transfer none): A #WebKitDOMHTMLFormElement
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLFormElement*
+WEBKIT_DEPRECATED WebKitDOMHTMLFormElement*
 webkit_dom_html_button_element_get_form(WebKitDOMHTMLButtonElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_button_element_get_form(WebKitDOMHTMLButtonElement* self);
  * @self: A #WebKitDOMHTMLButtonElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_button_element_get_button_type(WebKitDOMHTMLButtonElement* self);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_button_element_get_button_type(WebKitDOMHTMLButtonElement* self)
  * @self: A #WebKitDOMHTMLButtonElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_button_element_set_button_type(WebKitDOMHTMLButtonElement* self, const gchar* value);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_button_element_set_button_type(WebKitDOMHTMLButtonElement* self,
  * @self: A #WebKitDOMHTMLButtonElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_button_element_get_name(WebKitDOMHTMLButtonElement* self);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_button_element_get_name(WebKitDOMHTMLButtonElement* self);
  * @self: A #WebKitDOMHTMLButtonElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_button_element_set_name(WebKitDOMHTMLButtonElement* self, const gchar* value);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_button_element_set_name(WebKitDOMHTMLButtonElement* self, const 
  * @self: A #WebKitDOMHTMLButtonElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_button_element_get_value(WebKitDOMHTMLButtonElement* self);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_button_element_get_value(WebKitDOMHTMLButtonElement* self);
  * @self: A #WebKitDOMHTMLButtonElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_button_element_set_value(WebKitDOMHTMLButtonElement* self, const gchar* value);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_button_element_set_value(WebKitDOMHTMLButtonElement* self, const
  * @self: A #WebKitDOMHTMLButtonElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_button_element_get_will_validate(WebKitDOMHTMLButtonElement* self);
 
 G_END_DECLS

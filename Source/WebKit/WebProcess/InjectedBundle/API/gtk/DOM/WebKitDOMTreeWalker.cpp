@@ -39,6 +39,8 @@ typedef struct _WebKitDOMTreeWalkerPrivate {
     RefPtr<WebCore::TreeWalker> coreObject;
 } WebKitDOMTreeWalkerPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMTreeWalker* kit(WebCore::TreeWalker* obj)
@@ -320,3 +322,4 @@ void webkit_dom_tree_walker_set_current_node(WebKitDOMTreeWalker* self, WebKitDO
     item->setCurrentNode(*convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

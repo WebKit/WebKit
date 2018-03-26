@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMDocumentType* kit(WebCore::DocumentType* obj)
@@ -249,3 +251,4 @@ gchar* webkit_dom_document_type_get_system_id(WebKitDOMDocumentType* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -25,7 +25,6 @@
 #include "WebKitDOMPrivate.h"
 
 #include <WebCore/Blob.h>
-#include "DOMObjectCache.h"
 #include <WebCore/Element.h>
 #include <WebCore/Event.h>
 #include <WebCore/EventTarget.h>
@@ -62,12 +61,14 @@
 #include "WebKitDOMUIEventPrivate.h"
 #include "WebKitDOMWheelEventPrivate.h"
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 using namespace WebCore;
 using namespace WebCore::HTMLNames;
 
-WebKitDOMNode* wrap(Node* node)
+WebKitDOMNode* wrapNodeGtk(Node* node)
 {
     ASSERT(node);
     ASSERT(node->nodeType());
@@ -76,7 +77,7 @@ WebKitDOMNode* wrap(Node* node)
     case Node::ELEMENT_NODE:
         if (is<HTMLElement>(*node))
             return WEBKIT_DOM_NODE(wrap(downcast<HTMLElement>(node)));
-        return WEBKIT_DOM_NODE(wrapElement(downcast<Element>(node)));
+        return nullptr;
     case Node::ATTRIBUTE_NODE:
         return WEBKIT_DOM_NODE(wrapAttr(static_cast<Attr*>(node)));
     case Node::TEXT_NODE:
@@ -90,7 +91,7 @@ WebKitDOMNode* wrap(Node* node)
     case Node::DOCUMENT_NODE:
         if (is<HTMLDocument>(*node))
             return WEBKIT_DOM_NODE(wrapHTMLDocument(downcast<HTMLDocument>(node)));
-        return WEBKIT_DOM_NODE(wrapDocument(downcast<Document>(node)));
+        return nullptr;
     case Node::DOCUMENT_TYPE_NODE:
         return WEBKIT_DOM_NODE(wrapDocumentType(static_cast<DocumentType*>(node)));
     case Node::DOCUMENT_FRAGMENT_NODE:
@@ -156,3 +157,4 @@ WebKitDOMBlob* wrap(Blob* blob)
 }
 
 } // namespace WebKit
+G_GNUC_END_IGNORE_DEPRECATIONS;

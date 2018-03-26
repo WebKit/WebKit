@@ -38,6 +38,8 @@ typedef struct _WebKitDOMFileListPrivate {
     RefPtr<WebCore::FileList> coreObject;
 } WebKitDOMFileListPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMFileList* kit(WebCore::FileList* obj)
@@ -150,3 +152,4 @@ gulong webkit_dom_file_list_get_length(WebKitDOMFileList* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

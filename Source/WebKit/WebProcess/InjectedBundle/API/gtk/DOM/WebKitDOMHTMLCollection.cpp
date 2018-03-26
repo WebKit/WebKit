@@ -38,6 +38,8 @@ typedef struct _WebKitDOMHTMLCollectionPrivate {
     RefPtr<WebCore::HTMLCollection> coreObject;
 } WebKitDOMHTMLCollectionPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLCollection* kit(WebCore::HTMLCollection* obj)
@@ -161,3 +163,4 @@ gulong webkit_dom_html_collection_get_length(WebKitDOMHTMLCollection* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

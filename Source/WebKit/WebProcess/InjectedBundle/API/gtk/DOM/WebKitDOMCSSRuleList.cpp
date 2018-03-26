@@ -37,6 +37,8 @@ typedef struct _WebKitDOMCSSRuleListPrivate {
     RefPtr<WebCore::CSSRuleList> coreObject;
 } WebKitDOMCSSRuleListPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMCSSRuleList* kit(WebCore::CSSRuleList* obj)
@@ -149,3 +151,4 @@ gulong webkit_dom_css_rule_list_get_length(WebKitDOMCSSRuleList* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

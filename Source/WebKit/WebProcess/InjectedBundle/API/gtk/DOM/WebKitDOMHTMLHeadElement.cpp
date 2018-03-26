@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLHeadElement* kit(WebCore::HTMLHeadElement* obj)
@@ -168,3 +170,4 @@ void webkit_dom_html_head_element_set_profile(WebKitDOMHTMLHeadElement* self, co
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::profileAttr, convertedValue);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

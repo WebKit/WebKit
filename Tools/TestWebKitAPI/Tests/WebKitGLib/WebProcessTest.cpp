@@ -36,6 +36,19 @@ static TestsMap& testsMap()
     return s_testsMap;
 }
 
+static void checkLeaks()
+{
+    if (s_watchedObjects.isEmpty())
+        return;
+
+    g_print("Leaked objects in WebProcess:");
+    for (const auto object : s_watchedObjects)
+        g_print(" %s(%p)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(object)), object);
+    g_print("\n");
+
+    g_assert(s_watchedObjects.isEmpty());
+}
+
 void WebProcessTest::add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()> closure)
 {
     testsMap().add(testName, WTFMove(closure));
@@ -68,16 +81,7 @@ static gboolean runTest(WebKitWebPage* webPage, const char* testPath)
 static void webProcessTestRunnerFinalize(WebKitWebPage* webPage)
 {
     g_object_unref(webPage);
-
-    if (s_watchedObjects.isEmpty())
-        return;
-
-    g_print("Leaked objects in WebProcess:");
-    for (const auto object : s_watchedObjects)
-        g_print(" %s(%p)", g_type_name_from_instance(reinterpret_cast<GTypeInstance*>(object)), object);
-    g_print("\n");
-
-    g_assert(s_watchedObjects.isEmpty());
+    checkLeaks();
 }
 
 static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage* webPage, WebKitFrame* frame, WebKitWebExtension* extension)
@@ -99,4 +103,9 @@ extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)
 {
     webkitWebExtensionSetGarbageCollectOnPageDestroy(extension);
     g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectClearedCallback), extension);
+}
+
+static void __attribute__((destructor)) checkLeaksAtExit()
+{
+    checkLeaks();
 }

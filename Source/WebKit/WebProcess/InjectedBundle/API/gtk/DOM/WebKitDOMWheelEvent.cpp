@@ -33,6 +33,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMWheelEvent* kit(WebCore::WheelEvent* obj)
@@ -159,3 +161,4 @@ glong webkit_dom_wheel_event_get_wheel_delta(WebKitDOMWheelEvent* self)
     glong result = item->wheelDelta();
     return result;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS;

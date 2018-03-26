@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLMapElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_map_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_map_element_get_type(void);
  * @self: A #WebKitDOMHTMLMapElement
  *
  * Returns: (transfer full): A #WebKitDOMHTMLCollection
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMHTMLCollection*
+WEBKIT_DEPRECATED WebKitDOMHTMLCollection*
 webkit_dom_html_map_element_get_areas(WebKitDOMHTMLMapElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_map_element_get_areas(WebKitDOMHTMLMapElement* self);
  * @self: A #WebKitDOMHTMLMapElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_map_element_get_name(WebKitDOMHTMLMapElement* self);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_map_element_get_name(WebKitDOMHTMLMapElement* self);
  * @self: A #WebKitDOMHTMLMapElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_map_element_set_name(WebKitDOMHTMLMapElement* self, const gchar* value);
 
 G_END_DECLS

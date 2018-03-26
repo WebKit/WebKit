@@ -38,6 +38,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLFrameElement* kit(WebCore::HTMLFrameElement* obj)
@@ -512,3 +514,4 @@ glong webkit_dom_html_frame_element_get_height(WebKitDOMHTMLFrameElement* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

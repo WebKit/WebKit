@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2013 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,22 +17,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
+#error "Only <wpe/webkitdom.h> can be included directly."
+#endif
 
-#ifndef WebKitDOMObjectPrivate_h
-#define WebKitDOMObjectPrivate_h
+#ifndef WebKitDOMDefines_h
+#define WebKitDOMDefines_h
 
-#include <webkitdom/WebKitDOMObject.h>
+#include <glib.h>
 
-struct _WebKitDOMObject {
-    GObject parent;
-};
+#ifdef G_OS_WIN32
+    #ifdef BUILDING_WEBKIT
+        #define WEBKIT_API __declspec(dllexport)
+    #else
+        #define WEBKIT_API __declspec(dllimport)
+    #endif
+#else
+    #define WEBKIT_API __attribute__((visibility("default")))
+#endif
 
-struct _WebKitDOMObjectClass {
-    GObjectClass parent_class;
+#define WEBKIT_DEPRECATED WEBKIT_API G_DEPRECATED
+#define WEBKIT_DEPRECATED_FOR(f) WEBKIT_API G_DEPRECATED_FOR(f)
 
-    void (* wrap) (WebKitDOMObject*, void* coreObject);
-};
+#ifndef WEBKIT_API
+    #define WEBKIT_API
+#endif
 
-void webkitDOMObjectWrap(WebKitDOMObject*, void* coreObject);
-
-#endif /* WebKitDOMObject_h */
+#endif /* WebKitDOMDefines_h */

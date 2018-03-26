@@ -28,6 +28,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 typedef WebKitDOMXPathNSResolverIface WebKitDOMXPathNSResolverInterface;
 
 G_DEFINE_INTERFACE(WebKitDOMXPathNSResolver, webkit_dom_xpath_ns_resolver, G_TYPE_OBJECT)
@@ -138,3 +140,4 @@ WebCore::XPathNSResolver* core(WebKitDOMNativeXPathNSResolver* xPathNSResolver)
 }
 
 } // namespace WebKit
+G_GNUC_END_IGNORE_DEPRECATIONS;

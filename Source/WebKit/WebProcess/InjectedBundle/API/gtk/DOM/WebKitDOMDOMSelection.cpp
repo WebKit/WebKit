@@ -39,6 +39,8 @@ typedef struct _WebKitDOMDOMSelectionPrivate {
     RefPtr<WebCore::DOMSelection> coreObject;
 } WebKitDOMDOMSelectionPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMDOMSelection* kit(WebCore::DOMSelection* obj)
@@ -529,3 +531,4 @@ gulong webkit_dom_dom_selection_get_extent_offset(WebKitDOMDOMSelection* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

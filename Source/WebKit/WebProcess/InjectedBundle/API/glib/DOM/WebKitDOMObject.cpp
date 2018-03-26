@@ -8,10 +8,12 @@
 #include "config.h"
 #include "WebKitDOMObject.h"
 
+#if PLATFORM(GTK)
 enum {
-    DOM_OBJECT_PROP_0,
-    DOM_OBJECT_PROP_CORE_OBJECT
+    PROP_0,
+    PROP_CORE_OBJECT
 };
+#endif
 
 G_DEFINE_TYPE(WebKitDOMObject, webkit_dom_object, G_TYPE_OBJECT)
 
@@ -19,10 +21,11 @@ static void webkit_dom_object_init(WebKitDOMObject*)
 {
 }
 
+#if PLATFORM(GTK)
 static void webkitDOMObjectSetProperty(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     switch (propertyId) {
-    case DOM_OBJECT_PROP_CORE_OBJECT:
+    case PROP_CORE_OBJECT:
         WEBKIT_DOM_OBJECT(object)->coreObject = g_value_get_pointer(value);
         break;
     default:
@@ -30,18 +33,21 @@ static void webkitDOMObjectSetProperty(GObject* object, guint propertyId, const 
         break;
     }
 }
+#endif
 
 static void webkit_dom_object_class_init(WebKitDOMObjectClass* klass)
 {
+#if PLATFORM(GTK)
     GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
     gobjectClass->set_property = webkitDOMObjectSetProperty;
 
     g_object_class_install_property(
         gobjectClass,
-        DOM_OBJECT_PROP_CORE_OBJECT,
+        PROP_CORE_OBJECT,
         g_param_spec_pointer(
             "core-object",
             "Core Object",
             "The WebCore object the WebKitDOMObject wraps",
             static_cast<GParamFlags>(G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB)));
+#endif
 }

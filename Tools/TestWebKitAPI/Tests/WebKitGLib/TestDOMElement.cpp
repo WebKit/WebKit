@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Red Hat Inc.
+ * Copyright (C) 2018 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,18 +20,16 @@
 #include "config.h"
 
 #include "WebViewTest.h"
-#include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
 
-static void testWebKitWebEditorSelectionChanged(WebViewTest* test, gconstpointer)
+static void testWebKitDOMElementAutoFill(WebViewTest* test, gconstpointer)
 {
-    static const gchar* testHTML = "<html><body>All work and no play make Jack a dull boy.</body></html>";
-    g_assert(test->runWebProcessTest("WebKitWebEditor", "selection-changed", testHTML));
+    static const gchar* testHTML = "<html><body><form action='#'><input id='auto-fill'></input></form></body></html>";
+    g_assert(test->runWebProcessTest("WebKitDOMElement", "auto-fill", testHTML));
 }
 
 void beforeAll()
 {
-    WebViewTest::add("WebKitWebEditor", "selection-changed", testWebKitWebEditorSelectionChanged);
+    WebViewTest::add("WebKitDOMElement", "auto-fill", testWebKitDOMElementAutoFill);
 }
 
 void afterAll()

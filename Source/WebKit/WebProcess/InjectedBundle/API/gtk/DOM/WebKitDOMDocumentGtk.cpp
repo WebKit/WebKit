@@ -21,7 +21,6 @@
 #include "WebKitDOMDocument.h"
 
 #include "ConvertToUTF8String.h"
-#include "DOMObjectCache.h"
 #include "GObjectEventListener.h"
 #include "WebKitDOMAttrPrivate.h"
 #include "WebKitDOMCDATASectionPrivate.h"
@@ -60,25 +59,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebKit {
-
-WebKitDOMDocument* kit(WebCore::Document* obj)
-{
-    return WEBKIT_DOM_DOCUMENT(kit(static_cast<WebCore::Node*>(obj)));
-}
-
-WebCore::Document* core(WebKitDOMDocument* request)
-{
-    return request ? static_cast<WebCore::Document*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
-}
-
-WebKitDOMDocument* wrapDocument(WebCore::Document* coreObject)
-{
-    ASSERT(coreObject);
-    return WEBKIT_DOM_DOCUMENT(g_object_new(WEBKIT_DOM_TYPE_DOCUMENT, "core-object", coreObject, nullptr));
-}
-
-} // namespace WebKit
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 
 static gboolean webkit_dom_document_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
@@ -108,14 +89,12 @@ static gboolean webkit_dom_document_remove_event_listener(WebKitDOMEventTarget* 
     return WebKit::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static void webkit_dom_document_dom_event_target_init(WebKitDOMEventTargetIface* iface)
+void webkitDOMDocumentDOMEventTargetInit(WebKitDOMEventTargetIface* iface)
 {
     iface->dispatch_event = webkit_dom_document_dispatch_event;
     iface->add_event_listener = webkit_dom_document_add_event_listener;
     iface->remove_event_listener = webkit_dom_document_remove_event_listener;
 }
-
-G_DEFINE_TYPE_WITH_CODE(WebKitDOMDocument, webkit_dom_document, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_document_dom_event_target_init))
 
 enum {
     DOM_DOCUMENT_PROP_0,
@@ -374,9 +353,8 @@ static void webkit_dom_document_get_property(GObject* object, guint propertyId, 
     }
 }
 
-static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
+void webkitDOMDocumentInstallProperties(GObjectClass* gobjectClass)
 {
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->set_property = webkit_dom_document_set_property;
     gobjectClass->get_property = webkit_dom_document_get_property;
 
@@ -890,11 +868,6 @@ static void webkit_dom_document_class_init(WebKitDOMDocumentClass* requestClass)
             0, G_MAXULONG, 0,
             WEBKIT_PARAM_READABLE));
 
-}
-
-static void webkit_dom_document_init(WebKitDOMDocument* request)
-{
-    UNUSED_PARAM(request);
 }
 
 WebKitDOMElement* webkit_dom_document_create_element(WebKitDOMDocument* self, const gchar* tagName, GError** error)
@@ -2008,3 +1981,4 @@ gulong webkit_dom_document_get_child_element_count(WebKitDOMDocument* self)
     return result;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

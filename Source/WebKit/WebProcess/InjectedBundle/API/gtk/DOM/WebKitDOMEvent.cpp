@@ -38,6 +38,8 @@ typedef struct _WebKitDOMEventPrivate {
     RefPtr<WebCore::Event> coreObject;
 } WebKitDOMEventPrivate;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMEvent* kit(WebCore::Event* obj)
@@ -408,3 +410,4 @@ void webkit_dom_event_set_cancel_bubble(WebKitDOMEvent* self, gboolean value)
     item->setCancelBubble(value);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

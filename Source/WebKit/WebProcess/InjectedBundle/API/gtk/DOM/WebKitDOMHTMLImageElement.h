@@ -45,7 +45,7 @@ struct _WebKitDOMHTMLImageElementClass {
     WebKitDOMHTMLElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_image_element_get_type(void);
 
 /**
@@ -53,8 +53,10 @@ webkit_dom_html_image_element_get_type(void);
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_name(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -62,8 +64,10 @@ webkit_dom_html_image_element_get_name(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_name(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -71,8 +75,10 @@ webkit_dom_html_image_element_set_name(WebKitDOMHTMLImageElement* self, const gc
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_align(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -80,8 +86,10 @@ webkit_dom_html_image_element_get_align(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_align(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -89,8 +97,10 @@ webkit_dom_html_image_element_set_align(WebKitDOMHTMLImageElement* self, const g
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_alt(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -98,8 +108,10 @@ webkit_dom_html_image_element_get_alt(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_alt(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -107,8 +119,10 @@ webkit_dom_html_image_element_set_alt(WebKitDOMHTMLImageElement* self, const gch
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_border(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -116,8 +130,10 @@ webkit_dom_html_image_element_get_border(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_border(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -125,8 +141,10 @@ webkit_dom_html_image_element_set_border(WebKitDOMHTMLImageElement* self, const 
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_height(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -134,8 +152,10 @@ webkit_dom_html_image_element_get_height(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_height(WebKitDOMHTMLImageElement* self, glong value);
 
 /**
@@ -143,8 +163,10 @@ webkit_dom_html_image_element_set_height(WebKitDOMHTMLImageElement* self, glong 
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_hspace(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -152,8 +174,10 @@ webkit_dom_html_image_element_get_hspace(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_hspace(WebKitDOMHTMLImageElement* self, glong value);
 
 /**
@@ -161,8 +185,10 @@ webkit_dom_html_image_element_set_hspace(WebKitDOMHTMLImageElement* self, glong 
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_image_element_get_is_map(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -170,8 +196,10 @@ webkit_dom_html_image_element_get_is_map(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gboolean
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_is_map(WebKitDOMHTMLImageElement* self, gboolean value);
 
 /**
@@ -179,8 +207,10 @@ webkit_dom_html_image_element_set_is_map(WebKitDOMHTMLImageElement* self, gboole
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_long_desc(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -188,8 +218,10 @@ webkit_dom_html_image_element_get_long_desc(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_long_desc(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -197,8 +229,10 @@ webkit_dom_html_image_element_set_long_desc(WebKitDOMHTMLImageElement* self, con
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_src(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -206,8 +240,10 @@ webkit_dom_html_image_element_get_src(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_src(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -215,8 +251,10 @@ webkit_dom_html_image_element_set_src(WebKitDOMHTMLImageElement* self, const gch
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_use_map(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -224,8 +262,10 @@ webkit_dom_html_image_element_get_use_map(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_use_map(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -233,8 +273,10 @@ webkit_dom_html_image_element_set_use_map(WebKitDOMHTMLImageElement* self, const
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_vspace(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -242,8 +284,10 @@ webkit_dom_html_image_element_get_vspace(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_vspace(WebKitDOMHTMLImageElement* self, glong value);
 
 /**
@@ -251,8 +295,10 @@ webkit_dom_html_image_element_set_vspace(WebKitDOMHTMLImageElement* self, glong 
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_width(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -260,8 +306,10 @@ webkit_dom_html_image_element_get_width(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_width(WebKitDOMHTMLImageElement* self, glong value);
 
 /**
@@ -269,8 +317,10 @@ webkit_dom_html_image_element_set_width(WebKitDOMHTMLImageElement* self, glong v
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_image_element_get_complete(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -278,8 +328,10 @@ webkit_dom_html_image_element_get_complete(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_image_element_get_lowsrc(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -287,8 +339,10 @@ webkit_dom_html_image_element_get_lowsrc(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_image_element_set_lowsrc(WebKitDOMHTMLImageElement* self, const gchar* value);
 
 /**
@@ -296,8 +350,10 @@ webkit_dom_html_image_element_set_lowsrc(WebKitDOMHTMLImageElement* self, const 
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_natural_height(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -305,8 +361,10 @@ webkit_dom_html_image_element_get_natural_height(WebKitDOMHTMLImageElement* self
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_natural_width(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -314,8 +372,10 @@ webkit_dom_html_image_element_get_natural_width(WebKitDOMHTMLImageElement* self)
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_x(WebKitDOMHTMLImageElement* self);
 
 /**
@@ -323,8 +383,10 @@ webkit_dom_html_image_element_get_x(WebKitDOMHTMLImageElement* self);
  * @self: A #WebKitDOMHTMLImageElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_image_element_get_y(WebKitDOMHTMLImageElement* self);
 
 G_END_DECLS

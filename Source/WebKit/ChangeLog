@@ -1,3 +1,295 @@
+2018-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add API to convert between DOM and JSCValue
+        https://bugs.webkit.org/show_bug.cgi?id=183448
+
+        Reviewed by Michael Catanzaro.
+
+        Add methods to get a JSCValue for a WebKitDOMObject and to create a WebKitDOMNode from a JSCValue. Deprecate
+        most of the GTK+ DOM bindings API and move the non-deprecated parts to glib dir to be exposed by WPE too.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/DOMObjectCache.cpp.
+        * WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.h: Copied from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/DOMObjectCache.h.
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocument.cpp: Added.
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapDocument):
+        (webkit_dom_document_class_init):
+        (webkit_dom_document_init):
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMDocumentPrivate.h: Copied from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentPrivate.h.
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMElement.cpp: Added.
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapElement):
+        (webkit_dom_element_class_init):
+        (webkit_dom_element_init):
+        (webkit_dom_element_html_input_element_is_user_edited):
+        (webkit_dom_element_html_input_element_get_auto_filled):
+        (webkit_dom_element_html_input_element_set_auto_filled):
+        (webkit_dom_element_html_input_element_set_editing_value):
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMElementPrivate.h: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElementPrivate.h.
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNode.cpp: Added.
+        (_WebKitDOMNodePrivate::~_WebKitDOMNodePrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapNode):
+        (webkitDOMNodeConstructor):
+        (webkitDOMNodeFinalize):
+        (webkit_dom_node_init):
+        (webkit_dom_node_class_init):
+        (webkitDOMNodeSetCoreObject):
+        (webkitDOMNodeGetCoreObject):
+        (webkit_dom_node_for_js_value):
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNodePrivate.h: Copied from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodePrivate.h.
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMObject.cpp: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.cpp.
+        (webkitDOMObjectSetProperty):
+        (webkit_dom_object_class_init):
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMPrivate.cpp: Added.
+        (WebKit::wrap):
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMPrivate.h: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/DOMObjectCache.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp:
+        (webkit_frame_get_js_value_for_dom_object):
+        (webkit_frame_get_js_value_for_dom_object_in_script_world):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkit_web_page_class_init):
+        (webkitWebPageCreate):
+        (webkit_web_page_get_dom_document):
+        * WebProcess/InjectedBundle/API/gtk/DOM/GObjectEventListener.cpp:
+        (WebKit::GObjectEventListener::handleEvent):
+        * WebProcess/InjectedBundle/API/gtk/DOM/GObjectNodeFilterCondition.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/GObjectXPathNSResolver.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlob.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlob.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCDATASection.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCDATASection.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRuleList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRuleList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleDeclaration.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleDeclaration.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleSheet.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleSheet.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRect.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRect.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMComment.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMComment.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp.
+        (webkitDOMDocumentDOMEventTargetInit):
+        (webkitDOMDocumentInstallProperties):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElementGtk.cpp: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp.
+        (webkitDOMElementDOMEventTargetInit):
+        (webkitDOMElementInstallProperties):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventTarget.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEventTarget.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBRElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBRElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBaseElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBaseElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBodyElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBodyElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCanvasElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCanvasElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCollection.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCollection.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDListElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDListElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDirectoryElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDirectoryElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDivElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDivElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDocument.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDocument.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLEmbedElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLEmbedElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFontElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFontElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameSetElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameSetElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHRElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHRElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadingElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadingElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLIElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLIElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLegendElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLegendElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMapElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMapElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMenuElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMenuElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMetaElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMetaElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLModElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLModElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptGroupElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptGroupElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollection.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollection.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParagraphElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParagraphElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParamElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParamElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPreElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPreElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPrivate.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLQuoteElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLQuoteElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCaptionElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCaptionElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCellElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCellElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableColElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableColElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableRowElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableRowElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableSectionElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableSectionElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTitleElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTitleElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLUListElement.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLUListElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyboardEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyboardEvent.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeFilter.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeFilter.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeGtk.cpp: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp.
+        (webkitDOMNodeDOMEventTargetInit):
+        (webkitDOMNodeInstallProperties):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivateGtk.cpp: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivate.cpp.
+        (WebKit::wrapNodeGtk):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivateGtk.h: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivate.h.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheetList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheetList.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTreeWalker.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTreeWalker.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEvent.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathExpression.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathExpression.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathNSResolver.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathNSResolver.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/docs/webkitdomgtk-4.0-sections.txt:
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.h:
+        * WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMDefines.h: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentPrivate.h.
+        * WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMDocument.h: Added.
+        * WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMElement.h: Added.
+        * WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMNode.h: Added.
+        * WebProcess/InjectedBundle/API/wpe/DOM/WebKitDOMObject.h: Copied from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObject.h.
+        * WebProcess/InjectedBundle/API/wpe/DOM/webkitdom.h: Renamed from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodePrivate.h.
+        * WebProcess/InjectedBundle/API/wpe/WebKitFrame.h:
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebHitTestResult.h: Added.
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebPage.h:
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebProcessEnumTypes.cpp.template: Added.
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebProcessEnumTypes.h.template: Copied from Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMObjectPrivate.h.
+        * WebProcess/InjectedBundle/API/wpe/webkit-web-extension.h:
+
 2018-03-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Clean up CoordinatedGraphicsScene construct-time initializations

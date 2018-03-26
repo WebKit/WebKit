@@ -35,6 +35,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLCanvasElement* kit(WebCore::HTMLCanvasElement* obj)
@@ -199,3 +201,4 @@ void webkit_dom_html_canvas_element_set_height(WebKitDOMHTMLCanvasElement* self,
     item->setHeight(value);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;

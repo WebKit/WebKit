@@ -37,40 +37,58 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_CSS_RULE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_CSS_RULE))
 #define WEBKIT_DOM_CSS_RULE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_CSS_RULE, WebKitDOMCSSRuleClass))
 
+#ifndef WEBKIT_DISABLE_DEPRECATED
+
 /**
  * WEBKIT_DOM_CSS_RULE_UNKNOWN_RULE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_CSS_RULE_UNKNOWN_RULE 0
 
 /**
  * WEBKIT_DOM_CSS_RULE_STYLE_RULE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_CSS_RULE_STYLE_RULE 1
 
 /**
  * WEBKIT_DOM_CSS_RULE_CHARSET_RULE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_CSS_RULE_CHARSET_RULE 2
 
 /**
  * WEBKIT_DOM_CSS_RULE_IMPORT_RULE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_CSS_RULE_IMPORT_RULE 3
 
 /**
  * WEBKIT_DOM_CSS_RULE_MEDIA_RULE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_CSS_RULE_MEDIA_RULE 4
 
 /**
  * WEBKIT_DOM_CSS_RULE_FONT_FACE_RULE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_CSS_RULE_FONT_FACE_RULE 5
 
 /**
  * WEBKIT_DOM_CSS_RULE_PAGE_RULE:
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
  */
 #define WEBKIT_DOM_CSS_RULE_PAGE_RULE 6
+
+#endif /* WEBKIT_DISABLE_DEPRECATED */
 
 struct _WebKitDOMCSSRule {
     WebKitDOMObject parent_instance;
@@ -80,7 +98,7 @@ struct _WebKitDOMCSSRuleClass {
     WebKitDOMObjectClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_css_rule_get_type(void);
 
 /**
@@ -88,8 +106,10 @@ webkit_dom_css_rule_get_type(void);
  * @self: A #WebKitDOMCSSRule
  *
  * Returns: A #gushort
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gushort
+WEBKIT_DEPRECATED gushort
 webkit_dom_css_rule_get_rule_type(WebKitDOMCSSRule* self);
 
 /**
@@ -97,8 +117,10 @@ webkit_dom_css_rule_get_rule_type(WebKitDOMCSSRule* self);
  * @self: A #WebKitDOMCSSRule
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_css_rule_get_css_text(WebKitDOMCSSRule* self);
 
 /**
@@ -107,8 +129,10 @@ webkit_dom_css_rule_get_css_text(WebKitDOMCSSRule* self);
  * @value: A #gchar
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_css_rule_set_css_text(WebKitDOMCSSRule* self, const gchar* value, GError** error);
 
 /**
@@ -116,8 +140,10 @@ webkit_dom_css_rule_set_css_text(WebKitDOMCSSRule* self, const gchar* value, GEr
  * @self: A #WebKitDOMCSSRule
  *
  * Returns: (transfer full): A #WebKitDOMCSSStyleSheet
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMCSSStyleSheet*
+WEBKIT_DEPRECATED WebKitDOMCSSStyleSheet*
 webkit_dom_css_rule_get_parent_style_sheet(WebKitDOMCSSRule* self);
 
 /**
@@ -125,8 +151,10 @@ webkit_dom_css_rule_get_parent_style_sheet(WebKitDOMCSSRule* self);
  * @self: A #WebKitDOMCSSRule
  *
  * Returns: (transfer full): A #WebKitDOMCSSRule
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API WebKitDOMCSSRule*
+WEBKIT_DEPRECATED WebKitDOMCSSRule*
 webkit_dom_css_rule_get_parent_rule(WebKitDOMCSSRule* self);
 
 G_END_DECLS

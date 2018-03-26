@@ -45,15 +45,17 @@ struct _WebKitDOMHTMLElementClass {
     WebKitDOMElementClass parent_class;
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_dom_html_element_get_type(void);
 
 /**
  * webkit_dom_html_element_click:
  * @self: A #WebKitDOMHTMLElement
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_click(WebKitDOMHTMLElement* self);
 
 /**
@@ -61,8 +63,10 @@ webkit_dom_html_element_click(WebKitDOMHTMLElement* self);
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_title(WebKitDOMHTMLElement* self);
 
 /**
@@ -70,8 +74,10 @@ webkit_dom_html_element_get_title(WebKitDOMHTMLElement* self);
  * @self: A #WebKitDOMHTMLElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_title(WebKitDOMHTMLElement* self, const gchar* value);
 
 /**
@@ -79,8 +85,10 @@ webkit_dom_html_element_set_title(WebKitDOMHTMLElement* self, const gchar* value
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_lang(WebKitDOMHTMLElement* self);
 
 /**
@@ -88,8 +96,10 @@ webkit_dom_html_element_get_lang(WebKitDOMHTMLElement* self);
  * @self: A #WebKitDOMHTMLElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_lang(WebKitDOMHTMLElement* self, const gchar* value);
 
 /**
@@ -97,8 +107,10 @@ webkit_dom_html_element_set_lang(WebKitDOMHTMLElement* self, const gchar* value)
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_dir(WebKitDOMHTMLElement* self);
 
 /**
@@ -106,8 +118,10 @@ webkit_dom_html_element_get_dir(WebKitDOMHTMLElement* self);
  * @self: A #WebKitDOMHTMLElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_dir(WebKitDOMHTMLElement* self, const gchar* value);
 
 /**
@@ -115,8 +129,10 @@ webkit_dom_html_element_set_dir(WebKitDOMHTMLElement* self, const gchar* value);
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #glong
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API glong
+WEBKIT_DEPRECATED glong
 webkit_dom_html_element_get_tab_index(WebKitDOMHTMLElement* self);
 
 /**
@@ -124,8 +140,10 @@ webkit_dom_html_element_get_tab_index(WebKitDOMHTMLElement* self);
  * @self: A #WebKitDOMHTMLElement
  * @value: A #glong
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_tab_index(WebKitDOMHTMLElement* self, glong value);
 
 /**
@@ -133,8 +151,10 @@ webkit_dom_html_element_set_tab_index(WebKitDOMHTMLElement* self, glong value);
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_access_key(WebKitDOMHTMLElement* self);
 
 /**
@@ -142,8 +162,10 @@ webkit_dom_html_element_get_access_key(WebKitDOMHTMLElement* self);
  * @self: A #WebKitDOMHTMLElement
  * @value: A #gchar
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_access_key(WebKitDOMHTMLElement* self, const gchar* value);
 
 /**
@@ -151,8 +173,10 @@ webkit_dom_html_element_set_access_key(WebKitDOMHTMLElement* self, const gchar* 
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_inner_text(WebKitDOMHTMLElement* self);
 
 /**
@@ -161,8 +185,10 @@ webkit_dom_html_element_get_inner_text(WebKitDOMHTMLElement* self);
  * @value: A #gchar
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_inner_text(WebKitDOMHTMLElement* self, const gchar* value, GError** error);
 
 /**
@@ -170,8 +196,10 @@ webkit_dom_html_element_set_inner_text(WebKitDOMHTMLElement* self, const gchar* 
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_outer_text(WebKitDOMHTMLElement* self);
 
 /**
@@ -180,8 +208,10 @@ webkit_dom_html_element_get_outer_text(WebKitDOMHTMLElement* self);
  * @value: A #gchar
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_outer_text(WebKitDOMHTMLElement* self, const gchar* value, GError** error);
 
 /**
@@ -189,8 +219,10 @@ webkit_dom_html_element_set_outer_text(WebKitDOMHTMLElement* self, const gchar* 
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gchar
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_content_editable(WebKitDOMHTMLElement* self);
 
 /**
@@ -199,8 +231,10 @@ webkit_dom_html_element_get_content_editable(WebKitDOMHTMLElement* self);
  * @value: A #gchar
  * @error: #GError
  *
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_content_editable(WebKitDOMHTMLElement* self, const gchar* value, GError** error);
 
 /**
@@ -208,8 +242,10 @@ webkit_dom_html_element_set_content_editable(WebKitDOMHTMLElement* self, const g
  * @self: A #WebKitDOMHTMLElement
  *
  * Returns: A #gboolean
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_element_get_is_content_editable(WebKitDOMHTMLElement* self);
 
 /**
@@ -219,8 +255,10 @@ webkit_dom_html_element_get_is_content_editable(WebKitDOMHTMLElement* self);
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_element_get_translate(WebKitDOMHTMLElement* self);
 
 /**
@@ -229,8 +267,10 @@ webkit_dom_html_element_get_translate(WebKitDOMHTMLElement* self);
  * @value: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_translate(WebKitDOMHTMLElement* self, gboolean value);
 
 /**
@@ -240,8 +280,10 @@ webkit_dom_html_element_set_translate(WebKitDOMHTMLElement* self, gboolean value
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_element_get_draggable(WebKitDOMHTMLElement* self);
 
 /**
@@ -250,8 +292,10 @@ webkit_dom_html_element_get_draggable(WebKitDOMHTMLElement* self);
  * @value: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_draggable(WebKitDOMHTMLElement* self, gboolean value);
 
 /**
@@ -261,8 +305,10 @@ webkit_dom_html_element_set_draggable(WebKitDOMHTMLElement* self, gboolean value
  * Returns: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gchar*
+WEBKIT_DEPRECATED gchar*
 webkit_dom_html_element_get_webkitdropzone(WebKitDOMHTMLElement* self);
 
 /**
@@ -271,8 +317,10 @@ webkit_dom_html_element_get_webkitdropzone(WebKitDOMHTMLElement* self);
  * @value: A #gchar
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_webkitdropzone(WebKitDOMHTMLElement* self, const gchar* value);
 
 /**
@@ -282,8 +330,10 @@ webkit_dom_html_element_set_webkitdropzone(WebKitDOMHTMLElement* self, const gch
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_element_get_hidden(WebKitDOMHTMLElement* self);
 
 /**
@@ -292,8 +342,10 @@ webkit_dom_html_element_get_hidden(WebKitDOMHTMLElement* self);
  * @value: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_hidden(WebKitDOMHTMLElement* self, gboolean value);
 
 /**
@@ -303,8 +355,10 @@ webkit_dom_html_element_set_hidden(WebKitDOMHTMLElement* self, gboolean value);
  * Returns: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_dom_html_element_get_spellcheck(WebKitDOMHTMLElement* self);
 
 /**
@@ -313,8 +367,10 @@ webkit_dom_html_element_get_spellcheck(WebKitDOMHTMLElement* self);
  * @value: A #gboolean
  *
  * Since: 2.16
+ *
+ * Deprecated: 2.22: Use JavaScriptCore API instead
 **/
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_dom_html_element_set_spellcheck(WebKitDOMHTMLElement* self, gboolean value);
 
 G_END_DECLS

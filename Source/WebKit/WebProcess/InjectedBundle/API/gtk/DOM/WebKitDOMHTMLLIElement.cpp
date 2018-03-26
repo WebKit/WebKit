@@ -36,6 +36,8 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+
 namespace WebKit {
 
 WebKitDOMHTMLLIElement* kit(WebCore::HTMLLIElement* obj)
@@ -202,3 +204,4 @@ void webkit_dom_html_li_element_set_value(WebKitDOMHTMLLIElement* self, glong va
     item->setIntegralAttribute(WebCore::HTMLNames::valueAttr, value);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS;
