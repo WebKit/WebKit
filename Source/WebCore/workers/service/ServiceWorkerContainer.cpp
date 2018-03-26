@@ -172,7 +172,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     CONTAINER_RELEASE_LOG_IF_ALLOWED("addRegistration: Registering service worker. Job ID: %" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
 
     jobData.clientCreationURL = context->url();
-    jobData.topOrigin = context->topOrigin().data();
+    jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
     jobData.type = ServiceWorkerJobType::Register;
     jobData.registrationOptions = options;
 
@@ -196,7 +196,7 @@ void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<Deferre
 
     ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier(), contextIdentifier());
     jobData.clientCreationURL = context->url();
-    jobData.topOrigin = context->topOrigin().data();
+    jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
     jobData.type = ServiceWorkerJobType::Unregister;
     jobData.scopeURL = scopeURL;
 
@@ -221,7 +221,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
 
     ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier(), contextIdentifier());
     jobData.clientCreationURL = context.url();
-    jobData.topOrigin = context.topOrigin().data();
+    jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context.topOrigin());
     jobData.type = ServiceWorkerJobType::Update;
     jobData.scopeURL = scopeURL;
     jobData.scriptURL = scriptURL;

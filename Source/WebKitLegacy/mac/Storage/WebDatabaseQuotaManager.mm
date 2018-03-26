@@ -53,12 +53,12 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::singleton().usage([_origin _core]->data());
+    return DatabaseTracker::singleton().usage(SecurityOriginData::fromSecurityOrigin(*[_origin _core]));
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::singleton().quota([_origin _core]->data());
+    return DatabaseTracker::singleton().quota(SecurityOriginData::fromSecurityOrigin(*[_origin _core]));
 }
 
 // If the quota is set to a value lower than the current usage, that quota will
@@ -66,7 +66,7 @@ using namespace WebCore;
 // prevent new data from being added to databases in that origin.
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::singleton().setQuota([_origin _core]->data(), quota);
+    DatabaseTracker::singleton().setQuota(SecurityOriginData::fromSecurityOrigin(*[_origin _core]), quota);
 }
 
 @end

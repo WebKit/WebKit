@@ -153,12 +153,12 @@ void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registrat
     auto addResult2 = m_registrationsByID.add(registrationPtr->identifier(), registrationPtr);
     ASSERT_UNUSED(addResult2, addResult2.isNewEntry);
 
-    m_originStore->add(key.topOrigin());
+    m_originStore->add(key.topOrigin().securityOrigin());
 }
 
 void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& key)
 {
-    auto topOrigin = key.topOrigin();
+    auto topOrigin = key.topOrigin().securityOrigin();
     auto registration = m_registrations.take(key);
     ASSERT(registration);
     bool wasRemoved = m_registrationsByID.remove(registration->identifier());
@@ -205,29 +205,29 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
     m_registrationStore.clearAll(WTFMove(completionHandler));
 }
 
-void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler<void()>&& completionHandler)
+void SWServer::clear(const SecurityOrigin& origin, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_importCompleted) {
-        m_clearCompletionCallbacks.append([this, securityOrigin, completionHandler = WTFMove(completionHandler)] () mutable {
+        m_clearCompletionCallbacks.append([this, origin = makeRef(origin), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(m_importCompleted);
-            clear(securityOrigin, WTFMove(completionHandler));
+            clear(origin, WTFMove(completionHandler));
         });
         return;
     }
 
     m_jobQueues.removeIf([&](auto& keyAndValue) {
-        return keyAndValue.key.relatesToOrigin(securityOrigin);
+        return keyAndValue.key.relatesToOrigin(origin);
     });
 
     Vector<SWServerRegistration*> registrationsToRemove;
     for (auto& keyAndValue : m_registrations) {
-        if (keyAndValue.key.relatesToOrigin(securityOrigin))
+        if (keyAndValue.key.relatesToOrigin(origin))
             registrationsToRemove.append(keyAndValue.value.get());
     }
 
     for (auto& contextDatas : m_pendingContextDatas.values()) {
         contextDatas.removeAllMatching([&](auto& contextData) {
-            return contextData.registration.key.relatesToOrigin(securityOrigin);
+            return contextData.registration.key.relatesToOrigin(origin);
         });
     }
 
@@ -498,10 +498,10 @@ void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& j
 
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
 {
-    auto securityOrigin = SecurityOriginData::fromURL(data.scriptURL);
-    auto* connection = SWServerToContextConnection::connectionForOrigin(securityOrigin);
+    auto origin = SecurityOrigin::create(data.scriptURL);
+    auto* connection = SWServerToContextConnection::connectionForOrigin(origin);
     if (!connection) {
-        m_pendingContextDatas.ensure(WTFMove(securityOrigin), [] {
+        m_pendingContextDatas.ensure(WTFMove(origin), [] {
             return Vector<ServiceWorkerContextData> { };
         }).iterator->value.append(WTFMove(data));
         return;
@@ -512,11 +512,11 @@ void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
 
 void SWServer::serverToContextConnectionCreated(SWServerToContextConnection& contextConnection)
 {
-    auto pendingContextDatas = m_pendingContextDatas.take(contextConnection.securityOrigin());
+    auto pendingContextDatas = m_pendingContextDatas.take(&contextConnection.origin());
     for (auto& data : pendingContextDatas)
         installContextData(data);
 
-    auto serviceWorkerRunRequests = m_serviceWorkerRunRequests.take(contextConnection.securityOrigin());
+    auto serviceWorkerRunRequests = m_serviceWorkerRunRequests.take(&contextConnection.origin());
     for (auto& item : serviceWorkerRunRequests) {
         bool success = runServiceWorker(item.key);
         for (auto& callback : item.value)
@@ -641,11 +641,11 @@ void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode m
     };
 }
 
-void SWServer::markAllWorkersForOriginAsTerminated(const SecurityOriginData& securityOrigin)
+void SWServer::markAllWorkersForOriginAsTerminated(const SecurityOrigin& origin)
 {
     Vector<SWServerWorker*> terminatedWorkers;
     for (auto& worker : m_runningOrTerminatingWorkers.values()) {
-        if (worker->securityOrigin() == securityOrigin)
+        if (origin.isSameSchemeHostPort(worker->securityOrigin()))
             terminatedWorkers.append(worker.ptr());
     }
     for (auto& terminatedWorker : terminatedWorkers)
@@ -779,7 +779,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
                     terminateWorker(worker);
             }
             if (!m_clientsBySecurityOrigin.contains(clientOrigin.clientOrigin)) {
-                if (auto* connection = SWServerToContextConnection::connectionForOrigin(clientOrigin.clientOrigin))
+                if (auto* connection = SWServerToContextConnection::connectionForOrigin(clientOrigin.clientOrigin.securityOrigin()))
                     connection->connectionMayNoLongerBeNeeded();
             }
 
@@ -805,9 +805,9 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     m_clientToControllingRegistration.remove(registrationIterator);
 }
 
-bool SWServer::needsServerToContextConnectionForOrigin(const SecurityOriginData& securityOrigin) const
+bool SWServer::needsServerToContextConnectionForOrigin(const SecurityOrigin& origin) const
 {
-    return m_clientsBySecurityOrigin.contains(securityOrigin);
+    return m_clientsBySecurityOrigin.contains(SecurityOriginData::fromSecurityOrigin(origin));
 }
 
 void SWServer::resolveRegistrationReadyRequests(SWServerRegistration& registration)

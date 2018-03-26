@@ -693,7 +693,7 @@ WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
     originIdentifiers.reserveInitialCapacity(origins.size());
 
     for (const auto& origin : origins)
-        originIdentifiers.uncheckedAppend(API::String::create(origin->data().databaseIdentifier()));
+        originIdentifiers.uncheckedAppend(API::String::create(WebCore::SecurityOriginData::fromSecurityOrigin(*origin).databaseIdentifier()));
 
     return toAPI(&API::Array::create(WTFMove(originIdentifiers)).leakRef());
 }

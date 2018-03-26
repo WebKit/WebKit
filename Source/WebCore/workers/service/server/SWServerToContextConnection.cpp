@@ -30,6 +30,7 @@
 
 #include "SWServer.h"
 #include "SWServerWorker.h"
+#include "SecurityOriginHash.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -39,29 +40,29 @@ static SWServerToContextConnectionIdentifier generateServerToContextConnectionId
     return generateObjectIdentifier<SWServerToContextConnectionIdentifierType>();
 }
 
-static HashMap<SecurityOriginData, SWServerToContextConnection*>& allConnectionsByOrigin()
+static HashMap<RefPtr<SecurityOrigin>, SWServerToContextConnection*>& allConnectionsByOrigin()
 {
-    static NeverDestroyed<HashMap<SecurityOriginData, SWServerToContextConnection*>> connectionsByOrigin;
+    static NeverDestroyed<HashMap<RefPtr<SecurityOrigin>, SWServerToContextConnection*>> connectionsByOrigin;
     return connectionsByOrigin;
 }
 
-SWServerToContextConnection::SWServerToContextConnection(const SecurityOriginData& securityOrigin)
+SWServerToContextConnection::SWServerToContextConnection(Ref<SecurityOrigin>&& origin)
     : m_identifier(generateServerToContextConnectionIdentifier())
-    , m_securityOrigin(securityOrigin)
+    , m_origin(WTFMove(origin))
 {
-    auto result = allConnectionsByOrigin().add(m_securityOrigin, this);
+    auto result = allConnectionsByOrigin().add(m_origin.copyRef(), this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 SWServerToContextConnection::~SWServerToContextConnection()
 {
-    auto result = allConnectionsByOrigin().remove(m_securityOrigin);
+    auto result = allConnectionsByOrigin().remove(m_origin.ptr());
     ASSERT_UNUSED(result, result);
 }
 
-SWServerToContextConnection* SWServerToContextConnection::connectionForOrigin(const SecurityOriginData& securityOrigin)
+SWServerToContextConnection* SWServerToContextConnection::connectionForOrigin(const SecurityOrigin& origin)
 {
-    return allConnectionsByOrigin().get(securityOrigin);
+    return allConnectionsByOrigin().get(&const_cast<SecurityOrigin&>(origin));
 }
 
 void SWServerToContextConnection::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)

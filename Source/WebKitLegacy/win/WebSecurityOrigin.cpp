@@ -130,7 +130,7 @@ HRESULT WebSecurityOrigin::usage(_Out_ unsigned long long* result)
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseTracker::singleton().usage(m_securityOrigin->data());
+    *result = DatabaseTracker::singleton().usage(SecurityOriginData::fromSecurityOrigin(*m_securityOrigin));
 
     return S_OK;
 }
@@ -140,13 +140,13 @@ HRESULT WebSecurityOrigin::quota(_Out_ unsigned long long* result)
     if (!result)
         return E_POINTER;
 
-    *result = DatabaseTracker::singleton().quota(m_securityOrigin->data());
+    *result = DatabaseTracker::singleton().quota(SecurityOriginData::fromSecurityOrigin(*m_securityOrigin));
     return S_OK;
 }
         
 HRESULT WebSecurityOrigin::setQuota(unsigned long long quota) 
 {
-    DatabaseTracker::singleton().setQuota(m_securityOrigin->data(), quota);
+    DatabaseTracker::singleton().setQuota(SecurityOriginData::fromSecurityOrigin(*m_securityOrigin), quota);
 
     return S_OK;
 }

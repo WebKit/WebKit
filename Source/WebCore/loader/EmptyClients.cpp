@@ -374,7 +374,7 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         bool contains(const String&) final { return false; }
         StorageType storageType() const final { return StorageType::Local; }
         size_t memoryBytesUsedByCache() final { return 0; }
-        const SecurityOriginData& securityOrigin() const final { static NeverDestroyed<SecurityOriginData> origin; return origin.get(); }
+        SecurityOriginData securityOrigin() const final { return { }; }
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {

@@ -845,7 +845,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     FrameInfoData originatingFrameInfoData;
     originatingFrameInfoData.isMainFrame = navigationAction.initiatedByMainFrame() == InitiatedByMainFrame::Yes;
     originatingFrameInfoData.request = ResourceRequest(sourceDocument.url());
-    originatingFrameInfoData.securityOrigin = sourceDocument.securityOrigin().data();
+    originatingFrameInfoData.securityOrigin = SecurityOriginData::fromSecurityOrigin(sourceDocument.securityOrigin());
     if (originatingFrame)
         originatingFrameInfoData.frameID = originatingFrame->frameID();
 

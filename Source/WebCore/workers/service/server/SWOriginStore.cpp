@@ -32,17 +32,17 @@
 
 namespace WebCore {
 
-void SWOriginStore::add(const SecurityOriginData& origin)
+void SWOriginStore::add(const SecurityOrigin& origin)
 {
-    ++m_originCounts.ensure(origin, [&] {
+    ++m_originCounts.ensure(origin.toString(), [&] {
         addToStore(origin);
         return 0;
     }).iterator->value;
 }
 
-void SWOriginStore::remove(const SecurityOriginData& origin)
+void SWOriginStore::remove(const SecurityOrigin& origin)
 {
-    auto iterator = m_originCounts.find(origin);
+    auto iterator = m_originCounts.find(origin.toString());
     ASSERT(iterator != m_originCounts.end());
     if (iterator == m_originCounts.end())
         return;
@@ -54,9 +54,9 @@ void SWOriginStore::remove(const SecurityOriginData& origin)
     removeFromStore(origin);
 }
 
-void SWOriginStore::clear(const SecurityOriginData& origin)
+void SWOriginStore::clear(const SecurityOrigin& origin)
 {
-    m_originCounts.remove(origin);
+    m_originCounts.remove(origin.toString());
     removeFromStore(origin);
 }
 

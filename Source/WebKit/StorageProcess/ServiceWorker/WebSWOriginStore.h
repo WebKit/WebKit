@@ -31,6 +31,10 @@
 #include <WebCore/SWOriginStore.h>
 #include <wtf/HashSet.h>
 
+namespace WebCore {
+class SecurityOrigin;
+}
+
 namespace WebKit {
 
 class WebSWServerConnection;
@@ -46,8 +50,8 @@ public:
 private:
     void sendStoreHandle(WebSWServerConnection&);
 
-    void addToStore(const WebCore::SecurityOriginData&) final;
-    void removeFromStore(const WebCore::SecurityOriginData&) final;
+    void addToStore(const WebCore::SecurityOrigin&) final;
+    void removeFromStore(const WebCore::SecurityOrigin&) final;
     void clearStore() final;
 
     // SharedStringHashStore::Client.

@@ -104,7 +104,7 @@ public:
     ServiceWorkerContextData contextData() const;
 
     const ClientOrigin& origin() const;
-    WEBCORE_EXPORT const SecurityOriginData& securityOrigin() const;
+    WEBCORE_EXPORT Ref<SecurityOrigin> securityOrigin() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
 

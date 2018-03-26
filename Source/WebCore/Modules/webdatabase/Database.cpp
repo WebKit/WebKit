@@ -767,9 +767,9 @@ Vector<String> Database::tableNames()
 SecurityOriginData Database::securityOrigin()
 {
     if (m_scriptExecutionContext->isContextThread())
-        return m_contextThreadSecurityOrigin->data();
+        return SecurityOriginData::fromSecurityOrigin(m_contextThreadSecurityOrigin.get());
     if (databaseThread().getThread() == &Thread::current())
-        return m_databaseThreadSecurityOrigin->data();
+        return SecurityOriginData::fromSecurityOrigin(m_databaseThreadSecurityOrigin.get());
     RELEASE_ASSERT_NOT_REACHED();
 }
 

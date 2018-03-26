@@ -591,11 +591,12 @@ void WebProcessPool::storageProcessCrashed(StorageProcessProxy* storageProcessPr
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy, SecurityOriginData&& securityOrigin, std::optional<PAL::SessionID> sessionID)
+void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StorageProcessProxy& proxy, SecurityOriginData&& originData, std::optional<PAL::SessionID> sessionID)
 {
     ASSERT_UNUSED(proxy, &proxy == m_storageProcess);
 
-    if (m_serviceWorkerProcesses.contains(securityOrigin))
+    auto origin = originData.securityOrigin();
+    if (m_serviceWorkerProcesses.contains(origin.ptr()))
         return;
 
     m_mayHaveRegisteredServiceWorkers.clear();
@@ -613,8 +614,8 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
     if (m_serviceWorkerProcesses.isEmpty())
         sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
 
-    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, securityOrigin, *websiteDataStore);
-    m_serviceWorkerProcesses.add(WTFMove(securityOrigin), serviceWorkerProcessProxy.ptr());
+    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, origin.copyRef(), *websiteDataStore);
+    m_serviceWorkerProcesses.add(origin.copyRef(), serviceWorkerProcessProxy.ptr());
 
     updateProcessAssertions();
     initializeNewWebProcess(serviceWorkerProcessProxy, *websiteDataStore);
@@ -989,7 +990,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 
 #if ENABLE(SERVICE_WORKER)
     if (is<ServiceWorkerProcessProxy>(*process)) {
-        auto* removedProcess = m_serviceWorkerProcesses.take(downcast<ServiceWorkerProcessProxy>(*process).securityOrigin());
+        auto* removedProcess = m_serviceWorkerProcesses.take(&downcast<ServiceWorkerProcessProxy>(*process).origin());
         ASSERT_UNUSED(removedProcess, removedProcess == process);
         updateProcessAssertions();
     }
@@ -1877,9 +1878,9 @@ void WebProcessPool::updateProcessAssertions()
         if (!m_serviceWorkerProcesses.isEmpty() && m_foregroundWebProcessCounter.value()) {
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto& securityOrigin = serviceWorkerProcess->securityOrigin();
-                if (!m_foregroundTokensForServiceWorkerProcesses.contains(securityOrigin))
-                    m_foregroundTokensForServiceWorkerProcesses.add(securityOrigin, serviceWorkerProcess->throttler().foregroundActivityToken());
+                auto& origin = serviceWorkerProcess->origin();
+                if (!m_foregroundTokensForServiceWorkerProcesses.contains(&origin))
+                    m_foregroundTokensForServiceWorkerProcesses.add(&origin, serviceWorkerProcess->throttler().foregroundActivityToken());
             }
             m_backgroundTokensForServiceWorkerProcesses.clear();
             return;
@@ -1887,9 +1888,9 @@ void WebProcessPool::updateProcessAssertions()
         if (!m_serviceWorkerProcesses.isEmpty() && m_backgroundWebProcessCounter.value()) {
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto& securityOrigin = serviceWorkerProcess->securityOrigin();
-                if (!m_backgroundTokensForServiceWorkerProcesses.contains(securityOrigin))
-                    m_backgroundTokensForServiceWorkerProcesses.add(securityOrigin, serviceWorkerProcess->throttler().backgroundActivityToken());
+                auto& origin = serviceWorkerProcess->origin();
+                if (!m_backgroundTokensForServiceWorkerProcesses.contains(&origin))
+                    m_backgroundTokensForServiceWorkerProcesses.add(&origin, serviceWorkerProcess->throttler().backgroundActivityToken());
             }
             m_foregroundTokensForServiceWorkerProcesses.clear();
             return;

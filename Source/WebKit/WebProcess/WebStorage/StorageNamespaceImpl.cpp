@@ -75,7 +75,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 
 void StorageNamespaceImpl::didDestroyStorageAreaMap(StorageAreaMap& map)
 {
-    m_storageAreaMaps.remove(map.securityOrigin().data());
+    m_storageAreaMaps.remove(SecurityOriginData::fromSecurityOrigin(map.securityOrigin()));
 }
 
 RefPtr<StorageArea> StorageNamespaceImpl::storageArea(const SecurityOriginData& securityOrigin)
@@ -177,7 +177,7 @@ private:
     void decrementAccessCount() { }
     void closeDatabaseIfIdle() { }
 
-    const SecurityOriginData& securityOrigin() const
+    SecurityOriginData securityOrigin() const
     {
         return m_securityOriginData;
     }

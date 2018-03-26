@@ -29,7 +29,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBServer.h>
-#include <WebCore/SecurityOriginData.h>
+#include <WebCore/SecurityOriginHash.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/UniqueIDBDatabase.h>
@@ -45,6 +45,7 @@ namespace WebCore {
 class SWServer;
 class ServiceWorkerRegistrationKey;
 struct MessageWithMessagePorts;
+struct SecurityOriginData;
 struct ServiceWorkerClientIdentifier;
 }
 
@@ -93,8 +94,8 @@ public:
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    WebSWServerToContextConnection* serverToContextConnectionForOrigin(const WebCore::SecurityOriginData&);
-    void createServerToContextConnection(const WebCore::SecurityOriginData&, std::optional<PAL::SessionID>);
+    WebSWServerToContextConnection* serverToContextConnectionForOrigin(const WebCore::SecurityOrigin&);
+    void createServerToContextConnection(const WebCore::SecurityOrigin&, std::optional<PAL::SessionID>);
 
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
@@ -149,7 +150,7 @@ private:
     void disableServiceWorkerProcessTerminationDelay();
 
     WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
-    bool needsServerToContextConnectionForOrigin(const WebCore::SecurityOriginData&) const;
+    bool needsServerToContextConnectionForOrigin(WebCore::SecurityOrigin&) const;
 #endif
 #if ENABLE(INDEXED_DATABASE)
     Vector<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
@@ -176,7 +177,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void didCreateWorkerContextProcessConnection(const IPC::Attachment&);
 
-    HashMap<WebCore::SecurityOriginData, Ref<WebSWServerToContextConnection>> m_serverToContextConnections;
+    HashMap<RefPtr<WebCore::SecurityOrigin>, Ref<WebSWServerToContextConnection>> m_serverToContextConnections;
     bool m_waitingForServerToContextProcessConnection { false };
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;

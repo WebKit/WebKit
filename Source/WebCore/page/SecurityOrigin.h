@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "SecurityOriginData.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -79,10 +78,10 @@ public:
     void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
-    const String& protocol() const { return m_data.protocol; }
-    const String& host() const { return m_data.host; }
+    const String& protocol() const { return m_protocol; }
+    const String& host() const { return m_host; }
     const String& domain() const { return m_domain; }
-    std::optional<uint16_t> port() const { return m_data.port; }
+    std::optional<uint16_t> port() const { return m_port; }
 
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
@@ -206,8 +205,6 @@ public:
 
     static bool isLocalHostOrLoopbackIPAddress(const String& host);
 
-    const SecurityOriginData& data() const { return m_data; }
-
 private:
     SecurityOrigin();
     explicit SecurityOrigin(const URL&);
@@ -218,14 +215,16 @@ private:
 
     // This method checks that the scheme for this origin is an HTTP-family
     // scheme, e.g. HTTP and HTTPS.
-    bool isHTTPFamily() const { return m_data.protocol == "http" || m_data.protocol == "https"; }
+    bool isHTTPFamily() const { return m_protocol == "http" || m_protocol == "https"; }
     
     enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;
 
-    SecurityOriginData m_data;
+    String m_protocol;
+    String m_host;
     String m_domain;
     String m_filePath;
+    std::optional<uint16_t> m_port;
     bool m_isUnique { false };
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };

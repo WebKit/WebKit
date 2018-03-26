@@ -57,7 +57,7 @@ void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRe
     auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
 
     WebsiteDataRecord dataRecord;
-    dataRecord.add(WebsiteDataType::OfflineWebApplicationCache, toImpl(origin)->securityOrigin().data());
+    dataRecord.add(WebsiteDataType::OfflineWebApplicationCache, WebCore::SecurityOriginData::fromSecurityOrigin(toImpl(origin)->securityOrigin()));
 
     websiteDataStore.removeData(WebsiteDataType::OfflineWebApplicationCache, { dataRecord }, [] { });
 }

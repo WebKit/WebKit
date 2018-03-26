@@ -78,7 +78,7 @@ RefPtr<StorageArea> StorageNamespaceProvider::localStorageArea(Document& documen
     else
         storageNamespace = &localStorageNamespace();
 
-    return storageNamespace->storageArea(document.securityOrigin().data());
+    return storageNamespace->storageArea(SecurityOriginData::fromSecurityOrigin(document.securityOrigin()));
 }
 
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace()

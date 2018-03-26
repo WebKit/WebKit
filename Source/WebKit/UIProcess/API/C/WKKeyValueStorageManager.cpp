@@ -119,7 +119,7 @@ void WKKeyValueStorageManagerDeleteEntriesForOrigin(WKKeyValueStorageManagerRef 
     if (!storageManager)
         return;
 
-    storageManager->deleteLocalStorageEntriesForOrigin(toImpl(origin)->securityOrigin().data());
+    storageManager->deleteLocalStorageEntriesForOrigin(WebCore::SecurityOriginData::fromSecurityOrigin(toImpl(origin)->securityOrigin()));
 }
 
 void WKKeyValueStorageManagerDeleteAllEntries(WKKeyValueStorageManagerRef keyValueStorageManager)
