@@ -4182,92 +4182,17 @@ static bool isAssistableInputType(InputType type)
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-- (void)dismissAllInputViewControllers
-{
-    [self dismissTextInputViewController:YES];
-    [self dismissNumberPadViewController:YES];
-    [self dismissSelectMenuViewController:YES];
-    [self dismissTimePickerViewController:YES];
-    [self dismissDatePickerViewController:YES];
-}
-
-- (void)presentDatePickerViewController:(BOOL)animated
-{
-    if (_datePickerViewController)
-        return;
-
-    _datePickerViewController = adoptNS([[WKDatePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
-    [_datePickerViewController setDelegate:self];
-    [_focusedFormControlViewController presentViewController:_datePickerViewController.get() animated:animated completion:nil];
-}
-
-- (void)dismissDatePickerViewController:(BOOL)animated
-{
-    if (!_datePickerViewController)
-        return;
-
-    auto datePickerViewController = WTFMove(_datePickerViewController);
-    [datePickerViewController dismissViewControllerAnimated:animated completion:nil];
-}
-
-- (void)presentTimePickerViewController:(BOOL)animated
-{
-    if (_timePickerViewController)
-        return;
-
-    _timePickerViewController = adoptNS([[WKTimePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
-    [_timePickerViewController setDelegate:self];
-    [_focusedFormControlViewController presentViewController:_timePickerViewController.get() animated:animated completion:nil];
-}
-
-- (void)dismissTimePickerViewController:(BOOL)animated
-{
-    if (!_timePickerViewController)
-        return;
-
-    auto timePickerViewController = WTFMove(_timePickerViewController);
-    [timePickerViewController dismissViewControllerAnimated:animated completion:nil];
-}
-
-- (void)presentSelectMenuViewController:(BOOL)animated
-{
-    if (_selectMenuListViewController)
-        return;
-
-    _selectMenuListViewController = adoptNS([[WKSelectMenuListViewController alloc] initWithDelegate:self]);
-    [_focusedFormControlViewController presentViewController:_selectMenuListViewController.get() animated:animated completion:nil];
-}
-
-- (void)dismissSelectMenuViewController:(BOOL)animated
-{
-    if (!_selectMenuListViewController)
-        return;
-
-    auto selectMenuListViewController = WTFMove(_selectMenuListViewController);
-    [_selectMenuListViewController dismissViewControllerAnimated:animated completion:nil];
-}
-
 - (void)presentFocusedFormControlViewController:(BOOL)animated
 {
     if (_focusedFormControlViewController)
         return;
 
     ++_webView->_activeFocusedStateRetainCount;
-    _shouldRestoreFirstResponderStatusAfterLosingFocus = self.isFirstResponder;
 
     _focusedFormControlViewController = adoptNS([[WKFocusedFormControlViewController alloc] init]);
     [_focusedFormControlViewController setDelegate:self];
     [[UIViewController _viewControllerForFullScreenPresentationFromView:self] presentViewController:_focusedFormControlViewController.get() animated:animated completion:nil];
     [self setInputDelegate:_focusedFormControlViewController.get()];
-}
-
-- (void)dismissNumberPadViewController:(BOOL)animated
-{
-    if (!_numberPadViewController)
-        return;
-
-    auto numberPadViewController = WTFMove(_numberPadViewController);
-    [numberPadViewController dismissViewControllerAnimated:animated completion:nil];
 }
 
 - (void)dismissFocusedFormControlViewController:(BOOL)animated
@@ -4277,69 +4202,81 @@ static bool isAssistableInputType(InputType type)
 
     --_webView->_activeFocusedStateRetainCount;
 
-    if (_shouldRestoreFirstResponderStatusAfterLosingFocus && !self.isFirstResponder) {
-        _shouldRestoreFirstResponderStatusAfterLosingFocus = NO;
-        [self becomeFirstResponder];
-    }
-
     [_focusedFormControlViewController dismissViewControllerAnimated:animated completion:nil];
     _focusedFormControlViewController = nil;
     [self setInputDelegate:nil];
-}
-
-- (void)presentNumberPadViewController:(BOOL)animated
-{
-    if (_numberPadViewController)
-        return;
-
-    _numberPadViewController = adoptNS([[WKNumberPadViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[]]);
-    [_numberPadViewController setDelegate:self];
-    [_focusedFormControlViewController presentViewController:_numberPadViewController.get() animated:animated completion:nil];
 }
 
 - (void)presentViewControllerForCurrentAssistedNode
 {
     [self dismissAllInputViewControllers];
 
+    _shouldRestoreFirstResponderStatusAfterLosingFocus = self.isFirstResponder;
+
     switch (_assistedNodeInformation.elementType) {
     case InputType::Number:
     case InputType::NumberPad:
     case InputType::Phone:
-        [self presentNumberPadViewController:YES];
+        if (!_numberPadViewController) {
+            _numberPadViewController = adoptNS([[WKNumberPadViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[]]);
+            [_numberPadViewController setDelegate:self];
+            [_focusedFormControlViewController presentViewController:_numberPadViewController.get() animated:YES completion:nil];
+        }
         break;
     case InputType::Select:
-        [self presentSelectMenuViewController:YES];
+        if (!_selectMenuListViewController) {
+            _selectMenuListViewController = adoptNS([[WKSelectMenuListViewController alloc] initWithDelegate:self]);
+            [_focusedFormControlViewController presentViewController:_selectMenuListViewController.get() animated:YES completion:nil];
+        }
         break;
     case InputType::Time:
-        [self presentTimePickerViewController:YES];
+        if (!_timePickerViewController) {
+            _timePickerViewController = adoptNS([[WKTimePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
+            [_timePickerViewController setDelegate:self];
+            [_focusedFormControlViewController presentViewController:_timePickerViewController.get() animated:YES completion:nil];
+        }
         break;
     case InputType::Date:
-        [self presentDatePickerViewController:YES];
+        if (!_datePickerViewController) {
+            _datePickerViewController = adoptNS([[WKDatePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
+            [_datePickerViewController setDelegate:self];
+            [_focusedFormControlViewController presentViewController:_datePickerViewController.get() animated:YES completion:nil];
+        }
         break;
     case InputType::None:
+        ASSERT_NOT_REACHED();
         break;
     default:
-        [self presentTextInputViewController:YES];
+        if (!_textInputListViewController) {
+            _textInputListViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
+            [_focusedFormControlViewController presentViewController:_textInputListViewController.get() animated:YES completion:nil];
+        }
         break;
     }
 }
 
-- (void)presentTextInputViewController:(BOOL)animated
+- (void)dismissAllInputViewControllers
 {
-    if (_textInputListViewController)
-        return;
+    if (auto controller = WTFMove(_textInputListViewController))
+        [controller dismissViewControllerAnimated:YES completion:nil];
 
-    _textInputListViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
-    [_focusedFormControlViewController presentViewController:_textInputListViewController.get() animated:animated completion:nil];
-}
+    if (auto controller = WTFMove(_numberPadViewController))
+        [controller dismissViewControllerAnimated:YES completion:nil];
 
-- (void)dismissTextInputViewController:(BOOL)animated
-{
-    if (!_textInputListViewController)
-        return;
+    if (auto controller = WTFMove(_selectMenuListViewController))
+        [controller dismissViewControllerAnimated:YES completion:nil];
 
-    auto textInputListViewController = WTFMove(_textInputListViewController);
-    [textInputListViewController dismissViewControllerAnimated:animated completion:nil];
+    if (auto controller = WTFMove(_timePickerViewController))
+        [controller dismissViewControllerAnimated:YES completion:nil];
+
+    if (auto controller = WTFMove(_datePickerViewController))
+        [controller dismissViewControllerAnimated:YES completion:nil];
+
+    if (_shouldRestoreFirstResponderStatusAfterLosingFocus) {
+        _shouldRestoreFirstResponderStatusAfterLosingFocus = NO;
+        if (!self.isFirstResponder)
+            [self becomeFirstResponder];
+    }
 }
 
 - (void)textInputController:(WKTextFormControlViewController *)controller didCommitText:(NSString *)text

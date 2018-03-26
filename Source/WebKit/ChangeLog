@@ -1,3 +1,42 @@
+2018-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Refactor input view controller presentation and dismissal helpers
+        https://bugs.webkit.org/show_bug.cgi?id=184020
+        Work towards <rdar://problem/38758727>
+
+        Reviewed by Tim Horton.
+
+        We currently have separate presentation and dismissal helpers for each type of view controller corresponding to
+        a focused element type. This is excessive, considering that all of these helpers are only invoked from one place
+        (either -presentViewControllerForCurrentAssistedNode or -dismissAllInputViewControllers), with the exception of
+        the focused form control overlay.
+
+        This refactoring allows us to then adjust the timing of first responder restoration logic, such that the focused
+        form control view controller can receive forwarded events from the web view. See below for more detail.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentFocusedFormControlViewController:]):
+        (-[WKContentView dismissFocusedFormControlViewController:]):
+
+        Remove logic to restore the web view as first responder.
+
+        (-[WKContentView presentViewControllerForCurrentAssistedNode]):
+        (-[WKContentView dismissAllInputViewControllers]):
+
+        Restore first responder after dismissing a view controller that was presented when focusing a form control, only
+        if the web view was first responder before presentation.
+
+        (-[WKContentView presentDatePickerViewController:]): Deleted.
+        (-[WKContentView dismissDatePickerViewController:]): Deleted.
+        (-[WKContentView presentTimePickerViewController:]): Deleted.
+        (-[WKContentView dismissTimePickerViewController:]): Deleted.
+        (-[WKContentView presentSelectMenuViewController:]): Deleted.
+        (-[WKContentView dismissSelectMenuViewController:]): Deleted.
+        (-[WKContentView dismissNumberPadViewController:]): Deleted.
+        (-[WKContentView presentNumberPadViewController:]): Deleted.
+        (-[WKContentView presentTextInputViewController:]): Deleted.
+        (-[WKContentView dismissTextInputViewController:]): Deleted.
+
 2018-03-06  Brian Burg  <bburg@apple.com>
 
         Web Automation: provide a way to ask clients for a new tab or window
