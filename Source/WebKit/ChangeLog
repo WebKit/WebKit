@@ -1,3 +1,15 @@
+2018-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        Add and adopt HAVE(CORE_ANIMATION_RENDER_SERVER)
+        https://bugs.webkit.org/show_bug.cgi?id=184026
+        <rdar://problem/38883321>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+
 2018-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Refactor input view controller presentation and dismissal helpers
