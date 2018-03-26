@@ -1,3 +1,28 @@
+2018-03-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Clean up TextureMapperPlatformLayer, TextureMapperBackingStore code
+        https://bugs.webkit.org/show_bug.cgi?id=183985
+
+        Reviewed by Michael Catanzaro.
+
+        Clean up TextureMapperPlatformLayer and TextureMapperBackingStore
+        headers and implementation files. Remove dubious whitespace, use #pragma
+        once, clean up constructors, destructors, method definitions and remove
+        unnecessary includes in favor of forward declarations where possible.
+
+        The TextureMapperPlatformLayer::swapBuffers() method is removed as it
+        wasn't called or overridden anywhere.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (WebCore::TextureMapperBackingStore::drawRepaintCounter):
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (WebCore::TextureMapperPlatformLayer::setClient):
+        (WebCore::TextureMapperPlatformLayer::TextureMapperPlatformLayer): Deleted.
+        (WebCore::TextureMapperPlatformLayer::swapBuffers): Deleted.
+
 2018-03-25  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Remove workaround only needed for deploying to iOS 10.0 and earlier

@@ -18,12 +18,9 @@
  */
 
 #include "config.h"
-
 #include "TextureMapperBackingStore.h"
 
-#include "GraphicsLayer.h"
-#include "ImageBuffer.h"
-#include "TextureMapper.h"
+#include "FloatRect.h"
 
 namespace WebCore {
 
@@ -41,4 +38,4 @@ unsigned TextureMapperBackingStore::calculateExposedTileEdges(const FloatRect& t
     return exposedEdges;
 }
 
-}
+} // namespace WebCore

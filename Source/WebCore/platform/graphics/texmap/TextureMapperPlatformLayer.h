@@ -17,8 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef TextureMapperPlatformLayer_h
-#define TextureMapperPlatformLayer_h
+#pragma once
 
 #if USE(TEXTURE_MAPPER)
 
@@ -35,28 +34,25 @@ public:
         virtual void setPlatformLayerNeedsDisplay() = 0;
     };
 
-    TextureMapperPlatformLayer() : m_client(0) { }
+    TextureMapperPlatformLayer() = default;
     virtual ~TextureMapperPlatformLayer() = default;
+
     virtual void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) = 0;
-    virtual void swapBuffers() { }
+
     virtual void drawBorder(TextureMapper& textureMapper, const Color& color, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
     {
         textureMapper.drawBorder(color, borderWidth, targetRect, transform);
     }
-    void setClient(TextureMapperPlatformLayer::Client* client)
-    {
-        m_client = client;
-    }
+
+    void setClient(TextureMapperPlatformLayer::Client* client) { m_client = client; }
 
 protected:
     TextureMapperPlatformLayer::Client* client() { return m_client; }
 
 private:
-    TextureMapperPlatformLayer::Client* m_client;
+    TextureMapperPlatformLayer::Client* m_client { nullptr };
 };
 
-};
+} // namespace WebCore
 
 #endif // USE(TEXTURE_MAPPER)
-
-#endif // TextureMapperPlatformLayer_h
