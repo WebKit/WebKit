@@ -1,3 +1,12 @@
+2018-03-26  Youenn Fablet  <youennf@gmail.com>
+
+        Make VCP encoder usage conditional on using internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=184009
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h:
+
 2018-03-23  Youenn Fablet  <youenn@apple.com>
 
         Add support for VCP encoder on MacOS and iOS
