@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -272,25 +272,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(MathDotRandomState);
         return;
 
-    case HasGenericProperty:
-    case HasStructureProperty:
-    case GetPropertyEnumerator: {
-        read(World);
-        write(Heap);
-        return;
-    }
-
     case GetEnumerableLength: {
         read(Heap);
         write(SideState);
-        return;
-    }
-
-    case GetDirectPname: {
-        // This reads and writes heap because it can end up calling a generic getByVal 
-        // if the Structure changed, which could in turn end up calling a getter.
-        read(World);
-        write(Heap);
         return;
     }
 
@@ -537,18 +521,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
 
-    case ToObject:
-        read(World);
-        write(Heap);
-        return;
-
     case CallObjectConstructor:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
 
     case ToThis:
-    case CreateThis:
         read(MiscFields);
         read(HeapObjectCount);
         write(HeapObjectCount);
@@ -645,6 +623,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutDynamicVar:
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
+    case ToObject:
+    case HasGenericProperty:
+    case HasStructureProperty:
+    case GetPropertyEnumerator:
+    case GetDirectPname:
+    case InstanceOfCustom:
+    case ToNumber:
+    case NumberToStringWithRadix:
+    case CreateThis:
         read(World);
         write(Heap);
         return;
@@ -1029,11 +1016,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case InstanceOf:
         read(JSCell_structureID);
         def(HeapLocation(InstanceOfLoc, JSCell_structureID, node->child1(), node->child2()), LazyNode(node));
-        return;
-
-    case InstanceOfCustom:
-        read(World);
-        write(Heap);
         return;
 
     case PutStructure:
@@ -1571,12 +1553,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
-    case ToNumber: {
-        read(World);
-        write(Heap);
-        return;
-    }
-        
     case ToString:
     case CallStringConstructor:
         switch (node->child1().useKind()) {
@@ -1717,12 +1693,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case ToLowerCase:
         def(PureValue(node));
-        return;
-
-    case NumberToStringWithRadix:
-        // If the radix is invalid, NumberToStringWithRadix can throw an error.
-        read(World);
-        write(Heap);
         return;
 
     case NumberToStringWithValidRadixConstant:

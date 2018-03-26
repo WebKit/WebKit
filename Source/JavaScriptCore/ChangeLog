@@ -1,3 +1,18 @@
+2018-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should know that CreateThis can be effectful
+        https://bugs.webkit.org/show_bug.cgi?id=184013
+
+        Reviewed by Saam Barati.
+
+        As shown in the tests added in JSTests, CreateThis can be effectful if the constructor this
+        is a proxy.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2018-03-25  Saam Barati  <sbarati@apple.com>
 
         Fix typo in JSC option name

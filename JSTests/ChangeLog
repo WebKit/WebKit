@@ -1,3 +1,23 @@
+2018-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should know that CreateThis can be effectful
+        https://bugs.webkit.org/show_bug.cgi?id=184013
+
+        Reviewed by Saam Barati.
+
+        * stress/create-this-property-change.js: Added.
+        (Foo):
+        (RealBar):
+        (get if):
+        * stress/create-this-structure-change-without-cse.js: Added.
+        (Foo):
+        (RealBar):
+        (get if):
+        * stress/create-this-structure-change.js: Added.
+        (Foo):
+        (RealBar):
+        (get if):
+
 2018-03-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Introduces fused compare and jump
