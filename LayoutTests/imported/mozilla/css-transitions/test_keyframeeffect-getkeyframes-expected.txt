@@ -1,5 +1,5 @@
 
-FAIL KeyframeEffectReadOnly.getKeyframes() returns expected frames for a simple transition assert_equals: value for 'easing' on ComputedKeyframe #0 expected "ease" but got "linear"
-FAIL KeyframeEffectReadOnly.getKeyframes() returns expected frames for a simple transition with a non-default easing function assert_equals: value for 'easing' on ComputedKeyframe #0 expected "steps(2)" but got "linear"
-FAIL KeyframeEffectReadOnly.getKeyframes() returns expected frames for a transition with a CSS variable endpoint assert_equals: value for 'easing' on ComputedKeyframe #0 expected "ease" but got "linear"
+PASS KeyframeEffectReadOnly.getKeyframes() returns expected frames for a simple transition 
+PASS KeyframeEffectReadOnly.getKeyframes() returns expected frames for a simple transition with a non-default easing function 
+PASS KeyframeEffectReadOnly.getKeyframes() returns expected frames for a transition with a CSS variable endpoint 
 

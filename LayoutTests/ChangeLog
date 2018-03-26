@@ -1,3 +1,20 @@
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correctly handle timing functions specified by CSS Animations and CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=183935
+
+        Reviewed by Dean Jackson.
+
+        We now pass 2 additional Mozilla tests completely, so they no longer need to be marked as flaky failures or timeouts.
+        We also update tests that we wrote ourselves and which incorrectly assumed that the effect's timing would reflect
+        the timing function set by CSS.
+
+        * TestExpectations:
+        * webanimations/css-animations-expected.txt:
+        * webanimations/css-animations.html:
+        * webanimations/css-transitions-expected.txt:
+        * webanimations/css-transitions.html:
+
 2018-03-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/mozilla/css-animations/test_animation-cancel.html as flaky.

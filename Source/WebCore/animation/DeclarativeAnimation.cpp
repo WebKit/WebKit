@@ -81,7 +81,6 @@ void DeclarativeAnimation::syncPropertiesWithBackingAnimation()
     auto* timing = effect()->timing();
     timing->setDelay(Seconds(m_backingAnimation->delay()));
     timing->setIterationDuration(Seconds(m_backingAnimation->duration()));
-    timing->setTimingFunction(m_backingAnimation->timingFunction());
 
     unsuspendEffectInvalidation();
 }

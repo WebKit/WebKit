@@ -1,3 +1,38 @@
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correctly handle timing functions specified by CSS Animations and CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=183935
+
+        Reviewed by Dean Jackson.
+
+        We were incorrectly reflecting the animation-timing-function and transition-timing-function values on the generated
+        DeclarativeAnimation effect timing "easing" property. In fact, those values should only be represented on the keyframes.
+
+        In the case of a CSS Animation, the animation-timing-function property set on the element's style serves as the default
+        value used for all keyframes, and individual keyframes can specify an overriding animation-timing-function. For a CSS
+        Transition, the transition-timing-function property set on the element's style serves as the timing function of the
+        from keyframe.
+
+        To correctly reflect this, we provide a new timingFunctionForKeyframeAtIndex() function on KeyframeEffectReadOnly
+        which will return the right TimingFunction object at a given index, regardless of the animation type. In the case
+        of getKeyframes(), we manually return "linear" for the "to" keyframe since timingFunctionForKeyframeAtIndex()
+        would otherwise return the same timing function as the "from" keyframe. This avoids creating an extra
+        LinearTimingFunction object.
+
+        As a result, a number of Mozilla imported tests progress since we have correct information on the "easing" property
+        of objects returned by getKeyframes() and the "progress" reported by getComputedTiming() now always uses a linear
+        timing function.
+
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::syncPropertiesWithBackingAnimation): The timing function of the backing Animation should
+        not be reflected on the effect's timing object.
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::getKeyframes): Return the correct timing function for a keyframe, and use a "linear"
+        value for the "to" keyframe of a CSS Transition.
+        (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle):
+        (WebCore::KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex):
+        * animation/KeyframeEffectReadOnly.h:
+
 2018-03-26  Chris Dumez  <cdumez@apple.com>
 
         Use SecurityOriginData more consistently in Service Worker code

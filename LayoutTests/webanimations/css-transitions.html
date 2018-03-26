@@ -52,7 +52,6 @@ targetTest(target => {
     const timing = animation.effect.timing;
     assert_equals(timing.delay, -1000, "The animation's delay property matches the transition-delay property.");
     assert_equals(timing.duration, 2000, "The animation's duration property matches the transition-duration property.");
-    assert_equals(timing.easing, "linear", "The animation's easing property matches the transition-timing-function property.");
 
     const computedTiming = animation.effect.getComputedTiming();
     assert_equals(computedTiming.activeDuration, 2000, "The animations's computed timing activeDuration property matches the properties set by CSS");
@@ -153,19 +152,16 @@ targetTest(target => {
 
 transitionPropertyUpdateTest(target => {
     const initialAnimation = target.getAnimations()[0];
-    assert_equals(initialAnimation.effect.timing.easing, "ease", "The animation's easing matches the default transition-timing-function property.");
+    assert_equals(initialAnimation.effect.timing.easing, "linear", "The animation's easing does not match the default transition-timing-function property.");
 
     target.style.transitionTimingFunction = "ease-in";
     const updatedAnimation = target.getAnimations()[0];
-    assert_equals(updatedAnimation.effect.timing.easing, "ease-in", "The animation's easing matches the updated transition-timing-function property.");
+    assert_equals(updatedAnimation.effect.timing.easing, "linear", "The animation's easing does not match the updated transition-timing-function property.");
 
     target.style.removeProperty("transition-timing-function");
     const finalAnimation = target.getAnimations()[0];
-    assert_equals(target.getAnimations()[0].effect.timing.easing, "ease", "The animation's easing matches the default transition-timing-function value when the property is not set.");
-
-    assert_not_equals(initialAnimation, updatedAnimation, "The animations before and after updating the transition-timing-function property differ.");
-    assert_not_equals(updatedAnimation, finalAnimation, "The animations before and after updating the transition-timing-function property differ.");
-}, "Web Animations should reflect the transition-timing-function property.");
+    assert_equals(target.getAnimations()[0].effect.timing.easing, "linear", "The animation's easing does not match the default transition-timing-function value when the property is not set.");
+}, "Web Animations should not reflect the transition-timing-function property on the effect's timing.");
 
 function runAnimationCompletionTest(finalAssertionCallback, description)
 {

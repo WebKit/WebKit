@@ -1,5 +1,18 @@
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Correctly handle timing functions specified by CSS Animations and CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=183935
+
+        Reviewed by Dean Jackson.
+
+        Record progressions of Mozilla tests.
+
+        * css-animations/test_animation-computed-timing-expected.txt:
+        * css-transitions/test_animation-computed-timing-expected.txt:
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt:
+
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] infinite repeat counts aren't reflected for CSS Animations
         https://bugs.webkit.org/show_bug.cgi?id=183932
 

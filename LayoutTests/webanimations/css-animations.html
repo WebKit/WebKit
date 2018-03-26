@@ -59,7 +59,6 @@ targetTest(target => {
     assert_equals(timing.duration, 2000, "The animation's duration property matches the animation-duration property.");
     assert_equals(timing.iterations, 2, "The animation's iterations property matches the animation-iteration-count property.");
     assert_equals(timing.direction, "alternate", "The animation's direction property matches the animation-direction property.");
-    assert_equals(timing.easing, "linear", "The animation's easing property matches the animation-timing-function property.");
 
     const computedTiming = animation.effect.getComputedTiming();
     assert_equals(computedTiming.activeDuration, 4000, "The animations's computed timing activeDuration property matches the properties set by CSS");
@@ -196,14 +195,14 @@ targetTest(target => {
     target.style.animationTimingFunction = "ease-out";
     target.style.animationName = "animation";
 
-    assert_equals(target.getAnimations()[0].effect.timing.easing, "ease-out", "The animation's easing matches the initial animation-timing-function property.");
+    assert_equals(target.getAnimations()[0].effect.timing.easing, "linear", "The animation's easing does not match the initial animation-timing-function property.");
 
     target.style.animationTimingFunction = "ease-in";
-    assert_equals(target.getAnimations()[0].effect.timing.easing, "ease-in", "The animation's easing matches the updated animation-timing-function property.");
+    assert_equals(target.getAnimations()[0].effect.timing.easing, "linear", "The animation's easing does not match the updated animation-timing-function property.");
 
     target.style.removeProperty("animation-timing-function");
-    assert_equals(target.getAnimations()[0].effect.timing.easing, "ease", "The animation's easing matches the default animation-timing-function value when the property is not set.");
-}, "Web Animations should reflect the animation-timing-function property.");
+    assert_equals(target.getAnimations()[0].effect.timing.easing, "linear", "The animation's easing does not match the default animation-timing-function value when the property is not set.");
+}, "Web Animations should not reflect the animation-timing-function property on the effect's timing.");
 
 function runAnimationCompletionTest(finalAssertionCallback, description)
 {

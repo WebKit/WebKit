@@ -10,7 +10,7 @@ PASS iterations of a finitely repeating animation
 PASS iterations of an infinitely repeating animation 
 PASS duration of a new animation 
 PASS direction of a new animation 
-FAIL easing of a new animation assert_equals: Initial value of easing expected "linear" but got "ease"
+PASS easing of a new animation 
 PASS endTime of an new animation 
 PASS endTime of an animation with a negative delay 
 PASS endTime of an infinitely repeating animation 
@@ -25,13 +25,13 @@ PASS localTime of an animation is always equal to currentTime
 PASS localTime reflects playbackRate immediately 
 PASS localTime of an AnimationEffect without an Animation 
 PASS progress of an animation with different fill modes 
-FAIL progress of an integral repeating animation with normal direction assert_equals: Value of progress expected 0.25 but got 0.4085665049012694
+PASS progress of an integral repeating animation with normal direction 
 PASS progress of an infinitely repeating zero-duration animation 
 PASS progress of a finitely repeating zero-duration animation 
 PASS progress of a non-integral repeating zero-duration animation 
 PASS Progress of a non-integral repeating zero-duration animation with reversing direction 
-FAIL progress of a non-integral repeating animation with alternate direction assert_equals: Value of progress expected 0.25 but got 0.4085665049012694
-FAIL progress of a non-integral repeating animation with alternate-reversing direction assert_equals: Value of progress expected 0.75 but got 0.9604590729525889
+PASS progress of a non-integral repeating animation with alternate direction 
+PASS progress of a non-integral repeating animation with alternate-reversing direction 
 PASS progress of a non-integral repeating zero-duration animation with alternate direction 
 PASS progress of a non-integral repeating zero-duration animation with alternate-reverse direction 
 PASS currentIteration of a new animation with no backwards fill is unresolved in before phase 

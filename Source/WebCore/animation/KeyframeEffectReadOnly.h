@@ -126,6 +126,7 @@ protected:
 
 private:
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
+    TimingFunction* timingFunctionForKeyframeAtIndex(size_t);
     void computeStackingContextImpact();
     void updateBlendingKeyframes();
     bool shouldRunAccelerated();

@@ -524,6 +524,9 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
             BaseComputedKeyframe computedKeyframe;
             computedKeyframe.offset = keyframe.key();
             computedKeyframe.computedOffset = keyframe.key();
+            // For CSS transitions, there are only two keyframes and the second keyframe should always report "linear". In practice, this value
+            // has no bearing since, as the last keyframe, its value will never be used.
+            computedKeyframe.easing = is<CSSTransition>(animation()) && i == 1 ? "linear" : timingFunctionForKeyframeAtIndex(0)->cssText();
 
             auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
 
@@ -545,7 +548,7 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
             result.append(JSC::Strong<JSC::JSObject> { state.vm(), outputKeyframe });
         }
     } else {
-        for (auto& parsedKeyframe : m_parsedKeyframes) {
+        for (size_t i = 0; i < m_parsedKeyframes.size(); ++i) {
             // 1. Initialize a dictionary object, output keyframe, using the following definition:
             //
             // dictionary BaseComputedKeyframe {
@@ -555,12 +558,14 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
             //      CompositeOperation? composite = null;
             // };
 
+            auto& parsedKeyframe = m_parsedKeyframes[i];
+
             // 2. Set offset, computedOffset, easing, composite members of output keyframe to the respective values keyframe offset, computed keyframe
             // offset, keyframe-specific timing function and keyframe-specific composite operation of keyframe.
             BaseComputedKeyframe computedKeyframe;
             computedKeyframe.offset = parsedKeyframe.offset;
             computedKeyframe.computedOffset = parsedKeyframe.computedOffset;
-            computedKeyframe.easing = parsedKeyframe.timingFunction->cssText();
+            computedKeyframe.easing = timingFunctionForKeyframeAtIndex(i)->cssText();
             computedKeyframe.composite = parsedKeyframe.composite;
 
             auto outputKeyframe = convertDictionaryToJS(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), computedKeyframe);
@@ -977,11 +982,10 @@ void KeyframeEffectReadOnly::setAnimatedPropertiesInStyle(RenderStyle& targetSty
         // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
         //     passing interval distance as the input progress.
         auto transformedDistance = intervalDistance;
-        // In case we're backing a CSSAnimation or CSSTransition we won't actually have parsed keyframes.
-        if (startKeyframeIndex && startKeyframeIndex.value() + 1 <= m_parsedKeyframes.size()) {
+        if (startKeyframeIndex) {
             if (auto iterationDuration = timing()->iterationDuration()) {
                 auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
-                transformedDistance = m_parsedKeyframes[startKeyframeIndex.value()].timingFunction->transformTime(intervalDistance, rangeDuration);
+                transformedDistance = timingFunctionForKeyframeAtIndex(startKeyframeIndex.value())->transformTime(intervalDistance, rangeDuration);
             }
         }
 
@@ -992,6 +996,27 @@ void KeyframeEffectReadOnly::setAnimatedPropertiesInStyle(RenderStyle& targetSty
         auto endStyle = !endKeyframeIndex ? &targetStyle : m_blendingKeyframes[endKeyframeIndex.value()].style();
         CSSPropertyAnimation::blendProperties(this, cssPropertyId, &targetStyle, startStyle, endStyle, transformedDistance);
     }
+}
+
+TimingFunction* KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex(size_t index)
+{
+    if (!m_parsedKeyframes.isEmpty())
+        return m_parsedKeyframes[index].timingFunction.get();
+
+    auto effectAnimation = animation();
+
+    // If we didn't have parsed keyframes, we must be dealing with a declarative animation.
+    ASSERT(is<DeclarativeAnimation>(effectAnimation));
+
+    // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself,
+    // or failing that on the backing Animation object which defines the default for all keyframes.
+    if (is<CSSAnimation>(effectAnimation)) {
+        if (auto* timingFunction = m_blendingKeyframes[index].timingFunction(downcast<CSSAnimation>(effectAnimation)->animationName()))
+            return timingFunction;
+    }
+
+    // Failing that, or for a CSS Transition, the timing function is inherited from the backing Animation object. 
+    return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation().timingFunction();
 }
 
 void KeyframeEffectReadOnly::startOrStopAccelerated()
