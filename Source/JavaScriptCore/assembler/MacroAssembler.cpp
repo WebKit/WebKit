@@ -43,7 +43,7 @@ const double MacroAssembler::twoToThe32 = (double)0x100000000ull;
 
 void MacroAssembler::jitAssert(const ScopedLambda<Jump(void)>& functor)
 {
-    if (Options::enableJITDebugAssetions()) {
+    if (Options::enableJITDebugAssertions()) {
         Jump passed = functor();
         breakpoint();
         passed.link(this);

@@ -1,5 +1,18 @@
 2018-03-25  Saam Barati  <sbarati@apple.com>
 
+        Fix typo in JSC option name
+        https://bugs.webkit.org/show_bug.cgi?id=184001
+
+        Reviewed by Mark Lam.
+
+        enableJITDebugAssetions => enableJITDebugAssertions.
+
+        * assembler/MacroAssembler.cpp:
+        (JSC::MacroAssembler::jitAssert):
+        * runtime/Options.h:
+
+2018-03-25  Saam Barati  <sbarati@apple.com>
+
         r228149 accidentally removed code that resets m_emptyCursor at the end of a GC
         https://bugs.webkit.org/show_bug.cgi?id=183995
 
