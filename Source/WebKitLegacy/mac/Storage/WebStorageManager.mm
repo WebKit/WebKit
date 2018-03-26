@@ -84,7 +84,7 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
 
 - (void)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    WebKit::StorageTracker::tracker().deleteOrigin(SecurityOriginData::fromSecurityOrigin(*[origin _core]));
+    WebKit::StorageTracker::tracker().deleteOrigin([origin _core]->data());
 }
 
 - (unsigned long long)diskUsageForOrigin:(WebSecurityOrigin *)origin

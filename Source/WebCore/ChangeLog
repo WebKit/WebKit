@@ -1,3 +1,113 @@
+2018-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Use SecurityOriginData more consistently in Service Worker code
+        https://bugs.webkit.org/show_bug.cgi?id=183969
+
+        Reviewed by Darin Adler.
+
+        Use SecurityOriginData more consistently in Service Worker code to avoid constructing
+        SecurityOrigin objects unnecessarily.
+
+        I also updated SecurityOrigin to use SecurityOriginData as a data member. This reduces
+        code duplication a bit. This also avoids constructing SecurityOriginData unnecessarily
+        in some cases as callers can now use SecurityOrigin::data() instead of
+        SecurityOriginData::fromSecurityOrigin().
+
+        No new tests, no Web-facing behavior change.
+
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::DOMCacheStorage::origin const):
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::storageDirectory const):
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::mediaKeysStorageDirectory const):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::mediaKeysStorageDirectory const):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::getAllDatabaseNames):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::securityOrigin):
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::securityOrigin const):
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory const):
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::calculateQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateUsageForOrigin):
+        (WebCore::ApplicationCacheStorage::calculateRemainingSizeForOriginExcludingCache):
+        (WebCore::ApplicationCacheStorage::storeUpdatedQuotaForOrigin):
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::ensureOriginRecord):
+        * page/DOMWindow.cpp:
+        (WebCore:: const):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isPotentiallyTrustworthy const):
+        (WebCore::SecurityOrigin::canAccess const):
+        (WebCore::SecurityOrigin::canDisplay const):
+        (WebCore::SecurityOrigin::domainForCachePartition const):
+        (WebCore::SecurityOrigin::isLocal const):
+        (WebCore::SecurityOrigin::toString const):
+        (WebCore::SecurityOrigin::toRawString const):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::isSameSchemeHostPort const):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::protocol const):
+        (WebCore::SecurityOrigin::host const):
+        (WebCore::SecurityOrigin::port const):
+        (WebCore::SecurityOrigin::data const):
+        (WebCore::SecurityOrigin::isHTTPFamily const):
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::toString const):
+        (WebCore::SecurityOriginData::fromFrame):
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::fromURL):
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+        * testing/Internals.cpp:
+        (WebCore::Internals::clearCacheStorageMemoryRepresentation):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::removeRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::relatesToOrigin const):
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        * workers/service/server/SWOriginStore.cpp:
+        (WebCore::SWOriginStore::add):
+        (WebCore::SWOriginStore::remove):
+        (WebCore::SWOriginStore::clear):
+        * workers/service/server/SWOriginStore.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistration):
+        (WebCore::SWServer::removeRegistration):
+        (WebCore::SWServer::clear):
+        (WebCore::SWServer::tryInstallContextData):
+        (WebCore::SWServer::serverToContextConnectionCreated):
+        (WebCore::SWServer::markAllWorkersForOriginAsTerminated):
+        (WebCore::SWServer::unregisterServiceWorkerClient):
+        (WebCore::SWServer::needsServerToContextConnectionForOrigin const):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.cpp:
+        (WebCore::SWServerToContextConnection::SWServerToContextConnection):
+        (WebCore::SWServerToContextConnection::~SWServerToContextConnection):
+        (WebCore::SWServerToContextConnection::connectionForOrigin):
+        * workers/service/server/SWServerToContextConnection.h:
+        (WebCore::SWServerToContextConnection::securityOrigin const):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::origin const):
+        (WebCore::SWServerWorker::securityOrigin const):
+        * workers/service/server/SWServerWorker.h:
+
 2018-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         Warn against cookie access in the WebContent process using ProcessPrivilege assertions

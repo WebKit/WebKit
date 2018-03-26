@@ -145,15 +145,13 @@ bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
-    : m_protocol { url.protocol().isNull() ? emptyString() : url.protocol().toString().convertToASCIILowercase() }
-    , m_host { url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase() }
-    , m_port { url.port() }
+    : m_data(SecurityOriginData::fromURL(url))
 {
-    // document.domain starts as m_host, but can be set by the DOM.
-    m_domain = m_host;
+    // document.domain starts as m_data.host, but can be set by the DOM.
+    m_domain = m_data.host;
 
-    if (m_port && isDefaultPortForProtocol(m_port.value(), m_protocol))
-        m_port = std::nullopt;
+    if (m_data.port && isDefaultPortForProtocol(m_data.port.value(), m_data.protocol))
+        m_data.port = std::nullopt;
 
     // By default, only local SecurityOrigins can load local resources.
     m_canLoadLocalResources = isLocal();
@@ -166,8 +164,7 @@ SecurityOrigin::SecurityOrigin(const URL& url)
 }
 
 SecurityOrigin::SecurityOrigin()
-    : m_protocol { emptyString() }
-    , m_host { emptyString() }
+    : m_data { emptyString(), emptyString(), std::nullopt }
     , m_domain { emptyString() }
     , m_isUnique { true }
     , m_isPotentiallyTrustworthy { IsPotentiallyTrustworthy::Yes }
@@ -175,11 +172,9 @@ SecurityOrigin::SecurityOrigin()
 }
 
 SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
-    : m_protocol { other->m_protocol.isolatedCopy() }
-    , m_host { other->m_host.isolatedCopy() }
+    : m_data { other->m_data.isolatedCopy() }
     , m_domain { other->m_domain.isolatedCopy() }
     , m_filePath { other->m_filePath.isolatedCopy() }
-    , m_port { other->m_port }
     , m_isUnique { other->m_isUnique }
     , m_universalAccess { other->m_universalAccess }
     , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
@@ -228,7 +223,7 @@ bool SecurityOrigin::isPotentiallyTrustworthy() const
     // This code is using an enum instead of an std::optional for thread-safety. Worst case scenario, several thread will read
     // 'Unknown' value concurrently and they'll all call shouldTreatAsPotentiallyTrustworthy() and get the same result.
     if (m_isPotentiallyTrustworthy == IsPotentiallyTrustworthy::Unknown)
-        m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(m_protocol, m_host) ? IsPotentiallyTrustworthy::Yes : IsPotentiallyTrustworthy::No;
+        m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(m_data.protocol, m_data.host) ? IsPotentiallyTrustworthy::Yes : IsPotentiallyTrustworthy::No;
     return m_isPotentiallyTrustworthy == IsPotentiallyTrustworthy::Yes;
 }
 
@@ -277,9 +272,9 @@ bool SecurityOrigin::canAccess(const SecurityOrigin& other) const
     // this is a security vulnerability.
 
     bool canAccess = false;
-    if (m_protocol == other.m_protocol) {
+    if (m_data.protocol == other.m_data.protocol) {
         if (!m_domainWasSetInDOM && !other.m_domainWasSetInDOM) {
-            if (m_host == other.m_host && m_port == other.m_port)
+            if (m_data.host == other.m_data.host && m_data.port == other.m_data.port)
                 canAccess = true;
         } else if (m_domainWasSetInDOM && other.m_domainWasSetInDOM) {
             if (m_domain == other.m_domain)
@@ -363,7 +358,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
         return true;
 
 #if !PLATFORM(IOS)
-    if (m_protocol == "file" && url.isLocalFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
+    if (m_data.protocol == "file" && url.isLocalFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
 #endif
 
@@ -376,7 +371,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
         return canRequest(url);
 
     if (SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(protocol))
-        return equalIgnoringASCIICase(m_protocol, protocol) || SecurityPolicy::isAccessToURLWhiteListed(this, url);
+        return equalIgnoringASCIICase(m_data.protocol, protocol) || SecurityPolicy::isAccessToURLWhiteListed(this, url);
 
     if (SecurityPolicy::restrictAccessToLocal() && SchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
         return canLoadLocalResources() || SecurityPolicy::isAccessToURLWhiteListed(this, url);
@@ -461,7 +456,7 @@ String SecurityOrigin::domainForCachePartition() const
     if (isHTTPFamily())
         return host();
 
-    if (SchemeRegistry::shouldPartitionCacheForURLScheme(m_protocol))
+    if (SchemeRegistry::shouldPartitionCacheForURLScheme(m_data.protocol))
         return host();
 
     return emptyString();
@@ -475,35 +470,21 @@ void SecurityOrigin::setEnforcesFilePathSeparation()
 
 bool SecurityOrigin::isLocal() const
 {
-    return SchemeRegistry::shouldTreatURLSchemeAsLocal(m_protocol);
+    return SchemeRegistry::shouldTreatURLSchemeAsLocal(m_data.protocol);
 }
 
 String SecurityOrigin::toString() const
 {
     if (isUnique())
         return ASCIILiteral("null");
-    if (m_protocol == "file" && m_enforcesFilePathSeparation)
+    if (m_data.protocol == "file" && m_enforcesFilePathSeparation)
         return ASCIILiteral("null");
     return toRawString();
 }
 
 String SecurityOrigin::toRawString() const
 {
-    if (m_protocol == "file")
-        return ASCIILiteral("file://");
-
-    StringBuilder result;
-    result.reserveCapacity(m_protocol.length() + m_host.length() + 10);
-    result.append(m_protocol);
-    result.appendLiteral("://");
-    result.append(m_host);
-
-    if (m_port) {
-        result.append(':');
-        result.appendNumber(m_port.value());
-    }
-
-    return result.toString();
+    return m_data.toString();
 }
 
 static inline bool areOriginsMatching(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
@@ -552,7 +533,7 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
     String decodedHost = decodeURLEscapeSequences(host);
     auto origin = create(URL(URL(), protocol + "://" + host + "/"));
     if (port && !isDefaultPortForProtocol(*port, protocol))
-        origin->m_port = port;
+        origin->m_data.port = port;
     return origin;
 }
 
@@ -575,13 +556,7 @@ bool SecurityOrigin::equal(const SecurityOrigin* other) const
 
 bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin& other) const
 {
-    if (m_host != other.m_host)
-        return false;
-
-    if (m_protocol != other.m_protocol)
-        return false;
-
-    if (m_port != other.m_port)
+    if (m_data != other.m_data)
         return false;
 
     if (isLocal() && !passesFileCheck(other))

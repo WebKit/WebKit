@@ -41,13 +41,13 @@ WebSWOriginStore::WebSWOriginStore()
 {
 }
 
-void WebSWOriginStore::addToStore(const SecurityOrigin& origin)
+void WebSWOriginStore::addToStore(const SecurityOriginData& origin)
 {
     m_store.scheduleAddition(computeSharedStringHash(origin.toString()));
     m_store.flushPendingChanges();
 }
 
-void WebSWOriginStore::removeFromStore(const SecurityOrigin& origin)
+void WebSWOriginStore::removeFromStore(const SecurityOriginData& origin)
 {
     m_store.scheduleRemoval(computeSharedStringHash(origin.toString()));
     m_store.flushPendingChanges();

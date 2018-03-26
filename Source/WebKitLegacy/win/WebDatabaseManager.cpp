@@ -256,7 +256,7 @@ HRESULT WebDatabaseManager::databasesWithOrigin(_In_opt_ IWebSecurityOrigin* ori
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    auto databaseNames = DatabaseTracker::singleton().databaseNames(SecurityOriginData::fromSecurityOrigin(*webSecurityOrigin->securityOrigin()));
+    auto databaseNames = DatabaseTracker::singleton().databaseNames(webSecurityOrigin->securityOrigin()->data());
 
     COMPtr<COMEnumVariant<Vector<String>>> enumVariant(AdoptCOM, COMEnumVariant<Vector<String>>::adopt(databaseNames));
 
@@ -311,7 +311,7 @@ HRESULT WebDatabaseManager::deleteOrigin(_In_opt_ IWebSecurityOrigin* origin)
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseTracker::singleton().deleteOrigin(SecurityOriginData::fromSecurityOrigin(*webSecurityOrigin->securityOrigin()));
+    DatabaseTracker::singleton().deleteOrigin(webSecurityOrigin->securityOrigin()->data());
 
     return S_OK;
 }
@@ -331,7 +331,7 @@ HRESULT WebDatabaseManager::deleteDatabase(_In_ BSTR databaseName, _In_opt_ IWeb
     if (!webSecurityOrigin)
         return E_FAIL;
 
-    DatabaseTracker::singleton().deleteDatabase(SecurityOriginData::fromSecurityOrigin(*webSecurityOrigin->securityOrigin()), String(databaseName, SysStringLen(databaseName)));
+    DatabaseTracker::singleton().deleteDatabase(webSecurityOrigin->securityOrigin()->data(), String(databaseName, SysStringLen(databaseName)));
 
     return S_OK;
 }
@@ -396,7 +396,7 @@ HRESULT WebDatabaseManager::setQuota(_In_ BSTR origin, unsigned long long quota)
     if (this != s_sharedWebDatabaseManager)
         return E_FAIL;
 
-    DatabaseTracker::singleton().setQuota(SecurityOriginData::fromSecurityOrigin(SecurityOrigin::createFromString(origin)), quota);
+    DatabaseTracker::singleton().setQuota(SecurityOrigin::createFromString(origin)->data(), quota);
 
     return S_OK;
 }

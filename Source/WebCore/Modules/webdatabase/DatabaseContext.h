@@ -61,7 +61,7 @@ public:
     void databaseExceededQuota(const String& name, DatabaseDetails);
 
     using ActiveDOMObject::scriptExecutionContext;
-    SecurityOriginData securityOrigin() const;
+    const SecurityOriginData& securityOrigin() const;
 
     bool isContextThread() const;
 

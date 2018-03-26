@@ -49,7 +49,7 @@ std::optional<ClientOrigin> DOMCacheStorage::origin() const
     if (!origin)
         return std::nullopt;
 
-    return ClientOrigin { SecurityOriginData::fromSecurityOrigin(scriptExecutionContext()->topOrigin()), SecurityOriginData::fromSecurityOrigin(*origin) };
+    return ClientOrigin { scriptExecutionContext()->topOrigin().data(), origin->data() };
 }
 
 static void doSequentialMatch(size_t index, Vector<Ref<DOMCache>>&& caches, DOMCache::RequestInfo&& info, CacheQueryOptions&& options, DOMCache::MatchCallback&& completionHandler)

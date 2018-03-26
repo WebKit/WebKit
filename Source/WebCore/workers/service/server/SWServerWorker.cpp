@@ -85,14 +85,14 @@ void SWServerWorker::terminate()
 const ClientOrigin& SWServerWorker::origin() const
 {
     if (!m_origin)
-        m_origin = ClientOrigin { m_registrationKey.topOrigin(), SecurityOriginData::fromSecurityOrigin(SecurityOrigin::create(m_data.scriptURL)) };
+        m_origin = ClientOrigin { m_registrationKey.topOrigin(), SecurityOriginData::fromURL(m_data.scriptURL) };
 
     return *m_origin;
 }
 
-Ref<SecurityOrigin> SWServerWorker::securityOrigin() const
+const SecurityOriginData& SWServerWorker::securityOrigin() const
 {
-    return SecurityOrigin::create(m_data.scriptURL);
+    return origin().clientOrigin;
 }
 
 SWServerToContextConnection* SWServerWorker::contextConnection()

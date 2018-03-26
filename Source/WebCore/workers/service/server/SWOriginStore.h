@@ -27,32 +27,29 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SecurityOriginData.h"
 #include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class SecurityOrigin;
 
 class SWOriginStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~SWOriginStore() = default;
 
-    void add(const SecurityOrigin&);
-    void remove(const SecurityOrigin&);
-    void clear(const SecurityOrigin&);
+    void add(const SecurityOriginData&);
+    void remove(const SecurityOriginData&);
+    void clear(const SecurityOriginData&);
     void clearAll();
 
     virtual void importComplete() = 0;
 
 private:
-    virtual void addToStore(const SecurityOrigin&) = 0;
-    virtual void removeFromStore(const SecurityOrigin&) = 0;
+    virtual void addToStore(const SecurityOriginData&) = 0;
+    virtual void removeFromStore(const SecurityOriginData&) = 0;
     virtual void clearStore() = 0;
 
-    HashMap<String, uint64_t> m_originCounts;
+    HashMap<SecurityOriginData, uint64_t> m_originCounts;
 };
 
 } // namespace WebCore

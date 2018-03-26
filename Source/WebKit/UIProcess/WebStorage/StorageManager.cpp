@@ -602,7 +602,7 @@ void StorageManager::getLocalStorageOriginDetails(Function<void (Vector<LocalSto
     });
 }
 
-void StorageManager::deleteLocalStorageEntriesForOrigin(SecurityOriginData&& securityOrigin)
+void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOriginData& securityOrigin)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), copiedOrigin = securityOrigin.isolatedCopy()]() mutable {
         for (auto& localStorageNamespace : m_localStorageNamespaces.values())

@@ -32,37 +32,32 @@
 #include "SecurityOrigin.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 using namespace WebCore;
 
 namespace WebCore {
 
-SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& securityOrigin)
-{
-    SecurityOriginData securityOriginData;
-
-    securityOriginData.protocol = securityOrigin.protocol();
-    securityOriginData.host = securityOrigin.host();
-    securityOriginData.port = securityOrigin.port();
-
-    return securityOriginData;
-}
-
 String SecurityOriginData::toString() const
 {
-    return makeString(protocol, "://", host, ":", String::number(port.value_or(0)));
+    if (protocol == "file")
+        return ASCIILiteral("file://");
+
+    if (!port)
+        return makeString(protocol, "://", host);
+    return makeString(protocol, "://", host, ':', static_cast<uint32_t>(*port));
 }
 
 SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
 {
     if (!frame)
-        return SecurityOriginData();
+        return SecurityOriginData { };
     
-    Document* document = frame->document();
+    auto* document = frame->document();
     if (!document)
-        return SecurityOriginData();
+        return SecurityOriginData { };
 
-    return SecurityOriginData::fromSecurityOrigin(document->securityOrigin());
+    return document->securityOrigin().data();
 }
 
 Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const

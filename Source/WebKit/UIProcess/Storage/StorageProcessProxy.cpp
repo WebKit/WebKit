@@ -122,15 +122,15 @@ void StorageProcessProxy::getStorageProcessConnection(WebProcessProxy& webProces
     }
 
     bool isServiceWorkerProcess = false;
-    SecurityOriginData origin;
+    SecurityOriginData securityOrigin;
 #if ENABLE(SERVICE_WORKER)
     if (is<ServiceWorkerProcessProxy>(webProcessProxy)) {
         isServiceWorkerProcess = true;
-        origin = SecurityOriginData::fromSecurityOrigin(downcast<ServiceWorkerProcessProxy>(webProcessProxy).origin());
+        securityOrigin = downcast<ServiceWorkerProcessProxy>(webProcessProxy).securityOrigin();
     }
 #endif
 
-    send(Messages::StorageProcess::CreateStorageToWebProcessConnection(isServiceWorkerProcess, origin), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::StorageProcess::CreateStorageToWebProcessConnection(isServiceWorkerProcess, securityOrigin), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void StorageProcessProxy::didClose(IPC::Connection&)

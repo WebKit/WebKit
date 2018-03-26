@@ -28,7 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "WebProcessProxy.h"
-#include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
@@ -36,7 +36,7 @@ struct WebPreferencesStore;
 
 class ServiceWorkerProcessProxy final : public WebProcessProxy {
 public:
-    static Ref<ServiceWorkerProcessProxy> create(WebProcessPool&, Ref<WebCore::SecurityOrigin>&&, WebsiteDataStore&);
+    static Ref<ServiceWorkerProcessProxy> create(WebProcessPool&, const WebCore::SecurityOriginData&, WebsiteDataStore&);
     ~ServiceWorkerProcessProxy();
 
     static bool hasRegisteredServiceWorkers(const String& serviceWorkerDirectory);
@@ -47,7 +47,7 @@ public:
     void setUserAgent(const String&);
     void updatePreferencesStore(const WebPreferencesStore&);
 
-    WebCore::SecurityOrigin& origin() { return m_origin.get(); }
+    const WebCore::SecurityOriginData& securityOrigin() { return m_securityOrigin; }
     uint64_t pageID() const { return m_serviceWorkerPageID; }
 
 private:
@@ -56,9 +56,9 @@ private:
 
     bool isServiceWorkerProcess() const final { return true; }
 
-    ServiceWorkerProcessProxy(WebProcessPool&, Ref<WebCore::SecurityOrigin>&&, WebsiteDataStore&);
+    ServiceWorkerProcessProxy(WebProcessPool&, const WebCore::SecurityOriginData&, WebsiteDataStore&);
 
-    Ref<WebCore::SecurityOrigin> m_origin;
+    WebCore::SecurityOriginData m_securityOrigin;
     uint64_t m_serviceWorkerPageID { 0 };
 };
 

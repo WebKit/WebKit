@@ -63,7 +63,7 @@ public:
     void deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);
 
     void getLocalStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
-    void deleteLocalStorageEntriesForOrigin(WebCore::SecurityOriginData&&);
+    void deleteLocalStorageEntriesForOrigin(const WebCore::SecurityOriginData&);
 
     void deleteLocalStorageOriginsModifiedSince(WallTime, Function<void()>&& completionHandler);
     void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);

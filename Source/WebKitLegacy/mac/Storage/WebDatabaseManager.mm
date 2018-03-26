@@ -106,7 +106,7 @@ static NSString *databasesDirectoryPath();
 {
     if (!origin)
         return nil;
-    Vector<String> nameVector = DatabaseTracker::singleton().databaseNames(SecurityOriginData::fromSecurityOrigin(*[origin _core]));
+    Vector<String> nameVector = DatabaseTracker::singleton().databaseNames([origin _core]->data());
     NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:nameVector.size()];
     for (auto& name : nameVector)
         [names addObject:(NSString *)name];
@@ -142,12 +142,12 @@ static NSString *databasesDirectoryPath();
 
 - (BOOL)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    return origin && DatabaseTracker::singleton().deleteOrigin(SecurityOriginData::fromSecurityOrigin(*[origin _core]));
+    return origin && DatabaseTracker::singleton().deleteOrigin([origin _core]->data());
 }
 
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    return origin && DatabaseTracker::singleton().deleteDatabase(SecurityOriginData::fromSecurityOrigin(*[origin _core]), databaseIdentifier);
+    return origin && DatabaseTracker::singleton().deleteDatabase([origin _core]->data(), databaseIdentifier);
 }
 
 // For DumpRenderTree support only

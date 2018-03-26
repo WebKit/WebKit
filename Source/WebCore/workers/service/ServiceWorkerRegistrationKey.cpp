@@ -77,13 +77,12 @@ bool ServiceWorkerRegistrationKey::originIsMatching(const SecurityOriginData& to
     return protocolHostAndPortAreEqual(clientURL, m_scope);
 }
 
-bool ServiceWorkerRegistrationKey::relatesToOrigin(const SecurityOrigin& origin) const
+bool ServiceWorkerRegistrationKey::relatesToOrigin(const SecurityOriginData& securityOrigin) const
 {
-    if (m_topOrigin == SecurityOriginData::fromSecurityOrigin(origin))
+    if (m_topOrigin == securityOrigin)
         return true;
 
-    auto scopeOrigin = SecurityOrigin::create(m_scope);
-    return scopeOrigin->isSameOriginAs(origin);
+    return SecurityOriginData::fromURL(m_scope) == securityOrigin;
 }
 
 static const char separatorCharacter = '_';

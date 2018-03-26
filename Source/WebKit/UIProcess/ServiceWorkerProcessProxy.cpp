@@ -42,16 +42,16 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool& pool, Ref<SecurityOrigin>&& origin, WebsiteDataStore& store)
+Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool& pool, const SecurityOriginData& securityOrigin, WebsiteDataStore& store)
 {
-    auto proxy = adoptRef(*new ServiceWorkerProcessProxy { pool, WTFMove(origin), store });
+    auto proxy = adoptRef(*new ServiceWorkerProcessProxy { pool, securityOrigin, store });
     proxy->connect();
     return proxy;
 }
 
-ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, Ref<SecurityOrigin>&& origin, WebsiteDataStore& store)
+ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, const SecurityOriginData& securityOrigin, WebsiteDataStore& store)
     : WebProcessProxy { pool, store }
-    , m_origin(WTFMove(origin))
+    , m_securityOrigin(securityOrigin)
     , m_serviceWorkerPageID(generatePageID())
 {
 }
@@ -71,7 +71,7 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
     WebProcessProxy::getLaunchOptions(launchOptions);
 
     launchOptions.extraInitializationData.add(ASCIILiteral("service-worker-process"), ASCIILiteral("1"));
-    launchOptions.extraInitializationData.add(ASCIILiteral("security-origin"), origin().toString());
+    launchOptions.extraInitializationData.add(ASCIILiteral("security-origin"), securityOrigin().toString());
 }
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store, std::optional<PAL::SessionID> initialSessionID)

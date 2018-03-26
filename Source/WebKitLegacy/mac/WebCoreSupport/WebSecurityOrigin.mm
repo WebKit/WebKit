@@ -71,7 +71,7 @@ using namespace WebCore;
 
 - (NSString *)databaseIdentifier
 {
-    return SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)).databaseIdentifier();
+    return reinterpret_cast<SecurityOrigin*>(_private)->data().databaseIdentifier();
 }
 
 #if PLATFORM(IOS)
@@ -169,17 +169,17 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::singleton().usage(SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)));
+    return DatabaseTracker::singleton().usage(reinterpret_cast<SecurityOrigin*>(_private)->data());
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::singleton().quota(SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)));
+    return DatabaseTracker::singleton().quota(reinterpret_cast<SecurityOrigin*>(_private)->data());
 }
 
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::singleton().setQuota(SecurityOriginData::fromSecurityOrigin(*reinterpret_cast<SecurityOrigin*>(_private)), quota);
+    DatabaseTracker::singleton().setQuota(reinterpret_cast<SecurityOrigin*>(_private)->data(), quota);
 }
 
 @end
