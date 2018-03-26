@@ -36,7 +36,6 @@
 			buildConfigurationList = DD041FC109D9DDDC0010AF2A /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
 				DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */,
-				1A932ED91D6D2DFC00AB8E6F /* Make Phony WebKitLegacy.framework */,
 			);
 			dependencies = (
 			);
@@ -6151,7 +6150,6 @@
 		1AE96A841D1A0A8000B86768 /* JSApplePayValidateMerchantEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayValidateMerchantEvent.cpp; sourceTree = "<group>"; };
 		1AE96A861D1A0CEB00B86768 /* PaymentAuthorizationStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentAuthorizationStatus.h; sourceTree = "<group>"; };
 		1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentMerchantSession.h; sourceTree = "<group>"; };
-		1AEA88FF1D6CBF5E00E5AD64 /* WebKitLegacyStub.iOS.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; path = WebKitLegacyStub.iOS.tbd; sourceTree = "<group>"; };
 		1AEF4E66170E160300AB2799 /* CachedFontClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFontClient.h; sourceTree = "<group>"; };
 		1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocumentClient.h; sourceTree = "<group>"; };
 		1AF326770D78B9440068F0C4 /* EditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorClient.h; sourceTree = "<group>"; };
@@ -16147,7 +16145,6 @@
 				1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */,
 				E1BA66F21742BDCC00C20251 /* WebCoreTestShim.xcconfig */,
 				4181707D1386EDF20057AAA4 /* WebCoreTestSupport.xcconfig */,
-				1AEA88FF1D6CBF5E00E5AD64 /* WebKitLegacyStub.iOS.tbd */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -30848,22 +30845,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A932ED91D6D2DFC00AB8E6F /* Make Phony WebKitLegacy.framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Configurations/WebKitLegacyStub.iOS.tbd",
-			);
-			name = "Make Phony WebKitLegacy.framework";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PhonyWebKitLegacy/WebKitLegacy.framework/WebKitLegacy.tbd",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\ncase $WK_PLATFORM_NAME in\niphone*)\n    TBD_PLATFORM=ios\n    ;;\nappletv*)\n    TBD_PLATFORM=tvos\n    ;;\nesac\n\nif [[ -n $TBD_PLATFORM ]]; then\n    sed -E s/\\TBD_PLATFORM/$TBD_PLATFORM/ \"${SCRIPT_INPUT_FILE_0}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nfi\n";
-		};
 		37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
