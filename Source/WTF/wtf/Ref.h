@@ -108,6 +108,10 @@ public:
 
     void assignToHashTableEmptyValue(Ref&& reference)
     {
+#if ASAN_ENABLED
+        if (__asan_address_is_poisoned(this))
+            __asan_unpoison_memory_region(this, sizeof(*this));
+#endif
         ASSERT(m_ptr == hashTableEmptyValue());
         m_ptr = &reference.leakRef();
         ASSERT(m_ptr);
@@ -166,6 +170,10 @@ inline Ref<T, U>& Ref<T, U>::operator=(T& reference)
 template<typename T, typename U>
 inline Ref<T, U>& Ref<T, U>::operator=(Ref&& reference)
 {
+#if ASAN_ENABLED
+    if (__asan_address_is_poisoned(this))
+        __asan_unpoison_memory_region(this, sizeof(*this));
+#endif
     Ref movedReference = WTFMove(reference);
     swap(movedReference);
     return *this;
@@ -175,6 +183,10 @@ template<typename T, typename U>
 template<typename X, typename Y>
 inline Ref<T, U>& Ref<T, U>::operator=(Ref<X, Y>&& reference)
 {
+#if ASAN_ENABLED
+    if (__asan_address_is_poisoned(this))
+        __asan_unpoison_memory_region(this, sizeof(*this));
+#endif
     Ref movedReference = WTFMove(reference);
     swap(movedReference);
     return *this;
@@ -197,6 +209,10 @@ template<typename T, typename U>
 template<typename X, typename Y>
 inline Ref<T, U> Ref<T, U>::replace(Ref<X, Y>&& reference)
 {
+#if ASAN_ENABLED
+    if (__asan_address_is_poisoned(this))
+        __asan_unpoison_memory_region(this, sizeof(*this));
+#endif
     auto oldReference = adoptRef(*m_ptr);
     m_ptr = &reference.leakRef();
     return oldReference;

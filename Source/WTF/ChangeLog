@@ -1,3 +1,18 @@
+2018-03-26  Antoine Quint  <graouts@apple.com>
+
+        [ASan] Allow Ref<> to be swapped
+        https://bugs.webkit.org/show_bug.cgi?id=184017
+        <rdar://problem/36336787>
+
+        Reviewed by JF Bastien.
+
+        Unpoison a Ref in various calls just like in ~Ref so that sorting a Vector<Ref<>> works with ASan on.
+
+        * wtf/Ref.h:
+        (WTF::Ref::assignToHashTableEmptyValue):
+        (WTF::=):
+        (WTF::U>::replace):
+
 2018-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         Warn against cookie access in the WebContent process using ProcessPrivilege assertions
