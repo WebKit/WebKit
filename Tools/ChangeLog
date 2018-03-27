@@ -1,3 +1,15 @@
+2018-03-27  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r229937): WebDriver tests no longer run, test runner hangs when launching wpt web server
+        https://bugs.webkit.org/show_bug.cgi?id=184056
+        <rdar://problem/38925058>
+
+        Reviewed by Timothy Hatcher and Youenn Fablet.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_web_server.py:
+        (WebDriverW3CWebServer.start):
+        The config key used in upstream WPT has changed from 'host' to 'browser_host'.
+
 2018-03-27  Timothy Hatcher  <timothy@hatcher.name>
 
         Update my email address in contributors.json and scripts

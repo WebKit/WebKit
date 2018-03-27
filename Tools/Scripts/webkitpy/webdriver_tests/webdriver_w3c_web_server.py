@@ -96,7 +96,7 @@ class WebDriverW3CWebServer(object):
         config_json = self._port.host.filesystem.read_text_file(config_filename).replace("%DOC_ROOT%", doc_root)
         self._port.host.filesystem.write_text_file(os.path.join(self._layout_doc_root, 'config.json'), config_json)
         config = json.loads(config_json)
-        self._server_host = config['host']
+        self._server_host = config['browser_host']
         self._server_port = config['ports']['http'][0]
 
         self._wsout = self._port.host.filesystem.open_text_file_for_writing(self._output_log_path)
