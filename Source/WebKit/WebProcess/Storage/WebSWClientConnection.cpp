@@ -109,7 +109,7 @@ void WebSWClientConnection::didResolveRegistrationPromise(const ServiceWorkerReg
     send(Messages::WebSWServerConnection::DidResolveRegistrationPromise(key));
 }
 
-bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin& origin) const
+bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData& origin) const
 {
     if (!m_swOriginTable->isImported())
         return true;
@@ -145,7 +145,7 @@ void WebSWClientConnection::didGetRegistrations(uint64_t matchingRequest, Vector
         completionHandler(WTFMove(registrations));
 }
 
-void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
+void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&& callback)
 {
     ASSERT(isMainThread());
 
@@ -154,7 +154,7 @@ void WebSWClientConnection::matchRegistration(const SecurityOrigin& topOrigin, c
         return;
     }
 
-    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = topOrigin.data(), clientURL]() mutable {
+    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
         uint64_t callbackID = ++m_previousCallbackIdentifier;
         m_ongoingMatchRegistrationTasks.add(callbackID, WTFMove(callback));
         send(Messages::WebSWServerConnection::MatchRegistration(callbackID, topOrigin, clientURL));
@@ -183,7 +183,7 @@ void WebSWClientConnection::registrationReady(uint64_t callbackID, WebCore::Serv
         callback(WTFMove(registrationData));
 }
 
-void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
+void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)
 {
     ASSERT(isMainThread());
 
@@ -192,7 +192,7 @@ void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, co
         return;
     }
 
-    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = topOrigin.data(), clientURL]() mutable {
+    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
         uint64_t callbackID = ++m_previousCallbackIdentifier;
         m_ongoingGetRegistrationsTasks.add(callbackID, WTFMove(callback));
         send(Messages::WebSWServerConnection::GetRegistrations(callbackID, topOrigin, clientURL));

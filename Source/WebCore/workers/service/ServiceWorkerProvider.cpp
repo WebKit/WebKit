@@ -45,7 +45,7 @@ void ServiceWorkerProvider::setSharedProvider(ServiceWorkerProvider& newProvider
     sharedProvider = &newProvider;
 }
 
-bool ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin(PAL::SessionID sessionID, const WebCore::SecurityOrigin& origin)
+bool ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin)
 {
     auto* connection = existingServiceWorkerConnectionForSession(sessionID);
     if (!connection)

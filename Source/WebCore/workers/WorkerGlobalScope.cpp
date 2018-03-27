@@ -54,7 +54,7 @@
 namespace WebCore {
 using namespace Inspector;
 
-WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, bool isOnline, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
+WorkerGlobalScope::WorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
     : m_url(url)
     , m_identifier(identifier)
     , m_userAgent(userAgent)
@@ -76,7 +76,6 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& identifier, c
     UNUSED_PARAM(connectionProxy);
 #endif
 
-    auto origin = SecurityOrigin::create(url);
     if (m_topOrigin->hasUniversalAccess())
         origin->grantUniversalAccess();
     if (m_topOrigin->needsStorageAccessFromFileURLsQuirk())

@@ -58,10 +58,10 @@ public:
     WEBCORE_EXPORT virtual ~SWClientConnection();
 
     using RegistrationCallback = WTF::CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>;
-    virtual void matchRegistration(const SecurityOrigin& topOrigin, const URL& clientURL, RegistrationCallback&&) = 0;
+    virtual void matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&&) = 0;
 
     using GetRegistrationsCallback = WTF::CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&)>;
-    virtual void getRegistrations(const SecurityOrigin& topOrigin, const URL& clientURL, GetRegistrationsCallback&&) = 0;
+    virtual void getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&&) = 0;
 
     using WhenRegistrationReadyCallback = WTF::Function<void(ServiceWorkerRegistrationData&&)>;
     virtual void whenRegistrationReady(const SecurityOrigin& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&&) = 0;
@@ -77,7 +77,7 @@ public:
     virtual void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, const ServiceWorkerOrClientIdentifier& source) = 0;
 
     virtual SWServerConnectionIdentifier serverConnectionIdentifier() const = 0;
-    virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOrigin&) const = 0;
+    virtual bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const = 0;
     virtual void syncTerminateWorker(ServiceWorkerIdentifier) = 0;
 
     virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const std::optional<ServiceWorkerRegistrationIdentifier>&) = 0;

@@ -198,7 +198,7 @@ void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& resp
         return;
     }
 
-    m_eventStreamOrigin = SecurityOrigin::create(response.url())->toString();
+    m_eventStreamOrigin = SecurityOriginData::fromURL(response.url()).toString();
     m_state = OPEN;
     dispatchEvent(Event::create(eventNames().openEvent, false, false));
 }

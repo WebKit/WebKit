@@ -202,7 +202,7 @@ public:
 
     static URL urlWithUniqueSecurityOrigin();
 
-    WEBCORE_EXPORT bool isPotentiallyTrustworthy() const;
+    bool isPotentiallyTrustworthy() const { return m_isPotentiallyTrustworthy; }
 
     static bool isLocalHostOrLoopbackIPAddress(const String& host);
 
@@ -233,8 +233,7 @@ private:
     StorageBlockingPolicy m_storageBlockingPolicy { AllowAllStorage };
     bool m_enforcesFilePathSeparation { false };
     bool m_needsStorageAccessFromFileURLsQuirk { false };
-    enum class IsPotentiallyTrustworthy : uint8_t { No, Yes, Unknown };
-    mutable IsPotentiallyTrustworthy m_isPotentiallyTrustworthy { IsPotentiallyTrustworthy::Unknown };
+    bool m_isPotentiallyTrustworthy { false };
 };
 
 bool shouldTreatAsPotentiallyTrustworthy(const URL&);

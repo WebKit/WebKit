@@ -34,11 +34,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
-bool WebSWOriginTable::contains(const SecurityOrigin& origin) const
+bool WebSWOriginTable::contains(const SecurityOriginData& origin) const
 {
-    if (origin.isUnique())
-        return false;
-
     return m_serviceWorkerOriginTable.contains(computeSharedStringHash(origin.toString()));
 }
 

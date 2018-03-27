@@ -75,6 +75,7 @@ public:
     WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, bool isOnline, const String& sourceCode, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, PAL::SessionID);
 
     URL m_scriptURL;
+    Ref<SecurityOrigin> m_origin;
     String m_identifier;
     String m_userAgent;
     String m_sourceCode;
@@ -89,6 +90,7 @@ public:
 
 WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const String& identifier, const String& userAgent, bool isOnline, const String& sourceCode, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
     : m_scriptURL(scriptURL.isolatedCopy())
+    , m_origin(SecurityOrigin::create(m_scriptURL)->isolatedCopy())
     , m_identifier(identifier.isolatedCopy())
     , m_userAgent(userAgent.isolatedCopy())
     , m_sourceCode(sourceCode.isolatedCopy())
@@ -165,7 +167,7 @@ void WorkerThread::workerThread()
         // while WorkerThread::stop() is accessing it. Note that WorkerThread::stop() can
         // be called before we've finished creating the WorkerGlobalScope.
         LockHolder lock(m_threadCreationAndWorkerGlobalScopeMutex);
-        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_identifier, m_startupData->m_userAgent, m_startupData->m_isOnline, m_startupData->m_contentSecurityPolicyResponseHeaders, m_startupData->m_shouldBypassMainWorldContentSecurityPolicy, WTFMove(m_startupData->m_topOrigin), m_startupData->m_timeOrigin, m_startupData->m_sessionID);
+        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, WTFMove(m_startupData->m_origin), m_startupData->m_identifier, m_startupData->m_userAgent, m_startupData->m_isOnline, m_startupData->m_contentSecurityPolicyResponseHeaders, m_startupData->m_shouldBypassMainWorldContentSecurityPolicy, WTFMove(m_startupData->m_topOrigin), m_startupData->m_timeOrigin, m_startupData->m_sessionID);
 
         scriptController = m_workerGlobalScope->script();
 

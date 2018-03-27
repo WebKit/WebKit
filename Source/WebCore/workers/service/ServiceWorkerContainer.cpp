@@ -269,8 +269,8 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
     m_pendingPromises.add(pendingPromiseIdentifier, WTFMove(pendingPromise));
 
     auto contextIdentifier = this->contextIdentifier();
-    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().isolatedCopy(), parsedURL = parsedURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
-        connection->matchRegistration(topOrigin, parsedURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& result) mutable {
+    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().data().isolatedCopy(), parsedURL = parsedURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
+        connection->matchRegistration(WTFMove(topOrigin), parsedURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& result) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [this, pendingPromiseIdentifier, result = crossThreadCopy(result)](ScriptExecutionContext&) mutable {
                 this->didFinishGetRegistrationRequest(pendingPromiseIdentifier, WTFMove(result));
             });
@@ -332,8 +332,8 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
 
     auto contextIdentifier = this->contextIdentifier();
     auto contextURL = context->url();
-    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().isolatedCopy(), contextURL = contextURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
-        connection->getRegistrations(topOrigin, contextURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& registrationDatas) mutable {
+    callOnMainThread([connection = makeRef(ensureSWClientConnection()), this, topOrigin = context->topOrigin().data().isolatedCopy(), contextURL = contextURL.isolatedCopy(), contextIdentifier, pendingPromiseIdentifier]() mutable {
+        connection->getRegistrations(WTFMove(topOrigin), contextURL, [this, contextIdentifier, pendingPromiseIdentifier] (auto&& registrationDatas) mutable {
             ScriptExecutionContext::postTaskTo(contextIdentifier, [this, pendingPromiseIdentifier, registrationDatas = crossThreadCopy(registrationDatas)](ScriptExecutionContext&) mutable {
                 this->didFinishGetRegistrationsRequest(pendingPromiseIdentifier, WTFMove(registrationDatas));
             });

@@ -492,7 +492,7 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
         return;
     }
 
-    auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(url);
+    auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? m_frame->document()->topOrigin().data() : SecurityOriginData::fromURL(url);
     auto sessionID = m_frame->page()->sessionID();
     auto& provider = ServiceWorkerProvider::singleton();
     if (!provider.mayHaveServiceWorkerRegisteredForOrigin(sessionID, origin)) {
@@ -501,7 +501,7 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
     }
 
     auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
-    connection.matchRegistration(origin, url, WTFMove(callback));
+    connection.matchRegistration(WTFMove(origin), url, WTFMove(callback));
 }
 
 static inline bool areRegistrationsEqual(const std::optional<ServiceWorkerRegistrationData>& a, const std::optional<ServiceWorkerRegistrationData>& b)

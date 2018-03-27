@@ -31,7 +31,7 @@
 #include "SharedStringHashTableReadOnly.h"
 
 namespace WebCore {
-class SecurityOrigin;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -42,7 +42,7 @@ public:
 
     bool isImported() const { return m_isImported; }
     void setIsImported() { m_isImported = true; }
-    bool contains(const WebCore::SecurityOrigin&) const;
+    bool contains(const WebCore::SecurityOriginData&) const;
     void setSharedMemory(const SharedMemory::Handle&);
 
 private:

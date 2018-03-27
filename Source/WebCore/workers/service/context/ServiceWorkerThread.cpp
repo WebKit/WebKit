@@ -81,9 +81,9 @@ ServiceWorkerThread::ServiceWorkerThread(const ServiceWorkerContextData& data, P
 
 ServiceWorkerThread::~ServiceWorkerThread() = default;
 
-Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, bool isOnline, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
+Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
 {
-    return ServiceWorkerGlobalScope::create(m_data, url, identifier, userAgent, isOnline, *this, contentSecurityPolicy, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider(), sessionID);
+    return ServiceWorkerGlobalScope::create(m_data, url, WTFMove(origin), identifier, userAgent, isOnline, *this, contentSecurityPolicy, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider(), sessionID);
 }
 
 void ServiceWorkerThread::runEventLoop()
@@ -103,10 +103,10 @@ void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client
     }, WorkerRunLoop::defaultMode());
 }
 
-static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessagePorts&& message, ExtendableMessageEventSource&& source, Ref<SecurityOrigin>&& sourceOrigin)
+static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessagePorts&& message, ExtendableMessageEventSource&& source, const URL& sourceURL)
 {
     auto ports = MessagePort::entanglePorts(scope, WTFMove(message.transferredPorts));
-    auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message.message), sourceOrigin->toString(), { }, source);
+    auto messageEvent = ExtendableMessageEvent::create(WTFMove(ports), WTFMove(message.message), SecurityOriginData::fromURL(sourceURL).toString(), { }, source);
     scope.dispatchEvent(messageEvent);
     scope.thread().workerObjectProxy().confirmMessageFromWorkerObject(scope.hasPendingActivity());
     scope.updateExtendedEventsSet(messageEvent.ptr());
@@ -116,24 +116,24 @@ void ServiceWorkerThread::postMessageToServiceWorker(MessageWithMessagePorts&& m
 {
     runLoop().postTask([message = WTFMove(message), sourceData = WTFMove(sourceData)] (auto& context) mutable {
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
-        RefPtr<SecurityOrigin> sourceOrigin;
+        URL sourceURL;
         ExtendableMessageEventSource source;
         if (WTF::holds_alternative<ServiceWorkerClientData>(sourceData)) {
             RefPtr<ServiceWorkerClient> sourceClient = ServiceWorkerClient::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerClientData>(sourceData)));
 
             RELEASE_ASSERT(!sourceClient->url().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceClient->url()));
 
-            sourceOrigin = SecurityOrigin::create(sourceClient->url());
+            sourceURL = sourceClient->url();
             source = WTFMove(sourceClient);
         } else {
             RefPtr<ServiceWorker> sourceWorker = ServiceWorker::getOrCreate(serviceWorkerGlobalScope, WTFMove(WTF::get<ServiceWorkerData>(sourceData)));
 
             RELEASE_ASSERT(!sourceWorker->scriptURL().protocolIsInHTTPFamily() || !serviceWorkerGlobalScope.url().protocolIsInHTTPFamily() || protocolHostAndPortAreEqual(serviceWorkerGlobalScope.url(), sourceWorker->scriptURL()));
 
-            sourceOrigin = SecurityOrigin::create(sourceWorker->scriptURL());
+            sourceURL = sourceWorker->scriptURL();
             source = WTFMove(sourceWorker);
         }
-        fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), ExtendableMessageEventSource { source }, sourceOrigin.releaseNonNull());
+        fireMessageEvent(serviceWorkerGlobalScope, WTFMove(message), ExtendableMessageEventSource { source }, sourceURL);
     });
 }
 

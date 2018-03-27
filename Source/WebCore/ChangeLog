@@ -1,3 +1,62 @@
+2018-03-27  Chris Dumez  <cdumez@apple.com>
+
+        Avoid constructing SecurityOrigin objects from non-main threads
+        https://bugs.webkit.org/show_bug.cgi?id=184024
+
+        Reviewed by Youenn Fablet.
+
+        Avoid constructing SecurityOrigin objects from non-main threads as much as possible
+        as it is not safe. This patch gets rid of most offending cases but not all of them
+        yet, which is why I haven't added a ASSERT(isMainThread()) to the SecurityOrigin
+        constructor yet.
+
+        For example, ContentSecurityPolicy::upgradeInsecureRequestIfNeeded() currently
+        gets called from non-main threads and construct a SecurityOrigin. Fixing this
+        will require some refactoring that would have made this patch much larger.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::matchRegistration):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::isPotentiallyTrustworthy const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasServiceWorkerRegistration):
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::origin const):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        * workers/service/SWClientConnection.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::create):
+        (WebCore::ServiceWorkerGlobalScope::ServiceWorkerGlobalScope):
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerProvider.cpp:
+        (WebCore::ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin):
+        * workers/service/ServiceWorkerProvider.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::createWorkerGlobalScope):
+        (WebCore::fireMessageEvent):
+        (WebCore::ServiceWorkerThread::postMessageToServiceWorker):
+        * workers/service/context/ServiceWorkerThread.h:
+
 2018-03-27  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused libsoup ResourceHandle implementation

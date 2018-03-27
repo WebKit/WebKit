@@ -46,9 +46,9 @@ DedicatedWorkerThread::DedicatedWorkerThread(const URL& url, const String& ident
 
 DedicatedWorkerThread::~DedicatedWorkerThread() = default;
 
-Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, const String& identifier, const String& userAgent, bool isOnline, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
+Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const URL& url, Ref<SecurityOrigin>&& origin, const String& identifier, const String& userAgent, bool isOnline, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, PAL::SessionID sessionID)
 {
-    return DedicatedWorkerGlobalScope::create(url, identifier, userAgent, isOnline, *this, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider(), sessionID);
+    return DedicatedWorkerGlobalScope::create(url, WTFMove(origin), identifier, userAgent, isOnline, *this, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, idbConnectionProxy(), socketProvider(), sessionID);
 }
 
 void DedicatedWorkerThread::runEventLoop()

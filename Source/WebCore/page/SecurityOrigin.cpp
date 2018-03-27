@@ -159,15 +159,14 @@ SecurityOrigin::SecurityOrigin(const URL& url)
     if (m_canLoadLocalResources)
         m_filePath = url.fileSystemPath(); // In case enforceFilePathSeparation() is called.
 
-    if (!url.isValid())
-        m_isPotentiallyTrustworthy = IsPotentiallyTrustworthy::No;
+    m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(url);
 }
 
 SecurityOrigin::SecurityOrigin()
     : m_data { emptyString(), emptyString(), std::nullopt }
     , m_domain { emptyString() }
     , m_isUnique { true }
-    , m_isPotentiallyTrustworthy { IsPotentiallyTrustworthy::Yes }
+    , m_isPotentiallyTrustworthy { true }
 {
 }
 
@@ -216,15 +215,6 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 {
     m_domainWasSetInDOM = true;
     m_domain = newDomain.convertToASCIILowercase();
-}
-
-bool SecurityOrigin::isPotentiallyTrustworthy() const
-{
-    // This code is using an enum instead of an std::optional for thread-safety. Worst case scenario, several thread will read
-    // 'Unknown' value concurrently and they'll all call shouldTreatAsPotentiallyTrustworthy() and get the same result.
-    if (m_isPotentiallyTrustworthy == IsPotentiallyTrustworthy::Unknown)
-        m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(m_data.protocol, m_data.host) ? IsPotentiallyTrustworthy::Yes : IsPotentiallyTrustworthy::No;
-    return m_isPotentiallyTrustworthy == IsPotentiallyTrustworthy::Yes;
 }
 
 bool SecurityOrigin::isSecure(const URL& url)
