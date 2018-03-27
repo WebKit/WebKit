@@ -57,11 +57,11 @@ WI.isEditingAnyField = function()
 
 WI.isEventTargetAnEditableField = function(event)
 {
-    var textInputTypes = {"text": true, "search": true, "tel": true, "url": true, "email": true, "password": true};
+    let textInputTypes = new Set(["text", "search", "number", "tel", "url", "email", "password"]);
     if (event.target instanceof HTMLInputElement)
-        return event.target.type in textInputTypes;
+        return textInputTypes.has(event.target.type);
 
-    var codeMirrorEditorElement = event.target.enclosingNodeOrSelfWithClass("CodeMirror");
+    let codeMirrorEditorElement = event.target.enclosingNodeOrSelfWithClass("CodeMirror");
     if (codeMirrorEditorElement && codeMirrorEditorElement.CodeMirror)
         return !codeMirrorEditorElement.CodeMirror.getOption("readOnly");
 

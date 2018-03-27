@@ -1,3 +1,14 @@
+2018-03-27  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Command-Shift-left/right arrow keys should not switch tabs when focused on color picker text fields
+        https://bugs.webkit.org/show_bug.cgi?id=184028
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/EditingSupport.js:
+        (WI.isEventTargetAnEditableField):
+        Detect <input type="number"> as an editable text field.
+
 2018-03-23  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: don't show checkboxes for invalid properties
