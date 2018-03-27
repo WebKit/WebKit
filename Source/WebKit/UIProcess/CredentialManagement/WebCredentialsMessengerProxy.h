@@ -37,6 +37,7 @@ class LocalAuthenticator;
 
 struct ExceptionData;
 struct PublicKeyCredentialCreationOptions;
+struct PublicKeyCredentialRequestOptions;
 }
 
 namespace WebKit {
@@ -55,12 +56,13 @@ private:
 
     // Receivers.
     void makeCredential(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&);
-    void getAssertion(uint64_t messageId);
+    void getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&);
     void isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId);
 
     // Senders.
     void exceptionReply(uint64_t messageId, const WebCore::ExceptionData&);
     void makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject);
+    void getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle);
     void isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool);
 
     WebPageProxy& m_webPageProxy;

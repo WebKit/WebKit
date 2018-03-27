@@ -57,6 +57,7 @@ void WebCredentialsMessengerProxy::makeCredential(uint64_t messageId, const Vect
         return;
     }
     // FIXME(183534): Weak pointers doesn't work in another thread because of race condition.
+    // FIXME(183534): Unify callbacks.
     auto weakThis = m_weakFactory.createWeakPtr(*this);
     auto callback = [weakThis, messageId] (const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject) {
         if (!weakThis)
@@ -71,8 +72,23 @@ void WebCredentialsMessengerProxy::makeCredential(uint64_t messageId, const Vect
     m_authenticator->makeCredential(hash, options, WTFMove(callback), WTFMove(exceptionCallback));
 }
 
-void WebCredentialsMessengerProxy::getAssertion(uint64_t)
+void WebCredentialsMessengerProxy::getAssertion(uint64_t messageId, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions& options)
 {
+    // FIXME(182767)
+    if (!m_authenticator)
+        exceptionReply(messageId, { WebCore::NotAllowedError, ASCIILiteral("No avaliable authenticators.") });
+    // FIXME(183534): Weak pointers doesn't work in another thread because of race condition.
+    // FIXME(183534): Unify callbacks.
+    auto weakThis = m_weakFactory.createWeakPtr(*this);
+    auto callback = [weakThis, messageId] (const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle) {
+        if (weakThis)
+            weakThis->getAssertionReply(messageId, credentialId, authenticatorData, signature, userHandle);
+    };
+    auto exceptionCallback = [weakThis, messageId] (const WebCore::ExceptionData& exception) {
+        if (weakThis)
+            weakThis->exceptionReply(messageId, exception);
+    };
+    m_authenticator->getAssertion(hash, options, WTFMove(callback), WTFMove(exceptionCallback));
 }
 
 void WebCredentialsMessengerProxy::isUserVerifyingPlatformAuthenticatorAvailable(uint64_t messageId)
@@ -92,6 +108,11 @@ void WebCredentialsMessengerProxy::exceptionReply(uint64_t messageId, const WebC
 void WebCredentialsMessengerProxy::makeCredentialReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& attestationObject)
 {
     m_webPageProxy.send(Messages::WebCredentialsMessenger::MakeCredentialReply(messageId, credentialId, attestationObject));
+}
+
+void WebCredentialsMessengerProxy::getAssertionReply(uint64_t messageId, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle)
+{
+    m_webPageProxy.send(Messages::WebCredentialsMessenger::GetAssertionReply(messageId, credentialId, authenticatorData, signature, userHandle));
 }
 
 void WebCredentialsMessengerProxy::isUserVerifyingPlatformAuthenticatorAvailableReply(uint64_t messageId, bool result)

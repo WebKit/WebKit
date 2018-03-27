@@ -38,7 +38,28 @@ struct PublicKeyCredentialRequestOptions {
     std::optional<unsigned long> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
 };
+
+// Not every member is encoded.
+template<class Encoder>
+void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
+{
+    encoder << rpId << allowCredentials;
+}
+
+template<class Decoder>
+std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::decode(Decoder& decoder)
+{
+    PublicKeyCredentialRequestOptions result;
+    if (!decoder.decode(result.rpId))
+        return std::nullopt;
+    if (!decoder.decode(result.allowCredentials))
+        return std::nullopt;
+    return result;
+}
 
 } // namespace WebCore
 

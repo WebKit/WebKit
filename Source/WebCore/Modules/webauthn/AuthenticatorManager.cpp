@@ -160,7 +160,7 @@ void AuthenticatorManager::create(const SecurityOrigin& callerOrigin, const Publ
     // Step 18-21.
     // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
-    // For better performance, no filtering is done here regarding to options.excludeCredentials.
+    // For better performance, transports of options.excludeCredentials are checked in LocalAuthenticator.
     if (!m_messenger)  {
         promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
         return;
@@ -219,7 +219,7 @@ void AuthenticatorManager::discoverFromExternalSource(const SecurityOrigin& call
     // Step 14-15, 17-19.
     // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
     // Also, resident keys, user verifications and direct attestation are enforced at this tage.
-    // For better performance, no filtering is done here regarding to options.allowCredentials.
+    // For better performance, filtering of options.allowCredentials is done in LocalAuthenticator.
     if (!m_messenger)  {
         promise.reject(Exception { UnknownError, ASCIILiteral("Unknown internal error.") });
         return;

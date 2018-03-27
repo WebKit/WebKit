@@ -47,7 +47,7 @@ struct PublicKeyCredentialCreationOptions {
 
     struct UserEntity : public Entity {
         BufferSource id; // id becomes idVector once it is passed to UIProcess.
-        mutable Vector<uint8_t> idVector;
+        Vector<uint8_t> idVector;
         String displayName;
     };
 
@@ -140,7 +140,7 @@ template<> struct CrossThreadCopierBase<false, false, WebCore::PublicKeyCredenti
         result.user.name = source.user.name.isolatedCopy();
         result.user.icon = source.user.icon.isolatedCopy();
         result.user.displayName = source.user.displayName.isolatedCopy();
-        result.user.idVector = WTFMove(source.user.idVector);
+        result.user.idVector = source.user.idVector;
         return result;
     }
 };

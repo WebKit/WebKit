@@ -38,6 +38,7 @@
 #import <WebCore/ExceptionData.h>
 #import <WebCore/LocalAuthenticator.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
+#import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
@@ -85,7 +86,7 @@ RetainPtr<SecKeyRef> getTestKey()
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrKeySizeInBits: @256,
     };
-    CFErrorRef errorRef = NULL;
+    CFErrorRef errorRef = nullptr;
     auto key = adoptCF(SecKeyCreateWithData(
         (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:testES256PrivateKeyBase64 options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
         (__bridge CFDictionaryRef)options,
@@ -94,6 +95,19 @@ RetainPtr<SecKeyRef> getTestKey()
     EXPECT_FALSE(errorRef);
 
     return key;
+}
+
+void addTestKeyToKeychain()
+{
+    auto key = getTestKey();
+    NSDictionary* addQuery = @{
+        (id)kSecValueRef: (id)key.get(),
+        (id)kSecClass: (id)kSecClassKey,
+        (id)kSecAttrLabel: testRpId,
+        (id)kSecAttrApplicationTag: [NSData dataWithBytes:testUserhandle length:sizeof(testUserhandle)],
+    };
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
+    EXPECT_FALSE(status);
 }
 
 void cleanUpKeychain()
@@ -141,7 +155,7 @@ public:
     {
     }
 private:
-    static void evaluatePolicyFailed(id self, SEL _cmd, LAPolicy policy, NSString * reason, void (^reply)(BOOL success, NSError *error))
+    static void evaluatePolicyFailed(id, SEL, LAPolicy, NSString *, void (^reply)(BOOL, NSError *))
     {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             Util::sleep(1); // mimic user interaction delay
@@ -158,7 +172,41 @@ public:
     {
     }
 private:
-    static void evaluatePolicyPassed(id self, SEL _cmd, LAPolicy policy, NSString * reason, void (^reply)(BOOL success, NSError *error))
+    static void evaluatePolicyPassed(id, SEL, LAPolicy, NSString *, void (^reply)(BOOL, NSError *))
+    {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            Util::sleep(1); // mimic user interaction delay
+            reply(YES, nil);
+        });
+    }
+    InstanceMethodSwizzler m_swizzler;
+};
+
+class LAEvaluateAccessControlFailedSwizzler {
+public:
+    LAEvaluateAccessControlFailedSwizzler()
+        : m_swizzler([LAContext class], @selector(evaluateAccessControl:operation:localizedReason:reply:), reinterpret_cast<IMP>(evaluateAccessControlFailed))
+    {
+    }
+private:
+    static void evaluateAccessControlFailed(id, SEL, SecAccessControlRef, LAAccessControlOperation, NSString *, void (^reply)(BOOL, NSError *))
+    {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            Util::sleep(1); // mimic user interaction delay
+            reply(NO, nil);
+        });
+    }
+    InstanceMethodSwizzler m_swizzler;
+};
+
+class LAEvaluateAccessControlPassedSwizzler {
+public:
+    LAEvaluateAccessControlPassedSwizzler()
+        : m_swizzler([LAContext class], @selector(evaluateAccessControl:operation:localizedReason:reply:), reinterpret_cast<IMP>(evaluateAccessControlPassed))
+    {
+    }
+private:
+    static void evaluateAccessControlPassed(id, SEL, SecAccessControlRef, LAAccessControlOperation, NSString *, void (^reply)(BOOL, NSError *))
     {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             Util::sleep(1); // mimic user interaction delay
@@ -234,18 +282,8 @@ TEST(LocalAuthenticator, MakeCredentialNotSupportedPubKeyCredParams)
 
 TEST(LocalAuthenticator, MakeCredentialExcludeCredentialsMatch)
 {
-    // Insert the test key into Keychain
-    auto key = getTestKey();
-    NSDictionary* addQuery = @{
-        (id)kSecValueRef: (id)key.get(),
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrLabel: testRpId,
-        (id)kSecAttrApplicationTag: [NSData dataWithBytes:testUserhandle length:sizeof(testUserhandle)],
-    };
-    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
-    EXPECT_FALSE(status);
+    addTestKeyToKeychain();
 
-    // Invoke the LocalAuthenticator.
     WebCore::PublicKeyCredentialDescriptor descriptor;
     descriptor.type = WebCore::PublicKeyCredentialType::PublicKey;
     WTF::base64Decode(testCredentialIdBase64, descriptor.idVector);
@@ -350,15 +388,7 @@ TEST(LocalAuthenticator, MakeCredentialDeleteOlderCredenital)
     LAEvaluatePolicyPassedSwizzler evaluatePolicyPassedSwizzler;
 
     // Insert the older credential
-    auto key = getTestKey();
-    NSDictionary* addQuery = @{
-        (id)kSecValueRef: (id)key.get(),
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrLabel: testRpId,
-        (id)kSecAttrApplicationTag: [NSData dataWithBytes:testUserhandle length:sizeof(testUserhandle)],
-    };
-    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)addQuery, NULL);
-    EXPECT_FALSE(status);
+    addTestKeyToKeychain();
 
     WebCore::PublicKeyCredentialCreationOptions creationOptions;
     creationOptions.rp.id = testRpId;
@@ -475,7 +505,7 @@ TEST(LocalAuthenticator, MakeCredentialPassedWithSelfAttestation)
         auto& x5c = attStmt.find(cbor::CBORValue("x5c"))->second.getArray();
         auto& attestationCertificateData = x5c[0].getByteString();
         auto attestationCertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)[NSData dataWithBytes:attestationCertificateData.data() length:attestationCertificateData.size()]));
-        CFStringRef commonName = NULL;
+        CFStringRef commonName = nullptr;
         status = SecCertificateCopyCommonName(attestationCertificate.get(), &commonName);
         auto retainCommonName = adoptCF(commonName);
         ASSERT(!status);
@@ -483,7 +513,7 @@ TEST(LocalAuthenticator, MakeCredentialPassedWithSelfAttestation)
 
         auto& attestationIssuingCACertificateData = x5c[1].getByteString();
         auto attestationIssuingCACertificate = adoptCF(SecCertificateCreateWithData(NULL, (__bridge CFDataRef)[NSData dataWithBytes:attestationIssuingCACertificateData.data() length:attestationIssuingCACertificateData.size()]));
-        commonName = NULL;
+        commonName = nullptr;
         status = SecCertificateCopyCommonName(attestationIssuingCACertificate.get(), &commonName);
         retainCommonName = adoptCF(commonName);
         ASSERT(!status);
@@ -499,6 +529,199 @@ TEST(LocalAuthenticator, MakeCredentialPassedWithSelfAttestation)
     };
     Vector<uint8_t> hash(32);
     authenticator->makeCredential(hash, creationOptions, WTFMove(callback), WTFMove(exceptionCallback));
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(LocalAuthenticator, GetAssertionAllowCredentialsMismatch1)
+{
+    // Transports mismatched
+    WebCore::PublicKeyCredentialDescriptor descriptor;
+    descriptor.type = WebCore::PublicKeyCredentialType::PublicKey;
+    descriptor.transports.append(WebCore::PublicKeyCredentialDescriptor::AuthenticatorTransport::Usb);
+    WebCore::PublicKeyCredentialRequestOptions requestOptions;
+    requestOptions.allowCredentials.append(WTFMove(descriptor));
+
+    bool done = false;
+    std::unique_ptr<TestLocalAuthenticator> authenticator = std::make_unique<TestLocalAuthenticator>();
+    auto callback = [&done] (const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&) {
+        EXPECT_FALSE(true);
+        done = true;
+    };
+    auto exceptionCallback = [&done] (const WebCore::ExceptionData& exception) mutable {
+        EXPECT_EQ(WebCore::NotAllowedError, exception.code);
+        EXPECT_STREQ("No matched credentials are found in the platform attached authenticator.", exception.message.ascii().data());
+        done = true;
+    };
+    authenticator->getAssertion({ }, requestOptions, WTFMove(callback), WTFMove(exceptionCallback));
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(LocalAuthenticator, GetAssertionAllowCredentialsMismatch2)
+{
+    // No existing credential
+    WebCore::PublicKeyCredentialRequestOptions requestOptions;
+    requestOptions.rpId = testRpId;
+
+    bool done = false;
+    std::unique_ptr<TestLocalAuthenticator> authenticator = std::make_unique<TestLocalAuthenticator>();
+    auto callback = [&done] (const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&) {
+        EXPECT_FALSE(true);
+        done = true;
+    };
+    auto exceptionCallback = [&done] (const WebCore::ExceptionData& exception) mutable {
+        EXPECT_EQ(WebCore::NotAllowedError, exception.code);
+        EXPECT_STREQ("No matched credentials are found in the platform attached authenticator.", exception.message.ascii().data());
+        done = true;
+    };
+    authenticator->getAssertion({ }, requestOptions, WTFMove(callback), WTFMove(exceptionCallback));
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(LocalAuthenticator, GetAssertionAllowCredentialsMismatch3)
+{
+    // Credential ID mismatched
+    addTestKeyToKeychain();
+
+    WebCore::PublicKeyCredentialDescriptor descriptor;
+    descriptor.type = WebCore::PublicKeyCredentialType::PublicKey;
+    WTF::base64Decode(testCredentialIdBase64, descriptor.idVector);
+    descriptor.idVector[19] = 0; // nuke the last byte.
+    WebCore::PublicKeyCredentialRequestOptions requestOptions;
+    requestOptions.rpId = testRpId;
+    requestOptions.allowCredentials.append(descriptor);
+
+    bool done = false;
+    std::unique_ptr<TestLocalAuthenticator> authenticator = std::make_unique<TestLocalAuthenticator>();
+    auto callback = [&done] (const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&) {
+        EXPECT_FALSE(true);
+        cleanUpKeychain();
+        done = true;
+    };
+    auto exceptionCallback = [&done] (const WebCore::ExceptionData& exception) mutable {
+        EXPECT_EQ(WebCore::NotAllowedError, exception.code);
+        EXPECT_STREQ("No matched credentials are found in the platform attached authenticator.", exception.message.ascii().data());
+        cleanUpKeychain();
+        done = true;
+    };
+    authenticator->getAssertion({ }, requestOptions, WTFMove(callback), WTFMove(exceptionCallback));
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(LocalAuthenticator, GetAssertionBiometricsNotEnrolled)
+{
+    LACantEvaluatePolicySwizzler swizzler;
+
+    addTestKeyToKeychain();
+
+    WebCore::PublicKeyCredentialRequestOptions requestOptions;
+    requestOptions.rpId = testRpId;
+
+    bool done = false;
+    std::unique_ptr<TestLocalAuthenticator> authenticator = std::make_unique<TestLocalAuthenticator>();
+    auto callback = [&done] (const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&) {
+        EXPECT_FALSE(true);
+        cleanUpKeychain();
+        done = true;
+    };
+    auto exceptionCallback = [&done] (const WebCore::ExceptionData& exception) mutable {
+        EXPECT_EQ(WebCore::NotAllowedError, exception.code);
+        EXPECT_STREQ("No avaliable authenticators.", exception.message.ascii().data());
+        cleanUpKeychain();
+        done = true;
+    };
+    authenticator->getAssertion({ }, requestOptions, WTFMove(callback), WTFMove(exceptionCallback));
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(LocalAuthenticator, GetAssertionBiometricsNotAuthenticated)
+{
+    LACanEvaluatePolicySwizzler canEvaluatePolicySwizzler;
+    LAEvaluateAccessControlFailedSwizzler evaluateAccessControlFailedSwizzler;
+
+    addTestKeyToKeychain();
+
+    WebCore::PublicKeyCredentialRequestOptions requestOptions;
+    requestOptions.rpId = testRpId;
+
+    bool done = false;
+    std::unique_ptr<TestLocalAuthenticator> authenticator = std::make_unique<TestLocalAuthenticator>();
+    auto callback = [&done] (const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&) {
+        EXPECT_FALSE(true);
+        cleanUpKeychain();
+        done = true;
+    };
+    auto exceptionCallback = [&done] (const WebCore::ExceptionData& exception) mutable {
+        EXPECT_EQ(WebCore::NotAllowedError, exception.code);
+        EXPECT_STREQ("Couldn't get user consent.", exception.message.ascii().data());
+        cleanUpKeychain();
+        done = true;
+    };
+    authenticator->getAssertion({ }, requestOptions, WTFMove(callback), WTFMove(exceptionCallback));
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(LocalAuthenticator, GetAssertionPassed)
+{
+    LACanEvaluatePolicySwizzler canEvaluatePolicySwizzler;
+    LAEvaluateAccessControlPassedSwizzler evaluateAccessControlPassedSwizzler;
+
+    addTestKeyToKeychain();
+
+    WebCore::PublicKeyCredentialRequestOptions requestOptions;
+    requestOptions.rpId = testRpId;
+
+    Vector<uint8_t> hash(32);
+
+    bool done = false;
+    std::unique_ptr<TestLocalAuthenticator> authenticator = std::make_unique<TestLocalAuthenticator>();
+    auto callback = [&done, hash] (const Vector<uint8_t>& credentialId, const Vector<uint8_t>& authData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userhandle) {
+        // Check Credential ID
+        EXPECT_TRUE(WTF::base64Encode(credentialId.data(), credentialId.size()) == testCredentialIdBase64);
+
+        // Check Authenticator Data.
+        size_t pos = 0;
+        uint8_t expectedRpIdHash[] = {
+            0x49, 0x96, 0x0d, 0xe5, 0x88, 0x0e, 0x8c, 0x68,
+            0x74, 0x34, 0x17, 0x0f, 0x64, 0x76, 0x60, 0x5b,
+            0x8f, 0xe4, 0xae, 0xb9, 0xa2, 0x86, 0x32, 0xc7,
+            0x99, 0x5c, 0xf3, 0xba, 0x83, 0x1d, 0x97, 0x63
+        };
+        EXPECT_FALSE(memcmp(authData.data() + pos, expectedRpIdHash, sizeof(expectedRpIdHash)));
+        pos += sizeof(expectedRpIdHash);
+
+        // FLAGS
+        EXPECT_EQ(5, authData[pos]);
+        pos++;
+
+        uint32_t counter = -1;
+        memcpy(&counter, authData.data() + pos, sizeof(uint32_t));
+        EXPECT_EQ(0u, counter);
+
+        // Check signature
+        auto privateKey = getTestKey();
+        Vector<uint8_t> dataToSign(authData);
+        dataToSign.appendVector(hash);
+        EXPECT_TRUE(SecKeyVerifySignature(SecKeyCopyPublicKey(privateKey.get()), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)[NSData dataWithBytes:dataToSign.data() length:dataToSign.size()], (__bridge CFDataRef)[NSData dataWithBytes:signature.data() length:signature.size()], NULL));
+
+        // Check User Handle
+        EXPECT_EQ(userhandle.size(), sizeof(testUserhandle));
+        EXPECT_FALSE(memcmp(userhandle.data(), testUserhandle, sizeof(testUserhandle)));
+
+        cleanUpKeychain();
+        done = true;
+    };
+    auto exceptionCallback = [&done] (const WebCore::ExceptionData& exception) mutable {
+        EXPECT_FALSE(true);
+        cleanUpKeychain();
+        done = true;
+    };
+    authenticator->getAssertion(hash, requestOptions, WTFMove(callback), WTFMove(exceptionCallback));
 
     TestWebKitAPI::Util::run(&done);
 }

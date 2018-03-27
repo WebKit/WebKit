@@ -35,8 +35,10 @@ namespace WebCore {
 
 struct ExceptionData;
 struct PublicKeyCredentialCreationOptions;
+struct PublicKeyCredentialRequestOptions;
 
 using CreationCallback = Function<void(const Vector<uint8_t>&, const Vector<uint8_t>&)>;
+using RequestCallback = Function<void(const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&, const Vector<uint8_t>&)>;
 using ExceptionCallback = Function<void(const WebCore::ExceptionData&)>;
 
 typedef void (^CompletionBlock)(SecKeyRef _Nullable referenceKey, NSArray * _Nullable certificates, NSError * _Nullable error);
@@ -49,6 +51,7 @@ public:
     virtual ~LocalAuthenticator() = default;
 
     void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, CreationCallback&&, ExceptionCallback&&);
+    void getAssertion(const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions&, RequestCallback&&, ExceptionCallback&&);
     bool isAvailable() const;
 
 protected:

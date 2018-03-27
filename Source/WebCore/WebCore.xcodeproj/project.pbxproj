@@ -1709,7 +1709,7 @@
 		57303BEF200980C600355965 /* PublicKeyCredentialDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BEC200980BF00355965 /* PublicKeyCredentialDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57303BF42009904600355965 /* JSPublicKeyCredentialDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BF22009904500355965 /* JSPublicKeyCredentialDescriptor.h */; };
 		57303C002009951C00355965 /* JSPublicKeyCredentialType.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BF92009913400355965 /* JSPublicKeyCredentialType.h */; };
-		57303C0A20099BAD00355965 /* PublicKeyCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C06200998F800355965 /* PublicKeyCredentialRequestOptions.h */; };
+		57303C0A20099BAD00355965 /* PublicKeyCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C06200998F800355965 /* PublicKeyCredentialRequestOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57303C1120099CB100355965 /* JSPublicKeyCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C0C20099C7500355965 /* JSPublicKeyCredentialRequestOptions.h */; };
 		57303C192009A2F300355965 /* JSPublicKeyCredentialCreationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C132009A25700355965 /* JSPublicKeyCredentialCreationOptions.h */; };
 		57303C1F2009AB4200355965 /* AuthenticatorAttestationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303C1B2009A98600355965 /* AuthenticatorAttestationResponse.h */; };

@@ -1,3 +1,22 @@
+2018-03-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement authenticatorGetAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=183881
+        <rdar://problem/37258628>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/ios/LocalAuthenticator.mm:
+        (TestWebKitAPI::getTestKey):
+        (TestWebKitAPI::addTestKeyToKeychain):
+        (TestWebKitAPI::LAEvaluatePolicyFailedSwizzler::evaluatePolicyFailed):
+        (TestWebKitAPI::LAEvaluatePolicyPassedSwizzler::evaluatePolicyPassed):
+        (TestWebKitAPI::LAEvaluateAccessControlFailedSwizzler::LAEvaluateAccessControlFailedSwizzler):
+        (TestWebKitAPI::LAEvaluateAccessControlFailedSwizzler::evaluateAccessControlFailed):
+        (TestWebKitAPI::LAEvaluateAccessControlPassedSwizzler::LAEvaluateAccessControlPassedSwizzler):
+        (TestWebKitAPI::LAEvaluateAccessControlPassedSwizzler::evaluateAccessControlPassed):
+        (TestWebKitAPI::TEST):
+
 2018-03-27  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r229937): WebDriver tests no longer run, test runner hangs when launching wpt web server

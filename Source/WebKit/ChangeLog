@@ -1,3 +1,23 @@
+2018-03-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement authenticatorGetAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=183881
+        <rdar://problem/37258628>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.cpp:
+        (WebKit::WebCredentialsMessengerProxy::makeCredential):
+        (WebKit::WebCredentialsMessengerProxy::getAssertion):
+        (WebKit::WebCredentialsMessengerProxy::getAssertionReply):
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.h:
+        * UIProcess/CredentialManagement/WebCredentialsMessengerProxy.messages.in:
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.cpp:
+        (WebKit::WebCredentialsMessenger::getAssertion):
+        (WebKit::WebCredentialsMessenger::getAssertionReply):
+        * WebProcess/CredentialManagement/WebCredentialsMessenger.messages.in:
+
 2018-03-27  Chris Dumez  <cdumez@apple.com>
 
         Avoid constructing SecurityOrigin objects from non-main threads

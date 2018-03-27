@@ -1,3 +1,44 @@
+2018-03-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement authenticatorGetAssertion
+        https://bugs.webkit.org/show_bug.cgi?id=183881
+        <rdar://problem/37258628>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does the following few things:
+        1) It implements the spec: https://www.w3.org/TR/webauthn/#op-get-assertion as of 5 December 2017.
+        2) It tweaks encoding/decoding of PublicKeyCredentialRequestOptions such that options can be passed
+        between UI and Web processes.
+        3) It refines the way how LocalAuthenticator::makeCredential find intersection between
+        excludeCredentialDescriptorList and existing credentials in the authenticator, such that it is faster.
+        Basically, it takes the CredentialID from the list and treat it as an ASCII string and put it into a
+        HashSet<String>. It should not matter if a duplicated CredentialID is added. If the hash set is not
+        empty, the algorithm then queries Keychain for all CredentialIDs related to the current RP ID once.
+        For every queried CredentialID, the algorithm then treats it as an ASCII string as well and look for
+        a match in the hash set to produce the intersetction. The new way is also employed in
+        LocalAuthenticator::getAssertion as well.
+        4) It abstracts the way to produce authData and thus reorders a bit of code in
+        LocalAuthenticator::makeCredential.
+
+        Covered by API tests.
+
+        * Modules/webauthn/AuthenticatorManager.cpp:
+        (WebCore::AuthenticatorManager::create const):
+        (WebCore::AuthenticatorManager::discoverFromExternalSource const):
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.h:
+        (WebCore::PublicKeyCredentialRequestOptions::encode const):
+        (WebCore::PublicKeyCredentialRequestOptions::decode):
+        * Modules/webauthn/cocoa/LocalAuthenticator.h:
+        * Modules/webauthn/cocoa/LocalAuthenticator.mm:
+        (WebCore::LocalAuthenticatorInternal::buildAuthData):
+        (WebCore::LocalAuthenticatorInternal::produceHashSet):
+        (WebCore::LocalAuthenticator::makeCredential):
+        (WebCore::LocalAuthenticator::getAssertion):
+        (WebCore::LocalAuthenticator::issueClientCertificate const):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-03-27  Chris Dumez  <cdumez@apple.com>
 
         Avoid constructing SecurityOrigin objects from non-main threads
