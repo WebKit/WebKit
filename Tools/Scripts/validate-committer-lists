@@ -148,7 +148,7 @@ class CommitterListFromGit(object):
         'rjw' : 'rjw@apple.com',
         'seangies' : 'seangies@apple.com', # Sean Gies?, only 5 commits: r16600, r16592, r16511, r16489, r16484
         'sheridan' : 'sheridan@apple.com', # Shelly Sheridan
-        'thatcher' : 'timothy@hatcher.name',
+        'thatcher' : 'timothy@apple.com',
         'tomernic' : 'timo@apple.com',
         'trey' : 'trey@usa.net',
         'tristan' : 'tristan@apple.com',
