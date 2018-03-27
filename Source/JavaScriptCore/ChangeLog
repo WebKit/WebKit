@@ -1,3 +1,28 @@
+2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove repeated iteration of ElementNode
+        https://bugs.webkit.org/show_bug.cgi?id=183987
+
+        Reviewed by Keith Miller.
+
+        BytecodeGenerator repeatedly iterates ElementNode to emit the efficient code.
+        While it is OK for small arrays, this repeated iteration takes much time
+        if the array is very large. For example, Kraken's initialization code includes
+        very large array with numeric literals. This makes bytecode compiling so long.
+
+        This patch carefully removes unnecessary iteration when emitting arrays.
+        This reduces one of Kraken/imaging-darkroom's bytecode compiling from 13.169856 ms
+        to 9.988050 ms.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewArrayBuffer):
+        (JSC::BytecodeGenerator::emitNewArray):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::ArrayPatternNode::bindValue const):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+
 2018-03-26  Ross Kirsling  <ross.kirsling@sony.com>
 
         JIT callOperation() needs to support operations that return SlowPathReturnType differently on Windows.

@@ -384,35 +384,49 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
 
 RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    // FIXME: Should we put all of this code into emitNewArray?
-
+    bool hadVariableExpression = false;
     unsigned length = 0;
     ElementNode* firstPutElement;
     for (firstPutElement = m_element; firstPutElement; firstPutElement = firstPutElement->next()) {
         if (firstPutElement->elision() || firstPutElement->value()->isSpreadExpression())
             break;
+        if (!firstPutElement->value()->isConstant())
+            hadVariableExpression = true;
         ++length;
     }
 
+    auto newArray = [&generator] (RegisterID* dst, ElementNode* elements, unsigned length, bool hadVariableExpression) {
+        if (length && !hadVariableExpression) {
+            auto* array = JSFixedArray::create(*generator.vm(), length);
+            unsigned index = 0;
+            for (ElementNode* element = elements; index < length; element = element->next()) {
+                ASSERT(element->value()->isConstant());
+                array->set(*generator.vm(), index++, static_cast<ConstantNode*>(element->value())->jsValue(generator));
+            }
+            return generator.emitNewArrayBuffer(dst, array);
+        }
+        return generator.emitNewArray(dst, elements, length);
+    };
+
     if (!firstPutElement && !m_elision)
-        return generator.emitNewArray(generator.finalDestination(dst), m_element, length);
+        return newArray(generator.finalDestination(dst), m_element, length, hadVariableExpression);
 
     if (firstPutElement && firstPutElement->value()->isSpreadExpression()) {
-        bool hasElision = false;
-        for (ElementNode* node = m_element; node; node = node->next()) {
-            if (!!node->elision()) {
-                hasElision = true;
-                break;
+        bool hasElision = m_elision;
+        if (!hasElision) {
+            for (ElementNode* node = firstPutElement; node; node = node->next()) {
+                if (node->elision()) {
+                    hasElision = true;
+                    break;
+                }
             }
         }
-        if (!!m_elision)
-            hasElision = true;
 
         if (!hasElision)
             return generator.emitNewArrayWithSpread(generator.finalDestination(dst), m_element);
     }
 
-    RefPtr<RegisterID> array = generator.emitNewArray(generator.tempDestination(dst), m_element, length);
+    RefPtr<RegisterID> array = newArray(generator.tempDestination(dst), m_element, length, hadVariableExpression);
     ElementNode* n = firstPutElement;
     for (; n; n = n->next()) {
         if (n->value()->isSpreadExpression())
@@ -4081,7 +4095,7 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
         }
 
         case BindingType::RestElement: {
-            RefPtr<RegisterID> array = generator.emitNewArray(generator.newTemporary(), 0, 0);
+            RefPtr<RegisterID> array = generator.emitNewArray(generator.newTemporary(), nullptr, 0);
 
             Ref<Label> iterationDone = generator.newLabel();
             if (!done)
@@ -4133,7 +4147,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
 
     RefPtr<RegisterID> resultRegister;
     if (dst && dst != generator.ignoredResult())
-        resultRegister = generator.emitNewArray(generator.newTemporary(), 0, 0);
+        resultRegister = generator.emitNewArray(generator.newTemporary(), nullptr, 0);
     if (m_targetPatterns.size() != elements.size())
         return nullptr;
     Vector<RefPtr<RegisterID>> registers;
