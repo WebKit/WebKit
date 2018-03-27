@@ -540,6 +540,27 @@ void WebLoaderStrategy::storeDerivedDataToCache(const SHA1::Digest& bodyHash, co
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::StoreDerivedDataToCache(key, dataReference), 0);
 }
 
+bool WebLoaderStrategy::isOnLine() const
+{
+    return m_isOnLine;
+}
+
+void WebLoaderStrategy::addOnlineStateChangeListener(Function<void(bool)>&& listener)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection();
+    m_onlineStateChangeListeners.append(WTFMove(listener));
+}
+
+void WebLoaderStrategy::setOnLineState(bool isOnLine)
+{
+    if (m_isOnLine == isOnLine)
+        return;
+
+    m_isOnLine = isOnLine;
+    for (auto& listener : m_onlineStateChangeListeners)
+        listener(isOnLine);
+}
+
 void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCaptureExtraNetworkLoadMetricsEnabled(enabled), 0);

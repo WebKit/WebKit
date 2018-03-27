@@ -29,4 +29,5 @@ messages -> NetworkProcessConnection LegacyReceiver {
     DidWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, Vector<String> filenames)
     DidFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError error, WebCore::ResourceResponse response)
     DidFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError error)
+    SetOnLineState(bool isOnLine);
 }

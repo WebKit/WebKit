@@ -146,6 +146,11 @@ void NetworkProcessConnection::didFinishPreconnection(uint64_t preconnectionIden
     WebProcess::singleton().webLoaderStrategy().didFinishPreconnection(preconnectionIdentifier, WTFMove(error));
 }
 
+void NetworkProcessConnection::setOnLineState(bool isOnLine)
+{
+    WebProcess::singleton().webLoaderStrategy().setOnLineState(isOnLine);
+}
+
 #if ENABLE(SHAREABLE_RESOURCE)
 void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle, PAL::SessionID sessionID)
 {

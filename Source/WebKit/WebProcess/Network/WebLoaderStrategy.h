@@ -79,6 +79,10 @@ public:
 
     void scheduleLoadFromNetworkProcess(WebCore::ResourceLoader&, const WebCore::ResourceRequest&, const WebResourceLoader::TrackingParameters&, PAL::SessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime);
 
+    bool isOnLine() const final;
+    void addOnlineStateChangeListener(Function<void(bool)>&&) final;
+    void setOnLineState(bool);
+
 private:
     void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
@@ -93,6 +97,8 @@ private:
     HashMap<unsigned long, WebURLSchemeTaskProxy*> m_urlSchemeTasks;
     HashMap<unsigned long, PingLoadCompletionHandler> m_pingLoadCompletionHandlers;
     HashMap<unsigned long, PreconnectCompletionHandler> m_preconnectCompletionHandlers;
+    Vector<Function<void(bool)>> m_onlineStateChangeListeners;
+    bool m_isOnLine { true };
 };
 
 } // namespace WebKit

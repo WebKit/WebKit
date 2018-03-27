@@ -251,6 +251,11 @@ void NetworkConnectionToWebProcess::didFinishPingLoad(uint64_t pingLoadIdentifie
     m_connection->send(Messages::NetworkProcessConnection::DidFinishPingLoad(pingLoadIdentifier, error, response), 0);
 }
 
+void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)
+{
+    m_connection->send(Messages::NetworkProcessConnection::SetOnLineState(isOnLine), 0);
+}
+
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)
 {
     RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);

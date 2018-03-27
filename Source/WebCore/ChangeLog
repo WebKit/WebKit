@@ -1,3 +1,31 @@
+2018-03-27  Chris Dumez  <cdumez@apple.com>
+
+        Move online state detection from the WebProcess to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=183989
+        <rdar://problem/37093299>
+
+        Reviewed by Youenn Fablet.
+
+        Move online state detection from the WebProcess to the NetworkProcess. This avoid executing the same (expensive) code in
+        EACH web process whenever a network interface's state changes. Now, the Network Process monitors network interfaces
+        and determines the online state whenever an interface's state changes. If the onLine state changes, it notifies all
+        its connected WebProcesses via IPC.
+
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::networkStateChanged):
+        * loader/LoaderStrategy.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::onLine const):
+        * page/Page.cpp:
+        * platform/network/NetworkStateNotifier.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::notifyFinished):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+
 2018-03-27  Daniel Bates  <dabates@apple.com>
 
         CSS mask images should be retrieved using potentially CORS-enabled fetch

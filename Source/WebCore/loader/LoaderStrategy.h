@@ -75,6 +75,9 @@ public:
 
     virtual void setCaptureExtraNetworkLoadMetricsEnabled(bool) = 0;
 
+    virtual bool isOnLine() const = 0;
+    virtual void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) = 0;
+
 protected:
     virtual ~LoaderStrategy();
 };

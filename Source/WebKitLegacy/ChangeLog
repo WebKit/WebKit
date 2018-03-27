@@ -1,3 +1,19 @@
+2018-03-27  Chris Dumez  <cdumez@apple.com>
+
+        Move online state detection from the WebProcess to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=183989
+        <rdar://problem/37093299>
+
+        Reviewed by Youenn Fablet.
+
+        No change on WebKit1 except that WebResourceLoadScheduler needs to override
+        2 new virtual functions which forward the calls to the NetworkStateNotifier.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::isOnLine const):
+        (WebResourceLoadScheduler::addOnlineStateChangeListener):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2018-03-26  Chris Dumez  <cdumez@apple.com>
 
         Use SecurityOriginData more consistently in Service Worker code

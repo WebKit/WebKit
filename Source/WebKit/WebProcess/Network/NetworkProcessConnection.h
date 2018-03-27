@@ -75,6 +75,7 @@ private:
     void didWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, const Vector<String>& filenames);
     void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
     void didFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError&&);
+    void setOnLineState(bool isOnLine);
 
 #if ENABLE(SHAREABLE_RESOURCE)
     // Message handlers.

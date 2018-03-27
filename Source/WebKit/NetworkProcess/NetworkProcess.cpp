@@ -62,6 +62,7 @@
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/NetworkStateNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
@@ -122,6 +123,12 @@ NetworkProcess::NetworkProcess()
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
 #endif
+
+    NetworkStateNotifier::singleton().addListener([this](bool isOnLine) {
+        auto webProcessConnections = m_webProcessConnections;
+        for (auto& webProcessConnection : webProcessConnections)
+            webProcessConnection->setOnLineState(isOnLine);
+    });
 }
 
 NetworkProcess::~NetworkProcess()
@@ -309,6 +316,9 @@ void NetworkProcess::createNetworkConnectionToWebProcess()
 #else
     notImplemented();
 #endif
+
+    if (!m_webProcessConnections.isEmpty())
+        m_webProcessConnections.last()->setOnLineState(NetworkStateNotifier::singleton().onLine());
 }
 
 void NetworkProcess::clearCachedCredentials()

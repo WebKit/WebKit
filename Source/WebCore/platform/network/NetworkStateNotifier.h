@@ -47,10 +47,10 @@ class NetworkStateNotifier {
     WTF_MAKE_NONCOPYABLE(NetworkStateNotifier);
 
 public:
-    static NetworkStateNotifier& singleton();
+    WEBCORE_EXPORT static NetworkStateNotifier& singleton();
 
-    bool onLine();
-    void addListener(WTF::Function<void(bool isOnLine)>&&);
+    WEBCORE_EXPORT bool onLine();
+    WEBCORE_EXPORT void addListener(WTF::Function<void(bool isOnLine)>&&);
 
 private:
     friend NeverDestroyed<NetworkStateNotifier>;

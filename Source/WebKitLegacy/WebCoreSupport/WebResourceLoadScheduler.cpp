@@ -30,6 +30,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/NetworkStateNotifier.h>
 #include <WebCore/PingHandle.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ResourceRequest.h>
@@ -365,6 +366,16 @@ void WebResourceLoadScheduler::startPingLoad(Frame& frame, ResourceRequest& requ
 {
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
     new PingHandle(frame.loader().networkingContext(), request, options.credentials != FetchOptions::Credentials::Omit, options.redirect == FetchOptions::Redirect::Follow, WTFMove(completionHandler));
+}
+
+bool WebResourceLoadScheduler::isOnLine() const
+{
+    return NetworkStateNotifier::singleton().onLine();
+}
+
+void WebResourceLoadScheduler::addOnlineStateChangeListener(WTF::Function<void(bool)>&& listener)
+{
+    NetworkStateNotifier::singleton().addListener(WTFMove(listener));
 }
 
 void WebResourceLoadScheduler::preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, PreconnectCompletionHandler&&)

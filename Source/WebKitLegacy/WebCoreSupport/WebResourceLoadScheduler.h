@@ -72,6 +72,9 @@ public:
 
     void schedulePluginStreamLoad(WebCore::Frame&, WebCore::NetscapePlugInStreamLoaderClient&, WebCore::ResourceRequest&&, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&&);
 
+    bool isOnLine() const final;
+    void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) final;
+
 protected:
     virtual ~WebResourceLoadScheduler();
 

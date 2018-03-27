@@ -31,8 +31,9 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "Geolocation.h"
-#include "NetworkStateNotifier.h"
+#include "LoaderStrategy.h"
 #include "Page.h"
+#include "PlatformStrategies.h"
 #include "PluginData.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -91,7 +92,7 @@ String Navigator::userAgent() const
 
 bool Navigator::onLine() const
 {
-    return NetworkStateNotifier::singleton().onLine();
+    return platformStrategies()->loaderStrategy()->isOnLine();
 }
 
 DOMPluginArray& Navigator::plugins()
