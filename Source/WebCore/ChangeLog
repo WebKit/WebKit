@@ -1,3 +1,17 @@
+2018-03-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Stop using internals.pauseAnimationAtTimeOnElement() in favor of Web Animations API for animations tests
+        https://bugs.webkit.org/show_bug.cgi?id=184038
+
+        Reviewed by Dean Jackson.
+
+        Expose a new method to indicate that the runtime flag for CSS Animations and CSS Transitions as Web Animations is enabled.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2018-03-27  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Enhance debugging in the BasePlayer

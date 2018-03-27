@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
 <style>
 .box {
     height: 100px;
@@ -27,8 +28,14 @@
 <script>
 if (window.testRunner) {
     window.addEventListener("load", function () {
-        var box = document.querySelector(".box");
-        internals.pauseAnimationAtTimeOnElement("foo", 0.1, box);
+        const animations = document.querySelector(".box").getAnimations();
+        for (let animation of animations) {
+            if (animation instanceof CSSAnimation && animation.animationName == "foo") {
+                animation.currentTime = 100;
+                animation.pause();
+                break;
+            }
+        }
     }, false);
 }
 </script>

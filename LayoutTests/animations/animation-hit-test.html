@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
 
 <html lang="en">
 <head>
@@ -58,7 +57,7 @@
         {
             if (window.testRunner) {
                 var target = document.getElementById("target");
-                if (!internals.pauseAnimationAtTimeOnElement("anim", 2.0, target)) {
+                if (!pauseAnimationAtTimeOnElement("anim", 2.0, target)) {
                     document.getElementById('result').innerHTML = "FAIL: Failed to pause animation"
                     testRunner.notifyDone();
                     return;

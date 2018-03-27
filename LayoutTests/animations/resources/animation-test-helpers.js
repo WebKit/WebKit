@@ -18,7 +18,7 @@ Function parameters:
     - the tolerance to use when comparing the effective CSS property value with its expected value
 
     [1] If null is passed, a regular setTimeout() will be used instead to snapshot the animated property in the future,
-    instead of fast forwarding using the pauseAnimationAtTimeOnElement() JS API from Internals.
+    instead of fast forwarding using the pauseAnimationAtTimeOnElement() function.
     
     [2] If a single string is passed, it is the id of the element to test. If an array with 2 elements is passed they
     are the ids of 2 elements, whose values are compared for equality. In this case the expected value is ignored
@@ -373,12 +373,12 @@ function checkExpectedValue(expected, index)
         }
     }
 
-    if (animationName && hasPauseAnimationAPI && !internals.pauseAnimationAtTimeOnElement(animationName, time, document.getElementById(elementId))) {
+    if (animationName && hasPauseAnimationAPI && !pauseAnimationAtTimeOnElement(animationName, time, document.getElementById(elementId))) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
         return;
     }
     
-    if (compareElements && !element2Static && animationName && hasPauseAnimationAPI && !internals.pauseAnimationAtTimeOnElement(animationName, time, document.getElementById(elementId2))) {
+    if (compareElements && !element2Static && animationName && hasPauseAnimationAPI && !pauseAnimationAtTimeOnElement(animationName, time, document.getElementById(elementId2))) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
         return;
     }
@@ -510,6 +510,24 @@ function checkExpectedValueCallback(expected, index)
     return function() { checkExpectedValue(expected, index); };
 }
 
+function pauseAnimationAtTimeOnElement(animationName, time, element)
+{
+    // If we haven't opted into CSS Animations and CSS Transitions as Web Animations, use the internal API.
+    if ('internals' in window && !internals.settings.cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+        return internals.pauseAnimationAtTimeOnElement(animationName, time, element);
+
+    // Otherwise, use the Web Animations API.
+    const animations = element.getAnimations();
+    for (let animation of animations) {
+        if (animation instanceof CSSAnimation && animation.animationName == animationName) {
+            animation.currentTime = time * 1000;
+            animation.pause();
+            return true;
+        }
+    }
+    return false;
+}
+
 var testStarted = false;
 function startTest(expected, startCallback, finishCallback)
 {
@@ -526,7 +544,6 @@ function startTest(expected, startCallback, finishCallback)
         var time = expected[i][1];
 
         // We can only use the animation fast-forward mechanism if there's an animation name
-        // and Internals implements pauseAnimationAtTimeOnElement()
         if (animationName && hasPauseAnimationAPI)
             checkExpectedValue(expected, i);
         else {
@@ -546,14 +563,13 @@ function startTest(expected, startCallback, finishCallback)
 }
 
 var result = "";
-var hasPauseAnimationAPI;
+var hasPauseAnimationAPI = true;
 
 if (window.testRunner)
     testRunner.waitUntilDone();
 
 function runAnimationTest(expected, startCallback, event, disablePauseAnimationAPI, doPixelTest, finishCallback)
 {
-    hasPauseAnimationAPI = 'internals' in window;
     if (disablePauseAnimationAPI)
         hasPauseAnimationAPI = false;
 

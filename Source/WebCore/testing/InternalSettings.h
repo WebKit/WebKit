@@ -124,6 +124,8 @@ public:
     static void setWebVREnabled(bool);
     static void setScreenCaptureEnabled(bool);
 
+    static bool cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled();
+
 private:
     explicit InternalSettings(Page*);
 
