@@ -110,6 +110,7 @@ set(WebKit_SOURCES
     NetworkProcess/NetworkDataTask.cpp
     NetworkProcess/NetworkDataTaskBlob.cpp
     NetworkProcess/NetworkLoad.cpp
+    NetworkProcess/NetworkLoadChecker.cpp
     NetworkProcess/NetworkProcess.cpp
     NetworkProcess/NetworkProcessCreationParameters.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp

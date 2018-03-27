@@ -52,6 +52,8 @@ NetworkCORSPreflightChecker::~NetworkCORSPreflightChecker()
         m_task->clearClient();
         m_task->cancel();
     }
+    if (m_completionCallback)
+        m_completionCallback(Result::Canceled);
 }
 
 void NetworkCORSPreflightChecker::startPreflight()

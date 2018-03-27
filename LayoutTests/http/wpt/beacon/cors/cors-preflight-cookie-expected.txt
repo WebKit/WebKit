@@ -1,4 +1,5 @@
-
+  
 
 PASS CORS preflight success test 
+PASS CORS preflight success test with redirection 
 

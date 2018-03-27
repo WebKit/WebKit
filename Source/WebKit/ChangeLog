@@ -1,3 +1,57 @@
+2018-03-27  Youenn Fablet  <youenn@apple.com>
+
+        Move request checking out of PingLoad for future reuse in NetworkLoad
+        https://bugs.webkit.org/show_bug.cgi?id=183865
+
+        Reviewed by Chris Dumez.
+
+        Introduce NetworkLoadChecker as a way to validate requests before sending them in the network process.
+        Validation encompasses: CORS checks, CSP and Content Extensions on both main request and redirected requests if any.
+
+        Make PingLoad use NetworkLoadChecker. Future patch should make NetworkLoad to use it as well whenever needed.
+
+        Make NetworkCORSPreflightChecker takes a CompletionHandler instead of a Function.
+        Ensure this callback is called even if preflight is not completed by returning a Canceled error.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::~NetworkCORSPreflightChecker):
+        (WebKit::NetworkCORSPreflightChecker::returnResult):
+        (WebKit::NetworkCORSPreflightChecker::willPerformHTTPRedirection):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        (WebKit::NetworkCORSPreflightChecker::didCompleteWithError):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkLoadChecker.cpp: Added.
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::check):
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::returnError):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::checkCORSRequest):
+        (WebKit::NetworkLoadChecker::checkCORSRedirectedRequest):
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        (WebKit::NetworkLoadChecker::doesNotNeedCORSCheck const):
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy const):
+        (WebKit::NetworkLoadChecker::contentExtensionsBackend):
+        (WebKit::NetworkLoadChecker::processContentExtensionRulesForLoad):
+        * NetworkProcess/NetworkLoadChecker.h: Added.
+        (WebKit::NetworkLoadChecker::setCSPResponseHeaders):
+        (WebKit::NetworkLoadChecker::setContentExtensionRuleLists):
+        (WebKit::NetworkLoadChecker::url const):
+        (WebKit::NetworkLoadChecker::storedCredentialsPolicy const):
+        (WebKit::NetworkLoadChecker::isChecking const):
+        (WebKit::NetworkLoadChecker::isRedirected const):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::~PingLoad):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        (WebKit::PingLoad::didReceiveChallenge):
+        (WebKit::PingLoad::wasBlocked):
+        (WebKit::PingLoad::cannotShowURL):
+        (WebKit::PingLoad::timeoutTimerFired):
+        (WebKit::PingLoad::currentURL const):
+        * NetworkProcess/PingLoad.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-03-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorGetAssertion
