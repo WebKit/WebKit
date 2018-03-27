@@ -1,3 +1,28 @@
+2018-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Further refine cookie read/write logging
+        https://bugs.webkit.org/show_bug.cgi?id=184044
+        <rdar://problem/38915610>
+
+        Reviewed by Chris Dumez.
+
+        Cookie logging was passing the partition, rather than the first party, when logging, which
+        prevented logging in cases where partitioning or blocking was active. This patch corrects
+        these calls so that logging is generated in these cases, too.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM): Call log routines if needed.
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM): Ditto.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::escapeIDForJSON): Make available to use in multiple functions.
+        (WebKit::NetworkResourceLoader::logCookieInformation const): Revise to use shared
+        convenience functions.
+        (WebKit::logBlockedCookieInformation): Added.
+        (WebKit::logCookieInformationInternal): Added.
+        (WebKit::NetworkResourceLoader::logCookieInformation): Revise to use shared
+        convenience functions.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2018-03-27  Brian Burg  <bburg@apple.com>
 
         Web Automation: support enter/exit fullscreen and hide/restore window operations

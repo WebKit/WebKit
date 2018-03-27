@@ -1,3 +1,15 @@
+2018-03-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Further refine cookie read/write logging
+        https://bugs.webkit.org/show_bug.cgi?id=184044
+        <rdar://problem/38915610>
+
+        Reviewed by Chris Dumez.
+
+        Export 'shouldBlockCookies' so that it can be accessed by the WebKit framework.
+
+        * platform/network/NetworkStorageSession.h:
+
 2018-03-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Stop using internals.pauseAnimationAtTimeOnElement() in favor of Web Animations API for animations tests

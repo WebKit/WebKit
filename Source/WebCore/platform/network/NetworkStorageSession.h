@@ -103,7 +103,7 @@ public:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&) const;
-    bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource) const;
+    WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource) const;
     WEBCORE_EXPORT String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
     WEBCORE_EXPORT void setPrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool clearFirst);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);

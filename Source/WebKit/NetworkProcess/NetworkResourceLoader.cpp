@@ -740,6 +740,11 @@ static String escapeForJSON(String s)
     return s.replace('\\', "\\\\").replace('"', "\\\"");
 }
 
+static String escapeIDForJSON(const std::optional<uint64_t>& value)
+{
+    return value ? String::number(value.value()) : String("None");
+};
+
 void NetworkResourceLoader::logCookieInformation() const
 {
     ASSERT(shouldLogCookieInformation());
@@ -747,38 +752,41 @@ void NetworkResourceLoader::logCookieInformation() const
     auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID());
     ASSERT(networkStorageSession);
 
-#define LOCAL_LOG(str, ...) \
-    RELEASE_LOG_IF_ALLOWED("logCookieInformation: pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ": " str, pageID(), frameID(), identifier(), ##__VA_ARGS__)
-
-    auto url = originalRequest().url();
-    if (networkStorageSession->shouldBlockCookies(originalRequest())) {
-        auto escapedURL = escapeForJSON(url.string());
-        auto escapedReferrer = escapeForJSON(originalRequest().httpReferrer());
-
-        LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
-        LOCAL_LOG(R"(  "partition": "%{public}s",)", "BLOCKED");
-        LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", "false");
-        LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
-        LOCAL_LOG(R"(  "cookies": []})");
-        return;
-    }
-#undef LOCAL_LOG
-
-    auto partition = WebCore::URL(ParsedURLString, networkStorageSession->cookieStoragePartition(originalRequest(), frameID(), pageID()));
-    NetworkResourceLoader::logCookieInformation("NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, partition, url, originalRequest().httpReferrer(), frameID(), pageID(), identifier());
+    logCookieInformation("NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), identifier());
 }
 
-void NetworkResourceLoader::logCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& partition, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+static void logBlockedCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& firstParty, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
-    ASSERT(shouldLogCookieInformation());
+    ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
+
+    auto escapedURL = escapeForJSON(url.string());
+    auto escapedFirstParty = escapeForJSON(firstParty.string());
+    auto escapedFrameID = escapeIDForJSON(frameID);
+    auto escapedPageID = escapeIDForJSON(pageID);
+    auto escapedIdentifier = escapeIDForJSON(identifier);
+    auto escapedReferrer = escapeForJSON(referrer);
+
+#define LOCAL_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(networkStorageSession.sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - %s::" fmt, loggedObject, label.utf8().data(), ##__VA_ARGS__)
+#define LOCAL_LOG(str, ...) \
+    LOCAL_LOG_IF_ALLOWED("logCookieInformation: BLOCKED cookie access for pageID = %s, frameID = %s, resourceID = %s, firstParty = %s: " str, escapedPageID.utf8().data(), escapedFrameID.utf8().data(), escapedIdentifier.utf8().data(), escapedFirstParty.utf8().data(), ##__VA_ARGS__)
+
+    LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+    LOCAL_LOG(R"(  "partition": "%{public}s",)", "BLOCKED");
+    LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", "false");
+    LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
+    LOCAL_LOG(R"(  "cookies": [])");
+    LOCAL_LOG(R"(  "})");
+#undef LOCAL_LOG
+#undef LOCAL_LOG_IF_ALLOWED
+}
+
+static void logCookieInformationInternal(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& partition, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+{
+    ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
 
     Vector<WebCore::Cookie> cookies;
     if (!WebCore::getRawCookies(networkStorageSession, partition, url, frameID, pageID, cookies))
         return;
-
-    auto escapeIDForJSON = [](std::optional<uint64_t> value) {
-        return value ? String::number(value.value()) : String("None");
-    };
 
     auto escapedURL = escapeForJSON(url.string());
     auto escapedPartition = escapeForJSON(partition.string());
@@ -828,6 +836,18 @@ void NetworkResourceLoader::logCookieInformation(const String& label, const void
     LOCAL_LOG(R"(]})");
 #undef LOCAL_LOG
 #undef LOCAL_LOG_IF_ALLOWED
+}
+
+void NetworkResourceLoader::logCookieInformation(const String& label, const void* loggedObject, const NetworkStorageSession& networkStorageSession, const URL& firstParty, const URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+{
+    ASSERT(shouldLogCookieInformation());
+
+    if (networkStorageSession.shouldBlockCookies(firstParty, url))
+        logBlockedCookieInformation(label, loggedObject, networkStorageSession, firstParty, url, referrer, frameID, pageID, identifier);
+    else {
+        auto partition = URL(ParsedURLString, networkStorageSession.cookieStoragePartition(firstParty, url, frameID, pageID));
+        logCookieInformationInternal(label, loggedObject, networkStorageSession, partition, url, referrer, frameID, pageID, identifier);
+    }
 }
 #endif
 
