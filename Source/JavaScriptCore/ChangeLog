@@ -1,3 +1,16 @@
+2018-03-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add Load16Z for B3 and use it in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=165884
+
+        Reviewed by JF Bastien.
+
+        We already support Load16Z in B3. Use it for i32.load16_u / i64.load16_u in WebAssembly.
+        spec-tests/memory.wast.js already covered this change.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitLoadOp):
+
 2018-03-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove repeated iteration of ElementNode

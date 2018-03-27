@@ -733,9 +733,19 @@ inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, ExpressionType pointer, u
     case LoadOpType::I32Load16S: {
         return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin(), pointer, offset);
     }
+
     case LoadOpType::I64Load16S: {
         Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin(), pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin(), value);
+    }
+
+    case LoadOpType::I32Load16U: {
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), origin(), pointer, offset);
+    }
+
+    case LoadOpType::I64Load16U: {
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), origin(), pointer, offset);
+        return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), value);
     }
 
     case LoadOpType::I32Load: {
@@ -762,21 +772,6 @@ inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, ExpressionType pointer, u
 
     case LoadOpType::F64Load: {
         return m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Double, origin(), pointer, offset);
-    }
-
-    // FIXME: B3 doesn't support Load16Z yet. We should lower to that value when
-    // it's added. https://bugs.webkit.org/show_bug.cgi?id=165884
-    case LoadOpType::I32Load16U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin(), pointer, offset);
-        return m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), value,
-            m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0x0000ffff));
-    }
-    case LoadOpType::I64Load16U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16S), origin(), pointer, offset);
-        Value* partialResult = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), value,
-            m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0x0000ffff));
-
-        return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), partialResult);
     }
     }
     RELEASE_ASSERT_NOT_REACHED();
