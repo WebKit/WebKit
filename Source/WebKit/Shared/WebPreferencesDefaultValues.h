@@ -165,6 +165,12 @@
 
 #endif
 
+#if !ENABLE(EXTRA_ZOOM_MODE)
+#define DEFAULT_AVFOUNDATION_ENABLED true
+#else
+#define DEFAULT_AVFOUNDATION_ENABLED false
+#endif
+
 // Cocoa ports must disable experimental features on release branches for now.
 #if ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA)
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true

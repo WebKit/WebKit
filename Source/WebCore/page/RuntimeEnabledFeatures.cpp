@@ -57,11 +57,4 @@ bool RuntimeEnabledFeatures::spectreGadgetsEnabled() const
     return JSC::Options::enableSpectreGadgets();
 }
 
-#if ENABLE(VIDEO)
-bool RuntimeEnabledFeatures::audioEnabled() const
-{
-    return MediaPlayer::isAvailable();
-}
-#endif
-
 } // namespace WebCore

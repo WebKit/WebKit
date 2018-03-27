@@ -1,3 +1,19 @@
+2018-03-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Make AVFoundationEnabled preference available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183876
+        <rdar://problem/38726459>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/video.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/AVFoundationPreference.mm: Added.
+        (-[PreferenceTestMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::AVFoundationPref::SetUp):
+        (TestWebKitAPI::AVFoundationPref::testWithPreference):
+        (TestWebKitAPI::TEST_F):
+
 2018-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         Warn against cookie access in the WebContent process using ProcessPrivilege assertions

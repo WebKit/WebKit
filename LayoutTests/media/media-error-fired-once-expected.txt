@@ -1,0 +1,4 @@
+RUN(video = document.createElement("video"))
+RUN(video.src = "content/does-not-exist.mpeg")
+END OF TEST
+

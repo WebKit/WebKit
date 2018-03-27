@@ -230,10 +230,6 @@ public:
 
     bool spectreGadgetsEnabled() const;
 
-#if ENABLE(VIDEO)
-    bool audioEnabled() const;
-#endif
-
     void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
     bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
 

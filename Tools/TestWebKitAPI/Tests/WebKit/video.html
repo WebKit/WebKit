@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>
+        <button onclick="test()">Test</button>
+        </p>
+
+        <script>
+
+            let _element;
+            function elementType()
+            {
+                return _element.toString();
+            }
+            
+            function test(elementType)
+            {
+                _element = document.createElement(elementType);
+                _element.onerror = (event) => {
+                    if (window.webkit)
+                      window.webkit.messageHandlers.testHandler.postMessage('error');
+                }
+                _element.oncanplay = (event) => {
+                    if (window.webkit)
+                      window.webkit.messageHandlers.testHandler.postMessage('canplay');
+                }
+                _element.controls = "true"
+                _element.src = "test.mp4";
+
+                document.body.appendChild(_element);
+            }
+
+        </script>
+    </body>
+</html>

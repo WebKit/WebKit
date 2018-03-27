@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledAtRuntime=Audio,
     Conditional=VIDEO,
     ConstructorCallWith=Document,
     NamedConstructor=Audio(optional [AtomicString] DOMString src)

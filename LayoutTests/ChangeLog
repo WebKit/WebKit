@@ -1,3 +1,14 @@
+2018-03-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Make AVFoundationEnabled preference available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183876
+        <rdar://problem/38726459>
+
+        Reviewed by Youenn Fablet.
+
+        * media/media-error-fired-once-expected.txt: Added.
+        * media/media-error-fired-once.html: Added.
+
 2018-03-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Layout test editing/deleting/delete-surrogatepair.html crashing with CRITICAL **: enchant_dict_check: assertion 'g_utf8_validate(word, len, NULL)' failed

@@ -1,3 +1,19 @@
+2018-03-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Make AVFoundationEnabled preference available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=183876
+        <rdar://problem/38726459>
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/WebPreferences.yaml: Set AVFoundationEnabled with DEFAULT_AVFOUNDATION_ENABLED.
+        * Shared/WebPreferencesDefaultValues.h:
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setAVFoundationEnabled:]): Enable for iOS.
+        (-[WKPreferences _avFoundationEnabled]): Ditto.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2018-03-26  Tim Horton  <timothy_horton@apple.com>
 
         Adopt WK_ALTERNATE_FRAMEWORKS_DIR in WebKit
