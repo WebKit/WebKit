@@ -1,3 +1,21 @@
+2018-03-27  Daniel Bates  <dabates@apple.com>
+
+        CSS mask images should be retrieved using potentially CORS-enabled fetch
+        https://bugs.webkit.org/show_bug.cgi?id=179983
+        <rdar://problem/35678149>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test to ensure we do not fetch a cross-origin CSS mask image that does
+        not allow CORS access.
+
+        * http/tests/security/css-mask-image-expected.html: Added.
+        * http/tests/security/css-mask-image.html: Added.
+        * http/tests/security/resources/black-square.png: Added.
+        * http/tests/security/resources/fail-mask.png: Added.
+        * media/modern-media-controls/resources/media-controls-loader.js: Disable "Anonymous" mode
+        fetching of mask images to allow modern media controls to load mask assets from the filesystem.
+
 2018-03-27  Zalan Bujtas  <zalan@apple.com>
 
         RenderBox::parent/firstChild/nextSibling/previousSiblingBox() functions should type check.

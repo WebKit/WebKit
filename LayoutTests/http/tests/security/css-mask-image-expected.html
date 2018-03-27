@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.square {
+    width: 128px;
+    height: 128px;
+}
+</style>
+</head>
+<body>
+<p>This tests that a potentially CORS fetch is performed for a CSS mask image. This test PASSED if you see a solid yellow square and solid blue square below (in order). Otherwise, it FAILED.</p>
+<p>Without CORS access:</p>
+<div class="square" style="background-color: yellow"></div>
+<p>With CORS access:</p>
+<div class="square" style="background-color: blue"></div>
+</body>
+</html>
