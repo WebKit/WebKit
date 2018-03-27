@@ -1,3 +1,93 @@
+2018-03-27  Brian Burg  <bburg@apple.com>
+
+        Web Automation: support enter/exit fullscreen and hide/restore window operations
+        https://bugs.webkit.org/show_bug.cgi?id=182837
+        <rdar://problem/37580732>
+
+        Reviewed by Tim Horton.
+
+        The W3C specification is more explicit about when to exit fullscreen and
+        restore the window for a browsing context. So, WebKit needs to have support
+        for performing these operations on behalf of a driver.
+
+        Based on prototyping, it is sufficient to use a JavaScript atom to enter
+        fullscreen mode. This is included in the patch as EnterFullscreen.js and
+        can be used to implement the §10.7.5 Fullscreen Window command.
+
+        Other window operations cannot be peformed from JavaScript, so we need to
+        delegate these operations to the session client (i.e., Safari).
+        This patch adds session client callouts for restoring, minimizing, and
+        switching to a browsing context.
+
+        Exiting fullscreen happens implicitly (per specification) when setting a
+        window frame without an actual frame, or when switching/restoring/minimizing a window.
+        If needed, a driver can call Set Window Rect in this way to unfullscreen a context.
+        Similarly, a driver can restore a minimized window using Set Window Rect.
+
+        * UIProcess/API/APIAutomationSessionClient.h:
+        (API::AutomationSessionClient::requestHideWindowOfPage):
+        (API::AutomationSessionClient::requestRestoreWindowOfPage):
+        (API::AutomationSessionClient::requestSwitchToPage):
+        Add new API client methods.
+
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        Add new Cocoa API delegate methods.
+
+        * UIProcess/Automation/Automation.json:
+        Make the switch to browsing context command asynchronous, since this functionality
+        is not always synchronous, and we prefer to use completion handlers in the delegates.
+
+        Add new protocol method for hiding the window of a browsing context.
+        This is expected to minimize/miniaturize a window for desktop window managers.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        Make this function asynchronous. Call out to the session client.
+
+        (WebKit::WebAutomationSession::setWindowFrameOfBrowsingContext):
+        Follow the steps in the specification to restore window and exit fullscreen.
+
+        (WebKit::WebAutomationSession::hideWindowOfBrowsingContext):
+        Exit fullscreen and call out to the session client.
+
+        (WebKit::WebAutomationSession::exitFullscreenWindowForPage):
+        This is a little strange. Because there is no async API for exiting fullscreen
+        from C++ code, we hook into willEnterFullScreen and didExitFullScreen and send
+        out the response if the page exited fullscreen after we requested it to do so.
+        Because the W3C specification mandates that drivers only process one command at
+        a time, there will only ever be one callback installed by this method at a time.
+
+        (WebKit::WebAutomationSession::restoreWindowForPage):
+        (WebKit::WebAutomationSession::hideWindowForPage):
+        Call out to the session client.
+
+        (WebKit::WebAutomationSession::didEnterFullScreenForPage):
+        (WebKit::WebAutomationSession::didExitFullScreenForPage):
+        Add methods to be called by instrumentation hooks in WebFullScreenManagerProxy.
+
+        * UIProcess/Automation/atoms/EnterFullscreen.js: Added.
+        (enterFullscreen):
+
+        * UIProcess/Cocoa/AutomationSessionClient.h:
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::AutomationSessionClient):
+        (WebKit::AutomationSessionClient::requestSwitchToPage):
+        (WebKit::AutomationSessionClient::requestHideWindowOfPage):
+        (WebKit::AutomationSessionClient::requestRestoreWindowOfPage):
+        (WebKit::AutomationSessionClient::isShowingJavaScriptDialogOnPage):
+        Add boilerplate to convert C++ API client to Objective-C delegate methods.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::didEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::didExitFullScreen):
+        Notify the automation session if the page is under automation and
+        enters or exits fullscreen.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add EnterFullscreen.js to the list of WebDriver atoms. These are copied
+        as WebKit2 private headers and used by driver implementations.
+
 2018-03-27  Eric Carlson  <eric.carlson@apple.com>
 
         Make AVFoundationEnabled preference available on iOS

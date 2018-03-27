@@ -35,6 +35,7 @@
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebCookieManagerProxy.h"
+#include "WebFullScreenManagerProxy.h"
 #include "WebInspectorProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebProcessPool.h"
@@ -299,25 +300,27 @@ void WebAutomationSession::closeBrowsingContext(Inspector::ErrorString& errorStr
     page->closePage(false);
 }
 
-void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle)
+void WebAutomationSession::switchToBrowsingContext(const String& browsingContextHandle, const String* optionalFrameHandle, Ref<SwitchToBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
     std::optional<uint64_t> frameID = webFrameIDForHandle(optionalFrameHandle ? *optionalFrameHandle : emptyString());
     if (!frameID)
-        SYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    page->setFocus(true);
-    page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
+
+    m_client->requestSwitchToPage(*this, *page, [frameID, page = makeRef(*page), callback = WTFMove(callback)]() {
+        page->setFocus(true);
+        page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
+
+        callback->sendSuccess();
+    });
 }
 
 void WebAutomationSession::setWindowFrameOfBrowsingContext(const String& handle, const JSON::Object* optionalOriginObject, const JSON::Object* optionalSizeObject, Ref<SetWindowFrameOfBrowsingContextCallback>&& callback)
 {
-#if PLATFORM(IOS)
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
-#else
     std::optional<float> x;
     std::optional<float> y;
     if (optionalOriginObject) {
@@ -354,18 +357,17 @@ void WebAutomationSession::setWindowFrameOfBrowsingContext(const String& handle,
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    // FIXME (§10.7.2 Step 10): We need to exit fullscreen before setting the frame.
-    // FIXME (§10.7.2 Step 11): We need to de-miniaturize the window before setting the frame.
-
-    page->getWindowFrameWithCallback([callback = WTFMove(callback), page = makeRef(*page), width, height, x, y](WebCore::FloatRect originalFrame) mutable {
-        WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x.value_or(originalFrame.location().x()), y.value_or(originalFrame.location().y())), WebCore::FloatSize(width.value_or(originalFrame.size().width()), height.value_or(originalFrame.size().height())));
-        if (newFrame == originalFrame)
-            return callback->sendSuccess();
-
-        page->setWindowFrame(newFrame);
-        callback->sendSuccess();
+    exitFullscreenWindowForPage(*page, [this, protectedThis = makeRef(*this), callback = WTFMove(callback), page = makeRefPtr(page), width, height, x, y]() mutable {
+        this->restoreWindowForPage(*page, [callback = WTFMove(callback), page = WTFMove(page), width, height, x, y]() mutable {
+            page->getWindowFrameWithCallback([callback = WTFMove(callback), page = WTFMove(page), width, height, x, y](WebCore::FloatRect originalFrame) mutable {
+                WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x.value_or(originalFrame.location().x()), y.value_or(originalFrame.location().y())), WebCore::FloatSize(width.value_or(originalFrame.size().width()), height.value_or(originalFrame.size().height())));
+                if (newFrame != originalFrame)
+                    page->setWindowFrame(newFrame);
+                
+                callback->sendSuccess();
+            });
+        });
     });
-#endif
 }
 
 static std::optional<Inspector::Protocol::Automation::PageLoadStrategy> pageLoadStrategyFromStringParameter(const String* optionalPageLoadStrategyString)
@@ -507,6 +509,54 @@ void WebAutomationSession::loadTimerFired()
     respondToPendingPageNavigationCallbacksWithTimeout(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage);
 }
 
+void WebAutomationSession::hideWindowOfBrowsingContext(const String& browsingContextHandle, Ref<HideWindowOfBrowsingContextCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+    
+    exitFullscreenWindowForPage(*page, [protectedThis = makeRef(*this), callback = WTFMove(callback), page = makeRefPtr(page)]() mutable {
+        protectedThis->hideWindowForPage(*page, [callback = WTFMove(callback)]() mutable {
+            callback->sendSuccess();
+        });
+    });
+}
+
+void WebAutomationSession::exitFullscreenWindowForPage(WebPageProxy& page, WTF::CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(FULLSCREEN_API)
+    ASSERT(!m_windowStateTransitionCallback);
+    if (!page.fullScreenManager()->isFullScreen()) {
+        completionHandler();
+        return;
+    }
+    
+    m_windowStateTransitionCallback = WTF::Function<void(WindowTransitionedToState)> { [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](WindowTransitionedToState state) mutable {
+        // If fullscreen exited and we didn't request that, just ignore it.
+        if (state != WindowTransitionedToState::Unfullscreen)
+            return;
+
+        // Keep this callback in scope so completionHandler does not get destroyed before we call it.
+        auto protectedCallback = WTFMove(m_windowStateTransitionCallback);
+        completionHandler();
+    } };
+    
+    page.fullScreenManager()->requestExitFullScreen();
+#else
+    completionHandler();
+#endif
+}
+
+void WebAutomationSession::restoreWindowForPage(WebPageProxy& page, WTF::CompletionHandler<void()>&& completionHandler)
+{
+    m_client->requestRestoreWindowOfPage(*this, page, WTFMove(completionHandler));
+}
+
+void WebAutomationSession::hideWindowForPage(WebPageProxy& page, WTF::CompletionHandler<void()>&& completionHandler)
+{
+    m_client->requestHideWindowOfPage(*this, page, WTFMove(completionHandler));
+}
+
 void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
 {
     // Wait until the next run loop iteration to give time for the client to show the dialog,
@@ -532,6 +582,18 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
             }
         }
     });
+}
+    
+void WebAutomationSession::didEnterFullScreenForPage(const WebPageProxy&)
+{
+    if (m_windowStateTransitionCallback)
+        m_windowStateTransitionCallback(WindowTransitionedToState::Fullscreen);
+}
+
+void WebAutomationSession::didExitFullScreenForPage(const WebPageProxy&)
+{
+    if (m_windowStateTransitionCallback)
+        m_windowStateTransitionCallback(WindowTransitionedToState::Unfullscreen);
 }
 
 void WebAutomationSession::navigateBrowsingContext(const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&& callback)

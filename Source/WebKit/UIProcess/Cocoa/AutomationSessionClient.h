@@ -46,6 +46,10 @@ private:
     void didDisconnectFromRemote(WebAutomationSession&) override;
 
     void requestNewPageWithOptions(WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebPageProxy*)>&&) override;
+    void requestSwitchToPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
+    void requestHideWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
+    void requestRestoreWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
+
     bool isShowingJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void dismissCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
     void acceptCurrentJavaScriptDialogOnPage(WebAutomationSession&, WebPageProxy&) override;
@@ -59,6 +63,9 @@ private:
         bool didDisconnectFromRemote : 1;
 
         bool requestNewWebViewWithOptions : 1;
+        bool requestSwitchToWebView : 1;
+        bool requestHideWindowOfWebView : 1;
+        bool requestRestoreWindowOfWebView : 1;
         bool isShowingJavaScriptDialogForWebView : 1;
         bool dismissCurrentJavaScriptDialogForWebView : 1;
         bool acceptCurrentJavaScriptDialogForWebView : 1;
@@ -68,6 +75,9 @@ private:
 
         // FIXME 37408718: these delegate methods should be removed.
         bool requestNewPageWithOptions : 1;
+        bool requestSwitchToPage : 1;
+        bool requestHideWindowOfPage : 1;
+        bool requestRestoreWindowOfPage : 1;
         bool isShowingJavaScriptDialogOnPage : 1;
         bool dismissCurrentJavaScriptDialogOnPage : 1;
         bool acceptCurrentJavaScriptDialogOnPage : 1;

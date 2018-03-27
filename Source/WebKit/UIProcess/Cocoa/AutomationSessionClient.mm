@@ -44,6 +44,9 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
     m_delegateMethods.didDisconnectFromRemote = [delegate respondsToSelector:@selector(_automationSessionDidDisconnectFromRemote:)];
 
     m_delegateMethods.requestNewWebViewWithOptions = [delegate respondsToSelector:@selector(_automationSession:requestNewWebViewWithOptions:completionHandler:)];
+    m_delegateMethods.requestSwitchToWebView = [delegate respondsToSelector:@selector(_automationSession:requestSwitchToWebView:completionHandler:)];
+    m_delegateMethods.requestHideWindowOfWebView = [delegate respondsToSelector:@selector(_automationSession:requestHideWindowOfWebView:completionHandler:)];
+    m_delegateMethods.requestRestoreWindowOfWebView = [delegate respondsToSelector:@selector(_automationSession:requestRestoreWindowOfWebView:completionHandler:)];
     m_delegateMethods.isShowingJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:isShowingJavaScriptDialogForWebView:)];
     m_delegateMethods.dismissCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:dismissCurrentJavaScriptDialogForWebView:)];
     m_delegateMethods.acceptCurrentJavaScriptDialogForWebView = [delegate respondsToSelector:@selector(_automationSession:acceptCurrentJavaScriptDialogForWebView:)];
@@ -53,6 +56,9 @@ AutomationSessionClient::AutomationSessionClient(id <_WKAutomationSessionDelegat
 
     // FIXME 37408718: these delegate methods should be removed.
     m_delegateMethods.requestNewPageWithOptions = [delegate respondsToSelector:@selector(_automationSession:requestNewPageWithOptions:completionHandler:)];
+    m_delegateMethods.requestSwitchToPage = [delegate respondsToSelector:@selector(_automationSession:requestSwitchToPage:completionHandler:)];
+    m_delegateMethods.requestHideWindowOfPage = [delegate respondsToSelector:@selector(_automationSession:requestHideWindowOfPage:completionHandler:)];
+    m_delegateMethods.requestRestoreWindowOfPage = [delegate respondsToSelector:@selector(_automationSession:requestRestoreWindowOfPage:completionHandler:)];
     m_delegateMethods.isShowingJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:isShowingJavaScriptDialogOnPage:)];
     m_delegateMethods.dismissCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:dismissCurrentJavaScriptDialogOnPage:)];
     m_delegateMethods.acceptCurrentJavaScriptDialogOnPage = [delegate respondsToSelector:@selector(_automationSession:acceptCurrentJavaScriptDialogOnPage:)];
@@ -92,14 +98,55 @@ void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& se
     }
 }
 
+void AutomationSessionClient::requestSwitchToPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_delegateMethods.requestSwitchToWebView && !m_delegateMethods.requestSwitchToPage) {
+        completionHandler();
+        return;
+    }
+
+    auto completionBlock = BlockPtr<void()>::fromCallable([completionHandler = WTFMove(completionHandler)]() { completionHandler(); });
+    if (m_delegateMethods.requestSwitchToWebView)
+        [m_delegate.get() _automationSession:wrapper(session) requestSwitchToWebView:fromWebPageProxy(page) completionHandler:completionBlock.get()];
+    else if (m_delegateMethods.requestSwitchToPage)
+        [m_delegate.get() _automationSession:wrapper(session) requestSwitchToPage:toAPI(&page) completionHandler:completionBlock.get()];
+}
+
+void AutomationSessionClient::requestHideWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_delegateMethods.requestHideWindowOfWebView && !m_delegateMethods.requestHideWindowOfPage) {
+        completionHandler();
+        return;
+    }
+
+    auto completionBlock = BlockPtr<void()>::fromCallable([completionHandler = WTFMove(completionHandler)]() { completionHandler(); });
+    if (m_delegateMethods.requestHideWindowOfWebView)
+        [m_delegate.get() _automationSession:wrapper(session) requestHideWindowOfWebView:fromWebPageProxy(page) completionHandler:completionBlock.get()];
+    else if (m_delegateMethods.requestHideWindowOfPage)
+        [m_delegate.get() _automationSession:wrapper(session) requestHideWindowOfPage:toAPI(&page) completionHandler:completionBlock.get()];
+}
+
+void AutomationSessionClient::requestRestoreWindowOfPage(WebAutomationSession& session, WebPageProxy& page, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_delegateMethods.requestRestoreWindowOfWebView && !m_delegateMethods.requestRestoreWindowOfPage) {
+        completionHandler();
+        return;
+    }
+
+    auto completionBlock = BlockPtr<void()>::fromCallable([completionHandler = WTFMove(completionHandler)]() { completionHandler(); });
+    if (m_delegateMethods.requestRestoreWindowOfWebView)
+        [m_delegate.get() _automationSession:wrapper(session) requestRestoreWindowOfWebView:fromWebPageProxy(page) completionHandler:completionBlock.get()];
+    else if (m_delegateMethods.requestRestoreWindowOfPage)
+        [m_delegate.get() _automationSession:wrapper(session) requestRestoreWindowOfPage:toAPI(&page) completionHandler:completionBlock.get()];
+}
+
 bool AutomationSessionClient::isShowingJavaScriptDialogOnPage(WebAutomationSession& session, WebPageProxy& page)
 {
     if (m_delegateMethods.isShowingJavaScriptDialogForWebView)
         return [m_delegate.get() _automationSession:wrapper(session) isShowingJavaScriptDialogForWebView:fromWebPageProxy(page)];
-
-    if (m_delegateMethods.isShowingJavaScriptDialogOnPage)
+    else if (m_delegateMethods.isShowingJavaScriptDialogOnPage)
         return [m_delegate.get() _automationSession:wrapper(session) isShowingJavaScriptDialogOnPage:toAPI(&page)];
-
+    
     return false;
 }
 

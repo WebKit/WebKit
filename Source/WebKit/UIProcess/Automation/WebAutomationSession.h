@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "ShareableBitmap.h"
 #include "WebEvent.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 
@@ -100,6 +101,8 @@ public:
     void willClosePage(const WebPageProxy&);
     void handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&);
     void willShowJavaScriptDialog(WebPageProxy&);
+    void didEnterFullScreenForPage(const WebPageProxy&);
+    void didExitFullScreenForPage(const WebPageProxy&);
 
     bool shouldAllowGetUserMediaForPage(const WebPageProxy&) const;
 
@@ -119,10 +122,11 @@ public:
     // Platform: Generic
     void getBrowsingContexts(Ref<GetBrowsingContextsCallback>&&) final;
     void getBrowsingContext(const String&, Ref<GetBrowsingContextCallback>&&) final;
-    void closeBrowsingContext(Inspector::ErrorString&, const String&) override;
-    void switchToBrowsingContext(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle) override;
     void createBrowsingContext(const bool* preferNewTab, Ref<CreateBrowsingContextCallback>&&) final;
+    void closeBrowsingContext(Inspector::ErrorString&, const String&) final;
+    void switchToBrowsingContext(const String& browsingContextHandle, const String* optionalFrameHandle, Ref<SwitchToBrowsingContextCallback>&&) final;
     void setWindowFrameOfBrowsingContext(const String& handle, const JSON::Object* origin, const JSON::Object* size, Ref<SetWindowFrameOfBrowsingContextCallback>&&) final;
+    void hideWindowOfBrowsingContext(const String& handle, Ref<HideWindowOfBrowsingContextCallback>&&) final;
     void navigateBrowsingContext(const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&&) override;
     void goBackInBrowsingContext(const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoBackInBrowsingContextCallback>&&) override;
     void goForwardInBrowsingContext(const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoForwardInBrowsingContextCallback>&&) override;
@@ -176,6 +180,10 @@ private:
     void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>>&);
     void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>>&);
     void loadTimerFired();
+
+    void exitFullscreenWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
+    void restoreWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
+    void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
     // Implemented in generated WebAutomationSessionMessageReceiver.cpp.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -252,6 +260,12 @@ private:
 
     uint64_t m_nextSelectOptionElementCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::SelectOptionElementCallback>> m_selectOptionElementCallbacks;
+
+    enum class WindowTransitionedToState {
+        Fullscreen,
+        Unfullscreen,
+    };
+    Function<void(WindowTransitionedToState)> m_windowStateTransitionCallback { };
 
     RunLoop::Timer<WebAutomationSession> m_loadTimer;
     Vector<String> m_filesToSelectForFileUpload;

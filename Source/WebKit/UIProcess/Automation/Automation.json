@@ -290,15 +290,24 @@
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be made focused." },
                 { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that should be focused. Defaults to the main frame if omitted." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "setWindowFrameOfBrowsingContext",
-            "description": "Moves and/or resizes the window of the specified top-level browsing context to the specified size and origin. Both the size and origin may be omitted. Regardless of the arguments, this command will exit fullscreen and deminiaturize the window if applicable.",
+            "description": "Moves and/or resizes the window of the specified top-level browsing context to the specified position and size. Both position and size may be omitted. This command implicitly exits fullscreen and restores the window (if previously hidden), then optionally sets the window frame.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be resized." },
                 { "name": "origin", "$ref": "Point", "optional": true, "description": "The new origin for the browsing context's window. The position is interpreted in screen coordinate space, relative to the upper left corner of the screen." },
                 { "name": "size", "$ref": "Size", "optional": true, "description": "The new size for the browsing context's window. The size is interpreted in screen pixels." }
+            ],
+            "async": true
+        },
+        {
+            "name": "hideWindowOfBrowsingContext",
+            "description": "Causes the window of the specified browsing context to be hidden/minimized/iconified. This command implicitly exits fullscreen mode.",
+            "parameters": [
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context whose window should be hidden." }
             ],
             "async": true
         },

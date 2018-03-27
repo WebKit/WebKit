@@ -29,9 +29,11 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "APIFullscreenClient.h"
+#include "WebAutomationSession.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPageProxy.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/IntRect.h>
 
@@ -65,6 +67,11 @@ void WebFullScreenManagerProxy::didEnterFullScreen()
 {
     m_page->fullscreenClient().didEnterFullscreen(m_page);
     m_page->process().send(Messages::WebFullScreenManager::DidEnterFullScreen(), m_page->pageID());
+
+    if (m_page->isControlledByAutomation()) {
+        if (WebAutomationSession* automationSession = m_page->process().processPool().automationSession())
+            automationSession->didEnterFullScreenForPage(*m_page);
+    }
 }
 
 void WebFullScreenManagerProxy::willExitFullScreen()
@@ -77,6 +84,11 @@ void WebFullScreenManagerProxy::didExitFullScreen()
 {
     m_page->fullscreenClient().didExitFullscreen(m_page);
     m_page->process().send(Messages::WebFullScreenManager::DidExitFullScreen(), m_page->pageID());
+    
+    if (m_page->isControlledByAutomation()) {
+        if (WebAutomationSession* automationSession = m_page->process().processPool().automationSession())
+            automationSession->didExitFullScreenForPage(*m_page);
+    }
 }
 
 void WebFullScreenManagerProxy::setAnimatingFullScreen(bool animating)
