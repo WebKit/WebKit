@@ -323,7 +323,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
 
     const gchar* contextType;
     gst_message_parse_context_type(message, &contextType);
-    GST_DEBUG("Handling %s need-context message for %s", contextType, GST_MESSAGE_SRC_NAME(message));
+    GST_DEBUG_OBJECT(pipeline(), "Handling %s need-context message for %s", contextType, GST_MESSAGE_SRC_NAME(message));
 
 #if USE(GSTREAMER_GL)
     GRefPtr<GstContext> elementContext = adoptGRef(requestGLContext(contextType));
@@ -340,7 +340,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
             ASSERT_NOT_REACHED();
             return false;
         }
-        GST_DEBUG("handling drm-preferred-decryption-system-id need context message");
+        GST_DEBUG_OBJECT(pipeline(), "handling drm-preferred-decryption-system-id need context message");
         LockHolder lock(m_protectionMutex);
         std::pair<Vector<GRefPtr<GstEvent>>, Vector<String>> streamEncryptionInformation = extractEventsAndSystemsFromMessage(message);
         GST_TRACE("found %" G_GSIZE_FORMAT " protection events", streamEncryptionInformation.first.size());
@@ -360,7 +360,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
                 break;
             }
             GST_TRACE("appending init data for %s of size %" G_GSIZE_FORMAT, eventKeySystemId, mapInfo.size);
-            GST_MEMDUMP("init data", reinterpret_cast<const unsigned char *>(mapInfo.data), mapInfo.size);
+            GST_MEMDUMP("init data", reinterpret_cast<const unsigned char*>(mapInfo.data), mapInfo.size);
             concatenatedInitDataChunks.append(mapInfo.data, mapInfo.size);
             ++concatenatedInitDataChunksNumber;
             eventKeySystemIdString = eventKeySystemId;
@@ -381,18 +381,18 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
             if (!weakThis)
                 return;
 
-            GST_DEBUG("scheduling initializationDataEncountered event for %s with concatenated init datas size of %" G_GSIZE_FORMAT, eventKeySystemIdString.utf8().data(), initData.size());
+            GST_DEBUG_OBJECT(weakThis->pipeline(), "scheduling initializationDataEncountered event for %s with concatenated init datas size of %" G_GSIZE_FORMAT, eventKeySystemIdString.utf8().data(), initData.size());
             GST_MEMDUMP("init datas", initData.data(), initData.size());
             weakThis->m_player->initializationDataEncountered(ASCIILiteral("cenc"), ArrayBuffer::create(initData.data(), initData.size()));
         });
 
-        GST_INFO("waiting for a CDM instance");
+        GST_INFO_OBJECT(pipeline(), "waiting for a CDM instance");
         m_protectionCondition.waitFor(m_protectionMutex, Seconds(4), [this] {
             return this->m_cdmInstance;
         });
         if (m_cdmInstance && !m_cdmInstance->keySystem().isEmpty()) {
             const char* preferredKeySystemUuid = GStreamerEMEUtilities::keySystemToUuid(m_cdmInstance->keySystem());
-            GST_INFO("working with %s, continuing with %s on %s", m_cdmInstance->keySystem().utf8().data(), preferredKeySystemUuid, GST_MESSAGE_SRC_NAME(message));
+            GST_INFO_OBJECT(pipeline(), "working with %s, continuing with %s on %s", m_cdmInstance->keySystem().utf8().data(), preferredKeySystemUuid, GST_MESSAGE_SRC_NAME(message));
 
             GRefPtr<GstContext> context = adoptGRef(gst_context_new("drm-preferred-decryption-system-id", FALSE));
             GstStructure* contextStructure = gst_context_writable_structure(context.get());
@@ -447,7 +447,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 #if PLATFORM(X11)
 #if USE(GLX)
         if (is<PlatformDisplayX11>(sharedDisplay)) {
-            GST_DEBUG("Creating X11 shared GL display");
+            GST_DEBUG_OBJECT(pipeline(), "Creating X11 shared GL display");
             if (shouldAdoptRef)
                 m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native())));
             else
@@ -455,7 +455,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
         }
 #elif USE(EGL)
         if (is<PlatformDisplayX11>(sharedDisplay)) {
-            GST_DEBUG("Creating X11 shared EGL display");
+            GST_DEBUG_OBJECT(pipeline(), "Creating X11 shared EGL display");
             if (shouldAdoptRef)
                 m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay())));
             else
@@ -466,7 +466,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 
 #if PLATFORM(WAYLAND)
         if (is<PlatformDisplayWayland>(sharedDisplay)) {
-            GST_DEBUG("Creating Wayland shared display");
+            GST_DEBUG_OBJECT(pipeline(), "Creating Wayland shared display");
             if (shouldAdoptRef)
                 m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay())));
             else
@@ -476,7 +476,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 
 #if PLATFORM(WPE)
         ASSERT(is<PlatformDisplayWPE>(sharedDisplay));
-        GST_DEBUG("Creating WPE shared EGL display");
+        GST_DEBUG_OBJECT(pipeline(), "Creating WPE shared EGL display");
         if (shouldAdoptRef)
             m_glDisplay = adoptGRef(GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWPE>(sharedDisplay).eglDisplay())));
         else
@@ -550,8 +550,8 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     }
 #endif
 
-    GST_DEBUG("Original video size: %dx%d", originalSize.width(), originalSize.height());
-    GST_DEBUG("Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
+    GST_DEBUG_OBJECT(pipeline(), "Original video size: %dx%d", originalSize.width(), originalSize.height());
+    GST_DEBUG_OBJECT(pipeline(), "Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
 
     // Calculate DAR based on PAR and video size.
     int displayWidth = originalSize.width() * pixelAspectRatioNumerator;
@@ -565,20 +565,20 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     // Apply DAR to original video size. This is the same behavior as in xvimagesink's setcaps function.
     guint64 width = 0, height = 0;
     if (!(originalSize.height() % displayHeight)) {
-        GST_DEBUG("Keeping video original height");
+        GST_DEBUG_OBJECT(pipeline(), "Keeping video original height");
         width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
         height = static_cast<guint64>(originalSize.height());
     } else if (!(originalSize.width() % displayWidth)) {
-        GST_DEBUG("Keeping video original width");
+        GST_DEBUG_OBJECT(pipeline(), "Keeping video original width");
         height = gst_util_uint64_scale_int(originalSize.width(), displayHeight, displayWidth);
         width = static_cast<guint64>(originalSize.width());
     } else {
-        GST_DEBUG("Approximating while keeping original video height");
+        GST_DEBUG_OBJECT(pipeline(), "Approximating while keeping original video height");
         width = gst_util_uint64_scale_int(originalSize.height(), displayWidth, displayHeight);
         height = static_cast<guint64>(originalSize.height());
     }
 
-    GST_DEBUG("Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
+    GST_DEBUG_OBJECT(pipeline(), "Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
     m_videoSize = FloatSize(static_cast<int>(width), static_cast<int>(height));
     return m_videoSize;
 }
@@ -588,7 +588,7 @@ void MediaPlayerPrivateGStreamerBase::setVolume(float volume)
     if (!m_volumeElement)
         return;
 
-    GST_DEBUG("Setting volume: %f", volume);
+    GST_DEBUG_OBJECT(pipeline(), "Setting volume: %f", volume);
     gst_stream_volume_set_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_CUBIC, static_cast<double>(volume));
 }
 
@@ -617,7 +617,7 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfVolumeChange()
 void MediaPlayerPrivateGStreamerBase::volumeChangedCallback(MediaPlayerPrivateGStreamerBase* player)
 {
     // This is called when m_volumeElement receives the notify::volume signal.
-    GST_DEBUG("Volume changed to: %f", player->volume());
+    GST_DEBUG_OBJECT(player->pipeline(), "Volume changed to: %f", player->volume());
 
     player->m_notifier->notify(MainThreadNotification::VolumeChanged, [player] { player->notifyPlayerOfVolumeChange(); });
 }
@@ -646,7 +646,7 @@ void MediaPlayerPrivateGStreamerBase::setMuted(bool mute)
     if (currentValue == mute)
         return;
 
-    GST_INFO("Set muted to %s", toString(mute).utf8().data());
+    GST_INFO_OBJECT(pipeline(), "Set muted to %s", toString(mute).utf8().data());
     g_object_set(m_volumeElement.get(), "mute", mute, nullptr);
 }
 
@@ -657,7 +657,7 @@ bool MediaPlayerPrivateGStreamerBase::muted() const
 
     gboolean muted;
     g_object_get(m_volumeElement.get(), "mute", &muted, nullptr);
-    GST_INFO("Player is muted: %s", toString(static_cast<bool>(muted)).utf8().data());
+    GST_INFO_OBJECT(pipeline(), "Player is muted: %s", toString(static_cast<bool>(muted)).utf8().data());
     return muted;
 }
 
@@ -796,7 +796,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
     }
 
     if (triggerResize) {
-        GST_DEBUG("First sample reached the sink, triggering video dimensions update");
+        GST_DEBUG_OBJECT(pipeline(), "First sample reached the sink, triggering video dimensions update");
         m_notifier->notify(MainThreadNotification::SizeChanged, [this] { m_player->sizeChanged(); });
     }
 
@@ -864,7 +864,7 @@ GstFlowReturn MediaPlayerPrivateGStreamerBase::newPrerollCallback(GstElement* si
 
 void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
 {
-    GST_DEBUG("Flushing video sample");
+    GST_DEBUG_OBJECT(pipeline(), "Flushing video sample");
     WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
     m_sample.clear();
 
@@ -1151,12 +1151,12 @@ void MediaPlayerPrivateGStreamerBase::setStreamVolumeElement(GstStreamVolume* vo
     // We don't set the initial volume because we trust the sink to keep it for us. See
     // https://bugs.webkit.org/show_bug.cgi?id=118974 for more information.
     if (!m_player->platformVolumeConfigurationRequired()) {
-        GST_DEBUG("Setting stream volume to %f", m_player->volume());
+        GST_DEBUG_OBJECT(pipeline(), "Setting stream volume to %f", m_player->volume());
         g_object_set(m_volumeElement.get(), "volume", m_player->volume(), nullptr);
     } else
-        GST_DEBUG("Not setting stream volume, trusting system one");
+        GST_DEBUG_OBJECT(pipeline(), "Not setting stream volume, trusting system one");
 
-    GST_DEBUG("Setting stream muted %s",  toString(m_player->muted()).utf8().data());
+    GST_DEBUG_OBJECT(pipeline(), "Setting stream muted %s", toString(m_player->muted()).utf8().data());
     g_object_set(m_volumeElement.get(), "mute", m_player->muted(), nullptr);
 
     g_signal_connect_swapped(m_volumeElement.get(), "notify::volume", G_CALLBACK(volumeChangedCallback), this);
@@ -1208,7 +1208,7 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(CDMInstance& instance)
 {
     ASSERT(!m_cdmInstance);
     m_cdmInstance = &instance;
-    GST_DEBUG("CDM instance %p set", m_cdmInstance.get());
+    GST_DEBUG_OBJECT(pipeline(), "CDM instance %p set", m_cdmInstance.get());
     m_protectionCondition.notifyAll();
 }
 
@@ -1218,7 +1218,7 @@ void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(CDMInstance& instance)
     UNUSED_PARAM(instance);
 #endif
     ASSERT(m_cdmInstance.get() == &instance);
-    GST_DEBUG("detaching CDM instance %p", m_cdmInstance.get());
+    GST_DEBUG_OBJECT(pipeline(), "detaching CDM instance %p", m_cdmInstance.get());
     m_cdmInstance = nullptr;
     m_protectionCondition.notifyAll();
 }
@@ -1237,7 +1237,7 @@ void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithLocalInstance()
 
 void MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey(GstBuffer* buffer)
 {
-    bool eventHandled = gst_element_send_event(m_pipeline.get(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB,
+    bool eventHandled = gst_element_send_event(pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB,
         gst_structure_new("drm-cipher", "key", GST_TYPE_BUFFER, buffer, nullptr)));
     m_needToResendCredentials = m_handledProtectionEvents.size() > 0;
     GST_TRACE("emitted decryption cipher key on pipeline, event handled %s, need to resend credentials %s", boolForPrinting(eventHandled), boolForPrinting(m_needToResendCredentials));
@@ -1246,10 +1246,10 @@ void MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey(GstBuffer* buffer)
 void MediaPlayerPrivateGStreamerBase::handleProtectionEvent(GstEvent* event)
 {
     if (m_handledProtectionEvents.contains(GST_EVENT_SEQNUM(event))) {
-        GST_DEBUG("event %u already handled", GST_EVENT_SEQNUM(event));
+        GST_DEBUG_OBJECT(pipeline(), "event %u already handled", GST_EVENT_SEQNUM(event));
         m_handledProtectionEvents.remove(GST_EVENT_SEQNUM(event));
         if (m_needToResendCredentials) {
-            GST_DEBUG("resending credentials");
+            GST_DEBUG_OBJECT(pipeline(), "resending credentials");
             attemptToDecryptWithLocalInstance();
         }
         return;

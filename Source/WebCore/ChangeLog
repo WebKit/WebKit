@@ -1,3 +1,28 @@
+2018-03-27  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Enhance debugging in the BasePlayer
+        https://bugs.webkit.org/show_bug.cgi?id=184035
+
+        Reviewed by Philippe Normand.
+
+        No behaviour changes so no test were added/enabled.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext):
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setVolume):
+        (WebCore::MediaPlayerPrivateGStreamerBase::volumeChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setMuted):
+        (WebCore::MediaPlayerPrivateGStreamerBase::muted const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setStreamVolumeElement):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleProtectionEvent):
+
 2018-03-27  Eric Carlson  <eric.carlson@apple.com>
 
         Make AVFoundationEnabled preference available on iOS
