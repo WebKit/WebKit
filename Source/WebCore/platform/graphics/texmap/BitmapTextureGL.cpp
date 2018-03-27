@@ -97,7 +97,7 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
     glBindTexture(GL_TEXTURE_2D, m_id);
 
     const unsigned bytesPerPixel = 4;
-    char* data = reinterpret_cast<char*>(const_cast<void*>(srcData));
+    const char* data = static_cast<const char*>(srcData);
     Vector<char> temporaryData;
     IntPoint adjustedSourceOffset = sourceOffset;
 
@@ -108,10 +108,10 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
     // prepare temporaryData if necessary
     if (requireSubImageBuffer) {
         temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
-        data = temporaryData.data();
+        char* dst = temporaryData.data();
+        data = dst;
         const char* bits = static_cast<const char*>(srcData);
         const char* src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
-        char* dst = data;
         const int targetBytesPerLine = targetRect.width() * bytesPerPixel;
         for (int y = 0; y < targetRect.height(); ++y) {
             memcpy(dst, src, targetBytesPerLine);

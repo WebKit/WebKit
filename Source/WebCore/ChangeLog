@@ -1,3 +1,15 @@
+2018-03-26  Ms2ger  <Ms2ger@igalia.com>
+
+        Remove an unnecessary const_cast from BitmapTextureGL::updateContents().
+        https://bugs.webkit.org/show_bug.cgi?id=184007
+
+        Reviewed by Žan Doberšek.
+
+        No new tests.
+
+        * platform/graphics/texmap/BitmapTextureGL.cpp:
+        (WebCore::BitmapTextureGL::updateContents):
+
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-currenttime.html pass reliably
