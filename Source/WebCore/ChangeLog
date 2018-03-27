@@ -1,3 +1,61 @@
+2018-03-27  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused libsoup ResourceHandle implementation
+        https://bugs.webkit.org/show_bug.cgi?id=184048
+
+        Reviewed by Michael Catanzaro.
+
+        This code is unused since r228901 so let's remove it!
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandleInternal::soupSession):
+        (WebCore::ResourceHandle::cancelledOrClientless):
+        (WebCore::ResourceHandle::ensureReadBuffer):
+        (WebCore::ResourceHandle::currentStreamPosition const):
+        (WebCore::ResourceHandle::platformContinueSynchronousDidReceiveResponse):
+        (WebCore::ResourceHandle::didStartRequest):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::releaseForDownload):
+        (WebCore::ResourceHandle::sendPendingRequest):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::shouldUseCredentialStorage):
+        (WebCore::ResourceHandle::continueDidReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        (WebCore::ResourceHandle::receivedChallengeRejection):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::sessionFromContext): Deleted.
+        (WebCore::ResourceHandle::create): Deleted.
+        (WebCore::ResourceHandle::ResourceHandle): Deleted.
+        (WebCore::isAuthenticationFailureStatusCode): Deleted.
+        (WebCore::tlsErrorsChangedCallback): Deleted.
+        (WebCore::gotHeadersCallback): Deleted.
+        (WebCore::applyAuthenticationToRequest): Deleted.
+        (WebCore::restartedCallback): Deleted.
+        (WebCore::shouldRedirect): Deleted.
+        (WebCore::shouldRedirectAsGET): Deleted.
+        (WebCore::continueAfterWillSendRequest): Deleted.
+        (WebCore::doRedirect): Deleted.
+        (WebCore::redirectSkipCallback): Deleted.
+        (WebCore::wroteBodyDataCallback): Deleted.
+        (WebCore::cleanupSoupRequestOperation): Deleted.
+        (WebCore::nextMultipartResponsePartCallback): Deleted.
+        (WebCore::sendRequestCallback): Deleted.
+        (WebCore::continueAfterDidReceiveResponse): Deleted.
+        (WebCore::startingCallback): Deleted.
+        (WebCore::networkEventCallback): Deleted.
+        (WebCore::createSoupMessageForHandleAndRequest): Deleted.
+        (WebCore::createSoupRequestAndMessageForHandle): Deleted.
+        (WebCore::ResourceHandle::timeoutFired): Deleted.
+        (WebCore::waitingToSendRequest): Deleted.
+        (WebCore::readCallback): Deleted.
+
 2018-03-27  Chris Dumez  <cdumez@apple.com>
 
         Move online state detection from the WebProcess to the NetworkProcess
