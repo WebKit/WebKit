@@ -1953,6 +1953,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     [_webSelectionAssistant willStartScrollingOrZoomingPage];
     [_textSelectionAssistant willStartScrollingOverflow];
     _page->setIsScrollingOrZooming(true);
+
+#if ENABLE(EXTRA_ZOOM_MODE)
+    [_focusedFormControlViewController disengageFocusedFormControlNavigation];
+#endif
 }
 
 - (void)scrollViewWillStartPanOrPinchGesture
@@ -1969,6 +1973,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [_textSelectionAssistant didEndScrollingOverflow];
     }
     _page->setIsScrollingOrZooming(false);
+
+#if ENABLE(EXTRA_ZOOM_MODE)
+    [_focusedFormControlViewController engageFocusedFormControlNavigation];
+#endif
 }
 
 - (BOOL)requiresAccessoryView
@@ -4301,8 +4309,11 @@ static bool isAssistableInputType(InputType type)
     [_focusedFormControlViewController show:NO];
     [self dismissAllInputViewControllers];
     [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
-        if (didUpdate)
-            [weakSelf.get()->_focusedFormControlViewController reloadData:YES];
+        if (didUpdate) {
+            auto focusedFormController = weakSelf.get()->_focusedFormControlViewController;
+            [focusedFormController reloadData:YES];
+            [focusedFormController engageFocusedFormControlNavigation];
+        }
     }];
 }
 
@@ -4330,9 +4341,30 @@ static bool isAssistableInputType(InputType type)
     }];
 }
 
-- (CGRect)highlightedRectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace
+- (CGRect)rectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace
 {
     return [self convertRect:_assistedNodeInformation.elementRect toCoordinateSpace:coordinateSpace];
+}
+
+- (CGRect)nextRectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace
+{
+    if (!_assistedNodeInformation.hasNextNode)
+        return CGRectNull;
+
+    return [self convertRect:_assistedNodeInformation.nextNodeRect toCoordinateSpace:coordinateSpace];
+}
+
+- (CGRect)previousRectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace
+{
+    if (!_assistedNodeInformation.hasPreviousNode)
+        return CGRectNull;
+
+    return [self convertRect:_assistedNodeInformation.previousNodeRect toCoordinateSpace:coordinateSpace];
+}
+
+- (UIScrollView *)scrollViewForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
+{
+    return self._scroller;
 }
 
 - (NSString *)actionNameForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
