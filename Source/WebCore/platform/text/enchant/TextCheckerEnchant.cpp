@@ -64,14 +64,12 @@ void TextCheckerEnchant::learnWord(const String& word)
         enchant_dict_add(dictionary, word.utf8().data(), -1);
 }
 
-void TextCheckerEnchant::checkSpellingOfWord(const CString& word, int start, int end, int& misspellingLocation, int& misspellingLength)
+void TextCheckerEnchant::checkSpellingOfWord(const String& word, int start, int end, int& misspellingLocation, int& misspellingLength)
 {
-    const char* string = word.data();
-    char* startPtr = g_utf8_offset_to_pointer(string, start);
-    int numberOfBytes = static_cast<int>(g_utf8_offset_to_pointer(string, end) - startPtr);
+    CString string = word.substring(start, end - start).utf8();
 
     for (auto& dictionary : m_enchantDictionaries) {
-        if (!enchant_dict_check(dictionary, startPtr, numberOfBytes)) {
+        if (!enchant_dict_check(dictionary, string.data(), string.length())) {
             // Stop checking, this word is ok in at least one dict.
             misspellingLocation = -1;
             misspellingLength = 0;
@@ -96,11 +94,10 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
     if (!iter)
         return;
 
-    CString utf8String = string.utf8();
     int start = ubrk_first(iter);
     for (int end = ubrk_next(iter); end != UBRK_DONE; end = ubrk_next(iter)) {
         if (isWordTextBreak(iter)) {
-            checkSpellingOfWord(utf8String, start, end, misspellingLocation, misspellingLength);
+            checkSpellingOfWord(string, start, end, misspellingLocation, misspellingLength);
             // Stop checking the next words If the current word is misspelled, to do not overwrite its misspelled location and length.
             if (misspellingLength)
                 return;

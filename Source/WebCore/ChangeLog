@@ -1,3 +1,28 @@
+2018-03-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Layout test editing/deleting/delete-surrogatepair.html crashing with CRITICAL **: enchant_dict_check: assertion 'g_utf8_validate(word, len, NULL)' failed
+        https://bugs.webkit.org/show_bug.cgi?id=176799
+
+        Reviewed by Carlos Garcia Campos.
+
+        The length of a surrogate-pair UTF-16 character is 2 even though
+        the number of characters is 1. An incorrect string length was
+        passed to enchant_dict_check if the string contains a
+        surrogate-pair character because the length was calculated by
+        applying UTF-16 character position to UTF-8 string.
+
+        No new tests (Covered by existing tests).
+
+        * platform/text/enchant/TextCheckerEnchant.cpp:
+        (WebCore::TextCheckerEnchant::checkSpellingOfWord): Changed the
+        type of an argument `word` from CString to String. Convert a
+        substring of the argument into UTF-8.
+        (WebCore::TextCheckerEnchant::checkSpellingOfString): Pass the
+        original UTF-16 string to checkSpellingOfWord instead of a
+        converted UTF-8 string.
+        * platform/text/enchant/TextCheckerEnchant.h: Changed the type of
+        an argument `word` from CString to String.
+
 2018-03-26  Ms2ger  <Ms2ger@igalia.com>
 
         Remove an unnecessary const_cast from BitmapTextureGL::updateContents().

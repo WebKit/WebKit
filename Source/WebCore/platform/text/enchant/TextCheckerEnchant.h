@@ -48,7 +48,7 @@ public:
 
 private:
     void freeEnchantBrokerDictionaries();
-    void checkSpellingOfWord(const CString&, int start, int end, int& misspellingLocation, int& misspellingLength);
+    void checkSpellingOfWord(const String&, int start, int end, int& misspellingLocation, int& misspellingLength);
 
     EnchantBroker* m_broker;
     Vector<EnchantDict*> m_enchantDictionaries;

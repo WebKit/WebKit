@@ -1,3 +1,12 @@
+2018-03-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Layout test editing/deleting/delete-surrogatepair.html crashing with CRITICAL **: enchant_dict_check: assertion 'g_utf8_validate(word, len, NULL)' failed
+        https://bugs.webkit.org/show_bug.cgi?id=176799
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: Unmarked editing/deleting/delete-surrogatepair.html.
+
 2018-03-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Make imported/mozilla/css-animations/test_animation-currenttime.html pass reliably
