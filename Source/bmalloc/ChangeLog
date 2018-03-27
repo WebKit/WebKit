@@ -1,3 +1,24 @@
+2018-03-27  Saam Barati  <sbarati@apple.com>
+
+        memoryStatus() is wrong in certain testing scenarios on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=184050
+        <rdar://problem/37959258>
+
+        Rubber-stamped by Mark Lam.
+
+        This switches us from using "phys_footprint" to using "internal + compressed"
+        when computing the dirty memory in the current process. There are iOS testing
+        scenarios where phys_footprint doesn't give us a reliable answer. In my testing,
+        "internal + compressed" tracks phys_footprint closely (when phys_footprint is
+        working). They're usually within much less than 1% of each other. We're making
+        this change to ensure testing in our iOS infrastructure is valid.
+        
+        I opened a bug to move back to phys_footprint when it's feasible:
+        https://bugs.webkit.org/show_bug.cgi?id=184050
+
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::memoryStatus):
+
 2018-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add and adopt WK_PLATFORM_NAME and adjust default feature defines

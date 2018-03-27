@@ -99,8 +99,12 @@ MemoryStatus memoryStatus()
     mach_msg_type_number_t vmSize = TASK_VM_INFO_COUNT;
     
     size_t memoryFootprint = 0;
-    if (KERN_SUCCESS == task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)(&vmInfo), &vmSize))
-        memoryFootprint = static_cast<size_t>(vmInfo.phys_footprint);
+    if (KERN_SUCCESS == task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)(&vmInfo), &vmSize)) {
+        // FIXME: Move back to phys_footprint when it works in all of our
+        // iOS testing infrastructure:
+        // https://bugs.webkit.org/show_bug.cgi?id=184050
+        memoryFootprint = static_cast<size_t>(vmInfo.internal) + static_cast<size_t>(vmInfo.compressed);
+    }
 
     double percentInUse = static_cast<double>(memoryFootprint) / static_cast<double>(availableMemory());
     double percentAvailableMemoryInUse = std::min(percentInUse, 1.0);
