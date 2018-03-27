@@ -48,10 +48,11 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
     if (!styleImage || !styleImage->isPending())
         return;
 
+    bool isInUserAgentShadowTree = element && element->isInUserAgentShadowTree();
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.contentSecurityPolicyImposition = element && element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    options.contentSecurityPolicyImposition = isInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
-    if (loadPolicy == LoadPolicy::Anonymous && document.settings().useAnonymousModeWhenFetchingMaskImages()) {
+    if (loadPolicy == LoadPolicy::Anonymous && !isInUserAgentShadowTree && document.settings().useAnonymousModeWhenFetchingMaskImages()) {
         options.mode = FetchOptions::Mode::Cors;
         options.credentials = FetchOptions::Credentials::SameOrigin;
         options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
