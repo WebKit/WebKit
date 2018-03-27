@@ -1382,8 +1382,8 @@ void RenderListMarker::layout()
     ASSERT(needsLayout());
 
     LayoutUnit blockOffset;
-    for (auto* box = parentBox(); box && box != &m_listItem; box = box->parentBox())
-        blockOffset += box->logicalTop();
+    for (auto* ancestor = parentBox(); ancestor && ancestor != &m_listItem; ancestor = ancestor->parentBox())
+        blockOffset += ancestor->logicalTop();
     if (style().isLeftToRightDirection())
         m_lineOffsetForListItem = m_listItem.logicalLeftOffsetForLine(blockOffset, DoNotIndentText, LayoutUnit());
     else

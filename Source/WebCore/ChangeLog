@@ -1,3 +1,33 @@
+2018-03-27  Zalan Bujtas  <zalan@apple.com>
+
+        RenderBox::parent/firstChild/nextSibling/previousSiblingBox() functions should type check.
+        https://bugs.webkit.org/show_bug.cgi?id=184032
+        <rdar://problem/38384984>
+
+        Reviewed by Antti Koivisto.
+
+        We cannot rely on the correctness of the render tree structure when querying for parent/child/next and previous
+        sibling since some features (multicolumn/spanners) move subtrees out of their original position (which is highly
+        undesired and should not be encouraged at all though).
+        It should also be noted that these functions are not equivalent of typeOfChildren<RenderBox> and the following usage
+            for (auto* boxChild = firstChildBox(); boxChild; boxChild = boxChild->nextSiblingBox())
+        can lead to unexpected result.
+ 
+        Test: fast/multicol/parent-box-when-spanner-is-present.html
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::parentBox const):
+        (WebCore::RenderBox::firstChildBox const):
+        (WebCore::RenderBox::lastChildBox const):
+        (WebCore::RenderBox::previousSiblingBox const):
+        (WebCore::RenderBox::nextSiblingBox const):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::layout):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+
 2018-03-27  Brent Fulgham  <bfulgham@apple.com>
 
         Further refine cookie read/write logging

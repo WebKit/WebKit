@@ -1,3 +1,14 @@
+2018-03-27  Zalan Bujtas  <zalan@apple.com>
+
+        RenderBox::parent/firstChild/nextSibling/previousSiblingBox() functions should type check.
+        https://bugs.webkit.org/show_bug.cgi?id=184032
+        <rdar://problem/38384984>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/parent-box-when-spanner-is-present-expected.txt: Added.
+        * fast/multicol/parent-box-when-spanner-is-present.html: Added.
+
 2018-03-27  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Stop using internals.pauseAnimationAtTimeOnElement() in favor of Web Animations API for animations tests

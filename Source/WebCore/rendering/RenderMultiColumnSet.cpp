@@ -316,7 +316,7 @@ void RenderMultiColumnSet::updateLogicalWidth()
     
     // FIXME: When we add fragments support, we'll start it off at the width of the multi-column
     // block in that particular fragment.
-    setLogicalWidth(parentBox()->contentLogicalWidth());
+    setLogicalWidth(multiColumnBlockFlow()->contentLogicalWidth());
 }
 
 bool RenderMultiColumnSet::requiresBalancing() const
