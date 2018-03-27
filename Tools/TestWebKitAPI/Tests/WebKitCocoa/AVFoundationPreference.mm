@@ -35,7 +35,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 
 static bool receivedScriptMessage = false;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -71,6 +71,12 @@ public:
 
         auto preferences = [m_configuration preferences];
         preferences._avFoundationEnabled = enabled;
+        m_configuration.get()._mediaDataLoadsAutomatically = YES;
+#if TARGET_OS_IPHONE
+        m_configuration.get().allowsInlineMediaPlayback = YES;
+        m_configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
+#endif
+
         auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
         [webView synchronouslyLoadTestPageNamed:@"video"];
 

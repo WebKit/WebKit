@@ -1,3 +1,13 @@
+2018-03-27  Eric Carlson  <eric.carlson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=183876
+        <rdar://problem/38726459>
+        
+        Unreviewed, fix for the test added in r229995 in the iOS simulator.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AVFoundationPreference.mm:
+        (TestWebKitAPI::AVFoundationPref::testWithPreference):
+
 2018-03-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorGetAssertion
