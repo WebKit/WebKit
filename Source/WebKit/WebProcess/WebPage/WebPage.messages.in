@@ -508,4 +508,8 @@ messages -> WebPage LegacyReceiver {
 #if ENABLE(APPLICATION_MANIFEST)
     GetApplicationManifest(WebKit::CallbackID callbackID)
 #endif
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    OpenGLDisplayMaskChanged(uint32_t displayMask)
+#endif
 }

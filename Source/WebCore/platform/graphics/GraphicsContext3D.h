@@ -1282,6 +1282,10 @@ public:
     GC3Denum currentBoundTarget() const { return m_state.currentBoundTarget(); }
     unsigned textureSeed(GC3Duint texture) { return m_state.textureSeedCount.count(texture); }
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    WEBCORE_EXPORT static void setOpenGLDisplayMask(CGOpenGLDisplayMask);
+#endif
+
 private:
     GraphicsContext3D(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen, GraphicsContext3D* sharedContext = nullptr);
 
@@ -1314,6 +1318,10 @@ private:
     bool reshapeFBOs(const IntSize&);
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GLuint internalDepthStencilFormat, int width, int height);
+
+#if PLATFORM(COCOA)
+    bool allowOfflineRenderers() const;
+#endif
 
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };
@@ -1493,6 +1501,9 @@ private:
     Platform3DObject m_vao { 0 };
 #endif
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    static std::optional<CGOpenGLDisplayMask> m_displayMask;
+#endif
 };
 
 } // namespace WebCore

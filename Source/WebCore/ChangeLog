@@ -1,3 +1,40 @@
+2018-03-27  Per Arne Vollan  <pvollan@apple.com>
+
+        The layout test fast/canvas/webgl/read-pixels-test.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=183923
+        <rdar://problem/38756869>
+
+        Reviewed by Brent Fulgham.
+
+        The test is timing out when we do not interact directly with the WindowServer, causing
+        OpenGL to fall back to software rendering. In this mode, any call to CGLChoosePixelFormat
+        requesting an accelerated pixel format will fail because it cannot determine which GPU is
+        connected to the display.
+
+        OpenGL treats all GPUs as if they were offline when used in a process (like the WebContent
+        process) that does not directly control the display.
+
+        We can get correct behavior if we tell OpenGL which GPU is currently connected to the
+        display, and if we instruct CGLChoosePixelFormat to create an offline renderer pixel format
+        by including the 'kCGLPFAAllowOfflineRenderers' flag in its arguments.
+
+        We can use CGLSetVirtualScreen with an OpenGL display mask that tells the OpenGL framework
+        which GPU it should use.
+
+        See https://developer.apple.com/library/content/technotes/tn2229/_index.html#//apple_ref/doc/uid/DTS40008924-CH1-SUBSECTION7
+        for details on how the virtual screen is found from the OpenGL display mask.
+
+        No new tests, covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::setPixelFormat):
+        (WebCore::identifyAndSetCurrentGPU):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::setOpenGLDisplayMask):
+        (WebCore::GraphicsContext3D::allowOfflineRenderers):
+
 2018-03-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement authenticatorGetAssertion

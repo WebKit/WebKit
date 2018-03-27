@@ -1064,6 +1064,10 @@ public:
     void didFinishLoadingApplicationManifest(uint64_t, const std::optional<WebCore::ApplicationManifest>&);
 #endif
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    void openGLDisplayMaskChanged(uint32_t displayMask);
+#endif
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 

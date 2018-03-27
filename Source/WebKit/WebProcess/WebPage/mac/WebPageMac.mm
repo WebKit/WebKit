@@ -66,6 +66,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/GraphicsContext3D.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
@@ -1190,6 +1191,12 @@ void WebPage::setShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
 }
 #endif
 
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+void WebPage::openGLDisplayMaskChanged(uint32_t displayMask)
+{
+    GraphicsContext3D::setOpenGLDisplayMask(displayMask);
+}
+#endif
 
 } // namespace WebKit
 

@@ -2646,6 +2646,11 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
         return;
 
     m_process->send(Messages::WebPage::WindowScreenDidChange(displayID), m_pageID);
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    auto currentDisplaymask = CGDisplayIDToOpenGLDisplayMask(displayID);
+    m_process->send(Messages::WebPage::OpenGLDisplayMaskChanged(currentDisplaymask), m_pageID);
+#endif
 }
 
 float WebPageProxy::deviceScaleFactor() const

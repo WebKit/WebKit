@@ -64,6 +64,10 @@ namespace WebCore {
 
 static const unsigned statusCheckThreshold = 5;
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+std::optional<CGOpenGLDisplayMask> GraphicsContext3D::m_displayMask;
+#endif
+
 #if HAVE(APPLE_GRAPHICS_CONTROL)
 
 enum {
@@ -316,7 +320,7 @@ public:
 
 #if USE(OPENGL)
 
-static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest, bool antialias, bool useGLES3)
+static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBits, int depthBits, bool accelerated, bool supersample, bool closest, bool antialias, bool useGLES3, bool allowOfflineRenderers)
 {
     attribs.clear();
     
@@ -329,10 +333,8 @@ static void setPixelFormat(Vector<CGLPixelFormatAttribute>& attribs, int colorBi
     // allowing us to request the integrated graphics on a dual GPU
     // system, and not force the discrete GPU.
     // See https://developer.apple.com/library/mac/technotes/tn2229/_index.html
-#if HAVE(APPLE_GRAPHICS_CONTROL)
-    if (hasMuxableGPU())
+    if (allowOfflineRenderers)
         attribs.append(kCGLPFAAllowOfflineRenderers);
-#endif
 
     if (accelerated)
         attribs.append(kCGLPFAAccelerated);
@@ -397,6 +399,31 @@ Ref<GraphicsContext3D> GraphicsContext3D::createShared(GraphicsContext3D& shared
     return context;
 }
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+static void identifyAndSetCurrentGPU(CGLPixelFormatObj pixelFormatObj, int numPixelFormats, CGOpenGLDisplayMask displayMaskOpenGL, PlatformGraphicsContext3D contextObj)
+{
+    // When the WebProcess does not have access to the WindowServer, there is no way for OpenGL to tell which GPU is connected to a display.
+    // CGLSetVirtualScreen can be used to tell OpenGL which GPU it should be using.
+    // See code example at https://developer.apple.com/library/content/technotes/tn2229/_index.html#//apple_ref/doc/uid/DTS40008924-CH1-SUBSECTION7
+    
+    if (!displayMaskOpenGL || !contextObj)
+        return;
+
+    for (int virtualScreen = 0; virtualScreen < numPixelFormats; ++virtualScreen) {
+        GLint displayMask = 0;
+        CGLError error = CGLDescribePixelFormat(pixelFormatObj, virtualScreen, kCGLPFADisplayMask, &displayMask);
+        ASSERT(error == kCGLNoError);
+        if (error != kCGLNoError)
+            continue;
+        if (displayMask & displayMaskOpenGL) {
+            error = CGLSetVirtualScreen(contextObj, virtualScreen);
+            ASSERT(error == kCGLNoError);
+            break;
+        }
+    }
+}
+#endif
+
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow*, GraphicsContext3D::RenderStyle, GraphicsContext3D* sharedContext)
     : m_attrs(attrs)
 #if PLATFORM(IOS)
@@ -438,19 +465,19 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     m_powerPreferenceUsedForCreation = GraphicsContext3DPowerPreference::Default;
 #endif
 
-    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling, attrs.useGLES3);
+    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false, useMultisampling, attrs.useGLES3, allowOfflineRenderers());
     CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
     if (!numPixelFormats) {
-        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.useGLES3);
+        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.useGLES3, allowOfflineRenderers());
         CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
         if (!numPixelFormats) {
-            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.useGLES3);
+            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false, useMultisampling, attrs.useGLES3, allowOfflineRenderers());
             CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
 
             if (!attrs.forceSoftwareRenderer && !numPixelFormats) {
-                setPixelFormat(attribs, 32, 16, false, false, true, false, attrs.useGLES3);
+                setPixelFormat(attribs, 32, 16, false, false, true, false, attrs.useGLES3, allowOfflineRenderers());
                 CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
                 useMultisampling = false;
             }
@@ -463,6 +490,12 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     CGLError err = CGLCreateContext(pixelFormatObj, sharedContext ? sharedContext->m_contextObj : nullptr, &m_contextObj);
     GLint abortOnBlacklist = 0;
     CGLSetParameter(m_contextObj, kCGLCPAbortOnGPURestartStatusBlacklisted, &abortOnBlacklist);
+    
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    if (m_displayMask.has_value())
+        identifyAndSetCurrentGPU(pixelFormatObj, numPixelFormats, m_displayMask.value(), m_contextObj);
+#endif
+
     CGLDestroyPixelFormat(pixelFormatObj);
     
     if (err != kCGLNoError || !m_contextObj) {
@@ -754,6 +787,34 @@ void GraphicsContext3D::setErrorMessageCallback(std::unique_ptr<ErrorMessageCall
 void GraphicsContext3D::simulateContextChanged()
 {
     manager().updateAllContexts();
+}
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+void GraphicsContext3D::setOpenGLDisplayMask(CGOpenGLDisplayMask displayMask)
+{
+    m_displayMask = displayMask;
+}
+#endif
+
+bool GraphicsContext3D::allowOfflineRenderers() const
+{
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    // When WindowServer access is blocked in the WebProcess, there is no way
+    // for OpenGL to decide which GPU is connected to a display (online/offline).
+    // OpenGL will then consider all GPUs, or renderers, as offline, which means
+    // all offline renderers need to be considered when finding a pixel format.
+    // In WebKit legacy, there will still be a WindowServer connection, and
+    // m_displayMask will not be set in this case.
+    if (m_displayMask.has_value())
+        return true;
+#endif
+        
+#if HAVE(APPLE_GRAPHICS_CONTROL)
+    if (hasMuxableGPU())
+        return true;
+#endif
+    
+    return false;
 }
 
 }

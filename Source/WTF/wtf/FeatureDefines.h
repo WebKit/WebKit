@@ -231,6 +231,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_MAC_GESTURE_EVENTS 1
 #endif
 
+#if !defined(ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING)
+#define ENABLE_WEBPROCESS_WINDOWSERVER_BLOCKING 0
+#endif
+
 #endif /* PLATFORM(MAC) */
 
 #if PLATFORM(COCOA)
