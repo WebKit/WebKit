@@ -155,7 +155,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     // requests in new navigation contexts. Although this information is present when we construct the
     // Document object, it is discard in the subsequent 'clear' statements below. So, we must capture it
     // so we can restore it.
-    HashSet<RefPtr<SecurityOrigin>> insecureNavigationRequestsToUpgrade;
+    HashSet<SecurityOriginData> insecureNavigationRequestsToUpgrade;
     if (auto* existingDocument = m_frame->document())
         insecureNavigationRequestsToUpgrade = existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade();
     

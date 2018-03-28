@@ -1,3 +1,26 @@
+2018-03-27  Chris Dumez  <cdumez@apple.com>
+
+        Make it possible to call ContentSecurityPolicy::upgradeInsecureRequestIfNeeded() from non-main threads
+        https://bugs.webkit.org/show_bug.cgi?id=184029
+
+        Reviewed by Youenn Fablet.
+
+        Make it possible to call ContentSecurityPolicy::upgradeInsecureRequestIfNeeded() from non-main threads
+        by having it use SecurityOriginData (which is safe to construct on non-main threads) instead of
+        SecurityOrigin (which isn't).
+
+        ContentSecurityPolicy::upgradeInsecureRequestIfNeeded() is already called from non-main thread in
+        FetchLoader, XHR and WebSocket when used in workers. This wasn't safe.
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::upgradeInsecureRequestIfNeeded const):
+        (WebCore::ContentSecurityPolicy::setUpgradeInsecureRequests):
+        (WebCore::ContentSecurityPolicy::takeNavigationRequestsToUpgrade):
+        (WebCore::ContentSecurityPolicy::setInsecureNavigationRequestsToUpgrade):
+        * page/csp/ContentSecurityPolicy.h:
+
 2018-03-27  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix media control layout tests after <https://trac.webkit.org/changeset/230006/>
