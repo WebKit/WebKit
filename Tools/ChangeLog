@@ -1,3 +1,12 @@
+2018-03-28  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        Add Carlos Eduardo Ramalho as contributor
+        https://bugs.webkit.org/show_bug.cgi?id=184082
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-03-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Make boosted text autosizing values switchable at runtime
