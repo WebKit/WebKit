@@ -1,3 +1,17 @@
+2018-03-28  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r230005.
+        https://bugs.webkit.org/show_bug.cgi?id=184115
+
+        "it caused a huge regression on iOS" (Requested by saamyjoon
+        on #webkit).
+
+        Reverted changeset:
+
+        "memoryStatus() is wrong in certain testing scenarios on iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=184050
+        https://trac.webkit.org/changeset/230005
+
 2018-03-27  Saam Barati  <sbarati@apple.com>
 
         memoryStatus() is wrong in certain testing scenarios on iOS
