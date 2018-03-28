@@ -1,3 +1,23 @@
+2018-03-28  Daniel Bates  <dabates@apple.com>
+
+        WebSocket cookie incorrectly stored
+        https://bugs.webkit.org/show_bug.cgi?id=184100
+        <rdar://problem/37928715>
+
+        Reviewed by Brent Fulgham.
+
+        A cookie received in a WebSocket response should be stored with respect to the
+        origin of the WebSocket server in order for it to be sent in a subsequent request.
+
+        Also removed a FIXME about implementing support for the long since
+        deprecated Set-Cookie2 header.
+
+        Test: http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processBuffer):
+        * Modules/websockets/WebSocketHandshake.h:
+
 2018-03-28  Chris Dumez  <cdumez@apple.com>
 
         Do process swap when opening a cross-origin URL via window.open(url, '_blank', 'noopener')
