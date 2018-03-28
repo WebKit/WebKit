@@ -1,8 +1,8 @@
 diff --git a/Source/WTF/wtf/Platform.h b/Source/WTF/wtf/Platform.h
-index 84bc44c7450..d3ea1e02f9a 100644
+index 290f6de219b..f7411e2dfb4 100644
 --- a/Source/WTF/wtf/Platform.h
 +++ b/Source/WTF/wtf/Platform.h
-@@ -1119,7 +1119,7 @@
+@@ -1120,7 +1120,7 @@
  #if !defined(NDEBUG)
  #define ENABLE_TREE_DEBUGGING 1
  #else
@@ -38,7 +38,7 @@ index 02da4cb443c..aa757fcb42e 100644
  rendering/LayoutRepainter.cpp
  rendering/LayoutState.cpp
 diff --git a/Source/WebCore/WebCore.xcodeproj/project.pbxproj b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
-index 9bb56f01a81..aa103d8d782 100644
+index f899f092389..2cd59716f8f 100644
 --- a/Source/WebCore/WebCore.xcodeproj/project.pbxproj
 +++ b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
 @@ -397,6 +397,10 @@
@@ -424,7 +424,7 @@ index 25177a8cd43..294307dc815 100644
      DOMString? lookupNamespaceURI(DOMString? prefix);
      boolean isDefaultNamespace(DOMString? namespaceURI);
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index 31fb95c4c62..82e538fc68f 100644
+index 2d423cf4fd3..2c292aefdc2 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
 @@ -29,6 +29,7 @@
@@ -641,10 +641,10 @@ index 0b26444903f..595203b201e 100644
  
 diff --git a/Source/WebCore/rendering/InlineTextBreaker.cpp b/Source/WebCore/rendering/InlineTextBreaker.cpp
 new file mode 100644
-index 00000000000..4abbf429149
+index 00000000000..9ac083d2a90
 --- /dev/null
 +++ b/Source/WebCore/rendering/InlineTextBreaker.cpp
-@@ -0,0 +1,294 @@
+@@ -0,0 +1,308 @@
 +/*
 + * Copyright (C) 2018 Apple Inc. All rights reserved.
 + *
@@ -867,10 +867,24 @@ index 00000000000..4abbf429149
 +    runToSplit.setWidth(splitRunData.width);
 +}
 +
++unsigned InlineTextBreaker::skipLeadingWhitespaceIfNeeded() const
++{
++    if (!m_style.collapseWhitespace)
++        return 0;
++
++    for (unsigned index = 0; index < m_textRuns.size(); ++index) {
++        if (m_textRuns[index]->type() != InlineTextRun::Whitespace)
++            return index;
++    }
++    return m_textRuns.size();
++}
++
 +Vector<Ref<InlineTextRun>> InlineTextBreaker::createAndCollectLineRuns()
 +{
 +    bool lineCanBeWrapped = m_style.wrapLines || m_style.breakFirstWordOnOverflow || m_style.breakAnyWordOnOverflow;
-+    for (auto& run : m_textRuns) {
++    auto index = skipLeadingWhitespaceIfNeeded();
++    for (; index < m_textRuns.size(); ++index) {
++        auto& run = m_textRuns[index];
 +        // Hard and soft linebreaks.
 +        if (run->type() == InlineTextRun::SoftLineBreak) {
 +            // Add the new line fragment only if there's nothing on the line. (otherwise the extra new line character would show up at the end of the content.)
@@ -941,10 +955,10 @@ index 00000000000..4abbf429149
 +}
 diff --git a/Source/WebCore/rendering/InlineTextBreaker.h b/Source/WebCore/rendering/InlineTextBreaker.h
 new file mode 100644
-index 00000000000..fc0f0b2772e
+index 00000000000..8cf678fd5c5
 --- /dev/null
 +++ b/Source/WebCore/rendering/InlineTextBreaker.h
-@@ -0,0 +1,96 @@
+@@ -0,0 +1,97 @@
 +/*
 + * Copyright (C) 2018 Apple Inc. All rights reserved.
 + *
@@ -996,6 +1010,7 @@ index 00000000000..fc0f0b2772e
 +    void removeTrailingWhitespace();
 +    bool preWrap() const;
 +    float textWidth(unsigned from, unsigned to) const;
++    unsigned skipLeadingWhitespaceIfNeeded() const;
 +
 +    struct Style {
 +        explicit Style(const RenderStyle&);

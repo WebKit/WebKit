@@ -1,3 +1,12 @@
+2018-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Add InlineTextBreaker::skipLeadingWhitespaceIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=184099
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LayoutReloadedWebKit.patch:
+
 2018-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add JSCWeakValue to JavaScriptCore GLib API
