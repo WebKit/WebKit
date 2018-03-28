@@ -1261,7 +1261,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         fontSize:_assistedNodeInformation.nodeFontSize
         minimumScale:_assistedNodeInformation.minimumScaleFactor
         maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
-        allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone
+        allowScaling:_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad()
         forceScroll:[self requiresAccessoryView]];
 
     _didAccessoryTabInitiateFocus = NO;

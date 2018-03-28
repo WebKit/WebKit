@@ -1,3 +1,16 @@
+2018-03-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Revert an unnecessary workaround when zooming focused form controls
+        https://bugs.webkit.org/show_bug.cgi?id=184067
+        <rdar://problem/38805254>
+
+        Reviewed by Tim Horton.
+
+        Reverts an unintended change introduced in r227984.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _displayFormNodeInputView]):
+
 2018-03-28  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Remove UpdateAtlas
