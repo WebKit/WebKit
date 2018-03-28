@@ -48,14 +48,12 @@ Color StyleColor::colorFromKeyword(CSSValueID keyword, bool useSystemAppearance)
 
 bool StyleColor::isColorKeyword(CSSValueID id)
 {
-    return (id >= CSSValueAlpha && id <= CSSValueWebkitText)
-        || (id >= CSSValueAliceblue && id <= CSSValueYellowgreen)
-        || id == CSSValueMenu || isSystemColor(id);
+    return (id >= CSSValueAlpha && id <= CSSValueWebkitText) || (id >= CSSValueAliceblue && id <= CSSValueYellowgreen) || isSystemColor(id);
 }
 
 bool StyleColor::isSystemColor(CSSValueID id)
 {
-    return (id >= CSSValueActiveborder && id <= CSSValueAppleSystemYellow) || id == CSSValueMenu || id == CSSValueWebkitFocusRingColor;
+    return (id >= CSSValueActiveborder && id <= CSSValueWebkitFocusRingColor) || id == CSSValueMenu || id == CSSValueText;
 }
 
 } // namespace WebCore
