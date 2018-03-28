@@ -76,20 +76,21 @@ class InlineFormattingContext extends FormattingContext {
     _handleText(inlineBox) {
         // FIXME: This is a extremely simple line breaking algorithm.
         let currentPosition = 0;
-        let endPosition = inlineBox.text().length() - 1;
-        while (currentPosition < endPosition) {
-            let breakingPosition = Utils.nextBreakingOpportunity(inlineBox.text(), currentPosition);
-            if (breakingPosition == currentPosition)
-                break;
-            let fragmentWidth = Utils.measureText(inlineBox.text(), currentPosition, breakingPosition);
-            if (this._line().availableWidth() < fragmentWidth && !this._line().isEmpty())
-                this._commitLine();
-            this._line().addLineBox(currentPosition, breakingPosition, new LayoutSize(fragmentWidth, Utils.textHeight(inlineBox)));
-            currentPosition = breakingPosition;
+        let text = inlineBox.text().content();
+        while (currentPosition < text.length - 1) {
+            let textRuns = Utils.textRunsForLine(text, this._line().availableWidth(), this.formattingRoot());
+            for (let run of textRuns) {
+                this._line().addTextLineBox(run.startPosition, run.endPosition, new LayoutSize(run.width, Utils.textHeight(inlineBox)));
+                currentPosition = run.endPosition;
+            }
+            text = text.slice(currentPosition, text.length - 1);
+            this._commitLine();
         }
     }
 
     _commitLine() {
+        if (this._line().isEmpty())
+            return;
         this.formattingState().appendLine(this._line());
         this.m_line = this._createNewLine();
     }

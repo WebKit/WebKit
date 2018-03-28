@@ -46,10 +46,10 @@ class Line {
         return this.m_lineBoxes;
     }
 
-    addLineBox(startPosition, endPosition, size) {
+    addTextLineBox(startPosition, endPosition, size) {
         this.m_availableWidth -= size.width();
         // TODO: use the actual height instead of the line height.
-        let lineBoxRect = new LayoutRect(this.rect().topLeft(), new LayoutSize(size.width(), this.rect().height()));
+        let lineBoxRect = new LayoutRect(this.rect().topRight(), new LayoutSize(size.width(), this.rect().height()));
         this.m_lineBoxes.push({startPosition, endPosition, lineBoxRect});
         this.m_lineRect.growBy(new LayoutSize(size.width(), 0));
     }

@@ -26,6 +26,6 @@
 class BlockFormattingState extends FormattingState {
     constructor(formattingRoot, layoutState) {
         super(layoutState, formattingRoot);
-        this._setFormattingContext(new BlockFormattingContext(this));
+        this.m_formattingContext = new BlockFormattingContext(this);
     }
 }

@@ -35,7 +35,7 @@ class Text {
     }
 
     content() {
-        return this.m_node.wholeText;
+        return this.m_node.textContent;
     }
 
     length() {

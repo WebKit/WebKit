@@ -73,8 +73,4 @@ class FormattingState {
         ASSERT(!layoutBox.parent());
         return this.layoutState().initialDisplayBox();
     }
-
-    _setFormattingContext(formattingContext) {
-        this.m_formattingContext = formattingContext;
-    }
 }

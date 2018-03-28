@@ -475,6 +475,14 @@ class Utils {
         return window.getComputedStyle(node).float == "left";
     }
 
+    static textRuns(text, container) {
+        return window.collectTextRuns(text, container.node());
+    }
+
+    static textRunsForLine(text, availableSpace, container) {
+        return window.collectTextRuns(text, container.node(), availableSpace);
+    }
+
     static nextBreakingOpportunity(textBox, currentPosition)
     {
         return window.nextBreakingOpportunity(textBox.content(), currentPosition);
@@ -531,7 +539,7 @@ class Utils {
             content += indentation + "RootInlineBox at (" + lineRect.left() + "," + lineRect.top() + ") size " + Utils.precisionRound(lineRect.width(), 2) + "x" + lineRect.height() + "\n";
             line.lineBoxes().forEach(function(lineBox) {
                 let indentation = " ".repeat(level + 1);
-                content += indentation + "InlineTextBox at (" + lineBox.lineBoxRect.left() + "," + lineBox.lineBoxRect.top() + ") size " + Utils.precisionRound(lineBox.lineBoxRect.width(), 2) + "x" + lineBox.lineBoxRect.height() + "\n";
+                content += indentation + "InlineTextBox at (" + Utils.precisionRound(lineBox.lineBoxRect.left(), 2) + "," + Utils.precisionRound(lineBox.lineBoxRect.top(), 2) + ") size " + Utils.precisionRound(lineBox.lineBoxRect.width(), 2) + "x" + lineBox.lineBoxRect.height() + "\n";
             });
         });
         return content;
