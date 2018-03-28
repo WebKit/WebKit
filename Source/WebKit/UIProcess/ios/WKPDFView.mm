@@ -242,7 +242,7 @@ static void detachViewForPage(PDFPageInfo& page)
     [self _revalidateViews];
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+- (void)web_scrollViewDidScroll:(UIScrollView *)scrollView
 {
     if (scrollView.isZoomBouncing || scrollView._isAnimatingZoom)
         return;

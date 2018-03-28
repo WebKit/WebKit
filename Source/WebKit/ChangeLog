@@ -1,3 +1,26 @@
+2018-03-28  Dean Jackson  <dino@apple.com>
+
+        WKWebViewContentProvider shouldn't be a UIScrollViewDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=184107
+        <rdar://problem/38967492>
+
+        Reviewed by Tim Horton.
+
+        There is no need for this class to be a UIScrollViewDelegate. Instead
+        the protocol should have an optional method that is effectively
+        scrollViewDidScroll.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewDidScroll:]): Call web_scrollViewDidScroll
+        if it exists.
+        * UIProcess/Cocoa/WKWebViewContentProvider.h: Remove UIScrollViewDelegate
+        and add an optional web_scrollViewDidScroll.
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_scrollViewDidScroll:]): Renamed from scrollViewDidScroll.
+        (-[WKPDFView scrollViewDidScroll:]): Deleted.
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView scrollViewDidScroll:]): Deleted.
+
 2018-03-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Make boosted text autosizing values switchable at runtime

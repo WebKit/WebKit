@@ -161,14 +161,6 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
     page->goBack();
 }
 
-#pragma mark UIScrollViewDelegate
-
-// FIXME: This class, and WKWebContentProvider itself, shouldn't need to be a UIScrollViewDelegate.
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-}
-
 @end
 
 #endif
