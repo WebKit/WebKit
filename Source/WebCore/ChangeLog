@@ -1,5 +1,14 @@
 2018-03-28  Daniel Bates  <dabates@apple.com>
 
+        Substitute "strong password confirmation auto fill" for "strong confirmation password auto fill"
+        <rdar://problem/36518856>
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXAutoFillStrongConfirmationPasswordLabel):
+
+2018-03-28  Daniel Bates  <dabates@apple.com>
+
         WebSocket cookie incorrectly stored
         https://bugs.webkit.org/show_bug.cgi?id=184100
         <rdar://problem/37928715>

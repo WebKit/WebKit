@@ -1204,8 +1204,8 @@
 /* accessibility help text for hide closed captions button */
 "stop displaying closed captions" = "stop displaying closed captions";
 
-/* Label for the strong confirmation password auto fill button inside a text field. */
-"strong confirmation password auto fill" = "strong confirmation password auto fill";
+/* Label for the strong password confirmation auto fill button inside a text field. */
+"strong password confirmation auto fill" = "strong password confirmation auto fill";
 
 /* Label for the strong password auto fill button inside a text field. */
 "strong password auto fill" = "strong password auto fill";

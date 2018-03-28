@@ -632,7 +632,7 @@ String AXAutoFillStrongPasswordLabel()
 
 String AXAutoFillStrongConfirmationPasswordLabel()
 {
-    return WEB_UI_STRING("strong confirmation password auto fill", "Label for the strong confirmation password auto fill button inside a text field.");
+    return WEB_UI_STRING("strong password confirmation auto fill", "Label for the strong password confirmation auto fill button inside a text field.");
 }
 
 String autoFillStrongPasswordLabel()
