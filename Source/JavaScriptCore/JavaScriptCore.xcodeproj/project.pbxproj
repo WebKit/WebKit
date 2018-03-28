@@ -1130,6 +1130,7 @@
 		79EFD4841EBC045C00F3DFEA /* JSWebAssemblyCodeBlockHeapCellType.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EFD4821EBC045C00F3DFEA /* JSWebAssemblyCodeBlockHeapCellType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79F8FC1F1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 79F8FC1D1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h */; };
 		79FC8A081E32E9F000D88F0E /* DFGRegisteredStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 79FC8A071E32E9F000D88F0E /* DFGRegisteredStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A9774A8206B82E4008D03D0 /* JSWeakValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A9774A7206B82C9008D03D0 /* JSWeakValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC547D21B69599B00959B58 /* WasmFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CDB187124BB00955C24 /* JSPromiseDeferred.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CD9187124BB00955C24 /* JSPromiseDeferred.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CE7187631B600955C24 /* Microtask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CE5187631B600955C24 /* Microtask.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3661,6 +3662,8 @@
 		79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMaximalFlushInsertionPhase.cpp; path = dfg/DFGMaximalFlushInsertionPhase.cpp; sourceTree = "<group>"; };
 		79F8FC1D1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGMaximalFlushInsertionPhase.h; path = dfg/DFGMaximalFlushInsertionPhase.h; sourceTree = "<group>"; };
 		79FC8A071E32E9F000D88F0E /* DFGRegisteredStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRegisteredStructure.h; path = dfg/DFGRegisteredStructure.h; sourceTree = "<group>"; };
+		7A9774A6206B828C008D03D0 /* JSWeakValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakValue.cpp; sourceTree = "<group>"; };
+		7A9774A7206B82C9008D03D0 /* JSWeakValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakValue.h; sourceTree = "<group>"; };
 		7BC547D21B69599B00959B58 /* WasmFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFormat.h; sourceTree = "<group>"; };
 		7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseDeferred.cpp; sourceTree = "<group>"; };
 		7C008CD9187124BB00955C24 /* JSPromiseDeferred.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPromiseDeferred.h; sourceTree = "<group>"; };
@@ -5857,6 +5860,8 @@
 				A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */,
 				0F0B28691EB8E6CD000EB5D2 /* JSWeakPrivate.cpp */,
 				0F0B286A1EB8E6CD000EB5D2 /* JSWeakPrivate.h */,
+				7A9774A6206B828C008D03D0 /* JSWeakValue.cpp */,
+				7A9774A7206B82C9008D03D0 /* JSWeakValue.h */,
 				86E3C60C167BAB87006D760A /* JSWrapperMap.h */,
 				86E3C60B167BAB87006D760A /* JSWrapperMap.mm */,
 				86F3EEB9168CCF750077B92A /* ObjCCallbackFunction.h */,
@@ -9039,6 +9044,7 @@
 				A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */,
 				7013CA8C1B491A9400CAE613 /* JSJob.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSLexicalEnvironment.h in Headers */,
+				7A9774A8206B82E4008D03D0 /* JSWeakValue.h in Headers */,
 				BC18C4230E16F5CD00B34460 /* JSLock.h in Headers */,
 				C25D709C16DE99F400FCA6BC /* JSManagedValue.h in Headers */,
 				2A4BB7F318A41179008A0FCD /* JSManagedValueInternal.h in Headers */,

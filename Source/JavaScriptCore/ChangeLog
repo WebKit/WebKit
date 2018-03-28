@@ -1,3 +1,34 @@
+2018-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [JSC] Move WeakValueRef class to its own file and use it from Objc and GLib
+        https://bugs.webkit.org/show_bug.cgi?id=184073
+
+        Reviewed by Yusuke Suzuki.
+
+        We currently have duplicated code in Obj and GLib implementations.
+
+        * API/JSManagedValue.mm:
+        (managedValueHandleOwner):
+        (-[JSManagedValue initWithValue:]):
+        * API/JSWeakValue.cpp: Added.
+        (JSC::JSWeakValue::~JSWeakValue):
+        (JSC::JSWeakValue::clear):
+        (JSC::JSWeakValue::isClear const):
+        (JSC::JSWeakValue::setPrimitive):
+        (JSC::JSWeakValue::setObject):
+        (JSC::JSWeakValue::setString):
+        * API/JSWeakValue.h: Added.
+        (JSC::JSWeakValue::isSet const):
+        (JSC::JSWeakValue::isPrimitive const):
+        (JSC::JSWeakValue::isObject const):
+        (JSC::JSWeakValue::isString const):
+        (JSC::JSWeakValue::object const):
+        (JSC::JSWeakValue::primitive const):
+        (JSC::JSWeakValue::string const):
+        * API/glib/JSCWeakValue.cpp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+
 2018-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add JSCWeakValue to JavaScriptCore GLib API

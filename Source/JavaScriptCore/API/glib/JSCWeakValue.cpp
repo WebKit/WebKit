@@ -24,7 +24,7 @@
 #include "JSCContextPrivate.h"
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
-#include "Weak.h"
+#include "JSWeakValue.h"
 #include "WeakHandleOwner.h"
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -53,124 +53,10 @@ enum {
     LAST_SIGNAL
 };
 
-// FIXME: move this to its own file to be shared by GLib and Objc APIs.
-class WeakValueRef {
-public:
-    ~WeakValueRef()
-    {
-        clear();
-    }
-
-    void clear()
-    {
-        switch (m_tag) {
-        case WeakTypeTag::NotSet:
-            return;
-        case WeakTypeTag::Primitive:
-            u.m_primitive = JSC::JSValue();
-            return;
-        case WeakTypeTag::Object:
-            u.m_object.clear();
-            return;
-        case WeakTypeTag::String:
-            u.m_string.clear();
-            return;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    bool isClear() const
-    {
-        switch (m_tag) {
-        case WeakTypeTag::NotSet:
-            return true;
-        case WeakTypeTag::Primitive:
-            return !u.m_primitive;
-        case WeakTypeTag::Object:
-            return !u.m_object;
-        case WeakTypeTag::String:
-            return !u.m_string;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    bool isSet() const { return m_tag != WeakTypeTag::NotSet; }
-    bool isPrimitive() const { return m_tag == WeakTypeTag::Primitive; }
-    bool isObject() const { return m_tag == WeakTypeTag::Object; }
-    bool isString() const { return m_tag == WeakTypeTag::String; }
-
-    void setPrimitive(JSC::JSValue primitive)
-    {
-        ASSERT(!isSet());
-        ASSERT(!u.m_primitive);
-        ASSERT(primitive.isPrimitive());
-        m_tag = WeakTypeTag::Primitive;
-        u.m_primitive = primitive;
-    }
-
-    void setObject(JSC::JSObject* object, JSC::WeakHandleOwner& owner, void* context)
-    {
-        ASSERT(!isSet());
-        ASSERT(!u.m_object);
-        m_tag = WeakTypeTag::Object;
-        JSC::Weak<JSC::JSObject> weak(object, &owner, context);
-        u.m_object.swap(weak);
-    }
-
-    void setString(JSC::JSString* string, JSC::WeakHandleOwner& owner, void* context)
-    {
-        ASSERT(!isSet());
-        ASSERT(!u.m_object);
-        m_tag = WeakTypeTag::String;
-        JSC::Weak<JSC::JSString> weak(string, &owner, context);
-        u.m_string.swap(weak);
-    }
-
-    JSC::JSObject* object() const
-    {
-        ASSERT(isObject());
-        return u.m_object.get();
-    }
-
-    JSC::JSValue primitive() const
-    {
-        ASSERT(isPrimitive());
-        return u.m_primitive;
-    }
-
-    JSC::JSString* string() const
-    {
-        ASSERT(isString());
-        return u.m_string.get();
-    }
-
-private:
-    enum class WeakTypeTag { NotSet, Primitive, Object, String };
-
-    WeakTypeTag m_tag { WeakTypeTag::NotSet };
-
-    union WeakValueUnion {
-    public:
-        WeakValueUnion()
-            : m_primitive(JSC::JSValue())
-        {
-        }
-
-        ~WeakValueUnion()
-        {
-            ASSERT(!m_primitive);
-        }
-
-        JSC::JSValue m_primitive;
-        JSC::Weak<JSC::JSObject> m_object;
-        JSC::Weak<JSC::JSString> m_string;
-    } u;
-};
-
 struct _JSCWeakValuePrivate {
     JSC::Weak<JSC::JSGlobalObject> globalObject;
     RefPtr<JSC::JSLock> lock;
-    WeakValueRef weakValueRef;
+    JSC::JSWeakValue weakValueRef;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };

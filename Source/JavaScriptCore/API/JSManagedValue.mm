@@ -33,7 +33,7 @@
 #import "Heap.h"
 #import "JSContextInternal.h"
 #import "JSValueInternal.h"
-#import "Weak.h"
+#import "JSWeakValue.h"
 #import "WeakHandleOwner.h"
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
@@ -46,132 +46,16 @@ public:
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
 };
 
-static JSManagedValueHandleOwner* managedValueHandleOwner()
+static JSManagedValueHandleOwner& managedValueHandleOwner()
 {
     static NeverDestroyed<JSManagedValueHandleOwner> jsManagedValueHandleOwner;
-    return &jsManagedValueHandleOwner.get();
+    return jsManagedValueHandleOwner;
 }
-
-class WeakValueRef {
-public:
-    WeakValueRef()
-        : m_tag(NotSet)
-    {
-    }
-
-    ~WeakValueRef()
-    {
-        clear();
-    }
-
-    void clear()
-    {
-        switch (m_tag) {
-        case NotSet:
-            return;
-        case Primitive:
-            u.m_primitive = JSC::JSValue();
-            return;
-        case Object:
-            u.m_object.clear();
-            return;
-        case String:
-            u.m_string.clear();
-            return;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    bool isClear() const
-    {
-        switch (m_tag) {
-        case NotSet:
-            return true;
-        case Primitive:
-            return !u.m_primitive;
-        case Object:
-            return !u.m_object;
-        case String:
-            return !u.m_string;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    bool isSet() const { return m_tag != NotSet; }
-    bool isPrimitive() const { return m_tag == Primitive; }
-    bool isObject() const { return m_tag == Object; }
-    bool isString() const { return m_tag == String; }
-
-    void setPrimitive(JSC::JSValue primitive)
-    {
-        ASSERT(!isSet());
-        ASSERT(!u.m_primitive);
-        ASSERT(primitive.isPrimitive());
-        m_tag = Primitive;
-        u.m_primitive = primitive;
-    }
-
-    void setObject(JSC::JSObject* object, void* context)
-    {
-        ASSERT(!isSet());
-        ASSERT(!u.m_object);
-        m_tag = Object;
-        JSC::Weak<JSC::JSObject> weak(object, managedValueHandleOwner(), context);
-        u.m_object.swap(weak);
-    }
-
-    void setString(JSC::JSString* string, void* context)
-    {
-        ASSERT(!isSet());
-        ASSERT(!u.m_object);
-        m_tag = String;
-        JSC::Weak<JSC::JSString> weak(string, managedValueHandleOwner(), context);
-        u.m_string.swap(weak);
-    }
-
-    JSC::JSObject* object()
-    {
-        ASSERT(isObject());
-        return u.m_object.get();
-    }
-
-    JSC::JSValue primitive()
-    {
-        ASSERT(isPrimitive());
-        return u.m_primitive;
-    }
-
-    JSC::JSString* string()
-    {
-        ASSERT(isString());
-        return u.m_string.get();
-    }
-
-private:
-    enum WeakTypeTag { NotSet, Primitive, Object, String };
-    WeakTypeTag m_tag;
-    union WeakValueUnion {
-    public:
-        WeakValueUnion ()
-            : m_primitive(JSC::JSValue())
-        {
-        }
-
-        ~WeakValueUnion()
-        {
-            ASSERT(!m_primitive);
-        }
-
-        JSC::JSValue m_primitive;
-        JSC::Weak<JSC::JSObject> m_object;
-        JSC::Weak<JSC::JSString> m_string;
-    } u;
-};
 
 @implementation JSManagedValue {
     JSC::Weak<JSC::JSGlobalObject> m_globalObject;
     RefPtr<JSC::JSLock> m_lock;
-    WeakValueRef m_weakValue;
+    JSC::JSWeakValue m_weakValue;
     NSMapTable *m_owners;
 }
 
@@ -203,7 +87,8 @@ private:
 
     JSC::ExecState* exec = toJS([value.context JSGlobalContextRef]);
     JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    JSC::Weak<JSC::JSGlobalObject> weak(globalObject, managedValueHandleOwner(), self);
+    auto& owner = managedValueHandleOwner();
+    JSC::Weak<JSC::JSGlobalObject> weak(globalObject, &owner, self);
     m_globalObject.swap(weak);
 
     m_lock = &exec->vm().apiLock();
@@ -214,9 +99,9 @@ private:
 
     JSC::JSValue jsValue = toJS(exec, [value JSValueRef]);
     if (jsValue.isObject())
-        m_weakValue.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), self);
+        m_weakValue.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), owner, self);
     else if (jsValue.isString())
-        m_weakValue.setString(JSC::jsCast<JSC::JSString*>(jsValue.asCell()), self);
+        m_weakValue.setString(JSC::jsCast<JSC::JSString*>(jsValue.asCell()), owner, self);
     else
         m_weakValue.setPrimitive(jsValue);
     return self;
