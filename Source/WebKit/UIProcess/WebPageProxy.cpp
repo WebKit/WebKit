@@ -3827,7 +3827,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     if (frame->didHandleContentFilterUnblockNavigation(request))
         return receivedPolicyDecision(PolicyAction::Ignore, *frame, listenerID, &m_navigationState->navigation(newNavigationID), { });
 #else
-    UNUSED(newNavigationID);
+    UNUSED_PARAM(newNavigationID);
 #endif
 
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameInfoData.frameID);
