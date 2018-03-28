@@ -127,7 +127,7 @@ public:
     void setDisableSnapshotVolatilityForTesting(bool disable) { m_disableSnapshotVolatility = disable; }
     bool disableSnapshotVolatilityForTesting() const { return m_disableSnapshotVolatility; }
 
-#if !HAVE(IOSURFACE)
+#if !HAVE(IOSURFACE) && HAVE(CORE_ANIMATION_RENDER_SERVER)
     static CAContext *snapshottingContext();
 #endif
 

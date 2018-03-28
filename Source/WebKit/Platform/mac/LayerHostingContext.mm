@@ -61,8 +61,11 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
     // Use a very large display ID to ensure that the context is never put on-screen 
     // without being explicitly parented. See <rdar://problem/16089267> for details.
     layerHostingContext->m_context = [CAContext remoteContextWithOptions:@{
+#if HAVE(CORE_ANIMATION_RENDER_SERVER)
         kCAContextIgnoresHitTest : @YES,
-        kCAContextDisplayId : @10000 }];
+        kCAContextDisplayId : @10000
+#endif
+    }];
 #elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     [CAContext setAllowsCGSConnections:NO];
     layerHostingContext->m_context = [CAContext remoteContextWithOptions:@{kCAContextCIFilterBehavior :  @"ignore"}];

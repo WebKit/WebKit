@@ -60,7 +60,7 @@ ViewSnapshotStore& ViewSnapshotStore::singleton()
     return store;
 }
 
-#if !HAVE(IOSURFACE)
+#if !HAVE(IOSURFACE) && HAVE(CORE_ANIMATION_RENDER_SERVER)
 CAContext *ViewSnapshotStore::snapshottingContext()
 {
     static CAContext *context;
@@ -195,7 +195,9 @@ void ViewSnapshot::clearImage()
 #if HAVE(IOSURFACE)
     m_surface = nullptr;
 #else
+#if HAVE(CORE_ANIMATION_RENDER_SERVER)
     [ViewSnapshotStore::snapshottingContext() deleteSlot:m_slotID];
+#endif
     m_slotID = 0;
     m_imageSizeInBytes = 0;
 #endif
