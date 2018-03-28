@@ -28,6 +28,7 @@
 
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
+#import <mach/mach_error.h>
 #import <mach/machine.h>
 #import <pal/spi/cocoa/ServersSPI.h>
 #import <spawn.h>
