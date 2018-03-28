@@ -174,7 +174,7 @@ public:
         append(U16_TRAIL(c));
     }
 
-    WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
+    WTF_EXPORT_PRIVATE bool appendQuotedJSONString(const String&);
 
     template<unsigned characterCount>
     ALWAYS_INLINE void appendLiteral(const char (&characters)[characterCount]) { append(characters, characterCount - 1); }

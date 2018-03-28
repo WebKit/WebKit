@@ -74,16 +74,18 @@ ALWAYS_INLINE static void appendQuotedJSONStringInternal(OutputCharacterType*& o
     }
 }
 
-void StringBuilder::appendQuotedJSONString(const String& string)
+bool StringBuilder::appendQuotedJSONString(const String& string)
 {
     // Make sure we have enough buffer space to append this string without having
     // to worry about reallocating in the middle.
     // The 2 is for the '"' quotes on each end.
     // The 6 is for characters that need to be \uNNNN encoded.
-    Checked<unsigned> stringLength = string.length();
-    Checked<unsigned> maximumCapacityRequired = length();
+    Checked<unsigned, RecordOverflow> stringLength = string.length();
+    Checked<unsigned, RecordOverflow> maximumCapacityRequired = length();
     maximumCapacityRequired += 2 + stringLength * 6;
-    unsigned allocationSize = maximumCapacityRequired.unsafeGet();
+    unsigned allocationSize;
+    if (CheckedState::DidOverflow == maximumCapacityRequired.safeGet(allocationSize))
+        return false;
     // This max() is here to allow us to allocate sizes between the range [2^31, 2^32 - 2] because roundUpToPowerOfTwo(1<<31 + some int smaller than 1<<31) == 0.
     // FIXME: roundUpToPowerOfTwo should take Checked<unsigned> and abort if it fails to round up.
     // https://bugs.webkit.org/show_bug.cgi?id=176086
@@ -113,6 +115,7 @@ void StringBuilder::appendQuotedJSONString(const String& string)
         m_length = output - m_bufferCharacters16;
     }
     ASSERT(m_buffer->length() >= m_length);
+    return true;
 }
 
 } // namespace WTF

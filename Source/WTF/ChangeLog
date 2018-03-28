@@ -1,3 +1,17 @@
+2018-03-28  Robin Morisset  <rmorisset@apple.com>
+
+        appendQuotedJSONString stops on arithmetic overflow instead of propagating it upwards
+        https://bugs.webkit.org/show_bug.cgi?id=183894
+
+        Reviewed by Saam Barati.
+
+        appendQuotedJSONString now returns a bool indicating whether it succeeded, instead of silently failing when given a string too large
+        to fit in 4GB.
+
+        * wtf/text/StringBuilder.h:
+        * wtf/text/StringBuilderJSON.cpp:
+        (WTF::StringBuilder::appendQuotedJSONString):
+
 2018-03-27  Per Arne Vollan  <pvollan@apple.com>
 
         The layout test fast/canvas/webgl/read-pixels-test.html is timing out.
