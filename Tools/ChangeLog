@@ -1,3 +1,17 @@
+2018-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add JSCWeakValue to JavaScriptCore GLib API
+        https://bugs.webkit.org/show_bug.cgi?id=184041
+
+        Reviewed by Michael Catanzaro.
+
+        Add test case for JSCWeakValue.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (weakValueClearedCallback):
+        (testJSCWeakValue):
+        (main):
+
 2018-03-27  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Start using window.collectTextRuns() to layout text lines in inline formatting context

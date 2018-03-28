@@ -109,6 +109,27 @@ jsc_value_get_type
 </SECTION>
 
 <SECTION>
+<FILE>JSCWeakValue</FILE>
+<TITLE>JSCWeakValue</TITLE>
+JSCWeakValue
+jsc_weak_value_new
+jsc_weak_value_get_value
+
+<SUBSECTION Standard>
+JSCWeakValueClass
+JSC_TYPE_WEAK_VALUE
+JSC_WEAK_VALUE
+JSC_IS_WEAK_VALUE
+JSC_WEAK_VALUE_CLASS
+JSC_IS_WEAK_VALUE_CLASS
+JSC_WEAK_VALUE_GET_CLASS
+
+<SUBSECTION Private>
+JSCWeakValuePrivate
+jsc_weak_value_get_type
+</SECTION>
+
+<SECTION>
 <FILE>JSCException</FILE>
 <TITLE>JSCException</TITLE>
 JSCException

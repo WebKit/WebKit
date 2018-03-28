@@ -14,6 +14,7 @@
     <xi:include href="xml/JSCVirtualMachine.xml"/>
     <xi:include href="xml/JSCContext.xml"/>
     <xi:include href="xml/JSCValue.xml"/>
+    <xi:include href="xml/JSCWeakValue.xml"/>
     <xi:include href="xml/JSCException.xml"/>
     <xi:include href="xml/JSCClass.xml"/>
     <xi:include href="xml/JSCVersion.xml"/>

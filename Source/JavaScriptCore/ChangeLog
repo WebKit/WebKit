@@ -1,3 +1,41 @@
+2018-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Add JSCWeakValue to JavaScriptCore GLib API
+        https://bugs.webkit.org/show_bug.cgi?id=184041
+
+        Reviewed by Michael Catanzaro.
+
+        This allows to keep a reference to a JavaSCript value without protecting it, and without having a strong
+        reference of the context. When the value is cleared the JSCWeakValue::cleared signal is emitted and
+        jsc_weak_value_get_value() will always return nullptr.
+
+        * API/glib/JSCWeakValue.cpp: Added.
+        (WeakValueRef::~WeakValueRef):
+        (WeakValueRef::clear):
+        (WeakValueRef::isClear const):
+        (WeakValueRef::isSet const):
+        (WeakValueRef::isPrimitive const):
+        (WeakValueRef::isObject const):
+        (WeakValueRef::isString const):
+        (WeakValueRef::setPrimitive):
+        (WeakValueRef::setObject):
+        (WeakValueRef::setString):
+        (WeakValueRef::object const):
+        (WeakValueRef::primitive const):
+        (WeakValueRef::string const):
+        (weakValueHandleOwner):
+        (jscWeakValueInitialize):
+        (jscWeakValueSetProperty):
+        (jscWeakValueDispose):
+        (jsc_weak_value_class_init):
+        (jsc_weak_value_new):
+        (jsc_weak_value_get_value):
+        * API/glib/JSCWeakValue.h: Added.
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+        * API/glib/docs/jsc-glib-docs.sgml:
+        * API/glib/jsc.h:
+        * GLib.cmake:
+
 2018-03-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Remove unnecessary USE(JSVALUE32_64) / USE(JSVALUE64)

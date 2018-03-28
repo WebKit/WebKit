@@ -1748,6 +1748,183 @@ static void testJSCGarbageCollector()
     }
 }
 
+static void weakValueClearedCallback(JSCWeakValue* weakValue, bool* weakValueCleared)
+{
+    *weakValueCleared = true;
+    g_assert_null(jsc_weak_value_get_value(weakValue));
+}
+
+static void testJSCWeakValue()
+{
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        GRefPtr<JSCValue> object = adoptGRef(jsc_value_new_object(context.get(), nullptr, nullptr));
+        checker.watch(object.get());
+
+        GRefPtr<JSCWeakValue> weak = adoptGRef(jsc_weak_value_new(object.get()));
+        checker.watch(weak.get());
+        bool weakValueCleared = false;
+        g_signal_connect(weak.get(), "cleared", G_CALLBACK(weakValueClearedCallback), &weakValueCleared);
+
+        jsc_context_set_value(context.get(), "foo", object.get());
+        jscContextGarbageCollect(context.get());
+        g_assert_false(weakValueCleared);
+
+        GRefPtr<JSCValue> foo = adoptGRef(jsc_context_get_value(context.get(), "foo"));
+        checker.watch(foo.get());
+        g_assert_true(object.get() == foo.get());
+
+        GRefPtr<JSCValue> weakFoo = adoptGRef(jsc_weak_value_get_value(weak.get()));
+        checker.watch(weakFoo.get());
+        g_assert_true(foo.get() == weakFoo.get());
+
+        GRefPtr<JSCValue> undefinedValue = adoptGRef(jsc_value_new_undefined(context.get()));
+        checker.watch(undefinedValue.get());
+        jsc_context_set_value(context.get(), "foo", undefinedValue.get());
+        weakFoo = nullptr;
+        foo = nullptr;
+        object = nullptr;
+
+        // The value is still reachable, but unprotected.
+        g_assert_false(weakValueCleared);
+        weakFoo = adoptGRef(jsc_weak_value_get_value(weak.get()));
+        checker.watch(weakFoo.get());
+        g_assert_true(jsc_value_is_object(weakFoo.get()));
+        weakFoo = nullptr;
+
+        jscContextGarbageCollect(context.get());
+        g_assert_true(weakValueCleared);
+        g_assert_null(jsc_weak_value_get_value(weak.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCWeakValue> weakObject;
+        bool weakValueCleared = false;
+        {
+            GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+            checker.watch(context.get());
+            ExceptionHandler exceptionHandler(context.get());
+
+            GRefPtr<JSCValue> object = adoptGRef(jsc_context_evaluate(context.get(), "obj = {};"));
+            checker.watch(object.get());
+            g_assert_true(JSC_IS_VALUE(object.get()));
+            g_assert_true(jsc_value_is_object(object.get()));
+
+            weakObject = adoptGRef(jsc_weak_value_new(object.get()));
+            checker.watch(weakObject.get());
+            g_signal_connect(weakObject.get(), "cleared", G_CALLBACK(weakValueClearedCallback), &weakValueCleared);
+
+            object = adoptGRef(jsc_context_evaluate(context.get(), "obj = null"));
+            checker.watch(object.get());
+            g_assert_false(weakValueCleared);
+        }
+
+        g_assert_true(weakValueCleared);
+        g_assert_null(jsc_weak_value_get_value(weakObject.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCWeakValue> weakObj;
+        bool weakObjValueCleared = false;
+        GRefPtr<JSCWeakValue> weakStr;
+        bool weakStrValueCleared = false;
+        GRefPtr<JSCWeakValue> weakPrimitive;
+        bool weakPrimitiveValueCleared = false;
+        {
+            GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+            checker.watch(context.get());
+            ExceptionHandler exceptionHandler(context.get());
+
+            GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "obj = { 'foo' : 'bar' }; str = 'Hello World'; primitive = 25;"));
+            checker.watch(result.get());
+
+            GRefPtr<JSCValue> value = adoptGRef(jsc_context_get_value(context.get(), "obj"));
+            checker.watch(value.get());
+            weakObj = adoptGRef(jsc_weak_value_new(value.get()));
+            checker.watch(weakObj.get());
+            g_signal_connect(weakObj.get(), "cleared", G_CALLBACK(weakValueClearedCallback), &weakObjValueCleared);
+
+            value = adoptGRef(jsc_context_get_value(context.get(), "str"));
+            checker.watch(value.get());
+            weakStr = adoptGRef(jsc_weak_value_new(value.get()));
+            checker.watch(weakStr.get());
+            g_signal_connect(weakStr.get(), "cleared", G_CALLBACK(weakValueClearedCallback), &weakStrValueCleared);
+
+            value = adoptGRef(jsc_context_get_value(context.get(), "primitive"));
+            checker.watch(value.get());
+            weakPrimitive = adoptGRef(jsc_weak_value_new(value.get()));
+            checker.watch(weakPrimitive.get());
+            g_signal_connect(weakPrimitive.get(), "cleared", G_CALLBACK(weakValueClearedCallback), &weakPrimitiveValueCleared);
+
+            value = nullptr;
+            jscContextGarbageCollect(context.get());
+            g_assert_false(weakObjValueCleared);
+            g_assert_false(weakStrValueCleared);
+            g_assert_false(weakPrimitiveValueCleared);
+
+            value = adoptGRef(jsc_weak_value_get_value(weakObj.get()));
+            checker.watch(value.get());
+            g_assert_true(jsc_value_is_object(value.get()));
+
+            value = adoptGRef(jsc_weak_value_get_value(weakStr.get()));
+            checker.watch(value.get());
+            g_assert_true(jsc_value_is_string(value.get()));
+
+            value = adoptGRef(jsc_weak_value_get_value(weakPrimitive.get()));
+            checker.watch(value.get());
+            g_assert_true(jsc_value_is_number(value.get()));
+            value = nullptr;
+
+            result = adoptGRef(jsc_context_evaluate(context.get(), "str = undefined"));
+            checker.watch(result.get());
+            jscContextGarbageCollect(context.get());
+
+            g_assert_true(weakStrValueCleared);
+            g_assert_false(weakObjValueCleared);
+            g_assert_false(weakPrimitiveValueCleared);
+            g_assert_null(jsc_weak_value_get_value(weakStr.get()));
+
+            result = adoptGRef(jsc_context_evaluate(context.get(), "f = undefined"));
+            checker.watch(result.get());
+            jscContextGarbageCollect(context.get());
+
+            // Non-string primitve values are not garbage collected, the weak value
+            // will be cleared when the global object is destroyed.
+            g_assert_false(weakPrimitiveValueCleared);
+            g_assert_false(weakObjValueCleared);
+            g_assert_true(weakStrValueCleared);
+
+            value = adoptGRef(jsc_weak_value_get_value(weakPrimitive.get()));
+            checker.watch(value.get());
+            g_assert_true(jsc_value_is_number(value.get()));
+            value = nullptr;
+
+            result = adoptGRef(jsc_context_evaluate(context.get(), "obj = undefined"));
+            checker.watch(result.get());
+            jscContextGarbageCollect(context.get());
+
+            g_assert_true(weakObjValueCleared);
+            g_assert_true(weakStrValueCleared);
+            g_assert_false(weakPrimitiveValueCleared);
+            g_assert_null(jsc_weak_value_get_value(weakObj.get()));
+            weakObjValueCleared = false;
+            weakStrValueCleared = false;
+        }
+
+        // Context is now destroyed, only the primitive value should be notified.
+        g_assert_true(weakPrimitiveValueCleared);
+        g_assert_false(weakObjValueCleared);
+        g_assert_false(weakStrValueCleared);
+        g_assert_null(jsc_weak_value_get_value(weakPrimitive.get()));
+    }
+}
+
 static void testsJSCVirtualMachine()
 {
     {
@@ -1860,6 +2037,7 @@ int main(int argc, char** argv)
     g_test_add_func("/jsc/exceptions", testJSCExceptions);
     g_test_add_func("/jsc/promises", testJSCPromises);
     g_test_add_func("/jsc/garbage-collector", testJSCGarbageCollector);
+    g_test_add_func("/jsc/weak-value", testJSCWeakValue);
     g_test_add_func("/jsc/vm", testsJSCVirtualMachine);
 #ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC
     g_test_add_func("/jsc/autocleanups", testsJSCAutocleanups);

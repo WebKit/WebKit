@@ -29,6 +29,7 @@
 #include <jsc/JSCValue.h>
 #include <jsc/JSCVersion.h>
 #include <jsc/JSCVirtualMachine.h>
+#include <jsc/JSCWeakValue.h>
 
 #include <jsc/JSCAutocleanups.h>
 

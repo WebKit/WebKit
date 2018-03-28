@@ -10,6 +10,7 @@ list(APPEND JavaScriptCore_SOURCES
     API/glib/JSCValue.cpp
     API/glib/JSCVersion.cpp
     API/glib/JSCVirtualMachine.cpp
+    API/glib/JSCWeakValue.cpp
     API/glib/JSCWrapperMap.cpp
 )
 
@@ -28,6 +29,7 @@ set(JavaScriptCore_INSTALLED_HEADERS
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCException.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCValue.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCVirtualMachine.h
+    ${JAVASCRIPTCORE_DIR}/API/glib/JSCWeakValue.h
     ${JAVASCRIPTCORE_DIR}/API/glib/jsc.h
 )
 
