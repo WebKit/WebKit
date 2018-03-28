@@ -153,7 +153,7 @@ public:
     // The local SecurityOrigin is the most privileged SecurityOrigin.
     // The local SecurityOrigin can script any document, navigate to local
     // resources, and can set arbitrary headers on XMLHttpRequests.
-    WEBCORE_EXPORT bool isLocal() const;
+    bool isLocal() const { return m_isLocal; }
 
     // The origin is a globally unique identifier assigned when the Document is
     // created. http://www.whatwg.org/specs/web-apps/current-work/#sandboxOrigin
@@ -234,6 +234,7 @@ private:
     bool m_enforcesFilePathSeparation { false };
     bool m_needsStorageAccessFromFileURLsQuirk { false };
     bool m_isPotentiallyTrustworthy { false };
+    bool m_isLocal { false };
 };
 
 bool shouldTreatAsPotentiallyTrustworthy(const URL&);

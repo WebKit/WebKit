@@ -146,6 +146,7 @@ bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 
 SecurityOrigin::SecurityOrigin(const URL& url)
     : m_data(SecurityOriginData::fromURL(url))
+    , m_isLocal(SchemeRegistry::shouldTreatURLSchemeAsLocal(m_data.protocol))
 {
     // document.domain starts as m_data.host, but can be set by the DOM.
     m_domain = m_data.host;
@@ -182,6 +183,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_enforcesFilePathSeparation { other->m_enforcesFilePathSeparation }
     , m_needsStorageAccessFromFileURLsQuirk { other->m_needsStorageAccessFromFileURLsQuirk }
     , m_isPotentiallyTrustworthy { other->m_isPotentiallyTrustworthy }
+    , m_isLocal { other->m_isLocal }
 {
 }
 
@@ -456,11 +458,6 @@ void SecurityOrigin::setEnforcesFilePathSeparation()
 {
     ASSERT(isLocal());
     m_enforcesFilePathSeparation = true;
-}
-
-bool SecurityOrigin::isLocal() const
-{
-    return SchemeRegistry::shouldTreatURLSchemeAsLocal(m_data.protocol);
 }
 
 String SecurityOrigin::toString() const
