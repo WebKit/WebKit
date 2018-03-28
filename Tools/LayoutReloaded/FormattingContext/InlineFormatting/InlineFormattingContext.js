@@ -30,7 +30,6 @@ class InlineFormattingContext extends FormattingContext {
         ASSERT(this.formattingRoot().isBlockContainerBox());
         if (this.formattingRoot().establishesBlockFormattingContext())
             this.m_floatingContext = new FloatingContext(this);
-        this.m_line = this._createNewLine();
     }
 
     layout() {
@@ -40,6 +39,7 @@ class InlineFormattingContext extends FormattingContext {
             return;
         // This is a post-order tree traversal layout.
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
+        this.m_line = this._createNewLine();
         this._addToLayoutQueue(this.formattingRoot().firstChild());
         while (this._descendantNeedsLayout()) {
             // Travers down on the descendants until we find a leaf node.
@@ -77,13 +77,13 @@ class InlineFormattingContext extends FormattingContext {
         // FIXME: This is a extremely simple line breaking algorithm.
         let currentPosition = 0;
         let text = inlineBox.text().content();
-        while (currentPosition < text.length - 1) {
+        while (text.length) {
             let textRuns = Utils.textRunsForLine(text, this._line().availableWidth(), this.formattingRoot());
-            for (let run of textRuns) {
+            if (!textRuns.length)
+                break;
+            for (let run of textRuns)
                 this._line().addTextLineBox(run.startPosition, run.endPosition, new LayoutSize(run.width, Utils.textHeight(inlineBox)));
-                currentPosition = run.endPosition;
-            }
-            text = text.slice(currentPosition, text.length - 1);
+            text = text.slice(textRuns[textRuns.length - 1].endPosition, text.length);
             this._commitLine();
         }
     }
@@ -102,7 +102,11 @@ class InlineFormattingContext extends FormattingContext {
     _createNewLine() {
         // TODO: Floats need to be taken into account.
         let contentBoxRect = this.displayBox(this.formattingRoot()).contentBox();
-        return new Line(contentBoxRect.topLeft(), Utils.computedLineHeight(this.formattingRoot().node()), contentBoxRect.width());
+        let topLeft = contentBoxRect.topLeft();
+        let lines = this.formattingState().lines();
+        if (lines.length)
+            topLeft.setTop(lines[lines.length - 1].rect().bottom());
+        return new Line(topLeft, Utils.computedLineHeight(this.formattingRoot().node()), contentBoxRect.width());
     }
 }
 

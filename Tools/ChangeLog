@@ -1,5 +1,20 @@
 2018-03-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] InlineFormattingContext::_handleText should support runs on multiple lines
+        https://bugs.webkit.org/show_bug.cgi?id=184101
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext):
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleText):
+        (InlineFormattingContext.prototype._createNewLine):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/simple-multiline-text.html: Added.
+
+2018-03-28  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Add InlineTextBreaker::skipLeadingWhitespaceIfNeeded
         https://bugs.webkit.org/show_bug.cgi?id=184099
 
