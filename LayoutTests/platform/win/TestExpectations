@@ -3829,6 +3829,7 @@ webkit.org/b/179296 fast/css/object-position/object-position-embed.html [ ImageO
 webkit.org/b/179296 fast/css/object-position/object-position-object.html [ ImageOnlyFailure ]
 
 webkit.org/b/179297 fast/loader/empty-embed-src-attribute.html [ Pass Crash ]
+webkit.org/b/179297 http/tests/preload/download_resources.html [ Crash Pass ]
 webkit.org/b/179297 http/tests/preload/onerror_event.html [ Crash Pass ]
 webkit.org/b/179297 http/wpt/resource-timing/rt-initiatorType-media.html [ Crash Failure ]
 
