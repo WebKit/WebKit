@@ -70,6 +70,8 @@ uintptr_t nextPtrTagID();
 #if !USE(POINTER_PROFILING)
 inline uintptr_t nextPtrTagID() { return 0; }
 
+inline const char* tagForPtr(const void*) { return "<no tag>"; }
+
 template<typename... Arguments>
 inline constexpr PtrTag ptrTag(Arguments&&...) { return NoPtrTag; }
 
@@ -118,6 +120,9 @@ template<typename PtrType> void assertIsNullOrTagged(PtrType) { }
 
 template<typename PtrType> void assertIsTaggedWith(PtrType, PtrTag) { }
 template<typename PtrType> void assertIsNullOrTaggedWith(PtrType, PtrTag) { }
+
+#define CALL_WITH_PTRTAG(callInstructionString, targetRegisterString, tag) \
+    callInstructionString " " targetRegisterString "\n"
 
 #endif // !USE(POINTER_PROFILING)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -371,7 +371,7 @@ asm (
     // Note: we haven't changed the value of fp. Hence, it is still pointing to the frame of
     // the caller of the probe (which is what we want in order to play nice with debuggers e.g. lldb).
     "mov       x0, sp" "\n" // Set the Probe::State* arg.
-    "blr       x28" "\n" // Call the probe handler.
+    CALL_WITH_PTRTAG("blr", "x28", CFunctionPtrTag) // Call the probe handler.
 
     // Make sure the Probe::State is entirely below the result stack pointer so
     // that register values are still preserved when we call the initializeStack
@@ -407,7 +407,7 @@ asm (
     "cbz       x2, " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) "\n"
 
     "mov       x0, x27" "\n" // Set the Probe::State* arg.
-    "blr       x2" "\n" // Call the initializeStackFunction (loaded into x2 above).
+    CALL_WITH_PTRTAG("blr", "x2", CFunctionPtrTag) // Call the initializeStackFunction (loaded into x2 above).
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) ":" "\n"
 
@@ -517,7 +517,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeProbe)), x28);
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), x24);
     move(TrustedImmPtr(arg), x25);
-    m_assembler.blr(x26);
+    call(x26, CFunctionPtrTag);
 
     // ctiMasmProbeTrampoline should have restored every register except for lr and the sp.
     load64(Address(sp, offsetof(LRRestorationRecord, lr)), lr);

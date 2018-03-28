@@ -234,10 +234,8 @@ void testProbeReadsArgumentRegisters()
     compileAndRun<void>([&] (CCallHelpers& jit) {
         jit.emitFunctionPrologue();
 
-        jit.push(GPRInfo::argumentGPR0);
-        jit.push(GPRInfo::argumentGPR1);
-        jit.push(GPRInfo::argumentGPR2);
-        jit.push(GPRInfo::argumentGPR3);
+        jit.pushPair(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+        jit.pushPair(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
 
         jit.move(CCallHelpers::TrustedImm32(testWord32(0)), GPRInfo::argumentGPR0);
         jit.convertInt32ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
@@ -267,10 +265,8 @@ void testProbeReadsArgumentRegisters()
             CHECK_EQ(cpu.fpr(FPRInfo::fpRegT1), testWord32(1));
         });
 
-        jit.pop(GPRInfo::argumentGPR3);
-        jit.pop(GPRInfo::argumentGPR2);
-        jit.pop(GPRInfo::argumentGPR1);
-        jit.pop(GPRInfo::argumentGPR0);
+        jit.popPair(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
+        jit.popPair(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
 
         jit.emitFunctionEpilogue();
         jit.ret();
@@ -287,10 +283,8 @@ void testProbeWritesArgumentRegisters()
     compileAndRun<void>([&] (CCallHelpers& jit) {
         jit.emitFunctionPrologue();
 
-        jit.push(GPRInfo::argumentGPR0);
-        jit.push(GPRInfo::argumentGPR1);
-        jit.push(GPRInfo::argumentGPR2);
-        jit.push(GPRInfo::argumentGPR3);
+        jit.pushPair(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+        jit.pushPair(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
 
         // Pre-initialize with non-expected values.
 #if USE(JSVALUE64)
@@ -333,10 +327,8 @@ void testProbeWritesArgumentRegisters()
             CHECK_EQ(cpu.fpr<uint64_t>(FPRInfo::fpRegT1), testWord64(1));
         });
 
-        jit.pop(GPRInfo::argumentGPR3);
-        jit.pop(GPRInfo::argumentGPR2);
-        jit.pop(GPRInfo::argumentGPR1);
-        jit.pop(GPRInfo::argumentGPR0);
+        jit.popPair(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
+        jit.popPair(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
 
         jit.emitFunctionEpilogue();
         jit.ret();

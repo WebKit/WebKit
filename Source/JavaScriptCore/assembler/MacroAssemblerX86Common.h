@@ -2133,6 +2133,17 @@ public:
         m_assembler.push_i32(imm.m_value);
     }
 
+    void popPair(RegisterID dest1, RegisterID dest2)
+    {
+        pop(dest2);
+        pop(dest1);
+    }
+
+    void pushPair(RegisterID src1, RegisterID src2)
+    {
+        push(src1);
+        push(src2);
+    }
 
     // Register move operations:
     //
