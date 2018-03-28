@@ -104,10 +104,10 @@ public:
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
     bool isAccelerated() const override { return false; }
-    bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
-    bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
+    bool filterFunctionListsMatch() const override { return false; }
+    bool transformFunctionListsMatch() const override { return false; }
 #if ENABLE(FILTERS_LEVEL_2)
-    bool backdropFilterFunctionListsMatch() const override { return m_backdropFilterFunctionListsMatch; }
+    bool backdropFilterFunctionListsMatch() const override { return false; }
 #endif
 
     void computeCSSAnimationBlendingKeyframes();
@@ -130,21 +130,10 @@ private:
     void computeStackingContextImpact();
     void updateBlendingKeyframes();
     bool shouldRunAccelerated();
-    void setBlendingKeyframes(KeyframeList&);
-    void checkForMatchingTransformFunctionLists();
-    void checkForMatchingFilterFunctionLists();
-#if ENABLE(FILTERS_LEVEL_2)
-    void checkForMatchingBackdropFilterFunctionLists();
-#endif
 
     bool m_triggersStackingContext { false };
     bool m_started { false };
     bool m_startedAccelerated { false };
-    bool m_transformFunctionListsMatch { false };
-    bool m_filterFunctionListsMatch { false };
-#if ENABLE(FILTERS_LEVEL_2)
-    bool m_backdropFilterFunctionListsMatch { false };
-#endif
 
     RefPtr<Element> m_target;
     KeyframeList m_blendingKeyframes;

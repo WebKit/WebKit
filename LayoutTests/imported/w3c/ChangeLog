@@ -1,3 +1,17 @@
+2018-03-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r230033.
+
+        The LayoutTests modified in this change fail an assertion on
+        WK1.
+
+        Reverted changeset:
+
+        "[Web Animations] Implement more CSSPropertyBlendingClient
+        methods"
+        https://bugs.webkit.org/show_bug.cgi?id=184077
+        https://trac.webkit.org/changeset/230033
+
 2018-03-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement more CSSPropertyBlendingClient methods
