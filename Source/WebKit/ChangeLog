@@ -1,3 +1,44 @@
+2018-03-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid uninitialized mach ports
+        https://bugs.webkit.org/show_bug.cgi?id=184090
+        <rdar://problem/37261129>
+
+        Reviewed by Chris Dumez.
+
+        It is possible for mach_port_allocate to return an error, but we rarely check its return value. The value
+        of the argument passed to mach_port_allocate is not guaranteed to be valid when it returns an error, so
+        there is a potential for us to try to use invalid ports.
+
+        We should always check return values, and ensure that the mach port variables we seek to initialize are
+        kept in a valid state.
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess): Initialize new port to a safe default and
+        check the return state of the allocation function.
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::open): Ditto.
+        (IPC::Connection::initializeSendSource): Ditto.
+        (IPC::readFromMachPort): Ditto.
+        (IPC::Connection::receiveSourceEventHandler): Ditto.
+        * Platform/SharedMemory.h:
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        (WebKit::makeMemoryEntry): Ditto.
+        * Platform/mac/MachUtilities.cpp:
+        (setMachPortQueueLength): Ditto.
+        (setMachExceptionPort): Ditto.
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection): Ditto.
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::createStorageToWebProcessConnection): Ditto.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Ditto.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openFrontendConnection): Ditto.
+
 2018-03-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fails to build webkitgtk+ after git-svn-id: http://svn.webkit.org/repository/webkit/trunk@229877 268f45cc-cd09-0410-ab3c-d52691b4dbfc

@@ -328,11 +328,11 @@ private:
     void receiveSourceEventHandler();
     void initializeSendSource();
 
-    mach_port_t m_sendPort;
-    dispatch_source_t m_sendSource;
+    mach_port_t m_sendPort { MACH_PORT_NULL };
+    dispatch_source_t m_sendSource { nullptr };
 
-    mach_port_t m_receivePort;
-    dispatch_source_t m_receiveSource;
+    mach_port_t m_receivePort { MACH_PORT_NULL };
+    dispatch_source_t m_receiveSource { nullptr };
 
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
 

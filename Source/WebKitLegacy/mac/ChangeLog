@@ -1,3 +1,66 @@
+2018-03-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid uninitialized mach ports
+        https://bugs.webkit.org/show_bug.cgi?id=184090
+        <rdar://problem/37261129>
+
+        Reviewed by Chris Dumez.
+
+        It is possible for mach_port_allocate to return an error, but we rarely check its return value. The value
+        of the argument passed to mach_port_allocate is not guaranteed to be valid when it returns an error, so
+        there is a potential for us to try to use invalid ports.
+
+        We should always check return values, and ensure that the mach port variables we seek to initialize are
+        kept in a valid state.
+
+        Reviewed by Chris Dumez.
+
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPlugin): Initialize port to a valid state, ASSERT if an invalid
+        port is passed to an API function.
+        (WebKit::NetscapePluginHostManager::spawnPluginHost): Ditto.
+        (WebKit::NetscapePluginHostManager::initializeVendorPort): Ditto.
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy): Ditto.
+        (WebKit::NetscapePluginHostProxy::~NetscapePluginHostProxy): Ditto.
+        (WebKit::NetscapePluginHostProxy::processRequests): Ditto.
+        (WKPCStatusText): Ditto.
+        (WKPCLoadURL): Ditto.
+        (WKPCCancelLoadURL): Ditto.
+        (WKPCInvalidateRect): Ditto.
+        (WKPCGetScriptableNPObjectReply): Ditto.
+        (WKPCBooleanReply): Ditto.
+        (WKPCBooleanAndDataReply): Ditto.
+        (WKPCInstantiatePluginReply): Ditto.
+        (WKPCGetWindowNPObject): Ditto.
+        (WKPCGetPluginElementNPObject): Ditto.
+        (WKPCForgetBrowserObject): Ditto.
+        (WKPCEvaluate): Ditto.
+        (WKPCGetStringIdentifier): Ditto.
+        (WKPCGetIntIdentifier): Ditto.
+        (WKPCInvoke): Ditto.
+        (WKPCInvokeDefault): Ditto.
+        (WKPCConstruct): Ditto.
+        (WKPCGetProperty): Ditto.
+        (WKPCSetProperty): Ditto.
+        (WKPCRemoveProperty): Ditto.
+        (WKPCHasProperty): Ditto.
+        (WKPCHasMethod): Ditto.
+        (WKPCIdentifierInfo): Ditto.
+        (WKPCEnumerate): Ditto.
+        (WKPCSetMenuBarVisible): Ditto.
+        (WKPCSetFullscreenWindowIsShowing): Ditto.
+        (WKPCSetModal): Ditto.
+        (WKPCGetCookies): Ditto.
+        (WKPCGetProxy): Ditto.
+        (WKPCSetCookies): Ditto.
+        (WKPCGetAuthenticationInfo): Ditto.
+        (WKPCConvertPoint): Ditto.
+        (WKPCLayerHostingModeChanged): Ditto.
+        (WKPCSetException): Ditto.
+
 2018-03-26  Tim Horton  <timothy_horton@apple.com>
 
         Adopt WK_ALTERNATE_FRAMEWORKS_DIR in WebKit

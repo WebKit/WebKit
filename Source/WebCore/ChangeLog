@@ -1,3 +1,23 @@
+2018-03-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid uninitialized mach ports
+        https://bugs.webkit.org/show_bug.cgi?id=184090
+        <rdar://problem/37261129>
+
+        Reviewed by Chris Dumez.
+
+        It is possible for mach_port_allocate to return an error, but we rarely check its return value. The value
+        of the argument passed to mach_port_allocate is not guaranteed to be valid when it returns an error, so
+        there is a potential for us to try to use invalid ports.
+
+        We should always check return values, and ensure that the mach port variables we seek to initialize are
+        kept in a valid state.
+
+        No new tests, no Web-facing behavior change.
+
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::attachToAppleGraphicsControl): Initialize masterPort to a default value.
+
 2018-03-28  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Implement more CSSPropertyBlendingClient methods

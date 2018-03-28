@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if USE(PLUGIN_HOST_PROCESS)
+#pragma once
 
-#ifndef NetscapePluginHostProxy_h
-#define NetscapePluginHostProxy_h
+#if USE(PLUGIN_HOST_PROCESS)
 
 #include <dispatch/dispatch.h>
 #include <wtf/HashMap.h>
@@ -85,11 +84,11 @@ private:
     typedef HashMap<uint32_t, RefPtr<NetscapePluginInstanceProxy>> PluginInstanceMap;
     PluginInstanceMap m_instances;
     
-    mach_port_t m_clientPort;
-    mach_port_t m_portSet;
+    mach_port_t m_clientPort { MACH_PORT_NULL };
+    mach_port_t m_portSet { MACH_PORT_NULL };
     
     RetainPtr<CFRunLoopSourceRef> m_clientPortSource;
-    mach_port_t m_pluginHostPort;
+    mach_port_t m_pluginHostPort { MACH_PORT_NULL };
     RetainPtr<CFMachPortRef> m_deadNameNotificationPort;
     
     RetainPtr<id> m_activationObserver;
@@ -106,5 +105,4 @@ private:
     
 } // namespace WebKit
 
-#endif // NetscapePluginHostProxy_h
 #endif // USE(PLUGIN_HOST_PROCESS)

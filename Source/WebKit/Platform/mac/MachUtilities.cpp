@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,8 @@
 
 void setMachPortQueueLength(mach_port_t receivePort, mach_port_msgcount_t queueLength)
 {
+    ASSERT(MACH_PORT_VALID(receivePort));
+
     mach_port_limits_t portLimits;
     portLimits.mpl_qlimit = queueLength;
 
@@ -57,6 +59,8 @@ mach_port_t machExceptionPort()
 
 void setMachExceptionPort(mach_port_t exceptionPort)
 {
+    ASSERT(MACH_PORT_VALID(exceptionPort));
+
     // Assert that we dont try to call setMachExceptionPort more than once per process.
 #if !ASSERT_DISABLED
     static mach_port_t taskExceptionPort = MACH_PORT_NULL;

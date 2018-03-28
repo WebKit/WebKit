@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,7 +141,7 @@ static WebCore::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, S
 {
     memory_object_size_t memoryObjectSize = round_page(size);
 
-    mach_port_t port;
+    mach_port_t port = MACH_PORT_NULL;
     kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
 #if RELEASE_LOG_DISABLED

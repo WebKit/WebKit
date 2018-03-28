@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood <jhaygood@reaktix.com>
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
@@ -281,7 +281,7 @@ protected:
 #if OS(WINDOWS)
     ThreadIdentifier m_id { 0 };
 #elif OS(DARWIN)
-    mach_port_t m_platformThread;
+    mach_port_t m_platformThread { MACH_PORT_NULL };
 #elif USE(PTHREADS)
     PlatformRegisters* m_platformRegisters { nullptr };
     unsigned m_suspendCount { 0 };

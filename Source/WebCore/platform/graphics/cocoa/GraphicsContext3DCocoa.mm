@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ enum {
 
 static io_connect_t attachToAppleGraphicsControl()
 {
-    mach_port_t masterPort;
+    mach_port_t masterPort = MACH_PORT_NULL;
 
     if (IOMasterPort(MACH_PORT_NULL, &masterPort) != KERN_SUCCESS)
         return MACH_PORT_NULL;

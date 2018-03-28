@@ -63,7 +63,7 @@ private:
     
     bool initializeVendorPort();
     
-    mach_port_t m_pluginVendorPort;
+    mach_port_t m_pluginVendorPort { MACH_PORT_NULL };
     
     // FIXME: This should really be a HashMap of RetainPtrs, but that doesn't work right now.
     typedef HashMap<String, NetscapePluginHostProxy*> PluginHostMap;
