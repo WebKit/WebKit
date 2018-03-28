@@ -1306,6 +1306,13 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         return;
 
     NavigationAction action { frameLoadRequest.requester(), request, frameLoadRequest.initiatedByMainFrame(), newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute() };
+    action.setIsCrossOriginWindowOpenNavigation(frameLoadRequest.isCrossOriginWindowOpenNavigation());
+    if (auto* opener = this->opener()) {
+        auto pageID = opener->loader().client().pageID();
+        auto frameID = opener->loader().client().frameID();
+        if (pageID && frameID)
+            action.setOpener(std::make_pair(*pageID, *frameID));
+    }
 
     if (!targetFrame && !frameName.isEmpty()) {
         action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));

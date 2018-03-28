@@ -84,6 +84,9 @@ public:
 
     InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
+    void setIsCrossOriginWindowOpenNavigation(bool value) { m_isCrossOriginWindowOpenNavigation = value; }
+    bool isCrossOriginWindowOpenNavigation() const { return m_isCrossOriginWindowOpenNavigation; }
+
 private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
@@ -102,6 +105,7 @@ private:
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     AtomicString m_downloadAttribute;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
+    bool m_isCrossOriginWindowOpenNavigation { false };
 };
 
 } // namespace WebCore

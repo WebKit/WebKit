@@ -1,3 +1,34 @@
+2018-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Do process swap when opening a cross-origin URL via window.open(url, '_blank', 'noopener')
+        https://bugs.webkit.org/show_bug.cgi?id=183962
+        <rdar://problem/38817833>
+
+        Reviewed by Brady Eidson.
+
+        Swap WebProcess on for the initial navigation in a new Window that was opened
+        via window.open(), when the new URL is cross-origin compared to the opener's
+        origin. For now, we only swap process if 'noopener' property is set when calling
+        window.open(). This is because we do not support the remote DOMWindows yet.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setIsCrossOriginWindowOpenNavigation):
+        (API::Navigation::isCrossOriginWindowOpenNavigation const):
+        (API::Navigation::setOpener):
+        (API::Navigation::opener const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-03-28  Per Arne Vollan  <pvollan@apple.com>
 
         Adopt WEBPROCESS_WINDOWSERVER_BLOCKING compiler guard in WebProcess.

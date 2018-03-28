@@ -861,6 +861,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
     navigationActionData.downloadAttribute = navigationAction.downloadAttribute();
     navigationActionData.isRedirect = didReceiveRedirectResponse;
+    navigationActionData.isCrossOriginWindowOpenNavigation = navigationAction.isCrossOriginWindowOpenNavigation();
+    navigationActionData.opener = navigationAction.opener();
 
     WebCore::Frame* coreFrame = m_frame->coreFrame();
     if (!coreFrame)

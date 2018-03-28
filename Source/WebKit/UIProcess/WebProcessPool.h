@@ -445,7 +445,7 @@ public:
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
 #endif
 
-    Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const WebCore::URL&);
+    Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, WebCore::PolicyAction&);
 
 private:
     void platformInitialize();

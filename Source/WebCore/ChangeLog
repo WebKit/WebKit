@@ -1,5 +1,33 @@
 2018-03-28  Chris Dumez  <cdumez@apple.com>
 
+        Do process swap when opening a cross-origin URL via window.open(url, '_blank', 'noopener')
+        https://bugs.webkit.org/show_bug.cgi?id=183962
+        <rdar://problem/38817833>
+
+        Reviewed by Brady Eidson.
+
+        Pass extra bits of information to the UIProcess via NavigationAction:
+        - Is it a cross origin navigation caused by window.open()
+        - Does the navigated frame have an opener
+
+        This information is useful to determine on UIProcess side if we want
+        to swap WebProcess.
+
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setIsCrossOriginWindowOpenNavigation):
+        (WebCore::FrameLoadRequest::isCrossOriginWindowOpenNavigation const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::setIsCrossOriginWindowOpenNavigation):
+        (WebCore::NavigationAction::isCrossOriginWindowOpenNavigation const):
+        (WebCore::NavigationAction::setOpener):
+        (WebCore::NavigationAction::opener const):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
+2018-03-28  Chris Dumez  <cdumez@apple.com>
+
         Thread safety issue in IDBFactory' shouldThrowSecurityException()
         https://bugs.webkit.org/show_bug.cgi?id=184064
 

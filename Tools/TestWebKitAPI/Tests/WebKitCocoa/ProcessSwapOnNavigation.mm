@@ -30,6 +30,7 @@
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -40,6 +41,7 @@
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <WebKit/_WKWebsitePolicies.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -50,6 +52,7 @@
 #if WK_API_ENABLED
 
 static bool done;
+static bool didCreateWebView;
 static int numberOfDecidePolicyCalls;
 
 static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
@@ -79,6 +82,35 @@ static bool receivedMessage;
 {
     ++numberOfDecidePolicyCalls;
     decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+@end
+
+static RetainPtr<WKWebView> createdWebView;
+
+@interface PSONUIDelegate : NSObject <WKUIDelegatePrivate>
+- (instancetype)initWithNavigationDelegate:(PSONNavigationDelegate *)navigationDelegate;
+@end
+
+@implementation PSONUIDelegate {
+    RetainPtr<PSONNavigationDelegate> _navigationDelegate;
+}
+
+- (instancetype)initWithNavigationDelegate:(PSONNavigationDelegate *)navigationDelegate
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _navigationDelegate = navigationDelegate;
+    return self;
+}
+
+- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    createdWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [createdWebView setNavigationDelegate:_navigationDelegate.get()];
+    didCreateWebView = true;
+    return createdWebView.get();
 }
 
 @end
@@ -138,6 +170,35 @@ window.onpageshow = function(evt) {
 
 </script>
 </head>
+)PSONRESOURCE";
+
+static const char* windowOpenCrossOriginNoOpenerTestBytes = R"PSONRESOURCE(
+<script>
+window.onload = function() {
+    window.open("pson2://host/main2.html", "_blank", "noopener");
+}
+</script>
+)PSONRESOURCE";
+
+static const char* windowOpenCrossOriginWithOpenerTestBytes = R"PSONRESOURCE(
+<script>
+window.onload = function() {
+    window.open("pson2://host/main2.html");
+}
+</script>
+)PSONRESOURCE";
+
+static const char* windowOpenSameOriginNoOpenerTestBytes = R"PSONRESOURCE(
+<script>
+window.onload = function() {
+    if (!opener)
+        window.open("pson1://host/main2.html", "_blank", "noopener");
+}
+</script>
+)PSONRESOURCE";
+
+static const char* dummyBytes = R"PSONRESOURCE(
+<body>TEST</body>
 )PSONRESOURCE";
 
 TEST(ProcessSwap, Basic)
@@ -251,6 +312,128 @@ TEST(ProcessSwap, Back)
     // FIXME: Ideally we'd like to get process caching happening such that pid1 and pid3 are equal.
     // But for now they should not be.
     EXPECT_FALSE(pid1 == pid3);
+}
+
+TEST(ProcessSwap, CrossOriginWindowOpenNoOpener)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenCrossOriginNoOpenerTestBytes]);
+    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] initWithBytes:dummyBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"PSON2"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+    auto pid2 = [createdWebView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_NE(pid1, pid2);
+}
+
+TEST(ProcessSwap, CrossOriginWindowOpenWithOpener)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenCrossOriginWithOpenerTestBytes]);
+    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] initWithBytes:dummyBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"PSON2"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+    auto pid2 = [createdWebView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    // FIXME: This should eventually be false once we support process swapping when there is an opener.
+    EXPECT_EQ(pid1, pid2);
+}
+
+TEST(ProcessSwap, SamOriginWindowOpenNoOpener)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:windowOpenSameOriginNoOpenerTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    TestWebKitAPI::Util::run(&didCreateWebView);
+    didCreateWebView = false;
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+    auto pid2 = [createdWebView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_EQ(pid1, pid2);
 }
 
 #endif // WK_API_ENABLED

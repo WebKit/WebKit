@@ -1965,15 +1965,26 @@ ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(u
 }
 #endif
 
-Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const URL& targetURL)
+Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, PolicyAction& action)
 {
     if (!m_configuration->processSwapsOnNavigation())
         return page.process();
 
-    auto url = URL { ParsedURLString, page.pageLoadState().url() };
-    if (protocolHostAndPortAreEqual(url, targetURL) || url.isBlankURL())
+    // FIXME: We should support process swap when a window has an opener.
+    if (navigation.opener())
         return page.process();
 
+    if (navigation.isCrossOriginWindowOpenNavigation()) {
+        action = PolicyAction::Ignore;
+        return createNewWebProcess(page.websiteDataStore());
+    }
+
+    auto targetURL = navigation.request().url();
+    auto url = URL { ParsedURLString, page.pageLoadState().url() };
+    if (!url.isValid() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
+        return page.process();
+
+    action = PolicyAction::Suspend;
     return createNewWebProcess(page.websiteDataStore());
 }
 

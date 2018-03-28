@@ -2279,6 +2279,8 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
     if (created) {
         ResourceRequest resourceRequest { completedURL, referrer, UseProtocolCachePolicy };
         FrameLoadRequest frameLoadRequest { *activeWindow.document(), activeWindow.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate(), initiatedByMainFrame };
+        if (openerFrame.document() && !protocolHostAndPortAreEqual(openerFrame.document()->url(), frameLoadRequest.resourceRequest().url()))
+            frameLoadRequest.setIsCrossOriginWindowOpenNavigation(true);
         newFrame->loader().changeLocation(WTFMove(frameLoadRequest));
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)

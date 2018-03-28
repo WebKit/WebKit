@@ -72,6 +72,12 @@ public:
 
     const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
 
+    void setIsCrossOriginWindowOpenNavigation(bool value) { m_isCrossOriginWindowOpenNavigation = value; }
+    bool isCrossOriginWindowOpenNavigation() const { return m_isCrossOriginWindowOpenNavigation; }
+
+    void setOpener(std::optional<std::pair<uint64_t, uint64_t>>&& opener) { m_opener = WTFMove(opener); }
+    const std::optional<std::pair<uint64_t, uint64_t>>& opener() const { return m_opener; }
+
 private:
     RefPtr<Document> m_sourceDocument;
     ResourceRequest m_resourceRequest;
@@ -81,6 +87,8 @@ private:
     RefPtr<Event> m_event;
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
     AtomicString m_downloadAttribute;
+    bool m_isCrossOriginWindowOpenNavigation { false };
+    std::optional<std::pair<uint64_t /* pageID */, uint64_t /* frameID */>> m_opener;
 };
 
 } // namespace WebCore

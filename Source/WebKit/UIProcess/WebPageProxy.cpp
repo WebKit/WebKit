@@ -2351,11 +2351,10 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
         ASSERT(activePolicyListener->listenerID() == listenerID);
 
         if (action == PolicyAction::Use && navigation) {
-            auto proposedProcess = process().processPool().processForNavigation(*this, navigation->request().url());
+            auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, action);
             if (proposedProcess.ptr() != &process()) {
                 LOG(Loading, "Switching to new process for navigation %" PRIu64 " to url '%s' (WebBackForwardListItem %p)", navigation->navigationID(), navigation->loggingURL().utf8().data(), navigation->backForwardListItem());
 
-                action = PolicyAction::Suspend;
                 RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
                     continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
                 });
@@ -3809,19 +3808,14 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     
     uint64_t newNavigationID { 0 };
     Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NavigationAction);
-    if (!navigationID) {
-        auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
-        newNavigationID = navigation->navigationID();
-        navigation->setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
-        navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
-        listener->setNavigation(WTFMove(navigation));
-    } else {
-        auto& navigation = m_navigationState->navigation(navigationID);
-        newNavigationID = navigationID;
-        navigation.setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
-        navigation.setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
-        listener->setNavigation(navigation);
-    }
+    Ref<API::Navigation> navigation = navigationID ? makeRef(m_navigationState->navigation(navigationID)) : m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
+
+    newNavigationID = navigation->navigationID();
+    navigation->setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
+    navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
+    navigation->setIsCrossOriginWindowOpenNavigation(navigationActionData.isCrossOriginWindowOpenNavigation);
+    navigation->setOpener(navigationActionData.opener);
+    listener->setNavigation(WTFMove(navigation));
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame->didHandleContentFilterUnblockNavigation(request))

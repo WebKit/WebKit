@@ -31,7 +31,7 @@
 
 namespace WebCore {
 enum class FrameLoadType;
-};
+}
 
 namespace WebKit {
 class WebBackForwardListItem;
@@ -75,6 +75,12 @@ public:
     void setShouldForceDownload(bool value) { m_shouldForceDownload = value; }
     bool shouldForceDownload() const { return m_shouldForceDownload; }
 
+    void setIsCrossOriginWindowOpenNavigation(bool value) { m_isCrossOriginWindowOpenNavigation = value; }
+    bool isCrossOriginWindowOpenNavigation() const { return m_isCrossOriginWindowOpenNavigation; }
+
+    void setOpener(const std::optional<std::pair<uint64_t, uint64_t>>& opener) { m_opener = opener; }
+    const std::optional<std::pair<uint64_t, uint64_t>>& opener() const { return m_opener; }
+
 #if !LOG_DISABLED
     WTF::String loggingURL() const;
 #endif
@@ -92,6 +98,8 @@ private:
 
     RefPtr<WebKit::WebBackForwardListItem> m_backForwardListItem;
     std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
+    bool m_isCrossOriginWindowOpenNavigation { false };
+    std::optional<std::pair<uint64_t, uint64_t>> m_opener;
 };
 
 } // namespace API
