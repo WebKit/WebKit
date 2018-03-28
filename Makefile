@@ -1,4 +1,10 @@
-MODULES = WebKitLibraries Source Tools
+TOOLS_MODULE = Tools
+
+ifneq (,$(DISABLE_WEBKIT_TOOLS))
+	TOOLS_MODULE =
+endif
+
+MODULES = WebKitLibraries Source $(TOOLS_MODULE)
 
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
