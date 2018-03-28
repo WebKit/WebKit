@@ -1,5 +1,23 @@
 2018-03-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Remove unnecessary USE(JSVALUE32_64) / USE(JSVALUE64)
+        https://bugs.webkit.org/show_bug.cgi?id=181292
+
+        Reviewed by Saam Barati.
+
+        By using JSValueRegs abstraction, we can simplify DFGSpeculativeJIT.cpp code.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::compilePutDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorByVal):
+
+2018-03-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Add Load16Z for B3 and use it in WebAssembly
         https://bugs.webkit.org/show_bug.cgi?id=165884
 
