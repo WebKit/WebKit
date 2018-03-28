@@ -1,3 +1,10 @@
+2018-03-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix typo in variable name
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCrossingNotifyEvent):
+
 2018-03-27  Per Arne Vollan  <pvollan@apple.com>
 
         The layout test fast/canvas/webgl/read-pixels-test.html is timing out.

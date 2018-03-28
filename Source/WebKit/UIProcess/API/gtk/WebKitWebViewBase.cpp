@@ -885,7 +885,7 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     return GDK_EVENT_PROPAGATE;
 }
 
-static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEventCrossing* crosssingEvent)
+static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEventCrossing* crossingEvent)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -902,8 +902,8 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
     gtk_widget_get_allocation(widget, &allocation);
     double width = allocation.width;
     double height = allocation.height;
-    double x = crosssingEvent->x;
-    double y = crosssingEvent->y;
+    double x = crossingEvent->x;
+    double y = crossingEvent->y;
     if (x < 0 && x > -1)
         x = -1;
     else if (x >= width && x < width + 1)
@@ -913,9 +913,9 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
     else if (y >= height && y < height + 1)
         y = height + 1;
 
-    GdkEvent* event = reinterpret_cast<GdkEvent*>(crosssingEvent);
+    GdkEvent* event = reinterpret_cast<GdkEvent*>(crossingEvent);
     GUniquePtr<GdkEvent> copiedEvent;
-    if (x != crosssingEvent->x || y != crosssingEvent->y) {
+    if (x != crossingEvent->x || y != crossingEvent->y) {
         copiedEvent.reset(gdk_event_copy(event));
         copiedEvent->crossing.x = x;
         copiedEvent->crossing.y = y;
