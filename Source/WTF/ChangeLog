@@ -1,3 +1,24 @@
+2018-03-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Assertions.h: VC doesn't support GCC extension ##__VA_ARGS__
+        https://bugs.webkit.org/show_bug.cgi?id=184076
+
+        Reviewed by Alex Christensen.
+
+        ##__VA_ARGS__ is used to define RELEASE_LOG, RELEASE_LOG_ERROR,
+        RELEASE_LOG_IF, RELEASE_LOG_ERROR_IF, RELEASE_LOG_WITH_LEVEL,
+        RELEASE_LOG_WITH_LEVEL_IF and RELEASE_LOG_INFO_IF.
+
+        A macro using ##__VA_ARGS__,
+
+          #define foo(format, ...) bar(format, ##__VA_ARGS__)
+
+        can be defined without ##__VA_ARGS__:
+
+          #define foo(...) bar(__VA_ARGS__)
+
+        * wtf/Assertions.h: Use __VA_ARGS__ instead of ##__VA_ARGS__.
+
 2018-03-28  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid uninitialized mach ports

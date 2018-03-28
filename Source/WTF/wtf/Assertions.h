@@ -447,31 +447,31 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 /* RELEASE_LOG */
 
 #if RELEASE_LOG_DISABLED
-#define RELEASE_LOG(      channel, format, ...) ((void)0)
-#define RELEASE_LOG_ERROR(channel, format, ...) LOG_ERROR(format, ##__VA_ARGS__)
+#define RELEASE_LOG(channel, ...) ((void)0)
+#define RELEASE_LOG_ERROR(channel, ...) LOG_ERROR(__VA_ARGS__)
 
-#define RELEASE_LOG_IF(      isAllowed, channel, format, ...) ((void)0)
-#define RELEASE_LOG_ERROR_IF(isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, format, ##__VA_ARGS__); } while (0)
+#define RELEASE_LOG_IF(isAllowed, channel, ...) ((void)0)
+#define RELEASE_LOG_ERROR_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, __VA_ARGS__); } while (0)
 
-#define RELEASE_LOG_WITH_LEVEL(              channel, level, format, ...) ((void)0)
-#define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, level, format, ...) do { if (isAllowed) RELEASE_LOG_WITH_LEVEL(channel, level, format, ##__VA_ARGS__); } while (0)
+#define RELEASE_LOG_WITH_LEVEL(channel, level, ...) ((void)0)
+#define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, level, ...) do { if (isAllowed) RELEASE_LOG_WITH_LEVEL(channel, level, __VA_ARGS__); } while (0)
 #else
-#define RELEASE_LOG(      channel, format, ...) os_log(      LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
-#define RELEASE_LOG_ERROR(channel, format, ...) os_log_error(LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
-#define RELEASE_LOG_INFO(channel, format, ...) os_log_info(LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__)
+#define RELEASE_LOG(channel, ...) os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
+#define RELEASE_LOG_ERROR(channel, ...) os_log_error(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
+#define RELEASE_LOG_INFO(channel, ...) os_log_info(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
 
-#define RELEASE_LOG_IF(      isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG(      channel, format, ##__VA_ARGS__); } while (0)
-#define RELEASE_LOG_ERROR_IF(isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, format, ##__VA_ARGS__); } while (0)
-#define RELEASE_LOG_INFO_IF(isAllowed, channel, format, ...) do { if (isAllowed) RELEASE_LOG_INFO(channel, format, ##__VA_ARGS__); } while (0)
+#define RELEASE_LOG_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG(      channel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_ERROR_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_ERROR(channel, __VA_ARGS__); } while (0)
+#define RELEASE_LOG_INFO_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_INFO(channel, __VA_ARGS__); } while (0)
 
-#define RELEASE_LOG_WITH_LEVEL(channel, logLevel, format, ...) do { \
+#define RELEASE_LOG_WITH_LEVEL(channel, logLevel, ...) do { \
     if (LOG_CHANNEL(channel).level >= (logLevel)) \
-        os_log(LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__); \
+        os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); \
 } while (0)
 
-#define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, logLevel, format, ...) do { \
+#define RELEASE_LOG_WITH_LEVEL_IF(isAllowed, channel, logLevel, ...) do { \
     if ((isAllowed) && LOG_CHANNEL(channel).level >= (logLevel)) \
-        os_log(LOG_CHANNEL(channel).osLogChannel, format, ##__VA_ARGS__); \
+        os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__); \
 } while (0)
 #endif
 
