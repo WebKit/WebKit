@@ -899,7 +899,12 @@ FloatSize WebPageProxy::availableScreenSize()
 {
     return WebCore::availableScreenSize();
 }
-    
+
+FloatSize WebPageProxy::overrideScreenSize()
+{
+    return WebCore::overrideScreenSize();
+}
+
 float WebPageProxy::textAutosizingWidth()
 {
     return WebCore::screenSize().width();

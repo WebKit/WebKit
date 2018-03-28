@@ -279,6 +279,7 @@ private:
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize() const final;
     WebCore::FloatSize availableScreenSize() const final;
+    WebCore::FloatSize overrideScreenSize() const final;
 #endif
 
     void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const final;

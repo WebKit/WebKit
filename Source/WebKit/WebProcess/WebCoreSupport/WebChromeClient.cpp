@@ -1021,6 +1021,11 @@ FloatSize WebChromeClient::availableScreenSize() const
     return m_page.availableScreenSize();
 }
 
+FloatSize WebChromeClient::overrideScreenSize() const
+{
+    return m_page.overrideScreenSize();
+}
+
 #endif
 
 void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& viewportArguments) const

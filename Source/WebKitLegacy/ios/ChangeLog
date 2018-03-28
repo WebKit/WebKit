@@ -1,3 +1,15 @@
+2018-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        Make it possible to override the screen size
+        https://bugs.webkit.org/show_bug.cgi?id=184111
+        <rdar://problem/38972181>
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::overrideScreenSize const):
+
 2018-03-25  Tim Horton  <timothy_horton@apple.com>
 
         Disable geolocation prompt in minimal simulator mode

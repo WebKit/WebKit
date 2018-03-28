@@ -144,6 +144,7 @@ struct WebPageCreationParameters {
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize;
     WebCore::FloatSize availableScreenSize;
+    WebCore::FloatSize overrideScreenSize;
     float textAutosizingWidth;
     bool ignoresViewportScaleLimits;
     WebCore::FloatSize viewportConfigurationMinimumLayoutSize;

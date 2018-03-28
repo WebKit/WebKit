@@ -87,6 +87,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(IOS)
     encoder << screenSize;
     encoder << availableScreenSize;
+    encoder << overrideScreenSize;
     encoder << textAutosizingWidth;
     encoder << ignoresViewportScaleLimits;
     encoder << viewportConfigurationMinimumLayoutSize;
@@ -244,6 +245,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.screenSize))
         return std::nullopt;
     if (!decoder.decode(parameters.availableScreenSize))
+        return std::nullopt;
+    if (!decoder.decode(parameters.overrideScreenSize))
         return std::nullopt;
     if (!decoder.decode(parameters.textAutosizingWidth))
         return std::nullopt;

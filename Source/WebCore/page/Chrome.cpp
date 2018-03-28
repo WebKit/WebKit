@@ -450,6 +450,11 @@ FloatSize Chrome::availableScreenSize() const
     return m_client.availableScreenSize();
 }
 
+FloatSize Chrome::overrideScreenSize() const
+{
+    return m_client.overrideScreenSize();
+}
+
 void Chrome::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
 #if PLATFORM(IOS)

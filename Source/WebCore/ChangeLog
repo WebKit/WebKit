@@ -1,3 +1,23 @@
+2018-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        Make it possible to override the screen size
+        https://bugs.webkit.org/show_bug.cgi?id=184111
+        <rdar://problem/38972181>
+
+        Reviewed by Tim Horton.
+
+        We just call screenSize() atm.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::overrideScreenSize const):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/HostWindow.h:
+        * platform/PlatformScreen.h:
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenRect):
+        (WebCore::overrideScreenSize):
+
 2018-03-28  Timothy Hatcher  <timothy@apple.com>
 
         Include the 'text' color keyword as a system color.

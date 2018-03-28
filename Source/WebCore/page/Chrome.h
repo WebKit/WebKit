@@ -91,6 +91,7 @@ public:
 
     FloatSize screenSize() const override;
     FloatSize availableScreenSize() const override;
+    FloatSize overrideScreenSize() const override;
 
     void scrollRectIntoView(const IntRect&) const;
 

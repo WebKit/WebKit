@@ -5869,6 +5869,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 #if PLATFORM(IOS)
     parameters.screenSize = screenSize();
     parameters.availableScreenSize = availableScreenSize();
+    parameters.overrideScreenSize = overrideScreenSize();
     parameters.textAutosizingWidth = textAutosizingWidth();
     parameters.mimeTypesWithCustomContentProviders = m_pageClient.mimeTypesWithCustomContentProviders();
     parameters.ignoresViewportScaleLimits = m_forceAlwaysUserScalable;

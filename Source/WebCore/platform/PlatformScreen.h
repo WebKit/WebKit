@@ -101,6 +101,7 @@ WEBCORE_EXPORT void setScreenProperties(const HashMap<PlatformDisplayID, ScreenP
 float screenPPIFactor();
 WEBCORE_EXPORT FloatSize screenSize();
 WEBCORE_EXPORT FloatSize availableScreenSize();
+WEBCORE_EXPORT FloatSize overrideScreenSize();
 WEBCORE_EXPORT float screenScaleFactor(UIScreen * = nullptr);
 
 #endif

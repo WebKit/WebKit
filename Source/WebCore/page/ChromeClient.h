@@ -185,6 +185,7 @@ public:
 
     virtual FloatSize screenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
     virtual FloatSize availableScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
+    virtual FloatSize overrideScreenSize() const { return const_cast<ChromeClient&>(*this).windowRect().size(); }
 
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const { }
 

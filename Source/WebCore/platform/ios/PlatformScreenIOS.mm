@@ -96,7 +96,7 @@ FloatRect screenRect(Widget* widget)
         CGRect screenRect = { CGPointZero, [window screenSize] };
         return enclosingIntRect(screenRect);
     }
-    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->screenSize()));
+    return enclosingIntRect(FloatRect(FloatPoint(), widget->root()->hostWindow()->overrideScreenSize()));
 }
 
 FloatRect screenAvailableRect(Widget* widget)
@@ -144,6 +144,11 @@ FloatSize availableScreenSize()
     if (deviceHasIPadCapability() && [[get_UIKit_UIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
     return FloatSize([get_UIKit_UIScreenClass() mainScreen].bounds.size);
+}
+
+FloatSize overrideScreenSize()
+{
+    return screenSize();
 }
 
 float screenScaleFactor(UIScreen *screen)

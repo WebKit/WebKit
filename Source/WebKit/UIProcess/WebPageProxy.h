@@ -1626,6 +1626,7 @@ private:
 #if PLATFORM(IOS)
     WebCore::FloatSize screenSize();
     WebCore::FloatSize availableScreenSize();
+    WebCore::FloatSize overrideScreenSize();
     float textAutosizingWidth();
 
     void dynamicViewportUpdateChangedTarget(double newTargetScale, const WebCore::FloatPoint& newScrollPosition, uint64_t dynamicViewportSizeUpdateID);
