@@ -2240,6 +2240,8 @@ webkit.org/b/183181 inspector/heap/getPreview.html [ Pass Timeout ]
 
 webkit.org/b/183186 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html [ Pass Timeout ]
 
+webkit.org/b/184080 animations/animation-iteration-event-destroy-renderer.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3307,6 +3309,15 @@ webkit.org/b/183611 media/context-menu-actions.html [ Failure ]
 webkit.org/b/183613 imported/w3c/web-platform-tests/media-source/interfaces.html [ Failure ]
 
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
+
+webkit.org/b/184080 animations/animation-direction-normal.html [ Failure ]
+webkit.org/b/184080 animations/animation-direction-reverse.html [ Failure ]
+webkit.org/b/184080 animations/change-keyframes.html [ Failure ]
+webkit.org/b/184080 animations/play-state-in-shorthand.html [ Failure ]
+webkit.org/b/184080 animations/transform-non-accelerated.html [ Failure ]
+
+webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
+webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
