@@ -314,6 +314,8 @@ TEST(ProcessSwap, Back)
     EXPECT_FALSE(pid1 == pid3);
 }
 
+#if PLATFORM(MAC)
+
 TEST(ProcessSwap, CrossOriginWindowOpenNoOpener)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -397,7 +399,7 @@ TEST(ProcessSwap, CrossOriginWindowOpenWithOpener)
     EXPECT_EQ(pid1, pid2);
 }
 
-TEST(ProcessSwap, SamOriginWindowOpenNoOpener)
+TEST(ProcessSwap, SameOriginWindowOpenNoOpener)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
@@ -435,5 +437,7 @@ TEST(ProcessSwap, SamOriginWindowOpenNoOpener)
 
     EXPECT_EQ(pid1, pid2);
 }
+
+#endif // PLATFORM(MAC)
 
 #endif // WK_API_ENABLED
