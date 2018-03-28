@@ -487,7 +487,7 @@ void KeyframeEffectReadOnly::copyPropertiesFromSource(Ref<KeyframeEffectReadOnly
             keyframeValue.addProperty(propertyId);
         keyframeList.insert(WTFMove(keyframeValue));
     }
-    m_blendingKeyframes = WTFMove(keyframeList);
+    setBlendingKeyframes(keyframeList);
 }
 
 Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
@@ -687,10 +687,133 @@ void KeyframeEffectReadOnly::updateBlendingKeyframes()
         keyframeList.insert(WTFMove(keyframeValue));
     }
 
-    m_blendingKeyframes = WTFMove(keyframeList);
+    setBlendingKeyframes(keyframeList);
+}
+
+void KeyframeEffectReadOnly::setBlendingKeyframes(KeyframeList& blendingKeyframes)
+{
+    m_blendingKeyframes = WTFMove(blendingKeyframes);
 
     computeStackingContextImpact();
+
+    checkForMatchingTransformFunctionLists();
+    checkForMatchingFilterFunctionLists();
+#if ENABLE(FILTERS_LEVEL_2)
+    checkForMatchingBackdropFilterFunctionLists();
+#endif
 }
+
+void KeyframeEffectReadOnly::checkForMatchingTransformFunctionLists()
+{
+    m_transformFunctionListsMatch = false;
+
+    if (m_blendingKeyframes.size() < 2 || !m_blendingKeyframes.containsProperty(CSSPropertyTransform))
+        return;
+
+    // Empty transforms match anything, so find the first non-empty entry as the reference.
+    size_t numKeyframes = m_blendingKeyframes.size();
+    size_t firstNonEmptyTransformKeyframeIndex = numKeyframes;
+
+    for (size_t i = 0; i < numKeyframes; ++i) {
+        const KeyframeValue& currentKeyframe = m_blendingKeyframes[i];
+        if (currentKeyframe.style()->transform().operations().size()) {
+            firstNonEmptyTransformKeyframeIndex = i;
+            break;
+        }
+    }
+
+    if (firstNonEmptyTransformKeyframeIndex == numKeyframes)
+        return;
+
+    const TransformOperations* firstVal = &m_blendingKeyframes[firstNonEmptyTransformKeyframeIndex].style()->transform();
+    for (size_t i = firstNonEmptyTransformKeyframeIndex + 1; i < numKeyframes; ++i) {
+        const KeyframeValue& currentKeyframe = m_blendingKeyframes[i];
+        const TransformOperations* val = &currentKeyframe.style()->transform();
+
+        // An empty transform list matches anything.
+        if (val->operations().isEmpty())
+            continue;
+
+        if (!firstVal->operationsMatch(*val))
+            return;
+    }
+
+    m_transformFunctionListsMatch = true;
+}
+
+void KeyframeEffectReadOnly::checkForMatchingFilterFunctionLists()
+{
+    m_filterFunctionListsMatch = false;
+
+    if (m_blendingKeyframes.size() < 2 || !m_blendingKeyframes.containsProperty(CSSPropertyFilter))
+        return;
+
+    // Empty filters match anything, so find the first non-empty entry as the reference.
+    size_t numKeyframes = m_blendingKeyframes.size();
+    size_t firstNonEmptyFilterKeyframeIndex = numKeyframes;
+
+    for (size_t i = 0; i < numKeyframes; ++i) {
+        if (m_blendingKeyframes[i].style()->filter().operations().size()) {
+            firstNonEmptyFilterKeyframeIndex = i;
+            break;
+        }
+    }
+
+    if (firstNonEmptyFilterKeyframeIndex == numKeyframes)
+        return;
+
+    auto& firstVal = m_blendingKeyframes[firstNonEmptyFilterKeyframeIndex].style()->filter();
+    for (size_t i = firstNonEmptyFilterKeyframeIndex + 1; i < numKeyframes; ++i) {
+        auto& value = m_blendingKeyframes[i].style()->filter();
+
+        // An empty filter list matches anything.
+        if (value.operations().isEmpty())
+            continue;
+
+        if (!firstVal.operationsMatch(value))
+            return;
+    }
+
+    m_filterFunctionListsMatch = true;
+}
+
+#if ENABLE(FILTERS_LEVEL_2)
+void KeyframeEffectReadOnly::checkForMatchingBackdropFilterFunctionLists()
+{
+    m_backdropFilterFunctionListsMatch = false;
+
+    if (m_blendingKeyframes.size() < 2 || !m_blendingKeyframes.containsProperty(CSSPropertyWebkitBackdropFilter))
+        return;
+
+    // Empty filters match anything, so find the first non-empty entry as the reference.
+    size_t numKeyframes = m_blendingKeyframes.size();
+    size_t firstNonEmptyFilterKeyframeIndex = numKeyframes;
+
+    for (size_t i = 0; i < numKeyframes; ++i) {
+        if (m_blendingKeyframes[i].style()->backdropFilter().operations().size()) {
+            firstNonEmptyFilterKeyframeIndex = i;
+            break;
+        }
+    }
+
+    if (firstNonEmptyFilterKeyframeIndex == numKeyframes)
+        return;
+
+    auto& firstVal = m_blendingKeyframes[firstNonEmptyFilterKeyframeIndex].style()->backdropFilter();
+    for (size_t i = firstNonEmptyFilterKeyframeIndex + 1; i < numKeyframes; ++i) {
+        auto& value = m_blendingKeyframes[i].style()->backdropFilter();
+
+        // An empty filter list matches anything.
+        if (value.operations().isEmpty())
+            continue;
+
+        if (!firstVal.operationsMatch(value))
+            return;
+    }
+
+    m_backdropFilterFunctionListsMatch = true;
+}
+#endif
 
 void KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes()
 {
@@ -714,9 +837,7 @@ void KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes()
             Style::loadPendingResources(*style, m_target->document(), m_target.get());
     }
 
-    m_blendingKeyframes = WTFMove(keyframeList);
-
-    computeStackingContextImpact();
+    setBlendingKeyframes(keyframeList);
 }
 
 void KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle)
@@ -743,9 +864,7 @@ void KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes(const RenderS
     toKeyframeValue.addProperty(property);
     keyframeList.insert(WTFMove(toKeyframeValue));
 
-    m_blendingKeyframes = WTFMove(keyframeList);
-
-    computeStackingContextImpact();
+    setBlendingKeyframes(keyframeList);
 }
 
 bool KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const
