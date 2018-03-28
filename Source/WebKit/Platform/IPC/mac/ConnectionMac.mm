@@ -186,7 +186,7 @@ bool Connection::open()
 
         auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
         if (kr != KERN_SUCCESS) {
-            LOG_ERROR("Could not allocate mach port, error %x", kr);
+            LOG_ERROR("Could not allocate mach port, error %x: %s", kr, mach_error_string(kr));
             CRASH();
         }
 #if !PLATFORM(WATCHOS)
@@ -533,7 +533,13 @@ void Connection::receiveSourceEventHandler()
         
         if (m_sendPort) {
             mach_port_t previousNotificationPort = MACH_PORT_NULL;
-            mach_port_request_notification(mach_task_self(), m_receivePort, MACH_NOTIFY_NO_SENDERS, 0, MACH_PORT_NULL, MACH_MSG_TYPE_MOVE_SEND_ONCE, &previousNotificationPort);
+            auto kr = mach_port_request_notification(mach_task_self(), m_receivePort, MACH_NOTIFY_NO_SENDERS, 0, MACH_PORT_NULL, MACH_MSG_TYPE_MOVE_SEND_ONCE, &previousNotificationPort);
+            ASSERT(kr == KERN_SUCCESS);
+            if (kr != KERN_SUCCESS) {
+                // If mach_port_request_notification fails, 'previousNotificationPort' will be uninitialized.
+                LOG_ERROR("mach_port_request_notification failed: (%x) %s", kr, mach_error_string(kr));
+                previousNotificationPort = MACH_PORT_NULL;
+            }
 
             if (previousNotificationPort != MACH_PORT_NULL)
                 mach_port_deallocate(mach_task_self(), previousNotificationPort);

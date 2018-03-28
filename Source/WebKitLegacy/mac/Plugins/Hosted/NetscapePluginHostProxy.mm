@@ -111,10 +111,16 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     m_deadNameNotificationPort = adoptCF(CFMachPortCreate(0, deadNameNotificationCallback, &context, 0));
 
     mach_port_t previous = MACH_PORT_NULL;
-    mach_port_request_notification(mach_task_self(), pluginHostPort, MACH_NOTIFY_DEAD_NAME, 0, 
-                                   CFMachPortGetPort(m_deadNameNotificationPort.get()), MACH_MSG_TYPE_MAKE_SEND_ONCE, &previous);
+    auto kr = mach_port_request_notification(mach_task_self(), pluginHostPort, MACH_NOTIFY_DEAD_NAME, 0,
+        CFMachPortGetPort(m_deadNameNotificationPort.get()), MACH_MSG_TYPE_MAKE_SEND_ONCE, &previous);
     ASSERT(previous == MACH_PORT_NULL);
-    
+    ASSERT(kr == KERN_SUCCESS);
+    if (kr != KERN_SUCCESS) {
+        // If mach_port_request_notification fails, 'previous' will be uninitialized.
+        LOG_ERROR("mach_port_request_notification failed: (%x) %s", kr, mach_error_string(kr));
+        previous = MACH_PORT_NULL;
+    }
+
     RetainPtr<CFRunLoopSourceRef> deathPortSource = adoptCF(CFMachPortCreateRunLoopSource(0, m_deadNameNotificationPort.get(), 0));
     
     CFRunLoopAddSource(CFRunLoopGetCurrent(), deathPortSource.get(), kCFRunLoopDefaultMode);
@@ -284,7 +290,7 @@ bool NetscapePluginHostProxy::processRequests()
     if (!m_portSet) {
         auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_PORT_SET, &m_portSet);
         if (kr != KERN_SUCCESS) {
-            LOG_ERROR("Could not allocate mach port, error %x", kr);
+            LOG_ERROR("Could not allocate mach port, error %x: %s", kr, mach_error_string(kr));
             CRASH();
         }
         mach_port_insert_member(mach_task_self(), m_clientPort, m_portSet);
@@ -298,7 +304,7 @@ bool NetscapePluginHostProxy::processRequests()
     kern_return_t kr = mach_msg(msg, MACH_RCV_MSG, 0, sizeof(buffer), m_portSet, 0, MACH_PORT_NULL);
     
     if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Could not receive mach message, error %x", kr);
+        LOG_ERROR("Could not receive mach message, error %x: %s", kr, mach_error_string(kr));
         s_processingRequests--;
         return false;
     }
@@ -311,7 +317,7 @@ bool NetscapePluginHostProxy::processRequests()
             kr = mach_msg(replyHeader, MACH_SEND_MSG, replyHeader->msgh_size, 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
             
             if (kr != KERN_SUCCESS) {
-                LOG_ERROR("Could not send mach message, error %x", kr);
+                LOG_ERROR("Could not send mach message, error %x: %s", kr, mach_error_string(kr));
                 s_processingRequests--;
                 return false;
             }

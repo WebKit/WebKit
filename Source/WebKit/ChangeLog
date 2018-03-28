@@ -1,3 +1,20 @@
+2018-03-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Protect against invalid mach ports returned by mach_port_request_notification
+        https://bugs.webkit.org/show_bug.cgi?id=184106
+        <rdar://problem/37865316>
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::Identifier::Identifier): Use default initializer syntax.
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::open): Drive-by-fix: Include formatted mach error message in logging.
+        (IPC::Connection::receiveSourceEventHandler): Check return value from 'mach_port_request_notification'
+        and clean up if it experienced an error.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Ditto.
+
 2018-03-28  Dean Jackson  <dino@apple.com>
 
         WKWebViewContentProvider shouldn't be a UIScrollViewDelegate

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
@@ -116,7 +116,6 @@ public:
 #elif OS(DARWIN)
     struct Identifier {
         Identifier()
-            : port(MACH_PORT_NULL)
         {
         }
 
@@ -131,7 +130,7 @@ public:
         {
         }
 
-        mach_port_t port;
+        mach_port_t port { MACH_PORT_NULL };
         OSObjectPtr<xpc_connection_t> xpcConnection;
     };
     static bool identifierIsNull(Identifier identifier) { return identifier.port == MACH_PORT_NULL; }
