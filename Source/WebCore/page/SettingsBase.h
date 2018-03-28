@@ -114,14 +114,19 @@ public:
 
     WEBCORE_EXPORT static bool defaultTextAutosizingEnabled();
     WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
-    WEBCORE_EXPORT static float defaultOneLineTextMultiplierCoefficient();
-    WEBCORE_EXPORT static float defaultMultiLineTextMultiplierCoefficient();
-    WEBCORE_EXPORT static float defaultMaxTextAutosizingScaleIncrease();
     WEBCORE_EXPORT static bool defaultDownloadableBinaryFontsEnabled();
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;
 
+#if ENABLE(TEXT_AUTOSIZING)
+    constexpr static const float boostedOneLineTextMultiplierCoefficient = 2.23125f;
+    constexpr static const float boostedMultiLineTextMultiplierCoefficient = 2.48125f;
+    constexpr static const float boostedMaxTextAutosizingScaleIncrease = 5.0f;
+    constexpr static const float defaultOneLineTextMultiplierCoefficient = 1.7f;
+    constexpr static const float defaultMultiLineTextMultiplierCoefficient = 1.95f;
+    constexpr static const float defaultMaxTextAutosizingScaleIncrease = 1.7f;
+#endif
 
     WEBCORE_EXPORT void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
@@ -149,6 +154,12 @@ public:
 
     WEBCORE_EXPORT void setLayoutInterval(Seconds);
     Seconds layoutInterval() const { return m_layoutInterval; }
+
+#if ENABLE(TEXT_AUTOSIZING)
+    float oneLineTextMultiplierCoefficient() const { return m_oneLineTextMultiplierCoefficient; }
+    float multiLineTextMultiplierCoefficient() const { return m_multiLineTextMultiplierCoefficient; }
+    float maxTextAutosizingScaleIncrease() const { return m_maxTextAutosizingScaleIncrease; }
+#endif
 
     WEBCORE_EXPORT static const String& defaultMediaContentTypesRequiringHardwareSupport();
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>&);
@@ -178,6 +189,9 @@ protected:
     void hiddenPageDOMTimerThrottlingStateChanged();
     void hiddenPageCSSAnimationSuspensionEnabledChanged();
     void resourceUsageOverlayVisibleChanged();
+#if ENABLE(TEXT_AUTOSIZING)
+    void shouldEnableTextAutosizingBoostChanged();
+#endif
 
     Page* m_page;
 
@@ -188,6 +202,12 @@ protected:
     Timer m_setImageLoadingSettingsTimer;
 
     Vector<ContentType> m_mediaContentTypesRequiringHardwareSupport;
+
+#if ENABLE(TEXT_AUTOSIZING)
+    float m_oneLineTextMultiplierCoefficient { defaultOneLineTextMultiplierCoefficient };
+    float m_multiLineTextMultiplierCoefficient { defaultMultiLineTextMultiplierCoefficient };
+    float m_maxTextAutosizingScaleIncrease { defaultMaxTextAutosizingScaleIncrease };
+#endif
 };
 
 } // namespace WebCore

@@ -1038,6 +1038,11 @@ VisibleDebugOverlayRegions:
   defaultValue: 0
   category: debug
 
+ShouldEnableTextAutosizingBoost:
+  type: bool
+  defaultValue: false
+  condition: ENABLE(TEXT_AUTOSIZING)
+
 ShouldAllowUserInstalledFonts:
   type: bool
   defaultValue: true

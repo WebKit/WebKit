@@ -134,6 +134,8 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 - (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
+@property (nonatomic, setter=_setShouldEnableTextAutosizingBoost:) BOOL _shouldEnableTextAutosizingBoost WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setJavaEnabledForLocalFiles:) BOOL _javaEnabledForLocalFiles WK_API_AVAILABLE(macosx(WK_MAC_TBA));

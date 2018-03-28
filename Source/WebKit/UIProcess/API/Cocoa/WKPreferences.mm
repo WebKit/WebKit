@@ -1229,6 +1229,22 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->domPasteAllowed();
 }
 
+- (void)_setShouldEnableTextAutosizingBoost:(BOOL)shouldEnableTextAutosizingBoost
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    _preferences->setShouldEnableTextAutosizingBoost(shouldEnableTextAutosizingBoost);
+#endif
+}
+
+- (BOOL)_shouldEnableTextAutosizingBoost
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    return _preferences->shouldEnableTextAutosizingBoost();
+#else
+    return NO;
+#endif
+}
+
 @end
 
 #endif // WK_API_ENABLED

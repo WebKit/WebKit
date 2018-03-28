@@ -754,6 +754,7 @@
 		F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */; };
 		F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44D06461F395C4D001A0E29 /* EditorStateTests.mm */; };
 		F44D064A1F3962F2001A0E29 /* EditingTestHarness.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */; };
+		F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */; };
 		F4512E131F60C44600BB369E /* DataTransferItem-getAsEntry.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4512E121F60C43400BB369E /* DataTransferItem-getAsEntry.html */; };
 		F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4517B662054C49500C26721 /* TestWKWebViewController.mm */; };
 		F4517B7F2055101B00C26721 /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4517B692054E0AC00C26721 /* ClassMethodSwizzler.mm */; };
@@ -1902,6 +1903,7 @@
 		F44D06461F395C4D001A0E29 /* EditorStateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorStateTests.mm; sourceTree = "<group>"; };
 		F44D06481F3962E3001A0E29 /* EditingTestHarness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingTestHarness.h; sourceTree = "<group>"; };
 		F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditingTestHarness.mm; sourceTree = "<group>"; };
+		F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextAutosizingBoost.mm; sourceTree = "<group>"; };
 		F4512E121F60C43400BB369E /* DataTransferItem-getAsEntry.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "DataTransferItem-getAsEntry.html"; sourceTree = "<group>"; };
 		F4517B652054C49500C26721 /* TestWKWebViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestWKWebViewController.h; sourceTree = "<group>"; };
 		F4517B662054C49500C26721 /* TestWKWebViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestWKWebViewController.mm; sourceTree = "<group>"; };
@@ -2350,6 +2352,7 @@
 				574F55CE204D3763002948C6 /* LocalAuthenticator.mm */,
 				7560917719259C59009EF06E /* MemoryCacheAddImageToCacheIOS.mm */,
 				F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */,
+				F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */,
 				F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */,
 				2E1B881E2040EE5300FFF6A9 /* ViewportSizingTests.mm */,
 				514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */,
@@ -3710,6 +3713,7 @@
 				7CCE7EAE1A411A3400447C4C /* TestsController.cpp in Sources */,
 				2EFF06D41D8AEDBB0004BB30 /* TestWKWebView.mm in Sources */,
 				F4517B672054C49500C26721 /* TestWKWebViewController.mm in Sources */,
+				F45033F5206BEC95009351CE /* TextAutosizingBoost.mm in Sources */,
 				93E6193B1F931B3A00AF245E /* TextCodec.cpp in Sources */,
 				CE3524F91B1441C40028A7C5 /* TextFieldDidBeginAndEndEditing.cpp in Sources */,
 				7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */,

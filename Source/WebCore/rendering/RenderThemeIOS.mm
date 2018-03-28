@@ -1803,7 +1803,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
 String RenderThemeIOS::extraDefaultStyleSheet()
 {
-    return ASCIILiteral("* { -webkit-text-size-adjust: auto !important; -webkit-hyphens: auto !important; }");
+    return ASCIILiteral("* { -webkit-text-size-adjust: auto; -webkit-hyphens: auto !important; }");
 }
 
 #endif

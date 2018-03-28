@@ -715,20 +715,11 @@ touchEventEmulationEnabled:
   getter: isTouchEventEmulationEnabled
   conditional: TOUCH_EVENTS
 
-oneLineTextMultiplierCoefficient:
-  type: float
-  initial: defaultOneLineTextMultiplierCoefficient()
+shouldEnableTextAutosizingBoost:
+  type: bool
+  initial: false
   conditional: TEXT_AUTOSIZING
-
-multiLineTextMultiplierCoefficient:
-  type: float
-  initial: defaultMultiLineTextMultiplierCoefficient()
-  conditional: TEXT_AUTOSIZING
-
-maxTextAutosizingScaleIncrease:
-  type: float
-  initial: defaultMaxTextAutosizingScaleIncrease()
-  conditional: TEXT_AUTOSIZING
+  onChange: shouldEnableTextAutosizingBoostChanged
 
 mediaCapabilitiesEnabled:
   initial: false
