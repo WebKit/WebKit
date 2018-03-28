@@ -1,3 +1,18 @@
+2018-03-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Multiple select appearance doesn't update when selecting or deselecting rows in the picker view
+        https://bugs.webkit.org/show_bug.cgi?id=184110
+        <rdar://problem/38796648>
+
+        Reviewed by Tim Horton.
+
+        Adds a new layout test to verify that after tapping on a multiple select and choosing an option, the select's
+        renderer is updated to reflect its new state.
+
+        * fast/forms/ios/ipad/multiple-select-updates-renderer-expected.txt: Added.
+        * fast/forms/ios/ipad/multiple-select-updates-renderer.html: Added.
+        * resources/basic-gestures.js:
+
 2018-03-28  Per Arne Vollan  <pvollan@apple.com>
 
         Mark http/tests/preload/download_resources.html as a flaky crash on Windows.

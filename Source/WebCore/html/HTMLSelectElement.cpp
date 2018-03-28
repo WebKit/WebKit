@@ -117,6 +117,8 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
     if (!usesMenuList()) {
         updateSelectedState(optionToListIndex(optionIndex), allowMultipleSelection, false);
         updateValidity();
+        if (auto* renderer = this->renderer())
+            renderer->updateFromElement();
         if (fireOnChangeNow)
             listBoxOnChange();
         return;

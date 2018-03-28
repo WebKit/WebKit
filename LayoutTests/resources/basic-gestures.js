@@ -140,6 +140,12 @@ function touchAndDragFromPointToPoint(startX, startY, endX, endY)
     });
 }
 
+function selectFormAccessoryPickerRow(rowIndex)
+{
+    const selectRowScript = `(() => uiController.selectFormAccessoryPickerRow(${rowIndex}))()`;
+    return new Promise(resolve => testRunner.runUIScript(selectRowScript, resolve));
+}
+
 function holdAtPoint(x, y)
 {
     return new Promise(resolve => {
