@@ -1320,3 +1320,5 @@ webkit.org/b/182144 [ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.
 webkit.org/b/182849 imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Pass Failure ]
 
 webkit.org/b/183714 [ Debug ] http/tests/storageAccess/grant-storage-access-under-opener.html [ Skip ]
+
+webkit.org/b/183860 [ Release ] http/wpt/service-workers/third-party-registration.html [ Skip ]

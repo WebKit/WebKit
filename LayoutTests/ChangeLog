@@ -1,3 +1,13 @@
+2018-03-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip http/wpt/service-workers/third-party-registration.html.
+        https://bugs.webkit.org/show_bug.cgi?id=183860
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-03-27  Youenn Fablet  <youenn@apple.com>
 
         Move request checking out of PingLoad for future reuse in NetworkLoad

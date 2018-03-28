@@ -888,3 +888,5 @@ webkit.org/b/182176 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/183869 [ HighSierra+ ] media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Pass Failure ]
 
 webkit.org/b/183879 [ Debug ] fast/scrolling/latching/scroll-div-no-latching.html [ Pass Failure ]
+
+webkit.org/b/183860 [ Sierra Release ] http/wpt/service-workers/third-party-registration.html [ Skip ]
