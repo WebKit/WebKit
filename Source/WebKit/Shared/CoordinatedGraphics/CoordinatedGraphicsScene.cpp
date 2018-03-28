@@ -380,36 +380,9 @@ void CoordinatedGraphicsScene::updateTilesIfNeeded(TextureMapperLayer* layer, co
     for (auto& tile : state.tilesToUpdate) {
         const SurfaceUpdateInfo& surfaceUpdateInfo = tile.updateInfo;
 
-        auto surfaceIt = m_surfaces.find(surfaceUpdateInfo.atlasID);
-        ASSERT(surfaceIt != m_surfaces.end());
-
-        backingStore->updateTile(tile.tileID, surfaceUpdateInfo.updateRect, tile.tileRect, surfaceIt->value.copyRef(), surfaceUpdateInfo.surfaceOffset);
+        backingStore->updateTile(tile.tileID, surfaceUpdateInfo.updateRect, tile.tileRect, surfaceUpdateInfo.buffer.copyRef(), { 0, 0 });
         commitScope.backingStoresWithPendingBuffers.add(backingStore);
     }
-}
-
-void CoordinatedGraphicsScene::syncUpdateAtlases(const CoordinatedGraphicsState& state)
-{
-    for (auto& atlas : state.updateAtlasesToCreate)
-        createUpdateAtlas(atlas.first, atlas.second.copyRef());
-}
-
-void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, RefPtr<Nicosia::Buffer>&& buffer)
-{
-    ASSERT(!m_surfaces.contains(atlasID));
-    m_surfaces.add(atlasID, WTFMove(buffer));
-}
-
-void CoordinatedGraphicsScene::removeUpdateAtlas(uint32_t atlasID)
-{
-    ASSERT(m_surfaces.contains(atlasID));
-    m_surfaces.remove(atlasID);
-}
-
-void CoordinatedGraphicsScene::releaseUpdateAtlases(const Vector<uint32_t>& atlasesToRemove)
-{
-    for (auto& atlas : atlasesToRemove)
-        removeUpdateAtlas(atlas);
 }
 
 void CoordinatedGraphicsScene::syncImageBackings(const CoordinatedGraphicsState& state, CommitScope& commitScope)
@@ -495,7 +468,6 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
         setRootLayerID(state.rootCompositingLayer);
 
     syncImageBackings(state, commitScope);
-    syncUpdateAtlases(state);
 
     for (auto& layer : state.layersToUpdate)
         setLayerState(layer.first, layer.second, commitScope);
@@ -531,7 +503,6 @@ void CoordinatedGraphicsScene::purgeGLResources()
         proxy->invalidate();
     m_platformLayerProxies.clear();
 #endif
-    m_surfaces.clear();
 
     m_rootLayer = nullptr;
     m_rootLayerID = InvalidCoordinatedLayerID;

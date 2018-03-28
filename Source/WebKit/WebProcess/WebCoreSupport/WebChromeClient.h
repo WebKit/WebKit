@@ -111,7 +111,6 @@ private:
 
 #if USE(COORDINATED_GRAPHICS)
     void delegatedScrollRequested(const WebCore::IntPoint& scrollOffset) final;
-    void resetUpdateAtlasForTesting() final;
 #endif
 
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const final;

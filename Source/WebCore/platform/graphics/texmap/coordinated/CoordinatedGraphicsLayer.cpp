@@ -977,20 +977,17 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
             auto& tileRect = tile.rect();
             auto& dirtyRect = tile.dirtyRect();
 
+            auto coordinatedBuffer = Nicosia::Buffer::create(dirtyRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
             SurfaceUpdateInfo updateInfo;
-            IntRect targetRect;
-            auto coordinatedBuffer = m_coordinator->getCoordinatedBuffer(dirtyRect.size(),
-                contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha,
-                updateInfo.atlasID, targetRect);
+            updateInfo.updateRect = dirtyRect;
+            updateInfo.updateRect.move(-tileRect.x(), -tileRect.y());
+            updateInfo.buffer = coordinatedBuffer.copyRef();
 
             if (!m_coordinator->paintingEngine().paint(*this, WTFMove(coordinatedBuffer),
                 dirtyRect, m_mainBackingStore->mapToContents(dirtyRect),
-                targetRect, m_mainBackingStore->contentsScale()))
+                IntRect { { 0, 0 }, dirtyRect.size() }, m_mainBackingStore->contentsScale()))
                 continue;
 
-            updateInfo.surfaceOffset = targetRect.location();
-            updateInfo.updateRect = dirtyRect;
-            updateInfo.updateRect.move(-tileRect.x(), -tileRect.y());
             updateTile(tile.tileID(), updateInfo, tileRect);
 
             tile.markClean();

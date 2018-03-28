@@ -195,7 +195,6 @@ void ThreadedCompositor::renderLayerTree()
     bool drawsBackground;
     bool needsResize;
     Vector<WebCore::CoordinatedGraphicsState> states;
-    Vector<uint32_t> atlasesToRemove;
 
     {
         LockHolder locker(m_attributes.lock);
@@ -206,7 +205,6 @@ void ThreadedCompositor::renderLayerTree()
         needsResize = m_attributes.needsResize;
 
         states = WTFMove(m_attributes.states);
-        atlasesToRemove = WTFMove(m_attributes.atlasesToRemove);
 
         if (!states.isEmpty()) {
             // Client has to be notified upon finishing this scene update.
@@ -241,7 +239,6 @@ void ThreadedCompositor::renderLayerTree()
     }
 
     m_scene->applyStateChanges(states);
-    m_scene->releaseUpdateAtlases(atlasesToRemove);
     m_scene->paintToCurrentGLContext(viewportTransform, 1, FloatRect { FloatPoint { }, viewportSize },
         Color::transparent, !drawsBackground, scrollPosition, m_paintFlags);
 
@@ -290,13 +287,6 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 {
     LockHolder locker(m_attributes.lock);
     m_attributes.states.append(state);
-    m_compositingRunLoop->scheduleUpdate();
-}
-
-void ThreadedCompositor::releaseUpdateAtlases(const Vector<uint32_t>& atlasesToRemove)
-{
-    LockHolder locker(m_attributes.lock);
-    m_attributes.atlasesToRemove.appendVector(atlasesToRemove);
     m_compositingRunLoop->scheduleUpdate();
 }
 

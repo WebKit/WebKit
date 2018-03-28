@@ -23,6 +23,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "IntRect.h"
+#include "NicosiaBuffer.h"
 
 namespace WebCore {
 
@@ -34,11 +35,8 @@ public:
     // The rect to be updated.
     IntRect updateRect;
 
-    // The id of the update atlas including the shareable bitmap containing the updates.
-    uint32_t atlasID { 0 };
-
-    // The offset in the bitmap where the rendered contents are.
-    IntPoint surfaceOffset;
+    // The buffer where the tile has been rendered
+    RefPtr<Nicosia::Buffer> buffer;
 };
 
 } // namespace WebCore

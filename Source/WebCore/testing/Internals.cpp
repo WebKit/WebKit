@@ -431,7 +431,6 @@ void Internals::resetToConsistentState(Page& page)
         mainFrameView->setFixedLayoutSize(IntSize());
 #if USE(COORDINATED_GRAPHICS)
         mainFrameView->setFixedVisibleContentRect(IntRect());
-        page.chrome().client().resetUpdateAtlasForTesting();
 #endif
         if (auto* backing = mainFrameView->tiledBacking())
             backing->setTileSizeUpdateDelayDisabledForTesting(false);

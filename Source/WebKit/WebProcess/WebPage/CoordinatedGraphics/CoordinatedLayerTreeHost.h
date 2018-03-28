@@ -57,8 +57,6 @@ protected:
     void deviceOrPageScaleFactorChanged() override;
     void pageBackgroundTransparencyChanged() override;
 
-    void clearUpdateAtlases() override;
-
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     void renderNextFrame();
 
@@ -72,7 +70,6 @@ protected:
     void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
     void notifyFlushRequired() override { scheduleLayerFlush(); };
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
-    void releaseUpdateAtlases(const Vector<uint32_t>&) override { };
 
 private:
     void layerFlushTimerFired();

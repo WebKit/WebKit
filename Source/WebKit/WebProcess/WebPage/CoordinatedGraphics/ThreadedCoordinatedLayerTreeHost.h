@@ -113,7 +113,6 @@ private:
     // CompositingCoordinator::Client
     void didFlushRootLayer(const WebCore::FloatRect&) override { }
     void commitSceneState(const WebCore::CoordinatedGraphicsState&) override;
-    void releaseUpdateAtlases(const Vector<uint32_t>&) override;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;

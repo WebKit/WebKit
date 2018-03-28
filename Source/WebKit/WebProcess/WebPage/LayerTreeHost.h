@@ -89,7 +89,6 @@ public:
 #if USE(COORDINATED_GRAPHICS)
     virtual void scheduleAnimation() = 0;
     virtual void setIsDiscardable(bool) { };
-    virtual void clearUpdateAtlases() = 0;
 #endif
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)

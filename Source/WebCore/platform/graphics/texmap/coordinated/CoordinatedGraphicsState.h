@@ -189,8 +189,6 @@ struct CoordinatedGraphicsState {
     Vector<CoordinatedImageBackingID> imagesToRemove;
     Vector<std::pair<CoordinatedImageBackingID, RefPtr<Nicosia::Buffer>>> imagesToUpdate;
     Vector<CoordinatedImageBackingID> imagesToClear;
-
-    Vector<std::pair<uint32_t /* atlasID */, RefPtr<Nicosia::Buffer>>> updateAtlasesToCreate;
 };
 
 } // namespace WebCore

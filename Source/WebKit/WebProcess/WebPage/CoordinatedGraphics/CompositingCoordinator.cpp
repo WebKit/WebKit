@@ -51,11 +51,7 @@ CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinato
     : m_page(page)
     , m_client(client)
     , m_paintingEngine(Nicosia::PaintingEngine::create())
-    , m_releaseInactiveAtlasesTimer(RunLoop::main(), this, &CompositingCoordinator::releaseInactiveAtlasesTimerFired)
 {
-#if USE(GLIB_EVENT_LOOP)
-    m_releaseInactiveAtlasesTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
-#endif
 }
 
 CompositingCoordinator::~CompositingCoordinator()
@@ -138,10 +134,6 @@ bool CompositingCoordinator::flushPendingLayerChanges()
 
         m_client.commitSceneState(m_state);
 
-        if (!m_atlasesToRemove.isEmpty())
-            m_client.releaseUpdateAtlases(m_atlasesToRemove);
-        m_atlasesToRemove.clear();
-
         clearPendingStateChanges();
         m_shouldSyncFrame = false;
     }
@@ -179,8 +171,6 @@ void CompositingCoordinator::clearPendingStateChanges()
     m_state.imagesToRemove.clear();
     m_state.imagesToUpdate.clear();
     m_state.imagesToClear.clear();
-
-    m_state.updateAtlasesToCreate.clear();
 }
 
 void CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
@@ -285,18 +275,6 @@ std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(Graph
     return std::unique_ptr<GraphicsLayer>(layer);
 }
 
-void CompositingCoordinator::createUpdateAtlas(UpdateAtlas::ID id, Ref<Nicosia::Buffer>&& buffer)
-{
-    m_state.updateAtlasesToCreate.append(std::make_pair(id, WTFMove(buffer)));
-}
-
-void CompositingCoordinator::removeUpdateAtlas(UpdateAtlas::ID id)
-{
-    if (m_isPurging)
-        return;
-    m_atlasesToRemove.append(id);
-}
-
 FloatRect CompositingCoordinator::visibleContentsRect() const
 {
     return m_visibleContentsRect;
@@ -356,8 +334,6 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 
 void CompositingCoordinator::renderNextFrame()
 {
-    for (auto& atlas : m_updateAtlases)
-        atlas->didSwapBuffers();
 }
 
 void CompositingCoordinator::purgeBackingStores()
@@ -368,91 +344,11 @@ void CompositingCoordinator::purgeBackingStores()
         registeredLayer->purgeBackingStores();
 
     m_imageBackings.clear();
-    m_updateAtlases.clear();
-}
-
-Ref<Nicosia::Buffer> CompositingCoordinator::getCoordinatedBuffer(const IntSize& size, Nicosia::Buffer::Flags flags, uint32_t& atlasID, IntRect& allocatedRect)
-{
-    for (auto& atlas : m_updateAtlases) {
-        if (atlas->supportsAlpha() == (flags & Nicosia::Buffer::SupportsAlpha)) {
-            if (auto buffer = atlas->getCoordinatedBuffer(size, atlasID, allocatedRect))
-                return *buffer;
-        }
-    }
-
-    static const IntSize s_atlasSize { 1024, 1024 }; // This should be a square.
-    m_updateAtlases.append(std::make_unique<UpdateAtlas>(*this, s_atlasSize, flags));
-    scheduleReleaseInactiveAtlases();
-
-    // Specified size should always fit into a newly-created UpdateAtlas and a non-null
-    // CoordinatedBuffer value should be returned from UpdateAtlas::getCoordinatedBuffer().
-    // We use a RELEASE_ASSERT() to stop any malfunctioning at the earliest point.
-    auto buffer = m_updateAtlases.last()->getCoordinatedBuffer(size, atlasID, allocatedRect);
-    RELEASE_ASSERT(buffer);
-    return *buffer;
 }
 
 Nicosia::PaintingEngine& CompositingCoordinator::paintingEngine()
 {
     return *m_paintingEngine;
-}
-
-const Seconds releaseInactiveAtlasesTimerInterval { 500_ms };
-
-void CompositingCoordinator::scheduleReleaseInactiveAtlases()
-{
-    if (!m_releaseInactiveAtlasesTimer.isActive())
-        m_releaseInactiveAtlasesTimer.startRepeating(releaseInactiveAtlasesTimerInterval);
-}
-
-void CompositingCoordinator::releaseInactiveAtlasesTimerFired()
-{
-    releaseAtlases(MemoryPressureHandler::singleton().isUnderMemoryPressure() ? ReleaseUnused : ReleaseInactive);
-}
-
-void CompositingCoordinator::releaseAtlases(ReleaseAtlasPolicy policy)
-{
-    // We always want to keep one atlas for root contents layer.
-    std::unique_ptr<UpdateAtlas> atlasToKeepAnyway;
-    bool foundActiveAtlasForRootContentsLayer = false;
-    for (int i = m_updateAtlases.size() - 1;  i >= 0; --i) {
-        UpdateAtlas* atlas = m_updateAtlases[i].get();
-        bool inUse = atlas->isInUse();
-        if (!inUse)
-            atlas->addTimeInactive(releaseInactiveAtlasesTimerInterval.value());
-        bool usableForRootContentsLayer = !atlas->supportsAlpha();
-        if (atlas->isInactive() || (!inUse && policy == ReleaseUnused)) {
-            if (!foundActiveAtlasForRootContentsLayer && !atlasToKeepAnyway && usableForRootContentsLayer)
-                atlasToKeepAnyway = WTFMove(m_updateAtlases[i]);
-            m_updateAtlases.remove(i);
-        } else if (usableForRootContentsLayer)
-            foundActiveAtlasForRootContentsLayer = true;
-    }
-
-    if (!foundActiveAtlasForRootContentsLayer && atlasToKeepAnyway)
-        m_updateAtlases.append(atlasToKeepAnyway.release());
-
-    m_updateAtlases.shrinkToFit();
-
-    if (m_updateAtlases.size() <= 1)
-        m_releaseInactiveAtlasesTimer.stop();
-
-    if (!m_atlasesToRemove.isEmpty())
-        m_client.releaseUpdateAtlases(m_atlasesToRemove);
-    m_atlasesToRemove.clear();
-}
-
-void CompositingCoordinator::clearUpdateAtlases()
-{
-    if (m_isPurging)
-        return;
-
-    m_releaseInactiveAtlasesTimer.stop();
-    m_updateAtlases.clear();
-
-    if (!m_atlasesToRemove.isEmpty())
-        m_client.releaseUpdateAtlases(m_atlasesToRemove);
-    m_atlasesToRemove.clear();
 }
 
 } // namespace WebKit

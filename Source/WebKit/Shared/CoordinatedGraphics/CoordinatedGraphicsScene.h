@@ -87,8 +87,6 @@ public:
     void setViewBackgroundColor(const WebCore::Color& color) { m_viewBackgroundColor = color; }
     WebCore::Color viewBackgroundColor() const { return m_viewBackgroundColor; }
 
-    void releaseUpdateAtlases(const Vector<uint32_t>&);
-
 private:
     struct CommitScope {
         CommitScope() = default;
@@ -111,10 +109,6 @@ private:
     void setLayerAnimationsIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
     void syncPlatformLayerIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
     void setLayerRepaintCountIfNeeded(WebCore::TextureMapperLayer*, const WebCore::CoordinatedGraphicsLayerState&);
-
-    void syncUpdateAtlases(const WebCore::CoordinatedGraphicsState&);
-    void createUpdateAtlas(uint32_t atlasID, RefPtr<Nicosia::Buffer>&&);
-    void removeUpdateAtlas(uint32_t atlasID);
 
     void syncImageBackings(const WebCore::CoordinatedGraphicsState&, CommitScope&);
     void createImageBacking(WebCore::CoordinatedImageBackingID);
@@ -158,8 +152,6 @@ private:
 #if USE(COORDINATED_GRAPHICS_THREADED)
     HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperPlatformLayerProxy>> m_platformLayerProxies;
 #endif
-
-    HashMap<uint32_t /* atlasID */, RefPtr<Nicosia::Buffer>> m_surfaces;
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     CoordinatedGraphicsSceneClient* m_client;

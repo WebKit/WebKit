@@ -76,7 +76,6 @@ public:
     void setDrawsBackground(bool);
 
     void updateSceneState(const WebCore::CoordinatedGraphicsState&);
-    void releaseUpdateAtlases(const Vector<uint32_t>&);
 
     void invalidate();
 
@@ -121,7 +120,6 @@ private:
         bool needsResize { false };
 
         Vector<WebCore::CoordinatedGraphicsState> states;
-        Vector<uint32_t> atlasesToRemove;
 
         bool clientRendersNextFrame { false };
         bool coordinateUpdateCompletionWithClient { false };

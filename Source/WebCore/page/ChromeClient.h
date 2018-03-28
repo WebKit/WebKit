@@ -166,7 +166,6 @@ public:
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void delegatedScrollRequested(const IntPoint&) = 0;
-    virtual void resetUpdateAtlasForTesting() = 0;
 #endif
 
     virtual IntPoint screenToRootView(const IntPoint&) const = 0;

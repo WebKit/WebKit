@@ -383,16 +383,6 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeSoon()
     m_exitCompositingTimer.startOneShot(0_s);
 }
 
-#if USE(COORDINATED_GRAPHICS)
-void AcceleratedDrawingArea::resetUpdateAtlasForTesting()
-{
-    if (!m_layerTreeHost || exitAcceleratedCompositingModePending())
-        return;
-
-    m_layerTreeHost->clearUpdateAtlases();
-}
-#endif
-
 void AcceleratedDrawingArea::exitAcceleratedCompositingModeNow()
 {
     ASSERT(!m_layerTreeStateIsFrozen);

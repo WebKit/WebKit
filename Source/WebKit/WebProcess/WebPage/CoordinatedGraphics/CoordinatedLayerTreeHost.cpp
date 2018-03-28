@@ -236,10 +236,5 @@ void CoordinatedLayerTreeHost::scheduleAnimation()
     m_layerFlushTimer.startOneShot(1_s * m_coordinator.nextAnimationServiceTime());
 }
 
-void CoordinatedLayerTreeHost::clearUpdateAtlases()
-{
-    m_coordinator.clearUpdateAtlases();
-}
-
 } // namespace WebKit
 #endif // USE(COORDINATED_GRAPHICS)

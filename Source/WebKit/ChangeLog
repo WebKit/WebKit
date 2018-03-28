@@ -1,3 +1,57 @@
+2018-03-28  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Remove UpdateAtlas
+        https://bugs.webkit.org/show_bug.cgi?id=184042
+
+        Reviewed by Žan Doberšek.
+
+        Remove all the code related to UpdateAtlas handling.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateTilesIfNeeded):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        (WebKit::CoordinatedGraphicsScene::syncUpdateAtlases): Deleted.
+        (WebKit::CoordinatedGraphicsScene::createUpdateAtlas): Deleted.
+        (WebKit::CoordinatedGraphicsScene::removeUpdateAtlas): Deleted.
+        (WebKit::CoordinatedGraphicsScene::releaseUpdateAtlases): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        (WebKit::ThreadedCompositor::releaseUpdateAtlases): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::delegatedScrollRequested):
+        (WebKit::WebChromeClient::resetUpdateAtlasForTesting): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::resetUpdateAtlasForTesting): Deleted.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::CompositingCoordinator):
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::clearPendingStateChanges):
+        (WebKit::CompositingCoordinator::renderNextFrame):
+        (WebKit::CompositingCoordinator::purgeBackingStores):
+        (WebKit::CompositingCoordinator::createUpdateAtlas): Deleted.
+        (WebKit::CompositingCoordinator::removeUpdateAtlas): Deleted.
+        (WebKit::CompositingCoordinator::getCoordinatedBuffer): Deleted.
+        (): Deleted.
+        (WebKit::CompositingCoordinator::scheduleReleaseInactiveAtlases): Deleted.
+        (WebKit::CompositingCoordinator::releaseInactiveAtlasesTimerFired): Deleted.
+        (WebKit::CompositingCoordinator::releaseAtlases): Deleted.
+        (WebKit::CompositingCoordinator::clearUpdateAtlases): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::clearUpdateAtlases): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::releaseUpdateAtlases): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setIsDiscardable):
+
 2018-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r229998): WebDriver: MiniBrowser is crashing in a lot of tests after r229998

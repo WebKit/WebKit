@@ -248,11 +248,6 @@ void ThreadedCoordinatedLayerTreeHost::commitSceneState(const CoordinatedGraphic
     m_compositor->updateSceneState(state);
 }
 
-void ThreadedCoordinatedLayerTreeHost::releaseUpdateAtlases(const Vector<uint32_t>& atlasesToRemove)
-{
-    m_compositor->releaseUpdateAtlases(atlasesToRemove);
-}
-
 void ThreadedCoordinatedLayerTreeHost::setIsDiscardable(bool discardable)
 {
     m_isDiscardable = discardable;

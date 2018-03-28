@@ -108,7 +108,6 @@ class EmptyChromeClient : public ChromeClient {
 
 #if USE(COORDINATED_GRAPHICS)
     void delegatedScrollRequested(const IntPoint&) final { }
-    void resetUpdateAtlasForTesting() final { }
 #endif
 
     IntPoint screenToRootView(const IntPoint& p) const final { return p; }

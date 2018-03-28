@@ -554,11 +554,6 @@ void WebChromeClient::delegatedScrollRequested(const IntPoint& scrollOffset)
 {
     m_page.pageDidRequestScroll(scrollOffset);
 }
-
-void WebChromeClient::resetUpdateAtlasForTesting()
-{
-    m_page.drawingArea()->resetUpdateAtlasForTesting();
-}
 #endif
 
 IntPoint WebChromeClient::screenToRootView(const IntPoint& point) const

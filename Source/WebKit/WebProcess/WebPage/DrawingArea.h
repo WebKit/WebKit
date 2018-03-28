@@ -138,7 +138,6 @@ public:
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
-    virtual void resetUpdateAtlasForTesting() = 0;
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
