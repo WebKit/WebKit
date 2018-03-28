@@ -244,7 +244,7 @@ public:
 
     bool operator==(const TimingFunction& other) const final
     {
-        if (is<FramesTimingFunction>(other))
+        if (!is<FramesTimingFunction>(other))
             return false;
         auto& otherFrames = downcast<FramesTimingFunction>(other);
         return m_frames == otherFrames.m_frames;

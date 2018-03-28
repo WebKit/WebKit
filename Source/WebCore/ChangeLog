@@ -1,3 +1,15 @@
+2018-03-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Comparing two matching FramesTimingFunction objects fails
+        https://bugs.webkit.org/show_bug.cgi?id=184078
+
+        Reviewed by Jon Lee.
+
+        Fix a stupid mistake in the == operator for FramesTimingFunction. Without a correct check, we would mistakenly interrupt and
+        restart any transition with a frames() timing function when we check that the Animation objects are similar.
+
+        * platform/animation/TimingFunction.h:
+
 2018-03-28  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Remove UpdateAtlas
