@@ -56,3 +56,12 @@ PASS: String stays the same.
 PASS: Ellipsis is inserted in the middle.
 PASS: Ellipsis is inserted after the third character.
 
+-- Running test case: String.prototype.escapeCharacters
+PASS: String stays the same with no escape characters.
+PASS: String stays the same with empty escape characters.
+PASS: String stays the same with no matching escape characters.
+PASS: The letter 'c' is escaped.
+PASS: The letter 'c' and 'e' are escaped.
+PASS: The letter 'c' and 'e' are escaped.
+PASS: The letter 'c', 'd', and 'e' are escaped.
+

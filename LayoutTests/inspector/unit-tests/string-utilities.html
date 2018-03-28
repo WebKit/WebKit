@@ -54,7 +54,6 @@ function test()
         }
     });
 
-
     suite.addTestCase({
         name: "String.prototype.get lineCount",
         test() {
@@ -97,6 +96,20 @@ function test()
             InspectorTest.expectEqual("abcdef".truncateEnd(6), "abcdef", "String stays the same.");
             InspectorTest.expectEqual("abcdef".truncateEnd(5), "abcd" + ellipsis, "Ellipsis is inserted in the middle.");
             InspectorTest.expectEqual("abcdef".truncateEnd(4), "abc" + ellipsis, "Ellipsis is inserted after the third character.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "String.prototype.escapeCharacters",
+        test() {
+            InspectorTest.expectEqual("abcdef".escapeCharacters(), "abcdef", "String stays the same with no escape characters.");
+            InspectorTest.expectEqual("abcdef".escapeCharacters(""), "abcdef", "String stays the same with empty escape characters.");
+            InspectorTest.expectEqual("abcdef".escapeCharacters("g"), "abcdef", "String stays the same with no matching escape characters.");
+            InspectorTest.expectEqual("abcdef".escapeCharacters("c"), "ab\\cdef", "The letter 'c' is escaped.");
+            InspectorTest.expectEqual("abcdef".escapeCharacters("ce"), "ab\\cd\\ef", "The letter 'c' and 'e' are escaped.");
+            InspectorTest.expectEqual("abcdef".escapeCharacters("cee"), "ab\\cd\\ef", "The letter 'c' and 'e' are escaped.");
+            InspectorTest.expectEqual("abcdef".escapeCharacters("ced"), "ab\\c\\d\\ef", "The letter 'c', 'd', and 'e' are escaped.");
             return true;
         }
     });

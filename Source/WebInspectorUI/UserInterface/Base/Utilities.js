@@ -122,21 +122,24 @@ Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithClass",
 {
     value(className)
     {
-        for (var node = this; node && node !== this.ownerDocument; node = node.parentNode)
+        for (let node = this; node; node = node.parentElement) {
             if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains(className))
                 return node;
+        }
+
         return null;
     }
 });
 
 Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithNodeNameInArray",
 {
-    value(nameArray)
+    value(nodeNames)
     {
-        var lowerCaseNameArray = nameArray.map(function(name) { return name.toLowerCase(); });
-        for (var node = this; node && node !== this.ownerDocument; node = node.parentNode) {
-            for (var i = 0; i < nameArray.length; ++i) {
-                if (node.nodeName.toLowerCase() === lowerCaseNameArray[i])
+        let upperCaseNodeNames = nodeNames.map((name) => name.toUpperCase());
+
+        for (let node = this; node; node = node.parentElement) {
+            for (let nodeName of upperCaseNodeNames) {
+                if (node.nodeName === nodeName)
                     return node;
             }
         }
@@ -590,27 +593,32 @@ Object.defineProperty(String.prototype, "removeWhitespace",
 
 Object.defineProperty(String.prototype, "escapeCharacters",
 {
-    value(chars)
+    value(charactersToEscape)
     {
-        var foundChar = false;
-        for (var i = 0; i < chars.length; ++i) {
-            if (this.indexOf(chars.charAt(i)) !== -1) {
-                foundChar = true;
-                break;
-            }
+        if (!charactersToEscape)
+            return this.valueOf();
+
+        let charactersToEscapeSet = new Set(charactersToEscape);
+
+        let foundCharacter = false;
+        for (let c of this) {
+            if (!charactersToEscapeSet.has(c))
+                continue;
+            foundCharacter = true;
+            break;
         }
 
-        if (!foundChar)
-            return this;
+        if (!foundCharacter)
+            return this.valueOf();
 
-        var result = "";
-        for (var i = 0; i < this.length; ++i) {
-            if (chars.indexOf(this.charAt(i)) !== -1)
+        let result = "";
+        for (let c of this) {
+            if (charactersToEscapeSet.has(c))
                 result += "\\";
-            result += this.charAt(i);
+            result += c;
         }
 
-        return result;
+        return result.valueOf();
     }
 });
 

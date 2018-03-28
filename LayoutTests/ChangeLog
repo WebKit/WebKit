@@ -1,3 +1,13 @@
+2018-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Modernize some utility functions
+        https://bugs.webkit.org/show_bug.cgi?id=184047
+
+        Rubber-stamped by Matt Baker.
+
+        * inspector/unit-tests/string-utilities-expected.txt: Updated.
+        * inspector/unit-tests/string-utilities.html: Added String.prototype.escapeCharacters test.
+
 2018-03-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip http/wpt/service-workers/third-party-registration.html.

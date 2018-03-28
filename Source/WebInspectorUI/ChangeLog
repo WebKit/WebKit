@@ -1,3 +1,15 @@
+2018-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Modernize some utility functions
+        https://bugs.webkit.org/show_bug.cgi?id=184047
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Utilities.js:
+        (Node.prototype.enclosingNodeOrSelfWithClass): Use parentElement instead of parentNode, so we don't need to check for document.
+        (Node.prototype.enclosingNodeOrSelfWithNodeNameInArray): Ditto. Also just toUpperCase input, since nodeName is already upper case.
+        (String.prototype.escapeCharacters): Use Set and string iteration instead of indexOf and charAt.
+
 2018-03-27  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Command-Shift-left/right arrow keys should not switch tabs when focused on color picker text fields
