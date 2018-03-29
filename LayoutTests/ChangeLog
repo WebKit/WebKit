@@ -1,5 +1,76 @@
 2018-03-28  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Stop using internals.pauseTransitionAtTimeOnElement() in favor of Web Animations API for transitions tests
+        https://bugs.webkit.org/show_bug.cgi?id=184097
+
+        Reviewed by Dean Jackson.
+
+        Make 55 tests opt into CSS Animations and CSS Transitions as Web Animations. These tests used the internals.pauseTransitionAtTimeOnElement()
+        method, but this method should be going away since the Web Animations API allows seeking and pausing. To support this, we make
+        transition-test-helpers.js use the Web Animations API instead of internals.pauseTransitionAtTimeOnElement() if the tests has opted
+        into CSS Animations and CSS Transitions as Web Animations and we know it's safe to use these APIs.
+
+        Overall, 20 of those tests used to fail with the flag on before this change.
+
+        * compositing/animation/animated-composited-inside-hidden.html:
+        * compositing/animation/computed-style-during-delay.html:
+        * compositing/reflections/nested-reflection-transition.html:
+        * compositing/transitions/scale-transition-no-start.html:
+        * compositing/transitions/singular-scale-transition.html:
+        * css3/calc/transitions-dependent.html:
+        * css3/calc/transitions.html:
+        * transitions/background-position-transitions.html:
+        * transitions/background-transitions.html:
+        * transitions/blendmode-transitions.html:
+        * transitions/border-radius-transition.html:
+        * transitions/clip-path-path-transitions.html:
+        * transitions/clip-transition.html:
+        * transitions/color-transition-all.html:
+        * transitions/color-transition-rounding.html:
+        * transitions/cross-fade-background-image.html:
+        * transitions/cubic-bezier-overflow-color.html:
+        * transitions/cubic-bezier-overflow-shadow.html:
+        * transitions/cubic-bezier-overflow-transform.html:
+        * transitions/default-timing-function.html:
+        * transitions/delay.html:
+        * transitions/flex-transitions.html:
+        * transitions/font-family-during-transition.html:
+        * transitions/frames-timing-function.html:
+        * transitions/mask-transitions.html:
+        * transitions/min-max-width-height-transitions.html:
+        * transitions/mismatched-shadow-styles.html:
+        * transitions/mismatched-shadow-transitions.html:
+        * transitions/mixed-type.html:
+        * transitions/move-after-transition.html:
+        * transitions/multiple-background-size-transitions.html:
+        * transitions/multiple-mask-transitions.html:
+        * transitions/multiple-shadow-transitions.html:
+        * transitions/negative-delay.html:
+        * transitions/opacity-transition-zindex.html:
+        * transitions/resources/transition-test-helpers.js:
+        * transitions/shape-outside-transitions.html:
+        * transitions/shorthand-border-transitions.html:
+        * transitions/shorthand-transitions.html:
+        * transitions/steps-timing-function.html:
+        * transitions/svg-layout-transition.html:
+        * transitions/svg-text-shadow-transition.html:
+        * transitions/svg-transitions.html:
+        * transitions/text-indent-transition.html:
+        * transitions/transform-op-list-match.html:
+        * transitions/transform-op-list-no-match.html:
+        * transitions/transition-end-event-rendering.html:
+        * transitions/transition-hit-test.html:
+        * transitions/transition-on-element-with-content.html:
+        * transitions/transition-shorthand-delay.html:
+        * transitions/transition-timing-function.html:
+        * transitions/transition-to-from-auto.html:
+        * transitions/transition-to-from-undefined.html:
+        * transitions/visited-link-color.html:
+        * transitions/zero-duration-in-list.html:
+        * transitions/zero-duration-with-non-zero-delay-start.html:
+
+2018-03-28  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Implement more CSSPropertyBlendingClient methods
         https://bugs.webkit.org/show_bug.cgi?id=184077
 

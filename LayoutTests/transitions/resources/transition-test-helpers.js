@@ -350,6 +350,31 @@ function checkExpectedValueCallback(expected, index)
     return function() { checkExpectedValue(expected, index); };
 }
 
+const prefix = "-webkit-";
+const propertiesRequiringPrefix = ["-webkit-text-stroke-color", "-webkit-text-fill-color"];
+
+function pauseTransitionAtTimeOnElement(transitionProperty, time, element)
+{
+    // If we haven't opted into CSS Animations and CSS Transitions as Web Animations, use the internal API.
+    if ('internals' in window && !internals.settings.cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+        return internals.pauseTransitionAtTimeOnElement(transitionProperty, time, element);
+
+    if (transitionProperty.startsWith(prefix) && !propertiesRequiringPrefix.includes(transitionProperty))
+        transitionProperty = transitionProperty.substr(prefix.length);
+
+    // Otherwise, use the Web Animations API.
+    const animations = element.getAnimations();
+    for (let animation of animations) {
+        if (animation instanceof CSSTransition && animation.transitionProperty == transitionProperty) {
+            animation.currentTime = time * 1000;
+            animation.pause();
+            return true;
+        }
+    }
+    console.log(`A transition for property ${transitionProperty} could not be found`);
+    return false;
+}
+
 function runTest(expected, usePauseAPI)
 {
     var maxTime = 0;
@@ -367,7 +392,7 @@ function runTest(expected, usePauseAPI)
         if (hasPauseTransitionAPI && usePauseAPI) {
             if (tryToPauseTransition) {
               var element = document.getElementById(elementId);
-              if (!internals.pauseTransitionAtTimeOnElement(property, time, element))
+              if (!pauseTransitionAtTimeOnElement(property, time, element))
                 window.console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
             }
             checkExpectedValue(expected, i);
@@ -408,12 +433,10 @@ function startTest(expected, usePauseAPI, callback)
 }
 
 var result = "";
-var hasPauseTransitionAPI;
+var hasPauseTransitionAPI = true;
 
 function runTransitionTest(expected, callback, usePauseAPI, doPixelTest)
 {
-    hasPauseTransitionAPI = 'internals' in window;
-    
     if (window.testRunner) {
         if (!doPixelTest)
             testRunner.dumpAsText();

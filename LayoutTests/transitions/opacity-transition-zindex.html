@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
 
 <html>
 <head>
@@ -50,7 +50,9 @@
       if (window.testRunner)
         window.setTimeout(function() {
           var firstElement = document.getElementById('first');
-          internals.pauseTransitionAtTimeOnElement("opacity", 2.5, first);
+          const transition = firstElement.getAnimations()[0];
+          transition.currentTime = 2500;
+          transition.pause();
           testRunner.notifyDone();
         }, 0);
     }

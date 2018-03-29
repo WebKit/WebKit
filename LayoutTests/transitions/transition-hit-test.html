@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
 
 <html>
 <head>
@@ -22,6 +22,7 @@
         position:absolute;
     }
      </style>
+   <script src="resources/transition-test-helpers.js"></script>
    <script>
         function checkResult(pos, isIn)
         {
@@ -47,7 +48,7 @@
         {
             if (window.testRunner) {
                 var target = document.getElementById('target');
-                if (!internals.pauseTransitionAtTimeOnElement("left", 2.0, target))
+                if (!pauseTransitionAtTimeOnElement("left", 2.0, target))
                     throw("Transition is not running");
         
                 checkResults();

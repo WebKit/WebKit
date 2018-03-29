@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations=true ] -->
 <style>
 .outerBlock {
     border: 1px solid black;
@@ -73,16 +73,14 @@ function runTest(expected)
         var property = expected[i][2];
         var expectedValue = expected[i][3];
         var dependsOn = expected[i][4];
-        if (window.internals) {
-            internals.pauseTransitionAtTimeOnElement(property, time, document.getElementById(dependsOn));
-            internals.pauseTransitionAtTimeOnElement(property, time, document.getElementById(elementId));
-            var actual = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-            var result = document.getElementById("result");
-            if (actual == expectedValue)
-                result.innerHTML += 'PASS - "' + property + '" property for "' + elementId +'" element at ' + time + 's was: ' + actual + '<br/>';
-            else
-                result.innerHTML += 'FAIL - "' + property + '" property for "' + elementId +'" element at ' + time + 's expected: ' + expectedValue + ' but saw: ' + actual + '<br/>';
-        }
+        pauseTransitionAtTimeOnElement(property, time, document.getElementById(dependsOn));
+        pauseTransitionAtTimeOnElement(property, time, document.getElementById(elementId));
+        var actual = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+        var result = document.getElementById("result");
+        if (actual == expectedValue)
+            result.innerHTML += 'PASS - "' + property + '" property for "' + elementId +'" element at ' + time + 's was: ' + actual + '<br/>';
+        else
+            result.innerHTML += 'FAIL - "' + property + '" property for "' + elementId +'" element at ' + time + 's expected: ' + expectedValue + ' but saw: ' + actual + '<br/>';
     }
     if (window.testRunner)
         testRunner.notifyDone();
