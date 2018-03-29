@@ -303,6 +303,11 @@ void SVGAnimateElementBase::clearAnimatedType(SVGElement* targetElement)
     if (!m_animatedType)
         return;
 
+    // If the SVGAnimatedType is a list type, e.g. SVGLengthListValues, the wrappers of the
+    // animated properties have to be detached from the items in the list before it's deleted.
+    if (!m_animatedProperties.isEmpty())
+        m_animator->animValWillChange(m_animatedProperties);
+
     if (!targetElement) {
         m_animatedType = nullptr;
         return;

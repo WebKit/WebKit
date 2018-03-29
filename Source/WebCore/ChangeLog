@@ -1,3 +1,17 @@
+2018-03-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The SVGAnimatedProperty wrappers have to be detached from the referenced values before the SVGAnimatedType is deleted
+        https://bugs.webkit.org/show_bug.cgi?id=183972
+
+        Reviewed by Daniel Bates.
+
+        If the SVGAnimatedType is a list type, e.g. SVGLengthListValues, the wrappers
+        of the animated properties have to be detached from the items in the list
+        before it's deleted.
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::clearAnimatedType):
+
 2018-03-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         MSVC __forceinline slows down JSC release build fivefold after r229391
