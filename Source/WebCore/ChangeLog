@@ -1,3 +1,31 @@
+2018-03-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement more CSSPropertyBlendingClient methods
+        https://bugs.webkit.org/show_bug.cgi?id=184077
+
+        Reviewed by Dean Jackson.
+
+        We only had stubs for several of the CSSPropertyBlendingClient methods and thus always implied that we
+        were animating non-matching transform, filter and backdrop-filter properties. We now implement those using
+        the same code used in KeyframeAnimation. This allows for 31 new tests to opt into the CSS Animations and
+        CSS Transitions as Web Animations feature.
+
+        We also ensure we only run a CSSAnimationController assertion in FrameView::didDestroyRenderTree() if
+        we're not using the CSS Animations and CSS Transitions as Web Animations feature.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::copyPropertiesFromSource):
+        (WebCore::KeyframeEffectReadOnly::updateBlendingKeyframes):
+        (WebCore::KeyframeEffectReadOnly::setBlendingKeyframes):
+        (WebCore::KeyframeEffectReadOnly::checkForMatchingTransformFunctionLists):
+        (WebCore::KeyframeEffectReadOnly::checkForMatchingFilterFunctionLists):
+        (WebCore::KeyframeEffectReadOnly::checkForMatchingBackdropFilterFunctionLists):
+        (WebCore::KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes):
+        (WebCore::KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes):
+        * animation/KeyframeEffectReadOnly.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didDestroyRenderTree):
+
 2018-03-28  Chris Dumez  <cdumez@apple.com>
 
         Align XMLHttpRequest's open() / send() / abort() with the latest specification

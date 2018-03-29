@@ -84,6 +84,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGSVGElement.h"
 #include "ScriptedAnimationController.h"
@@ -590,7 +591,8 @@ void FrameView::didDestroyRenderTree()
     ASSERT(!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty());
     ASSERT(!m_slowRepaintObjects || m_slowRepaintObjects->isEmpty());
 
-    ASSERT(!frame().animation().hasAnimations());
+    if (!RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+        ASSERT(!frame().animation().hasAnimations());
 }
 
 void FrameView::setContentsSize(const IntSize& size)

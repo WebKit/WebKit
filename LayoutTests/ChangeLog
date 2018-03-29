@@ -1,3 +1,47 @@
+2018-03-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement more CSSPropertyBlendingClient methods
+        https://bugs.webkit.org/show_bug.cgi?id=184077
+
+        Reviewed by Dean Jackson.
+
+        Make 31 tests opt into the CSS Animations and CSS Transitions as Web Animations feature.
+
+        * animations/3d/replace-filling-transform.html:
+        * animations/additive-transform-animations.html:
+        * animations/animation-direction-reverse-fill-mode-hardware.html:
+        * animations/combo-transform-rotate+scale.html:
+        * animations/simultaneous-start-transform.html:
+        * compositing/animation/layer-for-filling-animation.html:
+        * compositing/reflections/animation-inside-reflection.html:
+        * compositing/reflections/nested-reflection-animated.html:
+        * css3/filters/backdrop/animation.html:
+        * css3/filters/composited-during-animation.html:
+        * css3/filters/filter-animation-from-none-hw.html:
+        * css3/filters/filter-animation-from-none-multi-hw.html:
+        * css3/filters/filter-animation-from-none-multi.html:
+        * css3/filters/filter-animation-from-none.html:
+        * css3/filters/filter-animation-hw.html:
+        * css3/filters/filter-animation-multi-hw.html:
+        * css3/filters/filter-animation-multi.html:
+        * css3/filters/filter-animation.html:
+        * css3/masking/clip-path-animation.html:
+        * fast/filter-image/filter-image-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * transitions/clip-path-transitions.html:
+        * transitions/color-transition-premultiplied.html:
+        * transitions/cross-fade-border-image.html:
+        * transitions/cubic-bezier-overflow-length.html:
+        * transitions/cubic-bezier-overflow-svg-length.html:
+        * transitions/delay.html:
+        * transitions/longhand-vs-shorthand-initial.html:
+        * transitions/multiple-background-transitions.html:
+
 2018-03-28  Chris Dumez  <cdumez@apple.com>
 
         Align XMLHttpRequest's open() / send() / abort() with the latest specification
