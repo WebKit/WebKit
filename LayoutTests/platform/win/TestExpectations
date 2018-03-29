@@ -3943,3 +3943,5 @@ webkit.org/b/183953 imported/mozilla/css-animations/test_animation-currenttime.h
 webkit.org/b/183953 imported/mozilla/css-transitions/test_keyframeeffect-getkeyframes.html [ Failure ]
 
 webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
+
+webkit.org/b/184133 transitions/opacity-transition-zindex.html [ Skip ]
