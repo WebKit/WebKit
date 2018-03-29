@@ -1,3 +1,26 @@
+2018-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Align XMLHttpRequest's open() / send() / abort() with the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=184108
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/xmlhttprequest/onloadend-event-after-abort.html:
+        * http/tests/xmlhttprequest/onloadend-event-after-error.html:
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events-expected.txt:
+        * http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events-expected.txt:
+        Fix tests that expected a progress event before error/abort event. This is not as
+        per specification and those tests were also failing in Firefox.
+
+        * http/tests/xmlhttprequest/readystatechange-and-abort.html:
+        Fix test that expected abort() to reset state to UNSENT as this is not as per specification.
+        This test was failing in both Firefox and Chrome.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-abort-readyState-shouldNotDispatchEvent.html:
+        Re-sync test from Blink. The test was wrongly expecting abort() to reset the state to
+        UNSENT.
+
 2018-03-28  Timothy Hatcher  <timothy@apple.com>
 
         Consolidate NSColor to WebCore::Color conversion and fix system colors.

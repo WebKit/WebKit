@@ -1,5 +1,5 @@
 
-FAIL abort() called from data stringification The object is in an invalid state.
+PASS abort() called from data stringification 
 PASS open() called from data stringification 
 PASS send() called from data stringification 
 

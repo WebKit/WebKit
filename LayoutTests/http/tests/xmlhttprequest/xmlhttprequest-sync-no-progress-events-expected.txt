@@ -10,7 +10,6 @@ loadend
 
 Step 2: Cross origin request, disallowed
 readystatechange 4
-progress
 error
 loadend
 NetworkError:  A network error occurred.

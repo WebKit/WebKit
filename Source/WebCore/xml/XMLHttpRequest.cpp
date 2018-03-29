@@ -329,22 +329,6 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url)
 
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, bool async)
 {
-    if (!internalAbort())
-        return { };
-
-    State previousState = m_state;
-    m_state = UNSENT;
-    m_error = false;
-    m_sendFlag = false;
-    m_uploadComplete = false;
-    m_wasAbortedByClient = false;
-
-    // clear stuff from possible previous load
-    clearResponse();
-    clearRequest();
-
-    ASSERT(m_state == UNSENT);
-
     if (!isValidHTTPToken(method))
         return Exception { SyntaxError };
 
@@ -368,7 +352,19 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
         }
     }
 
+    if (!internalAbort())
+        return { };
+
+    m_sendFlag = false;
+    m_uploadListenerFlag = false;
     m_method = normalizeHTTPMethod(method);
+    m_error = false;
+    m_uploadComplete = false;
+    m_wasAbortedByClient = false;
+
+    // clear stuff from possible previous load
+    clearResponse();
+    clearRequest();
 
     m_url = url;
     scriptExecutionContext()->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
@@ -377,12 +373,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
 
     ASSERT(!m_loader);
 
-    // Check previous state to avoid dispatching readyState event
-    // when calling open several times in a row.
-    if (previousState != OPENED)
-        changeState(OPENED);
-    else
-        m_state = OPENED;
+    changeState(OPENED);
 
     return { };
 }
@@ -571,25 +562,8 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     if (!m_async && m_url.protocolIsBlob() && m_method != "GET")
         return Exception { NetworkError };
 
-    m_sendFlag = true;
-
-    // The presence of upload event listeners forces us to use preflighting because POSTing to an URL that does not
-    // permit cross origin requests should look exactly like POSTing to an URL that does not respond at all.
-    // Also, only async requests support upload progress events.
-    bool uploadEvents = false;
-    if (m_async) {
-        m_progressEventThrottle.dispatchProgressEvent(eventNames().loadstartEvent);
-        if (m_requestEntityBody && m_upload) {
-            uploadEvents = m_upload->hasEventListeners();
-            m_upload->dispatchProgressEvent(eventNames().loadstartEvent);
-        }
-    }
-
-    m_sameOriginRequest = securityOrigin()->canRequest(m_url);
-
-    // We also remember whether upload events should be allowed for this request in case the upload listeners are
-    // added after the request is started.
-    m_uploadEventsAllowed = m_sameOriginRequest || uploadEvents || !isSimpleCrossOriginAccessRequest(m_method, m_requestHeaders);
+    if (m_async && m_upload && m_upload->hasEventListeners())
+        m_uploadListenerFlag = true;
 
     ResourceRequest request(m_url);
     request.setRequester(ResourceRequest::Requester::XHR);
@@ -607,7 +581,9 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbacks;
-    options.preflightPolicy = uploadEvents ? ForcePreflight : ConsiderPreflight;
+    // The presence of upload event listeners forces us to use preflighting because POSTing to an URL that does not
+    // permit cross origin requests should look exactly like POSTing to an URL that does not respond at all.
+    options.preflightPolicy = m_uploadListenerFlag ? ForcePreflight : ConsiderPreflight;
     options.credentials = m_includeCredentials ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.mode = FetchOptions::Mode::Cors;
     options.contentSecurityPolicyEnforcement = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
@@ -628,8 +604,17 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
 
     m_exceptionCode = std::nullopt;
     m_error = false;
+    m_uploadComplete = !request.httpBody();
+    m_sendFlag = true;
 
     if (m_async) {
+        m_progressEventThrottle.dispatchProgressEvent(eventNames().loadstartEvent);
+        if (!m_uploadComplete && m_uploadListenerFlag)
+            m_upload->dispatchProgressEvent(eventNames().loadstartEvent);
+
+        if (m_state != OPENED || !m_sendFlag || m_loader)
+            return { };
+
         // ThreadableLoader::create can return null here, for example if we're no longer attached to a page or if a content blocker blocks the load.
         // This is true while running onunload handlers.
         // FIXME: Maybe we need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
@@ -668,7 +653,6 @@ void XMLHttpRequest::abort()
 
     clearResponseBuffers();
 
-    // Clear headers as required by the spec
     m_requestHeaders.clear();
     if ((m_state == OPENED && m_sendFlag) || m_state == HEADERS_RECEIVED || m_state == LOADING) {
         ASSERT(!m_loader);
@@ -676,7 +660,8 @@ void XMLHttpRequest::abort()
         changeState(DONE);
         dispatchErrorEvents(eventNames().abortEvent);
     }
-    m_state = UNSENT;
+    if (m_state == DONE)
+        m_state = UNSENT;
 }
 
 bool XMLHttpRequest::internalAbort()
@@ -960,11 +945,12 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
     if (!m_upload)
         return;
 
-    if (m_uploadEventsAllowed)
+    if (m_uploadListenerFlag)
         m_upload->dispatchThrottledProgressEvent(true, bytesSent, totalBytesToBeSent);
+
     if (bytesSent == totalBytesToBeSent && !m_uploadComplete) {
         m_uploadComplete = true;
-        if (m_uploadEventsAllowed) {
+        if (m_uploadListenerFlag) {
             m_upload->dispatchProgressEvent(eventNames().loadEvent);
             m_upload->dispatchProgressEvent(eventNames().loadendEvent);
         }
@@ -1083,13 +1069,11 @@ void XMLHttpRequest::dispatchErrorEvents(const AtomicString& type)
 {
     if (!m_uploadComplete) {
         m_uploadComplete = true;
-        if (m_upload && m_uploadEventsAllowed) {
-            m_upload->dispatchProgressEvent(eventNames().progressEvent);
+        if (m_upload && m_uploadListenerFlag) {
             m_upload->dispatchProgressEvent(type);
             m_upload->dispatchProgressEvent(eventNames().loadendEvent);
         }
     }
-    m_progressEventThrottle.dispatchProgressEvent(eventNames().progressEvent);
     m_progressEventThrottle.dispatchProgressEvent(type);
     m_progressEventThrottle.dispatchProgressEvent(eventNames().loadendEvent);
 }

@@ -9,15 +9,12 @@ onload
 Response length: 8388608
 
 Test 2: The URL is not allowed for cross-origin requests
-onprogress
 onerror (expected)
 Response length: 0
 
 Test 3: The URL is not allowed for cross-origin requests and at least one upload event is listened for before doing the send.
 upload.onloadstart
-upload.onprogress
 upload.onerror (expected)
-onprogress
 onerror (expected)
 Response length: 0
 

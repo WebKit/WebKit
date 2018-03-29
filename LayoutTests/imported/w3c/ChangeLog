@@ -1,3 +1,27 @@
+2018-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Align XMLHttpRequest's open() / send() / abort() with the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=184108
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/XMLHttpRequest/abort-after-send-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-during-open-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-during-open.worker-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-event-abort-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-event-order-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-during-abort-event-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-during-abort-expected.txt:
+        * web-platform-tests/XMLHttpRequest/open-send-during-abort-expected.txt:
+        * web-platform-tests/XMLHttpRequest/security-consideration.sub-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-data-unexpected-tostring-expected.txt:
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/XMLHttpRequest/open-during-abort-processing-expected.txt:
+        We now fail the test differently. Our results are consistent with Firefox. I believe this
+        test does not match the specification so I filed:
+        https://github.com/w3c/web-platform-tests/issues/10217
+
 2018-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230033.

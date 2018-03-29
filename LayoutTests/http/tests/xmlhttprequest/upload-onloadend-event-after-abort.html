@@ -21,7 +21,7 @@ function log(message)
 
 var xhr = new XMLHttpRequest();
 var results = "";
-var expected = " progress abort loadend";
+var expected = " abort loadend";
 
 function logProgressEvent(e) {
     results += " " + e.type;

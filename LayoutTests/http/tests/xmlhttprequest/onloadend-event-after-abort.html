@@ -22,7 +22,7 @@ function log(message)
 
 var xhr = new XMLHttpRequest();
 var results = "";
-var expected = " loadstart readyState=DONE progress abort loadend";
+var expected = " loadstart readyState=DONE abort loadend";
 
 function logProgressEvent(e) {
     results += " " + e.type;

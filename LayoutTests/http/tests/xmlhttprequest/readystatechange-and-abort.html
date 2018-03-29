@@ -36,7 +36,7 @@ test(function()
     });
     xhr.open("GET", "resources/test.ogv", true);
     xhr.abort();
-    assert_equals(xhr.readyState, xhr.UNSENT, "xhr.readyState after abort() call");
+    assert_equals(xhr.readyState, xhr.OPENED, "xhr.readyState after abort() call");
     assert_array_equals(seenStates, [xhr.OPENED]);
 }, "Test onreadystatechange invocation when abort()-ed in OPENED state.");
 

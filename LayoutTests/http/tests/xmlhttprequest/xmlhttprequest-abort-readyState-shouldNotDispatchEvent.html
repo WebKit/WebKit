@@ -37,12 +37,20 @@ function testAbortDoNotDispatchEvent(num)
             ++finishedTests;
             this.onreadystatechange = catchReadystateEventAbort;
             this.abort();
-            if (this.readyState == 0)
+            // Following https://github.com/whatwg/xhr/issues/54, abort() should
+            // set readyState to UNSENT only when it (readyState) is DONE.
+            var pass;
+            if (num == XMLHttpRequest.DONE)
+                pass = this.readyState == XMLHttpRequest.UNSENT;
+            else
+                pass = this.readyState == num;
+
+            if (pass)
                 log("PASS");
             else
                 log("FAILED");
         }
-        
+
         if (finishedTests == abortToDo.length && window.testRunner)
             testRunner.notifyDone();
     }

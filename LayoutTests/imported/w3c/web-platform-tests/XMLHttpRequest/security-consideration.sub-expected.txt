@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8801/XMLHttpRequest/resources/img.jpg due to access control checks.
 
-FAIL ProgressEvent: security consideration assert_unreached: MUST NOT dispatch progress event. Reached unreachable code
+PASS ProgressEvent: security consideration 
 

@@ -1,3 +1,47 @@
+2018-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Align XMLHttpRequest's open() / send() / abort() with the latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=184108
+
+        Reviewed by Youenn Fablet.
+
+        Align XMLHttpRequest's open() / send() / abort() with the latest specification:
+        - https://xhr.spec.whatwg.org
+
+        No new tests, rebaselined existing layout tests.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        Align with https://xhr.spec.whatwg.org/#the-open()-method:
+        - Change the order of some steps to match the order in the spec. In particular,
+          open() no longer resets the state to UNSENT or abort any existing load when it
+          fails early due to being passed a bad method.
+
+        (WebCore::XMLHttpRequest::createRequest):
+        Align with https://xhr.spec.whatwg.org/#the-send()-method:
+        - Use the simpler "upload listener flag" logic from the spec instead of our more
+          complex m_uploadEventsAllowed flag. This avoids constructing a SecurityOrigin
+          objects on a background thread when XHR is used inside Web Workers, which was
+          not thread-safe.
+        - Set the upload complete flag when the request has no body as per step 9.
+        - After firing the loadstartEvent, return early if the state is no longer OPEN or
+          if the send flag is unset, as per step 11.3.
+
+        (WebCore::XMLHttpRequest::abort):
+        Align with https://xhr.spec.whatwg.org/#the-abort()-method:
+        - Only set the state to UNSENT if the state is still DONE after firing the error
+          events, as per step 3.
+
+        (WebCore::XMLHttpRequest::didSendData):
+        Use new "upload listener flag".
+
+        (WebCore::XMLHttpRequest::dispatchErrorEvents):
+        Align with https://xhr.spec.whatwg.org/#request-error-steps:
+        - Stop firing a progress event in case of error as this is not as per specification
+          and Firefox does not fire those either.
+
+        * xml/XMLHttpRequest.h:
+
 2018-03-28  Timothy Hatcher  <timothy@apple.com>
 
         Consolidate NSColor to WebCore::Color conversion and fix system colors.
