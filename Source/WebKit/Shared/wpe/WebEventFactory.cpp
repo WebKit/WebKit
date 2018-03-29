@@ -27,7 +27,7 @@
 #include "WebEventFactory.h"
 
 #include <WebCore/Scrollbar.h>
-#include <cstdlib>
+#include <cmath>
 #include <wpe/input.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -145,12 +145,12 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
     WebCore::FloatSize delta;
     switch (event->axis) {
     case Vertical:
-        wheelTicks = WebCore::FloatSize(0, event->value / std::abs(event->value));
+        wheelTicks = WebCore::FloatSize(0, std::copysign(1, event->value));
         delta = wheelTicks;
         delta.scale(WebCore::Scrollbar::pixelsPerLineStep());
         break;
     case Horizontal:
-        wheelTicks = WebCore::FloatSize(event->value / std::abs(event->value), 0);
+        wheelTicks = WebCore::FloatSize(std::copysign(1, event->value), 0);
         delta = wheelTicks;
         delta.scale(WebCore::Scrollbar::pixelsPerLineStep());
         break;
