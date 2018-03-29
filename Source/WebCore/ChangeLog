@@ -1,5 +1,17 @@
 2018-03-29  Daniel Bates  <dabates@apple.com>
 
+        Substitute ArchiveFactory::isArchiveMIMEType() for ArchiveFactory::isArchiveMimeType().
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitLoad):
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::ArchiveFactory::isArchiveMIMEType):
+        (WebCore::ArchiveFactory::isArchiveMimeType): Deleted.
+        * loader/archive/ArchiveFactory.h:
+        * platform/MIMETypeRegistry.h:
+
+2018-03-29  Daniel Bates  <dabates@apple.com>
+
         MIMETypeRegistry should return const HashSets
         https://bugs.webkit.org/show_bug.cgi?id=184150
 

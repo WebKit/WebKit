@@ -78,7 +78,7 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
     return map;
 }
 
-bool ArchiveFactory::isArchiveMimeType(const String& mimeType)
+bool ArchiveFactory::isArchiveMIMEType(const String& mimeType)
 {
     return !mimeType.isEmpty() && archiveMIMETypes().contains(mimeType);
 }

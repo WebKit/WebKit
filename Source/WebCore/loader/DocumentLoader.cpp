@@ -941,7 +941,7 @@ void DocumentLoader::commitLoad(const char* data, int length)
     if (!frameLoader)
         return;
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-    if (ArchiveFactory::isArchiveMimeType(response().mimeType()))
+    if (ArchiveFactory::isArchiveMIMEType(response().mimeType()))
         return;
 #endif
     frameLoader->client().committedLoad(this, data, length);
