@@ -23,24 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class InlineFormattingState extends FormattingState {
-    constructor(formattingRoot, layoutState) {
-        super(layoutState, formattingRoot);
-        // If the block container box that initiates this inline formatting contex also establishes a block context, create a new float for us.
-        if (this.formattingRoot().establishesBlockFormattingContext())
-            this.m_floatingState = new FloatingState(this);
-        else {
-            // TODO: use parent formatting context's floating state.
+class FloatingState {
+    constructor(formattingState) {
+        this.m_formattingState = formattingState;
+        this.m_leftFloatingBoxStack = new Array();
+        this.m_rightFloatingBoxStack = new Array();
+        this.m_lastFloating = null;
+    }
+
+    addFloating(floatingBox) {
+        // Convert floating box to absolute.
+        let floatingDisplayBox = this.formattingContext().displayBox(floatingBox).clone();
+        floatingDisplayBox.setRect(this.formattingContext().absoluteMarginBox(floatingBox));
+        this.m_lastFloating = floatingDisplayBox;
+        if (Utils.isFloatingLeft(floatingBox)) {
+            this.m_leftFloatingBoxStack.push(floatingDisplayBox);
+            return;
         }
-        this.m_formattingContext = new InlineFormattingContext(this);
-        this.m_lines = new Array();
+        this.m_rightFloatingBoxStack.push(floatingDisplayBox);
     }
 
-    lines() {
-        return this.m_lines;
+    leftFloatingStack() {
+        return this.m_leftFloatingBoxStack;
     }
 
-    appendLine(line) {
-        this.m_lines.push(line);
+    rightFloatingStack() {
+        return this.m_rightFloatingBoxStack;
+    }
+
+    lastFloating() {
+        return this.m_lastFloating;
+    }
+
+    formattingContext() {
+        return this.m_formattingState.formattingContext();
     }
 }

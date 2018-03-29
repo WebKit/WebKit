@@ -25,11 +25,8 @@
 
 // All geometry here is absolute to the formatting context's root.
 class FloatingContext {
-    constructor(formattingContext) {
-        this.m_leftFloatingBoxStack = new Array();
-        this.m_rightFloatingBoxStack = new Array();
-        this.m_lastFloating = null;
-        this.m_formattingContext = formattingContext;
+    constructor(floatingState) {
+        this.m_floatingState = floatingState;
     }
 
     computePosition(layoutBox) {
@@ -38,7 +35,7 @@ class FloatingContext {
         let displayBox = this._formattingContext().displayBox(layoutBox);
         if (layoutBox.isFloatingPositioned()) {
             displayBox.setTopLeft(this._positionForFloating(layoutBox));
-            this._addFloating(layoutBox);
+            this._floatingState().addFloating(layoutBox);
             return;
         }
         if (Utils.hasClear(layoutBox))
@@ -48,8 +45,8 @@ class FloatingContext {
     }
 
     bottom() {
-        let leftBottom = this._bottom(this.m_leftFloatingBoxStack);
-        let rightBottom = this._bottom(this.m_rightFloatingBoxStack);
+        let leftBottom = this._bottom(this._leftFloatingStack());
+        let rightBottom = this._bottom(this._rightFloatingStack());
         if (Number.isNaN(leftBottom) && Number.isNaN(rightBottom))
             return Number.NaN;
         if (!Number.isNaN(leftBottom) && !Number.isNaN(rightBottom))
@@ -63,7 +60,7 @@ class FloatingContext {
         let absoluteFloatingBox = this._formattingContext().absoluteMarginBox(floatingBox);
         if (this._isEmpty())
             return this._adjustedFloatingPosition(floatingBox, absoluteFloatingBox.top());
-        let verticalPosition = Math.max(absoluteFloatingBox.top(), this.m_lastFloating.top());
+        let verticalPosition = Math.max(absoluteFloatingBox.top(), this._lastFloating().top());
         let spaceNeeded = absoluteFloatingBox.width();
         while (true) {
             let floatingPair = this._findInnerMostLeftAndRight(verticalPosition);
@@ -83,9 +80,9 @@ class FloatingContext {
         let leftBottom = Number.NaN;
         let rightBottom = Number.NaN;
         if (Utils.hasClearLeft(layoutBox) || Utils.hasClearBoth(layoutBox))
-            leftBottom = this._bottom(this.m_leftFloatingBoxStack);
+            leftBottom = this._bottom(this._leftFloatingStack());
         if (Utils.hasClearRight(layoutBox) || Utils.hasClearBoth(layoutBox))
-            rightBottom = this._bottom(this.m_rightFloatingBoxStack);
+            rightBottom = this._bottom(this._rightFloatingStack());
 
         if (!Number.isNaN(leftBottom) && !Number.isNaN(rightBottom))
             return new LayoutPoint(Math.max(leftBottom, rightBottom), displayBox.left());
@@ -106,21 +103,9 @@ class FloatingContext {
         return this._positionForFloating(layoutBox);
     }
 
-    _addFloating(floatingBox) {
-        // Convert floating box to absolute.
-        let floatingDisplayBox = this._formattingContext().displayBox(floatingBox).clone();
-        floatingDisplayBox.setRect(this._formattingContext().absoluteMarginBox(floatingBox));
-        this.m_lastFloating = floatingDisplayBox;
-        if (Utils.isFloatingLeft(floatingBox)) {
-            this.m_leftFloatingBoxStack.push(floatingDisplayBox);
-            return;
-        }
-        this.m_rightFloatingBoxStack.push(floatingDisplayBox);
-    }
-
     _findInnerMostLeftAndRight(verticalPosition) {
-        let leftFloating = this._findFloatingAtVerticalPosition(verticalPosition, this.m_leftFloatingBoxStack);
-        let rightFloating = this._findFloatingAtVerticalPosition(verticalPosition, this.m_rightFloatingBoxStack);
+        let leftFloating = this._findFloatingAtVerticalPosition(verticalPosition, this._leftFloatingStack());
+        let rightFloating = this._findFloatingAtVerticalPosition(verticalPosition, this._rightFloatingStack());
         return { left: leftFloating, right: rightFloating };
     }
 
@@ -154,7 +139,7 @@ class FloatingContext {
     }
 
     _isEmpty() {
-        return !this.m_leftFloatingBoxStack.length && !this.m_rightFloatingBoxStack.length;
+        return !this._leftFloatingStack().length && !this._rightFloatingStack().length;
     }
 
     _adjustedFloatingPosition(floatingBox, verticalPosition, leftRightFloatings) {
@@ -199,7 +184,23 @@ class FloatingContext {
         return max;
     }
 
+    _floatingState() {
+        return this.m_floatingState;
+    }
+
     _formattingContext() {
-        return this.m_formattingContext;
+        return this._floatingState().formattingContext();
+    }
+
+    _lastFloating() {
+        return this._floatingState().lastFloating();
+    }
+
+    _leftFloatingStack() {
+        return this._floatingState().leftFloatingStack();
+    }
+
+    _rightFloatingStack() {
+        return this._floatingState().rightFloatingStack();
     }
 }

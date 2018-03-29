@@ -25,8 +25,6 @@
 class BlockFormattingContext extends FormattingContext {
     constructor(blockFormattingState) {
         super(blockFormattingState);
-        // New block formatting context always establishes a new floating context.
-        this.m_floatingContext = new FloatingContext(this);
     }
 
     layout() {

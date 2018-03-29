@@ -28,6 +28,7 @@ class FormattingState {
         this.m_layoutState = layoutState;
         this.m_formattingContext = null;
         this.m_formattingRoot = formattingRoot;
+        this.m_floatingState = null;
         this.m_displayToLayout = new Map();
     }
 
@@ -41,6 +42,10 @@ class FormattingState {
 
     layoutState() {
         return this.m_layoutState;
+    }
+
+    floatingState() {
+        return this.m_floatingState;
     }
 
     createDisplayBox(layoutBox) {
