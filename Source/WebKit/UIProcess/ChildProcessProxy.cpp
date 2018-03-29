@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -165,7 +165,7 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
 {
     ASSERT(!m_connection);
 
-    if (IPC::Connection::identifierIsNull(connectionIdentifier))
+    if (!IPC::Connection::identifierIsValid(connectionIdentifier))
         return;
 
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier, *this);

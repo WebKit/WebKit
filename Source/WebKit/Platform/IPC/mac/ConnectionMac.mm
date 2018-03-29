@@ -156,6 +156,9 @@ void Connection::terminateSoon(Seconds interval)
     
 void Connection::platformInitialize(Identifier identifier)
 {
+    if (!MACH_PORT_VALID(identifier.port))
+        return;
+
     if (m_isServer) {
         m_receivePort = identifier.port;
         m_sendPort = MACH_PORT_NULL;
@@ -179,10 +182,11 @@ bool Connection::open()
     if (m_isServer) {
         ASSERT(m_receivePort);
         ASSERT(!m_sendPort);
-        
+        ASSERT(MACH_PORT_VALID(m_receivePort));
     } else {
         ASSERT(!m_receivePort);
         ASSERT(m_sendPort);
+        ASSERT(MACH_PORT_VALID(m_sendPort));
 
         auto kr = mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_receivePort);
         if (kr != KERN_SUCCESS) {
@@ -358,6 +362,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
         memcpy(messageData, encoder->buffer(), encoder->bufferSize());
 
     ASSERT(m_sendPort);
+    ASSERT(MACH_PORT_VALID(m_sendPort));
 
     return sendMessage(WTFMove(message));
 }
@@ -493,6 +498,7 @@ void Connection::receiveSourceEventHandler()
 {
     ReceiveBuffer buffer;
 
+    ASSERT(MACH_PORT_VALID(m_receivePort));
     mach_msg_header_t* header = readFromMachPort(m_receivePort, buffer);
     if (!header)
         return;
@@ -532,6 +538,7 @@ void Connection::receiveSourceEventHandler()
         m_sendPort = port.port();
         
         if (m_sendPort) {
+            ASSERT(MACH_PORT_VALID(m_receivePort));
             mach_port_t previousNotificationPort = MACH_PORT_NULL;
             auto kr = mach_port_request_notification(mach_task_self(), m_receivePort, MACH_NOTIFY_NO_SENDERS, 0, MACH_PORT_NULL, MACH_MSG_TYPE_MOVE_SEND_ONCE, &previousNotificationPort);
             ASSERT(kr == KERN_SUCCESS);

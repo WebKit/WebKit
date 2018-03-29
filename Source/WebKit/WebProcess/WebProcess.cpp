@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1156,7 +1156,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #else
         ASSERT_NOT_REACHED();
 #endif
-        if (IPC::Connection::identifierIsNull(connectionIdentifier))
+        if (!IPC::Connection::identifierIsValid(connectionIdentifier))
             CRASH();
         m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
     }
@@ -1230,8 +1230,9 @@ WebToStorageProcessConnection& WebProcess::ensureWebToStorageProcessConnection(P
 #else
         ASSERT_NOT_REACHED();
 #endif
-        if (IPC::Connection::identifierIsNull(connectionIdentifier))
+        if (!IPC::Connection::identifierIsValid(connectionIdentifier))
             CRASH();
+
         m_webToStorageProcessConnection = WebToStorageProcessConnection::create(connectionIdentifier);
 
     }

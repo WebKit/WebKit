@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -219,7 +219,7 @@ void StorageProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
-    if (IPC::Connection::identifierIsNull(connectionIdentifier)) {
+    if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
         // FIXME: Do better cleanup here.
         return;
     }

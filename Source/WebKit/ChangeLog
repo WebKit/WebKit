@@ -1,3 +1,41 @@
+2018-03-29  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r230035): ASSERT(MACH_PORT_VALID(m_sendPort)) hit in IPC::Connection::initializeSendSource()
+        https://bugs.webkit.org/show_bug.cgi?id=184122
+        <rdar://problem/39003606>
+
+        Reviewed by Chris Dumez.
+
+        One of the new assertions added in r230035 begin firing while running tests locally. This was happening
+        because the WebInspector was attempting to open a new connection to a web process that had already
+        terminated its mach port connection (a dead port).
+        
+        We should avoid opening new connections when the port we were given is already dead.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::identifierIsValid): Added.
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInitialize): Do not perform initialization on a dead (or null) port.
+        (IPC::Connection::open): Add some assertions that ports are in a valid state.
+        (IPC::Connection::sendOutgoingMessage): Assert that the send port is not dead.
+        (IPC::Connection::receiveSourceEventHandler): Assert that the receive port is valid.
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching): Treat a dead port as a signal that the
+        child process failed to launch.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching): Ditto.
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Ditto.
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::didFinishLaunching): Ditto.
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection): Ditto.
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection): Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection): Ditto.
+        (WebKit::WebProcess::ensureWebToStorageProcessConnection): Ditto.
+
 2018-03-29  Youenn Fablet  <youenn@apple.com>
 
         Synchronize SecurityOrigin related scheme registries with NetworkProcess
