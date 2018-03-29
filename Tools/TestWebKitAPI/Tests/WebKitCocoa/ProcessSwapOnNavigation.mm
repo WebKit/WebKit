@@ -172,6 +172,8 @@ window.onpageshow = function(evt) {
 </head>
 )PSONRESOURCE";
 
+#if PLATFORM(MAC)
+
 static const char* windowOpenCrossOriginNoOpenerTestBytes = R"PSONRESOURCE(
 <script>
 window.onload = function() {
@@ -200,6 +202,8 @@ window.onload = function() {
 static const char* dummyBytes = R"PSONRESOURCE(
 <body>TEST</body>
 )PSONRESOURCE";
+
+#endif // PLATFORM(MAC)
 
 TEST(ProcessSwap, Basic)
 {
