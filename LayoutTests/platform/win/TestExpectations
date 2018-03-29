@@ -3945,3 +3945,5 @@ webkit.org/b/183953 imported/mozilla/css-transitions/test_keyframeeffect-getkeyf
 webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
 
 webkit.org/b/184133 transitions/opacity-transition-zindex.html [ Skip ]
+
+webkit.org/b/184134 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]
