@@ -1,3 +1,38 @@
+2018-03-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Decouple formatting state and context lifetime.
+        https://bugs.webkit.org/show_bug.cgi?id=184136
+
+        Reviewed by Antti Koivisto.
+
+        FormattingContext is about the layout logic. We don't need to hold on to it.
+
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext):
+        (FloatingContext.prototype.computePosition):
+        (FloatingContext.prototype._positionForClear):
+        (FloatingContext.prototype._computePositionToAvoidIntrudingFloats):
+        (FloatingContext.prototype._addFloatingBox):
+        (FloatingContext.prototype._formattingContext):
+        (FloatingContext.prototype._formattingState):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext):
+        * LayoutReloaded/FormattingState/BlockFormattingState.js:
+        (BlockFormattingState):
+        * LayoutReloaded/FormattingState/FloatingState.js:
+        (FloatingState):
+        (FloatingState.prototype.addFloating):
+        (FloatingState.prototype.formattingState):
+        (FloatingState.prototype.formattingContext): Deleted.
+        * LayoutReloaded/FormattingState/FormattingState.js:
+        (FormattingState):
+        (FormattingState.prototype.formattingContext): Deleted.
+        * LayoutReloaded/FormattingState/InlineFormattingState.js:
+        (InlineFormattingState):
+        * LayoutReloaded/LayoutState.js:
+        (LayoutState.prototype.layout):
+        (LayoutState.prototype.formattingContext):
+
 2018-03-28  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Introduce FloatingState.

@@ -26,14 +26,9 @@
 class FormattingState {
     constructor(layoutState, formattingRoot) {
         this.m_layoutState = layoutState;
-        this.m_formattingContext = null;
         this.m_formattingRoot = formattingRoot;
         this.m_floatingState = null;
         this.m_displayToLayout = new Map();
-    }
-
-    formattingContext() {
-        return this.m_formattingContext;
     }
 
     formattingRoot() {

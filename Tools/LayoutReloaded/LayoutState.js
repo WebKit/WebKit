@@ -32,7 +32,7 @@ class LayoutState {
     layout(formattingRoot) {
         let formattingState = this._createFormattingState(formattingRoot);
         this.m_formattingStates.set(formattingRoot, formattingState);
-        formattingState.formattingContext().layout();
+        this.formattingContext(formattingState).layout();
     }
 
     _createFormattingState(formattingRoot) {
@@ -41,6 +41,15 @@ class LayoutState {
             return new BlockFormattingState(formattingRoot, this);
         if (formattingRoot.establishesInlineFormattingContext())
             return new InlineFormattingState(formattingRoot, this);
+        ASSERT_NOT_REACHED();
+        return null;
+    }
+
+    formattingContext(formattingState) {
+        if (formattingState instanceof BlockFormattingState)
+            return new BlockFormattingContext(formattingState);
+        if (formattingState instanceof InlineFormattingState)
+            return new InlineFormattingContext(formattingState);
         ASSERT_NOT_REACHED();
         return null;
     }

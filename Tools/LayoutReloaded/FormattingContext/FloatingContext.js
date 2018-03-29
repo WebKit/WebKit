@@ -25,17 +25,18 @@
 
 // All geometry here is absolute to the formatting context's root.
 class FloatingContext {
-    constructor(floatingState) {
+    constructor(floatingState, parentFormattingContext) {
         this.m_floatingState = floatingState;
+        this.m_parentFormattingContext = parentFormattingContext;
     }
 
     computePosition(layoutBox) {
         if (layoutBox.isOutOfFlowPositioned())
             return;
-        let displayBox = this._formattingContext().displayBox(layoutBox);
+        let displayBox = this._formattingState().displayBox(layoutBox);
         if (layoutBox.isFloatingPositioned()) {
             displayBox.setTopLeft(this._positionForFloating(layoutBox));
-            this._floatingState().addFloating(layoutBox);
+            this._addFloatingBox(layoutBox);
             return;
         }
         if (Utils.hasClear(layoutBox))
@@ -73,7 +74,7 @@ class FloatingContext {
 
     _positionForClear(layoutBox) {
         ASSERT(Utils.hasClear(layoutBox));
-        let displayBox = this._formattingContext().displayBox(layoutBox);
+        let displayBox = this._formattingState().displayBox(layoutBox);
         if (this._isEmpty())
             return displayBox.topLeft();
 
@@ -95,7 +96,7 @@ class FloatingContext {
 
     _computePositionToAvoidIntrudingFloats(layoutBox) {
         if (!layoutBox.establishesBlockFormattingContext() || this._isEmpty())
-            return this._formattingContext().displayBox(layoutBox).topLeft();
+            return this._formattingState().displayBox(layoutBox).topLeft();
         // The border box of a table, a block-level replaced element, or an element in the normal flow that establishes
         // a new block formatting context (such as an element with 'overflow' other than 'visible') must not overlap the
         // margin box of any floats in the same block formatting context as the element itself.
@@ -184,12 +185,23 @@ class FloatingContext {
         return max;
     }
 
+    _addFloatingBox(layoutBox) {
+        // Convert floating box to absolute.
+        let clonedDisplayBox = this._formattingContext().displayBox(layoutBox).clone();
+        clonedDisplayBox.setRect(this._formattingContext().absoluteMarginBox(layoutBox));
+        this._floatingState().addFloating(layoutBox, clonedDisplayBox);
+    }
+
     _floatingState() {
         return this.m_floatingState;
     }
 
     _formattingContext() {
-        return this._floatingState().formattingContext();
+        return this.m_parentFormattingContext;
+    }
+
+    _formattingState() {
+        return this._floatingState().formattingState();
     }
 
     _lastFloating() {

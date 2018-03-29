@@ -32,7 +32,6 @@ class InlineFormattingState extends FormattingState {
         else {
             // TODO: use parent formatting context's floating state.
         }
-        this.m_formattingContext = new InlineFormattingContext(this);
         this.m_lines = new Array();
     }
 

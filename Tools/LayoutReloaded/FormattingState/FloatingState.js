@@ -24,23 +24,20 @@
  */
 
 class FloatingState {
-    constructor(formattingState) {
-        this.m_formattingState = formattingState;
+    constructor(parentFormattingState) {
+        this.m_parentFormattingState = parentFormattingState;
         this.m_leftFloatingBoxStack = new Array();
         this.m_rightFloatingBoxStack = new Array();
         this.m_lastFloating = null;
     }
 
-    addFloating(floatingBox) {
-        // Convert floating box to absolute.
-        let floatingDisplayBox = this.formattingContext().displayBox(floatingBox).clone();
-        floatingDisplayBox.setRect(this.formattingContext().absoluteMarginBox(floatingBox));
-        this.m_lastFloating = floatingDisplayBox;
-        if (Utils.isFloatingLeft(floatingBox)) {
-            this.m_leftFloatingBoxStack.push(floatingDisplayBox);
+    addFloating(layoutBox, displayBox) {
+        this.m_lastFloating = displayBox;
+        if (Utils.isFloatingLeft(layoutBox)) {
+            this.m_leftFloatingBoxStack.push(displayBox);
             return;
         }
-        this.m_rightFloatingBoxStack.push(floatingDisplayBox);
+        this.m_rightFloatingBoxStack.push(displayBox);
     }
 
     leftFloatingStack() {
@@ -55,7 +52,7 @@ class FloatingState {
         return this.m_lastFloating;
     }
 
-    formattingContext() {
-        return this.m_formattingState.formattingContext();
+    formattingState() {
+        return this.m_parentFormattingState;
     }
 }
