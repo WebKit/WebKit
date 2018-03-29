@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// All geometry here is absolute to the formatting context's root.
 class FloatingContext {
     constructor(formattingContext) {
         this.m_leftFloatingBoxStack = new Array();
@@ -36,9 +37,9 @@ class FloatingContext {
             return;
         let displayBox = this._formattingContext().displayBox(layoutBox);
         if (layoutBox.isFloatingPositioned()) {
-            let position = this._positionForFloating(layoutBox);
+            displayBox.setTopLeft(this._positionForFloating(layoutBox));
             this._addFloating(layoutBox);
-            return displayBox.setTopLeft(position);
+            return;
         }
         if (Utils.hasClear(layoutBox))
             return displayBox.setTopLeft(this._positionForClear(layoutBox));
@@ -59,10 +60,11 @@ class FloatingContext {
     }
 
     _positionForFloating(floatingBox) {
+        let absoluteFloatingBox = this._formattingContext().absoluteMarginBox(floatingBox);
         if (this._isEmpty())
-            return this._adjustedFloatingPosition(floatingBox, this._formattingContext().absoluteMarginBox(floatingBox).top());
-        let verticalPosition = Math.max(this._formattingContext().absoluteMarginBox(floatingBox).top(), this._formattingContext().absoluteMarginBox(this.m_lastFloating).top());
-        let spaceNeeded = this._formattingContext().absoluteMarginBox(floatingBox).width();
+            return this._adjustedFloatingPosition(floatingBox, absoluteFloatingBox.top());
+        let verticalPosition = Math.max(absoluteFloatingBox.top(), this.m_lastFloating.top());
+        let spaceNeeded = absoluteFloatingBox.width();
         while (true) {
             let floatingPair = this._findInnerMostLeftAndRight(verticalPosition);
             if (this._availableSpace(floatingBox.containingBlock(), floatingPair) >= spaceNeeded)
@@ -105,12 +107,15 @@ class FloatingContext {
     }
 
     _addFloating(floatingBox) {
-        this.m_lastFloating = floatingBox;
+        // Convert floating box to absolute.
+        let floatingDisplayBox = this._formattingContext().displayBox(floatingBox).clone();
+        floatingDisplayBox.setRect(this._formattingContext().absoluteMarginBox(floatingBox));
+        this.m_lastFloating = floatingDisplayBox;
         if (Utils.isFloatingLeft(floatingBox)) {
-            this.m_leftFloatingBoxStack.push(floatingBox);
+            this.m_leftFloatingBoxStack.push(floatingDisplayBox);
             return;
         }
-        this.m_rightFloatingBoxStack.push(floatingBox);
+        this.m_rightFloatingBoxStack.push(floatingDisplayBox);
     }
 
     _findInnerMostLeftAndRight(verticalPosition) {
@@ -125,26 +130,26 @@ class FloatingContext {
         let leftBottom = Number.POSITIVE_INFINITY;
         let rightBottom = Number.POSITIVE_INFINITY;
         if (floatingPair.left)
-            leftBottom = this._formattingContext().absoluteMarginBox(floatingPair.left).bottom();
+            leftBottom = floatingPair.left.bottom();
         if (floatingPair.right)
-            rightBottom = this._formattingContext().absoluteMarginBox(floatingPair.right).bottom();
+            rightBottom = floatingPair.right.bottom();
         return Math.min(leftBottom, rightBottom);
     }
 
     _availableSpace(containingBlock, floatingPair) {
         let containingBlockContentBox = this._formattingContext().displayBox(containingBlock);
         if (floatingPair.left && floatingPair.right)
-            return this._formattingContext().absoluteMarginBox(floatingPair.right).left() - this._formattingContext().absoluteMarginBox(floatingPair.left).right();
+            return floatingPair.right.left() - floatingPair.left.right();
         if (floatingPair.left)
-            return containingBlockContentBox.width() - (this._formattingContext().absoluteMarginBox(floatingPair.left).right() - this._formattingContext().absoluteBorderBox(containingBlock).left());
+            return containingBlockContentBox.width() - (floatingPair.left.right() - this._formattingContext().absoluteBorderBox(containingBlock).left());
         if (floatingPair.right)
-            return this._formattingContext().absoluteMarginBox(floatingPair.right).left();
+            return floatingPair.right.left();
         return containingBlockContentBox.width();
     }
 
     _findFloatingAtVerticalPosition(verticalPosition, floatingStack) {
         let index = floatingStack.length;
-        while (--index >= 0 && this._formattingContext().absoluteMarginBox(floatingStack[index]).bottom() <= verticalPosition);
+        while (--index >= 0 && floatingStack[index].bottom() <= verticalPosition);
         return index >= 0 ? floatingStack[index] : null;
     }
 
@@ -159,13 +164,13 @@ class FloatingContext {
         let right = this._formattingContext().absoluteContentBox(containingBlock).right();
         if (leftRightFloatings) {
             if (leftRightFloatings.left) {
-                let floatingBoxRight = this._formattingContext().absoluteMarginBox(leftRightFloatings.left).right();
+                let floatingBoxRight = leftRightFloatings.left.right();
                 if (floatingBoxRight > left)
                     left = floatingBoxRight;
             }
 
             if (leftRightFloatings.right) {
-                let floatingBoxLeft = this._formattingContext().absoluteMarginBox(leftRightFloatings.right).left();
+                let floatingBoxLeft = leftRightFloatings.right.left();
                 if (floatingBoxLeft < right)
                     right = floatingBoxLeft;
             }
@@ -190,7 +195,7 @@ class FloatingContext {
             return Number.NaN;
         let max = Number.NEGATIVE_INFINITY;
         for (let i = 0; i < floatingStack.length; ++i)
-            max = Math.max(this._formattingContext().absoluteMarginBox(floatingStack[i]).bottom(), max);
+            max = Math.max(floatingStack[i].bottom(), max);
         return max;
     }
 

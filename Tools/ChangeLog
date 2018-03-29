@@ -1,3 +1,27 @@
+2018-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Convert floating left/right stack display boxes absolute to the formatting context's root.
+        https://bugs.webkit.org/show_bug.cgi?id=184123
+
+        Reviewed by Antti Koivisto.
+
+        1. The left/right floating array should hold the Display.Box (and not the Layout.Box)
+        2. Clone the Display.Box and convert its rect absolute to the formatting context's root so that we
+        don't have to keep converting the coordinates while computing the positions. 
+
+        * LayoutReloaded/DisplayTree/Box.js:
+        (Display.Box.prototype.clone):
+        (Display.Box.prototype.setRect):
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype.computePosition):
+        (FloatingContext.prototype._positionForFloating):
+        (FloatingContext.prototype._addFloating):
+        (FloatingContext.prototype._moveToNextVerticalPosition):
+        (FloatingContext.prototype._availableSpace):
+        (FloatingContext.prototype._findFloatingAtVerticalPosition):
+        (FloatingContext.prototype._adjustedFloatingPosition):
+        (FloatingContext.prototype._bottom):
+
 2018-03-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r230060.

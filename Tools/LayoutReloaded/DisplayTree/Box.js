@@ -31,8 +31,18 @@ Display.Box = class Box {
         this.m_rect = new LayoutRect(new LayoutPoint(0, 0), new LayoutSize(0, 0));
     }
 
+    clone() {
+        let cloneBox = new Display.Box(this.m_node);
+        cloneBox.setRect(this.rect());
+        return cloneBox;
+    }
+
     rect() {
         return this.m_rect.clone();
+    }
+
+    setRect(rect) {
+        return this.m_rect = rect;
     }
     
     top() {
