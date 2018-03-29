@@ -191,11 +191,7 @@ public:
     String defaultStatus() const;
     void setDefaultStatus(const String&);
 
-    // Self-referential attributes
-
     DOMWindow* self() const;
-    DOMWindow* window() const { return self(); }
-    DOMWindow* frames() const { return self(); }
 
     DOMWindow* opener() const;
     void disownOpener();

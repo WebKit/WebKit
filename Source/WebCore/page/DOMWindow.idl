@@ -49,7 +49,7 @@ typedef USVString CSSOMString;
     PrimaryGlobal,
 ] interface DOMWindow : EventTarget {
     // The current browsing context.
-    [DoNotCheckSecurity, Unforgeable] readonly attribute DOMWindow window;
+    [DoNotCheckSecurity, Unforgeable, ImplementedAs=self] readonly attribute DOMWindow window;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow self;
     [Unforgeable] readonly attribute Document document;
     attribute DOMString name;
@@ -70,7 +70,7 @@ typedef USVString CSSOMString;
     [DoNotCheckSecurity, ForwardDeclareInHeader] void blur();
 
     // Other browsing contexts.
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow frames;
+    [Replaceable, DoNotCheckSecurityOnGetter, ImplementedAs=self] readonly attribute DOMWindow frames;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
     [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute DOMWindow? top;
     [DoNotCheckSecurityOnGetter, CustomSetter] attribute DOMWindow? opener;

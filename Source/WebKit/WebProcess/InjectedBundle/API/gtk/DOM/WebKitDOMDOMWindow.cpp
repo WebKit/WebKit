@@ -962,7 +962,7 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_window(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->window());
+    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->self());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -971,7 +971,7 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_frames(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->frames());
+    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->self());
     return WebKit::kit(gobjectResult.get());
 }
 
