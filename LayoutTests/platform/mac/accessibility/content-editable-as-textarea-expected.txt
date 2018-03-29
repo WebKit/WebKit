@@ -12,23 +12,23 @@ String with range: ello
 worl
 Attributed string with range: ello
 {
-    AXBackgroundColor = " [ (kCGColorSpaceDeviceRGB)] ( 0 0 0 0 )";
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
     AXFont =     {
         AXFontFamily = Times;
         AXFontName = "Times-Roman";
         AXFontSize = 16;
         AXVisibleName = "Times Roman";
     };
-    AXForegroundColor = " [ (kCGColorSpaceDeviceRGB)] ( 0 0 0 1 )";
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
 }worl{
-    AXBackgroundColor = " [ (kCGColorSpaceDeviceRGB)] ( 0 0 0 0 )";
+    AXBackgroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )";
     AXFont =     {
         AXFontFamily = Times;
         AXFontName = "Times-Bold";
         AXFontSize = 16;
         AXVisibleName = "Times Bold";
     };
-    AXForegroundColor = " [ (kCGColorSpaceDeviceRGB)] ( 0 0 0 1 )";
+    AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
     AXMarkedMisspelled = 1;
     AXMisspelled = 1;
 }

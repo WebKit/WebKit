@@ -292,29 +292,17 @@ String RenderThemeMac::imageControlsStyleSheet() const
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSColor* color = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-#pragma clang diagnostic pop
-    return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
+    return colorFromNSColor([NSColor selectedTextBackgroundColor]);
 }
 
 Color RenderThemeMac::platformInactiveSelectionBackgroundColor() const
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSColor* color = [[NSColor secondarySelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-#pragma clang diagnostic pop
-    return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
+    return colorFromNSColor([NSColor secondarySelectedControlColor]);
 }
 
 Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor() const
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSColor* color = [[NSColor alternateSelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-#pragma clang diagnostic pop
-    return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
+    return colorFromNSColor([NSColor alternateSelectedControlColor]);
 }
 
 Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor() const
@@ -414,78 +402,24 @@ void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, Fo
     fontDescription.setIsItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
 }
 
-static RGBA32 convertNSColorToColor(NSColor *color)
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSColor *colorInColorSpace = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-#pragma clang diagnostic pop
-    if (colorInColorSpace) {
-        static const double scaleFactor = nextafter(256.0, 0.0);
-        return makeRGB(static_cast<int>(scaleFactor * [colorInColorSpace redComponent]),
-            static_cast<int>(scaleFactor * [colorInColorSpace greenComponent]),
-            static_cast<int>(scaleFactor * [colorInColorSpace blueComponent]));
-    }
-
-    // This conversion above can fail if the NSColor in question is an NSPatternColor
-    // (as many system colors are). These colors are actually a repeating pattern
-    // not just a solid color. To work around this we simply draw a 1x1 image of
-    // the color and use that pixel's color. It might be better to use an average of
-    // the colors in the pattern instead.
-    NSBitmapImageRep *offscreenRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
-                                                                             pixelsWide:1
-                                                                             pixelsHigh:1
-                                                                          bitsPerSample:8
-                                                                        samplesPerPixel:4
-                                                                               hasAlpha:YES
-                                                                               isPlanar:NO
-                                                                         colorSpaceName:NSDeviceRGBColorSpace
-                                                                            bytesPerRow:4
-                                                                           bitsPerPixel:32];
-
-    [NSGraphicsContext saveGraphicsState];
-    [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep]];
-    NSEraseRect(NSMakeRect(0, 0, 1, 1));
-    [color drawSwatchInRect:NSMakeRect(0, 0, 1, 1)];
-    [NSGraphicsContext restoreGraphicsState];
-
-    NSUInteger pixel[4];
-    [offscreenRep getPixel:pixel atX:0 y:0];
-
-    [offscreenRep release];
-
-    return makeRGB(pixel[0], pixel[1], pixel[2]);
-}
-
 static RGBA32 menuBackgroundColor()
 {
-    NSBitmapImageRep *offscreenRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
-                                                                             pixelsWide:1
-                                                                             pixelsHigh:1
-                                                                          bitsPerSample:8
-                                                                        samplesPerPixel:4
-                                                                               hasAlpha:YES
-                                                                               isPlanar:NO
-                                                                         colorSpaceName:NSDeviceRGBColorSpace
-                                                                            bytesPerRow:4
-                                                                           bitsPerPixel:32];
+    RetainPtr<NSBitmapImageRep> offscreenRep = adoptNS([[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil pixelsWide:1 pixelsHigh:1
+        bitsPerSample:8 samplesPerPixel:4 hasAlpha:YES isPlanar:NO colorSpaceName:NSDeviceRGBColorSpace bytesPerRow:4 bitsPerPixel:32]);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep] graphicsPort]);
-#pragma clang diagnostic pop
-    CGRect rect = CGRectMake(0, 0, 1, 1);
+    CGContextRef bitmapContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:offscreenRep.get()].CGContext;
+    const CGRect rect = CGRectMake(0, 0, 1, 1);
+
     HIThemeMenuDrawInfo drawInfo;
     drawInfo.version =  0;
     drawInfo.menuType = kThemeMenuTypePopUp;
-    HIThemeDrawMenuBackground(&rect, &drawInfo, context, kHIThemeOrientationInverted);
+
+    HIThemeDrawMenuBackground(&rect, &drawInfo, bitmapContext, kHIThemeOrientationInverted);
 
     NSUInteger pixel[4];
     [offscreenRep getPixel:pixel atX:0 y:0];
 
-    [offscreenRep release];
-
-    return makeRGB(pixel[0], pixel[1], pixel[2]);
+    return makeRGBA(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 void RenderThemeMac::platformColorsDidChange()
@@ -592,7 +526,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, bool useSystemAppearanc
         };
         if (auto selector = selectCocoaColor()) {
             if (auto color = wtfObjcMsgSend<NSColor *>([NSColor class], selector))
-                return convertNSColorToColor(color);
+                return colorFromNSColor(color);
         }
         switch (cssValueID) {
         case CSSValueActivebuttontext:
@@ -2468,7 +2402,7 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
 
     Color backgroundColor;
     if (attachment.frame().selection().isFocusedAndActive())
-        backgroundColor = convertNSColorToColor([NSColor alternateSelectedControlColor]);
+        backgroundColor = colorFromNSColor([NSColor alternateSelectedControlColor]);
     else
         backgroundColor = attachmentTitleInactiveBackgroundColor();
 

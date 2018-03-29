@@ -36,7 +36,6 @@ OBJC_CLASS NSColor;
 
 namespace WebCore {
 
-// These functions assume NSColors are in DeviceRGB colorspace
 WEBCORE_EXPORT Color colorFromNSColor(NSColor *);
 WEBCORE_EXPORT NSColor *nsColor(const Color&);
 

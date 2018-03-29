@@ -1,3 +1,28 @@
+2018-03-28  Timothy Hatcher  <timothy@apple.com>
+
+        Consolidate NSColor to WebCore::Color conversion and fix system colors.
+
+        https://bugs.webkit.org/show_bug.cgi?id=184096
+        rdar://problem/38918925
+
+        Reviewed by Tim Horton.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (CreateCGColorIfDifferent): Use CGColor property on NSColor, don't manually create new CGColor.
+        * platform/graphics/mac/ColorMac.h:
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::makeRGBAFromNSColor): Move pattern code from RenderThemeMac's convertNSColorToColor.
+        Also use nextafter for proper RGBA float conversion.
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::color): Use colorFromNSColor.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformActiveSelectionBackgroundColor const): Use colorFromNSColor.
+        (WebCore::RenderThemeMac::platformInactiveSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderThemeMac::platformActiveListBoxSelectionBackgroundColor const): Ditto.
+        (WebCore::RenderThemeMac::systemColor const): Ditto.
+        (WebCore::paintAttachmentTitleBackground): Ditto.
+        (WebCore::convertNSColorToColor): Deleted.
+
 2018-03-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The SVGAnimatedProperty wrappers have to be detached from the referenced values before the SVGAnimatedType is deleted

@@ -793,44 +793,16 @@ static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSSt
     
 }
 
-static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existingColor)
-{
-    // get color information assuming NSDeviceRGBColorSpace
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-#pragma clang diagnostic pop
-    if (rgbColor == nil)
-        rgbColor = [NSColor blackColor];
-    CGFloat components[4];
-    [rgbColor getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
-    
-    // create a new CGColorRef to return
-    CGColorSpaceRef cgColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGColorRef cgColor = CGColorCreate(cgColorSpace, components);
-    CGColorSpaceRelease(cgColorSpace);
-    
-    // check for match with existing color
-    if (existingColor && CGColorEqualToColor(cgColor, existingColor)) {
-        CGColorRelease(cgColor);
-        cgColor = nullptr;
-    }
-    
-    return cgColor;
-}
-
 static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSString* attribute, NSColor* color, NSRange range)
 {
     if (!AXAttributedStringRangeIsValid(attrString, range))
         return;
-    
+
     if (color) {
-        CGColorRef existingColor = (CGColorRef) [attrString attribute:attribute atIndex:range.location effectiveRange:nil];
-        CGColorRef cgColor = CreateCGColorIfDifferent(color, existingColor);
-        if (cgColor) {
+        CGColorRef cgColor = color.CGColor;
+        CGColorRef existingColor = (CGColorRef)[attrString attribute:attribute atIndex:range.location effectiveRange:nil];
+        if (!existingColor || !CGColorEqualToColor(existingColor, cgColor))
             [attrString addAttribute:attribute value:(id)cgColor range:range];
-            CGColorRelease(cgColor);
-        }
     } else
         [attrString removeAttribute:attribute range:range];
 }
