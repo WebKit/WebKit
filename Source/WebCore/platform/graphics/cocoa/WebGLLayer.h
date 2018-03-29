@@ -34,6 +34,9 @@ class GraphicsLayer;
 class GraphicsContext3D;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #if USE(OPENGL)
 @interface WebGLLayer : CALayer
 #else
@@ -64,3 +67,4 @@ class GraphicsContext3D;
 
 @end
 
+#pragma clang diagnostic pop
