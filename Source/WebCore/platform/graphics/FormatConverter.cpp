@@ -35,6 +35,13 @@
 #include "GraphicsContext3DNEON.h"
 #endif
 
+// Visual Studio crashes with a C1063 Fatal Error if everything is inlined.
+#if COMPILER(MSVC)
+#define ALWAYS_INLINE_EXCEPT_MSVC
+#else
+#define ALWAYS_INLINE_EXCEPT_MSVC ALWAYS_INLINE
+#endif
+
 namespace WebCore {
 
 
@@ -1198,7 +1205,6 @@ ALWAYS_INLINE void FormatConverter::convert(GraphicsContext3D::AlphaOp alphaOp)
 #undef FORMATCONVERTER_CASE_ALPHAOP
 }
 
-// Visual Studio crashes with a C1063 Fatal Error if everything is inlined.
 template<GraphicsContext3D::DataFormat SrcFormat, GraphicsContext3D::DataFormat DstFormat, GraphicsContext3D::AlphaOp alphaOp>
 ALWAYS_INLINE_EXCEPT_MSVC void FormatConverter::convert()
 {

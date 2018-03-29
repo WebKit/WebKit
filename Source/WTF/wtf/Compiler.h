@@ -178,13 +178,6 @@
 #define ALWAYS_INLINE inline
 #endif
 
-// Sometimes needed due to MSVC optimizer sensitivities.
-#if COMPILER(MSVC)
-#define ALWAYS_INLINE_EXCEPT_MSVC inline
-#else
-#define ALWAYS_INLINE_EXCEPT_MSVC ALWAYS_INLINE
-#endif
-
 /* WTF_EXTERN_C_{BEGIN, END} */
 
 #ifdef __cplusplus
