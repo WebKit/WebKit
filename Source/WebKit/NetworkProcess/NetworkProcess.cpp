@@ -67,6 +67,7 @@
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/Settings.h>
@@ -270,6 +271,27 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
+
+    for (auto& scheme : parameters.urlSchemesRegisteredAsSecure)
+        registerURLSchemeAsSecure(scheme);
+
+    for (auto& scheme : parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy)
+        registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
+
+    for (auto& scheme : parameters.urlSchemesRegisteredAsLocal)
+        registerURLSchemeAsLocal(scheme);
+
+    for (auto& scheme : parameters.urlSchemesRegisteredAsNoAccess)
+        registerURLSchemeAsNoAccess(scheme);
+
+    for (auto& scheme : parameters.urlSchemesRegisteredAsDisplayIsolated)
+        registerURLSchemeAsDisplayIsolated(scheme);
+
+    for (auto& scheme : parameters.urlSchemesRegisteredAsCORSEnabled)
+        registerURLSchemeAsCORSEnabled(scheme);
+
+    for (auto& scheme : parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest)
+        registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
 
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
@@ -864,6 +886,41 @@ void NetworkProcess::preconnectTo(const WebCore::URL& url, WebCore::StoredCreden
 uint64_t NetworkProcess::cacheStoragePerOriginQuota() const
 {
     return m_cacheStoragePerOriginQuota;
+}
+
+void NetworkProcess::registerURLSchemeAsSecure(const String& scheme) const
+{
+    SchemeRegistry::registerURLSchemeAsSecure(scheme);
+}
+
+void NetworkProcess::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme) const
+{
+    SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
+}
+
+void NetworkProcess::registerURLSchemeAsLocal(const String& scheme) const
+{
+    SchemeRegistry::registerURLSchemeAsLocal(scheme);
+}
+
+void NetworkProcess::registerURLSchemeAsNoAccess(const String& scheme) const
+{
+    SchemeRegistry::registerURLSchemeAsNoAccess(scheme);
+}
+
+void NetworkProcess::registerURLSchemeAsDisplayIsolated(const String& scheme) const
+{
+    SchemeRegistry::registerURLSchemeAsDisplayIsolated(scheme);
+}
+
+void NetworkProcess::registerURLSchemeAsCORSEnabled(const String& scheme) const
+{
+    SchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
+}
+
+void NetworkProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String& scheme) const
+{
+    SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(scheme);
 }
 
 #if !PLATFORM(COCOA)

@@ -107,6 +107,14 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << recordReplayMode;
     encoder << recordReplayCacheLocation;
 #endif
+
+    encoder << urlSchemesRegisteredAsSecure;
+    encoder << urlSchemesRegisteredAsBypassingContentSecurityPolicy;
+    encoder << urlSchemesRegisteredAsLocal;
+    encoder << urlSchemesRegisteredAsNoAccess;
+    encoder << urlSchemesRegisteredAsDisplayIsolated;
+    encoder << urlSchemesRegisteredAsCORSEnabled;
+    encoder << urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -251,6 +259,21 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.recordReplayCacheLocation))
         return false;
 #endif
+
+    if (!decoder.decode(result.urlSchemesRegisteredAsSecure))
+        return false;
+    if (!decoder.decode(result.urlSchemesRegisteredAsBypassingContentSecurityPolicy))
+        return false;
+    if (!decoder.decode(result.urlSchemesRegisteredAsLocal))
+        return false;
+    if (!decoder.decode(result.urlSchemesRegisteredAsNoAccess))
+        return false;
+    if (!decoder.decode(result.urlSchemesRegisteredAsDisplayIsolated))
+        return false;
+    if (!decoder.decode(result.urlSchemesRegisteredAsCORSEnabled))
+        return false;
+    if (!decoder.decode(result.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest))
+        return false;
 
     return true;
 }

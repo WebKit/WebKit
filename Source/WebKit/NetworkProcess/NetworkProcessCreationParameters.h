@@ -124,6 +124,14 @@ struct NetworkProcessCreationParameters {
     String recordReplayMode;
     String recordReplayCacheLocation;
 #endif
+
+    Vector<String> urlSchemesRegisteredAsSecure;
+    Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
+    Vector<String> urlSchemesRegisteredAsLocal;
+    Vector<String> urlSchemesRegisteredAsNoAccess;
+    Vector<String> urlSchemesRegisteredAsDisplayIsolated;
+    Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
+    Vector<String> urlSchemesRegisteredAsCORSEnabled;
 };
 
 } // namespace WebKit

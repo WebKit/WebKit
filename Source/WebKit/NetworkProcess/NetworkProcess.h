@@ -240,6 +240,14 @@ private:
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
 #endif
 
+    void registerURLSchemeAsSecure(const String&) const;
+    void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;
+    void registerURLSchemeAsLocal(const String&) const;
+    void registerURLSchemeAsNoAccess(const String&) const;
+    void registerURLSchemeAsDisplayIsolated(const String&) const;
+    void registerURLSchemeAsCORSEnabled(const String&) const;
+    void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;
+
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
 

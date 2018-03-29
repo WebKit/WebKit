@@ -1,3 +1,43 @@
+2018-03-29  Youenn Fablet  <youenn@apple.com>
+
+        Synchronize SecurityOrigin related scheme registries with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184140
+
+        Reviewed by Chris Dumez.
+
+        Add syncing of scheme registries that are used by SecurityOrigin and ContentSecurityPolicy
+        so that we can properly use them in NetworkProcess as we do in WebProcess.
+        The registries that are not synced are:
+        - URLSchemeAsEmptyDocument
+        - URLSchemeDomainRelaxationForbidden
+        - URLSchemeAsCachePartitioned
+        - URLSchemeAsCanDisplayOnlyIfCanRequest
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::registerURLSchemeAsSecure const):
+        (WebKit::NetworkProcess::registerURLSchemeAsBypassingContentSecurityPolicy const):
+        (WebKit::NetworkProcess::registerURLSchemeAsLocal const):
+        (WebKit::NetworkProcess::registerURLSchemeAsNoAccess const):
+        (WebKit::NetworkProcess::registerURLSchemeAsDisplayIsolated const):
+        (WebKit::NetworkProcess::registerURLSchemeAsCORSEnabled const):
+        (WebKit::NetworkProcess::registerURLSchemeAsCanDisplayOnlyIfCanRequest const):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::registerURLSchemeAsSecure):
+        (WebKit::WebProcessPool::registerURLSchemeAsBypassingContentSecurityPolicy):
+        (WebKit::WebProcessPool::registerURLSchemeAsLocal):
+        (WebKit::WebProcessPool::registerURLSchemeAsNoAccess):
+        (WebKit::WebProcessPool::registerURLSchemeAsDisplayIsolated):
+        (WebKit::WebProcessPool::registerURLSchemeAsCORSEnabled):
+        (WebKit::WebProcessPool::registerURLSchemeAsCanDisplayOnlyIfCanRequest):
+
 2018-03-29  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r229480): ERROR: Unhandled web process message 'WebCookieManager:SetHTTPCookieAcceptPolicy'

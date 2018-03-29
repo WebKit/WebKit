@@ -91,4 +91,12 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
+
+    RegisterURLSchemeAsSecure(String scheme)
+    RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
+    RegisterURLSchemeAsLocal(String scheme)
+    RegisterURLSchemeAsNoAccess(String scheme)
+    RegisterURLSchemeAsDisplayIsolated(String scheme)
+    RegisterURLSchemeAsCORSEnabled(String scheme)
+    RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
 }
