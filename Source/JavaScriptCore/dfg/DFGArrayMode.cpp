@@ -118,6 +118,10 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJSLocker& locker, ArrayProfile
         return ArrayMode(Array::Float64Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     default:
+        // If we have seen multiple TypedArray types, or a TypedArray and non-typed array, it doesn't make sense to try to convert the object since you can't convert typed arrays.
+        if (observed & ALL_TYPED_ARRAY_MODES)
+            return ArrayMode(Array::Generic, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+
         if ((observed & asArrayModes(NonArray)) && profile->mayInterceptIndexedAccesses(locker))
             return ArrayMode(Array::SelectUsingPredictions).withSpeculationFromProfile(locker, profile, makeSafe);
         
