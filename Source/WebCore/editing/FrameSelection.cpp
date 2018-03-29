@@ -2441,6 +2441,10 @@ void FrameSelection::scheduleAppearanceUpdateAfterStyleChange()
 
 void FrameSelection::appearanceUpdateTimerFired()
 {
+    Ref<Frame> protectedFrame(*m_frame);
+    if (auto* document = protectedFrame->document())
+        document->updateLayoutIgnorePendingStylesheets();
+
     updateAppearanceAfterLayoutOrStyleChange();
 }
 
