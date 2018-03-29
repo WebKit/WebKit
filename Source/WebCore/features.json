@@ -497,7 +497,7 @@
     {
         "name": "Service Workers",
         "status": {
-            "status": "Supported In Preview"
+            "status": "Supported"
         },
         "url": "https://w3c.github.io/ServiceWorker/",
         "webkit-url": "https://webkit.org/b/174541",
