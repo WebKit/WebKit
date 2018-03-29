@@ -651,21 +651,21 @@ bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
     return false;
 }
 
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageMIMETypes()
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageMIMETypes()
 {
     if (!supportedImageMIMETypes)
         initializeSupportedImageMIMETypes();
     return *supportedImageMIMETypes;
 }
 
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageResourceMIMETypes()
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageResourceMIMETypes()
 {
     if (!supportedImageResourceMIMETypes)
         initializeSupportedImageMIMETypes();
     return *supportedImageResourceMIMETypes;
 }
 
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageMIMETypesForEncoding()
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageMIMETypesForEncoding()
 {
     if (!supportedImageMIMETypesForEncoding)
         initializeSupportedImageMIMETypesForEncoding();
@@ -679,7 +679,7 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedNonImag
     return *supportedNonImageMIMETypes;
 }
 
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedMediaMIMETypes()
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedMediaMIMETypes()
 {
     if (!supportedMediaMIMETypes)
         initializeSupportedMediaMIMETypes();
@@ -687,14 +687,14 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedMediaMI
 }
 
 
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getPDFMIMETypes()
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getPDFMIMETypes()
 {
     if (!pdfMIMETypes)
         initializePDFMIMETypes();
     return *pdfMIMETypes;
 }
 
-HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getUnsupportedTextMIMETypes()
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getUnsupportedTextMIMETypes()
 {
     if (!unsupportedTextMIMETypes)
         initializeUnsupportedTextMIMETypes();

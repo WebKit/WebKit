@@ -1,3 +1,22 @@
+2018-03-29  Daniel Bates  <dabates@apple.com>
+
+        MIMETypeRegistry should return const HashSets
+        https://bugs.webkit.org/show_bug.cgi?id=184150
+
+        Reviewed by Per Arne Vollan.
+
+        Only getSupportedNonImageMIMETypes() needs to return a non-const HashSet so that
+        LegacyWebKit can modify the set of non-image MIME types.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes):
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypesForEncoding):
+        (WebCore::MIMETypeRegistry::getSupportedMediaMIMETypes):
+        (WebCore::MIMETypeRegistry::getPDFMIMETypes):
+        (WebCore::MIMETypeRegistry::getUnsupportedTextMIMETypes):
+        * platform/MIMETypeRegistry.h:
+
 2018-03-29  Brady Eidson  <beidson@apple.com>
 
         Update Service Worker feature status.

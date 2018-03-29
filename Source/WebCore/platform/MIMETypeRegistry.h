@@ -106,13 +106,14 @@ public:
 
     // FIXME: WebKit coding style says we should not have the word "get" in the names of these functions.
     // FIXME: Would be nice to find a way to avoid exposing these sets, even worse exposing non-const references.
-    WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypes();
-    static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageResourceMIMETypes();
-    static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypesForEncoding();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedNonImageMIMETypes();
-    WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedMediaMIMETypes();
-    WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getPDFMIMETypes();
-    WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& getUnsupportedTextMIMETypes();
+
+    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypes();
+    const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageResourceMIMETypes();
+    const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypesForEncoding();
+    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedMediaMIMETypes();
+    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getPDFMIMETypes();
+    WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getUnsupportedTextMIMETypes();
 
     // FIXME: WebKit coding style says we should not have the word "get" in the name of this function.
     // FIXME: Unclear what the concept of a normalized MIME type is; currently it's a platform-specific notion.
