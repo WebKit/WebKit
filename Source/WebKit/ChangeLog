@@ -1,3 +1,21 @@
+2018-03-29  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r229480): ERROR: Unhandled web process message 'WebCookieManager:SetHTTPCookieAcceptPolicy'
+        https://bugs.webkit.org/show_bug.cgi?id=184124
+        <rdar://problem/38998971>
+
+        Reviewed by Chris Dumez.
+
+        Cookie accept policy messages were still being sent to the WebContent process after
+        I removed cookie access in r229480. The WebContent process no longer recognizes these
+        messages, and generates logging to that effect.
+        
+        This patch stops sending these unnecessary messages to the WebContent process. Only the
+        Network process needs to receive this information.
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+
 2018-03-29  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [WPE] Floating point exception in WebEventFactory::createWebWheelEvent
