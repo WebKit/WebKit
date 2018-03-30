@@ -1,5 +1,16 @@
 2018-03-30  Robin Morisset  <rmorisset@apple.com>
 
+        Inlining of a function that ends in op_unreachable in a non-tail position triggers an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=183812
+
+        Reviewed by Keith Miller.
+
+        * stress/inlining-unreachable-non-tail.js: Added.
+        (foo.):
+        (foo):
+
+2018-03-30  Robin Morisset  <rmorisset@apple.com>
+
         A stack overflow in the parsing of a builtin (called by createExecutable) cause a crash instead of a catchable js exception
         https://bugs.webkit.org/show_bug.cgi?id=184074
         <rdar://problem/37165897>

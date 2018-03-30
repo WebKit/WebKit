@@ -1,5 +1,19 @@
 2018-03-30  Robin Morisset  <rmorisset@apple.com>
 
+        Inlining of a function that ends in op_unreachable in a non-tail position triggers an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=183812
+
+        Reviewed by Keith Miller.
+
+        The fix I landed for https://bugs.webkit.org/show_bug.cgi?id=181027 was flawed: I tried setting the bytecodeIndex for the new block on line 1679 (at the end of inlineCall), but it is going to be reset on line 6612 (in parseCodeBlock).
+        The fix is simply to make the block untargetable by default, and let parseCodeBlock make it targetable afterwards if it is a jump target.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::allocateTargetableBlock):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+
+2018-03-30  Robin Morisset  <rmorisset@apple.com>
+
         A stack overflow in the parsing of a builtin (called by createExecutable) cause a crash instead of a catchable js exception
         https://bugs.webkit.org/show_bug.cgi?id=184074
         <rdar://problem/37165897>
