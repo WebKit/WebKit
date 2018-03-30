@@ -425,7 +425,7 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
 
 bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element& element)
 {
-    return m_inMSOList || (m_shouldPreserveMSOList && element.hasTagName(pTag) && element.getAttribute(styleAttr).contains(";mso-list:"));
+    return m_inMSOList || (m_shouldPreserveMSOList && element.getAttribute(styleAttr).contains(";mso-list:"));
 }
 
 void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
