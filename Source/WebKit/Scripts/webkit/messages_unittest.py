@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -300,20 +300,24 @@ class ParsingTest(MessagesTest):
 
 class GeneratedFileContentsTest(unittest.TestCase):
     def assertGeneratedFileContentsEqual(self, actual_file_contents, expected_file_name):
-        if reset_results:
-            with open(os.path.join(script_directory, expected_file_name), mode='w') as out_file:
-                out_file.write(actual_file_contents)
-            return
+        try:
+            if reset_results:
+                with open(os.path.join(script_directory, expected_file_name), mode='w') as out_file:
+                    out_file.write(actual_file_contents)
+                return
 
-        with open(os.path.join(script_directory, expected_file_name), mode='r') as in_file:
-            expected_file_contents = in_file.read()
-        actual_line_list = actual_file_contents.splitlines(False)
-        expected_line_list = expected_file_contents.splitlines(False)
+            with open(os.path.join(script_directory, expected_file_name), mode='r') as in_file:
+                expected_file_contents = in_file.read()
+            actual_line_list = actual_file_contents.splitlines(False)
+            expected_line_list = expected_file_contents.splitlines(False)
 
-        for index, actual_line in enumerate(actual_line_list):
-            self.assertEquals(actual_line, expected_line_list[index])
+            for index, actual_line in enumerate(actual_line_list):
+                self.assertEquals(actual_line, expected_line_list[index])
 
-        self.assertEquals(len(actual_line_list), len(expected_line_list))
+            self.assertEquals(len(actual_line_list), len(expected_line_list))
+        except:
+            sys.stderr.write('In expected file %s\n' % expected_file_name)
+            raise
 
     def assertHeaderEqual(self, input_messages_file_contents, expected_file_name):
         actual_file_contents = messages.generate_messages_header(StringIO(input_messages_file_contents))

@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@ LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 DELAYED_ATTRIBUTE = 'Delayed'
 
 _license_header = """/*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -172,6 +172,7 @@ def forward_declarations_and_headers(receiver):
 
     headers = set([
         '"ArgumentCoders.h"',
+        '<wtf/Forward.h>',
     ])
 
     non_template_wtf_types = frozenset([
@@ -191,6 +192,7 @@ def forward_declarations_and_headers(receiver):
         'WebCore::ServiceWorkerOrClientIdentifier',
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SWServerConnectionIdentifier',
+        'String',
     ])
 
     for parameter in receiver.iterparameters():
