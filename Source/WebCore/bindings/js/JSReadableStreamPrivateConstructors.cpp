@@ -124,27 +124,27 @@ template<> const ClassInfo JSBuiltinReadableStreamBYOBRequestPrivateConstructor:
 
 template<> FunctionExecutable* JSBuiltinReadableStreamDefaultReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
-    return readableStreamInternalsPrivateInitializeReadableStreamDefaultReaderCodeGenerator(vm);
+    return readableStreamInternalsPrivateInitializeReadableStreamDefaultReaderCodeGenerator(vm).value();
 }
 
 template<> FunctionExecutable* JSBuiltinReadableStreamDefaultControllerPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
-    return readableStreamInternalsPrivateInitializeReadableStreamDefaultControllerCodeGenerator(vm);
+    return readableStreamInternalsPrivateInitializeReadableStreamDefaultControllerCodeGenerator(vm).value();
 }
 
 template<> FunctionExecutable* JSBuiltinReadableByteStreamControllerPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
-    return readableByteStreamInternalsPrivateInitializeReadableByteStreamControllerCodeGenerator(vm);
+    return readableByteStreamInternalsPrivateInitializeReadableByteStreamControllerCodeGenerator(vm).value();
 }
 
 template<> FunctionExecutable* JSBuiltinReadableStreamBYOBReaderPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
-    return readableByteStreamInternalsPrivateInitializeReadableStreamBYOBReaderCodeGenerator(vm);
+    return readableByteStreamInternalsPrivateInitializeReadableStreamBYOBReaderCodeGenerator(vm).value();
 }
 
 template<> FunctionExecutable* JSBuiltinReadableStreamBYOBRequestPrivateConstructor::initializeExecutable(JSC::VM& vm)
 {
-    return readableByteStreamInternalsPrivateInitializeReadableStreamBYOBRequestCodeGenerator(vm);
+    return readableByteStreamInternalsPrivateInitializeReadableStreamBYOBRequestCodeGenerator(vm).value();
 }
 
 JSObject* createReadableStreamDefaultReaderPrivateConstructor(VM& vm, JSDOMGlobalObject& globalObject)

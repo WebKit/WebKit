@@ -68,14 +68,14 @@ THE POSSIBILITY OF SUCH DAMAGE.
 
     CombinedHeaderStaticMacros = (
     """#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
-    JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
+    Expected<JSC::FunctionExecutable*, JSC::ParserError> codeName##Generator(JSC::VM&);
 
 ${macroPrefix}_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR""")
 
     SeparateHeaderStaticMacros = (
     """#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
-    JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
+    Expected<JSC::FunctionExecutable*, JSC::ParserError> codeName##Generator(JSC::VM&);
 
 ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR""")
@@ -83,9 +83,12 @@ ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
     CombinedJSCImplementationStaticMacros = (
     """
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
-JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
+Expected<JSC::FunctionExecutable*, JSC::ParserError> codeName##Generator(JSC::VM& vm) \\
 {\\
-    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \
+    auto expectedUnlinked = vm.builtinExecutables()->codeName##Executable();\\
+    if (!expectedUnlinked.has_value())\\
+        return makeUnexpected(expectedUnlinked.error());\\
+        return expectedUnlinked.value()->link(vm, vm.builtinExecutables()->codeName##Source(), std::nullopt, s_##codeName##Intrinsic);\\
 }
 ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
@@ -94,9 +97,12 @@ ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
     SeparateJSCImplementationStaticMacros = (
     """
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
-JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
+Expected<JSC::FunctionExecutable*, JSC::ParserError> codeName##Generator(JSC::VM& vm) \\
 {\\
-    return vm.builtinExecutables()->codeName##Executable()->link(vm, vm.builtinExecutables()->codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \
+    auto expectedUnlinked = vm.builtinExecutables()->codeName##Executable();\\
+    if (!expectedUnlinked.has_value())\\
+        return makeUnexpected(expectedUnlinked.error());\\
+    return expectedUnlinked.value()->link(vm, vm.builtinExecutables()->codeName##Source(), std::nullopt, s_##codeName##Intrinsic);\\
 }
 ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
@@ -105,10 +111,10 @@ ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
     CombinedWebCoreImplementationStaticMacros = (
         """
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
-JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
+Expected<JSC::FunctionExecutable*, JSC::ParserError> codeName##Generator(JSC::VM& vm) \\
 {\\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \\
-    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \\
+    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable().value()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \\
 }
 ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
@@ -117,10 +123,10 @@ ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
     SeparateWebCoreImplementationStaticMacros = (
         """
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
-JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
+Expected<JSC::FunctionExecutable*, JSC::ParserError> codeName##Generator(JSC::VM& vm) \\
 {\\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \\
-    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \\
+    return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable().value()->link(vm, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \\
 }
 ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
@@ -139,7 +145,7 @@ public:
     }
 
 #define EXPOSE_BUILTIN_EXECUTABLES(name, functionName, overriddenName, length) \\
-    JSC::UnlinkedFunctionExecutable* name##Executable(); \\
+Expected<JSC::UnlinkedFunctionExecutable*, JSC::ParserError> name##Executable(); \\
     const JSC::SourceCode& name##Source() const { return m_##name##Source; }
     ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(EXPOSE_BUILTIN_EXECUTABLES)
 #undef EXPOSE_BUILTIN_EXECUTABLES
@@ -162,7 +168,7 @@ private:
 };
 
 #define DEFINE_BUILTIN_EXECUTABLES(name, functionName, overriddenName, length) \\
-inline JSC::UnlinkedFunctionExecutable* ${objectName}BuiltinsWrapper::name##Executable() \\
+inline Expected<JSC::UnlinkedFunctionExecutable*, JSC::ParserError> ${objectName}BuiltinsWrapper::name##Executable() \\
 {\\
     if (!m_##name##Executable) {\\
         JSC::Identifier executableName = functionName##PublicName();\\
@@ -202,7 +208,7 @@ public:
 inline void ${objectName}BuiltinFunctions::init(JSC::JSGlobalObject& globalObject)
 {
 #define EXPORT_FUNCTION(codeName, functionName, overriddenName, length)\\
-    m_##functionName##Function.set(m_vm, &globalObject, JSC::JSFunction::create(m_vm, codeName##Generator(m_vm), &globalObject));
+    m_##functionName##Function.set(m_vm, &globalObject, JSC::JSFunction::create(m_vm, codeName##Generator(m_vm).value(), &globalObject));
     ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(EXPORT_FUNCTION)
 #undef EXPORT_FUNCTION
 }

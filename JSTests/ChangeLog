@@ -1,5 +1,16 @@
 2018-03-30  Robin Morisset  <rmorisset@apple.com>
 
+        A stack overflow in the parsing of a builtin (called by createExecutable) cause a crash instead of a catchable js exception
+        https://bugs.webkit.org/show_bug.cgi?id=184074
+        <rdar://problem/37165897>
+
+        Reviewed by Keith Miller.
+
+        * stress/stack-overflow-while-parsing-builtin.js: Added.
+        (f):
+
+2018-03-30  Robin Morisset  <rmorisset@apple.com>
+
         Out-of-bounds accesses due to a missing check for MAX_STORAGE_VECTOR_LENGTH in unshiftCountForAnyIndexingType
         https://bugs.webkit.org/show_bug.cgi?id=183657
 

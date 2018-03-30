@@ -94,7 +94,7 @@ class JSObject : public JSCell {
     friend class JSCell;
     friend class JSFinalObject;
     friend class MarkedBlock;
-    JS_EXPORT_PRIVATE friend bool setUpStaticFunctionSlot(VM&, const HashTableValue*, JSObject*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE friend bool setUpStaticFunctionSlot(ExecState*, const HashTableValue*, JSObject*, PropertyName, PropertySlot&);
 
     enum PutMode {
         PutModePut,
@@ -1027,11 +1027,11 @@ private:
     JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     bool getNonIndexPropertySlot(ExecState*, PropertyName, PropertySlot&);
-    bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&);
+    bool getOwnNonIndexPropertySlot(ExecState*, Structure*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSCell*, unsigned, PropertyOffset);
     void fillCustomGetterPropertySlot(VM&, PropertySlot&, CustomGetterSetter*, unsigned, Structure*);
 
-    JS_EXPORT_PRIVATE bool getOwnStaticPropertySlot(VM&, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE bool getOwnStaticPropertySlot(ExecState*, PropertyName, PropertySlot&);
     struct PropertyHashEntry {
         const HashTable* table;
         const HashTableValue* value;
@@ -1343,14 +1343,15 @@ inline JSValue JSObject::getPrototype(VM& vm, ExecState* exec)
 
 // It is safe to call this method with a PropertyName that is actually an index,
 // but if so will always return false (doesn't search index storage).
-ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* structure, PropertyName propertyName, PropertySlot& slot)
+ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(ExecState* exec, Structure* structure, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
     unsigned attributes;
     PropertyOffset offset = structure->get(vm, propertyName, attributes);
     if (!isValidOffset(offset)) {
         if (!TypeInfo::hasStaticPropertyTable(inlineTypeFlags()))
             return false;
-        return getOwnStaticPropertySlot(vm, propertyName, slot);
+        return getOwnStaticPropertySlot(exec, propertyName, slot);
     }
     
     // getPropertySlot relies on this method never returning index properties!
@@ -1400,19 +1401,22 @@ ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(VM& vm, PropertySlot& 
 ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     Structure* structure = object->structure(vm);
-    if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
+    if (object->getOwnNonIndexPropertySlot(exec, structure, propertyName, slot))
         return true;
+    RETURN_IF_EXCEPTION(scope, false);
     if (std::optional<uint32_t> index = parseIndex(propertyName))
         return getOwnPropertySlotByIndex(object, exec, index.value(), slot);
     return false;
 }
 
 // It may seem crazy to inline a function this large but it makes a big difference
-// since this is function very hot in variable lookup
+// since this function is very hot in variable lookup
 ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     while (true) {
@@ -1429,8 +1433,9 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
         }
         ASSERT(object->type() != ProxyObjectType);
         Structure* structure = structureIDTable.get(object->structureID());
-        if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
+        if (object->getOwnNonIndexPropertySlot(exec, structure, propertyName, slot))
             return true;
+        RETURN_IF_EXCEPTION(scope, false);
         // FIXME: This doesn't look like it's following the specification:
         // https://bugs.webkit.org/show_bug.cgi?id=172572
         JSValue prototype = structure->storedPrototype(object);
@@ -1631,7 +1636,7 @@ JS_EXPORT_PRIVATE NEVER_INLINE bool ordinarySetSlow(ExecState*, JSObject*, Prope
 
 #define JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(jsName, generatorName, attributes) \
     putDirectBuiltinFunctionWithoutTransition(\
-        vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
+        vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm).value(), (attributes))
 
 // Helper for defining native getters on properties.
 #define JSC_NATIVE_INTRINSIC_GETTER(jsName, cppName, attributes, intrinsic)  \

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSDollarVM.h"
 
-#include "BuiltinExecutableCreator.h"
+#include "BuiltinExecutables.h"
 #include "CodeBlock.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DOMJITGetterSetter.h"
@@ -1522,9 +1522,8 @@ static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const SourceCode& source = makeSource(functionText, { });
-    JSFunction* func = JSFunction::create(vm, createBuiltinExecutable(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, source), exec->lexicalGlobalObject());
-
-    return JSValue::encode(func);
+    auto unlinked = BuiltinExecutables::createExecutableOrCrash(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct);
+    return JSValue::encode(JSFunction::create(vm, unlinked->link(vm, source), exec->lexicalGlobalObject()));
 }
 
 static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState* exec)
