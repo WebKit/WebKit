@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSValue.h"
 #include "ExceptionOr.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -53,6 +54,7 @@ public:
     bool operator!=(const TimingFunction& other) const { return !(*this == other); }
 
     static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
+    static RefPtr<TimingFunction> createFromCSSValue(const CSSValue&);
     double transformTime(double, double, bool before = false) const;
     String cssText() const;
 

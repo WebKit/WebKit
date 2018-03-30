@@ -151,7 +151,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     double offset = prevKeyframe.key();
     double scale = 1.0 / (nextIndex == prevIndex ?  1 : (nextKeyframe.key() - prevKeyframe.key()));
 
-    prog = progress(scale, offset, prevKeyframe.timingFunction(name()));
+    prog = progress(scale, offset, prevKeyframe.timingFunction());
 }
 
 bool KeyframeAnimation::animate(CompositeAnimation& compositeAnimation, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)

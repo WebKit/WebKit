@@ -1130,7 +1130,7 @@ TimingFunction* KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex(size_t 
     // If we're dealing with a CSS Animation, the timing function is specified either on the keyframe itself,
     // or failing that on the backing Animation object which defines the default for all keyframes.
     if (is<CSSAnimation>(effectAnimation)) {
-        if (auto* timingFunction = m_blendingKeyframes[index].timingFunction(downcast<CSSAnimation>(effectAnimation)->animationName()))
+        if (auto* timingFunction = m_blendingKeyframes[index].timingFunction())
             return timingFunction;
     }
 

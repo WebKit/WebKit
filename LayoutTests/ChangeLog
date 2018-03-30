@@ -1,3 +1,17 @@
+2018-03-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correctly obtain the timing function for a given keyframe
+        https://bugs.webkit.org/show_bug.cgi?id=184146
+
+        Reviewed by Dean Jackson.
+
+        Make 4 tests opt into CSS Animations and CSS Transitions as Web Animations.
+
+        * animations/keyframe-timing-functions-transform.html:
+        * animations/keyframe-timing-functions.html:
+        * animations/keyframe-timing-functions2.html:
+        * animations/missing-keyframe-properties-timing-function.html:
+
 2018-03-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230087.

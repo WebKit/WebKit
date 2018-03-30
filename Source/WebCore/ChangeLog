@@ -1,3 +1,42 @@
+2018-03-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correctly obtain the timing function for a given keyframe
+        https://bugs.webkit.org/show_bug.cgi?id=184146
+
+        Reviewed by Dean Jackson.
+
+        The way we would get the timing function for a given KeyframeValue stored in a KeyframeList was really suboptimal.
+        When keyframes were created, we would set the animated element's style on each keyframe, and set keyframe-specific
+        properties and values on top. When figuring out the timing function for a KeyframeValue, we would look at its render
+        style, go through its list of animations, which could include animations that are irrelevant to this specific keyframe
+        list since all animations from the animated element are referenced, and we would have to look up the correct animation
+        by name and get the timing function, even though the timing function stored on the animation was now specific to this
+        particular keyframe.
+
+        We now simply set a m_timingFunction member on a KeyframeValue, which is null if no explicit animation-timing-function
+        was provided for this keyframe in CSS, and otherwise set to a valid TimingFunction.
+
+        This fixes our behavior for a 4 existing animation tests when opted into the CSS Animations and CSS Transitions as
+        Web Animations feature.
+
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty const):
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::createFromCSSText):
+        (WebCore::TimingFunction::createFromCSSValue):
+        * platform/animation/TimingFunction.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeValue::timingFunction const): Deleted.
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeValue::timingFunction const):
+        (WebCore::KeyframeValue::setTimingFunction):
+
 2018-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying a list from Microsoft Word to TinyMCE fails when mso-list is on tags other than P

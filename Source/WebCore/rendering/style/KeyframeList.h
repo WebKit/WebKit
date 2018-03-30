@@ -52,12 +52,14 @@ public:
     const RenderStyle* style() const { return m_style.get(); }
     void setStyle(std::unique_ptr<RenderStyle> style) { m_style = WTFMove(style); }
 
-    TimingFunction* timingFunction(const AtomicString& name) const;
-
+    TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+    void setTimingFunction(const RefPtr<TimingFunction>& timingFunction) { m_timingFunction = timingFunction; }
+    
 private:
     double m_key;
     HashSet<CSSPropertyID> m_properties; // The properties specified in this keyframe.
     std::unique_ptr<RenderStyle> m_style;
+    RefPtr<TimingFunction> m_timingFunction;
 };
 
 class KeyframeList {

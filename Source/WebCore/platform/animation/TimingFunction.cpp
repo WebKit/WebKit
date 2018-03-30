@@ -130,51 +130,56 @@ ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const Stri
     cssString.append(cssText);
     auto styleProperties = MutableStyleProperties::create();
     styleProperties->parseDeclaration(cssString.toString(), CSSParserContext(HTMLStandardMode));
-    auto cssValue = styleProperties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction);
 
-    if (!cssValue)
-        return Exception { TypeError };
+    if (auto cssValue = styleProperties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
+        if (auto timingFunction = createFromCSSValue(*cssValue.get()))
+            return WTFMove(timingFunction);
+    }
+    
+    return Exception { TypeError };
+}
 
-    auto& value = *cssValue.get();
+RefPtr<TimingFunction> TimingFunction::createFromCSSValue(const CSSValue& value)
+{
     if (is<CSSPrimitiveValue>(value)) {
         switch (downcast<CSSPrimitiveValue>(value).valueID()) {
         case CSSValueLinear:
-            return { LinearTimingFunction::create() };
+            return LinearTimingFunction::create();
         case CSSValueEase:
-            return { CubicBezierTimingFunction::create() };
+            return CubicBezierTimingFunction::create();
         case CSSValueEaseIn:
-            return { CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseIn) };
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseIn);
         case CSSValueEaseOut:
-            return { CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseOut) };
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseOut);
         case CSSValueEaseInOut:
-            return { CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseInOut) };
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseInOut);
         case CSSValueStepStart:
-            return { StepsTimingFunction::create(1, true) };
+            return StepsTimingFunction::create(1, true);
         case CSSValueStepEnd:
-            return { StepsTimingFunction::create(1, false) };
+            return StepsTimingFunction::create(1, false);
         default:
-            return Exception { TypeError };
+            return nullptr;
         }
     }
 
     if (is<CSSCubicBezierTimingFunctionValue>(value)) {
         auto& cubicTimingFunction = downcast<CSSCubicBezierTimingFunctionValue>(value);
-        return { CubicBezierTimingFunction::create(cubicTimingFunction.x1(), cubicTimingFunction.y1(), cubicTimingFunction.x2(), cubicTimingFunction.y2()) };
+        return CubicBezierTimingFunction::create(cubicTimingFunction.x1(), cubicTimingFunction.y1(), cubicTimingFunction.x2(), cubicTimingFunction.y2());
     }
     if (is<CSSStepsTimingFunctionValue>(value)) {
         auto& stepsTimingFunction = downcast<CSSStepsTimingFunctionValue>(value);
-        return { StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepAtStart()) };
+        return StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepAtStart());
     }
     if (is<CSSFramesTimingFunctionValue>(value)) {
         auto& framesTimingFunction = downcast<CSSFramesTimingFunctionValue>(value);
-        return { FramesTimingFunction::create(framesTimingFunction.numberOfFrames()) };
+        return FramesTimingFunction::create(framesTimingFunction.numberOfFrames());
     }
     if (is<CSSSpringTimingFunctionValue>(value)) {
         auto& springTimingFunction = downcast<CSSSpringTimingFunctionValue>(value);
-        return { SpringTimingFunction::create(springTimingFunction.mass(), springTimingFunction.stiffness(), springTimingFunction.damping(), springTimingFunction.initialVelocity()) };
+        return SpringTimingFunction::create(springTimingFunction.mass(), springTimingFunction.stiffness(), springTimingFunction.damping(), springTimingFunction.initialVelocity());
     }
 
-    return Exception { TypeError };
+    return nullptr;
 }
 
 String TimingFunction::cssText() const

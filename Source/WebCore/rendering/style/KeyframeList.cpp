@@ -27,21 +27,6 @@
 
 namespace WebCore {
 
-TimingFunction* KeyframeValue::timingFunction(const AtomicString& name) const
-{
-    auto* keyframeStyle = style();
-    if (!keyframeStyle || !keyframeStyle->animations())
-        return nullptr;
-
-    for (size_t i = 0; i < keyframeStyle->animations()->size(); ++i) {
-        const Animation& animation = keyframeStyle->animations()->animation(i);
-        if (name == animation.name())
-            return animation.timingFunction();
-    }
-
-    return nullptr;
-}
-
 KeyframeList::~KeyframeList() = default;
 
 void KeyframeList::clear()
