@@ -1,3 +1,13 @@
+2018-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Bytecode generator should not get_from_scope something that may be a hole into a variable that is already live
+        https://bugs.webkit.org/show_bug.cgi?id=184189
+
+        Reviewed by JF Bastien.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::emitBytecode):
+
 2018-03-30  Mark Lam  <mark.lam@apple.com>
 
         Add pointer profiling support to Wasm.

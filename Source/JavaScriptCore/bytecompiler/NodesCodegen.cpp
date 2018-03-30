@@ -252,10 +252,12 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     generator.emitExpressionInfo(divot, m_start, divot);
     RefPtr<RegisterID> scope = generator.emitResolveScope(dst, var);
     RegisterID* finalDest = generator.finalDestination(dst);
-    RegisterID* result = generator.emitGetFromScope(finalDest, scope.get(), var, ThrowIfNotFound);
-    generator.emitTDZCheckIfNecessary(var, finalDest, nullptr);
+    RefPtr<RegisterID> uncheckedResult = generator.newTemporary();
+    generator.emitGetFromScope(uncheckedResult.get(), scope.get(), var, ThrowIfNotFound);
+    generator.emitTDZCheckIfNecessary(var, uncheckedResult.get(), nullptr);
+    generator.emitMove(finalDest, uncheckedResult.get());
     generator.emitProfileType(finalDest, var, m_position, JSTextPosition(-1, m_position.offset + m_ident.length(), -1));
-    return result;
+    return finalDest;
 }
 
 // ------------------------------ TemplateStringNode -----------------------------------
