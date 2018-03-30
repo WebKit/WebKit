@@ -348,7 +348,7 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
     RELEASE_ASSERT(currentCount <= (length - header));
 
     // Guard against overflow.
-    if (count > (UINT_MAX - length)) {
+    if (count > UINT_MAX - length) {
         throwOutOfMemoryError(exec, scope);
         return;
     }
