@@ -1,5 +1,20 @@
 2018-03-30  JF Bastien  <jfbastien@apple.com>
 
+        WorkQueueWin: don't move rvalues
+        https://bugs.webkit.org/show_bug.cgi?id=184190
+        <rdar://problem/39049850>
+
+        Reviewed by Mark Lam.
+
+        As part of #184167 optional is now more frequently an rvalue
+        reference, and moving its .value() is not a thing that should be
+        done anymore.
+
+        * wtf/win/WorkQueueWin.cpp:
+        (WTF::WorkQueue::unregisterAndCloseHandle):
+
+2018-03-30  JF Bastien  <jfbastien@apple.com>
+
         Remove CXX_REFERENCE_QUALIFIED_FUNCTIONS and optional's equivalent
         https://bugs.webkit.org/show_bug.cgi?id=184167
         <rdar://problem/39023130>

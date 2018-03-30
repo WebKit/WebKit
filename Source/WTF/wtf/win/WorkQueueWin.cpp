@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,7 @@ void WorkQueue::unregisterAndCloseHandle(HANDLE handle)
     auto locker = holdLock(m_itemsMapLock);
     ASSERT_ARG(handle, m_itemsMap.contains(handle));
 
-    unregisterWaitAndDestroyItemSoon(WTFMove(m_itemsMap.take(handle).value()));
+    unregisterWaitAndDestroyItemSoon(m_itemsMap.take(handle).value());
 }
 
 DWORD WorkQueue::workThreadCallback(void* context)
