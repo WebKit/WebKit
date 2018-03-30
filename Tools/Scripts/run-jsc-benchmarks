@@ -1342,10 +1342,10 @@ class VM
       @libPath, @relativeBinPath = [$~.pre_match+"/Release"], "./#{$1}"
     elsif @path =~ /\/Debug\/([a-zA-Z]+)$/
       @libPath, @relativeBinPath = [$~.pre_match+"/Debug"], "./#{$1}"
-    elsif @path =~ /\/Release\/bin\/([a-zA-Z]+)$/
-      @libPath, @relativeBinPath = [$~.pre_match+"/Release/lib"], "./#{$1}"
-    elsif @path =~ /\/Debug\/bin\/([a-zA-Z]+)$/
-      @libPath, @relativeBinPath = [$~.pre_match+"/Debug/lib"], "./#{$1}"
+    elsif @path =~ /\/Release\/bin(64|32|)\/([\.a-zA-Z]+)$/
+      @libPath, @relativeBinPath = [$~.pre_match+"/Release/lib#{$1}"], "./#{$2}"
+    elsif @path =~ /\/Debug\/bin(64|32|)\/([\.a-zA-Z]+)$/
+      @libPath, @relativeBinPath = [$~.pre_match+"/Debug/lib#{$1}"], "./#{$2}"
     elsif @path =~ /\/Contents\/Resources\/([a-zA-Z]+)$/
       @libPath = [$~.pre_match + "/Contents/Resources", $~.pre_match + "/Contents/Frameworks"]
     elsif @path =~ /\/JavaScriptCore.framework\/Resources\/([a-zA-Z]+)$/

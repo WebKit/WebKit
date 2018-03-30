@@ -1,3 +1,13 @@
+2018-03-29  Ross Kirsling  <ross.kirsling@sony.com>
+
+        run-jsc-benchmarks should recognize Windows-style build directory structure.
+        https://bugs.webkit.org/show_bug.cgi?id=184117
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-benchmarks:
+        Allow not only bin/jsc but also bin64/jsc.exe.
+
 2018-03-29  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Decouple formatting state and context lifetime.
