@@ -1,3 +1,13 @@
+2018-03-29  Ross Kirsling  <ross.kirsling@sony.com>
+
+        MSVC __forceinline slows down JSC release build fivefold after r229391
+        https://bugs.webkit.org/show_bug.cgi?id=184062
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/FormatConverter.cpp:
+        Factor ALWAYS_INLINE_EXCEPT_MSVC out to WTF.
+
 2018-03-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230087.

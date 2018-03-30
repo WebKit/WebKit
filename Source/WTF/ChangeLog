@@ -1,3 +1,13 @@
+2018-03-29  Ross Kirsling  <ross.kirsling@sony.com>
+
+        MSVC __forceinline slows down JSC release build fivefold after r229391
+        https://bugs.webkit.org/show_bug.cgi?id=184062
+
+        Reviewed by Alex Christensen.
+
+        * wtf/Compiler.h:
+        Add ALWAYS_INLINE_EXCEPT_MSVC to support MSVC optimizer sensitivities.
+
 2018-03-29  JF Bastien  <jfbastien@apple.com>
 
         Remove WTF_EXPORT_STRING_API
