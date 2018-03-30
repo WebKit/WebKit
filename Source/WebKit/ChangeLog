@@ -1,3 +1,23 @@
+2018-03-29  Brian Burg  <bburg@apple.com>
+
+        Web Automation: clipToViewport is ignored for element screenshots
+        https://bugs.webkit.org/show_bug.cgi?id=184158
+        <rdar://problem/39014307>
+
+        Reviewed by Timothy Hatcher.
+
+        In §19.2 Take Element Screenshot, step 5.2 says that we should clip
+        the element screenshot rect with the visible viewport rect. We don't
+        do that right now even though we pass over clipToViewport.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::snapshotRectForScreenshot):
+        Clip the rect to viewport if needed.
+
+        (WebKit::WebAutomationSessionProxy::takeScreenshot):
+        This scrollIntoView is misplaced; by this point we have already done
+        the math to figure out the screenshot rect. Move it before computing the rect.
+
 2018-03-29  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r230035): ASSERT(MACH_PORT_VALID(m_sendPort)) hit in IPC::Connection::initializeSendSource()
