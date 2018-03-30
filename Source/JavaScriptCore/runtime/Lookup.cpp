@@ -33,7 +33,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     if (value.accessorGetter()) {
         JSFunction* function = nullptr;
         if (value.attributes() & PropertyAttribute::Builtin)
-            function = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm).value(), globalObject);
+            function = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm), globalObject);
         else {
             String getterName = tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
             if (!getterName)
@@ -45,10 +45,8 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     thisObject.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
 }
 
-bool setUpStaticFunctionSlot(ExecState* exec, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
+bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(thisObject->globalObject());
     ASSERT(entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyProperty);
     unsigned attributes;
@@ -61,8 +59,7 @@ bool setUpStaticFunctionSlot(ExecState* exec, const ClassInfo* classInfo, const 
         if (thisObject->staticPropertiesReified())
             return false;
 
-        reifyStaticProperty(vm, exec, classInfo, propertyName, *entry, *thisObject);
-        RETURN_IF_EXCEPTION(scope, false);
+        reifyStaticProperty(vm, classInfo, propertyName, *entry, *thisObject);
 
         offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,45 +25,12 @@
 
 #pragma once
 
-#include "JSCBuiltins.h"
+#include "ConstructAbility.h"
 #include "ParserModes.h"
 #include "SourceCode.h"
-#include "Weak.h"
-#include "WeakHandleOwner.h"
 
 namespace JSC {
 
-class UnlinkedFunctionExecutable;
-class Identifier;
-class VM;
+JS_EXPORT_PRIVATE UnlinkedFunctionExecutable* createBuiltinExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
 
-class BuiltinExecutables final: private WeakHandleOwner {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit BuiltinExecutables(VM&);
-
-#define EXPOSE_BUILTIN_EXECUTABLES(name, functionName, overriddenName, length) \
-UnlinkedFunctionExecutable* name##Executable(); \
-const SourceCode& name##Source() { return m_##name##Source; }
-    
-    JSC_FOREACH_BUILTIN_CODE(EXPOSE_BUILTIN_EXECUTABLES)
-#undef EXPOSE_BUILTIN_SOURCES
-
-    UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name);
-
-    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
-private:
-    void finalize(Handle<Unknown>, void* context) override;
-
-    VM& m_vm;
-
-    UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&, ConstructAbility);
-
-#define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length)\
-    SourceCode m_##name##Source; \
-    Weak<UnlinkedFunctionExecutable> m_##name##Executable;
-    JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_SOURCE_MEMBERS)
-#undef DECLARE_BUILTIN_SOURCE_MEMBERS
-};
-
-}
+} // namespace JSC

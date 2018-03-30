@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Oleksandr Skachkov <gskackhov@gmail.com>.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,15 @@
  */
 
 #include "config.h"
-#include "AsyncIteratorPrototype.h"
+#include "BuiltinExecutableCreator.h"
 
-#include "JSCBuiltins.h"
-#include "JSCInlines.h"
-#include "JSGlobalObject.h"
-#include "ObjectConstructor.h"
+#include "BuiltinExecutables.h"
 
 namespace JSC {
 
-const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncIteratorPrototype) };
-
-void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+UnlinkedFunctionExecutable* createBuiltinExecutable(VM& vm, const SourceCode& source, const Identifier& ident, ConstructorKind kind, ConstructAbility ability)
 {
-    Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
-    didBecomePrototype();
-
-    JSFunction* asyncIteratorPrototypeFunction = JSFunction::create(vm, asyncIteratorPrototypeSymbolAsyncIteratorGetterCodeGenerator(vm), globalObject);
-    putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorPrototypeFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    return BuiltinExecutables::createExecutable(vm, source, ident, kind, ability);
 }
-
+    
 } // namespace JSC

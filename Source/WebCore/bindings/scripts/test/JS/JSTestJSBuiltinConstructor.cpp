@@ -91,7 +91,7 @@ template<> void JSTestJSBuiltinConstructorConstructor::initializeProperties(VM& 
 
 template<> FunctionExecutable* JSTestJSBuiltinConstructorConstructor::initializeExecutable(VM& vm)
 {
-    return testJSBuiltinConstructorInitializeTestJSBuiltinConstructorCodeGenerator(vm).value();
+    return testJSBuiltinConstructorInitializeTestJSBuiltinConstructorCodeGenerator(vm);
 }
 
 template<> const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorConstructor) };

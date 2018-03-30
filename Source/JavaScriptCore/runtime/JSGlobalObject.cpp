@@ -443,24 +443,24 @@ void JSGlobalObject::init(VM& vm)
         });
     m_arrayProtoValuesFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
-            init.set(JSFunction::create(init.vm, arrayPrototypeValuesCodeGenerator(init.vm).value(), init.owner));
+            init.set(JSFunction::create(init.vm, arrayPrototypeValuesCodeGenerator(init.vm), init.owner));
         });
     m_initializePromiseFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
-            init.set(JSFunction::create(init.vm, promiseOperationsInitializePromiseCodeGenerator(init.vm).value(), init.owner));
+            init.set(JSFunction::create(init.vm, promiseOperationsInitializePromiseCodeGenerator(init.vm), init.owner));
         });
 
     m_iteratorProtocolFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
-            init.set(JSFunction::create(init.vm, iteratorHelpersPerformIterationCodeGenerator(init.vm).value(), init.owner));
+            init.set(JSFunction::create(init.vm, iteratorHelpersPerformIterationCodeGenerator(init.vm), init.owner));
         });
 
     m_promiseResolveFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
-            init.set(JSFunction::create(init.vm, promiseConstructorResolveCodeGenerator(init.vm).value(), init.owner));
+            init.set(JSFunction::create(init.vm, promiseConstructorResolveCodeGenerator(init.vm), init.owner));
         });
 
-    m_newPromiseCapabilityFunction.set(vm, this, JSFunction::create(vm, promiseOperationsNewPromiseCapabilityCodeGenerator(vm).value(), this));
+    m_newPromiseCapabilityFunction.set(vm, this, JSFunction::create(vm, promiseOperationsNewPromiseCapabilityCodeGenerator(vm), this));
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
     m_throwTypeErrorGetterSetter.initLater(
         [] (const Initializer<GetterSetter>& init) {
@@ -491,7 +491,7 @@ void JSGlobalObject::init(VM& vm)
     m_functionPrototype->initRestrictedProperties(exec, this);
 
     m_speciesGetterSetter.set(vm, this, GetterSetter::create(vm, this));
-    m_speciesGetterSetter->setGetter(vm, this, JSFunction::create(vm, globalOperationsSpeciesGetterCodeGenerator(vm).value(), this));
+    m_speciesGetterSetter->setGetter(vm, this, JSFunction::create(vm, globalOperationsSpeciesGetterCodeGenerator(vm), this));
 
     m_typedArrayProto.initLater(
         [] (const Initializer<JSTypedArrayViewPrototype>& init) {
@@ -513,7 +513,7 @@ void JSGlobalObject::init(VM& vm)
         [] (LazyClassStructure::Initializer& init) { \
             init.setPrototype(JS ## type ## ArrayPrototype::create(init.vm, init.global, JS ## type ## ArrayPrototype::createStructure(init.vm, init.global, init.global->m_typedArrayProto.get(init.global)))); \
             init.setStructure(JS ## type ## Array::createStructure(init.vm, init.global, init.prototype)); \
-            init.setConstructor(JS ## type ## ArrayConstructor::create(init.vm, init.global, JS ## type ## ArrayConstructor::createStructure(init.vm, init.global, init.global->m_typedArraySuperConstructor.get(init.global)), init.prototype, ASCIILiteral(#type "Array"), typedArrayConstructorAllocate ## type ## ArrayCodeGenerator(init.vm).value())); \
+            init.setConstructor(JS ## type ## ArrayConstructor::create(init.vm, init.global, JS ## type ## ArrayConstructor::createStructure(init.vm, init.global, init.global->m_typedArraySuperConstructor.get(init.global)), init.prototype, ASCIILiteral(#type "Array"), typedArrayConstructorAllocate ## type ## ArrayCodeGenerator(init.vm))); \
             init.global->putDirectWithoutTransition(init.vm, init.vm.propertyNames->builtinNames().type ## ArrayPrivateName(), init.constructor, static_cast<unsigned>(PropertyAttribute::DontEnum)); \
         });
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(INIT_TYPED_ARRAY_LATER)
@@ -837,7 +837,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSObject* regExpSymbolReplace = asObject(m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol).asCell());
     m_regExpProtoSymbolReplace.set(vm, this, regExpSymbolReplace);
 
-#define CREATE_PRIVATE_GLOBAL_FUNCTION(name, code) JSFunction* name ## PrivateFunction = JSFunction::create(vm, code ## CodeGenerator(vm).value(), this);
+#define CREATE_PRIVATE_GLOBAL_FUNCTION(name, code) JSFunction* name ## PrivateFunction = JSFunction::create(vm, code ## CodeGenerator(vm), this);
     JSC_FOREACH_BUILTIN_FUNCTION_PRIVATE_GLOBAL_NAME(CREATE_PRIVATE_GLOBAL_FUNCTION)
 #undef CREATE_PRIVATE_GLOBAL_FUNCTION
 
