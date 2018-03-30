@@ -1,3 +1,14 @@
+2018-03-30  Daniel Bates  <dabates@apple.com>
+
+        Remove unused MIMETypeRegistry::getSupportedImageMIMETypesForEncoding()
+        https://bugs.webkit.org/show_bug.cgi?id=184154
+
+        Reviewed by Per Arne Vollan.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getSupportedImageMIMETypesForEncoding): Deleted.
+        * platform/MIMETypeRegistry.h:
+
 2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230102.

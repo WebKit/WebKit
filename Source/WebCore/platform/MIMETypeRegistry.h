@@ -110,7 +110,6 @@ public:
 
     WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypes();
     const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageResourceMIMETypes();
-    const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedImageMIMETypesForEncoding();
     WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getSupportedMediaMIMETypes();
     WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getPDFMIMETypes();
     WEBCORE_EXPORT const static HashSet<String, ASCIICaseInsensitiveHash>& getUnsupportedTextMIMETypes();

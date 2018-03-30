@@ -665,13 +665,6 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedI
     return *supportedImageResourceMIMETypes;
 }
 
-const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageMIMETypesForEncoding()
-{
-    if (!supportedImageMIMETypesForEncoding)
-        initializeSupportedImageMIMETypesForEncoding();
-    return *supportedImageMIMETypesForEncoding;
-}
-
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedNonImageMIMETypes()
 {
     if (!supportedNonImageMIMETypes)
