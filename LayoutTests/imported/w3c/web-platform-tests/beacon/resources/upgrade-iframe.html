@@ -1,0 +1,41 @@
+<html>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<body>
+<script src="/common/utils.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+var id = self.token();
+var hostInfo = get_host_info();
+var beaconURL = "http://" + hostInfo.ORIGINAL_HOST + ":" + hostInfo.HTTPS_PORT + "/beacon/resources/beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+
+function sendBeacon()
+{
+    return navigator.sendBeacon(beaconURL, "test");
+}
+
+function sendRedirectedBeacon()
+{
+    return navigator.sendBeacon("redirect.py?redirect_status=307&location=" + beaconURL, "test");
+}
+
+function waitFor(test, duration)
+{
+    return new Promise((resolve) => test.step_timeout(resolve, duration));
+}
+
+async function checkBeaconURL(test)
+{
+    var checkURL = "beacon-preflight.py?cmd=get&id=" + id;
+    var counter = 0;
+    while (++counter < 20) {
+        let response = await fetch(checkURL);
+        let body = await response.json();
+        if (body.url)
+            return body.url.startsWith('https://');
+        await waitFor(test, 50);
+    }
+}
+</script>
+
+</body>
+</html>

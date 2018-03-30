@@ -102,6 +102,13 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandl
 #endif
 
     if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
+        if (isRedirected()) {
+            URL url = request.url();
+            auto type = m_mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
+            contentSecurityPolicy->upgradeInsecureRequestIfNeeded(url, type);
+            if (url != request.url())
+                request.setURL(url);
+        }
         if (!contentSecurityPolicy->allowConnectToSource(request.url(), isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No)) {
             handler(returnError(ASCIILiteral("Blocked by Content Security Policy")));
             return;

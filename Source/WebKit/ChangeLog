@@ -1,3 +1,16 @@
+2018-03-30  Youenn Fablet  <youenn@apple.com>
+
+        NetworkLoadChecker should upgrade redirects if needed
+        https://bugs.webkit.org/show_bug.cgi?id=184098
+
+        Reviewed by Chris Dumez.
+
+        In case of redirections, upgrade URL according CSP.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::contentSecurityPolicy const):
+
 2018-03-30  JF Bastien  <jfbastien@apple.com>
 
         Update messages.py codegen for String, fix tests

@@ -162,7 +162,7 @@ public:
     bool upgradeInsecureRequests() const { return m_upgradeInsecureRequests; }
     enum class InsecureRequestType { Load, FormSubmission, Navigation };
     void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType) const;
-    void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType) const;
+    WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType) const;
 
     HashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);
