@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1599,7 +1599,7 @@ private:
         case CCall: {
             // Turn this: Call(fmod, constant1, constant2)
             // Into this: fcall-constant(constant1, constant2)
-            double(*fmodDouble)(double, double) = fmod;
+            auto* fmodDouble = tagCFunctionPtr<double (*)(double, double)>(fmod, B3CCallPtrTag);
             if (m_value->type() == Double
                 && m_value->numChildren() == 3
                 && m_value->child(0)->isIntPtr(reinterpret_cast<intptr_t>(fmodDouble))

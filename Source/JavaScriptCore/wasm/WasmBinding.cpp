@@ -42,7 +42,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     JIT jit;
 
-    GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR;
+    GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR0;
     GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
     ASSERT(baseMemory != scratch);
     const auto& sizeRegs = pinnedRegs.sizeRegisters;

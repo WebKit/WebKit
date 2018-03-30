@@ -35,6 +35,7 @@ namespace JSC {
     v(NearJumpPtrTag) \
     v(CFunctionPtrTag) \
     \
+    v(B3CCallPtrTag) \
     v(BytecodePtrTag) \
     v(BytecodeHelperPtrTag) \
     v(CodeEntryPtrTag) \
@@ -45,6 +46,7 @@ namespace JSC {
     v(JITThunkPtrTag) \
     v(NativeCodePtrTag) \
     v(SlowPathPtrTag) \
+    v(SwitchTablePtrTag) \
     \
     v(Yarr8BitPtrTag) \
     v(Yarr16BitPtrTag) \

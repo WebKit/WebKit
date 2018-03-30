@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,10 @@ public:
     // You cannot use this register to pass arguments. It just so happens that this register is not
     // used for arguments in the C calling convention. By the way, this is the only thing that causes
     // this special to be specific to C calls.
-    static const GPRReg scratchRegister = GPRInfo::nonArgGPR0;
+    static const GPRReg scratchRegister = GPRInfo::nonPreservedNonArgumentGPR0;
+#if USE(POINTER_PROFILING)
+    static const GPRReg ptrTagRegister = GPRInfo::nonPreservedNonArgumentGPR1;
+#endif
 
 protected:
     void forEachArg(Inst&, const ScopedLambda<Inst::EachArgCallback>&) final;

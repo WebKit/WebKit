@@ -10233,7 +10233,7 @@ void testCallSimple(int a, int b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
@@ -10260,7 +10260,7 @@ void testCallRare(int a, int b)
         proc, Return, Origin(),
         rare->appendNew<CCallValue>(
             proc, Int32, Origin(),
-            rare->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
             rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
             rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)));
 
@@ -10289,7 +10289,7 @@ void testCallRareLive(int a, int b, int c)
             proc, Add, Origin(),
             rare->appendNew<CCallValue>(
                 proc, Int32, Origin(),
-                rare->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+                rare->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
                 rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
                 rare->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2)),
             rare->appendNew<Value>(
@@ -10307,7 +10307,7 @@ void testCallSimplePure(int a, int b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(), Effects::none(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
@@ -10330,7 +10330,7 @@ void testCallFunctionWithHellaArguments()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int32, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionWithHellaArguments)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments, B3CCallPtrTag)));
     call->children().appendVector(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -10356,7 +10356,7 @@ void testCallFunctionWithHellaArguments2()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int64, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionWithHellaArguments2)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments2, B3CCallPtrTag)));
     call->children().appendVector(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -10378,7 +10378,7 @@ void testCallFunctionWithHellaArguments3()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int32, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionWithHellaArguments3)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments3, B3CCallPtrTag)));
     call->children().appendVector(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -10429,7 +10429,7 @@ void testCallSimpleDouble(double a, double b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Double, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunctionDouble)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunctionDouble, B3CCallPtrTag)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1)));
 
@@ -10455,7 +10455,7 @@ void testCallSimpleFloat(float a, float b)
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Float, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunctionFloat)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunctionFloat, B3CCallPtrTag)),
             floatValue1,
             floatValue2));
 
@@ -10478,7 +10478,7 @@ void testCallFunctionWithHellaDoubleArguments()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Double, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionWithHellaDoubleArguments)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaDoubleArguments, B3CCallPtrTag)));
     call->children().appendVector(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -10502,7 +10502,7 @@ void testCallFunctionWithHellaFloatArguments()
 
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Float, Origin(),
-        root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionWithHellaFloatArguments)));
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaFloatArguments, B3CCallPtrTag)));
     call->children().appendVector(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
@@ -10525,7 +10525,7 @@ void testLinearScanWithCalleeOnStack()
         proc, Return, Origin(),
         root->appendNew<CCallValue>(
             proc, Int32, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(simpleFunction)),
+            root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(simpleFunction, B3CCallPtrTag)),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
@@ -13043,12 +13043,13 @@ void testInterpreter()
             jit.move(CCallHelpers::TrustedImm64(JITCodePoison::key()), poisonScratch);
             jit.load64(CCallHelpers::BaseIndex(scratch, params[0].gpr(), CCallHelpers::timesPtr()), scratch);
             jit.xor64(poisonScratch, scratch);
-            jit.jump(scratch, NoPtrTag);
+            PtrTag tag = ptrTag(SwitchTablePtrTag, nextPtrTagID());
+            jit.jump(scratch, tag);
 
             jit.addLinkTask(
                 [&, jumpTable, labels] (LinkBuffer& linkBuffer) {
                     for (unsigned i = labels.size(); i--;)
-                        jumpTable[i] = linkBuffer.locationOf(*labels[i], NoPtrTag);
+                        jumpTable[i] = linkBuffer.locationOf(*labels[i], tag);
                 });
         });
     
@@ -13131,7 +13132,7 @@ void testInterpreter()
     print->appendNew<CCallValue>(
         proc, Void, Origin(),
         print->appendNew<ConstPtrValue>(
-            proc, Origin(), bitwise_cast<void*>(interpreterPrint)),
+            proc, Origin(), tagCFunctionPtr<void*>(interpreterPrint, B3CCallPtrTag)),
         context,
         print->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), dataPointerValue));
     print->appendNew<VariableValue>(
@@ -14717,7 +14718,7 @@ void testLICMPure()
         [&] (BasicBlock* loop, Value*) -> Value* {
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), Effects::none(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14736,11 +14737,11 @@ void testLICMPureSideExits()
             effects.exitsSideways = true;
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(noOpFunction)));
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(noOpFunction, B3CCallPtrTag)));
 
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), Effects::none(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14759,11 +14760,11 @@ void testLICMPureWritesPinned()
             effects.writesPinned = true;
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(noOpFunction)));
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(noOpFunction, B3CCallPtrTag)));
 
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), Effects::none(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14782,11 +14783,11 @@ void testLICMPureWrites()
             effects.writes = HeapRange(63479);
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(noOpFunction)));
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(noOpFunction, B3CCallPtrTag)));
 
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), Effects::none(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14805,7 +14806,7 @@ void testLICMReadsLocalState()
             effects.readsLocalState = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14824,7 +14825,7 @@ void testLICMReadsPinned()
             effects.readsPinned = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14843,7 +14844,7 @@ void testLICMReads()
             effects.reads = HeapRange::top();
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14861,7 +14862,7 @@ void testLICMPureNotBackwardsDominant()
         [&] (BasicBlock* loop, Value*) -> Value* {
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), Effects::none(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14878,7 +14879,7 @@ void testLICMPureFoiledByChild()
         [&] (BasicBlock* loop, Value* index) -> Value* {
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), Effects::none(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
                 index);
         });
@@ -14897,7 +14898,7 @@ void testLICMPureNotBackwardsDominantFoiledByChild()
         [&] (BasicBlock* loop, Value* index) -> Value* {
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), Effects::none(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
                 index);
         });
@@ -14917,7 +14918,7 @@ void testLICMExitsSideways()
             effects.exitsSideways = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14936,7 +14937,7 @@ void testLICMWritesLocalState()
             effects.writesLocalState = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14955,7 +14956,7 @@ void testLICMWrites()
             effects.writes = HeapRange(666);
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14974,7 +14975,7 @@ void testLICMFence()
             effects.fence = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -14993,7 +14994,7 @@ void testLICMWritesPinned()
             effects.writesPinned = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -15012,7 +15013,7 @@ void testLICMControlDependent()
             effects.controlDependent = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -15032,7 +15033,7 @@ void testLICMControlDependentNotBackwardsDominant()
             effects.controlDependent = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -15051,13 +15052,13 @@ void testLICMControlDependentSideExits()
             effects.exitsSideways = true;
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(noOpFunction)));
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(noOpFunction, B3CCallPtrTag)));
             
             effects = Effects::none();
             effects.controlDependent = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -15076,13 +15077,13 @@ void testLICMReadsPinnedWritesPinned()
             effects.writesPinned = true;
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(noOpFunction)));
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(noOpFunction, B3CCallPtrTag)));
             
             effects = Effects::none();
             effects.readsPinned = true;
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -15101,13 +15102,13 @@ void testLICMReadsWritesDifferentHeaps()
             effects.writes = HeapRange(6436);
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(noOpFunction)));
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(noOpFunction, B3CCallPtrTag)));
             
             effects = Effects::none();
             effects.reads = HeapRange(4886);
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -15126,13 +15127,13 @@ void testLICMReadsWritesOverlappingHeaps()
             effects.writes = HeapRange(6436, 74458);
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(noOpFunction)));
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(noOpFunction, B3CCallPtrTag)));
             
             effects = Effects::none();
             effects.reads = HeapRange(48864, 78239);
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -15149,7 +15150,7 @@ void testLICMDefaultCall()
         [&] (BasicBlock* loop, Value*) -> Value* {
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(),
-                loop->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(oneFunction)),
+                loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(oneFunction, B3CCallPtrTag)),
                 loop->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
         });
     
@@ -16194,7 +16195,7 @@ void testShuffleDoesntTrashCalleeSaves()
 
     unlikely->appendNew<CCallValue>(
         proc, Void, Origin(),
-        unlikely->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionNineArgs)),
+        unlikely->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionNineArgs, B3CCallPtrTag)),
         constNumber, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 
     PatchpointValue* voidPatch = unlikely->appendNew<PatchpointValue>(proc, Void, Origin());

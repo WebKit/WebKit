@@ -128,7 +128,7 @@ private:
                     break;
                 }
                 
-                double (*fmodDouble)(double, double) = fmod;
+                auto* fmodDouble = tagCFunctionPtr<double (*)(double, double)>(fmod, B3CCallPtrTag);
                 if (m_value->type() == Double) {
                     Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, fmodDouble);
                     Value* result = m_insertionSet.insert<CCallValue>(m_index, Double, m_origin,
@@ -506,12 +506,13 @@ private:
                         GPRReg index = params[0].gpr();
                         GPRReg scratch = params.gpScratch(0);
                         GPRReg poisonScratch = params.gpScratch(1);
+                        PtrTag tag = ptrTag(SwitchTablePtrTag, nextPtrTagID());
 
                         jit.move(CCallHelpers::TrustedImm64(JITCodePoison::key()), poisonScratch);
                         jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
                         jit.load64(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()), scratch);
                         jit.xor64(poisonScratch, scratch);
-                        jit.jump(scratch, NoPtrTag);
+                        jit.jump(scratch, tag);
 
                         // These labels are guaranteed to be populated before either late paths or
                         // link tasks run.
@@ -520,17 +521,14 @@ private:
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
                                 if (hasUnhandledIndex) {
-                                    MacroAssemblerCodePtr fallThrough =
-                                        linkBuffer.locationOf(*labels.last());
+                                    MacroAssemblerCodePtr fallThrough = linkBuffer.locationOf(*labels.last(), tag);
                                     for (unsigned i = tableSize; i--;)
                                         jumpTable[i] = fallThrough;
                                 }
                                 
                                 unsigned labelIndex = 0;
-                                for (unsigned tableIndex : handledIndices) {
-                                    jumpTable[tableIndex] =
-                                        linkBuffer.locationOf(*labels[labelIndex++]);
-                                }
+                                for (unsigned tableIndex : handledIndices)
+                                    jumpTable[tableIndex] = linkBuffer.locationOf(*labels[labelIndex++], tag);
                             });
                     });
                 return;

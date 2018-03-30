@@ -1,3 +1,64 @@
+2018-03-29  Mark Lam  <mark.lam@apple.com>
+
+        Add some pointer profiling support to B3 and Air.
+        https://bugs.webkit.org/show_bug.cgi?id=184165
+        <rdar://problem/39022125>
+
+        Reviewed by JF Bastien.
+
+        * b3/B3LowerMacros.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        * b3/B3MathExtras.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::generate):
+        * b3/air/AirCCallSpecial.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testCallSimple):
+        (JSC::B3::testCallRare):
+        (JSC::B3::testCallRareLive):
+        (JSC::B3::testCallSimplePure):
+        (JSC::B3::testCallFunctionWithHellaArguments):
+        (JSC::B3::testCallFunctionWithHellaArguments2):
+        (JSC::B3::testCallFunctionWithHellaArguments3):
+        (JSC::B3::testCallSimpleDouble):
+        (JSC::B3::testCallSimpleFloat):
+        (JSC::B3::testCallFunctionWithHellaDoubleArguments):
+        (JSC::B3::testCallFunctionWithHellaFloatArguments):
+        (JSC::B3::testLinearScanWithCalleeOnStack):
+        (JSC::B3::testInterpreter):
+        (JSC::B3::testLICMPure):
+        (JSC::B3::testLICMPureSideExits):
+        (JSC::B3::testLICMPureWritesPinned):
+        (JSC::B3::testLICMPureWrites):
+        (JSC::B3::testLICMReadsLocalState):
+        (JSC::B3::testLICMReadsPinned):
+        (JSC::B3::testLICMReads):
+        (JSC::B3::testLICMPureNotBackwardsDominant):
+        (JSC::B3::testLICMPureFoiledByChild):
+        (JSC::B3::testLICMPureNotBackwardsDominantFoiledByChild):
+        (JSC::B3::testLICMExitsSideways):
+        (JSC::B3::testLICMWritesLocalState):
+        (JSC::B3::testLICMWrites):
+        (JSC::B3::testLICMFence):
+        (JSC::B3::testLICMWritesPinned):
+        (JSC::B3::testLICMControlDependent):
+        (JSC::B3::testLICMControlDependentNotBackwardsDominant):
+        (JSC::B3::testLICMControlDependentSideExits):
+        (JSC::B3::testLICMReadsPinnedWritesPinned):
+        (JSC::B3::testLICMReadsWritesDifferentHeaps):
+        (JSC::B3::testLICMReadsWritesOverlappingHeaps):
+        (JSC::B3::testLICMDefaultCall):
+        (JSC::B3::testShuffleDoesntTrashCalleeSaves):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        * jit/GPRInfo.h:
+        * runtime/PtrTag.h:
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+
 2018-03-29  JF Bastien  <jfbastien@apple.com>
 
         Use Forward.h instead of forward-declaring WTF::String
