@@ -473,7 +473,7 @@ public:
     RuntimeFlags m_runtimeFlags;
     ConsoleClient* m_consoleClient { nullptr };
 
-    static JS_EXPORTDATA const GlobalObjectMethodTable s_globalObjectMethodTable;
+    static JS_EXPORT_PRIVATE const GlobalObjectMethodTable s_globalObjectMethodTable;
     const GlobalObjectMethodTable* m_globalObjectMethodTable;
 
     void createRareDataIfNeeded()

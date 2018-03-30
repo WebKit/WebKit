@@ -100,11 +100,11 @@ static const double executablePoolReservationFraction = 0.15;
 static const double executablePoolReservationFraction = 0.25;
 #endif
 
-JS_EXPORTDATA uintptr_t startOfFixedExecutableMemoryPool;
-JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
-JS_EXPORTDATA bool useFastPermisionsJITCopy { false };
+JS_EXPORT_PRIVATE uintptr_t startOfFixedExecutableMemoryPool;
+JS_EXPORT_PRIVATE uintptr_t endOfFixedExecutableMemoryPool;
+JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy { false };
 
-JS_EXPORTDATA JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
+JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
 
 #if !USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION) && HAVE(REMAP_JIT)
 static uintptr_t startOfFixedWritableMemoryPool;

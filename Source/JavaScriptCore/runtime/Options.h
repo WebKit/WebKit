@@ -638,7 +638,7 @@ private:
     static bool overrideAliasedOptionWithHeuristic(const char* name);
 
     // Declare the singleton instance of the options store:
-    JS_EXPORTDATA static Entry s_options[numberOfOptions];
+    JS_EXPORT_PRIVATE static Entry s_options[numberOfOptions];
     static Entry s_defaultOptions[numberOfOptions];
     static const EntryInfo s_optionsInfo[numberOfOptions];
 

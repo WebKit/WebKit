@@ -60,8 +60,8 @@ typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
 #if ENABLE(ASSEMBLER)
 
-extern JS_EXPORTDATA uintptr_t startOfFixedExecutableMemoryPool;
-extern JS_EXPORTDATA uintptr_t endOfFixedExecutableMemoryPool;
+extern JS_EXPORT_PRIVATE uintptr_t startOfFixedExecutableMemoryPool;
+extern JS_EXPORT_PRIVATE uintptr_t endOfFixedExecutableMemoryPool;
 
 inline bool isJITPC(void* pc)
 {
@@ -70,9 +70,9 @@ inline bool isJITPC(void* pc)
 }
 
 typedef void (*JITWriteSeparateHeapsFunction)(off_t, const void*, size_t);
-extern JS_EXPORTDATA JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
+extern JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
 
-extern JS_EXPORTDATA bool useFastPermisionsJITCopy;
+extern JS_EXPORT_PRIVATE bool useFastPermisionsJITCopy;
 
 static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 {

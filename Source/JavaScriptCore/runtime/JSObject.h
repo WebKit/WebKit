@@ -71,14 +71,14 @@ struct HashTable;
 struct HashTableValue;
 
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, ThrowScope&, const String&);
-extern JS_EXPORTDATA const char* const NonExtensibleObjectPropertyDefineError;
-extern JS_EXPORTDATA const char* const ReadonlyPropertyWriteError;
-extern JS_EXPORTDATA const char* const ReadonlyPropertyChangeError;
-extern JS_EXPORTDATA const char* const UnableToDeletePropertyError;
-extern JS_EXPORTDATA const char* const UnconfigurablePropertyChangeAccessMechanismError;
-extern JS_EXPORTDATA const char* const UnconfigurablePropertyChangeConfigurabilityError;
-extern JS_EXPORTDATA const char* const UnconfigurablePropertyChangeEnumerabilityError;
-extern JS_EXPORTDATA const char* const UnconfigurablePropertyChangeWritabilityError;
+extern JS_EXPORT_PRIVATE const char* const NonExtensibleObjectPropertyDefineError;
+extern JS_EXPORT_PRIVATE const char* const ReadonlyPropertyWriteError;
+extern JS_EXPORT_PRIVATE const char* const ReadonlyPropertyChangeError;
+extern JS_EXPORT_PRIVATE const char* const UnableToDeletePropertyError;
+extern JS_EXPORT_PRIVATE const char* const UnconfigurablePropertyChangeAccessMechanismError;
+extern JS_EXPORT_PRIVATE const char* const UnconfigurablePropertyChangeConfigurabilityError;
+extern JS_EXPORT_PRIVATE const char* const UnconfigurablePropertyChangeEnumerabilityError;
+extern JS_EXPORT_PRIVATE const char* const UnconfigurablePropertyChangeWritabilityError;
 
 COMPILE_ASSERT(PropertyAttribute::None < FirstInternalAttribute, None_is_below_FirstInternalAttribute);
 COMPILE_ASSERT(PropertyAttribute::ReadOnly < FirstInternalAttribute, ReadOnly_is_below_FirstInternalAttribute);

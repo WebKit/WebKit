@@ -358,7 +358,7 @@ public:
         operator StringImpl&();
     };
 
-    WTF_EXPORTDATA static StaticStringImpl s_atomicEmptyString;
+    WTF_EXPORT_PRIVATE static StaticStringImpl s_atomicEmptyString;
     ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_atomicEmptyString); }
 
     // FIXME: Does this really belong in StringImpl?
@@ -515,7 +515,7 @@ private:
     static const unsigned s_refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static string flag.
 
 #if STRING_STATS
-    WTF_EXPORTDATA static StringStats m_stringStats;
+    WTF_EXPORT_PRIVATE static StringStats m_stringStats;
 #endif
 
 public:

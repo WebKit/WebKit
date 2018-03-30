@@ -243,7 +243,7 @@ protected:
     // types don't use multiple-pass destruction.
 
 #if !HAVE(FAST_TLS)
-    static WTF_EXPORTDATA ThreadSpecificKey s_key;
+    static WTF_EXPORT_PRIVATE ThreadSpecificKey s_key;
     // One time initialization for this class as a whole.
     // This method must be called before initializeTLS() and it is not thread-safe.
     static void initializeTLSKey();

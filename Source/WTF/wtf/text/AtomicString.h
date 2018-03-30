@@ -284,11 +284,11 @@ inline AtomicString::AtomicString(NSString* string)
 
 // Define external global variables for the commonly used atomic strings.
 // These are only usable from the main thread.
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> nullAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> emptyAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> starAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> xmlAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> xmlnsAtomData;
+extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> nullAtomData;
+extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> emptyAtomData;
+extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> starAtomData;
+extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> xmlAtomData;
+extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<AtomicString> xmlnsAtomData;
 
 inline const AtomicString& nullAtom() { return nullAtomData.get(); }
 inline const AtomicString& emptyAtom() { return emptyAtomData.get(); }

@@ -1,3 +1,26 @@
+2018-03-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove WTF_EXPORTDATA and JS_EXPORTDATA
+        https://bugs.webkit.org/show_bug.cgi?id=184170
+
+        Reviewed by JF Bastien.
+
+        Replace WTF_EXPORTDATA and JS_EXPORTDATA with
+        WTF_EXPORT_PRIVATE and JS_EXPORT_PRIVATE respectively.
+
+        * heap/WriteBarrierSupport.h:
+        * jit/ExecutableAllocator.cpp:
+        * jit/ExecutableAllocator.h:
+        * runtime/JSCPoison.h:
+        * runtime/JSCell.h:
+        * runtime/JSExportMacros.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.h:
+        * runtime/Options.h:
+        * runtime/PropertyDescriptor.h:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/SamplingCounter.h:
+
 2018-03-29  Ross Kirsling  <ross.kirsling@sony.com>
 
         MSVC __forceinline slows down JSC release build fivefold after r229391

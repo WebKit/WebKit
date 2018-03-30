@@ -59,15 +59,15 @@ namespace WTF {
 
     struct HashTableStats {
         // The following variables are all atomically incremented when modified.
-        WTF_EXPORTDATA static std::atomic<unsigned> numAccesses;
-        WTF_EXPORTDATA static std::atomic<unsigned> numRehashes;
-        WTF_EXPORTDATA static std::atomic<unsigned> numRemoves;
-        WTF_EXPORTDATA static std::atomic<unsigned> numReinserts;
+        WTF_EXPORT_PRIVATE static std::atomic<unsigned> numAccesses;
+        WTF_EXPORT_PRIVATE static std::atomic<unsigned> numRehashes;
+        WTF_EXPORT_PRIVATE static std::atomic<unsigned> numRemoves;
+        WTF_EXPORT_PRIVATE static std::atomic<unsigned> numReinserts;
 
         // The following variables are only modified in the recordCollisionAtCount method within a mutex.
-        WTF_EXPORTDATA static unsigned maxCollisions;
-        WTF_EXPORTDATA static unsigned numCollisions;
-        WTF_EXPORTDATA static unsigned collisionGraph[4096];
+        WTF_EXPORT_PRIVATE static unsigned maxCollisions;
+        WTF_EXPORT_PRIVATE static unsigned numCollisions;
+        WTF_EXPORT_PRIVATE static unsigned collisionGraph[4096];
 
         WTF_EXPORT_PRIVATE static void recordCollisionAtCount(unsigned count);
         WTF_EXPORT_PRIVATE static void dumpStats();

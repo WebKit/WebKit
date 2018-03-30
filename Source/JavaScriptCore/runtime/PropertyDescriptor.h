@@ -82,7 +82,7 @@ public:
     unsigned attributesOverridingCurrent(const PropertyDescriptor& current) const;
 
 private:
-    JS_EXPORTDATA static unsigned defaultAttributes;
+    JS_EXPORT_PRIVATE static unsigned defaultAttributes;
     bool operator==(const PropertyDescriptor&) { return false; }
     enum { WritablePresent = 1, EnumerablePresent = 2, ConfigurablePresent = 4};
     // May be a getter/setter

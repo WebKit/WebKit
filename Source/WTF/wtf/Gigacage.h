@@ -34,7 +34,7 @@
 #define GIGACAGE_BASE_PTRS_SIZE 8192
 
 extern "C" {
-extern WTF_EXPORTDATA char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
+extern WTF_EXPORT_PRIVATE char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 }
 
 namespace Gigacage {

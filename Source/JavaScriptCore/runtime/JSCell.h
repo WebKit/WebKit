@@ -70,7 +70,7 @@ template<typename T> void* tryAllocateCell(Heap&, GCDeferralContext*, size_t = s
 
 #define DECLARE_EXPORT_INFO                                                  \
     protected:                                                               \
-        static JS_EXPORTDATA const ::JSC::ClassInfo s_info;                  \
+        static JS_EXPORT_PRIVATE const ::JSC::ClassInfo s_info;              \
     public:                                                                  \
         static constexpr const ::JSC::ClassInfo* info() { return &s_info; }
 

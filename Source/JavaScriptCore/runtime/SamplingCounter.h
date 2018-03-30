@@ -73,7 +73,7 @@ protected:
     AbstractSamplingCounter** m_referer;
     // Null object used to detect end of static chain.
     static AbstractSamplingCounter s_abstractSamplingCounterChainEnd;
-    JS_EXPORTDATA static AbstractSamplingCounter* s_abstractSamplingCounterChain;
+    JS_EXPORT_PRIVATE static AbstractSamplingCounter* s_abstractSamplingCounterChain;
     static bool s_completed;
 };
 

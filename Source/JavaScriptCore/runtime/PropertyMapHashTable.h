@@ -50,7 +50,7 @@ struct PropertyMapHashTableStats {
     std::atomic<unsigned> numReinserts;
 };
 
-JS_EXPORTDATA extern PropertyMapHashTableStats* propertyMapHashTableStats;
+JS_EXPORT_PRIVATE extern PropertyMapHashTableStats* propertyMapHashTableStats;
 
 #endif
 
