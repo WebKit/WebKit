@@ -150,8 +150,10 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
 #endif
 
     // If we want to useImageDocumentForSubframePDF, we'll let that override plugin support.
-    if (frame && !frame->isMainFrame() && MIMETypeRegistry::isPDFMIMEType(type) && frame->settings().useImageDocumentForSubframePDF())
+    if (frame && !frame->isMainFrame() && MIMETypeRegistry::isPDFMIMEType(type) && frame->settings().useImageDocumentForSubframePDF()) {
+        ASSERT(Image::supportsType(type));
         return ImageDocument::create(*frame, url);
+    }
 
     PluginData* pluginData = nullptr;
     auto allowedPluginTypes = PluginData::OnlyApplicationPlugins;

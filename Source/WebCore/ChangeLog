@@ -1,3 +1,44 @@
+2018-03-30  Daniel Bates  <dabates@apple.com>
+
+        ASSERTION FAILED: ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType])) in -[NSPasteboard(WebExtras) _web_writePromisedRTFDFromArchive:containsImage:]
+        https://bugs.webkit.org/show_bug.cgi?id=184161
+
+        Reviewed by Per Arne Vollan.
+
+        Fixes an assertion failure when quiting an app that uses a Legacy WebKit web view
+        after dragging-and-dropping a PDF embedded using an HTML image element into the
+        same web view.
+
+        When performing a drag-and-drop of a PDF document image (WebCore::PDFDocumentImage) we create a WebArchive
+        from the main frame's WebHTMLView and promise AppKit that will provide a Rich Text Format (RTF) document
+        from this archive if needed. For some reason, on app termination AppKit requests that the WebHTMLView
+        fullfill its RTF document promise for the WebArchive created at the start of the drag operation. WebKit
+        expects that the created WebArchive is either for an inline image (e.g. <img>) or an image document that
+        has a supported image resource MIME type (by querying MIMETypeRegistry::isSupportedImageResourceMIMEType())
+        and checks for these cases in this order. PDF/PostScript are not listed in the set of supported image
+        resource MIME types. So, the first check fails and WebKit assumes that the WebArchive was created from
+        an image document of a supported image resource MIME type. However, the WebArchive was created from a
+        WebHTMLView and has MIME type text/html. Therefore the assertion fails. We need to add PDF and PostScript
+        to the set of supported image resource MIME types so that WebKit does not fall back to the WebHTMLView
+        code path. Historically, PDF and PostScript were in the set supported image resource MIME types. Over time
+        the set of MIME types for image resouces (images loaded as a document) became identical to the set of MIME
+        types for images loaded inline (e.g. <img>) and this set omitted the MIME types for PDF and PostScript.
+
+        Additionally it is sufficient to implement MIMETypeRegistry::isSupportedImageResourceMIMEType() in terms
+        of MIMETypeRegistry::isSupportedImageMIMEType() and MIMETypeRegistry::isPDFOrPostScriptMIMEType() instead
+        of allocating a dedicated HashSet for the supported image resource MIME types (as we currently do).
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Assert that PDF is a supported image MIME type before
+        instantiating an ImageDocument.
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes): Remove unnecessary allocation of a HashSet for the support
+        image resource MIME types.
+        (WebCore::MIMETypeRegistry::isSupportedImageResourceMIMEType): Write in terms of MIMETypeRegistry::isSupportedImageMIMEType()
+        and MIMETypeRegistry::isPDFOrPostScriptMIMEType().
+        (WebCore::MIMETypeRegistry::getSupportedImageResourceMIMETypes): Deleted.
+        * platform/MIMETypeRegistry.h:
+
 2018-03-29  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] CSSTransition objects should have fill: backwards to allow seeking prior to start time
