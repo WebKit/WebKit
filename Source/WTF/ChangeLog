@@ -1,3 +1,25 @@
+2018-03-30  JF Bastien  <jfbastien@apple.com>
+
+        Introduce WTF_LAZY_INSTANTIATE
+        https://bugs.webkit.org/show_bug.cgi?id=184169
+        <rdar://problem/39023385>
+
+        Reviewed by Mark Lam.
+
+        As part of #184164 I'm adding some forwarding methods to
+        WTF::String. These need to forward RetainPtr and CString, and
+        usually that would require #include'ing RetainPtr.h and CString.h
+        to WTFString.h which isn't really something we should do.
+
+        Introduce WTF_LAZY_INSTANTIATE to forward-declare functions which
+        just pass parameters to another function, and return whatever that
+        other function returned, without having to include the return's /
+        parameters' type header.
+
+        Try it out here: godbolt.org/g/oV8G5Q
+
+        * wtf/Forward.h:
+
 2018-03-29  JF Bastien  <jfbastien@apple.com>
 
         Use Forward.h instead of forward-declaring WTF::String
