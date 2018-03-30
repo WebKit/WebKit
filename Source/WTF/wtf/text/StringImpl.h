@@ -218,16 +218,16 @@ private:
     StringImpl(const UChar*, unsigned length, Ref<StringImpl>&&);
 
 public:
-    WTF_EXPORT_STRING_API static void destroy(StringImpl*);
+    WTF_EXPORT_PRIVATE static void destroy(StringImpl*);
 
-    WTF_EXPORT_STRING_API static Ref<StringImpl> create(const UChar*, unsigned length);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> create(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const LChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
     template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity>&);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> create8BitIfPossible(const UChar*);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*);
 
     ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
-    WTF_EXPORT_STRING_API static Ref<StringImpl> create(const LChar*);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const LChar*);
     ALWAYS_INLINE static Ref<StringImpl> create(const char* string) { return create(reinterpret_cast<const LChar*>(string)); }
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
@@ -235,13 +235,13 @@ public:
     template<unsigned characterCount> static Ref<StringImpl> createFromLiteral(const char (&)[characterCount]);
 
     // FIXME: Replace calls to these overloads of createFromLiteral to createWithoutCopying instead.
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createFromLiteral(const char*, unsigned length);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createFromLiteral(const char*);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*);
 
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createWithoutCopying(const UChar*, unsigned length);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createWithoutCopying(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createUninitialized(unsigned length, LChar*&);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createUninitialized(unsigned length, UChar*&);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const LChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, LChar*&);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, UChar*&);
     template<typename CharacterType> static RefPtr<StringImpl> tryCreateUninitialized(unsigned length, CharacterType*&);
 
     // Reallocate the StringImpl. The originalString must be only owned by the Ref,
@@ -261,8 +261,8 @@ public:
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
     static Ref<StringImpl> adopt(StringVector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&&);
 
-    WTF_EXPORT_STRING_API static Ref<StringImpl> adopt(StringBuffer<UChar>&&);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> adopt(StringBuffer<LChar>&&);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> adopt(StringBuffer<UChar>&&);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> adopt(StringBuffer<LChar>&&);
 
     unsigned length() const { return m_length; }
     unsigned mask() const { return m_mask; }
@@ -278,7 +278,7 @@ public:
     size_t cost() const;
     size_t costDuringGC();
 
-    WTF_EXPORT_STRING_API size_t sizeInBytes() const;
+    WTF_EXPORT_PRIVATE size_t sizeInBytes() const;
 
     bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
     bool isAtomic() const { return m_hashAndFlags & s_hashFlagStringKindIsAtomic; }
@@ -288,13 +288,13 @@ public:
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
 #endif
 
-    static WTF_EXPORT_STRING_API CString utf8ForCharacters(const LChar* characters, unsigned length);
-    static WTF_EXPORT_STRING_API CString utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
-    WTF_EXPORT_STRING_API CString utf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
-    WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;
+    static WTF_EXPORT_PRIVATE CString utf8ForCharacters(const LChar* characters, unsigned length);
+    static WTF_EXPORT_PRIVATE CString utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
+    WTF_EXPORT_PRIVATE CString utf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
 private:
-    static WTF_EXPORT_STRING_API bool utf8Impl(const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode);
+    static WTF_EXPORT_PRIVATE bool utf8Impl(const UChar* characters, unsigned length, char*& buffer, size_t bufferSize, ConversionMode);
     
     // The high bits of 'hash' are always empty, but we prefer to store our flags
     // in the low bits because it makes them slightly more efficient to access.
@@ -370,11 +370,11 @@ public:
     // its own copy of the string.
     Ref<StringImpl> isolatedCopy() const;
 
-    WTF_EXPORT_STRING_API Ref<StringImpl> substring(unsigned position, unsigned length = std::numeric_limits<unsigned>::max());
+    WTF_EXPORT_PRIVATE Ref<StringImpl> substring(unsigned position, unsigned length = std::numeric_limits<unsigned>::max());
 
     UChar at(unsigned) const;
     UChar operator[](unsigned i) const { return at(i); }
-    WTF_EXPORT_STRING_API UChar32 characterStartingAt(unsigned);
+    WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned);
 
     int toIntStrict(bool* ok = 0, int base = 10);
     unsigned toUIntStrict(bool* ok = 0, int base = 10);
@@ -382,7 +382,7 @@ public:
     uint64_t toUInt64Strict(bool* ok = 0, int base = 10);
     intptr_t toIntPtrStrict(bool* ok = 0, int base = 10);
 
-    WTF_EXPORT_STRING_API int toInt(bool* ok = 0); // ignores trailing garbage
+    WTF_EXPORT_PRIVATE int toInt(bool* ok = 0); // ignores trailing garbage
     unsigned toUInt(bool* ok = 0); // ignores trailing garbage
     int64_t toInt64(bool* ok = 0); // ignores trailing garbage
     uint64_t toUInt64(bool* ok = 0); // ignores trailing garbage
@@ -394,18 +394,18 @@ public:
     double toDouble(bool* ok = 0);
     float toFloat(bool* ok = 0);
 
-    WTF_EXPORT_STRING_API Ref<StringImpl> convertToASCIILowercase();
-    WTF_EXPORT_STRING_API Ref<StringImpl> convertToASCIIUppercase();
-    WTF_EXPORT_STRING_API Ref<StringImpl> convertToLowercaseWithoutLocale();
-    WTF_EXPORT_STRING_API Ref<StringImpl> convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned);
-    WTF_EXPORT_STRING_API Ref<StringImpl> convertToUppercaseWithoutLocale();
-    WTF_EXPORT_STRING_API Ref<StringImpl> convertToLowercaseWithLocale(const AtomicString& localeIdentifier);
-    WTF_EXPORT_STRING_API Ref<StringImpl> convertToUppercaseWithLocale(const AtomicString& localeIdentifier);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToASCIILowercase();
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToASCIIUppercase();
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithoutLocale();
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithoutLocale();
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToLowercaseWithLocale(const AtomicString& localeIdentifier);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> convertToUppercaseWithLocale(const AtomicString& localeIdentifier);
 
     Ref<StringImpl> foldCase();
 
     Ref<StringImpl> stripWhiteSpace();
-    WTF_EXPORT_STRING_API Ref<StringImpl> simplifyWhiteSpace();
+    WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace();
     Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
     Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
@@ -418,53 +418,53 @@ public:
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
-    WTF_EXPORT_STRING_API size_t find(CodeUnitMatchFunction, unsigned index = 0);
+    WTF_EXPORT_PRIVATE size_t find(CodeUnitMatchFunction, unsigned index = 0);
     size_t find(const LChar*, unsigned index = 0);
     ALWAYS_INLINE size_t find(const char* string, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(string), index); }
-    WTF_EXPORT_STRING_API size_t find(StringImpl*);
-    WTF_EXPORT_STRING_API size_t find(StringImpl*, unsigned index);
-    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl&) const;
-    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl&, unsigned startOffset) const;
-    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl*) const;
-    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringImpl*, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE size_t find(StringImpl*);
+    WTF_EXPORT_PRIVATE size_t find(StringImpl*, unsigned index);
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl&, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*, unsigned startOffset) const;
 
-    WTF_EXPORT_STRING_API size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max());
-    WTF_EXPORT_STRING_API size_t reverseFind(StringImpl*, unsigned index = std::numeric_limits<unsigned>::max());
+    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max());
+    WTF_EXPORT_PRIVATE size_t reverseFind(StringImpl*, unsigned index = std::numeric_limits<unsigned>::max());
 
-    WTF_EXPORT_STRING_API bool startsWith(const StringImpl*) const;
-    WTF_EXPORT_STRING_API bool startsWith(const StringImpl&) const;
-    WTF_EXPORT_STRING_API bool startsWithIgnoringASCIICase(const StringImpl*) const;
-    WTF_EXPORT_STRING_API bool startsWithIgnoringASCIICase(const StringImpl&) const;
-    WTF_EXPORT_STRING_API bool startsWith(UChar) const;
-    WTF_EXPORT_STRING_API bool startsWith(const char*, unsigned matchLength) const;
+    WTF_EXPORT_PRIVATE bool startsWith(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE bool startsWith(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
+    WTF_EXPORT_PRIVATE bool startsWith(const char*, unsigned matchLength) const;
     template<unsigned matchLength> bool startsWith(const char (&prefix)[matchLength]) const { return startsWith(prefix, matchLength - 1); }
-    WTF_EXPORT_STRING_API bool hasInfixStartingAt(const StringImpl&, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE bool hasInfixStartingAt(const StringImpl&, unsigned startOffset) const;
 
-    WTF_EXPORT_STRING_API bool endsWith(StringImpl*);
-    WTF_EXPORT_STRING_API bool endsWith(StringImpl&);
-    WTF_EXPORT_STRING_API bool endsWithIgnoringASCIICase(const StringImpl*) const;
-    WTF_EXPORT_STRING_API bool endsWithIgnoringASCIICase(const StringImpl&) const;
-    WTF_EXPORT_STRING_API bool endsWith(UChar) const;
-    WTF_EXPORT_STRING_API bool endsWith(const char*, unsigned matchLength) const;
+    WTF_EXPORT_PRIVATE bool endsWith(StringImpl*);
+    WTF_EXPORT_PRIVATE bool endsWith(StringImpl&);
+    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE bool endsWith(UChar) const;
+    WTF_EXPORT_PRIVATE bool endsWith(const char*, unsigned matchLength) const;
     template<unsigned matchLength> bool endsWith(const char (&prefix)[matchLength]) const { return endsWith(prefix, matchLength - 1); }
-    WTF_EXPORT_STRING_API bool hasInfixEndingAt(const StringImpl&, unsigned endOffset) const;
+    WTF_EXPORT_PRIVATE bool hasInfixEndingAt(const StringImpl&, unsigned endOffset) const;
 
-    WTF_EXPORT_STRING_API Ref<StringImpl> replace(UChar, UChar);
-    WTF_EXPORT_STRING_API Ref<StringImpl> replace(UChar, StringImpl*);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, UChar);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, StringImpl*);
     ALWAYS_INLINE Ref<StringImpl> replace(UChar pattern, const char* replacement, unsigned replacementLength) { return replace(pattern, reinterpret_cast<const LChar*>(replacement), replacementLength); }
-    WTF_EXPORT_STRING_API Ref<StringImpl> replace(UChar, const LChar*, unsigned replacementLength);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, const LChar*, unsigned replacementLength);
     Ref<StringImpl> replace(UChar, const UChar*, unsigned replacementLength);
-    WTF_EXPORT_STRING_API Ref<StringImpl> replace(StringImpl*, StringImpl*);
-    WTF_EXPORT_STRING_API Ref<StringImpl> replace(unsigned index, unsigned length, StringImpl*);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringImpl*, StringImpl*);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned index, unsigned length, StringImpl*);
 
-    WTF_EXPORT_STRING_API UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr);
+    WTF_EXPORT_PRIVATE UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr);
 
 #if USE(CF)
     RetainPtr<CFStringRef> createCFString();
 #endif
 
 #ifdef __OBJC__
-    WTF_EXPORT_STRING_API operator NSString *();
+    WTF_EXPORT_PRIVATE operator NSString *();
 #endif
 
 #if STRING_STATS
@@ -537,25 +537,25 @@ template<> struct ValueCheck<StringImpl*> {
 
 #endif
 
-WTF_EXPORT_STRING_API bool equal(const StringImpl*, const StringImpl*);
-WTF_EXPORT_STRING_API bool equal(const StringImpl*, const LChar*);
+WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const StringImpl*);
+WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
 inline bool equal(const StringImpl* a, const char* b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
-WTF_EXPORT_STRING_API bool equal(const StringImpl*, const LChar*, unsigned);
-WTF_EXPORT_STRING_API bool equal(const StringImpl*, const UChar*, unsigned);
+WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*, unsigned);
+WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const UChar*, unsigned);
 inline bool equal(const StringImpl* a, const char* b, unsigned length) { return equal(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
-WTF_EXPORT_STRING_API bool equal(const StringImpl& a, const StringImpl& b);
+WTF_EXPORT_PRIVATE bool equal(const StringImpl& a, const StringImpl& b);
 
-WTF_EXPORT_STRING_API bool equalIgnoringNullity(StringImpl*, StringImpl*);
-WTF_EXPORT_STRING_API bool equalIgnoringNullity(const UChar*, size_t length, StringImpl*);
+WTF_EXPORT_PRIVATE bool equalIgnoringNullity(StringImpl*, StringImpl*);
+WTF_EXPORT_PRIVATE bool equalIgnoringNullity(const UChar*, size_t length, StringImpl*);
 
 bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
-WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
+WTF_EXPORT_PRIVATE bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
 bool equalIgnoringASCIICase(const StringImpl&, const char*);
 bool equalIgnoringASCIICase(const StringImpl*, const char*);
 
-WTF_EXPORT_STRING_API bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
+WTF_EXPORT_PRIVATE bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
 
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl&, const char (&lowercaseLetters)[length]);
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, const char (&lowercaseLetters)[length]);

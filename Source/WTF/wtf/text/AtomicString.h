@@ -104,11 +104,11 @@ public:
 
     UChar operator[](unsigned int i) const { return m_string[i]; }
 
-    WTF_EXPORT_STRING_API static AtomicString number(int);
-    WTF_EXPORT_STRING_API static AtomicString number(unsigned);
-    WTF_EXPORT_STRING_API static AtomicString number(unsigned long);
-    WTF_EXPORT_STRING_API static AtomicString number(unsigned long long);
-    WTF_EXPORT_STRING_API static AtomicString number(double);
+    WTF_EXPORT_PRIVATE static AtomicString number(int);
+    WTF_EXPORT_PRIVATE static AtomicString number(unsigned);
+    WTF_EXPORT_PRIVATE static AtomicString number(unsigned long);
+    WTF_EXPORT_PRIVATE static AtomicString number(unsigned long long);
+    WTF_EXPORT_PRIVATE static AtomicString number(double);
     // If we need more overloads of the number function, we can add all the others that String has, but these seem to do for now.
 
     bool contains(UChar character) const { return m_string.contains(character); }
@@ -133,8 +133,8 @@ public:
     bool endsWith(UChar character) const { return m_string.endsWith(character); }
     template<unsigned matchLength> bool endsWith(const char (&prefix)[matchLength]) const { return m_string.endsWith<matchLength>(prefix); }
 
-    WTF_EXPORT_STRING_API AtomicString convertToASCIILowercase() const;
-    WTF_EXPORT_STRING_API AtomicString convertToASCIIUppercase() const;
+    WTF_EXPORT_PRIVATE AtomicString convertToASCIILowercase() const;
+    WTF_EXPORT_PRIVATE AtomicString convertToASCIIUppercase() const;
 
     int toInt(bool* ok = 0) const { return m_string.toInt(ok); }
     double toDouble(bool* ok = 0) const { return m_string.toDouble(ok); }
@@ -168,7 +168,7 @@ private:
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType> AtomicString convertASCIICase() const;
 
-    WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
+    WTF_EXPORT_PRIVATE static AtomicString fromUTF8Internal(const char*, const char*);
 
     String m_string;
 };

@@ -29,8 +29,8 @@ class AtomicStringTable;
 
 class AtomicStringImpl : public UniquedStringImpl {
 public:
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> lookUp(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> lookUp(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> lookUp(const LChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> lookUp(const UChar*, unsigned length);
     static RefPtr<AtomicStringImpl> lookUp(StringImpl* string)
     {
         if (!string || string->isAtomic())
@@ -40,26 +40,26 @@ public:
 
     static void remove(AtomicStringImpl*);
 
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> add(const LChar*);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(const LChar*);
     ALWAYS_INLINE static RefPtr<AtomicStringImpl> add(const char* s) { return add(reinterpret_cast<const LChar*>(s)); };
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> add(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> add(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(const LChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(const UChar*, unsigned length);
     ALWAYS_INLINE static RefPtr<AtomicStringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); };
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> add(const UChar*);
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> add(StringImpl*, unsigned offset, unsigned length);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(const UChar*);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static RefPtr<AtomicStringImpl> add(StringImpl* string)
     {
         if (!string)
             return static_cast<AtomicStringImpl*>(string);
         return add(*string);
     }
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> add(const StaticStringImpl*);
-    WTF_EXPORT_STRING_API static Ref<AtomicStringImpl> addLiteral(const char* characters, unsigned length);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(const StaticStringImpl*);
+    WTF_EXPORT_PRIVATE static Ref<AtomicStringImpl> addLiteral(const char* characters, unsigned length);
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> addUTF8(const char* start, const char* end);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> addUTF8(const char* start, const char* end);
 #if USE(CF)
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> add(CFStringRef);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> add(CFStringRef);
 #endif
 
     template<typename StringTableProvider>
@@ -71,7 +71,7 @@ public:
     }
 
 #if !ASSERT_DISABLED
-    WTF_EXPORT_STRING_API static bool isInAtomicStringTable(StringImpl*);
+    WTF_EXPORT_PRIVATE static bool isInAtomicStringTable(StringImpl*);
 #endif
 
 private:
@@ -95,10 +95,10 @@ private:
         return addSlowCase(stringTable, string);
     }
 
-    WTF_EXPORT_STRING_API static Ref<AtomicStringImpl> addSlowCase(StringImpl&);
-    WTF_EXPORT_STRING_API static Ref<AtomicStringImpl> addSlowCase(AtomicStringTable&, StringImpl&);
+    WTF_EXPORT_PRIVATE static Ref<AtomicStringImpl> addSlowCase(StringImpl&);
+    WTF_EXPORT_PRIVATE static Ref<AtomicStringImpl> addSlowCase(AtomicStringTable&, StringImpl&);
 
-    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> lookUpSlowCase(StringImpl&);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomicStringImpl> lookUpSlowCase(StringImpl&);
 };
 
 #if !ASSERT_DISABLED

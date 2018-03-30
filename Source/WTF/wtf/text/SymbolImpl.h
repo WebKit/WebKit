@@ -50,8 +50,8 @@ public:
 
     RegisteredSymbolImpl* asRegisteredSymbolImpl();
 
-    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createNullSymbol();
-    WTF_EXPORT_STRING_API static Ref<SymbolImpl> create(StringImpl& rep);
+    WTF_EXPORT_PRIVATE static Ref<SymbolImpl> createNullSymbol();
+    WTF_EXPORT_PRIVATE static Ref<SymbolImpl> create(StringImpl& rep);
 
     class StaticSymbolImpl : private StringImplShape {
         WTF_MAKE_NONCOPYABLE(StaticSymbolImpl);
@@ -126,8 +126,8 @@ static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl), "");
 
 class PrivateSymbolImpl : public SymbolImpl {
 public:
-    WTF_EXPORT_STRING_API static Ref<PrivateSymbolImpl> createNullSymbol();
-    WTF_EXPORT_STRING_API static Ref<PrivateSymbolImpl> create(StringImpl& rep);
+    WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> createNullSymbol();
+    WTF_EXPORT_PRIVATE static Ref<PrivateSymbolImpl> create(StringImpl& rep);
 
 private:
     PrivateSymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)

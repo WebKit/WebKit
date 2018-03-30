@@ -97,16 +97,16 @@ public:
 
 #if USE(CF)
     // This function converts null strings to empty strings.
-    WTF_EXPORT_STRING_API RetainPtr<CFStringRef> createCFStringWithoutCopying() const;
+    WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFStringWithoutCopying() const;
 #endif
 
 #ifdef __OBJC__
     // These functions convert null strings to empty strings.
-    WTF_EXPORT_STRING_API RetainPtr<NSString> createNSString() const;
-    WTF_EXPORT_STRING_API RetainPtr<NSString> createNSStringWithoutCopying() const;
+    WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSString() const;
+    WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSStringWithoutCopying() const;
 #endif
 
-    WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
     class UpconvertedCharacters;
     UpconvertedCharacters upconvertedCharacters() const;
@@ -127,22 +127,22 @@ public:
     size_t find(UChar, unsigned start = 0) const;
     size_t find(CodeUnitMatchFunction, unsigned start = 0) const;
 
-    WTF_EXPORT_STRING_API size_t find(StringView, unsigned start) const;
+    WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start) const;
 
     size_t reverseFind(UChar, unsigned index = UINT_MAX) const;
 
-    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringView&) const;
-    WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringView&, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringView&, unsigned startOffset) const;
 
     bool contains(UChar) const;
-    WTF_EXPORT_STRING_API bool containsIgnoringASCIICase(const StringView&) const;
-    WTF_EXPORT_STRING_API bool containsIgnoringASCIICase(const StringView&, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(const StringView&, unsigned startOffset) const;
 
-    WTF_EXPORT_STRING_API bool startsWith(const StringView&) const;
-    WTF_EXPORT_STRING_API bool startsWithIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_PRIVATE bool startsWith(const StringView&) const;
+    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringView&) const;
 
-    WTF_EXPORT_STRING_API bool endsWith(const StringView&) const;
-    WTF_EXPORT_STRING_API bool endsWithIgnoringASCIICase(const StringView&) const;
+    WTF_EXPORT_PRIVATE bool endsWith(const StringView&) const;
+    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringView&) const;
 
     int toInt() const;
     int toInt(bool& isValid) const;
@@ -166,9 +166,9 @@ private:
     StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&);
 
 #if CHECK_STRINGVIEW_LIFETIME
-    WTF_EXPORT_STRING_API bool underlyingStringIsValid() const;
-    WTF_EXPORT_STRING_API void setUnderlyingString(const StringImpl*);
-    WTF_EXPORT_STRING_API void setUnderlyingString(const StringView&);
+    WTF_EXPORT_PRIVATE bool underlyingStringIsValid() const;
+    WTF_EXPORT_PRIVATE void setUnderlyingString(const StringImpl*);
+    WTF_EXPORT_PRIVATE void setUnderlyingString(const StringView&);
 #else
     bool underlyingStringIsValid() const { return true; }
     void setUnderlyingString(const StringImpl*) { }

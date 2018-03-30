@@ -40,37 +40,37 @@ class ASCIILiteral;
 
 // Declarations of string operations
 
-WTF_EXPORT_STRING_API int charactersToIntStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
-WTF_EXPORT_STRING_API int charactersToIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
-WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
-WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE int charactersToIntStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE int charactersToIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
 int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
-WTF_EXPORT_STRING_API uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
-WTF_EXPORT_STRING_API uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE uint64_t charactersToUInt64Strict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
+WTF_EXPORT_PRIVATE uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 intptr_t charactersToIntPtrStrict(const LChar*, size_t, bool* ok = nullptr, int base = 10);
 intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = nullptr, int base = 10);
 
-WTF_EXPORT_STRING_API int charactersToInt(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
-WTF_EXPORT_STRING_API int charactersToInt(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+WTF_EXPORT_PRIVATE int charactersToInt(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+WTF_EXPORT_PRIVATE int charactersToInt(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 unsigned charactersToUInt(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 unsigned charactersToUInt(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 int64_t charactersToInt64(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 int64_t charactersToInt64(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 uint64_t charactersToUInt64(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
-WTF_EXPORT_STRING_API uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
+WTF_EXPORT_PRIVATE uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 intptr_t charactersToIntPtr(const LChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = nullptr); // ignores trailing garbage
 
 // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
 // Like the non-strict functions above, these return the value when there is trailing garbage.
 // It would be better if these were more consistent with the above functions instead.
-WTF_EXPORT_STRING_API double charactersToDouble(const LChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_STRING_API double charactersToDouble(const UChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, bool* ok = nullptr);
-WTF_EXPORT_STRING_API float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
-WTF_EXPORT_STRING_API float charactersToFloat(const UChar*, size_t, size_t& parsedLength);
+WTF_EXPORT_PRIVATE double charactersToDouble(const LChar*, size_t, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE float charactersToFloat(const LChar*, size_t, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, bool* ok = nullptr);
+WTF_EXPORT_PRIVATE float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
+WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, size_t& parsedLength);
 
 template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpecialCharacters(const CharacterType*, size_t);
 
@@ -82,7 +82,7 @@ public:
     String() = default;
 
     // Construct a string with UTF-16 data.
-    WTF_EXPORT_STRING_API String(const UChar* characters, unsigned length);
+    WTF_EXPORT_PRIVATE String(const UChar* characters, unsigned length);
 
     // Construct a string by copying the contents of a vector.  To avoid
     // copying, consider using String::adopt instead.
@@ -96,15 +96,15 @@ public:
     explicit String(const Vector<UChar, inlineCapacity, OverflowHandler>&);
 
     // Construct a string with UTF-16 data, from a null-terminated source.
-    WTF_EXPORT_STRING_API String(const UChar*);
+    WTF_EXPORT_PRIVATE String(const UChar*);
 
     // Construct a string with latin1 data.
-    WTF_EXPORT_STRING_API String(const LChar* characters, unsigned length);
-    WTF_EXPORT_STRING_API String(const char* characters, unsigned length);
+    WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
+    WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
 
     // Construct a string with latin1 data, from a null-terminated source.
-    WTF_EXPORT_STRING_API String(const LChar* characters);
-    WTF_EXPORT_STRING_API String(const char* characters);
+    WTF_EXPORT_PRIVATE String(const LChar* characters);
+    WTF_EXPORT_PRIVATE String(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
     String(StringImpl&);
@@ -119,7 +119,7 @@ public:
     String(StaticStringImpl*);
 
     // Construct a string from a constant string literal.
-    WTF_EXPORT_STRING_API String(ASCIILiteral);
+    WTF_EXPORT_PRIVATE String(ASCIILiteral);
 
     // Construct a string from a constant string literal.
     // This constructor is the "big" version, as it put the length in the function call and generate bigger code.
@@ -160,27 +160,27 @@ public:
 
     unsigned sizeInBytes() const { return m_impl ? m_impl->length() * (is8Bit() ? sizeof(LChar) : sizeof(UChar)) : 0; }
 
-    WTF_EXPORT_STRING_API CString ascii() const;
-    WTF_EXPORT_STRING_API CString latin1() const;
+    WTF_EXPORT_PRIVATE CString ascii() const;
+    WTF_EXPORT_PRIVATE CString latin1() const;
 
-    WTF_EXPORT_STRING_API CString utf8(ConversionMode) const;
-    WTF_EXPORT_STRING_API CString utf8() const;
+    WTF_EXPORT_PRIVATE CString utf8(ConversionMode) const;
+    WTF_EXPORT_PRIVATE CString utf8() const;
 
     UChar characterAt(unsigned index) const;
     UChar operator[](unsigned index) const { return characterAt(index); }
 
-    WTF_EXPORT_STRING_API static String number(int);
-    WTF_EXPORT_STRING_API static String number(unsigned);
-    WTF_EXPORT_STRING_API static String number(long);
-    WTF_EXPORT_STRING_API static String number(unsigned long);
-    WTF_EXPORT_STRING_API static String number(long long);
-    WTF_EXPORT_STRING_API static String number(unsigned long long);
+    WTF_EXPORT_PRIVATE static String number(int);
+    WTF_EXPORT_PRIVATE static String number(unsigned);
+    WTF_EXPORT_PRIVATE static String number(long);
+    WTF_EXPORT_PRIVATE static String number(unsigned long);
+    WTF_EXPORT_PRIVATE static String number(long long);
+    WTF_EXPORT_PRIVATE static String number(unsigned long long);
 
-    WTF_EXPORT_STRING_API static String number(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    WTF_EXPORT_PRIVATE static String number(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
 
     // Number to String conversion following the ECMAScript definition.
-    WTF_EXPORT_STRING_API static String numberToStringECMAScript(double);
-    WTF_EXPORT_STRING_API static String numberToStringFixedWidth(double, unsigned decimalPlaces);
+    WTF_EXPORT_PRIVATE static String numberToStringECMAScript(double);
+    WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(double, unsigned decimalPlaces);
 
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
@@ -197,9 +197,9 @@ public:
     size_t reverseFind(UChar character, unsigned start = std::numeric_limits<unsigned>::max()) const { return m_impl ? m_impl->reverseFind(character, start) : notFound; }
     size_t reverseFind(const String& string, unsigned start = std::numeric_limits<unsigned>::max()) const { return m_impl ? m_impl->reverseFind(string.impl(), start) : notFound; }
 
-    WTF_EXPORT_STRING_API Vector<UChar> charactersWithNullTermination() const;
+    WTF_EXPORT_PRIVATE Vector<UChar> charactersWithNullTermination() const;
 
-    WTF_EXPORT_STRING_API UChar32 characterStartingAt(unsigned) const;
+    WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned) const;
 
     bool contains(UChar character) const { return find(character) != notFound; }
     bool contains(const LChar* string) const { return find(string) != notFound; }
@@ -220,13 +220,13 @@ public:
     template<unsigned matchLength> bool endsWith(const char (&prefix)[matchLength]) const { return m_impl ? m_impl->endsWith<matchLength>(prefix) : !matchLength; }
     bool hasInfixEndingAt(const String& suffix, unsigned endOffset) const { return m_impl && suffix.impl() && m_impl->hasInfixEndingAt(*suffix.impl(), endOffset); }
 
-    WTF_EXPORT_STRING_API void append(const String&);
-    WTF_EXPORT_STRING_API void append(LChar);
+    WTF_EXPORT_PRIVATE void append(const String&);
+    WTF_EXPORT_PRIVATE void append(LChar);
     void append(char character) { append(static_cast<LChar>(character)); };
-    WTF_EXPORT_STRING_API void append(UChar);
-    WTF_EXPORT_STRING_API void append(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API void append(const UChar*, unsigned length);
-    WTF_EXPORT_STRING_API void insert(const String&, unsigned position);
+    WTF_EXPORT_PRIVATE void append(UChar);
+    WTF_EXPORT_PRIVATE void append(const LChar*, unsigned length);
+    WTF_EXPORT_PRIVATE void append(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE void insert(const String&, unsigned position);
 
     String& replace(UChar target, UChar replacement);
     String& replace(UChar target, const String& replacement);
@@ -234,79 +234,79 @@ public:
     String& replace(unsigned start, unsigned length, const String& replacement);
     template<unsigned characterCount> String& replaceWithLiteral(UChar target, const char (&replacement)[characterCount]);
 
-    WTF_EXPORT_STRING_API void truncate(unsigned length);
-    WTF_EXPORT_STRING_API void remove(unsigned position, unsigned length = 1);
+    WTF_EXPORT_PRIVATE void truncate(unsigned length);
+    WTF_EXPORT_PRIVATE void remove(unsigned position, unsigned length = 1);
 
-    WTF_EXPORT_STRING_API String substring(unsigned position, unsigned length = std::numeric_limits<unsigned>::max()) const;
-    WTF_EXPORT_STRING_API String substringSharingImpl(unsigned position, unsigned length = std::numeric_limits<unsigned>::max()) const;
+    WTF_EXPORT_PRIVATE String substring(unsigned position, unsigned length = std::numeric_limits<unsigned>::max()) const;
+    WTF_EXPORT_PRIVATE String substringSharingImpl(unsigned position, unsigned length = std::numeric_limits<unsigned>::max()) const;
     String left(unsigned length) const { return substring(0, length); }
     String right(unsigned length) const { return substring(this->length() - length, length); }
 
-    WTF_EXPORT_STRING_API String convertToASCIILowercase() const;
-    WTF_EXPORT_STRING_API String convertToASCIIUppercase() const;
-    WTF_EXPORT_STRING_API String convertToLowercaseWithoutLocale() const;
-    WTF_EXPORT_STRING_API String convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned) const;
-    WTF_EXPORT_STRING_API String convertToUppercaseWithoutLocale() const;
-    WTF_EXPORT_STRING_API String convertToLowercaseWithLocale(const AtomicString& localeIdentifier) const;
-    WTF_EXPORT_STRING_API String convertToUppercaseWithLocale(const AtomicString& localeIdentifier) const;
+    WTF_EXPORT_PRIVATE String convertToASCIILowercase() const;
+    WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
+    WTF_EXPORT_PRIVATE String convertToLowercaseWithoutLocale() const;
+    WTF_EXPORT_PRIVATE String convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned) const;
+    WTF_EXPORT_PRIVATE String convertToUppercaseWithoutLocale() const;
+    WTF_EXPORT_PRIVATE String convertToLowercaseWithLocale(const AtomicString& localeIdentifier) const;
+    WTF_EXPORT_PRIVATE String convertToUppercaseWithLocale(const AtomicString& localeIdentifier) const;
 
-    WTF_EXPORT_STRING_API String stripWhiteSpace() const;
-    WTF_EXPORT_STRING_API String simplifyWhiteSpace() const;
-    WTF_EXPORT_STRING_API String simplifyWhiteSpace(CodeUnitMatchFunction) const;
+    WTF_EXPORT_PRIVATE String stripWhiteSpace() const;
+    WTF_EXPORT_PRIVATE String simplifyWhiteSpace() const;
+    WTF_EXPORT_PRIVATE String simplifyWhiteSpace(CodeUnitMatchFunction) const;
 
-    WTF_EXPORT_STRING_API String stripLeadingAndTrailingCharacters(CodeUnitMatchFunction) const;
-    WTF_EXPORT_STRING_API String removeCharacters(CodeUnitMatchFunction) const;
+    WTF_EXPORT_PRIVATE String stripLeadingAndTrailingCharacters(CodeUnitMatchFunction) const;
+    WTF_EXPORT_PRIVATE String removeCharacters(CodeUnitMatchFunction) const;
 
     // Returns the string with case folded for case insensitive comparison.
     // Use convertToASCIILowercase instead if ASCII case insensitive comparison is desired.
-    WTF_EXPORT_STRING_API String foldCase() const;
+    WTF_EXPORT_PRIVATE String foldCase() const;
 
-    WTF_EXPORT_STRING_API static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-    WTF_EXPORT_STRING_API static String formatWithArguments(const char *, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
+    WTF_EXPORT_PRIVATE static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+    WTF_EXPORT_PRIVATE static String formatWithArguments(const char *, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
 
     // Returns an uninitialized string. The characters needs to be written
     // into the buffer returned in data before the returned string is used.
     static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
     static String createUninitialized(unsigned length, LChar*& data) { return StringImpl::createUninitialized(length, data); }
 
-    WTF_EXPORT_STRING_API void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
+    WTF_EXPORT_PRIVATE void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
     void split(const String& separator, Vector<String>& result) const { split(separator, false, result); }
 
     using SplitFunctor = WTF::Function<void(const StringView&)>;
-    WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, const SplitFunctor&) const;
-    WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
+    WTF_EXPORT_PRIVATE void split(UChar separator, bool allowEmptyEntries, const SplitFunctor&) const;
+    WTF_EXPORT_PRIVATE void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
     void split(UChar separator, Vector<String>& result) const { split(separator, false, result); }
     Vector<String> split(UChar separator) const;
     Vector<String> split(const String& separator) const;
 
-    WTF_EXPORT_STRING_API int toIntStrict(bool* ok = nullptr, int base = 10) const;
-    WTF_EXPORT_STRING_API unsigned toUIntStrict(bool* ok = nullptr, int base = 10) const;
-    WTF_EXPORT_STRING_API int64_t toInt64Strict(bool* ok = nullptr, int base = 10) const;
-    WTF_EXPORT_STRING_API uint64_t toUInt64Strict(bool* ok = nullptr, int base = 10) const;
-    WTF_EXPORT_STRING_API intptr_t toIntPtrStrict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_PRIVATE int toIntStrict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_PRIVATE unsigned toUIntStrict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_PRIVATE int64_t toInt64Strict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_PRIVATE uint64_t toUInt64Strict(bool* ok = nullptr, int base = 10) const;
+    WTF_EXPORT_PRIVATE intptr_t toIntPtrStrict(bool* ok = nullptr, int base = 10) const;
 
-    WTF_EXPORT_STRING_API int toInt(bool* ok = nullptr) const;
-    WTF_EXPORT_STRING_API unsigned toUInt(bool* ok = nullptr) const;
-    WTF_EXPORT_STRING_API int64_t toInt64(bool* ok = nullptr) const;
-    WTF_EXPORT_STRING_API uint64_t toUInt64(bool* ok = nullptr) const;
-    WTF_EXPORT_STRING_API intptr_t toIntPtr(bool* ok = nullptr) const;
+    WTF_EXPORT_PRIVATE int toInt(bool* ok = nullptr) const;
+    WTF_EXPORT_PRIVATE unsigned toUInt(bool* ok = nullptr) const;
+    WTF_EXPORT_PRIVATE int64_t toInt64(bool* ok = nullptr) const;
+    WTF_EXPORT_PRIVATE uint64_t toUInt64(bool* ok = nullptr) const;
+    WTF_EXPORT_PRIVATE intptr_t toIntPtr(bool* ok = nullptr) const;
 
     // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
     // Like the non-strict functions above, these return the value when there is trailing garbage.
     // It would be better if these were more consistent with the above functions instead.
-    WTF_EXPORT_STRING_API double toDouble(bool* ok = nullptr) const;
-    WTF_EXPORT_STRING_API float toFloat(bool* ok = nullptr) const;
+    WTF_EXPORT_PRIVATE double toDouble(bool* ok = nullptr) const;
+    WTF_EXPORT_PRIVATE float toFloat(bool* ok = nullptr) const;
 
     bool percentage(int& percentage) const;
 
 #if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
-    WTF_EXPORT_STRING_API String isolatedCopy() const &;
-    WTF_EXPORT_STRING_API String isolatedCopy() &&;
+    WTF_EXPORT_PRIVATE String isolatedCopy() const &;
+    WTF_EXPORT_PRIVATE String isolatedCopy() &&;
 #else
-    WTF_EXPORT_STRING_API String isolatedCopy() const;
+    WTF_EXPORT_PRIVATE String isolatedCopy() const;
 #endif
 
-    WTF_EXPORT_STRING_API bool isSafeToSendToAnotherThread() const;
+    WTF_EXPORT_PRIVATE bool isSafeToSendToAnotherThread() const;
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
     // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString *).
@@ -316,12 +316,12 @@ public:
     operator UnspecifiedBoolTypeB() const;
 
 #if USE(CF)
-    WTF_EXPORT_STRING_API String(CFStringRef);
-    WTF_EXPORT_STRING_API RetainPtr<CFStringRef> createCFString() const;
+    WTF_EXPORT_PRIVATE String(CFStringRef);
+    WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFString() const;
 #endif
 
 #ifdef __OBJC__
-    WTF_EXPORT_STRING_API String(NSString *);
+    WTF_EXPORT_PRIVATE String(NSString *);
 
     // This conversion converts the null string to an empty NSString rather than to nil.
     // Given Cocoa idioms, this is a more useful default. Clients that need to preserve the
@@ -329,22 +329,22 @@ public:
     operator NSString *() const;
 #endif
 
-    WTF_EXPORT_STRING_API static String make8BitFrom16BitSource(const UChar*, size_t);
+    WTF_EXPORT_PRIVATE static String make8BitFrom16BitSource(const UChar*, size_t);
     template<size_t inlineCapacity> static String make8BitFrom16BitSource(const Vector<UChar, inlineCapacity>&);
 
-    WTF_EXPORT_STRING_API static String make16BitFrom8BitSource(const LChar*, size_t);
+    WTF_EXPORT_PRIVATE static String make16BitFrom8BitSource(const LChar*, size_t);
 
     // String::fromUTF8 will return a null string if
     // the input data contains invalid UTF-8 sequences.
-    WTF_EXPORT_STRING_API static String fromUTF8(const LChar*, size_t);
-    WTF_EXPORT_STRING_API static String fromUTF8(const LChar*);
+    WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*, size_t);
+    WTF_EXPORT_PRIVATE static String fromUTF8(const LChar*);
     static String fromUTF8(const char* characters, size_t length) { return fromUTF8(reinterpret_cast<const LChar*>(characters), length); };
     static String fromUTF8(const char* string) { return fromUTF8(reinterpret_cast<const LChar*>(string)); };
-    WTF_EXPORT_STRING_API static String fromUTF8(const CString&);
+    WTF_EXPORT_PRIVATE static String fromUTF8(const CString&);
     static String fromUTF8(const Vector<LChar>& characters);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
-    WTF_EXPORT_STRING_API static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
+    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
     static String fromUTF8WithLatin1Fallback(const char* characters, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(characters), length); };
 
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
@@ -362,7 +362,7 @@ public:
     unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
 
 #ifndef NDEBUG
-    WTF_EXPORT_STRING_API void show() const;
+    WTF_EXPORT_PRIVATE void show() const;
 #endif
 
     // Turns this String empty if the StringImpl is not referenced by anyone else.
@@ -417,13 +417,13 @@ NSString * nsStringNilIfEmpty(const String&);
 
 #endif
 
-WTF_EXPORT_STRING_API int codePointCompare(const String&, const String&);
+WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
 bool codePointCompareLessThan(const String&, const String&);
 
 template<typename CharacterType> void appendNumber(Vector<CharacterType>&, unsigned char number);
 
 // Shared global empty string.
-WTF_EXPORT_STRING_API const String& emptyString();
+WTF_EXPORT_PRIVATE const String& emptyString();
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String> { using Hash = StringHash; };
