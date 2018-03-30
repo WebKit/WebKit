@@ -425,7 +425,13 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
 
 bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element& element)
 {
-    return m_inMSOList || (m_shouldPreserveMSOList && element.getAttribute(styleAttr).contains(";mso-list:"));
+    if (m_inMSOList)
+        return true;
+    if (m_shouldPreserveMSOList) {
+        auto style = element.getAttribute(styleAttr);
+        return style.startsWith("mso-list:") || style.contains(";mso-list:") || style.contains("\nmso-list:");
+    }
+    return false;
 }
 
 void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)

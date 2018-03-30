@@ -1,3 +1,19 @@
+2018-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Copying a list from Microsoft Word to TinyMCE fails when mso-list is the first property
+        https://bugs.webkit.org/show_bug.cgi?id=182938
+        <rdar://problem/37683007>
+
+        Reviewed by Wenson Hsieh.
+
+        Made the logic to detect Microsoft Word's mso-list CSS property more generic by detecting
+        inline styles which start with "mso-list:" and one which line-break right before it: "\nmso-list:"
+
+        Tests: PasteHTML.PreservesMSOList
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement):
+
 2018-03-30  Youenn Fablet  <youenn@apple.com>
 
         NetworkLoadChecker should upgrade redirects if needed

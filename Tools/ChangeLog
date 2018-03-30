@@ -1,3 +1,17 @@
+2018-03-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Copying a list from Microsoft Word to TinyMCE fails when mso-list is the first property
+        https://bugs.webkit.org/show_bug.cgi?id=182938
+        <rdar://problem/37683007>
+
+        Reviewed by Wenson Hsieh.
+
+        Added more assertions to PasteHTML.PreservesMSOList for preserving an inline style which starts with mso-list
+        or the one which line-breaks right before it.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/mso-list.html:
+
 2018-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying a list from Microsoft Word to TinyMCE fails when mso-list is on tags other than P

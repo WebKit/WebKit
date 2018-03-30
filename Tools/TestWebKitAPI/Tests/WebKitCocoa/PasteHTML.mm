@@ -178,6 +178,9 @@ TEST(PasteHTML, PreservesMSOList)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('[if !supportLists]')"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('[endif]')"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes(' style=\"text-indent:-.25in;mso-list:l0 level1 lfo1\">')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('<p class=\"MsoNormal\" style=\"margin-left:0cm;text-indent:0cm;mso-pagination:none;\\n"
+        "mso-list:l1 level1 lfo1;mso-layout-grid-align:none;text-autospace:none\">')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('<p class=\"MsoNormal\" style=\"mso-list:l1 level1 lfo1;margin-left:0cm\">')"].boolValue);
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"pastedHTML.includes('/Users/webkitten/Library/')"].boolValue);
 
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('.MsoListParagraphCxSpLast'));"];
@@ -193,6 +196,9 @@ TEST(PasteHTML, PreservesMSOList)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('[if !supportLists]')"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('[endif]')"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes(' style=\"text-indent:-.25in;mso-list:l0 level1 lfo1\">')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('<p class=\"MsoNormal\" style=\"margin-left:0cm;text-indent:0cm;mso-pagination:none;\\n"
+        "mso-list:l1 level1 lfo1;mso-layout-grid-align:none;text-autospace:none\">')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('<p class=\"MsoNormal\" style=\"mso-list:l1 level1 lfo1;margin-left:0cm\">')"].boolValue);
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/Users/webkitten/Library/')"].boolValue);
 
     [webView stringByEvaluatingJavaScript:@"editor.innerHTML = ''; editor.focus();"];
