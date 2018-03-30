@@ -24,11 +24,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/GregorianDateTime.h>
-
-namespace WTF {
-class String;
-} // namespace WTF
 
 namespace JSC {
 

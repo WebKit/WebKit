@@ -3,7 +3,7 @@
 #   This file is part of the WebKit project
 #
 #   Copyright (C) 1999 Waldo Bastian (bastian@kde.org)
-#   Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+#   Copyright (C) 2007-2018 Apple Inc. All rights reserved.
 #   Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2010 Andras Becsi (abecsi@inf.u-szeged.hu), University of Szeged
 #   Copyright (C) 2013 Google Inc. All rights reserved.
@@ -415,13 +415,9 @@ print HEADER << "EOF";
 #pragma once
 
 #include <string.h>
+#include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
-
-namespace WTF {
-class AtomicString;
-class String;
-}
 
 namespace WebCore {
 

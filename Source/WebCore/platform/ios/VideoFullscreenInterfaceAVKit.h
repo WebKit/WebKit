@@ -34,6 +34,7 @@
 #include "PlaybackSessionInterfaceAVKit.h"
 #include "VideoFullscreenModel.h"
 #include <objc/objc.h>
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -50,10 +51,6 @@ OBJC_CLASS WebAVPlayerLayer;
 OBJC_CLASS WebAVPlayerViewController;
 OBJC_CLASS WebAVPlayerViewControllerDelegate;
 OBJC_CLASS NSError;
-
-namespace WTF {
-class String;
-}
 
 namespace WebCore {
 class IntRect;

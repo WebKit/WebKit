@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,16 +23,13 @@
 
 #include <limits>
 #include <utility>
+#include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
-
-class String;
-
-template<typename T> struct HashTraits;
 
 template<bool isInteger, typename T> struct GenericHashTraitsBase;
 

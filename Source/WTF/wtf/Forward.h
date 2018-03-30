@@ -46,6 +46,7 @@ class StringImpl;
 class StringView;
 class TextPosition;
 class TextStream;
+class UniquedStringImpl;
 class WallTime;
 
 struct FastMalloc;

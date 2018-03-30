@@ -1,3 +1,23 @@
+2018-03-29  JF Bastien  <jfbastien@apple.com>
+
+        Use Forward.h instead of forward-declaring WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=184172
+        <rdar://problem/39026146>
+
+        Reviewed by Yusuke Suzuki.
+
+        As part of #184164 I'm changing WTF::String, and the forward
+        declarations are just wrong because I'm making it templated. We
+        should use Forward.h anyways, so do that instead.
+
+        * css/makeprop.pl:
+        * platform/cocoa/PlaybackSessionInterface.h:
+        * platform/ios/Device.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/win/PathWalker.h:
+        * testing/js/WebCoreTestSupport.h:
+
 2018-03-29  Ross Kirsling  <ross.kirsling@sony.com>
 
         MSVC __forceinline slows down JSC release build fivefold after r229391
