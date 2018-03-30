@@ -64,7 +64,7 @@ targetTest(target => {
     assert_equals(computedTiming.iterations, 1, "The animations's computed timing iterations property matches the properties set by CSS");
     assert_equals(computedTiming.localTime, 0, "The animations's computed timing localTime property matches the properties set by CSS");
     assert_equals(computedTiming.progress, 0.5, "The animations's computed timing progress property matches the properties set by CSS");
-    assert_equals(computedTiming.fill, "none", "The animations's computed timing fill property matches the properties set by CSS");
+    assert_equals(computedTiming.fill, "backwards", "The animations's computed timing fill property matches the default value set for transitions");
     assert_equals(computedTiming.easing, "linear", "The animations's computed timing easing property matches the properties set by CSS");
     assert_equals(computedTiming.direction, "normal", "The animations's computed timing direction property matches the properties set by CSS");
 

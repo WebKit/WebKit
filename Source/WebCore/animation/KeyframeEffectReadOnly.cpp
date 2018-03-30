@@ -870,6 +870,11 @@ void KeyframeEffectReadOnly::computeCSSTransitionBlendingKeyframes(const RenderS
 bool KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const
 {
     ASSERT(is<CSSTransition>(animation()));
+
+    // We don't yet have blending keyframes to compare with, so these wouldn't be new keyframes, but the fisrt ones.
+    if (!hasBlendingKeyframes())
+        return false;
+
     auto property = downcast<CSSTransition>(animation())->backingAnimation().property();
 
     // There cannot be new keyframes if the start and to values are the same.

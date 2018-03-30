@@ -47,6 +47,9 @@ public:
     bool matchesBackingAnimationAndStyles(const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle) const;
     bool canBeListed() const final;
 
+protected:
+    void initialize(const Element&) final;
+
 private:
     CSSTransition(Element&, CSSPropertyID, const Animation&);
 

@@ -46,6 +46,19 @@ CSSTransition::CSSTransition(Element& element, CSSPropertyID property, const Ani
 {
 }
 
+void CSSTransition::initialize(const Element& target)
+{
+    DeclarativeAnimation::initialize(target);
+
+    suspendEffectInvalidation();
+
+    // In order for CSS Transitions to be seeked backwards, they need to have their fill mode set to backwards
+    // such that the original CSS value applied prior to the transition is used for a negative current time.
+    effect()->timing()->setFill(FillMode::Backwards);
+
+    unsuspendEffectInvalidation();
+}
+
 bool CSSTransition::matchesBackingAnimationAndStyles(const Animation& newBackingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle) const
 {
     // See if the animations match, excluding the property since we can move from an "all" transition to an explicit property transition.

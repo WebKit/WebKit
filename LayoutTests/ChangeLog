@@ -1,3 +1,16 @@
+2018-03-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] CSSTransition objects should have fill: backwards to allow seeking prior to start time
+        https://bugs.webkit.org/show_bug.cgi?id=184129
+
+        Reviewed by Dean Jackson.
+
+        Make one test opt into CSS Animations and CSS Transitions as Web Animations and fix expectations for a CSSTransition
+        test which mistakenly assumes the fill to be "none".
+
+        * transitions/transition-in-delay-phase.html:
+        * webanimations/css-transitions.html:
+
 2018-03-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm as flaky.

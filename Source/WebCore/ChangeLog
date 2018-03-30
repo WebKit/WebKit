@@ -1,3 +1,22 @@
+2018-03-29  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] CSSTransition objects should have fill: backwards to allow seeking prior to start time
+        https://bugs.webkit.org/show_bug.cgi?id=184129
+
+        Reviewed by Dean Jackson.
+
+        In order to allow a CSS Transition to be seeked prior to its start time, it needs to have its fill mode set
+        to backwards. Adding code to set the fill mode in CSSTransition::initialize() yields early timing model
+        invalidation and we could get in a situation where stylesWouldYieldNewCSSTransitionsBlendingKeyframes()
+        was called before we had a chance to create blending keyframes for a CSS transitions, since the call
+        to create blending keyframes is made after the call to initialize(), so we now cater for this case.
+
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::initialize):
+        * animation/CSSTransition.h:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes const):
+
 2018-03-30  Daniel Bates  <dabates@apple.com>
 
         Remove unused MIMETypeRegistry::getSupportedImageMIMETypesForEncoding()
