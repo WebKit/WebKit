@@ -1,5 +1,29 @@
 2018-03-30  JF Bastien  <jfbastien@apple.com>
 
+        Remove CXX_REFERENCE_QUALIFIED_FUNCTIONS and optional's equivalent
+        https://bugs.webkit.org/show_bug.cgi?id=184167
+        <rdar://problem/39023130>
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS), it's
+        supported by all compilers WebKit supports (it's a C++11 feature,
+        *detection* of it with __has_extension was added to clang on May
+        13th 2011, and VS2015 / GCC support it).
+
+        Optional.h had a similar thing, ditch it too.
+
+        * wtf/Compiler.h:
+        * wtf/Optional.h:
+        (std::optional::contained_val const):
+        (std::optional::contained_val):
+        * wtf/Ref.h:
+        * wtf/RefPtr.h:
+        * wtf/text/WTFString.cpp:
+        * wtf/text/WTFString.h:
+
+2018-03-30  JF Bastien  <jfbastien@apple.com>
+
         Introduce WTF_LAZY_INSTANTIATE
         https://bugs.webkit.org/show_bug.cgi?id=184169
         <rdar://problem/39023385>

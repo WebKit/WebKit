@@ -172,7 +172,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         constexpr bool hasNullType = brigand::any<TypeList, std::is_same<IDLNull, brigand::_1>>::value;
         if (hasNullType) {
             if (value.isUndefinedOrNull())
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, IDLNull, hasNullType>::convert(state, value).value());
+                return ConditionalConverter<ReturnType, IDLNull, hasNullType>::convert(state, value).value();
         }
         
         // 2. Let types be the flattened member types of the union type.
@@ -182,7 +182,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         if (hasDictionaryType) {
             if (value.isUndefinedOrNull()) {
                 //     1. If types includes a dictionary type, then return the result of converting V to that dictionary type.
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, DictionaryType, hasDictionaryType>::convert(state, value).value());
+                return ConditionalConverter<ReturnType, DictionaryType, hasDictionaryType>::convert(state, value).value();
             }
         }
 
@@ -230,8 +230,8 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             auto arrayBuffer = JSC::JSArrayBuffer::toWrapped(vm, value);
             if (arrayBuffer) {
                 if (hasArrayBufferType)
-                    return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasArrayBufferType>::get(WTFMove(arrayBuffer)).value());
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
+                    return ConditionalReturner<ReturnType, hasArrayBufferType>::get(WTFMove(arrayBuffer)).value();
+                return ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value();
             }
         }
 
@@ -240,8 +240,8 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             auto arrayBufferView = JSC::JSArrayBufferView::toWrapped(vm, value);
             if (arrayBufferView) {
                 if (hasArrayBufferViewType)
-                    return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasArrayBufferViewType>::get(WTFMove(arrayBufferView)).value());
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
+                    return ConditionalReturner<ReturnType, hasArrayBufferViewType>::get(WTFMove(arrayBufferView)).value();
+                return ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value();
             }
         }
 
@@ -253,8 +253,8 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             auto dataView = JSC::JSDataView::toWrapped(vm, value);
             if (dataView) {
                 if (hasDataViewType)
-                    return std::move<WTF::CheckMoveParameter>(ConditionalReturner<ReturnType, hasDataViewType>::get(WTFMove(dataView)).value());
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
+                    return ConditionalReturner<ReturnType, hasDataViewType>::get(WTFMove(dataView)).value();
+                return ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value();
             }
         }
 
@@ -307,7 +307,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                         auto method = JSC::iteratorMethod(state, object);
                         RETURN_IF_EXCEPTION(scope, ReturnType());
                         if (!method.isUndefined())
-                            return std::move<WTF::CheckMoveParameter>(ConditionalSequenceConverter<ReturnType, SequenceType, hasSequenceType>::convert(state, object, method).value());
+                            return ConditionalSequenceConverter<ReturnType, SequenceType, hasSequenceType>::convert(state, object, method).value();
                     }
 
                     //     2. If types includes a frozen array type, then:
@@ -320,24 +320,24 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                         auto method = JSC::iteratorMethod(state, object);
                         RETURN_IF_EXCEPTION(scope, ReturnType());
                         if (!method.isUndefined())
-                            return std::move<WTF::CheckMoveParameter>(ConditionalSequenceConverter<ReturnType, FrozenArrayType, hasFrozenArrayType>::convert(state, object, method).value());
+                            return ConditionalSequenceConverter<ReturnType, FrozenArrayType, hasFrozenArrayType>::convert(state, object, method).value();
                     }
 
                     //     3. If types includes a dictionary type, then return the result of
                     //        converting V to that dictionary type.
                     if (hasDictionaryType)
-                        return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, DictionaryType, hasDictionaryType>::convert(state, value).value());
+                        return ConditionalConverter<ReturnType, DictionaryType, hasDictionaryType>::convert(state, value).value();
 
                     //     4. If types includes a record type, then return the result of converting V to that record type.
                     if (hasRecordType)
-                        return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, RecordType, hasRecordType>::convert(state, value).value());
+                        return ConditionalConverter<ReturnType, RecordType, hasRecordType>::convert(state, value).value();
 
                     //     5. If types includes a callback interface type, then return the result of converting V to that interface type.
                     //         (FIXME: Add support for callback interface type and step 12.5)
 
                     //     6. If types includes object, then return the IDL value that is a reference to the object V.
                     if (hasObjectType)
-                        return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value());
+                        return ConditionalConverter<ReturnType, ObjectType, hasObjectType>::convert(state, value).value();
                 }
             }
         }
@@ -347,7 +347,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         constexpr bool hasBooleanType = brigand::any<TypeList, std::is_same<IDLBoolean, brigand::_1>>::value;
         if (hasBooleanType) {
             if (value.isBoolean())
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, IDLBoolean, hasBooleanType>::convert(state, value).value());
+                return ConditionalConverter<ReturnType, IDLBoolean, hasBooleanType>::convert(state, value).value();
         }
         
         // 13. If V is a Number value, then:
@@ -355,21 +355,21 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         constexpr bool hasNumericType = brigand::size<NumericTypeList>::value != 0;
         if (hasNumericType) {
             if (value.isNumber())
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, NumericType, hasNumericType>::convert(state, value).value());
+                return ConditionalConverter<ReturnType, NumericType, hasNumericType>::convert(state, value).value();
         }
         
         // 14. If types includes a string type, then return the result of converting V to that type.
         constexpr bool hasStringType = brigand::size<StringTypeList>::value != 0;
         if (hasStringType)
-            return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, StringType, hasStringType>::convert(state, value).value());
+            return ConditionalConverter<ReturnType, StringType, hasStringType>::convert(state, value).value();
 
         // 15. If types includes a numeric type, then return the result of converting V to that numeric type.
         if (hasNumericType)
-            return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, NumericType, hasNumericType>::convert(state, value).value());
+            return ConditionalConverter<ReturnType, NumericType, hasNumericType>::convert(state, value).value();
 
         // 16. If types includes a boolean, then return the result of converting V to boolean.
         if (hasBooleanType)
-            return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, IDLBoolean, hasBooleanType>::convert(state, value).value());
+            return ConditionalConverter<ReturnType, IDLBoolean, hasBooleanType>::convert(state, value).value();
 
         // 17. Throw a TypeError.
         throwTypeError(&state, scope);

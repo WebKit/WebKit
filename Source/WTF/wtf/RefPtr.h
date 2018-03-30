@@ -99,12 +99,8 @@ public:
 
     static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }
 
-#if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
     RefPtr copyRef() && = delete;
     RefPtr copyRef() const & WARN_UNUSED_RETURN { return RefPtr(m_ptr); }
-#else
-    RefPtr copyRef() const WARN_UNUSED_RETURN { return RefPtr(m_ptr); }
-#endif
 
 private:
     friend RefPtr adoptRef<T, PtrTraits>(T*);

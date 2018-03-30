@@ -299,12 +299,8 @@ public:
 
     bool percentage(int& percentage) const;
 
-#if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
     WTF_EXPORT_PRIVATE String isolatedCopy() const &;
     WTF_EXPORT_PRIVATE String isolatedCopy() &&;
-#else
-    WTF_EXPORT_PRIVATE String isolatedCopy() const;
-#endif
 
     WTF_EXPORT_PRIVATE bool isSafeToSendToAnotherThread() const;
 

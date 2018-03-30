@@ -678,8 +678,6 @@ float String::toFloat(bool* ok) const
     return m_impl->toFloat(ok);
 }
 
-#if COMPILER_SUPPORTS(CXX_REFERENCE_QUALIFIED_FUNCTIONS)
-
 String String::isolatedCopy() const &
 {
     // FIXME: Should this function, and the many others like it, be inlined?
@@ -696,16 +694,6 @@ String String::isolatedCopy() &&
 
     return m_impl ? m_impl->isolatedCopy() : String { };
 }
-
-#else
-
-String String::isolatedCopy() const
-{
-    // FIXME: Should this function, and the many others like it, be inlined?
-    return m_impl ? m_impl->isolatedCopy() : String { };
-}
-
-#endif
 
 bool String::isSafeToSendToAnotherThread() const
 {
