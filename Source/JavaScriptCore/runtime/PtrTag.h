@@ -53,6 +53,9 @@ namespace JSC {
     v(YarrMatchOnly8BitPtrTag) \
     v(YarrMatchOnly16BitPtrTag) \
     v(YarrBacktrackPtrTag) \
+    \
+    v(WasmCallPtrTag) \
+    v(WasmHelperPtrTag) \
 
 
 enum PtrTag : uintptr_t {

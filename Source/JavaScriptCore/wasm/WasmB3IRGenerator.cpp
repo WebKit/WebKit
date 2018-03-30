@@ -594,7 +594,7 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
     };
 
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(),
-        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(growMemory)),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(growMemory, B3CCallPtrTag)),
         m_currentBlock->appendNew<B3::Value>(m_proc, B3::FramePointer, origin()), instanceValue(), delta);
 
     restoreWebAssemblyGlobalState(RestoreCachedStackLimit::No, m_info.memory, instanceValue(), m_proc, m_currentBlock);
@@ -1135,8 +1135,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         if (Options::usePoisoning())
             jumpDestination = isEmbedderBlock->appendNew<Value>(m_proc, BitXor, origin(), jumpDestination, isEmbedderBlock->appendNew<Const64Value>(m_proc, origin(), g_JITCodePoison));
 
+        PtrTag callTag = ptrTag(WasmCallPtrTag, signature.hash());
         Value* embedderCallResult = wasmCallingConvention().setupCall(m_proc, isEmbedderBlock, origin(), args, toB3Type(returnType),
-            [&] (PatchpointValue* patchpoint) {
+            [=] (PatchpointValue* patchpoint) {
                 patchpoint->effects.writesPinned = true;
                 patchpoint->effects.readsPinned = true;
                 patchpoint->append(jumpDestination, ValueRep::SomeRegister);
@@ -1144,9 +1145,9 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
                 // We pessimistically assume we could be calling to something that is bounds checking.
                 // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
                 patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-                patchpoint->setGenerator([returnType] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                patchpoint->setGenerator([returnType, callTag] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
-                    jit.call(params[returnType == Void ? 0 : 1].gpr(), NoPtrTag);
+                    jit.call(params[returnType == Void ? 0 : 1].gpr(), callTag);
                 });
             });
         UpsilonValue* embedderCallResultUpsilon = returnType == Void ? nullptr : isEmbedderBlock->appendNew<UpsilonValue>(m_proc, origin(), embedderCallResult);
@@ -1317,6 +1318,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
         calleeCode = m_currentBlock->appendNew<Value>(m_proc, BitXor, origin(), calleeCode, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), g_JITCodePoison));
 
     Type returnType = signature.returnType();
+    PtrTag callTag = ptrTag(WasmCallPtrTag, signature.hash());
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, origin(), args, toB3Type(returnType),
         [=] (PatchpointValue* patchpoint) {
             patchpoint->effects.writesPinned = true;
@@ -1331,7 +1333,7 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
-                jit.call(params[returnType == Void ? 0 : 1].gpr(), NoPtrTag);
+                jit.call(params[returnType == Void ? 0 : 1].gpr(), callTag);
             });
         });
 
@@ -1582,7 +1584,7 @@ auto B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType arg, ExpressionType&
 #endif
 
     uint32_t (*popcount)(int32_t) = [] (int32_t value) -> uint32_t { return __builtin_popcount(value); };
-    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(popcount));
+    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(popcount, B3CCallPtrTag));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, origin(), Effects::none(), funcAddress, arg);
     return { };
 }
@@ -1604,7 +1606,7 @@ auto B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType arg, ExpressionType&
 #endif
 
     uint64_t (*popcount)(int64_t) = [] (int64_t value) -> uint64_t { return __builtin_popcountll(value); };
-    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), bitwise_cast<void*>(popcount));
+    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunctionPtr<void*>(popcount, B3CCallPtrTag));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int64, origin(), Effects::none(), funcAddress, arg);
     return { };
 }

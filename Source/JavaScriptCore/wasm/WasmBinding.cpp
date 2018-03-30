@@ -37,8 +37,11 @@ namespace JSC { namespace Wasm {
 
 using JIT = CCallHelpers;
 
-Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
+Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(const Signature& signature, unsigned importIndex)
 {
+    // FIXME: Consider uniquify the stubs based on signature + index to see if this saves memory.
+    // https://bugs.webkit.org/show_bug.cgi?id=184157
+
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     JIT jit;
 
@@ -78,13 +81,14 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
     jit.loadPtr(scratch, scratch);
     if (Options::usePoisoning())
         jit.xorPtr(JIT::TrustedImmPtr(g_JITCodePoison), scratch);
-    jit.jump(scratch, NoPtrTag);
+    PtrTag tag = ptrTag(WasmCallPtrTag, signature.hash());
+    jit.jump(scratch, tag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    return FINALIZE_CODE(patchBuffer, NoPtrTag, "WebAssembly->WebAssembly import[%i]", importIndex);
+    return FINALIZE_CODE(patchBuffer, tag, "WebAssembly->WebAssembly import[%i]", importIndex);
 }
 
 } } // namespace JSC::Wasm

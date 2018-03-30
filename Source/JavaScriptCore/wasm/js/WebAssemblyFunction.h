@@ -64,7 +64,13 @@ public:
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
 
-    MacroAssemblerCodePtr jsEntrypoint() { return m_jsEntrypoint; }
+    MacroAssemblerCodePtr jsEntrypoint(ArityCheckMode arity)
+    {
+        if (arity == ArityCheckNotRequired)
+            return m_jsEntrypoint;
+        ASSERT(arity == MustCheckArity);
+        return m_jsEntrypoint.retagged(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag);
+    }
 
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
 

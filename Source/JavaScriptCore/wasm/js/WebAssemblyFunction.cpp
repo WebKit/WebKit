@@ -141,7 +141,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     vm.wasmContext.store(wasmInstance, vm.softStackLimit());
     ASSERT(wasmFunction->instance());
     ASSERT(&wasmFunction->instance()->instance() == vm.wasmContext.load());
-    EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->jsEntrypoint().executableAddress(), &vm, &protoCallFrame);
+    EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->jsEntrypoint(MustCheckArity).executableAddress(), &vm, &protoCallFrame);
     // We need to make sure this is in a register or on the stack since it's stored in Vector<JSValue>.
     // This probably isn't strictly necessary, since the WebAssemblyFunction* should keep the instance
     // alive. But it's good hygiene.

@@ -1,3 +1,39 @@
+2018-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add pointer profiling support to Wasm.
+        https://bugs.webkit.org/show_bug.cgi?id=184175
+        <rdar://problem/39027923>
+
+        Reviewed by JF Bastien.
+
+        * runtime/PtrTag.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addGrowMemory):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Popcnt>):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmBinding.h:
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+
 2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230102.
