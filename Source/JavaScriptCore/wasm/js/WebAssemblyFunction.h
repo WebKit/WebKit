@@ -37,6 +37,7 @@ namespace JSC {
 class JSGlobalObject;
 struct ProtoCallFrame;
 class WebAssemblyInstance;
+using Wasm::WasmToWasmImportableFunction;
 
 namespace B3 {
 class Compilation;
@@ -56,25 +57,25 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, Wasm::WasmEntrypointLoadLocation, Wasm::SignatureIndex);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    Wasm::SignatureIndex signatureIndex() const { return m_wasmFunction.signatureIndex; }
-    Wasm::WasmEntrypointLoadLocation wasmEntrypointLoadLocation() const { return m_wasmFunction.code; }
-    Wasm::CallableFunction callableFunction() const { return m_wasmFunction; }
+    Wasm::SignatureIndex signatureIndex() const { return m_importableFunction.signatureIndex; }
+    WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
+    WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
 
     MacroAssemblerCodePtr jsEntrypoint() { return m_jsEntrypoint; }
 
-    static ptrdiff_t offsetOfWasmEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_wasmFunction) + Wasm::CallableFunction::offsetOfWasmEntrypointLoadLocation(); }
+    static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
 
 private:
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, Wasm::WasmEntrypointLoadLocation, Wasm::SignatureIndex);
+    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::SignatureIndex);
 
-    // It's safe to just hold the raw CallableFunction/jsEntrypoint because we have a reference
+    // It's safe to just hold the raw WasmToWasmImportableFunction/jsEntrypoint because we have a reference
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.
     MacroAssemblerCodePtr m_jsEntrypoint;
-    Wasm::CallableFunction m_wasmFunction;
+    WasmToWasmImportableFunction m_importableFunction;
 };
 
 } // namespace JSC

@@ -136,7 +136,7 @@ void OMGPlan::work(CompilationEffort)
     resetInstructionCacheOnAllThreads();
     WTF::storeStoreFence(); // This probably isn't necessary but it's good to be paranoid.
 
-    m_codeBlock->m_wasmIndirectCallEntryPoints[m_functionIndex] = entrypoint.executableAddress();
+    m_codeBlock->m_wasmIndirectCallEntryPoints[m_functionIndex] = entrypoint;
     {
         LockHolder holder(m_codeBlock->m_lock);
 

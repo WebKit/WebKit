@@ -123,10 +123,10 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
                 //     b. Append func to funcs.
                 //     c. Return func.
                 Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
-                Wasm::WasmEntrypointLoadLocation wasmEntrypointLoadLocation = codeBlock->wasmEntrypointLoadLocationFromFunctionIndexSpace(exp.kindIndex);
+                Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(exp.kindIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
                 const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), String::fromUTF8(exp.field), instance, embedderEntrypointCallee, wasmEntrypointLoadLocation, signatureIndex);
+                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), String::fromUTF8(exp.field), instance, embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
                 exportedValue = function;
             }
             break;
@@ -195,8 +195,8 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
             m_startFunction.set(vm, this, startFunction);
         } else {
             Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
-            Wasm::WasmEntrypointLoadLocation wasmEntrypointLoadLocation = codeBlock->wasmEntrypointLoadLocationFromFunctionIndexSpace(startFunctionIndexSpace);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), "start", instance, embedderEntrypointCallee, wasmEntrypointLoadLocation, signatureIndex);
+            Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(startFunctionIndexSpace);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), "start", instance, embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
             m_startFunction.set(vm, this, function);
         }
     }
@@ -313,14 +313,14 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
             }
 
             Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-            Wasm::WasmEntrypointLoadLocation wasmEntrypointLoadLocation = codeBlock->wasmEntrypointLoadLocationFromFunctionIndexSpace(functionIndex);
+            Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
             const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
             // FIXME: Say we export local function "foo" at function index 0.
             // What if we also set it to the table an Element w/ index 0.
             // Does (new Instance(...)).exports.foo === table.get(0)?
             // https://bugs.webkit.org/show_bug.cgi?id=165825
             WebAssemblyFunction* function = WebAssemblyFunction::create(
-                vm, m_instance->globalObject(), signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, wasmEntrypointLoadLocation, signatureIndex);
+                vm, m_instance->globalObject(), signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
 
             table->setFunction(vm, tableIndex, function);
             ++tableIndex;

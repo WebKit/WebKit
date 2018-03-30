@@ -68,7 +68,7 @@ public:
 
     Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }
     
-    void* wasmToEmbedderStubExecutableAddress(size_t importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code().executableAddress(); }
+    MacroAssemblerCodePtr wasmToEmbedderStub(size_t importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code(); }
 
     void finishCreation(VM&);
 

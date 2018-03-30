@@ -126,13 +126,13 @@ void JSWebAssemblyTable::clearFunction(uint32_t index)
 
 void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyFunction* function)
 {
-    m_table->setFunction(index, function->callableFunction(), &function->instance()->instance());
+    m_table->setFunction(index, function->importableFunction(), &function->instance()->instance());
     m_jsFunctions.get()[index & m_table->mask()].set(vm, this, function);
 }
 
 void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyWrapperFunction* function)
 {
-    m_table->setFunction(index, function->callableFunction(), &function->instance()->instance());
+    m_table->setFunction(index, function->importableFunction(), &function->instance()->instance());
     m_jsFunctions.get()[index & m_table->mask()].set(vm, this, function);
 }
 

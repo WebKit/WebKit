@@ -56,7 +56,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
     // Get the callee's Wasm::Instance and set it as WasmContext's instance. The caller will take care of restoring its own Instance.
     jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfTargetInstance(importIndex)), baseMemory); // Instance*.
     // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
-    jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfWasmEntrypoint(importIndex)), scratch); // Wasm::WasmEntrypointLoadLocation.
+    jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
     jit.storeWasmContextInstance(baseMemory);
 
     jit.loadPtr(JIT::Address(sizeRegAsScratch, Instance::offsetOfCachedStackLimit()), sizeRegAsScratch);
@@ -76,6 +76,8 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
 
     // Tail call into the callee WebAssembly function.
     jit.loadPtr(scratch, scratch);
+    if (Options::usePoisoning())
+        jit.xorPtr(JIT::TrustedImmPtr(g_JITCodePoison), scratch);
     jit.jump(scratch, NoPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);

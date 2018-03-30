@@ -66,12 +66,12 @@ Table::Table(uint32_t initial, std::optional<uint32_t> maximum)
 
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_functions = MallocPtr<Wasm::CallableFunction>::malloc((sizeof(Wasm::CallableFunction) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    m_importableFunctions = MallocPtr<WasmToWasmImportableFunction>::malloc((sizeof(WasmToWasmImportableFunction) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
     m_instances = MallocPtr<Instance*>::malloc((sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
-        new (&m_functions.get()[i]) CallableFunction();
-        ASSERT(m_functions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
+        new (&m_importableFunctions.get()[i]) WasmToWasmImportableFunction();
+        ASSERT(m_importableFunctions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
         m_instances.get()[i] = nullptr;
     }
 }
@@ -108,7 +108,7 @@ std::optional<uint32_t> Table::grow(uint32_t delta)
         return true;
     };
 
-    if (!checkedGrow(m_functions))
+    if (!checkedGrow(m_importableFunctions))
         return std::nullopt;
     if (!checkedGrow(m_instances))
         return std::nullopt;
@@ -121,15 +121,15 @@ std::optional<uint32_t> Table::grow(uint32_t delta)
 void Table::clearFunction(uint32_t index)
 {
     RELEASE_ASSERT(index < length());
-    m_functions.get()[index & m_mask] = Wasm::CallableFunction();
-    ASSERT(m_functions.get()[index & m_mask].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
+    m_importableFunctions.get()[index & m_mask] = WasmToWasmImportableFunction();
+    ASSERT(m_importableFunctions.get()[index & m_mask].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
     m_instances.get()[index & m_mask] = nullptr;
 }
 
-void Table::setFunction(uint32_t index, CallableFunction function, Instance* instance)
+void Table::setFunction(uint32_t index, WasmToWasmImportableFunction function, Instance* instance)
 {
     RELEASE_ASSERT(index < length());
-    m_functions.get()[index & m_mask] = function;
+    m_importableFunctions.get()[index & m_mask] = function;
     m_instances.get()[index & m_mask] = instance;
 }
 

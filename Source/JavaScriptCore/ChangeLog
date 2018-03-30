@@ -1,3 +1,65 @@
+2018-03-29  Mark Lam  <mark.lam@apple.com>
+
+        Use MacroAssemblerCodePtr in Wasm code for code pointers instead of void*.
+        https://bugs.webkit.org/show_bug.cgi?id=184163
+        <rdar://problem/39020397>
+
+        Reviewed by JF Bastien.
+
+        With the use of MacroAssemblerCodePtr, we now get poisoning for Wasm code pointers.
+
+        Also renamed some structs, methods, and variable names to be more accurate.
+        Previously, there is some confusion between a code pointer and the address of a
+        code pointer (sometimes referred to in the code as a "LoadLocation").  We now name
+        the LoadLocation variables appropriately to distinguish them from code pointers.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::entrypointLoadLocationFromFunctionIndexSpace):
+        (JSC::Wasm::CodeBlock::wasmEntrypointLoadLocationFromFunctionIndexSpace): Deleted.
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::WasmToWasmImportableFunction::WasmToWasmImportableFunction):
+        (JSC::Wasm::WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation):
+        (JSC::Wasm::CallableFunction::CallableFunction): Deleted.
+        (JSC::Wasm::CallableFunction::offsetOfWasmEntrypointLoadLocation): Deleted.
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::offsetOfWasmEntrypointLoadLocation):
+        (JSC::Wasm::Instance::offsetOfWasmToEmbedderStub):
+        (JSC::Wasm::Instance::offsetOfWasmEntrypoint): Deleted.
+        (JSC::Wasm::Instance::offsetOfWasmToEmbedderStubExecutableAddress): Deleted.
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::Table):
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::Table::clearFunction):
+        (JSC::Wasm::Table::setFunction):
+        * wasm/WasmTable.h:
+        (JSC::Wasm::Table::offsetOfFunctions):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::setFunction):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::WebAssemblyWrapperFunction):
+        (JSC::WebAssemblyWrapperFunction::create):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2018-03-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove WTF_EXPORTDATA and JS_EXPORTDATA

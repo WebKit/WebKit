@@ -270,28 +270,27 @@ struct InternalFunction {
     Entrypoint entrypoint;
 };
 
-using WasmEntrypointLoadLocation = void**;
-
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts
-// with all imports, and then all internal functions. CallableFunction and FunctionIndexSpace are only
+// with all imports, and then all internal functions. WasmToWasmImportableFunction and FunctionIndexSpace are only
 // meant as fast lookup tables for these opcodes and do not own code.
-struct CallableFunction {
+struct WasmToWasmImportableFunction {
+    using LoadLocation = MacroAssemblerCodePtr*;
 #if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    CallableFunction() = default;
-    CallableFunction(SignatureIndex signatureIndex, WasmEntrypointLoadLocation code = nullptr)
+    WasmToWasmImportableFunction() = default;
+    WasmToWasmImportableFunction(SignatureIndex signatureIndex, LoadLocation entrypointLoadLocation)
         : signatureIndex { signatureIndex }
-        , code { code }
+        , entrypointLoadLocation { entrypointLoadLocation }
     {
     }
 #endif
 
-    static ptrdiff_t offsetOfWasmEntrypointLoadLocation() { return OBJECT_OFFSETOF(CallableFunction, code); }
+    static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, entrypointLoadLocation); }
 
     // FIXME: Pack signature index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
     SignatureIndex signatureIndex { Signature::invalidIndex };
-    WasmEntrypointLoadLocation code { nullptr };
+    LoadLocation entrypointLoadLocation;
 };
-using FunctionIndexSpace = Vector<CallableFunction>;
+using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 
 } } // namespace JSC::Wasm
 

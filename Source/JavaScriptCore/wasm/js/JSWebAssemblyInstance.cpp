@@ -123,7 +123,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
 
     for (unsigned importFunctionNum = 0; importFunctionNum < instance().numImportFunctions(); ++importFunctionNum) {
         auto* info = instance().importFunctionInfo(importFunctionNum);
-        info->wasmToEmbedderStubExecutableAddress = m_codeBlock->wasmToEmbedderStubExecutableAddress(importFunctionNum);
+        info->wasmToEmbedderStub = m_codeBlock->wasmToEmbedderStub(importFunctionNum);
     }
 
     auto* moduleRecord = jsCast<WebAssemblyModuleRecord*>(m_moduleNamespaceObject->moduleRecord());
@@ -203,7 +203,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
                 return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "import function", "must be callable")));
 
             Wasm::Instance* calleeInstance = nullptr;
-            Wasm::WasmEntrypointLoadLocation wasmEntrypoint = nullptr;
+            WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = nullptr;
             JSObject* function = jsCast<JSObject*>(value);
 
             // ii. If v is an Exported Function Exotic Object:
@@ -215,7 +215,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
                 if (wasmFunction) {
                     importedSignatureIndex = wasmFunction->signatureIndex();
                     calleeInstance = &wasmFunction->instance()->instance();
-                    wasmEntrypoint = wasmFunction->wasmEntrypointLoadLocation();
+                    entrypointLoadLocation = wasmFunction->entrypointLoadLocation();
                 }
                 else {
                     importedSignatureIndex = wasmWrapperFunction->signatureIndex();
@@ -235,7 +235,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
             ASSERT(numImportFunctions == import.kindIndex);
             auto* info = jsInstance->instance().importFunctionInfo(numImportFunctions);
             info->targetInstance = calleeInstance;
-            info->wasmEntrypoint = wasmEntrypoint;
+            info->wasmEntrypointLoadLocation = entrypointLoadLocation;
             jsInstance->instance().importFunction<PoisonedBarrier<JSObject>>(numImportFunctions)->set(vm, jsInstance, function);
             ++numImportFunctions;
             // v. Append closure to imports.

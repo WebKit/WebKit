@@ -48,9 +48,9 @@ public:
     uint32_t length() const { return m_length; }
     std::optional<uint32_t> grow(uint32_t delta) WARN_UNUSED_RETURN;
     void clearFunction(uint32_t);
-    void setFunction(uint32_t, CallableFunction, Instance*);
+    void setFunction(uint32_t, WasmToWasmImportableFunction, Instance*);
 
-    static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(Table, m_functions); }
+    static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(Table, m_importableFunctions); }
     static ptrdiff_t offsetOfInstances() { return OBJECT_OFFSETOF(Table, m_instances); }
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
     static ptrdiff_t offsetOfMask() { return OBJECT_OFFSETOF(Table, m_mask); }
@@ -64,7 +64,7 @@ private:
 
     void setLength(uint32_t);
 
-    MallocPtr<CallableFunction> m_functions;
+    MallocPtr<WasmToWasmImportableFunction> m_importableFunctions;
     // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
     MallocPtr<Instance*> m_instances;
     uint32_t m_length;
