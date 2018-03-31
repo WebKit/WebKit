@@ -729,6 +729,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
         return;
     }
 
+    ASSERT(!m_isDecidingNavigationPolicyDecision);
+
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.

@@ -1,3 +1,19 @@
+2018-03-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r229828): Facebook login popup is blank
+        https://bugs.webkit.org/show_bug.cgi?id=184206
+        <rdar://problem/39057006>
+
+        Reviewed by Wenson Hsieh.
+
+        Add assertion to make sure we never try to do a policy check to
+        a resource response while a policy check for a navigation is
+        pending. This assertion was being hit by several of our redirection
+        tests without my fix.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
 2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230125.

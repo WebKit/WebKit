@@ -1,3 +1,39 @@
+2018-03-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r229828): Facebook login popup is blank
+        https://bugs.webkit.org/show_bug.cgi?id=184206
+        <rdar://problem/39057006>
+
+        Reviewed by Wenson Hsieh.
+
+        Since r229828, we freeze the layer tree during the navigation policy check.
+        We freeze in WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction()
+        and unfreeze in WebFrameLoaderClient::didDecidePolicyForNavigationAction().
+
+        WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction() gets called
+        from PolicyChecker::checkNavigationPolicy() which has 3 call sites in
+        FrameLoader and one in DocumentLoader for redirects. The call sites in
+        FrameLoader were taking care of calling didDecidePolicyForNavigationAction()
+        on the FrameLoaderClient in their completion handler, but the DocumentLoader
+        call site was failing to do so. As a result, the layer tree would stay frozen.
+
+        To make this a lot less error prone, I moved the call to
+        WebFrameLoaderClient::didDecidePolicyForNavigationAction() to
+        PolicyChecker::checkNavigationPolicy(), inside the completion handler passed
+        to WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(). This way,
+        even if new code starts calling PolicyChecker::checkNavigationPolicy(), we
+        do not need to worry about letting the client know when the policy decision
+        is made.
+
+        No new tests, covered by existing redirection tests with the
+        new assertion I added.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+
 2018-03-30  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: tint all pixels drawn by shader program when hovering ShaderProgramTreeElement

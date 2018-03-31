@@ -2930,8 +2930,6 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error)
 
 void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
-    m_client.didDecidePolicyForNavigationAction();
-
     m_quickRedirectComing = false;
 
     if (!shouldContinue)
@@ -3176,8 +3174,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     // nil policyDataSource because loading the alternate page will have passed
     // through this method already, nested; otherwise, policyDataSource should still be set.
     ASSERT(m_policyDocumentLoader || !m_provisionalDocumentLoader->unreachableURL().isEmpty());
-
-    m_client.didDecidePolicyForNavigationAction();
 
     bool isTargetItem = history().provisionalItem() ? history().provisionalItem()->isTargetItem() : false;
 
