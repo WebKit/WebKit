@@ -393,6 +393,123 @@ private:
     WebGLRenderingContextBase* m_context;
 };
 
+class InspectorScopedShaderProgramHighlight {
+public:
+    InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase& context, WebGLProgram* program)
+        : m_context(context)
+        , m_program(program)
+    {
+        showHightlight();
+    }
+
+    ~InspectorScopedShaderProgramHighlight()
+    {
+        hideHighlight();
+    }
+
+private:
+    void showHightlight()
+    {
+        if (!m_program || LIKELY(!InspectorInstrumentation::isShaderProgramHighlighted(m_context, *m_program)))
+            return;
+
+        if (hasBufferBinding(GraphicsContext3D::FRAMEBUFFER_BINDING)) {
+            if (!hasBufferBinding(GraphicsContext3D::RENDERBUFFER_BINDING))
+                return;
+            if (hasFramebufferParameterAttachment(GraphicsContext3D::DEPTH_ATTACHMENT))
+                return;
+            if (hasFramebufferParameterAttachment(GraphicsContext3D::STENCIL_ATTACHMENT))
+                return;
+#if ENABLE(WEBGL2)
+            if (hasFramebufferParameterAttachment(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT))
+                return;
+#endif
+        }
+
+        saveBlendValue(GraphicsContext3D::BLEND_COLOR, m_savedBlend.color);
+        saveBlendValue(GraphicsContext3D::BLEND_EQUATION_RGB, m_savedBlend.equationRGB);
+        saveBlendValue(GraphicsContext3D::BLEND_EQUATION_ALPHA, m_savedBlend.equationAlpha);
+        saveBlendValue(GraphicsContext3D::BLEND_SRC_RGB, m_savedBlend.srcRGB);
+        saveBlendValue(GraphicsContext3D::BLEND_SRC_ALPHA, m_savedBlend.srcAlpha);
+        saveBlendValue(GraphicsContext3D::BLEND_DST_RGB, m_savedBlend.dstRGB);
+        saveBlendValue(GraphicsContext3D::BLEND_DST_ALPHA, m_savedBlend.dstAlpha);
+        saveBlendValue(GraphicsContext3D::BLEND, m_savedBlend.enabled);
+
+        static const GC3Dfloat red = 111.0 / 255.0;
+        static const GC3Dfloat green = 168.0 / 255.0;
+        static const GC3Dfloat blue = 220.0 / 255.0;
+        static const GC3Dfloat alpha = 2.0 / 3.0;
+
+        m_context.enable(GraphicsContext3D::BLEND);
+        m_context.blendColor(red, green, blue, alpha);
+        m_context.blendEquation(GraphicsContext3D::FUNC_ADD);
+        m_context.blendFunc(GraphicsContext3D::CONSTANT_COLOR, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
+
+        m_didApply = true;
+    }
+
+    void hideHighlight()
+    {
+        if (!m_didApply)
+            return;
+
+        if (!m_savedBlend.enabled)
+            m_context.disable(GraphicsContext3D::BLEND);
+
+        const RefPtr<Float32Array>& color = m_savedBlend.color;
+        m_context.blendColor(color->item(0), color->item(1), color->item(2), color->item(3));
+        m_context.blendEquationSeparate(m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
+        m_context.blendFuncSeparate(m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
+
+        m_savedBlend.color = nullptr;
+
+        m_didApply = false;
+    }
+
+    template <typename T>
+    void saveBlendValue(GC3Denum attachment, T& destination)
+    {
+        WebGLAny param = m_context.getParameter(attachment);
+        if (WTF::holds_alternative<T>(param))
+            destination = WTF::get<T>(param);
+    }
+
+    bool hasBufferBinding(GC3Denum pname)
+    {
+        WebGLAny binding = m_context.getParameter(pname);
+        if (pname == GraphicsContext3D::FRAMEBUFFER_BINDING)
+            return WTF::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && WTF::get<RefPtr<WebGLFramebuffer>>(binding);
+        if (pname == GraphicsContext3D::RENDERBUFFER_BINDING)
+            return WTF::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && WTF::get<RefPtr<WebGLRenderbuffer>>(binding);
+        return false;
+    }
+
+    bool hasFramebufferParameterAttachment(GC3Denum attachment)
+    {
+        WebGLAny attachmentParameter = m_context.getFramebufferAttachmentParameter(GraphicsContext3D::FRAMEBUFFER, attachment, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
+        if (!WTF::holds_alternative<unsigned>(attachmentParameter))
+            return false;
+        if (WTF::get<unsigned>(attachmentParameter) != static_cast<unsigned>(GraphicsContext3D::RENDERBUFFER))
+            return false;
+        return true;
+    }
+
+    struct {
+        RefPtr<Float32Array> color;
+        unsigned equationRGB { 0 };
+        unsigned equationAlpha { 0 };
+        unsigned srcRGB { 0 };
+        unsigned srcAlpha { 0 };
+        unsigned dstRGB { 0 };
+        unsigned dstAlpha { 0 };
+        bool enabled { false };
+    } m_savedBlend;
+
+    WebGLRenderingContextBase& m_context;
+    WebGLProgram* m_program { nullptr };
+    bool m_didApply { false };
+};
+
 static bool isHighPerformanceContext(const RefPtr<GraphicsContext3D>& context)
 {
     return context->powerPreferenceUsedForCreation() == WebGLPowerPreference::HighPerformance;
@@ -2132,7 +2249,11 @@ void WebGLRenderingContextBase::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsiz
     if (!isGLES2NPOTStrict())
         usesFallbackTexture = checkTextureCompleteness("drawArrays", true);
 
-    m_context->drawArrays(mode, first, count);
+    {
+        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
+
+        m_context->drawArrays(mode, first, count);
+    }
 
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();
@@ -2169,7 +2290,11 @@ void WebGLRenderingContextBase::drawElements(GC3Denum mode, GC3Dsizei count, GC3
     if (!isGLES2NPOTStrict())
         usesFallbackTexture = checkTextureCompleteness("drawElements", true);
 
-    m_context->drawElements(mode, count, type, static_cast<GC3Dintptr>(offset));
+    {
+        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
+
+        m_context->drawElements(mode, count, type, static_cast<GC3Dintptr>(offset));
+    }
 
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
         restoreStatesAfterVertexAttrib0Simulation();

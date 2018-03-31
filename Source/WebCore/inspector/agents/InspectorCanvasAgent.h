@@ -78,6 +78,7 @@ public:
     void requestShaderSource(ErrorString&, const String& programId, const String& shaderType, String*) override;
     void updateShader(ErrorString&, const String& programId, const String& shaderType, const String& source) override;
     void setShaderProgramDisabled(ErrorString&, const String& programId, bool disabled) override;
+    void setShaderProgramHighlighted(ErrorString&, const String& programId, bool highlighted) override;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);
@@ -93,6 +94,7 @@ public:
     void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
     void willDeleteProgram(WebGLProgram&);
     bool isShaderProgramDisabled(WebGLProgram&);
+    bool isShaderProgramHighlighted(WebGLProgram&);
 #endif
 
     // CanvasObserver

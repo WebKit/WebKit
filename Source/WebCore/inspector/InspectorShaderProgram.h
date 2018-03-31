@@ -49,6 +49,9 @@ public:
     bool disabled() const { return m_disabled; }
     void setDisabled(bool disabled) { m_disabled = disabled; }
 
+    bool highlighted() const { return m_highlighted; }
+    void setHighlighted(bool value) { m_highlighted = value; }
+
     ~InspectorShaderProgram() = default;
 
 private:
@@ -59,6 +62,7 @@ private:
     InspectorCanvas& m_canvas;
 
     bool m_disabled { false };
+    bool m_highlighted { false };
 };
 
 } // namespace WebCore

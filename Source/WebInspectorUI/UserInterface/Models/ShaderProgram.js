@@ -79,6 +79,22 @@ WI.ShaderProgram = class ShaderProgram
         });
     }
 
+    showHighlight()
+    {
+        const highlighted = true;
+        CanvasAgent.setShaderProgramHighlighted(this._identifier, highlighted, (error) => {
+            console.assert(!error, error);
+        });
+    }
+
+    hideHighlight()
+    {
+        const highlighted = false;
+        CanvasAgent.setShaderProgramHighlighted(this._identifier, highlighted, (error) => {
+            console.assert(!error, error);
+        });
+    }
+
     // Private
 
     _requestShaderSource(shaderType, callback)

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/shaderProgram-utilities.js"></script>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec3 position;
+    void main(void) {
+        gl_Position = vec4(position, 1.0);
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+</script>
+<script>
+function load() {
+    createProgram("webgl");
+    linkProgram("vertex-shader", "fragment-shader");
+    context.useProgram(program);
+
+    clearContext();
+
+    runTest();
+}
+
+function clearContext() {
+    context.clearColor(0.0, 0.0, 0.0, 1.0);
+    context.clear(context.COLOR_BUFFER_BIT);
+}
+
+function drawArrays() {
+    clearContext();
+
+    let vertexes = [
+        -0.5,  0.5,  0.0,
+        -0.5, -0.5,  0.0,
+         0.5, -0.5,  0.0,
+    ];
+    let vertexBuffer = context.createBuffer();
+    context.bindBuffer(context.ARRAY_BUFFER, vertexBuffer);
+    context.bufferData(context.ARRAY_BUFFER, new Float32Array(vertexes), context.STATIC_DRAW);
+
+    let position = context.getAttribLocation(program, "position");
+    context.vertexAttribPointer(position, 3, context.FLOAT, false, 0, 0);
+    context.enableVertexAttribArray(position);
+
+    context.drawArrays(context.TRIANGLES, 0, 3);
+}
+
+function drawElements() {
+    clearContext();
+
+    let vertexes = [
+         0.5,  0.5,  0.0,
+        -0.5, -0.5,  0.0,
+         0.5, -0.5,  0.0,
+    ];
+    let vertexBuffer = context.createBuffer();
+    context.bindBuffer(context.ARRAY_BUFFER, vertexBuffer);
+    context.bufferData(context.ARRAY_BUFFER, new Float32Array(vertexes), context.STATIC_DRAW);
+
+    let indexes = [0, 1, 2];
+    let indexBuffer = context.createBuffer();
+    context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    context.bufferData(context.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexes), context.STATIC_DRAW);
+
+    let position = context.getAttribLocation(program, "position");
+    context.vertexAttribPointer(position, 3, context.FLOAT, false, 0, 0);
+    context.enableVertexAttribArray(position);
+
+    context.drawElements(context.TRIANGLES, indexes.length, context.UNSIGNED_SHORT, 0);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.setShaderProgramHighlighted");
+
+    let shaderProgram = WI.canvasManager.shaderPrograms[0];
+    let originalContent = null;
+
+    function validTest({name, highlighted, evaluateString}) {
+        suite.addTestCase({
+            name,
+            test(resolve, reject) {
+                CanvasAgent.setShaderProgramHighlighted(shaderProgram.identifier, highlighted, (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+
+                    InspectorTest.evaluateInPage(evaluateString, (error) => {
+                        if (error) {
+                            reject(error);
+                            return;
+                        }
+
+                        CanvasAgent.requestContent(shaderProgram.canvas.identifier)
+                        .then(({content}) => InspectorTest.log(content))
+                        .then(resolve, reject);
+                    });
+                });
+            }
+        });
+    }
+
+    validTest({
+        name: "Canvas.setShaderProgramHighlighted.highlightedDrawArrays",
+        highlighted: true,
+        evaluateString: `drawArrays()`,
+    });
+
+    validTest({
+        name: "Canvas.setShaderProgramHighlighted.highlightedDrawElements",
+        highlighted: true,
+        evaluateString: `drawElements()`,
+    });
+
+    validTest({
+        name: "Canvas.setShaderProgramHighlighted.unhighlightedDrawArrays",
+        highlighted: false,
+        evaluateString: `drawArrays()`,
+    });
+
+    validTest({
+        name: "Canvas.setShaderProgramHighlighted.unhighlightedDrawElements",
+        highlighted: false,
+        evaluateString: `drawElements()`,
+    });
+
+    suite.addTestCase({
+        name: "Canvas.setShaderProgramHighlighted.invalidProgramId",
+        description: "Invalid program identifiers should cause an error.",
+        test(resolve, reject) {
+            const programId = "INVALID_PROGRAM_ID";
+            const highlighted = false;
+            CanvasAgent.setShaderProgramHighlighted(programId, highlighted, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    CanvasAgent.requestContent(shaderProgram.canvas.identifier, (error, content) => {
+        originalContent = content;
+
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test highlighting of shader programs.</p>
+</body>
+</html>

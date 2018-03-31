@@ -1,3 +1,40 @@
+2018-03-30  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: tint all pixels drawn by shader program when hovering ShaderProgramTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=175223
+
+        Reviewed by Matt Baker.
+
+        Test: inspector/canvas/setShaderProgramHighlighted.html
+
+        * html/canvas/InspectorShaderProgram.h:
+        (WebCore::InspectorShaderProgram::highlighted):
+        (WebCore::InspectorShaderProgram::setHighlighted):
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::InspectorScopedShaderProgramHighlight::InspectorScopedShaderProgramHighlight):
+        (WebCore::InspectorScopedShaderProgramHighlight::~InspectorScopedShaderProgramHighlight):
+        (WebCore::InspectorScopedShaderProgramHighlight::showHighlight):
+        (WebCore::InspectorScopedShaderProgramHighlight::hideHighlight):
+        (WebCore::InspectorScopedShaderProgramHighlight::saveBlendValue):
+        (WebCore::InspectorScopedShaderProgramHighlight::hasBufferBinding):
+        (WebCore::InspectorScopedShaderProgramHighlight::hasFramebufferParameterAttachment):
+        (WebCore::WebGLRenderingContextBase::drawArrays):
+        (WebCore::WebGLRenderingContextBase::drawElements):
+        If the current shader program has been marked as highlighted, apply a blend right before
+        `drawArrays` and `drawElements` is called, tinting the resulting pixels so that they are
+        visually distinguished from pixels drawn by other shader programs.
+
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::setShaderProgramHighlighted):
+        (WebCore::InspectorCanvasAgent::isShaderProgramHighlighted):
+
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::isShaderProgramHighlighted):
+        (WebCore::InspectorInstrumentation::isShaderProgramHighlightedImpl):
+
 2018-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Adopt list view controller UI for numeric input types

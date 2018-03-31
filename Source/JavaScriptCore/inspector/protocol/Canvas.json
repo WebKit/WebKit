@@ -147,6 +147,14 @@
                 { "name": "programId", "$ref": "ProgramId" },
                 { "name": "disabled", "type": "boolean" }
             ]
+        },
+        {
+            "name": "setShaderProgramHighlighted",
+            "description": "Enable/disable highlighting of the given shader program.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "highlighted", "type": "boolean" }
+            ]
         }
     ],
     "events": [

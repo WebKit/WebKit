@@ -364,6 +364,21 @@ void InspectorCanvasAgent::setShaderProgramDisabled(ErrorString& errorString, co
 #endif
 }
 
+void InspectorCanvasAgent::setShaderProgramHighlighted(ErrorString& errorString, const String& programId, bool highlighted)
+{
+#if ENABLE(WEBGL)
+    auto* inspectorProgram = assertInspectorProgram(errorString, programId);
+    if (!inspectorProgram)
+        return;
+
+    inspectorProgram->setHighlighted(highlighted);
+#else
+    UNUSED_PARAM(programId);
+    UNUSED_PARAM(highlighted);
+    errorString = ASCIILiteral("WebGL is not supported.");
+#endif
+}
+
 void InspectorCanvasAgent::frameNavigated(Frame& frame)
 {
     if (frame.isMainFrame()) {
@@ -607,6 +622,15 @@ bool InspectorCanvasAgent::isShaderProgramDisabled(WebGLProgram& program)
         return false;
 
     return inspectorProgram->disabled();
+}
+
+bool InspectorCanvasAgent::isShaderProgramHighlighted(WebGLProgram& program)
+{
+    auto* inspectorProgram = findInspectorProgram(program);
+    if (!inspectorProgram)
+        return false;
+
+    return inspectorProgram->highlighted();
 }
 #endif
 

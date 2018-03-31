@@ -1001,6 +1001,13 @@ bool InspectorInstrumentation::isShaderProgramDisabledImpl(InstrumentingAgents& 
         return canvasAgent->isShaderProgramDisabled(program);
     return false;
 }
+
+bool InspectorInstrumentation::isShaderProgramHighlightedImpl(InstrumentingAgents& instrumentingAgents, WebGLProgram& program)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
+        return canvasAgent->isShaderProgramHighlighted(program);
+    return false;
+}
 #endif
 
 #if ENABLE(RESOURCE_USAGE)

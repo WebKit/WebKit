@@ -262,6 +262,7 @@ public:
     static void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
     static void willDeleteProgram(WebGLRenderingContextBase&, WebGLProgram&);
     static bool isShaderProgramDisabled(WebGLRenderingContextBase&, WebGLProgram&);
+    static bool isShaderProgramHighlighted(WebGLRenderingContextBase&, WebGLProgram&);
 #endif
 
     static void networkStateChanged(Page&);
@@ -432,6 +433,7 @@ private:
     static void didCreateProgramImpl(InstrumentingAgents&, WebGLRenderingContextBase&, WebGLProgram&);
     static void willDeleteProgramImpl(InstrumentingAgents&, WebGLProgram&);
     static bool isShaderProgramDisabledImpl(InstrumentingAgents&, WebGLProgram&);
+    static bool isShaderProgramHighlightedImpl(InstrumentingAgents&, WebGLProgram&);
 #endif
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
@@ -1258,6 +1260,14 @@ inline bool InspectorInstrumentation::isShaderProgramDisabled(WebGLRenderingCont
     FAST_RETURN_IF_NO_FRONTENDS(false);
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
         return isShaderProgramDisabledImpl(*instrumentingAgents, program);
+    return false;
+}
+
+inline bool InspectorInstrumentation::isShaderProgramHighlighted(WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
+        return isShaderProgramHighlightedImpl(*instrumentingAgents, program);
     return false;
 }
 #endif
