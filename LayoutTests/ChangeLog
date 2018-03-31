@@ -1,5 +1,14 @@
 2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark imported/w3c/web-platform-tests/html/browsers/offline/appcache/workers/appcache-worker.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=184198
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark inspector/unit-tests/debounce.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=184057
 
