@@ -633,7 +633,6 @@ static void stringCharLoad(SpecializedThunkJIT& jit, VM* vm)
     SpecializedThunkJIT::JumpList cont8Bit;
     // Load the string flags
     jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, StringImpl::flagsOffset()), SpecializedThunkJIT::regT2);
-    jit.and32(MacroAssembler::Address(SpecializedThunkJIT::regT0, StringImpl::maskOffset()), SpecializedThunkJIT::regT1);
     jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, StringImpl::dataOffset()), SpecializedThunkJIT::regT0);
     is16Bit.append(jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT2, MacroAssembler::TrustedImm32(StringImpl::flagIs8Bit())));
     jit.load8(MacroAssembler::BaseIndex(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1, MacroAssembler::TimesOne, 0), SpecializedThunkJIT::regT0);

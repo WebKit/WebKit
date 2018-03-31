@@ -1,3 +1,20 @@
+2018-03-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Strings and Vectors shouldn't do index masking
+        https://bugs.webkit.org/show_bug.cgi?id=184193
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringCharLoad):
+
 2018-03-30  Mark Lam  <mark.lam@apple.com>
 
         Add pointer profiling support in baseline JIT and supporting files.

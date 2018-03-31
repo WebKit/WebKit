@@ -148,7 +148,6 @@ protected:
         const char16_t* m_data16Char;
     };
     mutable unsigned m_hashAndFlags;
-    unsigned m_mask;
 };
 
 // FIXME: Use of StringImpl and const is rather confused.
@@ -254,7 +253,6 @@ public:
     static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
     static unsigned flagIsAtomic() { return s_hashFlagStringKindIsAtomic; }
     static unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
-    static unsigned maskOffset() { return OBJECT_OFFSETOF(StringImpl, m_mask); }
     static unsigned maskStringKind() { return s_hashMaskStringKind; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
@@ -265,7 +263,6 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> adopt(StringBuffer<LChar>&&);
 
     unsigned length() const { return m_length; }
-    unsigned mask() const { return m_mask; }
     static ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool isEmpty() const { return !m_length; }
 
@@ -758,7 +755,6 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
     , m_length(length)
     , m_data8(data8)
     , m_hashAndFlags(hashAndFlags)
-    , m_mask(maskForSize(length))
 {
 }
 
@@ -767,7 +763,6 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
     , m_length(length)
     , m_data16(data16)
     , m_hashAndFlags(hashAndFlags)
-    , m_mask(maskForSize(length))
 {
 }
 
@@ -776,7 +771,6 @@ template<unsigned characterCount> inline constexpr StringImplShape::StringImplSh
     , m_length(length)
     , m_data8Char(characters)
     , m_hashAndFlags(hashAndFlags)
-    , m_mask(maskForSize(length))
 {
 }
 
@@ -785,7 +779,6 @@ template<unsigned characterCount> inline constexpr StringImplShape::StringImplSh
     , m_length(length)
     , m_data16Char(characters)
     , m_hashAndFlags(hashAndFlags)
-    , m_mask(maskForSize(length))
 {
 }
 
@@ -1078,7 +1071,7 @@ ALWAYS_INLINE void StringImpl::copyCharacters(UChar* destination, const LChar* s
 inline UChar StringImpl::at(unsigned i) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
-    return is8Bit() ? m_data8[i & m_mask] : m_data16[i & m_mask];
+    return is8Bit() ? m_data8[i] : m_data16[i];
 }
 
 inline void StringImpl::assertCaged() const
@@ -1122,7 +1115,7 @@ template<typename T> inline size_t StringImpl::tailOffset()
     // MSVC doesn't support alignof yet.
     return roundUpToMultipleOf<sizeof(T)>(sizeof(StringImpl));
 #else
-    return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_mask) + sizeof(StringImpl::m_mask));
+    return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
 #endif
 }
 

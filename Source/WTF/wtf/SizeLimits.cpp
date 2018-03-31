@@ -68,7 +68,6 @@ public:
     void* bufferPointer;
     unsigned capacity;
     unsigned size;
-    unsigned mask;
 };
 
 template<typename T>
