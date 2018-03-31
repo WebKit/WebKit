@@ -833,6 +833,7 @@ webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.htm
 
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip ]
 webkit.org/b/183093 http/tests/resourceLoadStatistics/prevalent-resource-unhandled-keydown.html [ Skip ]
+webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Skip ]
 
 webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
 
