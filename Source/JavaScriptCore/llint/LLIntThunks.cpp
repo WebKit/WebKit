@@ -58,7 +58,7 @@ static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, OpcodeID opcodeID, 
     // FIXME: there's probably a better way to do it on X86, but I'm not sure I care.
     LLIntCode target = LLInt::getCodeFunctionPtr(opcodeID);
     jit.move(JSInterfaceJIT::TrustedImmPtr(bitwise_cast<void*>(target)), JSInterfaceJIT::regT0);
-    jit.jump(JSInterfaceJIT::regT0, ptrTag(BytecodeHelperPtrTag, opcodeID));
+    jit.jump(JSInterfaceJIT::regT0, thunkTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, thunkTag, "LLInt %s prologue thunk", thunkKind);

@@ -649,8 +649,9 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     
     m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(0, nullptr));
 
+    Label entryLabel(this);
     if (m_disassembler)
-        m_disassembler->setStartOfCode(label());
+        m_disassembler->setStartOfCode(entryLabel);
 
     // Just add a little bit of randomness to the codegen
     if (random() & 1)
@@ -735,15 +736,33 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
+#if CPU(ARM64) && USE(POINTER_PROFILING)
+        loadPtr(Address(callFrameRegister, CallFrame::returnPCOffset()), linkRegister);
+        addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), callFrameRegister, regT1);
+        untagPtr(linkRegister, regT1);
+        PtrTag tempTag = ptrTag(JITThunkPtrTag, nextPtrTagID());
+        move(TrustedImmPtr(tempTag), regT1);
+        tagPtr(linkRegister, regT1);
+        storePtr(linkRegister, Address(callFrameRegister, CallFrame::returnPCOffset()));
+#endif
         move(returnValueGPR, GPRInfo::argumentGPR0);
-        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).code());
+        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(JITThunkPtrTag, m_vm), NearCallPtrTag));
+#if CPU(ARM64) && USE(POINTER_PROFILING)
+        loadPtr(Address(callFrameRegister, CallFrame::returnPCOffset()), linkRegister);
+        move(TrustedImmPtr(tempTag), regT1);
+        untagPtr(linkRegister, regT1);
+        addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), callFrameRegister, regT1);
+        tagPtr(linkRegister, regT1);
+        storePtr(linkRegister, Address(callFrameRegister, CallFrame::returnPCOffset()));
+#endif
 
 #if !ASSERT_DISABLED
         m_bytecodeOffset = std::numeric_limits<unsigned>::max(); // Reset this, in order to guard its use with ASSERTs.
 #endif
 
         jump(beginLabel);
-    }
+    } else
+        m_arityCheck = entryLabel; // Not a function.
 
     ASSERT(m_jmpTable.isEmpty());
     
@@ -784,23 +803,28 @@ CompilationResult JIT::link()
             ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
             ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
 
-            record.jumpTable.simpleJumpTable->ctiDefault = patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], NoPtrTag);
+            auto* simpleJumpTable = record.jumpTable.simpleJumpTable;
+            PtrTag tag = ptrTag(SwitchTablePtrTag, simpleJumpTable);
+            simpleJumpTable->ctiDefault = patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], tag);
 
             for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
                 unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
-                record.jumpTable.simpleJumpTable->ctiOffsets[j] = offset ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], NoPtrTag) : record.jumpTable.simpleJumpTable->ctiDefault;
+                simpleJumpTable->ctiOffsets[j] = offset
+                    ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], tag)
+                    : simpleJumpTable->ctiDefault;
             }
         } else {
             ASSERT(record.type == SwitchRecord::String);
 
             auto* stringJumpTable = record.jumpTable.stringJumpTable;
+            PtrTag tag = ptrTag(SwitchTablePtrTag, stringJumpTable);
             stringJumpTable->ctiDefault =
-                patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], NoPtrTag);
+                patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], tag);
 
             for (auto& location : stringJumpTable->offsetTable.values()) {
                 unsigned offset = location.branchOffset;
                 location.ctiOffset = offset
-                    ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], NoPtrTag)
+                    ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], tag)
                     : stringJumpTable->ctiDefault;
             }
         }
@@ -832,9 +856,9 @@ CompilationResult JIT::link()
             if (Jump(patchableNotIndexJump).isSet())
                 notIndexJump = CodeLocationJump(patchBuffer.locationOf(patchableNotIndexJump));
             CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(byValCompilationInfo.badTypeJump));
-            CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget, NoPtrTag);
-            CodeLocationLabel nextHotPathTarget = patchBuffer.locationOf(byValCompilationInfo.nextHotPathTarget, NoPtrTag);
-            CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget, NoPtrTag);
+            CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget);
+            CodeLocationLabel nextHotPathTarget = patchBuffer.locationOf(byValCompilationInfo.nextHotPathTarget);
+            CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget);
             CodeLocationCall returnAddress = patchBuffer.locationOf(byValCompilationInfo.returnAddress);
 
             *byValCompilationInfo.byValInfo = ByValInfo(
@@ -865,9 +889,7 @@ CompilationResult JIT::link()
     }
     m_codeBlock->setJITCodeMap(jitCodeMapEncoder.finish());
 
-    MacroAssemblerCodePtr withArityCheck;
-    if (m_codeBlock->codeType() == FunctionCode)
-        withArityCheck = patchBuffer.locationOf(m_arityCheck, CodeEntryWithArityCheckPtrTag);
+    MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(m_arityCheck, CodeEntryWithArityCheckPtrTag);
 
     if (Options::dumpDisassembly()) {
         m_disassembler->dump(patchBuffer);

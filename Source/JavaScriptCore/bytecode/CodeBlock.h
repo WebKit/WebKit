@@ -248,22 +248,22 @@ public:
     void getByValInfoMap(ByValInfoMap& result);
     
 #if ENABLE(JIT)
-    JITAddIC* addJITAddIC(ArithProfile*);
-    JITMulIC* addJITMulIC(ArithProfile*);
-    JITNegIC* addJITNegIC(ArithProfile*);
-    JITSubIC* addJITSubIC(ArithProfile*);
+    JITAddIC* addJITAddIC(ArithProfile*, Instruction*);
+    JITMulIC* addJITMulIC(ArithProfile*, Instruction*);
+    JITNegIC* addJITNegIC(ArithProfile*, Instruction*);
+    JITSubIC* addJITSubIC(ArithProfile*, Instruction*);
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITAddGenerator>::value>::type>
-    JITAddIC* addMathIC(ArithProfile* profile) { return addJITAddIC(profile); }
+    JITAddIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITAddIC(profile, instruction); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITMulGenerator>::value>::type>
-    JITMulIC* addMathIC(ArithProfile* profile) { return addJITMulIC(profile); }
+    JITMulIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITMulIC(profile, instruction); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITNegGenerator>::value>::type>
-    JITNegIC* addMathIC(ArithProfile* profile) { return addJITNegIC(profile); }
+    JITNegIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITNegIC(profile, instruction); }
 
     template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITSubGenerator>::value>::type>
-    JITSubIC* addMathIC(ArithProfile* profile) { return addJITSubIC(profile); }
+    JITSubIC* addMathIC(ArithProfile* profile, Instruction* instruction) { return addJITSubIC(profile, instruction); }
 
     StructureStubInfo* addStubInfo(AccessType);
     auto stubInfoBegin() { return m_stubInfos.begin(); }
@@ -310,6 +310,9 @@ public:
         return m_jitCodeMap.get();
     }
     
+    typedef JSC::Instruction Instruction;
+    typedef PoisonedRefCountedArray<CodeBlockPoison, Instruction>& UnpackedInstructions;
+
     static void clearLLIntGetByIdCache(Instruction*);
 
     unsigned bytecodeOffset(Instruction* returnAddress)
@@ -317,9 +320,6 @@ public:
         RELEASE_ASSERT(returnAddress >= instructions().begin() && returnAddress < instructions().end());
         return static_cast<Instruction*>(returnAddress) - instructions().begin();
     }
-
-    typedef JSC::Instruction Instruction;
-    typedef PoisonedRefCountedArray<CodeBlockPoison, Instruction>& UnpackedInstructions;
 
     unsigned numberOfInstructions() const { return m_instructions.size(); }
     PoisonedRefCountedArray<CodeBlockPoison, Instruction>& instructions() { return m_instructions; }

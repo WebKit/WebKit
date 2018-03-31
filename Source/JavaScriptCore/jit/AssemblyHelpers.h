@@ -529,6 +529,7 @@ public:
 
     void emitFunctionPrologue()
     {
+        tagReturnAddress();
         pushPair(framePointerRegister, linkRegister);
         move(stackPointerRegister, framePointerRegister);
     }

@@ -3774,7 +3774,7 @@ public:
 
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(reinterpret_cast<void(*)()>(Assembler::readCallTarget(call.dataLocation())), CodeEntryPtrTag);
+        return FunctionPtr(MacroAssemblerCodePtr(Assembler::readCallTarget(call.dataLocation())));
     }
 
     static void replaceWithVMHalt(CodeLocationLabel instructionStart)
@@ -4442,10 +4442,13 @@ protected:
     {
         if (!call.isFlagSet(Call::Near))
             Assembler::linkPointer(code, call.m_label.labelAtOffset(REPATCH_OFFSET_CALL_TO_POINTER), function.executableAddress());
-        else if (call.isFlagSet(Call::Tail))
+        else if (call.isFlagSet(Call::Tail)) {
+            assertIsNotTagged(function.executableAddress());
             Assembler::linkJump(code, call.m_label, function.executableAddress());
-        else
+        } else {
+            assertIsNotTagged(function.executableAddress());
             Assembler::linkCall(code, call.m_label, function.executableAddress());
+        }
     }
 
     CachedTempRegister m_dataMemoryTempRegister;

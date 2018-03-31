@@ -1430,24 +1430,24 @@ StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
     return m_stubInfos.add(accessType);
 }
 
-JITAddIC* CodeBlock::addJITAddIC(ArithProfile* arithProfile)
+JITAddIC* CodeBlock::addJITAddIC(ArithProfile* arithProfile, Instruction* instruction)
 {
-    return m_addICs.add(arithProfile);
+    return m_addICs.add(arithProfile, instruction);
 }
 
-JITMulIC* CodeBlock::addJITMulIC(ArithProfile* arithProfile)
+JITMulIC* CodeBlock::addJITMulIC(ArithProfile* arithProfile, Instruction* instruction)
 {
-    return m_mulICs.add(arithProfile);
+    return m_mulICs.add(arithProfile, instruction);
 }
 
-JITSubIC* CodeBlock::addJITSubIC(ArithProfile* arithProfile)
+JITSubIC* CodeBlock::addJITSubIC(ArithProfile* arithProfile, Instruction* instruction)
 {
-    return m_subICs.add(arithProfile);
+    return m_subICs.add(arithProfile, instruction);
 }
 
-JITNegIC* CodeBlock::addJITNegIC(ArithProfile* arithProfile)
+JITNegIC* CodeBlock::addJITNegIC(ArithProfile* arithProfile, Instruction* instruction)
 {
-    return m_negICs.add(arithProfile);
+    return m_negICs.add(arithProfile, instruction);
 }
 
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)

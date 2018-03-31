@@ -1401,12 +1401,12 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
                     callLinkInfo->remove();
                 callLinkInfo->callee.set(vm, callerCodeBlock, internalFunction);
                 callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, internalFunction);
-                callLinkInfo->machineCodeTarget = codePtr;
-                callLinkInfo->callPtrTag = NativeCodePtrTag;
+                callLinkInfo->machineCodeTarget = codePtr.retagged(CodeEntryPtrTag, LLIntCallICPtrTag);
             }
 
+            assertIsTaggedWith(codePtr.executableAddress(), CodeEntryPtrTag);
             PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), NativeCodePtrTag);
+            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), CodeEntryPtrTag);
         }
         throwScope.release();
         return handleHostCall(execCallee, pc, calleeAsValue, kind);
@@ -1420,7 +1420,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction()) {
         codePtr = executable->entrypointFor(kind, MustCheckArity);
-        callPtrTag = NativeCodePtrTag;
+        callPtrTag = CodeEntryWithArityCheckPtrTag;
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1444,6 +1444,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         }
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
+    assertIsTaggedWith(codePtr.executableAddress(), callPtrTag);
 
     ASSERT(!!codePtr);
     
@@ -1456,13 +1457,13 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             callLinkInfo->remove();
         callLinkInfo->callee.set(vm, callerCodeBlock, callee);
         callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, callee);
-        callLinkInfo->machineCodeTarget = codePtr;
+        callLinkInfo->machineCodeTarget = codePtr.retagged(callPtrTag, LLIntCallICPtrTag);
         RELEASE_ASSERT(callPtrTag != NoPtrTag);
-        callLinkInfo->callPtrTag = callPtrTag;
         if (codeBlock)
             codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
 
+    assertIsTaggedWith(codePtr.executableAddress(), callPtrTag);
     PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
     LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), callPtrTag);
 }

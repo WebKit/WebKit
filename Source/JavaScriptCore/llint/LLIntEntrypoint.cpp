@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,45 +71,51 @@ static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
     if (VM::canUseJIT()) {
+        MacroAssemblerCodeRef codeRef = vm.getCTIStub(evalEntryThunkGenerator);
         codeBlock->setJITCode(
-            adoptRef(*new DirectJITCode(vm.getCTIStub(evalEntryThunkGenerator), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
+            adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
         return;
     }
 #endif // ENABLE(JIT)
 
     UNUSED_PARAM(vm);
+    MacroAssemblerCodeRef codeRef = MacroAssemblerCodeRef::createLLIntCodeRef(llint_eval_prologue);
     codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_eval_prologue), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
+        adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
 }
 
 static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
     if (VM::canUseJIT()) {
+        MacroAssemblerCodeRef codeRef = vm.getCTIStub(programEntryThunkGenerator);
         codeBlock->setJITCode(
-            adoptRef(*new DirectJITCode(vm.getCTIStub(programEntryThunkGenerator), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
+            adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
         return;
     }
 #endif // ENABLE(JIT)
 
     UNUSED_PARAM(vm);
+    MacroAssemblerCodeRef codeRef = MacroAssemblerCodeRef::createLLIntCodeRef(llint_program_prologue);
     codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_program_prologue), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
+        adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
 }
 
 static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
     if (VM::canUseJIT()) {
+        MacroAssemblerCodeRef codeRef = vm.getCTIStub(moduleProgramEntryThunkGenerator);
         codeBlock->setJITCode(
-            adoptRef(*new DirectJITCode(vm.getCTIStub(moduleProgramEntryThunkGenerator), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
+            adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
         return;
     }
 #endif // ENABLE(JIT)
 
     UNUSED_PARAM(vm);
+    MacroAssemblerCodeRef codeRef = MacroAssemblerCodeRef::createLLIntCodeRef(llint_module_program_prologue);
     codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_module_program_prologue), MacroAssemblerCodePtr(), JITCode::InterpreterThunk)));
+        adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
 }
 
 void setEntrypoint(VM& vm, CodeBlock* codeBlock)

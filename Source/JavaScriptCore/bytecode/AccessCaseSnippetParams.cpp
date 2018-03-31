@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,10 +61,11 @@ public:
 
         jit.setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);
 
-        CCallHelpers::Call operationCall = jit.call(NoPtrTag);
+        PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
+        CCallHelpers::Call operationCall = jit.call(tag);
         auto function = m_function;
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(operationCall, FunctionPtr(function));
+            linkBuffer.link(operationCall, FunctionPtr(function, tag));
         });
 
         jit.setupResults(m_result);

@@ -51,7 +51,6 @@ struct LLIntCallLinkInfo : public BasicRawSentinelNode<LLIntCallLinkInfo> {
     {
         callee.clear();
         machineCodeTarget = MacroAssemblerCodePtr();
-        callPtrTag = NoPtrTag;
         if (isOnList())
             remove();
     }
@@ -59,7 +58,6 @@ struct LLIntCallLinkInfo : public BasicRawSentinelNode<LLIntCallLinkInfo> {
     WriteBarrier<JSObject> callee;
     WriteBarrier<JSObject> lastSeenCallee;
     MacroAssemblerCodePtr machineCodeTarget;
-    PtrTag callPtrTag { NoPtrTag };
 };
 
 } // namespace JSC

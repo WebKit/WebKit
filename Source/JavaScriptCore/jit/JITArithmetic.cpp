@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -514,7 +514,7 @@ void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
 void JIT::emit_op_negate(Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
-    JITNegIC* negateIC = m_codeBlock->addJITNegIC(arithProfile);
+    JITNegIC* negateIC = m_codeBlock->addJITNegIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, negateIC);
     emitMathICFast(negateIC, currentInstruction, operationArithNegateProfiled, operationArithNegate);
 }
@@ -662,7 +662,7 @@ ALWAYS_INLINE static OperandTypes getOperandTypes(Instruction* instruction)
 void JIT::emit_op_add(Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
-    JITAddIC* addIC = m_codeBlock->addJITAddIC(arithProfile);
+    JITAddIC* addIC = m_codeBlock->addJITAddIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, addIC);
     emitMathICFast(addIC, currentInstruction, operationValueAddProfiled, operationValueAdd);
 }
@@ -705,11 +705,12 @@ void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, Instruction* current
 
     bool generatedInlineCode = mathIC->generateInline(*this, mathICGenerationState);
     if (!generatedInlineCode) {
+        PtrTag tag = ptrTag(MathICPtrTag, currentInstruction);
         ArithProfile* arithProfile = mathIC->arithProfile();
         if (arithProfile && shouldEmitProfiling())
-            callOperationWithResult(profiledFunction, NoPtrTag, resultRegs, srcRegs, arithProfile);
+            callOperationWithResult(profiledFunction, tag, resultRegs, srcRegs, arithProfile);
         else
-            callOperationWithResult(nonProfiledFunction, NoPtrTag, resultRegs, srcRegs);
+            callOperationWithResult(nonProfiledFunction, tag, resultRegs, srcRegs);
     } else
         addSlowCase(mathICGenerationState.slowPathJumps);
 
@@ -778,11 +779,12 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, Instruction* curren
             emitGetVirtualRegister(op1, leftRegs);
         else if (rightOperand.isConst())
             emitGetVirtualRegister(op2, rightRegs);
+        PtrTag tag = ptrTag(MathICPtrTag, currentInstruction);
         ArithProfile* arithProfile = mathIC->arithProfile();
         if (arithProfile && shouldEmitProfiling())
-            callOperationWithResult(profiledFunction, NoPtrTag, resultRegs, leftRegs, rightRegs, arithProfile);
+            callOperationWithResult(profiledFunction, tag, resultRegs, leftRegs, rightRegs, arithProfile);
         else
-            callOperationWithResult(nonProfiledFunction, NoPtrTag, resultRegs, leftRegs, rightRegs);
+            callOperationWithResult(nonProfiledFunction, tag, resultRegs, leftRegs, rightRegs);
     } else
         addSlowCase(mathICGenerationState.slowPathJumps);
 
@@ -817,14 +819,15 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, Instruction* current
     auto slowPathStart = label();
 #endif
 
+    PtrTag tag = ptrTag(MathICPtrTag, currentInstruction);
     ArithProfile* arithProfile = mathIC->arithProfile();
     if (arithProfile && shouldEmitProfiling()) {
         if (mathICGenerationState.shouldSlowPathRepatch)
-            mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_EJMic>(profiledRepatchFunction), NoPtrTag, resultRegs, srcRegs, TrustedImmPtr(mathIC));
+            mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_EJMic>(profiledRepatchFunction), tag, resultRegs, srcRegs, TrustedImmPtr(mathIC));
         else
-            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, NoPtrTag, resultRegs, srcRegs, arithProfile);
+            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, tag, resultRegs, srcRegs, arithProfile);
     } else
-        mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_EJMic>(repatchFunction), NoPtrTag, resultRegs, srcRegs, TrustedImmPtr(mathIC));
+        mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_EJMic>(repatchFunction), tag, resultRegs, srcRegs, TrustedImmPtr(mathIC));
 
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
@@ -883,14 +886,15 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, Instruction* curren
     auto slowPathStart = label();
 #endif
 
+    PtrTag callTag = ptrTag(MathICPtrTag, currentInstruction);
     ArithProfile* arithProfile = mathIC->arithProfile();
     if (arithProfile && shouldEmitProfiling()) {
         if (mathICGenerationState.shouldSlowPathRepatch)
-            mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_EJJMic>(profiledRepatchFunction), NoPtrTag, resultRegs, leftRegs, rightRegs, TrustedImmPtr(mathIC));
+            mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_EJJMic>(profiledRepatchFunction), callTag, resultRegs, leftRegs, rightRegs, TrustedImmPtr(mathIC));
         else
-            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, NoPtrTag, resultRegs, leftRegs, rightRegs, arithProfile);
+            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, callTag, resultRegs, leftRegs, rightRegs, arithProfile);
     } else
-        mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_EJJMic>(repatchFunction), NoPtrTag, resultRegs, leftRegs, rightRegs, TrustedImmPtr(mathIC));
+        mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_EJJMic>(repatchFunction), callTag, resultRegs, leftRegs, rightRegs, TrustedImmPtr(mathIC));
 
 #if ENABLE(MATH_IC_STATS)
     auto slowPathEnd = label();
@@ -977,7 +981,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 void JIT::emit_op_mul(Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
-    JITMulIC* mulIC = m_codeBlock->addJITMulIC(arithProfile);
+    JITMulIC* mulIC = m_codeBlock->addJITMulIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, mulIC);
     emitMathICFast(mulIC, currentInstruction, operationValueMulProfiled, operationValueMul);
 }
@@ -993,7 +997,7 @@ void JIT::emitSlow_op_mul(Instruction* currentInstruction, Vector<SlowCaseEntry>
 void JIT::emit_op_sub(Instruction* currentInstruction)
 {
     ArithProfile* arithProfile = m_codeBlock->arithProfileForPC(currentInstruction);
-    JITSubIC* subIC = m_codeBlock->addJITSubIC(arithProfile);
+    JITSubIC* subIC = m_codeBlock->addJITSubIC(arithProfile, currentInstruction);
     m_instructionToMathIC.add(currentInstruction, subIC);
     emitMathICFast(subIC, currentInstruction, operationValueSubProfiled, operationValueSub);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JITCompilationEffort.h"
+#include "PtrTag.h"
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
@@ -90,7 +91,8 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
             // Use execute-only write thunk for writes inside the JIT region. This is a variant of
             // memcpy that takes an offset into the JIT region as its destination (first) parameter.
             off_t offset = (off_t)((uintptr_t)dst - startOfFixedExecutableMemoryPool);
-            jitWriteSeparateHeapsFunction(offset, src, n);
+            PtrTag tag = ptrTag(JITWriteThunkPtrTag, &jitWriteSeparateHeapsFunction);
+            retagCodePtr(jitWriteSeparateHeapsFunction, tag, CFunctionPtrTag)(offset, src, n);
             return dst;
         }
     }

@@ -66,6 +66,11 @@ void NativeExecutable::finishCreation(VM& vm, Ref<JITCode>&& callThunk, Ref<JITC
     m_jitCodeForCallWithArityCheck = m_jitCodeForCall->addressForCall(MustCheckArity);
     m_jitCodeForConstructWithArityCheck = m_jitCodeForConstruct->addressForCall(MustCheckArity);
     m_name = name;
+
+    assertIsTaggedWith(m_jitCodeForCall->addressForCall(ArityCheckNotRequired).executableAddress(), CodeEntryPtrTag);
+    assertIsTaggedWith(m_jitCodeForConstruct->addressForCall(ArityCheckNotRequired).executableAddress(), CodeEntryPtrTag);
+    assertIsTaggedWith(m_jitCodeForCallWithArityCheck.executableAddress(), CodeEntryWithArityCheckPtrTag);
+    assertIsTaggedWith(m_jitCodeForConstructWithArityCheck.executableAddress(), CodeEntryWithArityCheckPtrTag);
 }
 
 NativeExecutable::NativeExecutable(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature)

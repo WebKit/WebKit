@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -357,7 +357,8 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
                 machineFrame = MachineContext::framePointer(registers);
                 callFrame = static_cast<ExecState*>(machineFrame);
                 machinePC = MachineContext::instructionPointer(registers);
-                llintPC = MachineContext::llintInstructionPointer(registers);
+                llintPC = removeCodePtrTag(MachineContext::llintInstructionPointer(registers));
+                assertIsNotTagged(machinePC);
             }
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761

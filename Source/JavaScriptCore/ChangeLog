@@ -1,3 +1,218 @@
+2018-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add pointer profiling support in baseline JIT and supporting files.
+        https://bugs.webkit.org/show_bug.cgi?id=184200
+        <rdar://problem/39057300>
+
+        Reviewed by Filip Pizlo.
+
+        1. To simplify pointer profiling support, vmEntryToJavaScript() now always enters
+           the code via the arity check entry.
+        2. To accommodate (1), all JITCode must now populate their arity check entry code
+           pointers as well.  For native code, programs, evals, and modules that don't
+           do arity check, we set the normal entry as the arity check entry (though with
+           the CodeEntryWithArityCheckPtrTag profile instead).
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::locationOfNearCall):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::readCallTarget):
+        (JSC::MacroAssemblerARM64::linkCall):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCaseSnippetParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addJITAddIC):
+        (JSC::CodeBlock::addJITMulIC):
+        (JSC::CodeBlock::addJITSubIC):
+        (JSC::CodeBlock::addJITNegIC):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addMathIC):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::rewireStubAsJump):
+        * bytecode/LLIntCallLinkInfo.h:
+        (JSC::LLIntCallLinkInfo::unlink):
+        (): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        (JSC::PolymorphicAccess::regenerate):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        * disassembler/ARM64Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithNegate):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::mark):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitFunctionPrologue):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_sub):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        (JSC::JITCodeWithCodeRef::executableAddressAtOffset):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::DirectJITCode::initializeCodeRef):
+        (JSC::NativeJITCode::addressForCall):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        (JSC::JITBinaryMathIC::JITBinaryMathIC):
+        (JSC::JITUnaryMathIC::JITUnaryMathIC):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        (JSC::tryGetByValOptimize):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::appropriateOptimizingPutByIdFunction):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::linkFor):
+        (JSC::revertCall):
+        (JSC::linkPolymorphicCall):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        * jit/Repatch.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        (JSC::SpecializedThunkJIT::callDoubleToDouble):
+        * jit/ThunkGenerators.cpp:
+        (JSC::emitPointerValidation):
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkCallThunkGenerator): Deleted.
+        (JSC::linkPolymorphicCallThunkGenerator): Deleted.
+        (JSC::virtualThunkFor): Deleted.
+        (JSC::nativeForGenerator): Deleted.
+        (JSC::nativeCallGenerator): Deleted.
+        (JSC::nativeTailCallGenerator): Deleted.
+        (JSC::nativeTailCallWithoutSavedTagsGenerator): Deleted.
+        (JSC::nativeConstructGenerator): Deleted.
+        (JSC::internalFunctionCallGenerator): Deleted.
+        (JSC::internalFunctionConstructGenerator): Deleted.
+        (JSC::arityFixupGenerator): Deleted.
+        (JSC::unreachableGenerator): Deleted.
+        (JSC::stringCharLoad): Deleted.
+        (JSC::charToString): Deleted.
+        (JSC::charCodeAtThunkGenerator): Deleted.
+        (JSC::charAtThunkGenerator): Deleted.
+        (JSC::fromCharCodeThunkGenerator): Deleted.
+        (JSC::clz32ThunkGenerator): Deleted.
+        (JSC::sqrtThunkGenerator): Deleted.
+        (JSC::floorThunkGenerator): Deleted.
+        (JSC::ceilThunkGenerator): Deleted.
+        (JSC::truncThunkGenerator): Deleted.
+        (JSC::roundThunkGenerator): Deleted.
+        (JSC::expThunkGenerator): Deleted.
+        (JSC::logThunkGenerator): Deleted.
+        (JSC::absThunkGenerator): Deleted.
+        (JSC::imulThunkGenerator): Deleted.
+        (JSC::randomThunkGenerator): Deleted.
+        (JSC::boundThisNoArgsFunctionCallGenerator): Deleted.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodePtr):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ExecutableBase.h:
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/NativeFunction.h:
+        (JSC::TaggedNativeFunction::TaggedNativeFunction):
+        (JSC::TaggedNativeFunction::operator NativeFunction):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        * runtime/PtrTag.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::setCustomValue):
+        (JSC::PutPropertySlot::setCustomAccessor):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::installCrashHandler):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateTryReadUnicodeCharacterHelper):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+
 2018-03-30  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: tint all pixels drawn by shader program when hovering ShaderProgramTreeElement

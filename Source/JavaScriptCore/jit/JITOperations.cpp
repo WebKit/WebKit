@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,7 @@
 #include "PolymorphicAccess.h"
 #include "ProgramCodeBlock.h"
 #include "PropertyName.h"
+#include "PtrTag.h"
 #include "RegExpObject.h"
 #include "Repatch.h"
 #include "ScopedArguments.h"
@@ -730,7 +731,7 @@ void JIT_OPERATION operationPutByValOptimize(ExecState* exec, EncodedJSValue enc
     if (tryPutByValOptimize(exec, baseValue, subscript, byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS)) == OptimizationResult::GiveUp) {
         // Don't ever try to optimize.
         byValInfo->tookSlowPath = true;
-        ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationPutByValGeneric));
+        ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationPutByValGeneric, PutPropertyPtrTag));
     }
     putByVal(exec, baseValue, subscript, value, byValInfo);
 }
@@ -814,7 +815,7 @@ void JIT_OPERATION operationDirectPutByValOptimize(ExecState* exec, EncodedJSVal
     if (tryDirectPutByValOptimize(exec, object, subscript, byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS)) == OptimizationResult::GiveUp) {
         // Don't ever try to optimize.
         byValInfo->tookSlowPath = true;
-        ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationDirectPutByValGeneric));
+        ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationDirectPutByValGeneric, PutPropertyPtrTag));
     }
 
     directPutByVal(exec, object, subscript, value, byValInfo);
@@ -861,7 +862,7 @@ EncodedJSValue JIT_OPERATION operationCallEval(ExecState* exec, ExecState* execC
     return JSValue::encode(result);
 }
 
-static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, CallLinkInfo* callLinkInfo)
+static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, CallLinkInfo* callLinkInfo, PtrTag resultTag)
 {
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
@@ -880,20 +881,22 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
             execCallee->setCallee(asObject(callee));
             vm->hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             if (UNLIKELY(scope.exception())) {
+                PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
                 return encodeResult(
-                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
                     reinterpret_cast<void*>(KeepTheFrame));
             }
 
             return encodeResult(
-                bitwise_cast<void*>(getHostCallReturnValue),
+                tagCFunctionPtr<void*>(getHostCallReturnValue, resultTag),
                 reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
     
         ASSERT(callType == CallType::None);
         throwException(exec, scope, createNotAFunctionError(exec, callee));
+        PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
         return encodeResult(
-            vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+            vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
             reinterpret_cast<void*>(KeepTheFrame));
     }
 
@@ -909,18 +912,20 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
         execCallee->setCallee(asObject(callee));
         vm->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
         if (UNLIKELY(scope.exception())) {
+            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
             return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
 
-        return encodeResult(bitwise_cast<void*>(getHostCallReturnValue), reinterpret_cast<void*>(KeepTheFrame));
+        return encodeResult(tagCFunctionPtr<void*>(getHostCallReturnValue, resultTag), reinterpret_cast<void*>(KeepTheFrame));
     }
     
     ASSERT(constructType == ConstructType::None);
     throwException(exec, scope, createNotAConstructorError(exec, callee));
+    PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
     return encodeResult(
-        vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+        vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
         reinterpret_cast<void*>(KeepTheFrame));
 }
 
@@ -930,6 +935,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     VM* vm = &exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(*vm);
 
+    PtrTag linkedTargetTag = ptrTag(OperationLinkCallPtrTag, vm);
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -945,12 +951,13 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
             if (!callLinkInfo->seenOnce())
                 callLinkInfo->setSeen();
             else
-                linkFor(execCallee, *callLinkInfo, nullptr, internalFunction, codePtr);
+                linkFor(execCallee, *callLinkInfo, nullptr, internalFunction, codePtr, CodeEntryPtrTag);
 
-            return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+            void* linkedTarget = retagCodePtr(codePtr.executableAddress(), CodeEntryPtrTag, linkedTargetTag);
+            return encodeResult(linkedTarget, reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
         throwScope.release();
-        return handleHostCall(execCallee, calleeAsValue, callLinkInfo);
+        return handleHostCall(execCallee, calleeAsValue, callLinkInfo, linkedTargetTag);
     }
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -959,40 +966,46 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = nullptr;
+    PtrTag codeTag = NoPtrTag;
     if (executable->isHostFunction()) {
         codePtr = executable->entrypointFor(kind, MustCheckArity);
+        codeTag = CodeEntryWithArityCheckPtrTag;
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
+        auto handleThrowException = [&] () {
+            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
+            void* throwTarget = retagCodePtr(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(), thunkTag, linkedTargetTag);
+            return encodeResult(throwTarget, reinterpret_cast<void*>(KeepTheFrame));
+        };
+
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
             throwException(exec, throwScope, createNotAConstructorError(exec, callee));
-            return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
-                reinterpret_cast<void*>(KeepTheFrame));
+            return handleThrowException();
         }
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
         JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, callee, scope, kind, *codeBlockSlot);
         EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
-        if (error) {
-            return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
-                reinterpret_cast<void*>(KeepTheFrame));
-        }
+        if (error)
+            return handleThrowException();
         codeBlock = *codeBlockSlot;
         ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs())
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs()) {
             arity = MustCheckArity;
-        else
+            codeTag = CodeEntryWithArityCheckPtrTag;
+        } else {
             arity = ArityCheckNotRequired;
+            codeTag = CodeEntryPtrTag;
+        }
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr);
-    
-    return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr, codeTag);
+
+    return encodeResult(codePtr.retagged(codeTag, linkedTargetTag).executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 
 void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLinkInfo, JSFunction* callee)
@@ -1025,7 +1038,7 @@ void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLi
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = nullptr;
     if (executable->isHostFunction())
-        codePtr = executable->entrypointFor(kind, MustCheckArity);
+        codePtr = executable->entrypointFor(kind, MustCheckArity).retagged(CodeEntryWithArityCheckPtrTag, NearCallPtrTag);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1035,20 +1048,18 @@ void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLi
         EXCEPTION_ASSERT_UNUSED(throwScope, throwScope.exception() == reinterpret_cast<Exception*>(error));
         if (error)
             return;
-        ArityCheckMode arity;
         unsigned argumentStackSlots = callLinkInfo->maxNumArguments();
         if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
-            arity = MustCheckArity;
+            codePtr = functionExecutable->entrypointFor(kind, MustCheckArity).retagged(CodeEntryWithArityCheckPtrTag, NearCallPtrTag);
         else
-            arity = ArityCheckNotRequired;
-        codePtr = functionExecutable->entrypointFor(kind, arity);
+            codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired).retagged(CodeEntryPtrTag, NearCallPtrTag);
     }
     
     linkDirectFor(exec, *callLinkInfo, codeBlock, codePtr);
 }
 
 inline SlowPathReturnType virtualForWithFunction(
-    ExecState* execCallee, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
+    ExecState* execCallee, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell, PtrTag resultTag)
 {
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
@@ -1063,10 +1074,10 @@ inline SlowPathReturnType virtualForWithFunction(
         if (jsDynamicCast<InternalFunction*>(*vm, calleeAsValue)) {
             MacroAssemblerCodePtr codePtr = vm->getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
-            return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+            return encodeResult(codePtr.retagged(CodeEntryPtrTag, resultTag).executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
         throwScope.release();
-        return handleHostCall(execCallee, calleeAsValue, callLinkInfo);
+        return handleHostCall(execCallee, calleeAsValue, callLinkInfo, resultTag);
     }
     
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
@@ -1077,8 +1088,9 @@ inline SlowPathReturnType virtualForWithFunction(
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
             throwException(exec, throwScope, createNotAConstructorError(exec, function));
+            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
             return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
 
@@ -1086,21 +1098,25 @@ inline SlowPathReturnType virtualForWithFunction(
         JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, function, scope, kind, *codeBlockSlot);
         EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
         if (error) {
+            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
             return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
     }
     return encodeResult(executable->entrypointFor(
-        kind, MustCheckArity).executableAddress(),
+        kind, MustCheckArity).retagged(CodeEntryWithArityCheckPtrTag, resultTag).executableAddress(),
         reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 
 SlowPathReturnType JIT_OPERATION operationLinkPolymorphicCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
+    ExecState* exec = execCallee->callerFrame();
+    VM* vm = &exec->vm();
     ASSERT(callLinkInfo->specializationKind() == CodeForCall);
     JSCell* calleeAsFunctionCell;
-    SlowPathReturnType result = virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCell);
+    PtrTag resultTag = ptrTag(OperationLinkPolymorphicCallPtrTag, vm);
+    SlowPathReturnType result = virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCell, resultTag);
 
     linkPolymorphicCall(execCallee, *callLinkInfo, CallVariant(calleeAsFunctionCell));
     
@@ -1109,8 +1125,11 @@ SlowPathReturnType JIT_OPERATION operationLinkPolymorphicCall(ExecState* execCal
 
 SlowPathReturnType JIT_OPERATION operationVirtualCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
+    ExecState* exec = execCallee->callerFrame();
+    VM* vm = &exec->vm();
     JSCell* calleeAsFunctionCellIgnored;
-    return virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCellIgnored);
+    PtrTag resultTag = ptrTag(OperationVirtualCallPtrTag, vm);
+    return virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCellIgnored, resultTag);
 }
 
 size_t JIT_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -1761,7 +1780,7 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
         uint32_t i = subscript.asUInt32();
         if (isJSString(baseValue)) {
             if (asString(baseValue)->canGetIndex(i)) {
-                ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(operationGetByValString));
+                ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(operationGetByValString, GetPropertyPtrTag));
                 scope.release();
                 return asString(baseValue)->getIndex(exec, i);
             }
@@ -1829,7 +1848,7 @@ static OptimizationResult tryGetByValOptimize(ExecState* exec, JSValue baseValue
                 ConcurrentJSLocker locker(codeBlock->m_lock);
                 byValInfo->arrayProfile->computeUpdatedPrediction(locker, codeBlock, structure);
 
-                JIT::compileGetByVal(&vm, exec->codeBlock(), byValInfo, returnAddress, arrayMode);
+                JIT::compileGetByVal(&vm, codeBlock, byValInfo, returnAddress, arrayMode);
                 optimizationResult = OptimizationResult::Optimized;
             }
         }
@@ -1901,7 +1920,7 @@ EncodedJSValue JIT_OPERATION operationGetByValOptimize(ExecState* exec, EncodedJ
     if (tryGetByValOptimize(exec, baseValue, subscript, byValInfo, returnAddress) == OptimizationResult::GiveUp) {
         // Don't ever try to optimize.
         byValInfo->tookSlowPath = true;
-        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(operationGetByValGeneric));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(operationGetByValGeneric, GetPropertyPtrTag));
     }
 
     return JSValue::encode(getByVal(exec, baseValue, subscript, byValInfo, returnAddress));
@@ -1941,7 +1960,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
         if (++byValInfo->slowPathCount >= 10
             || object->structure(vm)->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
             // Don't ever try to optimize.
-            ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationHasIndexedPropertyGeneric));
+            ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationHasIndexedPropertyGeneric, HasPropertyPtrTag));
         }
     }
 
@@ -2001,7 +2020,8 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!isJSString(baseValue)) {
             ASSERT(exec->bytecodeOffset());
-            ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(byValInfo->stubRoutine ? operationGetByValGeneric : operationGetByValOptimize));
+            auto getByValFunction = byValInfo->stubRoutine ? operationGetByValGeneric : operationGetByValOptimize;
+            ctiPatchCallByReturnAddress(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(getByValFunction, GetPropertyPtrTag));
         }
     } else {
         baseValue.requireObjectCoercible(exec);
@@ -2150,6 +2170,7 @@ char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState* exec, Encod
             result = jumpTable.ctiForValue((*value)[0]).executableAddress();
     }
 
+    assertIsTaggedWith(result, ptrTag(SwitchTablePtrTag, &jumpTable));
     return reinterpret_cast<char*>(result);
 }
 
@@ -2168,6 +2189,7 @@ char* JIT_OPERATION operationSwitchImmWithUnknownKeyType(ExecState* exec, Encode
         result = jumpTable.ctiForValue(static_cast<int32_t>(key.asDouble())).executableAddress();
     else
         result = jumpTable.ctiDefault.executableAddress();
+    assertIsTaggedWith(result, ptrTag(SwitchTablePtrTag, &jumpTable));
     return reinterpret_cast<char*>(result);
 }
 
@@ -2187,6 +2209,7 @@ char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState* exec, Enc
     } else
         result = jumpTable.ctiDefault.executableAddress();
 
+    assertIsTaggedWith(result, ptrTag(SwitchTablePtrTag, &jumpTable));
     return reinterpret_cast<char*>(result);
 }
 

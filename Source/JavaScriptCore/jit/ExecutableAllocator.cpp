@@ -238,6 +238,7 @@ private:
 
         MacroAssembler jit;
 
+        jit.tagReturnAddress();
         jit.move(MacroAssembler::TrustedImmPtr(writableAddr), x7);
         jit.addPtr(x7, x0);
 
@@ -298,7 +299,8 @@ private:
         // to appear in the console or anywhere in memory, via the PrintStream buffer.
         // The second is we can't guarantee that the code is readable when using the
         // asyncDisassembly option as our caller will set our pages execute only.
-        return linkBuffer.finalizeCodeWithoutDisassembly(NoPtrTag);
+        PtrTag tag = ptrTag(JITWriteThunkPtrTag, &jitWriteSeparateHeapsFunction);
+        return linkBuffer.finalizeCodeWithoutDisassembly(tag);
     }
 #else // CPU(ARM64) && USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
     static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)

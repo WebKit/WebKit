@@ -3769,8 +3769,10 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     bool needsScratchFPRReg = true;
 #endif
 
-    ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-    JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC(arithProfile);
+    CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+    Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+    JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC(arithProfile, instruction);
     auto repatchingFunction = operationValueAddOptimize;
     auto nonRepatchingFunction = operationValueAdd;
     
@@ -4434,8 +4436,10 @@ void SpeculativeJIT::compileArithSub(Node* node)
         bool needsScratchFPRReg = true;
 #endif
 
-        ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile);
+        CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+        JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile, instruction);
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
         
@@ -4523,8 +4527,10 @@ void SpeculativeJIT::compileArithNegate(Node* node)
     }
         
     default: {
-        ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile);
+        CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+        JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile, instruction);
         auto repatchingFunction = operationArithNegateOptimize;
         auto nonRepatchingFunction = operationArithNegate;
         bool needsScratchGPRReg = true;
@@ -4788,8 +4794,10 @@ void SpeculativeJIT::compileArithMul(Node* node)
         bool needsScratchFPRReg = true;
 #endif
 
-        ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC(arithProfile);
+        CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+        Instruction* instruction = &baselineCodeBlock->instructions()[node->origin.semantic.bytecodeIndex];
+        JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC(arithProfile, instruction);
         auto repatchingFunction = operationValueMulOptimize;
         auto nonRepatchingFunction = operationValueMul;
         
@@ -9900,7 +9908,8 @@ void SpeculativeJIT::emitSwitchIntJump(
 #if USE(JSVALUE64)
     m_jit.xor64(poisonScratch, scratch);
 #endif
-    m_jit.jump(scratch, NoPtrTag);
+    PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
+    m_jit.jump(scratch, tag);
     data->didUseJumpTable = true;
 }
 
@@ -9925,7 +9934,9 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
         GPRReg scratch2 = temp2.gpr();
 
         value.use();
-        
+
+        SimpleJumpTable& table = m_jit.codeBlock()->switchJumpTable(data->switchTableIndex);
+        PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
         auto notInt32 = m_jit.branchIfNotInt32(valueRegs);
         emitSwitchIntJump(data, valueRegs.payloadGPR(), scratch, scratch2);
         notInt32.link(&m_jit);
@@ -9934,7 +9945,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs, data->switchTableIndex);
         silentFillAllRegisters();
 
-        m_jit.jump(scratch, NoPtrTag);
+        m_jit.jump(scratch, tag);
         noResult(node, UseChildrenCalledExplicitly);
         break;
     }
@@ -10192,12 +10203,15 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
         totalLength += string->length();
     }
     
+    auto* codeBlock = m_jit.codeBlock();
     if (!canDoBinarySwitch || totalLength > Options::maximumBinaryStringSwitchTotalLength()) {
+        StringJumpTable& table = codeBlock->stringSwitchJumpTable(data->switchTableIndex);
+        PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
         flushRegisters();
         callOperation(
             operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
         m_jit.exceptionCheck();
-        m_jit.jump(string, NoPtrTag);
+        m_jit.jump(string, tag);
         return;
     }
     
@@ -10230,12 +10244,15 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     emitBinarySwitchStringRecurse(
         data, cases, 0, 0, cases.size(), string, lengthGPR, tempGPR, 0, false);
     
+    StringJumpTable& table = codeBlock->stringSwitchJumpTable(data->switchTableIndex);
+    PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
+
     slowCases.link(&m_jit);
     silentSpillAllRegisters(string);
     callOperation(operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
     silentFillAllRegisters();
     m_jit.exceptionCheck();
-    m_jit.jump(string, NoPtrTag);
+    m_jit.jump(string, tag);
 }
 
 void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)

@@ -872,7 +872,6 @@ public:
         AssemblerType::linkPointer(code, label, value.executableAddress());
     }
 
-    // FIXME: remove the default PtrTag value once we've tagged all the clients.
     static void* getLinkerAddress(void* code, AssemblerLabel label, PtrTag tag = NoPtrTag)
     {
         return tagCodePtr(AssemblerType::getRelocatedAddress(code, label), tag);

@@ -867,7 +867,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 #endif
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
-            PtrTag callTag = ptrTag(JITOperationPtrTag, nextPtrTagID());
+            PtrTag callTag = ptrTag(GetterSetterPtrTag, nextPtrTagID());
             operationCall = jit.call(callTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link(operationCall, FunctionPtr(this->as<GetterSetterAccessCase>().m_customAccessor.opaque, callTag));

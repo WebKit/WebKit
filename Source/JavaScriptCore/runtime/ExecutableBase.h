@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@ inline bool isCall(CodeSpecializationKind kind)
 
 class ExecutableBase : public JSCell {
     friend class JIT;
+    friend MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM*);
 
 protected:
     static const int NUM_PARAMETERS_IS_HOST = 0;

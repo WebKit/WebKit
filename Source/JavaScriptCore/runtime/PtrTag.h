@@ -41,11 +41,22 @@ namespace JSC {
     v(CodeEntryPtrTag) \
     v(CodeEntryWithArityCheckPtrTag) \
     v(ExceptionHandlerPtrTag) \
+    v(GetPropertyPtrTag) \
+    v(GetterSetterPtrTag) \
+    v(HasPropertyPtrTag) \
     v(JITCodePtrTag) \
     v(JITOperationPtrTag) \
     v(JITThunkPtrTag) \
+    v(JITWriteThunkPtrTag) \
+    v(LLIntCallICPtrTag) \
+    v(MathICPtrTag) \
     v(NativeCodePtrTag) \
+    v(OperationLinkCallPtrTag) \
+    v(OperationLinkPolymorphicCallPtrTag) \
+    v(OperationVirtualCallPtrTag) \
+    v(PutPropertyPtrTag) \
     v(SlowPathPtrTag) \
+    v(SpecializedThunkPtrTag) \
     v(SwitchTablePtrTag) \
     \
     v(Yarr8BitPtrTag) \

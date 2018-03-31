@@ -56,8 +56,9 @@ template <typename GeneratorType, bool(*isProfileEmpty)(ArithProfile&)>
 class JITMathIC {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JITMathIC(ArithProfile* arithProfile)
+    JITMathIC(ArithProfile* arithProfile, Instruction* instruction)
         : m_arithProfile(arithProfile)
+        , m_instruction(instruction)
     {
     }
 
@@ -139,11 +140,12 @@ public:
             LinkBuffer linkBuffer(jit, m_inlineStart.dataLocation(), jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
             RELEASE_ASSERT(linkBuffer.isValid());
             linkBuffer.link(jump, CodeLocationLabel(m_code.code()));
-            FINALIZE_CODE(linkBuffer, NoPtrTag, "JITMathIC: linking constant jump to out of line stub");
+            FINALIZE_CODE(linkBuffer, NearJumpPtrTag, "JITMathIC: linking constant jump to out of line stub");
         };
 
         auto replaceCall = [&] () {
-            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation(), callReplacement);
+            PtrTag tag = ptrTag(MathICPtrTag, m_instruction);
+            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation(), FunctionPtr(callReplacement, tag));
         };
 
         bool shouldEmitProfiling = !JITCode::isOptimizingJIT(codeBlock->jitType());
@@ -166,7 +168,7 @@ public:
                     linkBuffer.link(jumpToDone, doneLocation());
 
                     m_code = FINALIZE_CODE_FOR(
-                        codeBlock, linkBuffer, NoPtrTag, "JITMathIC: generating out of line fast IC snippet");
+                        codeBlock, linkBuffer, NearJumpPtrTag, "JITMathIC: generating out of line fast IC snippet");
 
                     if (!generationState.shouldSlowPathRepatch) {
                         // We won't need to regenerate, so we can wire the slow path call
@@ -208,7 +210,7 @@ public:
             linkBuffer.link(slowPathJumpList, slowPathStartLocation());
 
             m_code = FINALIZE_CODE_FOR(
-                codeBlock, linkBuffer, NoPtrTag, "JITMathIC: generating out of line IC snippet");
+                codeBlock, linkBuffer, NearJumpPtrTag, "JITMathIC: generating out of line IC snippet");
         }
 
         linkJumpToOutOfLineSnippet();
@@ -216,7 +218,7 @@ public:
 
     void finalizeInlineCode(const MathICGenerationState& state, LinkBuffer& linkBuffer)
     {
-        CodeLocationLabel start = linkBuffer.locationOf(state.fastPathStart, NoPtrTag);
+        CodeLocationLabel start = linkBuffer.locationOf(state.fastPathStart, NearJumpPtrTag);
         m_inlineStart = start;
 
         m_inlineSize = MacroAssembler::differenceBetweenCodePtr(
@@ -226,7 +228,7 @@ public:
         m_deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
             start, linkBuffer.locationOf(state.slowPathCall));
         m_deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf(state.slowPathStart, SlowPathPtrTag));
+            start, linkBuffer.locationOf(state.slowPathStart, NoPtrTag));
     }
 
     ArithProfile* arithProfile() const { return m_arithProfile; }
@@ -243,6 +245,7 @@ public:
 #endif
 
     ArithProfile* m_arithProfile;
+    Instruction* m_instruction;
     MacroAssemblerCodeRef m_code;
     CodeLocationLabel m_inlineStart;
     int32_t m_inlineSize;
@@ -259,8 +262,8 @@ inline bool isBinaryProfileEmpty(ArithProfile& arithProfile)
 template <typename GeneratorType>
 class JITBinaryMathIC : public JITMathIC<GeneratorType, isBinaryProfileEmpty> {
 public:
-    JITBinaryMathIC(ArithProfile* arithProfile)
-        : JITMathIC<GeneratorType, isBinaryProfileEmpty>(arithProfile)
+    JITBinaryMathIC(ArithProfile* arithProfile, Instruction* instruction)
+        : JITMathIC<GeneratorType, isBinaryProfileEmpty>(arithProfile, instruction)
     {
     }
 };
@@ -277,8 +280,8 @@ inline bool isUnaryProfileEmpty(ArithProfile& arithProfile)
 template <typename GeneratorType>
 class JITUnaryMathIC : public JITMathIC<GeneratorType, isUnaryProfileEmpty> {
 public:
-    JITUnaryMathIC(ArithProfile* arithProfile)
-        : JITMathIC<GeneratorType, isUnaryProfileEmpty>(arithProfile)
+    JITUnaryMathIC(ArithProfile* arithProfile, Instruction* instruction)
+        : JITMathIC<GeneratorType, isUnaryProfileEmpty>(arithProfile, instruction)
     {
     }
 };

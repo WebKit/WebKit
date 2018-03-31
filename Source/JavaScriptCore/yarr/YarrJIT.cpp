@@ -3282,9 +3282,7 @@ class YarrGenerator : private MacroAssembler {
 
         m_tryReadUnicodeCharacterEntry = label();
 
-#if CPU(ARM64)
-        tagPtr(linkRegister, stackPointerRegister);
-#endif
+        tagReturnAddress();
 
         tryReadUnicodeCharImpl(regT0);
 
@@ -3347,7 +3345,7 @@ class YarrGenerator : private MacroAssembler {
             loadPtr(Address(X86Registers::ebp, 2 * sizeof(void*)), output);
     #endif
 #elif CPU(ARM64)
-        tagPtr(linkRegister, stackPointerRegister);
+        tagReturnAddress();
         if (m_decodeSurrogatePairs) {
             pushPair(framePointerRegister, linkRegister);
             move(TrustedImm32(0x10000), supplementaryPlanesBase);

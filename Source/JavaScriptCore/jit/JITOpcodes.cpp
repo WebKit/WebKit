@@ -681,7 +681,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchImmWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR, NoPtrTag);
+    jump(returnValueGPR, ptrTag(SwitchTablePtrTag, jumpTable));
 }
 
 void JIT::emit_op_switch_char(Instruction* currentInstruction)
@@ -697,7 +697,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchCharWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR, NoPtrTag);
+    jump(returnValueGPR, ptrTag(SwitchTablePtrTag, jumpTable));
 }
 
 void JIT::emit_op_switch_string(Instruction* currentInstruction)
@@ -712,7 +712,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, regT0, tableIndex);
-    jump(returnValueGPR, NoPtrTag);
+    jump(returnValueGPR, ptrTag(SwitchTablePtrTag, jumpTable));
 }
 
 void JIT::emit_op_debug(Instruction* currentInstruction)
@@ -1170,11 +1170,11 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
     
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-        m_codeBlock, patchBuffer, NoPtrTag,
+        m_codeBlock, patchBuffer, NearJumpPtrTag,
         "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value());
     
     MacroAssembler::repatchJump(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall(MacroAssemblerCodePtr(returnAddress)), FunctionPtr(operationHasIndexedPropertyGeneric, SlowPathPtrTag));
+    MacroAssembler::repatchCall(CodeLocationCall(MacroAssemblerCodePtr(returnAddress)), FunctionPtr(operationHasIndexedPropertyGeneric, HasPropertyPtrTag));
 }
 
 void JIT::emit_op_has_indexed_property(Instruction* currentInstruction)
@@ -1233,7 +1233,7 @@ void JIT::emitSlow_op_has_indexed_property(Instruction* currentInstruction, Vect
     
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    Call call = callOperation(operationHasIndexedPropertyDefault, dst, regT0, regT1, byValInfo);
+    Call call = callOperation(operationHasIndexedPropertyDefault, HasPropertyPtrTag, dst, regT0, regT1, byValInfo);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;

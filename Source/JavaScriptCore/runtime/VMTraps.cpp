@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@ struct SignalContext {
         , stackPointer(MachineContext::stackPointer(registers))
         , framePointer(MachineContext::framePointer(registers))
     {
+        assertIsNotTagged(trapPC);
     }
 
     PlatformRegisters& registers;
@@ -93,6 +94,7 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
     // If we're not in JIT/LLInt code, we can't run the C++ code below because it
     // mallocs, and we must prove the JS thread isn't holding the malloc lock
     // to be able to do that without risking a deadlock.
+    assertIsNotTagged(trapPC);
     if (!isJITPC(trapPC) && !LLInt::isLLIntPC(trapPC))
         return;
 
@@ -187,6 +189,7 @@ public:
             installSignalHandler(Signal::BadAccess, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
                 SignalContext context(registers);
 
+                assertIsNotTagged(context.trapPC);
                 if (!isJITPC(context.trapPC))
                     return SignalAction::NotHandled;
 

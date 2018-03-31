@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ void buildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const Propert
 void repatchPutByID(ExecState*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void buildPutByIdList(ExecState*, JSValue, Structure*, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void repatchIn(ExecState*, JSCell*, const Identifier&, bool wasFound, const PropertySlot&, StructureStubInfo&);
-void linkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSObject* callee, MacroAssemblerCodePtr);
+void linkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSObject* callee, MacroAssemblerCodePtr, PtrTag);
 void linkDirectFor(ExecState*, CallLinkInfo&, CodeBlock*, MacroAssemblerCodePtr);
 void linkSlowFor(ExecState*, CallLinkInfo&);
 void unlinkFor(VM&, CallLinkInfo&);

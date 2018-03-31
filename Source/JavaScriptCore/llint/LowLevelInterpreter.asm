@@ -264,7 +264,7 @@ const BytecodePtrTag = constexpr BytecodePtrTag
 const CodeEntryPtrTag = constexpr CodeEntryPtrTag
 const CodeEntryWithArityCheckPtrTag = constexpr CodeEntryWithArityCheckPtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
-const NativeCodePtrTag = constexpr NativeCodePtrTag
+const LLIntCallICPtrTag = constexpr LLIntCallICPtrTag
 const NoPtrTag = constexpr NoPtrTag
 const SlowPathPtrTag = constexpr SlowPathPtrTag
 
@@ -853,12 +853,12 @@ macro callTargetFunction(callee, callPtrTag)
     dispatchAfterCall()
 end
 
-macro prepareForRegularCall(callee, temp1, temp2, temp3, prepareCallPtrTag)
+macro prepareForRegularCall(callee, temp1, temp2, temp3, callPtrTag)
     addp CallerFrameAndPCSize, sp
 end
 
 # sp points to the new frame
-macro prepareForTailCall(callee, temp1, temp2, temp3, prepareCallPtrTag)
+macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     restoreCalleeSavesUsedByLLInt()
 
     loadi PayloadOffset + ArgumentCount[cfr], temp2
@@ -907,9 +907,8 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, prepareCallPtrTag)
     storep temp3, [temp1, temp2, 1]
     btinz temp2, .copyLoop
 
-    prepareCallPtrTag(temp2)
     move temp1, sp
-    jmp callee, temp2
+    jmp callee, callPtrTag
 end
 
 macro slowPathForCall(slowPath, prepareCall)
@@ -919,11 +918,7 @@ macro slowPathForCall(slowPath, prepareCall)
         macro (callee, calleeFramePtr)
             btpz calleeFramePtr, .dontUpdateSP
             move calleeFramePtr, sp
-            prepareCall(callee, t2, t3, t4, macro (callPtrTagReg)
-                if POINTER_PROFILING
-                    move SlowPathPtrTag, callPtrTagReg
-                end
-            end)
+            prepareCall(callee, t2, t3, t4, SlowPathPtrTag)
         .dontUpdateSP:
             callTargetFunction(callee, SlowPathPtrTag)
         end)
@@ -1005,7 +1000,7 @@ end
 
 # Do the bare minimum required to execute code. Sets up the PC, leave the CodeBlock*
 # in t1. May also trigger prologue entry OSR.
-macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
+macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath, targetPtrTag)
     # Set up the call frame and check if we should OSR.
     tagReturnAddress sp
     preserveCallerPCAndCFR()
@@ -1036,13 +1031,14 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         # pop the callerFrame since we will jump to a function that wants to save it
         if ARM64 or ARM64E
             pop lr, cfr
+            untagReturnAddress sp
         elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
             pop cfr
             pop lr
         else
             pop cfr
         end
-        jmp r0, CodeEntryPtrTag
+        jmp r0, targetPtrTag
     .recover:
         codeBlockGetter(t1, t2)
     .continue:
@@ -1160,7 +1156,7 @@ else
     global _vmEntryToJavaScript
     _vmEntryToJavaScript:
 end
-    doVMEntry(makeJavaScriptCall, CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag)
+    doVMEntry(makeJavaScriptCall)
 
 
 if C_LOOP
@@ -1169,7 +1165,7 @@ else
     global _vmEntryToNative
     _vmEntryToNative:
 end
-    doVMEntry(makeHostFunctionCall, NativeCodePtrTag, NativeCodePtrTag)
+    doVMEntry(makeHostFunctionCall)
 
 
 if not C_LOOP
@@ -1287,34 +1283,34 @@ _llint_entry:
 end
 
 _llint_program_prologue:
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
+    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue, CodeEntryPtrTag)
     dispatch(0)
 
 
 _llint_module_program_prologue:
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
+    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue, CodeEntryPtrTag)
     dispatch(0)
 
 
 _llint_eval_prologue:
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
+    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue, CodeEntryPtrTag)
     dispatch(0)
 
 
 _llint_function_for_call_prologue:
-    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call)
+    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call, CodeEntryPtrTag)
     functionInitialization(0)
     dispatch(0)
     
 
 _llint_function_for_construct_prologue:
-    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct)
+    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct, CodeEntryPtrTag)
     functionInitialization(1)
     dispatch(0)
     
 
 _llint_function_for_call_arity_check:
-    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
+    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call, CodeEntryWithArityCheckPtrTag)
     functionArityCheck(.functionForCallBegin, _slow_path_call_arityCheck)
 .functionForCallBegin:
     functionInitialization(0)
@@ -1322,7 +1318,7 @@ _llint_function_for_call_arity_check:
 
 
 _llint_function_for_construct_arity_check:
-    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
+    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct, CodeEntryWithArityCheckPtrTag)
     functionArityCheck(.functionForConstructBegin, _slow_path_construct_arityCheck)
 .functionForConstructBegin:
     functionInitialization(1)

@@ -1,3 +1,14 @@
+2018-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add pointer profiling support in baseline JIT and supporting files.
+        https://bugs.webkit.org/show_bug.cgi?id=184200
+        <rdar://problem/39057300>
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/PointerPreparations.h:
+        - Remove WTF_PREPARE_FUNCTION_POINTER_FOR_EXECUTION.  It is no longer needed.
+
 2018-03-30  JF Bastien  <jfbastien@apple.com>
 
         WorkQueueWin: don't move rvalues

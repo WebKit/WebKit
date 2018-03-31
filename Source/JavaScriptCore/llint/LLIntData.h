@@ -85,6 +85,7 @@ ALWAYS_INLINE void* getCodePtr(OpcodeID id)
 }
 
 #if ENABLE(JIT)
+
 ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID codeId)
 {
     return reinterpret_cast<LLIntCode>(getCodePtr(codeId));
@@ -93,7 +94,7 @@ ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID codeId)
 
 ALWAYS_INLINE void* getCodePtr(JSC::EncodedJSValue glueHelper())
 {
-    return WTF_PREPARE_FUNCTION_POINTER_FOR_EXECUTION(glueHelper);
+    return bitwise_cast<void*>(glueHelper);
 }
 
 } } // namespace JSC::LLInt

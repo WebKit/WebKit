@@ -182,7 +182,7 @@ public:
     {
         ASSERT(call.isFlagSet(Call::Linkable));
         ASSERT(call.isFlagSet(Call::Near));
-        return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label), NearCallPtrTag),
+        return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label)),
             call.isFlagSet(Call::Tail) ? NearCallMode::Tail : NearCallMode::Regular);
     }
 
@@ -191,7 +191,6 @@ public:
         return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_jump.m_label)));
     }
 
-    // FIXME: remove the default PtrTag value once we've tagged all the clients.
     CodeLocationLabel locationOf(Label label, PtrTag tag = NoPtrTag)
     {
         return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(label.m_label), tag));

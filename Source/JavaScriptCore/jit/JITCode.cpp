@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,13 +71,7 @@ JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
     auto scope = DECLARE_THROW_SCOPE(*vm);
     void* entryAddress;
-    JSFunction* function = jsDynamicCast<JSFunction*>(*vm, protoCallFrame->callee());
-
-    if (!function || !protoCallFrame->needArityCheck()) {
-        ASSERT(!protoCallFrame->needArityCheck());
-        entryAddress = executableAddress();
-    } else
-        entryAddress = addressForCall(MustCheckArity).executableAddress();
+    entryAddress = addressForCall(MustCheckArity).executableAddress();
     JSValue result = JSValue::decode(vmEntryToJavaScript(entryAddress, vm, protoCallFrame));
     return scope.exception() ? jsNull() : result;
 }
@@ -127,7 +121,12 @@ JITCodeWithCodeRef::~JITCodeWithCodeRef()
 void* JITCodeWithCodeRef::executableAddressAtOffset(size_t offset)
 {
     RELEASE_ASSERT(m_ref);
-    return m_ref.code().executableAddress<char*>() + offset;
+    assertIsTaggedWith(m_ref.code().executableAddress(), CodeEntryPtrTag);
+    if (!offset)
+        return m_ref.code().executableAddress();
+
+    char* executableAddress = untagCodePtr<char*>(m_ref.code().executableAddress(), CodeEntryPtrTag);
+    return tagCodePtr(executableAddress + offset, CodeEntryPtrTag);
 }
 
 void* JITCodeWithCodeRef::dataAddressAtOffset(size_t offset)
@@ -166,6 +165,8 @@ DirectJITCode::DirectJITCode(JITCode::CodeRef ref, JITCode::CodePtr withArityChe
     : JITCodeWithCodeRef(ref, jitType)
     , m_withArityCheck(withArityCheck)
 {
+    ASSERT(m_ref);
+    ASSERT(m_withArityCheck);
 }
 
 DirectJITCode::~DirectJITCode()
@@ -177,6 +178,8 @@ void DirectJITCode::initializeCodeRef(JITCode::CodeRef ref, JITCode::CodePtr wit
     RELEASE_ASSERT(!m_ref);
     m_ref = ref;
     m_withArityCheck = withArityCheck;
+    ASSERT(m_ref);
+    ASSERT(m_withArityCheck);
 }
 
 JITCode::CodePtr DirectJITCode::addressForCall(ArityCheckMode arity)
@@ -213,10 +216,17 @@ void NativeJITCode::initializeCodeRef(CodeRef ref)
     m_ref = ref;
 }
 
-JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode)
+JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode arity)
 {
-    RELEASE_ASSERT(!!m_ref);
-    return m_ref.code();
+    RELEASE_ASSERT(m_ref);
+    switch (arity) {
+    case ArityCheckNotRequired:
+        return m_ref.code();
+    case MustCheckArity:
+        return m_ref.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return CodePtr();
 }
 
 #if ENABLE(JIT)

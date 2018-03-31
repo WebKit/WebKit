@@ -586,8 +586,12 @@ public:
         // We don't need the current frame beyond this point. Masquerade as our
         // caller.
 #if CPU(ARM) || CPU(ARM64)
-        loadPtr(Address(framePointerRegister, sizeof(void*)), linkRegister);
+        loadPtr(Address(framePointerRegister, CallFrame::returnPCOffset()), linkRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
+#if USE(POINTER_PROFILING)
+        addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), MacroAssembler::framePointerRegister, tempGPR);
+        untagPtr(linkRegister, tempGPR);
+#endif
 #elif CPU(MIPS)
         loadPtr(Address(framePointerRegister, sizeof(void*)), returnAddressRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
