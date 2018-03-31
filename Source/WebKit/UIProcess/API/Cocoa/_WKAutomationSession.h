@@ -43,7 +43,7 @@ WK_CLASS_AVAILABLE(macosx(10.12), ios(10.0))
 @property (nonatomic, weak) id <_WKAutomationSessionDelegate> delegate;
 @property (nonatomic, readonly, getter=isPaired) BOOL paired;
 
-@property (nonatomic, readonly, getter=isSimulatingUserInteraction) BOOL simulatingUserInteraction WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, getter=isSimulatingUserInteraction) BOOL simulatingUserInteraction WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 - (instancetype)initWithConfiguration:(_WKAutomationSessionConfiguration *)configuration NS_DESIGNATED_INITIALIZER;
 

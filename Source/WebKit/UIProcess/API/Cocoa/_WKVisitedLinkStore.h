@@ -32,10 +32,10 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface _WKVisitedLinkStore : NSObject
 
 - (void)addVisitedLinkWithURL:(NSURL *)URL;
-- (void)addVisitedLinkWithString:(NSString *)string WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)addVisitedLinkWithString:(NSString *)string WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 - (void)removeAll;
-- (BOOL)containsVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)removeVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (BOOL)containsVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+- (void)removeVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 @end
 

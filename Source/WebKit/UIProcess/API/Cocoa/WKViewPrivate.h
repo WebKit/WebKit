@@ -131,14 +131,14 @@
 
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
-- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress WK_API_AVAILABLE(macosx(10.13.4));
 
 @property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView;
 @property (nonatomic, readonly)  id _mediaPlaybackControlsView;
 - (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView;
 - (void)_removeMediaPlaybackControlsView;
 
-- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.13.4));
 
 @property (nonatomic, readwrite, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 

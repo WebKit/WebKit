@@ -42,7 +42,7 @@ WK_CLASS_AVAILABLE(macosx(10.12))
 
 /*! @abstract Whether the file upload control supports selecting directories.
  */
-@property (nonatomic, readonly) BOOL allowsDirectories WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, readonly) BOOL allowsDirectories WK_API_AVAILABLE(macosx(10.13.4));
 
 @end
 

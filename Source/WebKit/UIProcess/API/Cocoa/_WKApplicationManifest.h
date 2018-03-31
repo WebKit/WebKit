@@ -38,9 +38,9 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
     _WKApplicationManifestDisplayModeMinimalUI,
     _WKApplicationManifestDisplayModeStandalone,
     _WKApplicationManifestDisplayModeFullScreen,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macosx(10.13.4), ios(11.3))
 @interface _WKApplicationManifest : NSObject <NSSecureCoding>
 
 @property (nonatomic, readonly, nullable, copy) NSString *name;

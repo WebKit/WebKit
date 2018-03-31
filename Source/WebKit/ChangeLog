@@ -1,3 +1,41 @@
+2018-03-30  Dan Bernstein  <mitz@apple.com>
+
+        Update availability annotations to match the macOS 10.13.4 and iOS 11.3 GM SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=184173
+
+        Reviewed by Alex Christensen.
+
+        Changed WK_MAC_TBA and WK_IOS_TBA to 10.13.4 and 11.3, respectively, in all declarations that
+        appear in the GM SDKs.
+
+        * Shared/API/Cocoa/_WKNSWindowExtras.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.h:
+        * UIProcess/API/Cocoa/WKOpenPanelParametersPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/API/Cocoa/_WKFocusedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKFullscreenDelegate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+
 2018-03-30  Youenn Fablet  <youenn@apple.com>
 
         NetworkLoadChecker should upgrade redirects if needed

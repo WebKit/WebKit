@@ -50,30 +50,30 @@
 typedef NS_ENUM(NSInteger, _WKFocusDirection) {
     _WKFocusDirectionBackward,
     _WKFocusDirectionForward,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+} WK_API_AVAILABLE(macosx(10.13.4));
 
 typedef NS_ENUM(NSInteger, _WKAutoplayEvent) {
     _WKAutoplayEventDidPreventFromAutoplaying,
     _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying,
     _WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference,
     _WKAutoplayEventUserDidInterfereWithPlayback,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+} WK_API_AVAILABLE(macosx(10.13.4));
 
 typedef NS_ENUM(NSInteger, _WKResourceLimit) {
     _WKResourceLimitMemory,
     _WKResourceLimitCPU,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+} WK_API_AVAILABLE(macosx(10.13.4));
 
 typedef NS_ENUM(NSInteger, _WKPlugInUnavailabilityReason) {
     _WKPlugInUnavailabilityReasonPluginMissing,
     _WKPlugInUnavailabilityReasonPluginCrashed,
     _WKPlugInUnavailabilityReasonInsecurePluginVersion
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+} WK_API_AVAILABLE(macosx(10.13.4));
 
 typedef NS_OPTIONS(NSUInteger, _WKAutoplayEventFlags) {
     _WKAutoplayEventFlagsNone = 0,
     _WKAutoplayEventFlagsHasAudio = 1 << 0,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+} WK_API_AVAILABLE(macosx(10.13.4));
 #endif
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
@@ -105,13 +105,13 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView mediaCaptureStateDidChange:(_WKMediaCaptureState)state WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (WKDragDestinationAction)_webView:(WKWebView *)webView dragDestinationActionMaskForDraggingInfo:(id)draggingInfo WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures completionHandler:(void (^)(WKWebView *webView))completionHandler WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL allowed))decisionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL allowed))decisionHandler WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 - (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-- (void)_webView:(WKWebView *)webView editorStateDidChange:(NSDictionary *)editorState WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView editorStateDidChange:(NSDictionary *)editorState WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
-- (void)_webView:(WKWebView *)webView didRemoveAttachment:(_WKAttachment *)attachment WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView didRemoveAttachment:(_WKAttachment *)attachment WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 - (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment withSource:(NSString *)source WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
@@ -154,30 +154,30 @@ struct UIEdgeInsets;
 #endif
 - (void)_webView:(WKWebView *)webView didChangeSafeAreaShouldAffectObscuredInsets:(BOOL)safeAreaShouldAffectObscuredInsets WK_API_AVAILABLE(ios(11.0));
 #else // TARGET_OS_IPHONE
-- (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_cancelImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_completeImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_showWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webViewDidScroll:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webViewRunModal:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView getToolbarsAreVisibleWithCompletionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (CGFloat)_webViewHeaderHeight:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (CGFloat)_webViewFooterHeight:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView drawHeaderInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView drawFooterInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_cancelImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_completeImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_showWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webViewDidScroll:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webViewRunModal:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView getToolbarsAreVisibleWithCompletionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url WK_API_AVAILABLE(macosx(10.13.4));
+- (CGFloat)_webViewHeaderHeight:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (CGFloat)_webViewFooterHeight:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView drawHeaderInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView drawFooterInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webView:(WKWebView *)webview mouseDidMoveOverElement:(_WKHitTestResult *)hitTestResult withFlags:(NSEventModifierFlags)flags userInfo:(id <NSSecureCoding>)userInfo;
-- (void)_webView:(WKWebView *)webView didExceedBackgroundResourceLimitWhileInForeground:(_WKResourceLimit)limit WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView setResizable:(BOOL)isResizable WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView getWindowFrameWithCompletionHandler:(void (^)(CGRect))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_webView:(WKWebView *)webView setWindowFrame:(CGRect)frame WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webView:(WKWebView *)webView didExceedBackgroundResourceLimitWhileInForeground:(_WKResourceLimit)limit WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView setResizable:(BOOL)isResizable WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView getWindowFrameWithCompletionHandler:(void (^)(CGRect))completionHandler WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_webView:(WKWebView *)webView setWindowFrame:(CGRect)frame WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webView:(WKWebView *)webView unavailablePlugInButtonClickedWithReason:(_WKPlugInUnavailabilityReason)reason plugInInfo:(NSDictionary *)plugInInfo;
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element WK_API_AVAILABLE(macosx(10.12));
 - (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.12));

@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, WKRemoteWebInspectorDebuggableType) {
     WKRemoteWebInspectorDebuggableTypeJavaScript,
-    WKRemoteWebInspectorDebuggableTypeServiceWorker WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    WKRemoteWebInspectorDebuggableTypeServiceWorker WK_API_AVAILABLE(macosx(10.13.4), ios(11.3)),
     WKRemoteWebInspectorDebuggableTypeWeb,
 } WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 
