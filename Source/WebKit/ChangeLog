@@ -1,3 +1,10 @@
+2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix, remove unused lambda capture.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+
 2018-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Adopt list view controller UI for numeric input types
