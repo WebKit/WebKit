@@ -1,5 +1,16 @@
 2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r230125.
+
+        Build fix broke more builds.
+
+        Reverted changeset:
+
+        "Unreviewed build fix, remove unused lambda capture."
+        https://trac.webkit.org/changeset/230125
+
+2018-03-30  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed build fix, remove unused lambda capture.
 
         * NetworkProcess/NetworkResourceLoader.cpp:
