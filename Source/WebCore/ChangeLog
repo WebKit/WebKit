@@ -1,3 +1,18 @@
+2018-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Adopt list view controller UI for numeric input types
+        https://bugs.webkit.org/show_bug.cgi?id=184184
+        <rdar://problem/37238916>
+
+        Reviewed by Timothy Hatcher.
+
+        Add a localized string for the OK button shown on number pads in extra zoomed form controls.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::numberPadOKButtonTitle):
+        * platform/LocalizedStrings.h:
+
 2018-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying a list from Microsoft Word to TinyMCE fails when mso-list is the first property

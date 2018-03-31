@@ -1,3 +1,20 @@
+2018-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Adopt list view controller UI for numeric input types
+        https://bugs.webkit.org/show_bug.cgi?id=184184
+        <rdar://problem/37238916>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove existing logic for presenting a number pad view controller, since number pads will now be handled as a
+        special case of general text form controls in extra zoom mode.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentViewControllerForCurrentAssistedNode]):
+        (-[WKContentView dismissAllInputViewControllers]):
+        (-[WKContentView _wheelChangedWithEvent:]):
+
 2018-03-30  Dan Bernstein  <mitz@apple.com>
 
         Update availability annotations to match the macOS 10.13.4 and iOS 11.3 GM SDKs

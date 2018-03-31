@@ -49,7 +49,6 @@
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
-#import "WKNumberPadViewController.h"
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
@@ -4222,15 +4221,6 @@ static bool isAssistableInputType(InputType type)
     _shouldRestoreFirstResponderStatusAfterLosingFocus = self.isFirstResponder;
 
     switch (_assistedNodeInformation.elementType) {
-    case InputType::Number:
-    case InputType::NumberPad:
-    case InputType::Phone:
-        if (!_numberPadViewController) {
-            _numberPadViewController = adoptNS([[WKNumberPadViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[]]);
-            [_numberPadViewController setDelegate:self];
-            [_focusedFormControlViewController presentViewController:_numberPadViewController.get() animated:YES completion:nil];
-        }
-        break;
     case InputType::Select:
         if (!_selectMenuListViewController) {
             _selectMenuListViewController = adoptNS([[WKSelectMenuListViewController alloc] initWithDelegate:self]);
@@ -4266,9 +4256,6 @@ static bool isAssistableInputType(InputType type)
 - (void)dismissAllInputViewControllers
 {
     if (auto controller = WTFMove(_textInputListViewController))
-        [controller dismissViewControllerAnimated:YES completion:nil];
-
-    if (auto controller = WTFMove(_numberPadViewController))
         [controller dismissViewControllerAnimated:YES completion:nil];
 
     if (auto controller = WTFMove(_selectMenuListViewController))
@@ -4474,9 +4461,6 @@ static bool isAssistableInputType(InputType type)
 - (void)_wheelChangedWithEvent:(UIEvent *)event
 {
 #if ENABLE(EXTRA_ZOOM_MODE)
-    if ([_numberPadViewController handleWheelEvent:event])
-        return;
-
     if ([_timePickerViewController handleWheelEvent:event])
         return;
 

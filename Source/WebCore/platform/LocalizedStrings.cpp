@@ -1036,6 +1036,11 @@ String webCryptoMasterKeyKeychainComment()
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
+String numberPadOKButtonTitle()
+{
+    return WEB_UI_STRING_KEY("OK", "OK (OK button title in extra zoomed number pad)", "Title of the OK button for the number pad in zoomed form controls.");
+}
+
 String formControlDoneButtonTitle()
 {
     return WEB_UI_STRING("Done", "Title of the Done button for zoomed form controls.");

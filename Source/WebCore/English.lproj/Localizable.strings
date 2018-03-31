@@ -439,6 +439,9 @@
 /* Option in segmented control for inserting a numbered list in text editing */
 "Numbered list" = "Numbered list";
 
+/* Title of the OK button for the number pad in zoomed form controls. */
+"OK (OK button title in extra zoomed number pad)" = "OK";
+
 /* OK button label in document password failure alert */
 "OK (document password failure alert)" = "OK";
 
@@ -1204,11 +1207,11 @@
 /* accessibility help text for hide closed captions button */
 "stop displaying closed captions" = "stop displaying closed captions";
 
-/* Label for the strong password confirmation auto fill button inside a text field. */
-"strong password confirmation auto fill" = "strong password confirmation auto fill";
-
 /* Label for the strong password auto fill button inside a text field. */
 "strong password auto fill" = "strong password auto fill";
+
+/* Label for the strong password confirmation auto fill button inside a text field. */
+"strong password confirmation auto fill" = "strong password confirmation auto fill";
 
 /* The suboptimal value description for a meter element. */
 "suboptimal value" = "suboptimal value";

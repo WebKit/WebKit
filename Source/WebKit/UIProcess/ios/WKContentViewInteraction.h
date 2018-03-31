@@ -86,7 +86,6 @@ class WebPageProxy;
 #if ENABLE(EXTRA_ZOOM_MODE)
 @class WKDatePickerViewController;
 @class WKFocusedFormControlViewController;
-@class WKNumberPadViewController;
 @class WKSelectMenuListViewController;
 @class WKTextInputListViewController;
 @class WKTimePickerViewController;
@@ -255,7 +254,6 @@ struct WKAutoCorrectionData {
     RetainPtr<WKDatePickerViewController> _datePickerViewController;
     RetainPtr<WKTextInputListViewController> _textInputListViewController;
     RetainPtr<WKFocusedFormControlViewController> _focusedFormControlViewController;
-    RetainPtr<WKNumberPadViewController> _numberPadViewController;
     RetainPtr<WKSelectMenuListViewController> _selectMenuListViewController;
     RetainPtr<WKTimePickerViewController> _timePickerViewController;
 
