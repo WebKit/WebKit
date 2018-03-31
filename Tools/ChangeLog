@@ -1,3 +1,27 @@
+2018-03-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Add tree context to Display.Box
+        https://bugs.webkit.org/show_bug.cgi?id=184211
+
+        Reviewed by Antti Koivisto.
+
+        This is preparation for using the Display.Box tree to resolve absolute coordinates.
+
+        * LayoutReloaded/DisplayTree/Box.js:
+        (Display.Box):
+        (Display.Box.prototype.setParent):
+        (Display.Box.prototype.setNextSibling):
+        (Display.Box.prototype.setPreviousSibling):
+        (Display.Box.prototype.setFirstChild):
+        (Display.Box.prototype.setLastChild):
+        (Display.Box.prototype.parent):
+        (Display.Box.prototype.nextSibling):
+        (Display.Box.prototype.previousSibling):
+        (Display.Box.prototype.firstChild):
+        (Display.Box.prototype.lastChild):
+        * LayoutReloaded/FormattingState/FormattingState.js:
+        (FormattingState.prototype.createDisplayBox):
+
 2018-03-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying a list from Microsoft Word to TinyMCE fails when mso-list is the first property

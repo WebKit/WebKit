@@ -29,6 +29,11 @@ Display.Box = class Box {
     constructor(node) {
         this.m_node = node;
         this.m_rect = new LayoutRect(new LayoutPoint(0, 0), new LayoutSize(0, 0));
+        this.m_parent = null;
+        this.m_nextSibling = null;
+        this.m_previousSibling = null;
+        this.m_firstChild = null;
+        this.m_lastChild = null;
     }
 
     clone() {
@@ -127,5 +132,45 @@ Display.Box = class Box {
         contentBox.shrinkBy(paddingSize);
         contentBox.shrinkBy(Utils.computedPaddingBottomRight(this.m_node));
         return contentBox;
+    }
+
+    setParent(parent) {
+        this.m_parent = parent;
+    }
+
+    setNextSibling(nextSibling) {
+        this.m_nextSibling = nextSibling;
+    }
+
+    setPreviousSibling(previousSibling) {
+        this.m_previousSibling = previousSibling;
+    }
+
+    setFirstChild(firstChild) {
+        this.m_firstChild = firstChild;
+    }
+
+    setLastChild(lastChild) {
+        this.m_lastChild = lastChild;
+    }
+
+    parent() {
+        return this.m_parent;;
+    }
+
+    nextSibling() {
+        return this.m_nextSibling;
+    }
+
+    previousSibling() {
+        return this.m_previousSibling;
+    }
+
+    firstChild() {
+        return this.m_firstChild;
+    }
+
+    lastChild() {
+        return this.m_lastChild;
     }
 }

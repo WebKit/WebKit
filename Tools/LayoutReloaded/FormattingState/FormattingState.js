@@ -45,6 +45,17 @@ class FormattingState {
 
     createDisplayBox(layoutBox) {
         let displayBox = new Display.Box(layoutBox.node());
+        let parentDisplayBox = this.displayBox(layoutBox.containingBlock());
+        displayBox.setParent(parentDisplayBox);
+        if (!parentDisplayBox.firstChild()) {
+            parentDisplayBox.setFirstChild(displayBox);
+            parentDisplayBox.setLastChild(displayBox);
+        } else {
+            let previousSibling = parentDisplayBox.lastChild();
+            previousSibling.setNextSibling(displayBox);
+            displayBox.setPreviousSibling(previousSibling);
+            parentDisplayBox.setLastChild(displayBox);
+        }
         this.m_displayToLayout.set(layoutBox, displayBox);
     }
 
