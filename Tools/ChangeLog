@@ -1,5 +1,29 @@
 2018-03-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Do not clone Display.Box for FloatingState stacks.
+        https://bugs.webkit.org/show_bug.cgi?id=184218
+
+        Reviewed by Antti Koivisto.
+
+        Now that Display.Box is in a tree context, we can't just clone it for the purpose of caching its absolute position.
+
+        * LayoutReloaded/DisplayTree/Box.js:
+        (Display.Box.prototype.clone): Deleted.
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype._positionForFloating):
+        (FloatingContext.prototype._moveToNextVerticalPosition):
+        (FloatingContext.prototype._availableSpace):
+        (FloatingContext.prototype._findFloatingAtVerticalPosition):
+        (FloatingContext.prototype._adjustedFloatingPosition):
+        (FloatingContext.prototype._bottom):
+        (FloatingContext.prototype._addFloatingBox):
+        (FloatingContext.prototype._mapMarginBoxToFormattingRoot):
+        (FloatingContext.prototype._mapDisplayMarginBoxToFormattingRoot):
+        * LayoutReloaded/FormattingState/FloatingState.js:
+        (FloatingState.prototype.addFloating):
+
+2018-03-31  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Remove all FormattingContext::absolute*Box functions.
         https://bugs.webkit.org/show_bug.cgi?id=184215
 

@@ -40,12 +40,6 @@ Display.Box = class Box {
         this.m_lastChild = null;
     }
 
-    clone() {
-        let cloneBox = new Display.Box(this.m_node);
-        cloneBox.setRect(this.rect());
-        return cloneBox;
-    }
-
     setRect(rect) {
         return this.m_rect = rect;
     }

@@ -31,9 +31,9 @@ class FloatingState {
         this.m_lastFloating = null;
     }
 
-    addFloating(layoutBox, displayBox) {
+    addFloating(displayBox, isFloatingLeft) {
         this.m_lastFloating = displayBox;
-        if (Utils.isFloatingLeft(layoutBox)) {
+        if (isFloatingLeft) {
             this.m_leftFloatingBoxStack.push(displayBox);
             return;
         }

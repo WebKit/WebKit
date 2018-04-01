@@ -61,7 +61,7 @@ class FloatingContext {
         let absoluteFloatingBox = this._mapMarginBoxToFormattingRoot(floatingBox);
         if (this._isEmpty())
             return this._adjustedFloatingPosition(floatingBox, absoluteFloatingBox.top());
-        let verticalPosition = Math.max(absoluteFloatingBox.top(), this._lastFloating().top());
+        let verticalPosition = Math.max(absoluteFloatingBox.top(), this._mapDisplayMarginBoxToFormattingRoot(this._lastFloating()).top());
         let spaceNeeded = absoluteFloatingBox.width();
         while (true) {
             let floatingPair = this._findInnerMostLeftAndRight(verticalPosition);
@@ -116,9 +116,9 @@ class FloatingContext {
         let leftBottom = Number.POSITIVE_INFINITY;
         let rightBottom = Number.POSITIVE_INFINITY;
         if (floatingPair.left)
-            leftBottom = floatingPair.left.bottom();
+            leftBottom = this._mapDisplayMarginBoxToFormattingRoot(floatingPair.left).bottom();
         if (floatingPair.right)
-            rightBottom = floatingPair.right.bottom();
+            rightBottom = this._mapDisplayMarginBoxToFormattingRoot(floatingPair.right).bottom();
         return Math.min(leftBottom, rightBottom);
     }
 
@@ -126,16 +126,17 @@ class FloatingContext {
         let containingBlockContentBox = this._formattingContext().displayBox(containingBlock);
         if (floatingPair.left && floatingPair.right)
             return floatingPair.right.left() - floatingPair.left.right();
-        if (floatingPair.left)
-            return containingBlockContentBox.width() - (floatingPair.left.right() - this._mapBorderBoxToFormattingRoot(containingBlock).left());
+        if (floatingPair.left) {
+            return containingBlockContentBox.width() - (this._mapDisplayMarginBoxToFormattingRoot(floatingPair.left).right() - this._mapBorderBoxToFormattingRoot(containingBlock).left());
+        }
         if (floatingPair.right)
-            return floatingPair.right.left();
+            return this._mapDisplayMarginBoxToFormattingRoot(floatingPair.right).left();
         return containingBlockContentBox.width();
     }
 
     _findFloatingAtVerticalPosition(verticalPosition, floatingStack) {
         let index = floatingStack.length;
-        while (--index >= 0 && floatingStack[index].bottom() <= verticalPosition);
+        while (--index >= 0 && this._mapDisplayMarginBoxToFormattingRoot(floatingStack[index]).bottom() <= verticalPosition);
         return index >= 0 ? floatingStack[index] : null;
     }
 
@@ -150,13 +151,13 @@ class FloatingContext {
         let right = this._mapContentBoxToFormattingRoot(containingBlock).right();
         if (leftRightFloatings) {
             if (leftRightFloatings.left) {
-                let floatingBoxRight = leftRightFloatings.left.right();
+                let floatingBoxRight = this._mapDisplayMarginBoxToFormattingRoot(leftRightFloatings.left).right();
                 if (floatingBoxRight > left)
                     left = floatingBoxRight;
             }
 
             if (leftRightFloatings.right) {
-                let floatingBoxLeft = leftRightFloatings.right.left();
+                let floatingBoxLeft = this._mapDisplayMarginBoxToFormattingRoot(leftRightFloatings.right).left();
                 if (floatingBoxLeft < right)
                     right = floatingBoxLeft;
             }
@@ -181,21 +182,22 @@ class FloatingContext {
             return Number.NaN;
         let max = Number.NEGATIVE_INFINITY;
         for (let i = 0; i < floatingStack.length; ++i)
-            max = Math.max(floatingStack[i].bottom(), max);
+            max = Math.max(this._mapDisplayMarginBoxToFormattingRoot(floatingStack[i]).bottom(), max);
         return max;
     }
 
     _addFloatingBox(layoutBox) {
-        // Convert floating box to absolute.
-        let clonedDisplayBox = this._formattingContext().displayBox(layoutBox).clone();
-        clonedDisplayBox.setRect(this._mapMarginBoxToFormattingRoot(layoutBox));
-        this._floatingState().addFloating(layoutBox, clonedDisplayBox);
+        this._floatingState().addFloating(this._formattingContext().displayBox(layoutBox), Utils.isFloatingLeft(layoutBox));
     }
 
     _mapMarginBoxToFormattingRoot(layoutBox) {
-        let displayBox = this._formattingState().displayBox(layoutBox);
-        let rootDisplayBox = this._formattingState().displayBox(this._formattingRoot());
-        return Utils.marginBox(displayBox, rootDisplayBox);
+        ASSERT(layoutBox instanceof Layout.Box);
+        return this._mapDisplayMarginBoxToFormattingRoot(this._formattingState().displayBox(layoutBox));
+    }
+
+    _mapDisplayMarginBoxToFormattingRoot(displayBox) {
+        ASSERT(displayBox instanceof Display.Box);
+        return Utils.marginBox(displayBox, this._formattingState().displayBox(this._formattingRoot()));
     }
 
     _mapBorderBoxToFormattingRoot(layoutBox) {
