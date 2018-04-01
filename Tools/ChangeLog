@@ -1,5 +1,39 @@
 2018-03-31  Zalan Bujtas  <zalan@apple.com>
 
+        [layoutReloaded] Introduce margin to Display.Box
+        https://bugs.webkit.org/show_bug.cgi?id=184212
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for moving margin box out of formatting context to Display.Box.
+
+        * LayoutReloaded/DisplayTree/Box.js:
+        (Display.Box):
+        (Display.Box.prototype.setRect):
+        (Display.Box.prototype.setTopLeft):
+        (Display.Box.prototype.setTop):
+        (Display.Box.prototype.setLeft):
+        (Display.Box.prototype.setSize):
+        (Display.Box.prototype.setWidth):
+        (Display.Box.prototype.setHeight):
+        (Display.Box.prototype.width):
+        (Display.Box.prototype.setMarginTop):
+        (Display.Box.prototype.setMarginLeft):
+        (Display.Box.prototype.setMarginBottom):
+        (Display.Box.prototype.setMarginRight):
+        (Display.Box.prototype.marginTop):
+        (Display.Box.prototype.marginLeft):
+        (Display.Box.prototype.marginBottom):
+        (Display.Box.prototype.marginRight):
+        (Display.Box.prototype.marginBox):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype.absoluteMarginBox):
+        (FormattingContext.prototype._addToLayoutQueue):
+        * LayoutReloaded/FormattingState/FormattingState.js:
+        (FormattingState.prototype.createDisplayBox):
+
+2018-03-31  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Add tree context to Display.Box
         https://bugs.webkit.org/show_bug.cgi?id=184211
 

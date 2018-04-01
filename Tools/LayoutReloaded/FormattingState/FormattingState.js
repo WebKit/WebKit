@@ -57,6 +57,7 @@ class FormattingState {
             parentDisplayBox.setLastChild(displayBox);
         }
         this.m_displayToLayout.set(layoutBox, displayBox);
+        return displayBox;
     }
 
     displayBoxMap() {

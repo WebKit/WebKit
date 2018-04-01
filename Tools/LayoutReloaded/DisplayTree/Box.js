@@ -29,6 +29,10 @@ Display.Box = class Box {
     constructor(node) {
         this.m_node = node;
         this.m_rect = new LayoutRect(new LayoutPoint(0, 0), new LayoutSize(0, 0));
+        this.m_marginTop = 0;
+        this.m_marginLeft = 0;
+        this.m_marginBottom = 0;
+        this.m_marginRight = 0;
         this.m_parent = null;
         this.m_nextSibling = null;
         this.m_previousSibling = null;
@@ -42,14 +46,38 @@ Display.Box = class Box {
         return cloneBox;
     }
 
+    setRect(rect) {
+        return this.m_rect = rect;
+    }
+
+    setTopLeft(topLeft) {
+        this.m_rect.setTopLeft(topLeft);
+    }
+
+    setTop(top) {
+        this.m_rect.setTop(top);
+    }
+
+    setLeft(left) {
+        this.m_rect.setLeft(left);
+    }
+
+    setSize(size) {
+        this.m_rect.setSize(size);
+    }
+
+    setWidth(width) {
+        this.m_rect.setWidth(width);
+    }
+
+    setHeight(height) {
+        this.m_rect.setHeight(height);
+    }
+
     rect() {
         return this.m_rect.clone();
     }
 
-    setRect(rect) {
-        return this.m_rect = rect;
-    }
-    
     top() {
         return this.rect().top();
     }
@@ -78,33 +106,52 @@ Display.Box = class Box {
         return this.rect().size();
     }
 
-    height() {
-        return this.rect().height();
-    }
-
     width() {
         return this.rect().width();
     }
 
-    setTopLeft(topLeft) {
-        this.m_rect.setTopLeft(topLeft);
+    height() {
+        return this.rect().height();
     }
 
-    setTop(top) {
-        this.m_rect.setTop(top);
+    setMarginTop(marginTop) {
+        this.m_marginTop = marginTop;
+     }
+
+    setMarginLeft(marginLeft) {
+        this.m_marginLeft = marginLeft;
+     }
+
+    setMarginBottom(marginBottom) {
+        this.m_marginBottom = marginBottom;
+     }
+
+    setMarginRight(marginRight) {
+        this.m_marginRight = marginRight;
     }
 
-    setSize(size) {
-        this.m_rect.setSize(size);
+    marginTop() {
+        return this.m_marginTop;
     }
 
-    setWidth(width) {
-        this.m_rect.setWidth(width);
+    marginLeft() {
+        return this.m_marginLeft;
     }
 
-    setHeight(height) {
-        this.m_rect.setHeight(height);
+    marginBottom() {
+        return this.m_marginBottom;
     }
+
+    marginRight() {
+        return this.m_marginRight;
+    }
+
+    marginBox() {
+        let marginBox = this.rect();
+        marginBox.moveBy(new LayoutSize(-this.m_marginLeft, -this.m_marginTop));
+        marginBox.growBy(new LayoutSize(this.m_marginLeft + this.m_marginRight, this.m_marginTop + this.m_marginBottom));
+        return marginBox;
+     }
 
     borderBox() {
         return new LayoutRect(new LayoutPoint(0, 0), this.rect().size());

@@ -74,10 +74,10 @@ class FormattingContext {
 
     absoluteMarginBox(layoutBox) {
         let displayBox = this.displayBox(layoutBox);
-        let absoluteContentBox = new LayoutRect(this._toRootAbsolutePosition(layoutBox), displayBox.size());
-        absoluteContentBox.moveBy(new LayoutSize(-this.marginLeft(layoutBox), -this.marginTop(layoutBox)));
-        absoluteContentBox.growBy(new LayoutSize(this.marginLeft(layoutBox) + this.marginRight(layoutBox), this.marginTop(layoutBox) + this.marginBottom(layoutBox)));
-        return absoluteContentBox;
+        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), displayBox.borderBox().size());
+        absoluteRect.moveBy(new LayoutSize(-displayBox.marginLeft(), -displayBox.marginTop()));
+        absoluteRect.growBy(new LayoutSize(displayBox.marginLeft() + displayBox.marginRight(), displayBox.marginTop() + displayBox.marginBottom()));
+        return absoluteRect;
     }
 
     absoluteBorderBox(layoutBox) {
@@ -124,7 +124,14 @@ class FormattingContext {
 
     _addToLayoutQueue(layoutBox) {
         // Initialize the corresponding display box.
-        this.formattingState().createDisplayBox(layoutBox);
+        let displayBox = this.formattingState().createDisplayBox(layoutBox, this);
+        if (layoutBox.node()) {
+            displayBox.setMarginTop(this.marginTop(layoutBox));
+            displayBox.setMarginLeft(this.marginLeft(layoutBox));
+            displayBox.setMarginBottom(this.marginBottom(layoutBox));
+            displayBox.setMarginRight(this.marginRight(layoutBox));
+        }
+
         this.m_layoutStack.push(layoutBox);
     }
 
