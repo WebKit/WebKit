@@ -1,5 +1,31 @@
 2018-03-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Floating box reduces line with in inline formatting context
+        https://bugs.webkit.org/show_bug.cgi?id=184223
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype.left):
+        (FloatingContext.prototype.right):
+        (FloatingContext.prototype._mapDisplayMarginBoxToFormattingRoot):
+        (FloatingContext.prototype._mapBorderBoxToFormattingRoot):
+        (FloatingContext.prototype._mapContentBoxToFormattingRoot):
+        (FloatingContext.prototype.formattingRoot):
+        (FloatingContext.prototype._floatingState):
+        (FloatingContext.prototype._formattingRoot): Deleted.
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._createNewLine):
+        (InlineFormattingContext.prototype._mapFloatingPosition):
+        (InlineFormattingContext):
+        * LayoutReloaded/FormattingState/FormattingState.js:
+        (FormattingState.prototype.displayBox):
+        (FormattingState):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-formatting-context-with-floats.html: Added.
+
+2018-03-31  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] InlineFormattingState should inherit the floating state from its parent formatting state
         https://bugs.webkit.org/show_bug.cgi?id=184220
 

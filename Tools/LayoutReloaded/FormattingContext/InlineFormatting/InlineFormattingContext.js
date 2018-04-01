@@ -99,11 +99,28 @@ class InlineFormattingContext extends FormattingContext {
     _createNewLine() {
         // TODO: Floats need to be taken into account.
         let contentBoxRect = this.displayBox(this.formattingRoot()).contentBox();
+        let lineWidth = contentBoxRect.width();
         let topLeft = contentBoxRect.topLeft();
+        let floatingLeft = this._mapFloatingPosition(this.floatingContext().left());
+        if (!Number.isNaN(floatingLeft)) {
+            topLeft.setLeft(floatingLeft);
+            lineWidth -= floatingLeft;
+        }
         let lines = this.formattingState().lines();
         if (lines.length)
             topLeft.setTop(lines[lines.length - 1].rect().bottom());
-        return new Line(topLeft, Utils.computedLineHeight(this.formattingRoot().node()), contentBoxRect.width());
+        return new Line(topLeft, Utils.computedLineHeight(this.formattingRoot().node()), lineWidth);
     }
+
+    _mapFloatingPosition(verticalPosition) {
+        if (Number.isNaN(verticalPosition))
+            return verticalPosition;
+        // Floats position are relative to their formatting root (which might not be this formatting root).
+        let root = this.displayBox(this.formattingRoot());
+        let floatFormattingRoot = this.displayBox(this.floatingContext().formattingRoot());
+        if (root == floatFormattingRoot)
+            return verticalPosition;
+        return verticalPosition - Utils.mapPosition(root.topLeft(), root, floatFormattingRoot).left();
+     }
 }
 
