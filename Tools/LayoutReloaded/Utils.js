@@ -475,6 +475,19 @@ class Utils {
         return window.getComputedStyle(node).float == "left";
     }
 
+    static marginBox(box, container) {
+        ASSERT(box instanceof Display.Box);
+        ASSERT(container instanceof Display.Box);
+
+        let marginBox = box.marginBox();
+        if (box == container)
+            return marginBox;
+        for (let ascendant = box.parent(); ascendant && ascendant != container; ascendant = ascendant.parent())
+            marginBox.moveBy(ascendant.topLeft());
+        return marginBox;
+    }
+
+
     static textRuns(text, container) {
         return window.collectTextRuns(text, container.node());
     }

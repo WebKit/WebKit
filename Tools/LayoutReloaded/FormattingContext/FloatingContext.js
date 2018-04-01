@@ -58,7 +58,7 @@ class FloatingContext {
     }
 
     _positionForFloating(floatingBox) {
-        let absoluteFloatingBox = this._formattingContext().absoluteMarginBox(floatingBox);
+        let absoluteFloatingBox = this._mapMarginBoxToFormattingRoot(floatingBox);
         if (this._isEmpty())
             return this._adjustedFloatingPosition(floatingBox, absoluteFloatingBox.top());
         let verticalPosition = Math.max(absoluteFloatingBox.top(), this._lastFloating().top());
@@ -188,8 +188,14 @@ class FloatingContext {
     _addFloatingBox(layoutBox) {
         // Convert floating box to absolute.
         let clonedDisplayBox = this._formattingContext().displayBox(layoutBox).clone();
-        clonedDisplayBox.setRect(this._formattingContext().absoluteMarginBox(layoutBox));
+        clonedDisplayBox.setRect(this._mapMarginBoxToFormattingRoot(layoutBox));
         this._floatingState().addFloating(layoutBox, clonedDisplayBox);
+    }
+
+    _mapMarginBoxToFormattingRoot(layoutBox) {
+        let displayBox = this._formattingState().displayBox(layoutBox);
+        let rootDisplayBox = this._formattingState().displayBox(this._formattingRoot());
+        return Utils.marginBox(displayBox, rootDisplayBox);
     }
 
     _floatingState() {
@@ -198,6 +204,10 @@ class FloatingContext {
 
     _formattingContext() {
         return this.m_parentFormattingContext;
+    }
+
+    _formattingRoot() {
+        return this._formattingState().formattingRoot();
     }
 
     _formattingState() {

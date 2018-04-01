@@ -72,14 +72,6 @@ class FormattingContext {
         return Utils.computedMarginRight(layoutBox.node());
     }
 
-    absoluteMarginBox(layoutBox) {
-        let displayBox = this.displayBox(layoutBox);
-        let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), displayBox.borderBox().size());
-        absoluteRect.moveBy(new LayoutSize(-displayBox.marginLeft(), -displayBox.marginTop()));
-        absoluteRect.growBy(new LayoutSize(displayBox.marginLeft() + displayBox.marginRight(), displayBox.marginTop() + displayBox.marginBottom()));
-        return absoluteRect;
-    }
-
     absoluteBorderBox(layoutBox) {
         let borderBox = this.displayBox(layoutBox).borderBox();
         let absoluteRect = new LayoutRect(this._toRootAbsolutePosition(layoutBox), borderBox.size());
