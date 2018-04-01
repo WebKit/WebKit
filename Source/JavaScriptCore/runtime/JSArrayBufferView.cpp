@@ -131,7 +131,7 @@ JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     , m_length(context.length())
     , m_mode(context.mode())
 {
-    setButterflyWithIndexingMask(vm, context.butterfly(), WTF::computeIndexingMask(length()));
+    setButterfly(vm, context.butterfly());
     m_poisonedVector.setWithoutBarrier(context.vector());
 }
 

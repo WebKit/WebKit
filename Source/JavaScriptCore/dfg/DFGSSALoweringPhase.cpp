@@ -83,30 +83,6 @@ private:
 
         case GetByVal: {
             lowerBoundsCheck(m_graph.varArgChild(m_node, 0), m_graph.varArgChild(m_node, 1), m_graph.varArgChild(m_node, 2));
-            auto insertGetMask = [&] () {
-                Node* mask = m_insertionSet.insertNode(
-                    m_nodeIndex, SpecInt32Only, GetArrayMask,
-                    m_node->origin, Edge(m_graph.varArgChild(m_node, 0).node(), ObjectUse));
-                m_graph.varArgChild(m_node, 3) = Edge(mask, Int32Use);
-            };
-            auto arrayMode = m_node->arrayMode();
-            switch (arrayMode.type()) {
-            case Array::Int32:
-            case Array::Contiguous:
-            case Array::Double:
-            case Array::ArrayStorage:
-            case Array::SlowPutArrayStorage:
-                // FIXME: Also support this in the DFG:
-                // https://bugs.webkit.org/show_bug.cgi?id=182711
-                insertGetMask();
-                break;
-            default:
-                // FIXME: Pass in GetArrayLength on GetByVal's over Scoped/Direct Arguments.
-                // https://bugs.webkit.org/show_bug.cgi?id=182714
-                if (arrayMode.isSomeTypedArrayView())
-                    insertGetMask();
-                break;
-            }
             break;
         }
             

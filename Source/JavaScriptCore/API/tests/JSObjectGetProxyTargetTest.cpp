@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,17 +54,30 @@ int testJSObjectGetProxyTarget()
     ExecState* exec = toJS(context);
     VM& vm = *toJS(group);
     JSObjectRef globalObjectProxy = JSContextGetGlobalObject(context);
-    JSProxy* globalObjectProxyObject = jsCast<JSProxy*>(toJS(globalObjectProxy));
-    JSGlobalObject* globalObjectObject = jsCast<JSGlobalObject*>(globalObjectProxyObject->target());
-    Structure* proxyStructure = JSProxy::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), PureForwardingProxyType);
-    JSObjectRef globalObject = toRef(globalObjectObject);
-    JSProxy* jsProxyObject = JSProxy::create(vm, proxyStructure);
+
+    JSGlobalObject* globalObjectObject;
+    JSObjectRef globalObject;
+    JSProxy* jsProxyObject;
+
+    {
+        JSLockHolder locker(vm);
+        JSProxy* globalObjectProxyObject = jsCast<JSProxy*>(toJS(globalObjectProxy));
+        globalObjectObject = jsCast<JSGlobalObject*>(globalObjectProxyObject->target());
+        Structure* proxyStructure = JSProxy::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), PureForwardingProxyType);
+        globalObject = toRef(globalObjectObject);
+        jsProxyObject = JSProxy::create(vm, proxyStructure);
+    }
     
     JSObjectRef array = JSObjectMakeArray(context, 0, nullptr, nullptr);
 
-    Structure* emptyObjectStructure = JSFinalObject::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), 0);
-    JSObject* handler = JSFinalObject::create(vm, emptyObjectStructure);
-    ProxyObject* proxyObjectObject = ProxyObject::create(exec, globalObjectObject, toJS(array), handler);
+    ProxyObject* proxyObjectObject;
+
+    {
+        JSLockHolder locker(vm);
+        Structure* emptyObjectStructure = JSFinalObject::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype(), 0);
+        JSObject* handler = JSFinalObject::create(vm, emptyObjectStructure);
+        proxyObjectObject = ProxyObject::create(exec, globalObjectObject, toJS(array), handler);
+    }
 
     JSObjectRef jsProxy = toRef(jsProxyObject);
     JSObjectRef proxyObject = toRef(proxyObjectObject);
@@ -73,7 +86,10 @@ int testJSObjectGetProxyTarget()
     test("proxy target of non-proxy is null", !JSObjectGetProxyTarget(array));
     test("proxy target of uninitialized JSProxy is null", !JSObjectGetProxyTarget(jsProxy));
     
-    jsProxyObject->setTarget(vm, globalObjectObject);
+    {
+        JSLockHolder locker(vm);
+        jsProxyObject->setTarget(vm, globalObjectObject);
+    }
     
     test("proxy target of initialized JSProxy works", JSObjectGetProxyTarget(jsProxy) == globalObject);
     

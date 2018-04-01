@@ -68,7 +68,6 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(const Signature& sign
     // FIXME the following code assumes that all Wasm::Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemory register as well as the memory size registers.
     ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
-    jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedIndexingMask()), pinnedRegs.indexingMask); // Indexing mask.
     jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemorySize()), sizeRegs[0].sizeRegister); // Memory size.
     jit.loadPtr(JIT::Address(baseMemory, Wasm::Instance::offsetOfCachedMemory()), baseMemory); // Wasm::Memory::void*.
     for (unsigned i = 1; i < sizeRegs.size(); ++i) {

@@ -5215,7 +5215,6 @@ void SpeculativeJIT::compile(Node* node)
     case EntrySwitch:
     case CPUIntrinsic:
     case AssertNotEmpty:
-    case GetArrayMask:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }
@@ -5297,11 +5296,7 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
             
     RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType));
 
-    // X86 doesn't have enough registers to support compute the indexing mask before creating the object. So we do this hack...
-    auto mask = TrustedImm32(0);
-    emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, mask, scratchGPR, scratch2GPR, slowCases);
-    m_jit.emitComputeButterflyIndexingMask(sizeGPR, scratchGPR, scratch2GPR);
-    m_jit.store32(scratch2GPR, MacroAssembler::Address(resultGPR, JSObject::butterflyIndexingMaskOffset()));
+    emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
 
     addSlowPathGenerator(std::make_unique<CallArrayAllocatorWithVariableSizeSlowPathGenerator>(
         slowCases, this, operationNewArrayWithSize, resultGPR,

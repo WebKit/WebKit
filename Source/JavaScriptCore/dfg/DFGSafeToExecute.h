@@ -481,9 +481,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case StringCharCodeAt:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.child(node, 0)));
 
-    case GetArrayMask:
-        return state.forNode(node->child1()).isType(SpecObject);
-
     case ArrayPush:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(graph.varArgChild(node, 1)));
 

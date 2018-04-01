@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -268,11 +268,11 @@ public:
             return false;
         case ALL_INT32_INDEXING_TYPES:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
-            return i < butterfly->vectorLength() && butterfly->contiguous().at(this, i);
+            return i < butterfly->vectorLength() && butterfly->contiguous().at(i);
         case ALL_DOUBLE_INDEXING_TYPES: {
             if (i >= butterfly->vectorLength())
                 return false;
-            double value = butterfly->contiguousDouble().at(this, i);
+            double value = butterfly->contiguousDouble().at(i);
             if (value != value)
                 return false;
             return true;
@@ -290,11 +290,11 @@ public:
         Butterfly* butterfly = this->butterfly();
         switch (indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
-            return jsNumber(butterfly->contiguous().at(this, i).get().asInt32());
+            return jsNumber(butterfly->contiguous().at(i).get().asInt32());
         case ALL_CONTIGUOUS_INDEXING_TYPES:
-            return butterfly->contiguous().at(this, i).get();
+            return butterfly->contiguous().at(i).get();
         case ALL_DOUBLE_INDEXING_TYPES:
-            return JSValue(JSValue::EncodeAsDouble, butterfly->contiguousDouble().at(this, i));
+            return JSValue(JSValue::EncodeAsDouble, butterfly->contiguousDouble().at(i));
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             return butterfly->arrayStorage()->m_vector[i].get();
         default:
@@ -312,19 +312,19 @@ public:
             break;
         case ALL_INT32_INDEXING_TYPES:
             if (i < butterfly->publicLength()) {
-                JSValue result = butterfly->contiguous().at(this, i).get();
+                JSValue result = butterfly->contiguous().at(i).get();
                 ASSERT(result.isInt32() || !result);
                 return result;
             }
             break;
         case ALL_CONTIGUOUS_INDEXING_TYPES:
             if (i < butterfly->publicLength())
-                return butterfly->contiguous().at(this, i).get();
+                return butterfly->contiguous().at(i).get();
             break;
         case ALL_DOUBLE_INDEXING_TYPES: {
             if (i >= butterfly->publicLength())
                 break;
-            double result = butterfly->contiguousDouble().at(this, i);
+            double result = butterfly->contiguousDouble().at(i);
             if (result != result)
                 break;
             return JSValue(JSValue::EncodeAsDouble, result);
@@ -394,7 +394,7 @@ public:
         }
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < butterfly->vectorLength());
-            butterfly->contiguous().at(this, i).set(vm, this, v);
+            butterfly->contiguous().at(i).set(vm, this, v);
             if (i >= butterfly->publicLength())
                 butterfly->setPublicLength(i + 1);
             break;
@@ -410,7 +410,7 @@ public:
                 convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
                 return;
             }
-            butterfly->contiguousDouble().at(this, i) = value;
+            butterfly->contiguousDouble().at(i) = value;
             if (i >= butterfly->publicLength())
                 butterfly->setPublicLength(i + 1);
             break;
@@ -460,7 +460,7 @@ public:
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < butterfly->publicLength());
             ASSERT(i < butterfly->vectorLength());
-            butterfly->contiguous().at(this, i).set(vm, this, v);
+            butterfly->contiguous().at(i).set(vm, this, v);
             break;
         }
         case ALL_DOUBLE_INDEXING_TYPES: {
@@ -475,7 +475,7 @@ public:
                 convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
                 return;
             }
-            butterfly->contiguousDouble().at(this, i) = value;
+            butterfly->contiguousDouble().at(i) = value;
             break;
         }
         case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
@@ -514,7 +514,7 @@ public:
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < butterfly->publicLength());
             ASSERT(i < butterfly->vectorLength());
-            butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
+            butterfly->contiguous().at(i).setWithoutWriteBarrier(v);
             break;
         }
         case ALL_DOUBLE_INDEXING_TYPES: {
@@ -523,7 +523,7 @@ public:
             RELEASE_ASSERT(v.isNumber());
             double value = v.asNumber();
             RELEASE_ASSERT(value == value);
-            butterfly->contiguousDouble().at(this, i) = value;
+            butterfly->contiguousDouble().at(i) = value;
             break;
         }
         case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
@@ -775,11 +775,8 @@ public:
     
     // Call this if you do need to change the structure, or if you changed something about a structure
     // in-place.
-    void nukeStructureAndSetButterfly(VM&, StructureID oldStructureID, Butterfly*, IndexingType newIndexingType);
+    void nukeStructureAndSetButterfly(VM&, StructureID oldStructureID, Butterfly*);
 
-    // Call this only if you are a JSGenericTypedArrayView or are clearing the butterfly.
-    void setButterflyWithIndexingMask(VM&, Butterfly*, uint32_t indexingMask);
-    
     void setStructure(VM&, Structure*);
 
     JS_EXPORT_PRIVATE void convertToDictionary(VM&);
@@ -867,9 +864,6 @@ public:
     {
         return OBJECT_OFFSETOF(JSObject, m_butterfly);
     }
-    static ptrdiff_t butterflyIndexingMaskOffset() { return OBJECT_OFFSETOF(JSObject, m_butterflyIndexingMask); }
-    uintptr_t butterflyIndexingMask() const { return m_butterflyIndexingMask; }
-        
     void* butterflyAddress()
     {
         return &m_butterfly;
@@ -1063,7 +1057,9 @@ private:
     PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
     AuxiliaryBarrier<Butterfly*> m_butterfly;
-    uint32_t m_butterflyIndexingMask { 0 };
+#if USE(JSVALUE32_64)
+    unsigned m_32BitPadding;
+#endif
 };
 
 // JSNonFinalObject is a type of JSObject that has some internal storage,
@@ -1244,28 +1240,8 @@ inline void JSObject::setStructure(VM& vm, Structure* structure)
     JSCell::setStructure(vm, structure);
 }
 
-inline void JSObject::setButterflyWithIndexingMask(VM& vm, Butterfly* butterfly, uint32_t indexingMask)
-{
-    // These are the only two current use cases for this.
-    ASSERT(structure()->hijacksIndexingHeader() || !butterfly);
-    m_butterflyIndexingMask = indexingMask;
-    if (isX86() || vm.heap.mutatorShouldBeFenced()) {
-        WTF::storeStoreFence();
-        m_butterfly.set(vm, this, butterfly);
-        WTF::storeStoreFence();
-        return;
-    }
-
-    m_butterfly.set(vm, this, butterfly);
-}
-
 inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
 {
-    if (hasIndexedProperties(indexingType())) {
-        m_butterflyIndexingMask = butterfly->computeIndexingMask();
-        ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
-    }
-
     if (isX86() || vm.heap.mutatorShouldBeFenced()) {
         WTF::storeStoreFence();
         m_butterfly.set(vm, this, butterfly);
@@ -1276,13 +1252,8 @@ inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
     m_butterfly.set(vm, this, butterfly);
 }
 
-inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStructureID, Butterfly* butterfly, IndexingType newIndexingType)
+inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStructureID, Butterfly* butterfly)
 {
-    if (hasIndexedProperties(newIndexingType)) {
-        m_butterflyIndexingMask = butterfly->computeIndexingMask();
-        ASSERT(m_butterflyIndexingMask >= butterfly->vectorLength());
-    }
-
     if (isX86() || vm.heap.mutatorShouldBeFenced()) {
         setStructureIDDirectly(nuke(oldStructureID));
         WTF::storeStoreFence();
@@ -1323,8 +1294,6 @@ inline JSObject::JSObject(VM& vm, Structure* structure, Butterfly* butterfly)
     : JSCell(vm, structure)
     , m_butterfly(vm, this, butterfly)
 {
-    if (butterfly)
-        m_butterflyIndexingMask = butterfly->computeIndexingMask();
 }
 
 inline JSValue JSObject::getPrototypeDirect(VM& vm) const

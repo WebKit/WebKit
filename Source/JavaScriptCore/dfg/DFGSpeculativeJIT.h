@@ -1375,7 +1375,7 @@ public:
         GPRTemporary& valueTag,
 #endif
         Edge valueUse, JITCompiler::JumpList& slowPathCases, bool isClamped = false);
-    void loadFromIntTypedArray(GPRReg baseReg, GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType);
+    void loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType);
     void setIntTypedArrayLoadResult(Node*, GPRReg resultReg, TypedArrayType, bool canSpeculate = false);
     template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, MacroAssembler::JumpList&, size_t, FunctionExecutable*);
     void compileNewFunction(Node*);
@@ -1463,29 +1463,29 @@ public:
     }
 
     // Allocator for an object of a specific size.
-    template <typename StructureType, typename StorageType, typename MaskType> // StructureType, StorageType and, MaskType can be GPR or ImmPtr.
+    template <typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObject(
         GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure,
-        StorageType storage, MaskType mask, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+        StorageType storage, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
         m_jit.emitAllocateJSObject(
-            resultGPR, allocator, allocatorGPR, structure, storage, mask, scratchGPR, slowPath);
+            resultGPR, allocator, allocatorGPR, structure, storage, scratchGPR, slowPath);
     }
 
-    template <typename ClassType, typename StructureType, typename StorageType, typename MaskType> // StructureType, StorageType and, MaskType can be GPR or ImmPtr.
+    template <typename ClassType, typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObjectWithKnownSize(
-        GPRReg resultGPR, StructureType structure, StorageType storage, MaskType mask, GPRReg scratchGPR1,
+        GPRReg resultGPR, StructureType structure, StorageType storage, GPRReg scratchGPR1,
         GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath, size_t size)
     {
-        m_jit.emitAllocateJSObjectWithKnownSize<ClassType>(*m_jit.vm(), resultGPR, structure, storage, mask, scratchGPR1, scratchGPR2, slowPath, size);
+        m_jit.emitAllocateJSObjectWithKnownSize<ClassType>(*m_jit.vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath, size);
     }
 
     // Convenience allocator for a built-in object.
-    template <typename ClassType, typename StructureType, typename StorageType, typename MaskType> // StructureType, StorageType and, MaskType can be GPR or ImmPtr.
-    void emitAllocateJSObject(GPRReg resultGPR, StructureType structure, StorageType storage, MaskType mask,
+    template <typename ClassType, typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
+    void emitAllocateJSObject(GPRReg resultGPR, StructureType structure, StorageType storage,
         GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
     {
-        m_jit.emitAllocateJSObject<ClassType>(*m_jit.vm(), resultGPR, structure, storage, mask, scratchGPR1, scratchGPR2, slowPath);
+        m_jit.emitAllocateJSObject<ClassType>(*m_jit.vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath);
     }
 
     template <typename ClassType, typename StructureType> // StructureType and StorageType can be GPR or ImmPtr.
@@ -1654,10 +1654,6 @@ public:
     Node* m_currentNode;
     NodeType m_lastGeneratedNode;
     unsigned m_indexInBlock;
-
-    enum IndexMaskingMode { IndexMaskingDisabled, IndexMaskingEnabled };
-    
-    IndexMaskingMode m_indexMaskingMode;
 
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;

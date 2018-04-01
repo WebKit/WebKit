@@ -317,7 +317,6 @@ private:
                     escapeBasedOnArrayMode(node->arrayMode(), m_graph.varArgChild(node, 0), node);
                     escape(m_graph.varArgChild(node, 1), node);
                     escape(m_graph.varArgChild(node, 2), node);
-                    escape(m_graph.varArgChild(node, 3), node);
                     break;
 
                 case GetArrayLength:
@@ -325,9 +324,6 @@ private:
                     escape(node->child2(), node);
                     break;
 
-                case GetArrayMask:
-                    break;
-                
                 case NewArrayWithSpread: {
                     BitVector* bitVector = node->bitVector();
                     bool isWatchingHavingABadTimeWatchpoint = m_graph.isWatchingHavingABadTimeWatchpoint(node); 
@@ -726,20 +722,6 @@ private:
                     break;
                 }
 
-                case GetArrayMask: {
-                    Node* candidate = node->child1().node();
-                    if (!isEliminatedAllocation(candidate))
-                        break;
-                    
-                    // NOTE: This is valid because the only user of this node at the moment is GetByVal.
-                    // If the candidate is eliminated, it must also be eliminated for all GetByVal users.
-                    // Therefore, we'll transform those GetByVal nodes to no longer use us. If we introduce
-                    // other users of this node, we'll need to change this code. That would be easy: just
-                    // introduce a ComputeArrayMask node, and transform this into ComputeArrayMask(getArrayLength(candidate)).
-                    node->convertToConstant(m_graph.freeze(jsNumber(0)));
-                    break;
-                }
-                    
                 case GetByVal: {
                     // FIXME: For ClonedArguments, we would have already done a separate bounds check.
                     // This code will cause us to have two bounds checks - the original one that we

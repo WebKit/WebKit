@@ -81,7 +81,6 @@ public:
         if (m_memory != nullptr) {
             m_cachedMemory = memory()->memory();
             m_cachedMemorySize = memory()->size();
-            m_cachedIndexingMask = memory()->indexingMask();
         }
     }
     void setTable(Ref<Table>&& table) { m_table = WTFMove(table); }
@@ -97,7 +96,6 @@ public:
     static ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(Instance, m_table); }
     static ptrdiff_t offsetOfCachedMemory() { return OBJECT_OFFSETOF(Instance, m_cachedMemory); }
     static ptrdiff_t offsetOfCachedMemorySize() { return OBJECT_OFFSETOF(Instance, m_cachedMemorySize); }
-    static ptrdiff_t offsetOfCachedIndexingMask() { return OBJECT_OFFSETOF(Instance, m_cachedIndexingMask); }
     static ptrdiff_t offsetOfPointerToTopEntryFrame() { return OBJECT_OFFSETOF(Instance, m_pointerToTopEntryFrame); }
 
     static ptrdiff_t offsetOfPointerToActualStackLimit() { return OBJECT_OFFSETOF(Instance, m_pointerToActualStackLimit); }
@@ -150,7 +148,6 @@ private:
     Context* m_context { nullptr };
     void* m_cachedMemory { nullptr };
     size_t m_cachedMemorySize { 0 };
-    size_t m_cachedIndexingMask { 0 };
     Ref<Module> m_module;
     RefPtr<CodeBlock> m_codeBlock;
     RefPtr<Memory> m_memory;

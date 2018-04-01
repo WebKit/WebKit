@@ -61,7 +61,7 @@ ClonedArguments* ClonedArguments::createEmpty(
             return 0;
 
         for (unsigned i = length; i < vectorLength; ++i)
-            butterfly->contiguous().at(std::numeric_limits<uint32_t>::max(), i).clear();
+            butterfly->contiguous().at(i).clear();
     }
     
     ClonedArguments* result =

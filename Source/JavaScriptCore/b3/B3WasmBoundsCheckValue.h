@@ -59,7 +59,6 @@ public:
     unsigned offset() const { return m_offset; }
     Type boundsType() const { return m_boundsType; }
     Bounds bounds() const { return m_bounds; }
-    GPRReg pinnedIndexingMask() const { return m_pinnedIndexingMask; };
 
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
@@ -69,13 +68,12 @@ protected:
 private:
     friend class Procedure;
 
-    JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, GPRReg pinnedGPR, GPRReg pinnedIndexingMask, Value* ptr, unsigned offset);
+    JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, GPRReg pinnedGPR, Value* ptr, unsigned offset);
     JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, Value* ptr, unsigned offset, size_t maximum);
 
     unsigned m_offset;
     Type m_boundsType;
     Bounds m_bounds;
-    GPRReg m_pinnedIndexingMask { InvalidGPRReg };
 
 };
 

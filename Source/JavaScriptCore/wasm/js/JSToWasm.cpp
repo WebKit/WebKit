@@ -180,7 +180,6 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
 
         GPRReg currentInstanceGPR = Context::useFastTLS() ? baseMemory : wasmContextInstanceGPR;
         if (mode != MemoryMode::Signaling) {
-            jit.loadPtr(CCallHelpers::Address(currentInstanceGPR, Wasm::Instance::offsetOfCachedIndexingMask()), pinnedRegs.indexingMask);
             const auto& sizeRegs = pinnedRegs.sizeRegisters;
             ASSERT(sizeRegs.size() >= 1);
             ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.

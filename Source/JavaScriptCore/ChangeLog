@@ -1,5 +1,206 @@
 2018-03-31  Filip Pizlo  <fpizlo@apple.com>
 
+        JSObject shouldn't do index masking
+        https://bugs.webkit.org/show_bug.cgi?id=184194
+
+        Reviewed by Yusuke Suzuki.
+        
+        Remove index masking, because it's not the way we'll mitigate Spectre.
+
+        * API/tests/JSObjectGetProxyTargetTest.cpp:
+        (testJSObjectGetProxyTarget):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3WasmBoundsCheckValue.cpp:
+        (JSC::B3::WasmBoundsCheckValue::WasmBoundsCheckValue):
+        (JSC::B3::WasmBoundsCheckValue::dumpMeta const):
+        * b3/B3WasmBoundsCheckValue.h:
+        (JSC::B3::WasmBoundsCheckValue::bounds const):
+        (JSC::B3::WasmBoundsCheckValue::pinnedIndexingMask const): Deleted.
+        * b3/testb3.cpp:
+        (JSC::B3::testWasmBoundsCheck):
+        (JSC::B3::run):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::loadFromIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        (JSC::DFG::SpeculativeJIT::compileNewRegexp):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        (JSC::DFG::SpeculativeJIT::compileNewObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObjectWithKnownSize):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::pointerIntoTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayMask): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::maskedIndex): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::computeButterflyIndexingMask): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateVariableSizedJSObject):
+        (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOperations.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Butterfly.h:
+        (JSC::ContiguousData::at const):
+        (JSC::ContiguousData::at):
+        (JSC::Butterfly::computeIndexingMask const): Deleted.
+        * runtime/ButterflyInlines.h:
+        (JSC::ContiguousData<T>::at const): Deleted.
+        (JSC::ContiguousData<T>::at): Deleted.
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+        * runtime/JSFixedArray.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::createInitialForValueAndSet):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::countElements):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        (JSC::JSObject::getEnumerableLength):
+        * runtime/JSObject.h:
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly const):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::initializeIndexWithoutBarrier):
+        (JSC::JSObject::butterflyOffset):
+        (JSC::JSObject::setButterfly):
+        (JSC::JSObject::nukeStructureAndSetButterfly):
+        (JSC::JSObject::JSObject):
+        (JSC::JSObject::butterflyIndexingMaskOffset): Deleted.
+        (JSC::JSObject::butterflyIndexingMask const): Deleted.
+        (JSC::JSObject::setButterflyWithIndexingMask): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::prepareToPutDirectWithoutTransition):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::load):
+        (JSC::Wasm::B3IRGenerator::store):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::updateCachedMemory):
+        (JSC::Wasm::Instance::offsetOfCachedMemorySize):
+        (JSC::Wasm::Instance::offsetOfCachedIndexingMask): Deleted.
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::grow):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::size const):
+        (JSC::Wasm::Memory::offsetOfSize):
+        (JSC::Wasm::Memory::indexingMask): Deleted.
+        (JSC::Wasm::Memory::offsetOfIndexingMask): Deleted.
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave const):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+
+2018-03-31  Filip Pizlo  <fpizlo@apple.com>
+
         JSC crash in JIT code with for-of loop and Array/Set iterators
         https://bugs.webkit.org/show_bug.cgi?id=183174
 

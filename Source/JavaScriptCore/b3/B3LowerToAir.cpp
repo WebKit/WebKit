@@ -3265,10 +3265,6 @@ private:
             }
 
             append(Inst(Air::WasmBoundsCheck, value, ptrPlusImm, limit));
-            // Hypothetically, this could write to the pointer value. Which we didn't claim we did but since we assume the indexing mask
-            // should not actually change the value of the pointer we should be OK.
-            if (value->pinnedIndexingMask() != InvalidGPRReg)
-                append(And32, Arg(value->pinnedIndexingMask()), pointer, pointer);
             return;
         }
 

@@ -92,7 +92,7 @@ struct NumericSequenceConverter {
     {
         if (indexingType == JSC::Int32Shape) {
             for (unsigned i = 0; i < length; i++) {
-                auto indexValue = array->butterfly()->contiguousInt32().at(array, i).get();
+                auto indexValue = array->butterfly()->contiguousInt32().at(i).get();
                 ASSERT(!indexValue || indexValue.isInt32());
                 if (!indexValue)
                     result.uncheckedAppend(0);
@@ -104,7 +104,7 @@ struct NumericSequenceConverter {
 
         ASSERT(indexingType == JSC::DoubleShape);
         for (unsigned i = 0; i < length; i++) {
-            auto doubleValue = array->butterfly()->contiguousDouble().at(array, i);
+            auto doubleValue = array->butterfly()->contiguousDouble().at(i);
             if (std::isnan(doubleValue))
                 result.uncheckedAppend(0);
             else {
@@ -210,7 +210,7 @@ struct SequenceConverter {
 
         if (indexingType == JSC::ContiguousShape) {
             for (unsigned i = 0; i < length; i++) {
-                auto indexValue = array->butterfly()->contiguous().at(array, i).get();
+                auto indexValue = array->butterfly()->contiguous().at(i).get();
                 if (!indexValue)
                     indexValue = JSC::jsUndefined();
 

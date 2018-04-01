@@ -1622,7 +1622,6 @@ _llint_op_get_by_val:
 
 .opGetByValIsContiguous:
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValSlow
-    andi JSObject::m_butterflyIndexingMask[t0], t1
     loadi TagOffset[t3, t1, 8], t2
     loadi PayloadOffset[t3, t1, 8], t1
     jmp .opGetByValDone
@@ -1630,7 +1629,6 @@ _llint_op_get_by_val:
 .opGetByValNotContiguous:
     bineq t2, DoubleShape, .opGetByValNotDouble
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t3], .opGetByValSlow
-    andi JSObject::m_butterflyIndexingMask[t0], t1
     loadd [t3, t1, 8], ft0
     bdnequn ft0, ft0, .opGetByValSlow
     # FIXME: This could be massively optimized.
@@ -1642,7 +1640,6 @@ _llint_op_get_by_val:
     subi ArrayStorageShape, t2
     bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValSlow
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValSlow
-    andi JSObject::m_butterflyIndexingMask[t0], t1
     loadi ArrayStorage::m_vector + TagOffset[t3, t1, 8], t2
     loadi ArrayStorage::m_vector + PayloadOffset[t3, t1, 8], t1
 

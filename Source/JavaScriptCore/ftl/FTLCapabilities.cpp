@@ -337,7 +337,6 @@ inline CapabilityLevel canCompile(Node* node)
     case AtomicsIsLockFree:
     case InitializeEntrypointArguments:
     case CPUIntrinsic:
-    case GetArrayMask:
     case GetArrayLength:
     case GetVectorLength:
     case GetByVal:

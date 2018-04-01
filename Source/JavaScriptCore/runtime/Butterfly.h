@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,8 @@ struct ContiguousData {
         UNUSED_PARAM(length);
     }
 
-    const T& at(const uint32_t mask, size_t index) const { ASSERT(index < m_length); return m_data[index & mask]; }
-    T& at(const uint32_t mask, size_t index) { ASSERT(index < m_length);  return m_data[index & mask]; }
-
-    const T& at(const JSObject* base, size_t index) const;
-    T& at(const JSObject* base, size_t index);
+    const T& at(size_t index) const { ASSERT(index < m_length); return m_data[index]; }
+    T& at(size_t index) { ASSERT(index < m_length);  return m_data[index]; }
 
     T* data() const { return m_data; }
 #if !ASSERT_DISABLED
@@ -122,8 +119,6 @@ public:
     uint32_t vectorLength() const { return indexingHeader()->vectorLength(); }
     void setPublicLength(uint32_t value) { indexingHeader()->setPublicLength(value); }
     void setVectorLength(uint32_t value) { indexingHeader()->setVectorLength(value); }
-
-    uint32_t computeIndexingMask() const { return WTF::computeIndexingMask(vectorLength()); }
 
     template<typename T>
     T* indexingPayload() { return reinterpret_cast_ptr<T*>(this); }

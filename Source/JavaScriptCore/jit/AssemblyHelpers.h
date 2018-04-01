@@ -1532,27 +1532,26 @@ public:
         emitStoreStructureWithTypeInfo(structure, resultGPR, scratchGPR);
     }
     
-    template<typename StructureType, typename StorageType, typename MaskType>
-    void emitAllocateJSObject(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure, StorageType storage, MaskType mask, GPRReg scratchGPR, JumpList& slowPath)
+    template<typename StructureType, typename StorageType>
+    void emitAllocateJSObject(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure, StorageType storage, GPRReg scratchGPR, JumpList& slowPath)
     {
         emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
         storePtr(storage, Address(resultGPR, JSObject::butterflyOffset()));
-        store32(mask, Address(resultGPR, JSObject::butterflyIndexingMaskOffset()));
     }
     
-    template<typename ClassType, typename StructureType, typename StorageType, typename MaskType>
+    template<typename ClassType, typename StructureType, typename StorageType>
     void emitAllocateJSObjectWithKnownSize(
-        VM& vm, GPRReg resultGPR, StructureType structure, StorageType storage, MaskType mask, GPRReg scratchGPR1,
+        VM& vm, GPRReg resultGPR, StructureType structure, StorageType storage, GPRReg scratchGPR1,
         GPRReg scratchGPR2, JumpList& slowPath, size_t size)
     {
         Allocator allocator = subspaceFor<ClassType>(vm)->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
-        emitAllocateJSObject(resultGPR, JITAllocator::constant(allocator), scratchGPR1, structure, storage, mask, scratchGPR2, slowPath);
+        emitAllocateJSObject(resultGPR, JITAllocator::constant(allocator), scratchGPR1, structure, storage, scratchGPR2, slowPath);
     }
     
-    template<typename ClassType, typename StructureType, typename StorageType, typename MaskType>
-    void emitAllocateJSObject(VM& vm, GPRReg resultGPR, StructureType structure, StorageType storage, MaskType mask, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
+    template<typename ClassType, typename StructureType, typename StorageType>
+    void emitAllocateJSObject(VM& vm, GPRReg resultGPR, StructureType structure, StorageType storage, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
     {
-        emitAllocateJSObjectWithKnownSize<ClassType>(vm, resultGPR, structure, storage, mask, scratchGPR1, scratchGPR2, slowPath, ClassType::allocationSize(0));
+        emitAllocateJSObjectWithKnownSize<ClassType>(vm, resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath, ClassType::allocationSize(0));
     }
     
     // allocationSize can be aliased with any of the other input GPRs. If it's not aliased then it
@@ -1572,7 +1571,6 @@ public:
     {
         emitAllocateVariableSizedCell<ClassType>(vm, resultGPR, structure, allocationSize, scratchGPR1, scratchGPR2, slowPath);
         storePtr(TrustedImmPtr(nullptr), Address(resultGPR, JSObject::butterflyOffset()));
-        store32(TrustedImm32(0), Address(resultGPR, JSObject::butterflyIndexingMaskOffset()));
     }
 
     void emitConvertValueToBoolean(VM&, JSValueRegs value, GPRReg result, GPRReg scratchIfShouldCheckMasqueradesAsUndefined, FPRReg, FPRReg, bool shouldCheckMasqueradesAsUndefined, JSGlobalObject*, bool negateResult = false);
@@ -1581,8 +1579,7 @@ public:
     void emitAllocateDestructibleObject(VM& vm, GPRReg resultGPR, Structure* structure, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
     {
         auto butterfly = TrustedImmPtr(nullptr);
-        auto mask = TrustedImm32(0);
-        emitAllocateJSObject<ClassType>(vm, resultGPR, TrustedImmPtr(structure), butterfly, mask, scratchGPR1, scratchGPR2, slowPath);
+        emitAllocateJSObject<ClassType>(vm, resultGPR, TrustedImmPtr(structure), butterfly, scratchGPR1, scratchGPR2, slowPath);
         storePtr(TrustedImmPtr(PoisonedClassInfoPtr(structure->classInfo()).bits()), Address(resultGPR, JSDestructibleObject::classInfoOffset()));
     }
     

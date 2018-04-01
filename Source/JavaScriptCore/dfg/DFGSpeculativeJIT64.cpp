@@ -2731,11 +2731,9 @@ void SpeculativeJIT::compile(Node* node)
         case Array::Int32:
         case Array::Contiguous: {
             if (node->arrayMode().isInBounds()) {
-                SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
                 SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
                 StorageOperand storage(this, m_graph.varArgChild(node, 2));
 
-                GPRReg baseReg = base.gpr();
                 GPRReg propertyReg = property.gpr();
                 GPRReg storageReg = storage.gpr();
 
@@ -2746,8 +2744,6 @@ void SpeculativeJIT::compile(Node* node)
                 
                 GPRTemporary result(this);
 
-                if (m_indexMaskingMode == IndexMaskingEnabled)
-                    m_jit.and32(MacroAssembler::Address(baseReg, JSObject::butterflyIndexingMaskOffset()), propertyReg);
                 m_jit.load64(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), result.gpr());
                 if (node->arrayMode().isSaneChain()) {
                     ASSERT(node->arrayMode().type() == Array::Contiguous);
@@ -2782,8 +2778,6 @@ void SpeculativeJIT::compile(Node* node)
             
             slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
 
-            if (m_indexMaskingMode == IndexMaskingEnabled)
-                m_jit.and32(MacroAssembler::Address(baseReg, JSObject::butterflyIndexingMaskOffset()), propertyReg);
             m_jit.load64(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), resultReg);
             slowCases.append(m_jit.branchTest64(MacroAssembler::Zero, resultReg));
             
@@ -2798,11 +2792,9 @@ void SpeculativeJIT::compile(Node* node)
 
         case Array::Double: {
             if (node->arrayMode().isInBounds()) {
-                SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
                 SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
                 StorageOperand storage(this, m_graph.varArgChild(node, 2));
 
-                GPRReg baseReg = base.gpr();
                 GPRReg propertyReg = property.gpr();
                 GPRReg storageReg = storage.gpr();
 
@@ -2814,8 +2806,6 @@ void SpeculativeJIT::compile(Node* node)
 
                 speculationCheck(OutOfBounds, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
 
-                if (m_indexMaskingMode == IndexMaskingEnabled)
-                    m_jit.and32(MacroAssembler::Address(baseReg, JSObject::butterflyIndexingMaskOffset()), propertyReg);
                 m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), resultReg);
                 if (!node->arrayMode().isSaneChain())
                     speculationCheck(LoadFromHole, JSValueRegs(), 0, m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, resultReg, resultReg));
@@ -2843,8 +2833,6 @@ void SpeculativeJIT::compile(Node* node)
             
             slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
 
-            if (m_indexMaskingMode == IndexMaskingEnabled)
-                m_jit.and32(MacroAssembler::Address(baseReg, JSObject::butterflyIndexingMaskOffset()), propertyReg);
             m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), tempReg);
             slowCases.append(m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, tempReg, tempReg));
             boxDouble(tempReg, resultReg);
@@ -3296,7 +3284,7 @@ void SpeculativeJIT::compile(Node* node)
         
         JITCompiler::Label loop = m_jit.label();
         
-        loadFromIntTypedArray(baseGPR, storageGPR, indexGPR, oldValueGPR, type);
+        loadFromIntTypedArray(storageGPR, indexGPR, oldValueGPR, type);
         m_jit.move(oldValueGPR, newValueGPR);
         m_jit.move(oldValueGPR, resultGPR);
         
@@ -5732,7 +5720,6 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewArrayBuffer:
     case IdentityWithProfile:
     case CPUIntrinsic:
-    case GetArrayMask:
         DFG_CRASH(m_jit.graph(), node, "Unexpected node");
         break;
     }
@@ -5842,12 +5829,10 @@ void SpeculativeJIT::emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, 
 void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObject, GPRReg resultGPR, GPRReg sizeGPR, IndexingType indexingType, bool shouldConvertLargeSizeToArrayStorage)
 {
     GPRTemporary storage(this);
-    GPRTemporary indexingMask(this);
     GPRTemporary scratch(this);
     GPRTemporary scratch2(this);
     
     GPRReg storageGPR = storage.gpr();
-    GPRReg indexingMaskGPR = indexingMask.gpr();
     GPRReg scratchGPR = scratch.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
     
@@ -5865,11 +5850,10 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     else
         m_jit.move(TrustedImm64(JSValue::encode(JSValue())), scratchGPR);
     emitInitializeButterfly(storageGPR, sizeGPR, JSValueRegs(scratchGPR), scratch2GPR);
-    m_jit.emitComputeButterflyIndexingMask(sizeGPR, scratchGPR, indexingMaskGPR);
 
     RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType));
 
-    emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, indexingMaskGPR, scratchGPR, scratch2GPR, slowCases);
+    emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), storageGPR, scratchGPR, scratch2GPR, slowCases);
     
     m_jit.mutatorFence(*m_jit.vm());
     

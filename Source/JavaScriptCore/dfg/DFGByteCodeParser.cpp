@@ -4988,11 +4988,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 handleGetById(currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus, AccessType::Get, OPCODE_LENGTH(op_get_by_val));
             else {
                 ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
+                // FIXME: We could consider making this not vararg, since it only uses three child
+                // slots.
+                // https://bugs.webkit.org/show_bug.cgi?id=184192
                 addVarArgChild(base);
                 addVarArgChild(property);
                 addVarArgChild(0); // Leave room for property storage.
-                if (isFTL(m_graph.m_plan.mode))
-                    addVarArgChild(0); // Leave room for the array mask.
                 Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(VirtualRegister(currentInstruction[1].u.operand), getByVal);

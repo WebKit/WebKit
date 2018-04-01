@@ -2199,7 +2199,6 @@ private:
         case GetGlobalThis:
         case ExtractValueFromWeakMapGet:
         case CPUIntrinsic:
-        case GetArrayMask:
             break;
 #else
         default:

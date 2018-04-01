@@ -1067,7 +1067,6 @@ private:
             break;
         }
 
-        case GetArrayMask:
         case PutByValAlias:
         case DoubleAsInt32:
         case CheckArray:

@@ -35,11 +35,10 @@ WasmBoundsCheckValue::~WasmBoundsCheckValue()
 {
 }
 
-WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, GPRReg pinnedSize, GPRReg pinnedIndexingMask, Value* ptr, unsigned offset)
+WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, GPRReg pinnedSize, Value* ptr, unsigned offset)
     : Value(CheckedOpcode, WasmBoundsCheck, origin, ptr)
     , m_offset(offset)
     , m_boundsType(Type::Pinned)
-    , m_pinnedIndexingMask(pinnedIndexingMask)
 {
     m_bounds.pinnedSize = pinnedSize;
 }
@@ -65,7 +64,7 @@ void WasmBoundsCheckValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     switch (m_boundsType) {
     case Type::Pinned:
-        out.print(comma, "offset = ", m_offset, comma, "pinnedSize = ", m_bounds.pinnedSize, comma, "pinnedMask", m_pinnedIndexingMask);
+        out.print(comma, "offset = ", m_offset, comma, "pinnedSize = ", m_bounds.pinnedSize);
         break;
     case Type::Maximum:
         out.print(comma, "offset = ", m_offset, comma, "maximum = ", m_bounds.maximum);

@@ -92,8 +92,7 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
     else {
         JumpList slowCases;
         auto butterfly = TrustedImmPtr(nullptr);
-        auto mask = TrustedImm32(0);
-        emitAllocateJSObject(resultReg, JITAllocator::constant(allocator), allocatorReg, TrustedImmPtr(structure), butterfly, mask, scratchReg, slowCases);
+        emitAllocateJSObject(resultReg, JITAllocator::constant(allocator), allocatorReg, TrustedImmPtr(structure), butterfly, scratchReg, slowCases);
         emitInitializeInlineStorage(resultReg, structure->inlineCapacity());
         addSlowCase(slowCases);
         emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -850,8 +849,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
 
     JumpList slowCases;
     auto butterfly = TrustedImmPtr(nullptr);
-    auto mask = TrustedImm32(0);
-    emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, mask, scratchReg, slowCases);
+    emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, scratchReg, slowCases);
     emitGetVirtualRegister(callee, scratchReg);
     loadPtr(Address(scratchReg, JSFunction::offsetOfRareData()), scratchReg);
     xorPtr(TrustedImmPtr(JSFunctionPoison::key()), scratchReg);

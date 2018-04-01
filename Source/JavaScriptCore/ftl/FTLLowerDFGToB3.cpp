@@ -750,9 +750,6 @@ private:
         case GetArrayLength:
             compileGetArrayLength();
             break;
-        case GetArrayMask:
-            compileGetArrayMask();
-            break;
         case GetVectorLength:
             compileGetVectorLength();
             break;
@@ -3216,10 +3213,9 @@ private:
         LValue args[2];
         for (unsigned i = numExtraArgs; i--;)
             args[i] = getIntTypedArrayStoreOperand(argEdges[i]);
-        LValue base = lowCell(baseEdge);
         LValue storage = lowStorage(storageEdge);
 
-        TypedPointer pointer = pointerIntoTypedArray(base, storage, index, type);
+        TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
         Width width = widthForBytes(elementSize(type));
         
         LValue atomicValue;
@@ -3648,11 +3644,6 @@ private:
         }
     }
     
-    void compileGetArrayMask()
-    {
-        setInt32(m_out.load32NonNegative(lowObject(m_node->child1()), m_heaps.JSObject_butterflyMask));
-    }
-
     void compileGetArrayLength()
     {
         switch (m_node->arrayMode().type()) {
@@ -3745,10 +3736,9 @@ private:
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
 
             LValue base = lowCell(m_graph.varArgChild(m_node, 0));
-            LValue mask = lowInt32(m_graph.varArgChild(m_node, 3));
 
             if (m_node->arrayMode().isInBounds()) {
-                LValue result = m_out.load64(maskedIndex(heap, storage, index, mask, m_graph.varArgChild(m_node, 1)));
+                LValue result = m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
                 LValue isHole = m_out.isZero64(result);
                 if (m_node->arrayMode().isSaneChain()) {
                     DFG_ASSERT(
@@ -3772,7 +3762,7 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
 
-            LValue fastResultValue = m_out.load64(maskedIndex(heap, storage, index, mask, m_graph.varArgChild(m_node, 1)));
+            LValue fastResultValue = m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.branch(
                 m_out.isZero64(fastResultValue), rarely(slowCase), usually(continuation));
@@ -3791,13 +3781,12 @@ private:
             LValue base = lowCell(m_graph.varArgChild(m_node, 0));
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
-            LValue mask = lowInt32(m_graph.varArgChild(m_node, 3));
             
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
             
             if (m_node->arrayMode().isInBounds()) {
                 LValue result = m_out.loadDouble(
-                    maskedIndex(heap, storage, index, mask, m_graph.varArgChild(m_node, 1)));
+                    baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
                 
                 if (!m_node->arrayMode().isSaneChain()) {
                     speculate(
@@ -3820,7 +3809,7 @@ private:
             
             LBasicBlock lastNext = m_out.appendTo(inBounds, boxPath);
             LValue doubleValue = m_out.loadDouble(
-                maskedIndex(heap, storage, index, mask, m_graph.varArgChild(m_node, 1)));
+                baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
             m_out.branch(
                 m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue),
                 rarely(slowCase), usually(boxPath));
@@ -3983,12 +3972,11 @@ private:
             LValue base = lowCell(m_graph.varArgChild(m_node, 0));
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
-            LValue mask = lowInt32(m_graph.varArgChild(m_node, 3));
 
             IndexedAbstractHeap& heap = m_heaps.ArrayStorage_vector;
 
             if (m_node->arrayMode().isInBounds()) {
-                LValue result = m_out.load64(maskedIndex(heap, storage, index, mask, m_graph.varArgChild(m_node, 1)));
+                LValue result = m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
                 speculate(LoadFromHole, noValue(), 0, m_out.isZero64(result));
                 setJSValue(result);
                 break;
@@ -4003,7 +3991,7 @@ private:
                 rarely(slowCase), usually(inBounds));
 
             LBasicBlock lastNext = m_out.appendTo(inBounds, slowCase);
-            LValue result = m_out.load64(maskedIndex(heap, storage, index, mask, m_graph.varArgChild(m_node, 1)));
+            LValue result = m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
             ValueFromBlock fastResult = m_out.anchor(result);
             m_out.branch(
                 m_out.isZero64(result),
@@ -4025,15 +4013,13 @@ private:
         }
             
         default: {
-            LValue base = lowCell(m_graph.varArgChild(m_node, 0));
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
-            LValue mask = lowInt32(m_graph.varArgChild(m_node, 3));
             
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                TypedPointer pointer = pointerIntoTypedArray(base, storage, index, type, mask);
+                TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
                 
                 if (isInt(type)) {
                     LValue result = loadFromIntTypedArray(pointer, type);
@@ -5054,7 +5040,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         LValue fastObject = allocateObject<JSLexicalEnvironment>(
-            JSLexicalEnvironment::allocationSize(table), structure, m_out.intPtrZero, m_out.int32Zero, slowPath);
+            JSLexicalEnvironment::allocationSize(table), structure, m_out.intPtrZero, slowPath);
         
         // We don't need memory barriers since we just fast-created the activation, so the
         // activation must be young.
@@ -5133,10 +5119,10 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         LValue fastObject =
-            isGeneratorFunction ? allocateObject<JSGeneratorFunction>(structure, m_out.intPtrZero, m_out.int32Zero, slowPath) :
-            isAsyncFunction ? allocateObject<JSAsyncFunction>(structure, m_out.intPtrZero, m_out.int32Zero, slowPath) :
-            isAsyncGeneratorFunction ? allocateObject<JSAsyncGeneratorFunction>(structure, m_out.intPtrZero, m_out.int32Zero, slowPath) :
-            allocateObject<JSFunction>(structure, m_out.intPtrZero, m_out.int32Zero, slowPath);
+            isGeneratorFunction ? allocateObject<JSGeneratorFunction>(structure, m_out.intPtrZero, slowPath) :
+            isAsyncFunction ? allocateObject<JSAsyncFunction>(structure, m_out.intPtrZero, slowPath) :
+            isAsyncGeneratorFunction ? allocateObject<JSAsyncGeneratorFunction>(structure, m_out.intPtrZero, slowPath) :
+            allocateObject<JSFunction>(structure, m_out.intPtrZero, slowPath);
         
         
         // We don't need memory barriers since we just fast-created the function, so it
@@ -5221,7 +5207,7 @@ private:
         m_out.store32(length.value, fastStorage, m_heaps.DirectArguments_Storage_length);
         m_out.store32(m_out.constInt32(minCapacity), fastStorage, m_heaps.DirectArguments_Storage_minCapacity);
         
-        fastObject = allocateObject<DirectArguments>(structure, m_out.intPtrZero, m_out.intPtrZero, slowPath);
+        fastObject = allocateObject<DirectArguments>(structure, m_out.intPtrZero, slowPath);
  
         m_out.storePtr(m_out.bitXor(fastStorage, m_out.constIntPtr(DirectArgumentsPoison::key())), fastObject, m_heaps.DirectArguments_storage);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_mappedArguments);
@@ -5397,7 +5383,7 @@ private:
 
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
 
-        LValue fastResultValue = allocateObject<StringObject>(structure, m_out.intPtrZero, m_out.int32Zero, slowCase);
+        LValue fastResultValue = allocateObject<StringObject>(structure, m_out.intPtrZero, slowCase);
         m_out.storePtr(m_out.constIntPtr(PoisonedClassInfoPtr(StringObject::info()).bits()), fastResultValue, m_heaps.JSDestructibleObject_classInfo);
         m_out.store64(string, fastResultValue, m_heaps.JSWrapperObject_internalValue);
         mutatorFence();
@@ -5957,9 +5943,8 @@ private:
 
             ValueFromBlock haveStorage = m_out.anchor(storage);
 
-            LValue indexingMask = computeButterflyIndexingMask(size);
             LValue fastResultValue =
-                allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, indexingMask, slowCase);
+                allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, slowCase);
 
 #if ENABLE(POISON)
             storage = m_out.bitXor(m_out.constIntPtr(JSArrayBufferView::poisonFor(typedArrayType)), storage);
@@ -10414,9 +10399,8 @@ private:
 
                 m_out.store32(vectorLength, fastButterflyValue, m_heaps.Butterfly_vectorLength);
 
-                LValue mask = computeButterflyIndexingMask(vectorLength);
                 LValue fastObjectValue = allocateObject(
-                    m_out.constInt32(cellAllocator.offset()), structure, fastButterflyValue, mask, slowPath);
+                    m_out.constInt32(cellAllocator.offset()), structure, fastButterflyValue, slowPath);
 
                 ValueFromBlock fastObject = m_out.anchor(fastObjectValue);
                 ValueFromBlock fastButterfly = m_out.anchor(fastButterflyValue);
@@ -10623,7 +10607,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
 
         LValue fastObject = allocateObject<JSLexicalEnvironment>(
-            JSLexicalEnvironment::allocationSize(table), structure, m_out.intPtrZero, m_out.int32Zero, slowPath);
+            JSLexicalEnvironment::allocationSize(table), structure, m_out.intPtrZero, slowPath);
 
         m_out.storePtr(scope, fastObject, m_heaps.JSScope_next);
         m_out.storePtr(weakPointer(table), fastObject, m_heaps.JSSymbolTableObject_symbolTable);
@@ -10810,7 +10794,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
 
         auto structure = m_graph.registerStructure(m_graph.globalObjectFor(m_node->origin.semantic)->regExpStructure());
-        LValue fastResultValue = allocateObject<RegExpObject>(structure, m_out.intPtrZero, m_out.int32Zero, slowCase);
+        LValue fastResultValue = allocateObject<RegExpObject>(structure, m_out.intPtrZero, slowCase);
         m_out.storePtr(frozenPointer(regexp), fastResultValue, m_heaps.RegExpObject_regExp);
         m_out.store64(lastIndex, fastResultValue, m_heaps.RegExpObject_lastIndex);
         m_out.store32As8(m_out.constInt32(true), m_out.address(fastResultValue, m_heaps.RegExpObject_lastIndexIsWritable));
@@ -11601,15 +11585,6 @@ private:
     {
         return m_out.baseIndex(
             heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset);
-    }
-
-    TypedPointer maskedIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, LValue mask, Edge edge, ptrdiff_t offset = 0)
-    {
-        if (m_indexMaskingMode == IndexMaskingDisabled)
-            return baseIndex(heap, storage, index, edge, offset);
-
-        return m_out.baseIndex(
-            heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset, m_out.zeroExtPtr(mask));
     }
 
     template<typename IntFunctor, typename DoubleFunctor>
@@ -12550,11 +12525,6 @@ private:
         m_out.store32(blob, object, m_heaps.JSCell_usefulBytes);
     }
 
-    LValue computeButterflyIndexingMask(LValue vectorLength)
-    {
-        return m_out.lShr(m_out.zeroExt(m_out.constInt32(-1), Int64), m_out.ctlz32(vectorLength));
-    }
-
     template <typename StructureType>
     LValue allocateCell(LValue allocator, StructureType structure, LBasicBlock slowPath)
     {
@@ -12563,12 +12533,12 @@ private:
         return result;
     }
 
-    LValue allocateObject(LValue allocator, RegisteredStructure structure, LValue butterfly, LValue indexingMask, LBasicBlock slowPath)
+    LValue allocateObject(LValue allocator, RegisteredStructure structure, LValue butterfly, LBasicBlock slowPath)
     {
-        return allocateObject(allocator, weakStructure(structure), butterfly, indexingMask, slowPath);
+        return allocateObject(allocator, weakStructure(structure), butterfly, slowPath);
     }
 
-    LValue allocateObject(LValue allocator, LValue structure, LValue butterfly, LValue indexingMask, LBasicBlock slowPath)
+    LValue allocateObject(LValue allocator, LValue structure, LValue butterfly, LBasicBlock slowPath)
     {
         LValue result = allocateCell(allocator, structure, slowPath);
         if (structure->hasIntPtr()) {
@@ -12591,23 +12561,22 @@ private:
         }
         
         m_out.storePtr(butterfly, result, m_heaps.JSObject_butterfly);
-        m_out.store32(m_out.castToInt32(indexingMask), result, m_heaps.JSObject_butterflyMask);
         return result;
     }
     
     template<typename ClassType, typename StructureType>
     LValue allocateObject(
-        size_t size, StructureType structure, LValue butterfly, LValue indexingMask, LBasicBlock slowPath)
+        size_t size, StructureType structure, LValue butterfly, LBasicBlock slowPath)
     {
         Allocator allocator = subspaceFor<ClassType>(vm())->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
-        return allocateObject(m_out.constInt32(allocator.offset()), structure, butterfly, indexingMask, slowPath);
+        return allocateObject(m_out.constInt32(allocator.offset()), structure, butterfly, slowPath);
     }
     
     template<typename ClassType, typename StructureType>
-    LValue allocateObject(StructureType structure, LValue butterfly, LValue indexingMask, LBasicBlock slowPath)
+    LValue allocateObject(StructureType structure, LValue butterfly, LBasicBlock slowPath)
     {
         return allocateObject<ClassType>(
-            ClassType::allocationSize(0), structure, butterfly, indexingMask, slowPath);
+            ClassType::allocationSize(0), structure, butterfly, slowPath);
     }
     
     LValue allocatorForSize(LValue subspace, LValue size, LBasicBlock slowPath)
@@ -12660,10 +12629,10 @@ private:
     
     template<typename ClassType>
     LValue allocateVariableSizedObject(
-        LValue size, RegisteredStructure structure, LValue butterfly, LValue butterflyIndexingMask, LBasicBlock slowPath)
+        LValue size, RegisteredStructure structure, LValue butterfly, LBasicBlock slowPath)
     {
         LValue allocator = allocatorForSize(*subspaceFor<ClassType>(vm()), size, slowPath);
-        return allocateObject(allocator, structure, butterfly, butterflyIndexingMask, slowPath);
+        return allocateObject(allocator, structure, butterfly, slowPath);
     }
 
     template<typename ClassType>
@@ -12695,7 +12664,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         ValueFromBlock fastResult = m_out.anchor(allocateObject(
-            m_out.constInt32(allocator.offset()), structure, m_out.intPtrZero, m_out.int32Zero, slowPath));
+            m_out.constInt32(allocator.offset()), structure, m_out.intPtrZero, slowPath));
         
         m_out.jump(continuation);
         
@@ -12811,8 +12780,7 @@ private:
         
         ValueFromBlock haveButterfly = m_out.anchor(butterfly);
 
-        LValue mask = computeButterflyIndexingMask(vectorLength);
-        LValue object = allocateObject<JSArray>(structure, butterfly, mask, failCase);
+        LValue object = allocateObject<JSArray>(structure, butterfly, failCase);
 
         ValueFromBlock fastResult = m_out.anchor(object);
         ValueFromBlock fastButterfly = m_out.anchor(butterfly);
@@ -13692,13 +13660,8 @@ private:
         functor(TypeofType::Undefined);
     }
     
-    TypedPointer pointerIntoTypedArray(LValue base, LValue storage, LValue index, TypedArrayType type, LValue mask = nullptr)
+    TypedPointer pointerIntoTypedArray(LValue storage, LValue index, TypedArrayType type)
     {
-        if (m_indexMaskingMode == IndexMaskingEnabled) {
-            if (!mask)
-                mask = m_out.load32(base, m_heaps.JSObject_butterflyMask);
-            index = m_out.bitAnd(index, mask);
-        }
         LValue offset = m_out.shl(m_out.zeroExtPtr(index), m_out.constIntPtr(logElementSize(type)));
 
         return TypedPointer(

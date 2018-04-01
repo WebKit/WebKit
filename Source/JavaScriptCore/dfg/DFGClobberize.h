@@ -1189,11 +1189,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
         
-    case GetArrayMask:
-        read(JSObject_butterflyMask);
-        def(HeapLocation(ArrayMaskLoc, JSObject_butterflyMask, node->child1()), LazyNode(node));
-        return;
-
     case GetArrayLength: {
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {

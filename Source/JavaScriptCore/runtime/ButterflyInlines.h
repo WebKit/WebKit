@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,22 +32,6 @@
 #include "Structure.h"
 
 namespace JSC {
-
-template<typename T>
-const T& ContiguousData<T>::at(const JSObject* base, size_t index) const
-{
-    ASSERT(index < m_length);
-    ASSERT(base->butterflyIndexingMask() >= length());
-    return m_data[index & base->butterflyIndexingMask()];
-}
-
-template<typename T>
-T& ContiguousData<T>::at(const JSObject* base, size_t index)
-{
-    ASSERT(index < m_length);
-    ASSERT(base->butterflyIndexingMask() >= length());
-    return m_data[index & base->butterflyIndexingMask()];
-}
 
 ALWAYS_INLINE unsigned Butterfly::availableContiguousVectorLength(size_t propertyCapacity, unsigned vectorLength)
 {

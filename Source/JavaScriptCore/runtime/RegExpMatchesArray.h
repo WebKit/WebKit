@@ -51,7 +51,7 @@ ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializa
 
     unsigned i = (createUninitialized ? initialLength : 0);
     for (; i < vectorLength; ++i)
-        butterfly->contiguous().at(std::numeric_limits<uint32_t>::max(), i).clear();
+        butterfly->contiguous().at(i).clear();
 
     JSArray* result = JSArray::createWithButterfly(vm, deferralContext, structure, butterfly);
     scope.notifyAllocated(result, createUninitialized);
