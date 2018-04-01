@@ -1,3 +1,13 @@
+2018-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC crash in JIT code with for-of loop and Array/Set iterators
+        https://bugs.webkit.org/show_bug.cgi?id=183174
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): Fix the bug by making GetByOffset and friends verify that they are getting the type proof they want at the desired hoisting site.
+
 2018-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         Strings and Vectors shouldn't do index masking

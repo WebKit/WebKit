@@ -1,3 +1,15 @@
+2018-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC crash in JIT code with for-of loop and Array/Set iterators
+        https://bugs.webkit.org/show_bug.cgi?id=183174
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/hoist-get-by-offset-tower-with-inferred-types.js: Added. This test shows that fixing the bug didn't break hoisting of GetByOffset with inferred types. I confirmed that if I did break it, this test slows down by >7x.
+        (foo):
+        * stress/hoist-get-by-offset-with-control-dependent-inferred-type.js: Added. This test shows that the bug is fixed.
+        (f):
+
 2018-03-30  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: support DataView compilation
