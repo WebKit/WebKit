@@ -1,5 +1,25 @@
 2018-03-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] FloatingContext does not need a parent formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=184219
+
+        Reviewed by Antti Koivisto.
+
+        We don't need the formatting context in the FloatingContext now that margins are moved over to Display.Box.
+        This is in preparation for being able to create a FloatingContext for an inline formatting context,
+        when the inline context actually inherits the floating state from its formatting root.
+
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext):
+        (FloatingContext.prototype._availableSpace):
+        (FloatingContext.prototype._adjustedFloatingPosition):
+        (FloatingContext.prototype._addFloatingBox):
+        (FloatingContext.prototype._formattingContext): Deleted.
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext):
+
+2018-03-31  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Do not clone Display.Box for FloatingState stacks.
         https://bugs.webkit.org/show_bug.cgi?id=184218
 

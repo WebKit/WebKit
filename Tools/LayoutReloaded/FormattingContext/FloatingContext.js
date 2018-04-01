@@ -25,9 +25,8 @@
 
 // All geometry here is absolute to the formatting context's root.
 class FloatingContext {
-    constructor(floatingState, parentFormattingContext) {
+    constructor(floatingState) {
         this.m_floatingState = floatingState;
-        this.m_parentFormattingContext = parentFormattingContext;
     }
 
     computePosition(layoutBox) {
@@ -123,7 +122,7 @@ class FloatingContext {
     }
 
     _availableSpace(containingBlock, floatingPair) {
-        let containingBlockContentBox = this._formattingContext().displayBox(containingBlock);
+        let containingBlockContentBox = this._formattingState().displayBox(containingBlock);
         if (floatingPair.left && floatingPair.right)
             return floatingPair.right.left() - floatingPair.left.right();
         if (floatingPair.left) {
@@ -162,9 +161,10 @@ class FloatingContext {
                     right = floatingBoxLeft;
             }
         }
-        left += this._formattingContext().marginLeft(floatingBox);
-        right -= this._formattingContext().marginRight(floatingBox);
-        verticalPosition += this._formattingContext().marginTop(floatingBox);
+        let floatingDisplayBox = this._formattingState().displayBox(floatingBox);
+        left += floatingDisplayBox.marginLeft();
+        right -= floatingDisplayBox.marginRight();
+        verticalPosition += floatingDisplayBox.marginTop();
         // No convert them back relative to the floatingBox's containing block.
         let containingBlockLeft = this._mapBorderBoxToFormattingRoot(containingBlock).left();
         let containingBlockTop = this._mapBorderBoxToFormattingRoot(containingBlock).top();
@@ -174,7 +174,7 @@ class FloatingContext {
 
         if (Utils.isFloatingLeft(floatingBox) || !Utils.isFloatingPositioned(floatingBox))
             return new LayoutPoint(verticalPosition, left);
-        return new LayoutPoint(verticalPosition, right - this._formattingContext().displayBox(floatingBox).rect().width());
+        return new LayoutPoint(verticalPosition, right - floatingDisplayBox.rect().width());
     }
 
     _bottom(floatingStack) {
@@ -187,7 +187,7 @@ class FloatingContext {
     }
 
     _addFloatingBox(layoutBox) {
-        this._floatingState().addFloating(this._formattingContext().displayBox(layoutBox), Utils.isFloatingLeft(layoutBox));
+        this._floatingState().addFloating(this._formattingState().displayBox(layoutBox), Utils.isFloatingLeft(layoutBox));
     }
 
     _mapMarginBoxToFormattingRoot(layoutBox) {
@@ -214,10 +214,6 @@ class FloatingContext {
 
     _floatingState() {
         return this.m_floatingState;
-    }
-
-    _formattingContext() {
-        return this.m_parentFormattingContext;
     }
 
     _formattingRoot() {

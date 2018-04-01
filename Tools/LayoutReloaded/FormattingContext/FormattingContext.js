@@ -26,7 +26,7 @@
 class FormattingContext {
     constructor(formattingState) {
         this.m_formattingState = formattingState;
-        this.m_floatingContext = new FloatingContext(formattingState.floatingState(), this);
+        this.m_floatingContext = new FloatingContext(formattingState.floatingState());
         this.m_layoutStack = new Array();
     }
 
