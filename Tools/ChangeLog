@@ -1,5 +1,33 @@
 2018-03-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Remove all FormattingContext::absolute*Box functions.
+        https://bugs.webkit.org/show_bug.cgi?id=184215
+
+        Reviewed by Antti Koivisto.
+
+        Use Display.Box instead.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition):
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype._availableSpace):
+        (FloatingContext.prototype._adjustedFloatingPosition):
+        (FloatingContext.prototype._mapBorderBoxToFormattingRoot):
+        (FloatingContext.prototype._mapContentBoxToFormattingRoot):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype.absoluteBorderBox): Deleted.
+        (FormattingContext.prototype.absolutePaddingBox): Deleted.
+        (FormattingContext.prototype.absoluteContentBox): Deleted.
+        (FormattingContext.prototype._toAbsolutePosition): Deleted.
+        (FormattingContext.prototype._toRootAbsolutePosition): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils.mapPosition):
+        (Utils.marginBox):
+        (Utils.borderBox):
+        (Utils.contentBox):
+
+2018-03-31  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Remove FormattingContext::absoluteMarginBox
         https://bugs.webkit.org/show_bug.cgi?id=184213
 

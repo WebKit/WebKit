@@ -475,18 +475,36 @@ class Utils {
         return window.getComputedStyle(node).float == "left";
     }
 
-    static marginBox(box, container) {
+    static mapPosition(position, box, container) {
         ASSERT(box instanceof Display.Box);
         ASSERT(container instanceof Display.Box);
 
-        let marginBox = box.marginBox();
         if (box == container)
-            return marginBox;
+            return position;
         for (let ascendant = box.parent(); ascendant && ascendant != container; ascendant = ascendant.parent())
-            marginBox.moveBy(ascendant.topLeft());
-        return marginBox;
+            position.moveBy(ascendant.topLeft());
+        return position;
     }
 
+    static marginBox(box, container) {
+        let marginBox = box.marginBox();
+        let mappedPosition = Utils.mapPosition(marginBox.topLeft(), box, container);
+        return new LayoutRect(mappedPosition, marginBox.size());
+    }
+
+    static borderBox(box, container) {
+        let borderBox = box.borderBox();
+        let mappedPosition = Utils.mapPosition(box.topLeft(), box, container);
+        mappedPosition.moveBy(borderBox.topLeft());
+        return new LayoutRect(mappedPosition, borderBox.size());
+    }
+
+    static contentBox(box, container) {
+        let contentBox = box.contentBox();
+        let mappedPosition = Utils.mapPosition(box.topLeft(), box, container);
+        mappedPosition.moveBy(contentBox.topLeft());
+        return new LayoutRect(mappedPosition, contentBox.size());
+    }
 
     static textRuns(text, container) {
         return window.collectTextRuns(text, container.node());

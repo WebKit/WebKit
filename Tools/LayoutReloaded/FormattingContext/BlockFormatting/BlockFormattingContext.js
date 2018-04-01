@@ -321,8 +321,10 @@ class BlockFormattingContext extends FormattingContext {
             let contentBottom = previousInFlowSibling ? this.displayBox(previousInFlowSibling).bottom() : parentDisplayBox.contentBox().top();
             top = contentBottom + this.marginTop(layoutBox);
             // Convert static position (in parent coordinate system) to absolute (in containing block coordindate system).
-            if (parent != layoutBox.containingBlock())
-                top += this._toAbsolutePosition(parentDisplayBox.topLeft(), parent, layoutBox.containingBlock()).top();
+            if (parent != layoutBox.containingBlock()) {
+                ASSERT(displayBox.parent() == this.displayBox(layoutBox.containingBlock()));
+                top += Utils.mapPosition(parentDisplayBox.topLeft(), parentDisplayBox, displayBox.parent()).top();
+            }
         } else if (!Utils.isTopAuto(layoutBox))
             top = Utils.top(layoutBox) + this.marginTop(layoutBox);
         else if (!Utils.isBottomAuto(layoutBox))
@@ -339,8 +341,10 @@ class BlockFormattingContext extends FormattingContext {
             let parentDisplayBox = this.displayBox(parent);
             left = parentDisplayBox.contentBox().left() + this.marginLeft(layoutBox);
             // Convert static position (in parent coordinate system) to absolute (in containing block coordindate system).
-            if (parent != layoutBox.containingBlock())
-                left += this._toAbsolutePosition(parentDisplayBox.rect(), parent, layoutBox.containingBlock()).left();
+            if (parent != layoutBox.containingBlock()) {
+                ASSERT(displayBox.parent() == this.displayBox(layoutBox.containingBlock()));
+                left += Utils.mapPosition(parentDisplayBox.topLeft(), parentDisplayBox, displayBox.parent()).left();
+            }
         } else if (!Utils.isLeftAuto(layoutBox))
             left = Utils.left(layoutBox) + this.marginLeft(layoutBox);
         else if (!Utils.isRightAuto(layoutBox))

@@ -127,7 +127,7 @@ class FloatingContext {
         if (floatingPair.left && floatingPair.right)
             return floatingPair.right.left() - floatingPair.left.right();
         if (floatingPair.left)
-            return containingBlockContentBox.width() - (floatingPair.left.right() - this._formattingContext().absoluteBorderBox(containingBlock).left());
+            return containingBlockContentBox.width() - (floatingPair.left.right() - this._mapBorderBoxToFormattingRoot(containingBlock).left());
         if (floatingPair.right)
             return floatingPair.right.left();
         return containingBlockContentBox.width();
@@ -146,8 +146,8 @@ class FloatingContext {
     _adjustedFloatingPosition(floatingBox, verticalPosition, leftRightFloatings) {
         let containingBlock = floatingBox.containingBlock();
         // Convert all coordinates relative to formatting context's root.
-        let left = this._formattingContext().absoluteContentBox(containingBlock).left();
-        let right = this._formattingContext().absoluteContentBox(containingBlock).right();
+        let left = this._mapContentBoxToFormattingRoot(containingBlock).left();
+        let right = this._mapContentBoxToFormattingRoot(containingBlock).right();
         if (leftRightFloatings) {
             if (leftRightFloatings.left) {
                 let floatingBoxRight = leftRightFloatings.left.right();
@@ -165,8 +165,8 @@ class FloatingContext {
         right -= this._formattingContext().marginRight(floatingBox);
         verticalPosition += this._formattingContext().marginTop(floatingBox);
         // No convert them back relative to the floatingBox's containing block.
-        let containingBlockLeft = this._formattingContext().absoluteBorderBox(containingBlock).left();
-        let containingBlockTop = this._formattingContext().absoluteBorderBox(containingBlock).top();
+        let containingBlockLeft = this._mapBorderBoxToFormattingRoot(containingBlock).left();
+        let containingBlockTop = this._mapBorderBoxToFormattingRoot(containingBlock).top();
         left -= containingBlockLeft;
         right -= containingBlockLeft;
         verticalPosition -= containingBlockTop;
@@ -196,6 +196,18 @@ class FloatingContext {
         let displayBox = this._formattingState().displayBox(layoutBox);
         let rootDisplayBox = this._formattingState().displayBox(this._formattingRoot());
         return Utils.marginBox(displayBox, rootDisplayBox);
+    }
+
+    _mapBorderBoxToFormattingRoot(layoutBox) {
+        let displayBox = this._formattingState().displayBox(layoutBox);
+        let rootDisplayBox = this._formattingState().displayBox(this._formattingRoot());
+        return Utils.borderBox(displayBox, rootDisplayBox);
+    }
+
+    _mapContentBoxToFormattingRoot(layoutBox) {
+        let displayBox = this._formattingState().displayBox(layoutBox);
+        let rootDisplayBox = this._formattingState().displayBox(this._formattingRoot());
+        return Utils.contentBox(displayBox, rootDisplayBox);
     }
 
     _floatingState() {
