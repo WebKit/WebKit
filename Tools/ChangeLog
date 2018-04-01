@@ -1,3 +1,15 @@
+2018-04-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Right floating box reduces available line width.
+        https://bugs.webkit.org/show_bug.cgi?id=184226
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._createNewLine):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-with-floats-right-left-simple.html: Added.
+
 2018-03-31  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Floating box reduces line with in inline formatting context

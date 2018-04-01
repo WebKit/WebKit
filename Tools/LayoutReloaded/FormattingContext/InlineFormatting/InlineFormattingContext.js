@@ -97,19 +97,23 @@ class InlineFormattingContext extends FormattingContext {
     }
 
     _createNewLine() {
-        // TODO: Floats need to be taken into account.
-        let contentBoxRect = this.displayBox(this.formattingRoot()).contentBox();
-        let lineWidth = contentBoxRect.width();
-        let topLeft = contentBoxRect.topLeft();
+        let lineRect = this.displayBox(this.formattingRoot()).contentBox();
         let floatingLeft = this._mapFloatingPosition(this.floatingContext().left());
-        if (!Number.isNaN(floatingLeft)) {
-            topLeft.setLeft(floatingLeft);
-            lineWidth -= floatingLeft;
-        }
+        let floatingRight = this._mapFloatingPosition(this.floatingContext().right());
+        // TODO: Check the case when the containing block is narrower than the floats.
+        if (!Number.isNaN(floatingLeft) && !Number.isNaN(floatingRight)) {
+            // Floats on both sides.
+            lineRect.setLeft(floatingLeft);
+            lineRect.setWidth(floatingRight - floatingLeft);
+        } else if (!Number.isNaN(floatingLeft))
+            lineRect.setLeft(floatingLeft);
+        else if (!Number.isNaN(floatingRight))
+            lineRect.setRight(floatingRight);
+
         let lines = this.formattingState().lines();
         if (lines.length)
-            topLeft.setTop(lines[lines.length - 1].rect().bottom());
-        return new Line(topLeft, Utils.computedLineHeight(this.formattingRoot().node()), lineWidth);
+            lineRect.setTop(lines[lines.length - 1].rect().bottom());
+        return new Line(lineRect.topLeft(), Utils.computedLineHeight(this.formattingRoot().node()), lineRect.width());
     }
 
     _mapFloatingPosition(verticalPosition) {
