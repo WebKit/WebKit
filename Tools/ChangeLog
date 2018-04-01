@@ -1,5 +1,25 @@
 2018-03-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] InlineFormattingState should inherit the floating state from its parent formatting state
+        https://bugs.webkit.org/show_bug.cgi?id=184220
+
+        Reviewed by Antti Koivisto.
+
+        If the block container box that initiates an inline formatting context also establishes a block context,
+        create a new float state, otherwise use the existing one.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._contentHeight):
+        * LayoutReloaded/FormattingState/InlineFormattingState.js:
+        (InlineFormattingState):
+        * LayoutReloaded/LayoutState.js:
+        (LayoutState.prototype.establishedFormattingState):
+        (LayoutState.prototype.formattingStateForBox):
+        (LayoutState.prototype.formattingState): Deleted.
+        * LayoutReloaded/Utils.js:
+
+2018-03-31  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] FloatingContext does not need a parent formatting context.
         https://bugs.webkit.org/show_bug.cgi?id=184219
 

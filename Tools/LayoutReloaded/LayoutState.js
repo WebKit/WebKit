@@ -58,8 +58,20 @@ class LayoutState {
         return this.m_formattingStates;
     }
 
-    formattingState(formattingRoot) {
+    establishedFormattingState(formattingRoot) {
+        ASSERT(formattingRoot.establishesFormattingContext());
         return this.m_formattingStates.get(formattingRoot);
+    }
+
+    formattingStateForBox(layoutBox) {
+        // FIXME: We should probably cache this somewhere
+        let formattingState = null;
+        let ancestor = layoutBox.containingBlock();
+        do {
+            formattingState = this.m_formattingStates.get(ancestor);
+            ancestor = ancestor.containingBlock();
+        } while (!formattingState);
+        return formattingState;
     }
 
     initialDisplayBox() {

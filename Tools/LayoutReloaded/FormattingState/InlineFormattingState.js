@@ -26,11 +26,13 @@
 class InlineFormattingState extends FormattingState {
     constructor(formattingRoot, layoutState) {
         super(layoutState, formattingRoot);
-        // If the block container box that initiates this inline formatting contex also establishes a block context, create a new float for us.
+        // If the block container box that initiates this inline formatting context also establishes a block context, create a new float for us.
         if (this.formattingRoot().establishesBlockFormattingContext())
             this.m_floatingState = new FloatingState(this);
         else {
-            // TODO: use parent formatting context's floating state.
+            // Find the formatting state in which this formatting root lives, not the one it creates (this).
+            let parentFormattingState = layoutState.formattingStateForBox(formattingRoot);
+            this.m_floatingState = parentFormattingState.floatingState();
         }
         this.m_lines = new Array();
     }

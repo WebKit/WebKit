@@ -561,7 +561,7 @@ class Utils {
 
     static _dumpLines(layoutState, root, level) {
         ASSERT(root.establishesInlineFormattingContext());
-        let inlineFormattingState = layoutState.formattingState(root);
+        let inlineFormattingState = layoutState.establishedFormattingState(root);
         let lines = inlineFormattingState.lines();
         let content = "";
         let indentation = " ".repeat(level);
