@@ -1,3 +1,12 @@
+2018-04-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Raise the for-call inlining threshold to 190 to fix JetStream/richards regression
+        https://bugs.webkit.org/show_bug.cgi?id=184228
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/Options.h:
+
 2018-03-31  Filip Pizlo  <fpizlo@apple.com>
 
         JSObject shouldn't do index masking

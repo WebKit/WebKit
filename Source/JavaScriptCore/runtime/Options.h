@@ -288,7 +288,7 @@ constexpr bool enableAsyncIteration = false;
     \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 100000, Normal, nullptr) \
     \
-    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180, Normal, nullptr) \
+    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 190, Normal, nullptr) \
     v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 100, Normal, nullptr) \
     v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 100, Normal, nullptr) \
     \
