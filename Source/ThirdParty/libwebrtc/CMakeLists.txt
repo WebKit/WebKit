@@ -1363,7 +1363,7 @@ set(webrtc_SOURCES
     $<TARGET_OBJECTS:libsrtp>
 )
 
-if (WTF_CPU_X86_64)
+if (WTF_CPU_X86_64 OR WTF_CPU_X86)
     list(APPEND webrtc_SOURCES
         Source/webrtc/common_audio/fir_filter_sse.cc
         Source/webrtc/common_audio/resampler/sinc_resampler_sse.cc
