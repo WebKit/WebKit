@@ -85,7 +85,7 @@ public:
 
     bool isInitialized() const;
     
-    bool isOfflineContext() { return m_isOfflineContext; }
+    bool isOfflineContext() const { return m_isOfflineContext; }
 
     Document* document() const; // ASSERTs if document no longer exists.
 
@@ -276,8 +276,8 @@ private:
     bool willBeginPlayback();
     bool willPausePlayback();
 
-    bool userGestureRequiredForAudioStart() const { return m_restrictions & RequireUserGestureForAudioStartRestriction; }
-    bool pageConsentRequiredForAudioStart() const { return m_restrictions & RequirePageConsentForAudioStartRestriction; }
+    bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }
+    bool pageConsentRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequirePageConsentForAudioStartRestriction; }
 
     void setState(State);
 

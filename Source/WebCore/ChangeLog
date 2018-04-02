@@ -1,3 +1,23 @@
+2018-04-02  Jer Noble  <jer.noble@apple.com>
+
+        AudioBufferSourceNode start method causes OfflineAudioContext to start running
+        https://bugs.webkit.org/show_bug.cgi?id=181939
+        <rdar://problem/36755393>
+
+        Reviewed by Eric Carlson.
+
+        Test: webaudio/offlineaudiocontext-restriction.html
+
+        Don't respect playback restrictions for offline AudioContexts.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::constructCommon):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::isOfflineContext const):
+        (WebCore::AudioContext::userGestureRequiredForAudioStart const):
+        (WebCore::AudioContext::pageConsentRequiredForAudioStart const):
+        (WebCore::AudioContext::isOfflineContext): Deleted.
+
 2018-04-02  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Make libwebrtc backend buildable for GTK  port

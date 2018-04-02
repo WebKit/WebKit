@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description('OfflineAudioContexts should not have behavior restrictions.');
+
+var context = null;
+var node = null;
+var calledResumeWithUserGesture = false;
+
+function runTest() {
+    window.jsTestIsAsync = true;
+
+    context = new webkitOfflineAudioContext(2, 1000, 44100);
+
+    if (window.internals)
+        internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
+
+    shouldBe('context.state', '"suspended"');
+
+    node = context.createBufferSource();
+    evalAndLog('node.connect(context.destination)');
+    evalAndLog('node.start()');
+    shouldBe('context.state', '"suspended"');
+
+    debug('Calling context.startRendering() without a user gesture');
+    context.startRendering();
+    shouldBe('context.state', '"running"');
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

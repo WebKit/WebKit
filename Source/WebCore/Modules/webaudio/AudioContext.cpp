@@ -166,12 +166,10 @@ void AudioContext::constructCommon()
     
     m_listener = AudioListener::create();
 
-#if PLATFORM(IOS)
-    if (document()->settings().audioPlaybackRequiresUserGesture())
+    if (document()->audioPlaybackRequiresUserGesture())
         addBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
     else
         m_restrictions = NoRestrictions;
-#endif
 
 #if PLATFORM(COCOA)
     addBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
