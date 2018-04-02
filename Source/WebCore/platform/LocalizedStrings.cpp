@@ -1066,19 +1066,24 @@ String formControlSearchButtonTitle()
     return WEB_UI_STRING("Search", "Title of the Search button for zoomed form controls.");
 }
 
+String datePickerSetButtonTitle()
+{
+    return WEB_UI_STRING_KEY("Set", "Set (Button below date picker for extra zoom mode)", "Set button below date picker");
+}
+
 String datePickerDayLabelTitle()
 {
-    return WEB_UI_STRING_KEY("Day", "Day (Date picker for extra zoom mode)", "Day label in date picker");
+    return WEB_UI_STRING_KEY("DAY", "DAY (Date picker for extra zoom mode)", "Day label in date picker");
 }
 
 String datePickerMonthLabelTitle()
 {
-    return WEB_UI_STRING_KEY("Month", "Month (Date picker for extra zoom mode)", "Month label in date picker");
+    return WEB_UI_STRING_KEY("MONTH", "MONTH (Date picker for extra zoom mode)", "Month label in date picker");
 }
 
 String datePickerYearLabelTitle()
 {
-    return WEB_UI_STRING_KEY("Year", "Year (Date picker for extra zoom mode)", "Year label in date picker");
+    return WEB_UI_STRING_KEY("YEAR", "YEAR (Date picker for extra zoom mode)", "Year label in date picker");
 }
 
 #endif

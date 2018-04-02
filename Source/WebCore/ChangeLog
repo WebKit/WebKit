@@ -1,3 +1,22 @@
+2018-04-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Update date picker UI to latest specifications
+        https://bugs.webkit.org/show_bug.cgi?id=184234
+        <rdar://problem/38804760>
+
+        Reviewed by Timothy Hatcher.
+
+        Tweak localizable strings. Day, month and year labels should be fully capitalized, and there needs to be a
+        string for the "Set" button title.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::datePickerSetButtonTitle):
+        (WebCore::datePickerDayLabelTitle):
+        (WebCore::datePickerMonthLabelTitle):
+        (WebCore::datePickerYearLabelTitle):
+        * platform/LocalizedStrings.h:
+
 2018-04-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r228260):WebHTMLView beeps at every keydown for Chinese/Japanese/Korean Input Method

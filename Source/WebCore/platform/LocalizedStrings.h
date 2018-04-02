@@ -323,6 +323,7 @@ namespace WebCore {
     WEBCORE_EXPORT String formControlHideButtonTitle();
     WEBCORE_EXPORT String formControlGoButtonTitle();
     WEBCORE_EXPORT String formControlSearchButtonTitle();
+    WEBCORE_EXPORT String datePickerSetButtonTitle();
     WEBCORE_EXPORT String datePickerDayLabelTitle();
     WEBCORE_EXPORT String datePickerMonthLabelTitle();
     WEBCORE_EXPORT String datePickerYearLabelTitle();

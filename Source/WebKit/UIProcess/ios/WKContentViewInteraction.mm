@@ -125,7 +125,7 @@
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuListViewControllerDelegate, WKTextFormControlListViewControllerDelegate>
+@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
 @end
 
 #endif
@@ -4236,8 +4236,7 @@ static bool isAssistableInputType(InputType type)
         break;
     case InputType::Date:
         if (!_datePickerViewController) {
-            _datePickerViewController = adoptNS([[WKDatePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
-            [_datePickerViewController setDelegate:self];
+            _datePickerViewController = adoptNS([[WKDatePickerViewController alloc] initWithDelegate:self]);
             [_focusedFormControlViewController presentViewController:_datePickerViewController.get() animated:YES completion:nil];
         }
         break;
