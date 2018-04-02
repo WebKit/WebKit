@@ -614,7 +614,7 @@ WI._tryToRestorePendingTabs = function()
     this._pendingOpenTabs = stillPendingOpenTabs;
 
     if (!WI.settings.experimentalEnableNewTabBar.value)
-        this.tabBrowser.tabBar.updateNewTabTabBarItemState();
+        this.tabBar.updateNewTabTabBarItemState();
 };
 
 WI.showNewTabTab = function(options)
@@ -1416,8 +1416,6 @@ WI._mainResourceDidChange = function(event)
     if (!event.target.isMainFrame())
         return;
 
-    this._inProvisionalLoad = false;
-
     // Run cookie restoration after we are sure all of the Tabs and NavigationSidebarPanels
     // have updated with respect to the main resource change.
     setTimeout(this._restoreCookieForOpenTabs.bind(this, WI.StateRestorationType.Navigation));
@@ -1433,8 +1431,6 @@ WI._provisionalLoadStarted = function(event)
         return;
 
     this._saveCookieForOpenTabs();
-
-    this._inProvisionalLoad = true;
 };
 
 WI._restoreCookieForOpenTabs = function(restorationType)

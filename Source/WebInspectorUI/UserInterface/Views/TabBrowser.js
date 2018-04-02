@@ -157,8 +157,6 @@ WI.TabBrowser = class TabBrowser extends WI.View
         if (tabBarItem.representedObject !== tabContentView)
             tabBarItem.representedObject = tabContentView;
 
-        tabContentView.parentTabBrowser = this;
-
         if (tabBarItem.parentTabBar === this._tabBar)
             return true;
 
@@ -185,8 +183,7 @@ WI.TabBrowser = class TabBrowser extends WI.View
         if (!this.addTabForContentView(tabContentView, options))
             return false;
 
-        if (!options.suppressSelection)
-            this._tabBar.selectedTabBarItem = tabContentView.tabBarItem;
+        this._tabBar.selectedTabBarItem = tabContentView.tabBarItem;
 
         // FIXME: this is a workaround for <https://webkit.org/b/151876>.
         // Without this extra call, we might never lay out the child tab
@@ -291,8 +288,6 @@ WI.TabBrowser = class TabBrowser extends WI.View
             this._closedTabClasses.add(tabContentView.constructor);
 
         this._contentViewContainer.closeContentView(tabContentView);
-
-        tabContentView.parentTabBrowser = null;
 
         console.assert(this._recentTabContentViews.length === this._tabBar.saveableTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);

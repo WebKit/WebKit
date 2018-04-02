@@ -62,15 +62,15 @@ WI.NewTabContentView = class NewTabContentView extends WI.TabContentView
 
     shown()
     {
-        WI.tabBrowser.tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, this._updateTabItems, this);
-        WI.tabBrowser.tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, this._updateTabItems, this);
+        WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, this._updateTabItems, this);
+        WI.tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, this._updateTabItems, this);
 
         this._updateTabItems();
     }
 
     hidden()
     {
-        WI.tabBrowser.tabBar.removeEventListener(null, null, this);
+        WI.tabBar.removeEventListener(null, null, this);
     }
 
     get supportsSplitContentBrowser()
