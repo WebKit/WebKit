@@ -1,5 +1,13 @@
 2018-04-02  Dan Bernstein  <mitz@apple.com>
 
+        Build fix after r230121
+
+        * Configurations/WebKit.xcconfig: Disabled framework header postprocessing when building for
+          iOS 11.*
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h: Reverted r230159.
+
+2018-04-02  Dan Bernstein  <mitz@apple.com>
+
         Fixed the build when BOOL is not bool.
         <rdar://problem/39094484>
 
