@@ -521,7 +521,6 @@ set(webrtc_SOURCES
     Source/webrtc/common_audio/fft4g.c
     Source/webrtc/common_audio/fir_filter_c.cc
     Source/webrtc/common_audio/fir_filter_factory.cc
-    Source/webrtc/common_audio/fir_filter_sse.cc
     Source/webrtc/common_audio/lapped_transform.cc
     Source/webrtc/common_audio/real_fourier.cc
     Source/webrtc/common_audio/real_fourier_ooura.cc
@@ -529,7 +528,6 @@ set(webrtc_SOURCES
     Source/webrtc/common_audio/resampler/push_sinc_resampler.cc
     Source/webrtc/common_audio/resampler/resampler.cc
     Source/webrtc/common_audio/resampler/sinc_resampler.cc
-    Source/webrtc/common_audio/resampler/sinc_resampler_sse.cc
     Source/webrtc/common_audio/ring_buffer.c
     Source/webrtc/common_audio/signal_processing/auto_corr_to_refl_coef.c
     Source/webrtc/common_audio/signal_processing/auto_correlation.c
@@ -1367,9 +1365,11 @@ set(webrtc_SOURCES
 
 if (WTF_CPU_X86_64)
     list(APPEND webrtc_SOURCES
+        Source/webrtc/common_audio/fir_filter_sse.cc
+        Source/webrtc/common_audio/resampler/sinc_resampler_sse.cc
+        Source/webrtc/modules/audio_processing/aec/aec_core_sse2.cc
         Source/webrtc/modules/audio_processing/utility/ooura_fft_sse2.cc
         Source/webrtc/modules/video_processing/util/denoiser_filter_sse2.cc
-        Source/webrtc/modules/audio_processing/aec/aec_core_sse2.cc
     )
 endif()
 
