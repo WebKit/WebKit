@@ -103,6 +103,7 @@ function installDependenciesWithApt {
         gtk-doc-tools \
         intltool \
         itstool \
+        libasound2-dev \
         libatk1.0-dev \
         libedit-dev \
         libenchant-dev \
@@ -235,6 +236,7 @@ function installDependenciesWithApt {
 function installDependenciesWithPacman {
     # These are dependencies necessary for building WebKitGTK+.
     packages=" \
+        alsa-lib \
         autoconf \
         automake \
         bison \
@@ -405,6 +407,7 @@ function installDependenciesWithDnf {
     # These are dependencies necessary for building WebKitGTK+.
     packages=" \
         atk-devel \
+        alsa-lib-devel \
         autoconf \
         automake \
         bison \
