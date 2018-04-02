@@ -43,7 +43,7 @@
 
 - (NSURLRequest *)_request
 {
-    return _navigation->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+    return _navigation->originalRequest().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
 }
 
 #pragma mark WKObject protocol implementation

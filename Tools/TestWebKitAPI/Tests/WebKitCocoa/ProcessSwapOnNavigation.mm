@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -44,6 +45,7 @@
 #import <WebKit/_WKWebsitePolicies.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/StringHash.h>
@@ -57,6 +59,8 @@ static int numberOfDecidePolicyCalls;
 
 static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 static bool receivedMessage;
+static bool serverRedirected;
+static HashSet<pid_t> seenPIDs;
 @interface PSONMessageHandler : NSObject <WKScriptMessageHandler>
 @end
 
@@ -75,13 +79,21 @@ static bool receivedMessage;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
+    seenPIDs.add([webView _webProcessIdentifier]);
     done = true;
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
     ++numberOfDecidePolicyCalls;
+    seenPIDs.add([webView _webProcessIdentifier]);
     decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
+{
+    seenPIDs.add([webView _webProcessIdentifier]);
+    serverRedirected = true;
 }
 
 @end
@@ -117,8 +129,10 @@ static RetainPtr<WKWebView> createdWebView;
 
 @interface PSONScheme : NSObject <WKURLSchemeHandler> {
     const char* _bytes;
+    HashMap<String, String> _redirects;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
+- (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString;
 @end
 
 @implementation PSONScheme
@@ -130,9 +144,25 @@ static RetainPtr<WKWebView> createdWebView;
     return self;
 }
 
+- (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString
+{
+    _redirects.set(sourceURLString, destinationURLString);
+}
+
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
-    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
+    NSURL *finalURL = task.request.URL;
+    auto target = _redirects.get(task.request.URL.absoluteString);
+    if (!target.isEmpty()) {
+        auto redirectResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil]);
+
+        finalURL = [NSURL URLWithString:(NSString *)target];
+        auto request = adoptNS([[NSURLRequest alloc] initWithURL:finalURL]);
+
+        [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:redirectResponse.get() newRequest:request.get()];
+    }
+
+    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
 
     if (_bytes) {
@@ -443,5 +473,138 @@ TEST(ProcessSwap, SameOriginWindowOpenNoOpener)
 }
 
 #endif // PLATFORM(MAC)
+
+TEST(ProcessSwap, ServerRedirectFromNewWebView)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addRedirectFromURLString:@"pson://host/main1.html" toURLString:@"psonredirected://host/main1.html"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&serverRedirected);
+    serverRedirected = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+
+    EXPECT_FALSE(serverRedirected);
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+    EXPECT_EQ(1u, seenPIDs.size());
+}
+
+TEST(ProcessSwap, ServerRedirect)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] init]);
+    [handler1 addRedirectFromURLString:@"pson://host/main1.html" toURLString:@"psonredirected://host/main1.html"];
+    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"pson"];
+    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"originalload"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"originalload://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterFirstLoad = [webView _webProcessIdentifier];
+
+    EXPECT_EQ(1, numberOfDecidePolicyCalls);
+    EXPECT_EQ(1u, seenPIDs.size());
+    EXPECT_TRUE(*seenPIDs.begin() == pidAfterFirstLoad);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&serverRedirected);
+    serverRedirected = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+
+    EXPECT_FALSE(serverRedirected);
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+    EXPECT_EQ(2u, seenPIDs.size());
+}
+
+TEST(ProcessSwap, ServerRedirect2)
+{
+    // This tests a load that *starts out* to the same origin as the previous load, but then redirects to a new origin.
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler1 = adoptNS([[PSONScheme alloc] init]);
+    [handler1 addRedirectFromURLString:@"pson://host/main2.html" toURLString:@"psonredirected://host/main1.html"];
+    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"pson"];
+    RetainPtr<PSONScheme> handler2 = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"psonredirected"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pidAfterFirstLoad = [webView _webProcessIdentifier];
+
+    EXPECT_FALSE(serverRedirected);
+    EXPECT_EQ(1, numberOfDecidePolicyCalls);
+    EXPECT_EQ(1u, seenPIDs.size());
+    EXPECT_TRUE(*seenPIDs.begin() == pidAfterFirstLoad);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&serverRedirected);
+    serverRedirected = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+
+    EXPECT_FALSE(serverRedirected);
+    EXPECT_EQ(3, numberOfDecidePolicyCalls);
+    EXPECT_EQ(2u, seenPIDs.size());
+}
+
 
 #endif // WK_API_ENABLED

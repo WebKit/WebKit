@@ -2352,8 +2352,9 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
 
         if (action == PolicyAction::Use && navigation) {
             auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, action);
+
             if (proposedProcess.ptr() != &process()) {
-                LOG(Loading, "Switching to new process for navigation %" PRIu64 " to url '%s' (WebBackForwardListItem %p)", navigation->navigationID(), navigation->loggingURL().utf8().data(), navigation->backForwardListItem());
+                LOG(Loading, "Switching from process %i to new process for navigation %" PRIu64 " '%s'", processIdentifier(), navigation->navigationID(), navigation->loggingString().utf8().data());
 
                 RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
                     continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
@@ -2367,8 +2368,9 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
 
 void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, Ref<WebProcessProxy>&& process)
 {
-    LOG(Loading, "Continuing navigation %" PRIu64 " to URL %s in a new web process", navigation.navigationID(), navigation.loggingURL().utf8().data());
+    LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString().utf8().data());
 
+    ASSERT(m_process.ptr() != process.ptr());
     attachToProcessForNavigation(WTFMove(process));
 
     if (auto* item = navigation.backForwardListItem()) {
@@ -2384,7 +2386,20 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
     }
 
     // FIXME: Work out timing of responding with the last policy delegate, etc
-    loadRequestWithNavigation(navigation, ResourceRequest { navigation.request() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, NavigationPolicyCheck::Bypass);
+    ASSERT(!navigation.currentRequest().isEmpty());
+    loadRequestWithNavigation(navigation, ResourceRequest { navigation.currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, NavigationPolicyCheck::Bypass);
+
+    // Normally, notification of a server redirect comes from the WebContent process.
+    // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
+    // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
+    if (navigation.currentRequestIsRedirect()) {
+        ASSERT(!m_mainFrame);
+        m_mainFrameCreationHandler = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), request =  navigation.currentRequest()]() mutable {
+            ASSERT(m_mainFrame);
+            m_mainFrame->frameLoadState().didStartProvisionalLoad(request.url());
+            didReceiveServerRedirectForProvisionalLoadForFrame(m_mainFrame->frameID(), navigation->navigationID(), WTFMove(request), { });
+        };
+    }
 }
 
 void WebPageProxy::setUserAgent(String&& userAgent)
@@ -3193,6 +3208,11 @@ void WebPageProxy::didCreateMainFrame(uint64_t frameID)
 
     // Add the frame to the process wide map.
     m_process->frameCreated(frameID, m_mainFrame.get());
+
+    if (m_mainFrameCreationHandler) {
+        m_mainFrameCreationHandler();
+        m_mainFrameCreationHandler = nullptr;
+    }
 }
 
 void WebPageProxy::didCreateSubframe(uint64_t frameID)
@@ -3269,10 +3289,6 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
 {
     PageClientProtector protector(m_pageClient);
 
-    auto transaction = m_pageLoadState.transaction();
-
-    m_pageLoadState.clearPendingAPIRequestURL(transaction);
-
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(url);
@@ -3281,6 +3297,20 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
         navigation = &navigationState().navigation(navigationID);
+
+    // If this seemingly new load is actually continuing a server redirect for a previous navigation in a new process,
+    // then we ignore this notification.
+    if (navigation && navigation->currentRequestIsRedirect()) {
+        auto navigationProcessIdentifier = navigation->currentRequestProcessIdentifier();
+        if (navigationProcessIdentifier && *navigationProcessIdentifier != m_process->coreProcessIdentifier())
+            return;
+    }
+
+    LOG(Loading, "WebPageProxy::didStartProvisionalLoadForFrame to frameID %" PRIu64 ", navigationID %" PRIu64 ", url %s", frameID, navigationID, url.string().utf8().data());
+
+    auto transaction = m_pageLoadState.transaction();
+
+    m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
     if (frame->isMainFrame()) {
         if (m_pageLoadStart)
@@ -3302,27 +3332,29 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
         m_loaderClient->didStartProvisionalLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
 }
 
-void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::URL&& url, const UserData& userData)
+void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, ResourceRequest&& request, const UserData& userData)
 {
+    LOG(Loading, "WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame to frameID %" PRIu64 ", navigationID %" PRIu64 ", url %s", frameID, navigationID, request.url().string().utf8().data());
+
     PageClientProtector protector(m_pageClient);
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
-    MESSAGE_CHECK_URL(url);
+    MESSAGE_CHECK_URL(request.url());
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
     if (navigationID) {
         navigation = &navigationState().navigation(navigationID);
-        navigation->appendRedirectionURL(url);
+        navigation->appendRedirectionURL(request.url());
     }
 
     auto transaction = m_pageLoadState.transaction();
 
     if (frame->isMainFrame())
-        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, url);
+        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, request.url());
 
-    frame->didReceiveServerRedirectForProvisionalLoad(url);
+    frame->didReceiveServerRedirectForProvisionalLoad(request.url());
 
     m_pageLoadState.commitChanges();
     if (m_navigationClient) {
@@ -3442,6 +3474,8 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
         navigation = &navigationState().navigation(navigationID);
+
+    m_process->didCommitProvisionalLoad();
 
 #if PLATFORM(IOS)
     if (frame->isMainFrame()) {
@@ -3791,7 +3825,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 
 void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, ResourceRequest&& request, uint64_t listenerID, const UserData& userData)
 {
-    LOG(Loading, "WebPageProxy::didStartProvisionalLoadForFrame - Target url %s", originalRequest.url().string().utf8().data());
+    LOG(Loading, "WebPageProxy::decidePolicyForNavigationAction - Original URL %s, current target URL %s", originalRequest.url().string().utf8().data(), request.url().string().utf8().data());
 
     PageClientProtector protector(m_pageClient);
 
@@ -3806,15 +3840,19 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(originalRequest.url());
     
-    uint64_t newNavigationID { 0 };
-    Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NavigationAction);
     Ref<API::Navigation> navigation = navigationID ? makeRef(m_navigationState->navigation(navigationID)) : m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
 
-    newNavigationID = navigation->navigationID();
+    ASSERT(navigation->originalRequest().url() == originalRequest.url());
+
+    uint64_t newNavigationID = navigation->navigationID();
     navigation->setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
     navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
+    navigation->setCurrentRequest(ResourceRequest(request), m_process->coreProcessIdentifier());
+    navigation->setCurrentRequestIsRedirect(navigationActionData.isRedirect);
     navigation->setIsCrossOriginWindowOpenNavigation(navigationActionData.isCrossOriginWindowOpenNavigation);
     navigation->setOpener(navigationActionData.opener);
+
+    auto listener = makeRef(frame->setUpPolicyListenerProxy(listenerID, PolicyListenerType::NavigationAction));
     listener->setNavigation(WTFMove(navigation));
 
 #if ENABLE(CONTENT_FILTERING)
@@ -5803,9 +5841,12 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_touchEventQueue.clear();
 #endif
 
-    PageLoadState::Transaction transaction = m_pageLoadState.transaction();
-    m_pageLoadState.reset(transaction);
+    if (terminationReason != ProcessTerminationReason::NavigationSwap) {
+        PageLoadState::Transaction transaction = m_pageLoadState.transaction();
+        m_pageLoadState.reset(transaction);
+    }
 
+    // FIXME: <rdar://problem/38676604> In case of process swaps, the old process should gracefully suspend instead of terminating.
     m_process->processTerminated();
 }
 
