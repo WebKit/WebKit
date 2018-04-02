@@ -1,3 +1,34 @@
+2018-04-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] More aggressive removal of duplicate 32bit DFG code
+        https://bugs.webkit.org/show_bug.cgi?id=184089
+
+        Reviewed by Saam Barati.
+
+        This patch more aggressively removes duplicate 32bit DFG code
+        by leveraging JSValueRegs and meta-programmed callOperation.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValWithThis):
+        (JSC::DFG::SpeculativeJIT::compileArithMinMax):
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+        (JSC::DFG::SpeculativeJIT::compileCheckCell):
+        (JSC::DFG::SpeculativeJIT::compileGetGlobalVariable):
+        (JSC::DFG::SpeculativeJIT::compilePutGlobalVariable):
+        (JSC::DFG::SpeculativeJIT::compileGetClosureVar):
+        (JSC::DFG::SpeculativeJIT::compilePutClosureVar):
+        (JSC::DFG::SpeculativeJIT::compileGetByOffset):
+        (JSC::DFG::SpeculativeJIT::compilePutByOffset):
+        (JSC::DFG::SpeculativeJIT::compileGetExecutable):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayBuffer):
+        (JSC::DFG::SpeculativeJIT::compileToThis):
+        (JSC::DFG::SpeculativeJIT::compileIdentity):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2018-04-01  Filip Pizlo  <fpizlo@apple.com>
 
         Raise the for-call inlining threshold to 190 to fix JetStream/richards regression

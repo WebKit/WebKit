@@ -1281,6 +1281,7 @@ public:
     void compileLoadValueFromMapBucket(Node*);
     void compileExtractValueFromWeakMapGet(Node*);
     void compileGetPrototypeOf(Node*);
+    void compileIdentity(Node*);
     
 #if USE(JSVALUE32_64)
     template<typename BaseOperandType, typename PropertyOperandType, typename ValueOperandType, typename TagType>
@@ -1352,6 +1353,7 @@ public:
     void compileArithRandom(Node*);
     void compileArithUnary(Node*);
     void compileArithSqrt(Node*);
+    void compileArithMinMax(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
     JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR);
@@ -1366,6 +1368,9 @@ public:
     void compileGetByValForObjectWithSymbol(Node*);
     void compilePutByValForCellWithString(Node*, Edge& child1, Edge& child2, Edge& child3);
     void compilePutByValForCellWithSymbol(Node*, Edge& child1, Edge& child2, Edge& child3);
+    void compileGetByValWithThis(Node*);
+    void compileGetByOffset(Node*);
+    void compilePutByOffset(Node*);
     // If this returns false it means that we terminated speculative execution.
     bool getIntTypedArrayStoreOperand(
         GPRTemporary& value,
@@ -1391,6 +1396,7 @@ public:
     void compileCreateClonedArguments(Node*);
     void compileCreateRest(Node*);
     void compileSpread(Node*);
+    void compileNewArray(Node*);
     void compileNewArrayWithSpread(Node*);
     void compileGetRestLength(Node*);
     void compileArraySlice(Node*);
@@ -1406,6 +1412,7 @@ public:
     void compileIsObjectOrNull(Node*);
     void compileIsFunction(Node*);
     void compileTypeOf(Node*);
+    void compileCheckCell(Node*);
     void compileCheckStructure(Node*);
     void emitStructureCheck(Node*, GPRReg cellGPR, GPRReg tempGPR);
     void compilePutAccessorById(Node*);
@@ -1419,8 +1426,12 @@ public:
     void compileToObjectOrCallObjectConstructor(Node*);
     void compileResolveScope(Node*);
     void compileResolveScopeForHoistingFuncDeclInEval(Node*);
+    void compileGetGlobalVariable(Node*);
+    void compilePutGlobalVariable(Node*);
     void compileGetDynamicVar(Node*);
     void compilePutDynamicVar(Node*);
+    void compileGetClosureVar(Node*);
+    void compilePutClosureVar(Node*);
     void compileCompareEqPtr(Node*);
     void compileDefineDataProperty(Node*);
     void compileDefineAccessorProperty(Node*);
@@ -1435,14 +1446,17 @@ public:
     void compileHasStructureProperty(Node*);
     void compileGetPropertyEnumerator(Node*);
     void compileGetEnumeratorPname(Node*);
+    void compileGetExecutable(Node*);
     void compileGetGetter(Node*);
     void compileGetSetter(Node*);
     void compileGetCallee(Node*);
     void compileGetArgumentCountIncludingThis(Node*);
     void compileSetArgumentCountIncludingThis(Node*);
     void compileStrCat(Node*);
+    void compileNewArrayBuffer(Node*);
     void compileNewArrayWithSize(Node*);
     void compileNewTypedArray(Node*);
+    void compileToThis(Node*);
     void compileCreateThis(Node*);
     void compileNewObject(Node*);
     void compileToPrimitive(Node*);
