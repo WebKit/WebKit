@@ -1,3 +1,29 @@
+2018-04-02  Frederic Wang  <fwang@igalia.com>
+
+        Fix warnings for unused lambda captures in Source/WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=173555
+
+        Reviewed by Konstantin Tokarev.
+
+        When release logs are disabled, several lambda captures are unused, causing compilation
+        failures with -Wunused-lambda-capture. This patch marks the corresponding variables as unused
+        in order to fix these warnings.
+
+        Based on initial patch by: Konstantin Tokarev  <annulen@yandex.ru>
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+
 2018-04-02  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Make libwebrtc backend buildable for GTK  port
