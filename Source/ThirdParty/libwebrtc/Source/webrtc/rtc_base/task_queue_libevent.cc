@@ -15,7 +15,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#if defined(WEBRTC_LINUX)
+#include <event2/event.h>
+#include <event2/event_compat.h>
+#include <event2/event_struct.h>
+#else
 #include "base/third_party/libevent/event.h"
+#endif
+
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"

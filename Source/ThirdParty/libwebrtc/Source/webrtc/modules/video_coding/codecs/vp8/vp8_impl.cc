@@ -152,8 +152,16 @@ void GetPostProcParamsFromFieldTrialGroup(
 
 }  // namespace
 
+bool VP8Encoder::IsSupported() {
+  return true;
+}
+
 std::unique_ptr<VP8Encoder> VP8Encoder::Create() {
   return rtc::MakeUnique<VP8EncoderImpl>();
+}
+
+bool VP8Decoder::IsSupported() {
+  return true;
 }
 
 std::unique_ptr<VP8Decoder> VP8Decoder::Create() {

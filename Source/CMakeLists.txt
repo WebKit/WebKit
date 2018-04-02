@@ -28,6 +28,10 @@ if (USE_XDGMIME)
     add_subdirectory(ThirdParty/xdgmime)
 endif ()
 
+if (USE_LIBWEBRTC)
+    add_subdirectory(ThirdParty/libwebrtc)
+endif ()
+
 if (ENABLE_WEBCORE)
     add_subdirectory(WebCore)
 endif ()

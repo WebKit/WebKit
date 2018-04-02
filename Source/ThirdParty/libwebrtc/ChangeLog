@@ -1,3 +1,24 @@
+2018-04-02  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Make libwebrtc backend buildable for GTK  port
+        https://bugs.webkit.org/show_bug.cgi?id=178860
+
+        Reviewed by Youenn Fablet.
+
+        Modified the cmake file and added some assembly code to the
+        boringssl compilation required for the linux compilation generated
+        by libwebrtc.
+
+        * CMakeLists.txt: This cmake file was unused so we have modified
+        it completely to make it work for our port. It was originally
+        generated from the libwebrtc json file but not anymore. We could
+        change its structure at some point but current one seems a good
+        option for the moment.
+        * Source/webrtc/base/task_queue_libevent.cc: We use system
+        libevent for the moment so we needed to adapt the includes in this file.
+        * Source/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc:
+        Readded lines removed by mistake in a previous commit.
+
 2018-03-26  Youenn Fablet  <youennf@gmail.com>
 
         Make VCP encoder usage conditional on using internal SDK

@@ -1544,6 +1544,17 @@ if (USE_XDGMIME)
     list(APPEND WebCore_LIBRARIES xdgmime)
 endif ()
 
+if (USE_LIBWEBRTC)
+  list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/libwebrtc/Source/"
+      "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc")
+  list(APPEND WebCore_LIBRARIES webrtc)
+  list(APPEND WebCore_SOURCES
+      Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp
+      Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
+      Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
+      )
+endif ()
+
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/testing"
@@ -1582,6 +1593,7 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/MockCDMFactory.cpp
     testing/MockGamepad.cpp
     testing/MockGamepadProvider.cpp
+    testing/MockLibWebRTCPeerConnection.cpp
     testing/MockPageOverlay.cpp
     testing/MockPageOverlayClient.cpp
     testing/ServiceWorkerInternals.cpp

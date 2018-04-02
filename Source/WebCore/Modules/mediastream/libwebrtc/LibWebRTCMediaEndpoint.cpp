@@ -46,6 +46,8 @@
 #include "RTCTrackEvent.h"
 #include "RealtimeIncomingAudioSource.h"
 #include "RealtimeIncomingVideoSource.h"
+#include "RealtimeOutgoingAudioSource.h"
+#include "RealtimeOutgoingVideoSource.h"
 #include "RuntimeEnabledFeatures.h"
 #include <webrtc/rtc_base/physicalsocketserver.h>
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>

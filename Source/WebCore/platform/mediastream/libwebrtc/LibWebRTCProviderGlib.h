@@ -23,25 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LibWebRTCProviderGlib.h"
+#pragma once
 
-#include <wtf/UniqueRef.h>
+#include "LibWebRTCProvider.h"
+
+#if USE(LIBWEBRTC)
 
 namespace WebCore {
 
-UniqueRef<LibWebRTCProvider> LibWebRTCProvider::create()
-{
-#if USE(LIBWEBRTC) && (PLATFORM(GTK) || PLATFORM(WPE))
-    return makeUniqueRef<LibWebRTCProviderGlib>();
-#else
-    return makeUniqueRef<LibWebRTCProvider>();
-#endif
-}
-
-bool LibWebRTCProvider::webRTCAvailable()
-{
-    return true;
-}
+class WEBCORE_EXPORT LibWebRTCProviderGlib : public LibWebRTCProvider {
+public:
+    LibWebRTCProviderGlib() = default;
+};
 
 } // namespace WebCore
+
+#endif

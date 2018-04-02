@@ -1,3 +1,14 @@
+2018-04-02  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Make libwebrtc backend buildable for GTK  port
+        https://bugs.webkit.org/show_bug.cgi?id=178860
+
+        Reviewed by Youenn Fablet.
+
+        * Source/CMakeLists.txt: Add the libwebrtc directory to the compilation.
+        * Source/cmake/OptionsGTK.cmake: Add the USE_LIBWEBRTC option to
+        allow compilation of the specific code.
+
 2018-03-30  Daniel Bates  <dabates@apple.com>
 
         ASSERTION FAILED: ASSERT(!containsImage || MIMETypeRegistry::isSupportedImageResourceMIMEType([resource MIMEType])) in -[NSPasteboard(WebExtras) _web_writePromisedRTFDFromArchive:containsImage:]

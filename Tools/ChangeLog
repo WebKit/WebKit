@@ -1,3 +1,16 @@
+2018-04-02  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Make libwebrtc backend buildable for GTK  port
+        https://bugs.webkit.org/show_bug.cgi?id=178860
+
+        Reviewed by Youenn Fablet.
+
+        * gstreamer/jhbuild.modules: Modified the libvpx module for the
+        libwebrtc compilation.
+        * gtk/install-dependencies: Add libevent as a system requirement.
+        * Scripts/webkitpy/style/checker.py: Added libwebrtc to the list of third
+        party libraries with reduced style checks.
+
 2018-04-01  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Use containing block's contentBox left edge when the float is to the right.
