@@ -419,6 +419,11 @@ public:
         emitInst(0x0000002b | (rd << OP_SH_RD) | (rs << OP_SH_RS) | (rt << OP_SH_RT));
     }
 
+    void slti(RegisterID rt, RegisterID rs, int imm)
+    {
+        emitInst(0x28000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS) | (imm & 0xffff));
+    }
+
     void sltiu(RegisterID rt, RegisterID rs, int imm)
     {
         emitInst(0x2c000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS) | (imm & 0xffff));
