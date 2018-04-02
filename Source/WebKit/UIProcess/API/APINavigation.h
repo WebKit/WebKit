@@ -26,7 +26,6 @@
 #pragma once
 
 #include "APIObject.h"
-#include <WebCore/Process.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Ref.h>
 
@@ -63,14 +62,7 @@ public:
 
     uint64_t navigationID() const { return m_navigationID; }
 
-    const WebCore::ResourceRequest& originalRequest() const { return m_originalRequest; }
-    void setCurrentRequest(WebCore::ResourceRequest&&, WebCore::ProcessIdentifier);
-    const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
-    std::optional<WebCore::ProcessIdentifier> currentRequestProcessIdentifier() const { return m_currentRequestProcessIdentifier; }
-
-    void setCurrentRequestIsRedirect(bool isRedirect) { m_isRedirect = isRedirect; }
-    bool currentRequestIsRedirect() const { return m_isRedirect; }
-
+    const WebCore::ResourceRequest& request() const { return m_request; }
     WebKit::WebBackForwardListItem* backForwardListItem() { return m_backForwardListItem.get(); }
     std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
 
@@ -90,7 +82,7 @@ public:
     const std::optional<std::pair<uint64_t, uint64_t>>& opener() const { return m_opener; }
 
 #if !LOG_DISABLED
-    WTF::String loggingString() const;
+    WTF::String loggingURL() const;
 #endif
 
 private:
@@ -99,13 +91,10 @@ private:
     Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem&, WebCore::FrameLoadType);
 
     uint64_t m_navigationID;
-    WebCore::ResourceRequest m_originalRequest;
-    WebCore::ResourceRequest m_currentRequest;
-    std::optional<WebCore::ProcessIdentifier> m_currentRequestProcessIdentifier;
+    WebCore::ResourceRequest m_request;
     Vector<WebCore::URL> m_redirectChain;
     bool m_wasUserInitiated { true };
     bool m_shouldForceDownload { false };
-    bool m_isRedirect { false };
 
     RefPtr<WebKit::WebBackForwardListItem> m_backForwardListItem;
     std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;

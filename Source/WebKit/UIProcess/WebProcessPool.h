@@ -78,7 +78,6 @@ class DownloadClient;
 class HTTPCookieStore;
 class InjectedBundleClient;
 class LegacyContextHistoryClient;
-class Navigation;
 class PageConfiguration;
 }
 
