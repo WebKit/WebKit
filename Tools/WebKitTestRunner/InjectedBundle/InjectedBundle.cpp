@@ -180,6 +180,8 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         WKRetainPtr<WKStringRef> allowedHostsKey(AdoptWK, WKStringCreateWithUTF8CString("AllowedHosts"));
         WKTypeRef allowedHostsValue = WKDictionaryGetItemForKey(messageBodyDictionary, allowedHostsKey.get());
         if (allowedHostsValue && WKGetTypeID(allowedHostsValue) == WKArrayGetTypeID()) {
+            m_allowedHosts.clear();
+
             WKArrayRef allowedHostsArray = static_cast<WKArrayRef>(allowedHostsValue);
             for (size_t i = 0, size = WKArrayGetSize(allowedHostsArray); i < size; ++i) {
                 WKTypeRef item = WKArrayGetItemAtIndex(allowedHostsArray, i);

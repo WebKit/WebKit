@@ -30,6 +30,7 @@
 #include "WebNotificationProvider.h"
 #include "WorkQueueManager.h"
 #include <WebKit/WKRetainPtr.h>
+#include <set>
 #include <string>
 #include <vector>
 #include <wtf/HashMap.h>
@@ -359,7 +360,7 @@ private:
     bool m_gcBetweenTests { false };
     bool m_shouldDumpPixelsForAllTests { false };
     std::vector<std::string> m_paths;
-    std::vector<std::string> m_allowedHosts;
+    std::set<std::string> m_allowedHosts;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
 
@@ -420,6 +421,8 @@ private:
     bool m_shouldShowWebView { false };
     
     bool m_shouldShowTouches { false };
+
+    bool m_allowAnyHTTPSCertificateForAllowedHosts { false };
     
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
     bool m_shouldDecideResponsePolicyAfterDelay { false };

@@ -1,3 +1,45 @@
+2018-04-02  Daniel Bates  <dabates@apple.com>
+
+        Add infrastructure to relax SSL for allowed hosts in DumpRenderTree and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=184239
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds a new optional command line option --allow-any-certificate-for-allowed-hosts (defaults to disabled)
+        to allow the allowed hosts to accept any HTTPS certificate. You can specify an allowed host
+        by using the existing command line option --allowed-host.
+
+        Currently both DumpRenderTree and WebKitTestRunner relax SSL certificate validation
+        for 127.0.0.1 and localhost so that we can run HTTPS tests from these hosts using
+        a self-signed certificate. They do not relax these restrictions for any allowed host,
+        specified using the optional command line option --allowed-host. For testing purposes
+        it is useful to be able to run a local HTTPS server with a self-signed certificate and
+        mimic a non-localhost hostname (by adding an alias(es) for 127.0.0.1 to /etc/hosts).
+        We should support relaxing SSL restrictions for such testing purposes.
+
+        For example, to allow host example.test to present any HTTPS certificate when running
+        tests you would invoke:
+
+            run-webkit-tests --allowed-host example.test --additional-drt-flag '--allow-any-certificate-for-allowed-hosts'
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions): Parse the command line option --allow-any-certificate-for-allowed-hosts.
+        (dumpRenderTree): Allow any HTTPS certificate from each allowed host.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage): Clear out the existing list of allowed hosts
+        before appending entries to it to avoid growing the list of allowed hosts without bound. Call
+        platformAllowAnyHTTPSCertificateForAllowedHosts() to apply SSL relaxation for each allowed host.
+        * WebKitTestRunner/Options.cpp:
+        (WTR::handleOptionAllowAnyHTTPSCertificateForAllowedHosts): Added.
+        (WTR::handleOptionAllowedHost): Update code as needed now that Options::allowedHosts is a std::set.
+        (WTR::OptionsHandler::OptionsHandler):
+        * WebKitTestRunner/Options.h: Change the data type of allowedHosts from a std::vector to a std::set
+        so that we can make use of the convenience functon std::set::find() in TestController::canAuthenticateAgainstProtectionSpace().
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::canAuthenticateAgainstProtectionSpace): Allow any HTTPS certificate from each allowed host.
+        * WebKitTestRunner/TestController.h:
+
 2018-04-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230174.

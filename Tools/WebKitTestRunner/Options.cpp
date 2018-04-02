@@ -93,9 +93,15 @@ static bool handleOptionShowTouches(Options& options, const char*, const char*)
     return true;
 }
 
+static bool handleOptionAllowAnyHTTPSCertificateForAllowedHosts(Options& options, const char*, const char*)
+{
+    options.allowAnyHTTPSCertificateForAllowedHosts = true;
+    return true;
+}
+
 static bool handleOptionAllowedHost(Options& options, const char*, const char* host)
 {
-    options.allowedHosts.push_back(host);
+    options.allowedHosts.insert(host);
     return true;
 }
 
@@ -120,6 +126,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--remote-layer-tree", "Use remote layer tree.", handleOptionRemoteLayerTree));
     optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));
+    optionList.append(Option("--allow-any-certificate-for-allowed-hosts", "Allows any HTTPS certificate for an allowed host.", handleOptionAllowAnyHTTPSCertificateForAllowedHosts));
     optionList.append(Option("--show-webview", "Show the WebView during test runs (for debugging)", handleOptionShowWebView));
     optionList.append(Option("--show-touches", "Show the touches during test runs (for debugging)", handleOptionShowTouches));
 

@@ -28,6 +28,7 @@
 #pragma once
 
 #include <functional>
+#include <set>
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -47,8 +48,9 @@ struct Options {
     bool shouldUseRemoteLayerTree { false };
     bool shouldShowWebView { false };
     bool shouldShowTouches { false };
+    bool allowAnyHTTPSCertificateForAllowedHosts { false };
     std::vector<std::string> paths;
-    std::vector<std::string> allowedHosts;
+    std::set<std::string> allowedHosts;
 };
 
 class Option {
