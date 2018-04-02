@@ -1,3 +1,30 @@
+2018-04-02  Daniel Bates  <dabates@apple.com>
+
+        Remove Options constructor and use internal linkage for option handlers
+        https://bugs.webkit.org/show_bug.cgi?id=184229
+
+        Reviewed by Andy Estes.
+
+        Use C++11 default initializer syntax to remove the need to explicitly have a constructor
+        for the struct Options. Use internal linkage for option handler functions as these
+        are never invoked outside the translation unit they are defined in.
+
+        * WebKitTestRunner/Options.cpp:
+        (WTR::handleOptionNoTimeout):
+        (WTR::handleOptionVerbose):
+        (WTR::handleOptionGcBetweenTests):
+        (WTR::handleOptionPixelTests):
+        (WTR::handleOptionPrintSupportedFeatures):
+        (WTR::handleOptionComplexText):
+        (WTR::handleOptionAcceleratedDrawing):
+        (WTR::handleOptionRemoteLayerTree):
+        (WTR::handleOptionShowWebView):
+        (WTR::handleOptionShowTouches):
+        (WTR::handleOptionAllowedHost):
+        (WTR::handleOptionUnmatched):
+        (WTR::Options::Options): Deleted.
+        * WebKitTestRunner/Options.h:
+
 2018-04-02  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed GTK port dependencies fix after r230152.
