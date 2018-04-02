@@ -32,16 +32,16 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/MediaPlaybackTargetMac.h>
 #import <objc/runtime.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
-#import <wtf/SoftLinking.h>
 
 typedef AVOutputContext AVOutputContextType;
 typedef AVOutputDeviceMenuController AVOutputDeviceMenuControllerType;
 
+SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVOutputContext)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVOutputDeviceMenuController)

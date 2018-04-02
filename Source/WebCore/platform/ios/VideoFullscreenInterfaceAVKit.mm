@@ -60,7 +60,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResize, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResizeAspect, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResizeAspectFill, NSString *)
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
+SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)

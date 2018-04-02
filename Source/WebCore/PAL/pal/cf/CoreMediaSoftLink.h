@@ -31,6 +31,12 @@
 #include <pal/spi/cf/CoreMediaSPI.h>
 #include <wtf/SoftLinking.h>
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+#define SOFTLINK_AVKIT_FRAMEWORK() SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AVKit)
+#else
+#define SOFTLINK_AVKIT_FRAMEWORK() SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
+#endif
+
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreMedia)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferCopyDataBytes, OSStatus, (CMBlockBufferRef theSourceBuffer, size_t offsetToData, size_t dataLength, void* destination), (theSourceBuffer, offsetToData, dataLength, destination))

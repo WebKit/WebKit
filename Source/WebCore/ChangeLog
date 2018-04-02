@@ -1,3 +1,19 @@
+2018-04-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Define AVKit softlink macro
+        https://bugs.webkit.org/show_bug.cgi?id=184241
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        * platform/ios/WebAVPlayerController.mm:
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+
 2018-04-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Update date picker UI to latest specifications
