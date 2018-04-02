@@ -1,3 +1,12 @@
+2018-04-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] DragAndDropHandler.cpp should include GUniquePtrGtk.h
+        https://bugs.webkit.org/show_bug.cgi?id=184119
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+
 2018-04-02  Frederic Wang  <fwang@igalia.com>
 
         Fix warnings for unused lambda captures in Source/WebKit
