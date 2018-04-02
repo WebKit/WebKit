@@ -1,3 +1,21 @@
+2018-04-02  Daniel Bates  <dabates@apple.com>
+
+        Remove pre-Network Session code path for allowing any HTTPS certificate on Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=184242
+
+        Reviewed by Alexey Proskuryakov.
+
+        Following r227364 we use the Network Session (NSURLSession) code path by default in
+        modern WebKit on Mac and iOS. That is, we no longer use {CF, NS}URLConnection in modern
+        WebKit on these platforms. So, we can remove code that used NSURLRequest SPI to allow
+        any HTTPS certificate from localhost and 127.0.0.1 when using {CF, NS}URLConnection.
+        The equivalent functionality is implemented in TestController::canAuthenticateAgainstProtectionSpace().
+
+        * WebKitTestRunner/InjectedBundle/ios/InjectedBundleIOS.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2018-04-02  Brady Eidson  <beidson@apple.com>
 
         Process swapping on navigation needs to handle server redirects.
