@@ -111,7 +111,6 @@ void JIT::emitEnterOptimizationCheck()
 
     callOperation(operationOptimize, m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
-    move(returnValueGPR2, stackPointerRegister);
     jump(returnValueGPR, NoPtrTag);
     skipOptimize.link(this);
 }

@@ -112,9 +112,10 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
 {
     AssemblyHelpers jit(nullptr);
 
-    // We get passed the address of a scratch buffer. The first 8-byte slot of the buffer
-    // is the frame size. The second 8-byte slot is the pointer to where we are supposed to
-    // jump. The remaining bytes are the new call frame header followed by the locals.
+    // We get passed the address of a scratch buffer in GPRInfo::returnValueGPR2.
+    // The first 8-byte slot of the buffer is the frame size. The second 8-byte slot
+    // is the pointer to where we are supposed to jump. The remaining bytes are
+    // the new call frame header followed by the locals.
     
     ptrdiff_t offsetOfFrameSize = 0; // This is the DFG frame count.
     ptrdiff_t offsetOfTargetPC = offsetOfFrameSize + sizeof(EncodedJSValue);
