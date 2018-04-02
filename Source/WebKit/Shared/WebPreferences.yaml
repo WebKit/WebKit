@@ -165,7 +165,7 @@ LinkPreconnect:
 
 FullScreenEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_ENABLE_FULLSCREEN_API
   condition: ENABLE(FULLSCREEN_API)
   visibleCondition: PLATFORM(IOS)
   humanReadableName: "Fullscreen API"
