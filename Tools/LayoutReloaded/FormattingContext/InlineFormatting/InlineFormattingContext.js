@@ -124,7 +124,12 @@ class InlineFormattingContext extends FormattingContext {
         let floatFormattingRoot = this.displayBox(this.floatingContext().formattingRoot());
         if (root == floatFormattingRoot)
             return verticalPosition;
-        return verticalPosition - Utils.mapPosition(root.topLeft(), root, floatFormattingRoot).left();
+        let rootLeft = Utils.mapPosition(root.topLeft(), root, floatFormattingRoot).left();
+        rootLeft += root.contentBox().left();
+        // The left most float is to the right of the root.
+        if (rootLeft >= verticalPosition)
+            return root.contentBox().left();
+        return verticalPosition - rootLeft;
      }
 }
 
