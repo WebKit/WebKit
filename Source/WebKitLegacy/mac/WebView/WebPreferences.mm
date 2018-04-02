@@ -672,11 +672,7 @@ public:
         @NO, WebKitWebAuthenticationEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
         @NO, WebKitIsSecureContextAttributeEnabledPreferenceKey,
-#if PLATFORM(IOS)
-        @NO, WebKitLegacyEncryptedMediaAPIEnabledKey,
-#else
         @YES, WebKitLegacyEncryptedMediaAPIEnabledKey,
-#endif
         @NO, WebKitEncryptedMediaAPIEnabledKey,
         @YES, WebKitViewportFitEnabledPreferenceKey,
         @YES, WebKitConstantPropertiesEnabledPreferenceKey,

@@ -741,7 +741,7 @@ BeaconAPIEnabled:
 
 LegacyEncryptedMediaAPIEnabled:
   type: bool
-  defaultValue: DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED
+  defaultValue: true
   humanReadableName: "Enable Legacy EME API"
   humanReadableDescription: "Enable legacy EME API"
   webcoreBinding: RuntimeEnabledFeatures
