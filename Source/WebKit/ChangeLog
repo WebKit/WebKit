@@ -1,3 +1,47 @@
+2018-04-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Zoom level is sometimes excessive when zooming to focused form controls
+        https://bugs.webkit.org/show_bug.cgi?id=184222
+        <rdar://problem/39063886>
+
+        Reviewed by Timothy Hatcher.
+
+        Upon interactively focusing an element, we zoom and scroll to reveal that element. The heuristics introduced in
+        <https://trac.webkit.org/r168744> work by computing a target scale, and then a point to zoom to given that
+        scale. Currently, this scale is dependent on the computed font size of the form control, such that the form
+        control would be scaled to have an effective font size of 16.
+
+        However, in extra zoom mode, applying these same heuristics (ironically) results in excessive zoom levels, since
+        scaling the font up to 16 would cause most form controls to zoom so far in that we lose context of surrounding
+        elements such as labels and other form controls; the fact that the element is highlighted by the focused form
+        control overlay makes this even more confusing, since part of the focus overlay highlight rect often ends up
+        outside the viewport.
+
+        To fix this, we make a couple of tweaks to focus rect zooming in extra zoom mode. (1) Instead of computing
+        target zoom level based on font size, try to zoom such that the focused element rect fills up most of the
+        viewport (similar to double-tap zooming). This ensures that the focused form control overlay's highlight rect
+        makes sense in most cases, with few exceptions (e.g. the element frame is larger than the viewport). (2)
+        Introduce a minimum legible font size of 11, and compute the minimium scale needed such that the form control
+        font would appear to be at least this legible font size. Then, clamp the target scale chosen by (1) to this
+        minimum scale.
+
+        One additional consideration for (1) is that naively scaling to fit the element rect to the viewport (with some
+        fixed margins) would cause the viewport scale to always change when moving focus between form controls of
+        different dimensions, even if the current scale is more or less appropriate for all the focusable elements. To
+        address this, instead of computing a single target zoom scale for an element rect, compute a range of possible
+        target zoom scales (where the minimum and maximum values depend on the margin we add around the element rect).
+        If the current scale already falls within this target scale range, then we won't bother adjusting the scale at
+        all (unless the font size is too small — see (2)). If the current scale falls outside the target scale range, we
+        then make the minimal adjustment needed to ensure that the element rect fits well within the viewport without
+        being too small.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
+        Move some logic around so that the target scale is computed after computing the visible size. Also renames some
+        constants local to this function (WKWebViewStandardFontSize, kMinimumHeightToShowContentAboveKeyboard,
+        UIWebFormAnimationDuration, CaretOffsetFromWindowEdge) such that they now share a consistent naming style.
+
 2018-04-02  Jer Noble  <jer.noble@apple.com>
 
         Enable Legacy EME for all WebKit & WebKitLegacy clients

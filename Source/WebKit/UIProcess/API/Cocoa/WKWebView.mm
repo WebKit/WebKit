@@ -2120,21 +2120,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect:" << focusedElementRectInDocumentCoordinates << " selectionRect:" << selectionRectInDocumentCoordinates);
     UNUSED_PARAM(insideFixed);
 
-    const double WKWebViewStandardFontSize = 16;
-    const double kMinimumHeightToShowContentAboveKeyboard = 106;
-    const CFTimeInterval UIWebFormAnimationDuration = 0.25;
-    const double CaretOffsetFromWindowEdge = 20;
-
-    // Zoom around the element's bounding frame. We use a "standard" size to determine the proper frame.
-    double scale = allowScaling ? std::min(std::max(WKWebViewStandardFontSize / fontSize, minimumScale), maximumScale) : contentZoomScale(self);
-    CGFloat documentWidth = [_contentView bounds].size.width;
-    scale = CGRound(documentWidth * scale) / documentWidth;
+    const double minimumHeightToShowContentAboveKeyboard = 106;
+    const CFTimeInterval formControlZoomAnimationDuration = 0.25;
+    const double caretOffsetFromWindowEdge = 20;
 
     UIWindow *window = [_scrollView window];
-
-    WebCore::FloatRect focusedElementRectInNewScale = focusedElementRectInDocumentCoordinates;
-    focusedElementRectInNewScale.scale(scale);
-    focusedElementRectInNewScale.moveBy([_contentView frame].origin);
 
     // Find the portion of the view that is visible on the screen.
     UIViewController *topViewController = [[[_scrollView _viewControllerForAncestor] _rootAncestorViewController] _viewControllerForSupportedInterfaceOrientations];
@@ -2153,13 +2143,42 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         CGFloat heightVisibleAboveFormAssistant = CGRectGetMinY(intersectionBetweenScrollViewAndFormAssistant) - CGRectGetMinY(visibleScrollViewBoundsInWebViewCoordinates);
         CGFloat heightVisibleBelowFormAssistant = CGRectGetMaxY(visibleScrollViewBoundsInWebViewCoordinates) - CGRectGetMaxY(intersectionBetweenScrollViewAndFormAssistant);
 
-        if (heightVisibleAboveFormAssistant >= kMinimumHeightToShowContentAboveKeyboard || heightVisibleBelowFormAssistant < heightVisibleAboveFormAssistant)
+        if (heightVisibleAboveFormAssistant >= minimumHeightToShowContentAboveKeyboard || heightVisibleBelowFormAssistant < heightVisibleAboveFormAssistant)
             visibleSize.height = heightVisibleAboveFormAssistant;
         else {
             visibleSize.height = heightVisibleBelowFormAssistant;
             visibleOffsetFromTop = CGRectGetMaxY(intersectionBetweenScrollViewAndFormAssistant) - CGRectGetMinY(visibleScrollViewBoundsInWebViewCoordinates);
         }
     }
+
+    // Zoom around the element's bounding frame. We use a "standard" size to determine the proper frame.
+    double currentScale = contentZoomScale(self);
+    double scale = currentScale;
+    if (allowScaling) {
+#if ENABLE(EXTRA_ZOOM_MODE)
+        const double minimumLegibleFontSize = 11;
+        const CGFloat minimumMarginForZoomingToEntireFocusRectInWebViewCoordinates = 10;
+        const CGFloat maximumMarginForZoomingToEntireFocusRectInWebViewCoordinates = 35;
+
+        CGRect minimumTargetRectInDocumentCoordinates = UIRectInsetEdges(focusedElementRectInDocumentCoordinates, UIRectEdgeAll, -minimumMarginForZoomingToEntireFocusRectInWebViewCoordinates / currentScale);
+        CGRect maximumTargetRectInDocumentCoordinates = UIRectInsetEdges(focusedElementRectInDocumentCoordinates, UIRectEdgeAll, -maximumMarginForZoomingToEntireFocusRectInWebViewCoordinates / currentScale);
+
+        double clampedMaximumTargetScale = clampTo<double>(std::min(visibleSize.width / CGRectGetWidth(minimumTargetRectInDocumentCoordinates), visibleSize.height / CGRectGetHeight(minimumTargetRectInDocumentCoordinates)), minimumScale, maximumScale);
+        double clampedMinimumTargetScale = clampTo<double>(std::min(visibleSize.width / CGRectGetWidth(maximumTargetRectInDocumentCoordinates), visibleSize.height / CGRectGetHeight(maximumTargetRectInDocumentCoordinates)), minimumScale, maximumScale);
+        double targetScaleIgnoringFontSizeConstraints = clampTo<double>(currentScale, clampedMinimumTargetScale, clampedMaximumTargetScale);
+        scale = std::max<double>(minimumLegibleFontSize / fontSize, targetScaleIgnoringFontSizeConstraints);
+#else
+        const double webViewStandardFontSize = 16;
+        scale = clampTo<double>(webViewStandardFontSize / fontSize, minimumScale, maximumScale);
+#endif
+    }
+
+    CGFloat documentWidth = [_contentView bounds].size.width;
+    scale = CGRound(documentWidth * scale) / documentWidth;
+
+    WebCore::FloatRect focusedElementRectInNewScale = focusedElementRectInDocumentCoordinates;
+    focusedElementRectInNewScale.scale(scale);
+    focusedElementRectInNewScale.moveBy([_contentView frame].origin);
 
     BOOL selectionRectIsNotNull = !selectionRectInDocumentCoordinates.isZero();
     if (!forceScroll) {
@@ -2193,8 +2212,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         WebCore::FloatRect selectionRectInNewScale = selectionRectInDocumentCoordinates;
         selectionRectInNewScale.scale(scale);
         selectionRectInNewScale.moveBy([_contentView frame].origin);
-        minimumAllowableHorizontalOffsetInWebViewCoordinates = CGRectGetMaxX(selectionRectInNewScale) + CaretOffsetFromWindowEdge - visibleSize.width;
-        minimumAllowableVerticalOffsetInWebViewCoordinates = CGRectGetMaxY(selectionRectInNewScale) + CaretOffsetFromWindowEdge - visibleSize.height - visibleOffsetFromTop;
+        minimumAllowableHorizontalOffsetInWebViewCoordinates = CGRectGetMaxX(selectionRectInNewScale) + caretOffsetFromWindowEdge - visibleSize.width;
+        minimumAllowableVerticalOffsetInWebViewCoordinates = CGRectGetMaxY(selectionRectInNewScale) + caretOffsetFromWindowEdge - visibleSize.height - visibleOffsetFromTop;
     }
 
     WebCore::FloatRect documentBoundsInNewScale = [_contentView bounds];
@@ -2225,17 +2244,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     WebCore::FloatPoint newCenter = CGPointMake(topLeft.x + unobscuredScrollViewRectInWebViewCoordinates.size.width / 2.0, topLeft.y + unobscuredScrollViewRectInWebViewCoordinates.size.height / 2.0);
 
-    if (scale != contentZoomScale(self))
+    if (scale != currentScale)
         _page->willStartUserTriggeredZooming();
 
     LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect: zooming to " << newCenter << " scale:" << scale);
 
     // The newCenter has been computed in the new scale, but _zoomToCenter expected the center to be in the original scale.
     newCenter.scale(1 / scale);
-    [_scrollView _zoomToCenter:newCenter
-                        scale:scale
-                     duration:UIWebFormAnimationDuration
-                        force:YES];
+    [_scrollView _zoomToCenter:newCenter scale:scale duration:formControlZoomAnimationDuration force:YES];
 }
 
 - (CGFloat)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale
