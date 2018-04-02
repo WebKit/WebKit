@@ -1,3 +1,21 @@
+2018-04-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MSVC can't compile WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent
+        https://bugs.webkit.org/show_bug.cgi?id=184120
+
+        Reviewed by Alex Christensen.
+
+        It seems that MSVC can't compile the code using `this` in a
+        generalized lambda capture in another lambda.
+
+        In this case, there is no need to copy `protectedThis` for the
+        inner lambda. Move `protectedThis` of the outer lambda to the
+        inner as well as `callback`.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        Moved `protectedThis` from the outer lambda to the inner.
+
 2018-04-02  Dan Bernstein  <mitz@apple.com>
 
         Build fix after r230121

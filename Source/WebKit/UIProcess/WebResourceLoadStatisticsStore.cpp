@@ -821,7 +821,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
         m_persistentStorage.clear();
         
         if (shouldGrandfather == ShouldGrandfather::Yes)
-            grandfatherExistingWebsiteData([protectedThis = makeRef(*this), callback = WTFMove(callback)]() {
+            grandfatherExistingWebsiteData([protectedThis = WTFMove(protectedThis), callback = WTFMove(callback)]() {
                 callback();
             });
         else {
