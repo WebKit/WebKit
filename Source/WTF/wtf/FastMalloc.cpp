@@ -102,6 +102,8 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
 
+#include <wtf/OSAllocator.h>
+
 #if OS(WINDOWS)
 #include <malloc.h>
 #endif
@@ -238,6 +240,16 @@ size_t fastMallocSize(const void* p)
 #endif
 }
 
+void fastCommitAlignedMemory(void* ptr, size_t size)
+{
+    OSAllocator::commit(ptr, size, true, false);
+}
+
+void fastDecommitAlignedMemory(void* ptr, size_t size)
+{
+    OSAllocator::decommit(ptr, size);
+}
+
 } // namespace WTF
 
 #else // defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
@@ -359,6 +371,16 @@ FastMallocStatistics fastMallocStatistics()
 
 #endif // OS(WINDOWS)
     return statistics;
+}
+
+void fastCommitAlignedMemory(void* ptr, size_t size)
+{
+    bmalloc::api::commitAlignedPhysical(ptr, size);
+}
+
+void fastDecommitAlignedMemory(void* ptr, size_t size)
+{
+    bmalloc::api::decommitAlignedPhysical(ptr, size);
 }
 
 } // namespace WTF

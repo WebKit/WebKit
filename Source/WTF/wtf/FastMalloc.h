@@ -70,6 +70,9 @@ WTF_EXPORT_PRIVATE size_t fastMallocGoodSize(size_t);
 WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemory();
 WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemoryForThisThread();
 
+WTF_EXPORT_PRIVATE void fastCommitAlignedMemory(void*, size_t);
+WTF_EXPORT_PRIVATE void fastDecommitAlignedMemory(void*, size_t);
+
 struct FastMallocStatistics {
     size_t reservedVMBytes;
     size_t committedVMBytes;

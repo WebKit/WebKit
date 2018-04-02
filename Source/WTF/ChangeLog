@@ -1,3 +1,15 @@
+2018-04-02  Saam Barati  <sbarati@apple.com>
+
+        bmalloc should compute its own estimate of its footprint
+        https://bugs.webkit.org/show_bug.cgi?id=184121
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastCommitAlignedMemory):
+        (WTF::fastDecommitAlignedMemory):
+        * wtf/FastMalloc.h:
+
 2018-03-30  Filip Pizlo  <fpizlo@apple.com>
 
         Strings and Vectors shouldn't do index masking

@@ -71,8 +71,9 @@ EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligibl
             vmAllocatePhysicalPages(page, IsoPageBase::pageSize);
             new (page) IsoPage<Config>(*this, pageIndex);
         }
-        
+
         m_committed[pageIndex] = true;
+        this->m_heap.didCommit(page, IsoPageBase::pageSize);
     }
     
     RELEASE_BASSERT(page);
@@ -114,6 +115,7 @@ void IsoDirectory<Config, passedNumPages>::didDecommit(unsigned index)
     // syscall itself (which has to do many hard things).
     std::lock_guard<Mutex> locker(this->m_heap.lock);
     m_committed[index] = false;
+    this->m_heap.didDecommit(m_pages[index], IsoPageBase::pageSize);
 }
 
 template<typename Config, unsigned passedNumPages>
@@ -126,6 +128,16 @@ void IsoDirectory<Config, passedNumPages>::scavenge(Vector<DeferredDecommit>& de
             m_eligible[index] = false;
             decommits.push(DeferredDecommit(this, m_pages[index], index));
         });
+}
+
+template<typename Config, unsigned passedNumPages>
+size_t IsoDirectory<Config, passedNumPages>::freeableMemory()
+{
+    size_t result = 0;
+    (m_empty & m_committed).forEachSetBit([&] (size_t) {
+        result += IsoPageBase::pageSize;
+    });
+    return result;
 }
 
 template<typename Config, unsigned passedNumPages>

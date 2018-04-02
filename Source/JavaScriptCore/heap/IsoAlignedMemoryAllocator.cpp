@@ -37,7 +37,7 @@ IsoAlignedMemoryAllocator::~IsoAlignedMemoryAllocator()
     for (unsigned i = 0; i < m_blocks.size(); ++i) {
         void* block = m_blocks[i];
         if (!m_committed[i])
-            OSAllocator::commit(block, MarkedBlock::blockSize, true, false);
+            WTF::fastCommitAlignedMemory(block, MarkedBlock::blockSize);
         fastAlignedFree(block);
     }
 }
@@ -55,7 +55,7 @@ void* IsoAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size
     if (m_firstUncommitted < m_blocks.size()) {
         m_committed[m_firstUncommitted] = true;
         void* result = m_blocks[m_firstUncommitted];
-        OSAllocator::commit(result, MarkedBlock::blockSize, true, false);
+        WTF::fastCommitAlignedMemory(result, MarkedBlock::blockSize);
         return result;
     }
     
@@ -80,7 +80,7 @@ void IsoAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
     unsigned index = iter->value;
     m_committed[index] = false;
     m_firstUncommitted = std::min(index, m_firstUncommitted);
-    OSAllocator::decommit(basePtr, MarkedBlock::blockSize);
+    WTF::fastDecommitAlignedMemory(basePtr, MarkedBlock::blockSize);
 }
 
 void IsoAlignedMemoryAllocator::dump(PrintStream& out) const

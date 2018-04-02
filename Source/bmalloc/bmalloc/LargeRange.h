@@ -35,26 +35,48 @@ class LargeRange : public Range {
 public:
     LargeRange()
         : Range()
-        , m_physicalSize(0)
+        , m_startPhysicalSize(0)
+        , m_totalPhysicalSize(0)
     {
     }
 
-    LargeRange(const Range& other, size_t physicalSize)
+    LargeRange(const Range& other, size_t startPhysicalSize, size_t totalPhysicalSize)
         : Range(other)
-        , m_physicalSize(physicalSize)
+        , m_startPhysicalSize(startPhysicalSize)
+        , m_totalPhysicalSize(totalPhysicalSize)
     {
+        BASSERT(size() >= this->totalPhysicalSize());
+        BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
     }
 
-    LargeRange(void* begin, size_t size, size_t physicalSize)
+    LargeRange(void* begin, size_t size, size_t startPhysicalSize, size_t totalPhysicalSize)
         : Range(begin, size)
-        , m_physicalSize(physicalSize)
+        , m_startPhysicalSize(startPhysicalSize)
+        , m_totalPhysicalSize(totalPhysicalSize)
     {
+        BASSERT(this->size() >= this->totalPhysicalSize());
+        BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
     }
 
-    // Returns a lower bound on physical size. Ranges that span non-physical
-    // fragments only remember the physical size of the first fragment.
-    size_t physicalSize() const { return m_physicalSize; }
-    void setPhysicalSize(size_t physicalSize) { m_physicalSize = physicalSize; }
+    // Returns a lower bound on physical size at the start of the range. Ranges that
+    // span non-physical fragments use this number to remember the physical size of
+    // the first fragment.
+    size_t startPhysicalSize() const { return m_startPhysicalSize; }
+    void setStartPhysicalSize(size_t startPhysicalSize) { m_startPhysicalSize = startPhysicalSize; }
+
+    // This is accurate in the sense that if you take a range A and split it N ways
+    // and sum totalPhysicalSize over each of the N splits, you'll end up with A's
+    // totalPhysicalSize. This means if you take a LargeRange out of a LargeMap, split it,
+    // then insert the subsequent two ranges back into the LargeMap, the sum of the
+    // totalPhysicalSize of each LargeRange in the LargeMap will stay constant. This
+    // property is not true of startPhysicalSize. This invariant about totalPhysicalSize
+    // is good enough to get an accurate footprint estimate for memory used in bmalloc.
+    // The reason this is just an estimate is that splitting LargeRanges may lead to this
+    // number being rebalanced in arbitrary ways between the two resulting ranges. This
+    // is why the footprint is just an estimate. In practice, this arbitrary rebalance
+    // doesn't really affect accuracy.
+    size_t totalPhysicalSize() const { return m_totalPhysicalSize; }
+    void setTotalPhysicalSize(size_t totalPhysicalSize) { m_totalPhysicalSize = totalPhysicalSize; }
 
     std::pair<LargeRange, LargeRange> split(size_t) const;
 
@@ -62,7 +84,8 @@ public:
     bool operator<(const LargeRange& other) const { return begin() < other.begin(); }
 
 private:
-    size_t m_physicalSize;
+    size_t m_startPhysicalSize;
+    size_t m_totalPhysicalSize;
 };
 
 inline bool canMerge(const LargeRange& a, const LargeRange& b)
@@ -79,31 +102,40 @@ inline bool canMerge(const LargeRange& a, const LargeRange& b)
 inline LargeRange merge(const LargeRange& a, const LargeRange& b)
 {
     const LargeRange& left = std::min(a, b);
-    if (left.size() == left.physicalSize()) {
+    if (left.size() == left.startPhysicalSize()) {
         return LargeRange(
             left.begin(),
             a.size() + b.size(),
-            a.physicalSize() + b.physicalSize());
+            a.startPhysicalSize() + b.startPhysicalSize(),
+            a.totalPhysicalSize() + b.totalPhysicalSize());
     }
 
     return LargeRange(
         left.begin(),
         a.size() + b.size(),
-        left.physicalSize());
+        left.startPhysicalSize(),
+        a.totalPhysicalSize() + b.totalPhysicalSize());
 }
 
-inline std::pair<LargeRange, LargeRange> LargeRange::split(size_t size) const
+inline std::pair<LargeRange, LargeRange> LargeRange::split(size_t leftSize) const
 {
-    BASSERT(size <= this->size());
-    
-    if (size <= physicalSize()) {
-        LargeRange left(begin(), size, size);
-        LargeRange right(left.end(), this->size() - size, physicalSize() - size);
+    BASSERT(leftSize <= this->size());
+    size_t rightSize = this->size() - leftSize;
+
+    if (leftSize <= startPhysicalSize()) {
+        BASSERT(totalPhysicalSize() >= leftSize);
+        LargeRange left(begin(), leftSize, leftSize, leftSize);
+        LargeRange right(left.end(), rightSize, startPhysicalSize() - leftSize, totalPhysicalSize() - leftSize);
         return std::make_pair(left, right);
     }
 
-    LargeRange left(begin(), size, physicalSize());
-    LargeRange right(left.end(), this->size() - size, 0);
+    double ratio = static_cast<double>(leftSize) / static_cast<double>(this->size());
+    size_t leftTotalPhysicalSize = static_cast<size_t>(ratio * totalPhysicalSize());
+    leftTotalPhysicalSize = std::max(startPhysicalSize(), leftTotalPhysicalSize);
+    size_t rightTotalPhysicalSize = totalPhysicalSize() - leftTotalPhysicalSize;
+
+    LargeRange left(begin(), leftSize, startPhysicalSize(), leftTotalPhysicalSize);
+    LargeRange right(left.end(), rightSize, 0, rightTotalPhysicalSize);
     return std::make_pair(left, right);
 }
 

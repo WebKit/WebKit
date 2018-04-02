@@ -133,6 +133,7 @@
 		4426E2831C839547008EB042 /* BSoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E2821C839547008EB042 /* BSoftLinking.h */; };
 		6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */; };
 		6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = AD0934321FCF405000E85EB5 /* BCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = AD14AD27202529A600890E3B /* ProcessCheck.h */; };
 		AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD14AD28202529B000890E3B /* ProcessCheck.mm */; };
@@ -292,6 +293,7 @@
 		4426E2821C839547008EB042 /* BSoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BSoftLinking.h; path = bmalloc/darwin/BSoftLinking.h; sourceTree = "<group>"; };
 		6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AvailableMemory.cpp; path = bmalloc/AvailableMemory.cpp; sourceTree = "<group>"; };
 		6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AvailableMemory.h; path = bmalloc/AvailableMemory.h; sourceTree = "<group>"; };
+		795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PhysicalPageMap.h; path = bmalloc/PhysicalPageMap.h; sourceTree = "<group>"; };
 		AD0934321FCF405000E85EB5 /* BCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCompiler.h; path = bmalloc/BCompiler.h; sourceTree = "<group>"; };
 		AD14AD27202529A600890E3B /* ProcessCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessCheck.h; path = bmalloc/ProcessCheck.h; sourceTree = "<group>"; };
 		AD14AD28202529B000890E3B /* ProcessCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessCheck.mm; path = bmalloc/ProcessCheck.mm; sourceTree = "<group>"; };
@@ -486,6 +488,7 @@
 				144BE11E1CA346520099C8C0 /* Object.h */,
 				14105E8318E14374003A106E /* ObjectType.cpp */,
 				1485656018A43DBA00ED6942 /* ObjectType.h */,
+				795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */,
 				AD14AD27202529A600890E3B /* ProcessCheck.h */,
 				AD14AD28202529B000890E3B /* ProcessCheck.mm */,
 				0F5BF1501F22E1570029D91D /* Scavenger.cpp */,
@@ -604,6 +607,7 @@
 				14DD78C918F48D7500950702 /* BInline.h in Headers */,
 				0F7EB8471F9541B000F1ABCB /* IsoDeallocator.h in Headers */,
 				0F7EB8241F9541B000F1ABCB /* IsoHeapImplInlines.h in Headers */,
+				795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */,
 				144C07F51C7B70260051BB6A /* LargeMap.h in Headers */,
 				14C8992D1CC578330027A057 /* LargeRange.h in Headers */,
 				140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */,

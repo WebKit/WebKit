@@ -104,6 +104,17 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
 }
 
 template<typename Config>
+size_t IsoHeapImpl<Config>::freeableMemory()
+{
+    size_t result = 0;
+    forEachDirectory(
+        [&] (auto& directory) {
+            result += directory.freeableMemory();
+        });
+    return result;
+}
+
+template<typename Config>
 unsigned IsoHeapImpl<Config>::allocatorOffset()
 {
     return m_allocator.offset();
@@ -164,6 +175,35 @@ void IsoHeapImpl<Config>::forEachLiveObject(const Func& func)
         [&] (IsoPage<Config>& page) {
             page.forEachLiveObject(func);
         });
+}
+
+template<typename Config>
+size_t IsoHeapImpl<Config>::footprint()
+{
+#if ENABLE_PHYSICAL_PAGE_MAP
+    RELEASE_BASSERT(m_footprint == m_physicalPageMap.footprint());
+#endif
+    return m_footprint;
+}
+
+template<typename Config>
+void IsoHeapImpl<Config>::didCommit(void* ptr, size_t bytes)
+{
+    BUNUSED_PARAM(ptr);
+    m_footprint += bytes;
+#if ENABLE_PHYSICAL_PAGE_MAP
+    m_physicalPageMap.commit(ptr, bytes);
+#endif
+}
+
+template<typename Config>
+void IsoHeapImpl<Config>::didDecommit(void* ptr, size_t bytes)
+{
+    BUNUSED_PARAM(ptr);
+    m_footprint -= bytes;
+#if ENABLE_PHYSICAL_PAGE_MAP
+    m_physicalPageMap.decommit(ptr, bytes);
+#endif
 }
 
 } // namespace bmalloc

@@ -94,6 +94,11 @@ inline void scavengeThisThread()
 BEXPORT void scavenge();
 
 BEXPORT bool isEnabled(HeapKind kind = HeapKind::Primary);
+
+// ptr must be aligned to vmPageSizePhysical and size must be divisible 
+// by vmPageSizePhysical.
+BEXPORT void decommitAlignedPhysical(void* object, size_t, HeapKind = HeapKind::Primary);
+BEXPORT void commitAlignedPhysical(void* object, size_t, HeapKind = HeapKind::Primary);
     
 inline size_t availableMemory()
 {

@@ -219,6 +219,18 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 #endif
 }
 
+// Returns how much memory you would commit/decommit had you called
+// vmDeallocate/AllocatePhysicalPagesSloppy with p and size.
+inline size_t physicalPageSizeSloppy(void* p, size_t size)
+{
+    char* begin = roundUpToMultipleOf(vmPageSizePhysical(), static_cast<char*>(p));
+    char* end = roundDownToMultipleOf(vmPageSizePhysical(), static_cast<char*>(p) + size);
+
+    if (begin >= end)
+        return 0;
+    return end - begin;
+}
+
 // Trims requests that are un-page-aligned.
 inline void vmDeallocatePhysicalPagesSloppy(void* p, size_t size)
 {

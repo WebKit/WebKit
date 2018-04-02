@@ -1,3 +1,111 @@
+2018-04-02  Saam Barati  <sbarati@apple.com>
+
+        bmalloc should compute its own estimate of its footprint
+        https://bugs.webkit.org/show_bug.cgi?id=184121
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes it so that bmalloc keeps track of its own physical
+        footprint.
+        
+        Doing this for IsoHeaps is trivial. It allocates/deallocates fixed
+        page sizes at a time. IsoHeapImpl just updates a count every time
+        a page is committed/decommitted.
+        
+        Making Heap keep its footprint was a bit trickier because of how
+        LargeRange is constructed. Before this patch, LargeRange kept track
+        of the amount of physical memory at the start of its range. This
+        patch extends large range to also keep track of the total physical memory
+        in the range just for footprint bookkeeping. This was needed to make
+        Heap's footprint come close to resembling reality, because as we merge and split
+        large ranges, the start physical size often becomes wildly inaccurate.
+        The total physical size number stored in LargeRange is still just an
+        estimate. It's possible that as ranges are split, that the total physical
+        size split amongst the two ranges doesn't resemble reality. This can
+        happen when the total physical size is really all in one end of the split,
+        but we mark it as being proportionally split amongst the resulting two
+        ranges. In practice, I did not notice this being a problem. The footprint
+        estimate tracks reality very closely (in my testing, within less than 1MB for
+        heaps with sizes upwards of 1GB). The other nice thing about total physical
+        size is that even if it diverges from reality in terms of how memory is
+        using up physical RAM, it stays internally consistent inside bmalloc's
+        own data structures.
+        
+        The main oversight of this patch is how it deals with Wasm memory. All Wasm
+        memory will be viewed by bmalloc as taking up physical space even when it
+        may not be. Wasm memory starts off as taking up purely virtual pages. When a
+        page is first accessed, only then will the OS page it in and cause it to use
+        physical RAM. I opened a bug to come up with a solution to this problem:
+        https://bugs.webkit.org/show_bug.cgi?id=184207
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::memoryStatus):
+        * bmalloc/BPlatform.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::freeableMemory):
+        (bmalloc::Heap::footprint):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::deallocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::externalCommit):
+        (bmalloc::Heap::externalDecommit):
+        * bmalloc/Heap.h:
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didDecommit):
+        (bmalloc::passedNumPages>::freeableMemory):
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::freeableMemory):
+        (bmalloc::IsoHeapImpl<Config>::footprint):
+        (bmalloc::IsoHeapImpl<Config>::didCommit):
+        (bmalloc::IsoHeapImpl<Config>::didDecommit):
+        * bmalloc/LargeRange.h:
+        (bmalloc::LargeRange::LargeRange):
+        (bmalloc::LargeRange::startPhysicalSize const):
+        (bmalloc::LargeRange::setStartPhysicalSize):
+        (bmalloc::LargeRange::totalPhysicalSize const):
+        (bmalloc::LargeRange::setTotalPhysicalSize):
+        (bmalloc::merge):
+        (bmalloc::LargeRange::split const):
+        (bmalloc::LargeRange::physicalSize const): Deleted.
+        (bmalloc::LargeRange::setPhysicalSize): Deleted.
+        * bmalloc/PhysicalPageMap.h: Added.
+        This class is added for debugging purposes. It's useful when hacking
+        on the code that calculates the footprint to use this map as a sanity
+        check. It's just a simple implementation that has a set of all the committed pages.
+
+        (bmalloc::PhysicalPageMap::commit):
+        (bmalloc::PhysicalPageMap::decommit):
+        (bmalloc::PhysicalPageMap::footprint):
+        (bmalloc::PhysicalPageMap::forEachPhysicalPage):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::dumpStats):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::freeableMemory):
+        This is here just for debugging for now. But we should implement an
+        efficient version of this to use when driving when to run the
+        scavenger.
+
+        (bmalloc::Scavenger::footprint):
+        (bmalloc::Scavenger::threadRunLoop):
+        * bmalloc/Scavenger.h:
+        * bmalloc/VMAllocate.h:
+        (bmalloc::physicalPageSizeSloppy):
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::tryAllocateLargeChunk):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::commitAlignedPhysical):
+        (bmalloc::api::decommitAlignedPhysical):
+        * bmalloc/bmalloc.h:
+
 2018-03-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230005.

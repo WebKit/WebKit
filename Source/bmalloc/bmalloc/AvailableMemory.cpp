@@ -25,6 +25,9 @@
 
 #include "AvailableMemory.h"
 
+#include "Environment.h"
+#include "PerProcess.h"
+#include "Scavenger.h"
 #include "Sizes.h"
 #include <mutex>
 #if BOS(DARWIN)
@@ -95,12 +98,16 @@ size_t availableMemory()
 #if BPLATFORM(IOS)
 MemoryStatus memoryStatus()
 {
-    task_vm_info_data_t vmInfo;
-    mach_msg_type_number_t vmSize = TASK_VM_INFO_COUNT;
-    
-    size_t memoryFootprint = 0;
-    if (KERN_SUCCESS == task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)(&vmInfo), &vmSize))
-        memoryFootprint = static_cast<size_t>(vmInfo.phys_footprint);
+    size_t memoryFootprint;
+    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+        task_vm_info_data_t vmInfo;
+        mach_msg_type_number_t vmSize = TASK_VM_INFO_COUNT;
+        
+        memoryFootprint = 0;
+        if (KERN_SUCCESS == task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)(&vmInfo), &vmSize))
+            memoryFootprint = static_cast<size_t>(vmInfo.phys_footprint);
+    } else
+        memoryFootprint = PerProcess<Scavenger>::get()->footprint();
 
     double percentInUse = static_cast<double>(memoryFootprint) / static_cast<double>(availableMemory());
     double percentAvailableMemoryInUse = std::min(percentInUse, 1.0);

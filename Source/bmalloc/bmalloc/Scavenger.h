@@ -62,6 +62,15 @@ public:
     BEXPORT void scheduleIfUnderMemoryPressure(size_t bytes);
     BEXPORT void schedule(size_t bytes);
 
+    // This is only here for debugging purposes.
+    // FIXME: Make this fast so we can use it to help determine when to
+    // run the scavenger:
+    // https://bugs.webkit.org/show_bug.cgi?id=184176
+    size_t freeableMemory();
+    // This doesn't do any synchronization, so it might return a slightly out of date answer.
+    // It's unlikely, but possible.
+    size_t footprint();
+
 private:
     enum class State { Sleep, Run, RunSoon };
     
@@ -74,7 +83,7 @@ private:
     void threadRunLoop();
     
     void setSelfQOSClass();
-    
+
     std::atomic<State> m_state { State::Sleep };
     size_t m_scavengerBytes { 0 };
     bool m_isProbablyGrowing { false };

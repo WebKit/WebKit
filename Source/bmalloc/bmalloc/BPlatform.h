@@ -235,3 +235,6 @@
 #if !defined(BUNUSED_PARAM)
 #define BUNUSED_PARAM(variable) (void)variable
 #endif
+
+/* This is used for debugging when hacking on how bmalloc calculates its physical footprint. */
+#define ENABLE_PHYSICAL_PAGE_MAP 0

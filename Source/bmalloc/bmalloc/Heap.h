@@ -37,6 +37,7 @@
 #include "Object.h"
 #include "PerHeapKind.h"
 #include "PerProcess.h"
+#include "PhysicalPageMap.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
 #include "Vector.h"
@@ -76,6 +77,14 @@ public:
 
     void scavenge(std::lock_guard<StaticMutex>&);
 
+    size_t freeableMemory(std::lock_guard<StaticMutex>&);
+    size_t footprint();
+
+    void externalDecommit(void* ptr, size_t);
+    void externalDecommit(std::lock_guard<StaticMutex>&, void* ptr, size_t);
+    void externalCommit(void* ptr, size_t);
+    void externalCommit(std::lock_guard<StaticMutex>&, void* ptr, size_t);
+
 private:
     struct LargeObjectHash {
         static unsigned hash(void* key)
@@ -109,7 +118,7 @@ private:
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
 
-    LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t);
+    LargeRange splitAndAllocate(std::lock_guard<StaticMutex>&, LargeRange&, size_t alignment, size_t);
 
     HeapKind m_kind;
     
@@ -128,6 +137,12 @@ private:
 
     Scavenger* m_scavenger { nullptr };
     DebugHeap* m_debugHeap { nullptr };
+
+    size_t m_footprint { 0 };
+
+#if ENABLE_PHYSICAL_PAGE_MAP 
+    PhysicalPageMap m_physicalPageMap;
+#endif
 };
 
 inline void Heap::allocateSmallBumpRanges(

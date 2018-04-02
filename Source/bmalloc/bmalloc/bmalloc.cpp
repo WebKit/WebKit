@@ -91,5 +91,21 @@ void setScavengerThreadQOSClass(qos_class_t overrideClass)
 }
 #endif
 
+void commitAlignedPhysical(void* object, size_t size, HeapKind kind)
+{
+    vmValidatePhysical(object, size);
+    vmAllocatePhysicalPages(object, size);
+    Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
+    heap.externalCommit(object, size);
+}
+
+void decommitAlignedPhysical(void* object, size_t size, HeapKind kind)
+{
+    vmValidatePhysical(object, size);
+    vmDeallocatePhysicalPages(object, size);
+    Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
+    heap.externalDecommit(object, size);
+}
+
 } } // namespace bmalloc::api
 

@@ -27,10 +27,19 @@
 
 #include "AllIsoHeapsInlines.h"
 #include "AvailableMemory.h"
+#include "Environment.h"
 #include "Heap.h"
+#if BOS(DARWIN)
+#import <dispatch/dispatch.h>
+#import <mach/host_info.h>
+#import <mach/mach.h>
+#import <mach/mach_error.h>
+#endif
 #include <thread>
 
 namespace bmalloc {
+
+static constexpr bool verbose = false;
 
 Scavenger::Scavenger(std::lock_guard<StaticMutex>&)
 {
@@ -115,8 +124,33 @@ void Scavenger::schedule(size_t bytes)
     runSoonHoldingLock();
 }
 
+inline void dumpStats()
+{
+    auto dump = [] (auto* string, auto size) {
+        fprintf(stderr, "%s %zuMB\n", string, static_cast<size_t>(size) / 1024 / 1024);
+    };
+
+#if BOS(DARWIN)
+    task_vm_info_data_t vmInfo;
+    mach_msg_type_number_t vmSize = TASK_VM_INFO_COUNT;
+    if (KERN_SUCCESS == task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)(&vmInfo), &vmSize)) {
+        dump("phys_footrpint", vmInfo.phys_footprint);
+        dump("internal+compressed", vmInfo.internal + vmInfo.compressed);
+    }
+#endif
+
+    dump("bmalloc-freeable", PerProcess<Scavenger>::get()->freeableMemory());
+    dump("bmalloc-footprint", PerProcess<Scavenger>::get()->footprint());
+}
+
 void Scavenger::scavenge()
 {
+    if (verbose) {
+        fprintf(stderr, "--------------------------------\n");
+        fprintf(stderr, "--before scavenging--\n");
+        dumpStats();
+    }
+
     {
         std::lock_guard<StaticMutex> lock(Heap::mutex());
         for (unsigned i = numHeaps; i--;) {
@@ -126,14 +160,62 @@ void Scavenger::scavenge()
         }
     }
     
+    {
+        std::lock_guard<Mutex> locker(m_isoScavengeLock);
+        RELEASE_BASSERT(!m_deferredDecommits.size());
+        PerProcess<AllIsoHeaps>::get()->forEach(
+            [&] (IsoHeapImplBase& heap) {
+                heap.scavenge(m_deferredDecommits);
+            });
+        IsoHeapImplBase::finishScavenging(m_deferredDecommits);
+        m_deferredDecommits.shrink(0);
+    }
+
+    if (verbose) {
+        fprintf(stderr, "--after scavenging--\n");
+        dumpStats();
+        fprintf(stderr, "--------------------------------\n");
+    }
+}
+
+size_t Scavenger::freeableMemory()
+{
+    size_t result = 0;
+    {
+        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        for (unsigned i = numHeaps; i--;) {
+            if (!isActiveHeapKind(static_cast<HeapKind>(i)))
+                continue;
+            result += PerProcess<PerHeapKind<Heap>>::get()->at(i).freeableMemory(lock);
+        }
+    }
+
     std::lock_guard<Mutex> locker(m_isoScavengeLock);
-    RELEASE_BASSERT(!m_deferredDecommits.size());
     PerProcess<AllIsoHeaps>::get()->forEach(
         [&] (IsoHeapImplBase& heap) {
-            heap.scavenge(m_deferredDecommits);
+            result += heap.freeableMemory();
         });
-    IsoHeapImplBase::finishScavenging(m_deferredDecommits);
-    m_deferredDecommits.shrink(0);
+
+    return result;
+}
+
+size_t Scavenger::footprint()
+{
+    RELEASE_BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+
+    size_t result = 0;
+    for (unsigned i = numHeaps; i--;) {
+        if (!isActiveHeapKind(static_cast<HeapKind>(i)))
+            continue;
+        result += PerProcess<PerHeapKind<Heap>>::get()->at(i).footprint();
+    }
+
+    PerProcess<AllIsoHeaps>::get()->forEach(
+        [&] (IsoHeapImplBase& heap) {
+            result += heap.footprint();
+        });
+
+    return result;
 }
 
 void Scavenger::threadEntryPoint(Scavenger* scavenger)
@@ -169,6 +251,13 @@ void Scavenger::threadRunLoop()
         setSelfQOSClass();
         
         {
+            if (verbose) {
+                fprintf(stderr, "--------------------------------\n");
+                fprintf(stderr, "considering running scavenger\n");
+                dumpStats();
+                fprintf(stderr, "--------------------------------\n");
+            }
+
             std::unique_lock<Mutex> lock(m_mutex);
             if (m_isProbablyGrowing && !isUnderMemoryPressure()) {
                 m_isProbablyGrowing = false;
@@ -176,7 +265,7 @@ void Scavenger::threadRunLoop()
                 continue;
             }
         }
-        
+
         scavenge();
     }
 }

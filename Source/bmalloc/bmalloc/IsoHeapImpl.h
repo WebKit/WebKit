@@ -28,6 +28,7 @@
 #include "BMalloced.h"
 #include "IsoDirectoryPage.h"
 #include "IsoTLSAllocatorEntry.h"
+#include "PhysicalPageMap.h"
 
 namespace bmalloc {
 
@@ -39,6 +40,8 @@ public:
     virtual ~IsoHeapImplBase();
     
     virtual void scavenge(Vector<DeferredDecommit>&) = 0;
+    virtual size_t freeableMemory() = 0;
+    virtual size_t footprint() = 0;
     
     void scavengeNow();
     static void finishScavenging(Vector<DeferredDecommit>&);
@@ -53,7 +56,7 @@ private:
 };
 
 template<typename Config>
-class IsoHeapImpl : public IsoHeapImplBase {
+class IsoHeapImpl final : public IsoHeapImplBase {
     // Pick a size that makes us most efficiently use the bitvectors.
     static constexpr unsigned numPagesInInlineDirectory = 32;
     
@@ -67,6 +70,14 @@ public:
     void didBecomeEligible(IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>*);
     
     void scavenge(Vector<DeferredDecommit>&) override;
+
+    // This is only here for debugging purposes.
+    // FIXME: Make this fast so we can use it to help determine when to
+    // run the scavenger:
+    // https://bugs.webkit.org/show_bug.cgi?id=184176
+    size_t freeableMemory() override;
+
+    size_t footprint() override;
     
     unsigned allocatorOffset();
     unsigned deallocatorOffset();
@@ -84,6 +95,9 @@ public:
     // This is only accurate when all threads are scavenged. Otherwise it will overestimate.
     template<typename Func>
     void forEachLiveObject(const Func&);
+
+    void didCommit(void* ptr, size_t bytes);
+    void didDecommit(void* ptr, size_t bytes);
     
     // It's almost always the caller's responsibility to grab the lock. This lock comes from the
     // PerProcess<IsoTLSDeallocatorEntry<Config>>::get()->lock. That's pretty weird, and we don't
@@ -96,6 +110,10 @@ private:
     IsoDirectory<Config, numPagesInInlineDirectory> m_inlineDirectory;
     IsoDirectoryPage<Config>* m_headDirectory { nullptr };
     IsoDirectoryPage<Config>* m_tailDirectory { nullptr };
+    size_t m_footprint { 0 };
+#if ENABLE_PHYSICAL_PAGE_MAP
+    PhysicalPageMap m_physicalPageMap;
+#endif
     unsigned m_numDirectoryPages { 0 };
     
     bool m_isInlineDirectoryEligible { true };

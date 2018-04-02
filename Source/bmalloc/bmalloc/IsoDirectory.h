@@ -76,6 +76,12 @@ public:
     // pages as being decommitted. It's the caller's job to do the actual decommitting.
     void scavenge(Vector<DeferredDecommit>&);
 
+    // This is only here for debugging purposes.
+    // FIXME: Make this fast so we can use it to help determine when to
+    // run the scavenger:
+    // https://bugs.webkit.org/show_bug.cgi?id=184176
+    size_t freeableMemory();
+
     template<typename Func>
     void forEachCommittedPage(const Func&);
     

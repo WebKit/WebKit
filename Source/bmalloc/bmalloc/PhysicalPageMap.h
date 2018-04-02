@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "PerProcess.h"
-#include "VMHeap.h"
-#include <thread>
+#pragma once
+
+#if ENABLE_PHYSICAL_PAGE_MAP 
+
+#include "VMAllocate.h"
+#include <unordered_set>
 
 namespace bmalloc {
 
-VMHeap::VMHeap(std::lock_guard<StaticMutex>&)
-{
-}
+// This class is useful for debugging bmalloc's footprint.
+class PhysicalPageMap {
+public:
 
-LargeRange VMHeap::tryAllocateLargeChunk(size_t alignment, size_t size)
-{
-    // We allocate VM in aligned multiples to increase the chances that
-    // the OS will provide contiguous ranges that we can merge.
-    size_t roundedAlignment = roundUpToMultipleOf<chunkSize>(alignment);
-    if (roundedAlignment < alignment) // Check for overflow
-        return LargeRange();
-    alignment = roundedAlignment;
+    void commit(void* ptr, size_t size)
+    {
+        forEachPhysicalPage(ptr, size, [&] (void* ptr) {
+            m_physicalPages.insert(ptr);
+        });
+    }
 
-    size_t roundedSize = roundUpToMultipleOf<chunkSize>(size);
-    if (roundedSize < size) // Check for overflow
-        return LargeRange();
-    size = roundedSize;
+    void decommit(void* ptr, size_t size)
+    {
+        forEachPhysicalPage(ptr, size, [&] (void* ptr) {
+            m_physicalPages.erase(ptr);
+        });
+    }
 
-    void* memory = tryVMAllocate(alignment, size);
-    if (!memory)
-        return LargeRange();
-    
-    Chunk* chunk = static_cast<Chunk*>(memory);
-    
-#if BOS(DARWIN)
-    PerProcess<Zone>::get()->addRange(Range(chunk->bytes(), size));
-#endif
+    size_t footprint()
+    {
+        return static_cast<size_t>(m_physicalPages.size()) * vmPageSizePhysical();
+    }
 
-    return LargeRange(chunk->bytes(), size, 0, 0);
-}
+private:
+    template <typename F>
+    void forEachPhysicalPage(void* ptr, size_t size, F f)
+    {
+        char* begin = roundUpToMultipleOf(vmPageSizePhysical(), static_cast<char*>(ptr));
+        char* end = roundDownToMultipleOf(vmPageSizePhysical(), static_cast<char*>(ptr) + size);
+        while (begin < end) {
+            f(begin);
+            begin += vmPageSizePhysical();
+        }
+    }
+
+    std::unordered_set<void*> m_physicalPages;
+};
 
 } // namespace bmalloc
+
+#endif // ENABLE_PHYSICAL_PAGE_MAP 
