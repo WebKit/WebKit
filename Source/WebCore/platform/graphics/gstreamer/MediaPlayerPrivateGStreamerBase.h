@@ -226,7 +226,7 @@ protected:
     MediaPlayer::ReadyState m_readyState;
     mutable MediaPlayer::NetworkState m_networkState;
     IntSize m_size;
-    mutable GMutex m_sampleMutex;
+    mutable Lock m_sampleMutex;
     GRefPtr<GstSample> m_sample;
 
     mutable FloatSize m_videoSize;

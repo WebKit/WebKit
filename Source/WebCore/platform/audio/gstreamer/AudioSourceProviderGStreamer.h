@@ -66,7 +66,7 @@ private:
     unsigned long m_deinterleavePadAddedHandlerId;
     unsigned long m_deinterleaveNoMorePadsHandlerId;
     unsigned long m_deinterleavePadRemovedHandlerId;
-    GMutex m_adapterMutex;
+    Lock m_adapterMutex;
 };
 
 }

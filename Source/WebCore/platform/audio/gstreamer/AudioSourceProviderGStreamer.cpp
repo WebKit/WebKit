@@ -26,7 +26,6 @@
 #include <gst/app/gstappsink.h>
 #include <gst/audio/audio-info.h>
 #include <gst/base/gstadapter.h>
-#include <wtf/glib/GMutexLocker.h>
 
 
 namespace WebCore {
@@ -91,7 +90,6 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer()
     , m_deinterleaveNoMorePadsHandlerId(0)
     , m_deinterleavePadRemovedHandlerId(0)
 {
-    g_mutex_init(&m_adapterMutex);
     m_frontLeftAdapter = gst_adapter_new();
     m_frontRightAdapter = gst_adapter_new();
 }
@@ -109,7 +107,6 @@ AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer()
 
     g_object_unref(m_frontLeftAdapter);
     g_object_unref(m_frontRightAdapter);
-    g_mutex_clear(&m_adapterMutex);
 }
 
 void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstElement* teePredecessor)
@@ -154,7 +151,7 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
 
 void AudioSourceProviderGStreamer::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    WTF::GMutexLocker<GMutex> lock(m_adapterMutex);
+    auto locker = holdLock(m_adapterMutex);
     copyGStreamerBuffersToAudioChannel(m_frontLeftAdapter, bus, 0, framesToProcess);
     copyGStreamerBuffersToAudioChannel(m_frontRightAdapter, bus, 1, framesToProcess);
 }
@@ -181,7 +178,7 @@ GstFlowReturn AudioSourceProviderGStreamer::handleAudioBuffer(GstAppSink* sink)
     GstAudioInfo info;
     gst_audio_info_from_caps(&info, caps);
 
-    WTF::GMutexLocker<GMutex> lock(m_adapterMutex);
+    auto locker = holdLock(m_adapterMutex);
 
     // Check the first audio channel. The buffer is supposed to store
     // data of a single channel anyway.
@@ -351,7 +348,7 @@ void AudioSourceProviderGStreamer::deinterleavePadsConfigured()
 
 void AudioSourceProviderGStreamer::clearAdapters()
 {
-    WTF::GMutexLocker<GMutex> lock(m_adapterMutex);
+    auto locker = holdLock(m_adapterMutex);
     gst_adapter_clear(m_frontLeftAdapter);
     gst_adapter_clear(m_frontRightAdapter);
 }

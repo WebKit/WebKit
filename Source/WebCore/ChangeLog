@@ -1,3 +1,35 @@
+2018-04-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use WTF::Lock instead of GMutex
+        https://bugs.webkit.org/show_bug.cgi?id=184227
+
+        Reviewed by Saam Barati.
+
+        Prefer WTF::Lock over GMutex since these locks are just protecting WebKit C++ fields.
+
+        No behavior change.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::AudioSourceProviderGStreamer):
+        (WebCore::AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer):
+        (WebCore::AudioSourceProviderGStreamer::provideInput):
+        (WebCore::AudioSourceProviderGStreamer::handleAudioBuffer):
+        (WebCore::AudioSourceProviderGStreamer::clearAdapters):
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+
 2018-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         Show punycode if URL contains hyphen character

@@ -37,7 +37,6 @@
 #include "NotImplemented.h"
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
-#include <wtf/glib/GMutexLocker.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -237,7 +236,6 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxy()))
 #endif
 {
-    g_mutex_init(&m_sampleMutex);
 }
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
@@ -267,8 +265,6 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
     // about handlers running in the GStreamer thread.
     if (m_pipeline)
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
-
-    g_mutex_clear(&m_sampleMutex);
 
     m_player = nullptr;
 }
@@ -520,7 +516,7 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
-    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    auto sampleLocker = holdLock(m_sampleMutex);
     if (!GST_IS_SAMPLE(m_sample.get()))
         return FloatSize();
 
@@ -739,7 +735,7 @@ void MediaPlayerPrivateGStreamerBase::pushTextureToCompositor()
     ConditionNotifier notifier(m_drawMutex, m_drawCondition);
 #endif
 
-    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    auto sampleLocker = holdLock(m_sampleMutex);
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
@@ -790,7 +786,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 {
     bool triggerResize;
     {
-        WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+        auto sampleLocker = holdLock(m_sampleMutex);
         triggerResize = !m_sample;
         m_sample = sample;
     }
@@ -865,7 +861,7 @@ GstFlowReturn MediaPlayerPrivateGStreamerBase::newPrerollCallback(GstElement* si
 void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
 {
     GST_DEBUG_OBJECT(pipeline(), "Flushing video sample");
-    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    auto sampleLocker = holdLock(m_sampleMutex);
     m_sample.clear();
 
     {
@@ -890,7 +886,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
     if (!m_player->visible())
         return;
 
-    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    auto sampleLocker = holdLock(m_sampleMutex);
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
@@ -917,7 +913,7 @@ bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(Graphics
     if (premultiplyAlpha)
         return false;
 
-    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    auto sampleLocker = holdLock(m_sampleMutex);
 
     GstVideoInfo videoInfo;
     if (!getSampleVideoInfo(m_sample.get(), videoInfo))
@@ -949,7 +945,7 @@ NativeImagePtr MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime()
     if (m_usingFallbackVideoSink)
         return nullptr;
 
-    WTF::GMutexLocker<GMutex> lock(m_sampleMutex);
+    auto sampleLocker = holdLock(m_sampleMutex);
 
     GstVideoInfo videoInfo;
     if (!getSampleVideoInfo(m_sample.get(), videoInfo))
