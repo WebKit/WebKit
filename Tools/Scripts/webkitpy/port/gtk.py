@@ -122,6 +122,9 @@ class GtkPort(Port):
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
+        self._copy_value_from_environ_if_set(environment, 'GST_DEBUG')
+        self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_DUMP_DOT_DIR')
+        self._copy_value_from_environ_if_set(environment, 'GST_DEBUG_FILE')
 
         # Configure the software libgl renderer if jhbuild ready and we test inside a virtualized window system
         if self._driver_class() in [XvfbDriver, WestonDriver] and self._should_use_jhbuild():

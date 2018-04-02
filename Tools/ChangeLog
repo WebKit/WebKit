@@ -1,3 +1,16 @@
+2018-04-02  Thibault Saunier  <tsaunier@igalia.com>
+
+        webkitpy: Use current environment value for GST_DEBUG(_FILE) and DOT_DIR env vars
+        https://bugs.webkit.org/show_bug.cgi?id=184036
+
+        Reviewed by Philippe Normand.
+
+        Those variables are for debug purpose and should not change the behaviour
+        itself, and developers expect them to have effect.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+
 2018-04-02  Daniel Bates  <dabates@apple.com>
 
         Remove Options constructor and use internal linkage for option handlers
