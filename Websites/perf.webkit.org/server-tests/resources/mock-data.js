@@ -17,7 +17,6 @@ MockData = {
     jscRepositoryId() { return 222; },
     gitWebkitRepositoryId() { return 111; },
     sharedRepositoryId() { return 14; },
-    buildbotBuildersURLDeprecated() {return '/json/builders'},
     buildbotBuildersURL() {return '/api/v2/builders'},
     pendingBuildsUrl: function (builderName) {
         const builderId = this.builderIDForName(builderName);
@@ -251,29 +250,6 @@ MockData = {
             ]
         }
     },
-    mockBuildbotBuildersDeprecated: function ()
-    {
-        return {
-            "some builder": {
-                "slaves": [ "some-slave-1" ]
-            },
-            "some-builder-1": {
-                "slaves": [ "some-slave-2" ]
-            },
-            "some builder 2": {
-                "slaves": [ "some-slave-3" ]
-            },
-            "other builder": {
-                "slaves": [ "some-slave-4" ]
-            },
-            "some tester": {
-                "slaves": [ "some-slave-5" ]
-            },
-            "another tester": {
-                "slaves": [ "some-slave-6" ]
-            }
-        }
-    },
     mockBuildbotBuilders: function ()
     {
         return {
@@ -345,28 +321,6 @@ MockData = {
             "buildrequests": [this.pendingBuildData(options)]
         };
     },
-    pendingBuildDeprecated(options)
-    {
-        options = options || {};
-        return {
-            'builderName': options.builder || 'some-builder-1',
-            'builds': [],
-            'properties': [
-                ['wk', options.webkitRevision || '191622'],
-                ['os', options.osxRevision || '10.11 15A284'],
-                ['build-request-id', (options.buildRequestId || 702).toString(), ]
-            ],
-            'source': {
-                'branch': '',
-                'changes': [],
-                'codebase': 'WebKit',
-                'hasPatch': false,
-                'project': '',
-                'repository': '',
-                'revision': ''
-            },
-        };
-    },
     sampleBuildData(options, overrides)
     {
         options = options || {};
@@ -405,31 +359,6 @@ MockData = {
             "builds": [this.runningBuildData(options)]
         };
     },
-    runningBuildDeprecated(options)
-    {
-        options = options || {};
-        return {
-            'builderName': options.builder || 'some-builder-1',
-            'builds': [],
-            'properties': [
-                ['wk', options.webkitRevision || '192736'],
-                ['os', options.osxRevision || '10.11 15A284'],
-                ['build-request-id', (options.buildRequestId || 701).toString(), ]
-            ],
-            'currentStep': {},
-            'eta': 721,
-            'number': options.buildNumber || 124,
-            'source': {
-                'branch': '',
-                'changes': [],
-                'codebase': 'WebKit',
-                'hasPatch': false,
-                'project': '',
-                'repository': '',
-                'revision': ''
-            },
-        };
-    },
     finishedBuildData(options)
     {
         options = options || {};
@@ -445,32 +374,6 @@ MockData = {
     {
         return {
             "builds": [this.finishedBuildData(options)]
-        };
-    },
-    finishedBuildDeprecated(options)
-    {
-        options = options || {};
-        return {
-            'builderName': options.builder || 'some-builder-1',
-            'builds': [],
-            'properties': [
-                ['wk', options.webkitRevision || '191622'],
-                ['os', options.osxRevision || '10.11 15A284'],
-                ['build-request-id', (options.buildRequestId || 700).toString(), ]
-            ],
-            'currentStep': null,
-            'eta': null,
-            'number': options.buildNumber || 123,
-            'source': {
-                'branch': '',
-                'changes': [],
-                'codebase': 'WebKit',
-                'hasPatch': false,
-                'project': '',
-                'repository': '',
-                'revision': ''
-            },
-            'times': [0, 1],
         };
     }
 }

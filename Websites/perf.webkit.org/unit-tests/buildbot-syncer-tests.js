@@ -7,7 +7,6 @@ let MockRemoteAPI = require('./resources/mock-remote-api.js').MockRemoteAPI;
 let MockModels = require('./resources/mock-v3-models.js').MockModels;
 
 let BuildbotBuildEntry = require('../tools/js/buildbot-syncer.js').BuildbotBuildEntry;
-let BuildbotBuildEntryDeprecated = require('../tools/js/buildbot-syncer.js').BuildbotBuildEntryDeprecated;
 let BuildbotSyncer = require('../tools/js/buildbot-syncer.js').BuildbotSyncer;
 
 function sampleiOSConfig()
@@ -163,75 +162,14 @@ function smallPendingBuild()
     return samplePendingBuildRequests(null, null, null, "some builder");
 }
 
-function smallPendingBuildDeprecated()
-{
-    return {
-        'builderName': 'some builder',
-        'builds': [],
-        'properties': [],
-        'source': {
-            'branch': '',
-            'changes': [],
-            'codebase': 'WebKit',
-            'hasPatch': false,
-            'project': '',
-            'repository': '',
-            'revision': ''
-        },
-    };
-}
-
 function smallInProgressBuild()
 {
     return sampleInProgressBuild();
 }
 
-function smallInProgressBuildDeprecated()
-{
-    return {
-        'builderName': 'some builder',
-        'builds': [],
-        'properties': [],
-        'currentStep': { },
-        'eta': 123,
-        'number': 456,
-        'source': {
-            'branch': '',
-            'changes': [],
-            'codebase': 'WebKit',
-            'hasPatch': false,
-            'project': '',
-            'repository': '',
-            'revision': ''
-        },
-    };
-}
-
 function smallFinishedBuild()
 {
     return sampleFinishedBuild(null, null, "some builder");
-}
-
-function smallFinishedBuildDeprecated()
-{
-    return {
-        'builderName': 'some builder',
-        'builds': [],
-        'properties': [],
-        'currentStep': null,
-        'eta': null,
-        'number': 789,
-        'source': {
-            'branch': '',
-            'changes': [],
-            'codebase': 'WebKit',
-            'hasPatch': false,
-            'project': '',
-            'repository': '',
-            'revision': ''
-        },
-        'times': [0, 1],
-    };
 }
 
 function createSampleBuildRequest(platform, test)
@@ -388,197 +326,6 @@ function sampleFinishedBuild(buildRequestId, workerName, builderName)
 {
     return {
         "builds": [sampleFinishedBuildData(buildRequestId, workerName, builderName)]
-    };
-}
-
-function samplePendingBuildRequestDeprecated(buildRequestId, buildTime, slaveName)
-{
-    return {
-        'builderName': 'ABTest-iPad-RunBenchmark-Tests',
-        'builds': [],
-        'properties': [
-            ['build_request_id', buildRequestId || '16733', 'Force Build Form'],
-            ['desired_image', '13A452', 'Force Build Form'],
-            ['owner', '<unknown>', 'Force Build Form'],
-            ['test_name', 'speedometer', 'Force Build Form'],
-            ['reason', 'force build','Force Build Form'],
-            ['slavename', slaveName, ''],
-            ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler']
-        ],
-        'source': {
-            'branch': '',
-            'changes': [],
-            'codebase': 'compiler-rt',
-            'hasPatch': false,
-            'project': '',
-            'repository': '',
-            'revision': ''
-        },
-        'submittedAt': buildTime || 1458704983
-    };
-}
-
-function sampleInProgressBuildDeprecated(slaveName)
-{
-    return {
-        'blame': [],
-        'builderName': 'ABTest-iPad-RunBenchmark-Tests',
-        'currentStep': {
-            'eta': 0.26548067698460565,
-            'expectations': [['output', 845, 1315.0]],
-            'hidden': false,
-            'isFinished': false,
-            'isStarted': true,
-            'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/Some%20step/logs/stdio']],
-            'name': 'Some step',
-            'results': [null,[]],
-            'statistics': {},
-            'step_number': 1,
-            'text': [''],
-            'times': [1458718657.581628, null],
-            'urls': {}
-        },
-        'eta': 6497.991612434387,
-        'logs': [['stdio','https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/shell/logs/stdio']],
-        'number': 614,
-        'properties': [
-            ['build_request_id', '16733', 'Force Build Form'],
-            ['buildername', 'ABTest-iPad-RunBenchmark-Tests', 'Builder'],
-            ['buildnumber', 614, 'Build'],
-            ['desired_image', '13A452', 'Force Build Form'],
-            ['owner', '<unknown>', 'Force Build Form'],
-            ['reason', 'force build', 'Force Build Form'],
-            ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
-            ['slavename', slaveName || 'ABTest-iPad-0', 'BuildSlave'],
-        ],
-        'reason': 'A build was forced by \'<unknown>\': force build',
-        'results': null,
-        'slave': 'ABTest-iPad-0',
-        'sourceStamps': [{'branch': '', 'changes': [], 'codebase': 'compiler-rt', 'hasPatch': false, 'project': '', 'repository': '', 'revision': ''}],
-        'steps': [
-            {
-                'eta': null,
-                'expectations': [['output',2309,2309.0]],
-                'hidden': false,
-                'isFinished': true,
-                'isStarted': true,
-                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/shell/logs/stdio']],
-                'name': 'Finished step',
-                'results': [0, []],
-                'statistics': {},
-                'step_number': 0,
-                'text': [''],
-                'times': [1458718655.419865, 1458718655.453633],
-                'urls': {}
-            },
-            {
-                'eta': 0.26548067698460565,
-                'expectations': [['output', 845, 1315.0]],
-                'hidden': false,
-                'isFinished': false,
-                'isStarted': true,
-                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/Some%20step/logs/stdio']],
-                'name': 'Some step',
-                'results': [null,[]],
-                'statistics': {},
-                'step_number': 1,
-                'text': [''],
-                'times': [1458718657.581628, null],
-                'urls': {}
-            },
-            {
-                'eta': null,
-                'expectations': [['output', null, null]],
-                'hidden': false,
-                'isFinished': false,
-                'isStarted': false,
-                'logs': [],
-                'name': 'Some other step',
-                'results': [null, []],
-                'statistics': {},
-                'step_number': 2,
-                'text': [],
-                'times': [null, null],
-                'urls': {}
-            },
-        ],
-        'text': [],
-        'times': [1458718655.415821, null]
-    };
-}
-
-function sampleFinishedBuildDeprecated(buildRequestId, slaveName)
-{
-    return {
-        'blame': [],
-        'builderName': 'ABTest-iPad-RunBenchmark-Tests',
-        'currentStep': null,
-        'eta': null,
-        'logs': [['stdio','https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/1755/steps/shell/logs/stdio']],
-        'number': 1755,
-        'properties': [
-            ['build_request_id', buildRequestId || '18935', 'Force Build Form'],
-            ['buildername', 'ABTest-iPad-RunBenchmark-Tests', 'Builder'],
-            ['buildnumber', 1755, 'Build'],
-            ['desired_image', '13A452', 'Force Build Form'],
-            ['owner', '<unknown>', 'Force Build Form'],
-            ['reason', 'force build', 'Force Build Form'],
-            ['scheduler', 'ABTest-iPad-RunBenchmark-Tests-ForceScheduler', 'Scheduler'],
-            ['slavename', slaveName || 'ABTest-iPad-0', 'BuildSlave'],
-        ],
-        'reason': 'A build was forced by \'<unknown>\': force build',
-        'results': 2,
-        'slave': 'ABTest-iPad-0',
-        'sourceStamps': [{'branch': '', 'changes': [], 'codebase': 'compiler-rt', 'hasPatch': false, 'project': '', 'repository': '', 'revision': ''}],
-        'steps': [
-            {
-                'eta': null,
-                'expectations': [['output',2309,2309.0]],
-                'hidden': false,
-                'isFinished': true,
-                'isStarted': true,
-                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/shell/logs/stdio']],
-                'name': 'Finished step',
-                'results': [0, []],
-                'statistics': {},
-                'step_number': 0,
-                'text': [''],
-                'times': [1458718655.419865, 1458718655.453633],
-                'urls': {}
-            },
-            {
-                'eta': null,
-                'expectations': [['output', 845, 1315.0]],
-                'hidden': false,
-                'isFinished': true,
-                'isStarted': true,
-                'logs': [['stdio', 'https://build.webkit.org/builders/ABTest-iPad-RunBenchmark-Tests/builds/614/steps/Some%20step/logs/stdio']],
-                'name': 'Some step',
-                'results': [null,[]],
-                'statistics': {},
-                'step_number': 1,
-                'text': [''],
-                'times': [1458718657.581628, null],
-                'urls': {}
-            },
-            {
-                'eta': null,
-                'expectations': [['output', null, null]],
-                'hidden': false,
-                'isFinished': true,
-                'isStarted': true,
-                'logs': [],
-                'name': 'Some other step',
-                'results': [null, []],
-                'statistics': {},
-                'step_number': 2,
-                'text': [],
-                'times': [null, null],
-                'urls': {}
-            },
-        ],
-        'text': [],
-        'times': [1458937478.25837, 1458946147.173785]
     };
 }
 

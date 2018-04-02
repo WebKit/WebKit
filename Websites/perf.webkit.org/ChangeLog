@@ -1,3 +1,37 @@
+2018-04-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Remove deprecated Buildbot 0.8 code from Perf syncing scripts
+        https://bugs.webkit.org/show_bug.cgi?id=183915
+
+        Reviewed by Ryosuke Niwa.
+
+        * server-tests/resources/mock-data.js:
+        (MockData.buildbotBuildersURLDeprecated): Deleted.
+        (MockData.mockBuildbotBuildersDeprecated): Deleted.
+        (MockData.pendingBuildDeprecated): Deleted.
+        (MockData.runningBuildDeprecated): Deleted.
+        (MockData.finishedBuildDeprecated): Deleted.
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntryDeprecated): Deleted.
+        (BuildbotBuildEntryDeprecated.prototype.initialize): Deleted.
+        (BuildbotBuildEntryDeprecated.prototype.url): Deleted.
+        (BuildbotSyncer.prototype.scheduleBuildOnBuildbotDeprecated): Deleted.
+        (BuildbotSyncer.prototype._pullRecentBuildsDeprecated): Deleted.
+        (BuildbotSyncer.prototype.pathForPendingBuildsJSONDeprecated): Deleted.
+        (BuildbotSyncer.prototype.pathForBuildJSONDeprecated): Deleted.
+        (BuildbotSyncer.prototype.pathForForceBuildDeprecated): Deleted.
+        (BuildbotSyncer.prototype.url): Deleted.
+        (BuildbotSyncer.prototype.urlForBuildNumberDeprecated): Deleted.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.getBuilderNameToIDMapDeprecated): Deleted.
+        * unit-tests/buildbot-syncer-tests.js:
+        (smallPendingBuildDeprecated): Deleted.
+        (smallInProgressBuildDeprecated): Deleted.
+        (smallFinishedBuildDeprecated): Deleted.
+        (samplePendingBuildRequestDeprecated): Deleted.
+        (sampleInProgressBuildDeprecated): Deleted.
+        (sampleFinishedBuildDeprecated): Deleted.
+
 2018-03-19  Aakash Jain  <aakash_jain@apple.com>
 
         Update Perf buildbot syncing scripts for Buildbot 0.9
