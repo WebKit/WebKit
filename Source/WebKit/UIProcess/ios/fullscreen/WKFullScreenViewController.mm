@@ -115,7 +115,6 @@ private:
     RetainPtr<NSLayoutConstraint> _topConstraint;
     WebKit::FullscreenTouchSecheuristic _secheuristic;
     WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
-    BOOL _hasControlsManager;
     CGFloat _nonZeroStatusBarHeight;
 }
 
@@ -195,7 +194,6 @@ private:
     _playbackClient.setInterface(playbackSessionInterface);
 
     PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
-    _hasControlsManager = playbackSessionModel;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
     [_pipButton setHidden:!playbackSessionModel];
 }
