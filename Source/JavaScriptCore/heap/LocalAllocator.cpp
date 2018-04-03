@@ -177,7 +177,7 @@ void* LocalAllocator::allocateSlowCase(GCDeferralContext* deferralContext, Alloc
         else
             return nullptr;
     }
-    m_directory->addBlock(block, m_tlc->securityOriginToken());
+    m_directory->addBlock(block);
     result = allocateIn(block);
     ASSERT(result);
     return result;
@@ -233,7 +233,7 @@ void* LocalAllocator::tryAllocateWithoutCollecting()
             // because there is a remote chance that a block may have both canAllocateButNotEmpty
             // and empty set at the same time.
             block->removeFromDirectory();
-            m_directory->addBlock(block, m_tlc->securityOriginToken());
+            m_directory->addBlock(block);
             return allocateIn(block);
         }
     }

@@ -52,7 +52,6 @@
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
-#include <JavaScriptCore/ThreadLocalCache.h>
 #include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
@@ -1414,8 +1413,6 @@ public:
     bool handlingTouchEvent() const { return m_handlingTouchEvent; }
 #endif
 
-    JSC::ThreadLocalCache& threadLocalCache();
-
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
     void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
@@ -1906,8 +1903,6 @@ private:
 
     HashSet<ApplicationStateChangeListener*> m_applicationStateChangeListeners;
     
-    RefPtr<JSC::ThreadLocalCache> m_threadLocalCache;
-
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     String m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
 #endif

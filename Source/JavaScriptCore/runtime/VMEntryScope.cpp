@@ -30,7 +30,6 @@
 #include "JSGlobalObject.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
-#include "ThreadLocalCacheInlines.h"
 #include "VM.h"
 #include "Watchdog.h"
 #include <wtf/StackBounds.h>
@@ -42,7 +41,6 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     : m_vm(vm)
     , m_globalObject(globalObject)
 {
-    globalObject->threadLocalCache().install(vm, &m_previousTLC);
     ASSERT(!DisallowVMReentry::isInEffectOnCurrentThread());
     ASSERT(Thread::current().stack().isGrowingDownward());
     if (!vm.entryScope) {

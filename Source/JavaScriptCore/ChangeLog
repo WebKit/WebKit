@@ -1,3 +1,58 @@
+2018-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        GC shouldn't do object distancing
+        https://bugs.webkit.org/show_bug.cgi?id=184195
+
+        Reviewed by Saam Barati.
+        
+        This rolls out SecurityKind/SecurityOriginToken, but keeps the TLC infrastructure. It seems
+        to be a small speed-up.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::findBlockForAllocation):
+        (JSC::BlockDirectory::addBlock):
+        * heap/BlockDirectory.h:
+        * heap/CellAttributes.cpp:
+        (JSC::CellAttributes::dump const):
+        * heap/CellAttributes.h:
+        (JSC::CellAttributes::CellAttributes):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::allocateSlowCase):
+        (JSC::LocalAllocator::tryAllocateWithoutCollecting):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::didAddToDirectory):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::securityOriginToken const): Deleted.
+        * heap/SecurityKind.cpp: Removed.
+        * heap/SecurityKind.h: Removed.
+        * heap/SecurityOriginToken.cpp: Removed.
+        * heap/SecurityOriginToken.h: Removed.
+        * heap/ThreadLocalCache.cpp:
+        (JSC::ThreadLocalCache::create):
+        (JSC::ThreadLocalCache::ThreadLocalCache):
+        * heap/ThreadLocalCache.h:
+        (JSC::ThreadLocalCache::securityOriginToken const): Deleted.
+        * runtime/JSDestructibleObjectHeapCellType.cpp:
+        (JSC::JSDestructibleObjectHeapCellType::JSDestructibleObjectHeapCellType):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::threadLocalCache const): Deleted.
+        * runtime/JSSegmentedVariableObjectHeapCellType.cpp:
+        (JSC::JSSegmentedVariableObjectHeapCellType::JSSegmentedVariableObjectHeapCellType):
+        * runtime/JSStringHeapCellType.cpp:
+        (JSC::JSStringHeapCellType::JSStringHeapCellType):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp:
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::JSWebAssemblyCodeBlockHeapCellType):
+
 2018-04-02  Saam Barati  <sbarati@apple.com>
 
         bmalloc should compute its own estimate of its footprint

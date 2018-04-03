@@ -39,7 +39,7 @@ struct JSDestructibleObjectDestroyFunc {
 };
 
 JSDestructibleObjectHeapCellType::JSDestructibleObjectHeapCellType()
-    : HeapCellType(CellAttributes(NeedsDestruction, HeapCell::JSCell, SecurityKind::JSValueOOB))
+    : HeapCellType(CellAttributes(NeedsDestruction, HeapCell::JSCell))
 {
 }
 

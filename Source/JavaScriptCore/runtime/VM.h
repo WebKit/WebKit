@@ -293,8 +293,7 @@ public:
     std::unique_ptr<GigacageAlignedMemoryAllocator> primitiveGigacageAllocator;
     std::unique_ptr<GigacageAlignedMemoryAllocator> jsValueGigacageAllocator;
 
-    std::unique_ptr<HeapCellType> auxiliaryJSValueStrictHeapCellType;
-    std::unique_ptr<HeapCellType> auxiliaryDangerousBitsHeapCellType;
+    std::unique_ptr<HeapCellType> auxiliaryHeapCellType;
     std::unique_ptr<HeapCellType> cellJSValueOOBHeapCellType;
     std::unique_ptr<HeapCellType> cellDangerousBitsHeapCellType;
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;

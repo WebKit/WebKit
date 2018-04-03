@@ -32,14 +32,13 @@
 
 namespace JSC {
 
-RefPtr<ThreadLocalCache> ThreadLocalCache::create(Heap& heap, SecurityOriginToken securityOriginToken)
+RefPtr<ThreadLocalCache> ThreadLocalCache::create(Heap& heap)
 {
-    return adoptRef(new ThreadLocalCache(heap, securityOriginToken));
+    return adoptRef(new ThreadLocalCache(heap));
 }
 
-ThreadLocalCache::ThreadLocalCache(Heap& heap, SecurityOriginToken securityOriginToken)
+ThreadLocalCache::ThreadLocalCache(Heap& heap)
     : m_heap(heap)
-    , m_securityOriginToken(securityOriginToken)
 {
     m_data = allocateData();
 }

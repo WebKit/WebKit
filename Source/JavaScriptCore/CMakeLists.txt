@@ -546,8 +546,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/MutatorState.h
     heap/RegisterState.h
     heap/RunningScope.h
-    heap/SecurityKind.h
-    heap/SecurityOriginToken.h
     heap/SimpleMarkingConstraint.h
     heap/SlotVisitor.h
     heap/SlotVisitorInlines.h

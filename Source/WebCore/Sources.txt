@@ -1347,7 +1347,6 @@ page/MouseEventWithHitTestResults.cpp
 page/Navigator.cpp
 page/NavigatorBase.cpp
 page/OriginAccessEntry.cpp
-page/OriginThreadLocalCache.cpp
 page/Page.cpp
 page/PageConfiguration.cpp
 page/PageConsoleClient.cpp

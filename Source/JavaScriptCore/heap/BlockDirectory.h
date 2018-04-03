@@ -110,7 +110,7 @@ public:
     
     RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyBlockSource();
     
-    void addBlock(MarkedBlock::Handle*, SecurityOriginToken);
+    void addBlock(MarkedBlock::Handle*);
     void removeBlock(MarkedBlock::Handle*);
 
     bool isPagedOut(MonotonicTime deadline);

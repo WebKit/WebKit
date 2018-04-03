@@ -131,7 +131,6 @@
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
 #include "OriginAccessEntry.h"
-#include "OriginThreadLocalCache.h"
 #include "OverflowEvent.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
@@ -7766,17 +7765,5 @@ void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConne
     m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this, *serviceWorkerConnection), controllingServiceWorkerRegistrationIdentifier);
 }
 #endif
-
-JSC::ThreadLocalCache& Document::threadLocalCache()
-{
-    if (!m_threadLocalCache) {
-        SecurityOrigin& origin = securityOrigin();
-        if (origin.isUnique() || (origin.isLocal() && origin.enforcesFilePathSeparation()))
-            m_threadLocalCache = JSC::ThreadLocalCache::create(commonVM().heap);
-        else
-            m_threadLocalCache = OriginThreadLocalCache::create(origin);
-    }
-    return *m_threadLocalCache;
-}
 
 } // namespace WebCore

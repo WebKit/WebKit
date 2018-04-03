@@ -89,10 +89,8 @@ MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allo
         
         size_t blockIndex = allocator.m_allocationCursor++;
         MarkedBlock::Handle* result = m_blocks[blockIndex];
-        if (result->securityOriginToken() == allocator.tlc()->securityOriginToken()) {
-            setIsCanAllocateButNotEmpty(NoLockingNecessary, blockIndex, false);
-            return result;
-        }
+        setIsCanAllocateButNotEmpty(NoLockingNecessary, blockIndex, false);
+        return result;
     }
 }
 
@@ -109,7 +107,7 @@ MarkedBlock::Handle* BlockDirectory::tryAllocateBlock()
     return handle;
 }
 
-void BlockDirectory::addBlock(MarkedBlock::Handle* block, SecurityOriginToken securityOriginToken)
+void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 {
     size_t index;
     if (m_freeBlockIndices.isEmpty()) {
@@ -147,7 +145,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block, SecurityOriginToken se
         });
 
     // This is the point at which the block learns of its cellSize() and attributes().
-    block->didAddToDirectory(this, index, securityOriginToken);
+    block->didAddToDirectory(this, index);
     
     setIsLive(NoLockingNecessary, index, true);
     setIsEmpty(NoLockingNecessary, index, true);

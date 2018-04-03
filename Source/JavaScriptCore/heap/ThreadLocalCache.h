@@ -27,7 +27,6 @@
 
 #include "AllocationFailureMode.h"
 #include "LocalAllocator.h"
-#include "SecurityOriginToken.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/FastTLS.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -43,7 +42,7 @@ class ThreadLocalCache : public ThreadSafeRefCounted<ThreadLocalCache> {
     WTF_MAKE_FAST_ALLOCATED;
     
 public:
-    JS_EXPORT_PRIVATE static RefPtr<ThreadLocalCache> create(Heap&, SecurityOriginToken = uniqueSecurityOriginToken());
+    JS_EXPORT_PRIVATE static RefPtr<ThreadLocalCache> create(Heap&);
     
     JS_EXPORT_PRIVATE virtual ~ThreadLocalCache();
 
@@ -63,10 +62,8 @@ public:
     static ptrdiff_t offsetOfSizeInData() { return OBJECT_OFFSETOF(Data, size); }
     static ptrdiff_t offsetOfFirstAllocatorInData() { return OBJECT_OFFSETOF(Data, allocator); }
     
-    SecurityOriginToken securityOriginToken() const { return m_securityOriginToken; }
-
 protected:    
-    JS_EXPORT_PRIVATE ThreadLocalCache(Heap&, SecurityOriginToken);
+    JS_EXPORT_PRIVATE ThreadLocalCache(Heap&);
     
 private:
     friend class VM;
@@ -99,8 +96,6 @@ private:
     Heap& m_heap;
     Data* m_data { nullptr };
     
-    SecurityOriginToken m_securityOriginToken;
-
 #if USE(FAST_TLS_FOR_TLC)
     static const pthread_key_t tlsKey = WTF_GC_TLC_KEY;
 #endif
