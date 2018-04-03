@@ -31,8 +31,10 @@ use warnings;
 
 my $defines;
 my $preprocessor;
+my $gperf;
 GetOptions('defines=s' => \$defines,
-           'preprocessor=s' => \$preprocessor);
+           'preprocessor=s' => \$preprocessor,
+           'gperf-executable=s' => \$gperf);
 
 my @NAMES = applyPreprocessor("CSSValueKeywords.in", $defines, $preprocessor);
 
@@ -172,5 +174,7 @@ const char* getValueName(unsigned short id);
 EOF
 close HEADER;
 
-my $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
+if (not $gperf) {
+    $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
+}
 system("\"$gperf\" --key-positions=\"*\" -D -n -s 2 CSSValueKeywords.gperf --output-file=CSSValueKeywords.cpp") == 0 || die "calling gperf failed: $?";

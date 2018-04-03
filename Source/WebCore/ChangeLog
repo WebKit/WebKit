@@ -1,3 +1,19 @@
+2018-04-03  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [CMake] gperf path should be given when WebCore/css/makevalues.pl is executed
+        https://bugs.webkit.org/show_bug.cgi?id=184224
+
+        Reviewed by Konstantin Tokarev.
+
+        When a building evironment doens't include a path to gperf,
+        WebCore/css/makevalue.pl failes due to failing to execute gperf,
+        so the full path to gperf should be given like WebCore/css/makeprop.pl.
+
+        No new tests, no Web-facing behavior change.
+
+        * CMakeLists.txt: gperf path is given to css/makevalues.pl.
+        * css/makevalues.pl: Add an argument to handle a given gperf path.
+
 2018-04-03  Chris Dumez  <cdumez@apple.com>
 
         Drop MainFrame class
