@@ -29,6 +29,7 @@
 #include "ChildProcess.h"
 #include "DownloadManager.h"
 #include "MessageReceiverMap.h"
+#include "NetworkContentRuleListManager.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <memory>
 #include <pal/SessionID.h>
@@ -156,6 +157,10 @@ public:
 
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    NetworkContentRuleListManager& networkContentRuleListManager() { return m_NetworkContentRuleListManager; }
+#endif
 
 private:
     NetworkProcess();
@@ -290,6 +295,10 @@ private:
 
 #if PLATFORM(IOS)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    NetworkContentRuleListManager m_NetworkContentRuleListManager;
 #endif
 };
 

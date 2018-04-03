@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "UserContentControllerIdentifier.h"
 #include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerDataTypes.h"
 #include <WebCore/UserContentProvider.h>
@@ -49,10 +50,10 @@ class WebUserMessageHandlerDescriptorProxy;
 
 class WebUserContentController final : public WebCore::UserContentProvider, private IPC::MessageReceiver {
 public:
-    static Ref<WebUserContentController> getOrCreate(uint64_t identifier);
+    static Ref<WebUserContentController> getOrCreate(UserContentControllerIdentifier);
     virtual ~WebUserContentController();
 
-    uint64_t identifier() { return m_identifier; } 
+    UserContentControllerIdentifier identifier() { return m_identifier; }
 
     void addUserScript(InjectedBundleScriptWorld&, WebCore::UserScript&&);
     void removeUserScriptWithURL(InjectedBundleScriptWorld&, const WebCore::URL&);
@@ -71,7 +72,7 @@ public:
 #endif
 
 private:
-    explicit WebUserContentController(uint64_t identifier);
+    explicit WebUserContentController(UserContentControllerIdentifier);
 
     // WebCore::UserContentProvider
     void forEachUserScript(Function<void(WebCore::DOMWrapperWorld&, const WebCore::UserScript&)>&&) const final;
@@ -111,7 +112,7 @@ private:
     void removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld&, uint64_t userScriptMessageHandlerIdentifier);
 #endif
 
-    uint64_t m_identifier;
+    UserContentControllerIdentifier m_identifier;
 
     typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<uint64_t, WebCore::UserScript>>> WorldToUserScriptMap;
     WorldToUserScriptMap m_userScripts;
@@ -126,7 +127,6 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::ContentExtensions::ContentExtensionsBackend m_contentExtensionBackend;
 #endif
-
 };
 
 } // namespace WebKit

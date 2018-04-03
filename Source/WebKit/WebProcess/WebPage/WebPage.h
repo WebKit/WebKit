@@ -46,6 +46,7 @@
 #include "SharedMemory.h"
 #include "UserData.h"
 #include "WebURLSchemeHandler.h"
+#include "WebUserContentController.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -1068,6 +1069,8 @@ public:
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void openGLDisplayMaskChanged(uint32_t displayMask);
 #endif
+
+    UserContentControllerIdentifier userContentControllerIdentifier() const { return m_userContentController->identifier(); }
 
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);

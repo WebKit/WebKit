@@ -179,8 +179,13 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.highestUsedBackForwardItemID))
         return std::nullopt;
-    if (!decoder.decode(parameters.userContentControllerID))
+
+    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    decoder >> userContentControllerIdentifier;
+    if (!userContentControllerIdentifier)
         return std::nullopt;
+    parameters.userContentControllerID = *userContentControllerIdentifier;
+
     if (!decoder.decode(parameters.visitedLinkTableID))
         return std::nullopt;
     if (!decoder.decode(parameters.websiteDataStoreID))
