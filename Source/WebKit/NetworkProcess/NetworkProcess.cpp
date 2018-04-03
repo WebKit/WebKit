@@ -39,7 +39,6 @@
 #include "Logging.h"
 #include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcess.h"
-#include "NetworkContentRuleListManagerMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessPlatformStrategies.h"
 #include "NetworkProcessProxyMessages.h"
@@ -171,13 +170,6 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
         ChildProcess::didReceiveMessage(connection, decoder);
         return;
     }
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    if (decoder.messageReceiverName() == Messages::NetworkContentRuleListManager::messageReceiverName()) {
-        m_NetworkContentRuleListManager.didReceiveMessage(connection, decoder);
-        return;
-    }
-#endif
 
     didReceiveNetworkProcessMessage(connection, decoder);
 }

@@ -27,7 +27,7 @@
 
 #include "NetworkLoadParameters.h"
 #include "SandboxExtension.h"
-#include "UserContentControllerIdentifier.h"
+#include "WebCompiledContentRuleListData.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -61,7 +61,7 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::URL mainDocumentURL;
-    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    Vector<std::pair<String, WebCompiledContentRuleListData>> contentRuleLists;
 #endif
 };
 

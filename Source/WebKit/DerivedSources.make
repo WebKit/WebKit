@@ -115,7 +115,6 @@ MESSAGE_RECEIVERS = \
     NetworkRTCSocket \
     NetworkResourceLoader \
     NetworkSocketStream \
-    NetworkContentRuleListManager \
     PluginControllerProxy \
     PluginProcess \
     PluginProcessConnection \

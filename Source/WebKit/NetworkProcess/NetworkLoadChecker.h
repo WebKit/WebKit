@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "NetworkContentRuleListManager.h"
 #include "NetworkResourceLoadParameters.h"
+#include <WebCore/ContentExtensionsBackend.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/CompletionHandler.h>
@@ -40,12 +40,9 @@ namespace WebKit {
 
 class NetworkCORSPreflightChecker;
 
-class NetworkLoadChecker : public RefCounted<NetworkLoadChecker> {
+class NetworkLoadChecker {
 public:
-    static Ref<NetworkLoadChecker> create(WebCore::FetchOptions::Mode mode, bool shouldFollowRedirects, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PAL::SessionID sessionID, WebCore::HTTPHeaderMap&& originalHeaders, WebCore::URL&& url, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin)
-    {
-        return adoptRef(*new NetworkLoadChecker { mode, shouldFollowRedirects, storedCredentialsPolicy, sessionID, WTFMove(originalHeaders), WTFMove(url), WTFMove(sourceOrigin) });
-    }
+    NetworkLoadChecker(WebCore::FetchOptions::Mode, bool shouldFollowRedirects, WebCore::StoredCredentialsPolicy, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&);
     ~NetworkLoadChecker();
 
     using RequestOrError = Expected<WebCore::ResourceRequest, WebCore::ResourceError>;
@@ -55,10 +52,10 @@ public:
 
     void setCSPResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders&& headers) { m_cspResponseHeaders = WTFMove(headers); }
 #if ENABLE(CONTENT_EXTENSIONS)
-    void setContentExtensionController(WebCore::URL&& mainDocumentURL, std::optional<UserContentControllerIdentifier> identifier)
+    void setContentExtensionRuleLists(WebCore::URL&& mainDocumentURL, Vector<std::pair<String, WebCompiledContentRuleListData>>&& contentRuleLists)
     {
         m_mainDocumentURL = WTFMove(mainDocumentURL);
-        m_userContentControllerIdentifier = identifier;
+        m_contentRuleLists = WTFMove(contentRuleLists);
     }
 #endif
 
@@ -66,15 +63,11 @@ public:
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
 
 private:
-    NetworkLoadChecker(WebCore::FetchOptions::Mode, bool shouldFollowRedirects, WebCore::StoredCredentialsPolicy, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&);
-
     WebCore::ContentSecurityPolicy* contentSecurityPolicy() const;
     bool isChecking() const { return !!m_corsPreflightChecker; }
     bool isRedirected() const { return m_redirectCount; }
 
     void checkRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
-
-    void continueCheckingRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
 
     bool doesNotNeedCORSCheck(const WebCore::URL&) const;
     void checkCORSRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
@@ -84,7 +77,8 @@ private:
     RequestOrError returnError(String&& error);
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    void processContentExtensionRulesForLoad(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&, const WebCore::ContentExtensions::BlockedStatus&)>&&);
+    WebCore::ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend();
+    WebCore::ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(WebCore::ResourceRequest&);
 #endif
 
     WebCore::FetchOptions::Mode m_mode;
@@ -98,13 +92,16 @@ private:
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> m_cspResponseHeaders;
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::URL m_mainDocumentURL;
-    std::optional<UserContentControllerIdentifier> m_userContentControllerIdentifier;
+    Vector<std::pair<String, WebCompiledContentRuleListData>> m_contentRuleLists;
 #endif
 
     std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
     bool m_isSameOriginRequest { true };
     bool m_isSimpleRequest { true };
     mutable std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
+#if ENABLE(CONTENT_EXTENSIONS)
+    std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend> m_contentExtensionsBackend;
+#endif
     size_t m_redirectCount { 0 };
     WebCore::URL m_previousURL;
 };

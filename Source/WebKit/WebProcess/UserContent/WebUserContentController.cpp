@@ -50,9 +50,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HashMap<UserContentControllerIdentifier, WebUserContentController*>& userContentControllers()
+static HashMap<uint64_t, WebUserContentController*>& userContentControllers()
 {
-    static NeverDestroyed<HashMap<UserContentControllerIdentifier, WebUserContentController*>> userContentControllers;
+    static NeverDestroyed<HashMap<uint64_t, WebUserContentController*>> userContentControllers;
 
     return userContentControllers;
 }
@@ -66,7 +66,7 @@ static WorldMap& worldMap()
     return map;
 }
 
-Ref<WebUserContentController> WebUserContentController::getOrCreate(UserContentControllerIdentifier identifier)
+Ref<WebUserContentController> WebUserContentController::getOrCreate(uint64_t identifier)
 {
     auto& userContentControllerPtr = userContentControllers().add(identifier, nullptr).iterator->value;
     if (userContentControllerPtr)
@@ -78,17 +78,17 @@ Ref<WebUserContentController> WebUserContentController::getOrCreate(UserContentC
     return userContentController.releaseNonNull();
 }
 
-WebUserContentController::WebUserContentController(UserContentControllerIdentifier identifier)
+WebUserContentController::WebUserContentController(uint64_t identifier)
     : m_identifier(identifier)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier.toUInt64(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier, *this);
 }
 
 WebUserContentController::~WebUserContentController()
 {
     ASSERT(userContentControllers().contains(m_identifier));
 
-    WebProcess::singleton().removeMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier.toUInt64());
+    WebProcess::singleton().removeMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier);
 
     userContentControllers().remove(m_identifier);
 }
@@ -242,7 +242,7 @@ private:
         if (!webPage)
             return;
 
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->info(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier().toUInt64());
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->info(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
     }
 
     RefPtr<WebUserContentController> m_controller;

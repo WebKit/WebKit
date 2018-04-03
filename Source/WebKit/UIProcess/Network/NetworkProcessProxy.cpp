@@ -26,23 +26,19 @@
 #include "config.h"
 #include "NetworkProcessProxy.h"
 
-#include "APIContentRuleList.h"
 #include "AuthenticationChallengeProxy.h"
 #include "DownloadProxyMessages.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerProxyMessages.h"
 #endif
 #include "Logging.h"
-#include "NetworkContentRuleListManagerMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "SandboxExtension.h"
 #include "StorageProcessMessages.h"
-#include "WebCompiledContentRuleList.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
-#include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
 #include <wtf/CompletionHandler.h>
 
@@ -89,10 +85,6 @@ NetworkProcessProxy::~NetworkProcessProxy()
     ASSERT(m_pendingFetchWebsiteDataCallbacks.isEmpty());
     ASSERT(m_pendingDeleteWebsiteDataCallbacks.isEmpty());
     ASSERT(m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty());
-#if ENABLE(CONTENT_EXTENSIONS)
-    for (auto* proxy : m_webUserContentControllerProxies)
-        proxy->removeNetworkProcess(*this);
-#endif
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -547,29 +539,5 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
         m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
     }
 }
-
-
-#if ENABLE(CONTENT_EXTENSIONS)
-void NetworkProcessProxy::contentExtensionRules(UserContentControllerIdentifier identifier)
-{
-    if (auto* webUserContentControllerProxy = WebUserContentControllerProxy::get(identifier)) {
-        m_webUserContentControllerProxies.add(webUserContentControllerProxy);
-        webUserContentControllerProxy->addNetworkProcess(*this);
-
-        auto rules = WTF::map(webUserContentControllerProxy->contentExtensionRules(), [](auto&& keyValue) -> std::pair<String, WebCompiledContentRuleListData> {
-            return std::make_pair(keyValue.value->name(), keyValue.value->compiledRuleList().data());
-        });
-        send(Messages::NetworkContentRuleListManager::AddContentRuleLists { identifier, rules }, 0);
-        return;
-    }
-    send(Messages::NetworkContentRuleListManager::AddContentRuleLists { identifier, { } }, 0);
-}
-
-void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
-{
-    send(Messages::NetworkContentRuleListManager::Remove { proxy.identifier() }, 0);
-    m_webUserContentControllerProxies.remove(&proxy);
-}
-#endif
 
 } // namespace WebKit

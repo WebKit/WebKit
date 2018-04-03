@@ -93,7 +93,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
 #if ENABLE(CONTENT_EXTENSIONS)
     encoder << mainDocumentURL;
-    encoder << userContentControllerIdentifier;
+    encoder << contentRuleLists;
 #endif
 }
 
@@ -184,11 +184,11 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.mainDocumentURL))
         return false;
 
-    std::optional<std::optional<UserContentControllerIdentifier>> userContentControllerIdentifier;
-    decoder >> userContentControllerIdentifier;
-    if (!userContentControllerIdentifier)
+    std::optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
+    decoder >> contentRuleLists;
+    if (!contentRuleLists)
         return false;
-    result.userContentControllerIdentifier = *userContentControllerIdentifier;
+    result.contentRuleLists = WTFMove(*contentRuleLists);
 #endif
 
     return true;

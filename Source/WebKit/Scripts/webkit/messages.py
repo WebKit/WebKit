@@ -185,7 +185,6 @@ def forward_declarations_and_headers(receiver):
             types_by_namespace['IPC'].update([('class', 'Connection')])
 
     no_forward_declaration_types = frozenset([
-        'String',
         'WebCore::DocumentIdentifier',
         'WebCore::ServiceWorkerIdentifier',
         'WebCore::ServiceWorkerJobIdentifier',
@@ -193,7 +192,7 @@ def forward_declarations_and_headers(receiver):
         'WebCore::ServiceWorkerOrClientIdentifier',
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SWServerConnectionIdentifier',
-        'WebKit::UserContentControllerIdentifier',
+        'String',
     ])
 
     for parameter in receiver.iterparameters():

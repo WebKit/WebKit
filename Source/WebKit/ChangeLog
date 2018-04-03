@@ -1,3 +1,17 @@
+2018-04-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r230210.
+        https://bugs.webkit.org/show_bug.cgi?id=184277
+
+        it is breaking internal bots (Requested by youenn on #webkit).
+
+        Reverted changeset:
+
+        "Make NetworkProcess get ContentBlocker information from
+        UIProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=184205
+        https://trac.webkit.org/changeset/230210
+
 2018-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Update time picker to use platform view controller

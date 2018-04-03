@@ -98,7 +98,7 @@ struct WebPageCreationParameters {
     PAL::SessionID sessionID;
     uint64_t highestUsedBackForwardItemID;
 
-    UserContentControllerIdentifier userContentControllerID;
+    uint64_t userContentControllerID;
     uint64_t visitedLinkTableID;
     uint64_t websiteDataStoreID;
     bool canRunBeforeUnloadConfirmPanel;
