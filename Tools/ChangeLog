@@ -1,3 +1,12 @@
+2018-04-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][JHBuild] Tools/gtk/install-dependencies: Replace libxfont with libxfont2 in Arch Linux
+        https://bugs.webkit.org/show_bug.cgi?id=184258
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * gtk/install-dependencies: Use libxfont2 on Arch Linux as well.
+
 2018-04-02  Brady Eidson  <beidson@apple.com>
 
         Process swapping on navigation needs to handle server redirects.

@@ -351,7 +351,7 @@ function installDependenciesWithPacman {
         libproxy \
         libtiff \
         libxfixes \
-        libxfont \
+        libxfont2 \
         libxcb \
         libxkbfile \
         libxkbcommon-x11 \
