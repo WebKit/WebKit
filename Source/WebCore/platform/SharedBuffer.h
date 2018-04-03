@@ -43,6 +43,11 @@
 #include "GUniquePtrSoup.h"
 #endif
 
+#if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
+typedef struct _GBytes GBytes;
+#endif
+
 #if USE(FOUNDATION)
 OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
@@ -77,6 +82,10 @@ public:
 #if USE(SOUP)
     GUniquePtr<SoupBuffer> createSoupBuffer(unsigned offset = 0, unsigned size = 0);
     static Ref<SharedBuffer> wrapSoupBuffer(SoupBuffer*);
+#endif
+
+#if USE(GLIB)
+    static Ref<SharedBuffer> create(GBytes*);
 #endif
 
     // Calling data() causes all the data segments to be copied into one segment if they are not already.
@@ -114,6 +123,9 @@ public:
 #if USE(SOUP)
         static Ref<DataSegment> create(GUniquePtr<SoupBuffer>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
+#if USE(GLIB)
+        static Ref<DataSegment> create(GRefPtr<GBytes>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
+#endif
         static Ref<DataSegment> create(FileSystem::MappedFileData&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 
     private:
@@ -127,6 +139,10 @@ public:
         DataSegment(GUniquePtr<SoupBuffer>&& data)
             : m_immutableData(WTFMove(data)) { }
 #endif
+#if USE(GLIB)
+        DataSegment(GRefPtr<GBytes>&& data)
+            : m_immutableData(WTFMove(data)) { }
+#endif
         DataSegment(FileSystem::MappedFileData&& data)
             : m_immutableData(WTFMove(data)) { }
 
@@ -136,6 +152,9 @@ public:
 #endif
 #if USE(SOUP)
             GUniquePtr<SoupBuffer>,
+#endif
+#if USE(GLIB)
+            GRefPtr<GBytes>,
 #endif
             FileSystem::MappedFileData> m_immutableData;
         friend class SharedBuffer;
@@ -165,6 +184,9 @@ private:
 #endif
 #if USE(SOUP)
     explicit SharedBuffer(SoupBuffer*);
+#endif
+#if USE(GLIB)
+    explicit SharedBuffer(GBytes*);
 #endif
 
     void combineIntoOneSegment() const;

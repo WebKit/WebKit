@@ -210,6 +210,10 @@ private:
     bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
+#if USE(SOUP)
+    void loadGResource();
+#endif
+
     ResourceRequest m_request;
     ResourceRequest m_originalRequest; // Before redirects.
     RefPtr<SharedBuffer> m_resourceData;

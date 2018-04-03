@@ -41,6 +41,8 @@ accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
 editing/atk/FrameSelectionAtk.cpp
 
+loader/soup/ResourceLoaderSoup.cpp
+
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 

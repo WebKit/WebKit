@@ -1,3 +1,29 @@
+2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Stop using ResourceHandle to load GResources
+        https://bugs.webkit.org/show_bug.cgi?id=184259
+
+        Reviewed by Sergio Villar Senin.
+
+        GResources are loaded in the WebProcess using ResourceHandle because soup handles them transparently. But now
+        that we no longer use ResourceHandle, we can add a simple loader for GResources, similar to the one used for
+        data URLS, since loading a GResource is a matter of calling g_resources_lookup_data() in the end.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::start): Check if resource to load is a GResource and call loadGResource().
+        * loader/ResourceLoader.h:
+        * loader/soup/ResourceLoaderSoup.cpp: Added.
+        (WebCore::ResourceLoader::loadGResource): Load the GResource in a GTask thread.
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::DataSegment::data const):
+        (WebCore::SharedBuffer::DataSegment::size const):
+        * platform/SharedBuffer.h:
+        * platform/glib/SharedBufferGlib.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::create):
+
 2018-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Enchant] Clean up TextCheckerEnchant

@@ -31,10 +31,6 @@
 #include <algorithm>
 #include <wtf/unicode/UTF8.h>
 
-#if USE(SOUP)
-#include "GUniquePtrSoup.h"
-#endif
-
 namespace WebCore {
 
 SharedBuffer::SharedBuffer(const char* data, size_t size)
@@ -212,6 +208,9 @@ const char* SharedBuffer::DataSegment::data() const
 #if USE(SOUP)
         [](const GUniquePtr<SoupBuffer>& data) { return data->data; },
 #endif
+#if USE(GLIB)
+        [](const GRefPtr<GBytes>& data) { return reinterpret_cast<const char*>(g_bytes_get_data(data.get(), nullptr)); },
+#endif
         [](const FileSystem::MappedFileData& data) { return reinterpret_cast<const char*>(data.data()); }
     );
     return WTF::visit(visitor, m_immutableData);
@@ -232,6 +231,9 @@ size_t SharedBuffer::DataSegment::size() const
 #endif
 #if USE(SOUP)
         [](const GUniquePtr<SoupBuffer>& data) { return static_cast<size_t>(data->length); },
+#endif
+#if USE(GLIB)
+        [](const GRefPtr<GBytes>& data) { return g_bytes_get_size(data.get()); },
 #endif
         [](const FileSystem::MappedFileData& data) { return data.size(); }
     );
