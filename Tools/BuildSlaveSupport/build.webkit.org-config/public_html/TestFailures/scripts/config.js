@@ -57,7 +57,7 @@ config.kPlatforms = {
             return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
         },
         _builderApplies: function(builderName) {
-            return builderName.indexOf('Apple') != -1;
+            return builderName.indexOf('Apple') !== -1;
         },
     },
     'gtk' : {
@@ -79,7 +79,28 @@ config.kPlatforms = {
             return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
         },
         _builderApplies: function(builderName) {
-            return builderName.indexOf('GTK') != -1;
+            return builderName.indexOf('GTK') !== -1;
+        },
+    },
+    'wpe' : {
+        label : 'WPE',
+        buildConsoleURL: 'https://build.webkit.org',
+        layoutTestResultsURL: 'https://build.webkit.org/results',
+        waterfallURL: 'https://build.webkit.org/waterfall',
+        builders: {
+            'WPE Linux 64-bit Release (Tests)' : {version: '64-bit release'},
+        },
+        haveBuilderAccumulatedResults : false,
+        useDirectoryListingForOldBuilds: false,
+        useFlakinessDashboard: false,
+        resultsDirectoryNameFromBuilderName: function(builderName) {
+            return encodeURIComponent(builderName);
+        },
+        resultsDirectoryForBuildNumber: function(buildNumber, revision) {
+            return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
+        },
+        _builderApplies: function(builderName) {
+            return builderName.indexOf('WPE') !== -1;
         },
     },
 };

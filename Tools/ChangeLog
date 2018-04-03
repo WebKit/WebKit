@@ -1,3 +1,19 @@
+2018-04-03  Charlie Turner  <cturner@igalia.com>
+
+        [WPE] Add WPE port to garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=182998
+
+        Reviewed by Michael Catanzaro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        Add WPE as a port to check.
+        (config.kPlatforms.string_appeared_here._builderApplies): Use less
+        surprising equality operator.
+        (config.kPlatforms.string_appeared_here.resultsDirectoryNameFromBuilderName):
+        Ditto.
+        (config.kPlatforms.string_appeared_here.resultsDirectoryForBuildNumber):
+        Ditto.
+
 2018-04-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][JHBuild] Tools/gtk/install-dependencies: Replace libxfont with libxfont2 in Arch Linux
