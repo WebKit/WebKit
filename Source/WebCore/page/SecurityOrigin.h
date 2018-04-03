@@ -200,8 +200,6 @@ public:
     // https://html.spec.whatwg.org/multipage/browsers.html#same-origin
     WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin&) const;
 
-    static URL urlWithUniqueSecurityOrigin();
-
     bool isPotentiallyTrustworthy() const { return m_isPotentiallyTrustworthy; }
 
     static bool isLocalHostOrLoopbackIPAddress(const String& host);

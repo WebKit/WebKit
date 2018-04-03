@@ -1,3 +1,73 @@
+2018-04-03  Chris Dumez  <cdumez@apple.com>
+
+        Make SecurityOrigin safe to create and use from any thread
+        https://bugs.webkit.org/show_bug.cgi?id=184216
+
+        Reviewed by Youenn Fablet.
+
+        We found that we have a decent amount of code constructing and using SecurityOrigin
+        objects from non-main threads. Unfortunately, this was not safe, mostly due to
+        SecurityOrigin's reliance on the SchemeRegistry.
+
+        This patch makes it safe to construct a SecurityOrigin on any thread A and use
+        it later on the same thread A. However, developers still need to call isolatedCopy()
+        if they want to pass such object to another thread B.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canDisplay const):
+        * page/SecurityOrigin.h:
+        * page/SecurityPolicy.cpp:
+        (WebCore::originAccessMapLock):
+        (WebCore::originAccessMap):
+        (WebCore::SecurityPolicy::isAccessWhiteListed):
+        (WebCore::SecurityPolicy::addOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::resetOriginAccessWhitelists):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::schemeRegistryLock):
+        (WebCore::allBuiltinSchemes):
+        (WebCore::builtinLocalURLSchemes):
+        (WebCore::localURLSchemes):
+        (WebCore::displayIsolatedURLSchemes):
+        (WebCore::builtinSecureSchemes):
+        (WebCore::secureSchemes):
+        (WebCore::builtinSchemesWithUniqueOrigins):
+        (WebCore::schemesWithUniqueOrigins):
+        (WebCore::builtinEmptyDocumentSchemes):
+        (WebCore::emptyDocumentSchemes):
+        (WebCore::schemesForbiddenFromDomainRelaxation):
+        (WebCore::builtinCanDisplayOnlyIfCanRequestSchemes):
+        (WebCore::canDisplayOnlyIfCanRequestSchemes):
+        (WebCore::notAllowingJavascriptURLsSchemes):
+        (WebCore::SchemeRegistry::registerURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::schemesAllowingLocalStorageAccessInPrivateBrowsing):
+        (WebCore::schemesAllowingDatabaseAccessInPrivateBrowsing):
+        (WebCore::builtinCORSEnabledSchemes):
+        (WebCore::CORSEnabledSchemes):
+        (WebCore::ContentSecurityPolicyBypassingSchemes):
+        (WebCore::cachePartitioningSchemes):
+        (WebCore::serviceWorkerSchemes):
+        (WebCore::alwaysRevalidatedSchemes):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::registerURLSchemeAsNoAccess):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsNoAccess):
+        (WebCore::SchemeRegistry::registerURLSchemeAsDisplayIsolated):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated):
+        (WebCore::SchemeRegistry::registerURLSchemeAsSecure):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsSecure):
+        (WebCore::SchemeRegistry::canDisplayOnlyIfCanRequest):
+        (WebCore::SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest):
+        (WebCore::SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy):
+        (WebCore::SchemeRegistry::schemeShouldBypassContentSecurityPolicy):
+        (WebCore::SchemeRegistry::registerURLSchemeAsCachePartitioned):
+        (WebCore::SchemeRegistry::shouldPartitionCacheForURLScheme):
+        (WebCore::SchemeRegistry::registerURLSchemeServiceWorkersCanHandle):
+        (WebCore::SchemeRegistry::canServiceWorkersHandleURLScheme):
+        (WebCore::SchemeRegistry::isServiceWorkerContainerCustomScheme):
+        * platform/SchemeRegistry.h:
+
 2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Stop using ResourceHandle to load GResources
