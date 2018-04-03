@@ -1,3 +1,13 @@
+2018-04-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark http/tests/workers/service/service-worker-cache-api.https.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=184245
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-04-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup(r230063): Add test a layout test for https://bugs.webkit.org/show_bug.cgi?id=183972
