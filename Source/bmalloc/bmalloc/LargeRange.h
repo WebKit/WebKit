@@ -45,7 +45,7 @@ public:
         , m_startPhysicalSize(startPhysicalSize)
         , m_totalPhysicalSize(totalPhysicalSize)
     {
-        BASSERT(size() >= this->totalPhysicalSize());
+        BASSERT(this->size() >= this->totalPhysicalSize());
         BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
     }
 
@@ -131,8 +131,14 @@ inline std::pair<LargeRange, LargeRange> LargeRange::split(size_t leftSize) cons
 
     double ratio = static_cast<double>(leftSize) / static_cast<double>(this->size());
     size_t leftTotalPhysicalSize = static_cast<size_t>(ratio * totalPhysicalSize());
+    BASSERT(leftTotalPhysicalSize <= leftSize);
     leftTotalPhysicalSize = std::max(startPhysicalSize(), leftTotalPhysicalSize);
     size_t rightTotalPhysicalSize = totalPhysicalSize() - leftTotalPhysicalSize;
+    if (rightTotalPhysicalSize > rightSize) { // This may happen because of rounding.
+        leftTotalPhysicalSize += rightTotalPhysicalSize - rightSize;
+        BASSERT(leftTotalPhysicalSize <= leftSize);
+        rightTotalPhysicalSize = rightSize;
+    }
 
     LargeRange left(begin(), leftSize, startPhysicalSize(), leftTotalPhysicalSize);
     LargeRange right(left.end(), rightSize, 0, rightTotalPhysicalSize);
