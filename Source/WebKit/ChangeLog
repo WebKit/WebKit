@@ -1,3 +1,16 @@
+2018-04-02  Beth Dakin  <bdakin@apple.com>
+
+        Fix the managed configurations build
+        https://bugs.webkit.org/show_bug.cgi?id=184253
+        -and corresponding-
+        rdar://problem/39078586
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView _defineForWebView:]):
+
 2018-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Enchant] Clean up TextCheckerEnchant
