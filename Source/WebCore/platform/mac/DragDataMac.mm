@@ -173,12 +173,17 @@ unsigned DragData::numberOfFiles() const
 Vector<String> DragData::asFilenames() const
 {
 #if PLATFORM(MAC)
+    Vector<String> types;
+    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
+    if (types.contains(String(legacyFilesPromisePasteboardType())))
+        return fileNames();
+
     Vector<String> results;
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(results, String(legacyFilenamesPasteboardType()), m_pasteboardName);
-    if (!results.isEmpty())
-        return results;
-#endif
+    return results;
+#else
     return fileNames();
+#endif
 }
 
 bool DragData::containsPlainText() const

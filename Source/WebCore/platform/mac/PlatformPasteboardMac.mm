@@ -65,14 +65,23 @@ RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardT
 int PlatformPasteboard::numberOfFiles() const
 {
     Vector<String> files;
-    getPathnamesForType(files, String(legacyFilenamesPasteboardType()));
 
-    // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
-    // guaranteed that the count of UTIs equals the count of files, since some clients only write
-    // unique UTIs.
-    if (!files.size())
+    NSArray *pasteboardTypes = [m_pasteboard types];
+    if ([pasteboardTypes containsObject:legacyFilesPromisePasteboardType()]) {
+        // FIXME: legacyFilesPromisePasteboardType() contains file types, not path names, but in
+        // this case we are only concerned with the count of them. The count of types should equal
+        // the count of files, but this isn't guaranteed as some legacy providers might only write
+        // unique file types.
         getPathnamesForType(files, String(legacyFilesPromisePasteboardType()));
-    return files.size();
+        return files.size();
+    }
+
+    if ([pasteboardTypes containsObject:legacyFilenamesPasteboardType()]) {
+        getPathnamesForType(files, String(legacyFilenamesPasteboardType()));
+        return files.size();
+    }
+
+    return 0;
 }
 
 void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const

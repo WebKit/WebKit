@@ -329,16 +329,16 @@ void Pasteboard::read(PasteboardPlainText& text)
         }
     }
 
-    if (types.contains(String(legacyFilenamesPasteboardType()))) {
-        Vector<String> pathnames;
-        strategy.getPathnamesForType(pathnames, legacyFilenamesPasteboardType(), m_pasteboardName);
-        text.text = joinPathnames(pathnames);
+    if (types.contains(String(legacyFilesPromisePasteboardType()))) {
+        text.text = joinPathnames(m_promisedFilePaths);
         text.isURL = false;
         return;
     }
 
-    if (types.contains(String(legacyFilesPromisePasteboardType()))) {
-        text.text = joinPathnames(m_promisedFilePaths);
+    if (types.contains(String(legacyFilenamesPasteboardType()))) {
+        Vector<String> pathnames;
+        strategy.getPathnamesForType(pathnames, legacyFilenamesPasteboardType(), m_pasteboardName);
+        text.text = joinPathnames(pathnames);
         text.isURL = false;
         return;
     }
@@ -364,15 +364,15 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
         }
     }
 
+    if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilesPromisePasteboardType()))) {
+        if (m_changeCount != changeCount() || reader.readFilePaths(m_promisedFilePaths))
+            return;
+    }
+
     if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilenamesPasteboardType()))) {
         Vector<String> paths;
         strategy.getPathnamesForType(paths, legacyFilenamesPasteboardType(), m_pasteboardName);
         if (m_changeCount != changeCount() || reader.readFilePaths(paths))
-            return;
-    }
-
-    if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilesPromisePasteboardType()))) {
-        if (m_changeCount != changeCount() || reader.readFilePaths(m_promisedFilePaths))
             return;
     }
 
@@ -569,15 +569,15 @@ Vector<String> Pasteboard::readFilePaths()
     Vector<String> types;
     strategy.getTypes(types, m_pasteboardName);
 
+    if (types.contains(String(legacyFilesPromisePasteboardType())))
+        return m_promisedFilePaths;
+
     if (types.contains(String(legacyFilenamesPasteboardType()))) {
         Vector<String> filePaths;
         strategy.getPathnamesForType(filePaths, legacyFilenamesPasteboardType(), m_pasteboardName);
         return filePaths;
     }
 
-    if (types.contains(String(legacyFilesPromisePasteboardType())))
-        return m_promisedFilePaths;
-    
     return { };
 }
 

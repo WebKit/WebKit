@@ -469,7 +469,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     assert(!draggingInfo);
 
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
-    [pasteboard declareTypes:@[NSFilesPromisePboardType] owner:nil];
+    [pasteboard declareTypes:@[NSFilesPromisePboardType, NSFilenamesPboardType] owner:nil];
 
     NSURL *currentTestURL = [NSURL URLWithString:mainFrame.webView.mainFrameURL];
 
@@ -492,6 +492,9 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
 
     [pasteboard setPropertyList:fileUTIs forType:NSFilesPromisePboardType];
     assert([pasteboard propertyListForType:NSFilesPromisePboardType]);
+
+    [pasteboard setPropertyList:@[@"file-name-should-not-be-used"] forType:NSFilenamesPboardType];
+    assert([pasteboard propertyListForType:NSFilenamesPboardType]);
 
     auto source = adoptNS([[DumpRenderTreeFileDraggingSource alloc] initWithPromisedFileURLs:fileURLs]);
     draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pasteboard source:source.get()];

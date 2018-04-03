@@ -1,3 +1,31 @@
+2018-04-03  Andy Estes  <aestes@apple.com>
+
+        [Mac] Prioritize file promises over filenames during drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=184237
+        <rdar://problem/38278076>
+
+        Reviewed by Wenson Hsieh.
+
+        When performing a drag operation where the pasteboard contains both a file path and a file
+        promise, we have historically preferred to accept the file path. Some versions of Photos.app
+        will provide both a low-resolution thumbnail as a file path and its high-resolution
+        counterpart as a file promise when dragging a photo, and our current logic leads us to
+        choose the low-quality thumbnail.
+
+        This patch changes our logic to prefer file promises over file paths. This matches the
+        behavior of Finder and ensures we accept high-resolution assets from Photos.app.
+
+        Covered by existing file promise drag tests. beginDragWithFilePromises() was updated to
+        write a bogus file path to the pasteboard along with the legitimate file promise.
+
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asFilenames const):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readFilePaths):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::numberOfFiles const):
+
 2018-04-03  Mark Lam  <mark.lam@apple.com>
 
         Fix mis-application of WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION macro.

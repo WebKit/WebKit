@@ -3699,19 +3699,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::HandleArray sandboxExtensionForUpload;
 
-    if ([types containsObject:WebCore::legacyFilenamesPasteboardType()]) {
-        NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()];
-        if (![files isKindOfClass:[NSArray class]]) {
-            delete dragData;
-            return false;
-        }
-
-        Vector<String> fileNames;
-
-        for (NSString *file in files)
-            fileNames.append(file);
-        m_page->createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
-    } else if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()]) {
+    if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()]) {
         
         // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, it's not
         // guaranteed that the count of UTIs equals the count of files, since some clients only write
@@ -3758,6 +3746,20 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
         }];
 
         return true;
+    }
+
+    if ([types containsObject:WebCore::legacyFilenamesPasteboardType()]) {
+        NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()];
+        if (![files isKindOfClass:[NSArray class]]) {
+            delete dragData;
+            return false;
+        }
+        
+        Vector<String> fileNames;
+        
+        for (NSString *file in files)
+            fileNames.append(file);
+        m_page->createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
     }
 
     m_page->performDragOperation(*dragData, draggingInfo.draggingPasteboard.name, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
