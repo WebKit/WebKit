@@ -217,15 +217,7 @@ all : \
 	@echo Generating message receiver for $*...
 	@python $(WebKit2)/Scripts/generate-messages-header.py $< > $@
 
-
-# Some versions of clang incorrectly strip out // comments in c89 code.
-# Use -traditional as a workaround, but only when needed since that causes
-# other problems with later versions of clang.
-ifeq ($(shell echo '//x' | $(CC) -E -P -x c -std=c89 - | grep x),)
-TEXT_PREPROCESSOR_FLAGS=-E -P -x c -traditional -w
-else
-TEXT_PREPROCESSOR_FLAGS=-E -P -x c -std=c89 -w
-endif
+TEXT_PREPROCESSOR_FLAGS=-E -P -w
 
 ifneq ($(SDKROOT),)
 	SDK_FLAGS=-isysroot $(SDKROOT)
@@ -245,7 +237,7 @@ all: $(SANDBOX_PROFILES)
 
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...
-	$(CC) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
+	grep -o '^[^;]*' $< | $(CC) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" - > $@
 
 AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator_templates.py \
