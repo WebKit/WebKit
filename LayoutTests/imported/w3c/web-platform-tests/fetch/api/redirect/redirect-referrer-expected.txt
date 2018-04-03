@@ -2,10 +2,10 @@
 PASS Same origin redirection, empty init, unsafe-url redirect header  
 PASS Same origin redirection, empty init, no-referrer-when-downgrade redirect header  
 PASS Same origin redirection, empty init, same-origin redirect header  
-FAIL Same origin redirection, empty init, origin redirect header  assert_equals: Check referrer header expected "http://localhost:8800/" but got "http://localhost:8800/fetch/api/redirect/redirect-referrer.html"
+PASS Same origin redirection, empty init, origin redirect header  
 PASS Same origin redirection, empty init, origin-when-cross-origin redirect header  
-FAIL Same origin redirection, empty init, no-referrer redirect header  assert_equals: Check referrer header expected (object) null but got (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.html"
-FAIL Same origin redirection, empty init, strict-origin redirect header  assert_equals: Check referrer header expected "http://localhost:8800/" but got "http://localhost:8800/fetch/api/redirect/redirect-referrer.html"
+PASS Same origin redirection, empty init, no-referrer redirect header  
+PASS Same origin redirection, empty init, strict-origin redirect header  
 PASS Same origin redirection, empty init, strict-origin-when-cross-origin redirect header  
 PASS Same origin redirection, empty redirect header, unsafe-url init  
 PASS Same origin redirection, empty redirect header, no-referrer-when-downgrade init  
@@ -15,20 +15,20 @@ PASS Same origin redirection, empty redirect header, origin-when-cross-origin in
 PASS Same origin redirection, empty redirect header, no-referrer init  
 PASS Same origin redirection, empty redirect header, strict-origin init  
 PASS Same origin redirection, empty redirect header, strict-origin-when-cross-origin init  
-FAIL Cross origin redirection, empty init, unsafe-url redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.html" but got (object) null
-FAIL Cross origin redirection, empty init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.html" but got (object) null
+PASS Cross origin redirection, empty init, unsafe-url redirect header  
+PASS Cross origin redirection, empty init, no-referrer-when-downgrade redirect header  
 PASS Cross origin redirection, empty init, same-origin redirect header  
-FAIL Cross origin redirection, empty init, origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
-FAIL Cross origin redirection, empty init, origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+PASS Cross origin redirection, empty init, origin redirect header  
+PASS Cross origin redirection, empty init, origin-when-cross-origin redirect header  
 PASS Cross origin redirection, empty init, no-referrer redirect header  
-FAIL Cross origin redirection, empty init, strict-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
-FAIL Cross origin redirection, empty init, strict-origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
-FAIL Cross origin redirection, empty redirect header, unsafe-url init  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.html" but got (object) null
-FAIL Cross origin redirection, empty redirect header, no-referrer-when-downgrade init  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer.html" but got (object) null
+PASS Cross origin redirection, empty init, strict-origin redirect header  
+PASS Cross origin redirection, empty init, strict-origin-when-cross-origin redirect header  
+PASS Cross origin redirection, empty redirect header, unsafe-url init  
+PASS Cross origin redirection, empty redirect header, no-referrer-when-downgrade init  
 PASS Cross origin redirection, empty redirect header, same-origin init  
-FAIL Cross origin redirection, empty redirect header, origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
-FAIL Cross origin redirection, empty redirect header, origin-when-cross-origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+PASS Cross origin redirection, empty redirect header, origin init  
+PASS Cross origin redirection, empty redirect header, origin-when-cross-origin init  
 PASS Cross origin redirection, empty redirect header, no-referrer init  
-FAIL Cross origin redirection, empty redirect header, strict-origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
-FAIL Cross origin redirection, empty redirect header, strict-origin-when-cross-origin init  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+PASS Cross origin redirection, empty redirect header, strict-origin init  
+PASS Cross origin redirection, empty redirect header, strict-origin-when-cross-origin init  
 

@@ -13004,6 +13004,7 @@
 		C9DADBC91B1D3B25001F17D8 /* JSMediaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaSession.cpp; sourceTree = "<group>"; };
 		C9DADBCA1B1D3B25001F17D8 /* JSMediaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaSession.h; sourceTree = "<group>"; };
 		C9F87CFD1B28E5F600979B83 /* MediaSessionEvents.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = MediaSessionEvents.h; sourceTree = "<group>"; };
+		CA1635DC2072E76900E7D2CE /* ReferrerPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReferrerPolicy.cpp; sourceTree = "<group>"; };
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAspectRatioValue.cpp; sourceTree = "<group>"; };
@@ -24189,6 +24190,7 @@
 				F47A633C1FF6FD500081B3CC /* PromisedBlobInfo.h */,
 				0081FEFD16B0A244008AAA7A /* PublicSuffix.h */,
 				5C97A3361F5F7A6500105207 /* RectEdges.h */,
+				CA1635DC2072E76900E7D2CE /* ReferrerPolicy.cpp */,
 				9831AE49154225A200FE2644 /* ReferrerPolicy.h */,
 				CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */,
 				CDFC360418CA61C20026E56F /* RemoteCommandListener.h */,

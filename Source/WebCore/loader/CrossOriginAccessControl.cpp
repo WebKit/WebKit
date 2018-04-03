@@ -34,6 +34,7 @@
 #include "ResourceResponse.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
@@ -57,6 +58,15 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     }
 
     return true;
+}
+
+void updateRequestReferrer(ResourceRequest& request, ReferrerPolicy referrerPolicy, const String& outgoingReferrer)
+{
+    String newOutgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrer);
+    if (newOutgoingReferrer.isEmpty())
+        request.clearHTTPReferrer();
+    else
+        request.setHTTPReferrer(newOutgoingReferrer);
 }
 
 void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& securityOrigin, StoredCredentialsPolicy storedCredentialsPolicy)

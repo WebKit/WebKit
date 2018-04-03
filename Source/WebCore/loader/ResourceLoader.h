@@ -159,6 +159,9 @@ protected:
     bool wasCancelled() const { return m_cancellationStatus >= Cancelled; }
 
     void didReceiveDataOrBuffer(const char*, unsigned, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
+    
+    void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_options.referrerPolicy = referrerPolicy; }
+    ReferrerPolicy referrerPolicy() const { return m_options.referrerPolicy; }
 
 #if PLATFORM(COCOA)
     void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) override;

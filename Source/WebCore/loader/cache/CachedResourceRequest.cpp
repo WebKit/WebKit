@@ -35,7 +35,6 @@
 #include "HTTPHeaderValues.h"
 #include "ImageDecoder.h"
 #include "MemoryCache.h"
-#include "SecurityPolicy.h"
 #include "ServiceWorkerRegistrationData.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -102,7 +101,7 @@ void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Docu
         ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     m_options.credentials = credentials;
     m_options.storedCredentialsPolicy = credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
-    WebCore::updateRequestForAccessControl(m_resourceRequest, document.securityOrigin(), m_options.storedCredentialsPolicy);
+    updateRequestForAccessControl(m_resourceRequest, document.securityOrigin(), m_options.storedCredentialsPolicy);
 }
 
 void CachedResourceRequest::updateForAccessControl(Document& document)
@@ -110,7 +109,7 @@ void CachedResourceRequest::updateForAccessControl(Document& document)
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     m_origin = &document.securityOrigin();
-    WebCore::updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.storedCredentialsPolicy);
+    updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.storedCredentialsPolicy);
 }
 
 void upgradeInsecureResourceRequestIfNeeded(ResourceRequest& request, Document& document)
@@ -231,22 +230,15 @@ void CachedResourceRequest::updateReferrerPolicy(ReferrerPolicy defaultPolicy)
 
 void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader& frameLoader)
 {
-    // Implementing step 7 to 9 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
-
-    String outgoingOrigin;
-    String outgoingReferrer = m_resourceRequest.httpReferrer();
-    if (!outgoingReferrer.isNull())
+    // Implementing step 9 to 11 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 16 March 2018
+    String outgoingReferrer = frameLoader.outgoingReferrer();
+    String outgoingOrigin = frameLoader.outgoingOrigin();
+    if (m_resourceRequest.hasHTTPReferrer()) {
+        outgoingReferrer = m_resourceRequest.httpReferrer();
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
-    else {
-        outgoingReferrer = frameLoader.outgoingReferrer();
-        outgoingOrigin = frameLoader.outgoingOrigin();
     }
+    updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrer);
 
-    outgoingReferrer = SecurityPolicy::generateReferrerHeader(m_options.referrerPolicy, m_resourceRequest.url(), outgoingReferrer);
-    if (outgoingReferrer.isEmpty())
-        m_resourceRequest.clearHTTPReferrer();
-    else
-        m_resourceRequest.setHTTPReferrer(outgoingReferrer);
     FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
 
     frameLoader.applyUserAgentIfNeeded(m_resourceRequest);

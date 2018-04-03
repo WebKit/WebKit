@@ -42,6 +42,8 @@ class URL;
 WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
 
+void updateRequestReferrer(ResourceRequest&, ReferrerPolicy, const String&);
+    
 WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentialsPolicy);
 WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&);
 

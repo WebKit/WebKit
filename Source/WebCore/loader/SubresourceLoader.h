@@ -79,6 +79,8 @@ private:
     void willCancel(const ResourceError&) override;
     void didCancel(const ResourceError&) override;
     void didRetrieveDerivedDataFromCache(const String& type, SharedBuffer&) override;
+    
+    void updateReferrerPolicy(const String&);
 
 #if PLATFORM(COCOA)
     void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) override;

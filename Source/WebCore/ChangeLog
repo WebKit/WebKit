@@ -1,3 +1,38 @@
+2018-04-03  Sihui Liu  <sihui_liu@apple.com>
+
+        The referer header is not set after redirect
+        https://bugs.webkit.org/show_bug.cgi?id=182644
+        <rdar://problem/37479048>
+
+        Reviewed by Youenn Fablet.
+
+        Update referrer policy and recompute referrer in redirection check, so Referer header would be set after it's removed from cross-origin request.
+
+        Add support for Referrer-Policy header, so referrer policy would be changed based on redirect response. 
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::processReferrerPolicy):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::updateRequestReferrer):
+        * loader/CrossOriginAccessControl.h:
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::setReferrerPolicy):
+        (WebCore::ResourceLoader::referrerPolicy const):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::checkRedirectionCrossOriginAccessControl):
+        (WebCore::SubresourceLoader::updateReferrerPolicy):
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setAsPotentiallyCrossOrigin):
+        (WebCore::CachedResourceRequest::updateForAccessControl):
+        (WebCore::CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders):
+        * platform/ReferrerPolicy.cpp: Added.
+        (WebCore::parseReferrerPolicy):
+        * platform/ReferrerPolicy.h:
+        * platform/network/HTTPHeaderNames.in:
+
 2018-04-03  Chris Dumez  <cdumez@apple.com>
 
         Make SecurityOrigin safe to create and use from any thread

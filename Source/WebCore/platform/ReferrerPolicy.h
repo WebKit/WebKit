@@ -33,6 +33,7 @@
 #pragma once
 
 #include <wtf/EnumTraits.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -47,6 +48,10 @@ enum class ReferrerPolicy {
     StrictOriginWhenCrossOrigin,
     UnsafeUrl
 };
+
+enum class ShouldParseLegacyKeywords { No, Yes };
+    
+std::optional<ReferrerPolicy> parseReferrerPolicy(StringView, ShouldParseLegacyKeywords);
 
 }
 
