@@ -47,7 +47,7 @@ typedef void (^CompletionBlock)(SecKeyRef _Nullable referenceKey, NSArray * _Nul
 class WEBCORE_EXPORT LocalAuthenticator {
     WTF_MAKE_NONCOPYABLE(LocalAuthenticator);
 public:
-    LocalAuthenticator() = default;
+    LocalAuthenticator();
     virtual ~LocalAuthenticator() = default;
 
     void makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions&, CreationCallback&&, ExceptionCallback&&);

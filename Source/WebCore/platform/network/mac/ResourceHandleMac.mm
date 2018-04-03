@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,7 @@
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/Ref.h>
 #import <wtf/SchedulePair.h>
 #import <wtf/text/Base64.h>
@@ -495,6 +496,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // the keychain.  CFNetwork used to handle this until WebCore was changed to always
     // return NO to -connectionShouldUseCredentialStorage: for <rdar://problem/7704943>.
     if (!challenge.previousFailureCount() && challenge.protectionSpace().isProxy()) {
+        RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
         NSURLAuthenticationChallenge *macChallenge = mac(challenge);
         if (NSURLCredential *credential = [[NSURLCredentialStorage sharedCredentialStorage] defaultCredentialForProtectionSpace:[macChallenge protectionSpace]]) {
             [challenge.sender() useCredential:credential forAuthenticationChallenge:macChallenge];

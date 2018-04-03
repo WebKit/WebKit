@@ -1,3 +1,18 @@
+2018-04-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Guard against keychain/certificate access outside the network process
+        https://bugs.webkit.org/show_bug.cgi?id=184214
+        <rdar://problem/38734795>
+
+        Reviewed by Youenn Fablet.
+
+        Use the ProcessPrivilege assertions to guard against accessing the Keychain from
+        a non-Networking process.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode): Assert if we access the keychain from a proces other than the Network or UI process.
+        (IPC::decode): Ditto.
+
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
         NetworkResourceLoader does not need to expose all redirect response headers

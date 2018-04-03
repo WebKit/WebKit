@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2005, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #import <Security/SecAsn1Coder.h>
 #import <Security/SecAsn1Templates.h>
 #import <Security/SecEncodeTransform.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
 #import <wtf/cf/TypeCastsCF.h>

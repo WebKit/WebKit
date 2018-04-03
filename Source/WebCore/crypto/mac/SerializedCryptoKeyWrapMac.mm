@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/CryptographicUtilities.h>
+#include <wtf/ProcessPrivilege.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -80,6 +81,8 @@ static NSString* masterKeyAccountNameForCurrentApplication()
 
 static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
+
     masterKeyData.resize(masterKeySizeInBytes);
     int rc = CCRandomCopyBytes(kCCRandomDefault, masterKeyData.data(), masterKeyData.size());
     RELEASE_ASSERT(rc == kCCSuccess);
@@ -151,6 +154,8 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
 
 static bool findMasterKey(Vector<uint8_t>& masterKeyData)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
+
     NSDictionary *query = @{
         (id)kSecClass : (id)kSecClassGenericPassword,
         (id)kSecAttrAccount : masterKeyAccountNameForCurrentApplication(),
@@ -180,6 +185,8 @@ bool getDefaultWebCryptoMasterKey(Vector<uint8_t>& masterKey)
 
 bool deleteDefaultWebCryptoMasterKey()
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
+
     NSDictionary *query = @{
         (id)kSecClass : (id)kSecClassGenericPassword,
         (id)kSecAttrAccount : masterKeyAccountNameForCurrentApplication(),

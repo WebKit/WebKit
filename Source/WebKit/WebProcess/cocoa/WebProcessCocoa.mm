@@ -33,7 +33,6 @@
 #import "ObjCObjectGraph.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
-#import "SecItemShim.h"
 #import "SessionTracker.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
@@ -303,10 +302,6 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 
 #if USE(OS_STATE)
     registerWithStateDumper();
-#endif
-
-#if ENABLE(SEC_ITEM_SHIM)
-    initializeSecItemShim(*this);
 #endif
 }
 

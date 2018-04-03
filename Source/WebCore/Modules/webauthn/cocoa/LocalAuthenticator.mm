@@ -39,6 +39,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/HashSet.h>
 #import <wtf/MainThread.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/StringHash.h>
@@ -108,6 +109,11 @@ inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDescriptor
 #endif // !PLATFORM(IOS)
 
 } // LocalAuthenticatorInternal
+
+LocalAuthenticator::LocalAuthenticator()
+{
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
+}
 
 void LocalAuthenticator::makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, CreationCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
