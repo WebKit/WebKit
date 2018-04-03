@@ -245,6 +245,9 @@ public:
     void setResourceLoadStatisticsDebugMode(bool isEnabled) { m_resourceLoadStatisticsDebugMode = isEnabled; }
     bool resourceLoadStatisticsDebugMode() const { return m_resourceLoadStatisticsDebugMode; }
 
+    void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
+    bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -375,6 +378,8 @@ private:
     bool m_mediaCapabilitiesEnabled { false };
 
     bool m_resourceLoadStatisticsDebugMode { false };
+
+    bool m_isRestrictedHTTPResponseAccess { false };
     
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

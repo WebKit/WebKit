@@ -102,6 +102,7 @@ public:
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
     void setHTTPHeaderFields(HTTPHeaderMap&&);
+    WEBCORE_EXPORT void sanitizeRedirectionHTTPHeaderFields();
 
     String httpHeaderField(const String& name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;

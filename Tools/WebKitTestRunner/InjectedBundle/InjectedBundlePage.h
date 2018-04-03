@@ -49,6 +49,8 @@ public:
 
     void dumpBackForwardList(WTF::StringBuilder&);
 
+    static uint64_t responseHeaderCount(WKURLResponseRef);
+
 private:
     // Loader Client
     static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);

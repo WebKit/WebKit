@@ -1213,3 +1213,10 @@ ResourceLoadStatisticsDebugMode:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+RestrictedHTTPResponseAccess:
+    type: bool
+    defaultValue: true
+    humanReadableName: "Restricted HTTP Response Access to Web Process"
+    humanReadableDescription: "Restricted HTTP Response Access to Web Process"
+    category: experimental
+    webcoreBinding: RuntimeEnabledFeatures

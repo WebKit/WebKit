@@ -95,6 +95,8 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << mainDocumentURL;
     encoder << userContentControllerIdentifier;
 #endif
+
+    encoder << shouldRestrictHTTPResponseAccess;
 }
 
 bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourceLoadParameters& result)
@@ -190,6 +192,12 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
         return false;
     result.userContentControllerIdentifier = *userContentControllerIdentifier;
 #endif
+
+    std::optional<bool> shouldRestrictHTTPResponseAccess;
+    decoder >> shouldRestrictHTTPResponseAccess;
+    if (!shouldRestrictHTTPResponseAccess)
+        return false;
+    result.shouldRestrictHTTPResponseAccess = *shouldRestrictHTTPResponseAccess;
 
     return true;
 }

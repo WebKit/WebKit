@@ -1,5 +1,37 @@
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
+        NetworkResourceLoader does not need to expose all redirect response headers
+        https://bugs.webkit.org/show_bug.cgi?id=184114
+        <rdar://problem/39010557>
+
+        Reviewed by Ryosuke Niwa.
+
+        WebProcess instructs NetworkProcess whether to sanitize response headers based on a runtime flag.
+        We sanitize redirection response headers in case this is not related to a navigation load.
+        Navigation loads may currently require the full response for content blockers.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::sanitizeRedirectResponseIfPossible):
+        (WebKit::NetworkResourceLoader::dispatchWillSendRequestForCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRestrictedHTTPResponseAccess):
+        (WKPreferencesGetRestrictedHTTPResponseAccess):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+
+2018-04-03  Youenn Fablet  <youenn@apple.com>
+
         Make NetworkProcess get ContentBlocker information from UIProcess
         https://bugs.webkit.org/show_bug.cgi?id=184205
 

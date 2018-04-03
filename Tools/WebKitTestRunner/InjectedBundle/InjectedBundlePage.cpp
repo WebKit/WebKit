@@ -499,7 +499,7 @@ static inline void dumpRequestDescriptionSuitableForTestResult(WKURLRequestRef r
     stringBuilder.append('>');
 }
 
-static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef response, StringBuilder& stringBuilder)
+static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef response, StringBuilder& stringBuilder, bool shouldDumpResponseHeaders = false)
 {
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLResponseCopyURL(response));
     if (!url) {
@@ -510,8 +510,22 @@ static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef
     stringBuilder.append(pathSuitableForTestResult(url.get()));
     stringBuilder.appendLiteral(", http status code ");
     stringBuilder.appendNumber(WKURLResponseHTTPStatusCode(response));
+
+    if (shouldDumpResponseHeaders) {
+        stringBuilder.appendLiteral(", ");
+        stringBuilder.appendNumber(InjectedBundlePage::responseHeaderCount(response));
+        stringBuilder.appendLiteral(" headers");
+    }
     stringBuilder.append('>');
 }
+
+#if !PLATFORM(COCOA)
+// FIXME: Implement this for non cocoa ports.
+uint64_t InjectedBundlePage::responseHeaderCount(WKURLResponseRef response)
+{
+    return 0;
+}
+#endif
 
 static inline void dumpErrorDescriptionSuitableForTestResult(WKErrorRef error, StringBuilder& stringBuilder)
 {
@@ -1133,7 +1147,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
         stringBuilder.appendLiteral(" - willSendRequest ");
         dumpRequestDescriptionSuitableForTestResult(request, stringBuilder);
         stringBuilder.appendLiteral(" redirectResponse ");
-        dumpResponseDescriptionSuitableForTestResult(response, stringBuilder);
+        dumpResponseDescriptionSuitableForTestResult(response, stringBuilder, injectedBundle.testRunner()->shouldDumpAllHTTPRedirectedResponseHeaders());
         stringBuilder.append('\n');
         injectedBundle.outputText(stringBuilder.toString());
     }

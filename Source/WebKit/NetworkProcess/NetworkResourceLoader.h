@@ -146,6 +146,8 @@ private:
     void logCookieInformation() const;
 #endif
 
+    WebCore::ResourceResponse sanitizeRedirectResponseIfPossible(WebCore::ResourceResponse&&);
+
     const NetworkResourceLoadParameters m_parameters;
 
     Ref<NetworkConnectionToWebProcess> m_connection;

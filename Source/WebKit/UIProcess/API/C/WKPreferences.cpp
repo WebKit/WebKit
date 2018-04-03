@@ -1953,3 +1953,13 @@ bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferenc
 {
     return toImpl(preferencesRef)->allowCrossOriginSubresourcesToAskForCredentials();
 }
+
+void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setRestrictedHTTPResponseAccess(flag);
+}
+
+bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->restrictedHTTPResponseAccess();
+}

@@ -1,3 +1,28 @@
+2018-04-03  Youenn Fablet  <youenn@apple.com>
+
+        NetworkResourceLoader does not need to expose all redirect response headers
+        https://bugs.webkit.org/show_bug.cgi?id=184114
+        <rdar://problem/39010557>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add an option to dump the number of headers in a response.
+        This allows validating that filtering does happen or not.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpResponseDescriptionSuitableForTestResult):
+        (WTR::InjectedBundlePage::responseHeaderCount):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::dumpAllHTTPRedirectedResponseHeaders):
+        (WTR::TestRunner::shouldDumpAllHTTPRedirectedResponseHeaders const):
+        * WebKitTestRunner/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm:
+        (WTR::InjectedBundlePage::responseHeaderCount):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2018-04-03  Andy Estes  <aestes@apple.com>
 
         [Mac] Prioritize file promises over filenames during drag and drop

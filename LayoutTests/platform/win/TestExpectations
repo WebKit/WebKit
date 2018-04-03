@@ -3722,6 +3722,8 @@ http/tests/cache-storage [ Skip ]
 http/wpt/cache-storage [ Skip ]
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 
+# No header filtering for WK1
+http/wpt/loading/redirect-headers.html [ Skip ]
 
 # Flaky tests on Windows:
 webkit.org/b/176564 http/tests/misc/delete-frame-during-readystatechange.html [ Pass Crash ]

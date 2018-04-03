@@ -431,6 +431,9 @@ public:
 
     void installFakeHelvetica(JSStringRef configuration);
 
+    void dumpAllHTTPRedirectedResponseHeaders() { m_dumpAllHTTPRedirectedResponseHeaders = true; }
+    bool shouldDumpAllHTTPRedirectedResponseHeaders() const { return m_dumpAllHTTPRedirectedResponseHeaders; }
+
 private:
     TestRunner();
 
@@ -495,6 +498,8 @@ private:
     size_t m_userMediaPermissionRequestCount { 0 };
 
     PlatformTimerRef m_waitToDumpWatchdogTimer;
+
+    bool m_dumpAllHTTPRedirectedResponseHeaders { false };
 };
 
 } // namespace WTR

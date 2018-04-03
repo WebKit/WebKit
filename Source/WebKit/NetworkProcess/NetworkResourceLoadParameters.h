@@ -58,6 +58,7 @@ public:
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WebCore::FetchOptions::Mode mode;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    bool shouldRestrictHTTPResponseAccess { false };
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::URL mainDocumentURL;

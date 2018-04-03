@@ -307,6 +307,10 @@ WK_EXPORT void WKPreferencesSetAllowMediaContentTypesRequiringHardwareSupportAsF
 WK_EXPORT bool WKPreferencesGetMediaCapabilitiesEnabled(WKPreferencesRef preferencesRef);
 WK_EXPORT void WKPreferencesSetMediaCapabilitiesEnabled(WKPreferencesRef preferencesRef, bool enabled);
 
+// Defaults to false.
+WK_EXPORT bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool allow);
+
 #ifdef __cplusplus
 }
 #endif

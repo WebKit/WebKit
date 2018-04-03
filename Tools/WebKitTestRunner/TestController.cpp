@@ -751,6 +751,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetAccessibilityObjectModelEnabled(preferences, true);
     WKPreferencesSetMediaCapabilitiesEnabled(preferences, true);
 
+    WKPreferencesSetRestrictedHTTPResponseAccess(preferences, true);
+
     platformResetPreferencesToConsistentValues();
 }
 

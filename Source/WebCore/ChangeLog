@@ -1,3 +1,25 @@
+2018-04-03  Youenn Fablet  <youenn@apple.com>
+
+        NetworkResourceLoader does not need to expose all redirect response headers
+        https://bugs.webkit.org/show_bug.cgi?id=184114
+        <rdar://problem/39010557>
+
+        Reviewed by Ryosuke Niwa.
+
+        No JS observable change of behavior.
+        Behavior change is observable for injected bundles since they will no longer get access to the full response.
+        List of response headers correspond to the one currently being used/exposed for redirections.
+
+        Test: http/wpt/loading/redirect-headers.html
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setRestrictedHTTPResponseAccess):
+        (WebCore::RuntimeEnabledFeatures::restrictedHTTPResponseAccess const):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isSafeToKeepRedirectionHeader):
+        (WebCore::ResourceResponseBase::sanitizeRedirectionHTTPHeaderFields):
+        * platform/network/ResourceResponseBase.h:
+
 2018-04-03  Andy Estes  <aestes@apple.com>
 
         [Mac] Prioritize file promises over filenames during drag and drop

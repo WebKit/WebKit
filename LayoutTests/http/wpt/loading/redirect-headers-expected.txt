@@ -1,0 +1,11 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+http://localhost:8800/WebKit/beacon/resources/redirect.py?status=302&location=/ - willSendRequest <NSURLRequest URL http://localhost:8800/WebKit/beacon/resources/redirect.py?status=302&location=/, main document URL http://localhost:8800/WebKit/loading/redirect-headers.html, http method GET> redirectResponse (null)
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+http://localhost:8800/WebKit/loading/redirect-headers.html - didFinishLoading
+http://localhost:8800/WebKit/beacon/resources/redirect.py?status=302&location=/ - willSendRequest <NSURLRequest URL http://localhost:8800/?status=302&location=%2F&count=1, main document URL http://localhost:8800/WebKit/loading/redirect-headers.html, http method GET> redirectResponse <NSURLResponse http://localhost:8800/WebKit/beacon/resources/redirect.py?status=302&location=/, http status code 302, 6 headers>
+http://localhost:8800/WebKit/beacon/resources/redirect.py?status=302&location=/ - didReceiveResponse <NSURLResponse http://localhost:8800/?status=302&location=%2F&count=1, http status code 200>
+http://localhost:8800/WebKit/beacon/resources/redirect.py?status=302&location=/ - didFinishLoading
+

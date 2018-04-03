@@ -456,10 +456,17 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
         continueWillSendRequest(WTFMove(overridenRequest), false);
         return;
     }
-    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, redirectResponse));
-
     if (canUseCachedRedirect(request))
         m_cache->storeRedirect(request, redirectResponse, redirectRequest);
+
+    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeRedirectResponseIfPossible(WTFMove(redirectResponse))));
+}
+
+ResourceResponse NetworkResourceLoader::sanitizeRedirectResponseIfPossible(ResourceResponse&& response)
+{
+    if (m_parameters.shouldRestrictHTTPResponseAccess)
+        response.sanitizeRedirectionHTTPHeaderFields();
+    return WTFMove(response);
 }
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
@@ -665,7 +672,7 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
     ++m_redirectCount;
-    send(Messages::WebResourceLoader::WillSendRequest(*entry->redirectRequest(), entry->response()));
+    send(Messages::WebResourceLoader::WillSendRequest { *entry->redirectRequest(), sanitizeRedirectResponseIfPossible(ResourceResponse { entry->response() }) });
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
 }
 

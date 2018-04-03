@@ -317,6 +317,42 @@ void ResourceResponseBase::setHTTPVersion(const String& versionText)
     // FIXME: Should invalidate or update platform response if present.
 }
 
+static bool isSafeToKeepRedirectionHeader(HTTPHeaderName name)
+{
+    // WebCore needs to keep location and cache related headers as it does caching.
+    // We also keep CORS/ReferrerPolicy headers until CORS checks/Referrer computation are done in NetworkProcess.
+    return name == HTTPHeaderName::Location
+        || name == HTTPHeaderName::ReferrerPolicy
+        || name == HTTPHeaderName::CacheControl
+        || name == HTTPHeaderName::Date
+        || name == HTTPHeaderName::Expires
+        || name == HTTPHeaderName::ETag
+        || name == HTTPHeaderName::LastModified
+        || name == HTTPHeaderName::Age
+        || name == HTTPHeaderName::Pragma
+        || name == HTTPHeaderName::Refresh
+        || name == HTTPHeaderName::Vary
+        || name == HTTPHeaderName::AccessControlAllowCredentials
+        || name == HTTPHeaderName::AccessControlAllowHeaders
+        || name == HTTPHeaderName::AccessControlAllowMethods
+        || name == HTTPHeaderName::AccessControlAllowOrigin
+        || name == HTTPHeaderName::AccessControlExposeHeaders
+        || name == HTTPHeaderName::AccessControlMaxAge
+        || name == HTTPHeaderName::TimingAllowOrigin;
+}
+
+void ResourceResponseBase::sanitizeRedirectionHTTPHeaderFields()
+{
+    lazyInit(AllFields);
+
+    auto commonHeaders = WTFMove(m_httpHeaderFields.commonHeaders());
+    for (auto& header : commonHeaders) {
+        if (isSafeToKeepRedirectionHeader(header.key))
+            m_httpHeaderFields.add(header.key, WTFMove(header.value));
+    }
+    m_httpHeaderFields.uncommonHeaders().clear();
+}
+
 bool ResourceResponseBase::isHTTP09() const
 {
     lazyInit(AllFields);

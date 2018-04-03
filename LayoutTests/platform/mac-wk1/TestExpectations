@@ -133,6 +133,9 @@ imported/w3c/web-platform-tests/mediacapture-streams
 http/tests/media/media-stream
 http/tests/ssl/media-stream
 
+# WK1 does not filter response headers.
+http/wpt/loading/redirect-headers.html [ Skip ]
+
 # No service worker implementation for WK1
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 http/wpt/service-workers [ Skip ]
