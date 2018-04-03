@@ -125,7 +125,7 @@
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
+@interface WKContentView (ExtraZoomMode) <WKFocusedFormControlViewControllerDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
 @end
 
 #endif
@@ -4235,8 +4235,7 @@ static bool isAssistableInputType(InputType type)
         break;
     case InputType::Time:
         if (!_timePickerViewController) {
-            _timePickerViewController = adoptNS([[WKTimePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
-            [_timePickerViewController setDelegate:self];
+            _timePickerViewController = adoptNS([[WKTimePickerViewController alloc] initWithDelegate:self]);
             [_focusedFormControlViewController presentViewController:_timePickerViewController.get() animated:YES completion:nil];
         }
         break;
@@ -4277,41 +4276,6 @@ static bool isAssistableInputType(InputType type)
         if (!self.isFirstResponder)
             [self becomeFirstResponder];
     }
-}
-
-- (void)textInputController:(WKTextFormControlViewController *)controller didCommitText:(NSString *)text
-{
-    [self textInputController:controller didCommitText:text withSuggestion:nil];
-}
-
-- (void)textInputController:(WKTextFormControlViewController *)controller didCommitText:(NSString *)text withSuggestion:(UITextSuggestion *)suggestion
-{
-    if (suggestion)
-        [self insertTextSuggestion:suggestion];
-    else
-        _page->setTextAsync(text);
-
-    if (![self actionNameForFocusedFormControlController:_focusedFormControlViewController.get()] && !_assistedNodeInformation.hasNextNode && !_assistedNodeInformation.hasPreviousNode) {
-        // In this case, there's no point in collapsing down to the form control focus UI because there's nothing the user could potentially do
-        // besides dismiss the UI, so we just automatically dismiss the focused form control UI.
-        _page->blurAssistedNode();
-        return;
-    }
-
-    [_focusedFormControlViewController show:NO];
-    [self dismissAllInputViewControllers];
-    [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
-        if (didUpdate) {
-            auto focusedFormController = weakSelf.get()->_focusedFormControlViewController;
-            [focusedFormController reloadData:YES];
-            [focusedFormController engageFocusedFormControlNavigation];
-        }
-    }];
-}
-
-- (void)textInputControllerDidRequestDismissal:(WKTextFormControlViewController *)controller
-{
-    _page->blurAssistedNode();
 }
 
 - (void)focusedFormControlControllerDidSubmit:(WKFocusedFormControlViewController *)controller

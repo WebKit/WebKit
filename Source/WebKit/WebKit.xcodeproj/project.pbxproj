@@ -725,14 +725,10 @@
 		2DFC7DBB1BCCC19500C1548C /* WebViewImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */; };
 		2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */; };
 		2DFF7B6F1DA4CFAF00814614 /* WKBackForwardListItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF7B6E1DA4CFAF00814614 /* WKBackForwardListItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2E16B6A12016E680008996D6 /* WKTextFormControlViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E16B69F2016E680008996D6 /* WKTextFormControlViewController.h */; };
-		2E16B6A720171693008996D6 /* WKTextFormControlViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E16B6A02016E680008996D6 /* WKTextFormControlViewController.mm */; };
 		2E16B6B82017AB9C008996D6 /* WKFocusedFormControlViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E16B6B62017AB9C008996D6 /* WKFocusedFormControlViewController.h */; };
 		2E16B6B92017AB9C008996D6 /* WKFocusedFormControlViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E16B6B72017AB9C008996D6 /* WKFocusedFormControlViewController.mm */; };
 		2E16B6CE2017B7AD008996D6 /* WKFocusedFormControlView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E16B6CC2017B7AB008996D6 /* WKFocusedFormControlView.mm */; };
 		2E16B6CF2017B7AD008996D6 /* WKFocusedFormControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */; };
-		2E16B6D42017BA37008996D6 /* WKTextSuggestionButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E16B6D22017BA37008996D6 /* WKTextSuggestionButton.h */; };
-		2E16B6D52017BA37008996D6 /* WKTextSuggestionButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E16B6D32017BA37008996D6 /* WKTextSuggestionButton.mm */; };
 		2E5C770E1FA7D429005932C3 /* APIAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E5C770C1FA7D429005932C3 /* APIAttachment.h */; };
 		2E5C770F1FA7D429005932C3 /* APIAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */; };
 		2E7A944A1BBD97C300945547 /* _WKFocusedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3096,14 +3092,10 @@
 		2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewImpl.h; sourceTree = "<group>"; };
 		2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewImpl.mm; sourceTree = "<group>"; };
 		2DFF7B6E1DA4CFAF00814614 /* WKBackForwardListItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListItemPrivate.h; sourceTree = "<group>"; };
-		2E16B69F2016E680008996D6 /* WKTextFormControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTextFormControlViewController.h; path = ios/forms/WKTextFormControlViewController.h; sourceTree = "<group>"; };
-		2E16B6A02016E680008996D6 /* WKTextFormControlViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTextFormControlViewController.mm; path = ios/forms/WKTextFormControlViewController.mm; sourceTree = "<group>"; };
 		2E16B6B62017AB9C008996D6 /* WKFocusedFormControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFocusedFormControlViewController.h; path = ios/forms/WKFocusedFormControlViewController.h; sourceTree = "<group>"; };
 		2E16B6B72017AB9C008996D6 /* WKFocusedFormControlViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFocusedFormControlViewController.mm; path = ios/forms/WKFocusedFormControlViewController.mm; sourceTree = "<group>"; };
 		2E16B6CC2017B7AB008996D6 /* WKFocusedFormControlView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFocusedFormControlView.mm; path = ios/forms/WKFocusedFormControlView.mm; sourceTree = "<group>"; };
 		2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFocusedFormControlView.h; path = ios/forms/WKFocusedFormControlView.h; sourceTree = "<group>"; };
-		2E16B6D22017BA37008996D6 /* WKTextSuggestionButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTextSuggestionButton.h; path = ios/forms/WKTextSuggestionButton.h; sourceTree = "<group>"; };
-		2E16B6D32017BA37008996D6 /* WKTextSuggestionButton.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTextSuggestionButton.mm; path = ios/forms/WKTextSuggestionButton.mm; sourceTree = "<group>"; };
 		2E5C770C1FA7D429005932C3 /* APIAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIAttachment.h; sourceTree = "<group>"; };
 		2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIAttachment.cpp; sourceTree = "<group>"; };
 		2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKFocusedElementInfo.h; sourceTree = "<group>"; };
@@ -8468,12 +8460,8 @@
 				2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */,
 				F4F59AD42065A5CA006CAA46 /* WKSelectMenuListViewController.h */,
 				F4F59AD32065A5C9006CAA46 /* WKSelectMenuListViewController.mm */,
-				2E16B69F2016E680008996D6 /* WKTextFormControlViewController.h */,
-				2E16B6A02016E680008996D6 /* WKTextFormControlViewController.mm */,
 				F4D5F519206087A00038BBA8 /* WKTextInputListViewController.h */,
 				F4D5F51A206087A10038BBA8 /* WKTextInputListViewController.mm */,
-				2E16B6D22017BA37008996D6 /* WKTextSuggestionButton.h */,
-				2E16B6D32017BA37008996D6 /* WKTextSuggestionButton.mm */,
 				2EB6FBFF203021960017E619 /* WKTimePickerViewController.h */,
 				2EB6FC00203021960017E619 /* WKTimePickerViewController.mm */,
 			);
@@ -9683,10 +9671,8 @@
 				51F886A61F2C228100C193EF /* WKTestingSupport.h in Headers */,
 				31D755C11D91B81500843BD1 /* WKTextChecker.h in Headers */,
 				2DD67A351BD861060053B251 /* WKTextFinderClient.h in Headers */,
-				2E16B6A12016E680008996D6 /* WKTextFormControlViewController.h in Headers */,
 				F4D5F51D206087A10038BBA8 /* WKTextInputListViewController.h in Headers */,
 				0FCB4E6818BBE3D9000FCFC9 /* WKTextInputWindowController.h in Headers */,
-				2E16B6D42017BA37008996D6 /* WKTextSuggestionButton.h in Headers */,
 				2EB6FC01203021960017E619 /* WKTimePickerViewController.h in Headers */,
 				BC407608124FF0270068F20A /* WKType.h in Headers */,
 				7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */,
@@ -11352,10 +11338,8 @@
 				51F886A51F2C227E00C193EF /* WKTestingSupport.cpp in Sources */,
 				31D755C21D91B81B00843BD1 /* WKTextChecker.cpp in Sources */,
 				2DD67A361BD861060053B251 /* WKTextFinderClient.mm in Sources */,
-				2E16B6A720171693008996D6 /* WKTextFormControlViewController.mm in Sources */,
 				F4D5F51E206087A10038BBA8 /* WKTextInputListViewController.mm in Sources */,
 				0FCB4E6918BBE3D9000FCFC9 /* WKTextInputWindowController.mm in Sources */,
-				2E16B6D52017BA37008996D6 /* WKTextSuggestionButton.mm in Sources */,
 				2EB6FC02203021960017E619 /* WKTimePickerViewController.mm in Sources */,
 				BC407607124FF0270068F20A /* WKType.cpp in Sources */,
 				7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */,
