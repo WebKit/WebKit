@@ -1,3 +1,14 @@
+2018-04-02  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Fix some internal builds that consume WebDriver atoms
+        https://bugs.webkit.org/show_bug.cgi?id=184197
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Use a Run Script phase to copy WebDriver atoms to WebKit.framework
+        private headers during the installhdrs phase.
+
 2018-04-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230174.

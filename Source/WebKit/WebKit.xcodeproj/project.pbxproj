@@ -1537,18 +1537,12 @@
 		9955A6F71C7986E500EB6A93 /* AutomationProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6F31C79866400EB6A93 /* AutomationProtocolObjects.h */; };
 		99788ACB1F421DDA00C08000 /* _WKAutomationSessionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 99788AC91F421DCA00C08000 /* _WKAutomationSessionConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99788ACC1F421DE200C08000 /* _WKAutomationSessionConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99788ACA1F421DCA00C08000 /* _WKAutomationSessionConfiguration.mm */; };
-		99B750F21F33ED5B00C1CFB5 /* ElementAttribute.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657341F323CBF00944F9C /* ElementAttribute.js */; };
-		99B750F31F33ED5B00C1CFB5 /* ElementDisplayed.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657331F323CBF00944F9C /* ElementDisplayed.js */; };
-		99B750F41F33ED5B00C1CFB5 /* FindNodes.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657311F323CBF00944F9C /* FindNodes.js */; };
-		99B750F51F33ED5B00C1CFB5 /* FormElementClear.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657321F323CBF00944F9C /* FormElementClear.js */; };
-		99B750F61F33ED5B00C1CFB5 /* FormSubmit.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 990657351F323CBF00944F9C /* FormSubmit.js */; };
 		99C3AE241DAD8E3700AF5C16 /* WebAutomationSessionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C3AE231DAD8E3400AF5C16 /* WebAutomationSessionMac.mm */; };
 		99C3AE271DAD948900AF5C16 /* WebAutomationSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C3AE261DAD948500AF5C16 /* WebAutomationSessionCocoa.mm */; };
 		99C3AE2D1DADA6AD00AF5C16 /* WebAutomationSessionMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C3AE2C1DADA6A700AF5C16 /* WebAutomationSessionMacros.h */; };
 		99C81D591C20E1E5005C4C82 /* AutomationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C81D561C20DFBE005C4C82 /* AutomationClient.mm */; };
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
-		99CA66CA2036685D0074F35E /* EnterFullscreen.js in Copy WebDriver Atoms */ = {isa = PBXBuildFile; fileRef = 99CA66C8203668220074F35E /* EnterFullscreen.js */; };
 		99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F88E16488E87007DF81A /* ChildProcessMac.mm */; };
 		9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */; };
@@ -2337,22 +2331,6 @@
 				7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */,
 			);
 			name = "Copy Plug-in Sandbox Profiles";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		99B750F11F33ED3600C1CFB5 /* Copy WebDriver Atoms */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = PrivateHeaders/atoms;
-			dstSubfolderSpec = 1;
-			files = (
-				99CA66CA2036685D0074F35E /* EnterFullscreen.js in Copy WebDriver Atoms */,
-				99B750F21F33ED5B00C1CFB5 /* ElementAttribute.js in Copy WebDriver Atoms */,
-				99B750F31F33ED5B00C1CFB5 /* ElementDisplayed.js in Copy WebDriver Atoms */,
-				99B750F41F33ED5B00C1CFB5 /* FindNodes.js in Copy WebDriver Atoms */,
-				99B750F51F33ED5B00C1CFB5 /* FormElementClear.js in Copy WebDriver Atoms */,
-				99B750F61F33ED5B00C1CFB5 /* FormSubmit.js in Copy WebDriver Atoms */,
-			);
-			name = "Copy WebDriver Atoms";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A7AADA1519395CC3003EA1C7 /* CopyFiles */ = {
@@ -9874,9 +9852,9 @@
 				8DC2EF520486A6940098B216 /* Resources */,
 				372589431C1E496800C92CA9 /* Copy Shims */,
 				7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */,
+				99CA3862207286DB00BAD578 /* Copy WebDriver Atoms to Framework Private Headers */,
 				37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */,
 				1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */,
-				99B750F11F33ED3600C1CFB5 /* Copy WebDriver Atoms */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
 				5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */,
@@ -10301,6 +10279,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
+		};
+		99CA3862207286DB00BAD578 /* Copy WebDriver Atoms to Framework Private Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/UIProcess/Automation/atoms/ElementAttribute.js",
+				"$(SRCROOT)/UIProcess/Automation/atoms/ElementDisplayed.js",
+				"$(SRCROOT)/UIProcess/Automation/atoms/EnterFullscreen.js",
+				"$(SRCROOT)/UIProcess/Automation/atoms/FindNodes.js",
+				"$(SRCROOT)/UIProcess/Automation/atoms/FormElementClear.js",
+				"$(SRCROOT)/UIProcess/Automation/atoms/FormSubmit.js",
+			);
+			name = "Copy WebDriver Atoms to Framework Private Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "DST_DIR=\"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/atoms\"\nmkdir -p \"$DST_DIR\"\n\nfor ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n    eval WEBDRIVER_ATOM=\\${SCRIPT_INPUT_FILE_${i}}\n    ditto \"${WEBDRIVER_ATOM}\" \"${DST_DIR}/${WEBDRIVER_ATOM##*/}\"\ndone\n";
 		};
 		A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */ = {
 			isa = PBXShellScriptBuildPhase;
