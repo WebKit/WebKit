@@ -162,6 +162,7 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
     thread->m_platformRegisters = &registersFromUContext(userContext);
 #else
+    UNUSED_PARAM(ucontext);
     PlatformRegisters platformRegisters { getApproximateStackPointer() };
     thread->m_platformRegisters = &platformRegisters;
 #endif
