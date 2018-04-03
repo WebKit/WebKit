@@ -91,14 +91,15 @@ private:
 #endif
 
     // VideoFullscreenChangeObserver
-    void requestUpdateInlineRect() override;
-    void requestVideoContentLayer() override;
-    void returnVideoContentLayer() override;
-    void didSetupFullscreen() override;
-    void didEnterFullscreen() override;
-    void didExitFullscreen() override;
-    void didCleanupFullscreen() override;
-    void fullscreenMayReturnToInline() override;
+    void requestUpdateInlineRect() final;
+    void requestVideoContentLayer() final;
+    void returnVideoContentLayer() final;
+    void didSetupFullscreen() final;
+    void didEnterFullscreen() final;
+    void willExitFullscreen() final;
+    void didExitFullscreen() final;
+    void didCleanupFullscreen() final;
+    void fullscreenMayReturnToInline() final;
 
     VideoFullscreenManagerProxy* m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
@@ -150,6 +151,7 @@ private:
     void exitFullscreen(uint64_t contextId, WebCore::IntRect finalRect);
     void cleanupFullscreen(uint64_t contextId);
     void preparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect);
+    void preparedToExitFullscreen(uint64_t contextId);
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     void exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 #endif
@@ -160,6 +162,7 @@ private:
     void requestVideoContentLayer(uint64_t contextId);
     void returnVideoContentLayer(uint64_t contextId);
     void didSetupFullscreen(uint64_t contextId);
+    void willExitFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);
     void didCleanupFullscreen(uint64_t contextId);

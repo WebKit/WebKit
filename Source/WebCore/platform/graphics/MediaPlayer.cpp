@@ -705,6 +705,11 @@ void MediaPlayer::setVideoFullscreenLayer(PlatformLayer* layer, WTF::Function<vo
     m_private->setVideoFullscreenLayer(layer, WTFMove(completionHandler));
 }
 
+void MediaPlayer::updateVideoFullscreenInlineImage()
+{
+    m_private->updateVideoFullscreenInlineImage();
+}
+
 void MediaPlayer::setVideoFullscreenFrame(FloatRect frame)
 {
     m_private->setVideoFullscreenFrame(frame);

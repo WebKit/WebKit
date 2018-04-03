@@ -1079,6 +1079,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     }
 #endif
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+    createVideoOutput();
+#endif
+
     setDelayCallbacks(false);
 }
 
@@ -1162,9 +1166,16 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
     return m_videoFullscreenLayerManager->videoInlineLayer();
 }
 
-void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
+void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
-    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler));
+    updateLastImage(UpdateType::UpdateSynchronously);
+    m_videoFullscreenLayerManager->updateVideoFullscreenInlineImage(m_lastImage);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
+{
+    updateLastImage(UpdateType::UpdateSynchronously);
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
     updateDisableExternalPlayback();
 }
 
@@ -2231,6 +2242,9 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
 
 bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
 {
+    if (!m_avPlayerItem)
+        return false;
+
     if (!m_videoOutput)
         createVideoOutput();
     ASSERT(m_videoOutput);
@@ -2259,9 +2273,15 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
     return [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]];
 }
 
-void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
+void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 {
 #if HAVE(CORE_VIDEO)
+    if (!m_avPlayerItem)
+        return;
+
+    if (type == UpdateType::UpdateSynchronously && !m_lastImage && !videoOutputHasAvailableFrame())
+        waitForVideoOutputMediaDataWillChange();
+
     // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
     // should be displayed.
@@ -2291,11 +2311,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
 {
-    if (m_videoOutput && !m_lastImage && !videoOutputHasAvailableFrame())
-        waitForVideoOutputMediaDataWillChange();
-
-    updateLastImage();
-
+    updateLastImage(UpdateType::UpdateSynchronously);
     if (!m_lastImage)
         return;
 

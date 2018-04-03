@@ -43,7 +43,8 @@ public:
     PlatformLayer *videoFullscreenLayer() const final { return m_videoFullscreenLayer.get(); }
     FloatRect videoFullscreenFrame() const final { return m_videoFullscreenFrame; }
     void setVideoLayer(PlatformLayer *, IntSize contentSize) final;
-    void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler) final;
+    void setVideoFullscreenLayer(PlatformLayer *, WTF::Function<void()>&& completionHandler, NativeImagePtr) final;
+    void updateVideoFullscreenInlineImage(NativeImagePtr) final;
     void setVideoFullscreenFrame(FloatRect) final;
     void didDestroyVideoLayer() final;
 

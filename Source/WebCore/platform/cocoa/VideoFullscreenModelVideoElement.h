@@ -55,6 +55,7 @@ public:
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
+    WEBCORE_EXPORT void willExitFullscreen();
     WEBCORE_EXPORT void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
     
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;

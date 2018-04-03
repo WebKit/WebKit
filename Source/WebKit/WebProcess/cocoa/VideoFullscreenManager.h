@@ -143,6 +143,7 @@ protected:
     void requestVideoContentLayer(uint64_t contextId);
     void returnVideoContentLayer(uint64_t contextId);
     void didSetupFullscreen(uint64_t contextId);
+    void willExitFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);
     void didCleanupFullscreen(uint64_t contextId);

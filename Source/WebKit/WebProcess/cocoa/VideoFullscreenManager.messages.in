@@ -27,6 +27,7 @@ messages -> VideoFullscreenManager {
     RequestVideoContentLayer(uint64_t contextId)
     ReturnVideoContentLayer(uint64_t contextId)
     DidSetupFullscreen(uint64_t contextId)
+    WillExitFullscreen(uint64_t contextId)
     DidExitFullscreen(uint64_t contextId)
     DidEnterFullscreen(uint64_t contextId)
     DidCleanupFullscreen(uint64_t contextId)

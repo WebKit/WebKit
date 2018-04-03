@@ -335,6 +335,7 @@ public:
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
     void setVideoFullscreenFrame(FloatRect);
+    void updateVideoFullscreenInlineImage();
     using MediaPlayerEnums::VideoGravity;
     void setVideoFullscreenGravity(VideoGravity);
     void setVideoFullscreenMode(VideoFullscreenMode);

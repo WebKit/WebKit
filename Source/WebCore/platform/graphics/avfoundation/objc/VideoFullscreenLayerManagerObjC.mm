@@ -74,6 +74,8 @@ void VideoFullscreenLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, I
     [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
 #endif
     [m_videoInlineLayer setFrame:m_videoInlineFrame];
+    [m_videoInlineLayer setContentsGravity:kCAGravityResizeAspect];
+
     if (m_videoFullscreenLayer) {
         [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
@@ -83,7 +85,13 @@ void VideoFullscreenLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, I
     }
 }
 
-void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
+void VideoFullscreenLayerManagerObjC::updateVideoFullscreenInlineImage(NativeImagePtr image)
+{
+    if (m_videoInlineLayer)
+        [m_videoInlineLayer setContents:(id)image.get()];
+}
+
+void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler, NativeImagePtr currentImage)
 {
     if (m_videoFullscreenLayer == videoFullscreenLayer) {
         completionHandler();
@@ -97,6 +105,9 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *vid
 
     if (m_videoLayer) {
         CAContext *oldContext = [m_videoLayer context];
+
+        if (m_videoInlineLayer)
+            [m_videoInlineLayer setContents:(id)currentImage.get()];
 
         if (m_videoFullscreenLayer) {
             [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];

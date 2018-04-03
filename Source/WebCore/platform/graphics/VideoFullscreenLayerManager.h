@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NativeImage.h"
 #include "PlatformLayer.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
@@ -45,7 +46,8 @@ public:
     virtual PlatformLayer *videoFullscreenLayer() const = 0;
     virtual FloatRect videoFullscreenFrame() const = 0;
     virtual void setVideoLayer(PlatformLayer*, IntSize) = 0;
-    virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) = 0;
+    virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler, NativeImagePtr) = 0;
+    virtual void updateVideoFullscreenInlineImage(NativeImagePtr) = 0;
     virtual void setVideoFullscreenFrame(FloatRect) = 0;
     virtual void didDestroyVideoLayer() = 0;
 

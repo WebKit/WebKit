@@ -554,6 +554,7 @@ public:
     bool isSuspended() const final;
 
     WEBCORE_EXPORT void didBecomeFullscreenElement() override;
+    WEBCORE_EXPORT void willExitFullscreen();
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);

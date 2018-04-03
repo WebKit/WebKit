@@ -1,3 +1,22 @@
+2018-04-02  Eric Carlson  <eric.carlson@apple.com>
+
+        [Extra zoom mode] Replace video with a placeholder image during fullscreen transition
+        https://bugs.webkit.org/show_bug.cgi?id=184188
+        <rdar://problem/38940307>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::willExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::preparedToExitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::willExitFullscreen):
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::willExitFullscreen):
+
 2018-04-02  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Fix some internal builds that consume WebDriver atoms

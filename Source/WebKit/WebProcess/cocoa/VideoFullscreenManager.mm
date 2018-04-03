@@ -427,7 +427,26 @@ void VideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     });
 #endif
 }
-    
+
+void VideoFullscreenManager::willExitFullscreen(uint64_t contextId)
+{
+    LOG(Fullscreen, "VideoFullscreenManager::willExitFullscreen(%p, %x)", this, contextId);
+
+    RefPtr<VideoFullscreenModelVideoElement> model;
+    RefPtr<VideoFullscreenInterfaceContext> interface;
+    std::tie(model, interface) = ensureModelAndInterface(contextId);
+
+    RefPtr<HTMLVideoElement> videoElement = model->videoElement();
+    if (!videoElement)
+        return;
+
+    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), videoElement = WTFMove(videoElement), contextId] {
+        videoElement->willExitFullscreen();
+        if (protectedThis->m_page)
+            protectedThis->m_page->send(Messages::VideoFullscreenManagerProxy::PreparedToExitFullscreen(contextId), protectedThis->m_page->pageID());
+    });
+}
+
 void VideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
 {
     LOG(Fullscreen, "VideoFullscreenManager::didEnterFullscreen(%p, %x)", this, contextId);

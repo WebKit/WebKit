@@ -84,6 +84,7 @@ public:
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT void requestHideAndExitFullscreen();
     WEBCORE_EXPORT void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
+    WEBCORE_EXPORT void preparedToExitFullscreen();
 #if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT void setHasVideoContentLayer(bool);
     WEBCORE_EXPORT void setInlineRect(const IntRect&, bool visible);
@@ -227,6 +228,7 @@ protected:
     bool m_exitCompleted { false };
     bool m_enterRequested { false };
     bool m_shouldReturnToFullscreenAfterEnteringForeground { false };
+    bool m_waitingForPreparedToExit { false };
 #endif
 };
 

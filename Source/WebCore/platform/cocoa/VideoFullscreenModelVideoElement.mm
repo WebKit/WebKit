@@ -100,6 +100,12 @@ void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicStrin
     }
 }
 
+void VideoFullscreenModelVideoElement::willExitFullscreen()
+{
+    if (m_videoElement)
+        m_videoElement->willExitFullscreen();
+}
+
 void VideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* videoLayer, WTF::Function<void()>&& completionHandler)
 {
     if (m_videoFullscreenLayer == videoLayer) {

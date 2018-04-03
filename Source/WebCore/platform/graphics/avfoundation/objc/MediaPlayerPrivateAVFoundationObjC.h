@@ -185,7 +185,8 @@ private:
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     PlatformLayer* platformLayer() const override;
-    void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
+    void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
+    void updateVideoFullscreenInlineImage() final;
     void setVideoFullscreenFrame(FloatRect) override;
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity) override;
     void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;
@@ -261,10 +262,12 @@ private:
     void paintWithImageGenerator(GraphicsContext&, const FloatRect&);
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+    enum class UpdateType { UpdateSynchronously, UpdateAsynchronously };
+    void updateLastImage(UpdateType type = UpdateType::UpdateAsynchronously);
+
     void createVideoOutput();
     void destroyVideoOutput();
     bool updateLastPixelBuffer();
-    void updateLastImage();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     NativeImagePtr nativeImageForCurrentTime() override;

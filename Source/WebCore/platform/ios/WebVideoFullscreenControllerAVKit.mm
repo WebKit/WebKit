@@ -122,14 +122,15 @@ private:
     VideoFullscreenControllerContext() { }
 
     // VideoFullscreenChangeObserver
-    void requestUpdateInlineRect() override;
-    void requestVideoContentLayer() override;
-    void returnVideoContentLayer() override;
-    void didSetupFullscreen() override;
-    void didEnterFullscreen() override { }
-    void didExitFullscreen() override;
-    void didCleanupFullscreen() override;
-    void fullscreenMayReturnToInline() override;
+    void requestUpdateInlineRect() final;
+    void requestVideoContentLayer() final;
+    void returnVideoContentLayer() final;
+    void didSetupFullscreen() final;
+    void didEnterFullscreen() final { }
+    void willExitFullscreen() final;
+    void didExitFullscreen() final;
+    void didCleanupFullscreen() final;
+    void fullscreenMayReturnToInline() final;
 
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
@@ -275,6 +276,16 @@ void VideoFullscreenControllerContext::didSetupFullscreen()
                 m_interface->enterFullscreen();
             });
         });
+    });
+#endif
+}
+
+void VideoFullscreenControllerContext::willExitFullscreen()
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    ASSERT(isUIThread());
+    WebThreadRun([protectedThis = makeRefPtr(this), this] () mutable {
+        m_fullscreenModel->willExitFullscreen();
     });
 #endif
 }

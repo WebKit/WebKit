@@ -6023,6 +6023,12 @@ void HTMLMediaElement::waitForPreparedForInlineThen(WTF::Function<void()>&& comp
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+void HTMLMediaElement::willExitFullscreen()
+{
+    if (m_player)
+        m_player->updateVideoFullscreenInlineImage();
+}
+
 bool HTMLMediaElement::isVideoLayerInline()
 {
     return !m_videoFullscreenLayer;
