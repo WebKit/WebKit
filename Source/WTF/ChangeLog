@@ -1,3 +1,13 @@
+2018-04-03  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed, fix the unused variable compilation warning
+
+        Move the ucontext_t code under the HAVE(MACHINE_CONTEXT). Triggered
+        on the PPC64 machine.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::signalHandlerSuspendResume):
+
 2018-04-02  Saam Barati  <sbarati@apple.com>
 
         bmalloc should compute its own estimate of its footprint
