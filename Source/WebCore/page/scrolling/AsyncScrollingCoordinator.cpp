@@ -35,7 +35,6 @@
 #include "FrameView.h"
 #include "GraphicsLayer.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PerformanceLoggingClient.h"
 #include "ScrollAnimator.h"

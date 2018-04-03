@@ -51,6 +51,10 @@
 #include <wtf/SchedulePair.h>
 #endif
 
+#if ENABLE(APPLICATION_MANIFEST)
+#include "ApplicationManifest.h"
+#endif
+
 #if ENABLE(MEDIA_SESSION)
 #include "MediaSessionEvents.h"
 #endif
@@ -87,6 +91,7 @@ class DragCaretController;
 class DragClient;
 class DragController;
 class EditorClient;
+class Element;
 class FocusController;
 class Frame;
 class FrameLoaderClient;
@@ -97,13 +102,15 @@ class InspectorClient;
 class InspectorController;
 class LibWebRTCProvider;
 class LowPowerModeNotifier;
-class MainFrame;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
 class PageConfiguration;
 class PageConsoleClient;
 class PageDebuggable;
 class PageGroup;
+class PageOverlayController;
+class PaymentCoordinator;
+class PerformanceLogging;
 class PerformanceLoggingClient;
 class PerformanceMonitor;
 class PlugInClient;
@@ -118,8 +125,10 @@ class RenderObject;
 class RenderTheme;
 class ResourceUsageOverlay;
 class VisibleSelection;
+class ScrollLatchingState;
 class ScrollableArea;
 class ScrollingCoordinator;
+class ServicesOverlayController;
 class Settings;
 class SocketProvider;
 class StorageNamespace;
@@ -130,6 +139,7 @@ class ValidationMessageClient;
 class ActivityStateChangeObserver;
 class VisitedLinkStore;
 class WebGLStateTracker;
+class WheelEventDeltaFilter;
 
 typedef uint64_t SharedStringHash;
 
@@ -175,8 +185,8 @@ public:
     EditorClient& editorClient() { return m_editorClient.get(); }
     PlugInClient* plugInClient() const { return m_plugInClient; }
 
-    MainFrame& mainFrame() { return m_mainFrame.get(); }
-    const MainFrame& mainFrame() const { return m_mainFrame.get(); }
+    Frame& mainFrame() { return m_mainFrame.get(); }
+    const Frame& mainFrame() const { return m_mainFrame.get(); }
 
     bool openedByDOM() const;
     void setOpenedByDOM();
@@ -366,6 +376,29 @@ public:
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
     PerformanceLoggingClient* performanceLoggingClient() const { return m_performanceLoggingClient.get(); }
+
+    WheelEventDeltaFilter* wheelEventDeltaFilter() { return m_recentWheelEventDeltaFilter.get(); }
+    PageOverlayController& pageOverlayController() { return *m_pageOverlayController; }
+
+#if PLATFORM(MAC)
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
+#endif // ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    ScrollLatchingState* latchingState();
+    void pushNewLatchingState();
+    void popLatchingState();
+    void resetLatchingState();
+    void removeLatchingStateForTarget(Element&);
+#endif // PLATFORM(MAC)
+
+#if ENABLE(APPLE_PAY)
+    PaymentCoordinator& paymentCoordinator() const { return *m_paymentCoordinator; }
+    WEBCORE_EXPORT void setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&&);
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    const std::optional<ApplicationManifest>& applicationManifest() const { return m_applicationManifest; }
+#endif
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setActivityState(ActivityState::Flags);
@@ -606,6 +639,8 @@ public:
     WEBCORE_EXPORT void applicationWillEnterForeground();
     WEBCORE_EXPORT void applicationDidBecomeActive();
 
+    PerformanceLogging& performanceLogging() const { return *m_performanceLogging; }
+
 private:
     struct Navigation {
         String domain;
@@ -666,7 +701,7 @@ private:
     const std::unique_ptr<ProgressTracker> m_progress;
 
     const std::unique_ptr<BackForwardController> m_backForwardController;
-    Ref<MainFrame> m_mainFrame;
+    Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 
@@ -824,6 +859,25 @@ private:
     std::optional<bool> m_lowPowerModeEnabledOverrideForTesting;
 
     std::optional<Navigation> m_navigationToLogWhenVisible;
+
+    std::unique_ptr<PerformanceLogging> m_performanceLogging;
+#if PLATFORM(MAC)
+    Vector<ScrollLatchingState> m_latchingState;
+#if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+    std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
+#endif
+#endif
+
+    std::unique_ptr<WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
+    std::unique_ptr<PageOverlayController> m_pageOverlayController;
+
+#if ENABLE(APPLE_PAY)
+    std::unique_ptr<PaymentCoordinator> m_paymentCoordinator;
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    std::optional<ApplicationManifest> m_applicationManifest;
+#endif
 
     bool m_isRunningUserScripts { false };
     bool m_shouldEnableICECandidateFilteringByDefault { true };

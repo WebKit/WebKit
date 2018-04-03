@@ -64,7 +64,6 @@
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "LowPowerModeNotifier.h"
-#include "MainFrame.h"
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "PageCache.h"
@@ -73,6 +72,8 @@
 #include "PageDebuggable.h"
 #include "PageGroup.h"
 #include "PageOverlayController.h"
+#include "PaymentCoordinator.h"
+#include "PerformanceLogging.h"
 #include "PerformanceLoggingClient.h"
 #include "PerformanceMonitor.h"
 #include "PlatformMediaSessionManager.h"
@@ -94,6 +95,7 @@
 #include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "ScriptedAnimationController.h"
+#include "ScrollLatchingState.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -112,6 +114,7 @@
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
 #include "WebGLStateTracker.h"
+#include "WheelEventDeltaFilter.h"
 #include "Widget.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -121,6 +124,10 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "HTMLVideoElement.h"
 #include "MediaPlaybackTarget.h"
+#endif
+
+#if PLATFORM(MAC)
+#include "ServicesOverlayController.h"
 #endif
 
 #if ENABLE(MEDIA_SESSION)
@@ -204,7 +211,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_settings(Settings::create(this))
     , m_progress(std::make_unique<ProgressTracker>(*pageConfiguration.progressTrackerClient))
     , m_backForwardController(std::make_unique<BackForwardController>(*this, *WTFMove(pageConfiguration.backForwardClient)))
-    , m_mainFrame(MainFrame::create(*this, pageConfiguration))
+    , m_mainFrame(Frame::create(this, nullptr, pageConfiguration.loaderClientForMainFrame))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
     , m_plugInClient(pageConfiguration.plugInClient)
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
@@ -234,6 +241,18 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : std::make_unique<PerformanceMonitor>(*this))
     , m_lowPowerModeNotifier(std::make_unique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowModePowerChange(isLowPowerModeEnabled); }))
+    , m_performanceLogging(std::make_unique<PerformanceLogging>(*this))
+#if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
+    , m_servicesOverlayController(std::make_unique<ServicesOverlayController>(*this))
+#endif
+    , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
+    , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
+#if ENABLE(APPLE_PAY)
+    , m_paymentCoordinator(std::make_unique<PaymentCoordinator>(*pageConfiguration.paymentCoordinatorClient))
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+    , m_applicationManifest(pageConfiguration.applicationManifest)
+#endif
 {
     updateTimerThrottlingState();
 
@@ -895,7 +914,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
 
     GraphicsContext::updateDocumentMarkerResources();
 
-    mainFrame().pageOverlayController().didChangeDeviceScaleFactor();
+    pageOverlayController().didChangeDeviceScaleFactor();
 }
 
 void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection)
@@ -2405,5 +2424,51 @@ void Page::applicationDidBecomeActive()
         });
     });
 }
+
+#if PLATFORM(MAC)
+ScrollLatchingState* Page::latchingState()
+{
+    if (m_latchingState.isEmpty())
+        return nullptr;
+
+    return &m_latchingState.last();
+}
+
+void Page::pushNewLatchingState()
+{
+    m_latchingState.append(ScrollLatchingState());
+}
+
+void Page::resetLatchingState()
+{
+    m_latchingState.clear();
+}
+
+void Page::popLatchingState()
+{
+    m_latchingState.removeLast();
+}
+
+void Page::removeLatchingStateForTarget(Element& targetNode)
+{
+    if (m_latchingState.isEmpty())
+        return;
+
+    m_latchingState.removeAllMatching([&targetNode] (ScrollLatchingState& state) {
+        auto* wheelElement = state.wheelEventElement();
+        if (!wheelElement)
+            return false;
+
+        return targetNode.isEqualNode(wheelElement);
+    });
+}
+#endif // PLATFORM(MAC)
+
+#if ENABLE(APPLE_PAY)
+void Page::setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&& paymentCoordinator)
+{
+    m_paymentCoordinator = WTFMove(paymentCoordinator);
+}
+#endif
 
 } // namespace WebCore

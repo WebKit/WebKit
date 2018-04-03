@@ -1,3 +1,81 @@
+2018-04-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=184191
+
+        Reviewed by Darin Adler.
+
+        Drop MainFrame class and move contents into Page / Frame since there is a 1:1
+        relationship between the Page and the MainFrame.
+
+        This is ground work for introducing LocalFrame / RemoteFrame concepts.
+
+        * Shared/WebRenderLayer.cpp:
+        * Shared/WebRenderObject.cpp:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::paymentCoordinator):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageInstallPageOverlay):
+        (WKBundlePageUninstallPageOverlay):
+        (WKBundlePageInstallPageOverlayWithAnimation):
+        (WKBundlePageUninstallPageOverlayWithAnimation):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::~WebInspectorClient):
+        (WebKit::WebInspectorClient::highlight):
+        (WebKit::WebInspectorClient::hideHighlight):
+        (WebKit::WebInspectorClient::showPaintRect):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::hideFindUI):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updatePreferences):
+        * WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        * WebProcess/WebPage/WebFrame.cpp:
+        * WebProcess/WebPage/WebInspector.cpp:
+        * WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrame const):
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        (WebKit::WebPage::plugInIntersectsSearchRect):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp:
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+        (WebKit::WebPage::dataDetectorsDidPresentUI):
+        (WebKit::WebPage::dataDetectorsDidChangeUI):
+        (WebKit::WebPage::dataDetectorsDidHideUI):
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkProcess get ContentBlocker information from UIProcess

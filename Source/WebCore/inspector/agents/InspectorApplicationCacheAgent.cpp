@@ -33,7 +33,6 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "LoaderStrategy.h"
-#include "MainFrame.h"
 #include "PlatformStrategies.h"
 #include <wtf/text/StringBuilder.h>
 

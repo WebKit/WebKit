@@ -1342,7 +1342,6 @@ page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
 page/LayoutContext.cpp
 page/Location.cpp
-page/MainFrame.cpp
 page/MemoryRelease.cpp
 page/MouseEventWithHitTestResults.cpp
 page/Navigator.cpp

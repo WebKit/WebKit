@@ -32,8 +32,8 @@
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "WebPage.h"
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>

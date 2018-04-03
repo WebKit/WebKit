@@ -39,7 +39,6 @@
 #include "Image.h"
 #include "ImageDocument.h"
 #include "MIMETypeRegistry.h"
-#include "MainFrame.h"
 #include "MediaDocument.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"

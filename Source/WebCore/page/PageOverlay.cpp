@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PageOverlay.h"
 
+#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
@@ -66,7 +66,7 @@ PageOverlayController* PageOverlay::controller() const
 {
     if (!m_page)
         return nullptr;
-    return &m_page->mainFrame().pageOverlayController();
+    return &m_page->pageOverlayController();
 }
 
 IntRect PageOverlay::bounds() const

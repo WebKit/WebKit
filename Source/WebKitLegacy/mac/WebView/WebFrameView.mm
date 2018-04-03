@@ -72,7 +72,6 @@
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/KeyEventCodesIOS.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/WAKClipView.h>
 #import <WebCore/WAKScrollView.h>
 #import <WebCore/WAKWindow.h>

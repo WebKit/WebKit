@@ -55,7 +55,6 @@
 #include "LoaderStrategy.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PingLoader.h"

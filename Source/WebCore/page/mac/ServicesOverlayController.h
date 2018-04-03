@@ -38,14 +38,14 @@ typedef struct __DDHighlight *DDHighlightRef;
 namespace WebCore {
     
 class LayoutRect;
-class MainFrame;
+class Page;
 
 struct GapRects;
 
 class ServicesOverlayController : private PageOverlay::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ServicesOverlayController(MainFrame&);
+    explicit ServicesOverlayController(Page&);
     ~ServicesOverlayController();
 
     void selectedTelephoneNumberRangesChanged();
@@ -134,9 +134,10 @@ private:
     void willDestroyHighlight(Highlight*);
     void didFinishFadingOutHighlight(Highlight*);
 
-    MainFrame& mainFrame() const { return m_mainFrame; }
+    Frame& mainFrame() const;
+    Page& page() const { return m_page; }
 
-    MainFrame& m_mainFrame;
+    Page& m_page;
     PageOverlay* m_servicesOverlay { nullptr };
 
     RefPtr<Highlight> m_activeHighlight;

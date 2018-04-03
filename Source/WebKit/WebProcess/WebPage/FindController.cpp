@@ -36,10 +36,10 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PlatformMouseEvent.h>
@@ -184,12 +184,12 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
     if (!shouldShowOverlay) {
         if (m_findPageOverlay)
-            m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
+            m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
         if (!m_findPageOverlay) {
             auto findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
             m_findPageOverlay = findPageOverlay.ptr();
-            m_webPage->mainFrame()->pageOverlayController().installPageOverlay(WTFMove(findPageOverlay), PageOverlay::FadeMode::Fade);
+            m_webPage->corePage()->pageOverlayController().installPageOverlay(WTFMove(findPageOverlay), PageOverlay::FadeMode::Fade);
         }
         m_findPageOverlay->setNeedsDisplay();
     }
@@ -308,7 +308,7 @@ void FindController::hideFindUI()
 {
     m_findMatches.clear();
     if (m_findPageOverlay)
-        m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
+        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
 
     if (auto* pluginView = WebPage::pluginViewForFrame(m_webPage->mainFrame()))
         pluginView->findString(emptyString(), { }, 0);

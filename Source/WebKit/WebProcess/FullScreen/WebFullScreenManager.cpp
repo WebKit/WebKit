@@ -34,9 +34,9 @@
 #include "WebPage.h"
 #include <WebCore/Color.h>
 #include <WebCore/Element.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLVideoElement.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>

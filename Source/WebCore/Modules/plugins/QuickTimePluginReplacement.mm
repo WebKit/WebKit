@@ -31,6 +31,7 @@
 
 #import "CommonVM.h"
 #import "Event.h"
+#import "Frame.h"
 #import "HTMLPlugInElement.h"
 #import "HTMLVideoElement.h"
 #import "JSDOMBinding.h"
@@ -41,7 +42,6 @@
 #import "JSHTMLVideoElement.h"
 #import "JSQuickTimePluginReplacement.h"
 #import "Logging.h"
-#import "MainFrame.h"
 #import "RenderElement.h"
 #import "ScriptController.h"
 #import "ScriptSourceCode.h"

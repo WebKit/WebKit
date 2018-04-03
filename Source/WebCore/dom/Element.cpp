@@ -51,6 +51,7 @@
 #include "EventNames.h"
 #include "FocusController.h"
 #include "FocusEvent.h"
+#include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLBodyElement.h"
@@ -72,7 +73,6 @@
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "KeyframeEffect.h"
-#include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "NodeRenderStyle.h"
@@ -1802,8 +1802,8 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         frame->animation().cancelAnimations(*this);
 
 #if PLATFORM(MAC)
-    if (frame)
-        frame->mainFrame().removeLatchingStateForTarget(*this);
+    if (frame && frame->page())
+        frame->page()->removeLatchingStateForTarget(*this);
 #endif
 }
 

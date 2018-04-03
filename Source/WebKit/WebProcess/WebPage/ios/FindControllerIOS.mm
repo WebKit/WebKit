@@ -35,9 +35,9 @@
 #import "WebPageProxyMessages.h"
 #import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/PathUtilities.h>
@@ -90,7 +90,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
     if (m_findIndicatorOverlay) {
-        m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
+        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
         m_findIndicatorOverlay = nullptr;
         m_isShowingFindIndicator = false;
     }
@@ -101,7 +101,7 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
 
     m_findIndicatorOverlayClient = std::make_unique<FindIndicatorOverlayClientIOS>(selectedFrame, textIndicator.get());
     m_findIndicatorOverlay = PageOverlay::create(*m_findIndicatorOverlayClient, PageOverlay::OverlayType::Document);
-    m_webPage->mainFrame()->pageOverlayController().installPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
+    m_webPage->corePage()->pageOverlayController().installPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
 
     m_findIndicatorOverlay->setFrame(enclosingIntRect(textIndicator->textBoundingRectInRootViewCoordinates()));
     m_findIndicatorOverlay->setNeedsDisplay();
@@ -128,7 +128,7 @@ void FindController::hideFindIndicator()
     if (!m_isShowingFindIndicator)
         return;
 
-    m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
+    m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findIndicatorOverlay, PageOverlay::FadeMode::DoNotFade);
     m_findIndicatorOverlay = nullptr;
     m_isShowingFindIndicator = false;
     m_foundStringMatchIndex = -1;

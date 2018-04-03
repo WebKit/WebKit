@@ -32,9 +32,9 @@
 #include "ScriptState.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "JSDOMWindowBase.h"
 #include "JSWorkerGlobalScope.h"
-#include "MainFrame.h"
 #include "Node.h"
 #include "Page.h"
 #include "ScriptController.h"

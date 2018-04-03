@@ -33,7 +33,6 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "ProgressTrackerClient.h"
 #include "ResourceResponse.h"
 #include <wtf/text/CString.h>

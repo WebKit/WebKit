@@ -53,7 +53,6 @@
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/JSElement.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/RenderElement.h>
 #include <wtf/UUID.h>
 

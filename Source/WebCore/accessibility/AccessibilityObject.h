@@ -82,7 +82,6 @@ class Frame;
 class FrameView;
 class IntPoint;
 class IntSize;
-class MainFrame;
 class Node;
 class Page;
 class RenderObject;
@@ -842,7 +841,7 @@ public:
     virtual Document* document() const;
     virtual FrameView* documentFrameView() const;
     Frame* frame() const;
-    MainFrame* mainFrame() const;
+    Frame* mainFrame() const;
     Document* topDocument() const;
     ScrollView* scrollViewAncestor() const;
     String language() const;

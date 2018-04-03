@@ -29,9 +29,8 @@
 
 #import "PlatformUtilities.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <WebKit/WebView.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageConfiguration.h>
 #import <WebCore/Document.h>
@@ -42,6 +41,7 @@
 #import <WebCore/SubresourceLoader.h>
 #import <WebCore/WebCoreNSURLSession.h>
 #import <WebCore/ResourceLoader.h>
+#import <WebKit/WebView.h>
 #import <wtf/SchedulePair.h>
 
 static bool didLoadMainResource;

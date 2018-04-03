@@ -33,9 +33,9 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/Frame.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/PageCache.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

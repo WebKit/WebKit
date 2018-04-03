@@ -45,6 +45,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FocusController.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
@@ -61,7 +62,6 @@
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
@@ -1636,7 +1636,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     }
 #endif
 
-    if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (m_frame.page()->pageOverlayController().handleMouseEvent(platformMouseEvent))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1837,7 +1837,7 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     RefPtr<FrameView> protector(m_frame.view());
     MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
 
-    if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(event))
+    if (m_frame.page() && m_frame.page()->pageOverlayController().handleMouseEvent(event))
         return true;
 
     HitTestResult hoveredNode = HitTestResult(LayoutPoint());
@@ -2035,7 +2035,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
     }
 #endif
 
-    if (m_frame.mainFrame().pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (m_frame.page()->pageOverlayController().handleMouseEvent(platformMouseEvent))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2653,7 +2653,8 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent&, cons
 
 void EventHandler::platformRecordWheelEvent(const PlatformWheelEvent& event)
 {
-    m_frame.mainFrame().wheelEventDeltaFilter()->updateFromDelta(FloatSize(event.deltaX(), event.deltaY()));
+    if (auto* page = m_frame.page())
+        page->wheelEventDeltaFilter()->updateFromDelta(FloatSize(event.deltaX(), event.deltaY()));
 }
 
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& event, ContainerNode*, const WeakPtr<ScrollableArea>&)
@@ -2776,8 +2777,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     platformPrepareForWheelEvents(event, result, element, scrollableContainer, scrollableArea, isOverWidget);
 
 #if PLATFORM(MAC)
-    if (event.phase() == PlatformWheelEventPhaseNone && event.momentumPhase() == PlatformWheelEventPhaseNone)
-        m_frame.mainFrame().resetLatchingState();
+    if (event.phase() == PlatformWheelEventPhaseNone && event.momentumPhase() == PlatformWheelEventPhaseNone && m_frame.page())
+        m_frame.page()->resetLatchingState();
 #endif
 
     // FIXME: It should not be necessary to do this mutation here.
@@ -2816,10 +2817,14 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
 void EventHandler::clearLatchedState()
 {
+    auto* page = m_frame.page();
+    if (!page)
+        return;
+
 #if PLATFORM(MAC)
-    m_frame.mainFrame().resetLatchingState();
+    page->resetLatchingState();
 #endif
-    if (auto filter = m_frame.mainFrame().wheelEventDeltaFilter())
+    if (auto filter = page->wheelEventDeltaFilter())
         filter->endFilteringDeltas();
 }
 
@@ -2838,12 +2843,12 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     }
 
 #if PLATFORM(MAC)
-    ScrollLatchingState* latchedState = m_frame.mainFrame().latchingState();
+    ScrollLatchingState* latchedState = m_frame.page() ? m_frame.page()->latchingState() : nullptr;
     Element* stopElement = latchedState ? latchedState->previousWheelScrolledElement() : nullptr;
 
-    if (m_frame.mainFrame().wheelEventDeltaFilter()->isFilteringDeltas()) {
-        filteredPlatformDelta = m_frame.mainFrame().wheelEventDeltaFilter()->filteredDelta();
-        filteredVelocity = m_frame.mainFrame().wheelEventDeltaFilter()->filteredVelocity();
+    if (m_frame.page() && m_frame.page()->wheelEventDeltaFilter()->isFilteringDeltas()) {
+        filteredPlatformDelta = m_frame.page()->wheelEventDeltaFilter()->filteredDelta();
+        filteredVelocity = m_frame.page()->wheelEventDeltaFilter()->filteredVelocity();
     }
 #else
     Element* stopElement = nullptr;

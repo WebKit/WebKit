@@ -46,7 +46,6 @@ class DocumentLoader;
 class Frame;
 class InspectorClient;
 class InspectorOverlay;
-class MainFrame;
 class Page;
 class RenderObject;
 class SharedBuffer;
@@ -128,7 +127,7 @@ public:
 
     // Cross-agents API
     Page& page() { return m_page; }
-    MainFrame& mainFrame();
+    Frame& mainFrame();
     Frame* frameForId(const String& frameId);
     WEBCORE_EXPORT String frameId(Frame*);
     bool hasIdForFrame(Frame*) const;

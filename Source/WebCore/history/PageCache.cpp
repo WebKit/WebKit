@@ -37,13 +37,13 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FocusController.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "HistoryController.h"
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -371,7 +371,7 @@ static void setPageCacheState(Page& page, Document::PageCacheState pageCacheStat
 // When entering page cache, tear down the render tree before setting the in-cache flag.
 // This maintains the invariant that render trees are never present in the page cache.
 // Note that destruction happens bottom-up so that the main frame's tree dies last.
-static void destroyRenderTree(MainFrame& mainFrame)
+static void destroyRenderTree(Frame& mainFrame)
 {
     for (Frame* frame = mainFrame.tree().traversePrevious(CanWrap::Yes); frame; frame = frame->tree().traversePrevious(CanWrap::No)) {
         if (!frame->document())

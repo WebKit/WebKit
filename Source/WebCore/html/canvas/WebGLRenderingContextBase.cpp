@@ -55,7 +55,6 @@
 #include "IntSize.h"
 #include "JSMainThreadExecState.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "NotImplemented.h"
 #include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"

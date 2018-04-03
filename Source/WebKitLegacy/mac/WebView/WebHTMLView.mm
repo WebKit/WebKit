@@ -109,7 +109,6 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>

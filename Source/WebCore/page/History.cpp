@@ -34,7 +34,6 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "ScriptController.h"

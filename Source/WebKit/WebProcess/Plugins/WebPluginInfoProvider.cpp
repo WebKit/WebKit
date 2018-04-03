@@ -32,8 +32,8 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SubframeLoader.h>
 #include <wtf/text/StringHash.h>

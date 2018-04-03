@@ -37,7 +37,6 @@
 #include "JSCanvasRenderingContext2D.h"
 #include "JSImageBitmapRenderingContext.h"
 #include "JSMainThreadExecState.h"
-#include "MainFrame.h"
 #include "OffscreenCanvas.h"
 #include "ScriptState.h"
 #include "StringAdaptors.h"

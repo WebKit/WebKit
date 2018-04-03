@@ -29,8 +29,8 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "Document.h"
+#include "Frame.h"
 #include "InspectorController.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "Settings.h"
 #include <JavaScriptCore/InspectorAgentBase.h>

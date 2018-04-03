@@ -34,14 +34,13 @@
 namespace WebCore {
 
 class Frame;
-class MainFrame;
 class Page;
 class PlatformMouseEvent;
 
 class PageOverlayController final : public GraphicsLayerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageOverlayController(MainFrame&);
+    PageOverlayController(Page&);
     virtual ~PageOverlayController();
 
     GraphicsLayer& layerWithDocumentOverlays();
@@ -99,7 +98,7 @@ private:
 
     HashMap<PageOverlay*, std::unique_ptr<GraphicsLayer>> m_overlayGraphicsLayers;
     Vector<RefPtr<PageOverlay>> m_pageOverlays;
-    MainFrame& m_mainFrame;
+    Page& m_page;
 };
 
 } // namespace WebKit

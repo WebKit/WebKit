@@ -64,7 +64,6 @@
 #import <WebCore/Frame.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
-#import <WebCore/MainFrame.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 using namespace WebCore;

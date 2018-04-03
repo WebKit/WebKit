@@ -26,8 +26,8 @@
 #include "config.h"
 #include "PluginInfoProvider.h"
 
+#include "Frame.h"
 #include "FrameLoader.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "SubframeLoader.h"
 
@@ -42,7 +42,7 @@ void PluginInfoProvider::refresh(bool reloadPages)
 {
     refreshPlugins();
 
-    Vector<Ref<MainFrame>> framesNeedingReload;
+    Vector<Ref<Frame>> framesNeedingReload;
 
     for (auto& page : m_pages) {
         page->clearPluginData();

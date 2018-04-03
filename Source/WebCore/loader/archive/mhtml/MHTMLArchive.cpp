@@ -35,9 +35,9 @@
 #include "MHTMLArchive.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "MHTMLParser.h"
 #include "MIMETypeRegistry.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PageSerializer.h"
 #include "QuotedPrintable.h"

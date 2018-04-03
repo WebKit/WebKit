@@ -33,8 +33,8 @@
 
 #include "AcceleratedSurface.h"
 #include "WebPage.h"
+#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/MainFrame.h>
 
 namespace WebKit {
 using namespace WebCore;

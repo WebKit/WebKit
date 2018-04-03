@@ -47,7 +47,6 @@
 #include "HTMLNames.h"
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "RenderBox.h"

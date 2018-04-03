@@ -53,7 +53,6 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFormElement.h>
-#include <WebCore/MainFrame.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/WTFGType.h>

@@ -31,10 +31,10 @@
 
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/NicosiaPaintingEngine.h>
 #include <WebCore/Page.h>
 #include <wtf/MemoryPressureHandler.h>

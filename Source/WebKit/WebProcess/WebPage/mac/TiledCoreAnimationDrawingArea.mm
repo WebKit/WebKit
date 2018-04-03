@@ -41,12 +41,12 @@
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/DebugPageOverlays.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/MachSendRight.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/RenderLayerBacking.h>
@@ -205,8 +205,7 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     // in order to be scrolled by the ScrollingCoordinator.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
 
-    if (MainFrame* mainFrame = m_webPage.mainFrame())
-        DebugPageOverlays::settingsChanged(*mainFrame);
+    DebugPageOverlays::settingsChanged(*m_webPage.corePage());
 
     bool showTiledScrollingIndicator = settings.showTiledScrollingIndicator();
     if (showTiledScrollingIndicator == !!m_debugInfoLayer)

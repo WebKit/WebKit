@@ -81,7 +81,6 @@
 #include "HitTestResult.h"
 #include "HitTestingTransformState.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"

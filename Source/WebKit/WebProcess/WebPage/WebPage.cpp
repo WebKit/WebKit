@@ -151,6 +151,7 @@
 #include <WebCore/File.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
@@ -172,7 +173,6 @@
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -4530,7 +4530,7 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
     send(Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents(m_canShortCircuitHorizontalWheelEvents));
 }
 
-MainFrame* WebPage::mainFrame() const
+Frame* WebPage::mainFrame() const
 {
     return m_page ? &m_page->mainFrame() : nullptr;
 }
@@ -5302,7 +5302,7 @@ void WebPage::determinePrimarySnapshottedPlugIn()
 
     layoutIfNeeded();
 
-    MainFrame& mainFrame = corePage()->mainFrame();
+    auto& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view())
         return;
     if (!mainFrame.view()->renderView())
@@ -5401,7 +5401,7 @@ bool WebPage::matchesPrimaryPlugIn(const String& pageOrigin, const String& plugi
 
 bool WebPage::plugInIntersectsSearchRect(HTMLPlugInImageElement& plugInImageElement)
 {
-    MainFrame& mainFrame = corePage()->mainFrame();
+    auto& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view())
         return false;
     if (!mainFrame.view()->renderView())

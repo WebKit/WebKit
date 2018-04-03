@@ -88,7 +88,6 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LibWebRTCProvider.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/MediaSessionManagerIOS.h>
 #import <WebCore/Node.h>
 #import <WebCore/NodeList.h>

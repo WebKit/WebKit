@@ -51,9 +51,9 @@
 #import <WebCore/EditorClient.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FloatPoint.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Image.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardWriter.h>

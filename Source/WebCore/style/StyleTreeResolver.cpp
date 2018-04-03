@@ -32,13 +32,13 @@
 #include "ComposedTreeIterator.h"
 #include "DocumentTimeline.h"
 #include "ElementIterator.h"
+#include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSlotElement.h"
 #include "LoaderStrategy.h"
-#include "MainFrame.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
@@ -594,7 +594,7 @@ static void suspendMemoryCacheClientCalls(Document& document)
 
     page->setMemoryCacheClientCallsEnabled(false);
 
-    postResolutionCallbackQueue().append([protectedMainFrame = Ref<MainFrame>(page->mainFrame())] {
+    postResolutionCallbackQueue().append([protectedMainFrame = makeRef(page->mainFrame())] {
         if (Page* page = protectedMainFrame->page())
             page->setMemoryCacheClientCallsEnabled(true);
     });

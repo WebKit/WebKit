@@ -37,7 +37,6 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowBase.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "ScriptController.h"

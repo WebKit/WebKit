@@ -68,7 +68,6 @@
 #include "InsertTextCommand.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "ModifySelectionListLevel.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
@@ -3453,7 +3452,8 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     FrameSelection& frameSelection = m_frame.selection();
     if (!frameSelection.isRange()) {
-        m_frame.mainFrame().servicesOverlayController().selectedTelephoneNumberRangesChanged();
+        if (auto* page = m_frame.page())
+            page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
         return;
     }
     RefPtr<Range> selectedRange = frameSelection.toNormalizedRange();
@@ -3474,7 +3474,8 @@ void Editor::scanSelectionForTelephoneNumbers()
     RefPtr<Range> extendedRange = extendedSelection.toNormalizedRange();
 
     if (!extendedRange) {
-        m_frame.mainFrame().servicesOverlayController().selectedTelephoneNumberRangesChanged();
+        if (auto* page = m_frame.page())
+            page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
         return;
     }
 
@@ -3486,7 +3487,8 @@ void Editor::scanSelectionForTelephoneNumbers()
             m_detectedTelephoneNumberRanges.append(range);
     }
 
-    m_frame.mainFrame().servicesOverlayController().selectedTelephoneNumberRangesChanged();
+    if (auto* page = m_frame.page())
+        page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
 }
 
 void Editor::scanRangeForTelephoneNumbers(Range& range, const StringView& stringView, Vector<RefPtr<Range>>& markedRanges)

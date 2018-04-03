@@ -27,7 +27,7 @@
 #include "WebInspectorFrontendAPIDispatcher.h"
 
 #include "WebPage.h"
-#include <WebCore/MainFrame.h>
+#include <WebCore/Frame.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ScriptState.h>
 

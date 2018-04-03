@@ -54,7 +54,6 @@
 #include "HTMLParserIdioms.h"
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
-#include "MainFrame.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
@@ -1034,7 +1033,7 @@ Frame* AccessibilityObject::frame() const
     return node->document().frame();
 }
 
-MainFrame* AccessibilityObject::mainFrame() const
+Frame* AccessibilityObject::mainFrame() const
 {
     Document* document = topDocument();
     if (!document)
@@ -1450,7 +1449,7 @@ VisiblePosition AccessibilityObject::visiblePositionForBounds(const IntRect& rec
     if (rect.isEmpty())
         return VisiblePosition();
     
-    MainFrame* mainFrame = this->mainFrame();
+    auto* mainFrame = this->mainFrame();
     if (!mainFrame)
         return VisiblePosition();
     

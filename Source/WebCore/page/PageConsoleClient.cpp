@@ -41,7 +41,6 @@
 #include "JSHTMLCanvasElement.h"
 #include "JSMainThreadExecState.h"
 #include "JSOffscreenCanvas.h"
-#include "MainFrame.h"
 #include "OffscreenCanvas.h"
 #include "Page.h"
 #include "ScriptableDocumentParser.h"

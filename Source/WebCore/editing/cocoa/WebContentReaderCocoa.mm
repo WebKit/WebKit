@@ -44,7 +44,6 @@
 #import "HTMLImageElement.h"
 #import "HTMLObjectElement.h"
 #import "LegacyWebArchive.h"
-#import "MainFrame.h"
 #import "Page.h"
 #import "PublicURLManager.h"
 #import "RuntimeEnabledFeatures.h"

@@ -98,6 +98,7 @@
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Font.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameTree.h>
@@ -123,7 +124,6 @@
 #include <WebCore/LogInitialization.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/NavigationPolicyCheck.h>

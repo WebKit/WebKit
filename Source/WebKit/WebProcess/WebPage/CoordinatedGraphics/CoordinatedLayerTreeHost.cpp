@@ -33,8 +33,8 @@
 #include "DrawingArea.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/PageOverlayController.h>
 
 #if USE(GLIB_EVENT_LOOP)
@@ -212,7 +212,7 @@ void CoordinatedLayerTreeHost::commitSceneState(const CoordinatedGraphicsState& 
 void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     m_coordinator.deviceOrPageScaleFactorChanged();
-    m_webPage.mainFrame()->pageOverlayController().didChangeDeviceScaleFactor();
+    m_webPage.corePage()->pageOverlayController().didChangeDeviceScaleFactor();
 }
 
 void CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()

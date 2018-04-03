@@ -147,6 +147,7 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCache.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
@@ -171,7 +172,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NavigationPolicyCheck.h>

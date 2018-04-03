@@ -34,7 +34,7 @@
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/MainFrame.h>
+#include <WebCore/Frame.h>
 #include <WebCore/PaymentCoordinator.h>
 #include <WebCore/URL.h>
 
@@ -226,7 +226,7 @@ void WebPaymentCoordinator::openPaymentSetupReply(uint64_t requestID, bool resul
 
 WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator()
 {
-    return m_webPage.mainFrame()->paymentCoordinator();
+    return m_webPage.corePage()->paymentCoordinator();
 }
 
 }

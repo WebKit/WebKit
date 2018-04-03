@@ -385,7 +385,7 @@ public:
 
     WebFrame* mainWebFrame() const { return m_mainFrame.get(); }
 
-    WebCore::MainFrame* mainFrame() const; // May return nullptr.
+    WebCore::Frame* mainFrame() const; // May return nullptr.
     WebCore::FrameView* mainFrameView() const; // May return nullptr.
 
     RefPtr<WebCore::Range> currentSelectionAsRange();

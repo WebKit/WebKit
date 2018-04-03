@@ -42,7 +42,6 @@
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PageOverlayController.h"
@@ -627,7 +626,7 @@ void RenderLayerCompositor::updateCompositingLayersTimerFired()
 
 bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const
 {
-    int layerCount = m_compositedLayerCount + m_renderView.frame().mainFrame().pageOverlayController().overlayCount();
+    int layerCount = m_compositedLayerCount + page().pageOverlayController().overlayCount();
     return layerCount > (rootLayer.isComposited() ? 1 : 0);
 }
 
@@ -655,7 +654,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (m_renderView.needsLayout())
         return false;
 
-    if (!m_compositing && (m_forceCompositingMode || (isMainFrameCompositor() && m_renderView.frame().mainFrame().pageOverlayController().overlayCount())))
+    if (!m_compositing && (m_forceCompositingMode || (isMainFrameCompositor() && page().pageOverlayController().overlayCount())))
         enableCompositingMode(true);
 
     if (!m_reevaluateCompositingAfterLayout && !m_compositing)
@@ -780,8 +779,7 @@ void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<GraphicsLayer*>& 
     if (!isMainFrameCompositor() || !m_compositing)
         return;
 
-    auto& frame = m_renderView.frameView().frame();
-    childList.append(&frame.mainFrame().pageOverlayController().layerWithDocumentOverlays());
+    childList.append(&page().pageOverlayController().layerWithDocumentOverlays());
 }
 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
@@ -3387,7 +3385,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             auto& frame = m_renderView.frameView().frame();
             page().chrome().client().attachRootGraphicsLayer(frame, rootGraphicsLayer());
             if (frame.isMainFrame())
-                page().chrome().client().attachViewOverlayGraphicsLayer(frame, &frame.mainFrame().pageOverlayController().layerWithViewOverlays());
+                page().chrome().client().attachViewOverlayGraphicsLayer(frame, &page().pageOverlayController().layerWithViewOverlays());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -3431,7 +3429,7 @@ void RenderLayerCompositor::detachRootLayer()
         page().chrome().client().attachRootGraphicsLayer(frame, nullptr);
         if (frame.isMainFrame()) {
             page().chrome().client().attachViewOverlayGraphicsLayer(frame, nullptr);
-            frame.mainFrame().pageOverlayController().willDetachRootLayer();
+            page().pageOverlayController().willDetachRootLayer();
         }
     }
     break;
@@ -3467,7 +3465,7 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     if (!frame.isMainFrame())
         return;
 
-    m_rootContentLayer->addChild(&frame.mainFrame().pageOverlayController().layerWithDocumentOverlays());
+    m_rootContentLayer->addChild(&page().pageOverlayController().layerWithDocumentOverlays());
 }
 
 void RenderLayerCompositor::notifyIFramesOfCompositingChange()

@@ -33,9 +33,9 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "MediaFeatureNames.h"
 #include "MediaList.h"
 #include "MediaQuery.h"
@@ -756,7 +756,7 @@ static bool displayModeEvaluate(CSSValue* value, const CSSToLengthConversionData
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
 
-    auto manifest = frame.mainFrame().applicationManifest();
+    auto manifest = frame.page() ? frame.page()->applicationManifest() : std::nullopt;
     if (!manifest)
         return keyword == CSSValueBrowser;
 

@@ -31,7 +31,7 @@
 #include "WebPage.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/Document.h>
-#include <WebCore/MainFrame.h>
+#include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 
 using namespace WebKit;

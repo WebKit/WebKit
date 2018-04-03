@@ -35,7 +35,6 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsLayerTextureMapper.h>
 #include <WebCore/HWndDC.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SystemInfo.h>

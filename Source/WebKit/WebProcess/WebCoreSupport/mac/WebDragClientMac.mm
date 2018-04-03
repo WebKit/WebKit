@@ -43,7 +43,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>

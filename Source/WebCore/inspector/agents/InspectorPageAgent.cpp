@@ -52,7 +52,6 @@
 #include "InspectorOverlay.h"
 #include "InstrumentingAgents.h"
 #include "MIMETypeRegistry.h"
-#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "RenderObject.h"
@@ -582,7 +581,7 @@ void InspectorPageAgent::frameDetached(Frame& frame)
     m_identifierToFrame.remove(identifier);
 }
 
-MainFrame& InspectorPageAgent::mainFrame()
+Frame& InspectorPageAgent::mainFrame()
 {
     return m_page.mainFrame();
 }

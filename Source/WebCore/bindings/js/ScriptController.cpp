@@ -39,7 +39,6 @@
 #include "JSDocument.h"
 #include "JSMainThreadExecState.h"
 #include "LoadableModuleScript.h"
-#include "MainFrame.h"
 #include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
 #include "NP_jsobject.h"

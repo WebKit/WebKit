@@ -22,9 +22,9 @@
 #include "FrameTree.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include <stdarg.h>

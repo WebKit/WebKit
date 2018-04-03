@@ -48,8 +48,8 @@
 #include <WebCore/Color.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/Frame.h>
 #include <WebCore/LoaderStrategy.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>

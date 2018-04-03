@@ -38,8 +38,8 @@
 #import "WKString.h"
 #import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/ScrollView.h>
@@ -77,7 +77,7 @@ using namespace WebKit;
 
 - (NSArray *)accessibilityParameterizedAttributeNames
 {
-    Vector<String> result = m_page->mainFrame()->pageOverlayController().copyAccessibilityAttributesNames(true);
+    Vector<String> result = m_page->corePage()->pageOverlayController().copyAccessibilityAttributesNames(true);
     if (result.isEmpty())
         return nil;
     
@@ -168,14 +168,14 @@ using namespace WebKit;
 
     if ([attribute isEqualToString:@"AXDataDetectorExistsAtPoint"] || [attribute isEqualToString:@"AXDidShowDataDetectorMenuAtPoint"]) {
         bool value;
-        if (!m_page->mainFrame()->pageOverlayController().copyAccessibilityAttributeBoolValueForPoint(attribute, pageOverlayPoint, value))
+        if (!m_page->corePage()->pageOverlayController().copyAccessibilityAttributeBoolValueForPoint(attribute, pageOverlayPoint, value))
             return nil;
         return [NSNumber numberWithBool:value];
     }
 
     if ([attribute isEqualToString:@"AXDataDetectorTypeAtPoint"]) {
         String value;
-        if (!m_page->mainFrame()->pageOverlayController().copyAccessibilityAttributeStringValueForPoint(attribute, pageOverlayPoint, value))
+        if (!m_page->corePage()->pageOverlayController().copyAccessibilityAttributeStringValueForPoint(attribute, pageOverlayPoint, value))
             return nil;
         return [NSString stringWithString:value];
     }

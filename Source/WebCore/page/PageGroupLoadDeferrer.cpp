@@ -23,7 +23,7 @@
 
 #include "Document.h"
 #include "DocumentParser.h"
-#include "MainFrame.h"
+#include "Frame.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "ScriptRunner.h"

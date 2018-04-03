@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-class MainFrame;
+class Page;
 struct ApplePayPaymentMethod;
 
 class MockPaymentCoordinator final : public PaymentCoordinatorClient {
 public:
-    explicit MockPaymentCoordinator(MainFrame&);
+    explicit MockPaymentCoordinator(Page&);
 
     void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTFMove(shippingAddress); }
     void changeShippingOption(String&& shippingOption);
@@ -72,7 +72,7 @@ private:
 
     void updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
 
-    MainFrame& m_mainFrame;
+    Page& m_page;
     ApplePayPaymentContact m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;

@@ -48,7 +48,6 @@
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
 #include "LayoutState.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxFragmentInfo.h"

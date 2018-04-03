@@ -48,6 +48,7 @@
 #include "File.h"
 #include "FloatRect.h"
 #include "FocusController.h"
+#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
@@ -61,7 +62,6 @@
 #include "HitTestResult.h"
 #include "Image.h"
 #include "ImageOrientation.h"
-#include "MainFrame.h"
 #include "MoveSelectionCommand.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -261,7 +261,7 @@ bool DragController::performDragOperation(const DragData& dragData)
 
     if ((m_dragDestinationAction & DragDestinationActionDHTML) && dragIsHandledByDocument(m_dragHandlingMethod)) {
         m_client.willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
-        Ref<MainFrame> mainFrame(m_page.mainFrame());
+        Ref<Frame> mainFrame(m_page.mainFrame());
         bool preventedDefault = false;
         if (mainFrame->view())
             preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), Pasteboard::createForDragAndDrop(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
@@ -685,7 +685,7 @@ static DragOperation defaultOperationForDrag(DragOperation srcOpMask)
 bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& operation)
 {
     ASSERT(m_documentUnderMouse);
-    Ref<MainFrame> mainFrame(m_page.mainFrame());
+    Ref<Frame> mainFrame(m_page.mainFrame());
     RefPtr<FrameView> viewProtector = mainFrame->view();
     if (!viewProtector)
         return false;
@@ -1193,7 +1193,7 @@ void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& 
     m_dragInitiator = frame.document();
 
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
-    Ref<MainFrame> mainFrameProtector(m_page.mainFrame());
+    Ref<Frame> mainFrameProtector(m_page.mainFrame());
     RefPtr<FrameView> viewProtector = mainFrameProtector->view();
 
     auto mouseDownPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDownPoint));
@@ -1214,7 +1214,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     m_didInitiateDrag = true;
     m_dragInitiator = frame.document();
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
-    Ref<MainFrame> frameProtector(m_page.mainFrame());
+    Ref<Frame> frameProtector(m_page.mainFrame());
     RefPtr<FrameView> viewProtector = frameProtector->view();
 
     DragItem item;

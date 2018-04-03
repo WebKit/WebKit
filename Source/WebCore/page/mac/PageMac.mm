@@ -30,10 +30,10 @@
 #import "Page.h"
 
 #import "DocumentLoader.h"
+#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameTree.h"
 #import "Logging.h"
-#import "MainFrame.h"
 #import "RenderObject.h"
 #import <pal/Logging.h>
 

@@ -29,7 +29,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "MainFrame.h"
+#include "Frame.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "Range.h"

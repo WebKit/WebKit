@@ -27,9 +27,9 @@
 #include "MockPageOverlay.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "MainFrame.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"
 

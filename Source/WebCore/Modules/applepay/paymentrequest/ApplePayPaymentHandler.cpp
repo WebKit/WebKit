@@ -35,10 +35,10 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "JSApplePayPayment.h"
 #include "JSApplePayRequest.h"
 #include "LinkIconCollector.h"
-#include "MainFrame.h"
 #include "MerchantValidationEvent.h"
 #include "Page.h"
 #include "Payment.h"
@@ -64,7 +64,8 @@ bool ApplePayPaymentHandler::handlesIdentifier(const PaymentRequest::MethodIdent
 
 static inline PaymentCoordinator& paymentCoordinator(Document& document)
 {
-    return document.frame()->mainFrame().paymentCoordinator();
+    ASSERT(document.page());
+    return document.page()->paymentCoordinator();
 }
 
 bool ApplePayPaymentHandler::hasActiveSession(Document& document)

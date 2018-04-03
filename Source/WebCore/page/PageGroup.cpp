@@ -28,7 +28,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "MainFrame.h"
+#include "Frame.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "StorageNamespace.h"

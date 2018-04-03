@@ -29,8 +29,8 @@
 
 #import "ScrollingCoordinatorIOS.h"
 
+#include "Frame.h"
 #include "FrameView.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "Region.h"
 #include "ScrollingStateTree.h"

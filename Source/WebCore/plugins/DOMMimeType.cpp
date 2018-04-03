@@ -20,8 +20,8 @@
 #include "DOMMimeType.h"
 
 #include "DOMPlugin.h"
+#include "Frame.h"
 #include "FrameLoader.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "SubframeLoader.h"

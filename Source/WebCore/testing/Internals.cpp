@@ -66,6 +66,7 @@
 #include "File.h"
 #include "FontCache.h"
 #include "FormController.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GCObservation.h"
@@ -93,7 +94,6 @@
 #include "InternalSettings.h"
 #include "JSImageData.h"
 #include "LibWebRTCProvider.h"
-#include "MainFrame.h"
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
@@ -523,9 +523,9 @@ Internals::Internals(Document& document)
 
 #if ENABLE(APPLE_PAY)
     auto* frame = document.frame();
-    if (frame && frame->isMainFrame()) {
-        m_mockPaymentCoordinator = new MockPaymentCoordinator(frame->mainFrame());
-        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator));
+    if (frame && frame->page()) {
+        m_mockPaymentCoordinator = new MockPaymentCoordinator(*frame->page());
+        frame->page()->setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator));
     }
 #endif
 
@@ -3675,21 +3675,21 @@ ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String&
 ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type)
 {
     Document* document = contextDocument();
-    if (!document || !document->frame())
+    if (!document || !document->page())
         return Exception { InvalidAccessError };
 
-    return MockPageOverlayClient::singleton().installOverlay(document->frame()->mainFrame(), type == PageOverlayType::View ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
+    return MockPageOverlayClient::singleton().installOverlay(*document->page(), type == PageOverlayType::View ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
 }
 
 ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) const
 {
     Document* document = contextDocument();
-    if (!document || !document->frame())
+    if (!document || !document->page())
         return Exception { InvalidAccessError };
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    return MockPageOverlayClient::singleton().layerTreeAsText(document->frame()->mainFrame(), toLayerTreeFlags(flags));
+    return MockPageOverlayClient::singleton().layerTreeAsText(*document->page(), toLayerTreeFlags(flags));
 }
 
 void Internals::setPageMuted(StringView statesString)

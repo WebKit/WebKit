@@ -1,3 +1,25 @@
+2018-04-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=184191
+
+        Reviewed by Darin Adler.
+
+        Drop MainFrame class and move contents into Page / Frame since there is a 1:1
+        relationship between the Page and the MainFrame.
+
+        This is ground work for introducing LocalFrame / RemoteFrame concepts.
+
+        * WebCoreSupport/WebDragClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        * WebCoreSupport/WebPluginInfoProvider.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebView.mm:
+
 2018-04-02  Jer Noble  <jer.noble@apple.com>
 
         Enable Legacy EME for all WebKit & WebKitLegacy clients

@@ -30,7 +30,7 @@
 #import "WebResourceLoadScheduler.h"
 #import <WebCore/BlobRegistryImpl.h>
 #import <WebCore/Color.h>
-#import <WebCore/MainFrame.h>
+#import <WebCore/Frame.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PasteboardItemInfo.h>
 #import <WebCore/PlatformCookieJar.h>

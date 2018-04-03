@@ -32,7 +32,6 @@
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "ResourceLoadStatistics.h"
 #include "ResourceRequest.h"

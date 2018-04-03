@@ -69,7 +69,6 @@
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PDFDocumentImage.h>
 #import <WebCore/Page.h>

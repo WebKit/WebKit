@@ -31,8 +31,8 @@
 #include "config.h"
 #include "InspectorClient.h"
 
+#include "Frame.h"
 #include "InspectorController.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"

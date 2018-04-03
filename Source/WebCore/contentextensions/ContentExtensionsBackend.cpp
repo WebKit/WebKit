@@ -39,7 +39,6 @@
 #include "ExtensionStyleSheets.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "ResourceLoadInfo.h"
 #include "URL.h"

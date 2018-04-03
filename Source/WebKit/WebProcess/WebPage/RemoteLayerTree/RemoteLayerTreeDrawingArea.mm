@@ -42,7 +42,6 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/InspectorController.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
@@ -168,8 +167,7 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
 
     m_rootLayer->setShowDebugBorder(settings.showDebugBorders());
 
-    if (MainFrame* mainFrame = m_webPage.mainFrame())
-        DebugPageOverlays::settingsChanged(*mainFrame);
+    DebugPageOverlays::settingsChanged(*m_webPage.corePage());
 }
 
 #if PLATFORM(IOS)

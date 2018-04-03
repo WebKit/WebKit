@@ -78,7 +78,6 @@ class ImageBuffer;
 class IntPoint;
 class IntRect;
 class IntSize;
-class MainFrame;
 class NavigationScheduler;
 class Node;
 class Page;
@@ -118,7 +117,7 @@ enum {
 };
 typedef unsigned LayerTreeFlags;
 
-class Frame : public ThreadSafeRefCounted<Frame> {
+class Frame final : public ThreadSafeRefCounted<Frame> {
 public:
     WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
@@ -133,7 +132,7 @@ public:
         bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
         ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
-    WEBCORE_EXPORT virtual ~Frame();
+    WEBCORE_EXPORT ~Frame();
 
     void addDestructionObserver(FrameDestructionObserver*);
     void removeDestructionObserver(FrameDestructionObserver*);
@@ -142,7 +141,7 @@ public:
     void detachFromPage();
     void disconnectOwnerElement();
 
-    MainFrame& mainFrame() const;
+    Frame& mainFrame() const;
     bool isMainFrame() const { return this == static_cast<void*>(&m_mainFrame); }
 
     Page* page() const;
@@ -282,14 +281,19 @@ public:
 
 // ========
 
-protected:
-    Frame(Page&, HTMLFrameOwnerElement*, FrameLoaderClient&);
-    void setMainFrameWasDestroyed();
+    void selfOnlyRef();
+    void selfOnlyDeref();
 
 private:
+    friend class NavigationDisabler;
+
+    Frame(Page&, HTMLFrameOwnerElement*, FrameLoaderClient&);
+
+    void dropChildren();
+
     HashSet<FrameDestructionObserver*> m_destructionObservers;
 
-    MainFrame& m_mainFrame;
+    Frame& m_mainFrame;
     Page* m_page;
     const RefPtr<Settings> m_settings;
     mutable FrameTree m_treeNode;
@@ -332,8 +336,9 @@ private:
     float m_textZoomFactor;
 
     int m_activeDOMObjectsAndAnimationsSuspendedCount;
-    bool m_mainFrameWasDestroyed { false };
     bool m_documentIsBeingReplaced { false };
+    unsigned m_navigationDisableCount { 0 };
+    unsigned m_selfOnlyRefCount { 0 };
 
 protected:
     UniqueRef<EventHandler> m_eventHandler;
@@ -379,15 +384,9 @@ inline void Frame::detachFromPage()
     m_page = nullptr;
 }
 
-inline MainFrame& Frame::mainFrame() const
+inline Frame& Frame::mainFrame() const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_mainFrameWasDestroyed);
     return m_mainFrame;
-}
-
-inline void Frame::setMainFrameWasDestroyed()
-{
-    m_mainFrameWasDestroyed = false;
 }
 
 } // namespace WebCore

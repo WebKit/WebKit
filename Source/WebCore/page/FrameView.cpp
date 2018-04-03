@@ -42,6 +42,7 @@
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
@@ -62,7 +63,6 @@
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "OverflowEvent.h"
 #include "Page.h"
@@ -460,8 +460,8 @@ void FrameView::setFrameRect(const IntRect& newRect)
             renderView->compositor().frameViewDidChangeSize();
     }
 
-    if (frame().isMainFrame())
-        frame().mainFrame().pageOverlayController().didChangeViewSize();
+    if (frame().isMainFrame() && frame().page())
+        frame().page()->pageOverlayController().didChangeViewSize();
 
     viewportContentsChanged();
 }
@@ -614,7 +614,7 @@ void FrameView::setContentsSize(const IntSize& size)
     page->chrome().contentsSizeChanged(frame(), size); // Notify only.
 
     if (frame().isMainFrame()) {
-        frame().mainFrame().pageOverlayController().didChangeDocumentSize();
+        page->pageOverlayController().didChangeDocumentSize();
         PageCache::singleton().markPagesForContentsSizeChanged(*page);
     }
     layoutContext().enableSetNeedsLayout();
@@ -2363,7 +2363,8 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
 
 void FrameView::didChangeScrollOffset()
 {
-    frame().mainFrame().pageOverlayController().didScrollFrame(frame());
+    if (auto* page = frame().page())
+        page->pageOverlayController().didScrollFrame(frame());
     frame().loader().client().didChangeScrollOffset();
 }
 
@@ -5045,7 +5046,8 @@ void FrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect)
     if (auto* view = renderView())
         view->compositor().scheduleLayerFlush(false /* canThrottle */);
 
-    frame().mainFrame().pageOverlayController().didChangeViewExposedRect();
+    if (auto* page = frame().page())
+        page->pageOverlayController().didChangeViewExposedRect();
 }
     
 void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)

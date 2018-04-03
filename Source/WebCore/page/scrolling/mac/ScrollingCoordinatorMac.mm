@@ -29,9 +29,9 @@
 
 #import "ScrollingCoordinatorMac.h"
 
+#include "Frame.h"
 #include "FrameView.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"
 #include "Region.h"

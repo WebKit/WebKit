@@ -29,9 +29,9 @@
 #include "AutoscrollController.h"
 
 #include "EventHandler.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "HitTestResult.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderView.h"

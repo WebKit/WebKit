@@ -39,7 +39,6 @@
 #include "HTMLVideoElement.h"
 #include "HitTestResult.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
 #include "RenderMedia.h"
@@ -717,7 +716,7 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
     if (!document.frame() || !document.frame()->isMainFrame())
         return false;
 
-    MainFrame& mainFrame = document.frame()->mainFrame();
+    auto& mainFrame = document.frame()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())
         return false;
 

@@ -39,7 +39,6 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameView.h"
 #include "MIMETypeRegistry.h"
-#include "MainFrame.h"
 #include "PluginDocument.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"

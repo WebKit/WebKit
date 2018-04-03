@@ -35,6 +35,7 @@
 #import "EventHandler.h"
 #import "FloatQuad.h"
 #import "FocusController.h"
+#import "Frame.h"
 #import "FrameSelection.h"
 #import "FrameView.h"
 #import "GapRects.h"
@@ -42,7 +43,6 @@
 #import "GraphicsLayer.h"
 #import "GraphicsLayerCA.h"
 #import "Logging.h"
-#import "MainFrame.h"
 #import "Page.h"
 #import "PageOverlayController.h"
 #import "PlatformCAAnimationCocoa.h"
@@ -72,8 +72,8 @@ ServicesOverlayController::Highlight::Highlight(ServicesOverlayController& contr
 {
     ASSERT(ddHighlight);
 
-    Page* page = controller.mainFrame().page();
-    m_graphicsLayer = GraphicsLayer::create(page ? page->chrome().client().graphicsLayerFactory() : nullptr, *this);
+    auto& page = controller.page();
+    m_graphicsLayer = GraphicsLayer::create(page.chrome().client().graphicsLayerFactory(), *this);
     m_graphicsLayer->setDrawsContent(true);
 
     setDDHighlight(ddHighlight.get());
@@ -122,11 +122,7 @@ void ServicesOverlayController::Highlight::notifyFlushRequired(const GraphicsLay
     if (!m_controller)
         return;
 
-    Page* page = m_controller->mainFrame().page();
-    if (!page)
-        return;
-
-    page->chrome().client().scheduleCompositingLayerFlush();
+    m_controller->page().chrome().client().scheduleCompositingLayerFlush();
 }
 
 void ServicesOverlayController::Highlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect&, GraphicsLayerPaintBehavior)
@@ -148,11 +144,7 @@ float ServicesOverlayController::Highlight::deviceScaleFactor() const
     if (!m_controller)
         return 1;
 
-    Page* page = m_controller->mainFrame().page();
-    if (!page)
-        return 1;
-
-    return page->deviceScaleFactor();
+    return m_controller->page().deviceScaleFactor();
 }
 
 void ServicesOverlayController::Highlight::fadeIn()
@@ -207,8 +199,8 @@ static IntRect textQuadsToBoundingRectForRange(Range& range)
     return enclosingIntRect(boundingRect);
 }
 
-ServicesOverlayController::ServicesOverlayController(MainFrame& mainFrame)
-    : m_mainFrame(mainFrame)
+ServicesOverlayController::ServicesOverlayController(Page& page)
+    : m_page(page)
     , m_determineActiveHighlightTimer(*this, &ServicesOverlayController::determineActiveHighlightTimerFired)
     , m_buildHighlightsTimer(*this, &ServicesOverlayController::buildPotentialHighlightsIfNeeded)
 {
@@ -386,7 +378,7 @@ void ServicesOverlayController::selectedTelephoneNumberRangesChanged()
 
 void ServicesOverlayController::invalidateHighlightsOfType(Highlight::Type type)
 {
-    if (!m_mainFrame.settings().serviceControlsEnabled())
+    if (!m_page.settings().serviceControlsEnabled())
         return;
 
     m_dirtyHighlightTypes |= type;
@@ -408,7 +400,7 @@ void ServicesOverlayController::buildPotentialHighlightsIfNeeded()
 
     if (m_potentialHighlights.isEmpty()) {
         if (m_servicesOverlay)
-            m_mainFrame.pageOverlayController().uninstallPageOverlay(*m_servicesOverlay, PageOverlay::FadeMode::DoNotFade);
+            m_page.pageOverlayController().uninstallPageOverlay(*m_servicesOverlay, PageOverlay::FadeMode::DoNotFade);
         return;
     }
 
@@ -438,11 +430,10 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(High
         return 0_s;
 
     Seconds minimumTimeUntilHighlightShouldBeShown = 200_ms;
-    Page* page = m_mainFrame.page();
-    if (page && page->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
+    if (m_page.focusController().focusedOrMainFrame().selection().selection().isContentEditable())
         minimumTimeUntilHighlightShouldBeShown = 1_s;
 
-    bool mousePressed = m_mainFrame.eventHandler().mousePressed();
+    bool mousePressed = mainFrame().eventHandler().mousePressed();
 
     // Highlight hysteresis is only for selection services, because telephone number highlights are already much more stable
     // by virtue of being expanded to include the entire telephone number. However, we will still avoid highlighting
@@ -493,7 +484,7 @@ void ServicesOverlayController::removeAllPotentialHighlightsOfType(Highlight::Ty
 void ServicesOverlayController::buildPhoneNumberHighlights()
 {
     Vector<RefPtr<Range>> phoneNumberRanges;
-    for (Frame* frame = &m_mainFrame; frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         phoneNumberRanges.appendVector(frame->editor().detectedTelephoneNumberRanges());
 
     if (phoneNumberRanges.isEmpty()) {
@@ -506,7 +497,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
     HashSet<RefPtr<Highlight>> newPotentialHighlights;
 
-    FrameView& mainFrameView = *m_mainFrame.view();
+    FrameView& mainFrameView = *mainFrame().view();
 
     for (auto& range : phoneNumberRanges) {
         // FIXME: This will choke if the range wraps around the edge of the view.
@@ -538,10 +529,6 @@ void ServicesOverlayController::buildSelectionHighlight()
         return;
     }
 
-    Page* page = m_mainFrame.page();
-    if (!page)
-        return;
-
     if (!DataDetectorsLibrary())
         return;
 
@@ -550,9 +537,9 @@ void ServicesOverlayController::buildSelectionHighlight()
     Vector<CGRect> cgRects;
     cgRects.reserveCapacity(m_currentSelectionRects.size());
 
-    RefPtr<Range> selectionRange = page->selection().firstRange();
+    RefPtr<Range> selectionRange = m_page.selection().firstRange();
     if (selectionRange) {
-        FrameView* mainFrameView = m_mainFrame.view();
+        FrameView* mainFrameView = mainFrame().view();
         if (!mainFrameView)
             return;
 
@@ -605,9 +592,7 @@ void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighl
 
 bool ServicesOverlayController::hasRelevantSelectionServices()
 {
-    if (Page* page = m_mainFrame.page())
-        return page->chrome().client().hasRelevantSelectionServices(m_isTextOnly);
-    return false;
+    return m_page.chrome().client().hasRelevantSelectionServices(m_isTextOnly);
 }
 
 void ServicesOverlayController::createOverlayIfNeeded()
@@ -615,21 +600,17 @@ void ServicesOverlayController::createOverlayIfNeeded()
     if (m_servicesOverlay)
         return;
 
-    if (!m_mainFrame.settings().serviceControlsEnabled())
+    if (!m_page.settings().serviceControlsEnabled())
         return;
 
     auto overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
     m_servicesOverlay = overlay.ptr();
-    m_mainFrame.pageOverlayController().installPageOverlay(WTFMove(overlay), PageOverlay::FadeMode::DoNotFade);
+    m_page.pageOverlayController().installPageOverlay(WTFMove(overlay), PageOverlay::FadeMode::DoNotFade);
 }
 
 Vector<RefPtr<Range>> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
 {
-    Page* page = m_mainFrame.page();
-    if (!page)
-        return { };
-
-    return page->focusController().focusedOrMainFrame().editor().detectedTelephoneNumberRanges();
+    return m_page.focusController().focusedOrMainFrame().editor().detectedTelephoneNumberRanges();
 }
 
 bool ServicesOverlayController::highlightsAreEquivalent(const Highlight* a, const Highlight* b)
@@ -646,11 +627,7 @@ ServicesOverlayController::Highlight* ServicesOverlayController::findTelephoneNu
     if (selectionHighlight.type() != Highlight::SelectionType)
         return nullptr;
 
-    Page* page = m_mainFrame.page();
-    if (!page)
-        return nullptr;
-
-    const VisibleSelection& selection = page->selection();
+    const VisibleSelection& selection = m_page.selection();
     if (!selection.isRange())
         return nullptr;
 
@@ -743,7 +720,7 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
 
 bool ServicesOverlayController::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
 {
-    m_mousePosition = m_mainFrame.view()->windowToContents(event.position());
+    m_mousePosition = mainFrame().view()->windowToContents(event.position());
 
     bool mouseIsOverActiveHighlightButton = false;
     determineActiveHighlight(mouseIsOverActiveHighlightButton);
@@ -806,12 +783,8 @@ void ServicesOverlayController::didScrollFrame(PageOverlay&, Frame& frame)
 
 void ServicesOverlayController::handleClick(const IntPoint& clickPoint, Highlight& highlight)
 {
-    FrameView* frameView = m_mainFrame.view();
+    FrameView* frameView = mainFrame().view();
     if (!frameView)
-        return;
-
-    Page* page = m_mainFrame.page();
-    if (!page)
         return;
 
     IntPoint windowPoint = frameView->contentsToWindow(clickPoint);
@@ -823,9 +796,14 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, Highligh
         for (auto& range : telephoneNumberRanges)
             selectedTelephoneNumbers.append(range->text());
 
-        page->chrome().client().handleSelectionServiceClick(page->focusController().focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
+        m_page.chrome().client().handleSelectionServiceClick(m_page.focusController().focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
     } else if (highlight.type() == Highlight::TelephoneNumberType)
-        page->chrome().client().handleTelephoneNumberClick(highlight.range().text(), windowPoint);
+        m_page.chrome().client().handleTelephoneNumberClick(highlight.range().text(), windowPoint);
+}
+
+Frame& ServicesOverlayController::mainFrame() const
+{
+    return m_page.mainFrame();
 }
 
 void ServicesOverlayController::didCreateHighlight(Highlight* highlight)

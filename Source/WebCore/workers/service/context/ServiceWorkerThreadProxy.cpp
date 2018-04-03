@@ -29,9 +29,9 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "CacheStorageProvider.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "LoaderStrategy.h"
-#include "MainFrame.h"
 #include "PlatformStrategies.h"
 #include "Settings.h"
 #include <pal/SessionID.h>

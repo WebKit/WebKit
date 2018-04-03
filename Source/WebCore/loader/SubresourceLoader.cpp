@@ -41,7 +41,6 @@
 #include "HTTPParsers.h"
 #include "LinkLoader.h"
 #include "Logging.h"
-#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "ResourceLoadObserver.h"

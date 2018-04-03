@@ -1,3 +1,273 @@
+2018-04-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=184191
+
+        Reviewed by Darin Adler.
+
+        Drop MainFrame class and move contents into Page / Frame since there is a 1:1
+        relationship between the Page and the MainFrame.
+
+        This is ground work for introducing LocalFrame / RemoteFrame concepts.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::create):
+        (WebCore::ApplePaySession::supportsVersion):
+        (WebCore::ApplePaySession::canMakePayments):
+        (WebCore::ApplePaySession::canMakePaymentsWithActiveCard):
+        (WebCore::ApplePaySession::openPaymentSetup):
+        (WebCore::ApplePaySession::paymentCoordinator const):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::paymentCoordinator):
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::mainFrame const):
+        (WebCore::AccessibilityObject::visiblePositionForBounds const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptState.cpp:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::displayModeEvaluate):
+        * dom/DOMImplementation.cpp:
+        * dom/Document.cpp:
+        * dom/DocumentMarkerController.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * dom/EventDispatcher.cpp:
+        * dom/ScriptedAnimationController.cpp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::scanSelectionForTelephoneNumbers):
+        * editing/EditorCommand.cpp:
+        * editing/SelectionRectGatherer.cpp:
+        (WebCore::SelectionRectGatherer::Notifier::~Notifier):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        * editing/markup.cpp:
+        * history/CachedFrame.cpp:
+        * history/CachedPage.cpp:
+        * history/PageCache.cpp:
+        (WebCore::destroyRenderTree):
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+        * html/ImageDocument.cpp:
+        * html/MediaElementSession.cpp:
+        (WebCore::isMainContentForPurposesOfAutoplay):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * inspector/InspectorClient.cpp:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorOverlay.cpp:
+        * inspector/PageScriptDebugServer.cpp:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::mainFrame):
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentWriter.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::setState):
+        * loader/HistoryController.cpp:
+        * loader/NavigationDisabler.h:
+        * loader/ProgressTracker.cpp:
+        * loader/ResourceLoadObserver.cpp:
+        * loader/ResourceLoader.cpp:
+        * loader/SubframeLoader.cpp:
+        * loader/SubresourceLoader.cpp:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResourceLoader.cpp:
+        * page/AutoscrollController.cpp:
+        * page/Chrome.cpp:
+        * page/ContextMenuController.cpp:
+        * page/DOMWindow.cpp:
+        * page/DebugPageOverlays.cpp:
+        (WebCore::MouseWheelRegionOverlay::updateRegion):
+        (WebCore::NonFastScrollableRegionOverlay::updateRegion):
+        (WebCore::RegionOverlay::create):
+        (WebCore::RegionOverlay::RegionOverlay):
+        (WebCore::RegionOverlay::~RegionOverlay):
+        (WebCore::DebugPageOverlays::ensureRegionOverlayForPage):
+        (WebCore::DebugPageOverlays::showRegionOverlay):
+        (WebCore::DebugPageOverlays::hideRegionOverlay):
+        (WebCore::DebugPageOverlays::regionChanged):
+        (WebCore::DebugPageOverlays::regionOverlayForPage const):
+        (WebCore::DebugPageOverlays::updateOverlayRegionVisibility):
+        (WebCore::DebugPageOverlays::settingsChanged):
+        * page/DebugPageOverlays.h:
+        (WebCore::DebugPageOverlays::hasOverlaysForPage const):
+        (WebCore::DebugPageOverlays::hasOverlays):
+        (WebCore::DebugPageOverlays::didLayout):
+        (WebCore::DebugPageOverlays::didChangeEventHandlers):
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+        (WebCore::DragController::tryDHTMLDrag):
+        (WebCore::DragController::beginDrag):
+        (WebCore::DragController::doSystemDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::clearLatchedState):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * page/FocusController.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::dropChildren):
+        (WebCore::Frame::selfOnlyRef):
+        (WebCore::Frame::selfOnlyDeref):
+        * page/Frame.h:
+        (WebCore::Frame::mainFrame const):
+        * page/FrameTree.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::didChangeScrollOffset):
+        (WebCore::FrameView::setViewExposedRect):
+        * page/History.cpp:
+        * page/MainFrame.cpp: Removed.
+        * page/MainFrame.h: Removed.
+        * page/MemoryRelease.cpp:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::m_applicationManifest):
+        (WebCore::Page::setDeviceScaleFactor):
+        (WebCore::Page::latchingState):
+        (WebCore::Page::pushNewLatchingState):
+        (WebCore::Page::resetLatchingState):
+        (WebCore::Page::popLatchingState):
+        (WebCore::Page::removeLatchingStateForTarget):
+        (WebCore::Page::setPaymentCoordinator):
+        * page/Page.h:
+        (WebCore::Page::mainFrame):
+        (WebCore::Page::mainFrame const):
+        (WebCore::Page::wheelEventDeltaFilter):
+        (WebCore::Page::pageOverlayController):
+        (WebCore::Page::servicesOverlayController):
+        (WebCore::Page::paymentCoordinator const):
+        (WebCore::Page::applicationManifest const):
+        (WebCore::Page::performanceLogging const):
+        * page/PageConsoleClient.cpp:
+        * page/PageDebuggable.cpp:
+        * page/PageGroup.cpp:
+        * page/PageGroupLoadDeferrer.cpp:
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::controller const):
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::PageOverlayController):
+        (WebCore::PageOverlayController::createRootLayersIfNeeded):
+        (WebCore::PageOverlayController::layerWithDocumentOverlays):
+        (WebCore::PageOverlayController::layerWithViewOverlays):
+        (WebCore::PageOverlayController::installPageOverlay):
+        (WebCore::PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates):
+        (WebCore::PageOverlayController::didChangeViewExposedRect):
+        (WebCore::PageOverlayController::updateSettingsForLayer):
+        (WebCore::PageOverlayController::deviceScaleFactor const):
+        (WebCore::PageOverlayController::notifyFlushRequired):
+        (WebCore::PageOverlayController::tiledBackingUsageChanged):
+        * page/PageOverlayController.h:
+        * page/PageSerializer.cpp:
+        * page/PerformanceLogging.cpp:
+        (WebCore::PerformanceLogging::PerformanceLogging):
+        (WebCore::PerformanceLogging::didReachPointOfInterest):
+        * page/PerformanceLogging.h:
+        * page/PerformanceMonitor.cpp:
+        * page/ResourceUsageOverlay.cpp:
+        (WebCore::ResourceUsageOverlay::~ResourceUsageOverlay):
+        (WebCore::ResourceUsageOverlay::initialize):
+        * page/SettingsBase.cpp:
+        * page/SpatialNavigation.cpp:
+        * page/UserContentProvider.cpp:
+        * page/ios/FrameIOS.mm:
+        * page/mac/DragControllerMac.mm:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::latchingIsLockedToPlatformFrame):
+        (WebCore::latchingIsLockedToAncestorOfThisFrame):
+        (WebCore::EventHandler::clearOrScheduleClearingLatchedStateIfNeeded):
+        (WebCore::EventHandler::platformPrepareForWheelEvents):
+        (WebCore::EventHandler::platformRecordWheelEvent):
+        (WebCore::EventHandler::platformCompleteWheelEvent):
+        (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent):
+        * page/mac/PageMac.mm:
+        * page/mac/ServicesOverlayController.h:
+        (WebCore::ServicesOverlayController::page const):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::Highlight):
+        (WebCore::ServicesOverlayController::Highlight::notifyFlushRequired):
+        (WebCore::ServicesOverlayController::Highlight::deviceScaleFactor const):
+        (WebCore::ServicesOverlayController::ServicesOverlayController):
+        (WebCore::ServicesOverlayController::invalidateHighlightsOfType):
+        (WebCore::ServicesOverlayController::buildPotentialHighlightsIfNeeded):
+        (WebCore::ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown const):
+        (WebCore::ServicesOverlayController::buildPhoneNumberHighlights):
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        (WebCore::ServicesOverlayController::hasRelevantSelectionServices):
+        (WebCore::ServicesOverlayController::createOverlayIfNeeded):
+        (WebCore::ServicesOverlayController::telephoneNumberRangesForFocusedFrame):
+        (WebCore::ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight):
+        (WebCore::ServicesOverlayController::mouseEvent):
+        (WebCore::ServicesOverlayController::handleClick):
+        (WebCore::ServicesOverlayController::mainFrame const):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        * plugins/DOMMimeType.cpp:
+        * plugins/PluginInfoProvider.cpp:
+        (WebCore::PluginInfoProvider::refresh):
+        * rendering/RenderBox.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::hasAnyAdditionalCompositedLayers const):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+        * rendering/RenderObject.cpp:
+        * replay/UserInputBridge.cpp:
+        * storage/StorageEventDispatcher.cpp:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::suspendMemoryCacheClientCalls):
+        * svg/SVGSVGElement.cpp:
+        * svg/graphics/SVGImage.cpp:
+        * testing/InternalSettings.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::installMockPageOverlay):
+        (WebCore::Internals::pageOverlayLayerTreeAsText const):
+        * testing/MockPageOverlay.cpp:
+        * testing/MockPageOverlay.h:
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::installOverlay):
+        (WebCore::MockPageOverlayClient::layerTreeAsText):
+        * testing/MockPageOverlayClient.h:
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::MockPaymentCoordinator):
+        (WebCore::MockPaymentCoordinator::showPaymentUI):
+        (WebCore::MockPaymentCoordinator::completeMerchantValidation):
+        (WebCore::MockPaymentCoordinator::changeShippingOption):
+        (WebCore::MockPaymentCoordinator::changePaymentMethod):
+        (WebCore::MockPaymentCoordinator::acceptPayment):
+        (WebCore::MockPaymentCoordinator::cancelPayment):
+        * testing/MockPaymentCoordinator.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+
 2018-04-03  Sihui Liu  <sihui_liu@apple.com>
 
         The referer header is not set after redirect

@@ -86,6 +86,7 @@
 #import <WebCore/EventNames.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FormState.h>
+#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderStateMachine.h>
 #import <WebCore/FrameLoaderTypes.h>
@@ -103,7 +104,6 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/MainFrame.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginBlacklist.h>

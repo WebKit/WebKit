@@ -67,6 +67,7 @@
 #include <WebCore/Event.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FormState.h>
+#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
@@ -86,7 +87,6 @@
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/MainFrame.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MouseRelatedEvent.h>
 #include <WebCore/NotImplemented.h>
