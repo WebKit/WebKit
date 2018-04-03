@@ -1263,7 +1263,7 @@ void WebsiteDataStore::webPageWasAdded(WebPageProxy& webPageProxy)
         m_storageManager->createSessionStorageNamespace(webPageProxy.pageID(), std::numeric_limits<unsigned>::max());
 }
 
-void WebsiteDataStore::webPageWasRemoved(WebPageProxy& webPageProxy)
+void WebsiteDataStore::webPageWasInvalidated(WebPageProxy& webPageProxy)
 {
     if (m_storageManager)
         m_storageManager->destroySessionStorageNamespace(webPageProxy.pageID());

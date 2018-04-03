@@ -173,7 +173,7 @@ private:
 
     // WebProcessLifetimeObserver.
     void webPageWasAdded(WebPageProxy&) override;
-    void webPageWasRemoved(WebPageProxy&) override;
+    void webPageWasInvalidated(WebPageProxy&) override;
     void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) override;
     void webPageWillOpenConnection(WebPageProxy&, IPC::Connection&) override;
     void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) override;

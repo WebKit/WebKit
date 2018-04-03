@@ -4167,7 +4167,7 @@ void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
 
 void WebPageProxy::webProcessWillShutDown()
 {
-    m_webProcessLifetimeTracker.webProcessWillShutDown();
+    m_webProcessLifetimeTracker.webPageLeavingWebProcess();
 }
 
 void WebPageProxy::processDidFinishLaunching()
@@ -5619,7 +5619,9 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     // For bringup of process swapping, NavigationSwap termination will not go out to clients.
     // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.
     // FIXME: This might have to change
-    if (reason != ProcessTerminationReason::NavigationSwap) {
+    if (reason == ProcessTerminationReason::NavigationSwap)
+        m_webProcessLifetimeTracker.webPageLeavingWebProcess();
+    else {
         navigationState().clearAllNavigations();
 
         if (m_navigationClient)

@@ -61,7 +61,7 @@ void WebProcessLifetimeTracker::connectionWillOpen(IPC::Connection&)
         observer->addWebPage(m_webPageProxy);
 }
 
-void WebProcessLifetimeTracker::webProcessWillShutDown()
+void WebProcessLifetimeTracker::webPageLeavingWebProcess()
 {
     ASSERT(processIsRunning());
 
@@ -77,7 +77,7 @@ void WebProcessLifetimeTracker::pageWasInvalidated()
     for (auto& observer : m_observers) {
         observer->removeWebPage(m_webPageProxy);
 
-        observer->webPageWasRemoved(m_webPageProxy);
+        observer->webPageWasInvalidated(m_webPageProxy);
     }
 }
 

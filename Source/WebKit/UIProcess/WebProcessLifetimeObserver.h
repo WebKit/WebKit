@@ -56,7 +56,7 @@ private:
     virtual void webPageWillOpenConnection(WebPageProxy&, IPC::Connection&) { }
     virtual void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) { }
     virtual void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) { }
-    virtual void webPageWasRemoved(WebPageProxy&) { }
+    virtual void webPageWasInvalidated(WebPageProxy&) { }
 
     HashCountedSet<WebProcessProxy*> m_processes;
 };

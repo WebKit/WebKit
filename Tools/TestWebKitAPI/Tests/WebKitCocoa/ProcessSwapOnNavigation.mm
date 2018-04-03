@@ -67,7 +67,11 @@ static HashSet<pid_t> seenPIDs;
 @implementation PSONMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    [receivedMessages addObject:[message body]];
+    if ([message body])
+        [receivedMessages addObject:[message body]];
+    else
+        [receivedMessages addObject:@""];
+
     receivedMessage = true;
 }
 @end
@@ -606,5 +610,81 @@ TEST(ProcessSwap, ServerRedirect2)
     EXPECT_EQ(2u, seenPIDs.size());
 }
 
+static const char* sessionStorageTestBytes = R"PSONRESOURCE(
+<head>
+<script>
+
+function log(msg)
+{
+    window.webkit.messageHandlers.pson.postMessage(msg);
+}
+
+window.onload = function(evt) {
+    log(sessionStorage.psonKey);
+    sessionStorage.psonKey = "I exist!";
+}
+
+</script>
+</head>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, SessionStorage)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler1 = adoptNS([[PSONScheme alloc] initWithBytes:sessionStorageTestBytes]);
+    auto handler2 = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler1.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler2.get() forURLScheme:@"PSON2"];
+
+    auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid3 = [webView _webProcessIdentifier];
+
+    // Verify the web pages are in different processes
+    EXPECT_NE(pid1, pid2);
+    EXPECT_NE(pid1, pid3);
+    EXPECT_NE(pid2, pid3);
+
+    // Verify the sessionStorage values were as expected
+    EXPECT_EQ([receivedMessages count], 2u);
+    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@""]);
+    EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"I exist!"]);
+}
 
 #endif // WK_API_ENABLED
