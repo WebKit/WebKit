@@ -1,3 +1,31 @@
+2018-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Enchant] Clean up TextCheckerEnchant
+        https://bugs.webkit.org/show_bug.cgi?id=184233
+
+        Reviewed by Michael Catanzaro.
+
+        Several cleanups and improvements:
+
+        * platform/text/enchant/TextCheckerEnchant.cpp:
+        (WebCore::TextCheckerEnchant::singleton): Make TextCheckerEnchant a singleton since it's always used as a
+        singleton.
+        (WebCore::TextCheckerEnchant::EnchantDictDeleter::operator() const):
+        (WebCore::TextCheckerEnchant::TextCheckerEnchant):
+        (WebCore::TextCheckerEnchant::ignoreWord): Convert to utf8 once instead of on every loop iteration.
+        (WebCore::TextCheckerEnchant::learnWord): Ditton.
+        (WebCore::TextCheckerEnchant::checkSpellingOfWord): m_enchantDictionaries is now a Vector of std::unique_ptr.
+        (WebCore::TextCheckerEnchant::getGuessesForWord): Convert to utf8 once instead of on every loop iteration.
+        (WebCore::TextCheckerEnchant::updateSpellCheckingLanguages): Get only the first language instead of building a
+        vector to get its first item. Use WTFMove to replace m_enchantDictionaries with the new Vector.
+        (WebCore::TextCheckerEnchant::loadedSpellCheckingLanguages const): Use a lambda to get the list of languages
+        already converted to String and iterate only once.
+        (WebCore::TextCheckerEnchant::availableSpellCheckingLanguages const): Ditto.
+        (WebCore::enchantDictDescribeCallback): Deleted.
+        (WebCore::TextCheckerEnchant::~TextCheckerEnchant): Deleted.
+        (WebCore::TextCheckerEnchant::freeEnchantBrokerDictionaries): Deleted.
+        * platform/text/enchant/TextCheckerEnchant.h:
+
 2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Segfaults in enchant_broker_free_dict()

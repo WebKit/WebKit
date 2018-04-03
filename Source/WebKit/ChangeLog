@@ -1,3 +1,21 @@
+2018-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Enchant] Clean up TextCheckerEnchant
+        https://bugs.webkit.org/show_bug.cgi?id=184233
+
+        Reviewed by Michael Catanzaro.
+
+        Use TextCheckerEnchant as a singleton now, instead of implementing the singleton here.
+
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        (WebKit::TextChecker::setSpellCheckingLanguages):
+        (WebKit::TextChecker::loadedSpellCheckingLanguages):
+        (WebKit::enchantTextChecker): Deleted.
+
 2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] NetworkProcess from WebKitGtk+ 2.19.9x SIGSEVs in NetworkStorageSession (secret search callback)

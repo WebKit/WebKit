@@ -17,25 +17,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef TextCheckerEnchant_h
-#define TextCheckerEnchant_h
+#pragma once
 
 #if ENABLE(SPELLCHECK)
 
 #include <enchant.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class TextCheckerEnchant {
-    WTF_MAKE_FAST_ALLOCATED;
-
+    WTF_MAKE_NONCOPYABLE(TextCheckerEnchant); WTF_MAKE_FAST_ALLOCATED;
+    friend class WTF::NeverDestroyed<TextCheckerEnchant>;
 public:
-    TextCheckerEnchant();
-    virtual ~TextCheckerEnchant();
+    static TextCheckerEnchant& singleton();
 
     void ignoreWord(const String&);
     void learnWord(const String&);
@@ -47,15 +43,21 @@ public:
     Vector<String> availableSpellCheckingLanguages() const;
 
 private:
-    void freeEnchantBrokerDictionaries();
+    TextCheckerEnchant();
+    ~TextCheckerEnchant() = delete;
+
     void checkSpellingOfWord(const String&, int start, int end, int& misspellingLocation, int& misspellingLength);
 
+    struct EnchantDictDeleter {
+        void operator()(EnchantDict*) const;
+    };
+
+    using UniqueEnchantDict = std::unique_ptr<EnchantDict, EnchantDictDeleter>;
+
     EnchantBroker* m_broker;
-    Vector<EnchantDict*> m_enchantDictionaries;
+    Vector<UniqueEnchantDict> m_enchantDictionaries;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SPELLCHECK)
-
-#endif

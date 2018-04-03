@@ -39,14 +39,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if ENABLE(SPELLCHECK)
-static WebCore::TextCheckerEnchant& enchantTextChecker()
-{
-    static NeverDestroyed<WebCore::TextCheckerEnchant> checker;
-    return checker;
-}
-#endif
-
 TextCheckerState& checkerState()
 {
     static TextCheckerState textCheckerState;
@@ -149,7 +141,7 @@ void TextChecker::checkSpellingOfString(int64_t /* spellDocumentTag */, StringVi
 #if ENABLE(SPELLCHECK)
     misspellingLocation = -1;
     misspellingLength = 0;
-    enchantTextChecker().checkSpellingOfString(text.toStringWithoutCopying(), misspellingLocation, misspellingLength);
+    TextCheckerEnchant::singleton().checkSpellingOfString(text.toStringWithoutCopying(), misspellingLocation, misspellingLength);
 #else
     UNUSED_PARAM(text);
     UNUSED_PARAM(misspellingLocation);
@@ -181,7 +173,7 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t /* spellDocumentTag 
 void TextChecker::getGuessesForWord(int64_t /* spellDocumentTag */, const String& word, const String& /* context */, int32_t /* insertionPoint */, Vector<String>& guesses, bool)
 {
 #if ENABLE(SPELLCHECK)
-    guesses = enchantTextChecker().getGuessesForWord(word);
+    guesses = TextCheckerEnchant::singleton().getGuessesForWord(word);
 #else
     UNUSED_PARAM(word);
     UNUSED_PARAM(guesses);
@@ -191,7 +183,7 @@ void TextChecker::getGuessesForWord(int64_t /* spellDocumentTag */, const String
 void TextChecker::learnWord(int64_t /* spellDocumentTag */, const String& word)
 {
 #if ENABLE(SPELLCHECK)
-    enchantTextChecker().learnWord(word);
+    TextCheckerEnchant::singleton().learnWord(word);
 #else
     UNUSED_PARAM(word);
 #endif
@@ -200,7 +192,7 @@ void TextChecker::learnWord(int64_t /* spellDocumentTag */, const String& word)
 void TextChecker::ignoreWord(int64_t /* spellDocumentTag */, const String& word)
 {
 #if ENABLE(SPELLCHECK)
-    enchantTextChecker().ignoreWord(word);
+    TextCheckerEnchant::singleton().ignoreWord(word);
 #else
     UNUSED_PARAM(word);
 #endif
@@ -296,7 +288,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 void TextChecker::setSpellCheckingLanguages(const Vector<String>& languages)
 {
 #if ENABLE(SPELLCHECK)
-    enchantTextChecker().updateSpellCheckingLanguages(languages);
+    TextCheckerEnchant::singleton().updateSpellCheckingLanguages(languages);
 #else
     UNUSED_PARAM(languages);
 #endif
@@ -305,7 +297,7 @@ void TextChecker::setSpellCheckingLanguages(const Vector<String>& languages)
 Vector<String> TextChecker::loadedSpellCheckingLanguages()
 {
 #if ENABLE(SPELLCHECK)
-    return enchantTextChecker().loadedSpellCheckingLanguages();
+    return TextCheckerEnchant::singleton().loadedSpellCheckingLanguages();
 #else
     return Vector<String>();
 #endif
