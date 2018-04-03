@@ -53,10 +53,11 @@ std::optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
     bool visibleToHistoryClient;
     if (!decoder.decode(visibleToHistoryClient))
         return std::nullopt;
-    uint64_t userContentControllerIdentifier;
-    if (!decoder.decode(userContentControllerIdentifier))
+    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    decoder >> userContentControllerIdentifier;
+    if (!userContentControllerIdentifier)
         return std::nullopt;
-    return { { id, pageGroupID, visibleToInjectedBundle, visibleToHistoryClient, userContentControllerIdentifier } };
+    return { { id, pageGroupID, visibleToInjectedBundle, visibleToHistoryClient, *userContentControllerIdentifier } };
 }
 
 } // namespace WebKit

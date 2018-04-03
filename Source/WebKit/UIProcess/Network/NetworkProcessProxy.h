@@ -33,6 +33,7 @@
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
+#include "UserContentControllerIdentifier.h"
 #include "WebProcessProxyMessages.h"
 #include <memory>
 #include <wtf/Deque.h>
@@ -59,6 +60,7 @@ class WebProcessPool;
 enum class WebsiteDataFetchOption;
 enum class WebsiteDataType;
 struct NetworkProcessCreationParameters;
+class WebUserContentControllerProxy;
 struct WebsiteData;
 
 class NetworkProcessProxy : public ChildProcessProxy, private ProcessThrottlerClient {
@@ -93,6 +95,10 @@ public:
 
     ProcessThrottler& throttler() { return m_throttler; }
     WebProcessPool& processPool() { return m_processPool; }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
+#endif
 
 private:
     NetworkProcessProxy(WebProcessPool&);
@@ -139,6 +145,10 @@ private:
     void allStorageAccessEntriesResult(Vector<String>&& domains, uint64_t contextId);
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    void contentExtensionRules(UserContentControllerIdentifier);
+#endif
+
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
@@ -161,6 +171,10 @@ private:
     HashMap<uint64_t, CompletionHandler<void(bool success)>> m_writeBlobToFilePathCallbackMap;
     HashMap<uint64_t, WTF::CompletionHandler<void(bool wasGranted)>> m_storageAccessResponseCallbackMap;
     HashMap<uint64_t, CompletionHandler<void(Vector<String>&& domains)>> m_allStorageAccessEntriesCallbackMap;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
+#endif
 };
 
 } // namespace WebKit

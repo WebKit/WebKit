@@ -1,3 +1,100 @@
+2018-04-03  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkProcess get ContentBlocker information from UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184205
+
+        Reviewed by Alex Christensen.
+
+        Make NetworkProcess get content blockers from UIProcess directly.
+        Before that patch, WebProcess sent content blockers to NetworkProcess for each PingLoad.
+        Instead, WebProcess sends the content blocker identifier for each PingLoad and NetworkProcess fetches the content blocker once.
+
+        This is both more efficient than passing them for each PingLoad and safer in the sense
+        that a compromised WebProcess will not be able to bypass any of these.
+        In the future, NetworkProcess should get the content blocker identifier directly from the WebPageID attached to the request.
+
+        Covered by existing beacon+content blocker tests.
+
+        Did some refactoring to add a typed content blocker identifier.
+        Once NetworkProcess fetches a given content blocker, the content blocker will send any modification to NetworkProcess.
+        Introduced NetworkContentRuleListManager to handle the content blockers in NetworkProcess.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::continueCheckingRequest):
+        (WebKit::NetworkLoadChecker::processContentExtensionRulesForLoad):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::setContentExtensionController):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::networkUserContentController):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkContentRuleListManager.cpp: Added.
+        (WebKit::NetworkContentRuleListManager::contentExtensionsBackend):
+        (WebKit::NetworkContentRuleListManager::addContentRuleLists):
+        (WebKit::NetworkContentRuleListManager::removeContentRuleList):
+        (WebKit::NetworkContentRuleListManager::removeAllContentRuleLists):
+        (WebKit::NetworkContentRuleListManager::remove):
+        * NetworkProcess/NetworkContentRuleListManager.h: Added.
+        * NetworkProcess/NetworkContentRuleListManager.messages.in: Added.
+        * NetworkProcess/PingLoad.cpp:
+        * Scripts/webkit/messages.py:
+        * Shared/UserContentControllerIdentifier.h: Added.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::contentExtensionRules):
+        (WebKit::NetworkProcessProxy::didDestroyWebUserContentControllerProxy):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::get):
+        (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::~WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::removeProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentWorldUse):
+        (WebKit::WebUserContentControllerProxy::removeUserContentWorldUses):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::addUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeUserStyleSheet):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        (WebKit::WebUserContentControllerProxy::addUserScriptMessageHandler):
+        (WebKit::WebUserContentControllerProxy::removeUserMessageHandlerForName):
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+        (WebKit::WebUserContentControllerProxy::addContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeContentRuleList):
+        (WebKit::WebUserContentControllerProxy::removeAllContentRuleLists):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::create):
+        (WebKit::WebUserContentControllerProxy::addNetworkProcess):
+        (WebKit::WebUserContentControllerProxy::removeNetworkProcess):
+        (WebKit::WebUserContentControllerProxy::contentExtensionRules):
+        (WebKit::WebUserContentControllerProxy::identifier const):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::getOrCreate):
+        (WebKit::WebUserContentController::WebUserContentController):
+        (WebKit::WebUserContentController::~WebUserContentController):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userContentControllerIdentifier const):
+
 2018-04-03  Andy Estes  <aestes@apple.com>
 
         [Mac] Prioritize file promises over filenames during drag and drop

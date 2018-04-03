@@ -42,13 +42,13 @@ PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& o
     : m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(m_parameters.mode, m_parameters.shouldFollowRedirects, m_parameters.storedCredentialsPolicy, m_parameters.sessionID, WTFMove(originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef()))
+    , m_networkLoadChecker(NetworkLoadChecker::create(m_parameters.mode, m_parameters.shouldFollowRedirects, m_parameters.storedCredentialsPolicy, m_parameters.sessionID, WTFMove(originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef()))
 {
 
     if (m_parameters.cspResponseHeaders)
         m_networkLoadChecker->setCSPResponseHeaders(WTFMove(m_parameters.cspResponseHeaders.value()));
 #if ENABLE(CONTENT_EXTENSIONS)
-    m_networkLoadChecker->setContentExtensionRuleLists(WTFMove(m_parameters.mainDocumentURL), WTFMove(m_parameters.contentRuleLists));
+    m_networkLoadChecker->setContentExtensionController(WTFMove(m_parameters.mainDocumentURL), m_parameters.userContentControllerIdentifier);
 #endif
 
     // If the server never responds, this object will hang around forever.

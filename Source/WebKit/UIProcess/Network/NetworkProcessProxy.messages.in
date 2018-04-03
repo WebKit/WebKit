@@ -47,4 +47,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     StorageAccessRequestResult(bool wasGranted, uint64_t contextId)
     AllStorageAccessEntriesResult(Vector<String> domains, uint64_t contextId)
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    ContentExtensionRules(WebKit::UserContentControllerIdentifier identifier)
+#endif
 }

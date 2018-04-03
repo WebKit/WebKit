@@ -472,14 +472,12 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
 
 #if ENABLE(CONTENT_EXTENSIONS)
     loadParameters.mainDocumentURL = document->topDocument().url();
-
-    if (auto* documentLoader = frame.loader().documentLoader()) {
-        if (auto* page = frame.page()) {
-            page->userContentProvider().forEachContentExtension([&loadParameters](const String& identifier, ContentExtensions::ContentExtension& contentExtension) {
-                loadParameters.contentRuleLists.append(std::make_pair(identifier, static_cast<const WebCompiledContentRuleList&>(contentExtension.compiledExtension()).data()));
-            }, *documentLoader);
-        }
-    }
+    // FIXME: Instead of passing userContentControllerIdentifier, we should just pass webPageId to NetworkProcess.
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame.loader().client());
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    WebPage* webPage = webFrame ? webFrame->page() : nullptr;
+    if (webPage)
+        loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
 #endif
 
     if (completionHandler)

@@ -28,7 +28,9 @@
 
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
+#include "NetworkProcess.h"
 #include "WebCompiledContentRuleList.h"
+#include "WebUserContentController.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
@@ -95,12 +97,20 @@ NetworkLoadChecker::RequestOrError NetworkLoadChecker::returnError(String&& erro
 void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandler&& handler)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (processContentExtensionRulesForLoad(request).blockedLoad) {
-        handler(returnError(ASCIILiteral("Blocked by content extension")));
-        return;
-    }
+    processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler)](auto&& request, auto status) mutable {
+        if (status.blockedLoad) {
+            handler(this->returnError(ASCIILiteral("Blocked by content extension")));
+            return;
+        }
+        this->continueCheckingRequest(WTFMove(request), WTFMove(handler));
+    });
+#else
+    continueCheckingRequest(WTFMove(request), WTFMove(handler));
 #endif
+}
 
+void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, ValidationHandler&& handler)
+{
     if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
         if (isRedirected()) {
             URL url = request.url();
@@ -229,21 +239,18 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy() const
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-ContentExtensions::ContentExtensionsBackend& NetworkLoadChecker::contentExtensionsBackend()
+void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&, const ContentExtensions::BlockedStatus&)>&& callback)
 {
-    if (!m_contentExtensionsBackend) {
-        m_contentExtensionsBackend = std::make_unique<ContentExtensions::ContentExtensionsBackend>();
-        for (auto& pair : m_contentRuleLists)
-            m_contentExtensionsBackend->addContentExtension(pair.first, WebCompiledContentRuleList::create(WTFMove(pair.second)));
+    if (!m_userContentControllerIdentifier) {
+        ContentExtensions::BlockedStatus status;
+        callback(WTFMove(request), status);
+        return;
     }
-    return *m_contentExtensionsBackend;
-}
-
-ContentExtensions::BlockedStatus NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest& request)
-{
-    auto status = contentExtensionsBackend().processContentExtensionRulesForPingLoad(request.url(), m_mainDocumentURL);
-    applyBlockedStatusToRequest(status, nullptr, request);
-    return status;
+    NetworkProcess::singleton().networkContentRuleListManager().contentExtensionsBackend(*m_userContentControllerIdentifier, [protectedThis = makeRef(*this), this, request = WTFMove(request), callback = WTFMove(callback)](auto& backend) mutable {
+        auto status = backend.processContentExtensionRulesForPingLoad(request.url(), m_mainDocumentURL);
+        applyBlockedStatusToRequest(status, nullptr, request);
+        callback(WTFMove(request), status);
+    });
 }
 #endif // ENABLE(CONTENT_EXTENSIONS)
 

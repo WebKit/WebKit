@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,40 @@
 
 #pragma once
 
-#include "NetworkLoadParameters.h"
-#include "SandboxExtension.h"
+#if ENABLE(CONTENT_EXTENSIONS)
+
 #include "UserContentControllerIdentifier.h"
-#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
-#include <WebCore/FetchOptions.h>
-#include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
-#include <WebCore/SecurityOrigin.h>
-#include <pal/SessionID.h>
-#include <wtf/Seconds.h>
+#include "WebCompiledContentRuleListData.h"
+#include <WebCore/ContentExtensionsBackend.h>
+#include <WebCore/UserContentProvider.h>
 
 namespace IPC {
+class Connection;
 class Decoder;
-class Encoder;
 }
 
 namespace WebKit {
 
-typedef uint64_t ResourceLoadIdentifier;
-
-class NetworkResourceLoadParameters : public NetworkLoadParameters {
+class NetworkContentRuleListManager {
 public:
-    void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, NetworkResourceLoadParameters&);
+    NetworkContentRuleListManager();
+    ~NetworkContentRuleListManager();
 
-    ResourceLoadIdentifier identifier { 0 };
-    Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
-    RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
-    Seconds maximumBufferingTime;
-    Vector<String> derivedCachedDataTypesToRetrieve;
-    RefPtr<WebCore::SecurityOrigin> sourceOrigin;
-    WebCore::FetchOptions::Mode mode;
-    std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-#if ENABLE(CONTENT_EXTENSIONS)
-    WebCore::URL mainDocumentURL;
-    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
-#endif
+    using BackendCallback = CompletionHandler<void(WebCore::ContentExtensions::ContentExtensionsBackend&)>;
+    void contentExtensionsBackend(UserContentControllerIdentifier, BackendCallback&&);
+
+private:
+    void addContentRuleLists(UserContentControllerIdentifier, const Vector<std::pair<String, WebCompiledContentRuleListData>>&);
+    void removeContentRuleList(UserContentControllerIdentifier, const String& name);
+    void removeAllContentRuleLists(UserContentControllerIdentifier);
+    void remove(UserContentControllerIdentifier);
+
+    HashMap<UserContentControllerIdentifier, std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend>> m_contentExtensionBackends;
+    HashMap<UserContentControllerIdentifier, Vector<BackendCallback>> m_pendingCallbacks;
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

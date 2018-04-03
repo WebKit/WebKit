@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,11 @@
 
 #pragma once
 
-#include "UserContentControllerIdentifier.h"
-#include <wtf/text/WTFString.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-struct WebPageGroupData {
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebPageGroupData> decode(IPC::Decoder&);
+enum UserContentControllerIdentifierType { };
+using UserContentControllerIdentifier = ObjectIdentifier<UserContentControllerIdentifierType>;
 
-    String identifier;
-    uint64_t pageGroupID;
-    bool visibleToInjectedBundle;
-    bool visibleToHistoryClient;
-
-    UserContentControllerIdentifier userContentControllerIdentifier;
-};
-
-} // namespace WebKit
+}
