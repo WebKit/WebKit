@@ -1985,6 +1985,9 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     if (!m_configuration->processSwapsOnNavigation())
         return page.process();
 
+    if (!page.process().hasCommittedAnyProvisionalLoads())
+        return page.process();
+
     // FIXME: We should support process swap when a window has an opener.
     if (navigation.opener())
         return page.process();
@@ -1994,9 +1997,9 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
         return createNewWebProcess(page.websiteDataStore());
     }
 
-    auto targetURL = navigation.request().url();
+    auto targetURL = navigation.currentRequest().url();
     auto url = URL { ParsedURLString, page.pageLoadState().url() };
-    if (!url.isValid() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
+    if (!url.isValid() || url.isEmpty() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
         return page.process();
 
     action = PolicyAction::Suspend;

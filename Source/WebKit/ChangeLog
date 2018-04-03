@@ -1,3 +1,67 @@
+2018-04-02  Brady Eidson  <beidson@apple.com>
+
+        Process swapping on navigation needs to handle server redirects.
+        <rdar://problem/38690465> and https://bugs.webkit.org/show_bug.cgi?id=184142
+
+        Reviewed by Alex Christensen.
+
+        The same rules we apply to process swapping for basic navigations need to apply
+        to server redirects as well.
+
+        There's three interesting cases we need to support that are covered by new API tests:
+        1 - The initial load in a WKWebView redirects cross-origin.
+        2 - A WKWebView is showing content from a.com, we start a load to b.com, and that redirects to c.com
+        3 - A WKWebView is showing content from a.com, we start a load to a.com, that that redirects to b.com.
+
+        Supporting all 3 of these brought their own little challenges.
+
+        By teaching Navigation objects more about redirects I was able to support all 3 cases.
+
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::Navigation):
+        (API::Navigation::setCurrentRequest):
+        (API::Navigation::appendRedirectionURL):
+        (API::Navigation::loggingString const):
+        (API::Navigation::loggingURL const): Deleted.
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::originalRequest const):
+        (API::Navigation::currentRequest const):
+        (API::Navigation::currentRequestProcessIdentifier const):
+        (API::Navigation::setCurrentRequestIsRedirect):
+        (API::Navigation::currentRequestIsRedirect const):
+        (API::Navigation::request const): Deleted.
+
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        (-[WKNavigation _request]):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess): If this continued navigation is currently in a server
+          redirect, save off a lambda to synthesize a "did receive server redirect" callback once the new WebProcess is running.
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame): Possibly ignore this notification if it is really a
+          cross-origin redirect that is just starting back up in a new WebProcess.
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited): Do not clear pageLoadState if the process is exitting for
+          a navigation swap, as we will need to pick up where we left off when the load continues in a new WebProcess.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation): If a process has never committed any provisional load, it can always
+          be used to continue a navigation.
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::didCommitProvisionalLoad):
+        (WebKit::WebProcessProxy::hasCommittedAnyProvisionalLoads const):
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-04-02  Eric Carlson  <eric.carlson@apple.com>
 
         [Extra zoom mode] Replace video with a placeholder image during fullscreen transition
