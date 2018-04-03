@@ -1,3 +1,25 @@
+2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] NetworkProcess from WebKitGtk+ 2.19.9x SIGSEVs in NetworkStorageSession (secret search callback)
+        https://bugs.webkit.org/show_bug.cgi?id=183346
+
+        Reviewed by Michael Catanzaro.
+
+        This might happen if a request is cancelled right after the password request starts and before it finishes. We
+        should cancel the password search when the network request is cancelled, not only when the NetworkStorageSession
+        is destroyed.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::~NetworkStorageSession):
+        (WebCore::SecretServiceSearchData::SecretServiceSearchData): Helper struct to keep the request cancellable and
+        completion handler.
+        (WebCore::NetworkStorageSession::getCredentialFromPersistentStorage): Create a SecretServiceSearchData for the
+        request.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Pass the request cancellable to
+        NetworkStorageSession::getCredentialFromPersistentStorage().
+
 2018-04-02  Eric Carlson  <eric.carlson@apple.com>
 
         [Extra zoom mode] Replace video with a placeholder image during fullscreen transition

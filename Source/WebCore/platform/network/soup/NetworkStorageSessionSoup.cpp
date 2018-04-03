@@ -61,10 +61,6 @@ NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, std::uniq
 NetworkStorageSession::~NetworkStorageSession()
 {
     g_signal_handlers_disconnect_matched(m_cookieStorage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-
-#if USE(LIBSECRET)
-    g_cancellable_cancel(m_persisentStorageCancellable.get());
-#endif
 }
 
 static std::unique_ptr<NetworkStorageSession>& defaultSession()
@@ -187,9 +183,22 @@ static const char* authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSpa
     ASSERT_NOT_REACHED();
     return "unknown";
 }
+
+struct SecretServiceSearchData {
+    SecretServiceSearchData(GCancellable* cancellable, Function<void (Credential&&)>&& completionHandler)
+        : cancellable(cancellable)
+        , completionHandler(WTFMove(completionHandler))
+    {
+    }
+
+    ~SecretServiceSearchData() = default;
+
+    GRefPtr<GCancellable> cancellable;
+    Function<void (Credential&&)> completionHandler;
+};
 #endif // USE(LIBSECRET)
 
-void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionSpace& protectionSpace, Function<void (Credential&&)> completionHandler)
+void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionSpace& protectionSpace, GCancellable* cancellable, Function<void (Credential&&)>&& completionHandler)
 {
 #if USE(LIBSECRET)
     if (m_sessionID.isEphemeral()) {
@@ -215,36 +224,32 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
         return;
     }
 
-    m_persisentStorageCancellable = adoptGRef(g_cancellable_new());
-    m_persisentStorageCompletionHandler = WTFMove(completionHandler);
+    auto data = std::make_unique<SecretServiceSearchData>(cancellable, WTFMove(completionHandler));
     secret_service_search(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(),
-        static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS), m_persisentStorageCancellable.get(),
+        static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS), cancellable,
         [](GObject* source, GAsyncResult* result, gpointer userData) {
+            auto data = std::unique_ptr<SecretServiceSearchData>(static_cast<SecretServiceSearchData*>(userData));
             GUniqueOutPtr<GError> error;
             GUniquePtr<GList> elements(secret_service_search_finish(SECRET_SERVICE(source), result, &error.outPtr()));
-            if (g_error_matches (error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                return;
-
-            NetworkStorageSession* session = static_cast<NetworkStorageSession*>(userData);
-            auto completionHandler = std::exchange(session->m_persisentStorageCompletionHandler, nullptr);
-            if (error || !elements || !elements->data) {
-                completionHandler({ });
+            if (g_cancellable_is_cancelled(data->cancellable.get()) || error || !elements || !elements->data) {
+                data->completionHandler({ });
                 return;
             }
 
-            GRefPtr<SecretItem> secretItem = adoptGRef(static_cast<SecretItem*>(elements->data));
+            GRefPtr<SecretItem> secretItem = static_cast<SecretItem*>(elements->data);
+            g_list_foreach(elements.get(), reinterpret_cast<GFunc>(g_object_unref), nullptr);
             GRefPtr<GHashTable> attributes = adoptGRef(secret_item_get_attributes(secretItem.get()));
             String user = String::fromUTF8(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "user")));
             if (user.isEmpty()) {
-                completionHandler({ });
+                data->completionHandler({ });
                 return;
             }
 
             size_t length;
             GRefPtr<SecretValue> secretValue = adoptGRef(secret_item_get_secret(secretItem.get()));
             const char* passwordData = secret_value_get(secretValue.get(), &length);
-            completionHandler(Credential(user, String::fromUTF8(passwordData, length), CredentialPersistencePermanent));
-    }, this);
+            data->completionHandler(Credential(user, String::fromUTF8(passwordData, length), CredentialPersistencePermanent));
+        }, data.release());
 #else
     UNUSED_PARAM(protectionSpace);
     completionHandler({ });

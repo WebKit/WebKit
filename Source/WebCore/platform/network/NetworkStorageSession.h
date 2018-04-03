@@ -124,7 +124,7 @@ public:
     SoupCookieJar* cookieStorage() const;
     void setCookieStorage(SoupCookieJar*);
     void setCookieObserverHandler(Function<void ()>&&);
-    void getCredentialFromPersistentStorage(const ProtectionSpace&, Function<void (Credential&&)> completionHandler);
+    void getCredentialFromPersistentStorage(const ProtectionSpace&, GCancellable*, Function<void (Credential&&)>&& completionHandler);
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
 #elif USE(CURL)
     NetworkStorageSession(PAL::SessionID, NetworkingContext*);
@@ -162,10 +162,6 @@ private:
     mutable std::unique_ptr<SoupNetworkSession> m_session;
     GRefPtr<SoupCookieJar> m_cookieStorage;
     Function<void ()> m_cookieObserverHandler;
-#if USE(LIBSECRET)
-    Function<void (Credential&&)> m_persisentStorageCompletionHandler;
-    GRefPtr<GCancellable> m_persisentStorageCancellable;
-#endif
 #elif USE(CURL)
     RefPtr<NetworkingContext> m_context;
 
