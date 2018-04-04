@@ -1,3 +1,14 @@
+2018-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Add a test for HttpOnly cookies used to load AppCache resources
+        https://bugs.webkit.org/show_bug.cgi?id=184305
+        <rdar://problem/39175648>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/appcache/document-cookie-http-only-expected.txt: Added.
+        * http/tests/appcache/document-cookie-http-only.php: Added.
+
 2018-04-04  Ms2ger  <Ms2ger@igalia.com>
 
         Test gardening for GTK.
