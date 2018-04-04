@@ -1,3 +1,17 @@
+2018-04-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove Atomics.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184300
+
+        Reviewed by Konstantin Tokarev.
+
+        This Atomics.cpp is a workaround for GCC which version is < 4.8.
+        Our compiler requirement is now 5.0.0. This workaround is no
+        longer necessary.
+
+        * wtf/Atomics.cpp: Removed.
+        * wtf/CMakeLists.txt:
+
 2018-04-03  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed, mute the unused parameter compilation warning
