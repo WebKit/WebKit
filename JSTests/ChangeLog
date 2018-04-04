@@ -1,3 +1,12 @@
+2018-04-03  Mark Lam  <mark.lam@apple.com>
+
+        Test js-fixed-array-out-of-memory.js should be excluded for memory limited devices.
+        https://bugs.webkit.org/show_bug.cgi?id=184284
+
+        Reviewed by Saam Barati.
+
+        * stress/js-fixed-array-out-of-memory.js:
+
 2018-03-31  Filip Pizlo  <fpizlo@apple.com>
 
         JSC crash in JIT code with for-of loop and Array/Set iterators

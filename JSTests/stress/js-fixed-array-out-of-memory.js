@@ -1,4 +1,4 @@
-//@ if $buildType == "debug" then runDefault("--maxSingleAllocationSize=1048576") else skip end
+//@ if $buildType == "debug" && !$memoryLimited then runDefault("--maxSingleAllocationSize=1048576") else skip end
 
 var exception;
 
