@@ -36,27 +36,22 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DirectArguments);
 
 const ClassInfo DirectArguments::s_info = { "Arguments", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DirectArguments) };
 
-DirectArguments::DirectArguments(VM& vm, Structure* structure, WriteBarrier<Unknown>* storage)
+DirectArguments::DirectArguments(VM& vm, Structure* structure, unsigned length, unsigned capacity)
     : GenericArguments(vm, structure)
-    , m_storage(vm, this, storage)
+    , m_length(length)
+    , m_minCapacity(capacity)
 {
     // When we construct the object from C++ code, we expect the capacity to be at least as large as
     // length. JIT-allocated DirectArguments objects play evil tricks, though.
-    ASSERT(storageHeader(storage).minCapacity >= storageHeader(storage).length);
+    ASSERT(capacity >= length);
 }
 
 DirectArguments* DirectArguments::createUninitialized(
     VM& vm, Structure* structure, unsigned length, unsigned capacity)
 {
-    void* rawStoragePtr = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
-        vm, storageSize(capacity), nullptr, AllocationFailureMode::Assert);
-    WriteBarrier<Unknown>* storage = static_cast<WriteBarrier<Unknown>*>(rawStoragePtr) + 1;
-    storageHeader(storage).length = length;
-    storageHeader(storage).minCapacity = capacity;
-    
     DirectArguments* result =
-        new (NotNull, allocateCell<DirectArguments>(vm.heap))
-        DirectArguments(vm, structure, storage);
+        new (NotNull, allocateCell<DirectArguments>(vm.heap, allocationSize(capacity)))
+        DirectArguments(vm, structure, length, capacity);
     result->finishCreation(vm);
     return result;
 }
@@ -64,10 +59,9 @@ DirectArguments* DirectArguments::createUninitialized(
 DirectArguments* DirectArguments::create(VM& vm, Structure* structure, unsigned length, unsigned capacity)
 {
     DirectArguments* result = createUninitialized(vm, structure, length, capacity);
-
-    WriteBarrier<Unknown>* storage = result->storage();
+    
     for (unsigned i = capacity; i--;)
-        storage[i].clear();
+        result->storage()[i].clear();
     
     return result;
 }
@@ -81,9 +75,8 @@ DirectArguments* DirectArguments::createByCopying(ExecState* exec)
     DirectArguments* result = createUninitialized(
         vm, exec->lexicalGlobalObject()->directArgumentsStructure(), length, capacity);
     
-    WriteBarrier<Unknown>* storage = result->storage();
     for (unsigned i = capacity; i--;)
-        storage[i].set(vm, result, exec->getArgumentUnsafe(i));
+        result->storage()[i].set(vm, result, exec->getArgumentUnsafe(i));
     
     result->setCallee(vm, jsCast<JSFunction*>(exec->jsCallee()));
     
@@ -94,7 +87,7 @@ size_t DirectArguments::estimatedSize(JSCell* cell)
 {
     DirectArguments* thisObject = jsCast<DirectArguments*>(cell);
     size_t mappedArgumentsSize = thisObject->m_mappedArguments ? thisObject->mappedArgumentsSize() * sizeof(bool) : 0;
-    size_t modifiedArgumentsSize = thisObject->m_modifiedArgumentsDescriptor ? thisObject->storageHeader().length * sizeof(bool) : 0;
+    size_t modifiedArgumentsSize = thisObject->m_modifiedArgumentsDescriptor ? thisObject->m_length * sizeof(bool) : 0;
     return Base::estimatedSize(cell) + mappedArgumentsSize + modifiedArgumentsSize;
 }
 
@@ -104,14 +97,11 @@ void DirectArguments::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.markAuxiliary(&thisObject->storageHeader());
-    visitor.appendValues(thisObject->storage(), std::max(thisObject->storageHeader().length, thisObject->storageHeader().minCapacity));
-    
+    visitor.appendValues(thisObject->storage(), std::max(thisObject->m_length, thisObject->m_minCapacity));
     visitor.append(thisObject->m_callee);
 
     if (thisObject->m_mappedArguments)
         visitor.markAuxiliary(thisObject->m_mappedArguments.get());
-    
     GenericArguments<DirectArguments>::visitChildren(thisCell, visitor);
 }
 
@@ -124,14 +114,14 @@ void DirectArguments::overrideThings(VM& vm)
 {
     RELEASE_ASSERT(!m_mappedArguments);
     
-    putDirect(vm, vm.propertyNames->length, jsNumber(storageHeader().length), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->length, jsNumber(m_length), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).allocateNonVirtual(vm, mappedArgumentsSize(), nullptr, AllocationFailureMode::Assert);
     bool* overrides = static_cast<bool*>(backingStore);
     m_mappedArguments.set(vm, this, overrides);
-    for (unsigned i = storageHeader().length; i--;)
+    for (unsigned i = m_length; i--;)
         overrides[i] = false;
 }
 
@@ -150,12 +140,11 @@ void DirectArguments::unmapArgument(VM& vm, unsigned index)
 void DirectArguments::copyToArguments(ExecState* exec, VirtualRegister firstElementDest, unsigned offset, unsigned length)
 {
     if (!m_mappedArguments) {
-        unsigned limit = std::min(length + offset, storageHeader().length);
+        unsigned limit = std::min(length + offset, m_length);
         unsigned i;
         VirtualRegister start = firstElementDest - offset;
-        WriteBarrier<Unknown>* storage = this->storage();
         for (i = offset; i < limit; ++i)
-            exec->r(start + i) = storage[i].get();
+            exec->r(start + i) = storage()[i].get();
         for (; i < length; ++i)
             exec->r(start + i) = get(exec, i);
         return;
@@ -169,7 +158,7 @@ unsigned DirectArguments::mappedArgumentsSize()
     // We always allocate something; in the relatively uncommon case of overriding an empty argument we
     // still allocate so that m_mappedArguments is non-null. We use that to indicate that the other properties
     // (length, etc) are overridden.
-    return WTF::roundUpToMultipleOf<8>(storageHeader().length ? storageHeader().length : 1);
+    return WTF::roundUpToMultipleOf<8>(m_length ? m_length : 1);
 }
 
 } // namespace JSC

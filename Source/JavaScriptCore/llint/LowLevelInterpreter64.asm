@@ -2562,9 +2562,7 @@ _llint_op_get_from_arguments:
     traceExecution()
     loadVariable(2, t0)
     loadi 24[PB, PC, 8], t1
-    loadp DirectArguments::m_storage[t0], t0
-    unpoison(_g_DirectArgumentsPoison, t0, t3)
-    loadq [t0, t1, 8], t0
+    loadq DirectArguments_storage[t0, t1, 8], t0
     valueProfile(t0, 4, t1)
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
@@ -2577,9 +2575,7 @@ _llint_op_put_to_arguments:
     loadi 16[PB, PC, 8], t1
     loadisFromInstruction(3, t3)
     loadConstantOrVariable(t3, t2)
-    loadp DirectArguments::m_storage[t0], t0
-    unpoison(_g_DirectArgumentsPoison, t0, t3)
-    storeq t2, [t0, t1, 8]
+    storeq t2, DirectArguments_storage[t0, t1, 8]
     writeBarrierOnOperands(1, 3)
     dispatch(constexpr op_put_to_arguments_length)
 

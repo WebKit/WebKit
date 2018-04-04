@@ -1,5 +1,62 @@
 2018-04-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Don't do index masking or poisoning for DirectArguments
+        https://bugs.webkit.org/show_bug.cgi?id=184280
+
+        Reviewed by Saam Barati.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGCallCreateDirectArgumentsSlowPathGenerator.h:
+        (JSC::DFG::CallCreateDirectArgumentsSlowPathGenerator::CallCreateDirectArgumentsSlowPathGenerator):
+        * dfg/DFGCallCreateDirectArgumentsWithKnownLengthSlowPathGenerator.h: Removed.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetFromArguments):
+        (JSC::DFG::SpeculativeJIT::compilePutToArguments):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetFromArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutToArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoison):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnLoadedType):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnType):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedHeapCell): Deleted.
+        * heap/SecurityKind.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_put_to_arguments):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::DirectArguments):
+        (JSC::DirectArguments::createUninitialized):
+        (JSC::DirectArguments::create):
+        (JSC::DirectArguments::createByCopying):
+        (JSC::DirectArguments::estimatedSize):
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::copyToArguments):
+        (JSC::DirectArguments::mappedArgumentsSize):
+        * runtime/DirectArguments.h:
+        * runtime/JSCPoison.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSSymbolTableObject.h:
+
+2018-04-03  Filip Pizlo  <fpizlo@apple.com>
+
         JSArray::appendMemcpy seems to be missing a barrier
         https://bugs.webkit.org/show_bug.cgi?id=184290
 

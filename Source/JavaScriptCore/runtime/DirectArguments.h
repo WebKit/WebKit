@@ -32,24 +32,25 @@
 
 namespace JSC {
 
-class LLIntOffsetsExtractor;
-    
 // This is an Arguments-class object that we create when you say "arguments" inside a function,
 // and none of the arguments are captured in the function's activation. The function will copy all
 // of its arguments into this object, and all subsequent accesses to the arguments will go through
 // this object thereafter. Special support is in place for mischevious events like the arguments
 // being deleted (something like "delete arguments[0]") or reconfigured (broadly, we say deletions
 // and reconfigurations mean that the respective argument was "overridden").
+//
+// To speed allocation, this object will hold all of the arguments in-place. The arguments as well
+// as a table of flags saying which arguments were overridden.
 class DirectArguments final : public GenericArguments<DirectArguments> {
 private:
-    DirectArguments(VM&, Structure*, WriteBarrier<Unknown>* storage);
+    DirectArguments(VM&, Structure*, unsigned length, unsigned capacity);
     
 public:
     template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
+    static CompleteSubspace* subspaceFor(VM& vm)
     {
         RELEASE_ASSERT(!CellType::needsDestruction);
-        return &vm.directArgumentsSpace;
+        return &vm.jsValueGigacageCellSpace;
     }
 
     // Creates an arguments object but leaves it uninitialized. This is dangerous if we GC right
@@ -68,7 +69,7 @@ public:
     
     uint32_t internalLength() const
     {
-        return storageHeader().length;
+        return m_length;
     }
     
     uint32_t length(ExecState* exec) const
@@ -81,33 +82,29 @@ public:
             scope.release();
             return value.toUInt32(exec);
         }
-        return storageHeader().length;
+        return m_length;
     }
     
     bool isMappedArgument(uint32_t i) const
     {
-        return i < storageHeader().length && (!m_mappedArguments || !m_mappedArguments[i]);
+        return i < m_length && (!m_mappedArguments || !m_mappedArguments[i]);
     }
 
     bool isMappedArgumentInDFG(uint32_t i) const
     {
-        return i < storageHeader().length && !overrodeThings();
+        return i < m_length && !overrodeThings();
     }
-    
+
     JSValue getIndexQuickly(uint32_t i) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(isMappedArgument(i));
-        WriteBarrier<Unknown>* storage = this->storage();
-        auto* ptr = &storage[i];
-        return preciseIndexMaskPtr(i, storageHeader(storage).length, ptr)->get();
+        return const_cast<DirectArguments*>(this)->storage()[i].get();
     }
     
     void setIndexQuickly(VM& vm, uint32_t i, JSValue value)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(isMappedArgument(i));
-        WriteBarrier<Unknown>* storage = this->storage();
-        auto* ptr = &storage[i];
-        preciseIndexMaskPtr(i, storageHeader(storage).length, ptr)->set(vm, this, value);
+        storage()[i].set(vm, this, value);
     }
     
     JSFunction* callee()
@@ -123,13 +120,8 @@ public:
     WriteBarrier<Unknown>& argument(DirectArgumentsOffset offset)
     {
         ASSERT(offset);
-        ASSERT_WITH_SECURITY_IMPLICATION(offset.offset() < std::max(storageHeader().length, storageHeader().minCapacity));
-        WriteBarrier<Unknown>* storage = this->storage();
-        auto* ptr = &storage[offset.offset()];
-        return *preciseIndexMaskPtr(
-            offset.offset(),
-            std::max(storageHeader(storage).length, storageHeader(storage).minCapacity),
-            ptr);
+        ASSERT_WITH_SECURITY_IMPLICATION(offset.offset() < std::max(m_length, m_minCapacity));
+        return storage()[offset.offset()];
     }
     
     // Methods intended for use by the GenericArguments mixin.
@@ -140,17 +132,17 @@ public:
 
     void initModifiedArgumentsDescriptorIfNecessary(VM& vm)
     {
-        GenericArguments<DirectArguments>::initModifiedArgumentsDescriptorIfNecessary(vm, storageHeader().length);
+        GenericArguments<DirectArguments>::initModifiedArgumentsDescriptorIfNecessary(vm, m_length);
     }
 
     void setModifiedArgumentDescriptor(VM& vm, unsigned index)
     {
-        GenericArguments<DirectArguments>::setModifiedArgumentDescriptor(vm, index, storageHeader().length);
+        GenericArguments<DirectArguments>::setModifiedArgumentDescriptor(vm, index, m_length);
     }
 
     bool isModifiedArgumentDescriptor(unsigned index)
     {
-        return GenericArguments<DirectArguments>::isModifiedArgumentDescriptor(index, storageHeader().length);
+        return GenericArguments<DirectArguments>::isModifiedArgumentDescriptor(index, m_length);
     }
 
     void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
@@ -160,55 +152,38 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
     static ptrdiff_t offsetOfCallee() { return OBJECT_OFFSETOF(DirectArguments, m_callee); }
+    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(DirectArguments, m_length); }
+    static ptrdiff_t offsetOfMinCapacity() { return OBJECT_OFFSETOF(DirectArguments, m_minCapacity); }
     static ptrdiff_t offsetOfMappedArguments() { return OBJECT_OFFSETOF(DirectArguments, m_mappedArguments); }
     static ptrdiff_t offsetOfModifiedArgumentsDescriptor() { return OBJECT_OFFSETOF(DirectArguments, m_modifiedArgumentsDescriptor); }
-    static ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(DirectArguments, m_storage); }
-
-    static ptrdiff_t offsetOfLengthInStorage() { return OBJECT_OFFSETOF(StorageHeader, length) - sizeof(WriteBarrier<Unknown>); }
-    static ptrdiff_t offsetOfMinCapacityInStorage() { return OBJECT_OFFSETOF(StorageHeader, minCapacity) - sizeof(WriteBarrier<Unknown>); }
     
-    static size_t storageSize(Checked<size_t> capacity)
+    static size_t storageOffset()
     {
-        return (sizeof(WriteBarrier<Unknown>) * (capacity + static_cast<size_t>(1))).unsafeGet();
+        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<Unknown>)>(sizeof(DirectArguments));
     }
     
-    static size_t storageHeaderSize() { return sizeof(WriteBarrier<Unknown>); }
-    
-    static size_t allocationSize(size_t inlineSize)
+    static size_t offsetOfSlot(Checked<size_t> index)
     {
-        RELEASE_ASSERT(!inlineSize);
-        return sizeof(DirectArguments);
+        return (storageOffset() + sizeof(WriteBarrier<Unknown>) * index).unsafeGet();
+    }
+    
+    static size_t allocationSize(Checked<size_t> capacity)
+    {
+        return offsetOfSlot(capacity);
     }
     
 private:
-    friend class LLIntOffsetsExtractor;
-    
-    struct StorageHeader {
-        uint32_t length; // Always the actual length of captured arguments and never what was stored into the length property.
-        uint32_t minCapacity; // The max of this and length determines the capacity of this object. It may be the actual capacity, or maybe something smaller. We arrange it this way to be kind to the JITs.
-    };
-    
-    WriteBarrier<Unknown>* storage() const
+    WriteBarrier<Unknown>* storage()
     {
-        return m_storage.get().unpoisoned();
-    }
-    
-    static StorageHeader& storageHeader(WriteBarrier<Unknown>* storage)
-    {
-        static_assert(sizeof(StorageHeader) == sizeof(WriteBarrier<Unknown>), "StorageHeader needs to be the same size as a JSValue");
-        return *bitwise_cast<StorageHeader*>(storage - 1);
-    }
-
-    StorageHeader& storageHeader() const
-    {
-        return storageHeader(storage());
+        return bitwise_cast<WriteBarrier<Unknown>*>(bitwise_cast<char*>(this) + storageOffset());
     }
     
     unsigned mappedArgumentsSize();
     
     WriteBarrier<JSFunction> m_callee;
+    uint32_t m_length; // Always the actual length of captured arguments and never what was stored into the length property.
+    uint32_t m_minCapacity; // The max of this and length determines the capacity of this object. It may be the actual capacity, or maybe something smaller. We arrange it this way to be kind to the JITs.
     CagedBarrierPtr<Gigacage::Primitive, bool> m_mappedArguments; // If non-null, it means that length, callee, and caller are fully materialized properties.
-    AuxiliaryBarrier<Poisoned<DirectArgumentsPoison, WriteBarrier<Unknown>*>> m_storage;
 };
 
 } // namespace JSC

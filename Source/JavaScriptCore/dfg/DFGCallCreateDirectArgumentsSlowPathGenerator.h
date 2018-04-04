@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,17 +34,16 @@
 
 namespace JSC { namespace DFG {
 
-// This calls operationCreateDirectArguments but then restores the value of lengthGPR and storageGPR.
+// This calls operationCreateDirectArguments but then restores the value of lengthGPR.
 class CallCreateDirectArgumentsSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
     CallCreateDirectArgumentsSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, GPRReg resultGPR, RegisteredStructure structure,
-        GPRReg lengthGPR, GPRReg storageGPR, unsigned minCapacity)
+        GPRReg lengthGPR, unsigned minCapacity)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_resultGPR(resultGPR)
         , m_structure(structure)
         , m_lengthGPR(lengthGPR)
-        , m_storageGPR(storageGPR)
         , m_minCapacity(minCapacity)
     {
         jit->silentSpillAllRegistersImpl(false, m_plans, resultGPR);
@@ -62,11 +61,7 @@ protected:
             jit->silentFill(m_plans[i]);
         jit->m_jit.exceptionCheck();
         jit->m_jit.loadPtr(
-            MacroAssembler::Address(m_resultGPR, DirectArguments::offsetOfStorage()), m_storageGPR);
-        jit->m_jit.xorPtr(
-            MacroAssembler::TrustedImmPtr(DirectArgumentsPoison::key()), m_storageGPR);
-        jit->m_jit.load32(
-            MacroAssembler::Address(m_storageGPR, DirectArguments::offsetOfLengthInStorage()), m_lengthGPR);
+            MacroAssembler::Address(m_resultGPR, DirectArguments::offsetOfLength()), m_lengthGPR);
         jumpTo(jit);
     }
     
@@ -74,7 +69,6 @@ private:
     GPRReg m_resultGPR;
     RegisteredStructure m_structure;
     GPRReg m_lengthGPR;
-    GPRReg m_storageGPR;
     unsigned m_minCapacity;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };

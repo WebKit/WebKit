@@ -34,7 +34,6 @@ namespace JSC {
     v(ArrayPrototype) \
     v(CodeBlock) \
     v(DateInstance) \
-    v(DirectArguments) \
     v(GlobalData) \
     v(JITCode) \
     v(JSAPIWrapperObject) \

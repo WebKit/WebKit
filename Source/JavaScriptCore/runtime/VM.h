@@ -344,7 +344,6 @@ public:
     IsoSubspace asyncGeneratorFunctionSpace;
     IsoSubspace boundFunctionSpace;
     IsoSubspace customGetterSetterFunctionSpace;
-    IsoSubspace directArgumentsSpace;
     IsoSubspace directEvalExecutableSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionExecutableSpace;

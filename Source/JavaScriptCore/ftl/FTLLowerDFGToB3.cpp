@@ -3674,10 +3674,7 @@ private:
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.notNull(m_out.loadPtr(arguments, m_heaps.DirectArguments_mappedArguments)));
-            LValue storage = m_out.bitXor(
-                m_out.loadPtr(lowCell(m_node->child1()), m_heaps.DirectArguments_storage),
-                m_out.constIntPtr(DirectArgumentsPoison::key()));
-            setInt32(m_out.load32NonNegative(storage, m_heaps.DirectArguments_Storage_length));
+            setInt32(m_out.load32NonNegative(arguments, m_heaps.DirectArguments_length));
             return;
         }
             
@@ -3844,16 +3841,13 @@ private:
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.notNull(m_out.loadPtr(base, m_heaps.DirectArguments_mappedArguments)));
 
-            LValue storage = m_out.loadPtr(base, m_heaps.DirectArguments_storage);
-            storage = m_out.bitXor(storage, m_out.constIntPtr(DirectArgumentsPoison::key()));
-            
-            LValue length = m_out.load32NonNegative(storage, m_heaps.DirectArguments_Storage_length);
+            LValue length = m_out.load32NonNegative(base, m_heaps.DirectArguments_length);
             auto isOutOfBounds = m_out.aboveOrEqual(index, length);
             if (m_node->arrayMode().isInBounds()) {
                 speculate(OutOfBounds, noValue(), nullptr, isOutOfBounds);
                 TypedPointer address = m_out.baseIndex(
-                    m_heaps.DirectArguments_Storage_storage, storage, m_out.zeroExtPtr(index));
-                setJSValue(preciseIndexMask32(m_out.load64(address), index, length));
+                    m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
+                setJSValue(m_out.load64(address));
                 return;
             }
 
@@ -3865,10 +3859,10 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(inBounds, slowCase);
             TypedPointer address = m_out.baseIndex(
-                m_heaps.DirectArguments_Storage_storage, storage,
+                m_heaps.DirectArguments_storage,
+                base,
                 m_out.zeroExt(index, pointerType()));
-            ValueFromBlock fastResult = m_out.anchor(
-                preciseIndexMask32(m_out.load64(address), index, length));
+            ValueFromBlock fastResult = m_out.anchor(m_out.load64(address));
             m_out.jump(continuation);
 
             m_out.appendTo(slowCase, continuation);
@@ -5181,39 +5175,29 @@ private:
         
         ArgumentsLength length = getArgumentsLength();
         
-        LValue fastStorage;
         LValue fastObject;
         if (length.isKnown) {
-            LValue allocator = m_out.constInt32(
-                vm().jsValueGigacageAuxiliarySpace.allocatorForNonVirtual(
-                    DirectArguments::storageSize(std::max(length.known, minCapacity)),
-                    AllocatorForMode::AllocatorIfExists).offset());
-
-            fastStorage = allocateHeapCell(allocator, slowPath);
+            fastObject = allocateObject<DirectArguments>(
+                DirectArguments::allocationSize(std::max(length.known, minCapacity)), structure,
+                m_out.intPtrZero, slowPath);
         } else {
             LValue size = m_out.add(
                 m_out.shl(length.value, m_out.constInt32(3)),
-                m_out.constInt32(DirectArguments::storageHeaderSize()));
+                m_out.constInt32(DirectArguments::storageOffset()));
             
             size = m_out.select(
                 m_out.aboveOrEqual(length.value, m_out.constInt32(minCapacity)),
-                size, m_out.constInt32(DirectArguments::storageSize(minCapacity)));
-        
-            fastStorage = allocateVariableSizedHeapCell(
-                vm().jsValueGigacageAuxiliarySpace, m_out.zeroExtPtr(size), slowPath);
+                size, m_out.constInt32(DirectArguments::allocationSize(minCapacity)));
+            
+            fastObject = allocateVariableSizedObject<DirectArguments>(
+                m_out.zeroExtPtr(size), structure, m_out.intPtrZero, slowPath);
         }
         
-        fastStorage = m_out.add(fastStorage, m_out.constIntPtr(DirectArguments::storageHeaderSize()));
-        m_out.store32(length.value, fastStorage, m_heaps.DirectArguments_Storage_length);
-        m_out.store32(m_out.constInt32(minCapacity), fastStorage, m_heaps.DirectArguments_Storage_minCapacity);
-        
-        fastObject = allocateObject<DirectArguments>(structure, m_out.intPtrZero, slowPath);
- 
-        m_out.storePtr(m_out.bitXor(fastStorage, m_out.constIntPtr(DirectArgumentsPoison::key())), fastObject, m_heaps.DirectArguments_storage);
+        m_out.store32(length.value, fastObject, m_heaps.DirectArguments_length);
+        m_out.store32(m_out.constInt32(minCapacity), fastObject, m_heaps.DirectArguments_minCapacity);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_mappedArguments);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_modifiedArgumentsDescriptor);
         
-        ValueFromBlock fastStorageAnchor = m_out.anchor(fastStorage);
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
         
@@ -5227,14 +5211,9 @@ private:
                     CCallHelpers::TrustedImm32(minCapacity));
             }, length.value);
         ValueFromBlock slowResult = m_out.anchor(callResult);
-        ValueFromBlock slowStorage = m_out.anchor(
-            m_out.bitXor(
-                m_out.loadPtr(callResult, m_heaps.DirectArguments_storage),
-                m_out.constIntPtr(DirectArgumentsPoison::key())));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
-        LValue storage = m_out.phi(pointerType(), fastStorageAnchor, slowStorage);
         LValue result = m_out.phi(pointerType(), fastResult, slowResult);
 
         m_out.storePtr(getCurrentCallee(), result, m_heaps.DirectArguments_callee);
@@ -5244,7 +5223,7 @@ private:
             for (unsigned i = 0; i < std::max(length.known, minCapacity); ++i) {
                 m_out.store64(
                     m_out.load64(addressFor(start + i)),
-                    storage, m_heaps.DirectArguments_Storage_storage[i]);
+                    result, m_heaps.DirectArguments_storage[i]);
             }
         } else {
             LValue stackBase = getArgumentsStart();
@@ -5272,7 +5251,7 @@ private:
             LValue index = m_out.sub(previousIndex, m_out.intPtrOne);
             m_out.store64(
                 m_out.load64(m_out.baseIndex(m_heaps.variables, stackBase, index)),
-                m_out.baseIndex(m_heaps.DirectArguments_Storage_storage, storage, index));
+                m_out.baseIndex(m_heaps.DirectArguments_storage, result, index));
             ValueFromBlock nextIndex = m_out.anchor(index);
             m_out.addIncomingToPhi(previousIndex, nextIndex);
             m_out.branch(m_out.isNull(index), unsure(end), unsure(loop));
@@ -6728,23 +6707,18 @@ private:
     
     void compileGetFromArguments()
     {
-        LValue storage = m_out.bitXor(
-            m_out.loadPtr(lowCell(m_node->child1()), m_heaps.DirectArguments_storage),
-            m_out.constIntPtr(DirectArgumentsPoison::key()));
         setJSValue(
             m_out.load64(
-                storage,
-                m_heaps.DirectArguments_Storage_storage[m_node->capturedArgumentsOffset().offset()]));
+                lowCell(m_node->child1()),
+                m_heaps.DirectArguments_storage[m_node->capturedArgumentsOffset().offset()]));
     }
     
     void compilePutToArguments()
     {
-        LValue storage = m_out.bitXor(
-            m_out.loadPtr(lowCell(m_node->child1()), m_heaps.DirectArguments_storage),
-            m_out.constIntPtr(DirectArgumentsPoison::key()));
         m_out.store64(
-            lowJSValue(m_node->child2()), storage,
-            m_heaps.DirectArguments_Storage_storage[m_node->capturedArgumentsOffset().offset()]);
+            lowJSValue(m_node->child2()),
+            lowCell(m_node->child1()),
+            m_heaps.DirectArguments_storage[m_node->capturedArgumentsOffset().offset()]);
     }
 
     void compileGetArgument()
@@ -11874,7 +11848,7 @@ private:
 
             LValue structure = loadStructure(cell);
             LValue poisonedClassInfo = m_out.loadPtr(structure, m_heaps.Structure_classInfo);
-            LValue classInfo = m_out.bitXor(poisonedClassInfo, m_out.constIntPtr(GlobalDataPoison::key()));
+            LValue classInfo = m_out.bitXor(poisonedClassInfo, m_out.constInt64(GlobalDataPoison::key()));
             ValueFromBlock otherAtStart = m_out.anchor(classInfo);
             m_out.jump(loop);
 
@@ -12641,12 +12615,6 @@ private:
     {
         LValue allocator = allocatorForSize(*subspaceFor<ClassType>(vm()), size, slowPath);
         return allocateCell(allocator, structure, slowPath);
-    }
-    
-    LValue allocateVariableSizedHeapCell(CompleteSubspace& subspace, LValue size, LBasicBlock slowPath)
-    {
-        LValue allocator = allocatorForSize(subspace, size, slowPath);
-        return allocateHeapCell(allocator, slowPath);
     }
     
     LValue allocateObject(RegisteredStructure structure)
@@ -15599,6 +15567,32 @@ private:
         return preciseIndexMask64(value, m_out.zeroExt(index, Int64), m_out.zeroExt(limit, Int64));
     }
     
+    LValue dynamicPoison(LValue value, LValue poison)
+    {
+        return m_out.add(
+            value,
+            m_out.shl(
+                m_out.zeroExt(poison, pointerType()),
+                m_out.constInt32(40)));
+    }
+    
+    LValue dynamicPoisonOnLoadedType(LValue value, LValue actualType, JSType expectedType)
+    {
+        return dynamicPoison(
+            value,
+            m_out.bitXor(
+                m_out.opaque(actualType),
+                m_out.constInt32(expectedType)));
+    }
+    
+    LValue dynamicPoisonOnType(LValue value, JSType expectedType)
+    {
+        return dynamicPoisonOnLoadedType(
+            value,
+            m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType),
+            expectedType);
+    }
+
     template<typename... Args>
     LValue vmCall(LType type, LValue function, Args&&... args)
     {

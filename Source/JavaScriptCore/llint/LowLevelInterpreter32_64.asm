@@ -2531,9 +2531,8 @@ _llint_op_get_from_arguments:
     loadisFromInstruction(2, t0)
     loadi PayloadOffset[cfr, t0, 8], t0
     loadi 12[PC], t1
-    loadp DirectArguments::m_storage[t0], t0
-    loadi TagOffset[t0, t1, 8], t2
-    loadi PayloadOffset[t0, t1, 8], t3
+    loadi DirectArguments_storage + TagOffset[t0, t1, 8], t2
+    loadi DirectArguments_storage + PayloadOffset[t0, t1, 8], t3
     loadisFromInstruction(1, t1)
     valueProfile(t2, t3, 16, t0)
     storei t2, TagOffset[cfr, t1, 8]
@@ -2548,10 +2547,9 @@ _llint_op_put_to_arguments:
     loadi PayloadOffset[cfr, t0, 8], t0
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
-    loadp DirectArguments::m_storage[t0], t0
     loadi 8[PC], t1
-    storei t2, TagOffset[t0, t1, 8]
-    storei t3, PayloadOffset[t0, t1, 8]
+    storei t2, DirectArguments_storage + TagOffset[t0, t1, 8]
+    storei t3, DirectArguments_storage + PayloadOffset[t0, t1, 8]
     dispatch(4)
 
 
