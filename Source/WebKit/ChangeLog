@@ -1,5 +1,27 @@
 2018-04-04  Alex Christensen  <achristensen@webkit.org>
 
+        Remove legacyCustomProtocolManager from NetworkSessionCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=182178
+
+        Reviewed by Youenn Fablet.
+
+        Now that we only make NetworkSessions in the NetworkProcess, we don't need to pass this parameter around.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+
+2018-04-04  Alex Christensen  <achristensen@webkit.org>
+
         Move PingHandle to WebKitLegacy
         https://bugs.webkit.org/show_bug.cgi?id=184145
 

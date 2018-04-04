@@ -73,7 +73,6 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
         session->setCacheStoragePerOriginQuota(parameters.cacheStoragePerOriginQuota);
     }
 
-    parameters.networkSessionParameters.legacyCustomProtocolManager = NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>();
     SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 }
 

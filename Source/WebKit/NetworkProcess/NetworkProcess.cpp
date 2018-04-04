@@ -272,9 +272,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_logCookieInformation = parameters.logCookieInformation;
 #endif
 
-#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    parameters.defaultSessionParameters.legacyCustomProtocolManager = supplement<LegacyCustomProtocolManager>();
-#endif
     SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(WTFMove(parameters.defaultSessionParameters)));
 
     for (auto& supplement : m_supplements.values())

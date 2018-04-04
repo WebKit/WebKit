@@ -679,9 +679,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
         configuration._CTDataConnectionServiceType = ctDataConnectionServiceType;
 #endif
 
-    if (parameters.legacyCustomProtocolManager)
-        parameters.legacyCustomProtocolManager->registerProtocolClass(configuration);
-    
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    NetworkProcess::singleton().supplement<LegacyCustomProtocolManager>()->registerProtocolClass(configuration);
+#endif
+
 #if HAVE(TIMINGDATAOPTIONS)
     configuration._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
 #else

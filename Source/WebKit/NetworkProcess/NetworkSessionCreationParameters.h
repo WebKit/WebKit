@@ -41,7 +41,6 @@ struct NetworkSessionCreationParameters {
     static std::optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
     
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };
-    LegacyCustomProtocolManager* legacyCustomProtocolManager { nullptr };
     String boundInterfaceIdentifier;
     AllowsCellularAccess allowsCellularAccess { AllowsCellularAccess::Yes };
 };
@@ -69,7 +68,7 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
     if (!allowsCellularAccess)
         return std::nullopt;
 
-    return {{ sessionID, nullptr, WTFMove(*boundInterfaceIdentifier), WTFMove(*allowsCellularAccess) }};
+    return {{ sessionID, WTFMove(*boundInterfaceIdentifier), WTFMove(*allowsCellularAccess) }};
 }
 
 } // namespace WebKit
