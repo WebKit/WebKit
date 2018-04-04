@@ -30,11 +30,6 @@
 #import "WKWebViewContentProvider.h"
 
 @interface WKPDFView : UIView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate, WKActionSheetAssistantDelegate>
-
-@property (nonatomic, readonly) NSString *suggestedFilename;
-@property (nonatomic, readonly) CGPDFDocumentRef pdfDocument;
-@property (nonatomic, readonly) BOOL isBackground;
-
 @end
 
 #endif // PLATFORM(IOS) && ENABLE(WKPDFVIEW)

@@ -55,6 +55,9 @@ struct UIEdgeInsets;
 
 @optional
 - (void)web_scrollViewDidScroll:(UIScrollView *)scrollView;
+@property (nonatomic, readonly) NSData *web_dataRepresentation;
+@property (nonatomic, readonly) NSString *web_suggestedFilename;
+@property (nonatomic, readonly) BOOL web_isBackground;
 
 @end
 

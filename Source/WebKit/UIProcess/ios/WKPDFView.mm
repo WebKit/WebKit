@@ -46,6 +46,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/WebCoreNSURLExtras.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -154,14 +155,14 @@ typedef struct {
     [super dealloc];
 }
 
-- (NSString *)suggestedFilename
+- (NSString *)web_suggestedFilename
 {
     return _suggestedFilename.get();
 }
 
-- (CGPDFDocumentRef)pdfDocument
+- (NSData *)web_dataRepresentation
 {
-    return _cgPDFDocument.get();
+    return [(NSData *)CGDataProviderCopyData(CGPDFDocumentGetDataProvider(_cgPDFDocument.get())) autorelease];
 }
 
 static void detachViewForPage(PDFPageInfo& page)
@@ -830,7 +831,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
     _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidCreateWindowContext), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
 }
 
-- (BOOL)isBackground
+- (BOOL)web_isBackground
 {
     if (!_applicationStateTracker)
         return YES;

@@ -97,6 +97,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
+#import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
@@ -136,7 +137,6 @@
 #import "UIKitSPI.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "WKContentViewInteraction.h"
-#import "WKPDFView.h"
 #import "WKPasswordView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
@@ -1301,10 +1301,8 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 - (BOOL)_isBackground
 {
-#if ENABLE(WKPDFVIEW)
     if ([self _isDisplayingPDF])
-        return [(WKPDFView *)_customContentView isBackground];
-#endif
+        return [_customContentView web_isBackground];
     return [_contentView isBackground];
 }
 
@@ -5452,34 +5450,27 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (BOOL)_isDisplayingPDF
 {
-#if ENABLE(WKPDFVIEW)
-    return [_customContentView isKindOfClass:[WKPDFView class]];
-#else
+    for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes()) {
+        Class providerClass = [[_configuration _contentProviderRegistry] providerForMIMEType:mimeType];
+        if ([_customContentView isKindOfClass:providerClass])
+            return YES;
+    }
+
     return NO;
-#endif
 }
 
 - (NSData *)_dataForDisplayedPDF
 {
-#if ENABLE(WKPDFVIEW)
     if (![self _isDisplayingPDF])
         return nil;
-    CGPDFDocumentRef pdfDocument = [(WKPDFView *)_customContentView pdfDocument];
-    return [(NSData *)CGDataProviderCopyData(CGPDFDocumentGetDataProvider(pdfDocument)) autorelease];
-#else
-    return nil;
-#endif
+    return [_customContentView web_dataRepresentation];
 }
 
 - (NSString *)_suggestedFilenameForDisplayedPDF
 {
-#if ENABLE(WKPDFVIEW)
     if (![self _isDisplayingPDF])
         return nil;
-    return [(WKPDFView *)_customContentView.get() suggestedFilename];
-#else
-    return nil;
-#endif
+    return [_customContentView web_suggestedFilename];
 }
 
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter
