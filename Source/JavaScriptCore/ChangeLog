@@ -1,5 +1,21 @@
 2018-04-03  Filip Pizlo  <fpizlo@apple.com>
 
+        JSArray::appendMemcpy seems to be missing a barrier
+        https://bugs.webkit.org/show_bug.cgi?id=184290
+
+        Reviewed by Mark Lam.
+        
+        If you write to an array that may contain pointers and you didn't just allocate it, then you need to
+        barrier right after.
+        
+        I don't know if this is really a bug - it's possible that all callers of appendMemcpy do things that
+        obviate the need for this barrier. But these barriers are cheap, so we should do them if in doubt.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::appendMemcpy):
+
+2018-04-03  Filip Pizlo  <fpizlo@apple.com>
+
         GC shouldn't do object distancing
         https://bugs.webkit.org/show_bug.cgi?id=184195
 
