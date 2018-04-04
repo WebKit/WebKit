@@ -1,3 +1,18 @@
+2018-04-03  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Add Experimental setting for Accessibility Audit
+        https://bugs.webkit.org/show_bug.cgi?id=183646
+        <rdar://problem/38478583>
+
+        Reviewed by Brian Burg.
+
+        Added experimental feature flag for Accessibility Audit work.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2018-04-01  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove dead TabBrowser/TabContentView code
