@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
 Description
 
 This test checks for the presence of the navigator.mediaDevices.getUserMedia method.

@@ -1,10 +1,10 @@
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
 DOM IDL tests
 
 

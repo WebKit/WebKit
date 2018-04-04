@@ -1,3 +1,90 @@
+2018-04-04  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Resync idlharness web-platform-tests up to 94b33b573a069ae5170104ca581a354a35762536
+        https://bugs.webkit.org/show_bug.cgi?id=184278
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/FileAPI/idlharness-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.html:
+        * web-platform-tests/FileAPI/idlharness.idl: Removed.
+        * web-platform-tests/FileAPI/idlharness.worker.js:
+        * web-platform-tests/IndexedDB/interfaces.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.worker-expected.txt.
+        * web-platform-tests/IndexedDB/interfaces.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.worker.html.
+        * web-platform-tests/IndexedDB/interfaces.any.js: Added.
+        * web-platform-tests/IndexedDB/interfaces.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.worker-expected.txt.
+        * web-platform-tests/IndexedDB/interfaces.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.worker.html.
+        * web-platform-tests/IndexedDB/interfaces.html: Removed.
+        * web-platform-tests/IndexedDB/interfaces.idl: Removed.
+        * web-platform-tests/IndexedDB/interfaces.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/WebCryptoAPI.idl: Removed.
+        * web-platform-tests/WebCryptoAPI/idlharness.html: Removed.
+        * web-platform-tests/WebCryptoAPI/idlharness.https.html:
+        * web-platform-tests/WebCryptoAPI/idlharness.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/idlharness.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.worker.html.
+        * web-platform-tests/WebCryptoAPI/idlharness.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.worker.js.
+        * web-platform-tests/WebIDL/interfaces-expected.txt:
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/background-fetch/interfaces-expected.txt:
+        * web-platform-tests/background-fetch/interfaces.html:
+        * web-platform-tests/background-fetch/interfaces.idl: Removed.
+        * web-platform-tests/background-fetch/interfaces.worker.js:
+        (promise_test):
+        * web-platform-tests/css/geometry/interfaces-expected.txt:
+        * web-platform-tests/css/geometry/interfaces.html:
+        * web-platform-tests/css/geometry/interfaces.worker-expected.txt:
+        * web-platform-tests/css/geometry/support/interfaces.js:
+        (doTest):
+        * web-platform-tests/cssom-view/interfaces-expected.txt:
+        * web-platform-tests/cssom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/encoding/idlharness-expected.txt:
+        * web-platform-tests/encoding/idlharness.html:
+        * web-platform-tests/encrypted-media/EncryptedMediaExtensions.idl: Removed.
+        * web-platform-tests/encrypted-media/idlharness.https-expected.txt: Added.
+        * web-platform-tests/encrypted-media/idlharness.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/idlharness.html.
+        * web-platform-tests/eventsource/interfaces-expected.txt:
+        * web-platform-tests/eventsource/interfaces.html:
+        * web-platform-tests/fetch/api/request/request-idl.html:
+        * web-platform-tests/fetch/api/response/response-idl.html:
+        * web-platform-tests/hr-time/idlharness-expected.txt:
+        * web-platform-tests/hr-time/idlharness.html:
+        * web-platform-tests/html/webappapis/animation-frames/idlharness-expected.txt:
+        * web-platform-tests/html/webappapis/animation-frames/idlharness.html:
+        * web-platform-tests/interfaces/encoding.idl: Added.
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-all-expected.txt:
+        * web-platform-tests/mediacapture-streams/MediaDevices-IDL-enumerateDevices-expected.txt:
+        * web-platform-tests/notifications/interfaces-expected.txt:
+        * web-platform-tests/notifications/interfaces.html:
+        * web-platform-tests/payment-request/interfaces.https-expected.txt:
+        * web-platform-tests/payment-request/interfaces.https.html:
+        * web-platform-tests/resources/idlharness.js:
+        (self.IdlHarnessError):
+        (IdlHarnessError.prototype.toString):
+        (IdlArray.prototype.add_untested_idls):
+        (IdlArray.prototype.internal_add_idls):
+        (IdlArray.prototype.recursively_get_implements):
+        (IdlArray.prototype.recursively_get_includes):
+        (set exposed_in):
+        (IdlArray.prototype.assert_throws):
+        (IdlArray.prototype.test):
+        (IdlArray.prototype.assert_type_is):
+        (IdlInterface.prototype.test_self):
+        (IdlInterface.prototype.test_member_const):
+        (IdlInterface.prototype.test_to_json_operation):
+        (IdlInterface.prototype.test_object):
+        * web-platform-tests/service-workers/service-worker/interfaces-window.https-expected.txt:
+        * web-platform-tests/url/interfaces.any-expected.txt:
+        * web-platform-tests/url/interfaces.any.js:
+        (promise_test.async):
+        * web-platform-tests/url/interfaces.any.worker-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-idl-expected.txt: Removed.
+        * web-platform-tests/webrtc/RTCPeerConnection-idl.html: Removed.
+        * web-platform-tests/webrtc/datachannel-idlharness-expected.txt: Removed.
+        * web-platform-tests/webrtc/datachannel-idlharness.html: Removed.
+        * web-platform-tests/webrtc/interfaces.https-expected.txt:
+        * web-platform-tests/webrtc/interfaces.https.html:
+
 2018-04-04  Ms2ger  <Ms2ger@igalia.com>
 
         Test gardening for GTK.

@@ -1,3 +1,15 @@
+2018-04-04  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Resync idlharness web-platform-tests up to 94b33b573a069ae5170104ca581a354a35762536
+        https://bugs.webkit.org/show_bug.cgi?id=184278
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * http/wpt/webauthn/idl.https.html:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         Add a test for HttpOnly cookies used to load AppCache resources

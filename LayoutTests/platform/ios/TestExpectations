@@ -3098,7 +3098,6 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html 
 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 
 # <rdar://problem/34051745>
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
 
 PASS test setup (worker registration) 
 PASS WorkerGlobalScope interface: existence and properties of interface object 

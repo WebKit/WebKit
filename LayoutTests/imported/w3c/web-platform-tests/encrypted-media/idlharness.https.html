@@ -22,7 +22,7 @@
     <script>
         setup(function() {
 
-            fetch( 'EncryptedMediaExtensions.idl')
+            fetch( '/interfaces/encrypted-media.idl' )
             .then( function( response ) {
                 if ( !response.ok ) throw new Error( 'IDL fetch failed' );
                 return response.text();
@@ -30,9 +30,7 @@
             .then( function( idls ) {
 
                 var idl_array = new IdlArray();
-                idl_array.add_untested_idls("[PrimaryGlobal] interface Window {};");
                 idl_array.add_untested_idls("interface Navigator {};");
-                idl_array.add_untested_idls("interface ArrayBuffer {};");
                 idl_array.add_untested_idls("interface HTMLMediaElement {};");
                 idl_array.add_untested_idls("interface Event {};");
                 idl_array.add_untested_idls("interface EventTarget {};");

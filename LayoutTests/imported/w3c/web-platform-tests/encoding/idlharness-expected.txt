@@ -3,6 +3,7 @@ idlharness test
 This test validates the WebIDL included in the Encoding Living Standard.
 
 
+PASS Test driver 
 PASS TextDecoder interface: existence and properties of interface object 
 PASS TextDecoder interface object length 
 PASS TextDecoder interface object name 

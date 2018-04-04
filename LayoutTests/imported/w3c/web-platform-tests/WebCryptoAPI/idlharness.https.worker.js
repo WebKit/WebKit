@@ -2,7 +2,7 @@ importScripts("/resources/testharness.js");
 importScripts("/resources/WebIDLParser.js", "/resources/idlharness.js");
 
 var request = new XMLHttpRequest();
-request.open("GET", "WebCryptoAPI.idl");
+request.open("GET", "../interfaces/WebCryptoAPI.idl");
 request.send();
 request.onload = function() {
     var idl_array = new IdlArray();

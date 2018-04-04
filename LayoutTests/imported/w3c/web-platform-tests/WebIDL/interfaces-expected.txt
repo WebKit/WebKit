@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 309: callback not yet supported
-CONSOLE MESSAGE: line 309: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
 
 PASS Test driver 
 PASS DOMException interface: existence and properties of interface object 

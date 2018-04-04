@@ -1375,6 +1375,10 @@ webkit.org/b/168415 [ ElCapitan ] http/wpt/resource-timing/rt-cors.worker.html [
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker.html [ Failure ]
 [ Sierra+ ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location.html [ Failure ]
 
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.html [ Slow ]
+
 webkit.org/b/168503 editing/pasteboard/drag-drop-copy-content.html [ Failure ]
 
 webkit.org/b/168936 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-deleteObjectStore-exception-order.htm [ Pass Failure ]
