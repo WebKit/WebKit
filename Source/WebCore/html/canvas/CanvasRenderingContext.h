@@ -47,7 +47,7 @@ public:
     virtual ~CanvasRenderingContext() = default;
 
     void ref();
-    void deref();
+    WEBCORE_EXPORT void deref();
 
     CanvasBase& canvasBase() const { return m_canvas; }
 

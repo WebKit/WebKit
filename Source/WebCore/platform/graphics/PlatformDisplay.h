@@ -40,7 +40,7 @@ class GLContext;
 class PlatformDisplay {
     WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PlatformDisplay& sharedDisplay();
+    WEBCORE_EXPORT static PlatformDisplay& sharedDisplay();
     WEBCORE_EXPORT static PlatformDisplay& sharedDisplayForCompositing();
     virtual ~PlatformDisplay();
 
@@ -62,7 +62,7 @@ public:
     virtual Type type() const = 0;
 
 #if USE(EGL) || USE(GLX)
-    GLContext* sharingGLContext();
+    WEBCORE_EXPORT GLContext* sharingGLContext();
 #endif
 
 #if USE(EGL)

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CurlResponse;
 
-class ResourceResponse : public ResourceResponseBase {
+class WEBCORE_EXPORT ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
         : ResourceResponseBase()

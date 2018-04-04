@@ -114,7 +114,7 @@ public:
     WEBCORE_EXPORT HTTPHeaderMap();
 
     // Gets a copy of the data suitable for passing to another thread.
-    HTTPHeaderMap isolatedCopy() const;
+    WEBCORE_EXPORT HTTPHeaderMap isolatedCopy() const;
 
     bool isEmpty() const { return m_commonHeaders.isEmpty() && m_uncommonHeaders.isEmpty(); }
     int size() const { return m_commonHeaders.size() + m_uncommonHeaders.size(); }

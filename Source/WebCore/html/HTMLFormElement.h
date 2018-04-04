@@ -96,8 +96,8 @@ public:
     String acceptCharset() const { return m_attributes.acceptCharset(); }
     void setAcceptCharset(const String&);
 
-    String action() const;
-    void setAction(const String&);
+    WEBCORE_EXPORT String action() const;
+    WEBCORE_EXPORT void setAction(const String&);
 
     WEBCORE_EXPORT String method() const;
     WEBCORE_EXPORT void setMethod(const String&);

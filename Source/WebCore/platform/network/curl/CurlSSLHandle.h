@@ -45,7 +45,7 @@ public:
     bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
     const char* getCACertPath() const { return m_caCertPath.data(); }
 
-    void setHostAllowsAnyHTTPSCertificate(const String&);
+    WEBCORE_EXPORT void setHostAllowsAnyHTTPSCertificate(const String&);
     bool isAllowedHTTPSCertificateHost(const String&);
     bool canIgnoredHTTPSCertificate(const String&, const ListHashSet<String>&);
 

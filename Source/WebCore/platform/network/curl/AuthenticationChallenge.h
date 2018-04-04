@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CurlResponse;
 
-class AuthenticationChallenge final : public AuthenticationChallengeBase {
+class WEBCORE_EXPORT AuthenticationChallenge final : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge()
     {

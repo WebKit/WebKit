@@ -168,8 +168,8 @@ public:
     void setStart(const VisiblePosition &, EUserTriggered = NotUserTriggered);
     void setEnd(const VisiblePosition &, EUserTriggered = NotUserTriggered);
     
-    void setBase(const VisiblePosition&, EUserTriggered = NotUserTriggered);
-    void setBase(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
+    WEBCORE_EXPORT void setBase(const VisiblePosition&, EUserTriggered = NotUserTriggered);
+    WEBCORE_EXPORT void setBase(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
     void setExtent(const VisiblePosition&, EUserTriggered = NotUserTriggered);
     void setExtent(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
@@ -323,7 +323,7 @@ private:
     void updateAppearanceAfterLayoutOrStyleChange();
     void appearanceUpdateTimerFired();
 
-    void setCaretVisibility(CaretVisibility);
+    WEBCORE_EXPORT void setCaretVisibility(CaretVisibility);
     bool recomputeCaretRect();
     void invalidateCaretRect();
 

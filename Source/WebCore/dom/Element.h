@@ -360,7 +360,7 @@ public:
     void setStyleIsAffectedByPreviousSibling() { setFlag(StyleIsAffectedByPreviousSibling); }
     void setChildIndex(unsigned);
 
-    AtomicString computeInheritedLanguage() const;
+    WEBCORE_EXPORT AtomicString computeInheritedLanguage() const;
     Locale& locale() const;
 
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }

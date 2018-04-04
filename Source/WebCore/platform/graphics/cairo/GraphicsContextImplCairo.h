@@ -38,8 +38,8 @@ class PlatformContextCairo;
 
 class GraphicsContextImplCairo final : public GraphicsContextImpl {
 public:
-    static GraphicsContext::GraphicsContextImplFactory createFactory(PlatformContextCairo&);
-    static GraphicsContext::GraphicsContextImplFactory createFactory(cairo_t*);
+    WEBCORE_EXPORT static GraphicsContext::GraphicsContextImplFactory createFactory(PlatformContextCairo&);
+    WEBCORE_EXPORT static GraphicsContext::GraphicsContextImplFactory createFactory(cairo_t*);
 
     GraphicsContextImplCairo(GraphicsContext&, PlatformContextCairo&);
     GraphicsContextImplCairo(GraphicsContext&, cairo_t*);

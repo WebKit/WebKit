@@ -34,11 +34,11 @@ class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
-class TextureMapperLayer {
+class WEBCORE_EXPORT TextureMapperLayer {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT TextureMapperLayer();
+    TextureMapperLayer();
     virtual ~TextureMapperLayer();
 
     void setID(uint32_t id) { m_id = id; }

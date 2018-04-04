@@ -509,7 +509,7 @@ public:
 
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
-    void dispatchInputEvent();
+    WEBCORE_EXPORT void dispatchInputEvent();
 
     // Perform the default action for an event.
     virtual void defaultEventHandler(Event&);

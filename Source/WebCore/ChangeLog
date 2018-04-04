@@ -1,3 +1,31 @@
+2018-04-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add missing WEBCORE_EXPORTs (for Windows shared library build)
+        https://bugs.webkit.org/show_bug.cgi?id=184279
+
+        Reviewed by Alex Christensen.
+
+        * dom/Element.h:
+        * dom/Node.h:
+        * editing/FrameSelection.h:
+        * html/DOMURL.h:
+        * html/HTMLFormElement.h:
+        * html/canvas/CanvasRenderingContext.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/curl/AuthenticationChallenge.h:
+        * platform/network/curl/CurlFormDataStream.h:
+        * platform/network/curl/CurlRequest.h:
+        * platform/network/curl/CurlSSLHandle.h:
+        * platform/network/curl/ResourceError.h:
+        * platform/network/curl/ResourceResponse.h:
+
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingVideoSourceMac should pass a ObjCFrameBuffer buffer

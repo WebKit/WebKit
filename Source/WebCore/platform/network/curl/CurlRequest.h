@@ -64,12 +64,12 @@ public:
     virtual ~CurlRequest() = default;
 
     void invalidateClient() { m_client = nullptr;  }
-    void setUserPass(const String&, const String&);
+    WEBCORE_EXPORT void setUserPass(const String&, const String&);
 
     void start(bool isSyncRequest = false);
     void cancel();
-    void suspend();
-    void resume();
+    WEBCORE_EXPORT void suspend();
+    WEBCORE_EXPORT void resume();
 
     const ResourceRequest& resourceRequest() const { return m_request; }
     bool isSyncRequest() const { return m_isSyncRequest; }
@@ -79,7 +79,7 @@ public:
 
 
     // Processing for DidReceiveResponse
-    void completeDidReceiveResponse();
+    WEBCORE_EXPORT void completeDidReceiveResponse();
 
     // Download
     void enableDownloadToFile();
