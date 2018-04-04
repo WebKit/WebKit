@@ -46,6 +46,7 @@
 #include "ClipRect.h"
 #include "GraphicsLayer.h"
 #include "LayerFragment.h"
+#include "PaintFrequencyTracker.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderPtr.h"
@@ -66,7 +67,6 @@ class FilterOperations;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
-class PaintFrequencyInfo;
 class RenderFragmentedFlow;
 class RenderGeometryMap;
 class RenderLayerBacking;
@@ -713,9 +713,8 @@ public:
 
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return renderer().shouldPlaceBlockDirectionScrollbarOnLeft(); }
 
-    WEBCORE_EXPORT void simulateFrequentPaint();
-    WEBCORE_EXPORT bool paintingFrequently() const;
-    void clearPaintFrequencyInfo();
+    void simulateFrequentPaint() { SinglePaintFrequencyTracking { m_paintFrequencyTracker }; }
+    bool paintingFrequently() const { return m_paintFrequencyTracker.paintingFrequently(); }
 
 private:
     enum CollectLayersBehavior { StopAtStackingContexts, StopAtStackingContainers };
@@ -1170,7 +1169,7 @@ private:
 
     std::unique_ptr<RenderLayerBacking> m_backing;
     
-    std::unique_ptr<PaintFrequencyInfo> m_paintFrequencyInfo;
+    PaintFrequencyTracker m_paintFrequencyTracker;
 };
 
 inline void RenderLayer::clearZOrderLists()

@@ -134,64 +134,9 @@
 
 #define MIN_INTERSECT_FOR_REVEAL 32
 
-const Seconds paintFrequencyTimePerFrameThreshold = 32_ms;
-const Seconds paintFrequencySecondsIdleThreshold = 5_s;
-
 namespace WebCore {
 
 using namespace HTMLNames;
-
-// This class is used to detect when we are painting frequently so that - even in a painting model
-// without display lists - we can build and cache portions of display lists and reuse them only when
-// animating. Once we transition fully to display lists, we can probably just pull from the previous
-// paint's display list if it is still around and get rid of this code.
-class PaintFrequencyInfo {
-    WTF_MAKE_FAST_ALLOCATED;
-    
-public:
-    PaintFrequencyInfo(MonotonicTime now)
-        : m_firstPaintTime(now)
-        , m_lastPaintTime(now)
-    { }
-
-    enum PaintFrequency { Idle, Low, High };
-    PaintFrequency updatePaintFrequency();
-    
-    void paintingCacheableResource(MonotonicTime);
-    void setPaintedCacheableResource(bool painted) { m_paintedCacheableResource = painted; }
-
-    bool paintingFrequently() const { return m_paintingFrequently; }
-
-private:
-    MonotonicTime m_firstPaintTime;
-    MonotonicTime m_lastPaintTime;
-    unsigned m_totalPaints { 1 };
-    bool m_paintedCacheableResource { false };
-    bool m_paintingFrequently { false };
-};
-
-PaintFrequencyInfo::PaintFrequency PaintFrequencyInfo::updatePaintFrequency()
-{
-    MonotonicTime now = MonotonicTime::now(); // FIXME: Should have a single time for the paint of the whole frame.
-    if ((now - m_lastPaintTime) > paintFrequencySecondsIdleThreshold)
-        return Idle;
-    if (m_totalPaints && ((now - m_firstPaintTime) / m_totalPaints) <= paintFrequencyTimePerFrameThreshold) {
-        m_paintingFrequently = true;
-        return High;
-    }
-    m_paintingFrequently = false;
-    return Low;
-}
-
-void PaintFrequencyInfo::paintingCacheableResource(MonotonicTime now)
-{
-    if (m_paintedCacheableResource)
-        return;
-    
-    m_paintedCacheableResource = true;
-    m_lastPaintTime = now;
-    m_totalPaints++;
-}
 
 class ClipRects : public RefCounted<ClipRects> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -4351,9 +4296,8 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     bool selectionAndBackgroundsOnly = paintingInfo.paintBehavior & PaintBehaviorSelectionAndBackgroundsOnly;
     bool selectionOnly = paintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
-    
-    if (shouldPaintContent && m_paintFrequencyInfo && m_paintFrequencyInfo->updatePaintFrequency() == PaintFrequencyInfo::PaintFrequency::Idle)
-        clearPaintFrequencyInfo();
+
+    SinglePaintFrequencyTracking singlePaintFrequencyTracking(m_paintFrequencyTracker, shouldPaintContent);
 
     LayerFragments layerFragments;
     RenderObject* subtreePaintRootForRenderer = nullptr;
@@ -6874,28 +6818,6 @@ RenderStyle RenderLayer::createReflectionStyle()
     newStyle.setZIndex(0);
 
     return newStyle;
-}
-
-bool RenderLayer::paintingFrequently() const
-{
-    return m_paintFrequencyInfo && m_paintFrequencyInfo->paintingFrequently();
-}
-
-void RenderLayer::simulateFrequentPaint()
-{
-    auto now = MonotonicTime::now();
-    if (!m_paintFrequencyInfo)
-        m_paintFrequencyInfo = std::make_unique<PaintFrequencyInfo>(now);
-    else {
-        m_paintFrequencyInfo->paintingCacheableResource(now);
-        m_paintFrequencyInfo->setPaintedCacheableResource(false);
-        m_paintFrequencyInfo->updatePaintFrequency();
-    }
-}
-
-void RenderLayer::clearPaintFrequencyInfo()
-{
-    m_paintFrequencyInfo = nullptr;
 }
 
 void RenderLayer::updateOrRemoveFilterClients()

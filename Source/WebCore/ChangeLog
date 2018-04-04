@@ -1,3 +1,38 @@
+2018-04-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Track the paint frequency through a new class named PaintFrequencyTracker
+        https://bugs.webkit.org/show_bug.cgi?id=184311
+
+        Reviewed by Antti Koivisto.
+
+        PaintFrequencyTracker is a class which detects when a layer is painted 
+        frequently. SinglePaintFrequencyTracking is used in conjunction with
+        PaintFrequencyTracker to recored a single paint timing.
+
+        * rendering/PaintFrequencyTracker.h: Added.
+        (WebCore::PaintFrequencyTracker::begin):
+        (WebCore::PaintFrequencyTracker::end):
+        (WebCore::PaintFrequencyTracker::paintingFrequently const):
+        Simplify the logic for tracking the paint frequency and move it from
+        RenderLayer.cpp.
+
+        (WebCore::SinglePaintFrequencyTracking::SinglePaintFrequencyTracking):
+        (WebCore::SinglePaintFrequencyTracking::~SinglePaintFrequencyTracking):
+        A convenient way to bracket the begin() and the end() methods of
+        PaintFrequencyTracker.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::PaintFrequencyInfo::PaintFrequencyInfo): Deleted.
+        (WebCore::PaintFrequencyInfo::setPaintedCacheableResource): Deleted.
+        (WebCore::PaintFrequencyInfo::paintingFrequently const): Deleted.
+        (WebCore::PaintFrequencyInfo::updatePaintFrequency): Deleted.
+        (WebCore::PaintFrequencyInfo::paintingCacheableResource): Deleted.
+        * rendering/RenderLayer.h:
+        Rename PaintFrequencyInfo to PaintFrequencyTracker and move it a separate
+        header file.
+
 2018-04-04  Jer Noble  <jer.noble@apple.com>
 
         RELEASE_ASSERT in CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF() when MediaToolbox.framework missing
