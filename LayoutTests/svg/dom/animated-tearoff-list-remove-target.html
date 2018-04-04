@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<body>
+    <div>Removing the target of an animate element should detach the wrappers of the attributes from their animated properties.</div>
+    <svg>
+        <text x="15" y="40">
+            <tspan id="first-tspan">First tspan.</tspan> 
+        </text>
+        <text x="15" y="60">
+            <tspan id="second-tspan">Second tspan</tspan> 
+        </text>
+        <animate id="animate" xlink:href="#first-tspan" attributeType="XML" attributeName="x" from="0" to="100" dur="10s" repeatCount="indefinite"/>
+    </svg>
+    <script>
+        function gc() {
+            if (window.GCController)
+                return GCController.collect();
+
+            // Force garbage collection.
+            for (var i = 0; i < 10000; i++)
+                var s = new String("abc");
+        }
+
+        (function() {
+            if (window.testRunner)  {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            setTimeout(() => {
+                // The target of the <animate> element is the "first-tspan".
+                var tspanElement = document.getElementById("first-tspan");
+
+                // animItem is a reference (not a copy) to the first item in the x animated list.
+                var animList = tspanElement.x.animVal;
+                var animItem = animList.getItem(0);
+
+                // Now change the target of the <animate> element to be the "second-tspan".
+                var animateElement = document.getElementById("animate");
+                animateElement.setAttributeNS("http://www.w3.org/1999/xlink", "href", "second-tspan");
+
+                // By now animItem should be detached from the animated animList and has its own copy
+                // of an SVGLength. animItem should not be affected if garbage collection is forced.
+                gc();
+                if (animItem.valueAsString == "0") {
+                    document.querySelector("div").innerHTML += "<br><br>PASS."
+                    document.querySelector("svg").remove();
+                }
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        })();
+    </script>
+</body>

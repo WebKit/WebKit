@@ -1,0 +1,4 @@
+Removing the target of an animate element should detach the wrappers of the attributes from their animated properties.
+
+PASS.
+
