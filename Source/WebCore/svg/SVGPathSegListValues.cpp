@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,4 +41,17 @@ void SVGPathSegListValues::commitChange(SVGElement& contextElement, ListModifica
     downcast<SVGPathElement>(contextElement).pathSegListChanged(m_role, listModification);
 }
 
+void SVGPathSegListValues::clearItemContextAndRole(unsigned index)
+{
+    auto& item = at(index);
+    static_cast<SVGPathSegWithContext&>(*item).setContextAndRole(nullptr, PathSegUndefinedRole);
+}
+    
+void SVGPathSegListValues::clearContextAndRoles()
+{
+    auto count = size();
+    while (count--)
+        clearItemContextAndRole(count);
+}
+    
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,20 +27,11 @@
 
 namespace WebCore {
 
-void SVGPathSegList::clearContextAndRoles()
-{
-    ASSERT(m_values);
-    for (auto& item : *m_values)
-        static_cast<SVGPathSegWithContext*>(item.get())->setContextAndRole(nullptr, PathSegUndefinedRole);
-}
-
 ExceptionOr<void> SVGPathSegList::clear()
 {
     ASSERT(m_values);
     if (m_values->isEmpty())
         return { };
-
-    clearContextAndRoles();
     return Base::clearValues();
 }
 
@@ -50,24 +42,19 @@ ExceptionOr<RefPtr<SVGPathSeg>> SVGPathSegList::getItem(unsigned index)
 
 ExceptionOr<RefPtr<SVGPathSeg>> SVGPathSegList::replaceItem(Ref<SVGPathSeg>&& newItem, unsigned index)
 {
-    if (index < m_values->size()) {
-        ListItemType replacedItem = m_values->at(index);
-        ASSERT(replacedItem);
-        static_cast<SVGPathSegWithContext*>(replacedItem.get())->setContextAndRole(nullptr, PathSegUndefinedRole);
-    }
-
+    if (index < m_values->size())
+        m_values->clearItemContextAndRole(index);
     return Base::replaceItemValues(WTFMove(newItem), index);
 }
 
 ExceptionOr<RefPtr<SVGPathSeg>> SVGPathSegList::removeItem(unsigned index)
 {
+    if (index < m_values->size())
+        m_values->clearItemContextAndRole(index);
     auto result = Base::removeItemValues(index);
     if (result.hasException())
         return result;
-    auto removedItem = result.releaseReturnValue();
-    if (removedItem)
-        static_cast<SVGPathSegWithContext&>(*removedItem).setContextAndRole(nullptr, PathSegUndefinedRole);
-    return WTFMove(removedItem);
+    return result.releaseReturnValue();
 }
 
 SVGPathElement* SVGPathSegList::contextElement() const

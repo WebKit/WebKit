@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,16 +36,42 @@ class SVGPropertyTearOff;
 
 class SVGPathSegListValues : public Vector<RefPtr<SVGPathSeg>> {
 public:
+    using Base = Vector<RefPtr<SVGPathSeg>>;
+    
     explicit SVGPathSegListValues(SVGPathSegRole role)
         : m_role(role)
     {
+    }
+    
+    SVGPathSegListValues(const SVGPathSegListValues&) = default;
+    SVGPathSegListValues(SVGPathSegListValues&&) = default;
+    
+    SVGPathSegListValues& operator=(const SVGPathSegListValues& other)
+    {
+        clearContextAndRoles();
+        return static_cast<SVGPathSegListValues&>(Base::operator=(other));
+    }
+
+    SVGPathSegListValues& operator=(SVGPathSegListValues&& other)
+    {
+        clearContextAndRoles();
+        return static_cast<SVGPathSegListValues&>(Base::operator=(WTFMove(other)));
+    }
+    
+    void clear()
+    {
+        clearContextAndRoles();
+        Base::clear();
     }
 
     String valueAsString() const;
 
     void commitChange(SVGElement& contextElement, ListModification);
+    void clearItemContextAndRole(unsigned index);
 
 private:
+    void clearContextAndRoles();
+
     SVGPathSegRole m_role;
 };
 

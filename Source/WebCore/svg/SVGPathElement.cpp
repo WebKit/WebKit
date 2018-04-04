@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -255,7 +256,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         if (m_pathSegList.shouldSynchronize && !SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(this, dPropertyInfo())->isAnimating()) {
             SVGPathSegListValues newList(PathSegUnalteredRole);
             buildSVGPathSegListValuesFromByteStream(m_pathByteStream, *this, newList, UnalteredParsing);
-            m_pathSegList.value = newList;
+            m_pathSegList.value = WTFMove(newList);
         }
 
         if (renderer)

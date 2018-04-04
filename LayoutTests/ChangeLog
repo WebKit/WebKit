@@ -1,3 +1,58 @@
+2018-04-03  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r229830. rdar://problem/39155360
+
+    Disconnect the SVGPathSegList items from their SVGPathElement before rebuilding a new list
+    https://bugs.webkit.org/show_bug.cgi?id=183723
+    <rdar://problem/38517871>
+    
+    Patch by Said Abou-Hallawa <sabouhallawa@apple.com> on 2018-03-21
+    Reviewed by Daniel Bates.
+    
+    Source/WebCore:
+    
+    When setting the "d" attribute directly on a path, we rebuild the list
+    of path segments held for creating the property tear off. The old path
+    segments need to get disconnected from the path element. We already do
+    that when a path segment is replaced or removed.
+    
+    Test: svg/dom/reuse-pathseg-after-changing-d.html
+    
+    * svg/SVGPathElement.cpp:
+    (WebCore::SVGPathElement::svgAttributeChanged):
+    * svg/SVGPathSegList.cpp:
+    (WebCore::SVGPathSegList::clear): SVGPathSegListValues::clearContextAndRoles()
+    will now be called from SVGPathSegListValues::clear() via SVGListProperty::clearValues().
+    (WebCore::SVGPathSegList::replaceItem):
+    (WebCore::SVGPathSegList::removeItem):
+    (WebCore::SVGPathSegList::clearContextAndRoles): Deleted.
+    * svg/SVGPathSegList.h: SVGPathSegListValues::clearContextAndRoles() will
+    now be called from SVGPathSegListValues::clear() via SVGListProperty::initializeValues().
+    * svg/SVGPathSegListValues.cpp:
+    (WebCore::SVGPathSegListValues::clearItemContextAndRole):
+    (WebCore::SVGPathSegListValues::clearContextAndRoles):
+    * svg/SVGPathSegListValues.h:
+    (WebCore::SVGPathSegListValues::operator=):
+    (WebCore::SVGPathSegListValues::clear):
+    
+    LayoutTests:
+    
+    * svg/dom/reuse-pathseg-after-changing-d-expected.txt: Added.
+    * svg/dom/reuse-pathseg-after-changing-d.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@229830 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Disconnect the SVGPathSegList items from their SVGPathElement before rebuilding a new list
+            https://bugs.webkit.org/show_bug.cgi?id=183723
+            <rdar://problem/38517871>
+
+            Reviewed by Daniel Bates.
+
+            * svg/dom/reuse-pathseg-after-changing-d-expected.txt: Added.
+            * svg/dom/reuse-pathseg-after-changing-d.html: Added.
+
 2018-03-21  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229297. rdar://problem/38682578
