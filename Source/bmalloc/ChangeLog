@@ -1,3 +1,21 @@
+2018-04-04  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Enable Gigacage unconditionally when building JSCOnly on macOS (build fix)
+        https://bugs.webkit.org/show_bug.cgi?id=184301
+
+        Reviewed by Yusuke Suzuki.
+
+        bmalloc/ProcessCheck.mm implements specific behavior for Mac and iOS ports,
+        which is guarded with BPLATFORM(COCOA). if we don't enable BPLATFORM(MAC)
+        or BPLATFORM(IOS) in JSCOnly, then BPLATFORM(COCOA) won't be defined
+        as well, and code path from ProcessCheck.mm will not be taken.
+
+        * CMakeLists.txt: Exclude ProcessCheck.mm from port-independent file
+        list.
+        * PlatformMac.cmake: Build ProcessCheck.mm for Mac port.
+        * bmalloc/BPlatform.h: Don't enable BPLATFORM(MAC) or BPLATFORM(IOS)
+        when building JSCOnly port.
+
 2018-04-03  Saam Barati  <sbarati@apple.com>
 
         totalPhysicalSize calculation when splitting a range must account for double rounding effects

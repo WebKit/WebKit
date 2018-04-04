@@ -35,7 +35,6 @@ set(bmalloc_SOURCES
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     list(APPEND bmalloc_SOURCES
-        bmalloc/ProcessCheck.mm
         bmalloc/Zone.cpp
     )
 endif ()
@@ -43,6 +42,8 @@ endif ()
 set(bmalloc_LIBRARIES
     ${CMAKE_DL_LIBS}
 )
+
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_WRAP_SOURCELIST(${bmalloc_SOURCES})
 include_directories(${bmalloc_INCLUDE_DIRECTORIES})
