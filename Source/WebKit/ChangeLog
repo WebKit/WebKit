@@ -1,3 +1,19 @@
+2018-04-03  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkProcess get ContentBlocker information from UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184205
+        <rdar://problem/39146551>
+
+        Unreviewed.
+        Updated decode/encode methods to not hit null identifier assertion.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode const):
+        (WebKit::WebPageGroupData::decode):
+
 2018-04-03  Andy Estes  <aestes@apple.com>
 
         [iOS] WKWebView shouldn't know about WKPDFView
