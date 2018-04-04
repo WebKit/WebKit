@@ -91,6 +91,7 @@
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
 
 using namespace WebCore;
@@ -307,7 +308,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().provisionalDocumentLoader());
     RefPtr<API::Object> userData;
 
-    LOG(Loading, "WebProcess %i - dispatchDidReceiveServerRedirectForProvisionalLoad to request url %s", getpid(), documentLoader.request().url().string().utf8().data());
+    LOG(Loading, "WebProcess %i - dispatchDidReceiveServerRedirectForProvisionalLoad to request url %s", getCurrentProcessID(), documentLoader.request().url().string().utf8().data());
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didReceiveServerRedirectForProvisionalLoadForFrame(*webPage, *m_frame, userData);
@@ -821,7 +822,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         return;
     }
 
-    LOG(Loading, "WebProcess %i - dispatchDecidePolicyForNavigationAction to request url %s", getpid(), request.url().string().utf8().data());
+    LOG(Loading, "WebProcess %i - dispatchDecidePolicyForNavigationAction to request url %s", getCurrentProcessID(), request.url().string().utf8().data());
 
     m_isDecidingNavigationPolicyDecision = true;
     if (m_frame->isMainFrame())
