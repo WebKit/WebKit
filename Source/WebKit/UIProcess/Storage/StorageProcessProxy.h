@@ -56,7 +56,7 @@ public:
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, WTF::Function<void()>&& completionHandler);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, WTF::Function<void()>&& completionHandler);
 
-    void getStorageProcessConnection(WebProcessProxy&, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
+    void getStorageProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply&&);
 
 private:
     StorageProcessProxy(WebProcessPool&);
@@ -91,7 +91,7 @@ private:
     WebProcessPool& m_processPool;
 
     unsigned m_numPendingConnectionRequests;
-    Deque<Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>> m_pendingConnectionReplies;
+    Deque<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply> m_pendingConnectionReplies;
 
     HashMap<uint64_t, WTF::Function<void (WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
     HashMap<uint64_t, WTF::Function<void ()>> m_pendingDeleteWebsiteDataCallbacks;

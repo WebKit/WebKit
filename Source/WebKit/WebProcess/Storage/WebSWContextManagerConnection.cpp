@@ -236,10 +236,10 @@ void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier iden
     SWContextManager::singleton().terminateWorker(identifier, asyncWorkerTerminationTimeout, nullptr);
 }
 
-void WebSWContextManagerConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier, Ref<Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply>&& reply)
+void WebSWContextManagerConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier, Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply&& reply)
 {
     SWContextManager::singleton().terminateWorker(identifier, syncWorkerTerminationTimeout, [reply = WTFMove(reply)] {
-        reply->send();
+        reply();
     });
 }
 

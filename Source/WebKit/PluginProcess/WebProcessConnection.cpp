@@ -179,11 +179,11 @@ void WebProcessConnection::didClose(IPC::Connection&)
         destroyPluginControllerProxy(pluginControllers[i]);
 }
 
-void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, Ref<Messages::WebProcessConnection::DestroyPlugin::DelayedReply>&& reply)
+void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete, Messages::WebProcessConnection::DestroyPlugin::DelayedReply&& reply)
 {
     // We return immediately from this synchronous IPC. We want to make sure the plugin destruction is just about to start so audio playback
     // will finish soon after returning. However we don't want to wait for destruction to complete fully as that may take a while.
-    reply->send();
+    reply();
 
     // Ensure we don't clamp any timers during destruction
     ActivityAssertion activityAssertion(PluginProcess::singleton().connectionActivity());
@@ -232,7 +232,7 @@ void WebProcessConnection::createPluginInternal(const PluginCreationParameters& 
 #endif
 }
 
-void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, Ref<Messages::WebProcessConnection::CreatePlugin::DelayedReply>&& reply)
+void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, Messages::WebProcessConnection::CreatePlugin::DelayedReply&& reply)
 {
     // Ensure we don't clamp any timers during initialization
     ActivityAssertion activityAssertion(PluginProcess::singleton().connectionActivity());
@@ -249,9 +249,9 @@ void WebProcessConnection::createPlugin(const PluginCreationParameters& creation
         
         // If its initialization is complete then we need to respond to this message with the correct information about its creation.
 #if PLATFORM(COCOA)
-        reply->send(true, pluginControllerProxy->wantsWheelEvents(), pluginControllerProxy->remoteLayerClientID());
+        reply(true, pluginControllerProxy->wantsWheelEvents(), pluginControllerProxy->remoteLayerClientID());
 #else
-        reply->send(true, pluginControllerProxy->wantsWheelEvents(), 0);
+        reply(true, pluginControllerProxy->wantsWheelEvents(), 0);
 #endif
         return;
     }
@@ -266,7 +266,7 @@ void WebProcessConnection::createPlugin(const PluginCreationParameters& creation
     uint32_t remoteLayerClientID = 0;
     createPluginInternal(creationParameters, result, wantsWheelEvents, remoteLayerClientID);
     
-    reply->send(result, wantsWheelEvents, remoteLayerClientID);
+    reply(result, wantsWheelEvents, remoteLayerClientID);
 }
 
 void WebProcessConnection::createPluginAsynchronously(const PluginCreationParameters& creationParameters)
@@ -311,8 +311,8 @@ void WebProcessConnection::createPluginAsynchronously(const PluginCreationParame
     // synchronous reply instead of sending the asynchronous reply.
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(creationParameters.pluginInstanceID);
     ASSERT(pluginControllerProxy);
-    if (RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> delayedSyncReply = pluginControllerProxy->takeInitializationReply()) {
-        delayedSyncReply->send(result, wantsWheelEvents, remoteLayerClientID);
+    if (auto delayedSyncReply = pluginControllerProxy->takeInitializationReply()) {
+        delayedSyncReply(result, wantsWheelEvents, remoteLayerClientID);
         return;
     }
 
