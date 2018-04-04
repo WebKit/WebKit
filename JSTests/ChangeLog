@@ -1,5 +1,42 @@
 2018-04-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r230143. rdar://problem/39155381
+
+    JSC crash in JIT code with for-of loop and Array/Set iterators
+    https://bugs.webkit.org/show_bug.cgi?id=183174
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * microbenchmarks/hoist-get-by-offset-tower-with-inferred-types.js: Added. This test shows that fixing the bug didn't break hoisting of GetByOffset with inferred types. I confirmed that if I did break it, this test slows down by >7x.
+    (foo):
+    * stress/hoist-get-by-offset-with-control-dependent-inferred-type.js: Added. This test shows that the bug is fixed.
+    (f):
+    
+    Source/JavaScriptCore:
+    
+    * dfg/DFGSafeToExecute.h:
+    (JSC::DFG::safeToExecute): Fix the bug by making GetByOffset and friends verify that they are getting the type proof they want at the desired hoisting site.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230143 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+            JSC crash in JIT code with for-of loop and Array/Set iterators
+            https://bugs.webkit.org/show_bug.cgi?id=183174
+
+            Reviewed by Saam Barati.
+
+            * microbenchmarks/hoist-get-by-offset-tower-with-inferred-types.js: Added. This test shows that fixing the bug didn't break hoisting of GetByOffset with inferred types. I confirmed that if I did break it, this test slows down by >7x.
+            (foo):
+            * stress/hoist-get-by-offset-with-control-dependent-inferred-type.js: Added. This test shows that the bug is fixed.
+            (f):
+
+2018-04-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r230119. rdar://problem/39155070
 
     WebAssembly compilation from DataView
