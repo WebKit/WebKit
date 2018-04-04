@@ -1,5 +1,57 @@
 2018-04-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r230052. rdar://problem/39155251
+
+    WebSocket cookie incorrectly stored
+    https://bugs.webkit.org/show_bug.cgi?id=184100
+    <rdar://problem/37928715>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    A cookie received in a WebSocket response should be stored with respect to the
+    origin of the WebSocket server in order for it to be sent in a subsequent request.
+    
+    Also removed a FIXME about implementing support for the long since
+    deprecated Set-Cookie2 header.
+    
+    Test: http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html
+    
+    * Modules/websockets/WebSocketChannel.cpp:
+    (WebCore::WebSocketChannel::processBuffer):
+    * Modules/websockets/WebSocketHandshake.h:
+    
+    LayoutTests:
+    
+    * http/tests/websocket/tests/hybi/cookie_wsh.py: Added. Downloaded from
+    <https://github.com/w3c/pywebsocket/blob/b2e1d11086fdf00b33a0d30c504f227e7d4fa86b/src/example/cookie_wsh.py>.
+    (_add_set_cookie):
+    (web_socket_do_extra_handshake):
+    (web_socket_transfer_data):
+    * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior-expected.txt: Added.
+    * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230052 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-28  Daniel Bates  <dabates@apple.com>
+
+            WebSocket cookie incorrectly stored
+            https://bugs.webkit.org/show_bug.cgi?id=184100
+            <rdar://problem/37928715>
+
+            Reviewed by Brent Fulgham.
+
+            * http/tests/websocket/tests/hybi/cookie_wsh.py: Added. Downloaded from
+            <https://github.com/w3c/pywebsocket/blob/b2e1d11086fdf00b33a0d30c504f227e7d4fa86b/src/example/cookie_wsh.py>.
+            (_add_set_cookie):
+            (web_socket_do_extra_handshake):
+            (web_socket_transfer_data):
+            * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior-expected.txt: Added.
+            * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html: Added.
+
+2018-04-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r229830. rdar://problem/39155360
 
     Disconnect the SVGPathSegList items from their SVGPathElement before rebuilding a new list

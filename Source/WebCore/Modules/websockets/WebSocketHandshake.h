@@ -52,6 +52,7 @@ public:
 
     const URL& url() const;
     void setURL(const URL&);
+    URL httpURLForAuthenticationAndCookies() const;
     const String host() const;
 
     const String& clientProtocol() const;
@@ -86,7 +87,6 @@ public:
     static String getExpectedWebSocketAccept(const String& secWebSocketKey);
 
 private:
-    URL httpURLForAuthenticationAndCookies() const;
 
     int readStatusLine(const char* header, size_t headerLength, int& statusCode, String& statusText);
 
