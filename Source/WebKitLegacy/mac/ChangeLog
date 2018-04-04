@@ -1,3 +1,38 @@
+2018-04-03  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r229414. rdar://problem/38651634
+
+    Possible null dereference of the page under WebFrameNetworkingContext::storageSession()
+    https://bugs.webkit.org/show_bug.cgi?id=183455
+    <rdar://problem/38191749>
+    
+    Reviewed by Youenn Fablet.
+    
+    Add a null check for the page as we have evidence from crashes that it can be null.
+    Other functions in WebFrameNetworkingContext already null check the page as well,
+    not just the frame so this is consistent.
+    
+    * WebCoreSupport/WebFrameNetworkingContext.mm:
+    (WebFrameNetworkingContext::storageSession const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@229414 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-08  Chris Dumez  <cdumez@apple.com>
+
+            Possible null dereference of the page under WebFrameNetworkingContext::storageSession()
+            https://bugs.webkit.org/show_bug.cgi?id=183455
+            <rdar://problem/38191749>
+
+            Reviewed by Youenn Fablet.
+
+            Add a null check for the page as we have evidence from crashes that it can be null.
+            Other functions in WebFrameNetworkingContext already null check the page as well,
+            not just the frame so this is consistent.
+
+            * WebCoreSupport/WebFrameNetworkingContext.mm:
+            (WebFrameNetworkingContext::storageSession const):
+
 2018-03-21  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229297. rdar://problem/38682578
