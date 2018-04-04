@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKPDFView.h"
+#import "WKLegacyPDFView.h"
 
 #if PLATFORM(IOS) && ENABLE(WKPDFVIEW)
 
@@ -73,11 +73,11 @@ typedef struct {
     unsigned index;
 } PDFPageInfo;
 
-@interface WKPDFView ()
+@interface WKLegacyPDFView ()
 - (void)_resetZoomAnimated:(BOOL)animated;
 @end
 
-@implementation WKPDFView {
+@implementation WKLegacyPDFView {
     RetainPtr<CGPDFDocumentRef> _cgPDFDocument;
     RetainPtr<UIPDFDocument> _pdfDocument;
     RetainPtr<NSString> _suggestedFilename;
@@ -541,7 +541,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
     _nextCachedFindOptionsAffectingResults = optionsAffectingResults;
     _nextCachedFindMaximumCount = maxCount;
 
-    RetainPtr<WKPDFView> retainedSelf = self;
+    RetainPtr<WKLegacyPDFView> retainedSelf = self;
     typeof(completionHandler) completionHandlerCopy = Block_copy(completionHandler);
 
     dispatch_async(_findQueue, [pages, string, findOptions, optionsAffectingResults, maxCount, computeMatchesOperationID, retainedSelf, completionHandlerCopy] {
@@ -866,10 +866,10 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 #pragma mark Printing
 
-@interface WKPDFView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
+@interface WKLegacyPDFView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
 @end
 
-@implementation WKPDFView (_WKWebViewPrintFormatter)
+@implementation WKLegacyPDFView (_WKWebViewPrintFormatter)
 
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {

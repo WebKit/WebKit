@@ -1,3 +1,19 @@
+2018-04-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] Rename WKPDFView to WKLegacyPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=184286
+
+        Rubber-stamped by Wenson Hsieh.
+
+        A series of upcoming patches will implement a new WKPDFView based on PDFKit.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry init]):
+        * UIProcess/ios/WKLegacyPDFView.h: Renamed from Source/WebKit/UIProcess/ios/WKPDFView.h.
+        * UIProcess/ios/WKLegacyPDFView.mm: Renamed from Source/WebKit/UIProcess/ios/WKPDFView.mm.
+        (-[WKLegacyPDFView _computeMatchesForString:options:maxCount:completionHandler:]):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-04-04  Yousuke Kimoto  <yousuke.kimoto@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Add WebKit Shared/win files for wincairo webkit

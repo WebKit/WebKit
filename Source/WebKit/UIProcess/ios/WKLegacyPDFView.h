@@ -29,7 +29,7 @@
 #import "WKActionSheetAssistant.h"
 #import "WKWebViewContentProvider.h"
 
-@interface WKPDFView : UIView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate, WKActionSheetAssistantDelegate>
+@interface WKLegacyPDFView : UIView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate, WKActionSheetAssistantDelegate>
 @end
 
 #endif // PLATFORM(IOS) && ENABLE(WKPDFVIEW)
