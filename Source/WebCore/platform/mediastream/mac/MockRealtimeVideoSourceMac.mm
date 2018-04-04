@@ -68,21 +68,26 @@ MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac(const String& deviceID, c
 
 RetainPtr<CMSampleBufferRef> MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer(CVPixelBufferRef pixelBuffer)
 {
-        if (!pixelBuffer)
+    if (!pixelBuffer)
         return nullptr;
+
+    if (!m_pixelBufferConformer)
+        m_pixelBufferConformer = std::make_unique<PixelBufferConformerCV>((CFDictionaryRef)@{ (NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8Planar) });
+
+    auto convertedPixelBuffer = m_pixelBufferConformer->convert(pixelBuffer);
 
     CMTime sampleTime = CMTimeMake(((elapsedTime() + 100_ms) * videoSampleRate).seconds(), videoSampleRate);
     CMSampleTimingInfo timingInfo = { kCMTimeInvalid, sampleTime, sampleTime };
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
-    OSStatus status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
+    OSStatus status = CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)convertedPixelBuffer, &formatDescription);
     if (status != noErr) {
         LOG_ERROR("Failed to initialize CMVideoFormatDescription with error code: %d", status);
         return nullptr;
     }
 
     CMSampleBufferRef sampleBuffer;
-    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
+    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)convertedPixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
     CFRelease(formatDescription);
     if (status != noErr) {
         LOG_ERROR("Failed to initialize CMSampleBuffer with error code: %d", status);

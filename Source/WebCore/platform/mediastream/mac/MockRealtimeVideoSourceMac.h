@@ -34,6 +34,7 @@
 
 #include "MockRealtimeVideoSource.h"
 #include "OrientationNotifier.h"
+#include "PixelBufferConformerCV.h"
 
 typedef struct __CVBuffer *CVBufferRef;
 typedef CVBufferRef CVImageBufferRef;
@@ -64,6 +65,7 @@ private:
     mutable RetainPtr<PlatformLayer> m_previewLayer;
     mutable RetainPtr<CVPixelBufferPoolRef> m_bufferPool;
     MediaSample::VideoRotation m_deviceOrientation { MediaSample::VideoRotation::None };
+    std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 };
 
 } // namespace WebCore

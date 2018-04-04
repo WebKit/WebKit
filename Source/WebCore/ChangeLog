@@ -1,5 +1,19 @@
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
+        MockRealtimeVideoSourceMac should produce kCVPixelFormatType_420YpCbCr8Planar buffers
+        https://bugs.webkit.org/show_bug.cgi?id=184304
+
+        Reviewed by Eric Carlson.
+
+        Allows covering RealtimeOutgoingVideoSourceMac code path handling native buffers produced by capture video sources.
+        ARGB buffer coverage is done through canvas capture streams.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer):
+
+2018-04-04  Youenn Fablet  <youenn@apple.com>
+
         Introduce a ThreadSafeRefCounted parameter to ensure being destroyed on the main thread
         https://bugs.webkit.org/show_bug.cgi?id=183988
 
