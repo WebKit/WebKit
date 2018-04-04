@@ -41,8 +41,9 @@
 namespace WebCore {
 namespace Style {
 
-enum class LoadPolicy { Normal, ShapeOutside };
-static void loadPendingImage(Document& document, const StyleImage* styleImage, const Element* element, LoadPolicy loadPolicy = LoadPolicy::Normal)
+// <https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes>
+enum class LoadPolicy { NoCORS, Anonymous };
+static void loadPendingImage(Document& document, const StyleImage* styleImage, const Element* element, LoadPolicy loadPolicy = LoadPolicy::NoCORS)
 {
     if (!styleImage || !styleImage->isPending())
         return;
@@ -50,8 +51,7 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = element && element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
-    // FIXME: Why does shape-outside have different policy than other properties?
-    if (loadPolicy == LoadPolicy::ShapeOutside) {
+    if (loadPolicy == LoadPolicy::Anonymous && document.settings().useAnonymousModeWhenFetchingMaskImages()) {
         options.mode = FetchOptions::Mode::Cors;
         options.credentials = FetchOptions::Credentials::SameOrigin;
         options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
@@ -85,11 +85,14 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
     if (auto* reflection = style.boxReflect())
         loadPendingImage(document, reflection->mask().image(), element);
 
+    // Masking operations may be sensitive to timing attacks that can be used to reveal the pixel data of
+    // the image used as the mask. As a means to mitigate such attacks CSS mask images and shape-outside
+    // images are retreived in "Anonymous" mode, which uses a potentially CORS-enabled fetch.
     for (auto* maskLayer = &style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
-        loadPendingImage(document, maskLayer->image(), element);
+        loadPendingImage(document, maskLayer->image(), element, LoadPolicy::Anonymous);
 
     if (style.shapeOutside())
-        loadPendingImage(document, style.shapeOutside()->image(), element, LoadPolicy::ShapeOutside);
+        loadPendingImage(document, style.shapeOutside()->image(), element, LoadPolicy::Anonymous);
 }
 
 }

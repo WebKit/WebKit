@@ -103,6 +103,8 @@ allowSettingAnyXHRHeaderFromFileURLs:
   initial: false
 needsStorageAccessFromFileURLsQuirk:
   initial: true
+useAnonymousModeWhenFetchingMaskImages:
+  initial: true
 javaScriptCanOpenWindowsAutomatically:
   initial: false
 javaScriptCanAccessClipboard:

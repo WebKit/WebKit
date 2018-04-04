@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.square {
+    width: 128px;
+    height: 128px;
+}
+
+.blue-background {
+    background-color: blue;
+}
+
+.mask-cors-no-access {
+    mask-image: url("http://localhost:8000/security/resources/image-access-control.php?file=fail-mask.png");
+    mask-size: 128px 128px;
+    -webkit-mask-image: url("http://localhost:8000/security/resources/image-access-control.php?file=fail-mask.png");
+    -webkit-mask-size: 128px 128px;
+}
+
+.mask-cors-has-access {
+    mask-image: url("http://localhost:8000/security/resources/image-access-control.php?allow=true&file=black-square.png");
+    mask-size: 128px 128px;
+    -webkit-mask-image: url("http://localhost:8000/security/resources/image-access-control.php?allow=true&file=black-square.png");
+    -webkit-mask-size: 128px 128px;
+}
+</style>
+</head>
+<body>
+<p>This tests that a potentially CORS fetch is performed for a CSS mask image. This test PASSED if you see a solid yellow square and solid blue square below (in order). Otherwise, it FAILED.</p>
+<p>Without CORS access:</p>
+<div class="square" style="background-color: yellow"><div class="square blue-background mask-cors-no-access"></div></div>
+<p>With CORS access:</p>
+<div class="square blue-background mask-cors-has-access"></div>
+</body>
+</html>
