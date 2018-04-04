@@ -117,6 +117,12 @@ bool isH264HardwareEncoderAllowed()
     return h264HardwareEncoderAllowed;
 }
 
+rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef pixelBuffer)
+{
+    RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer: pixelBuffer];
+    return new rtc::RefCountedObject<webrtc::ObjCFrameBuffer>(frameBuffer);
+}
+
 CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame)
 {
     auto buffer = frame.video_frame_buffer();

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "api/video_codecs/video_encoder_factory.h"
+#include "api/video/video_frame_buffer.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 
@@ -44,5 +46,6 @@ void setH264HardwareEncoderAllowed(bool);
 bool isH264HardwareEncoderAllowed();
 
 CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&);
+rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
 
 }

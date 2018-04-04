@@ -1,3 +1,16 @@
+2018-04-03  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingVideoSourceMac should pass a ObjCFrameBuffer buffer
+        https://bugs.webkit.org/show_bug.cgi?id=184281
+        rdar://problem/39153262
+
+        Reviewed by Jer Noble.
+
+        Covered by manual testing by going to WebRTC web sites.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated):
+
 2018-04-03  Filip Pizlo  <fpizlo@apple.com>
 
         GC shouldn't do object distancing

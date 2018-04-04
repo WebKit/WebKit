@@ -50,7 +50,10 @@ class ObjCI420FrameBuffer : public I420BufferInterface {
 ObjCFrameBuffer::ObjCFrameBuffer(id<RTCVideoFrameBuffer> frame_buffer)
     : frame_buffer_(frame_buffer), width_(frame_buffer.width), height_(frame_buffer.height) {}
 
-ObjCFrameBuffer::~ObjCFrameBuffer() {}
+ObjCFrameBuffer::~ObjCFrameBuffer() {
+    // FIXME: Activate ARC.
+    [frame_buffer_ release];
+}
 
 VideoFrameBuffer::Type ObjCFrameBuffer::type() const {
   return Type::kNative;

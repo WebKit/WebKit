@@ -1,3 +1,20 @@
+2018-04-03  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingVideoSourceMac should pass a ObjCFrameBuffer buffer
+        https://bugs.webkit.org/show_bug.cgi?id=184281
+        rdar://problem/39153262
+
+        Reviewed by Jer Noble.
+
+        Introduce a routine to create the wrapper around native pixel buffers as expected by the new libwebrtc H264 encoder.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::pixelBufferToFrame):
+
 2018-04-02  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed fixing GTK port X86 32bits compilation after r230152.

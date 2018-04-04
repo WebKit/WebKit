@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
+#include <webrtc/sdk/WebKit/WebKitUtilities.h>
 #include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
@@ -147,7 +148,7 @@ void RealtimeOutgoingVideoSourceCocoa::sampleBufferUpdated(MediaStreamTrackPriva
     auto pixelFormatType = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
     if (pixelFormatType == kCVPixelFormatType_420YpCbCr8Planar || pixelFormatType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) {
-        rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer = new rtc::RefCountedObject<webrtc::CoreVideoFrameBuffer>(pixelBuffer);
+        rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer = webrtc::pixelBufferToFrame(pixelBuffer);
         if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0) {
             // FIXME: We should make AVVideoCaptureSource handle the rotation whenever possible.
             // This implementation is inefficient, we should rotate on the CMSampleBuffer directly instead of doing this double allocation.
