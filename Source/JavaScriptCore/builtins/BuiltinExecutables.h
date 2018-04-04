@@ -26,10 +26,11 @@
 #pragma once
 
 #include "JSCBuiltins.h"
-#include "ParserModes.h"
+#include "Parser.h"
 #include "SourceCode.h"
 #include "Weak.h"
 #include "WeakHandleOwner.h"
+#include <wtf/Expected.h>
 
 namespace JSC {
 
@@ -37,13 +38,15 @@ class UnlinkedFunctionExecutable;
 class Identifier;
 class VM;
 
+using ExpectedUnlinkedFunctionExecutable = Expected<UnlinkedFunctionExecutable*, ParserError>;
+
 class BuiltinExecutables final: private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit BuiltinExecutables(VM&);
 
 #define EXPOSE_BUILTIN_EXECUTABLES(name, functionName, overriddenName, length) \
-UnlinkedFunctionExecutable* name##Executable(); \
+ExpectedUnlinkedFunctionExecutable name##Executable(); \
 const SourceCode& name##Source() { return m_##name##Source; }
     
     JSC_FOREACH_BUILTIN_CODE(EXPOSE_BUILTIN_EXECUTABLES)
@@ -51,13 +54,14 @@ const SourceCode& name##Source() { return m_##name##Source; }
 
     UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name);
 
-    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
+    static ExpectedUnlinkedFunctionExecutable createExecutable(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
+    static UnlinkedFunctionExecutable* createExecutableOrCrash(VM&, const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
 private:
     void finalize(Handle<Unknown>, void* context) override;
 
     VM& m_vm;
 
-    UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&, ConstructAbility);
+    ExpectedUnlinkedFunctionExecutable createBuiltinExecutable(const SourceCode&, const Identifier&, ConstructAbility);
 
 #define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length)\
     SourceCode m_##name##Source; \

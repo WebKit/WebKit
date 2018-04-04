@@ -2034,12 +2034,15 @@ bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
     return !result.isString();
 }
 
-bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, PropertySlot& slot)
+bool JSObject::getOwnStaticPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     for (auto* info = classInfo(vm); info; info = info->parentClass) {
         if (auto* table = info->staticPropHashTable) {
-            if (getStaticPropertySlotFromTable(vm, table->classForThis, *table, this, propertyName, slot))
+            if (getStaticPropertySlotFromTable(exec, table->classForThis, *table, this, propertyName, slot))
                 return true;
+            RETURN_IF_EXCEPTION(scope, false);
         }
     }
     return false;
@@ -2325,6 +2328,7 @@ void JSObject::reifyAllStaticProperties(ExecState* exec)
 {
     ASSERT(!staticPropertiesReified());
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     // If this object's ClassInfo has no static properties, then nothing to reify!
     // We can safely set the flag to avoid the expensive check again in the future.
@@ -2345,8 +2349,10 @@ void JSObject::reifyAllStaticProperties(ExecState* exec)
             unsigned attributes;
             auto key = Identifier::fromString(&vm, value.m_key);
             PropertyOffset offset = getDirectOffset(vm, key, attributes);
-            if (!isValidOffset(offset))
-                reifyStaticProperty(vm, hashTable->classForThis, key, value, *this);
+            if (!isValidOffset(offset)) {
+                reifyStaticProperty(vm, exec, hashTable->classForThis, key, value, *this);
+                RETURN_IF_EXCEPTION(scope, void());
+            }
         }
     }
 

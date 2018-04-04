@@ -93,6 +93,10 @@ class FunctionExecutable;
             ),
 
             (["WebCore"],
+                ("JavaScriptCore", "parser/ParserError.h"),
+            ),
+
+            (["WebCore"],
                 ("JavaScriptCore", "builtins/BuiltinUtils.h"),
             ),
 

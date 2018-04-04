@@ -66,12 +66,17 @@ class BuiltinsCombinedHeaderGenerator(BuiltinsGenerator):
         return "\n\n".join(sections)
 
     def generate_forward_declarations(self):
-        return """namespace JSC {
+        return """
+#include <wtf/Expected.h>
+
+namespace JSC {
 class FunctionExecutable;
 class VM;
+class ParserError;
 
 enum class ConstructAbility : unsigned;
-}"""
+}
+"""
 
     def generate_section_for_object(self, object):
         lines = []

@@ -30,6 +30,7 @@
 #include "BuiltinNames.h"
 #include "JSCInlines.h"
 #include "Parser.h"
+#include <wtf/Expected.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC {
@@ -51,25 +52,34 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
     case ConstructorKind::None:
         break;
     case ConstructorKind::Base:
-        return createExecutable(m_vm, makeSource(baseConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutableOrCrash(m_vm, makeSource(baseConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
     case ConstructorKind::Extends:
-        return createExecutable(m_vm, makeSource(derivedConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutableOrCrash(m_vm, makeSource(derivedConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
     }
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
+ExpectedUnlinkedFunctionExecutable BuiltinExecutables::createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
 {
     return createExecutable(m_vm, code, name, ConstructorKind::None, constructAbility);
 }
 
 UnlinkedFunctionExecutable* createBuiltinExecutable(VM& vm, const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
 {
-    return BuiltinExecutables::createExecutable(vm, code, name, ConstructorKind::None, constructAbility);
+    return BuiltinExecutables::createExecutableOrCrash(vm, code, name, ConstructorKind::None, constructAbility);
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
+UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableOrCrash(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
+{
+    auto expected = BuiltinExecutables::createExecutable(vm, source, name, constructorKind, constructAbility);
+    if (!expected.has_value()) {
+        dataLogLn("Fatal error compiling builtin function '", name.string(), "'");
+        CRASH();
+    }
+    return expected.value();
+}
+
+ExpectedUnlinkedFunctionExecutable BuiltinExecutables::createExecutable(VM& vm, const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
 {
     JSTextPosition positionBeforeLastNewline;
     ParserError error;
@@ -83,8 +93,8 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         &positionBeforeLastNewline, constructorKind);
 
     if (!program) {
-        dataLog("Fatal error compiling builtin function '", name.string(), "': ", error.message());
-        CRASH();
+        RELEASE_ASSERT(error.isValid());
+        return makeUnexpected(WTFMove(error));
     }
 
     StatementNode* exprStatement = program->singleStatement();
@@ -106,7 +116,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     metadata->overrideName(name);
     VariableEnvironment dummyTDZVariables;
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, kind, constructAbility, JSParserScriptMode::Classic, dummyTDZVariables, DerivedContextType::None, WTFMove(parentSourceOverride));
-    return functionExecutable;
+    return ExpectedUnlinkedFunctionExecutable(functionExecutable);
 }
 
 void BuiltinExecutables::finalize(Handle<Unknown>, void* context)
@@ -115,15 +125,18 @@ void BuiltinExecutables::finalize(Handle<Unknown>, void* context)
 }
 
 #define DEFINE_BUILTIN_EXECUTABLES(name, functionName, overrideName, length) \
-UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
+ExpectedUnlinkedFunctionExecutable BuiltinExecutables::name##Executable() \
 {\
     if (!m_##name##Executable) {\
         Identifier executableName = m_vm.propertyNames->builtinNames().functionName##PublicName();\
         if (overrideName)\
             executableName = Identifier::fromString(&m_vm, overrideName);\
-        m_##name##Executable = Weak<UnlinkedFunctionExecutable>(createBuiltinExecutable(m_##name##Source, executableName, s_##name##ConstructAbility), this, &m_##name##Executable);\
+        ExpectedUnlinkedFunctionExecutable f = createBuiltinExecutable(m_##name##Source, executableName, s_##name##ConstructAbility);\
+        if (!f.has_value())\
+            return f;\
+        m_##name##Executable = Weak<UnlinkedFunctionExecutable>(f.value(), this, &m_##name##Executable);\
     }\
-    return m_##name##Executable.get();\
+    return ExpectedUnlinkedFunctionExecutable(m_##name##Executable.get());\
 }
 JSC_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_EXECUTABLES)
 #undef EXPOSE_BUILTIN_SOURCES

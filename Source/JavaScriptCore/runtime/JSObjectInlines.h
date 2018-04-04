@@ -140,8 +140,9 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
     while (true) {
         Structure* structure = structureIDTable.get(object->structureID());
         if (LIKELY(!TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
-            if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
+            if (object->getOwnNonIndexPropertySlot(exec, structure, propertyName, slot))
                 return true;
+            RETURN_IF_EXCEPTION(scope, false);
         } else {
             bool hasSlot = structure->classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, false);

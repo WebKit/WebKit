@@ -7173,7 +7173,7 @@ sub GenerateConstructorHelperMethods
     if (IsJSBuiltinConstructor($interface)) {
         push(@$outputArray, "template<> FunctionExecutable* ${constructorClassName}::initializeExecutable(VM& vm)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return " . GetJSBuiltinFunctionNameFromString($interface->type->name, "initialize" . $interface->type->name) . "(vm);\n");
+        push(@$outputArray, "    return " . GetJSBuiltinFunctionNameFromString($interface->type->name, "initialize" . $interface->type->name) . "(vm).value();\n");
         push(@$outputArray, "}\n");
         push(@$outputArray, "\n");
     }

@@ -330,7 +330,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     toStringTagAccessor->setGetter(vm, globalObject, toStringTagFunction);
     putDirectNonIndexAccessor(vm, vm.propertyNames->toStringTagSymbol, toStringTagAccessor, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly | PropertyAttribute::Accessor);
 
-    JSFunction* valuesFunction = JSFunction::create(vm, typedArrayPrototypeValuesCodeGenerator(vm), globalObject);
+    JSFunction* valuesFunction = JSFunction::create(vm, typedArrayPrototypeValuesCodeGenerator(vm).value(), globalObject);
 
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().valuesPublicName(), valuesFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, valuesFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));

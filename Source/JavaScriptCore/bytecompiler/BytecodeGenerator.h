@@ -31,6 +31,7 @@
 #pragma once
 
 #include "CodeBlock.h"
+#include "Error.h"
 #include "Instruction.h"
 #include "Interpreter.h"
 #include "JSAsyncGeneratorFunction.h"
