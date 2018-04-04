@@ -1,5 +1,25 @@
 2018-04-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r230119. rdar://problem/39155070
+
+    WebAssembly compilation from DataView
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230119 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-30  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: support DataView compilation
+            https://bugs.webkit.org/show_bug.cgi?id=183342
+
+            Reviewed by Mark Lam.
+
+            Test WebAssembly compilation using a DataView with offset.
+
+            * wasm/regress/183342.js: Added.
+            (attempt.catch):
+
+2018-04-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r230102. rdar://problem/38154594
 
     A stack overflow in the parsing of a builtin (called by createExecutable) cause a crash instead of a catchable js exception
