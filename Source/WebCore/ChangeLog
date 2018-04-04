@@ -1,3 +1,13 @@
+2018-04-04  Alex Christensen  <achristensen@webkit.org>
+
+        Move PingHandle to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=184145
+
+        Reviewed by Youenn Fablet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/PingHandle.h: Removed.
+
 2018-04-04  Per Arne Vollan  <pvollan@apple.com>
 
         The layout test fast/canvas/canvas-blending-global-alpha.html is failing when the WebContent process does not have WindowServer access.

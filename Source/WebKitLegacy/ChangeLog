@@ -1,3 +1,15 @@
+2018-04-04  Alex Christensen  <achristensen@webkit.org>
+
+        Move PingHandle to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=184145
+
+        Reviewed by Youenn Fablet.
+
+        * WebCoreSupport/PingHandle.h: Copied from Source/WebCore/platform/network/PingHandle.h.
+        (): Deleted.
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2018-03-27  Chris Dumez  <cdumez@apple.com>
 
         Move online state detection from the WebProcess to the NetworkProcess

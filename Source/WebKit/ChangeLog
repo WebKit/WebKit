@@ -1,3 +1,12 @@
+2018-04-04  Alex Christensen  <achristensen@webkit.org>
+
+        Move PingHandle to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=184145
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+
 2018-04-04  Brent Fulgham  <bfulgham@apple.com>
 
         Failures from mach port reference handling should be fatal

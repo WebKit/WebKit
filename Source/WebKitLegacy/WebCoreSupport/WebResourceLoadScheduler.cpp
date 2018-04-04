@@ -24,6 +24,7 @@
 
 #include "WebResourceLoadScheduler.h"
 
+#include "PingHandle.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FetchOptions.h>
@@ -31,7 +32,6 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkStateNotifier.h>
-#include <WebCore/PingHandle.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SubresourceLoader.h>

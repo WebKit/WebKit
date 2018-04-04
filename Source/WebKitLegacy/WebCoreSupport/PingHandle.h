@@ -25,21 +25,22 @@
 
 #pragma once
 
-#include "ResourceHandle.h"
-#include "ResourceHandleClient.h"
-#include "Timer.h"
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceHandleClient.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
-
-namespace WebCore {
 
 // This class triggers asynchronous loads independent of the networking context staying alive (i.e., auditing pingbacks).
 // The object just needs to live long enough to ensure the message was actually sent.
 // As soon as any callback is received from the ResourceHandle, this class will cancel the load and delete itself.
 
-class PingHandle final : private ResourceHandleClient {
+class PingHandle final : private WebCore::ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(PingHandle); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects, WTF::CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
+    PingHandle(WebCore::NetworkingContext* networkingContext, const WebCore::ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
         : m_currentRequest(request)
         , m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
         , m_shouldUseCredentialStorage(shouldUseCredentialStorage)
@@ -49,7 +50,7 @@ public:
         bool defersLoading = false;
         bool shouldContentSniff = false;
         bool shouldContentEncodingSniff = true;
-        m_handle = ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, shouldContentEncodingSniff);
+        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, shouldContentEncodingSniff);
 
         // If the server never responds, this object will hang around forever.
         // Set a very generous timeout, just in case.
@@ -57,35 +58,35 @@ public:
     }
 
 private:
-    void willSendRequestAsync(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final
+    void willSendRequestAsync(WebCore::ResourceHandle*, WebCore::ResourceRequest&& request, WebCore::ResourceResponse&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
     {
         m_currentRequest = WTFMove(request);
         if (m_shouldFollowRedirects) {
-            completionHandler(ResourceRequest { m_currentRequest });
+            completionHandler(WebCore::ResourceRequest { m_currentRequest });
             return;
         }
         completionHandler({ });
-        pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Not allowed to follow redirects"), ResourceError::Type::AccessControl });
+        pingLoadComplete(WebCore::ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Not allowed to follow redirects"), WebCore::ResourceError::Type::AccessControl });
     }
-    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response, CompletionHandler<void()>&& completionHandler) final
+    void didReceiveResponseAsync(WebCore::ResourceHandle*, WebCore::ResourceResponse&& response, CompletionHandler<void()>&& completionHandler) final
     {
         completionHandler();
         pingLoadComplete({ }, response);
     }
-    void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) final { pingLoadComplete(); }
-    void didFinishLoading(ResourceHandle*) final { pingLoadComplete(); }
-    void didFail(ResourceHandle*, const ResourceError& error) final { pingLoadComplete(error); }
-    bool shouldUseCredentialStorage(ResourceHandle*) final { return m_shouldUseCredentialStorage; }
-    void timeoutTimerFired() { pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Load timed out"), ResourceError::Type::Timeout }); }
+    void didReceiveBuffer(WebCore::ResourceHandle*, Ref<WebCore::SharedBuffer>&&, int) final { pingLoadComplete(); }
+    void didFinishLoading(WebCore::ResourceHandle*) final { pingLoadComplete(); }
+    void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError& error) final { pingLoadComplete(error); }
+    bool shouldUseCredentialStorage(WebCore::ResourceHandle*) final { return m_shouldUseCredentialStorage; }
+    void timeoutTimerFired() { pingLoadComplete(WebCore::ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Load timed out"), WebCore::ResourceError::Type::Timeout }); }
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&, CompletionHandler<void(bool)>&& completionHandler)
+    void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&, CompletionHandler<void(bool)>&& completionHandler)
     {
         completionHandler(false);
-        pingLoadComplete(ResourceError { String { }, 0, m_currentRequest.url(), ASCIILiteral("Not allowed to authenticate"), ResourceError::Type::AccessControl });
+        pingLoadComplete(WebCore::ResourceError { String { }, 0, m_currentRequest.url(), ASCIILiteral("Not allowed to authenticate"), WebCore::ResourceError::Type::AccessControl });
     }
 #endif
 
-    void pingLoadComplete(const ResourceError& error = { }, const ResourceResponse& response = { })
+    void pingLoadComplete(const WebCore::ResourceError& error = { }, const WebCore::ResourceResponse& response = { })
     {
         if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
             completionHandler(error, response);
@@ -102,12 +103,10 @@ private:
         }
     }
 
-    RefPtr<ResourceHandle> m_handle;
-    ResourceRequest m_currentRequest;
-    Timer m_timeoutTimer;
+    RefPtr<WebCore::ResourceHandle> m_handle;
+    WebCore::ResourceRequest m_currentRequest;
+    WebCore::Timer m_timeoutTimer;
     bool m_shouldUseCredentialStorage;
     bool m_shouldFollowRedirects;
-    WTF::CompletionHandler<void(const ResourceError&, const ResourceResponse&)> m_completionHandler;
+    CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)> m_completionHandler;
 };
-
-} // namespace WebCore
