@@ -178,11 +178,6 @@ class BlockFormattingContext extends FormattingContext {
         this.displayBox(layoutBox).setWidth(width);
     }
 
-    _computeFloatingWidth(layoutBox) {
-        // FIXME: missing cases
-        this.displayBox(layoutBox).setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
-    }
-
     _computeInFlowWidth(layoutBox) {
         if (Utils.isWidthAuto(layoutBox))
             return this.displayBox(layoutBox).setWidth(this._horizontalConstraint(layoutBox));
@@ -224,11 +219,6 @@ class BlockFormattingContext extends FormattingContext {
             ASSERT_NOT_REACHED();
         height += Utils.computedVerticalBorderAndPadding(layoutBox.node());
         this.displayBox(layoutBox).setHeight(height);
-    }
-
-    _computeFloatingHeight(layoutBox) {
-        // FIXME: missing cases
-        this.displayBox(layoutBox).setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
     }
 
     _computeInFlowHeight(layoutBox) {

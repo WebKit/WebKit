@@ -1,3 +1,25 @@
+2018-04-03  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Introduce floating to InlineFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=184288
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._computeFloatingWidth): Deleted.
+        (BlockFormattingContext.prototype._computeFloatingHeight): Deleted.
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype._computeFloatingWidth):
+        (FormattingContext.prototype._computeFloatingHeight):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleFloatingBox):
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js:
+        (Line.prototype.addFloatingBox):
+        (Line):
+        * LayoutReloaded/test/float-is-inside-inline-formatting-context-simple.html: Added.
+        * LayoutReloaded/test/index.html:
+
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
         NetworkResourceLoader does not need to expose all redirect response headers

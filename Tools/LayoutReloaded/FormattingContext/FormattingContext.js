@@ -105,6 +105,16 @@ class FormattingContext {
         return this.formattingState().displayBox(layoutBox);
     }
 
+    _computeFloatingWidth(layoutBox) {
+        // FIXME: missing cases
+        this.displayBox(layoutBox).setWidth(Utils.width(layoutBox) + Utils.computedHorizontalBorderAndPadding(layoutBox.node()));
+    }
+
+    _computeFloatingHeight(layoutBox) {
+        // FIXME: missing cases
+        this.displayBox(layoutBox).setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
+    }
+
     _outOfFlowDescendants() {
         // FIXME: This is highly inefficient but will do for now.
         // 1. Collect all the out-of-flow descendants first.

@@ -53,4 +53,10 @@ class Line {
         this.m_lineBoxes.push({startPosition, endPosition, lineBoxRect});
         this.m_lineRect.growBy(new LayoutSize(size.width(), 0));
     }
+
+    addFloatingBox(size) {
+        // TODO: Add missing cases.
+        this.m_availableWidth -= size.width();
+        this.m_lineRect.moveBy(new LayoutSize(size.width(), 0));
+    }
 }

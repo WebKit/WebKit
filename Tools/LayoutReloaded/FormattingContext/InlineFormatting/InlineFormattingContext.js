@@ -52,7 +52,10 @@ class InlineFormattingContext extends FormattingContext {
             }
             while (this._descendantNeedsLayout()) {
                 let layoutBox = this._nextInLayoutQueue();
-                this._handleInlineBox(layoutBox);
+                if (layoutBox instanceof Layout.InlineBox)
+                    this._handleInlineBox(layoutBox);
+                else if (layoutBox.isFloatingPositioned())
+                    this._handleFloatingBox(layoutBox);
                 // We are done with laying out this box.
                 this._removeFromLayoutQueue(layoutBox);
                 if (layoutBox.nextSibling()) {
@@ -83,6 +86,13 @@ class InlineFormattingContext extends FormattingContext {
             text = text.slice(textRuns[textRuns.length - 1].endPosition, text.length);
             this._commitLine();
         }
+    }
+
+    _handleFloatingBox(floatingBox) {
+        this._computeFloatingWidth(floatingBox);
+        this._computeFloatingHeight(floatingBox);
+        this.floatingContext().computePosition(floatingBox);
+        this._line().addFloatingBox(this.displayBox(floatingBox).size());
     }
 
     _commitLine() {
