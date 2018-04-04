@@ -1,3 +1,19 @@
+2018-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Remove effective font size constraints when determining focus zoom scale
+        https://bugs.webkit.org/show_bug.cgi?id=184287
+        <rdar://problem/39063886>
+
+        Reviewed by Timothy Hatcher.
+
+        As it turns out, form controls on some important websites can be very wide, with a small font size, which
+        renders the approach taken in <https://trac.webkit.org/r230171> moot, since we'll just end up zooming to a scale
+        that is too large anyways. To mitigate this for now, remove the minimum font scaling threshold while we think of
+        more clever ways to account for this scenario.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
 2018-04-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] WebFrameLoaderClient: 'getpid': identifier not found

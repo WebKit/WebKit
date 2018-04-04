@@ -2154,7 +2154,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     double scale = currentScale;
     if (allowScaling) {
 #if ENABLE(EXTRA_ZOOM_MODE)
-        const double minimumLegibleFontSize = 11;
         const CGFloat minimumMarginForZoomingToEntireFocusRectInWebViewCoordinates = 10;
         const CGFloat maximumMarginForZoomingToEntireFocusRectInWebViewCoordinates = 35;
 
@@ -2163,8 +2162,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
         double clampedMaximumTargetScale = clampTo<double>(std::min(visibleSize.width / CGRectGetWidth(minimumTargetRectInDocumentCoordinates), visibleSize.height / CGRectGetHeight(minimumTargetRectInDocumentCoordinates)), minimumScale, maximumScale);
         double clampedMinimumTargetScale = clampTo<double>(std::min(visibleSize.width / CGRectGetWidth(maximumTargetRectInDocumentCoordinates), visibleSize.height / CGRectGetHeight(maximumTargetRectInDocumentCoordinates)), minimumScale, maximumScale);
-        double targetScaleIgnoringFontSizeConstraints = clampTo<double>(currentScale, clampedMinimumTargetScale, clampedMaximumTargetScale);
-        scale = std::max<double>(minimumLegibleFontSize / fontSize, targetScaleIgnoringFontSizeConstraints);
+        scale = clampTo<double>(currentScale, clampedMinimumTargetScale, clampedMaximumTargetScale);
 #else
         const double webViewStandardFontSize = 16;
         scale = clampTo<double>(webViewStandardFontSize / fontSize, minimumScale, maximumScale);
