@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
-#import <WebCore/MachSendRight.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/SystemTracing.h>
 
 using namespace IPC;

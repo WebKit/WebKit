@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
 #include <wtf/TypeCasts.h>
 
 #if PLATFORM(COCOA)
-namespace WebCore {
+namespace WTF {
 class MachSendRight;
 }
 #endif
@@ -101,7 +101,7 @@ public:
     virtual void prepareForAppSuspension() { }
 
 #if PLATFORM(COCOA)
-    virtual WebCore::MachSendRight createFence();
+    virtual WTF::MachSendRight createFence();
 #endif
 
     virtual void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) { }

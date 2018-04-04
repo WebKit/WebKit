@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginControllerProxy_h
-#define PluginControllerProxy_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -102,7 +101,7 @@ private:
 #if PLATFORM(COCOA)
     void pluginFocusOrWindowFocusChanged(bool) override;
     void setComplexTextInputState(PluginComplexTextInputState) override;
-    const WebCore::MachSendRight& compositingRenderServerPort() override;
+    const WTF::MachSendRight& compositingRenderServerPort() override;
 #endif
 
     float contentsScaleFactor() override;
@@ -237,5 +236,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#endif // PluginControllerProxy_h

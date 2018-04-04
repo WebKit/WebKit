@@ -37,10 +37,10 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
-#import <WebCore/MachSendRight.h>
 #import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/TimeRanges.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/MachSendRight.h>
 
 #if PLATFORM(IOS)
 #import "RemoteLayerTreeDrawingAreaProxy.h"

@@ -10,6 +10,7 @@ list(APPEND WTF_LIBRARIES
 list(APPEND WTF_PUBLIC_HEADERS
     cf/TypeCastsCF.h
 
+    cocoa/MachSendRight.h
     cocoa/SoftLinking.h
 
     darwin/WeakLinking.h
@@ -42,6 +43,7 @@ list(APPEND WTF_SOURCES
     text/mac/TextBreakIteratorInternalICUMac.mm
 
     cocoa/CPUTimeCocoa.mm
+    cocoa/MachSendRight.cpp
     cocoa/MemoryFootprintCocoa.cpp
     cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/WorkQueueCocoa.cpp

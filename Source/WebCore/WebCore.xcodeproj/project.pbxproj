@@ -442,7 +442,6 @@
 		1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */; };
 		197B180C1506353200E4ADA8 /* SVGRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 197B180B150634C000E4ADA8 /* SVGRenderingContext.h */; };
 		19BFF64F11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */; };
-		1A0409DC1A4360B5009E47F3 /* MachSendRight.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0409DB1A4360B5009E47F3 /* MachSendRight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A08FEDD1D592B8B008BA8CB /* PluginInfoProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A08FEDB1D592B8B008BA8CB /* PluginInfoProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */; };
@@ -5808,8 +5807,6 @@
 		197B180B150634C000E4ADA8 /* SVGRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGRenderingContext.h; sourceTree = "<group>"; };
 		19BFF64911C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
 		19BFF64A11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
-		1A0409DB1A4360B5009E47F3 /* MachSendRight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachSendRight.h; sourceTree = "<group>"; };
-		1A0409F21A43675C009E47F3 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
 		1A08FEDA1D592B8B008BA8CB /* PluginInfoProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInfoProvider.cpp; sourceTree = "<group>"; };
 		1A08FEDB1D592B8B008BA8CB /* PluginInfoProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoProvider.h; sourceTree = "<group>"; };
 		1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = OverflowEvent.cpp; sourceTree = "<group>"; };
@@ -21267,8 +21264,6 @@
 				5721214E20535D710062AA1F /* LocalAuthenticationSoftLink.h */,
 				57212150205361D20062AA1F /* LocalAuthenticationSoftLink.mm */,
 				1A4832B21A953BA6008B4DFE /* LocalizedStringsCocoa.mm */,
-				1A0409F21A43675C009E47F3 /* MachSendRight.cpp */,
-				1A0409DB1A4360B5009E47F3 /* MachSendRight.h */,
 				C53D39331C97892D007F3AE9 /* MIMETypeRegistryCocoa.mm */,
 				A19D93491AA11B1E00B46C24 /* NetworkExtensionContentFilter.h */,
 				A19D93481AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm */,
@@ -28950,7 +28945,6 @@
 				0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */,
 				93A806171E03B51C008A1F26 /* LongRange.h in Headers */,
 				46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */,
-				1A0409DC1A4360B5009E47F3 /* MachSendRight.h in Headers */,
 				7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				CE1866451F72E5B400A0CAB6 /* MarkedText.h in Headers */,

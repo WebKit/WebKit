@@ -169,9 +169,9 @@
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
 #include "ViewSnapshotStore.h"
-#include <WebCore/MachSendRight.h>
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextIndicatorWindow.h>
+#include <wtf/MachSendRight.h>
 #endif
 
 #if PLATFORM(GTK)

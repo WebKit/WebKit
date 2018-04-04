@@ -234,6 +234,7 @@
 #include "VideoFullscreenManager.h"
 #include "WKStringCF.h"
 #include <WebCore/LegacyWebArchive.h>
+#include <wtf/MachSendRight.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -2661,7 +2662,7 @@ void WebPage::setTopContentInsetFenced(float contentInset, IPC::Attachment fence
 
     setTopContentInset(contentInset);
 
-    mach_port_deallocate(mach_task_self(), fencePort.port());
+    deallocateSendRightSafely(fencePort.port());
 }
 #endif
 

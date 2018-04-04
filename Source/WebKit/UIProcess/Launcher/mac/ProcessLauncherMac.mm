@@ -34,6 +34,7 @@
 #import <spawn.h>
 #import <sys/param.h>
 #import <sys/stat.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Threading.h>
@@ -182,7 +183,6 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
 
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
-    mach_port_deallocate(mach_task_self(), listeningPort);
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
@@ -212,8 +212,14 @@ void ProcessLauncher::launchProcess()
         if (!processLauncher->isLaunching())
             return;
 
+#ifndef _NDEBUG
+        mach_port_urefs_t sendRightCount = 0;
+        mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
+        ASSERT(sendRightCount == 1);
+#endif
+
         // We failed to launch. Release the send right.
-        mach_port_deallocate(mach_task_self(), listeningPort);
+        deallocateSendRightSafely(listeningPort);
 
         // And the receive right.
         mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
@@ -233,6 +239,14 @@ void ProcessLauncher::launchProcess()
         if (xpc_get_type(reply) != XPC_TYPE_ERROR) {
             ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
             ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
+
+#ifndef _NDEBUG
+            mach_port_urefs_t sendRightCount = 0;
+            mach_port_get_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_SEND, &sendRightCount);
+            ASSERT(sendRightCount == 1);
+#endif
+
+            deallocateSendRightSafely(listeningPort);
 
             if (!m_xpcConnection) {
                 // The process was terminated.

@@ -176,6 +176,7 @@ def forward_declarations_and_headers(receiver):
     ])
 
     non_template_wtf_types = frozenset([
+        'MachSendRight',
         'String',
     ])
 
@@ -185,6 +186,7 @@ def forward_declarations_and_headers(receiver):
             types_by_namespace['IPC'].update([('class', 'Connection')])
 
     no_forward_declaration_types = frozenset([
+        'MachSendRight',
         'String',
         'WebCore::DocumentIdentifier',
         'WebCore::ServiceWorkerIdentifier',
@@ -365,6 +367,7 @@ def headers_for_type(type):
     header_infos_and_types = class_template_headers(type)
 
     special_cases = {
+        'MachSendRight': ['<wtf/MachSendRight.h>'],
         'MonotonicTime': ['<wtf/MonotonicTime.h>'],
         'Seconds': ['<wtf/Seconds.h>'],
         'WallTime': ['<wtf/WallTime.h>'],

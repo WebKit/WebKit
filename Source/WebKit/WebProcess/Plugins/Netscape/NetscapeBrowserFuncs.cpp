@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/MachSendRight.h>
+#include <wtf/MachSendRight.h>
 #endif
 
 #if PLATFORM(X11)

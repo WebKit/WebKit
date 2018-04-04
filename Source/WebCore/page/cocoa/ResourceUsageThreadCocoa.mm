@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include <mach/mach.h>
 #include <mach/vm_statistics.h>
 #include <pal/spi/cocoa/MachVMSPI.h>
+#include <wtf/MachSendRight.h>
 
 namespace WebCore {
 
@@ -138,35 +139,41 @@ std::array<TagInfo, 256> pagesPerVMTag()
     return tags;
 }
 
-static float cpuUsage()
+static Vector<MachSendRight> threadSendRights()
 {
-    thread_array_t threadList;
-    mach_msg_type_number_t threadCount;
+    thread_array_t threadList = nullptr;
+    mach_msg_type_number_t threadCount = 0;
     kern_return_t kr = task_threads(mach_task_self(), &threadList, &threadCount);
     if (kr != KERN_SUCCESS)
-        return -1;
+        return { };
 
-    float usage = 0;
-
-    for (mach_msg_type_number_t i = 0; i < threadCount; ++i) {
-        thread_info_data_t threadInfo;
-        thread_basic_info_t threadBasicInfo;
-
-        mach_msg_type_number_t threadInfoCount = THREAD_INFO_MAX;
-        kr = thread_info(threadList[i], THREAD_BASIC_INFO, static_cast<thread_info_t>(threadInfo), &threadInfoCount);
-        if (kr != KERN_SUCCESS)
-            return -1;
-
-        threadBasicInfo = reinterpret_cast<thread_basic_info_t>(threadInfo);
-
-        if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
-            usage += threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
-
-        mach_port_deallocate(mach_task_self(), threadList[i]);
-    }
+    Vector<MachSendRight> machThreads;
+    for (mach_msg_type_number_t i = 0; i < threadCount; ++i)
+        machThreads.append(MachSendRight::adopt(threadList[i]));
 
     kr = vm_deallocate(mach_task_self(), (vm_offset_t)threadList, threadCount * sizeof(thread_t));
     ASSERT(kr == KERN_SUCCESS);
+
+    return machThreads;
+}
+
+static float cpuUsage()
+{
+    auto machThreads = threadSendRights();
+
+    float usage = 0;
+
+    for (auto& machThread : machThreads) {
+        thread_info_data_t threadInfo;
+        mach_msg_type_number_t threadInfoCount = THREAD_INFO_MAX;
+        auto kr = thread_info(machThread.sendRight(), THREAD_BASIC_INFO, static_cast<thread_info_t>(threadInfo), &threadInfoCount);
+        if (kr != KERN_SUCCESS)
+            return -1;
+
+        auto threadBasicInfo = reinterpret_cast<thread_basic_info_t>(threadInfo);
+        if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
+            usage += threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
+    }
 
     return usage;
 }

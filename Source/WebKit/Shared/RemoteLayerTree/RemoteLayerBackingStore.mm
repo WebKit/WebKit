@@ -1,5 +1,5 @@
  /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,7 +114,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
         if (m_frontBuffer.surface)
             encoder << m_frontBuffer.surface->createSendRight();
         else
-            encoder << WebCore::MachSendRight();
+            encoder << WTF::MachSendRight();
         return;
     }
 #endif

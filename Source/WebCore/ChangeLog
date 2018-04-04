@@ -1,3 +1,46 @@
+2018-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Failures from mach port reference handling should be fatal
+        https://bugs.webkit.org/show_bug.cgi?id=184202
+        <rdar://problem/37771114>
+
+        Reviewed by Anders Carlsson.
+
+        We may corrupt the Mach port space by improperly matching the equivalent of reference counting
+        retains (mach_port_mod_refs) with releases (mach_port_deallocate).
+
+        Our current implementation of MachSendRights::create does not grab a reference if the passed
+        port is MACH_PORT_DEAD, but we unconditionally call mach_port_deallocate on the port, which
+        could lead to a reference count mismatch.
+
+        Likewise, our MachSendRight destructor does not release the port if it has changed to MACH_PORT_DEAD
+        (e.g., if a child process dies), again leading to a mismatch in retain/releases.
+
+        Finally, failures in mach_port_deallocate should be fatal because they indicate that the
+        application was attempting to remove an unowned right. This is a fatal condition for Mach, and
+        should lead to an abort. 
+
+        This patch does the following:
+
+        1. It creates a helper function that does the right thing for safely deallocating a mach port.
+        2. It uses it in multiple places.
+        3. It revises 'MachSendRight::create" so that it properly handles the condition of a dead port.
+        4. It revises the MachSendRight destructor to properly handle the condition of a dead port.
+
+        No new tests, no change in behavior expected.
+
+        * SourcesCocoa.txt: Update for move of MachSendRight files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::getMachThreads): Added.
+        (WebCore::cpuUsage): Use the new cleanup helper function.
+        * platform/cocoa/MachSendRight.cpp: Removed.
+        * platform/cocoa/MachSendRight.h: Removed.
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.mm:
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer):
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         Remove unused HTTP header names

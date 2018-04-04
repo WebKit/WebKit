@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #import <mach/mach_port.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/MachSendRight.h>
 
 @interface WebVideoContainerLayer : CALayer
 @end
@@ -124,9 +125,8 @@ void VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *vid
             oldContext.commitPriority = 0;
             newContext.commitPriority = 1;
 #endif
-            mach_port_t fencePort = [oldContext createFencePort];
-            [newContext setFencePort:fencePort];
-            mach_port_deallocate(mach_task_self(), fencePort);
+            auto fencePort = MachSendRight::adopt([oldContext createFencePort]);
+            [newContext setFencePort:fencePort.sendRight()];
         }
     }
 

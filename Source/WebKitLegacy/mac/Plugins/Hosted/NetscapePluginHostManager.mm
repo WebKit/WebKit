@@ -37,6 +37,7 @@
 #import <pal/spi/cocoa/ServersSPI.h>
 #import <spawn.h>
 #import <wtf/Assertions.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -197,8 +198,8 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
                                     &pluginHostPSN.highLongOfPSN, &pluginHostPSN.lowLongOfPSN);
     
     if (kr != KERN_SUCCESS) {
-        mach_port_deallocate(mach_task_self(), pluginHostPort);
         LOG_ERROR("Failed to check in with plug-in host, error %x", kr);
+        deallocateSendRightSafely(pluginHostPort);
 
         return false;
     }

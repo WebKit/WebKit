@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -203,7 +203,7 @@ messages -> WebPageProxy {
     PrintFinishedCallback(WebCore::ResourceError error, WebKit::CallbackID callbackID)
 #endif
 #if PLATFORM(COCOA)
-    MachSendRightCallback(WebCore::MachSendRight sendRight, WebKit::CallbackID callbackID)
+    MachSendRightCallback(MachSendRight sendRight, WebKit::CallbackID callbackID)
     NowPlayingInfoCallback(bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
 #endif
 

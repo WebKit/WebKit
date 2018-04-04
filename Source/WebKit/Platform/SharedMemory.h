@@ -45,7 +45,7 @@ class Encoder;
 }
 
 #if OS(DARWIN)
-namespace WebCore {
+namespace WTF {
 class MachSendRight;
 }
 #endif
@@ -119,7 +119,7 @@ public:
 
 private:
 #if OS(DARWIN)
-    WebCore::MachSendRight createSendRight(Protection) const;
+    WTF::MachSendRight createSendRight(Protection) const;
 #endif
 
     size_t m_size;

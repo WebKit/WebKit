@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,7 @@
 #import <WebCore/TimeRanges.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <mach/mach_port.h>
+#import <wtf/MachSendRight.h>
 
 using namespace WebCore;
 
@@ -575,7 +576,7 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCor
     if (interface->layerHostingContext())
         interface->layerHostingContext()->setFencePort(fencePort.port());
     model->setVideoLayerFrame(bounds);
-    mach_port_deallocate(mach_task_self(), fencePort.port());
+    deallocateSendRightSafely(fencePort.port());
 }
 
 } // namespace WebKit

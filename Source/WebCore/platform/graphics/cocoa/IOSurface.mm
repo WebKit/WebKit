@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,10 @@
 #import "ImageBuffer.h"
 #import "ImageBufferDataCG.h"
 #import "Logging.h"
-#import "MachSendRight.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/IOSurfaceSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
 #import <wtf/text/TextStream.h>
 

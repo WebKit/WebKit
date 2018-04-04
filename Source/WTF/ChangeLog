@@ -1,3 +1,32 @@
+2018-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Failures from mach port reference handling should be fatal
+        https://bugs.webkit.org/show_bug.cgi?id=184202
+        <rdar://problem/37771114>
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/MachSendRight.h: Copied from WebCore/platform/cocoa/MachSendRight.h.
+        (WebCore::MachSendRight::operator bool const): Deleted.
+        (WebCore::MachSendRight::sendRight const): Deleted.
+        * wtf/PlatformMac.cmake:
+        * wtf/cocoa/CPUTimeCocoa.mm:
+        (WTF::CPUTime::forCurrentThread): Do proper cleanup if the port is invalid.
+        * wtf/cocoa/MachSendRight.cpp: Copied from WebCore/platform/cocoa/MachSendRight.cpp.
+        (WTF::retainSendRight):
+        (WTF::releaseSendRight):
+        (WTF::deallocateSendRightSafely):
+        (WebCore::retainSendRight): Deleted.
+        (WebCore::releaseSendRight): Deleted.
+        (WebCore::MachSendRight::adopt): Deleted.
+        (WebCore::MachSendRight::create): Deleted.
+        (WebCore::MachSendRight::MachSendRight): Deleted.
+        (WebCore::MachSendRight::~MachSendRight): Deleted.
+        (WebCore::MachSendRight::operator=): Deleted.
+        (WebCore::MachSendRight::copySendRight const): Deleted.
+        (WebCore::MachSendRight::leakSendRight): Deleted.
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         Introduce a ThreadSafeRefCounted parameter to ensure being destroyed on the main thread

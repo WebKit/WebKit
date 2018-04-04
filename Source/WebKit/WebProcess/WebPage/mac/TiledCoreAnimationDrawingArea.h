@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,13 +92,13 @@ private:
     bool flushLayers() override;
 
     // Message handlers.
-    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WebCore::MachSendRight& fencePort) override;
+    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
     void setDeviceScaleFactor(float) override;
     void suspendPainting();
     void resumePainting();
     void setLayerHostingMode(LayerHostingMode) override;
     void setColorSpace(const ColorSpaceData&) override;
-    void addFence(const WebCore::MachSendRight&) override;
+    void addFence(const WTF::MachSendRight&) override;
 
     void addTransactionCallbackID(CallbackID) override;
     void setShouldScaleViewToFitDocument(bool) override;

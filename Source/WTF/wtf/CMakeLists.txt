@@ -119,6 +119,7 @@ set(WTF_PUBLIC_HEADERS
     LoggingHashSet.h
     LoggingHashTraits.h
     MD5.h
+    MachSendRight.h
     MainThread.h
     MallocPtr.h
     MathExtras.h

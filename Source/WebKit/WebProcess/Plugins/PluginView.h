@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginView_h
-#define PluginView_h
+#pragma once
 
 #include "LayerTreeContext.h"
 #include "NPRuntimeObjectMap.h"
@@ -51,10 +50,13 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS PDFSelection;
 #endif
 
+namespace WTF {
+class MachSendRight;
+}
+
 namespace WebCore {
 class Frame;
 class HTMLPlugInElement;
-class MachSendRight;
 class MouseEvent;
 }
 
@@ -211,7 +213,7 @@ private:
 #if PLATFORM(COCOA)
     void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
     void setComplexTextInputState(PluginComplexTextInputState) override;
-    const WebCore::MachSendRight& compositingRenderServerPort() override;
+    const WTF::MachSendRight& compositingRenderServerPort() override;
 #endif
     float contentsScaleFactor() override;
     String proxiesForURL(const String&) override;
@@ -294,5 +296,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // PluginView_h

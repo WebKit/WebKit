@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,26 +30,44 @@
 #include <mach/mach_init.h>
 #include <utility>
 
-namespace WebCore {
+namespace WTF {
 
 static void retainSendRight(mach_port_t port)
 {
-    if (!MACH_PORT_VALID(port))
+    if (port == MACH_PORT_NULL)
         return;
 
-    auto kr = mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, 1);
-    if (kr != KERN_SUCCESS)
-        LOG_ERROR("mach_port_mod_refs error: %s (%x)", mach_error_string(kr), kr);
+    auto kr = KERN_SUCCESS;
+    if (port != MACH_PORT_DEAD)
+        kr = mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_SEND, 1);
+
+    if (kr == KERN_INVALID_RIGHT || port == MACH_PORT_DEAD)
+        kr = mach_port_mod_refs(mach_task_self(), port, MACH_PORT_RIGHT_DEAD_NAME, 1);
+
+    if (kr != KERN_SUCCESS) {
+        LOG_ERROR("mach_port_mod_refs error for port %d: %s (%x)", port, mach_error_string(kr), kr);
+        if (kr == KERN_INVALID_RIGHT)
+            CRASH();
+    }
 }
 
 static void releaseSendRight(mach_port_t port)
 {
-    if (!MACH_PORT_VALID(port))
+    if (port == MACH_PORT_NULL)
         return;
 
+    deallocateSendRightSafely(port);
+}
+
+void deallocateSendRightSafely(mach_port_t port)
+{
     auto kr = mach_port_deallocate(mach_task_self(), port);
-    if (kr != KERN_SUCCESS)
-        LOG_ERROR("mach_port_deallocate error: %s (%x)", mach_error_string(kr), kr);
+    if (kr == KERN_SUCCESS)
+        return;
+
+    LOG_ERROR("mach_port_deallocate error for port %d: %s (%#x)", port, mach_error_string(kr), kr);
+    if (kr == KERN_INVALID_RIGHT)
+        CRASH();
 }
 
 MachSendRight MachSendRight::adopt(mach_port_t port)

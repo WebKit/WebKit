@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
 
+namespace WTF {
+class MachSendRight;
+}
+
 namespace IPC {
 class Connection;
 class Decoder;
@@ -50,7 +54,6 @@ class Frame;
 class FrameView;
 class GraphicsLayer;
 class GraphicsLayerFactory;
-class MachSendRight;
 struct ViewportAttributes;
 }
 
@@ -93,7 +96,7 @@ public:
 
     virtual void acceleratedAnimationDidStart(uint64_t /*layerID*/, const String& /*key*/, MonotonicTime /*startTime*/) { }
     virtual void acceleratedAnimationDidEnd(uint64_t /*layerID*/, const String& /*key*/) { }
-    virtual void addFence(const WebCore::MachSendRight&) { }
+    virtual void addFence(const WTF::MachSendRight&) { }
 #endif
 #if PLATFORM(IOS)
     virtual WebCore::FloatRect exposedContentRect() const = 0;
@@ -131,7 +134,7 @@ public:
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WebCore::MachSendRight& fencePort) { }
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) { }
 #endif
 
     virtual void layerHostDidFlushLayers() { };

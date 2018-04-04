@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,6 @@
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/InspectorController.h>
-#import <WebCore/MachSendRight.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/RenderLayerBacking.h>
@@ -57,6 +56,7 @@
 #import <WebCore/TiledBacking.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/MainThread.h>
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -539,7 +539,7 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
     frameView->setViewExposedRect(m_scrolledViewExposedRect);
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WebCore::MachSendRight& fencePort)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort)
 {
     m_inUpdateGeometry = true;
 

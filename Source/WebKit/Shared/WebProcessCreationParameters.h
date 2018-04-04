@@ -38,7 +38,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/MachSendRight.h>
+#include <wtf/MachSendRight.h>
 #endif
 
 #if USE(SOUP)
@@ -146,7 +146,7 @@ struct WebProcessCreationParameters {
     ProcessID presentingApplicationPID { 0 };
 
 #if PLATFORM(COCOA)
-    WebCore::MachSendRight acceleratedCompositingPort;
+    WTF::MachSendRight acceleratedCompositingPort;
 
     String uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;

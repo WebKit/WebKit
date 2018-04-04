@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,11 @@
 #import "WebEvent.h"
 #import <Carbon/Carbon.h>
 #import <WebCore/GraphicsContext.h>
-#import <WebCore/MachSendRight.h>
 #import <WebCore/NotImplemented.h>
 #import <objc/runtime.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringView.h>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MachSendRight_h
-#define MachSendRight_h
+#pragma once
+
+#if PLATFORM(COCOA)
 
 #include <mach/mach_port.h>
 
-namespace WebCore {
+namespace WTF {
 
 class MachSendRight {
 public:
-    WEBCORE_EXPORT static MachSendRight adopt(mach_port_t);
-    WEBCORE_EXPORT static MachSendRight create(mach_port_t);
+    WTF_EXPORT_PRIVATE static MachSendRight adopt(mach_port_t);
+    WTF_EXPORT_PRIVATE static MachSendRight create(mach_port_t);
 
     MachSendRight() = default;
-    WEBCORE_EXPORT MachSendRight(MachSendRight&&);
-    WEBCORE_EXPORT ~MachSendRight();
+    WTF_EXPORT_PRIVATE MachSendRight(MachSendRight&&);
+    WTF_EXPORT_PRIVATE ~MachSendRight();
 
-    WEBCORE_EXPORT MachSendRight& operator=(MachSendRight&&);
+    WTF_EXPORT_PRIVATE MachSendRight& operator=(MachSendRight&&);
 
     explicit operator bool() const { return m_port != MACH_PORT_NULL; }
 
     mach_port_t sendRight() const { return m_port; }
 
-    WEBCORE_EXPORT MachSendRight copySendRight() const;
-    WEBCORE_EXPORT mach_port_t leakSendRight() WARN_UNUSED_RETURN;
+    WTF_EXPORT_PRIVATE MachSendRight copySendRight() const;
+    WTF_EXPORT_PRIVATE mach_port_t leakSendRight() WARN_UNUSED_RETURN;
 
 private:
     explicit MachSendRight(mach_port_t);
@@ -54,6 +55,11 @@ private:
     mach_port_t m_port { MACH_PORT_NULL };
 };
 
+WTF_EXPORT_PRIVATE void deallocateSendRightSafely(mach_port_t);
+
 }
 
-#endif // MachSendRight_h
+using WTF::MachSendRight;
+using WTF::deallocateSendRightSafely;
+
+#endif

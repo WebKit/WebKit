@@ -36,6 +36,7 @@
 #import <mach/mach_error.h>
 #import <mach/vm_map.h>
 #import <sys/mman.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
@@ -115,7 +116,7 @@ void Connection::platformInvalidate()
 {
     if (!m_isConnected) {
         if (m_sendPort) {
-            mach_port_deallocate(mach_task_self(), m_sendPort);
+            deallocateSendRightSafely(m_sendPort);
             m_sendPort = MACH_PORT_NULL;
         }
 
@@ -396,7 +397,7 @@ void Connection::initializeSendSource()
     mach_port_t sendPort = m_sendPort;
     dispatch_source_set_cancel_handler(m_sendSource, ^{
         // Release our send right.
-        mach_port_deallocate(mach_task_self(), sendPort);
+        deallocateSendRightSafely(sendPort);
     });
 }
 
@@ -549,7 +550,7 @@ void Connection::receiveSourceEventHandler()
             }
 
             if (previousNotificationPort != MACH_PORT_NULL)
-                mach_port_deallocate(mach_task_self(), previousNotificationPort);
+                deallocateSendRightSafely(previousNotificationPort);
 
             initializeSendSource();
             dispatch_resume(m_sendSource);

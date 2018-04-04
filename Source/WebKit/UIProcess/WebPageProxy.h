@@ -305,7 +305,7 @@ using DrawToPDFCallback = GenericCallback<const IPC::DataReference&>;
 #endif
 
 #if PLATFORM(COCOA)
-typedef GenericCallback<const WebCore::MachSendRight&> MachSendRightCallback;
+typedef GenericCallback<const WTF::MachSendRight&> MachSendRightCallback;
 typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
 #endif
 
@@ -1566,7 +1566,7 @@ private:
     void applicationManifestCallback(const std::optional<WebCore::ApplicationManifest>&, CallbackID);
 #endif
 #if PLATFORM(COCOA)
-    void machSendRightCallback(const WebCore::MachSendRight&, CallbackID);
+    void machSendRightCallback(const WTF::MachSendRight&, CallbackID);
 #endif
     void rectForCharacterRangeCallback(const WebCore::IntRect&, const EditingRange&, CallbackID);
 #if PLATFORM(MAC)

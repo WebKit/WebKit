@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,11 @@
 #include "IntSize.h"
 
 namespace WTF {
+class MachSendRight;
 class TextStream;
 }
 
 namespace WebCore {
-
-class MachSendRight;
 
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -84,7 +83,7 @@ public:
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, CGColorSpaceRef, Format = Format::RGBA);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, IntSize contextSize, CGColorSpaceRef, Format = Format::RGBA);
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const MachSendRight&&, CGColorSpaceRef);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&, CGColorSpaceRef);
     static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, CGColorSpaceRef);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
     
@@ -96,7 +95,7 @@ public:
 
     static IntSize maximumSize();
 
-    WEBCORE_EXPORT MachSendRight createSendRight() const;
+    WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
 
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.

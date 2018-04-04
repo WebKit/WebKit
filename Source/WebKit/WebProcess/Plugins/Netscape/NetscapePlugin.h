@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetscapePlugin_h
-#define NetscapePlugin_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -38,8 +37,11 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
-namespace WebCore {
+namespace WTF {
 class MachSendRight;
+}
+
+namespace WebCore {
 class HTTPHeaderMap;
 class ProtectionSpace;
 class SharedBuffer;
@@ -71,7 +73,7 @@ public:
 
     bool hasHandledAKeyDownEvent() const { return m_hasHandledAKeyDownEvent; }
 
-    const WebCore::MachSendRight& compositingRenderServerPort();
+    const WTF::MachSendRight& compositingRenderServerPort();
 
     // Computes an affine transform from the given coordinate space to the screen coordinate space.
     bool getScreenTransform(NPCoordinateSpace sourceSpace, WebCore::AffineTransform&);
@@ -396,5 +398,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_PLUGIN(NetscapePlugin, NetscapePluginType)
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#endif // NetscapePlugin_h

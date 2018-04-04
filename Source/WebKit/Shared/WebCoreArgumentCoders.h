@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,12 @@
 
 #if ENABLE(APPLE_PAY)
 #include <WebCore/PaymentHeaders.h>
+#endif
+
+#if PLATFORM(COCOA)
+namespace WTF {
+class MachSendRight;
+}
 #endif
 
 namespace WebCore {
@@ -116,7 +122,6 @@ template <typename> class RectEdges;
 using FloatBoxExtent = RectEdges<float>;
 
 #if PLATFORM(COCOA)
-class MachSendRight;
 struct KeypressCommand;
 #endif
 
@@ -378,10 +383,10 @@ template<> struct ArgumentCoder<WebCore::DragData> {
 #endif
 
 #if PLATFORM(COCOA)
-template<> struct ArgumentCoder<WebCore::MachSendRight> {
-    static void encode(Encoder&, const WebCore::MachSendRight&);
-    static void encode(Encoder&, WebCore::MachSendRight&&);
-    static bool decode(Decoder&, WebCore::MachSendRight&);
+template<> struct ArgumentCoder<WTF::MachSendRight> {
+    static void encode(Encoder&, const WTF::MachSendRight&);
+    static void encode(Encoder&, WTF::MachSendRight&&);
+    static bool decode(Decoder&, WTF::MachSendRight&);
 };
 
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
