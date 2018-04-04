@@ -1,3 +1,16 @@
+2018-04-04  Jer Noble  <jer.noble@apple.com>
+
+        RELEASE_ASSERT in CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF() when MediaToolbox.framework missing
+        https://bugs.webkit.org/show_bug.cgi?id=184247
+        <rdar://problem/39007591>
+
+        Rubber-stamped by Eric Carlson.
+
+        Use SOFT_LINK_FRAMEWORK_OPTIONAL for frameworks which are not guaranteed to be present.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF):
+
 2018-04-04  Brent Fulgham  <bfulgham@apple.com>
 
         Failures from mach port reference handling should be fatal

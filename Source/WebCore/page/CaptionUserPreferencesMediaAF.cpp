@@ -85,7 +85,7 @@ SOFT_LINK_AVF_FRAMEWORK_IMPORT_OPTIONAL(CoreMedia, MTEnableCaption2015Behavior, 
 
 #else
 
-SOFT_LINK_FRAMEWORK(MediaToolbox)
+SOFT_LINK_FRAMEWORK_OPTIONAL(MediaToolbox)
 SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
 
 #endif // PLATFORM(WIN)
@@ -117,6 +117,11 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
     static bool initialized;
     if (!initialized) {
         initialized = true;
+
+#if !PLATFORM(WIN)
+        if (!MediaToolboxLibrary())
+            return;
+#endif
 
         MTEnableCaption2015BehaviorPtrType function = MTEnableCaption2015BehaviorPtr();
         if (!function || !function())
