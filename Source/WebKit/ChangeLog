@@ -1,3 +1,18 @@
+2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ASSERTION FAILED: !m_mainFrame->coreFrame()->loader().frameHasLoaded() || !m_pendingNavigationID when reloading page while a page is loading
+        https://bugs.webkit.org/show_bug.cgi?id=153210
+
+        Reviewed by Alex Christensen.
+
+        The assert happens when WebPage::reload() is called twice and the first time the reload is ignored by
+        FrameLoader because the document URL is empty. In that case the pending navigation is not reset, because
+        FrameLoader::reload() returns before creating the document loader.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reload): Check if the pending navigation has been reset after calling FrameLoader::reload()
+        and reset it otherwise.
+
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkProcess get ContentBlocker information from UIProcess
