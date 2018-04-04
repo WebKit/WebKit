@@ -40,12 +40,6 @@
 #include "CurlResourceHandleDelegate.h"
 #endif
 
-#if USE(SOUP)
-typedef struct _GTlsCertificate GTlsCertificate;
-typedef struct _SoupSession SoupSession;
-typedef struct _SoupRequest SoupRequest;
-#endif
-
 #if USE(CF)
 typedef const struct __CFData * CFDataRef;
 #endif
@@ -92,7 +86,6 @@ class ResourceHandleInternal;
 class NetworkLoadMetrics;
 class ResourceRequest;
 class ResourceResponse;
-class SoupNetworkSession;
 class SharedBuffer;
 class Timer;
 
@@ -105,11 +98,6 @@ class ResourceHandle : public RefCounted<ResourceHandle>, public AuthenticationC
 public:
     WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
     WEBCORE_EXPORT static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
-
-#if USE(SOUP)
-    static RefPtr<ResourceHandle> create(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
-#endif
-
     WEBCORE_EXPORT virtual ~ResourceHandle();
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
@@ -179,19 +167,8 @@ public:
 
     WEBCORE_EXPORT static void forceContentSniffing();
 
-#if USE(CURL) || USE(SOUP)
+#if USE(CURL)
     ResourceHandleInternal* getInternal() { return d.get(); }
-#endif
-
-#if USE(SOUP)
-    RefPtr<ResourceHandle> releaseForDownload(ResourceHandleClient*);
-    void continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage);
-    void sendPendingRequest();
-    bool cancelledOrClientless();
-    void ensureReadBuffer();
-    size_t currentStreamPosition() const;
-    void didStartRequest();
-    MonotonicTime m_requestTime;
 #endif
 
 #if USE(CURL)
@@ -243,10 +220,6 @@ private:
         InvalidURLFailure
     };
 
-#if USE(SOUP)
-    ResourceHandle(SoupNetworkSession&, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
-#endif
-
     void platformSetDefersLoading(bool);
 
     void platformContinueSynchronousDidReceiveResponse();
@@ -277,10 +250,6 @@ private:
 
 #if PLATFORM(COCOA)
     void applySniffingPoliciesAndStoragePartitionIfNeeded(NSURLRequest*&, bool shouldContentSniff, bool shouldContentEncodingSniff);
-#endif
-
-#if USE(SOUP)
-    void timeoutFired();
 #endif
 
 #if USE(CURL)
