@@ -1,3 +1,22 @@
+2018-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Remove unused HTTP header names
+        https://bugs.webkit.org/show_bug.cgi?id=184272
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+        Removed some names that are not used in the code base.
+        This allows to strengthen filtering of responses sent to WebProcess.
+        Added two headers used by web inspector.
+        Updated existing code to use indexed HTTP header names.
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::sourceMapURLForResource):
+        * platform/network/HTTPHeaderNames.in:
+
 2018-04-04  Beth Dakin  <bdakin@apple.com>
 
         Fix the !HAVE(AVFOUNDATION_VIDEO_OUTPUT) build
