@@ -1,3 +1,21 @@
+2018-04-03  Beth Dakin  <bdakin@apple.com>
+
+        Fix the print formatter build
+        https://bugs.webkit.org/show_bug.cgi?id=184289
+        -and corresponding-
+        rdar://problem/39164641
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _webViewPrintFormatter]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/_WKWebViewPrintFormatter.h:
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        * UIProcess/_WKWebViewPrintFormatterInternal.h:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKPDFView.mm:
+
 2018-04-04  Andy Estes  <aestes@apple.com>
 
         [iOS] Rename WKPDFView to WKLegacyPDFView

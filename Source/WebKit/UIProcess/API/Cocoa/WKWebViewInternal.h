@@ -170,7 +170,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 @end
 #endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !ENABLE(MINIMAL_SIMULATOR)
 @interface WKWebView (_WKWebViewPrintFormatter)
 @property (nonatomic, readonly) id <_WKWebViewPrintProvider> _printProvider;
 @end

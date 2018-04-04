@@ -866,6 +866,8 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 #pragma mark Printing
 
+#if !ENABLE(MINIMAL_SIMULATOR)
+
 @interface WKLegacyPDFView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
 @end
 
@@ -890,6 +892,8 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 }
 
 @end
+
+#endif // !ENABLE(MINIMAL_SIMULATOR)
 
 #pragma clang diagnostic pop
 
