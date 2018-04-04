@@ -1168,14 +1168,20 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     updateLastImage(UpdateType::UpdateSynchronously);
     m_videoFullscreenLayerManager->updateVideoFullscreenInlineImage(m_lastImage);
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     updateLastImage(UpdateType::UpdateSynchronously);
     m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage);
+#else
+    m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), nil);
+#endif
     updateDisableExternalPlayback();
 }
 

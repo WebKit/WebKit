@@ -1,3 +1,16 @@
+2018-04-04  Beth Dakin  <bdakin@apple.com>
+
+        Fix the !HAVE(AVFOUNDATION_VIDEO_OUTPUT) build
+        https://bugs.webkit.org/show_bug.cgi?id=184309
+        -and corresponding-
+        rdar://problem/39179126
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer):
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         MockRealtimeVideoSourceMac should produce kCVPixelFormatType_420YpCbCr8Planar buffers
