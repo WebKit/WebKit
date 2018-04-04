@@ -114,6 +114,7 @@ set_tests_properties(TestWebCore PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore)
 
 list(APPEND TestWTF_SOURCES
+    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/GUniquePtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/WorkQueueGLib.cpp
 )

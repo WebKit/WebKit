@@ -45,6 +45,7 @@ set(webkit_api_harness_SOURCES
 # TestWTF
 
 list(APPEND TestWTF_SOURCES
+    ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/GUniquePtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/WorkQueueGLib.cpp
 )

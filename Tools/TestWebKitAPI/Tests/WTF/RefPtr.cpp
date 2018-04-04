@@ -25,10 +25,16 @@
 
 #include "config.h"
 
+#if! PLATFORM(WIN)
+#include "PlatformUtilities.h"
+#endif
 #include "RefLogger.h"
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
 
@@ -534,5 +540,50 @@ TEST(WTF_RefPtr, ReleaseNonNullBeforeDeref)
 
     EXPECT_STREQ("ref(a) slot=null deref(a) ", takeLogStr().c_str());
 }
+
+// FIXME: Enable these tests once Win platform supports TestWebKitAPI::Util::run
+#if! PLATFORM(WIN)
+
+static bool done;
+static bool isDestroyedInMainThread;
+struct ThreadSafeRefCountedObject : ThreadSafeRefCounted<ThreadSafeRefCountedObject> {
+    static Ref<ThreadSafeRefCountedObject> create() { return adoptRef(*new ThreadSafeRefCountedObject); }
+
+    ~ThreadSafeRefCountedObject()
+    {
+        isDestroyedInMainThread = isMainThread();
+        done = true;
+    }
+};
+
+struct MainThreadSafeRefCountedObject : ThreadSafeRefCounted<MainThreadSafeRefCountedObject, WTF::DestructionThread::Main> {
+    static Ref<MainThreadSafeRefCountedObject> create() { return adoptRef(*new MainThreadSafeRefCountedObject); }
+
+    ~MainThreadSafeRefCountedObject()
+    {
+        isDestroyedInMainThread = isMainThread();
+        done = true;
+    }
+};
+
+TEST(WTF_RefPtr, ReleaseInNonMainThread)
+{
+    done = false;
+    Thread::create("", [object = ThreadSafeRefCountedObject::create()] { });
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_FALSE(isDestroyedInMainThread);
+}
+
+TEST(WTF_RefPtr, ReleaseInNonMainThreadDestroyInMainThread)
+{
+    done = false;
+    Thread::create("", [object = MainThreadSafeRefCountedObject::create()] { });
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE(isDestroyedInMainThread);
+}
+
+#endif
 
 } // namespace TestWebKitAPI

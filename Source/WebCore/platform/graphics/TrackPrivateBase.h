@@ -46,7 +46,7 @@ public:
 };
 
 class TrackPrivateBase
-    : public ThreadSafeRefCounted<TrackPrivateBase>
+    : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
