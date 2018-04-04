@@ -1,3 +1,21 @@
+2018-04-04  Ms2ger  <Ms2ger@igalia.com>
+
+        Test gardening for GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=184298
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+          - update expectations for fast/mediastream tests for the libwebrtc
+            integration in r230152
+          - skip http/wpt/loading/redirect-headers.html, which was added in
+            r230224, because the API it uses is only implemented for cocoa
+            (https://bugs.webkit.org/show_bug.cgi?id=184295)
+        * platform/wpe/TestExpectations:
+          - skip http/wpt/loading/redirect-headers.html, which was added in
+            r230224, because the API it uses is only implemented for cocoa
+            (https://bugs.webkit.org/show_bug.cgi?id=184295)
+
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
         NetworkResourceLoader does not need to expose all redirect response headers

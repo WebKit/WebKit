@@ -1150,3 +1150,5 @@ webkit.org/b/181139 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
+
+webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]

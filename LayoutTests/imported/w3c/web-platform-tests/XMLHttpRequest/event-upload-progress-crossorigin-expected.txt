@@ -2,5 +2,5 @@
 PASS Upload events registered on time (http://127.0.0.1:8800/XMLHttpRequest/resources/corsenabled.py) 
 PASS Upload events registered on time (resources/redirect.py?code=307&location=http://127.0.0.1:8800/XMLHttpRequest/resources/corsenabled.py) 
 PASS Upload events registered too late (http://127.0.0.1:8800/XMLHttpRequest/resources/corsenabled.py) 
-FAIL Upload events registered too late (resources/redirect.py?code=307&location=http://127.0.0.1:8800/XMLHttpRequest/resources/corsenabled.py) assert_unreached: Reached unreachable code
+PASS Upload events registered too late (resources/redirect.py?code=307&location=http://127.0.0.1:8800/XMLHttpRequest/resources/corsenabled.py) 
 

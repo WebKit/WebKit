@@ -521,6 +521,7 @@ static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef
 
 #if !PLATFORM(COCOA)
 // FIXME: Implement this for non cocoa ports.
+//        [GTK][WPE] https://bugs.webkit.org/show_bug.cgi?id=184295
 uint64_t InjectedBundlePage::responseHeaderCount(WKURLResponseRef response)
 {
     return 0;

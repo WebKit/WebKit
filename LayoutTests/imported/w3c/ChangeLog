@@ -1,3 +1,14 @@
+2018-04-04  Ms2ger  <Ms2ger@igalia.com>
+
+        Test gardening for GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=184298
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin-expected.txt:
+          update expectations: the test started passing in r230066, but this was
+          not noticed because it is marked as flaky on macOS.
+
 2018-04-03  Sihui Liu  <sihui_liu@apple.com>
 
         The referer header is not set after redirect
