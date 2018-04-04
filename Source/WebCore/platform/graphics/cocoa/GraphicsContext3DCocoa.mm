@@ -794,6 +794,13 @@ void GraphicsContext3D::setOpenGLDisplayMask(CGOpenGLDisplayMask displayMask)
 {
     m_displayMask = displayMask;
 }
+    
+CGOpenGLDisplayMask GraphicsContext3D::getOpenGLDisplayMask()
+{
+    if (m_displayMask.has_value())
+        return m_displayMask.value();
+    return 0;
+}
 #endif
 
 bool GraphicsContext3D::allowOfflineRenderers() const

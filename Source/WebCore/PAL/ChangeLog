@@ -1,3 +1,12 @@
+2018-04-04  Per Arne Vollan  <pvollan@apple.com>
+
+        The layout test fast/canvas/canvas-blending-global-alpha.html is failing when the WebContent process does not have WindowServer access.
+        https://bugs.webkit.org/show_bug.cgi?id=183752
+
+        Reviewed by Brent Fulgham.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2018-04-02  Eric Carlson  <eric.carlson@apple.com>
 
         Define AVKit softlink macro

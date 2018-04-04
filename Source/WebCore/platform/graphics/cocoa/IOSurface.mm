@@ -28,6 +28,7 @@
 
 #if HAVE(IOSURFACE)
 
+#import "GraphicsContext3D.h"
 #import "GraphicsContextCG.h"
 #import "IOSurfacePool.h"
 #import "ImageBuffer.h"
@@ -298,6 +299,11 @@ CGContextRef IOSurface::ensurePlatformContext()
     }
     
     m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.get(), bitmapInfo));
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    if (uint32_t mask = GraphicsContext3D::getOpenGLDisplayMask())
+        CGIOSurfaceContextSetDisplayMask(m_cgContext.get(), mask);
+#endif
 
     return m_cgContext.get();
 }

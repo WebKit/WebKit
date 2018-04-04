@@ -1,3 +1,24 @@
+2018-04-04  Per Arne Vollan  <pvollan@apple.com>
+
+        The layout test fast/canvas/canvas-blending-global-alpha.html is failing when the WebContent process does not have WindowServer access.
+        https://bugs.webkit.org/show_bug.cgi?id=183752
+        <rdar://problem/38635731>
+
+        The test is failing because the system is only providing software rendering when there is no access
+        to the WindowServer, and software rendering is producing slightly different results than hardware
+        rendering. To enable accelerated rendering, the GPU to be used for IOSurface rendering needs to be
+        selected by handing over the OpenGL display mask to the IOSurface CGContext.
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::getOpenGLDisplayMask):
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::ensurePlatformContext):
+
 2018-04-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Track the paint frequency through a new class named PaintFrequencyTracker

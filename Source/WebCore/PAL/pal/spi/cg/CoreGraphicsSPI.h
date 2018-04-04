@@ -254,6 +254,7 @@ CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 CGImageRef CGIOSurfaceContextCreateImageReference(CGContextRef);
 CGColorSpaceRef CGIOSurfaceContextGetColorSpace(CGContextRef);
+void CGIOSurfaceContextSetDisplayMask(CGContextRef, uint32_t mask);
 #endif
 
 #if PLATFORM(COCOA)
