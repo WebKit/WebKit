@@ -1,5 +1,56 @@
 2018-04-03  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r229987. rdar://problem/39155464
+
+    DFG should know that CreateThis can be effectful
+    https://bugs.webkit.org/show_bug.cgi?id=184013
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/create-this-property-change.js: Added.
+    (Foo):
+    (RealBar):
+    (get if):
+    * stress/create-this-structure-change-without-cse.js: Added.
+    (Foo):
+    (RealBar):
+    (get if):
+    * stress/create-this-structure-change.js: Added.
+    (Foo):
+    (RealBar):
+    (get if):
+    
+    Source/JavaScriptCore:
+    
+    As shown in the tests added in JSTests, CreateThis can be effectful if the constructor this
+    is a proxy.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@229987 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG should know that CreateThis can be effectful
+            https://bugs.webkit.org/show_bug.cgi?id=184013
+
+            Reviewed by Saam Barati.
+
+            As shown in the tests added in JSTests, CreateThis can be effectful if the constructor this
+            is a proxy.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+
+2018-04-03  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r230143. rdar://problem/39155381
 
     JSC crash in JIT code with for-of loop and Array/Set iterators
