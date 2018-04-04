@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,7 @@
 #pragma once
 
 #include "AuxiliaryBarrier.h"
-#include <type_traits>
 #include <wtf/CagedPtr.h>
-
-namespace WTF {
-
-template<typename Poison, typename T> struct PoisonedPtrTraits;
-
-} // namespace WTF
 
 namespace JSC {
 
@@ -42,7 +35,7 @@ class VM;
 
 // This is a convenient combo of AuxiliaryBarrier and CagedPtr.
 
-template<Gigacage::Kind passedKind, typename T, typename PtrTraits = WTF::DumbPtrTraits<T>>
+template<Gigacage::Kind passedKind, typename T>
 class CagedBarrierPtr {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
@@ -92,11 +85,11 @@ public:
     T& operator[](IndexType index) const { return get()[index]; }
     
 private:
-    AuxiliaryBarrier<CagedPtr<kind, T, PtrTraits>> m_barrier;
+    AuxiliaryBarrier<CagedPtr<kind, T>> m_barrier;
 };
 
-template<Gigacage::Kind passedKind, typename PtrTraits>
-class CagedBarrierPtr<passedKind, void, PtrTraits> {
+template<Gigacage::Kind passedKind>
+class CagedBarrierPtr<passedKind, void> {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
     typedef void Type;
@@ -139,10 +132,7 @@ public:
     void setWithoutBarrier(U&& value) { m_barrier.setWithoutBarrier(std::forward<U>(value)); }
     
 private:
-    AuxiliaryBarrier<CagedPtr<kind, void, PtrTraits>> m_barrier;
+    AuxiliaryBarrier<CagedPtr<kind, void>> m_barrier;
 };
-
-template<typename Poison, Gigacage::Kind passedKind, typename T>
-using PoisonedCagedBarrierPtr = CagedBarrierPtr<passedKind, T, WTF::PoisonedPtrTraits<Poison, T>>;
 
 } // namespace JSC

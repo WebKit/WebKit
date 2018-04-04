@@ -468,11 +468,6 @@ class LabelReference
         $asm.puts "movq #{asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
         "#{offset}(#{dst.x86Operand(kind)})"
     end
-    def x86AddressOperand(addressKind)
-        # FIXME: Implement this on platforms that aren't Mach-O.
-        # https://bugs.webkit.org/show_bug.cgi?id=175104
-        "#{asmLabel}@GOTPCREL(%rip)"
-    end
 end
 
 class LocalLabelReference
@@ -1551,9 +1546,9 @@ class Instruction
         when "bnz"
             $asm.puts "jnz #{operands[0].asmLabel}"
         when "leai"
-            emitX86Lea(operands[0], operands[1], :int)
+            $asm.puts "lea#{x86Suffix(:int)} #{orderOperands(operands[0].x86AddressOperand(:int), operands[1].x86Operand(:int))}"
         when "leap"
-            emitX86Lea(operands[0], operands[1], :ptr)
+            $asm.puts "lea#{x86Suffix(:ptr)} #{orderOperands(operands[0].x86AddressOperand(:ptr), operands[1].x86Operand(:ptr))}"
         when "memfence"
             sp = RegisterID.new(nil, "sp")
             if isIntelSyntax

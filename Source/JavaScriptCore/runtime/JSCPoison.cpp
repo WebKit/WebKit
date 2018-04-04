@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSCPoison.h"
 
-#include "JSArrayBufferView.h"
 #include "Options.h"
 #include <mutex>
 #include <wtf/HashSet.h>
@@ -36,8 +35,6 @@ namespace JSC {
 #define DEFINE_POISON(poisonID) \
     uintptr_t POISON_KEY_NAME(poisonID);
 FOR_EACH_JSC_POISON(DEFINE_POISON)
-
-uintptr_t g_typedArrayPoisons[NumberOfTypedArrayPoisons];
 
 void initializePoison()
 {
@@ -50,9 +47,6 @@ void initializePoison()
     POISON_KEY_NAME(poisonID) = makePoison();
 
         FOR_EACH_JSC_POISON(INITIALIZE_POISON)
-
-        for (uint32_t i = 0; i < NumberOfTypedArrayPoisons; ++i)
-            g_typedArrayPoisons[i] = makePoison();
     });
 }
 

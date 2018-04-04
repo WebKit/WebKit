@@ -3495,13 +3495,7 @@ private:
         }
 
         DFG_ASSERT(m_graph, m_node, isTypedView(m_node->arrayMode().typedArrayType()), m_node->arrayMode().typedArrayType());
-        LValue poisonedVector = m_out.loadPtr(cell, m_heaps.JSArrayBufferView_poisonedVector);
-#if ENABLE(POISON)
-        auto typedArrayType = m_node->arrayMode().typedArrayType();
-        LValue vector = m_out.bitXor(m_out.constIntPtr(JSArrayBufferView::poisonFor(typedArrayType)), poisonedVector);
-#else
-        LValue vector = poisonedVector;
-#endif
+        LValue vector = m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector);
         setStorage(caged(Gigacage::Primitive, vector));
     }
     
@@ -3540,24 +3534,16 @@ private:
 
         m_out.appendTo(wastefulCase, notNull);
 
-        LValue poisonedVector = m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_poisonedVector);
-        ValueFromBlock nullVectorOut = m_out.anchor(poisonedVector);
-        m_out.branch(poisonedVector, unsure(notNull), unsure(continuation));
+        LValue vector = m_out.loadPtr(basePtr, m_heaps.JSArrayBufferView_vector);
+        ValueFromBlock nullVectorOut = m_out.anchor(vector);
+        m_out.branch(vector, unsure(notNull), unsure(continuation));
 
         m_out.appendTo(notNull, continuation);
 
         LValue butterflyPtr = caged(Gigacage::JSValue, m_out.loadPtr(basePtr, m_heaps.JSObject_butterfly));
         LValue arrayBufferPtr = m_out.loadPtr(butterflyPtr, m_heaps.Butterfly_arrayBuffer);
 
-#if ENABLE(POISON)
-        LValue jsType = m_out.load8ZeroExt32(basePtr, m_heaps.JSCell_typeInfoType);
-        LValue typeIndex = m_out.sub(jsType, m_out.constInt32(FirstTypedArrayType));
-        LValue maskedTypeIndex = m_out.zeroExtPtr(m_out.bitAnd(typeIndex, m_out.constInt32(TypedArrayPoisonIndexMask)));
-        LValue poisonsBasePtr = m_out.constIntPtr(&g_typedArrayPoisons);
-        LValue poison = m_out.loadPtr(m_out.baseIndex(m_heaps.TypedArrayPoisons, poisonsBasePtr, maskedTypeIndex));
-        poisonedVector = m_out.bitXor(poisonedVector, poison);
-#endif
-        LValue vectorPtr = caged(Gigacage::Primitive, poisonedVector);
+        LValue vectorPtr = caged(Gigacage::Primitive, vector);
 
         // FIXME: This needs caging.
         // https://bugs.webkit.org/show_bug.cgi?id=175515
@@ -5925,10 +5911,7 @@ private:
             LValue fastResultValue =
                 allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, slowCase);
 
-#if ENABLE(POISON)
-            storage = m_out.bitXor(m_out.constIntPtr(JSArrayBufferView::poisonFor(typedArrayType)), storage);
-#endif
-            m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_poisonedVector);
+            m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_vector);
             m_out.store32(size, fastResultValue, m_heaps.JSArrayBufferView_length);
             m_out.store32(m_out.constInt32(FastTypedArray), fastResultValue, m_heaps.JSArrayBufferView_mode);
             
@@ -15425,7 +15408,7 @@ private:
             unsure(isWasteful), unsure(continuation));
 
         LBasicBlock lastNext = m_out.appendTo(isWasteful, continuation);
-        LValue vector = m_out.loadPtr(base, m_heaps.JSArrayBufferView_poisonedVector);
+        LValue vector = m_out.loadPtr(base, m_heaps.JSArrayBufferView_vector);
         speculate(Uncountable, jsValueValue(vector), m_node, m_out.isZero64(vector));
         m_out.jump(continuation);
 

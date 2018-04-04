@@ -66,8 +66,6 @@ namespace JSC {
 FOR_EACH_JSC_POISON(DECLARE_POISON)
 #undef DECLARE_POISON
 
-extern "C" JS_EXPORT_PRIVATE uintptr_t g_typedArrayPoisons[];
-
 struct ClassInfo;
 
 using PoisonedClassInfoPtr = Poisoned<GlobalDataPoison, const ClassInfo*>;

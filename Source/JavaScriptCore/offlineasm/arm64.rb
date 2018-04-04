@@ -275,13 +275,6 @@ def arm64LowerLabelReferences(list)
                 else
                     newList << node
                 end
-            when "leai", "leap", "leaq"
-                labelRef = node.operands[0]
-                if labelRef.is_a? LabelReference
-                    newList << Instruction.new(codeOrigin, "globaladdr", [LabelReference.new(node.codeOrigin, labelRef.label), node.operands[1]])
-                else
-                    newList << node
-                end
             else
                 newList << node
             end

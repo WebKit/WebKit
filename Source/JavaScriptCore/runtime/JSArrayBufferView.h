@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,21 +26,11 @@
 #pragma once
 
 #include "AuxiliaryBarrier.h"
-#include "CagedBarrierPtr.h"
-#include "JSCPoison.h"
 #include "JSObject.h"
-#include "TypedArrayType.h"
-#include <wtf/MathExtras.h>
 
 namespace JSC {
 
 class LLIntOffsetsExtractor;
-
-// Since we'll be indexing into the g_typedArrayPoisons array based on the TypedArray type,
-// we'll index mask the index value and round up to the array size to the next power of 2 to
-// ensure that we'll never be able to access beyond the bounds of this array.
-static constexpr uint32_t NumberOfTypedArrayPoisons = WTF::roundUpToPowerOfTwo(NumberOfTypedArrayTypes);
-static constexpr uint32_t TypedArrayPoisonIndexMask = NumberOfTypedArrayPoisons - 1;
 
 // This class serves two purposes:
 //
@@ -177,29 +167,18 @@ public:
     bool isNeutered() { return hasArrayBuffer() && !vector(); }
     void neuter();
     
-    void* vector() const { return m_poisonedVector.getMayBeNull(); }
+    void* vector() const { return m_vector.getMayBeNull(); }
     
     unsigned byteOffset();
     unsigned length() const { return m_length; }
 
     DECLARE_EXPORT_INFO;
     
-    static ptrdiff_t offsetOfPoisonedVector() { return OBJECT_OFFSETOF(JSArrayBufferView, m_poisonedVector); }
+    static ptrdiff_t offsetOfVector() { return OBJECT_OFFSETOF(JSArrayBufferView, m_vector); }
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSArrayBufferView, m_length); }
     static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
     
     static RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
-
-    static uintptr_t poisonFor(JSType type)
-    {
-        return g_typedArrayPoisons[(type - FirstTypedArrayType) & TypedArrayPoisonIndexMask];
-    }
-
-    static uintptr_t poisonFor(TypedArrayType typedArrayType)
-    {
-        ASSERT(isTypedView(typedArrayType));
-        return poisonFor(typeForTypedArrayType(typedArrayType));
-    }
 
 private:
     static void finalize(JSCell*);
@@ -211,19 +190,7 @@ protected:
 
     static String toStringName(const JSObject*, ExecState*);
 
-    class Poison {
-    public:
-        template<typename PoisonedType>
-        inline static uintptr_t key(const PoisonedType* poisonedPtr)
-        {
-            uintptr_t poisonedVectorAddress = bitwise_cast<uintptr_t>(poisonedPtr);
-            uintptr_t baseAddress = poisonedVectorAddress - OBJECT_OFFSETOF(JSArrayBufferView, m_poisonedVector);
-            JSArrayBufferView* thisObject = bitwise_cast<JSArrayBufferView*>(baseAddress);
-            return poisonFor(thisObject->type());
-        }
-    };
-
-    PoisonedCagedBarrierPtr<Poison, Gigacage::Primitive, void> m_poisonedVector;
+    CagedBarrierPtr<Gigacage::Primitive, void> m_vector;
     uint32_t m_length;
     TypedArrayMode m_mode;
 };
