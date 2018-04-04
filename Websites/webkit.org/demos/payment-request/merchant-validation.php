@@ -17,7 +17,7 @@
  * openssl pkcs12 -in merchant_id.p12 -out merchant_id_key.pem -nocerts
  **/
 
-$configFilePath = 'payment-request-config.php';
+$configFilePath = '/var/www/config/payment-request-config.php';
 if (file_exists($configFilePath))
     include($configFilePath);
 
