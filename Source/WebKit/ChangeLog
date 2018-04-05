@@ -1,3 +1,24 @@
+2018-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r229831): Test WebKit2.ProvisionalURLAfterWillSendRequestCallback times out since r229831
+        https://bugs.webkit.org/show_bug.cgi?id=184293
+
+        Reviewed by Alex Christensen.
+
+        The problem is that after willSendRequest callback changes the request, the load is cancelled while
+        transitioning to committed state. This happens because the load is not waiting for the response policy check, so
+        it continues and when transitioning to committed, FrameLoader::closeURL() invalidates the current policy check
+        that causes a load failure. The new request returned by the API doesn't have any requester, so it's no longer
+        considered a main resource load. In the network process the resource load task doesn't wait for the response
+        policy and continues the load, sending the data to the web process. Once the first data is received, the load
+        transitions to commit, but the response policy check is still ongoing. This can only happen when using the C API
+        (I don't know about the Cocoa API), but not with the GLib API because it doesn't allow to create a new request,
+        only to modify the passed in one. With the C API we loss other internal things of the request like the priority,
+        but I guess the most important one is the requester.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+
 2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230283.
