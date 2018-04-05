@@ -9,7 +9,8 @@ if (window.testRunner) {
 
 async function doTest()
 {
-    await fetch("../beacon/resources/redirect.py?status=302&location=/");
+    const response = await fetch("../beacon/resources/redirect.py?status=302&location=/");
+    await response.text();
     testRunner.notifyDone();
 }
 </script>
