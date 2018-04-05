@@ -1,3 +1,17 @@
+2018-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r222563): removed DoubleReal type check causes tons of crashes because CSE has never known how to handle SaneChain
+        https://bugs.webkit.org/show_bug.cgi?id=184319
+
+        Reviewed by Saam Barati.
+
+        * stress/array-push-nan-to-double-array-cse-sane-and-insane-chain.js: Added.
+        (foo):
+        (bar):
+        * stress/array-push-nan-to-double-array.js: Added.
+        (foo):
+        (bar):
+
 2018-04-03  Mark Lam  <mark.lam@apple.com>
 
         Test js-fixed-array-out-of-memory.js should be excluded for memory limited devices.
