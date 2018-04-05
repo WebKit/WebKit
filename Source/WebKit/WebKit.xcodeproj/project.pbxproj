@@ -950,6 +950,8 @@
 		41DC459E1E3DBDA100B11F51 /* WebRTCSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41DC459D1E3DBCF000B11F51 /* WebRTCSocket.cpp */; };
 		41DC459F1E3DBDA500B11F51 /* WebRTCSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F31E3BFE7F001AE678 /* WebRTCSocket.h */; };
 		41DC45A11E3DC53F00B11F51 /* WebRTCResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41DC45A01E3DC53C00B11F51 /* WebRTCResolver.cpp */; };
+		41F12A9E2069BB4400FF26E8 /* WebMDNSRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B7ED6E20681DCF0087D853 /* WebMDNSRegister.cpp */; };
+		41F12A9F2069BB4C00FF26E8 /* NetworkMDNSRegister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */; };
 		41FABD2A1F4DE001006A6C97 /* CacheStorageEngineCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */; };
 		41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */; };
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
@@ -1173,6 +1175,8 @@
 		51F060E11654318500F3281F /* WebRTCMonitorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3281F /* WebRTCMonitorMessageReceiver.cpp */; };
 		51F060E11654318500F3282C /* WebRTCResolverMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282C /* WebRTCResolverMessageReceiver.cpp */; };
 		51F060E11654318500F3282E /* NetworkRTCProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */; };
+		51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */; };
+		51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */; };
 		51F7DC41180CC93600212CA3 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		51F7DC43180CC93600212CA3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		51F7DC44180CC93600212CA3 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
@@ -3322,6 +3326,12 @@
 		41AC86811E042E5300303074 /* WebRTCResolver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = WebRTCResolver.messages.in; path = Network/webrtc/WebRTCResolver.messages.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
 		41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCPacketOptions.h; sourceTree = "<group>"; };
 		41B28B091F83AD3E00FB52AC /* RTCPacketOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCPacketOptions.cpp; sourceTree = "<group>"; };
+		41B7ED6C20681DCE0087D853 /* WebMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMDNSRegister.h; path = Network/webrtc/WebMDNSRegister.h; sourceTree = "<group>"; };
+		41B7ED6D20681DCF0087D853 /* WebMDNSRegister.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebMDNSRegister.messages.in; path = Network/webrtc/WebMDNSRegister.messages.in; sourceTree = "<group>"; };
+		41B7ED6E20681DCF0087D853 /* WebMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMDNSRegister.cpp; path = Network/webrtc/WebMDNSRegister.cpp; sourceTree = "<group>"; };
+		41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkMDNSRegister.cpp; path = NetworkProcess/webrtc/NetworkMDNSRegister.cpp; sourceTree = "<group>"; };
+		41B7ED70206965900087D853 /* NetworkMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkMDNSRegister.h; path = NetworkProcess/webrtc/NetworkMDNSRegister.h; sourceTree = "<group>"; };
+		41B7ED71206965900087D853 /* NetworkMDNSRegister.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NetworkMDNSRegister.messages.in; path = NetworkProcess/webrtc/NetworkMDNSRegister.messages.in; sourceTree = "<group>"; };
 		41C858191F510DEE0065E085 /* CacheStorageEngineCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngineCache.cpp; sourceTree = "<group>"; };
 		41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCacheStorageProvider.h; sourceTree = "<group>"; };
 		41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkRTCProvider.h; path = NetworkProcess/webrtc/NetworkRTCProvider.h; sourceTree = "<group>"; };
@@ -3599,6 +3609,8 @@
 		51F060DD1654317500F3281F /* WebRTCMonitorMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRTCMonitorMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3282C /* WebRTCResolverMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRTCResolverMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DD1654317500F3282E /* NetworkRTCProviderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCProviderMessageReceiver.cpp; sourceTree = "<group>"; };
+		51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMDNSRegisterMessageReceiver.cpp; sourceTree = "<group>"; };
+		51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegisterMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
 		51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Storage.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Storage.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		51F886A31F2C214A00C193EF /* WKTestingSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKTestingSupport.cpp; sourceTree = "<group>"; };
@@ -6246,6 +6258,9 @@
 			children = (
 				41DC45991E3DBB2400B11F51 /* LibWebRTCSocketClient.cpp */,
 				41DC459A1E3DBB2400B11F51 /* LibWebRTCSocketClient.h */,
+				41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */,
+				41B7ED70206965900087D853 /* NetworkMDNSRegister.h */,
+				41B7ED71206965900087D853 /* NetworkMDNSRegister.messages.in */,
 				4130759A1DE84FB00039EC69 /* NetworkRTCMonitor.cpp */,
 				4130759B1DE84FB00039EC69 /* NetworkRTCMonitor.h */,
 				4130759C1DE84FB00039EC69 /* NetworkRTCMonitor.messages.in */,
@@ -6275,6 +6290,9 @@
 				413075A01DE85EE70039EC69 /* LibWebRTCSocket.h */,
 				413075A51DE85EE70039EC69 /* LibWebRTCSocketFactory.cpp */,
 				413075A61DE85EE70039EC69 /* LibWebRTCSocketFactory.h */,
+				41B7ED6E20681DCF0087D853 /* WebMDNSRegister.cpp */,
+				41B7ED6C20681DCE0087D853 /* WebMDNSRegister.h */,
+				41B7ED6D20681DCF0087D853 /* WebMDNSRegister.messages.in */,
 				413075A21DE85EE70039EC69 /* WebRTCMonitor.cpp */,
 				413075A31DE85EE70039EC69 /* WebRTCMonitor.h */,
 				413075A41DE85EE70039EC69 /* WebRTCMonitor.messages.in */,
@@ -8248,6 +8266,7 @@
 				51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */,
 				51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */,
 				52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */,
+				51F060DD1654317500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp */,
 				517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */,
 				517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */,
 				51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */,
@@ -8357,6 +8376,7 @@
 				1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */,
 				1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */,
 				1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */,
+				51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */,
 				31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */,
 				31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */,
 				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
@@ -10666,6 +10686,8 @@
 				530258461DCBBD2200DA89C2 /* NetworkDataTaskReplay.cpp in Sources */,
 				839902021BE9A02B000F3653 /* NetworkLoad.cpp in Sources */,
 				4103FBA52061C8FE00C2EAF8 /* NetworkLoadChecker.cpp in Sources */,
+				41F12A9F2069BB4C00FF26E8 /* NetworkMDNSRegister.cpp in Sources */,
+				51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */,
 				51795568162876CF00FA43B6 /* NetworkProcess.cpp in Sources */,
 				7EC4F0FB18E4ACBB008056AF /* NetworkProcessCocoa.mm in Sources */,
 				5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */,
@@ -11016,6 +11038,8 @@
 				BC9BA5041697C45300E44616 /* WebKit2Initialize.cpp in Sources */,
 				465250E61ECF52DC002025CB /* WebKit2InitializeCocoa.mm in Sources */,
 				51FB08FF1639DE1A00EC324A /* WebLoaderStrategy.cpp in Sources */,
+				41F12A9E2069BB4400FF26E8 /* WebMDNSRegister.cpp in Sources */,
+				51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */,
 				CD003A5219D49B5D005ABCE0 /* WebMediaKeyStorageManager.cpp in Sources */,
 				C98C48A51B6FD4C300145103 /* WebMediaSessionFocusManager.cpp in Sources */,
 				C9C1833B1B74026A007036A7 /* WebMediaSessionFocusManagerClient.cpp in Sources */,

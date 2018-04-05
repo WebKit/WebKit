@@ -1,3 +1,44 @@
+2018-04-04  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC data channel only applications require capture permissions for direct connections
+        https://bugs.webkit.org/show_bug.cgi?id=174500
+        <rdar://problem/34134281>
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/datachannel/mdns-ice-candidates.html
+
+        Add support at PeerConnectionBackend to obfuscate any gathered host candidate
+        by replacing the IP address with an opaque name that can be resolved by MDNS.
+        An opaque name is generated for each IP address and is scoped by the document owning the peer connection object.
+
+        Add support to resolve any such MDNS ICE candidate.
+        A limit of 250 ms is fixed for the resolution to happen.
+        After 250 ms, the candidate is discarded.
+
+        Add an experimental flag around this feature, off by default.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::extractIPAddres):
+        (WebCore::PeerConnectionBackend::addIceCandidate):
+        (WebCore::PeerConnectionBackend::addIceCandidateSucceeded):
+        (WebCore::PeerConnectionBackend::addIceCandidateFailed):
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        (WebCore::PeerConnectionBackend::registerMDNSName):
+        (WebCore::PeerConnectionBackend::finishedRegisteringMDNSName):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCIceCandidate.h:
+        (WebCore::RTCIceCandidate::setCandidate):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::suspend):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::mdnsICECandidatesEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setMDNSICECandidatesEnabled):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2018-04-04  Brian Burg  <bburg@apple.com>
 
         [Cocoa] WebDriver: test imported/w3c/webdriver/tests/cookies/add_cookie.py::test_add_non_session_cookie fails

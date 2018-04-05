@@ -120,6 +120,8 @@ public:
     void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
     bool webRTCLegacyAPIEnabled() const { return m_webRTCLegacyAPIEnabled; }
     void setWebRTCLegacyAPIEnabled(bool isEnabled) { m_webRTCLegacyAPIEnabled = isEnabled; }
+    bool mdnsICECandidatesEnabled() const { return m_mdnsICECandidatesEnabled; }
+    void setMDNSICECandidatesEnabled(bool isEnabled) { m_mdnsICECandidatesEnabled = isEnabled; }
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
@@ -290,6 +292,7 @@ private:
 #if ENABLE(WEB_RTC)
     bool m_isPeerConnectionEnabled { true };
     bool m_webRTCLegacyAPIEnabled { false };
+    bool m_mdnsICECandidatesEnabled { false };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)

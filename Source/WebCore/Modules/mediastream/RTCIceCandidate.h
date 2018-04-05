@@ -52,6 +52,8 @@ public:
     const String& sdpMid() const { return m_sdpMid; }
     std::optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
 
+    void setCandidate(String&& candidate) { m_candidate = WTFMove(candidate); }
+
 private:
     RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
 

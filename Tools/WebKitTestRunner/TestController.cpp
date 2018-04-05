@@ -668,6 +668,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetWebAudioEnabled(preferences, true);
     WKPreferencesSetMediaDevicesEnabled(preferences, true);
     WKPreferencesSetWebRTCLegacyAPIEnabled(preferences, true);
+    WKPreferencesSetWebRTCMDNSICECandidatesEnabled(preferences, false);
     WKPreferencesSetDeveloperExtrasEnabled(preferences, true);
     WKPreferencesSetJavaScriptRuntimeFlags(preferences, kWKJavaScriptRuntimeFlagsAllEnabled);
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);

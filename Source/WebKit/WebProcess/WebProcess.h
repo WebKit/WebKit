@@ -174,9 +174,7 @@ public:
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     WebLoaderStrategy& webLoaderStrategy();
 
-#if USE(LIBWEBRTC)
     LibWebRTCNetwork& libWebRTCNetwork();
-#endif
 
     void webToStorageProcessConnectionClosed(WebToStorageProcessConnection*);
     WebToStorageProcessConnection* existingWebToStorageProcessConnection() { return m_webToStorageProcessConnection.get(); }
@@ -414,9 +412,7 @@ private:
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
 
-#if USE(LIBWEBRTC)
     std::unique_ptr<LibWebRTCNetwork> m_libWebRTCNetwork;
-#endif
 
     HashSet<String> m_dnsPrefetchedHosts;
     PAL::HysteresisActivity m_dnsPrefetchHystereris;

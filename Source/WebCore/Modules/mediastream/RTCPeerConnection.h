@@ -107,6 +107,7 @@ public:
     void close();
 
     bool isClosed() const { return m_connectionState == RTCPeerConnectionState::Closed; }
+    bool isStopped() const { return m_isStopped; }
 
     // 5.1 RTCPeerConnection extensions
     const Vector<std::reference_wrapper<RTCRtpSender>>& getSenders() const { return m_transceiverSet->senders(); }

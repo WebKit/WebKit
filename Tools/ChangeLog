@@ -1,3 +1,21 @@
+2018-04-04  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC data channel only applications require capture permissions for direct connections
+        https://bugs.webkit.org/show_bug.cgi?id=174500
+        <rdar://problem/34134281>
+
+        Reviewed by Eric Carlson.
+
+        Adding options to enable MDNS ICE candidates.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setMediaDevicesEnabled):
+        (WTR::TestRunner::setMDNSICECandidatesEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable failing WKWebViewAutofillTests

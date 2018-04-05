@@ -317,6 +317,7 @@ interface TestRunner {
     void setOpenPanelFiles(object filesArray);
 
     void setWebRTCLegacyAPIEnabled(boolean value);
+    void setMDNSICECandidatesEnabled(boolean value);
 
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();

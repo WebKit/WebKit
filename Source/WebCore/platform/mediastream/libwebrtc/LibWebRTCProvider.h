@@ -26,8 +26,12 @@
 #pragma once
 
 #include "LibWebRTCMacros.h"
-#include <wtf/Forward.h>
+#include <pal/SessionID.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/Expected.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(LIBWEBRTC)
 
@@ -53,6 +57,8 @@ namespace WebCore {
 
 class LibWebRTCAudioModule;
 
+enum class MDNSRegisterError { NotImplemented, BadParameter, DNSSD, Internal, Timeout };
+
 class WEBCORE_EXPORT LibWebRTCProvider {
 public:
     static UniqueRef<LibWebRTCProvider> create();
@@ -64,6 +70,27 @@ public:
     virtual void setActive(bool) { };
 
     virtual void setH264HardwareEncoderAllowed(bool) { }
+
+    using IPAddressOrError = Expected<String, MDNSRegisterError>;
+    using MDNSNameOrError = Expected<String, MDNSRegisterError>;
+
+    virtual void unregisterMDNSNames(uint64_t documentIdentifier)
+    {
+        UNUSED_PARAM(documentIdentifier);
+    }
+
+    virtual void registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
+    {
+        UNUSED_PARAM(documentIdentifier);
+        UNUSED_PARAM(ipAddress);
+        callback(makeUnexpected(MDNSRegisterError::NotImplemented));
+    }
+
+    virtual void resolveMDNSName(PAL::SessionID, const String& name, CompletionHandler<void(IPAddressOrError&&)>&& callback)
+    {
+        UNUSED_PARAM(name);
+        callback(makeUnexpected(MDNSRegisterError::NotImplemented));
+    }
 
 #if USE(LIBWEBRTC)
     virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
@@ -98,3 +125,16 @@ protected:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::MDNSRegisterError> {
+    using values = EnumValues<
+        WebCore::MDNSRegisterError,
+        WebCore::MDNSRegisterError::NotImplemented,
+        WebCore::MDNSRegisterError::BadParameter,
+        WebCore::MDNSRegisterError::DNSSD,
+        WebCore::MDNSRegisterError::Internal,
+        WebCore::MDNSRegisterError::Timeout
+    >;
+};
+}

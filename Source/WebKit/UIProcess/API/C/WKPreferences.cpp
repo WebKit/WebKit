@@ -1414,6 +1414,16 @@ bool WKPreferencesGetWebRTCLegacyAPIEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webRTCLegacyAPIEnabled();
 }
 
+void WKPreferencesSetWebRTCMDNSICECandidatesEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setMDNSICECandidatesEnabled(enabled);
+}
+
+bool WKPreferencesGetWebRTCMDNSICECandidatesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mDNSICECandidatesEnabled();
+}
+
 void WKPreferencesSetSpatialNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setSpatialNavigationEnabled(enabled);

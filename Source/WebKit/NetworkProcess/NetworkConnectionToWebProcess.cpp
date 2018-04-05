@@ -33,6 +33,7 @@
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
+#include "NetworkMDNSRegisterMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkRTCMonitorMessages.h"
@@ -67,6 +68,9 @@ Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(IPC::Co
 
 NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
+#if ENABLE(WEB_RTC)
+    , m_mdnsRegister(*this)
+#endif
 {
     m_connection->open();
 }
@@ -122,6 +126,12 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
     if (decoder.messageReceiverName() == Messages::NetworkRTCProvider::messageReceiverName()) {
         rtcProvider().didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
+#if ENABLE(WEB_RTC)
+    if (decoder.messageReceiverName() == Messages::NetworkMDNSRegister::messageReceiverName()) {
+        mdnsRegister().didReceiveMessage(connection, decoder);
         return;
     }
 #endif

@@ -114,6 +114,7 @@
 #include "KeyboardEvent.h"
 #include "KeyframeEffectReadOnly.h"
 #include "LayoutDisallowedScope.h"
+#include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
@@ -2348,6 +2349,11 @@ void Document::prepareForDestruction()
 
     if (m_frame)
         m_frame->animation().detachFromDocument(this);
+
+#if USE(LIBWEBRTC)
+    if (auto* page = this->page())
+        page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+#endif
 
 #if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
@@ -4876,6 +4882,11 @@ void Document::suspend(ActiveDOMObject::ReasonForSuspension reason)
         if (view->usesCompositing())
             view->compositor().cancelCompositingLayerUpdate();
     }
+
+#if USE(LIBWEBRTC)
+    if (auto* page = this->page())
+        page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ActiveDOMObject::ReasonForSuspension::PageCache) {

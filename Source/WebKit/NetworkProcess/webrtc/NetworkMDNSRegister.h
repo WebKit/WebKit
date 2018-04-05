@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,57 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
-#include <WebCore/LibWebRTCProviderCocoa.h>
+#if ENABLE(WEB_RTC)
+
+#include "RTCNetwork.h"
+#include <WebCore/DocumentIdentifier.h>
+#include <wtf/Expected.h>
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+
+#if defined __has_include && __has_include(<dns_sd.h>)
+#define ENABLE_MDNS 1
 #else
-#include <WebCore/LibWebRTCProvider.h>
+#define ENABLE_MDNS 0
 #endif
+
+#if ENABLE_MDNS
+#include <dns_sd.h>
+#endif
+
+namespace IPC {
+class Connection;
+class Decoder;
+}
+
+namespace PAL {
+class SessionID;
+}
 
 namespace WebKit {
 
-#if USE(LIBWEBRTC)
+class NetworkConnectionToWebProcess;
 
-#if PLATFORM(COCOA)
-using LibWebRTCProviderBase = WebCore::LibWebRTCProviderCocoa;
-#else
-using LibWebRTCProviderBase = WebCore::LibWebRTCProvider;
-#endif
-
-class LibWebRTCProvider final : public LibWebRTCProviderBase {
+class NetworkMDNSRegister {
 public:
-    LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
+    NetworkMDNSRegister(NetworkConnectionToWebProcess&);
+    ~NetworkMDNSRegister();
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
+    void unregisterMDNSNames(WebCore::DocumentIdentifier);
+    void registerMDNSName(uint64_t requestIdentifier, PAL::SessionID, WebCore::DocumentIdentifier, const String& ipAddress);
+    void resolveMDNSName(uint64_t requestIdentifier, PAL::SessionID, const String& name);
 
-    void unregisterMDNSNames(uint64_t documentIdentifier) final;
-    void registerMDNSName(PAL::SessionID, uint64_t documentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&&) final;
-    void resolveMDNSName(PAL::SessionID, const String& name, CompletionHandler<void(IPAddressOrError&&)>&&) final;
+    NetworkConnectionToWebProcess& m_connection;
+#if ENABLE_MDNS
+    HashMap<WebCore::DocumentIdentifier, DNSServiceRef> m_services;
+
+    uint64_t m_registrationCount { 0 };
+#endif
 };
-#else
-using LibWebRTCProvider = WebCore::LibWebRTCProvider;
-#endif // USE(LIBWEBRTC)
 
 } // namespace WebKit
+
+#endif // ENABLE(WEB_RTC)

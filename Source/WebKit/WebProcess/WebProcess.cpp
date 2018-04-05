@@ -1672,14 +1672,12 @@ bool WebProcess::hasVisibleWebPage() const
     return false;
 }
 
-#if USE(LIBWEBRTC)
 LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 {
     if (!m_libWebRTCNetwork)
         m_libWebRTCNetwork = std::make_unique<LibWebRTCNetwork>();
     return *m_libWebRTCNetwork;
 }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 void WebProcess::establishWorkerContextConnectionToStorageProcess(uint64_t pageGroupID, uint64_t pageID, const WebPreferencesStore& store, PAL::SessionID initialSessionID)

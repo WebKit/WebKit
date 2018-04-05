@@ -26,11 +26,13 @@
 #pragma once
 
 #if USE(LIBWEBRTC)
-
 #include "LibWebRTCSocketFactory.h"
 #include "WebRTCMonitor.h"
 #include "WebRTCResolver.h"
 #include "WebRTCSocket.h"
+#endif
+
+#include "WebMDNSRegister.h"
 
 namespace WebKit {
 
@@ -38,17 +40,26 @@ class LibWebRTCNetwork {
 public:
     LibWebRTCNetwork() = default;
 
+#if USE(LIBWEBRTC)
     WebRTCMonitor& monitor() { return m_webNetworkMonitor; }
     LibWebRTCSocketFactory& socketFactory() { return m_socketFactory; }
 
     WebRTCSocket socket(uint64_t identifier) { return WebRTCSocket(socketFactory(), identifier); }
     WebRTCResolver resolver(uint64_t identifier) { return WebRTCResolver(socketFactory(), identifier); }
+#endif
+
+#if ENABLE(WEB_RTC)
+    WebMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+#endif
 
 private:
+#if USE(LIBWEBRTC)
     LibWebRTCSocketFactory m_socketFactory;
     WebRTCMonitor m_webNetworkMonitor;
+#endif
+#if ENABLE(WEB_RTC)
+    WebMDNSRegister m_mdnsRegister;
+#endif
 };
 
 } // namespace WebKit
-
-#endif // USE(LIBWEBRTC)

@@ -30,8 +30,8 @@
 #include "Connection.h"
 #include "DownloadID.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkMDNSRegister.h"
 #include "NetworkRTCProvider.h"
-
 #include <WebCore/ResourceLoadPriority.h>
 #include <wtf/RefCounted.h>
 
@@ -131,6 +131,9 @@ private:
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif
+#if ENABLE(WEB_RTC)
+    NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+#endif
 
     CacheStorageEngineConnection& cacheStorageConnection();
 
@@ -145,6 +148,9 @@ private:
 
 #if USE(LIBWEBRTC)
     RefPtr<NetworkRTCProvider> m_rtcProvider;
+#endif
+#if ENABLE(WEB_RTC)
+    NetworkMDNSRegister m_mdnsRegister;
 #endif
 
     bool m_captureExtraNetworkLoadMetricsEnabled { false };

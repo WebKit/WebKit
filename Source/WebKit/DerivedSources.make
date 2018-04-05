@@ -107,6 +107,7 @@ MESSAGE_RECEIVERS = \
     LegacyCustomProtocolManagerProxy \
     NPObjectMessageReceiver \
     NetworkConnectionToWebProcess \
+    NetworkMDNSRegister\
     NetworkProcess \
     NetworkProcessConnection \
     NetworkProcessProxy \
@@ -160,6 +161,7 @@ MESSAGE_RECEIVERS = \
     WebInspectorInterruptDispatcher \
     WebInspectorProxy \
     WebInspectorUI \
+    WebMDNSRegister\
     WebNotificationManager \
     WebPage \
     WebPageProxy \

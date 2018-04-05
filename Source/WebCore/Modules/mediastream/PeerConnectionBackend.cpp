@@ -40,7 +40,9 @@
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionIceEvent.h"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -254,13 +256,56 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     m_setDescriptionPromise = std::nullopt;
 }
 
+static String extractIPAddres(const String& sdp)
+{
+    ASSERT(sdp.contains(" host "));
+    unsigned counter = 0;
+    for (auto item : StringView { sdp }.split(' ')) {
+        if (++counter == 5)
+            return item.toString();
+    }
+    return { };
+}
+
 void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
 
     if (!iceCandidate) {
+        if (m_waitingForMDNSResolution) {
+            m_finishedReceivingCandidates = true;
+            m_endOfIceCandidatePromise = WTFMove(promise);
+            return;
+        }
         endOfIceCandidates(WTFMove(promise));
         return;
+    }
+
+    if (RuntimeEnabledFeatures::sharedFeatures().mdnsICECandidatesEnabled()) {
+        auto name = extractIPAddres(iceCandidate->candidate());
+        if (name.endsWith(".local")) {
+            ++m_waitingForMDNSResolution;
+            auto& document = downcast<Document>(*m_peerConnection.scriptExecutionContext());
+            auto& provider = document.page()->libWebRTCProvider();
+            provider.resolveMDNSName(document.sessionID(), name, [peerConnection = makeRef(m_peerConnection), this, name, iceCandidate = makeRef(*iceCandidate), promise = WTFMove(promise)] (LibWebRTCProvider::IPAddressOrError&& result) mutable {
+                if (peerConnection->isStopped())
+                    return;
+
+                --m_waitingForMDNSResolution;
+                if (!result.has_value()) {
+                    if (result.error() != MDNSRegisterError::Timeout)
+                        peerConnection->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("MDNS resolution of a host candidate failed with error", (unsigned)result.error()));
+                    return;
+                }
+
+                auto candidate = iceCandidate->candidate();
+                candidate.replace(name, result.value());
+                iceCandidate->setCandidate(WTFMove(candidate));
+                m_addIceCandidatePromise = WTFMove(promise);
+                this->doAddIceCandidate(iceCandidate);
+            });
+            return;
+        }
     }
 
     // FIXME: As per https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-addicecandidate(), this check should be done before enqueuing the task.
@@ -285,6 +330,9 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
 
     m_addIceCandidatePromise->resolve();
     m_addIceCandidatePromise = std::nullopt;
+
+    if (!m_waitingForMDNSResolution && m_finishedReceivingCandidates)
+        endOfIceCandidates(WTFMove(*m_endOfIceCandidatePromise));
 }
 
 void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
@@ -299,6 +347,9 @@ void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
 
     m_addIceCandidatePromise->reject(WTFMove(exception));
     m_addIceCandidatePromise = std::nullopt;
+
+    if (!m_waitingForMDNSResolution && m_finishedReceivingCandidates)
+        endOfIceCandidates(WTFMove(*m_endOfIceCandidatePromise));
 }
 
 void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& candidate)
@@ -376,13 +427,21 @@ String PeerConnectionBackend::filterSDP(String&& sdp) const
 void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "Gathered ice candidate:", sdp);
+    m_finishedGatheringCandidates = false;
 
     if (!m_shouldFilterICECandidates) {
         fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex));
         return;
     }
     if (sdp.find(" host ", 0) != notFound) {
-        m_pendingICECandidates.append(PendingICECandidate { WTFMove(sdp), WTFMove(mid), sdpMLineIndex});
+        // FIXME: We might need to clear all pending candidates when setting again local description.
+        m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex});
+        if (RuntimeEnabledFeatures::sharedFeatures().mdnsICECandidatesEnabled()) {
+            auto ipAddress = extractIPAddres(sdp);
+            // We restrict to IPv4 candidates for now.
+            if (ipAddress.contains('.'))
+                registerMDNSName(ipAddress);
+        }
         return;
     }
     fireICECandidateEvent(RTCIceCandidate::create(filterICECandidate(WTFMove(sdp)), WTFMove(mid), sdpMLineIndex));
@@ -392,9 +451,52 @@ void PeerConnectionBackend::doneGatheringCandidates()
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Finished ice candidate gathering");
+    m_finishedGatheringCandidates = true;
+
+    if (m_waitingForMDNSRegistration)
+        return;
 
     m_peerConnection.fireEvent(RTCPeerConnectionIceEvent::create(false, false, nullptr));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
+    m_pendingICECandidates.clear();
+}
+
+void PeerConnectionBackend::registerMDNSName(const String& ipAddress)
+{
+    ++m_waitingForMDNSRegistration;
+    auto& document = downcast<Document>(*m_peerConnection.scriptExecutionContext());
+    auto& provider = document.page()->libWebRTCProvider();
+    provider.registerMDNSName(document.sessionID(), document.identifier().toUInt64(), ipAddress, [peerConnection = makeRef(m_peerConnection), this, ipAddress] (LibWebRTCProvider::MDNSNameOrError&& result) {
+        if (peerConnection->isStopped())
+            return;
+
+        --m_waitingForMDNSRegistration;
+        if (!result.has_value()) {
+            m_peerConnection.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("MDNS registration of a host candidate failed with error", (unsigned)result.error()));
+            return;
+        }
+
+        this->finishedRegisteringMDNSName(ipAddress, result.value());
+    });
+}
+
+void PeerConnectionBackend::finishedRegisteringMDNSName(const String& ipAddress, const String& name)
+{
+    Vector<PendingICECandidate*> candidates;
+    for (auto& candidate : m_pendingICECandidates) {
+        if (candidate.sdp.find(ipAddress) != notFound) {
+            auto sdp = candidate.sdp;
+            sdp.replace(ipAddress, name);
+            fireICECandidateEvent(RTCIceCandidate::create(String(sdp), String(candidate.mid), candidate.sdpMLineIndex));
+            candidates.append(&candidate);
+        }
+    }
+    m_pendingICECandidates.removeAllMatching([&] (const auto& candidate) {
+        return candidates.contains(&candidate);
+    });
+
+    if (!m_waitingForMDNSRegistration && m_finishedGatheringCandidates)
+        doneGatheringCandidates();
 }
 
 void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingState)

@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing basic data channel from offerer to receiver with MDNS ICE Candidates</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+if (window.testRunner)
+    testRunner.setMDNSICECandidatesEnabled(true);
+if (window.internals)
+    internals.setICECandidateFiltering(true);
+
+var localChannel;
+var remoteChannel;
+
+function closeDataChannels() {
+    localChannel.close();
+    remoteChannel.close();
+    closeConnections();
+}
+
+function receiveMessages(event) {
+try {
+    if (++counter === 1)
+        assert_equals(event.data, "one");
+    else if (counter === 2)
+        assert_equals(event.data, "two");
+    else if (counter === 3)
+        assert_equals(event.data, "three");
+    else if (counter === 4) {
+        assert_equals(event.data, "four");
+        closeDataChannels();
+        finishTest();
+    } else
+        assert_unreached();
+} catch(e) {
+    console.log(e);
+}
+}
+
+function sendMessages(channel)
+{
+    channel.send("one");
+    channel.send("two");
+    channel.send("three");
+    channel.send("four");
+}
+
+promise_test((test) => {
+    return new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            localConnection.createDataChannel('sendDataChannel');
+        }, () => {
+        }, {
+            filterOutICECandidate: (candidate) => {
+                if (candidate && candidate.candidate.toLowerCase().indexOf("host") !== -1)
+                    assert_true(candidate.candidate.indexOf(".local") !== -1);
+                if (!candidate)
+                    resolve();
+                return false;
+            }
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Getting some MDNS candidates");
+
+var finishTest;
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from offerer to receiver");
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onmessage = receiveMessages;
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onopen = () => { sendMessages(remoteChannel) };
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from receiver to offerer");
+
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        }, { filterOutICECandidate: (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("udp") == -1; } });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from offerer to receiver using UDP only");
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        var checkDataChannelOptions = (channel, init) => {
+            assert_equals(channel.ordered, init.ordered, "ordered");
+            assert_equals(channel.maxPacketLifeTime, init.maxPacketLifeTime, "maxPacketLifeTime");
+            assert_equals(channel.maxRetransmitTime, init.maxRetransmitTime, "maxRetransmitTime");
+            assert_equals(channel.maxRetransmits, init.maxRetransmits, "maxRetransmits");
+            assert_equals(channel.protocol, init.protocol, "protocol");
+            assert_equals(channel.negotiated, init.negotiated, "negotiated");
+            assert_equals(channel.id, init.id, "id");
+        };
+
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            var init = { ordered: true, maxPacketLifeTime: 10, maxRetransmitTime: 11, protocol: "whatever", negotiated: false, id: 1 };
+            localChannel = localConnection.createDataChannel('sendDataChannel', init);
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from offerer to receiver");
+
+    </script>
+  </body>
+</html>

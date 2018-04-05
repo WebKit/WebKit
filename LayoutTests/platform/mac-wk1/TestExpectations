@@ -150,6 +150,7 @@ webrtc [ Skip ]
 http/tests/webrtc [ Skip ]
 http/wpt/webrtc [ Skip ]
 webrtc/datachannel [ Pass ]
+webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
 

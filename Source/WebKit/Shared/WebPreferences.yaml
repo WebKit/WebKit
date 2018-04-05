@@ -1114,6 +1114,15 @@ WebRTCLegacyAPIEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
 
+MDNSICECandidatesEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Enable MDNS ICE candidates"
+  humanReadableDescription: "Enable MDNS ICE candidates"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(WEB_RTC)
+
 IsSecureContextAttributeEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
