@@ -132,6 +132,7 @@ void Connection::platformInvalidate()
     }
 
     m_pendingOutgoingMachMessage = nullptr;
+    m_isInitializingSendSource = false;
     m_isConnected = false;
 
     ASSERT(m_sendPort);
@@ -247,6 +248,7 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
 {
     ASSERT(message);
     ASSERT(!m_pendingOutgoingMachMessage);
+    ASSERT(!m_isInitializingSendSource);
 
     // Send the message.
     kern_return_t kr = mach_msg(message->header(), MACH_SEND_MSG | MACH_SEND_TIMEOUT | MACH_SEND_NOTIFY, message->size(), 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
@@ -273,12 +275,12 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
 
 bool Connection::platformCanSendOutgoingMessages() const
 {
-    return !m_pendingOutgoingMachMessage;
+    return !m_pendingOutgoingMachMessage && !m_isInitializingSendSource;
 }
 
 bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 {
-    ASSERT(!m_pendingOutgoingMachMessage);
+    ASSERT(!m_pendingOutgoingMachMessage && !m_isInitializingSendSource);
 
     Vector<Attachment> attachments = encoder->releaseAttachments();
     
@@ -371,8 +373,15 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 void Connection::initializeSendSource()
 {
     m_sendSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_DEAD | DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue());
+    m_isInitializingSendSource = true;
 
     RefPtr<Connection> connection(this);
+    dispatch_source_set_registration_handler(m_sendSource, [connection] {
+        if (!connection->m_sendSource)
+            return;
+        connection->m_isInitializingSendSource = false;
+        connection->resumeSendSource();
+    });
     dispatch_source_set_event_handler(m_sendSource, [connection] {
         if (!connection->m_sendSource)
             return;
@@ -386,9 +395,7 @@ void Connection::initializeSendSource()
 
         if (data & DISPATCH_MACH_SEND_POSSIBLE) {
             // FIXME: Figure out why we get spurious DISPATCH_MACH_SEND_POSSIBLE events.
-            if (connection->m_pendingOutgoingMachMessage)
-                connection->sendMessage(WTFMove(connection->m_pendingOutgoingMachMessage));
-            connection->sendOutgoingMessages();
+            connection->resumeSendSource();
             return;
         }
     });
@@ -399,6 +406,14 @@ void Connection::initializeSendSource()
         // Release our send right.
         deallocateSendRightSafely(sendPort);
     });
+}
+
+void Connection::resumeSendSource()
+{
+    ASSERT(!m_isInitializingSendSource);
+    if (m_pendingOutgoingMachMessage)
+        sendMessage(WTFMove(m_pendingOutgoingMachMessage));
+    sendOutgoingMessages();
 }
 
 static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)

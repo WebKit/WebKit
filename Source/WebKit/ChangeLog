@@ -1,3 +1,36 @@
+2018-04-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebContent process sometimes hangs in WebProcess::ensureNetworkProcessConnection
+        https://bugs.webkit.org/show_bug.cgi?id=184326
+
+        Reviewed by Chris Dumez.
+
+        The hang was caused by UI process never sending the reply back to GetNetworkProcessConnection
+        due to m_pendingOutgoingMachMessage being set and the event handler for DISPATCH_MACH_SEND_POSSIBLE
+        never getting called. This is because the event handler registration happens asynchronously,
+        and may not have completed by the time we send the first IPC to the web content process
+        in which case it can timeout and we may never get the callback.
+
+        Fixed the hang by waiting for the event handler registration to be completed using
+        dispatch_source_set_registration_handler. To do this, this patch adds a new boolean instance variable,
+        m_isInitializingSendSource, to Connection which is set to true between the time mach port is created
+        and until the event handler registration has been completed. platformCanSendOutgoingMessages returns
+        false while m_isInitializingSendSource is set to prevent the attempt to send messages like we do when
+        m_pendingOutgoingMachMessage is set to true.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::m_isInitializingSendSource): Added.
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate): Set m_isInitializingSendSource to false.
+        (IPC::Connection::sendMessage): Assert that m_isInitializingSendSource is false.
+        (IPC::Connection::platformCanSendOutgoingMessages const): Return false if m_isInitializingSendSource
+        is set to true.
+        (IPC::Connection::sendOutgoingMessage): Assert that m_isInitializingSendSource is false.
+        (IPC::Connection::initializeSendSource): Set m_isInitializingSendSource to true temporarily until
+        dispatch_source_set_registration_handler's callback is called. Resume and send any pending outgoing
+        messages.
+        (IPC::Connection::resumeSendSource): Extracted from initializeSendSource.
+
 2018-04-05  Youenn Fablet  <youenn@apple.com>
 
         WebRTC data channel only applications require capture permissions for direct connections
