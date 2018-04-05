@@ -97,11 +97,15 @@ void NetworkMDNSRegister::registerMDNSName(uint64_t requestIdentifier, PAL::Sess
     DNSServiceRef service;
     auto iterator = m_services.find(documentIdentifier);
     if (iterator == m_services.end()) {
-        if (auto error = DNSServiceCreateConnection(&service)) {
+        auto error = DNSServiceCreateConnection(&service);
+        if (error) {
+            RELEASE_LOG_IF_ALLOWED(sessionID, "registerMDNSName DNSServiceCreateConnection error %d", error);
             m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, makeUnexpected(MDNSRegisterError::DNSSD) }, 0);
             return;
         }
-        if (auto error = DNSServiceSetDispatchQueue(service, dispatch_get_main_queue())) {
+        error = DNSServiceSetDispatchQueue(service, dispatch_get_main_queue());
+        if (error) {
+            RELEASE_LOG_IF_ALLOWED(sessionID, "registerMDNSName DNSServiceCreateConnection error %d", error);
             m_connection.connection().send(Messages::WebMDNSRegister::FinishedRegisteringMDNSName { requestIdentifier, makeUnexpected(MDNSRegisterError::DNSSD) }, 0);
             return;
         }
