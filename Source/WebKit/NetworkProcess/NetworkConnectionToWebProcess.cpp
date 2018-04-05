@@ -228,16 +228,16 @@ void NetworkConnectionToWebProcess::endSuspension()
 #endif
 }
 
-void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters)
+void NetworkConnectionToWebProcess::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters)
 {
-    auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this);
+    auto loader = NetworkResourceLoader::create(loadParameters, *this);
     m_networkResourceLoaders.add(loadParameters.identifier, loader.ptr());
     loader->start();
 }
 
-void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& reply)
+void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResourceLoadParameters& loadParameters, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply)
 {
-    auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this, WTFMove(reply));
+    auto loader = NetworkResourceLoader::create(loadParameters, *this, WTFMove(reply));
     m_networkResourceLoaders.add(loadParameters.identifier, loader.ptr());
     loader->start();
 }

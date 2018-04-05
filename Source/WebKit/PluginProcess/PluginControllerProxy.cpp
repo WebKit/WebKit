@@ -91,16 +91,15 @@ PluginControllerProxy::~PluginControllerProxy()
         releaseNPObject(m_pluginElementNPObject);
 }
 
-void PluginControllerProxy::setInitializationReply(Messages::WebProcessConnection::CreatePlugin::DelayedReply&& reply)
+void PluginControllerProxy::setInitializationReply(Ref<Messages::WebProcessConnection::CreatePlugin::DelayedReply>&& reply)
 {
     ASSERT(!m_initializationReply);
     m_initializationReply = WTFMove(reply);
 }
 
-Messages::WebProcessConnection::CreatePlugin::DelayedReply PluginControllerProxy::takeInitializationReply()
+RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> PluginControllerProxy::takeInitializationReply()
 {
-    ASSERT(m_initializationReply);
-    return WTFMove(m_initializationReply);
+    return m_initializationReply;
 }
 
 bool PluginControllerProxy::initialize(const PluginCreationParameters& creationParameters)

@@ -54,8 +54,6 @@
 
 namespace IPC {
 
-template<typename> struct CodingType;
-
 enum class SendOption {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.

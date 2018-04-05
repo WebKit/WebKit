@@ -231,7 +231,7 @@ public:
         uint64_t currentOriginUsage;
         uint64_t currentDatabaseUsage;
         uint64_t expectedUsage;
-        Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply reply;
+        RefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply> reply;
     };
 
     static ExceededDatabaseQuotaRecords& singleton();
@@ -239,7 +239,7 @@ public:
     std::unique_ptr<Record> createRecord(uint64_t frameID, String originIdentifier,
         String databaseName, String displayName, uint64_t currentQuota,
         uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, 
-        Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&&);
+        Ref<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply>&&);
 
     void add(std::unique_ptr<Record>);
     bool areBeingProcessed() const { return !!m_currentRecord; }
@@ -262,7 +262,7 @@ ExceededDatabaseQuotaRecords& ExceededDatabaseQuotaRecords::singleton()
 std::unique_ptr<ExceededDatabaseQuotaRecords::Record> ExceededDatabaseQuotaRecords::createRecord(
     uint64_t frameID, String originIdentifier, String databaseName, String displayName,
     uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage,
-    uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
+    uint64_t expectedUsage, Ref<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply>&& reply)
 {
     auto record = std::make_unique<Record>();
     record->frameID = frameID;
@@ -4042,20 +4042,20 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
 
 // UIClient
 
-void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, ResourceRequest&& request, WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, Messages::WebPageProxy::CreateNewPage::DelayedReply&& reply)
+void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, ResourceRequest&& request, WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, Ref<Messages::WebPageProxy::CreateNewPage::DelayedReply>&& reply)
 {
     MESSAGE_CHECK(m_process->webFrame(originatingFrameInfoData.frameID));
     auto originatingFrameInfo = API::FrameInfo::create(originatingFrameInfoData, m_process->webPage(originatingPageID));
 
     auto mainFrameURL = m_mainFrame->url();
 
-    m_uiClient->createNewPage(*this, WTFMove(originatingFrameInfo), WTFMove(request), WTFMove(windowFeatures), WTFMove(navigationActionData), [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply)](RefPtr<WebPageProxy> newPage) {
+    m_uiClient->createNewPage(*this, WTFMove(originatingFrameInfo), WTFMove(request), WTFMove(windowFeatures), WTFMove(navigationActionData), [this, protectedThis = RefPtr<WebPageProxy>(this), mainFrameURL, request, reply = WTFMove(reply)](RefPtr<WebPageProxy> newPage) {
         if (!newPage) {
-            reply(0, { });
+            reply->send(0, { });
             return;
         }
 
-        reply(newPage->pageID(), newPage->creationParameters());
+        reply->send(newPage->pageID(), newPage->creationParameters());
 
         WebsiteDataStore::cloneSessionData(*this, *newPage);
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL(ParsedURLString, mainFrameURL), request.url());
@@ -4091,7 +4091,7 @@ void WebPageProxy::closePage(bool stopResponsivenessTimer)
     m_uiClient->close(this);
 }
 
-void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply&& reply)
+void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, Ref<Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply>&& reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -4104,11 +4104,11 @@ void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const SecurityOriginData
             automationSession->willShowJavaScriptDialog(*this);
     }
     m_uiClient->runJavaScriptAlert(this, message, frame, securityOrigin, [reply = WTFMove(reply)] {
-        reply();
+        reply->send();
     });
 }
 
-void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply&& reply)
+void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, Ref<Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply>&& reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -4122,11 +4122,11 @@ void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const SecurityOriginDa
     }
 
     m_uiClient->runJavaScriptConfirm(this, message, frame, securityOrigin, [reply = WTFMove(reply)](bool result) {
-        reply(result);
+        reply->send(result);
     });
 }
 
-void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, const String& defaultValue, Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply&& reply)
+void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, const String& defaultValue, Ref<Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply>&& reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -4140,7 +4140,7 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const SecurityOriginDat
     }
 
     m_uiClient->runJavaScriptPrompt(this, message, defaultValue, frame, securityOrigin, [reply = WTFMove(reply)](const String& result) {
-        reply(result);
+        reply->send(result);
     });
 }
 
@@ -4209,24 +4209,24 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(WEBGL)
-void WebPageProxy::webGLPolicyForURL(URL&& url, Messages::WebPageProxy::WebGLPolicyForURL::DelayedReply&& reply)
+void WebPageProxy::webGLPolicyForURL(URL&& url, Ref<Messages::WebPageProxy::WebGLPolicyForURL::DelayedReply>&& reply)
 {
     if (m_navigationClient) {
         m_navigationClient->webGLLoadPolicy(*this, url, [reply = WTFMove(reply)](WebGLLoadPolicy policy) {
-            reply(static_cast<uint32_t>(policy));
+            reply->send(static_cast<uint32_t>(policy));
         });
     } else
-        reply(static_cast<uint32_t>(m_loaderClient->webGLLoadPolicy(*this, url)));
+        reply->send(static_cast<uint32_t>(m_loaderClient->webGLLoadPolicy(*this, url)));
 }
 
-void WebPageProxy::resolveWebGLPolicyForURL(URL&& url, Messages::WebPageProxy::ResolveWebGLPolicyForURL::DelayedReply&& reply)
+void WebPageProxy::resolveWebGLPolicyForURL(URL&& url, Ref<Messages::WebPageProxy::ResolveWebGLPolicyForURL::DelayedReply>&& reply)
 {
     if (m_navigationClient) {
         m_navigationClient->resolveWebGLLoadPolicy(*this, url, [reply = WTFMove(reply)](WebGLLoadPolicy policy) {
-            reply(static_cast<uint32_t>(policy));
+            reply->send(static_cast<uint32_t>(policy));
         });
     } else
-        reply(static_cast<uint32_t>(m_loaderClient->resolveWebGLLoadPolicy(*this, url)));
+        reply->send(static_cast<uint32_t>(m_loaderClient->resolveWebGLLoadPolicy(*this, url)));
 }
 #endif // ENABLE(WEBGL)
 
@@ -4235,10 +4235,10 @@ void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
     m_uiClient->setToolbarsAreVisible(*this, toolbarsAreVisible);
 }
 
-void WebPageProxy::getToolbarsAreVisible(Messages::WebPageProxy::GetToolbarsAreVisible::DelayedReply&& reply)
+void WebPageProxy::getToolbarsAreVisible(Ref<Messages::WebPageProxy::GetToolbarsAreVisible::DelayedReply>&& reply)
 {
     m_uiClient->toolbarsAreVisible(*this, [reply = WTFMove(reply)](bool visible) {
-        reply(visible);
+        reply->send(visible);
     });
 }
 
@@ -4247,10 +4247,10 @@ void WebPageProxy::setMenuBarIsVisible(bool menuBarIsVisible)
     m_uiClient->setMenuBarIsVisible(*this, menuBarIsVisible);
 }
 
-void WebPageProxy::getMenuBarIsVisible(Messages::WebPageProxy::GetMenuBarIsVisible::DelayedReply&& reply)
+void WebPageProxy::getMenuBarIsVisible(Ref<Messages::WebPageProxy::GetMenuBarIsVisible::DelayedReply>&& reply)
 {
     m_uiClient->menuBarIsVisible(*this, [reply = WTFMove(reply)] (bool visible) {
-        reply(visible);
+        reply->send(visible);
     });
 }
 
@@ -4259,10 +4259,10 @@ void WebPageProxy::setStatusBarIsVisible(bool statusBarIsVisible)
     m_uiClient->setStatusBarIsVisible(*this, statusBarIsVisible);
 }
 
-void WebPageProxy::getStatusBarIsVisible(Messages::WebPageProxy::GetStatusBarIsVisible::DelayedReply&& reply)
+void WebPageProxy::getStatusBarIsVisible(Ref<Messages::WebPageProxy::GetStatusBarIsVisible::DelayedReply>&& reply)
 {
     m_uiClient->statusBarIsVisible(*this, [reply = WTFMove(reply)] (bool visible) {
-        reply(visible);
+        reply->send(visible);
     });
 }
 
@@ -4276,10 +4276,10 @@ void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
     m_uiClient->setWindowFrame(*this, m_pageClient.convertToDeviceSpace(newWindowFrame));
 }
 
-void WebPageProxy::getWindowFrame(Messages::WebPageProxy::GetWindowFrame::DelayedReply&& reply)
+void WebPageProxy::getWindowFrame(Ref<Messages::WebPageProxy::GetWindowFrame::DelayedReply>&& reply)
 {
     m_uiClient->windowFrame(*this, [this, protectedThis = makeRef(*this), reply = WTFMove(reply)] (FloatRect frame) {
-        reply(m_pageClient.convertToUserSpace(frame));
+        reply->send(m_pageClient.convertToUserSpace(frame));
     });
 }
 
@@ -4288,14 +4288,14 @@ void WebPageProxy::getWindowFrameWithCallback(Function<void(FloatRect)>&& comple
     m_uiClient->windowFrame(*this, WTFMove(completionHandler));
 }
 
-void WebPageProxy::screenToRootView(const IntPoint& screenPoint, Messages::WebPageProxy::ScreenToRootView::DelayedReply&& reply)
+void WebPageProxy::screenToRootView(const IntPoint& screenPoint, Ref<Messages::WebPageProxy::ScreenToRootView::DelayedReply>&& reply)
 {
-    reply(m_pageClient.screenToRootView(screenPoint));
+    reply->send(m_pageClient.screenToRootView(screenPoint));
 }
     
-void WebPageProxy::rootViewToScreen(const IntRect& viewRect, Messages::WebPageProxy::RootViewToScreen::DelayedReply&& reply)
+void WebPageProxy::rootViewToScreen(const IntRect& viewRect, Ref<Messages::WebPageProxy::RootViewToScreen::DelayedReply>&& reply)
 {
-    reply(m_pageClient.rootViewToScreen(viewRect));
+    reply->send(m_pageClient.rootViewToScreen(viewRect));
 }
     
 #if PLATFORM(IOS)
@@ -4310,7 +4310,7 @@ void WebPageProxy::rootViewToAccessibilityScreen(const IntRect& viewRect, IntRec
 }
 #endif
 
-void WebPageProxy::runBeforeUnloadConfirmPanel(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply reply)
+void WebPageProxy::runBeforeUnloadConfirmPanel(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, RefPtr<Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply> reply)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -4323,7 +4323,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(uint64_t frameID, const SecurityO
             automationSession->willShowJavaScriptDialog(*this);
     }
 
-    m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame, securityOrigin, [reply = WTFMove(reply)](bool result) { reply(result); });
+    m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame, securityOrigin, [reply](bool result) { reply->send(result); });
 }
 
 void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
@@ -6018,7 +6018,7 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t frameID, Ref<
         m_loaderClient->didReceiveAuthenticationChallengeInFrame(*this, *frame, authenticationChallenge.get());
 }
 
-void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
+void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Ref<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply>&& reply)
 {
     ExceededDatabaseQuotaRecords& records = ExceededDatabaseQuotaRecords::singleton();
     std::unique_ptr<ExceededDatabaseQuotaRecords::Record> newRecord = records.createRecord(frameID,
@@ -6029,23 +6029,26 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
     if (records.areBeingProcessed())
         return;
 
-    while (auto* record = records.next()) {
+    ExceededDatabaseQuotaRecords::Record* record = records.next();
+    while (record) {
         WebFrameProxy* frame = m_process->webFrame(record->frameID);
         MESSAGE_CHECK(frame);
 
-        auto origin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(record->originIdentifier)->securityOrigin());
-        m_uiClient->exceededDatabaseQuota(this, frame, origin.ptr(), record->databaseName, record->displayName, record->currentQuota, record->currentOriginUsage, record->currentDatabaseUsage, record->expectedUsage, [currentReply = WTFMove(record->reply)](unsigned long long newQuota) {
-            currentReply(newQuota);
-        });
+        RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(record->originIdentifier)->securityOrigin());
+        auto currentReply = record->reply;
+        m_uiClient->exceededDatabaseQuota(this, frame, origin.get(),
+            record->databaseName, record->displayName, record->currentQuota,
+            record->currentOriginUsage, record->currentDatabaseUsage, record->expectedUsage,
+            [currentReply](unsigned long long newQuota) { currentReply->send(newQuota); });
+
+        record = records.next();
     }
 }
 
-void WebPageProxy::reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply&& reply)
+void WebPageProxy::reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Ref<Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply>&& reply)
 {
     Ref<SecurityOrigin> securityOrigin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier)->securityOrigin();
-    m_uiClient->reachedApplicationCacheOriginQuota(this, securityOrigin.get(), currentQuota, totalBytesNeeded, [reply = WTFMove(reply)](unsigned long long newQuota) {
-        reply(newQuota);
-    });
+    m_uiClient->reachedApplicationCacheOriginQuota(this, securityOrigin.get(), currentQuota, totalBytesNeeded, [reply = WTFMove(reply)](unsigned long long newQuota) { reply->send(newQuota); });
 }
 
 void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier)

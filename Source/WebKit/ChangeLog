@@ -1,3 +1,15 @@
+2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r230283.
+
+        Caused webkitpy test failures.
+
+        Reverted changeset:
+
+        "Use CompletionHandlers for DelayedReplies"
+        https://bugs.webkit.org/show_bug.cgi?id=182269
+        https://trac.webkit.org/changeset/230283
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         webrtc/video-update-often.html is flakily crashing on iOS simulator Debug
