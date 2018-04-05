@@ -1,3 +1,20 @@
+2018-04-05  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Add CMake package search for vpx and libevent libraries
+        https://bugs.webkit.org/show_bug.cgi?id=184257
+
+        Reviewed by Michael Catanzaro.
+
+        Add new cmake search files for libevent, vpx and alsa-lib, this
+        makes a cleaner detection of the libraries.
+
+        * CMakeLists.txt: Use the new cmake find files to detect the
+        package and add a better error message when the library is not
+        there.
+        * Source/cmake/FindAlsaLib.cmake: Added.
+        * Source/cmake/FindLibEvent.cmake: Added.
+        * Source/cmake/FindVpx.cmake: Added.
+
 2018-04-03  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingVideoSourceMac should pass a ObjCFrameBuffer buffer

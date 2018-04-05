@@ -1,6 +1,20 @@
 
-find_library(VPX_LIBRARY vpx)
-find_library(EVENT_LIBRARY event)
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+find_package(Vpx 1.7.0)
+if (NOT LIBVPX_FOUND)
+    message(FATAL_ERROR "libvpx is needed for USE_LIBWEBRTC.")
+endif ()
+
+find_package(LibEvent)
+if (NOT LIBEVENT_FOUND)
+    message(FATAL_ERROR "libevent is needed for USE_LIBWEBRTC.")
+endif ()
+
+find_package(AlsaLib)
+if (NOT ALSALIB_FOUND)
+    message(FATAL_ERROR "alsa-lib is needed for USE_LIBWEBRTC.")
+endif ()
 
 set(webrtc_SOURCES
     Source/third_party/boringssl/err_data.c
