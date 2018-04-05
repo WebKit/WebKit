@@ -46,18 +46,18 @@ class FloatingContext {
 
     left(verticalPosition) {
         // Relative to the formatting context's root.
-        let leftFloatings = this._leftFloatings();
-        if (!leftFloatings.length)
+        let leftFloating = this._findFloatingAtVerticalPosition(verticalPosition, this._leftFloatings());
+        if (!leftFloating)
             return Number.NaN;
-        return this._mapDisplayMarginBoxToFormattingRoot(leftFloatings[leftFloatings.length - 1]).right();
+        return this._mapDisplayMarginBoxToFormattingRoot(leftFloating).right();
     }
 
     right(verticalPosition) {
         // Relative to the formatting context's root.
-        let rightFloatings = this._rightFloatings();
-        if (!rightFloatings.length)
+        let rightFloating = this._findFloatingAtVerticalPosition(verticalPosition, this._rightFloatings());
+        if (!rightFloating)
             return Number.NaN;
-        return this._mapDisplayMarginBoxToFormattingRoot(rightFloatings[rightFloatings.length - 1]).left();
+        return this._mapDisplayMarginBoxToFormattingRoot(rightFloating).left();
     }
 
     bottom() {

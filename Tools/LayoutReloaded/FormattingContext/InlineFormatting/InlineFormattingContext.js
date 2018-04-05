@@ -119,9 +119,14 @@ class InlineFormattingContext extends FormattingContext {
 
     _createNewLine() {
         let lineRect = this.displayBox(this.formattingRoot()).contentBox();
-        let floatingLeft = this._mapFloatingPosition(this.floatingContext().left());
-        let floatingRight = this._mapFloatingPosition(this.floatingContext().right());
-        // TODO: Check the case when the containing block is narrower than the floats.
+        let lines = this.formattingState().lines();
+        if (lines.length)
+            lineRect.setTop(lines[lines.length - 1].rect().bottom());
+        // Find floatings on this line.
+        // Offset the vertical position if the floating context belongs to the parent formatting context.
+        let lineTopInFloatingPosition = this._mapFloatingVerticalPosition(lineRect.top());
+        let floatingLeft = this._mapFloatingHorizontalPosition(this.floatingContext().left(lineTopInFloatingPosition));
+        let floatingRight = this._mapFloatingHorizontalPosition(this.floatingContext().right(lineTopInFloatingPosition));
         if (!Number.isNaN(floatingLeft) && !Number.isNaN(floatingRight)) {
             // Floats on both sides.
             lineRect.setLeft(floatingLeft);
@@ -131,26 +136,33 @@ class InlineFormattingContext extends FormattingContext {
         else if (!Number.isNaN(floatingRight))
             lineRect.setRight(floatingRight);
 
-        let lines = this.formattingState().lines();
-        if (lines.length)
-            lineRect.setTop(lines[lines.length - 1].rect().bottom());
         return new Line(lineRect.topLeft(), Utils.computedLineHeight(this.formattingRoot().node()), lineRect.width());
     }
 
-    _mapFloatingPosition(verticalPosition) {
-        if (Number.isNaN(verticalPosition))
-            return verticalPosition;
+    _mapFloatingVerticalPosition(verticalPosition) {
         // Floats position are relative to their formatting root (which might not be this formatting root).
         let root = this.displayBox(this.formattingRoot());
         let floatFormattingRoot = this.displayBox(this.floatingContext().formattingRoot());
         if (root == floatFormattingRoot)
             return verticalPosition;
+        let rootTop = Utils.mapPosition(root.topLeft(), root, floatFormattingRoot).top();
+        return rootTop += root.contentBox().top();
+    }
+
+    _mapFloatingHorizontalPosition(horizontalPosition) {
+        if (Number.isNaN(horizontalPosition))
+            return horizontalPosition;
+        // Floats position are relative to their formatting root (which might not be this formatting root).
+        let root = this.displayBox(this.formattingRoot());
+        let floatFormattingRoot = this.displayBox(this.floatingContext().formattingRoot());
+        if (root == floatFormattingRoot)
+            return horizontalPosition;
         let rootLeft = Utils.mapPosition(root.topLeft(), root, floatFormattingRoot).left();
         rootLeft += root.contentBox().left();
         // The left most float is to the right of the root.
-        if (rootLeft >= verticalPosition)
+        if (rootLeft >= horizontalPosition)
             return root.contentBox().left();
-        return verticalPosition - rootLeft;
+        return horizontalPosition - rootLeft;
      }
 
     _floatingBoxes() {

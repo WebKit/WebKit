@@ -1,5 +1,26 @@
 2018-04-05  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Find the correct left edge for a line when floating boxes are in parent formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=184330
+
+        Reviewed by Antti Koivisto.
+
+        In inline formatting context, the floating boxes can come from the parent (block) formatting context. Let's
+        take them into account when computing the line edges.
+
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        (FloatingContext.prototype.left):
+        (FloatingContext.prototype.right):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._createNewLine):
+        (InlineFormattingContext.prototype._mapFloatingVerticalPosition):
+        (InlineFormattingContext.prototype._mapFloatingHorizontalPosition):
+        (InlineFormattingContext.prototype._mapFloatingPosition): Deleted.
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/multiple-left-floats-on-line-from-parent-formatting-context.html: Added.
+
+2018-04-05  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Collect floating boxes in inline formatting context and layout them first.
         https://bugs.webkit.org/show_bug.cgi?id=184329
 
