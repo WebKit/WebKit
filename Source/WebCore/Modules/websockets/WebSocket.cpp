@@ -572,7 +572,7 @@ void WebSocket::didReceiveMessage(const String& msg)
     if (m_state != OPEN)
         return;
     ASSERT(scriptExecutionContext());
-    dispatchEvent(MessageEvent::create(msg, SecurityOriginData::fromURL(m_url).toString()));
+    dispatchEvent(MessageEvent::create(msg, SecurityOrigin::create(m_url)->toString()));
 }
 
 void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
