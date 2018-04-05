@@ -1,3 +1,26 @@
+2018-04-05  Zalan Bujtas  <zalan@apple.com>
+
+        Folding anonymous blocks should not result in deleting content.
+        https://bugs.webkit.org/show_bug.cgi?id=184339
+        <rdar://problem/37327428>
+
+        Reviewed by Antti Koivisto.
+
+        While folding multiple anonymous blocks (moving the children from next sibling over to previous sibling)
+        we should ensure that the block we are about to destroy does not gain new descendants.
+        In case of 4 sibling anonymous blocks (A B C D), while destroying B
+        1. we move C's children to A and destroy C.
+        2. While destroying C, we notice B and C as sibling anonymous blocks and we move
+        D's children over to B (even though B is going to be destroyed as we climb back on the stack).
+        
+        In this patch, B is detached from the tree before we start moving renderers around so that a subsequent folding won't
+        find B anymore as a candidate.
+
+        Test: fast/block/crash-while-folding-anonymous-blocks.html
+
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::detach):
+
 2018-04-05  Andy Estes  <aestes@apple.com>
 
         Mark Payment Request as "Supported" in features.json
