@@ -1,3 +1,12 @@
+2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark storage/websql/database-lock-after-reload.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173928
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-04-04  Brendan McLoughlin  <brendan@bocoup.com>
 
         Resync idlharness web-platform-tests up to 94b33b573a069ae5170104ca581a354a35762536
