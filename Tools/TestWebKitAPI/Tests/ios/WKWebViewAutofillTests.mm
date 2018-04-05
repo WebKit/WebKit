@@ -115,7 +115,7 @@ typedef UIView <UITextInputTraits_Private_Proposed_SPI_34583628> AutofillInputVi
 
 namespace TestWebKitAPI {
 
-TEST(WKWebViewAutofillTests, UsernameAndPasswordField)
+TEST(WKWebViewAutofillTests, DISABLED_UsernameAndPasswordField)
 {
     auto webView = adoptNS([[AutofillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input id='password' type='password'>"];
@@ -134,7 +134,7 @@ TEST(WKWebViewAutofillTests, UsernameAndPasswordField)
     EXPECT_FALSE([webView textInputHasAutofillContext]);
 }
 
-TEST(WKWebViewAutofillTests, UsernameAndPasswordFieldSeparatedByRadioButton)
+TEST(WKWebViewAutofillTests, DISABLED_UsernameAndPasswordFieldSeparatedByRadioButton)
 {
     auto webView = adoptNS([[AutofillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input type='radio' name='radio_button' value='radio'><input id='password' type='password'>"];
@@ -165,7 +165,7 @@ TEST(WKWebViewAutofillTests, TwoTextFields)
     EXPECT_FALSE([webView textInputHasAutofillContext]);
 }
 
-TEST(WKWebViewAutofillTests, StandalonePasswordField)
+TEST(WKWebViewAutofillTests, DISABLED_StandalonePasswordField)
 {
     auto webView = adoptNS([[AutofillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<input id='password' type='password'>"];

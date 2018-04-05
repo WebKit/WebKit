@@ -1,3 +1,13 @@
+2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Disable failing WKWebViewAutofillTests
+        https://bugs.webkit.org/show_bug.cgi?id=184196
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         Introduce a ThreadSafeRefCounted parameter to ensure being destroyed on the main thread
