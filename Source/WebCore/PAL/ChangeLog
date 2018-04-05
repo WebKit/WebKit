@@ -1,3 +1,14 @@
+2018-04-05  John Wilander  <wilander@apple.com>
+
+        Add necessary colon to CFNetwork selector
+        https://bugs.webkit.org/show_bug.cgi?id=184335
+        <rdar://problem/39213124>
+
+        Reviewed by Brent Fulgham.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+        (setIgnoreHSTS):
+
 2018-04-04  Per Arne Vollan  <pvollan@apple.com>
 
         The layout test fast/canvas/canvas-blending-global-alpha.html is failing when the WebContent process does not have WindowServer access.

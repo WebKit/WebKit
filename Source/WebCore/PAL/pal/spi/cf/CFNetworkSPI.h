@@ -346,8 +346,8 @@ static bool schemeWasUpgradedDueToDynamicHSTS(NSURLRequest *request)
 
 static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
 {
-    if ([request respondsToSelector:@selector(_setIgnoreHSTS)])
-        [request performSelector:@selector(_setIgnoreHSTS) withObject:[NSNumber numberWithBool:ignoreHSTS]];
+    if ([request respondsToSelector:@selector(_setIgnoreHSTS:)])
+        [request performSelector:@selector(_setIgnoreHSTS:) withObject:[NSNumber numberWithBool:ignoreHSTS]];
 }
 
 static bool ignoreHSTS(NSURLRequest *request)
