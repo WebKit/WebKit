@@ -1,3 +1,19 @@
+2018-04-05  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/39191858
+
+    fix-httponly-cookie
+
+    2018-04-04  Youenn Fablet  <youenn@apple.com>
+
+            iOS 11.4 Beta WKWebView does not send cookies with HttpOnly flag set, for cache manifest request and its resources
+            <rdar://problem/39144159>
+
+            Reviewed by Brady Eidson.
+
+            * http/tests/appcache/document-cookie-http-only-expected.txt: Added.
+            * http/tests/appcache/document-cookie-http-only.php: Added.
+
 2018-04-03  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r230172. rdar://problem/39155049

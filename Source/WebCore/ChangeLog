@@ -1,3 +1,27 @@
+2018-04-05  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/39191858
+
+    fix-httponly-cookie
+
+    2018-04-04  Youenn Fablet  <youenn@apple.com>
+
+            iOS 11.4 Beta WKWebView does not send cookies with HttpOnly flag set, for cache manifest request and its resources
+            <rdar://problem/39144159>
+
+            Reviewed by Brady Eidson.
+
+            Test: http/tests/appcache/document-cookie-http-only.php
+            Before that patch, we were using cookie as visible by the DOM document for loading manifest and other cached resources.
+            We now are back to the exact same behavior as preElk/Emet by fully respecting cookies for appcache:
+            - HttpOnly headers are used for appcache loading
+            - Cookie is retrieved for each appcache loading so that cookie scopes are respected.
+
+            * loader/appcache/ApplicationCacheGroup.cpp:
+            (WebCore::ApplicationCacheGroup::update):
+            (WebCore::ApplicationCacheGroup::createResourceHandle):
+            * loader/appcache/ApplicationCacheGroup.h:
+
 2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r230016. rdar://problem/38154623

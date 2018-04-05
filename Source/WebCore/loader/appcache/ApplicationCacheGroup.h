@@ -201,7 +201,6 @@ private:
     bool m_originQuotaExceededPreviously { false };
 
     friend class ChromeClientCallbackTimer;
-    String m_cookieStringFromDocument;
 };
 
 } // namespace WebCore
