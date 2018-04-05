@@ -105,7 +105,7 @@ Cookie::operator NSHTTPCookie *() const
         [properties setObject:(NSString *)value forKey:NSHTTPCookieValue];
 
     NSDate *expirationDate = [NSDate dateWithTimeIntervalSince1970:expires / 1000.0];
-    auto maxAge = [expirationDate timeIntervalSinceNow];
+    auto maxAge = ceil([expirationDate timeIntervalSinceNow]);
     if (maxAge > 0)
         [properties setObject:[NSString stringWithFormat:@"%f", maxAge] forKey:NSHTTPCookieMaximumAge];
 
