@@ -1,3 +1,14 @@
+2018-03-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tests for High Sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/fast/forms/input-table-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-table-expected.txt.
+        * platform/mac-sierra/tables/mozilla/bugs/bug30692-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug30692-expected.txt.
+        * platform/mac/fast/forms/input-table-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.txt:
+
 2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for http/tests/media/video-buffered-range-contains-currentTime.html.

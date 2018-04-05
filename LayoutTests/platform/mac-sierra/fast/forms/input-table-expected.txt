@@ -86,8 +86,8 @@ layer at (20,341) size 24x13
   RenderBlock {DIV} at (3,3) size 24x13
 layer at (20,432) size 194x13
   RenderBlock {DIV} at (3,3) size 194x13
-    RenderText {#text} at (0,0) size 61x13
-      text run at (0,0) width 61: "width 100%"
+    RenderText {#text} at (0,0) size 60x13
+      text run at (0,0) width 60: "width 100%"
 layer at (22,551) size 64x13
   RenderBlock {DIV} at (3,3) size 64x13
     RenderText {#text} at (0,0) size 51x13
