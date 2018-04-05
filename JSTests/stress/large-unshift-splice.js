@@ -9,8 +9,10 @@ function make_contig_arr(sz)
     return a;
 }
 
-let ARRAY_LENGTH = 0x10000000;
-let a = make_contig_arr(ARRAY_LENGTH);
-let b = make_contig_arr(0xff00);
-b.unshift(a.length-0x10000, 0);
-Array.prototype.splice.apply(a, b);
+try {
+    let ARRAY_LENGTH = 0x10000000;
+    let a = make_contig_arr(ARRAY_LENGTH);
+    let b = make_contig_arr(0xff00);
+    b.unshift(a.length-0x10000, 0);
+    Array.prototype.splice.apply(a, b);
+} catch (e) {}

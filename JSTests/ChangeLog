@@ -1,3 +1,12 @@
+2018-04-05  Robin Morisset  <rmorisset@apple.com>
+
+        Fix testcase (missing try/catch).
+        https://bugs.webkit.org/show_bug.cgi?id=183657
+
+        Unreviewed.
+
+        * stress/large-unshift-splice.js
+
 2018-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r222563): removed DoubleReal type check causes tons of crashes because CSE has never known how to handle SaneChain
