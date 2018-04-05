@@ -1,3 +1,12 @@
+2018-04-05  Andy Estes  <aestes@apple.com>
+
+        Mark Payment Request as "Supported" in features.json
+        https://bugs.webkit.org/show_bug.cgi?id=184338
+
+        Reviewed by Anders Carlsson.
+
+        * features.json:
+
 2018-04-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r230042.
