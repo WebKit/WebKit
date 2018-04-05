@@ -1,3 +1,56 @@
+2018-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove StaticLock
+        https://bugs.webkit.org/show_bug.cgi?id=184332
+
+        Reviewed by Mark Lam.
+
+        Now, WTF::StaticLock is `using StaticLock = Lock`. Lock just works
+        in either static storage and dynamic storage. Remove StaticLock and
+        always use Lock.
+
+        We also remove StaticWordLock and StaticReadWriteLock. And we add
+        WTF::RecursiveLock, which is RecursiveLockAdapter<Lock>.
+
+        * wtf/HashTable.cpp:
+        (WTF::HashTableStats::recordCollisionAtCount):
+        (WTF::HashTableStats::dumpStats):
+        * wtf/Language.cpp:
+        (WTF::userPreferredLanguages):
+        * wtf/Lock.h:
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread):
+        (WTF::callOnMainThread):
+        * wtf/ParkingLot.cpp:
+        * wtf/ReadWriteLock.h:
+        * wtf/RecursiveLockAdapter.h:
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        (WTF::StackStats::LayoutCheckPoint::~LayoutCheckPoint):
+        * wtf/StackStats.h:
+        * wtf/ThreadMessage.cpp:
+        (WTF::sendMessageScoped):
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/ThreadingWin.cpp:
+        * wtf/WordLock.h:
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::languagePreferencesDidChange):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/dtoa.cpp:
+        * wtf/text/AtomicStringImpl.cpp:
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::invalidate):
+        (WTF::StringView::adoptUnderlyingString):
+        (WTF::StringView::setUnderlyingString):
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::Collator):
+        (WTF::Collator::~Collator):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::platformLanguage):
+
 2018-04-04  Brent Fulgham  <bfulgham@apple.com>
 
         Failures from mach port reference handling should be fatal

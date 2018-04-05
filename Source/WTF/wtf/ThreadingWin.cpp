@@ -100,7 +100,7 @@
 
 namespace WTF {
 
-static StaticLock globalSuspendLock;
+static Lock globalSuspendLock;
 
 Thread::~Thread()
 {

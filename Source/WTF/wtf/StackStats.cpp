@@ -41,7 +41,7 @@
 namespace WTF {
 
 // CheckPoint management:
-StaticLock StackStats::s_sharedMutex;
+Lock StackStats::s_sharedMutex;
 StackStats::CheckPoint* StackStats::s_topCheckPoint = 0;
 StackStats::LayoutCheckPoint* StackStats::s_firstLayoutCheckPoint = 0;
 StackStats::LayoutCheckPoint* StackStats::s_topLayoutCheckPoint = 0;
@@ -68,7 +68,7 @@ StackStats::PerThreadStats::PerThreadStats()
 
 StackStats::CheckPoint::CheckPoint()
 {
-    std::lock_guard<StaticLock> lock(StackStats::s_sharedMutex);
+    std::lock_guard<Lock> lock(StackStats::s_sharedMutex);
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
@@ -126,7 +126,7 @@ StackStats::CheckPoint::CheckPoint()
 
 StackStats::CheckPoint::~CheckPoint()
 {
-    std::lock_guard<StaticLock> lock(StackStats::s_sharedMutex);
+    std::lock_guard<Lock> lock(StackStats::s_sharedMutex);
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
 
@@ -157,7 +157,7 @@ StackStats::CheckPoint::~CheckPoint()
 
 void StackStats::probe()
 {
-    std::lock_guard<StaticLock> lock(StackStats::s_sharedMutex);
+    std::lock_guard<Lock> lock(StackStats::s_sharedMutex);
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
@@ -218,7 +218,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
     // probe first, we can avoid re-entering the lock.
     StackStats::probe();
 
-    std::lock_guard<StaticLock> lock(StackStats::s_sharedMutex);
+    std::lock_guard<Lock> lock(StackStats::s_sharedMutex);
     Thread& thread = Thread::current();
     StackStats::PerThreadStats& t = thread.stackStats();
     const StackBounds& stack = thread.stack();
@@ -287,7 +287,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
 
 StackStats::LayoutCheckPoint::~LayoutCheckPoint()
 {
-    std::lock_guard<StaticLock> lock(StackStats::s_sharedMutex);
+    std::lock_guard<Lock> lock(StackStats::s_sharedMutex);
 
     // Pop to the previous layout checkpoint:
     StackStats::s_topLayoutCheckPoint = m_prev;

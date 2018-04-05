@@ -36,7 +36,7 @@ namespace SQLiteDatabaseTracker {
 static SQLiteDatabaseTrackerClient* s_staticSQLiteDatabaseTrackerClient = nullptr;
 static unsigned s_transactionInProgressCounter = 0;
 
-static StaticLock transactionInProgressMutex;
+static Lock transactionInProgressMutex;
 
 void setClient(SQLiteDatabaseTrackerClient* client)
 {
@@ -50,7 +50,7 @@ void incrementTransactionInProgressCount()
     if (!s_staticSQLiteDatabaseTrackerClient)
         return;
 
-    std::lock_guard<StaticLock> lock(transactionInProgressMutex);
+    std::lock_guard<Lock> lock(transactionInProgressMutex);
 
     s_transactionInProgressCounter++;
     if (s_transactionInProgressCounter == 1)
@@ -62,7 +62,7 @@ void decrementTransactionInProgressCount()
     if (!s_staticSQLiteDatabaseTrackerClient)
         return;
 
-    std::lock_guard<StaticLock> lock(transactionInProgressMutex);
+    std::lock_guard<Lock> lock(transactionInProgressMutex);
 
     ASSERT(s_transactionInProgressCounter);
     s_transactionInProgressCounter--;

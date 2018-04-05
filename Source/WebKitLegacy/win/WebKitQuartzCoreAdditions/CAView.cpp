@@ -68,7 +68,7 @@ private:
     CAView* m_view;
 };
 
-static StaticLock globalStateLock;
+static Lock globalStateLock;
 static HWND messageWindow;
 static const wchar_t messageWindowClassName[] = L"CAViewMessageWindow";
 
@@ -106,7 +106,7 @@ static HWND createMessageWindow()
 
 void CAView::releaseAllD3DResources()
 {
-    static StaticLock lock;
+    static Lock lock;
 
     if (!lock.tryLock()) {
         // Another thread is currently releasing 3D resources.

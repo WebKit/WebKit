@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
@@ -86,6 +87,8 @@ private:
     LockType m_lock;
 };
 
+using RecursiveLock = RecursiveLockAdapter<Lock>;
+
 } // namespace WTF
 
-
+using WTF::RecursiveLock;

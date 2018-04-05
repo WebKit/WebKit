@@ -53,8 +53,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RecursiveLockAdapter.h>
 
-using RecursiveStaticLock = WTF::RecursiveLockAdapter<StaticLock>;
-static RecursiveStaticLock fontLock;
+static RecursiveLock fontLock;
 
 #endif // PLATFORM(IOS)
 

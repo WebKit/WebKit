@@ -36,7 +36,7 @@ namespace JSC {
 
 volatile uint32_t g_superSamplerCount;
 
-static StaticLock lock;
+static Lock lock;
 static double in;
 static double out;
 

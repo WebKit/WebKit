@@ -46,7 +46,7 @@ static bool callbacksPaused; // This global variable is only accessed from main 
 static Thread* mainThread { nullptr };
 #endif
 
-static StaticLock mainThreadFunctionQueueMutex;
+static Lock mainThreadFunctionQueueMutex;
 
 static Deque<Function<void ()>>& functionQueue()
 {
@@ -119,7 +119,7 @@ void dispatchFunctionsFromMainThread()
 
     while (true) {
         {
-            std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
+            std::lock_guard<Lock> lock(mainThreadFunctionQueueMutex);
             if (!functionQueue().size())
                 break;
 
@@ -149,7 +149,7 @@ void callOnMainThread(Function<void()>&& function)
     bool needToSchedule = false;
 
     {
-        std::lock_guard<StaticLock> lock(mainThreadFunctionQueueMutex);
+        std::lock_guard<Lock> lock(mainThreadFunctionQueueMutex);
         needToSchedule = functionQueue().size() == 0;
         functionQueue().append(WTFMove(function));
     }

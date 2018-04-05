@@ -853,8 +853,8 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     Vector<String>& availableNumberingSystems = cachedNumberingSystems.get();
 
     if (UNLIKELY(availableNumberingSystems.isEmpty())) {
-        static StaticLock cachedNumberingSystemsMutex;
-        std::lock_guard<StaticLock> lock(cachedNumberingSystemsMutex);
+        static Lock cachedNumberingSystemsMutex;
+        std::lock_guard<Lock> lock(cachedNumberingSystemsMutex);
         if (availableNumberingSystems.isEmpty()) {
             UErrorCode status = U_ZERO_ERROR;
             UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);

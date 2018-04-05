@@ -44,7 +44,7 @@
 // Wrapping WebCore implementation objects
 
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-static StaticLock wrapperCacheLock;
+static Lock wrapperCacheLock;
 #endif
 
 static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache()
@@ -56,7 +56,7 @@ static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache()
 NSObject* getDOMWrapper(DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    std::lock_guard<StaticLock> lock(wrapperCacheLock);
+    std::lock_guard<Lock> lock(wrapperCacheLock);
 #endif
     return wrapperCache().get(impl);
 }
@@ -64,7 +64,7 @@ NSObject* getDOMWrapper(DOMObjectInternal* impl)
 void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    std::lock_guard<StaticLock> lock(wrapperCacheLock);
+    std::lock_guard<Lock> lock(wrapperCacheLock);
 #endif
     wrapperCache().set(impl, wrapper);
 }
@@ -72,7 +72,7 @@ void addDOMWrapper(NSObject* wrapper, DOMObjectInternal* impl)
 void removeDOMWrapper(DOMObjectInternal* impl)
 {
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
-    std::lock_guard<StaticLock> lock(wrapperCacheLock);
+    std::lock_guard<Lock> lock(wrapperCacheLock);
 #endif
     wrapperCache().remove(impl);
 }

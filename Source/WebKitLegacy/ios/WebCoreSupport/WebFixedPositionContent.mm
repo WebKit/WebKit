@@ -49,7 +49,7 @@
 using namespace WebCore;
 using namespace std;
 
-static StaticLock webFixedPositionContentDataLock;
+static Lock webFixedPositionContentDataLock;
 
 struct ViewportConstrainedLayerData {
     ViewportConstrainedLayerData()

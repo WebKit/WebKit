@@ -84,7 +84,7 @@ void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(PAL::HysteresisState stat
 
 }
 
-static StaticLock transactionBackgroundTaskIdentifierLock;
+static Lock transactionBackgroundTaskIdentifierLock;
 
 static NSUInteger transactionBackgroundTaskIdentifier;
 

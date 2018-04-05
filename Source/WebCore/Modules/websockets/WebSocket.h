@@ -60,7 +60,7 @@ public:
     virtual ~WebSocket();
 
     static HashSet<WebSocket*>& allActiveWebSockets(const LockHolder&);
-    static StaticLock& allActiveWebSocketsMutex();
+    static Lock& allActiveWebSocketsMutex();
 
     enum State {
         CONNECTING = 0,

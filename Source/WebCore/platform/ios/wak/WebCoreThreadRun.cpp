@@ -111,7 +111,7 @@ extern "C" {
 
 typedef WTF::Vector<WebThreadBlock> WebThreadRunQueue;
 
-static StaticLock runQueueMutex;
+static Lock runQueueMutex;
 static CFRunLoopSourceRef runSource;
 static WebThreadRunQueue* runQueue;
 
@@ -124,7 +124,7 @@ static void HandleRunSource(void *info)
 
     WebThreadRunQueue queueCopy;
     {
-        std::lock_guard<StaticLock> lock(runQueueMutex);
+        std::lock_guard<Lock> lock(runQueueMutex);
         queueCopy = *runQueue;
         runQueue->clear();
     }
@@ -148,7 +148,7 @@ static void _WebThreadRun(void (^block)(void), bool synchronous)
         state = new WebThreadBlockState;
 
     {
-        std::lock_guard<StaticLock> lock(runQueueMutex);
+        std::lock_guard<Lock> lock(runQueueMutex);
         runQueue->append(WebThreadBlock(block, state));
     }
 

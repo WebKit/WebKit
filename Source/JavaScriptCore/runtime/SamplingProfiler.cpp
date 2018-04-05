@@ -909,7 +909,7 @@ String SamplingProfiler::stackTracesAsJSON()
 
 void SamplingProfiler::registerForReportAtExit()
 {
-    static StaticLock registrationLock;
+    static Lock registrationLock;
     static HashSet<RefPtr<SamplingProfiler>>* profilesToReport;
 
     LockHolder holder(registrationLock);

@@ -1,3 +1,56 @@
+2018-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove StaticLock
+        https://bugs.webkit.org/show_bug.cgi?id=184332
+
+        Reviewed by Mark Lam.
+
+        No behavior change.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::closeDatabase):
+        (WebCore::Database::getCachedVersion const):
+        (WebCore::Database::setCachedVersion):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::openDatabaseMutex):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::allActiveWebSocketsMutex):
+        * Modules/websockets/WebSocket.h:
+        * bridge/objc/WebScriptObject.mm:
+        * crypto/CryptoAlgorithmRegistry.cpp:
+        (WebCore::CryptoAlgorithmRegistry::identifier):
+        (WebCore::CryptoAlgorithmRegistry::name):
+        (WebCore::CryptoAlgorithmRegistry::create):
+        (WebCore::CryptoAlgorithmRegistry::registerAlgorithm):
+        * dom/Node.cpp:
+        * platform/URL.cpp:
+        * platform/graphics/FontCache.cpp:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/ios/QuickLook.mm:
+        * platform/ios/WebSQLiteDatabaseTrackerClient.mm:
+        * platform/ios/wak/WebCoreThread.mm:
+        * platform/ios/wak/WebCoreThreadRun.cpp:
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::loaderRunLoop):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlShareHandle::mutexFor):
+        * platform/network/curl/CurlContext.h:
+        * platform/sql/SQLiteDatabaseTracker.cpp:
+        (WebCore::SQLiteDatabaseTracker::incrementTransactionInProgressCount):
+        (WebCore::SQLiteDatabaseTracker::decrementTransactionInProgressCount):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        (WebCore::newTextCodec):
+        (WebCore::atomicCanonicalTextEncodingName):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThreadCount):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::~WorkerThread):
+        (WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads):
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         WebRTC data channel only applications require capture permissions for direct connections

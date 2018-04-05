@@ -55,7 +55,7 @@
 
 namespace WTF {
 
-static StaticLock s_dtoaP5Mutex;
+static Lock s_dtoaP5Mutex;
 
 typedef union {
     double d;

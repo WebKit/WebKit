@@ -185,9 +185,9 @@ HashSet<WebSocket*>& WebSocket::allActiveWebSockets(const LockHolder&)
     return activeWebSockets;
 }
 
-StaticLock& WebSocket::allActiveWebSocketsMutex()
+Lock& WebSocket::allActiveWebSocketsMutex()
 {
-    static StaticLock mutex;
+    static Lock mutex;
     return mutex;
 }
 

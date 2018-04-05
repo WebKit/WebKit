@@ -1115,7 +1115,7 @@ static StructHandlers* createStructHandlerMap()
 
 static StructTagHandler* handerForStructTag(const char* encodedType)
 {
-    static StaticLock handerForStructTagLock;
+    static Lock handerForStructTagLock;
     LockHolder lockHolder(&handerForStructTagLock);
 
     static StructHandlers* structHandlers = createStructHandlerMap();

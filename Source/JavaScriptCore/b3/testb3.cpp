@@ -97,7 +97,7 @@ bool shouldBeVerbose()
     return shouldDumpIR(B3Mode);
 }
 
-StaticLock crashLock;
+Lock crashLock;
 
 // Nothing fancy for now; we just use the existing WTF assertion machinery.
 #define CHECK(x) do {                                                   \

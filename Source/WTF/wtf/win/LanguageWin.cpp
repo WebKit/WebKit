@@ -34,7 +34,7 @@
 
 namespace WTF {
 
-static StaticLock platformLanguageMutex;
+static Lock platformLanguageMutex;
 
 static String localeInfo(LCTYPE localeType, const String& fallback)
 {
@@ -56,7 +56,7 @@ static String localeInfo(LCTYPE localeType, const String& fallback)
 
 static String platformLanguage()
 {
-    std::lock_guard<StaticLock> lock(platformLanguageMutex);
+    std::lock_guard<Lock> lock(platformLanguageMutex);
 
     static String computedDefaultLanguage;
     if (!computedDefaultLanguage.isEmpty())

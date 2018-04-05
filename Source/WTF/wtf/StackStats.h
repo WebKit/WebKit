@@ -120,7 +120,7 @@ public:
 
 private:
     // CheckPoint management:
-    static StaticLock s_sharedMutex;
+    static Lock s_sharedMutex;
     static CheckPoint* s_topCheckPoint;
     static LayoutCheckPoint* s_firstLayoutCheckPoint;
     static LayoutCheckPoint* s_topLayoutCheckPoint;

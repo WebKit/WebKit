@@ -91,11 +91,9 @@ extern void NSPopAutoreleasePool(NSAutoreleasePoolMark token);
 }
 #endif
 
-using StaticRecursiveLock = WTF::RecursiveLockAdapter<StaticLock>;
-
-static StaticRecursiveLock webLock;
-static StaticLock webThreadReleaseLock;
-static StaticRecursiveLock webCoreReleaseLock;
+static RecursiveLock webLock;
+static Lock webThreadReleaseLock;
+static RecursiveLock webCoreReleaseLock;
 
 static NSAutoreleasePoolMark autoreleasePoolMark;
 static CFRunLoopRef webThreadRunLoop;
@@ -117,7 +115,7 @@ static CFMutableArrayRef WebThreadReleaseObjArray;
 
 static void MainThreadAdoptAndRelease(id obj);
 
-static StaticLock delegateLock;
+static Lock delegateLock;
 static StaticCondition delegateCondition;
 static NSInvocation* delegateInvocation;
 static CFRunLoopSourceRef delegateSource = nullptr;
@@ -128,7 +126,7 @@ static BOOL sendingDelegateMessage;
 
 static CFRunLoopObserverRef mainRunLoopAutoUnlockObserver;
 
-static StaticLock startupLock;
+static Lock startupLock;
 static StaticCondition startupCondition;
 
 static WebThreadContext* webThreadContext;

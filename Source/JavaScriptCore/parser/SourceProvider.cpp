@@ -45,7 +45,7 @@ SourceProvider::~SourceProvider()
 {
 }
 
-static StaticLock providerIdLock;
+static Lock providerIdLock;
 
 void SourceProvider::getID()
 {

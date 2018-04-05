@@ -205,7 +205,7 @@ struct Hashtable;
 
 // We track all allocated hashtables so that hashtable resizing doesn't anger leak detectors.
 Vector<Hashtable*>* hashtables;
-StaticWordLock hashtablesLock;
+WordLock hashtablesLock;
 
 struct Hashtable {
     unsigned size;

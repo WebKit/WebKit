@@ -71,7 +71,7 @@ using JSC::B3::Width64;
 
 namespace {
 
-StaticLock crashLock;
+Lock crashLock;
 
 // Nothing fancy for now; we just use the existing WTF assertion machinery.
 #define CHECK(x) do {                                                   \
@@ -123,7 +123,7 @@ void testSimple()
 template<typename T>
 void loadConstantImpl(BasicBlock* block, T value, B3::Air::Opcode move, Tmp tmp, Tmp scratch)
 {
-    static StaticLock lock;
+    static Lock lock;
     static StdMap<T, T*>* map; // I'm not messing with HashMap's problems with integers.
 
     LockHolder locker(lock);

@@ -47,7 +47,7 @@ struct _JSCVirtualMachinePrivate {
 
 WEBKIT_DEFINE_TYPE(JSCVirtualMachine, jsc_virtual_machine, G_TYPE_OBJECT)
 
-static StaticLock wrapperCacheMutex;
+static Lock wrapperCacheMutex;
 
 static HashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap()
 {
@@ -57,14 +57,14 @@ static HashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap()
 
 static void addWrapper(JSContextGroupRef group, JSCVirtualMachine* vm)
 {
-    std::lock_guard<StaticLock> lock(wrapperCacheMutex);
+    std::lock_guard<Lock> lock(wrapperCacheMutex);
     ASSERT(!wrapperMap().contains(group));
     wrapperMap().set(group, vm);
 }
 
 static void removeWrapper(JSContextGroupRef group)
 {
-    std::lock_guard<StaticLock> lock(wrapperCacheMutex);
+    std::lock_guard<Lock> lock(wrapperCacheMutex);
     ASSERT(wrapperMap().contains(group));
     wrapperMap().remove(group);
 }

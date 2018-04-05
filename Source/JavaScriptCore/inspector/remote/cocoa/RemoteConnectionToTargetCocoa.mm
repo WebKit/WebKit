@@ -41,7 +41,7 @@
 
 namespace Inspector {
 
-static StaticLock rwiQueueMutex;
+static Lock rwiQueueMutex;
 static CFRunLoopSourceRef rwiRunLoopSource;
 static RemoteTargetQueue* rwiQueue;
 
@@ -53,7 +53,7 @@ static void RemoteTargetHandleRunSourceGlobal(void*)
 
     RemoteTargetQueue queueCopy;
     {
-        std::lock_guard<StaticLock> lock(rwiQueueMutex);
+        std::lock_guard<Lock> lock(rwiQueueMutex);
         queueCopy = *rwiQueue;
         rwiQueue->clear();
     }
@@ -68,7 +68,7 @@ static void RemoteTargetQueueTaskOnGlobalQueue(void (^task)())
     ASSERT(rwiQueue);
 
     {
-        std::lock_guard<StaticLock> lock(rwiQueueMutex);
+        std::lock_guard<Lock> lock(rwiQueueMutex);
         rwiQueue->append(task);
     }
 

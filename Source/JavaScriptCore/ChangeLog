@@ -1,3 +1,44 @@
+2018-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Remove StaticLock
+        https://bugs.webkit.org/show_bug.cgi?id=184332
+
+        Reviewed by Mark Lam.
+
+        * API/JSValue.mm:
+        (handerForStructTag):
+        * API/JSVirtualMachine.mm:
+        (+[JSVMWrapperCache addWrapper:forJSContextGroupRef:]):
+        (+[JSVMWrapperCache wrapperForJSContextGroupRef:]):
+        * API/glib/JSCVirtualMachine.cpp:
+        (addWrapper):
+        (removeWrapper):
+        * assembler/testmasm.cpp:
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        * bytecode/SuperSampler.cpp:
+        * dfg/DFGCommon.cpp:
+        * dfg/DFGCommonData.cpp:
+        * dynbench.cpp:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteTargetHandleRunSourceGlobal):
+        (Inspector::RemoteTargetQueueTaskOnGlobalQueue):
+        * interpreter/CLoopStack.cpp:
+        * parser/SourceProvider.cpp:
+        * profiler/ProfilerDatabase.cpp:
+        * profiler/ProfilerUID.cpp:
+        (JSC::Profiler::UID::create):
+        * runtime/IntlObject.cpp:
+        (JSC::numberingSystemsForLocale):
+        * runtime/JSLock.cpp:
+        * runtime/JSLock.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::registerForReportAtExit):
+        * runtime/VM.cpp:
+        * wasm/WasmFaultSignalHandler.cpp:
+
 2018-04-04  Mark Lam  <mark.lam@apple.com>
 
         Add pointer profiling support to the DFG and supporting files.

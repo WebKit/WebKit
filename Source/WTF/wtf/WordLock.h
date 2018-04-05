@@ -101,14 +101,12 @@ protected:
     Atomic<uintptr_t> m_word { 0 };
 };
 
-using StaticWordLock = WordLock;
 using WordLockHolder = Locker<WordLock>;
 
 } // namespace WTF
 
 using WTF::WordLock;
 using WTF::WordLockHolder;
-using WTF::StaticWordLock;
 
 #endif // WTF_WordLock_h
 

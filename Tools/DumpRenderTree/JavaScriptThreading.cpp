@@ -45,7 +45,7 @@
 static const size_t javaScriptThreadsCount = 4;
 static bool javaScriptThreadsShouldTerminate;
 static JSContextGroupRef javaScriptThreadsGroup;
-static StaticLock javaScriptThreadsLock;
+static Lock javaScriptThreadsLock;
 
 typedef HashSet<RefPtr<Thread>> ThreadSet;
 static ThreadSet& javaScriptThreads()

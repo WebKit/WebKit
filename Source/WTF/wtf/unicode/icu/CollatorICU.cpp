@@ -49,7 +49,7 @@ static UCollator* cachedCollator;
 static char* cachedCollatorLocale;
 static bool cachedCollatorShouldSortLowercaseFirst;
 
-static StaticLock cachedCollatorMutex;
+static Lock cachedCollatorMutex;
 
 #if !(OS(DARWIN) && USE(CF))
 
@@ -106,7 +106,7 @@ Collator::Collator(const char* locale, bool shouldSortLowercaseFirst)
     UErrorCode status = U_ZERO_ERROR;
 
     {
-        std::lock_guard<StaticLock> lock(cachedCollatorMutex);
+        std::lock_guard<Lock> lock(cachedCollatorMutex);
         if (cachedCollator && localesMatch(cachedCollatorLocale, locale) && cachedCollatorShouldSortLowercaseFirst == shouldSortLowercaseFirst) {
             m_collator = cachedCollator;
             m_locale = cachedCollatorLocale;
@@ -136,7 +136,7 @@ Collator::Collator(const char* locale, bool shouldSortLowercaseFirst)
 
 Collator::~Collator()
 {
-    std::lock_guard<StaticLock> lock(cachedCollatorMutex);
+    std::lock_guard<Lock> lock(cachedCollatorMutex);
     if (cachedCollator) {
         ucol_close(cachedCollator);
         fastFree(cachedCollatorLocale);

@@ -90,7 +90,7 @@ void CommonData::shrinkToFit()
     catchEntrypoints.shrinkToFit();
 }
 
-static StaticLock pcCodeBlockMapLock;
+static Lock pcCodeBlockMapLock;
 inline HashMap<void*, CodeBlock*>& pcCodeBlockMap(AbstractLocker&)
 {
     static NeverDestroyed<HashMap<void*, CodeBlock*>> pcCodeBlockMap;

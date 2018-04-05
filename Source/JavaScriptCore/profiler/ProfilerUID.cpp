@@ -33,7 +33,7 @@ namespace JSC { namespace Profiler {
 
 UID UID::create()
 {
-    static StaticLock lock;
+    static Lock lock;
     static uint64_t counter;
     
     LockHolder locker(lock);

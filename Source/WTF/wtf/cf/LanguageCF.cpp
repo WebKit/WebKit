@@ -38,7 +38,7 @@
 
 namespace WTF {
 
-static StaticLock preferredLanguagesMutex;
+static Lock preferredLanguagesMutex;
 
 static Vector<String>& preferredLanguages()
 {
@@ -76,7 +76,7 @@ static String httpStyleLanguageCode(CFStringRef language)
 static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
     {
-        std::lock_guard<StaticLock> lock(preferredLanguagesMutex);
+        std::lock_guard<Lock> lock(preferredLanguagesMutex);
         preferredLanguages().clear();
     }
     
@@ -93,7 +93,7 @@ Vector<String> platformUserPreferredLanguages()
     });
 #endif
 
-    std::lock_guard<StaticLock> lock(preferredLanguagesMutex);
+    std::lock_guard<Lock> lock(preferredLanguagesMutex);
     Vector<String>& userPreferredLanguages = preferredLanguages();
 
     if (userPreferredLanguages.isEmpty()) {

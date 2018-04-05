@@ -46,7 +46,7 @@ NSSet *QLPreviewGetSupportedMIMETypesSet()
     return set;
 }
 
-static StaticLock qlPreviewConverterDictionaryLock;
+static Lock qlPreviewConverterDictionaryLock;
 
 static NSMutableDictionary *QLPreviewConverterDictionary()
 {

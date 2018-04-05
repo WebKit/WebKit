@@ -85,10 +85,6 @@ public:
 inline ReadWriteLock::ReadLock& ReadWriteLock::read() { return *static_cast<ReadLock*>(this); }
 inline ReadWriteLock::WriteLock& ReadWriteLock::write() { return *static_cast<WriteLock*>(this); }
 
-using StaticReadWriteLock = ReadWriteLock;
-
 } // namespace WTF
 
 using WTF::ReadWriteLock;
-using WTF::StaticReadWriteLock;
-

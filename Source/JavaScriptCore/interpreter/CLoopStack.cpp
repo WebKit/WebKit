@@ -48,7 +48,7 @@ static size_t commitSize()
     return size;
 }
 
-static StaticLock stackStatisticsMutex;
+static Lock stackStatisticsMutex;
 
 CLoopStack::CLoopStack(VM& vm)
     : m_vm(vm)

@@ -47,7 +47,7 @@ using namespace Unicode;
 class AtomicStringTableLocker : public LockHolder {
     WTF_MAKE_NONCOPYABLE(AtomicStringTableLocker);
 
-    static StaticLock s_stringTableLock;
+    static Lock s_stringTableLock;
 public:
     AtomicStringTableLocker()
         : LockHolder(&s_stringTableLock)
@@ -55,7 +55,7 @@ public:
     }
 };
 
-StaticLock AtomicStringTableLocker::s_stringTableLock;
+Lock AtomicStringTableLocker::s_stringTableLock;
 
 #else
 

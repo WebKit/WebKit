@@ -139,8 +139,8 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void
 {
     // Prevent two VMs from suspending each other's threads at the same time,
     // which can cause deadlock: <rdar://problem/20300842>.
-    static StaticLock mutex;
-    std::lock_guard<StaticLock> lock(mutex);
+    static Lock mutex;
+    std::lock_guard<Lock> lock(mutex);
 
     *size = 0;
 

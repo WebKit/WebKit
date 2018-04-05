@@ -275,7 +275,7 @@ static void assertProtocolIsGood(StringView protocol)
 
 #endif
 
-static StaticLock defaultPortForProtocolMapForTestingLock;
+static Lock defaultPortForProtocolMapForTestingLock;
 
 using DefaultPortForProtocolMapForTesting = HashMap<String, uint16_t>;
 static DefaultPortForProtocolMapForTesting*& defaultPortForProtocolMapForTesting()

@@ -47,7 +47,7 @@ static const bool verbose = false;
 }
 }
 
-static StaticLock codeLocationsLock;
+static Lock codeLocationsLock;
 static LazyNeverDestroyed<HashSet<std::tuple<void*, void*>>> codeLocations; // (start, end)
 
 #if ENABLE(WEBASSEMBLY_FAST_MEMORY)

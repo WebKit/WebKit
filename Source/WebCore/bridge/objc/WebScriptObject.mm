@@ -71,7 +71,7 @@ using JSC::makeSource;
 
 namespace WebCore {
 
-static StaticLock spinLock;
+static Lock spinLock;
 static CreateWrapperFunction createDOMWrapperFunction;
 static DisconnectWindowWrapperFunction disconnectWindowWrapperFunction;
 

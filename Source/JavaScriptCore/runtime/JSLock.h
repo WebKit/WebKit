@@ -60,7 +60,7 @@ public:
     JS_EXPORT_PRIVATE GlobalJSLock();
     JS_EXPORT_PRIVATE ~GlobalJSLock();
 private:
-    static StaticLock s_sharedInstanceMutex;
+    static Lock s_sharedInstanceMutex;
 };
 
 class JSLockHolder {

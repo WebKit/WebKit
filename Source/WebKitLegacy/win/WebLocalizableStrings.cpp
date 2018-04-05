@@ -45,7 +45,7 @@ WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit
 
 typedef HashMap<String, LocalizedString*> LocalizedStringMap;
 
-static StaticLock mainBundleLocStringsLock;
+static Lock mainBundleLocStringsLock;
 
 static LocalizedStringMap& mainBundleLocStrings()
 {
@@ -53,7 +53,7 @@ static LocalizedStringMap& mainBundleLocStrings()
     return map;
 }
 
-static StaticLock frameworkLocStringsLock;
+static Lock frameworkLocStringsLock;
 
 static LocalizedStringMap frameworkLocStrings()
 {

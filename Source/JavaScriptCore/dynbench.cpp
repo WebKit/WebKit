@@ -39,7 +39,7 @@ using namespace JSC;
 
 namespace {
 
-StaticLock crashLock;
+Lock crashLock;
 const char* nameFilter;
 unsigned requestedIterationCount;
 

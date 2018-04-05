@@ -463,7 +463,7 @@ VM::VM(VMType vmType, HeapType heapType)
     VMInspector::instance().add(this);
 }
 
-static StaticReadWriteLock s_destructionLock;
+static ReadWriteLock s_destructionLock;
 
 void waitForVMDestruction()
 {

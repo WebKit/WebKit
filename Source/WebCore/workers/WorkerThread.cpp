@@ -53,7 +53,7 @@
 
 namespace WebCore {
 
-static StaticLock threadSetMutex;
+static Lock threadSetMutex;
 
 static HashSet<WorkerThread*>& workerThreads()
 {
@@ -64,7 +64,7 @@ static HashSet<WorkerThread*>& workerThreads()
 
 unsigned WorkerThread::workerThreadCount()
 {
-    std::lock_guard<StaticLock> lock(threadSetMutex);
+    std::lock_guard<Lock> lock(threadSetMutex);
 
     return workerThreads().size();
 }
@@ -119,14 +119,14 @@ WorkerThread::WorkerThread(const URL& scriptURL, const String& identifier, const
     UNUSED_PARAM(connectionProxy);
 #endif
 
-    std::lock_guard<StaticLock> lock(threadSetMutex);
+    std::lock_guard<Lock> lock(threadSetMutex);
 
     workerThreads().add(this);
 }
 
 WorkerThread::~WorkerThread()
 {
-    std::lock_guard<StaticLock> lock(threadSetMutex);
+    std::lock_guard<Lock> lock(threadSetMutex);
 
     ASSERT(workerThreads().contains(this));
     workerThreads().remove(this);
@@ -315,7 +315,7 @@ void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
 
 void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
 {
-    std::lock_guard<StaticLock> lock(threadSetMutex);
+    std::lock_guard<Lock> lock(threadSetMutex);
 
     for (auto* workerThread : workerThreads()) {
         workerThread->runLoop().postTask([] (ScriptExecutionContext&) {
