@@ -2350,7 +2350,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
     if (activePolicyListener && activePolicyListener->policyListenerType() == PolicyListenerType::NavigationAction) {
         ASSERT(activePolicyListener->listenerID() == listenerID);
 
-        if (action == PolicyAction::Use && navigation) {
+        if (action == PolicyAction::Use && navigation && frame.isMainFrame()) {
             auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, action);
 
             if (proposedProcess.ptr() != &process()) {

@@ -73,6 +73,7 @@ static HashSet<pid_t> seenPIDs;
         [receivedMessages addObject:@""];
 
     receivedMessage = true;
+    seenPIDs.add([message.webView _webProcessIdentifier]);
 }
 @end
 
@@ -134,9 +135,11 @@ static RetainPtr<WKWebView> createdWebView;
 @interface PSONScheme : NSObject <WKURLSchemeHandler> {
     const char* _bytes;
     HashMap<String, String> _redirects;
+    HashMap<String, RetainPtr<NSData *>> _dataMappings;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
 - (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString;
+- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data;
 @end
 
 @implementation PSONScheme
@@ -151,6 +154,11 @@ static RetainPtr<WKWebView> createdWebView;
 - (void)addRedirectFromURLString:(NSString *)sourceURLString toURLString:(NSString *)destinationURLString
 {
     _redirects.set(sourceURLString, destinationURLString);
+}
+
+- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data
+{
+    _dataMappings.set(urlString, [NSData dataWithBytesNoCopy:(void*)data length:strlen(data) freeWhenDone:NO]);
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
@@ -169,7 +177,9 @@ static RetainPtr<WKWebView> createdWebView;
     RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
 
-    if (_bytes) {
+    if (auto data = _dataMappings.get([finalURL absoluteString]))
+        [task didReceiveData:data.get()];
+    else if (_bytes) {
         RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void *)_bytes length:strlen(_bytes) freeWhenDone:NO]);
         [task didReceiveData:data.get()];
     } else
@@ -685,6 +695,60 @@ TEST(ProcessSwap, SessionStorage)
     EXPECT_EQ([receivedMessages count], 2u);
     EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@""]);
     EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"I exist!"]);
+}
+
+static const char* mainFramesOnlyMainFrame = R"PSONRESOURCE(
+<script>
+function loaded() {
+    setTimeout('window.frames[0].location.href = "pson2://host2/main.html"', 0);
+}
+</script>
+<body onload="loaded();">
+Some text
+<iframe src="pson1://host/iframe.html"></iframe>
+</body>
+)PSONRESOURCE";
+
+static const char* mainFramesOnlySubframe = R"PSONRESOURCE(
+Some content
+)PSONRESOURCE";
+
+
+static const char* mainFramesOnlySubframe2 = R"PSONRESOURCE(
+<script>
+    window.webkit.messageHandlers.pson.postMessage("Done");
+</script>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, MainFramesOnly)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson1://host/main.html" toData:mainFramesOnlyMainFrame];
+    [handler addMappingFromURLString:@"pson1://host/iframe" toData:mainFramesOnlySubframe];
+    [handler addMappingFromURLString:@"pson2://host2/main.html" toData:mainFramesOnlySubframe2];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+
+    auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+
+    EXPECT_EQ(1u, seenPIDs.size());
 }
 
 #endif // WK_API_ENABLED
