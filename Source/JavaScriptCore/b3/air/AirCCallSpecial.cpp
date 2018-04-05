@@ -134,29 +134,14 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
     case Arg::Imm:
     case Arg::BigImm:
         jit.move(inst.args[calleeArgOffset].asTrustedImmPtr(), scratchRegister);
-#if USE(POINTER_PROFILING)
-        jit.move(CCallHelpers::TrustedImmPtr(B3CCallPtrTag), ptrTagRegister);
-        jit.call(scratchRegister, ptrTagRegister);
-#else
-        jit.call(scratchRegister, NoPtrTag);
-#endif
+        jit.call(scratchRegister, B3CCallPtrTag);
         break;
     case Arg::Tmp:
-#if USE(POINTER_PROFILING)
-        jit.move(CCallHelpers::TrustedImmPtr(B3CCallPtrTag), ptrTagRegister);
-        jit.call(inst.args[calleeArgOffset].gpr(), ptrTagRegister);
-#else
-        jit.call(inst.args[calleeArgOffset].gpr(), NoPtrTag);
-#endif
+        jit.call(inst.args[calleeArgOffset].gpr(), B3CCallPtrTag);
         break;
     case Arg::Addr:
     case Arg::ExtendedOffsetAddr:
-#if USE(POINTER_PROFILING)
-        jit.move(CCallHelpers::TrustedImmPtr(B3CCallPtrTag), ptrTagRegister);
-        jit.call(inst.args[calleeArgOffset].asAddress(), ptrTagRegister);
-#else
-        jit.call(inst.args[calleeArgOffset].asAddress(), NoPtrTag);
-#endif
+        jit.call(inst.args[calleeArgOffset].asAddress(), B3CCallPtrTag);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

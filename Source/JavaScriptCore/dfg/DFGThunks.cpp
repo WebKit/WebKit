@@ -44,8 +44,9 @@ MacroAssemblerCodeRef osrExitThunkGenerator(VM* vm)
 {
     MacroAssembler jit;
     jit.probe(OSRExit::executeOSRExit, vm);
+    PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, NoPtrTag, "DFG OSR exit thunk");
+    return FINALIZE_CODE(patchBuffer, osrExitThunkTag, "DFG OSR exit thunk");
 }
 
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
@@ -82,7 +83,8 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #endif
 
-    MacroAssembler::Call functionCall = jit.call(NoPtrTag);
+    PtrTag callTag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
+    MacroAssembler::Call functionCall = jit.call(callTag);
 
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
     jit.storePtr(MacroAssembler::TrustedImmPtr(nullptr), MacroAssembler::Address(GPRInfo::regT0));
@@ -99,13 +101,14 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 #endif
     }
 
-    jit.jump(MacroAssembler::AbsoluteAddress(&vm->osrExitJumpDestination), NoPtrTag);
+    jit.jump(MacroAssembler::AbsoluteAddress(&vm->osrExitJumpDestination), ptrTag(DFGOSRExitPtrTag, vm));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     
-    patchBuffer.link(functionCall, OSRExit::compileOSRExit, NoPtrTag);
-    
-    return FINALIZE_CODE(patchBuffer, NoPtrTag, "DFG OSR exit generation thunk");
+    patchBuffer.link(functionCall, FunctionPtr(OSRExit::compileOSRExit, callTag));
+
+    PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm);
+    return FINALIZE_CODE(patchBuffer, osrExitThunkTag, "DFG OSR exit generation thunk");
 }
 
 MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
@@ -144,10 +147,11 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
     jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
     jit.emitMaterializeTagCheckRegisters();
 
-    jit.jump(GPRInfo::regT1, NoPtrTag);
-    
+    jit.jump(GPRInfo::regT1, GPRInfo::callFrameRegister);
+
+    PtrTag osrEntryThunkTag = ptrTag(DFGOSREntryPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, NoPtrTag, "DFG OSR entry thunk");
+    return FINALIZE_CODE(patchBuffer, osrEntryThunkTag, "DFG OSR entry thunk");
 }
 
 } } // namespace JSC::DFG

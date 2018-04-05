@@ -822,9 +822,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     CodeLocationLabel(linkBuffer.locationOf(addressOfLinkFunctionCheck)),
                     linkBuffer.locationOfNearCall(fastPathCall));
 
+                PtrTag linkTag = ptrTag(LinkCallPtrTag, &vm);
                 linkBuffer.link(
                     slowPathCall,
-                    CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).code()));
+                    CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag)));
             });
         } else {
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);

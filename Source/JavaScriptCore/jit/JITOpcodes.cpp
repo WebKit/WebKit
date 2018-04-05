@@ -642,7 +642,8 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
         callOperation(operationTryOSREnterAtCatchAndValueProfile, m_bytecodeOffset);
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
     emitRestoreCalleeSaves();
-    jump(returnValueGPR, NoPtrTag);
+    PtrTag exceptionHandlerTag = ExceptionHandlerPtrTag;
+    jump(returnValueGPR, exceptionHandlerTag);
     skipOSREntry.link(this);
     if (buffer && shouldEmitProfiling()) {
         buffer->forEach([&] (ValueProfileAndOperand& profile) {
@@ -964,7 +965,7 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
             abortWithReason(JITUnreasonableLoopHintJumpTarget);
             ok.link(this);
         }
-        jump(returnValueGPR, NoPtrTag);
+        jump(returnValueGPR, GPRInfo::callFrameRegister);
         noOptimizedEntry.link(this);
 
         emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));

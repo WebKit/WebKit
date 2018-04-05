@@ -1,3 +1,111 @@
+2018-04-04  Mark Lam  <mark.lam@apple.com>
+
+        Add pointer profiling support to the DFG and supporting files.
+        https://bugs.webkit.org/show_bug.cgi?id=184316
+        <rdar://problem/39188524>
+
+        Reviewed by Filip Pizlo.
+
+        1. Profile lots of pointers with PtrTags.
+
+        2. Remove PtrTag.cpp and make ptrTagName() into an inline function.  It's only
+           used for debugging anyway, and not normally called in the code.  Making it
+           an inline function prevents it from taking up code space in builds when not in
+           use.
+
+        3. Change the call to the the arityFixupThunk in DFG code to be a near call.
+           It doesn't need to be a far call.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/testmasm.cpp:
+        (JSC::testProbeModifiesProgramCounter):
+        * b3/B3LowerMacros.cpp:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::generate):
+        * b3/air/AirCCallSpecial.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testInterpreter):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/HandlerInfo.h:
+        (JSC::HandlerInfo::initialize):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::noticeCatchEntrypoint):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendCall):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::CallResultAndArgumentsSlowPathGenerator::CallResultAndArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndArgumentsSlowPathGenerator::unpackAndGenerate):
+        (JSC::DFG::slowPathCall):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCall):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitThunkGenerator):
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitDumbVirtualCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::linkSlowFor):
+        (JSC::linkFor):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        * runtime/PtrTag.cpp: Removed.
+        * runtime/PtrTag.h:
+        (JSC::ptrTagName):
+        * runtime/VMEntryScope.cpp:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2018-04-04  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r222563): removed DoubleReal type check causes tons of crashes because CSE has never known how to handle SaneChain

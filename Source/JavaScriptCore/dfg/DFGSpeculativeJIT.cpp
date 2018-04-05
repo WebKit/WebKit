@@ -3861,6 +3861,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
 
     bool shouldEmitProfiling = false;
     bool generatedInline = mathIC->generateInline(m_jit, *addICGenerationState, shouldEmitProfiling);
+    PtrTag mathICTag = ptrTag(MathICPtrTag, mathIC->instruction());
 
     if (generatedInline) {
         ASSERT(!addICGenerationState->slowPathJumps.empty());
@@ -3890,9 +3891,9 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
             }
 
             if (addICGenerationState->shouldSlowPathRepatch)
-                addICGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJJMic>(repatchingFunction), resultRegs, innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
+                addICGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJJMic>(repatchingFunction), mathICTag, resultRegs, innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
             else
-                addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, innerLeftRegs, innerRightRegs);
+                addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, mathICTag, resultRegs, innerLeftRegs, innerRightRegs);
 
             silentFill(savePlans);
             m_jit.exceptionCheck();
@@ -3921,7 +3922,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
         }
 
         flushRegisters();
-        callOperation(nonRepatchingFunction, resultRegs, leftRegs, rightRegs);
+        callOperation(nonRepatchingFunction, mathICTag, resultRegs, leftRegs, rightRegs);
         m_jit.exceptionCheck();
     }
 
@@ -4578,6 +4579,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
 
     bool shouldEmitProfiling = false;
     bool generatedInline = mathIC->generateInline(m_jit, *icGenerationState, shouldEmitProfiling);
+    PtrTag mathICTag = ptrTag(MathICPtrTag, mathIC->instruction());
 
     if (generatedInline) {
         ASSERT(!icGenerationState->slowPathJumps.empty());
@@ -4597,9 +4599,9 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
             silentSpill(savePlans);
 
             if (icGenerationState->shouldSlowPathRepatch)
-                icGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJMic>(repatchingFunction), resultRegs, childRegs, TrustedImmPtr(mathIC));
+                icGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJMic>(repatchingFunction), mathICTag, resultRegs, childRegs, TrustedImmPtr(mathIC));
             else
-                icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, childRegs);
+                icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, mathICTag, resultRegs, childRegs);
 
             silentFill(savePlans);
             m_jit.exceptionCheck();
@@ -4620,7 +4622,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
         });
     } else {
         flushRegisters();
-        callOperation(nonRepatchingFunction, resultRegs, childRegs);
+        callOperation(nonRepatchingFunction, mathICTag, resultRegs, childRegs);
         m_jit.exceptionCheck();
     }
 

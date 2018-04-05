@@ -668,20 +668,21 @@ void repatchIn(
         ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
 }
 
-static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
+static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef, PtrTag linkTag)
 {
-    MacroAssembler::repatchNearCall(callLinkInfo.callReturnLocation(), CodeLocationLabel(codeRef.code()));
+    MacroAssembler::repatchNearCall(callLinkInfo.callReturnLocation(), CodeLocationLabel(codeRef.retaggedCode(linkTag, NearCallPtrTag)));
 }
 
-static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
+static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator, PtrTag linkTag)
 {
-    linkSlowFor(vm, callLinkInfo, vm->getCTIStub(generator));
+    linkSlowFor(vm, callLinkInfo, vm->getCTIStub(generator), linkTag);
 }
 
 static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo)
 {
+    PtrTag linkTag = ptrTag(LinkVirtualCallPtrTag, vm);
     MacroAssemblerCodeRef virtualThunk = virtualThunkFor(vm, callLinkInfo);
-    linkSlowFor(vm, callLinkInfo, virtualThunk);
+    linkSlowFor(vm, callLinkInfo, virtualThunk, linkTag);
     callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, *vm, nullptr, true));
 }
 
@@ -727,7 +728,8 @@ void linkFor(
         calleeCodeBlock->linkIncomingCall(callerFrame, &callLinkInfo);
 
     if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs()) {
-        linkSlowFor(&vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
+        PtrTag linkTag = ptrTag(LinkPolymorphicCallPtrTag, &vm);
+        linkSlowFor(&vm, callLinkInfo, linkPolymorphicCallThunkGenerator, linkTag);
         return;
     }
     
@@ -766,9 +768,8 @@ void linkSlowFor(
     linkSlowFor(vm, callLinkInfo);
 }
 
-static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
+static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef, PtrTag codeTag)
 {
-    assertIsTaggedWith(codeRef.code().executableAddress(), NearCallPtrTag);
     if (callLinkInfo.isDirect()) {
         callLinkInfo.clearCodeBlock();
         if (callLinkInfo.callType() == CallLinkInfo::DirectTailCall)
@@ -779,7 +780,7 @@ static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef
         MacroAssembler::revertJumpReplacementToBranchPtrWithPatch(
             MacroAssembler::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
             static_cast<MacroAssembler::RegisterID>(callLinkInfo.calleeGPR()), 0);
-        linkSlowFor(vm, callLinkInfo, codeRef);
+        linkSlowFor(vm, callLinkInfo, codeRef, codeTag);
         callLinkInfo.clearCallee();
     }
     callLinkInfo.clearSeen();
@@ -794,7 +795,8 @@ void unlinkFor(VM& vm, CallLinkInfo& callLinkInfo)
     if (Options::dumpDisassembly())
         dataLog("Unlinking call at ", callLinkInfo.hotPathOther(), "\n");
     
-    revertCall(&vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator));
+    PtrTag linkTag = ptrTag(LinkCallPtrTag, &vm);
+    revertCall(&vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator), linkTag);
 }
 
 void linkVirtualFor(ExecState* exec, CallLinkInfo& callLinkInfo)
@@ -806,8 +808,9 @@ void linkVirtualFor(ExecState* exec, CallLinkInfo& callLinkInfo)
     if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking virtual call at ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()), "\n");
 
+    PtrTag linkTag = ptrTag(LinkVirtualCallPtrTag, &vm);
     MacroAssemblerCodeRef virtualThunk = virtualThunkFor(&vm, callLinkInfo);
-    revertCall(&vm, callLinkInfo, virtualThunk);
+    revertCall(&vm, callLinkInfo, virtualThunk, linkTag);
     callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
 }
 
@@ -1083,7 +1086,8 @@ void linkPolymorphicCall(
         patchBuffer.link(done, callLinkInfo.callReturnLocation().labelAtOffset(0));
     else
         patchBuffer.link(done, callLinkInfo.hotPathOther().labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(vm.getCTIStub(linkPolymorphicCallThunkGenerator).code()));
+    PtrTag linkTag = ptrTag(LinkPolymorphicCallPtrTag, &vm);
+    patchBuffer.link(slow, CodeLocationLabel(vm.getCTIStub(linkPolymorphicCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag)));
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(

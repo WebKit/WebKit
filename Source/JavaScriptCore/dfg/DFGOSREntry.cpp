@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -273,8 +273,8 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     if (Options::verboseOSR())
         dataLogF("    OSR using target PC %p.\n", targetPC);
     RELEASE_ASSERT(targetPC);
-    *bitwise_cast<void**>(scratch + 1) = targetPC;
-    
+    *bitwise_cast<void**>(scratch + 1) = retagCodePtr(targetPC, CodeEntryPtrTag, bitwise_cast<PtrTag>(exec));
+
     Register* pivot = scratch + 2 + CallFrame::headerSizeInRegisters;
     
     for (int index = -CallFrame::headerSizeInRegisters; index < static_cast<int>(baselineFrameSize); ++index) {

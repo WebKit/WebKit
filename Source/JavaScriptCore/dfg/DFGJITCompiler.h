@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,10 +156,10 @@ public:
     }
 
     // Add a call out from JIT code, without an exception check.
-    Call appendCall(const FunctionPtr function)
+    Call appendCall(const FunctionPtr function, PtrTag tag = CFunctionPtrTag)
     {
-        Call functionCall = call(NoPtrTag);
-        m_calls.append(CallLinkRecord(functionCall, function));
+        Call functionCall = call(tag);
+        m_calls.append(CallLinkRecord(functionCall, FunctionPtr(function, tag)));
         return functionCall;
     }
     
@@ -364,7 +364,6 @@ private:
     };
     Vector<ExceptionHandlingOSRExitInfo> m_exceptionHandlerOSRExitCallSites;
     
-    Call m_callArityFixup;
     Label m_arityCheck;
     std::unique_ptr<SpeculativeJIT> m_speculative;
     PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;

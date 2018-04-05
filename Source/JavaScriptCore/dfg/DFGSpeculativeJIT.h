@@ -936,10 +936,30 @@ public:
     std::enable_if_t<
         FunctionTraits<OperationType>::hasResult,
     JITCompiler::Call>
-    callOperation(OperationType operation, ResultRegType result, Args... args)
+    callOperation(OperationType operation, PtrTag tag, ResultRegType result, Args... args)
     {
         m_jit.setupArguments<OperationType>(args...);
-        return appendCallSetResult(operation, result);
+        return appendCallSetResult(operation, tag, result);
+    }
+
+    template<typename OperationType, typename ResultRegType, typename... Args>
+    std::enable_if_t<
+        FunctionTraits<OperationType>::hasResult,
+    JITCompiler::Call>
+    callOperation(OperationType operation, ResultRegType result, Args... args)
+    {
+        return callOperation(operation, CFunctionPtrTag, result, args...);
+    }
+
+    template<typename OperationType, typename Arg, typename... Args>
+    std::enable_if_t<
+        !FunctionTraits<OperationType>::hasResult
+        && !std::is_same<Arg, NoResultTag>::value,
+    JITCompiler::Call>
+    callOperation(OperationType operation, PtrTag tag, Arg arg, Args... args)
+    {
+        m_jit.setupArguments<OperationType>(arg, args...);
+        return appendCall(operation, tag);
     }
 
     template<typename OperationType, typename Arg, typename... Args>
@@ -949,8 +969,17 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation, Arg arg, Args... args)
     {
-        m_jit.setupArguments<OperationType>(arg, args...);
-        return appendCall(operation);
+        return callOperation(operation, CFunctionPtrTag, arg, args...);
+    }
+
+    template<typename OperationType, typename... Args>
+    std::enable_if_t<
+        !FunctionTraits<OperationType>::hasResult,
+    JITCompiler::Call>
+    callOperation(OperationType operation, PtrTag tag, NoResultTag, Args... args)
+    {
+        m_jit.setupArguments<OperationType>(args...);
+        return appendCall(operation, tag);
     }
 
     template<typename OperationType, typename... Args>
@@ -959,8 +988,17 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation, NoResultTag, Args... args)
     {
-        m_jit.setupArguments<OperationType>(args...);
-        return appendCall(operation);
+        return callOperation(operation, CFunctionPtrTag, NoResult, args...);
+    }
+
+    template<typename OperationType>
+    std::enable_if_t<
+        !FunctionTraits<OperationType>::hasResult,
+    JITCompiler::Call>
+    callOperation(OperationType operation, PtrTag tag)
+    {
+        m_jit.setupArguments<OperationType>();
+        return appendCall(operation, tag);
     }
 
     template<typename OperationType>
@@ -969,8 +1007,7 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation)
     {
-        m_jit.setupArguments<OperationType>();
-        return appendCall(operation);
+        return callOperation(operation, CFunctionPtrTag);
     }
 
 #undef FIRST_ARGUMENT_TYPE
@@ -1007,11 +1044,11 @@ public:
 #endif
 
     // These methods add call instructions, optionally setting results, and optionally rolling back the call frame on an exception.
-    JITCompiler::Call appendCall(const FunctionPtr function)
+    JITCompiler::Call appendCall(const FunctionPtr function, PtrTag tag = CFunctionPtrTag)
     {
         prepareForExternalCall();
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        return m_jit.appendCall(function);
+        return m_jit.appendCall(function, tag);
     }
     JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr function)
     {
@@ -1026,31 +1063,43 @@ public:
             m_jit.move(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, GPRReg result)
     {
-        JITCompiler::Call call = appendCall(function);
+        JITCompiler::Call call = appendCall(function, tag);
         if (result != InvalidGPRReg)
             m_jit.move(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result1, GPRReg result2)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result)
     {
-        JITCompiler::Call call = appendCall(function);
+        return appendCallSetResult(function, CFunctionPtrTag, result);
+    }
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, GPRReg result1, GPRReg result2)
+    {
+        JITCompiler::Call call = appendCall(function, tag);
         m_jit.setupResults(result1, result2);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, JSValueRegs resultRegs)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result1, GPRReg result2)
+    {
+        return appendCallSetResult(function, CFunctionPtrTag, result1, result2);
+    }
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, JSValueRegs resultRegs)
     {
 #if USE(JSVALUE64)
-        return appendCallSetResult(function, resultRegs.gpr());
+        return appendCallSetResult(function, tag, resultRegs.gpr());
 #else
-        return appendCallSetResult(function, resultRegs.payloadGPR(), resultRegs.tagGPR());
+        return appendCallSetResult(function, tag, resultRegs.payloadGPR(), resultRegs.tagGPR());
 #endif
     }
-#if CPU(X86)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, JSValueRegs resultRegs)
     {
-        JITCompiler::Call call = appendCall(function);
+        return appendCallSetResult(function, CFunctionPtrTag, resultRegs);
+    }
+#if CPU(X86)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, FPRReg result)
+    {
+        JITCompiler::Call call = appendCall(function, tag);
         if (result != InvalidFPRReg) {
             m_jit.assembler().fstpl(0, JITCompiler::stackPointerRegister);
             m_jit.loadDouble(JITCompiler::stackPointerRegister, result);
@@ -1058,23 +1107,27 @@ public:
         return call;
     }
 #elif CPU(ARM) && !CPU(ARM_HARDFP)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, FPRReg result)
     {
-        JITCompiler::Call call = appendCall(function);
+        JITCompiler::Call call = appendCall(function, tag);
         if (result != InvalidFPRReg)
             m_jit.assembler().vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
         return call;
     }
 #else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, FPRReg result)
     {
-        JITCompiler::Call call = appendCall(function);
+        JITCompiler::Call call = appendCall(function, tag);
         if (result != InvalidFPRReg)
             m_jit.moveDouble(FPRInfo::returnValueFPR, result);
         return call;
     }
 #endif
-    
+    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
+    {
+        return appendCallSetResult(function, CFunctionPtrTag, result);
+    }
+
     void branchDouble(JITCompiler::DoubleCondition cond, FPRReg left, FPRReg right, BasicBlock* destination)
     {
         return addBranch(m_jit.branchDouble(cond, left, right), destination);

@@ -232,6 +232,7 @@ public:
     }
 
     ArithProfile* arithProfile() const { return m_arithProfile; }
+    Instruction* instruction() const { return m_instruction; }
 
 #if ENABLE(MATH_IC_STATS)
     size_t m_generatedCodeSize { 0 };

@@ -180,7 +180,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     slowCases.append(gen.slowPathJump());
     
     auto slowPath = slowPathCall(
-        slowCases, this, type == AccessType::Get ? operationGetByIdOptimize : operationTryGetByIdOptimize,
+        slowCases, this, type == AccessType::Get ? operationGetByIdOptimize : operationTryGetByIdOptimize, GetPropertyPtrTag,
         spillMode, ExceptionCheckRequirement::CheckNeeded,
         resultGPR, gen.stubInfo(), baseGPR, identifierUID(identifierNumber));
     
@@ -208,7 +208,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR
     slowCases.append(gen.slowPathJump());
     
     auto slowPath = slowPathCall(
-        slowCases, this, operationGetByIdWithThisOptimize,
+        slowCases, this, operationGetByIdWithThisOptimize, GetPropertyPtrTag,
         DontSpill, ExceptionCheckRequirement::CheckNeeded,
         resultGPR, gen.stubInfo(), baseGPR, thisGPR, identifierUID(identifierNumber));
     
@@ -238,7 +238,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     slowCases.append(gen.slowPathJump());
     
     auto slowPath = slowPathCall(
-        slowCases, this, gen.slowPathFunction(), NoResult, gen.stubInfo(), valueGPR, baseGPR,
+        slowCases, this, gen.slowPathFunction(), PutPropertyPtrTag, NoResult, gen.stubInfo(), valueGPR, baseGPR,
         identifierUID(identifierNumber));
 
     m_jit.addPutById(gen, slowPath.get());
@@ -2697,7 +2697,7 @@ void SpeculativeJIT::compile(Node* node)
             
             addSlowPathGenerator(
                 slowPathCall(
-                    slowCases, this, operationGetByValObjectInt,
+                    slowCases, this, operationGetByValObjectInt, GetPropertyPtrTag,
                     result.gpr(), baseReg, propertyReg));
             
             jsValueResult(resultReg, node);
@@ -2753,7 +2753,7 @@ void SpeculativeJIT::compile(Node* node)
             
             addSlowPathGenerator(
                 slowPathCall(
-                    slowCases, this, operationGetByValObjectInt,
+                    slowCases, this, operationGetByValObjectInt, GetPropertyPtrTag,
                     result.gpr(), baseReg, propertyReg));
             
             jsValueResult(resultReg, node);
@@ -2805,7 +2805,7 @@ void SpeculativeJIT::compile(Node* node)
     
             addSlowPathGenerator(
                 slowPathCall(
-                    slowCases, this, operationGetByValObjectInt,
+                    slowCases, this, operationGetByValObjectInt, GetPropertyPtrTag,
                     result.gpr(), baseReg, propertyReg));
             
             jsValueResult(resultReg, node);
@@ -2964,7 +2964,7 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.codeBlock()->isStrictMode()
                         ? (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict)
                         : (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict),
-                    NoResult, baseReg, propertyReg, valueReg));
+                    PutPropertyPtrTag, NoResult, baseReg, propertyReg, valueReg));
             }
 
             noResult(node, UseChildrenCalledExplicitly);
@@ -3048,7 +3048,7 @@ void SpeculativeJIT::compile(Node* node)
                     m_jit.codeBlock()->isStrictMode()
                         ? (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict)
                         : (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict),
-                    NoResult, baseReg, propertyReg, valueReg));
+                    PutPropertyPtrTag, NoResult, baseReg, propertyReg, valueReg));
             }
 
             noResult(node, UseChildrenCalledExplicitly);
@@ -5020,7 +5020,7 @@ void SpeculativeJIT::compile(Node* node)
         }
         }
 
-        addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedPropertyByInt, resultGPR, baseGPR, indexGPR, static_cast<int32_t>(node->internalMethodType())));
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedPropertyByInt, HasPropertyPtrTag, resultGPR, baseGPR, indexGPR, static_cast<int32_t>(node->internalMethodType())));
         
         jsValueResult(resultGPR, node, DataFormatJSBoolean);
         break;
@@ -5079,7 +5079,7 @@ void SpeculativeJIT::compile(Node* node)
 
         done.link(&m_jit);
 
-        addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByVal, resultGPR, baseGPR, propertyGPR));
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByVal, GetPropertyPtrTag, resultGPR, baseGPR, propertyGPR));
 
         jsValueResult(resultGPR, node);
         break;
@@ -5292,7 +5292,7 @@ void SpeculativeJIT::compile(Node* node)
                 osrEnter.link(&m_jit);
             }
             m_jit.emitRestoreCalleeSaves();
-            m_jit.jump(tempGPR, NoPtrTag);
+            m_jit.jump(tempGPR, GPRInfo::callFrameRegister);
         });
         break;
     }

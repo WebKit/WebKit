@@ -161,7 +161,8 @@ void JITCompiler::compileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallLinkRecord(call(NoPtrTag), lookupExceptionHandlerFromCallerFrame));
+        PtrTag callTag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
+        m_calls.append(CallLinkRecord(call(callTag), FunctionPtr(lookupExceptionHandlerFromCallerFrame, callTag)));
 
         jumpToExceptionHandler(*vm());
     }
@@ -180,7 +181,8 @@ void JITCompiler::compileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        m_calls.append(CallLinkRecord(call(NoPtrTag), lookupExceptionHandler));
+        PtrTag callTag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
+        m_calls.append(CallLinkRecord(call(callTag), FunctionPtr(lookupExceptionHandler, callTag)));
 
         jumpToExceptionHandler(*vm());
     }
@@ -214,14 +216,15 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         
         usedJumpTables.set(data.switchTableIndex);
         SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough.block->index], NoPtrTag);
+        PtrTag switchTag = ptrTag(SwitchTablePtrTag, &table);
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough.block->index], switchTag);
         table.ctiOffsets.grow(table.branchOffsets.size());
         for (unsigned j = table.ctiOffsets.size(); j--;)
             table.ctiOffsets[j] = table.ctiDefault;
         for (unsigned j = data.cases.size(); j--;) {
             SwitchCase& myCase = data.cases[j];
             table.ctiOffsets[myCase.value.switchLookupValue(data.kind) - table.min] =
-                linkBuffer.locationOf(m_blockHeads[myCase.target.block->index], NoPtrTag);
+                linkBuffer.locationOf(m_blockHeads[myCase.target.block->index], switchTag);
         }
     }
     
@@ -244,7 +247,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             continue;
         
         StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
-        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough.block->index], NoPtrTag);
+        PtrTag switchTag = ptrTag(SwitchTablePtrTag, &table);
+
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough.block->index], switchTag);
         StringJumpTable::StringOffsetTable::iterator iter;
         StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
         for (iter = table.offsetTable.begin(); iter != end; ++iter)
@@ -253,7 +258,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             SwitchCase& myCase = data.cases[j];
             iter = table.offsetTable.find(myCase.value.stringImpl());
             RELEASE_ASSERT(iter != end);
-            iter->value.ctiOffset = linkBuffer.locationOf(m_blockHeads[myCase.target.block->index], NoPtrTag);
+            iter->value.ctiOffset = linkBuffer.locationOf(m_blockHeads[myCase.target.block->index], switchTag);
         }
     }
 
@@ -275,7 +280,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.patch.start = start;
 
         ptrdiff_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf(m_ins[i].m_done, NoPtrTag));
+            start, linkBuffer.locationOf(m_ins[i].m_done));
         RELEASE_ASSERT(inlineSize >= 0);
         info.patch.inlineSize = inlineSize;
 
@@ -283,12 +288,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             start, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->call()));
 
         info.patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label(), NoPtrTag));
+            start, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
     }
     
+    PtrTag linkTag = ptrTag(LinkCallPtrTag, vm());
+    auto linkCallThunk = FunctionPtr(vm()->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag));
     for (auto& record : m_jsCalls) {
         CallLinkInfo& info = *record.info;
-        linkBuffer.link(record.slowCall, FunctionPtr(vm()->getCTIStub(linkCallThunkGenerator).code()));
+        linkBuffer.link(record.slowCall, linkCallThunk);
         info.setCallLocations(
             CodeLocationLabel(linkBuffer.locationOfNearCall(record.slowCall)),
             CodeLocationLabel(linkBuffer.locationOf(record.targetToCheck)),
@@ -297,10 +304,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     for (JSDirectCallRecord& record : m_jsDirectCalls) {
         CallLinkInfo& info = *record.info;
-        linkBuffer.link(record.call, linkBuffer.locationOf(record.slowPath, NoPtrTag));
+        linkBuffer.link(record.call, linkBuffer.locationOf(record.slowPath, NearCallPtrTag));
         info.setCallLocations(
             CodeLocationLabel(),
-            linkBuffer.locationOf(record.slowPath, NoPtrTag),
+            linkBuffer.locationOf(record.slowPath, NearCallPtrTag),
             linkBuffer.locationOfNearCall(record.call));
     }
     
@@ -308,7 +315,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         CallLinkInfo& info = *record.info;
         info.setCallLocations(
             linkBuffer.locationOf(record.patchableJump),
-            linkBuffer.locationOf(record.slowPath, NoPtrTag),
+            linkBuffer.locationOf(record.slowPath, NearCallPtrTag),
             linkBuffer.locationOfNearCall(record.call));
     }
     
@@ -323,8 +330,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         }
         if (info.m_replacementSource.isSet()) {
             m_jitCode->common.jumpReplacements.append(JumpReplacement(
-                linkBuffer.locationOf(info.m_replacementSource, NoPtrTag),
-                linkBuffer.locationOf(info.m_replacementDestination, NoPtrTag)));
+                linkBuffer.locationOf(info.m_replacementSource, NearJumpPtrTag),
+                linkBuffer.locationOf(info.m_replacementDestination, NearJumpPtrTag)));
         }
     }
     
@@ -334,7 +341,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             Vector<Label>& labels = m_exitSiteLabels[i];
             Vector<const void*> addresses;
             for (unsigned j = 0; j < labels.size(); ++j)
-                addresses.append(linkBuffer.locationOf(labels[j], NoPtrTag).executableAddress());
+                addresses.append(linkBuffer.locationOf(labels[j], DFGOSRExitPtrTag).executableAddress());
             m_graph.compilation()->addOSRExitSite(addresses);
         }
     } else
@@ -351,7 +358,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             // i.e, we explicitly emitted an exceptionCheck that we know will be caught in this machine frame.
             // If this *is set*, it means we will be landing at this code location from genericUnwind from an
             // exception thrown in a child call frame.
-            CodeLocationLabel catchLabel = linkBuffer.locationOf(info.m_replacementDestination, NoPtrTag);
+            CodeLocationLabel catchLabel = linkBuffer.locationOf(info.m_replacementDestination, ExceptionHandlerPtrTag);
             HandlerInfo newExceptionHandler = m_exceptionHandlerOSRExitCallSites[i].baselineExceptionHandler;
             CallSiteIndex callSite = m_exceptionHandlerOSRExitCallSites[i].callSiteIndex;
             newExceptionHandler.start = callSite.bits();
@@ -504,9 +511,9 @@ void JITCompiler::compileFunction()
     branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
     move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
-    m_callArityFixup = call(NoPtrTag);
+    Call callArityFixup = nearCall();
     jump(fromArityCheck);
-    
+
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
     m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
@@ -530,11 +537,11 @@ void JITCompiler::compileFunction()
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
-    linkBuffer->link(m_callArityFixup, FunctionPtr(vm()->getCTIStub(arityFixupGenerator).code()));
+    linkBuffer->link(callArityFixup, FunctionPtr(vm()->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, vm()), NearCallPtrTag)));
 
     disassemble(*linkBuffer);
 
-    MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck, NoPtrTag);
+    MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck, CodeEntryWithArityCheckPtrTag);
 
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
         m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);
@@ -574,7 +581,7 @@ void JITCompiler::noticeCatchEntrypoint(BasicBlock& basicBlock, JITCompiler::Lab
 {
     RELEASE_ASSERT(basicBlock.isCatchEntrypoint);
     RELEASE_ASSERT(basicBlock.intersectionOfCFAHasVisited); // An entrypoint is reachable by definition.
-    m_jitCode->common.appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.locationOf(blockHead, NoPtrTag).executableAddress(), WTFMove(argumentFormats));
+    m_jitCode->common.appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.locationOf(blockHead, ExceptionHandlerPtrTag).executableAddress(), WTFMove(argumentFormats));
 }
 
 void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)

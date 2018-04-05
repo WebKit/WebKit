@@ -867,6 +867,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
+    PtrTag throwExceptionTag = ptrTag(ThrowExceptionPtrTag, vm);
 
     execCallee->setCodeBlock(0);
 
@@ -881,9 +882,8 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
             execCallee->setCallee(asObject(callee));
             vm->hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             if (UNLIKELY(scope.exception())) {
-                PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
                 return encodeResult(
-                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
+                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(throwExceptionTag, resultTag).executableAddress(),
                     reinterpret_cast<void*>(KeepTheFrame));
             }
 
@@ -894,9 +894,8 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
     
         ASSERT(callType == CallType::None);
         throwException(exec, scope, createNotAFunctionError(exec, callee));
-        PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
         return encodeResult(
-            vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
+            vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(throwExceptionTag, resultTag).executableAddress(),
             reinterpret_cast<void*>(KeepTheFrame));
     }
 
@@ -912,9 +911,8 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
         execCallee->setCallee(asObject(callee));
         vm->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
         if (UNLIKELY(scope.exception())) {
-            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
             return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(throwExceptionTag, resultTag).executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
 
@@ -923,9 +921,8 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
     
     ASSERT(constructType == ConstructType::None);
     throwException(exec, scope, createNotAConstructorError(exec, callee));
-    PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
     return encodeResult(
-        vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
+        vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(throwExceptionTag, resultTag).executableAddress(),
         reinterpret_cast<void*>(KeepTheFrame));
 }
 
@@ -935,7 +932,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     VM* vm = &exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(*vm);
 
-    PtrTag linkedTargetTag = ptrTag(OperationLinkCallPtrTag, vm);
+    PtrTag linkedTargetTag = ptrTag(LinkCallResultPtrTag, vm);
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
     NativeCallFrameTracer tracer(vm, exec);
     
@@ -974,8 +971,8 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         auto handleThrowException = [&] () {
-            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
-            void* throwTarget = retagCodePtr(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(), thunkTag, linkedTargetTag);
+            PtrTag throwExceptionTag = ptrTag(ThrowExceptionPtrTag, vm);
+            void* throwTarget = vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(throwExceptionTag, linkedTargetTag).executableAddress();
             return encodeResult(throwTarget, reinterpret_cast<void*>(KeepTheFrame));
         };
 
@@ -1085,12 +1082,12 @@ inline SlowPathReturnType virtualForWithFunction(
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+        PtrTag throwExceptionTag = ptrTag(ThrowExceptionPtrTag, vm);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
             throwException(exec, throwScope, createNotAConstructorError(exec, function));
-            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
             return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(throwExceptionTag, resultTag).executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
 
@@ -1098,9 +1095,8 @@ inline SlowPathReturnType virtualForWithFunction(
         JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, function, scope, kind, *codeBlockSlot);
         EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
         if (error) {
-            PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
             return encodeResult(
-                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(thunkTag, resultTag).executableAddress(),
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode(throwExceptionTag, resultTag).executableAddress(),
                 reinterpret_cast<void*>(KeepTheFrame));
         }
     }
@@ -1115,7 +1111,7 @@ SlowPathReturnType JIT_OPERATION operationLinkPolymorphicCall(ExecState* execCal
     VM* vm = &exec->vm();
     ASSERT(callLinkInfo->specializationKind() == CodeForCall);
     JSCell* calleeAsFunctionCell;
-    PtrTag resultTag = ptrTag(OperationLinkPolymorphicCallPtrTag, vm);
+    PtrTag resultTag = ptrTag(LinkPolymorphicCallResultPtrTag, vm);
     SlowPathReturnType result = virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCell, resultTag);
 
     linkPolymorphicCall(execCallee, *callLinkInfo, CallVariant(calleeAsFunctionCell));
@@ -1128,7 +1124,7 @@ SlowPathReturnType JIT_OPERATION operationVirtualCall(ExecState* execCallee, Cal
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
     JSCell* calleeAsFunctionCellIgnored;
-    PtrTag resultTag = ptrTag(OperationVirtualCallPtrTag, vm);
+    PtrTag resultTag = ptrTag(LinkVirtualCallResultPtrTag, vm);
     return virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCellIgnored, resultTag);
 }
 
@@ -1528,7 +1524,10 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, uint32_t byt
 
         codeBlock->optimizeSoon();
         codeBlock->unlinkedCodeBlock()->setDidOptimize(TrueTriState);
-        return encodeResult(vm.getCTIStub(DFG::osrEntryThunkGenerator).code().executableAddress(), dataBuffer);
+        void* targetPC = vm.getCTIStub(DFG::osrEntryThunkGenerator).code().executableAddress();
+        PtrTag thunkTag = ptrTag(DFGOSREntryPtrTag, &vm);
+        targetPC = retagCodePtr(targetPC, thunkTag, bitwise_cast<PtrTag>(exec));
+        return encodeResult(targetPC, dataBuffer);
     }
 
     if (UNLIKELY(Options::verboseOSR())) {
@@ -1577,8 +1576,12 @@ char* JIT_OPERATION operationTryOSREnterAtCatch(ExecState* exec, uint32_t byteco
     CodeBlock* optimizedReplacement = exec->codeBlock()->replacement();
     switch (optimizedReplacement->jitType()) {
     case JITCode::DFGJIT:
-    case JITCode::FTLJIT:
-        return static_cast<char*>(DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex));
+    case JITCode::FTLJIT: {
+        void* entry = DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex);
+        if (entry)
+            assertIsTaggedWith(entry, ExceptionHandlerPtrTag);
+        return static_cast<char*>(entry);
+    }
     default:
         break;
     }
@@ -1595,8 +1598,12 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(ExecState* exec, 
 
     switch (optimizedReplacement->jitType()) {
     case JITCode::DFGJIT:
-    case JITCode::FTLJIT:
-        return static_cast<char*>(DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex));
+    case JITCode::FTLJIT: {
+        void* entry = DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex);
+        if (entry)
+            assertIsTaggedWith(entry, ExceptionHandlerPtrTag);
+        return static_cast<char*>(entry);
+    }
     default:
         break;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,8 +109,9 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     jit.move(GPRInfo::regT0, GPRInfo::argumentGPR0);
     jit.move(AssemblyHelpers::TrustedImmPtr(&exit), GPRInfo::argumentGPR1);
 #endif
-    jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(triggerReoptimizationNow)), GPRInfo::nonArgGPR0);
-    jit.call(GPRInfo::nonArgGPR0, NoPtrTag);
+    PtrTag tag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
+    jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunctionPtr(triggerReoptimizationNow, tag)), GPRInfo::nonArgGPR0);
+    jit.call(GPRInfo::nonArgGPR0, tag);
     AssemblyHelpers::Jump doneAdjusting = jit.jump();
     
     tooFewFails.link(&jit);
@@ -162,6 +163,12 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         if (!trueCaller) {
             ASSERT(inlineCallFrame->isTail());
             jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
+#if USE(POINTER_PROFILING)
+            jit.addPtr(AssemblyHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, GPRInfo::regT2);
+            jit.untagPtr(GPRInfo::regT3, GPRInfo::regT2);
+            jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
+            jit.tagPtr(GPRInfo::regT3, GPRInfo::regT2);
+#endif
             jit.storePtr(GPRInfo::regT3, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
             jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()), GPRInfo::regT3);
             callerFrameGPR = GPRInfo::regT3;
@@ -207,7 +214,14 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
                 callerFrameGPR = GPRInfo::regT3;
             }
 
+#if USE(POINTER_PROFILING)
+            jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
+            jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::nonArgGPR0);
+            jit.tagPtr(GPRInfo::nonArgGPR0, GPRInfo::regT2);
+            jit.storePtr(GPRInfo::nonArgGPR0, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+#else
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+#endif
         }
 
         jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + CallFrameSlot::codeBlock)));
@@ -262,8 +276,9 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 #endif
 
     jit.setupArguments<decltype(operationOSRWriteBarrier)>(owner);
-    jit.move(MacroAssembler::TrustedImmPtr(reinterpret_cast<void*>(operationOSRWriteBarrier)), scratch);
-    jit.call(scratch, NoPtrTag);
+    PtrTag tag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
+    jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr(operationOSRWriteBarrier, tag)), scratch);
+    jit.call(scratch, tag);
 
 #if CPU(X86)
     jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 4), MacroAssembler::stackPointerRegister);
@@ -308,8 +323,9 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
-    
-    void* jumpTarget = codeBlockForExit->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+
+    PtrTag exitTag = ptrTag(DFGOSRExitPtrTag, nextPtrTagID());
+    void* jumpTarget = retagCodePtr(codeBlockForExit->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset), CodeEntryPtrTag, exitTag);
 
     jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     if (exit.isExceptionHandler()) {
@@ -318,7 +334,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     }
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
-    jit.jump(GPRInfo::regT2, NoPtrTag);
+    jit.jump(GPRInfo::regT2, exitTag);
 }
 
 } } // namespace JSC::DFG

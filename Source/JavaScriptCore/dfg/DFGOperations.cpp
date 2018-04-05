@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3062,7 +3062,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
                 dataLog("OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(entryBlock), "\n");
             if (void* address = FTL::prepareOSREntry(exec, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
                 CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at bc#", originBytecodeIndex));
-                return static_cast<char*>(address);
+                return retagCodePtr<char*>(address, CodeEntryPtrTag, bitwise_cast<PtrTag>(exec));
             }
         }
     }
@@ -3182,7 +3182,9 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
         dataLog("Immediate OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(jitCode->osrEntryBlock()), "\n");
     void* address = FTL::prepareOSREntry(
         exec, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
-    return static_cast<char*>(address);
+    if (!address)
+        return nullptr;
+    return retagCodePtr<char*>(address, CodeEntryPtrTag, bitwise_cast<PtrTag>(exec));
 }
 
 void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeIndex)

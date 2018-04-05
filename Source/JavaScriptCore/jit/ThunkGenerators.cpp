@@ -77,9 +77,9 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
     jit.call(GPRInfo::nonArgGPR0, callTag);
     jit.jumpToExceptionHandler(*vm);
 
-    PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm, throwExceptionFromCallSlowPathGenerator);
+    PtrTag throwExceptionTag = ptrTag(ThrowExceptionPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, thunkTag, "Throw exception from call slow path thunk");
+    return FINALIZE_CODE(patchBuffer, throwExceptionTag, "Throw exception from call slow path thunk");
 }
 
 static void slowPathFor(
@@ -145,11 +145,12 @@ MacroAssemblerCodeRef linkCallThunkGenerator(VM* vm)
     // been adjusted, and all other registers to be available for use.
     CCallHelpers jit;
 
-    PtrTag expectedLinkedTargetTag = ptrTag(OperationLinkCallPtrTag, vm);
+    PtrTag expectedLinkedTargetTag = ptrTag(LinkCallResultPtrTag, vm);
     slowPathFor(jit, vm, operationLinkCall, expectedLinkedTargetTag);
 
+    PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, NearCallPtrTag, "Link call slow path thunk");
+    return FINALIZE_CODE(patchBuffer, linkTag, "Link call slow path thunk");
 }
 
 // For closure optimizations, we only include calls, since if you're using closures for
@@ -158,11 +159,12 @@ MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM* vm)
 {
     CCallHelpers jit;
 
-    PtrTag expectedLinkedTargetTag = ptrTag(OperationLinkPolymorphicCallPtrTag, vm);
+    PtrTag expectedLinkedTargetTag = ptrTag(LinkPolymorphicCallResultPtrTag, vm);
     slowPathFor(jit, vm, operationLinkPolymorphicCall, expectedLinkedTargetTag);
 
+    PtrTag linkTag = ptrTag(LinkPolymorphicCallPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, NearCallPtrTag, "Link polymorphic call slow path thunk");
+    return FINALIZE_CODE(patchBuffer, linkTag, "Link polymorphic call slow path thunk");
 }
 
 // FIXME: We should distinguish between a megamorphic virtual call vs. a slow
@@ -246,12 +248,13 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     slowCase.link(&jit);
     
     // Here we don't know anything, so revert to the full slow path.
-    PtrTag expectedLinkedTargetTag = ptrTag(OperationVirtualCallPtrTag, vm);
+    PtrTag expectedLinkedTargetTag = ptrTag(LinkVirtualCallResultPtrTag, vm);
     slowPathFor(jit, vm, operationVirtualCall, expectedLinkedTargetTag);
 
+    PtrTag linkTag = ptrTag(LinkVirtualCallPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
-        patchBuffer, NearCallPtrTag,
+        patchBuffer, linkTag,
         "Virtual %s slow path thunk",
         callLinkInfo.callMode() == CallMode::Regular ? "call" : callLinkInfo.callMode() == CallMode::Tail ? "tail call" : "construct");
 }
@@ -487,6 +490,15 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
     jit.pop(JSInterfaceJIT::regT4);
 #  endif
     jit.tagReturnAddress();
+#if CPU(ARM64) && USE(POINTER_PROFILING)
+    jit.loadPtr(JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, extraTemp);
+    jit.untagPtr(GPRInfo::regT3, extraTemp);
+    PtrTag tempReturnPCTag = ptrTag(ArityFixupPtrTag, nextPtrTagID());
+    jit.move(JSInterfaceJIT::TrustedImmPtr(tempReturnPCTag), extraTemp);
+    jit.tagPtr(GPRInfo::regT3, extraTemp);
+    jit.storePtr(GPRInfo::regT3, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
+#endif
     jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
     jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, CallFrameSlot::argumentCount * sizeof(Register)), JSInterfaceJIT::argumentGPR2);
     jit.add32(JSInterfaceJIT::TrustedImm32(CallFrame::headerSizeInRegisters), JSInterfaceJIT::argumentGPR2);
@@ -533,6 +545,15 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
     jit.branchAdd32(MacroAssembler::NonZero, JSInterfaceJIT::TrustedImm32(1), JSInterfaceJIT::argumentGPR2).linkTo(fillUndefinedLoop, &jit);
     
     done.link(&jit);
+
+#if CPU(ARM64) && USE(POINTER_PROFILING)
+    jit.loadPtr(JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
+    jit.move(JSInterfaceJIT::TrustedImmPtr(tempReturnPCTag), extraTemp);
+    jit.untagPtr(GPRInfo::regT3, extraTemp);
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, extraTemp);
+    jit.tagPtr(GPRInfo::regT3, extraTemp);
+    jit.storePtr(GPRInfo::regT3, JSInterfaceJIT::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
+#endif
 
 #  if CPU(X86_64)
     jit.push(JSInterfaceJIT::regT4);
@@ -598,8 +619,8 @@ MacroAssemblerCodeRef arityFixupGenerator(VM* vm)
 #endif // End of USE(JSVALUE32_64) section.
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    PtrTag tag = ptrTag(JITThunkPtrTag, vm);
-    return FINALIZE_CODE(patchBuffer, tag, "fixup arity");
+    PtrTag arityFixupTag = ptrTag(ArityFixupPtrTag, vm);
+    return FINALIZE_CODE(patchBuffer, arityFixupTag, "fixup arity");
 }
 
 MacroAssemblerCodeRef unreachableGenerator(VM* vm)
@@ -609,7 +630,8 @@ MacroAssemblerCodeRef unreachableGenerator(VM* vm)
     jit.breakpoint();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, NearCallPtrTag, "unreachable thunk");
+    PtrTag thunkTag = ptrTag(JITThunkPtrTag, vm);
+    return FINALIZE_CODE(patchBuffer, thunkTag, "unreachable thunk");
 }
 
 static void stringCharLoad(SpecializedThunkJIT& jit, VM* vm)

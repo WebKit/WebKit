@@ -83,7 +83,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/NumberConstructor.cpp
     runtime/NumberPrototype.cpp
     runtime/ObjectConstructor.cpp
-    runtime/PtrTag.cpp
     runtime/ReflectObject.cpp
     runtime/RegExpConstructor.cpp
     runtime/RegExpPrototype.cpp

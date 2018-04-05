@@ -539,7 +539,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
                 linkBuffer.link(jumpToOSRExitExceptionHandler, oldHandler.nativeCode);
 
                 HandlerInfo handlerToRegister = oldHandler;
-                handlerToRegister.nativeCode = linkBuffer.locationOf(makeshiftCatchHandler, NearJumpPtrTag);
+                handlerToRegister.nativeCode = linkBuffer.locationOf(makeshiftCatchHandler, ExceptionHandlerPtrTag);
                 handlerToRegister.start = newExceptionHandlingCallSite.bits();
                 handlerToRegister.end = newExceptionHandlingCallSite.bits() + 1;
                 codeBlock->appendExceptionHandler(handlerToRegister);

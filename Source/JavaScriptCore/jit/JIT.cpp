@@ -111,7 +111,7 @@ void JIT::emitEnterOptimizationCheck()
 
     callOperation(operationOptimize, m_bytecodeOffset);
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
-    jump(returnValueGPR, NoPtrTag);
+    jump(returnValueGPR, GPRInfo::callFrameRegister);
     skipOptimize.link(this);
 }
 #endif
@@ -735,25 +735,8 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
-#if CPU(ARM64) && USE(POINTER_PROFILING)
-        loadPtr(Address(callFrameRegister, CallFrame::returnPCOffset()), linkRegister);
-        addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), callFrameRegister, regT1);
-        untagPtr(linkRegister, regT1);
-        PtrTag tempTag = ptrTag(JITThunkPtrTag, nextPtrTagID());
-        move(TrustedImmPtr(tempTag), regT1);
-        tagPtr(linkRegister, regT1);
-        storePtr(linkRegister, Address(callFrameRegister, CallFrame::returnPCOffset()));
-#endif
         move(returnValueGPR, GPRInfo::argumentGPR0);
-        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(JITThunkPtrTag, m_vm), NearCallPtrTag));
-#if CPU(ARM64) && USE(POINTER_PROFILING)
-        loadPtr(Address(callFrameRegister, CallFrame::returnPCOffset()), linkRegister);
-        move(TrustedImmPtr(tempTag), regT1);
-        untagPtr(linkRegister, regT1);
-        addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), callFrameRegister, regT1);
-        tagPtr(linkRegister, regT1);
-        storePtr(linkRegister, Address(callFrameRegister, CallFrame::returnPCOffset()));
-#endif
+        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, m_vm), NearCallPtrTag));
 
 #if !ASSERT_DISABLED
         m_bytecodeOffset = std::numeric_limits<unsigned>::max(); // Reset this, in order to guard its use with ASSERTs.

@@ -35,11 +35,15 @@ namespace JSC {
     v(NearJumpPtrTag) \
     v(CFunctionPtrTag) \
     \
+    v(ArityFixupPtrTag) \
     v(B3CCallPtrTag) \
     v(BytecodePtrTag) \
     v(BytecodeHelperPtrTag) \
     v(CodeEntryPtrTag) \
     v(CodeEntryWithArityCheckPtrTag) \
+    v(DFGOSREntryPtrTag) \
+    v(DFGOSRExitPtrTag) \
+    v(DFGOperationPtrTag) \
     v(ExceptionHandlerPtrTag) \
     v(GetPropertyPtrTag) \
     v(GetterSetterPtrTag) \
@@ -49,15 +53,19 @@ namespace JSC {
     v(JITThunkPtrTag) \
     v(JITWriteThunkPtrTag) \
     v(LLIntCallICPtrTag) \
+    v(LinkCallPtrTag) \
+    v(LinkCallResultPtrTag) \
+    v(LinkPolymorphicCallPtrTag) \
+    v(LinkPolymorphicCallResultPtrTag) \
+    v(LinkVirtualCallPtrTag) \
+    v(LinkVirtualCallResultPtrTag) \
     v(MathICPtrTag) \
     v(NativeCodePtrTag) \
-    v(OperationLinkCallPtrTag) \
-    v(OperationLinkPolymorphicCallPtrTag) \
-    v(OperationVirtualCallPtrTag) \
     v(PutPropertyPtrTag) \
     v(SlowPathPtrTag) \
     v(SpecializedThunkPtrTag) \
     v(SwitchTablePtrTag) \
+    v(ThrowExceptionPtrTag) \
     \
     v(Yarr8BitPtrTag) \
     v(Yarr16BitPtrTag) \
@@ -79,7 +87,15 @@ static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0), "")
 static_assert(static_cast<uintptr_t>(NearCallPtrTag) == static_cast<uintptr_t>(1), "");
 static_assert(static_cast<uintptr_t>(NearJumpPtrTag) == static_cast<uintptr_t>(2), "");
 
-JS_EXPORT_PRIVATE const char* ptrTagName(PtrTag);
+inline const char* ptrTagName(PtrTag tag)
+{
+#define RETURN_PTRTAG_NAME(_tagName) case _tagName: return #_tagName;
+    switch (tag) {
+        FOR_EACH_PTRTAG_ENUM(RETURN_PTRTAG_NAME)
+    default: return "<unknown>";
+    }
+#undef RETURN_PTRTAG_NAME
+}
 
 uintptr_t nextPtrTagID();
 

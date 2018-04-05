@@ -722,9 +722,10 @@ void AssemblyHelpers::emitDumbVirtualCall(VM& vm, CallLinkInfo* info)
     Call call = nearCall();
     addLinkTask(
         [=, &vm] (LinkBuffer& linkBuffer) {
+            PtrTag linkTag = ptrTag(LinkVirtualCallPtrTag, &vm);
             MacroAssemblerCodeRef virtualThunk = virtualThunkFor(&vm, *info);
             info->setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
-            linkBuffer.link(call, CodeLocationLabel(virtualThunk.code()));
+            linkBuffer.link(call, CodeLocationLabel(virtualThunk.retaggedCode(linkTag, NearCallPtrTag)));
         });
 }
 

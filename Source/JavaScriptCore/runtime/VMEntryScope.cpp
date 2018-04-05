@@ -30,6 +30,7 @@
 #include "JSGlobalObject.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
+#include "ThreadLocalCacheInlines.h"
 #include "VM.h"
 #include "Watchdog.h"
 #include <wtf/StackBounds.h>

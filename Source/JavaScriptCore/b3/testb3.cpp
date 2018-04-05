@@ -13043,13 +13043,13 @@ void testInterpreter()
             jit.move(CCallHelpers::TrustedImm64(JITCodePoison::key()), poisonScratch);
             jit.load64(CCallHelpers::BaseIndex(scratch, params[0].gpr(), CCallHelpers::timesPtr()), scratch);
             jit.xor64(poisonScratch, scratch);
-            PtrTag tag = ptrTag(SwitchTablePtrTag, nextPtrTagID());
-            jit.jump(scratch, tag);
+            PtrTag switchTag = ptrTag(SwitchTablePtrTag, nextPtrTagID());
+            jit.jump(scratch, switchTag);
 
             jit.addLinkTask(
                 [&, jumpTable, labels] (LinkBuffer& linkBuffer) {
                     for (unsigned i = labels.size(); i--;)
-                        jumpTable[i] = linkBuffer.locationOf(*labels[i], tag);
+                        jumpTable[i] = linkBuffer.locationOf(*labels[i], switchTag);
                 });
         });
     

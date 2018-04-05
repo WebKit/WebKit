@@ -506,13 +506,13 @@ private:
                         GPRReg index = params[0].gpr();
                         GPRReg scratch = params.gpScratch(0);
                         GPRReg poisonScratch = params.gpScratch(1);
-                        PtrTag tag = ptrTag(SwitchTablePtrTag, nextPtrTagID());
+                        PtrTag switchTag = ptrTag(SwitchTablePtrTag, nextPtrTagID());
 
                         jit.move(CCallHelpers::TrustedImm64(JITCodePoison::key()), poisonScratch);
                         jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
                         jit.load64(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()), scratch);
                         jit.xor64(poisonScratch, scratch);
-                        jit.jump(scratch, tag);
+                        jit.jump(scratch, switchTag);
 
                         // These labels are guaranteed to be populated before either late paths or
                         // link tasks run.
@@ -521,14 +521,14 @@ private:
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
                                 if (hasUnhandledIndex) {
-                                    MacroAssemblerCodePtr fallThrough = linkBuffer.locationOf(*labels.last(), tag);
+                                    MacroAssemblerCodePtr fallThrough = linkBuffer.locationOf(*labels.last(), switchTag);
                                     for (unsigned i = tableSize; i--;)
                                         jumpTable[i] = fallThrough;
                                 }
                                 
                                 unsigned labelIndex = 0;
                                 for (unsigned tableIndex : handledIndices)
-                                    jumpTable[tableIndex] = linkBuffer.locationOf(*labels[labelIndex++], tag);
+                                    jumpTable[tableIndex] = linkBuffer.locationOf(*labels[labelIndex++], switchTag);
                             });
                     });
                 return;
