@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -469,22 +469,21 @@ private:
                         case Array::Int32:
                             if (!mode.isInBounds())
                                 break;
-                            heap = HeapLocation(
-                                indexedPropertyLoc, IndexedInt32Properties, base, index);
+                            heap = HeapLocation(indexedPropertyLoc, IndexedInt32Properties, base, index);
                             break;
                             
-                        case Array::Double:
+                        case Array::Double: {
                             if (!mode.isInBounds())
                                 break;
-                            heap = HeapLocation(
-                                indexedPropertyLoc, IndexedDoubleProperties, base, index);
+                            LocationKind kind = mode.isSaneChain() ? IndexedPropertyDoubleSaneChainLoc : IndexedPropertyDoubleLoc;
+                            heap = HeapLocation(kind, IndexedDoubleProperties, base, index);
                             break;
+                        }
                             
                         case Array::Contiguous:
                             if (!mode.isInBounds())
                                 break;
-                            heap = HeapLocation(
-                                indexedPropertyLoc, IndexedContiguousProperties, base, index);
+                            heap = HeapLocation(indexedPropertyLoc, IndexedContiguousProperties, base, index);
                             break;
                             
                         case Array::Int8Array:

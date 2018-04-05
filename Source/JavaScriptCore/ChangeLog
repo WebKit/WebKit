@@ -1,3 +1,78 @@
+2018-04-05  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r230287. rdar://problem/39208588
+
+    REGRESSION(r222563): removed DoubleReal type check causes tons of crashes because CSE has never known how to handle SaneChain
+    https://bugs.webkit.org/show_bug.cgi?id=184319
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/array-push-nan-to-double-array-cse-sane-and-insane-chain.js: Added.
+    (foo):
+    (bar):
+    * stress/array-push-nan-to-double-array.js: Added.
+    (foo):
+    (bar):
+    
+    Source/JavaScriptCore:
+    
+    In r222581, we replaced type checks about DoubleReal in ArrayPush in the DFG/FTL backends with
+    assertions. That's correct because FixupPhase was emitting those checks as Check(DoubleRealRep:) before
+    the ArrayPush.
+    
+    But this revealed a longstanding CSE bug: CSE will happily match a SaneChain GetByVal with a InBounds
+    GetByVal. SaneChain can return NaN while InBounds cannot. This means that if we first use AI to
+    eliminate the Check(DoubleRealRep:) based on the input being a GetByVal(InBounds) but then replace that
+    with a GetByVal(SaneChain), then we will hit the assertion.
+    
+    This teaches CSE to not replace GetByVal(InBounds) with GetByVal(SaneChain) and vice versa. That gets
+    tricky because PutByVal can match either. So, we use the fact that it's legal for a store to def() more
+    than once: PutByVal now defs() a HeapLocation for InBounds and a HeapLocation for SaneChain.
+    
+    * dfg/DFGCSEPhase.cpp:
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGHeapLocation.cpp:
+    (WTF::printInternal):
+    * dfg/DFGHeapLocation.h:
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileArrayPush):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230287 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+            REGRESSION(r222563): removed DoubleReal type check causes tons of crashes because CSE has never known how to handle SaneChain
+            https://bugs.webkit.org/show_bug.cgi?id=184319
+
+            Reviewed by Saam Barati.
+
+            In r222581, we replaced type checks about DoubleReal in ArrayPush in the DFG/FTL backends with
+            assertions. That's correct because FixupPhase was emitting those checks as Check(DoubleRealRep:) before
+            the ArrayPush.
+
+            But this revealed a longstanding CSE bug: CSE will happily match a SaneChain GetByVal with a InBounds
+            GetByVal. SaneChain can return NaN while InBounds cannot. This means that if we first use AI to
+            eliminate the Check(DoubleRealRep:) based on the input being a GetByVal(InBounds) but then replace that
+            with a GetByVal(SaneChain), then we will hit the assertion.
+
+            This teaches CSE to not replace GetByVal(InBounds) with GetByVal(SaneChain) and vice versa. That gets
+            tricky because PutByVal can match either. So, we use the fact that it's legal for a store to def() more
+            than once: PutByVal now defs() a HeapLocation for InBounds and a HeapLocation for SaneChain.
+
+            * dfg/DFGCSEPhase.cpp:
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGHeapLocation.cpp:
+            (WTF::printInternal):
+            * dfg/DFGHeapLocation.h:
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileArrayPush):
+
 2018-04-03  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229987. rdar://problem/39155464
