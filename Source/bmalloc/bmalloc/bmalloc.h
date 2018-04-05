@@ -30,9 +30,9 @@
 #include "Gigacage.h"
 #include "Heap.h"
 #include "IsoTLS.h"
+#include "Mutex.h"
 #include "PerHeapKind.h"
 #include "Scavenger.h"
-#include "StaticMutex.h"
 
 namespace bmalloc {
 namespace api {

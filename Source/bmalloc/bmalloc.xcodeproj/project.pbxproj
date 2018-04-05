@@ -86,8 +86,8 @@
 		141D9B001C8E51C0000ABBA0 /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 141D9AFF1C8E51C0000ABBA0 /* List.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142B44341E2839E7001DA6E9 /* DebugHeap.cpp */; };
 		142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B44351E2839E7001DA6E9 /* DebugHeap.h */; };
-		143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* StaticMutex.cpp */; };
-		143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* StaticMutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		143CB81C19022BC900B16A45 /* Mutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* Mutex.cpp */; };
+		143CB81D19022BC900B16A45 /* Mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* Mutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1440AFCB1A95261100837FAA /* Zone.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440AFCA1A95261100837FAA /* Zone.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1440AFCC1A9527AF00837FAA /* Zone.cpp */; };
 		1448C30018F3754600502839 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1448C2FF18F3754300502839 /* mbmalloc.cpp */; };
@@ -115,7 +115,6 @@
 		14DD78C718F48D7500950702 /* BAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E468189EEDE400546D68 /* BAssert.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C818F48D7500950702 /* FixedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D9DB4517F2447100EAAB79 /* FixedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78C918F48D7500950702 /* BInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 1413E460189DCE1E00546D68 /* BInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14DD78CA18F48D7500950702 /* Mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 144DCED617A649D90093B2F2 /* Mutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CB18F48D7500950702 /* PerProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 14446A0717A61FA400F9EA1D /* PerProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CC18F48D7500950702 /* PerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 144469FD17A61F1F00F9EA1D /* PerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CD18F48D7500950702 /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F6878179E3A4400D65598 /* Range.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -245,8 +244,8 @@
 		1421A87718EE462A00B4DD68 /* Algorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Algorithm.h; path = bmalloc/Algorithm.h; sourceTree = "<group>"; };
 		142B44341E2839E7001DA6E9 /* DebugHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugHeap.cpp; path = bmalloc/DebugHeap.cpp; sourceTree = "<group>"; };
 		142B44351E2839E7001DA6E9 /* DebugHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugHeap.h; path = bmalloc/DebugHeap.h; sourceTree = "<group>"; };
-		143CB81A19022BC900B16A45 /* StaticMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticMutex.cpp; path = bmalloc/StaticMutex.cpp; sourceTree = "<group>"; };
-		143CB81B19022BC900B16A45 /* StaticMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticMutex.h; path = bmalloc/StaticMutex.h; sourceTree = "<group>"; };
+		143CB81A19022BC900B16A45 /* Mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Mutex.cpp; path = bmalloc/Mutex.cpp; sourceTree = "<group>"; };
+		143CB81B19022BC900B16A45 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mutex.h; path = bmalloc/Mutex.h; sourceTree = "<group>"; };
 		143E29ED18CAE90500FE8A0F /* SmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallPage.h; path = bmalloc/SmallPage.h; sourceTree = "<group>"; };
 		1440AFCA1A95261100837FAA /* Zone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Zone.h; path = bmalloc/Zone.h; sourceTree = "<group>"; };
 		1440AFCC1A9527AF00837FAA /* Zone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Zone.cpp; path = bmalloc/Zone.cpp; sourceTree = "<group>"; };
@@ -259,7 +258,6 @@
 		144BE11E1CA346520099C8C0 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Object.h; path = bmalloc/Object.h; sourceTree = "<group>"; };
 		144C07F21C7B70260051BB6A /* LargeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LargeMap.cpp; path = bmalloc/LargeMap.cpp; sourceTree = "<group>"; };
 		144C07F31C7B70260051BB6A /* LargeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LargeMap.h; path = bmalloc/LargeMap.h; sourceTree = "<group>"; };
-		144DCED617A649D90093B2F2 /* Mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mutex.h; path = bmalloc/Mutex.h; sourceTree = "<group>"; };
 		144F7BFB18BFC517003537F3 /* VMHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VMHeap.cpp; path = bmalloc/VMHeap.cpp; sourceTree = "<group>"; };
 		144F7BFC18BFC517003537F3 /* VMHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VMHeap.h; path = bmalloc/VMHeap.h; sourceTree = "<group>"; };
 		1452478618BC757C00F80098 /* SmallLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallLine.h; path = bmalloc/SmallLine.h; sourceTree = "<group>"; };
@@ -406,23 +404,23 @@
 				1448C2FD18F3752B00502839 /* api */,
 				14D9DB4D17F2865C00EAAB79 /* cache */,
 				14B650C418F39F4800751968 /* Configurations */,
+				0F7EB7F91F95414C00F1ABCB /* Frameworks */,
 				14D9DB4E17F2866E00EAAB79 /* heap */,
 				147AAA9C18CE6010002201E4 /* heap: large */,
 				147AAA9A18CE5FD3002201E4 /* heap: small */,
 				0F7EB7FB1F95416900F1ABCB /* iso */,
-				0F7EB7F01F95285300F1ABCB /* test */,
 				145F6840179DC45F00D65598 /* Products */,
 				14D9DB4F17F2868900EAAB79 /* stdlib */,
-				0F7EB7F91F95414C00F1ABCB /* Frameworks */,
+				0F7EB7F01F95285300F1ABCB /* test */,
 			);
 			sourceTree = "<group>";
 		};
 		145F6840179DC45F00D65598 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				0F7EB7EF1F95285300F1ABCB /* testbmalloc */,
 				14F271BE18EA3963008C152F /* libbmalloc.a */,
 				14CC394418EA8743004AFE34 /* libmbmalloc.dylib */,
-				0F7EB7EF1F95285300F1ABCB /* testbmalloc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -505,6 +503,7 @@
 		14D9DB4F17F2868900EAAB79 /* stdlib */ = {
 			isa = PBXGroup;
 			children = (
+				4408F2961C9896C40012EC64 /* darwin */,
 				1421A87718EE462A00B4DD68 /* Algorithm.h */,
 				6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */,
 				6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */,
@@ -517,7 +516,6 @@
 				14C919C818FCC59F0028DB43 /* BPlatform.h */,
 				0F74B93D1F89713E00B935D3 /* CryptoRandom.cpp */,
 				0F74B93C1F89713E00B935D3 /* CryptoRandom.h */,
-				4408F2961C9896C40012EC64 /* darwin */,
 				14D9DB4517F2447100EAAB79 /* FixedVector.h */,
 				0FD557321F7EDB7B00B1F0A3 /* HeapKind.cpp */,
 				0F5BF1461F22A8B10029D91D /* HeapKind.h */,
@@ -525,15 +523,14 @@
 				4426E27E1C838EE0008EB042 /* Logging.cpp */,
 				4426E27F1C838EE0008EB042 /* Logging.h */,
 				14C8992A1CC485E70027A057 /* Map.h */,
-				144DCED617A649D90093B2F2 /* Mutex.h */,
-				0F26A7A42054830D0090A141 /* PerProcess.cpp */,
+				143CB81A19022BC900B16A45 /* Mutex.cpp */,
+				143CB81B19022BC900B16A45 /* Mutex.h */,
 				0F5BF1481F22A8D80029D91D /* PerHeapKind.h */,
+				0F26A7A42054830D0090A141 /* PerProcess.cpp */,
 				14446A0717A61FA400F9EA1D /* PerProcess.h */,
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
 				145F6878179E3A4400D65598 /* Range.h */,
 				148EFAE61D6B953B008E721E /* ScopeExit.h */,
-				143CB81A19022BC900B16A45 /* StaticMutex.cpp */,
-				143CB81B19022BC900B16A45 /* StaticMutex.h */,
 				1417F64F18B7280C0076FA3F /* Syscall.h */,
 				1479E21217A1A255006D4E9D /* Vector.h */,
 				1479E21417A1A63E006D4E9D /* VMAllocate.h */,
@@ -564,88 +561,87 @@
 			buildActionMask = 2147483647;
 			files = (
 				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,
+				0F7EB8341F9541B000F1ABCB /* AllIsoHeaps.h in Headers */,
+				0F7EB84F1F954D4E00F1ABCB /* AllIsoHeapsInlines.h in Headers */,
 				14DD789818F48D4A00950702 /* Allocator.h in Headers */,
-				0F5BF1531F22E1570029D91D /* Scavenger.h in Headers */,
-				0F7EB8291F9541B000F1ABCB /* FreeListInlines.h in Headers */,
-				0F7EB85A1F955A1100F1ABCB /* DeferredDecommitInlines.h in Headers */,
-				0F7EB8371F9541B000F1ABCB /* IsoDirectory.h in Headers */,
-				0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */,
 				6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */,
-				0F7EB8451F9541B000F1ABCB /* IsoHeapImpl.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
+				AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */,
+				0F5BF1731F23C5710029D91D /* BExport.h in Headers */,
+				14DD78C918F48D7500950702 /* BInline.h in Headers */,
+				0F7EB84C1F9541C700F1ABCB /* Bits.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
-				0F7EB8381F9541B000F1ABCB /* EligibilityResultInlines.h in Headers */,
+				0F7EB84D1F9541C700F1ABCB /* BMalloced.h in Headers */,
 				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
 				4426E2831C839547008EB042 /* BSoftLinking.h in Headers */,
-				0F7EB8461F9541B000F1ABCB /* IsoTLSInlines.h in Headers */,
-				0F7EB8421F9541B000F1ABCB /* IsoTLS.h in Headers */,
-				0F7EB84F1F954D4E00F1ABCB /* AllIsoHeapsInlines.h in Headers */,
 				14DD789C18F48D4A00950702 /* BumpAllocator.h in Headers */,
-				0F7EB8231F9541B000F1ABCB /* EligibilityResult.h in Headers */,
-				0F74B93E1F89713E00B935D3 /* CryptoRandom.h in Headers */,
 				140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */,
 				14DD789918F48D4A00950702 /* Cache.h in Headers */,
 				147DC6E31CA5B70B00724E8D /* Chunk.h in Headers */,
-				0F7EB82C1F9541B000F1ABCB /* IsoHeap.h in Headers */,
-				0F5BF1731F23C5710029D91D /* BExport.h in Headers */,
-				0F7EB83C1F9541B000F1ABCB /* IsoAllocator.h in Headers */,
-				0F7EB8431F9541B000F1ABCB /* IsoTLSAllocatorEntry.h in Headers */,
+				0F74B93E1F89713E00B935D3 /* CryptoRandom.h in Headers */,
 				14DD789A18F48D4A00950702 /* Deallocator.h in Headers */,
-				0F7EB8491F9541B000F1ABCB /* IsoDirectoryPage.h in Headers */,
-				0F7EB8281F9541B000F1ABCB /* IsoDirectoryInlines.h in Headers */,
-				0F7EB8251F9541B000F1ABCB /* DeferredTriggerInlines.h in Headers */,
 				142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */,
-				0F7EB84C1F9541C700F1ABCB /* Bits.h in Headers */,
+				0F7EB83D1F9541B000F1ABCB /* DeferredDecommit.h in Headers */,
+				0F7EB85A1F955A1100F1ABCB /* DeferredDecommitInlines.h in Headers */,
+				0F7EB8391F9541B000F1ABCB /* DeferredTrigger.h in Headers */,
+				0F7EB8251F9541B000F1ABCB /* DeferredTriggerInlines.h in Headers */,
+				0F7EB8231F9541B000F1ABCB /* EligibilityResult.h in Headers */,
+				0F7EB8381F9541B000F1ABCB /* EligibilityResultInlines.h in Headers */,
 				14895D921A3A319C0006235D /* Environment.h in Headers */,
 				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
+				0F7EB8441F9541B000F1ABCB /* FreeList.h in Headers */,
+				0F7EB8291F9541B000F1ABCB /* FreeListInlines.h in Headers */,
+				0F5BF14D1F22B0C30029D91D /* Gigacage.h in Headers */,
 				1400274918F89C1300115C97 /* Heap.h in Headers */,
-				0F7EB8481F9541B000F1ABCB /* IsoTLSAllocatorEntryInlines.h in Headers */,
-				0F7EB84D1F9541C700F1ABCB /* BMalloced.h in Headers */,
-				0F7EB82A1F9541B000F1ABCB /* IsoDirectoryPageInlines.h in Headers */,
-				0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */,
-				0F7EB82D1F9541B000F1ABCB /* IsoTLSEntry.h in Headers */,
-				14DD78C918F48D7500950702 /* BInline.h in Headers */,
+				0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */,
+				0F7EB83C1F9541B000F1ABCB /* IsoAllocator.h in Headers */,
+				0F7EB8261F9541B000F1ABCB /* IsoAllocatorInlines.h in Headers */,
+				0F7EB8411F9541B000F1ABCB /* IsoConfig.h in Headers */,
 				0F7EB8471F9541B000F1ABCB /* IsoDeallocator.h in Headers */,
+				0F7EB83A1F9541B000F1ABCB /* IsoDeallocatorInlines.h in Headers */,
+				0F7EB8371F9541B000F1ABCB /* IsoDirectory.h in Headers */,
+				0F7EB8281F9541B000F1ABCB /* IsoDirectoryInlines.h in Headers */,
+				0F7EB8491F9541B000F1ABCB /* IsoDirectoryPage.h in Headers */,
+				0F7EB82A1F9541B000F1ABCB /* IsoDirectoryPageInlines.h in Headers */,
+				0F7EB82C1F9541B000F1ABCB /* IsoHeap.h in Headers */,
+				0F7EB8451F9541B000F1ABCB /* IsoHeapImpl.h in Headers */,
 				0F7EB8241F9541B000F1ABCB /* IsoHeapImplInlines.h in Headers */,
-				795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */,
+				0F7EB8301F9541B000F1ABCB /* IsoHeapInlines.h in Headers */,
+				0F7EB82E1F9541B000F1ABCB /* IsoPage.h in Headers */,
+				0F7EB8311F9541B000F1ABCB /* IsoPageInlines.h in Headers */,
+				0F7EB82B1F9541B000F1ABCB /* IsoPageTrigger.h in Headers */,
+				0F7EB8421F9541B000F1ABCB /* IsoTLS.h in Headers */,
+				0F7EB8431F9541B000F1ABCB /* IsoTLSAllocatorEntry.h in Headers */,
+				0F7EB8481F9541B000F1ABCB /* IsoTLSAllocatorEntryInlines.h in Headers */,
+				0F7EB8331F9541B000F1ABCB /* IsoTLSDeallocatorEntry.h in Headers */,
+				0F7EB8271F9541B000F1ABCB /* IsoTLSDeallocatorEntryInlines.h in Headers */,
+				0F7EB82D1F9541B000F1ABCB /* IsoTLSEntry.h in Headers */,
+				0F7EB8351F9541B000F1ABCB /* IsoTLSEntryInlines.h in Headers */,
+				0F7EB8461F9541B000F1ABCB /* IsoTLSInlines.h in Headers */,
+				0F7EB8401F9541B000F1ABCB /* IsoTLSLayout.h in Headers */,
 				144C07F51C7B70260051BB6A /* LargeMap.h in Headers */,
 				14C8992D1CC578330027A057 /* LargeRange.h in Headers */,
 				140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */,
-				0F7EB8331F9541B000F1ABCB /* IsoTLSDeallocatorEntry.h in Headers */,
 				141D9B001C8E51C0000ABBA0 /* List.h in Headers */,
 				4426E2811C838EE0008EB042 /* Logging.h in Headers */,
-				0F7EB82E1F9541B000F1ABCB /* IsoPage.h in Headers */,
-				0F7EB83D1F9541B000F1ABCB /* DeferredDecommit.h in Headers */,
-				0F7EB8351F9541B000F1ABCB /* IsoTLSEntryInlines.h in Headers */,
-				0F7EB8301F9541B000F1ABCB /* IsoHeapInlines.h in Headers */,
 				14C8992B1CC485E70027A057 /* Map.h in Headers */,
-				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
+				143CB81D19022BC900B16A45 /* Mutex.h in Headers */,
 				144BE11F1CA346520099C8C0 /* Object.h in Headers */,
 				14DD789318F48D0F00950702 /* ObjectType.h in Headers */,
+				0F5BF1491F22A8D80029D91D /* PerHeapKind.h in Headers */,
 				14DD78CB18F48D7500950702 /* PerProcess.h in Headers */,
-				0F7EB8261F9541B000F1ABCB /* IsoAllocatorInlines.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
+				795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */,
+				AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */,
 				14DD78CD18F48D7500950702 /* Range.h in Headers */,
-				0F7EB8441F9541B000F1ABCB /* FreeList.h in Headers */,
+				0F5BF1531F22E1570029D91D /* Scavenger.h in Headers */,
 				148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */,
-				0F7EB8341F9541B000F1ABCB /* AllIsoHeaps.h in Headers */,
-				0F7EB8401F9541B000F1ABCB /* IsoTLSLayout.h in Headers */,
-				0F7EB8391F9541B000F1ABCB /* DeferredTrigger.h in Headers */,
 				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
-				0F7EB8411F9541B000F1ABCB /* IsoConfig.h in Headers */,
-				AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */,
-				0F7EB8311F9541B000F1ABCB /* IsoPageInlines.h in Headers */,
 				14DD78BC18F48D6B00950702 /* SmallLine.h in Headers */,
-				0F7EB82B1F9541B000F1ABCB /* IsoPageTrigger.h in Headers */,
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
-				143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */,
-				0F7EB8271F9541B000F1ABCB /* IsoTLSDeallocatorEntryInlines.h in Headers */,
 				14DD78CE18F48D7500950702 /* Syscall.h in Headers */,
-				0F5BF14D1F22B0C30029D91D /* Gigacage.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
 				14DD78D018F48D7500950702 /* VMAllocate.h in Headers */,
-				0F7EB83A1F9541B000F1ABCB /* IsoDeallocatorInlines.h in Headers */,
-				AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */,
 				1400274A18F89C2300115C97 /* VMHeap.h in Headers */,
 				1440AFCB1A95261100837FAA /* Zone.h in Headers */,
 			);
@@ -767,32 +763,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */,
-				0F7EB8361F9541B000F1ABCB /* IsoTLS.cpp in Sources */,
-				0FD557331F7EDB7B00B1F0A3 /* HeapKind.cpp in Sources */,
-				0F7EB83B1F9541B000F1ABCB /* IsoHeapImpl.cpp in Sources */,
-				0F5549EF1FB54704007FF75A /* IsoPage.cpp in Sources */,
+				0F7EB82F1F9541B000F1ABCB /* AllIsoHeaps.cpp in Sources */,
 				14F271C318EA3978008C152F /* Allocator.cpp in Sources */,
 				6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */,
+				0F5167741FAD685C008236A8 /* bmalloc.cpp in Sources */,
 				14F271C418EA397B008C152F /* Cache.cpp in Sources */,
-				0F26A7A5205483130090A141 /* PerProcess.cpp in Sources */,
+				0F74B93F1F89713E00B935D3 /* CryptoRandom.cpp in Sources */,
 				14F271C518EA397E008C152F /* Deallocator.cpp in Sources */,
 				142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */,
 				14895D911A3A319C0006235D /* Environment.cpp in Sources */,
-				0F7EB83F1F9541B000F1ABCB /* IsoTLSLayout.cpp in Sources */,
-				AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */,
-				14F271C718EA3990008C152F /* Heap.cpp in Sources */,
-				0F7EB8321F9541B000F1ABCB /* IsoTLSEntry.cpp in Sources */,
-				0F74B93F1F89713E00B935D3 /* CryptoRandom.cpp in Sources */,
-				0F5BF14F1F22DEAF0029D91D /* Gigacage.cpp in Sources */,
-				144C07F41C7B70260051BB6A /* LargeMap.cpp in Sources */,
 				0F7EB83E1F9541B000F1ABCB /* FreeList.cpp in Sources */,
+				0F5BF14F1F22DEAF0029D91D /* Gigacage.cpp in Sources */,
+				14F271C718EA3990008C152F /* Heap.cpp in Sources */,
+				0FD557331F7EDB7B00B1F0A3 /* HeapKind.cpp in Sources */,
+				0F7EB83B1F9541B000F1ABCB /* IsoHeapImpl.cpp in Sources */,
+				0F5549EF1FB54704007FF75A /* IsoPage.cpp in Sources */,
+				0F7EB8361F9541B000F1ABCB /* IsoTLS.cpp in Sources */,
+				0F7EB8321F9541B000F1ABCB /* IsoTLSEntry.cpp in Sources */,
+				0F7EB83F1F9541B000F1ABCB /* IsoTLSLayout.cpp in Sources */,
+				144C07F41C7B70260051BB6A /* LargeMap.cpp in Sources */,
 				4426E2801C838EE0008EB042 /* Logging.cpp in Sources */,
-				0F7EB82F1F9541B000F1ABCB /* AllIsoHeaps.cpp in Sources */,
+				143CB81C19022BC900B16A45 /* Mutex.cpp in Sources */,
 				14F271C818EA3990008C152F /* ObjectType.cpp in Sources */,
-				143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */,
+				0F26A7A5205483130090A141 /* PerProcess.cpp in Sources */,
+				AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */,
+				0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */,
 				14F271C918EA3990008C152F /* VMHeap.cpp in Sources */,
-				0F5167741FAD685C008236A8 /* bmalloc.cpp in Sources */,
 				1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

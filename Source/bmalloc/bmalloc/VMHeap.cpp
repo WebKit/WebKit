@@ -29,7 +29,7 @@
 
 namespace bmalloc {
 
-VMHeap::VMHeap(std::lock_guard<StaticMutex>&)
+VMHeap::VMHeap(std::lock_guard<Mutex>&)
 {
 }
 

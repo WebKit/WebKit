@@ -52,7 +52,7 @@ void* tryLargeZeroedMemalignVirtual(size_t alignment, size_t size, HeapKind kind
 
     void* result;
     {
-        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        std::lock_guard<Mutex> lock(Heap::mutex());
         result = heap.tryAllocateLarge(lock, alignment, size);
     }
 
@@ -65,7 +65,7 @@ void freeLargeVirtual(void* object, HeapKind kind)
 {
     kind = mapToActiveHeapKind(kind);
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
-    std::lock_guard<StaticMutex> lock(Heap::mutex());
+    std::lock_guard<Mutex> lock(Heap::mutex());
     heap.deallocateLarge(lock, object);
 }
 
@@ -79,14 +79,14 @@ void scavenge()
 bool isEnabled(HeapKind kind)
 {
     kind = mapToActiveHeapKind(kind);
-    std::unique_lock<StaticMutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     return !PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).debugHeap();
 }
 
 #if BOS(DARWIN)
 void setScavengerThreadQOSClass(qos_class_t overrideClass)
 {
-    std::unique_lock<StaticMutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     PerProcess<Scavenger>::get()->setScavengerThreadQOSClass(overrideClass);
 }
 #endif

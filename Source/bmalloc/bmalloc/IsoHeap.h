@@ -26,7 +26,7 @@
 #pragma once
 
 #include "IsoConfig.h"
-#include "StaticMutex.h"
+#include "Mutex.h"
 
 namespace bmalloc {
 
@@ -60,7 +60,7 @@ struct IsoHeap {
     
     IsoHeapImpl<Config>& impl();
     
-    StaticMutex m_initializationLock;
+    Mutex m_initializationLock;
     unsigned m_allocatorOffsetPlusOne;
     unsigned m_deallocatorOffsetPlusOne;
     IsoHeapImpl<Config>* m_impl;

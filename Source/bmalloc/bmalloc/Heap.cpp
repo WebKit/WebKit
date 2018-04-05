@@ -41,7 +41,7 @@
 
 namespace bmalloc {
 
-Heap::Heap(HeapKind kind, std::lock_guard<StaticMutex>&)
+Heap::Heap(HeapKind kind, std::lock_guard<Mutex>&)
     : m_kind(kind)
     , m_vmPageSizePhysical(vmPageSizePhysical())
     , m_debugHeap(nullptr)
@@ -138,7 +138,7 @@ void Heap::initializePageMetadata()
         m_pageClasses[i] = (computePageSize(i) - 1) / smallPageSize;
 }
 
-size_t Heap::freeableMemory(std::lock_guard<StaticMutex>&)
+size_t Heap::freeableMemory(std::lock_guard<Mutex>&)
 {
     size_t result = 0;
     for (auto& list : m_freePages) {
@@ -162,7 +162,7 @@ size_t Heap::footprint()
     return m_footprint;
 }
 
-void Heap::scavenge(std::lock_guard<StaticMutex>&)
+void Heap::scavenge(std::lock_guard<Mutex>&)
 {
     for (auto& list : m_freePages) {
         for (auto* chunk : list) {
@@ -197,7 +197,7 @@ void Heap::scavenge(std::lock_guard<StaticMutex>&)
     }
 }
 
-void Heap::deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache& lineCache)
+void Heap::deallocateLineCache(std::lock_guard<Mutex>&, LineCache& lineCache)
 {
     for (auto& list : lineCache) {
         while (!list.isEmpty()) {
@@ -207,7 +207,7 @@ void Heap::deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache& lineCac
     }
 }
 
-void Heap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageClass)
+void Heap::allocateSmallChunk(std::lock_guard<Mutex>& lock, size_t pageClass)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
     
@@ -256,7 +256,7 @@ void Heap::deallocateSmallChunk(Chunk* chunk, size_t pageClass)
     m_largeFree.add(LargeRange(chunk, size, startPhysicalSize, totalPhysicalSize));
 }
 
-SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass, LineCache& lineCache)
+SmallPage* Heap::allocateSmallPage(std::lock_guard<Mutex>& lock, size_t sizeClass, LineCache& lineCache)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
@@ -300,7 +300,7 @@ SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t si
     return page;
 }
 
-void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, Object object, LineCache& lineCache)
+void Heap::deallocateSmallLine(std::lock_guard<Mutex>& lock, Object object, LineCache& lineCache)
 {
     BASSERT(!object.line()->refCount(lock));
     SmallPage* page = object.page();
@@ -339,7 +339,7 @@ void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, Object object
 }
 
 void Heap::allocateSmallBumpRangesByMetadata(
-    std::lock_guard<StaticMutex>& lock, size_t sizeClass,
+    std::lock_guard<Mutex>& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache)
 {
@@ -403,7 +403,7 @@ void Heap::allocateSmallBumpRangesByMetadata(
 }
 
 void Heap::allocateSmallBumpRangesByObject(
-    std::lock_guard<StaticMutex>& lock, size_t sizeClass,
+    std::lock_guard<Mutex>& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache)
 {
@@ -459,7 +459,7 @@ void Heap::allocateSmallBumpRangesByObject(
     }
 }
 
-LargeRange Heap::splitAndAllocate(std::lock_guard<StaticMutex>&, LargeRange& range, size_t alignment, size_t size)
+LargeRange Heap::splitAndAllocate(std::lock_guard<Mutex>&, LargeRange& range, size_t alignment, size_t size)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
@@ -503,7 +503,7 @@ LargeRange Heap::splitAndAllocate(std::lock_guard<StaticMutex>&, LargeRange& ran
     return range;
 }
 
-void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size)
+void* Heap::tryAllocateLarge(std::lock_guard<Mutex>& lock, size_t alignment, size_t size)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
@@ -541,24 +541,24 @@ void* Heap::tryAllocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignmen
     return splitAndAllocate(lock, range, alignment, size).begin();
 }
 
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size)
+void* Heap::allocateLarge(std::lock_guard<Mutex>& lock, size_t alignment, size_t size)
 {
     void* result = tryAllocateLarge(lock, alignment, size);
     RELEASE_BASSERT(result);
     return result;
 }
 
-bool Heap::isLarge(std::lock_guard<StaticMutex>&, void* object)
+bool Heap::isLarge(std::lock_guard<Mutex>&, void* object)
 {
     return m_objectTypes.get(Object(object).chunk()) == ObjectType::Large;
 }
 
-size_t Heap::largeSize(std::lock_guard<StaticMutex>&, void* object)
+size_t Heap::largeSize(std::lock_guard<Mutex>&, void* object)
 {
     return m_largeAllocated.get(object);
 }
 
-void Heap::shrinkLarge(std::lock_guard<StaticMutex>& lock, const Range& object, size_t newSize)
+void Heap::shrinkLarge(std::lock_guard<Mutex>& lock, const Range& object, size_t newSize)
 {
     BASSERT(object.size() > newSize);
 
@@ -569,7 +569,7 @@ void Heap::shrinkLarge(std::lock_guard<StaticMutex>& lock, const Range& object, 
     m_scavenger->schedule(size);
 }
 
-void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object)
+void Heap::deallocateLarge(std::lock_guard<Mutex>&, void* object)
 {
     if (m_debugHeap)
         return m_debugHeap->freeLarge(object);
@@ -581,11 +581,11 @@ void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object)
 
 void Heap::externalCommit(void* ptr, size_t size)
 {
-    std::lock_guard<StaticMutex> lock(Heap::mutex());
+    std::lock_guard<Mutex> lock(Heap::mutex());
     externalCommit(lock, ptr, size);
 }
 
-void Heap::externalCommit(std::lock_guard<StaticMutex>&, void* ptr, size_t size)
+void Heap::externalCommit(std::lock_guard<Mutex>&, void* ptr, size_t size)
 {
     BUNUSED_PARAM(ptr);
 
@@ -597,11 +597,11 @@ void Heap::externalCommit(std::lock_guard<StaticMutex>&, void* ptr, size_t size)
 
 void Heap::externalDecommit(void* ptr, size_t size)
 {
-    std::lock_guard<StaticMutex> lock(Heap::mutex());
+    std::lock_guard<Mutex> lock(Heap::mutex());
     externalDecommit(lock, ptr, size);
 }
 
-void Heap::externalDecommit(std::lock_guard<StaticMutex>&, void* ptr, size_t size)
+void Heap::externalDecommit(std::lock_guard<Mutex>&, void* ptr, size_t size)
 {
     BUNUSED_PARAM(ptr);
 

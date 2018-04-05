@@ -26,9 +26,8 @@
 #pragma once
 
 #include "BInline.h"
+#include "Mutex.h"
 #include "Sizes.h"
-#include "StaticMutex.h"
-#include <mutex>
 
 namespace bmalloc {
 
@@ -47,7 +46,7 @@ namespace bmalloc {
 // x = object->m_field; // OK
 // if (globalFlag) { ... } // Undefined behavior.
 //
-// std::lock_guard<StaticMutex> lock(PerProcess<Object>::mutex());
+// std::lock_guard<Mutex> lock(PerProcess<Object>::mutex());
 // Object* object = PerProcess<Object>::get(lock);
 // if (globalFlag) { ... } // OK.
 
@@ -56,7 +55,7 @@ struct PerProcessData {
     void* memory;
     size_t size;
     size_t alignment;
-    StaticMutex mutex;
+    Mutex mutex;
     bool isInitialized;
     PerProcessData* next;
 };
@@ -87,7 +86,7 @@ public:
         return s_object.load(std::memory_order_relaxed);
     }
     
-    static StaticMutex& mutex()
+    static Mutex& mutex()
     {
         if (!s_data)
             coalesce();
@@ -106,7 +105,7 @@ private:
     
     BNO_INLINE static T* getSlowCase()
     {
-        std::lock_guard<StaticMutex> lock(mutex());
+        std::lock_guard<Mutex> lock(mutex());
         if (!s_object.load()) {
             if (s_data->isInitialized)
                 s_object.store(static_cast<T*>(s_data->memory));

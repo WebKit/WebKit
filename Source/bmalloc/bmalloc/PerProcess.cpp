@@ -32,7 +32,7 @@ namespace bmalloc {
 static constexpr unsigned tableSize = 100;
 static constexpr bool verbose = false;
 
-static StaticMutex s_mutex;
+static Mutex s_mutex;
 
 static char* s_bumpBase;
 static size_t s_bumpOffset;
@@ -59,7 +59,7 @@ static void* allocate(size_t size, size_t alignment)
 
 PerProcessData* getPerProcessData(unsigned hash, const char* disambiguator, size_t size, size_t alignment)
 {
-    std::lock_guard<StaticMutex> lock(s_mutex);
+    std::lock_guard<Mutex> lock(s_mutex);
 
     PerProcessData*& bucket = s_table[hash % tableSize];
     

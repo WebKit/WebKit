@@ -172,7 +172,7 @@ template<typename Type>
 void IsoTLS::ensureHeap(api::IsoHeap<Type>& handle)
 {
     if (!handle.isInitialized()) {
-        std::lock_guard<StaticMutex> locker(handle.m_initializationLock);
+        std::lock_guard<Mutex> locker(handle.m_initializationLock);
         if (!handle.isInitialized()) {
             auto* heap = new IsoHeapImpl<typename api::IsoHeap<Type>::Config>();
             std::atomic_thread_fence(std::memory_order_seq_cst);

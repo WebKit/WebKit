@@ -36,7 +36,7 @@ namespace bmalloc {
     
 #if BOS(DARWIN)
 
-DebugHeap::DebugHeap(std::lock_guard<StaticMutex>&)
+DebugHeap::DebugHeap(std::lock_guard<Mutex>&)
     : m_zone(malloc_create_zone(0, 0))
     , m_pageSize(vmPageSize())
 {
@@ -74,7 +74,7 @@ void DebugHeap::free(void* object)
 
 #else
 
-DebugHeap::DebugHeap(std::lock_guard<StaticMutex>&)
+DebugHeap::DebugHeap(std::lock_guard<Mutex>&)
 {
 }
 

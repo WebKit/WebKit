@@ -32,7 +32,7 @@ namespace bmalloc {
 
 class AllIsoHeaps {
 public:
-    AllIsoHeaps(const std::lock_guard<StaticMutex>&);
+    AllIsoHeaps(const std::lock_guard<Mutex>&);
     
     void add(IsoHeapImplBase*);
     IsoHeapImplBase* head();

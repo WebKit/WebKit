@@ -54,36 +54,36 @@ class Scavenger;
 
 class Heap {
 public:
-    Heap(HeapKind, std::lock_guard<StaticMutex>&);
+    Heap(HeapKind, std::lock_guard<Mutex>&);
     
-    static StaticMutex& mutex() { return PerProcess<PerHeapKind<Heap>>::mutex(); }
+    static Mutex& mutex() { return PerProcess<PerHeapKind<Heap>>::mutex(); }
     
     HeapKind kind() const { return m_kind; }
     
     DebugHeap* debugHeap() { return m_debugHeap; }
 
-    void allocateSmallBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass,
+    void allocateSmallBumpRanges(std::lock_guard<Mutex>&, size_t sizeClass,
         BumpAllocator&, BumpRangeCache&, LineCache&);
-    void derefSmallLine(std::lock_guard<StaticMutex>&, Object, LineCache&);
-    void deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache&);
+    void derefSmallLine(std::lock_guard<Mutex>&, Object, LineCache&);
+    void deallocateLineCache(std::lock_guard<Mutex>&, LineCache&);
 
-    void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
-    void* tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
-    void deallocateLarge(std::lock_guard<StaticMutex>&, void*);
+    void* allocateLarge(std::lock_guard<Mutex>&, size_t alignment, size_t);
+    void* tryAllocateLarge(std::lock_guard<Mutex>&, size_t alignment, size_t);
+    void deallocateLarge(std::lock_guard<Mutex>&, void*);
 
-    bool isLarge(std::lock_guard<StaticMutex>&, void*);
-    size_t largeSize(std::lock_guard<StaticMutex>&, void*);
-    void shrinkLarge(std::lock_guard<StaticMutex>&, const Range&, size_t);
+    bool isLarge(std::lock_guard<Mutex>&, void*);
+    size_t largeSize(std::lock_guard<Mutex>&, void*);
+    void shrinkLarge(std::lock_guard<Mutex>&, const Range&, size_t);
 
-    void scavenge(std::lock_guard<StaticMutex>&);
+    void scavenge(std::lock_guard<Mutex>&);
 
-    size_t freeableMemory(std::lock_guard<StaticMutex>&);
+    size_t freeableMemory(std::lock_guard<Mutex>&);
     size_t footprint();
 
     void externalDecommit(void* ptr, size_t);
-    void externalDecommit(std::lock_guard<StaticMutex>&, void* ptr, size_t);
+    void externalDecommit(std::lock_guard<Mutex>&, void* ptr, size_t);
     void externalCommit(void* ptr, size_t);
-    void externalCommit(std::lock_guard<StaticMutex>&, void* ptr, size_t);
+    void externalCommit(std::lock_guard<Mutex>&, void* ptr, size_t);
 
 private:
     struct LargeObjectHash {
@@ -103,22 +103,22 @@ private:
     void initializeLineMetadata();
     void initializePageMetadata();
 
-    void allocateSmallBumpRangesByMetadata(std::lock_guard<StaticMutex>&,
+    void allocateSmallBumpRangesByMetadata(std::lock_guard<Mutex>&,
         size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&);
-    void allocateSmallBumpRangesByObject(std::lock_guard<StaticMutex>&,
+    void allocateSmallBumpRangesByObject(std::lock_guard<Mutex>&,
         size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&);
 
-    SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t sizeClass, LineCache&);
-    void deallocateSmallLine(std::lock_guard<StaticMutex>&, Object, LineCache&);
+    SmallPage* allocateSmallPage(std::lock_guard<Mutex>&, size_t sizeClass, LineCache&);
+    void deallocateSmallLine(std::lock_guard<Mutex>&, Object, LineCache&);
 
-    void allocateSmallChunk(std::lock_guard<StaticMutex>&, size_t pageClass);
+    void allocateSmallChunk(std::lock_guard<Mutex>&, size_t pageClass);
     void deallocateSmallChunk(Chunk*, size_t pageClass);
 
     void mergeLarge(BeginTag*&, EndTag*&, Range&);
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
 
-    LargeRange splitAndAllocate(std::lock_guard<StaticMutex>&, LargeRange&, size_t alignment, size_t);
+    LargeRange splitAndAllocate(std::lock_guard<Mutex>&, LargeRange&, size_t alignment, size_t);
 
     HeapKind m_kind;
     
@@ -146,7 +146,7 @@ private:
 };
 
 inline void Heap::allocateSmallBumpRanges(
-    std::lock_guard<StaticMutex>& lock, size_t sizeClass,
+    std::lock_guard<Mutex>& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache)
 {
@@ -155,7 +155,7 @@ inline void Heap::allocateSmallBumpRanges(
     return allocateSmallBumpRangesByObject(lock, sizeClass, allocator, rangeCache, lineCache);
 }
 
-inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, Object object, LineCache& lineCache)
+inline void Heap::derefSmallLine(std::lock_guard<Mutex>& lock, Object object, LineCache& lineCache)
 {
     if (!object.line()->deref(lock))
         return;

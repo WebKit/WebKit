@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "Mutex.h"
+
 #include "ScopeExit.h"
-#include "StaticMutex.h"
 #include <thread>
 
 namespace bmalloc {
 
-void StaticMutex::lockSlowCase()
+void Mutex::lockSlowCase()
 {
     // The longest critical section in bmalloc is much shorter than the
     // time it takes to make a system call to yield to the OS scheduler.
     // So, we try again a lot before we yield.
     static const size_t aLot = 256;
     
-    if (!m_isSpinning.test_and_set()) {
-        auto clear = makeScopeExit([&] { m_isSpinning.clear(); });
+    if (!m_isSpinning.exchange(true)) {
+        auto clear = makeScopeExit([&] { m_isSpinning.store(false); });
 
         for (size_t i = 0; i < aLot; ++i) {
             if (try_lock())

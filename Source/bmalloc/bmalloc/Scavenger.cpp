@@ -41,7 +41,7 @@ namespace bmalloc {
 
 static constexpr bool verbose = false;
 
-Scavenger::Scavenger(std::lock_guard<StaticMutex>&)
+Scavenger::Scavenger(std::lock_guard<Mutex>&)
 {
 #if BOS(DARWIN)
     auto queue = dispatch_queue_create("WebKit Malloc Memory Pressure Handler", DISPATCH_QUEUE_SERIAL);
@@ -152,7 +152,7 @@ void Scavenger::scavenge()
     }
 
     {
-        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        std::lock_guard<Mutex> lock(Heap::mutex());
         for (unsigned i = numHeaps; i--;) {
             if (!isActiveHeapKind(static_cast<HeapKind>(i)))
                 continue;
@@ -182,7 +182,7 @@ size_t Scavenger::freeableMemory()
 {
     size_t result = 0;
     {
-        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        std::lock_guard<Mutex> lock(Heap::mutex());
         for (unsigned i = numHeaps; i--;) {
             if (!isActiveHeapKind(static_cast<HeapKind>(i)))
                 continue;

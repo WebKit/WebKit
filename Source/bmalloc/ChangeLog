@@ -1,3 +1,123 @@
+2018-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        bmalloc StaticMutex's constructor should be constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=180600
+
+        Reviewed by Mark Lam.
+
+        StaticMutex and Mutex can be unified. This patch changes std::atomic_flag in StaticMutex
+        to std::atomic<bool> to add constexpr constructor to StaticMutex. Then, StaticMutex can
+        be initialized in static storage without calling any static initializers.
+        And we also rename StaticMutex to Mutex simply.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/AllIsoHeaps.cpp:
+        (bmalloc::AllIsoHeaps::AllIsoHeaps):
+        * bmalloc/AllIsoHeaps.h:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::tryAllocate):
+        (bmalloc::Allocator::allocateImpl):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::allocateLarge):
+        * bmalloc/CryptoRandom.cpp:
+        (bmalloc::ARC4RandomNumberGenerator::ARC4RandomNumberGenerator):
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::lineCache):
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::DebugHeap):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/Environment.cpp:
+        (bmalloc::Environment::Environment):
+        * bmalloc/Environment.h:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::addPrimitiveDisableCallback):
+        (Gigacage::removePrimitiveDisableCallback):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::freeableMemory):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::deallocateLineCache):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        (bmalloc::Heap::allocateSmallBumpRangesByObject):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::isLarge):
+        (bmalloc::Heap::largeSize):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::externalCommit):
+        (bmalloc::Heap::externalDecommit):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::mutex):
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        (bmalloc::Heap::derefSmallLine):
+        * bmalloc/IsoDeallocator.h:
+        * bmalloc/IsoHeap.h:
+        * bmalloc/IsoTLSDeallocatorEntry.h:
+        * bmalloc/IsoTLSDeallocatorEntryInlines.h:
+        (bmalloc::IsoTLSDeallocatorEntry<Config>::IsoTLSDeallocatorEntry):
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::ensureHeap):
+        * bmalloc/IsoTLSLayout.cpp:
+        (bmalloc::IsoTLSLayout::IsoTLSLayout):
+        (bmalloc::IsoTLSLayout::add):
+        * bmalloc/IsoTLSLayout.h:
+        * bmalloc/Mutex.cpp: Renamed from Source/bmalloc/bmalloc/StaticMutex.cpp.
+        (bmalloc::Mutex::lockSlowCase):
+        * bmalloc/Mutex.h:
+        (bmalloc::sleep):
+        (bmalloc::waitUntilFalse):
+        (bmalloc::Mutex::try_lock):
+        (bmalloc::Mutex::lock):
+        (bmalloc::Mutex::unlock):
+        (bmalloc::Mutex::Mutex): Deleted.
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/PerProcess.cpp:
+        (bmalloc::getPerProcessData):
+        * bmalloc/PerProcess.h:
+        (bmalloc::PerProcess::mutex):
+        (bmalloc::PerProcess::getSlowCase):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::freeableMemory):
+        * bmalloc/Scavenger.h:
+        * bmalloc/SmallLine.h:
+        (bmalloc::SmallLine::refCount):
+        (bmalloc::SmallLine::ref):
+        (bmalloc::SmallLine::deref):
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::refCount):
+        (bmalloc::SmallPage::hasFreeLines const):
+        (bmalloc::SmallPage::setHasFreeLines):
+        (bmalloc::SmallPage::ref):
+        (bmalloc::SmallPage::deref):
+        * bmalloc/StaticMutex.h: Removed.
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::VMHeap):
+        * bmalloc/VMHeap.h:
+        * bmalloc/Zone.cpp:
+        (bmalloc::Zone::Zone):
+        * bmalloc/Zone.h:
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::isEnabled):
+        (bmalloc::api::setScavengerThreadQOSClass):
+        * bmalloc/bmalloc.h:
+
 2018-04-04  Konstantin Tokarev  <annulen@yandex.ru>
 
         Enable Gigacage unconditionally when building JSCOnly on macOS (build fix)

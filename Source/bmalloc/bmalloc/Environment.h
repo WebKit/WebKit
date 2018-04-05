@@ -26,13 +26,13 @@
 #ifndef Environment_h
 #define Environment_h
 
-#include "StaticMutex.h"
+#include "Mutex.h"
 
 namespace bmalloc {
 
 class Environment {
 public:
-    Environment(std::lock_guard<StaticMutex>&);
+    Environment(std::lock_guard<Mutex>&);
     
     bool isDebugHeapEnabled() { return m_isDebugHeapEnabled; }
 

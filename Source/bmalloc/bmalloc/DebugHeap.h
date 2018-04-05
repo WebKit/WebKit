@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "StaticMutex.h"
+#include "Mutex.h"
 #include <mutex>
 #include <unordered_map>
 
@@ -37,7 +37,7 @@ namespace bmalloc {
     
 class DebugHeap {
 public:
-    DebugHeap(std::lock_guard<StaticMutex>&);
+    DebugHeap(std::lock_guard<Mutex>&);
     
     void* malloc(size_t);
     void* memalign(size_t alignment, size_t, bool crashOnFailure);

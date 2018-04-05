@@ -46,7 +46,7 @@ typedef enum { Sync, Async } ScavengeMode;
 
 class VMHeap {
 public:
-    VMHeap(std::lock_guard<StaticMutex>&);
+    VMHeap(std::lock_guard<Mutex>&);
     
     LargeRange tryAllocateLargeChunk(size_t alignment, size_t);
 };

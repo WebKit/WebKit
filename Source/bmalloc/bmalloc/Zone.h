@@ -27,8 +27,8 @@
 #define Zone_h
 
 #include "FixedVector.h"
+#include "Mutex.h"
 #include "Range.h"
-#include "StaticMutex.h"
 #include <malloc/malloc.h>
 #include <mutex>
 
@@ -41,7 +41,7 @@ public:
     // Enough capacity to track a 64GB heap, so probably enough for anything.
     static const size_t capacity = 2048;
 
-    Zone(std::lock_guard<StaticMutex>&);
+    Zone(std::lock_guard<Mutex>&);
     Zone(task_t, memory_reader_t, vm_address_t);
 
     void addRange(Range);

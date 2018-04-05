@@ -24,10 +24,10 @@ set(bmalloc_SOURCES
     bmalloc/IsoTLSLayout.cpp
     bmalloc/LargeMap.cpp
     bmalloc/Logging.cpp
+    bmalloc/Mutex.cpp
     bmalloc/ObjectType.cpp
     bmalloc/PerProcess.cpp
     bmalloc/Scavenger.cpp
-    bmalloc/StaticMutex.cpp
     bmalloc/VMHeap.cpp
     bmalloc/bmalloc.cpp
     bmalloc/mbmalloc.cpp

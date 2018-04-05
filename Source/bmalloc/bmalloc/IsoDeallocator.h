@@ -27,10 +27,9 @@
 
 #include "FixedVector.h"
 #include "IsoPage.h"
+#include "Mutex.h"
 
 namespace bmalloc {
-
-class Mutex;
 
 template<typename Config>
 class IsoDeallocator {

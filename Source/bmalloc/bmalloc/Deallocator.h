@@ -35,7 +35,7 @@ namespace bmalloc {
 
 class DebugHeap;
 class Heap;
-class StaticMutex;
+class Mutex;
 
 // Per-cache object deallocator.
 
@@ -47,9 +47,9 @@ public:
     void deallocate(void*);
     void scavenge();
     
-    void processObjectLog(std::lock_guard<StaticMutex>&);
+    void processObjectLog(std::lock_guard<Mutex>&);
     
-    LineCache& lineCache(std::lock_guard<StaticMutex>&) { return m_lineCache; }
+    LineCache& lineCache(std::lock_guard<Mutex>&) { return m_lineCache; }
 
 private:
     bool deallocateFastCase(void*);

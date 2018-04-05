@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +24,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Mutex_h
-#define Mutex_h
+#pragma once
 
-#include "StaticMutex.h"
+#include "BAssert.h"
+#include <atomic>
+#include <mutex>
+#include <thread>
 
-// A fast replacement for std::mutex, for use in standard storage.
+// A fast replacement for std::mutex.
 
 namespace bmalloc {
 
-class Mutex : public StaticMutex {
+class Mutex {
 public:
-    Mutex();
+    Mutex() = default;
+
+    void lock();
+    bool try_lock();
+    void unlock();
+
+private:
+    BEXPORT void lockSlowCase();
+
+    std::atomic<bool> m_flag { false };
+    std::atomic<bool> m_isSpinning { false };
 };
 
-inline Mutex::Mutex()
+static inline void sleep(
+    std::unique_lock<Mutex>& lock, std::chrono::milliseconds duration)
 {
-    // StaticMutex requires explicit initialization when used in non-static storage.
-    init();
+    if (duration == std::chrono::milliseconds(0))
+        return;
+    
+    lock.unlock();
+    std::this_thread::sleep_for(duration);
+    lock.lock();
+}
+
+static inline void waitUntilFalse(
+    std::unique_lock<Mutex>& lock, std::chrono::milliseconds sleepDuration,
+    bool& condition)
+{
+    while (condition) {
+        condition = false;
+        sleep(lock, sleepDuration);
+    }
+}
+
+inline bool Mutex::try_lock()
+{
+    return !m_flag.exchange(true, std::memory_order_acquire);
+}
+
+inline void Mutex::lock()
+{
+    if (!try_lock())
+        lockSlowCase();
+}
+
+inline void Mutex::unlock()
+{
+    m_flag.store(false, std::memory_order_release);
 }
 
 } // namespace bmalloc
-
-#endif // Mutex_h

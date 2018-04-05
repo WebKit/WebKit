@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "StaticMutex.h"
+#include "Mutex.h"
 #include <mutex>
 
 namespace bmalloc {
@@ -34,7 +34,7 @@ class IsoTLSEntry;
 
 class IsoTLSLayout {
 public:
-    IsoTLSLayout(const std::lock_guard<StaticMutex>&);
+    IsoTLSLayout(const std::lock_guard<Mutex>&);
     
     void add(IsoTLSEntry*);
     

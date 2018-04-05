@@ -38,7 +38,7 @@ ObjectType objectType(HeapKind kind, void* object)
         if (!object)
             return ObjectType::Small;
 
-        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        std::lock_guard<Mutex> lock(Heap::mutex());
         if (PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).isLarge(lock, object))
             return ObjectType::Large;
     }

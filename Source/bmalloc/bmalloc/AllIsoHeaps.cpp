@@ -27,7 +27,7 @@
 
 namespace bmalloc {
 
-AllIsoHeaps::AllIsoHeaps(const std::lock_guard<StaticMutex>&)
+AllIsoHeaps::AllIsoHeaps(const std::lock_guard<Mutex>&)
 {
 }
 

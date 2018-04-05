@@ -27,7 +27,7 @@
 
 #include "IsoDeallocator.h"
 #include "IsoTLSEntry.h"
-#include "StaticMutex.h"
+#include "Mutex.h"
 #include <mutex>
 
 namespace bmalloc {
@@ -35,7 +35,7 @@ namespace bmalloc {
 template<typename Config>
 class IsoTLSDeallocatorEntry : public DefaultIsoTLSEntry<IsoDeallocator<Config>> {
 public:
-    IsoTLSDeallocatorEntry(const std::lock_guard<StaticMutex>&);
+    IsoTLSDeallocatorEntry(const std::lock_guard<Mutex>&);
     ~IsoTLSDeallocatorEntry();
     
     // This is used as the heap lock, since heaps in the same size class share the same deallocator
