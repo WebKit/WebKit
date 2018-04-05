@@ -26,6 +26,8 @@
 #import "config.h"
 #import "UserAgent.h"
 
+#import "SystemVersion.h"
+
 namespace WebCore {
 
 String systemMarketingVersionForUserAgentString()
@@ -33,17 +35,7 @@ String systemMarketingVersionForUserAgentString()
     // Use underscores instead of dots because when we first added the Mac OS X version to the user agent string
     // we were concerned about old DHTML libraries interpreting "4." as Netscape 4. That's no longer a concern for us
     // but we're sticking with the underscores for compatibility with the format used by older versions of Safari.
-#if PLATFORM(MAC)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
-    return ASCIILiteral("10_13_4");
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    return ASCIILiteral("10_12_6");
-#else
-    return ASCIILiteral("10_11_6");
-#endif
-#else
-    return ASCIILiteral("11_3");
-#endif
+    return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
 }
 
 String userAgentBundleVersion()

@@ -1,5 +1,23 @@
 2018-04-05  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228334. rdar://problem/38712636
+
+    2018-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+            [macOS, iOS] Expose OS marketing version in UserAgent
+            https://bugs.webkit.org/show_bug.cgi?id=182629
+            <rdar://problem/37370975>
+
+            Reviewed by Daniel Bates.
+
+            Revert back to dynamically reading the operating system marketing version
+            rather than using a hard-coded version.
+
+            * page/cocoa/UserAgent.mm:
+            (WebCore::systemMarketingVersionForUserAgentString):
+
+2018-04-05  Jason Marcell  <jmarcell@apple.com>
+
         Apply patch. rdar://problem/39191858
 
     fix-httponly-cookie
