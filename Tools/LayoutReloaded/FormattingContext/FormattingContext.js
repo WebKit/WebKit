@@ -148,5 +148,4 @@ class FormattingContext {
         }
         return outOfFlowBoxes;
     }
-
 }

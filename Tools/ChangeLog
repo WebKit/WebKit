@@ -1,3 +1,24 @@
+2018-04-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Collect floating boxes in inline formatting context and layout them first.
+        https://bugs.webkit.org/show_bug.cgi?id=184329
+
+        Reviewed by Antti Koivisto.
+
+        Let's do this for now. There might be some cases where this violates layout.
+
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype._outOfFlowDescendants):
+        (FormattingContext):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleFloatingBoxes):
+        (InlineFormattingContext.prototype._handleFloatingBox):
+        (InlineFormattingContext.prototype._floatingBoxes):
+        (InlineFormattingContext):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/multiple-left-floats-on-line-simple.html: Added.
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         WebRTC data channel only applications require capture permissions for direct connections

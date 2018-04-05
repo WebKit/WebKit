@@ -37,7 +37,10 @@ class InlineFormattingContext extends FormattingContext {
         // This is a post-order tree traversal layout.
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
         this.m_line = this._createNewLine();
-        this._addToLayoutQueue(this.formattingRoot().firstChild());
+        // Collect floating boxes and layout them first.
+        this._handleFloatingBoxes();
+        //
+        this._addToLayoutQueue(this.formattingRoot().firstInFlowChild());
         while (this._descendantNeedsLayout()) {
             // Travers down on the descendants until we find a leaf node.
             while (true) {
@@ -48,18 +51,16 @@ class InlineFormattingContext extends FormattingContext {
                 }
                 if (!layoutBox.isContainer() || !layoutBox.hasChild())
                     break;
-                this._addToLayoutQueue(layoutBox.firstChild());
+                this._addToLayoutQueue(layoutBox.firstInFlowChild());
             }
             while (this._descendantNeedsLayout()) {
                 let layoutBox = this._nextInLayoutQueue();
                 if (layoutBox instanceof Layout.InlineBox)
                     this._handleInlineBox(layoutBox);
-                else if (layoutBox.isFloatingPositioned())
-                    this._handleFloatingBox(layoutBox);
                 // We are done with laying out this box.
                 this._removeFromLayoutQueue(layoutBox);
-                if (layoutBox.nextSibling()) {
-                    this._addToLayoutQueue(layoutBox.nextSibling());
+                if (layoutBox.nextInFlowSibling()) {
+                    this._addToLayoutQueue(layoutBox.nextInFlowSibling());
                     break;
                 }
             }
@@ -88,7 +89,17 @@ class InlineFormattingContext extends FormattingContext {
         }
     }
 
+    _handleFloatingBoxes() {
+        let floatingBoxes = this._floatingBoxes();
+        for (let floatingBox of floatingBoxes) {
+            this._addToLayoutQueue(floatingBox);
+            this._handleFloatingBox(floatingBox);
+            this._removeFromLayoutQueue(floatingBox);
+        }
+    }
+
     _handleFloatingBox(floatingBox) {
+        this.layoutState().layout(floatingBox);
         this._computeFloatingWidth(floatingBox);
         this._computeFloatingHeight(floatingBox);
         this.floatingContext().computePosition(floatingBox);
@@ -141,5 +152,33 @@ class InlineFormattingContext extends FormattingContext {
             return root.contentBox().left();
         return verticalPosition - rootLeft;
      }
+
+    _floatingBoxes() {
+        ASSERT(this.formattingRoot().firstChild());
+        // FIXME: This is highly inefficient but will do for now.
+        let floatingBoxes = new Array();
+        let stack = new Array();
+        stack.push(this.formattingRoot().firstChild());
+        while (stack.length) {
+            while (true) {
+                let box = stack[stack.length - 1];
+                if (box.isFloatingPositioned())
+                    floatingBoxes.push(box);
+                if (box.establishesFormattingContext())
+                    break;
+                if (!box.isContainer() || !box.hasChild())
+                    break;
+                stack.push(box.firstChild());
+            }
+            while (stack.length) {
+                let box = stack.pop();
+                if (box.nextSibling()) {
+                    stack.push(box.nextSibling());
+                    break;
+                }
+            }
+        }
+        return floatingBoxes;
+    }
 }
 
