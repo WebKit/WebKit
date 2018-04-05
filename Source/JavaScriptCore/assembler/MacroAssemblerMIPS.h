@@ -2002,7 +2002,7 @@ public:
                 nop
                 b       Overflow
                 nop
-                nop
+                b       No_overflow
                 nop
                 nop
                 nop
@@ -2010,10 +2010,10 @@ public:
             */
             move(dest, dataTempRegister);
             m_assembler.xorInsn(cmpTempRegister, dataTempRegister, src);
-            m_assembler.bltz(cmpTempRegister, 12);
+            m_assembler.bltz(cmpTempRegister, 10);
             m_assembler.addu(dest, dataTempRegister, src);
             m_assembler.xorInsn(cmpTempRegister, dest, dataTempRegister);
-            m_assembler.bgez(cmpTempRegister, 9);
+            m_assembler.bgez(cmpTempRegister, 7);
             m_assembler.nop();
             return jump();
         }
@@ -2055,7 +2055,7 @@ public:
                 nop
                 b       Overflow
                 nop
-                nop
+                b       No_overflow
                 nop
                 nop
                 nop
@@ -2063,10 +2063,10 @@ public:
             */
             move(op1, dataTempRegister);
             m_assembler.xorInsn(cmpTempRegister, dataTempRegister, op2);
-            m_assembler.bltz(cmpTempRegister, 12);
+            m_assembler.bltz(cmpTempRegister, 10);
             m_assembler.addu(dest, dataTempRegister, op2);
             m_assembler.xorInsn(cmpTempRegister, dest, dataTempRegister);
-            m_assembler.bgez(cmpTempRegister, 9);
+            m_assembler.bgez(cmpTempRegister, 7);
             m_assembler.nop();
             return jump();
         }
@@ -2111,14 +2111,14 @@ public:
             ASSERT((cond == Overflow) || (cond == Signed) || (cond == PositiveOrZero) || (cond == Zero) || (cond == NonZero));
             if (cond == Overflow) {
                 if (imm.m_value >= 0) {
-                    m_assembler.bltz(src, 11);
+                    m_assembler.bltz(src, 9);
                     m_assembler.addiu(dest, src, imm.m_value);
-                    m_assembler.bgez(dest, 9);
+                    m_assembler.bgez(dest, 7);
                     m_assembler.nop();
                 } else {
-                    m_assembler.bgez(src, 11);
+                    m_assembler.bgez(src, 9);
                     m_assembler.addiu(dest, src, imm.m_value);
-                    m_assembler.bltz(dest, 9);
+                    m_assembler.bltz(dest, 7);
                     m_assembler.nop();
                 }
                 return jump();
@@ -2162,7 +2162,7 @@ public:
                     nop
                     b       Overflow
                     nop
-                    nop
+                    b       No_overflow
                     nop
                     nop
                     nop
@@ -2173,9 +2173,9 @@ public:
                 m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
                 m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
                 store32(dataTempRegister, dest.m_ptr);
-                m_assembler.bltz(cmpTempRegister, 11);
+                m_assembler.bltz(cmpTempRegister, 9);
                 m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
-                m_assembler.bgez(cmpTempRegister, 9);
+                m_assembler.bgez(cmpTempRegister, 7);
                 m_assembler.nop();
             } else {
                 uintptr_t adr = reinterpret_cast<uintptr_t>(dest.m_ptr);
@@ -2184,25 +2184,25 @@ public:
                 if (imm.m_value >= 0 && imm.m_value  <= 32767) {
                     move(dataTempRegister, cmpTempRegister);
                     m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
-                    m_assembler.bltz(cmpTempRegister, 11);
+                    m_assembler.bltz(cmpTempRegister, 9);
                     m_assembler.sw(dataTempRegister, addrTempRegister, adr & 0xffff);
-                    m_assembler.bgez(dataTempRegister, 9);
+                    m_assembler.bgez(dataTempRegister, 7);
                     m_assembler.nop();
                 } else if (imm.m_value >= -32768 && imm.m_value < 0) {
                     move(dataTempRegister, cmpTempRegister);
                     m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
-                    m_assembler.bgez(cmpTempRegister, 11);
+                    m_assembler.bgez(cmpTempRegister, 9);
                     m_assembler.sw(dataTempRegister, addrTempRegister, adr & 0xffff);
-                    m_assembler.bltz(cmpTempRegister, 9);
+                    m_assembler.bltz(cmpTempRegister, 7);
                     m_assembler.nop();
                 } else {
                     move(imm, immTempRegister);
                     m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
                     m_assembler.addu(dataTempRegister, dataTempRegister, immTempRegister);
-                    m_assembler.bltz(cmpTempRegister, 12);
+                    m_assembler.bltz(cmpTempRegister, 10);
                     m_assembler.sw(dataTempRegister, addrTempRegister, adr & 0xffff);
                     m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
-                    m_assembler.bgez(cmpTempRegister, 9);
+                    m_assembler.bgez(cmpTempRegister, 7);
                     m_assembler.nop();
                 }
             }
@@ -2251,7 +2251,7 @@ public:
                 nop
                 b       Overflow
                 nop
-                nop
+                b       No_overflow
                 nop
                 nop
                 nop
@@ -2261,7 +2261,7 @@ public:
             m_assembler.mfhi(dataTempRegister);
             m_assembler.mflo(dest);
             m_assembler.sra(addrTempRegister, dest, 31);
-            m_assembler.beq(dataTempRegister, addrTempRegister, 9);
+            m_assembler.beq(dataTempRegister, addrTempRegister, 7);
             m_assembler.nop();
             return jump();
         }
@@ -2296,7 +2296,7 @@ public:
                 nop
                 b       Overflow
                 nop
-                nop
+                b       No_overflow
                 nop
                 nop
                 nop
@@ -2306,7 +2306,7 @@ public:
             m_assembler.mfhi(dataTempRegister);
             m_assembler.mflo(dest);
             m_assembler.sra(addrTempRegister, dest, 31);
-            m_assembler.beq(dataTempRegister, addrTempRegister, 9);
+            m_assembler.beq(dataTempRegister, addrTempRegister, 7);
             m_assembler.nop();
             return jump();
         }
@@ -2348,7 +2348,7 @@ public:
                 nop
                 b       Overflow
                 nop
-                nop
+                b       No_overflow
                 nop
                 nop
                 nop
@@ -2356,10 +2356,10 @@ public:
             */
             move(dest, dataTempRegister);
             m_assembler.xorInsn(cmpTempRegister, dataTempRegister, src);
-            m_assembler.bgez(cmpTempRegister, 12);
+            m_assembler.bgez(cmpTempRegister, 10);
             m_assembler.subu(dest, dataTempRegister, src);
             m_assembler.xorInsn(cmpTempRegister, dest, dataTempRegister);
-            m_assembler.bgez(cmpTempRegister, 9);
+            m_assembler.bgez(cmpTempRegister, 7);
             m_assembler.nop();
             return jump();
         }
@@ -2407,7 +2407,7 @@ public:
                 nop
                 b       Overflow
                 nop
-                nop
+                b       No_overflow
                 nop
                 nop
                 nop
@@ -2415,10 +2415,10 @@ public:
             */
             move(op1, dataTempRegister);
             m_assembler.xorInsn(cmpTempRegister, dataTempRegister, op2);
-            m_assembler.bgez(cmpTempRegister, 12);
+            m_assembler.bgez(cmpTempRegister, 10);
             m_assembler.subu(dest, dataTempRegister, op2);
             m_assembler.xorInsn(cmpTempRegister, dest, dataTempRegister);
-            m_assembler.bgez(cmpTempRegister, 9);
+            m_assembler.bgez(cmpTempRegister, 7);
             m_assembler.nop();
             return jump();
         }
@@ -2451,7 +2451,7 @@ public:
                 nop
                 b       Overflow
                 nop
-                nop
+                b       No_overflow
                 nop
                 nop
                 nop
@@ -2678,6 +2678,8 @@ public:
     {
         m_fixedWidth = true;
         dataLabel = moveWithPatch(initialRightValue, immTempRegister);
+        m_assembler.nop();
+        m_assembler.nop();
         Jump temp = branch32(cond, left, immTempRegister);
         m_fixedWidth = false;
         return temp;
@@ -2688,6 +2690,8 @@ public:
         m_fixedWidth = true;
         load32(left, dataTempRegister);
         dataLabel = moveWithPatch(initialRightValue, immTempRegister);
+        m_assembler.nop();
+        m_assembler.nop();
         Jump temp = branch32(cond, dataTempRegister, immTempRegister);
         m_fixedWidth = false;
         return temp;
@@ -3203,8 +3207,6 @@ public:
 
     Jump branchEqual(RegisterID rs, RegisterID rt)
     {
-        m_assembler.nop();
-        m_assembler.nop();
         m_assembler.appendJump();
         m_assembler.beq(rs, rt, 0);
         m_assembler.nop();
@@ -3214,8 +3216,6 @@ public:
 
     Jump branchNotEqual(RegisterID rs, RegisterID rt)
     {
-        m_assembler.nop();
-        m_assembler.nop();
         m_assembler.appendJump();
         m_assembler.bne(rs, rt, 0);
         m_assembler.nop();

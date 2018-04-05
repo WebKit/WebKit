@@ -944,8 +944,7 @@ public:
         insn++;
         ASSERT((*insn & 0xfc000000) == 0x34000000); // ori
         *insn = (*insn & 0xffff0000) | (to & 0xffff);
-        insn--;
-        cacheFlush(insn, 2 * sizeof(MIPSWord));
+        cacheFlush(from, 2 * sizeof(MIPSWord));
     }
 
     static int32_t readInt32(void* from)
@@ -1018,7 +1017,7 @@ public:
             *insn = 0x00000000;
             codeSize += sizeof(MIPSWord);
         }
-        cacheFlush(insn, codeSize);
+        cacheFlush(instructionStart, codeSize);
     }
 
     static void replaceWithJump(void* instructionStart, void* to)
