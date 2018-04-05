@@ -256,15 +256,18 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
         if (m_controlsManagerContextId == contextId)
             return;
 
-        if (m_controlsManagerContextId)
-            removeClientForContext(m_controlsManagerContextId);
+        auto previousContextId = m_controlsManagerContextId;
         m_controlsManagerContextId = contextId;
+        if (previousContextId)
+            removeClientForContext(previousContextId);
     } else {
-        auto addResult = m_mediaElements.ensure(&mediaElement, [&] { return nextContextId(); });
-        auto contextId = addResult.iterator->value;
-        if (m_controlsManagerContextId)
-            removeClientForContext(m_controlsManagerContextId);
+        auto contextId = m_mediaElements.ensure(&mediaElement, [&] { return nextContextId(); }).iterator->value;
+
+        auto previousContextId = m_controlsManagerContextId;
         m_controlsManagerContextId = contextId;
+        if (previousContextId)
+            removeClientForContext(previousContextId);
+
         ensureModel(contextId).setMediaElement(&mediaElement);
     }
 

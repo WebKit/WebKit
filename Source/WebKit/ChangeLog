@@ -1,5 +1,18 @@
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
+        webrtc/video-update-often.html is flakily crashing on iOS simulator Debug
+        https://bugs.webkit.org/show_bug.cgi?id=184022
+
+        Reviewed by Jer Noble.
+
+        Remove client context once the new context identifier is set.
+        Covered by test no longer crashing locally.
+
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::setUpPlaybackControlsManager):
+
+2018-04-04  Youenn Fablet  <youenn@apple.com>
+
         WebRTC data channel only applications require capture permissions for direct connections
         https://bugs.webkit.org/show_bug.cgi?id=174500
         <rdar://problem/34134281>
