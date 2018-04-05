@@ -19,7 +19,8 @@ class ChartPaneBase extends ComponentBase {
         this._mainChartStatus = null;
         this._commitLogViewer = null;
         this._tasksForAnnotations = null;
-        this._renderedAnnotations = false;
+        this._detectedAnnotations = null;
+        this._renderAnnotationsLazily = new LazilyEvaluatedFunction(this._renderAnnotations.bind(this));
     }
 
     configure(platformId, metricId)
@@ -51,7 +52,7 @@ class ChartPaneBase extends ComponentBase {
         this._mainChart.listenToAction('indicatorChange', this._indicatorDidChange.bind(this));
         this._mainChart.listenToAction('selectionChange', this._mainSelectionDidChange.bind(this));
         this._mainChart.listenToAction('zoom', this._mainSelectionDidZoom.bind(this));
-        this._mainChart.listenToAction('annotationClick', this._openAnalysisTask.bind(this));
+        this._mainChart.listenToAction('annotationClick', this._didClickAnnotation.bind(this));
         this.renderReplace(this.content().querySelector('.chart-pane-main'), this._mainChart);
 
         this._revisionRange = new ChartRevisionRange(this._mainChart);
@@ -97,7 +98,6 @@ class ChartPaneBase extends ComponentBase {
         var self = this;
         AnalysisTask.fetchByPlatformAndMetric(this._platformId, this._metricId, noCache).then(function (tasks) {
             self._tasksForAnnotations = tasks;
-            self._renderedAnnotations = false;
             self.enqueueToRender();
         });
     }
@@ -105,7 +105,7 @@ class ChartPaneBase extends ComponentBase {
     // FIXME: We should have a mechanism to get notified whenever the set of annotations change.
     didUpdateAnnotations()
     {
-        this._renderedAnnotations = false;
+        this._tasksForAnnotations = [...this._tasksForAnnotations];
         this.enqueueToRender();
     }
 
@@ -169,6 +169,18 @@ class ChartPaneBase extends ComponentBase {
         const range = this._revisionRange.rangeForRepository(this._openRepository);
         this._commitLogViewer.view(this._openRepository, range.from, range.to);
         this.enqueueToRender();
+    }
+
+    _didClickAnnotation(annotation)
+    {
+        if (annotation.task)
+            this._openAnalysisTask(annotation);
+        else {
+            const newSelection = [annotation.startTime, annotation.endTime];
+            this._mainChart.setSelection(newSelection);
+            this._overviewChart.setSelection(newSelection, this);
+            this.enqueueToRender();
+        }
     }
 
     _openAnalysisTask(annotation)
@@ -246,15 +258,16 @@ class ChartPaneBase extends ComponentBase {
         if (this._overviewChart)
             this._overviewChart.enqueueToRender();
 
-        if (this._mainChart)
+        if (this._mainChart) {
             this._mainChart.enqueueToRender();
+            this._renderAnnotationsLazily.evaluate(this._tasksForAnnotations, this._detectedAnnotations);
+        }
 
         if (this._errorMessage) {
             this.renderReplace(this.content().querySelector('.chart-pane-main'), this._errorMessage);
             return;
         }
 
-        this._renderAnnotations();
 
         if (this._mainChartStatus)
             this._mainChartStatus.enqueueToRender();
@@ -268,37 +281,20 @@ class ChartPaneBase extends ComponentBase {
         Instrumentation.endMeasuringTime('ChartPane', 'render');
     }
 
-    _renderAnnotations()
+    _renderAnnotations(taskForAnnotations, detectedAnnotations)
     {
-        if (!this._tasksForAnnotations || this._renderedAnnotations)
-            return;
-        this._renderedAnnotations = true;
-
-        var annotations = this._tasksForAnnotations.map(function (task) {
-            var fillStyle = '#fc6';
-            switch (task.changeType()) {
-            case 'inconclusive':
-                fillStyle = '#fcc';
-                break;
-            case 'progression':
-                fillStyle = '#39f';
-                break;
-            case 'regression':
-                fillStyle = '#c60';
-                break;
-            case 'unchanged':
-                fillStyle = '#ccc';
-                break;
-            }
-
+        let annotations = (taskForAnnotations || []).map((task) => {
             return {
-                task: task,
+                task,
+                fillStyle: ChartStyles.annotationFillStyleForTask(task),
                 startTime: task.startTime(),
                 endTime: task.endTime(),
-                label: task.label(),
-                fillStyle: fillStyle,
+                label: task.label()
             };
         });
+
+        annotations = annotations.concat(detectedAnnotations || []);
+
         this._mainChart.setAnnotations(annotations);
     }
 

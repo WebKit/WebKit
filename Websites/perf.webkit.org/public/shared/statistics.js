@@ -39,6 +39,10 @@ var Statistics = new (function () {
         return supportedProbabilities
     }
 
+    this.supportedOneSideTTestProbabilities = function () {
+        return Object.keys(tDistributionByOneSidedProbability);
+    }
+
     // Computes the delta d s.t. (mean - d, mean + d) is the confidence interval with the specified probability in O(1).
     this.confidenceIntervalDelta = function (probability, numberOfSamples, sum, squareSum) {
         var oneSidedProbability = twoSidedToOneSidedProbability(probability);
@@ -105,6 +109,42 @@ var Statistics = new (function () {
             significantlyDifferent: t > minT,
         };
     }
+
+    this.findRangesForChangeDetectionsWithWelchsTTest = function (values, segmentations, oneSidedPossibility) {
+        if (!values.length)
+            return [];
+
+        const selectedRanges = [];
+        const twoSidedFromOneSidedPossibility = 2 * oneSidedPossibility - 1;
+
+        for (let i = 1; i + 2 < segmentations.length; i += 2) {
+            let found = false;
+            const previousMean = segmentations[i].value;
+            const currentMean = segmentations[i + 1].value;
+            console.assert(currentMean != previousMean);
+            const currentChangePoint = segmentations[i].seriesIndex;
+            const start = segmentations[i - 1].seriesIndex;
+            const end = segmentations[i + 2].seriesIndex;
+
+            for (let leftEdge = currentChangePoint - 2, rightEdge = currentChangePoint + 2; leftEdge >= start && rightEdge <= end; leftEdge--, rightEdge++) {
+                const result = this.computeWelchsT(values, leftEdge, currentChangePoint - leftEdge, values, currentChangePoint, rightEdge - currentChangePoint, twoSidedFromOneSidedPossibility);
+                if (result.significantlyDifferent) {
+                    selectedRanges.push({
+                        startIndex: leftEdge,
+                        endIndex: rightEdge - 1,
+                        segmentationStartValue: previousMean,
+                        segmentationEndValue: currentMean
+                    });
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && Statistics.debuggingTestingRangeNomination)
+                console.log('Failed to find a testing range at', currentChangePoint, 'changing from', previousMean, 'to', currentMean);
+        }
+
+        return selectedRanges;
+    };
 
     function sampleMeanAndVarianceForValues(values, startIndex, length) {
         var sum = 0;

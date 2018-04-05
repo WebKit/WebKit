@@ -800,7 +800,7 @@ describe('TimeSeriesChart', () => {
         it('should render annotations', () => {
             const context = new BrowsingContext();
             return ChartTest.importChartScripts(context).then(() => {
-                const options = {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 7, barSpacing: 2}};
+                const options = {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 7, barSpacing: 2, fillStyle: '#ccc'}};
                 const chartWithoutAnnotations = ChartTest.createChartWithSampleCluster(context, null, options);
                 const chartWithAnnotations = ChartTest.createChartWithSampleCluster(context, null, options);
 
@@ -818,7 +818,6 @@ describe('TimeSeriesChart', () => {
                         startTime: ChartTest.sampleCluster.startTime + diff / 4,
                         endTime: ChartTest.sampleCluster.startTime + diff / 2,
                         label: 'hello, world',
-                        fillStyle: 'rgb(0, 0, 255)',
                     }]);
 
                     canvasWithAnnotations = chartWithAnnotations.content().querySelector('canvas');

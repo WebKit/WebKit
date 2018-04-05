@@ -751,7 +751,7 @@ class AnalysisTaskPage extends PageWithHeading {
             newChangeType = null;
 
         const updateRendering = () => {
-            this._chartPane.didUpdateAnnotations();
+            this.part('chart-pane').didUpdateAnnotations();
             this.enqueueToRender();
         };
         return this._task.updateChangeType(newChangeType).then(updateRendering, (error) => {

@@ -144,15 +144,12 @@ class TestGroup extends LabeledObject {
         }
 
         if (beforeValues.length && afterValues.length) {
-            var diff = afterMean - beforeMean;
-            var smallerIsBetter = metric.isSmallerBetter();
-            var changeType = diff < 0 == smallerIsBetter ? 'better' : 'worse';
-            var changeLabel = Math.abs(diff / beforeMean * 100).toFixed(2) + '% ' + changeType;
+            const summary = metric.labelForDifference(beforeMean, afterMean, 'better', 'worse');
+            result.changeType = summary.changeType;
+            result.changeLabel = summary.changeLabel;
             var isSignificant = Statistics.testWelchsT(beforeValues, afterValues);
             var significanceLabel = isSignificant ? 'significant' : 'insignificant';
 
-            result.changeType = changeType;
-            result.label = changeLabel;
             if (hasCompleted)
                 result.status = isSignificant ? result.changeType : 'unchanged';
             result.fullLabel = `${result.label} (statistically ${significanceLabel})`;

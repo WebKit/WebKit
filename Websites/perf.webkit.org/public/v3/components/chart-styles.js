@@ -152,8 +152,26 @@ class ChartStyles {
             textBackground: '#fff',
             minWidth: 3,
             barHeight: 7,
-            barSpacing: 2,
+            barSpacing: 2
         };
         return options;
+    }
+
+    static annotationFillStyleForTask(task) {
+        if (!task)
+            return '#888';
+
+        switch (task.changeType()) {
+            case 'inconclusive':
+                return '#fcc';
+            case 'progression':
+                return '#39f';
+            case 'regression':
+                return '#c60';
+            case 'unchanged':
+                return '#ccc';
+        }
+        return '#fc6';
+
     }
 }

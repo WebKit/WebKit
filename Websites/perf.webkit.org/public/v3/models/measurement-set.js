@@ -22,6 +22,7 @@ class MeasurementSet {
     }
 
     platformId() { return this._platformId; }
+    metricId() { return this._metricId; }
 
     static findSet(platformId, metricId, lastModified)
     {
@@ -225,8 +226,8 @@ class MeasurementSet {
             var segmentationSeries = [];
             var addSegment = function (startingPoint, endingPoint) {
                 var value = Statistics.mean(timeSeries.valuesBetweenRange(startingPoint.seriesIndex, endingPoint.seriesIndex));
-                segmentationSeries.push({value: value, time: startingPoint.time, interval: function () { return null; }});
-                segmentationSeries.push({value: value, time: endingPoint.time, interval: function () { return null; }});
+                segmentationSeries.push({value: value, time: startingPoint.time, seriesIndex: startingPoint.seriesIndex, interval: function () { return null; }});
+                segmentationSeries.push({value: value, time: endingPoint.time, seriesIndex: endingPoint.seriesIndex, interval: function () { return null; }});
             };
 
             var startingIndex = 0;

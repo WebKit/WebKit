@@ -494,7 +494,7 @@ describe('InteractiveTimeSeriesChart', () => {
         const context = new BrowsingContext();
         return ChartTest.importChartScripts(context).then(() => {
             const chart = ChartTest.createInteractiveChartWithSampleCluster(context, null,
-                {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 10, barSpacing: 1}});
+                {annotations: { textStyle: '#000', textBackground: '#fff', minWidth: 3, barHeight: 10, barSpacing: 1, fillStyle: '#ccc'}});
 
             chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
             chart.fetchMeasurementSets();
@@ -505,8 +505,7 @@ describe('InteractiveTimeSeriesChart', () => {
                 startTime: ChartTest.sampleCluster.startTime + diff / 2,
                 endTime: ChartTest.sampleCluster.endTime - diff / 4,
                 label: 'hello, world',
-                fillStyle: 'rgb(0, 0, 255)',
-            }]
+            }];
             chart.setAnnotations(annotations);
 
             const annotationClickCalls = [];

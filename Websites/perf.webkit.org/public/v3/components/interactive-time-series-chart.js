@@ -341,7 +341,7 @@ class InteractiveTimeSeriesChart extends TimeSeriesChart {
         if (!this._annotations)
             return null;
 
-        for (var item of this._annotations) {
+        for (const item of this._annotations) {
             if (item.x <= cursorLocation.x && cursorLocation.x <= item.x + item.width
                 && item.y <= cursorLocation.y && cursorLocation.y <= item.y + item.height)
                 return item;

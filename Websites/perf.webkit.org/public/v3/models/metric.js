@@ -85,6 +85,15 @@ class Metric extends LabeledObject {
         return unit != 'fps' && unit != '/s' && unit != 'pt';
     }
 
+    labelForDifference(beforeValue, afterValue, progressionTypeName, regressionTypeName)
+    {
+        const diff = afterValue - beforeValue;
+        const changeType = diff < 0 == this.isSmallerBetter() ? progressionTypeName : regressionTypeName;
+        const relativeChange = diff / beforeValue * 100;
+        const changeLabel = Math.abs(relativeChange).toFixed(2) + '% ' + changeType;
+        return {changeType, relativeChange, changeLabel};
+    }
+
     makeFormatter(sigFig, alwaysShowSign) { return Metric.makeFormatter(this.unit(), sigFig, alwaysShowSign); }
 
     static makeFormatter(unit, sigFig = 2, alwaysShowSign = false)

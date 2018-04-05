@@ -388,4 +388,96 @@ describe('Statistics', function () {
             assert.deepEqual(Statistics.segmentTimeSeriesByMaximizingSchwarzCriterion(values), [ 0, 6, 16, 26, 37 ]);
         });
     });
+
+    describe('findRangesForChangeDetectionsWithWelchsTTest', () => {
+        it('should return an empty array if the value is empty list', () => {
+            assert.deepEqual(Statistics.findRangesForChangeDetectionsWithWelchsTTest([], [], 0.975), []);
+        });
+
+        it('should return an empty array if segmentation is empty list', () => {
+            assert.deepEqual(Statistics.findRangesForChangeDetectionsWithWelchsTTest([1,2,3], [], 0.975), []);
+        });
+
+        it('should return the range if computeWelchsT shows a significant change', () => {
+            const values = [
+                747.30337423744,
+                731.47392585276,
+                743.66763513161,
+                738.02055323487,
+                738.25426340842,
+                742.38680046471,
+                733.13921703284,
+                739.22069966147,
+                735.69295749633,
+                743.01705472504,
+                745.45778145306,
+                731.04841157169,
+                729.4372674973,
+                735.4497416527,
+                739.0230668644,
+                730.91782989909,
+                722.18725411279,
+                731.96223451728,
+                730.04119216192,
+                730.78087646284,
+                729.63155210365,
+                730.17585200878,
+                733.93766054706,
+                740.74920717197,
+                752.14718023647,
+                764.49990164847,
+                766.36100828473,
+                756.2291883252,
+                750.14522451097,
+                749.57595092266,
+                748.03624881866,
+                769.41522176386,
+                744.04660430456,
+                751.17927808265,
+                753.29996854062,
+                757.01813756936,
+                746.62413820741,
+                742.64420062736,
+                758.12726352772,
+                778.2278439089,
+                775.11818554541,
+                775.11818554541];
+            const segmentation = [{
+                    seriesIndex: 0,
+                    time: 1505176030671,
+                    value: 736.5366704896555,
+                    x: 370.4571789404566,
+                    y: 185.52613334520248,
+                },
+                {
+                    seriesIndex: 18,
+                    time: 1515074391534,
+                    value: 736.5366704896555,
+                    x: 919.4183852714947,
+                    y: 185.52613334520248
+                },
+                {
+                    seriesIndex: 18,
+                    time: 1515074391534,
+                    value: 750.3483428383142,
+                    x: 919.4183852714947,
+                    y: 177.9710953409673,
+                },
+                {
+                    seriesIndex: 41,
+                    time: 1553851695869,
+                    value: 750.3483428383142,
+                    x: 3070.000290764446,
+                    y: 177.9710953409673,
+                }];
+            assert.deepEqual(Statistics.findRangesForChangeDetectionsWithWelchsTTest(values, segmentation, 0.975), [
+                {
+                  "endIndex": 29,
+                  "segmentationEndValue": 750.3483428383142,
+                  "segmentationStartValue": 736.5366704896555,
+                  "startIndex": 6
+                }
+            ]);
+        })
+    });
 });

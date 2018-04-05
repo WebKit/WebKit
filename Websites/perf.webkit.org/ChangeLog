@@ -1,3 +1,44 @@
+2018-03-29  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Added UI to show potential regressions in chart with t-testing against segmentations.
+        https://bugs.webkit.org/show_bug.cgi?id=184131
+
+        Reviewed by Ryosuke Niwa.
+
+        Added UI in the chart-pane so that user can use new option in trendline which not only
+        shows the segmentation, but also t-test against potential changes indicated by segmentation.
+
+        Fix a bug in AnalysisTaskPage that chart is not updated when change type of task changes.
+
+        * browser-tests/interactive-time-series-chart-tests.js: Fix a unit tests.
+        * browser-tests/time-series-chart-tests.js: Fix a unit tests.
+        * public/shared/statistics.js: Added a function to t-test certain range based on segmentation results.
+        (Statistics.supportedOneSideTTestProbabilities):
+        (Statistics.findRangesForChangeDetectionsWithWelchsTTest): The argument `segmentations`, every 2 items in the list defines 
+        segmentation, that is why the index incremental is 2 in this funcion.
+        * public/v3/components/chart-pane-base.js: Will select the range if user clicks on a suggested annotation.
+        (ChartPaneBase.prototype.configure):
+        (ChartPaneBase.prototype._didClickAnnotation):
+        * public/v3/components/chart-styles.js:
+        (ChartStyles.annotationFillStyleForTask): Added 'annotationFillStyleForTask' to determine the fillStyle for annotation based on change type of a analysis task.
+        * public/v3/components/interactive-time-series-chart.js:
+        (InteractiveTimeSeriesChart.prototype._findAnnotation): Also need to search among suggested annotaions.
+        * public/v3/components/time-series-chart.js: Introduced 'suggested annotaion' which does not have an existing task and is suggested by t-test based on segmentation.
+        (TimeSeriesChart):
+        (TimeSeriesChart.prototype.setSuggestedAnnotations):
+        (TimeSeriesChart.prototype.allAnnotations): Returns both annotations with and without analysis task.
+        (TimeSeriesChart.prototype._layoutAnnotationBars): Should take all annotations in the calculation.
+        * public/v3/models/measurement-set.js:
+        (MeasurementSet.prototype.metricId): Returns metric id.
+        * public/v3/models/metric.js:
+        (Metric.prototype.summarizeForValues): Added helper function to summarize a given value
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype.compareTestResults): Adapted to use 'Metric.summarizeForValues'.
+        * public/v3/pages/chart-pane.js: Added 'Segmentation with t-test analysis' to 'ChartTrendLineTypes'.
+        (ChartPane.prototype._renderTrendLinePopover):
+        (ChartPane.prototype.async._updateTrendLine): make it an async function.
+        * unit-tests/statistics-tests.js: Added unit tests for 'findRangesForChangeDetectionsWithWelchsTTest'.
+
 2018-04-02  Aakash Jain  <aakash_jain@apple.com>
 
         Remove deprecated Buildbot 0.8 code from Perf syncing scripts
