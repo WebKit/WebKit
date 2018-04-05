@@ -1737,3 +1737,5 @@ webkit.org/b/183490 media/modern-media-controls/media-controller/media-controlle
 webkit.org/b/183764 fast/css/apple-system-control-colors.html [ Pass ]
 
 webkit.org/b/184116 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Pass Failure ]
+
+webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]

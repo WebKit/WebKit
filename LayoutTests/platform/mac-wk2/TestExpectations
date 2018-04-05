@@ -817,9 +817,6 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html [ Pass ]
 http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html [ Pass ]
 
-# <rdar://problem/33555759>
-webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
-
 # Link preconnect is disabled on pre-High Sierra because the CFNetwork SPI is missing.
 [ ElCapitan Sierra ] http/tests/preconnect [ Skip ]
 

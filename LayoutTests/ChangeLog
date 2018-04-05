@@ -1,3 +1,13 @@
+2018-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for http/tests/media/video-buffered-range-contains-currentTime.html.
+        https://trac.webkit.org/changeset/223243/webkit
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-04-04  Youenn Fablet  <youenn@apple.com>
 
         http/wpt/loading/redirect-headers.html is flaky
