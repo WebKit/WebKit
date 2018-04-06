@@ -105,9 +105,7 @@ CFDataRef BitmapImage::tiffRepresentation()
         return nullptr;
 
     m_tiffRep = data;
-    return m_tiffRep.get();
-
-    
+    return m_tiffRep.get();    
 }
 
 #if USE(APPKIT)

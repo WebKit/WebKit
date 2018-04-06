@@ -1,3 +1,31 @@
+2018-04-06  Antti Koivisto  <antti@apple.com>
+
+        Tighten ImageSource to have BitmapImage pointer instead of Image
+        https://bugs.webkit.org/show_bug.cgi?id=184356
+
+        Reviewed by Said Abou-Hallawa.
+
+        ImageSource is an implementation detail of BitmapImage, not a generic type.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::decode):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::decode): Deleted.
+        (WebCore::Image::imageFrameAvailableAtIndex): Deleted.
+
+        Also make some BitmapImage specific functions non-virtual and remove them from Image.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource):
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::create):
+
+        Make constructors private.
+
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+
 2018-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r230323

@@ -137,9 +137,6 @@ public:
     virtual bool isAnimating() const { return false; }
     bool animationPending() const { return m_animationStartTimer.isActive(); }
 
-    virtual void decode(WTF::Function<void()>&&) { }
-    virtual void imageFrameAvailableAtIndex(size_t) { }
-
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }
     void setImageObserver(ImageObserver* observer) { m_imageObserver = observer; }
@@ -152,8 +149,6 @@ public:
     virtual NativeImagePtr nativeImage(const GraphicsContext* = nullptr) { return nullptr; }
     virtual NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) { return nullptr; }
     virtual NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) { return nullptr; }
-    virtual ImageOrientation orientationForCurrentFrame() const { return ImageOrientation(); }
-    virtual Vector<NativeImagePtr> framesNativeImages() { return { }; }
 
     // Accessors for native image formats.
 

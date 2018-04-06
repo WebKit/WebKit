@@ -99,7 +99,7 @@ public:
 
     size_t currentFrame() const { return m_currentFrame; }
     bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrame()); }
-    ImageOrientation orientationForCurrentFrame() const override { return frameOrientationAtIndex(currentFrame()); }
+    ImageOrientation orientationForCurrentFrame() const { return frameOrientationAtIndex(currentFrame()); }
     bool canAnimate() const;
 
     bool shouldUseAsyncDecodingForAnimatedImagesForTesting() const { return m_frameDecodingDurationForTesting > 0_s; }
@@ -135,8 +135,11 @@ public:
     NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) override;
 #if USE(CG)
     NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) override;
-    Vector<NativeImagePtr> framesNativeImages() override;
+    Vector<NativeImagePtr> framesNativeImages();
 #endif
+
+    void imageFrameAvailableAtIndex(size_t);
+    void decode(Function<void()>&&);
 
 protected:
     WEBCORE_EXPORT BitmapImage(NativeImagePtr&&, ImageObserver* = nullptr);
@@ -197,9 +200,7 @@ private:
     bool canDestroyDecodedData();
     void setCurrentFrameDecodingStatusIfNecessary(DecodingStatus);
     bool isBitmapImage() const override { return true; }
-    void decode(WTF::Function<void()>&&) override;
     void callDecodingCallbacks();
-    void imageFrameAvailableAtIndex(size_t) override;
     void dump(WTF::TextStream&) const override;
 
     // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.

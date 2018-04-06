@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageSource.h"
 
-#include "Image.h"
+#include "BitmapImage.h"
 #include "ImageDecoder.h"
 #include "ImageObserver.h"
 #include "Logging.h"
@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-ImageSource::ImageSource(Image* image, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+ImageSource::ImageSource(BitmapImage* image, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : m_image(image)
     , m_alphaOption(alphaOption)
     , m_gammaAndColorProfileOption(gammaAndColorProfileOption)

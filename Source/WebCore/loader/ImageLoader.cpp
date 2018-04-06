@@ -22,6 +22,7 @@
 #include "config.h"
 #include "ImageLoader.h"
 
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
@@ -418,12 +419,13 @@ void ImageLoader::decode()
     }
 
     Image* image = m_image->image();
-    if (!image->isBitmapImage()) {
+    if (!is<BitmapImage>(image)) {
         decodeError("Invalid image type.");
         return;
     }
-    
-    image->decode([promises = WTFMove(m_decodingPromises)]() mutable {
+
+    auto& bitmapImage = downcast<BitmapImage>(*image);
+    bitmapImage.decode([promises = WTFMove(m_decodingPromises)]() mutable {
         for (auto& promise : promises)
             promise->resolve();
     });

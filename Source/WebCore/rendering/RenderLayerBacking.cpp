@@ -27,6 +27,7 @@
 
 #include "RenderLayerBacking.h"
 
+#include "BitmapImage.h"
 #include "CSSAnimationController.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
@@ -2189,10 +2190,10 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
             return false;
 
         auto* image = cachedImage->imageForRenderer(&imageRenderer);
-        if (!image->isBitmapImage())
+        if (!is<BitmapImage>(image))
             return false;
 
-        if (image->orientationForCurrentFrame() != DefaultImageOrientation)
+        if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != DefaultImageOrientation)
             return false;
 
 #if (PLATFORM(GTK) || PLATFORM(WPE))
