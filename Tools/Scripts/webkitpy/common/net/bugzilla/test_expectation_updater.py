@@ -79,7 +79,7 @@ class TestExpectationUpdater(object):
                 bot_type = self._bot_type(attachment)
                 if bot_type:
                     self.platform_specific_attachments[bot_type] = attachment
-            self.generic_attachment = self.platform_specific_attachments.pop("mac-wk2")
+            self.generic_attachment = self.platform_specific_attachments.pop("mac-wk2") if "mac-wk2" in self.platform_specific_attachments else None
         else:
             attachment = attachment_fetcher.fetch_attachment(bugzilla_id)
             self.platform_specific_attachments = {self._bot_type(attachment): attachment} if is_attachment_platform_specific else {}
@@ -96,6 +96,8 @@ class TestExpectationUpdater(object):
             return "mac-wk1"
         if "simulator" in name:
             return "ios-wk2"
+        if "win-future" in name:
+            return "win"
         return None
 
     def _tests_to_update(self, attachment, bot_type=None):
@@ -131,10 +133,11 @@ class TestExpectationUpdater(object):
                 self.filesystem.remove(expected_filename)
 
     def do_update(self):
-        if not self.generic_attachment or not self.platform_specific_attachments:
+        if not self.generic_attachment and not self.platform_specific_attachments:
             _log.info("No attachment to process")
             return
-        self._update_from_generic_attachment()
+        if self.generic_attachment:
+            self._update_from_generic_attachment()
         for bot_type, attachment in self.platform_specific_attachments.iteritems():
             self._update_from_platform_specific_attachment(attachment, bot_type)
 

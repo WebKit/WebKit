@@ -1,3 +1,35 @@
+2018-04-05  Youenn Fablet  <youenn@apple.com>
+
+        Test expectation updater should handle Win bot results
+        https://bugs.webkit.org/show_bug.cgi?id=184274
+
+        Reviewed by Ryosuke Niwa.
+
+        Add processing of win bot results.
+        They will update platform/win results.
+
+        Updated the script so that if there is no mac-wk2 results, it will still process specific results.
+
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater.py:
+        (TestExpectationUpdater.__init__):
+        (TestExpectationUpdater._bot_type):
+        (TestExpectationUpdater.do_update):
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater_unittest.py:
+        (MockAttachment):
+        (MockAttachment.__init__):
+        (MockAttachment.contents):
+        (MockBugzilla):
+        (MockBugzilla.__init__):
+        (MockBugzilla.fetch_bug):
+        (MockBugzilla.attachments):
+        (MockZip):
+        (MockZip.__init__):
+        (MockZip.unzip):
+        (MockZip.read):
+        (TestExpectationUpdaterTest.test_update_test_expectations):
+        (TestExpectationUpdaterTest):
+        (TestExpectationUpdaterTest.test_update_win_future_test_expectations):
+
 2018-04-05  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Fix static position for floating boxes when they don't fit the current line
