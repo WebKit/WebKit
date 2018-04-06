@@ -1,4 +1,0 @@
-
-FAIL Revoke blob URL after open(), will fetch assert_unreached: Got unexpected error event Reached unreachable code
-PASS Revoke blob URL before open(), network error (after send()) 
-

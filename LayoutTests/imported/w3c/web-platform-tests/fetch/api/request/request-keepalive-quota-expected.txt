@@ -1,14 +1,11 @@
-CONSOLE MESSAGE: line 44: Fetch API cannot load http://localhost:8800/fetch/api/resources/trickle.py?count=1&ms=0. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: line 71: Fetch API cannot load http://localhost:8800/fetch/api/resources/trickle.py?count=1&ms=0. Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Reached maximum amount of queued data of 64Kb for keepalive requests
-CONSOLE MESSAGE: line 88: Fetch API cannot load http://localhost:8800/fetch/api/resources/trickle.py?count=1&ms=0. Reached maximum amount of queued data of 64Kb for keepalive requests
-
-Harness Error (FAIL), message = Reached maximum amount of queued data of 64Kb for keepalive requests
+CONSOLE MESSAGE: line 33: Fetch API cannot load http://localhost:8800/fetch/api/resources/trickle.py?count=1&ms=0. Reached maximum amount of queued data of 64Kb for keepalive requests
+CONSOLE MESSAGE: line 33: Fetch API cannot load http://localhost:8800/fetch/api/resources/trickle.py?count=1&ms=0. Reached maximum amount of queued data of 64Kb for keepalive requests
+CONSOLE MESSAGE: line 33: Fetch API cannot load http://localhost:8800/fetch/api/resources/trickle.py?count=1&ms=0. Reached maximum amount of queued data of 64Kb for keepalive requests
 
 PASS A Keep-Alive fetch() with a small body should succeed. 
 PASS A Keep-Alive fetch() with a body at the Quota Limit should succeed. 
 PASS A Keep-Alive fetch() with a body over the Quota Limit should reject. 
-PASS A Keep-Alive fetch() should return it's allocated Quota upon promise resolution. 
-PASS A Keep-Alive fetch() should return only it's allocated Quota upon promise resolution. 
+PASS A Keep-Alive fetch() should return its allocated Quota upon promise resolution. 
+PASS A Keep-Alive fetch() should return only its allocated Quota upon promise resolution. 
 PASS A Keep-Alive fetch() should not be allowed if the Quota is used up. 
 

@@ -6,6 +6,7 @@ PASS Blob constructor without brackets
 PASS Blob constructor with undefined as first argument 
 PASS Passing non-objects, Dates and RegExps for blobParts should throw a TypeError. 
 PASS A plain object with @@iterator should be treated as a sequence for the blobParts argument. 
+PASS A plain object with custom @@iterator should be treated as a sequence for the blobParts argument. 
 PASS A plain object with @@iterator and a length property should be treated as a sequence for the blobParts argument. 
 PASS A String object should be treated as a sequence for the blobParts argument. 
 PASS A Uint8Array object should be treated as a sequence for the blobParts argument. 
@@ -27,7 +28,6 @@ PASS Array with two blobs
 PASS Array with two buffers 
 PASS Array with two bufferviews 
 PASS Array with mixed types 
-FAIL The 'endings' property should be ignored. Type error
 PASS options properties should be accessed in lexicographic order. 
 PASS Arguments should be evaluated from left to right. 
 PASS Passing null (index 0) for options should use the defaults. 
@@ -42,13 +42,16 @@ PASS Passing object "/regex/" (index 4) for options should use the defaults.
 PASS Passing object "/regex/" (index 4) for options should use the defaults (with newlines). 
 PASS Passing function "function () {}" (index 5) for options should use the defaults. 
 PASS Passing function "function () {}" (index 5) for options should use the defaults (with newlines). 
-PASS Newlines should not change when endings is 'transparent'. 
-FAIL Newlines should not change when endings is 'native'. assert_equals: expected 9 but got 8
+PASS Passing 123 for options should throw 
+PASS Passing 123.4 for options should throw 
+PASS Passing true for options should throw 
+PASS Passing "abc" for options should throw 
 PASS Blob with type "" 
 PASS Blob with type "a" 
 PASS Blob with type "A" 
 PASS Blob with type "text/html" 
 PASS Blob with type "TEXT/HTML" 
+PASS Blob with type "text/plain;charset=utf-8" 
 PASS Blob with type "å" 
 PASS Blob with type "𐑾" 
 PASS Blob with type " image/gif " 

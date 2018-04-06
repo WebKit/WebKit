@@ -1,3 +1,3 @@
 
-FAIL trailer() test promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'res.trailer.then')"
+FAIL trailer() test assert_equals: expected (string) "X-Test-Me" but got (object) null
 

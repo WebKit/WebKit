@@ -1,3 +1,167 @@
+2018-04-06  Brendan McLoughlin  <brendan@bocoup.com>
+
+        Sync 2dcontext, FileAPI, IndexedDB, background-fetch, credential-management, custom-elements, dom, encoding, and fetch web-platform-tests to 94b33b573a069ae5170104ca581a354a35762536
+        https://bugs.webkit.org/show_bug.cgi?id=184299
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/2dcontext/imagebitmap/common.sub.js:
+        (makeMakeHTMLImage.return.new.Promise): Deleted.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html:
+        * web-platform-tests/FileAPI/BlobURL/support/file_test1.js: Removed.
+        * web-platform-tests/FileAPI/BlobURL/support/file_test3.html: Removed.
+        * web-platform-tests/FileAPI/FileReader/w3c-import.log:
+        * web-platform-tests/FileAPI/blob/Blob-XHR-revoke-expected.txt: Removed.
+        * web-platform-tests/FileAPI/blob/Blob-XHR-revoke.html: Removed.
+        * web-platform-tests/FileAPI/blob/Blob-constructor-expected.txt:
+        * web-platform-tests/FileAPI/blob/Blob-constructor.html:
+        * web-platform-tests/FileAPI/blob/Blob-slice-overflow.html:
+        * web-platform-tests/FileAPI/blob/w3c-import.log:
+        * web-platform-tests/FileAPI/file/File-constructor-expected.txt:
+        * web-platform-tests/FileAPI/file/File-constructor.html:
+        * web-platform-tests/FileAPI/file/w3c-import.log:
+        * web-platform-tests/FileAPI/url/blob-url-in-sandboxed-iframe-expected.txt: Removed.
+        * web-platform-tests/FileAPI/url/blob-url-in-sandboxed-iframe.html: Removed.
+        * web-platform-tests/FileAPI/url/cross-global-revoke.sub-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/cross-global-revoke.sub.html: Added.
+        * web-platform-tests/FileAPI/url/resources/create-helper.html: Added.
+        * web-platform-tests/FileAPI/url/resources/create-helper.js: Added.
+        * web-platform-tests/FileAPI/url/resources/fetch-tests.js: Added.
+        (fetch_tests):
+        * web-platform-tests/FileAPI/url/resources/revoke-helper.html: Added.
+        * web-platform-tests/FileAPI/url/resources/revoke-helper.js: Added.
+        * web-platform-tests/FileAPI/url/sandboxed-iframe-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/sandboxed-iframe.html: Added.
+        * web-platform-tests/FileAPI/url/unicode-origin.sub-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/origin.sub-expected.txt.
+        * web-platform-tests/FileAPI/url/unicode-origin.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/origin.sub.html.
+        * web-platform-tests/FileAPI/url/url-format.any-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-format.any.html: Added.
+        * web-platform-tests/FileAPI/url/url-format.any.js: Added.
+        (test):
+        * web-platform-tests/FileAPI/url/url-format.any.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-format.any.worker.html: Added.
+        * web-platform-tests/FileAPI/url/url-in-tags.window.js: Added.
+        (async_test.t.e.onload.t.step_func_done):
+        (async_test.t.frame.onload.t.step_func_done):
+        * web-platform-tests/FileAPI/url/url-lifetime-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-lifetime.html: Added.
+        * web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-with-fetch.any.html: Added.
+        * web-platform-tests/FileAPI/url/url-with-fetch.any.js: Added.
+        (fetch_should_succeed):
+        (promise_test):
+        * web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-with-fetch.any.worker.html: Added.
+        * web-platform-tests/FileAPI/url/url-with-xhr.any-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-with-xhr.any.html: Added.
+        * web-platform-tests/FileAPI/url/url-with-xhr.any.js: Added.
+        (xhr_should_succeed):
+        (async_test.t.xhr.onloadend.t.step_func_done):
+        (async_test.t.xhr.onload.t.step_func_done):
+        * web-platform-tests/FileAPI/url/url-with-xhr.any.worker-expected.txt: Added.
+        * web-platform-tests/FileAPI/url/url-with-xhr.any.worker.html: Added.
+        * web-platform-tests/FileAPI/url/url_createobjecturl_blob-expected.txt: Removed.
+        * web-platform-tests/FileAPI/url/url_createobjecturl_blob.html: Removed.
+        * web-platform-tests/FileAPI/url/url_xmlhttprequest.html: Removed.
+        * web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html:
+        * web-platform-tests/FileAPI/url/w3c-import.log:
+        * web-platform-tests/FileAPI/w3c-import.log:
+        * web-platform-tests/IndexedDB/README.md:
+        * web-platform-tests/IndexedDB/interleaved-cursors.html: Removed.
+        * web-platform-tests/IndexedDB/w3c-import.log:
+        * web-platform-tests/background-fetch/mixed-content-and-allowed-schemes.https.window.js:
+        (backgroundFetchTest):
+        * web-platform-tests/background-fetch/w3c-import.log:
+        * web-platform-tests/credential-management/credentialscontainer-create-basics.https-expected.txt:
+        * web-platform-tests/credential-management/credentialscontainer-create-basics.https.html:
+        * web-platform-tests/custom-elements/Document-createElement-expected.txt:
+        * web-platform-tests/custom-elements/Document-createElement.html:
+        * web-platform-tests/custom-elements/OWNERS:
+        * web-platform-tests/custom-elements/attribute-changed-callback-expected.txt:
+        * web-platform-tests/custom-elements/attribute-changed-callback.html:
+        * web-platform-tests/custom-elements/custom-element-registry/w3c-import.log:
+        * web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children-expected.txt:
+        * web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children.html:
+        * web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document-expected.txt:
+        * web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document.html:
+        * web-platform-tests/custom-elements/parser/w3c-import.log:
+        * web-platform-tests/custom-elements/reactions/CSSStyleDeclaration-expected.txt:
+        * web-platform-tests/custom-elements/reactions/CSSStyleDeclaration.html:
+        * web-platform-tests/custom-elements/reactions/Document.html:
+        * web-platform-tests/custom-elements/reactions/HTMLElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLElement.html:
+        * web-platform-tests/custom-elements/reactions/w3c-import.log:
+        * web-platform-tests/custom-elements/resources/custom-elements-helpers.js:
+        (CustomElement):
+        (CustomElement.prototype.attributeChangedCallback):
+        (CustomElement.prototype.connectedCallback):
+        (CustomElement.prototype.disconnectedCallback):
+        (CustomElement.prototype.adoptedCallback):
+        (document_types.return.create): Deleted.
+        (document_types.create): Deleted.
+        (document_types.): Deleted.
+        (document_types): Deleted.
+        * web-platform-tests/custom-elements/resources/w3c-import.log:
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode.html:
+        * web-platform-tests/custom-elements/upgrading/w3c-import.log:
+        * web-platform-tests/custom-elements/w3c-import.log:
+        * web-platform-tests/dom/nodes/Element-classlist.html:
+        * web-platform-tests/dom/nodes/w3c-import.log:
+        * web-platform-tests/encoding/big5-encoder-expected.txt:
+        * web-platform-tests/encoding/big5-encoder.html:
+        * web-platform-tests/encoding/gbk-encoder-expected.txt:
+        * web-platform-tests/encoding/gbk-encoder.html:
+        * web-platform-tests/fetch/README.md:
+        * web-platform-tests/fetch/api/abort/general.any.js:
+        * web-platform-tests/fetch/api/basic/integrity.js:
+        * web-platform-tests/fetch/api/cors/cors-expose-star.js:
+        (string_appeared_here.promise_test):
+        * web-platform-tests/fetch/api/cors/cors-filtering.js:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.js:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location.js:
+        * web-platform-tests/fetch/api/redirect/redirect-method-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-method-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-method.js:
+        (redirectMethod):
+        * web-platform-tests/fetch/api/redirect/redirect-mode-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-mode-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-mode.js:
+        (redirectMode):
+        * web-platform-tests/fetch/api/request/request-disturbed-expected.txt:
+        * web-platform-tests/fetch/api/request/request-disturbed.html:
+        * web-platform-tests/fetch/api/request/request-keepalive-expected.txt:
+        * web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt:
+        * web-platform-tests/fetch/api/request/request-keepalive-quota.html:
+        * web-platform-tests/fetch/api/request/request-keepalive.html:
+        * web-platform-tests/fetch/api/resources/redirect.py:
+        (main):
+        * web-platform-tests/fetch/api/resources/trickle.py:
+        (main):
+        * web-platform-tests/fetch/api/response/response-consume.html:
+        * web-platform-tests/fetch/api/response/response-init-002-expected.txt:
+        * web-platform-tests/fetch/api/response/response-init-002.html:
+        * web-platform-tests/fetch/api/response/response-trailer-expected.txt:
+        * web-platform-tests/fetch/api/response/response-trailer.html:
+        * web-platform-tests/fetch/data-urls/resources/base64.json: Added.
+        * web-platform-tests/fetch/http-cache/cc-request.html:
+        * web-platform-tests/fetch/http-cache/heuristic.html:
+        * web-platform-tests/fetch/http-cache/partial.html:
+        * web-platform-tests/fetch/http-cache/vary-expected.txt:
+        * web-platform-tests/fetch/http-cache/vary.html:
+        * web-platform-tests/fetch/nosniff/importscripts.js:
+        (string_appeared_here.forEach):
+        * web-platform-tests/fetch/nosniff/resources/css.py:
+        (main):
+        * web-platform-tests/fetch/nosniff/script-expected.txt:
+        * web-platform-tests/fetch/nosniff/script.html:
+        * web-platform-tests/fetch/nosniff/stylesheet-expected.txt:
+        * web-platform-tests/fetch/nosniff/stylesheet.html:
+        * web-platform-tests/fetch/nosniff/worker-expected.txt:
+        * web-platform-tests/fetch/nosniff/worker.html:
+
 2018-04-04  Brendan McLoughlin  <brendan@bocoup.com>
 
         Resync idlharness web-platform-tests up to 94b33b573a069ae5170104ca581a354a35762536

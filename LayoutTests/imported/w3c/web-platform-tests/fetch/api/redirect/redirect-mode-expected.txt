@@ -1,19 +1,17 @@
 
-PASS Redirect 301 in "error" redirect, cors mode 
-PASS Redirect 301 in "follow" redirect, cors mode 
-PASS Redirect 301 in "manual" redirect, cors mode 
-PASS Redirect 302 in "error" redirect, cors mode 
-PASS Redirect 302 in "follow" redirect, cors mode 
-PASS Redirect 302 in "manual" redirect, cors mode 
-PASS Redirect 303 in "error" redirect, cors mode 
-PASS Redirect 303 in "follow" redirect, cors mode 
-PASS Redirect 303 in "manual" redirect, cors mode 
-PASS Redirect 307 in "error" redirect, cors mode 
-PASS Redirect 307 in "follow" redirect, cors mode 
-PASS Redirect 307 in "manual" redirect, cors mode 
-PASS Redirect 308 in "error" redirect, cors mode 
-PASS Redirect 308 in "follow" redirect, cors mode 
-PASS Redirect 308 in "manual" redirect, cors mode 
-PASS Redirect in "error" redirect, no cors mode 
-PASS Redirect in "manual" redirect, no cors mode 
+PASS Redirect 301 in "error" mode  
+PASS Redirect 301 in "follow" mode  
+PASS Redirect 301 in "manual" mode  
+PASS Redirect 302 in "error" mode  
+PASS Redirect 302 in "follow" mode  
+PASS Redirect 302 in "manual" mode  
+PASS Redirect 303 in "error" mode  
+PASS Redirect 303 in "follow" mode  
+PASS Redirect 303 in "manual" mode  
+PASS Redirect 307 in "error" mode  
+PASS Redirect 307 in "follow" mode  
+PASS Redirect 307 in "manual" mode  
+PASS Redirect 308 in "error" mode  
+PASS Redirect 308 in "follow" mode  
+PASS Redirect 308 in "manual" mode  
 

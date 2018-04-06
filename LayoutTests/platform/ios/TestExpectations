@@ -3018,8 +3018,6 @@ webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui/outline-style-014
 
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Pass Failure ]
-
 # This test tests a feature that only exists on iOS.
 fast/text/accessibility-bold-system-font-2.html [ Pass ]
 

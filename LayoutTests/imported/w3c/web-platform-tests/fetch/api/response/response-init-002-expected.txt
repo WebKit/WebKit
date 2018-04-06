@@ -6,4 +6,5 @@ PASS Initialize Response's body with application/x-www-form-urlencoded;charset=U
 PASS Initialize Response's body with text/plain;charset=UTF-8 
 PASS Read Response's body as readableStream 
 PASS Testing empty Response Content-Type header 
+PASS Testing null Response body 
 

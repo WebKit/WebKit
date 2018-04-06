@@ -394,7 +394,6 @@ webkit.org/b/154612 [ Sierra+ ] compositing/repaint/fixed-background-scroll.html
 
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 
-imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Failure ]
 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure ]
 
 # webkit.org/b/163585

@@ -20,7 +20,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/dangling-markup.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/interfaces.html
-/LayoutTests/imported/w3c/web-platform-tests/background-fetch/interfaces.idl
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/interfaces.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/mixed-content-and-allowed-schemes.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/background-fetch/port-blocking.https.window.js

@@ -1470,8 +1470,6 @@ webkit.org/b/175102 workers/wasm-hashset-many-2.html [ Skip ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
-webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Pass Failure ]
-
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
@@ -1739,3 +1737,6 @@ webkit.org/b/183764 fast/css/apple-system-control-colors.html [ Pass ]
 webkit.org/b/184116 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Pass Failure ]
 
 webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
+
+[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Crash ]
+[ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Crash ]

@@ -14,10 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/blob-url-in-sandboxed-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/cross-global-revoke.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/multi-global-origin-serialization.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/origin.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_createobjecturl_blob.html
-/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/unicode-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-format.any.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-in-tags-revoke.window.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-in-tags.window.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-lifetime.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url-with-xhr.any.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html

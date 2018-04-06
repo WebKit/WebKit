@@ -5,14 +5,6 @@
 <script src="/resources/testharnessreport.js"></script>
 <body>
 <script>
-test(t => {
-  const blob = new Blob(["Test Blob"]);
-  const url = URL.createObjectURL(blob);
-  assert_equals(new URL(url).origin, location.origin);
-  assert_true(url.includes(location.origin));
-  assert_true(url.startsWith('blob:{{location[scheme]}}://'));
-}, 'Verify origin of Blob URI matches our origin');
-
 async_test(t => {
   const frame = document.createElement('iframe');
   self.addEventListener('message', t.step_func(e => {

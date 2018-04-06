@@ -16,8 +16,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-constructs-custom-element-in-document-write.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-constructs-custom-element-synchronously.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-constructs-custom-elements-with-is.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-constructs-custom-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-constructed-element.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/parser/serializing-html-fragments.html

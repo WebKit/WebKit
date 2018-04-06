@@ -3,15 +3,15 @@ if (this.document === undefined) {
   importScripts("/common/get-host-info.sub.js")
 }
 
-function redirectMode(desc, redirectUrl, redirectLocation, redirectStatus, redirectMode, corsMode) {
+function redirectMode(desc, redirectUrl, redirectLocation, redirectStatus, redirectMode) {
   var url = redirectUrl;
   var urlParameters = "?redirect_status=" + redirectStatus;
   urlParameters += "&location=" + encodeURIComponent(redirectLocation);
 
-  var requestInit = {"redirect": redirectMode, mode: corsMode};
+  var requestInit = {"redirect": redirectMode};
 
   promise_test(function(test) {
-    if (redirectMode === "error" || (corsMode === "no-cors" && redirectMode !== "follow"))
+    if (redirectMode === "error")
       return promise_rejects(test, new TypeError(), fetch(url + urlParameters, requestInit));
     if (redirectMode === "manual")
       return fetch(url + urlParameters, requestInit).then(function(resp) {
@@ -33,11 +33,9 @@ var redirUrl = get_host_info().HTTP_ORIGIN + "/fetch/api/resources/redirect.py";
 var locationUrl = "top.txt";
 
 for (var statusCode of [301, 302, 303, 307, 308]) {
-  redirectMode("Redirect " + statusCode + " in \"error\" redirect, cors mode", redirUrl, locationUrl, statusCode, "error", "cors");
-  redirectMode("Redirect " + statusCode + " in \"follow\" redirect, cors mode", redirUrl, locationUrl, statusCode, "follow", "cors");
-  redirectMode("Redirect " + statusCode + " in \"manual\" redirect, cors mode", redirUrl, locationUrl, statusCode, "manual", "cors");
+  redirectMode("Redirect " + statusCode + " in \"error\" mode ", redirUrl, locationUrl, statusCode, "error");
+  redirectMode("Redirect " + statusCode + " in \"follow\" mode ", redirUrl, locationUrl, statusCode, "follow");
+  redirectMode("Redirect " + statusCode + " in \"manual\" mode ", redirUrl, locationUrl, statusCode, "manual");
 }
-redirectMode("Redirect in \"error\" redirect, no cors mode", redirUrl, locationUrl, 301, "error", "no-cors");
-redirectMode("Redirect in \"manual\" redirect, no cors mode", redirUrl, locationUrl, 301, "manual", "no-cors");
 
 done();

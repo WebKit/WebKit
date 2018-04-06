@@ -14,7 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-XHR-revoke.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-in-worker.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/blob/Blob-slice-overflow.html

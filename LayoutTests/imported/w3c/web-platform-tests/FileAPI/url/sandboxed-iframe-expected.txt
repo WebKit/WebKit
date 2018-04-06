@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1714: SecurityError: Sandbox access violation: Blocked a frame at "http://localhost:8800" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+
+FAIL FileAPI Test: Verify behavior of Blob URL in unique origins SecurityError: Sandbox access violation: Blocked a frame at "http://localhost:8800" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+

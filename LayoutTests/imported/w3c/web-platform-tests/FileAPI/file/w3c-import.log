@@ -14,5 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/File-constructor-endings.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/File-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/Worker-read-file-constructor.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-iso-2022-jp.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-utf-8.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-windows-1252.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-x-user-defined.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form.html

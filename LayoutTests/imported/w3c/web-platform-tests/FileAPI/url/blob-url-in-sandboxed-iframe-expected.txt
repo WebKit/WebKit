@@ -1,5 +1,0 @@
- 
-
-PASS reading a Blob URL in an unconstrained iframe 
-PASS reading a Blob URL in a sandboxed iframe without the same-origin flag 
-

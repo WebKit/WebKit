@@ -9,5 +9,7 @@ PASS HTTP cache doesn't use two-way Vary response when request doesn't match.
 PASS HTTP cache doesn't use two-way Vary response when request omits variant header. 
 PASS HTTP cache reuses three-way Vary response when request matches. 
 PASS HTTP cache doesn't use three-way Vary response when request doesn't match. 
-PASS HTTP cache doesn't use three-way Vary response when request omits variant header. 
+PASS HTTP cache doesn't use three-way Vary response when request doesn't match, regardless of header order. 
+PASS HTTP cache uses three-way Vary response when both request and the original request omited a variant header. 
+PASS HTTP cache doesn't use Vary response with a field value of '*'. 
 

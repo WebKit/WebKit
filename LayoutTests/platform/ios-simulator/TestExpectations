@@ -66,3 +66,5 @@ webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Failure ]
 
 # This test requires Skia, which isn't available on iOS.
 webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ ImageOnlyFailure ]

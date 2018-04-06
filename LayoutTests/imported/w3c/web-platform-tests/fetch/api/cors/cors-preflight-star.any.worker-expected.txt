@@ -5,8 +5,8 @@ FAIL CORS that succeeds with credentials: false; method: OK (allowed: *); header
 PASS CORS that fails with credentials: true; method: OK (allowed: *); header: X-Test,1 (allowed: *) 
 PASS CORS that fails with credentials: true; method: PUT (allowed: *); header:  (allowed: ) 
 PASS CORS that succeeds with credentials: true; method: PUT (allowed: PUT); header:  (allowed: *) 
-PASS CORS that fails with credentials: true; method: PUT (allowed: put); header:  (allowed: *) 
 PASS CORS that fails with credentials: true; method: GET (allowed: get); header: X-Test,1 (allowed: *) 
 PASS CORS that fails with credentials: true; method: GET (allowed: *); header: X-Test,1 (allowed: *) 
 PASS CORS that succeeds with credentials: true; method: * (allowed: *); header: *,1 (allowed: *) 
+PASS CORS that fails with credentials: true; method: PUT (allowed: put); header:  (allowed: *) 
 

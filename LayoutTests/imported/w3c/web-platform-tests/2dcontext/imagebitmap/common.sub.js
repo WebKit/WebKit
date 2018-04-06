@@ -65,11 +65,12 @@ function makeDataUrlVideo() {
 
 function makeMakeHTMLImage(src) {
     return function() {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             var img = new Image();
             img.onload = function() {
                 resolve(img);
             };
+            img.onerror = reject;
             img.src = src;
         });
     }

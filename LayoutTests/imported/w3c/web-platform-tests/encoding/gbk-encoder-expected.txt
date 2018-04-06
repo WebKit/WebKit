@@ -4,5 +4,5 @@ PASS gbk encoder: Euro
 PASS gbk encoder: character 
 PASS gbk encoder: PUA 
 PASS gbk encoder: PUA #2 
-PASS gbk encoder: poo 
+FAIL gbk encoder: poo assert_equals: expected "&%23128169;" but got "%26%23128169%3B"
 

@@ -315,10 +315,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbversionchangeevent.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbworker.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/index_sort_order.htm
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.html
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.idl
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/interfaces.any.js
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/key_valid.html

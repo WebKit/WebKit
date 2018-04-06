@@ -1,3 +1,0 @@
-
-PASS Check if the Blob URI starts with 'blob' using createObjectURL() 
-

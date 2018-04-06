@@ -2,4 +2,6 @@
 PASS HTML parser must set the attributes 
 PASS HTML parser must append child nodes 
 PASS HTML parser must set the attributes or append children before calling constructor 
+FAIL HTML parser should call connectedCallback before appending child nodes. assert_equals: expected 0 but got 2
+FAIL HTML parser must enqueue attributeChanged reactions assert_equals: attributeChangedCallback should be called before appending a child expected 0 but got 2
 hello world

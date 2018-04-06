@@ -206,11 +206,6 @@ imported/w3c/web-platform-tests/dom [ Pass ]
 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 
 
-# WPT: 2dcontext
-# ==============
-imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ Pass ]
-
-
 # WPT: cors
 # =========
 

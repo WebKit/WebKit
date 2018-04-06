@@ -9,4 +9,6 @@ PASS Mutating observedAttributes after calling customElements.define must not af
 PASS attributedChangedCallback must be enqueued for attributes specified in a non-Array iterable observedAttributes 
 PASS attributedChangedCallback must be enqueued for style attribute change by mutating inline style declaration 
 PASS attributedChangedCallback must not be enqueued when mutating inline style declaration if the style attribute is not observed 
+PASS Upgrading a parser created element must enqueue and invoke attributeChangedCallback for an HTML attribute 
+PASS Upgrading a cloned element must enqueue and invoke attributeChangedCallback for an HTML attribute 
 
