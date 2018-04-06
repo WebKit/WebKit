@@ -279,6 +279,9 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     ASSERT([filteredCookies.get() count] <= 1);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (session.shouldBlockCookies(firstParty, url))
+        return;
+
     String partition = session.cookieStoragePartition(firstParty, url, frameID, pageID);
     if (!partition.isEmpty())
         filteredCookies = applyPartitionToCookies(partition, filteredCookies.get());

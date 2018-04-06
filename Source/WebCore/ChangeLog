@@ -1,3 +1,19 @@
+2018-04-05  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Apply cookie blocking to setCookiesFromDOM()
+        https://bugs.webkit.org/show_bug.cgi?id=184346
+        <rdar://problem/39226036>
+
+        Reviewed by Brent Fulgham.
+
+        Since these cookies can't be seen and are not sent in requests, I
+        can't write an automated test for them. This really should have been
+        done as part of: https://bugs.webkit.org/show_bug.cgi?id=180682.
+        That said, I have tested this manually.
+
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::setCookiesFromDOM):
+
 2018-04-05  Zalan Bujtas  <zalan@apple.com>
 
         Folding anonymous blocks should not result in deleting content.
