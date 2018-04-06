@@ -127,6 +127,8 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
     }
 
     if (!isScriptAllowedByNosniff(response)) {
+        String message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type: nosniff\" was given and its Content-Type is not a script MIME type.");
+        m_error = ResourceError { errorDomainWebKitInternal, 0, url(), message, ResourceError::Type::General };
         m_failed = true;
         return;
     }

@@ -13,5 +13,6 @@ if ($cgi->param('options')) {
     print "X-Content-Type-Options: nosniff\n";
 }
 print "\n";
-print "console.log(\"Executed script with MIME type: '" .  $cgi->param('mime') . "'.\");\n";
-print "window.scriptsSuccessfullyLoaded++;\n";
+print "if (self.console)\n";
+print "    console.log(\"Executed script with MIME type: '" .  $cgi->param('mime') . "'.\");\n";
+print "self.scriptsSuccessfullyLoaded++;\n";

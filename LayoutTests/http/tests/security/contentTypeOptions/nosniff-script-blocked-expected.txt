@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: Did not load script at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/json' because non script MIME types are not allowed when 'X-Content-Type: nosniff' is given.
-CONSOLE MESSAGE: Did not load script at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=image/png' because non script MIME types are not allowed when 'X-Content-Type: nosniff' is given.
-CONSOLE MESSAGE: Did not load script at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/html' because non script MIME types are not allowed when 'X-Content-Type: nosniff' is given.
-CONSOLE MESSAGE: Did not load script at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/vbs' because non script MIME types are not allowed when 'X-Content-Type: nosniff' is given.
-CONSOLE MESSAGE: Did not load script at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/vbscript' because non script MIME types are not allowed when 'X-Content-Type: nosniff' is given.
-CONSOLE MESSAGE: Did not load script at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/xx-javascript' because non script MIME types are not allowed when 'X-Content-Type: nosniff' is given.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/json as script because "X-Content-Type: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=image/png as script because "X-Content-Type: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/html as script because "X-Content-Type: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/vbs as script because "X-Content-Type: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/vbscript as script because "X-Content-Type: nosniff" was given and its Content-Type is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/xx-javascript as script because "X-Content-Type: nosniff" was given and its Content-Type is not a script MIME type.
 Check that script sent with an 'X-Content-Type-Options: nosniff' header is correctly blocked if the MIME type isn't scripty.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
