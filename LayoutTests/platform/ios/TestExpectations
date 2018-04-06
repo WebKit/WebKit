@@ -3266,3 +3266,7 @@ webkit.org/b/182850 [ Release ] editing/pasteboard/data-transfer-set-data-saniti
 webkit.org/b/183219 [ Release ] editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Skip ]
 
 webkit.org/b/173928 storage/websql/database-lock-after-reload.html [ Pass Failure ]
+
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Slow ]
+[ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.html [ Slow ]
