@@ -252,6 +252,7 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
         }, data.release());
 #else
     UNUSED_PARAM(protectionSpace);
+    UNUSED_PARAM(cancellable);
     completionHandler({ });
 #endif
 }

@@ -1,3 +1,10 @@
+2018-04-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix unused parameter warning when credential storage is disabled
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::getCredentialFromPersistentStorage):
+
 2018-04-06  Eric Carlson  <eric.carlson@apple.com>
 
         [Extra zoom mode] Block playback until fullscreen begins
