@@ -64,6 +64,7 @@ public:
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
 
     static Ref<ImageBitmap> create(IntSize);
+    static Ref<ImageBitmap> create(std::pair<std::unique_ptr<ImageBuffer>, bool>&&);
 
     ~ImageBitmap();
 
@@ -78,6 +79,8 @@ public:
     bool originClean() const { return m_originClean; }
 
     std::unique_ptr<ImageBuffer> transferOwnershipAndClose();
+
+    static Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
 
 private:
     friend class PendingImageBitmap;

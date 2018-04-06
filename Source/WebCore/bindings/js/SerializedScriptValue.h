@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "ImageBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Strong.h>
@@ -46,6 +47,7 @@ class Module;
 namespace WebCore {
 
 class IDBValue;
+class ImageBitmap;
 class MessagePort;
 class SharedBuffer;
 enum class SerializationReturnCode;
@@ -103,7 +105,7 @@ public:
 
 private:
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&);
-    SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers
+    SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>>&& imageBuffers
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray>
 #endif
@@ -112,6 +114,7 @@ private:
     Vector<unsigned char> m_data;
     std::unique_ptr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
     std::unique_ptr<ArrayBufferContentsArray> m_sharedBufferContentsArray;
+    Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>> m_imageBuffers;
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
 #endif

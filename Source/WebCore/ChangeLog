@@ -1,3 +1,32 @@
+2018-04-06  Ms2ger  <Ms2ger@igalia.com>
+
+        Support transferring ImageBitmap objects
+        https://bugs.webkit.org/show_bug.cgi?id=183131
+
+        Reviewed by Dean Jackson.
+
+        Test: imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize): thread through ImageBitmaps.
+        (WebCore::CloneSerializer::CloneSerializer): thread through ImageBitmaps.
+        (WebCore::CloneSerializer::fillTransferMap): don't require a mutable reference.
+        (WebCore::CloneSerializer::dumpImageBitmap): add.
+        (WebCore::CloneSerializer::dumpIfTerminal): check for ImageBitmap.
+        (WebCore::CloneDeserializer::deserialize): thread through ImageBitmaps.
+        (WebCore::CloneDeserializer::CloneDeserializer): thread through ImageBitmaps.
+        (WebCore::CloneDeserializer::readImageBitmap): add.
+        (WebCore::CloneDeserializer::readTerminal): check for ImageBitmap.
+        (WebCore::SerializedScriptValue::SerializedScriptValue): thread through ImageBitmaps.
+        (WebCore::SerializedScriptValue::create): thread through ImageBitmaps.
+        (WebCore::containsDuplicates): add.
+        (WebCore::SerializedScriptValue::deserialize): handle ImageBitmap arguments.
+        * bindings/js/SerializedScriptValue.h: update signatures, add member.
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::create): add.
+        (WebCore::ImageBitmap::detachBitmaps): add.
+        * html/ImageBitmap.h: add signatures.
+
 2018-04-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         When recording the drawing, the DisplayList should be initialized with the GraphicsContextState of the underlying GraphicsContext
