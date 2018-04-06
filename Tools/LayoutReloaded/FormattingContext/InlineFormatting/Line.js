@@ -58,10 +58,10 @@ class Line {
     addFloatingBox(floatingDisplayBox, isFloatingLeft) {
         let width = floatingDisplayBox.width();
         ASSERT(width <= this.m_availableWidth);
-        // Push non-floating boxes to the right.
         this.m_availableWidth -= width;
         if (!isFloatingLeft)
             return;
+        // Push non-floating boxes to the right.
         for (let lineBox of this.m_lineBoxes)
             lineBox.lineBoxRect.moveHorizontally(width);
         this.m_lineRect.moveHorizontally(width);
