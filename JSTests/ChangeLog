@@ -1,3 +1,10 @@
+2018-04-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Add svn:eol-style to line-terminator-normalisation-CR.js
+        https://bugs.webkit.org/show_bug.cgi?id=184341
+
+        * test262/test/built-ins/Function/prototype/toString/line-terminator-normalisation-CR.js: Added property svn:eol-style.
+
 2018-04-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, remove errant LF from existing test262 test for CR line endings.
