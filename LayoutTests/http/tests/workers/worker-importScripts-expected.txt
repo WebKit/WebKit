@@ -24,7 +24,7 @@ Loaded message from different origin
 Loaded resource 2
 PASS: all resources executed.
 Loaded resource 1
-PASS: Threw NetworkError: A network error occurred. when load failed
+PASS: Threw NetworkError: Failed to load script when load failed
 PASS: some resources were loaded despite the network error
 Loaded resource 1
 PASS: Threw SyntaxError: Unexpected identifier 'syntax' when encountering a syntax error in imported script

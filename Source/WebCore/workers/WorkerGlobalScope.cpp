@@ -289,7 +289,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
 
         // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
         if (scriptLoader->failed())
-            return Exception { NetworkError };
+            return Exception { NetworkError, scriptLoader->error().localizedDescription() };
 
 #if ENABLE(SERVICE_WORKER)
         if (isServiceWorkerGlobalScope && !MIMETypeRegistry::isSupportedJavaScriptMIMEType(scriptLoader->responseMIMEType()))

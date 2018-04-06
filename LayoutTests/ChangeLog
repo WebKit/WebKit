@@ -1,3 +1,16 @@
+2018-04-06  Daniel Bates  <dabates@apple.com>
+
+        importScripts() should throw exception with a reason when it fails to load a script from the network
+        https://bugs.webkit.org/show_bug.cgi?id=184345
+
+        Reviewed by Alexey Proskuryakov.
+
+        Update expected results.
+
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * http/tests/workers/worker-importScripts-expected.txt:
+
 2018-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove pass expectation for LayoutTest imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html

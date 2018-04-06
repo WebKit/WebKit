@@ -1,3 +1,3 @@
 This tests that the Content Security Policy of the parent origin (this page) blocks a Web Worker from importing a script from a different origin, not listed in script-src, through a redirect.
 
-PASS threw exception NetworkError:  A network error occurred..
+PASS threw exception NetworkError: Cross-origin redirection denied by Content Security Policy..
