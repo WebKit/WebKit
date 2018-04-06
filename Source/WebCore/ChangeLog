@@ -1,5 +1,17 @@
 2018-04-06  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the build after <https://trac.webkit.org/changeset/230338>
+        (https://bugs.webkit.org/show_bug.cgi?id=184360)
+
+        Make lambdas mutable so that we can WTFMove() their captured arguments.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed):
+
+2018-04-06  Daniel Bates  <dabates@apple.com>
+
         Have class Exception take String by value instead of a String&&
         https://bugs.webkit.org/show_bug.cgi?id=184360
 

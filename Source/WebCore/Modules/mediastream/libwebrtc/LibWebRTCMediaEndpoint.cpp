@@ -910,7 +910,7 @@ void LibWebRTCMediaEndpoint::createSessionDescriptionSucceeded(std::unique_ptr<w
 void LibWebRTCMediaEndpoint::createSessionDescriptionFailed(const std::string& errorMessage)
 {
     String error(errorMessage.data(), errorMessage.size());
-    callOnMainThread([protectedThis = makeRef(*this), error = WTFMove(error)] {
+    callOnMainThread([protectedThis = makeRef(*this), error = WTFMove(error)] () mutable {
         if (protectedThis->isStopped())
             return;
         if (protectedThis->m_isInitiator)
@@ -932,7 +932,7 @@ void LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded()
 void LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed(const std::string& errorMessage)
 {
     String error(errorMessage.data(), errorMessage.size());
-    callOnMainThread([protectedThis = makeRef(*this), error = WTFMove(error)] {
+    callOnMainThread([protectedThis = makeRef(*this), error = WTFMove(error)] () mutable {
         if (protectedThis->isStopped())
             return;
         protectedThis->m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, WTFMove(error) });
@@ -951,7 +951,7 @@ void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded()
 void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed(const std::string& errorMessage)
 {
     String error(errorMessage.data(), errorMessage.size());
-    callOnMainThread([protectedThis = makeRef(*this), error = WTFMove(error)] {
+    callOnMainThread([protectedThis = makeRef(*this), error = WTFMove(error)] () mutable {
         if (protectedThis->isStopped())
             return;
         protectedThis->m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { OperationError, WTFMove(error) });
