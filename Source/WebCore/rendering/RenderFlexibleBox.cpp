@@ -1552,6 +1552,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
     for (size_t i = 0; i < children.size(); ++i) {
         const auto& flexItem = children[i];
         auto& child = flexItem.box;
+        bool childHadLayout = child.everHadLayout();
 
         ASSERT(!flexItem.box.isOutOfFlowPositioned());
 
@@ -1582,6 +1583,10 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         if (child.needsLayout())
             m_relaidOutChildren.add(&child);
         child.layoutIfNeeded();
+        if (!childHadLayout && child.checkForRepaintDuringLayout()) {
+            child.repaint();
+            child.repaintOverhangingFloats(true);
+        }
 
         updateAutoMarginsInMainAxis(child, autoMarginOffset);
 
