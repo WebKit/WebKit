@@ -24,10 +24,10 @@ index f5d0e5d2c3e..3945090acf3 100644
      $(WebCore)/dom/TreeWalker.idl \
      $(WebCore)/dom/UIEvent.idl \
 diff --git a/Source/WebCore/Sources.txt b/Source/WebCore/Sources.txt
-index 02da4cb443c..aa757fcb42e 100644
+index ff942b36a44..5bc30f914af 100644
 --- a/Source/WebCore/Sources.txt
 +++ b/Source/WebCore/Sources.txt
-@@ -1798,7 +1798,9 @@ rendering/InlineBox.cpp
+@@ -1797,7 +1797,9 @@ rendering/InlineBox.cpp
  rendering/InlineElementBox.cpp
  rendering/InlineFlowBox.cpp
  rendering/InlineIterator.cpp
@@ -38,10 +38,10 @@ index 02da4cb443c..aa757fcb42e 100644
  rendering/LayoutRepainter.cpp
  rendering/LayoutState.cpp
 diff --git a/Source/WebCore/WebCore.xcodeproj/project.pbxproj b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
-index f899f092389..2cd59716f8f 100644
+index 690b9e941bd..3ffc4406907 100644
 --- a/Source/WebCore/WebCore.xcodeproj/project.pbxproj
 +++ b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
-@@ -397,6 +397,10 @@
+@@ -396,6 +396,10 @@
  		1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */; };
  		119340971FED715500935F1E /* RenderTreeBuilderFormControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */; };
  		119340A31FEE024000935F1E /* RenderTreeBuilderBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */; };
@@ -52,7 +52,7 @@ index f899f092389..2cd59716f8f 100644
  		11CB2789203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */; };
  		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
  		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-@@ -5704,6 +5708,13 @@
+@@ -5699,6 +5703,13 @@
  		119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFormControls.h; sourceTree = "<group>"; };
  		119340A01FEE024000935F1E /* RenderTreeBuilderBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderBlock.cpp; sourceTree = "<group>"; };
  		119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlock.h; sourceTree = "<group>"; };
@@ -66,7 +66,7 @@ index f899f092389..2cd59716f8f 100644
  		11C5F1162003E7750001AE60 /* RenderTreeBuilderInline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderInline.cpp; sourceTree = "<group>"; };
  		11C5F1182003E7760001AE60 /* RenderTreeBuilderInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderInline.h; sourceTree = "<group>"; };
  		11C5F11D2003F69E0001AE60 /* RenderTreeBuilderBlockFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlockFlow.h; sourceTree = "<group>"; };
-@@ -22130,6 +22141,7 @@
+@@ -22115,6 +22126,7 @@
  		A83B79100CCB001B000B0825 /* Core */ = {
  			isa = PBXGroup;
  			children = (
@@ -74,7 +74,7 @@ index f899f092389..2cd59716f8f 100644
  				7C30D97E1F815AC000268356 /* JSAbortController.cpp */,
  				7C30D9801F815AC100268356 /* JSAbortController.h */,
  				7C30D9821F815AC200268356 /* JSAbortSignal.cpp */,
-@@ -25461,6 +25473,10 @@
+@@ -25447,6 +25459,10 @@
  		F523D2F302DE443B018635CA /* rendering */ = {
  			isa = PBXGroup;
  			children = (
@@ -85,7 +85,7 @@ index f899f092389..2cd59716f8f 100644
  				FFB698C81832F10B00158A31 /* line */,
  				439046C212DA25CE00AF80A2 /* mathml */,
  				FD08A879175D3926002CD360 /* shapes */,
-@@ -25755,6 +25771,8 @@
+@@ -25742,6 +25758,8 @@
  		F523D32402DE4478018635CA /* dom */ = {
  			isa = PBXGroup;
  			children = (
@@ -94,7 +94,7 @@ index f899f092389..2cd59716f8f 100644
  				CE2616A4187E65C1007955F3 /* ios */,
  				2D5036661BCDDDC400E20BB3 /* mac */,
  				51ECC3E42005831F00483EAE /* messageports */,
-@@ -26749,6 +26767,7 @@
+@@ -26736,6 +26754,7 @@
  				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
  				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
  				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
@@ -102,7 +102,7 @@ index f899f092389..2cd59716f8f 100644
  				A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */,
  				A12C59EE2035FC9B0012236B /* ApplePayError.h in Headers */,
  				7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */,
-@@ -30345,6 +30364,7 @@
+@@ -30329,6 +30348,7 @@
  				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
  				E17B491616A9B094001C8839 /* TransitionEvent.h in Headers */,
  				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
@@ -110,7 +110,7 @@ index f899f092389..2cd59716f8f 100644
  				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
  				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
  				14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */,
-@@ -30559,6 +30579,7 @@
+@@ -30543,6 +30563,7 @@
  				97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */,
  				97AABD1F14FA09D5007457AE /* WebSocketChannelClient.h in Headers */,
  				4A38BF5114FE1C0900612512 /* WebSocketDeflateFramer.h in Headers */,
@@ -118,7 +118,7 @@ index f899f092389..2cd59716f8f 100644
  				97AABD2114FA09D5007457AE /* WebSocketDeflater.h in Headers */,
  				97AABD2314FA09D5007457AE /* WebSocketExtensionDispatcher.h in Headers */,
  				4A5A2ADC161E7E00005889DD /* WebSocketExtensionParser.h in Headers */,
-@@ -31043,6 +31064,7 @@
+@@ -31027,6 +31048,7 @@
  				0719427F1D088F21002AA51D /* AVFoundationMIMETypeCache.mm in Sources */,
  				070363E5181A1CDC00C074A5 /* AVMediaCaptureSource.mm in Sources */,
  				CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */,
@@ -360,7 +360,7 @@ index 00000000000..20c01b8cff5
 +    readonly attribute boolean isCollapsible;
 +};
 diff --git a/Source/WebCore/dom/Node.cpp b/Source/WebCore/dom/Node.cpp
-index 5fc4cb16620..def018fdf3f 100644
+index 4b1e8725795..cae6e476cad 100644
 --- a/Source/WebCore/dom/Node.cpp
 +++ b/Source/WebCore/dom/Node.cpp
 @@ -517,6 +517,27 @@ ExceptionOr<void> Node::before(Vector<NodeOrString>&& nodeOrStringVector)
@@ -392,7 +392,7 @@ index 5fc4cb16620..def018fdf3f 100644
  {
      RefPtr<ContainerNode> parent = parentNode();
 diff --git a/Source/WebCore/dom/Node.h b/Source/WebCore/dom/Node.h
-index 7488f5d47d2..cb0b054997f 100644
+index 7f176126c7a..1b7a19e07f0 100644
 --- a/Source/WebCore/dom/Node.h
 +++ b/Source/WebCore/dom/Node.h
 @@ -179,7 +179,11 @@ public:
@@ -424,7 +424,7 @@ index 25177a8cd43..294307dc815 100644
      DOMString? lookupNamespaceURI(DOMString? prefix);
      boolean isDefaultNamespace(DOMString? namespaceURI);
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index 2d423cf4fd3..2c292aefdc2 100644
+index 90c3e8e5a78..41e4447ff23 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
 @@ -29,6 +29,7 @@
@@ -435,7 +435,7 @@ index 2d423cf4fd3..2c292aefdc2 100644
  #include "CSSComputedStyleDeclaration.h"
  #include "CSSRule.h"
  #include "CSSRuleList.h"
-@@ -63,9 +64,11 @@
+@@ -64,9 +65,11 @@
  #include "FrameTree.h"
  #include "FrameView.h"
  #include "History.h"
@@ -445,8 +445,8 @@ index 2d423cf4fd3..2c292aefdc2 100644
  #include "JSMainThreadExecState.h"
 +#include "InlineTextBreaker.h"
  #include "Location.h"
- #include "MainFrame.h"
  #include "MediaQueryList.h"
+ #include "MediaQueryMatcher.h"
 @@ -78,6 +81,7 @@
  #include "PageConsoleClient.h"
  #include "PageTransitionEvent.h"
@@ -514,7 +514,7 @@ index 2d423cf4fd3..2c292aefdc2 100644
  {
      return !m_frame;
 diff --git a/Source/WebCore/page/DOMWindow.h b/Source/WebCore/page/DOMWindow.h
-index 6422a48517a..381504c4a2a 100644
+index 4c66b724e29..4ee2993438c 100644
 --- a/Source/WebCore/page/DOMWindow.h
 +++ b/Source/WebCore/page/DOMWindow.h
 @@ -48,7 +48,6 @@ template<typename> class Strong;
@@ -542,11 +542,11 @@ index 6422a48517a..381504c4a2a 100644
 +    int nextBreakingOpportunity(const String& text, unsigned startPosition);
 +    Vector<Ref<InlineTextRun>> collectTextRuns(const String&, const Node&, float availableSpace);
 +
-     // Self-referential attributes
- 
      DOMWindow* self() const;
+ 
+     DOMWindow* opener() const;
 diff --git a/Source/WebCore/page/DOMWindow.idl b/Source/WebCore/page/DOMWindow.idl
-index 801a0fb3bb3..5f0eae7b1fe 100644
+index 46ebc1561fa..cbcd213b46a 100644
 --- a/Source/WebCore/page/DOMWindow.idl
 +++ b/Source/WebCore/page/DOMWindow.idl
 @@ -82,6 +82,11 @@ typedef USVString CSSOMString;
@@ -562,7 +562,7 @@ index 801a0fb3bb3..5f0eae7b1fe 100644
      void alert();
      void alert(DOMString message);
 diff --git a/Source/WebCore/page/mac/PageMac.mm b/Source/WebCore/page/mac/PageMac.mm
-index 4807e7b61d1..f5916c11502 100644
+index aa030c54617..7457861e142 100644
 --- a/Source/WebCore/page/mac/PageMac.mm
 +++ b/Source/WebCore/page/mac/PageMac.mm
 @@ -52,11 +52,6 @@ void Page::platformInitialize()
@@ -1434,7 +1434,7 @@ index 02094a327a5..695b0235780 100644
  #include "PaintInfo.h"
  #include "RenderFragmentedFlow.h"
 diff --git a/Source/WebCore/rendering/RenderObject.cpp b/Source/WebCore/rendering/RenderObject.cpp
-index 0555b1e712f..8c784751a62 100644
+index 7f3d46b7dd8..8120bd369ac 100644
 --- a/Source/WebCore/rendering/RenderObject.cpp
 +++ b/Source/WebCore/rendering/RenderObject.cpp
 @@ -108,7 +108,7 @@ struct SameSizeAsRenderObject {

@@ -1,3 +1,9 @@
+2018-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        Rebaseline LayoutReloaded patch file.
+
+        * LayoutReloaded/misc/LayoutReloadedWebKit.patch:
+
 2018-04-05  Youenn Fablet  <youenn@apple.com>
 
         Test expectation updater should handle Win bot results
