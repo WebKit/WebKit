@@ -41,7 +41,8 @@ class CompiledContentExtension;
 
 class ContentExtension : public RefCounted<ContentExtension> {
 public:
-    static Ref<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&);
+    enum class ShouldCompileCSS { No, Yes };
+    static Ref<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&, ShouldCompileCSS = ShouldCompileCSS::Yes);
 
     const String& identifier() const { return m_identifier; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
@@ -51,7 +52,7 @@ public:
     const Vector<uint32_t>& universalActionsWithConditions(const URL& topURL);
 
 private:
-    ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&);
+    ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&, ShouldCompileCSS);
     uint32_t findFirstIgnorePreviousRules() const;
     
     String m_identifier;

@@ -72,7 +72,7 @@ void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIde
     for (const auto& contentRuleList : contentRuleLists) {
         WebCompiledContentRuleListData contentRuleListData = contentRuleList.second;
         auto compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleListData));
-        backend.addContentExtension(contentRuleList.first, WTFMove(compiledContentRuleList));
+        backend.addContentExtension(contentRuleList.first, WTFMove(compiledContentRuleList), ContentExtensions::ContentExtension::ShouldCompileCSS::No);
     }
 
     auto pendingCallbacks = m_pendingCallbacks.take(identifier);

@@ -1,3 +1,13 @@
+2018-04-05  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r230223): LayoutTest http/tests/contentextensions/css-display-none-overflows-rule-data-1.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=184306
+
+        Reviewed by Ryosuke Niwa.
+
+        * NetworkProcess/NetworkContentRuleListManager.cpp:
+        (WebKit::NetworkContentRuleListManager::addContentRuleLists):
+
 2018-04-05  Brent Fulgham  <bfulgham@apple.com>
 
         WebContent process is calling CGDisplayUsesInvertedPolarity

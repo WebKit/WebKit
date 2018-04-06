@@ -36,12 +36,12 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
+Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, ShouldCompileCSS shouldCompileCSS)
 {
-    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension)));
+    return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension), shouldCompileCSS));
 }
 
-ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
+ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension, ShouldCompileCSS shouldCompileCSS)
     : m_identifier(identifier)
     , m_compiledExtension(WTFMove(compiledExtension))
 {
@@ -55,8 +55,9 @@ ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContent
         ASSERT((action & ~IfConditionFlag) == static_cast<uint32_t>(action));
         m_universalActionsWithConditions.append(action);
     }
-    
-    compileGlobalDisplayNoneStyleSheet();
+
+    if (shouldCompileCSS == ShouldCompileCSS::Yes)
+        compileGlobalDisplayNoneStyleSheet();
     m_universalActionsWithoutConditions.shrinkToFit();
     m_universalActionsWithConditions.shrinkToFit();
 }

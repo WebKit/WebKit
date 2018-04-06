@@ -50,13 +50,13 @@ namespace WebCore {
 
 namespace ContentExtensions {
     
-void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension)
+void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension, ContentExtension::ShouldCompileCSS shouldCompileCSS)
 {
     ASSERT(!identifier.isEmpty());
     if (identifier.isEmpty())
         return;
     
-    auto contentExtension = ContentExtension::create(identifier, WTFMove(compiledContentExtension));
+    auto contentExtension = ContentExtension::create(identifier, WTFMove(compiledContentExtension), shouldCompileCSS);
     m_contentExtensions.set(identifier, WTFMove(contentExtension));
 }
 
