@@ -207,7 +207,15 @@ class LayoutRect {
     moveBy(distance) {
         this.m_topLeft.moveBy(distance);
     }
-    
+
+    moveHorizontally(distance) {
+        this.m_topLeft.shiftLeft(distance);
+    }
+
+    moveVertically(distance) {
+        this.m_topLeft.shiftTop(distance);
+    }
+
     isEmpty() {
         return this.m_size.isEmpty();
     }

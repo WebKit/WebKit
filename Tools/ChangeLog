@@ -1,3 +1,29 @@
+2018-04-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Move floating box to the next line when needed
+        https://bugs.webkit.org/show_bug.cgi?id=184349
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleContent):
+        (InlineFormattingContext.prototype._handleText):
+        (InlineFormattingContext.prototype._handleFloatingBox):
+        (InlineFormattingContext.prototype._mapFloatingHorizontalPosition):
+        (InlineFormattingContext):
+        (InlineFormattingContext.prototype._handleFloatingBoxes): Deleted.
+        (InlineFormattingContext.prototype._floatingBoxes): Deleted.
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js:
+        (Line.prototype.addTextLineBox):
+        (Line.prototype.addFloatingBox):
+        (Line):
+        * LayoutReloaded/Utils.js:
+        (LayoutRect.prototype.moveHorizontally):
+        (LayoutRect.prototype.moveVertically):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-with-floats-when-they-dont-fit.html: Added.
+
 2018-04-05  Brady Eidson  <beidson@apple.com>
 
         Process Swap on Navigation causes many webpages to hang due to attempted process swap for iframe navigations.
