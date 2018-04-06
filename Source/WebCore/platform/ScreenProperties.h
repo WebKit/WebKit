@@ -41,6 +41,7 @@ struct ScreenProperties {
     RetainPtr<CGColorSpaceRef> colorSpace;
     int screenDepth { 0 };
     int screenDepthPerComponent { 0 };
+    bool screenSupportsExtendedColor { false };
     bool screenHasInvertedColors { false };
     bool screenIsMonochrome { false };
 
@@ -57,7 +58,7 @@ struct ScreenProperties {
 template<class Encoder>
 void ScreenProperties::encode(Encoder& encoder) const
 {
-    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenHasInvertedColors << screenIsMonochrome;
+    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenSupportsExtendedColor << screenHasInvertedColors << screenIsMonochrome;
 
     if (colorSpace) {
         // Try to encode the name.
@@ -106,6 +107,11 @@ std::optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
     if (!screenDepthPerComponent)
         return std::nullopt;
 
+    std::optional<bool> screenSupportsExtendedColor;
+    decoder >> screenSupportsExtendedColor;
+    if (!screenSupportsExtendedColor)
+        return std::nullopt;
+
     std::optional<bool> screenHasInvertedColors;
     decoder >> screenHasInvertedColors;
     if (!screenHasInvertedColors)
@@ -151,7 +157,7 @@ std::optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
     }
     }
 
-    return { { WTFMove(*screenAvailableRect), WTFMove(*screenRect), WTFMove(cgColorSpace), WTFMove(*screenDepth), WTFMove(*screenDepthPerComponent), WTFMove(*screenHasInvertedColors), WTFMove(*screenIsMonochrome) } };
+    return { { WTFMove(*screenAvailableRect), WTFMove(*screenRect), WTFMove(cgColorSpace), WTFMove(*screenDepth), WTFMove(*screenDepthPerComponent), WTFMove(*screenSupportsExtendedColor), WTFMove(*screenHasInvertedColors), WTFMove(*screenIsMonochrome) } };
 }
 
 } // namespace WebCore

@@ -48,7 +48,7 @@ namespace WebCore {
 
 static PlatformDisplayID displayID(NSScreen *screen)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
     return [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
 }
 
@@ -71,7 +71,7 @@ static PlatformDisplayID displayID(Widget* widget)
 // Screen containing the menubar.
 static NSScreen *firstScreen()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
     NSArray *screens = [NSScreen screens];
     if (![screens count])
         return nil;
@@ -112,10 +112,11 @@ void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenPro
 
         int screenDepth = NSBitsPerPixelFromDepth(screen.depth);
         int screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
+        bool screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
         bool screenHasInvertedColors = CGDisplayUsesInvertedPolarity();
         bool screenIsMonochrome = CGDisplayUsesForceToGray();
 
-        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenHasInvertedColors, screenIsMonochrome });
+        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome });
     }
 }
 
@@ -229,7 +230,10 @@ bool screenSupportsExtendedColor(Widget* widget)
     if (!widget)
         return false;
 
-    // FIXME: <https://webkit.org/b/184364> We should assert here if in WebContent process.
+    if (!screenProperties().isEmpty())
+        return getScreenProperties(widget).screenSupportsExtendedColor;
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
 }
 

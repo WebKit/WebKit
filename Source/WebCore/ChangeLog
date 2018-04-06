@@ -1,3 +1,24 @@
+2018-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        WebCore::screenSupportsExtendedColor improperly calls NSScreen functions in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=184364
+        <rdar://problem/39246314>
+
+        Reviewed by Per Arne Vollan.
+
+        The WebContent process is interacting directly with NSScreen to determine if the current screen
+        has extended color support. This should be brokered from the UIProcess.
+        
+        Tested by fast/media/mq-color-gamut.html.
+
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenProperties::encode const): Add screenSupportsExtendedColor.
+        (WebCore::ScreenProperties::decode): Ditto.
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::getScreenProperties): Retrieve extended color support.
+        (WebCore::screenSupportsExtendedColor): Retrieve cached version when in the WebContent
+        process. Assert that NSScreen is not accessed in the WebContent process.
+
 2018-04-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebCore] Expose a constant for scrollbar pixels per line (cScrollbarPixelsPerLine)
