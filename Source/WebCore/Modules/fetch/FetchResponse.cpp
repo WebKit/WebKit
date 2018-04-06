@@ -241,10 +241,10 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
     m_response.m_loadingError = error;
 
     if (auto responseCallback = WTFMove(m_responseCallback))
-        responseCallback(Exception { TypeError, String(error.localizedDescription()) });
+        responseCallback(Exception { TypeError, error.localizedDescription() });
 
     if (auto consumeDataCallback = WTFMove(m_consumeDataCallback))
-        consumeDataCallback(Exception { TypeError, String(error.localizedDescription()) });
+        consumeDataCallback(Exception { TypeError, error.localizedDescription() });
 
 #if ENABLE(STREAMS_API)
     if (m_response.m_readableStreamSource) {

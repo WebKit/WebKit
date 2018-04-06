@@ -1,3 +1,32 @@
+2018-04-06  Daniel Bates  <dabates@apple.com>
+
+        Have class Exception take String by value instead of a String&&
+        https://bugs.webkit.org/show_bug.cgi?id=184360
+
+        Reviewed by Alexey Proskuryakov.
+
+        For convenience support instantiating an Exception with either an lvalue String or
+        rvalue String.
+
+        Although it can be argued that having Exception take a String by value instead of String&&
+        can lead to missed opportunities to WTFMove() a String object into Exception such mistakes
+        are just that, missed opportunities. That is, correctness is not affected and we may perform
+        an unnecessary ref/deref of the underlying StringImpl when instantiating an Exception. If
+        such missed opportunities show up in profiles and such mistakes happen often then we can
+        re-evaluate the decision to have Exception take a String by value.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::put): Simplify code now that Exception takes a String by value.
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didFail): Ditto.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionFailed): Move String into Exception to avoid an
+        unnecessary ref/de-ref.
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed): Ditto.
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed): Ditto.
+        * dom/Exception.h:
+        (WebCore::Exception::Exception): Take String by value. Also use uniform initializer syntax.
+
 2018-04-06  Antti Koivisto  <antti@apple.com>
 
         Tighten ImageSource to have BitmapImage pointer instead of Image
