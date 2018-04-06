@@ -1,0 +1,5 @@
+
+FAIL webkitAudioContext interface should not exist assert_false: expected false got true
+FAIL webkitAudioPannerNode interface should not exist assert_false: expected false got true
+FAIL webkitOfflineAudioContext interface should not exist assert_false: expected false got true
+

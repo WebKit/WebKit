@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 70: TypeError: undefined is not an object (evaluating 'context.startRendering().then')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.startRendering().then')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [test] Equal-power panner model of AudioPannerNode 
+

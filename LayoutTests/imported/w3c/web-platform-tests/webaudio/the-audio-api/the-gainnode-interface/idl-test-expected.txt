@@ -1,0 +1,35 @@
+dictionary GainOptions : AudioNodeOptions {
+             float gain = 1.0;
+};
+
+[Constructor(BaseAudioContext context, optional GainOptions options)]
+interface GainNode : AudioNode {
+
+    readonly attribute AudioParam gain;
+
+};
+
+FAIL webaudio Gain interfaces promise_test: Unhandled rejection with value: object "Unrecognised tokens, line 1 (tokens: '{"error": {')
+[
+    {
+        "type": "other",
+        "value": "{"
+    },
+    {
+        "type": "string",
+        "value": "\"error\""
+    },
+    {
+        "type": "other",
+        "value": ":"
+    },
+    {
+        "type": "whitespace",
+        "value": " "
+    },
+    {
+        "type": "other",
+        "value": "{"
+    }
+]"
+

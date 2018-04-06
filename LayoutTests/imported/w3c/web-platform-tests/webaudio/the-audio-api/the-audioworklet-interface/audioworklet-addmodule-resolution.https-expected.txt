@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 52: TypeError: undefined is not an object (evaluating 'realtimeContext.audioWorklet.addModule')
+
+FAIL 
+      Test the invocation order of AudioWorklet.addModule() and BaseAudioContext
+     TypeError: undefined is not an object (evaluating 'realtimeContext.audioWorklet.addModule')
+

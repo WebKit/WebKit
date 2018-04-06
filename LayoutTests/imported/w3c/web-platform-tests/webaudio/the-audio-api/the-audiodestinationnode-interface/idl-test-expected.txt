@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 331: callback not yet supported
+CONSOLE MESSAGE: line 331: callback not yet supported
+interface AudioDestinationNode : AudioNode {
+
+    readonly attribute unsigned long maxChannelCount;
+
+};
+
+PASS AudioDestinationNode interface: existence and properties of interface object 
+PASS AudioDestinationNode interface object length 
+PASS AudioDestinationNode interface object name 
+PASS AudioDestinationNode interface: existence and properties of interface prototype object 
+PASS AudioDestinationNode interface: existence and properties of interface prototype object's "constructor" property 
+PASS AudioDestinationNode interface: existence and properties of interface prototype object's @@unscopables property 
+PASS AudioDestinationNode interface: attribute maxChannelCount 
+PASS Unscopable handled correctly for maxChannelCount property on AudioDestinationNode 
+PASS AudioDestinationNode must be primary interface of audio_destination_node 
+PASS Stringification of audio_destination_node 
+PASS AudioDestinationNode interface: audio_destination_node must inherit property "maxChannelCount" with the proper type 
+

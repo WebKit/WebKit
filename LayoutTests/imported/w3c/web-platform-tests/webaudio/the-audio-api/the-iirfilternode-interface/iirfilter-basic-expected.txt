@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 39: TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(coef, coef)', 'context.createIIRFilter' is undefined)
+
+Harness Error (FAIL), message = TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(coef, coef)', 'context.createIIRFilter' is undefined)
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [initialize]  
+PASS   Initialize context for testing did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [existence]  
+FAIL X context.createIIRFilter does not exist. Got undefined. assert_true: expected true got false
+FAIL < [existence] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS > [parameters]  
+

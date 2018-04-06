@@ -1,0 +1,4 @@
+
+FAIL Test currentTime at completion of OfflineAudioContext rendering undefined is not an object (evaluating 'context.startRendering().
+    then')
+

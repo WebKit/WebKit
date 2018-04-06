@@ -327,7 +327,7 @@
     "web-platform-tests/wasm": "skip", 
     "web-platform-tests/web-animations": "skip", 
     "web-platform-tests/web-nfc": "skip", 
-    "web-platform-tests/webaudio": "skip", 
+    "web-platform-tests/webaudio": "import", 
     "web-platform-tests/webauthn": "skip", 
     "web-platform-tests/webdriver": "skip", 
     "web-platform-tests/webgl": "skip", 

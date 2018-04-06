@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 20: ReferenceError: Can't find variable: AudioWorklet
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: AudioWorklet
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [Test if AudioWorklet exists]  
+

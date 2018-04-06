@@ -1,0 +1,8 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [test]  
+PASS   Setting ConvolverNode impulse response buffer to null did not throw an exception. 
+PASS   conv.buffer === null is true. 
+PASS < [test] All assertions passed. (total 2 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

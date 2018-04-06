@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: line 58: TypeError: undefined is not an object (evaluating 'panner.positionX.value')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'panner.positionX.value')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [initialize]  
+PASS   Initialize context and panner did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
+PASS > [basic]  
+PASS   panner.numberOfInputs is equal to 1. 
+PASS   panner.numberOfOutputs is equal to 1. 
+PASS   panner.refDistance is equal to 1. 
+PASS   panner.refDistance = 270.5 is equal to 270.5. 
+PASS   panner.maxDistance is equal to 10000. 
+PASS   panner.maxDistance = 100.5 is equal to 100.5. 
+PASS   panner.rolloffFactor is equal to 1. 
+PASS   panner.rolloffFactor = 0.75 is equal to 0.75. 
+PASS   panner.coneInnerAngle is equal to 360. 
+PASS   panner.coneInnerAngle = 240.5 is equal to 240.5. 
+PASS   panner.coneOuterAngle is equal to 360. 
+PASS   panner.coneOuterAngle = 166.5 is equal to 166.5. 
+PASS   panner.coneOuterGain is equal to 0. 
+PASS   panner.coneOuterGain = 0.25 is equal to 0.25. 
+FAIL X panner.panningModel is not equal to equalpower. Got HRTF. assert_true: expected true got false
+PASS   inverse is equal to panner.distanceModel. 
+

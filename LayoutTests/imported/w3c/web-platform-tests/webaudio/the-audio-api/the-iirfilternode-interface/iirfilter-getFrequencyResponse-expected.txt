@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 42: TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)
+
+Harness Error (FAIL), message = TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [1-pole IIR]  
+

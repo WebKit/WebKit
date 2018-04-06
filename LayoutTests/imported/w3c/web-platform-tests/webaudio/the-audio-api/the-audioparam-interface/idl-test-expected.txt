@@ -1,0 +1,46 @@
+
+PASS AudioParam interface: existence and properties of interface object 
+PASS AudioParam interface object length 
+PASS AudioParam interface object name 
+PASS AudioParam interface: existence and properties of interface prototype object 
+PASS AudioParam interface: existence and properties of interface prototype object's "constructor" property 
+PASS AudioParam interface: existence and properties of interface prototype object's @@unscopables property 
+PASS AudioParam interface: attribute value 
+PASS Unscopable handled correctly for value property on AudioParam 
+PASS AudioParam interface: attribute defaultValue 
+PASS Unscopable handled correctly for defaultValue property on AudioParam 
+PASS AudioParam interface: attribute minValue 
+PASS Unscopable handled correctly for minValue property on AudioParam 
+PASS AudioParam interface: attribute maxValue 
+PASS Unscopable handled correctly for maxValue property on AudioParam 
+PASS AudioParam interface: operation setValueAtTime(float, double) 
+PASS Unscopable handled correctly for setValueAtTime(float, double) on AudioParam 
+PASS AudioParam interface: operation linearRampToValueAtTime(float, double) 
+PASS Unscopable handled correctly for linearRampToValueAtTime(float, double) on AudioParam 
+PASS AudioParam interface: operation exponentialRampToValueAtTime(float, double) 
+PASS Unscopable handled correctly for exponentialRampToValueAtTime(float, double) on AudioParam 
+PASS AudioParam interface: operation setTargetAtTime(float, double, double) 
+PASS Unscopable handled correctly for setTargetAtTime(float, double, double) on AudioParam 
+PASS AudioParam interface: operation setValueCurveAtTime(Float32Array, double, double) 
+PASS Unscopable handled correctly for setValueCurveAtTime(Float32Array, double, double) on AudioParam 
+PASS AudioParam interface: operation cancelScheduledValues(double) 
+PASS Unscopable handled correctly for cancelScheduledValues(double) on AudioParam 
+PASS AudioParam must be primary interface of delay_time 
+PASS Stringification of delay_time 
+PASS AudioParam interface: delay_time must inherit property "value" with the proper type 
+PASS AudioParam interface: delay_time must inherit property "defaultValue" with the proper type 
+PASS AudioParam interface: delay_time must inherit property "minValue" with the proper type 
+PASS AudioParam interface: delay_time must inherit property "maxValue" with the proper type 
+PASS AudioParam interface: delay_time must inherit property "setValueAtTime(float, double)" with the proper type 
+PASS AudioParam interface: calling setValueAtTime(float, double) on delay_time with too few arguments must throw TypeError 
+PASS AudioParam interface: delay_time must inherit property "linearRampToValueAtTime(float, double)" with the proper type 
+PASS AudioParam interface: calling linearRampToValueAtTime(float, double) on delay_time with too few arguments must throw TypeError 
+PASS AudioParam interface: delay_time must inherit property "exponentialRampToValueAtTime(float, double)" with the proper type 
+PASS AudioParam interface: calling exponentialRampToValueAtTime(float, double) on delay_time with too few arguments must throw TypeError 
+PASS AudioParam interface: delay_time must inherit property "setTargetAtTime(float, double, double)" with the proper type 
+PASS AudioParam interface: calling setTargetAtTime(float, double, double) on delay_time with too few arguments must throw TypeError 
+PASS AudioParam interface: delay_time must inherit property "setValueCurveAtTime(Float32Array, double, double)" with the proper type 
+PASS AudioParam interface: calling setValueCurveAtTime(Float32Array, double, double) on delay_time with too few arguments must throw TypeError 
+PASS AudioParam interface: delay_time must inherit property "cancelScheduledValues(double)" with the proper type 
+PASS AudioParam interface: calling cancelScheduledValues(double) on delay_time with too few arguments must throw TypeError 
+

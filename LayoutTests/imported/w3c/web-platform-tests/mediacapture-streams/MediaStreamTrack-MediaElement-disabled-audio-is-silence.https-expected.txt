@@ -5,5 +5,5 @@ Description
 This test checks that a disabled audio track in a MediaStream is rendered as silence. It relies on the Web Audio API.
 
 
-FAIL Tests that a disabled audio track in a MediaStream is rendered as silence Can't find variable: AudioContext
+PASS Tests that a disabled audio track in a MediaStream is rendered as silence 
 

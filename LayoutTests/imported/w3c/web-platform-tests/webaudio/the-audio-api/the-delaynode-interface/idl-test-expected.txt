@@ -1,0 +1,36 @@
+dictionary DelayOptions : AudioNodeOptions {
+             double maxDelayTime = 1;
+             double delayTime = 0;
+};
+
+[Constructor(BaseAudioContext context, optional DelayOptions options)]
+interface DelayNode : AudioNode {
+
+    readonly attribute AudioParam delayTime;
+
+};
+
+FAIL webaudio Delay interfaces promise_test: Unhandled rejection with value: object "Unrecognised tokens, line 1 (tokens: '{"error": {')
+[
+    {
+        "type": "other",
+        "value": "{"
+    },
+    {
+        "type": "string",
+        "value": "\"error\""
+    },
+    {
+        "type": "other",
+        "value": ":"
+    },
+    {
+        "type": "whitespace",
+        "value": " "
+    },
+    {
+        "type": "other",
+        "value": "{"
+    }
+]"
+

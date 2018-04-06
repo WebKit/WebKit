@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 24: TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [Initializing AudioWorklet and Context]  
+

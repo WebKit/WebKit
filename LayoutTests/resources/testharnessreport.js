@@ -21,6 +21,12 @@ if (self.testRunner) {
     // The risk is that testharness timeout() might be called to late on slow bots to finish properly.
     if (testRunner.timeout && (location.port == 8800 || location.port == 9443))
         setTimeout(timeout, testRunner.timeout * 0.9);
+
+    // Make WebAudio map to webkitWebAudio for WPT tests
+    if (location.port == 8800 || location.port == 9443) {
+        self.AudioContext = self.webkitAudioContext;
+        self.OfflineAudioContext = self.webkitOfflineAudioContext;
+    }
 }
 
 if (self.internals && internals.setICECandidateFiltering)

@@ -1,0 +1,4 @@
+
+FAIL Test setTargetAtTime after an event in the same processing block undefined is not an object (evaluating 'context.startRendering().
+    then')
+

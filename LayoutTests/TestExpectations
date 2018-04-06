@@ -1098,6 +1098,12 @@ webkit.org/b/182087 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
 
+# Does timeout
+imported/w3c/web-platform-tests/webaudio/idlharness.https.html [ Skip ]
+# Do assert in OfflineAudioContext
+[ Debug ] imported/w3c/web-platform-tests/webaudio/ [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-disconnect.html [ DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/148925 svg/dom/svg-root-lengths.html [ Pass Failure ]
 

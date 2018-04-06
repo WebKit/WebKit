@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 52: TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [test] Tests attribute and maximum allowed delay of DelayNode 
+PASS   () => context.createDelay(180) threw NotSupportedError: "The operation is not supported.". 
+PASS   () => context.createDelay(0) threw NotSupportedError: "The operation is not supported.". 
+PASS   () => context.createDelay(-1) threw NotSupportedError: "The operation is not supported.". 
+FAIL X () => context.createDelay(NaN) did not throw an exception. assert_true: expected true got false
+PASS   delay.delayTime.value = 0.5 is equal to 0.5. 
+
