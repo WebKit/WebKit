@@ -1,3 +1,16 @@
+2018-04-05  Youenn Fablet  <youenn@apple.com>
+
+        Add a test for scoped cookies used to load AppCache resources
+        https://bugs.webkit.org/show_bug.cgi?id=184315
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/tests/appcache/document-cookie-http-only-expected.txt:
+        * http/tests/appcache/document-cookie-http-only.php:
+        * http/tests/appcache/resources/manifest-protected-script.php: Added.
+        * http/tests/appcache/resources/scope1/cookie-protected-manifest.php: Added.
+        * http/tests/appcache/resources/scope2/cookie-protected-script.php: Added.
+
 2018-04-05  Zalan Bujtas  <zalan@apple.com>
 
         Folding anonymous blocks should not result in deleting content.
