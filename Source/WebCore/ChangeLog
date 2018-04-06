@@ -1,3 +1,10 @@
+2018-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r230323
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screen): Remove assertion we still hit due to event handling code.
+
 2018-04-05  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r230223): LayoutTest http/tests/contentextensions/css-display-none-overflows-rule-data-1.html is crashing

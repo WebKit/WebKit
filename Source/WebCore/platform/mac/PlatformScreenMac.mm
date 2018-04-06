@@ -197,13 +197,13 @@ FloatRect screenAvailableRect(Widget* widget)
 
 NSScreen *screen(NSWindow *window)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
     return [window screen] ?: firstScreen();
 }
 
 NSScreen *screen(PlatformDisplayID displayID)
 {
-    // FIXME: <http://webkit.org/b/184344> We should assert here if in WebContent process.
+    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
     for (NSScreen *screen in [NSScreen screens]) {
         if (WebCore::displayID(screen) == displayID)
             return screen;
