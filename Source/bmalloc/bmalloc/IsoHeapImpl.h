@@ -48,6 +48,7 @@ public:
     
 protected:
     IsoHeapImplBase();
+    void addToAllIsoHeaps();
 
 private:
     friend class AllIsoHeaps;

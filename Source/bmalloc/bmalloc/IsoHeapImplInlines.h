@@ -36,6 +36,7 @@ IsoHeapImpl<Config>::IsoHeapImpl()
     , m_inlineDirectory(*this)
     , m_allocator(*this)
 {
+    addToAllIsoHeaps();
 }
 
 template<typename Config>

@@ -1,3 +1,19 @@
+2018-04-05  Saam Barati  <sbarati@apple.com>
+
+        IsoHeapImpl not IsoHeapImplBase should add itself to AllIsoHeaps
+        https://bugs.webkit.org/show_bug.cgi?id=184174
+
+        Reviewed by Filip Pizlo.
+
+        Otherwise, another thread may see a non-fully formed IsoHeapImpl.
+
+        * bmalloc/IsoHeapImpl.cpp:
+        (bmalloc::IsoHeapImplBase::IsoHeapImplBase):
+        (bmalloc::IsoHeapImplBase::addToAllIsoHeaps):
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::IsoHeapImpl):
+
 2018-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         bmalloc StaticMutex's constructor should be constexpr
