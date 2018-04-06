@@ -50,7 +50,7 @@ class DrawingItem;
 class Recorder : public GraphicsContextImpl {
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
-    Recorder(GraphicsContext&, DisplayList&, const FloatRect& initialClip, const AffineTransform&);
+    Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&);
     virtual ~Recorder();
 
     size_t itemCount() const { return m_displayList.itemCount(); }
@@ -145,17 +145,17 @@ private:
         bool wasUsedForDrawing { false };
         size_t saveItemIndex { 0 };
         
-        ContextState(const AffineTransform& transform, const FloatRect& clip)
+        ContextState(const GraphicsContextState& state, const AffineTransform& transform, const FloatRect& clip)
             : ctm(transform)
             , clipBounds(clip)
+            , lastDrawingState(state)
         {
         }
         
         ContextState cloneForSave(size_t saveIndex) const
         {
-            ContextState state(ctm, clipBounds);
+            ContextState state(lastDrawingState, ctm, clipBounds);
             state.stateChange = stateChange;
-            state.lastDrawingState = lastDrawingState;
             state.saveItemIndex = saveIndex;
             return state;
         }

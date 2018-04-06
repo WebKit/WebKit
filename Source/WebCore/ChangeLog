@@ -1,3 +1,31 @@
+2018-04-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        When recording the drawing, the DisplayList should be initialized with the GraphicsContextState of the underlying GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=184336
+
+        Reviewed by Antti Koivisto.
+
+        The state of the drawing context has to be transfered to the recording 
+        DisplayList before recording. Many recording GraphicsContext functions 
+        will behave wrongly if it gets the default state.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::DisplayListDrawingContext::DisplayListDrawingContext):
+        (WebCore::CanvasRenderingContext2DBase::drawingContext const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        (WebCore::DisplayList::Recorder::ContextState::ContextState):
+        (WebCore::DisplayList::Recorder::ContextState::cloneForSave const):
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::replay):
+        * platform/graphics/displaylists/DisplayListReplayer.h:
+        (WebCore::DisplayList::Replayer::replay): If we do not have a clipping
+        rectangle and we want to record all the drawing, we need a default value
+        for the clipping rectangle and we want no clipping to happen.
+
 2018-04-06  Daniel Bates  <dabates@apple.com>
 
         Emit a more informative message when a script is blocked due to "X-Content-Type: nosniff"

@@ -87,9 +87,9 @@ public:
     GraphicsContext context;
     DisplayList::DisplayList displayList;
     
-    DisplayListDrawingContext(const FloatRect& clip)
-        : context([&](GraphicsContext& context) {
-            return std::make_unique<DisplayList::Recorder>(context, displayList, clip, AffineTransform());
+    DisplayListDrawingContext(GraphicsContext& context, const FloatRect& clip)
+        : context([&](GraphicsContext& displayListContext) {
+            return std::make_unique<DisplayList::Recorder>(displayListContext, displayList, context.state(), clip, AffineTransform());
         })
     {
     }
@@ -2086,7 +2086,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
     auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
     if (UNLIKELY(m_usesDisplayListDrawing)) {
         if (!m_recordingContext)
-            m_recordingContext = std::make_unique<DisplayListDrawingContext>(FloatRect(FloatPoint::zero(), canvas.size()));
+            m_recordingContext = std::make_unique<DisplayListDrawingContext>(*canvas.drawingContext(), FloatRect(FloatPoint::zero(), canvas.size()));
         return &m_recordingContext->context;
     }
 

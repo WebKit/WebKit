@@ -42,7 +42,7 @@ public:
     Replayer(GraphicsContext&, const DisplayList&);
     ~Replayer();
 
-    std::unique_ptr<DisplayList> replay(const FloatRect& initialClip, bool trackReplayList = false);
+    std::unique_ptr<DisplayList> replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
     
 private:
     const DisplayList& m_displayList;

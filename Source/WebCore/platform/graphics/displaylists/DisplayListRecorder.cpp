@@ -36,12 +36,12 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const FloatRect& initialClip, const AffineTransform& baseCTM)
+Recorder::Recorder(GraphicsContext& context, DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& baseCTM)
     : GraphicsContextImpl(context, initialClip, baseCTM)
     , m_displayList(displayList)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
-    m_stateStack.append(ContextState(baseCTM, initialClip));
+    m_stateStack.append(ContextState(state, baseCTM, initialClip));
 }
 
 Recorder::~Recorder()
