@@ -39,6 +39,7 @@
 
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebCore/COMPtr.h>
+#include <WebCore/PlatformWheelEvent.h>
 #include <WebKitLegacy/WebKit.h>
 #include <windows.h>
 #include <wtf/ASCIICType.h>
@@ -788,15 +789,12 @@ void mouseScrollBy(double x, double y, bool continuous)
     RECT rect;
     ::GetWindowRect(webViewWindow, &rect);
 
-    // This value is taken from Source/WebCore/platform/win/WheelEventWin.cpp
-    const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
-
     if (x) {
         UINT scrollChars = 1;
         ::SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &scrollChars, 0);
         x *= WHEEL_DELTA / scrollChars;
         if (continuous)
-            x /= cScrollbarPixelsPerLine;
+            x /= WebCore::cScrollbarPixelsPerLine;
         MSG msg = makeMsg(webViewWindow, WM_MOUSEHWHEEL, MAKEWPARAM(0, x), MAKELPARAM(rect.left + lastMousePosition.x, rect.top + lastMousePosition.y));
         dispatchMessage(&msg);
     }
@@ -806,7 +804,7 @@ void mouseScrollBy(double x, double y, bool continuous)
         ::SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0);
         y *= WHEEL_DELTA / scrollLines;
         if (continuous)
-            y /= cScrollbarPixelsPerLine;
+            y /= WebCore::cScrollbarPixelsPerLine;
         MSG msg = makeMsg(webViewWindow, WM_MOUSEWHEEL, MAKEWPARAM(0, y), MAKELPARAM(rect.left + lastMousePosition.x, rect.top + lastMousePosition.y));
         dispatchMessage(&msg);
     }

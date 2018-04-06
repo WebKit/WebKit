@@ -1,3 +1,16 @@
+2018-04-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebCore] Expose a constant for scrollbar pixels per line (cScrollbarPixelsPerLine)
+        https://bugs.webkit.org/show_bug.cgi?id=184296
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior changes).
+
+        * platform/PlatformWheelEvent.h: Placed cScrollbarPixelsPerLine definition.
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Removed cScrollbarPixelsPerLine definition.
+
 2018-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r230323
