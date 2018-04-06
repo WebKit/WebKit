@@ -1,3 +1,15 @@
+2018-04-05  Mark Lam  <mark.lam@apple.com>
+
+        MacroAssemblerCodePtr::retagged() should not re-decorate the pointer on ARMv7.
+        https://bugs.webkit.org/show_bug.cgi?id=184347
+        <rdar://problem/39183165>
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::retagged const):
+
 2018-04-05  Stanislav Ocovaj  <stanislav.ocovaj@rt-rk.com>
 
         [MIPS] Optimize generated JIT code for branches

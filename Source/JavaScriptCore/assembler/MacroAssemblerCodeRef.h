@@ -197,6 +197,9 @@ public:
     {
         m_value.assertIsPoisoned();
         ASSERT(value);
+#if CPU(ARM_THUMB2)
+        ASSERT(!(reinterpret_cast<uintptr_t>(value) & 1));
+#endif
         ASSERT_VALID_CODE_POINTER(m_value.unpoisoned());
     }
 
@@ -224,7 +227,7 @@ public:
 
     MacroAssemblerCodePtr retagged(PtrTag oldTag, PtrTag newTag) const
     {
-        return MacroAssemblerCodePtr(retagCodePtr(executableAddress(), oldTag, newTag));
+        return MacroAssemblerCodePtr::createFromExecutableAddress(retagCodePtr(executableAddress(), oldTag, newTag));
     }
 
     template<typename T = void*>
