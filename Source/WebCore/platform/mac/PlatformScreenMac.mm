@@ -229,7 +229,7 @@ bool screenSupportsExtendedColor(Widget* widget)
     if (!widget)
         return false;
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    // FIXME: <https://webkit.org/b/184364> We should assert here if in WebContent process.
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
 }
 
