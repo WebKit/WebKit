@@ -1,3 +1,9 @@
+2018-04-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, remove errant LF from existing test262 test for CR line endings.
+
+        * test262/test/built-ins/Function/prototype/toString/line-terminator-normalisation-CR.js:
+
 2018-04-05  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, rolling out r230320.
