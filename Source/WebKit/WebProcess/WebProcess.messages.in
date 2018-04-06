@@ -1,4 +1,4 @@
-# Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -128,8 +128,10 @@ messages -> WebProcess LegacyReceiver {
     CheckProcessLocalPortForActivity(struct WebCore::MessagePortIdentifier port, uint64_t callbackIdentifier)
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
     SetScreenProperties(HashMap<uint32_t, WebCore::ScreenProperties> screenProperties)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
+#endif
 #endif
 }

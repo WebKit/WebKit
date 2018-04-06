@@ -34,6 +34,8 @@ struct ScreenProperties {
     FloatRect screenRect;
     int screenDepth { 0 };
     int screenDepthPerComponent { 0 };
+    bool screenHasInvertedColors { false };
+    bool screenIsMonochrome { false };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ScreenProperties> decode(Decoder&);
@@ -42,7 +44,7 @@ struct ScreenProperties {
 template<class Encoder>
 void ScreenProperties::encode(Encoder& encoder) const
 {
-    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent;
+    encoder << screenAvailableRect << screenRect << screenDepth << screenDepthPerComponent << screenHasInvertedColors << screenIsMonochrome;
 }
 
 template<class Decoder>
@@ -67,8 +69,18 @@ std::optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
     decoder >> screenDepthPerComponent;
     if (!screenDepthPerComponent)
         return std::nullopt;
-    
-    return { { WTFMove(*screenAvailableRect), WTFMove(*screenRect), WTFMove(*screenDepth), WTFMove(*screenDepthPerComponent) } };
+
+    std::optional<bool> screenHasInvertedColors;
+    decoder >> screenHasInvertedColors;
+    if (!screenHasInvertedColors)
+        return std::nullopt;
+
+    std::optional<bool> screenIsMonochrome;
+    decoder >> screenIsMonochrome;
+    if (!screenIsMonochrome)
+        return std::nullopt;
+
+    return { { WTFMove(*screenAvailableRect), WTFMove(*screenRect), WTFMove(*screenDepth), WTFMove(*screenDepthPerComponent), WTFMove(*screenHasInvertedColors), WTFMove(*screenIsMonochrome) } };
 }
 
 } // namespace WebCore

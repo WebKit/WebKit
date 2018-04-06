@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import "ScreenProperties.h"
 #import <ColorSync/ColorSync.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/ProcessPrivilege.h>
 
 extern "C" {
 bool CGDisplayUsesInvertedPolarity(void);
@@ -47,6 +48,7 @@ namespace WebCore {
 
 static PlatformDisplayID displayID(NSScreen *screen)
 {
+    // FIXME: <http://webkit.org/b/184343> We should assert here if in WebContent process.
     return [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
 }
 
@@ -69,6 +71,7 @@ static PlatformDisplayID displayID(Widget* widget)
 // Screen containing the menubar.
 static NSScreen *firstScreen()
 {
+    // FIXME: <http://webkit.org/b/184343> We should assert here if in WebContent process.
     NSArray *screens = [NSScreen screens];
     if (![screens count])
         return nil;
@@ -91,19 +94,12 @@ static NSScreen *screen(Widget* widget)
     return screen(displayID(widget));
 }
 
-bool screenIsMonochrome(Widget*)
+static HashMap<PlatformDisplayID, ScreenProperties>& screenProperties()
 {
-    // This is a system-wide accessibility setting, same on all screens.
-    return CGDisplayUsesForceToGray();
+    static NeverDestroyed<HashMap<PlatformDisplayID, ScreenProperties>> screenProperties;
+    return screenProperties;
 }
 
-bool screenHasInvertedColors()
-{
-    // This is a system-wide accessibility setting, same on all screens.
-    return CGDisplayUsesInvertedPolarity();
-}
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenProperties)
 {
     for (NSScreen *screen in [NSScreen screens]) {
@@ -112,14 +108,11 @@ void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenPro
         FloatRect screenRect = [screen frame];
         int screenDepth = NSBitsPerPixelFromDepth(screen.depth);
         int screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
-        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, screenDepth, screenDepthPerComponent });
-    }
-}
+        bool screenHasInvertedColors = CGDisplayUsesInvertedPolarity();
+        bool screenIsMonochrome = CGDisplayUsesForceToGray();
 
-static HashMap<PlatformDisplayID, ScreenProperties>& screenProperties()
-{
-    static NeverDestroyed<HashMap<PlatformDisplayID, ScreenProperties>> screenProperties;
-    return screenProperties;
+        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, screenDepth, screenDepthPerComponent, screenHasInvertedColors, screenIsMonochrome });
+    }
 }
 
 void setScreenProperties(const HashMap<PlatformDisplayID, ScreenProperties>& properties)
@@ -130,62 +123,87 @@ void setScreenProperties(const HashMap<PlatformDisplayID, ScreenProperties>& pro
 static ScreenProperties getScreenProperties(Widget* widget)
 {
     auto displayIDForWidget = displayID(widget);
-    if (displayIDForWidget && screenProperties().contains(displayIDForWidget))
-        return screenProperties().get(displayIDForWidget);
+    if (displayIDForWidget) {
+        auto screenPropertiesForDisplay = screenProperties().find(displayIDForWidget);
+        if (screenPropertiesForDisplay != screenProperties().end())
+            return screenPropertiesForDisplay->value;
+    }
+
     // Return property of the first screen if the screen is not found in the map.
-    auto iter = screenProperties().begin();
-    return screenProperties().get(iter->key);
+    return screenProperties().begin()->value;
 }
-#endif
+
+bool screenIsMonochrome(Widget* widget)
+{
+    if (!screenProperties().isEmpty())
+        return getScreenProperties(widget).screenIsMonochrome;
+
+    // This is a system-wide accessibility setting, same on all screens.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    return CGDisplayUsesForceToGray();
+}
+
+bool screenHasInvertedColors()
+{
+    if (!screenProperties().isEmpty())
+        return screenProperties().begin()->value.screenHasInvertedColors;
+
+    // This is a system-wide accessibility setting, same on all screens.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    return CGDisplayUsesInvertedPolarity();
+}
 
 int screenDepth(Widget* widget)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     if (!screenProperties().isEmpty()) {
-        ASSERT(getScreenProperties(widget).screenDepth);
-        return getScreenProperties(widget).screenDepth;
+        auto screenDepth = getScreenProperties(widget).screenDepth;
+        ASSERT(screenDepth);
+        return screenDepth;
     }
-#endif
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return NSBitsPerPixelFromDepth(screen(widget).depth);
 }
 
 int screenDepthPerComponent(Widget* widget)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     if (!screenProperties().isEmpty()) {
-        ASSERT(getScreenProperties(widget).screenDepthPerComponent);
-        return getScreenProperties(widget).screenDepthPerComponent;
+        auto depthPerComponent = getScreenProperties(widget).screenDepthPerComponent;
+        ASSERT(depthPerComponent);
+        return depthPerComponent;
     }
-#endif
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return NSBitsPerSampleFromDepth(screen(widget).depth);
 }
 
 FloatRect screenRect(Widget* widget)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     if (!screenProperties().isEmpty())
         return getScreenProperties(widget).screenRect;
-#endif
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) frame], window(widget));
 }
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    if (!screenProperties().isEmpty()) {
+    if (!screenProperties().isEmpty())
         return getScreenProperties(widget).screenAvailableRect;
-    }
-#endif
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return toUserSpace([screen(widget) visibleFrame], window(widget));
 }
 
 NSScreen *screen(NSWindow *window)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [window screen] ?: firstScreen();
 }
 
 NSScreen *screen(PlatformDisplayID displayID)
 {
+    // FIXME: <http://webkit.org/b/184344> We should assert here if in WebContent process.
     for (NSScreen *screen in [NSScreen screens]) {
         if (WebCore::displayID(screen) == displayID)
             return screen;
@@ -195,6 +213,7 @@ NSScreen *screen(PlatformDisplayID displayID)
 
 CGColorSpaceRef screenColorSpace(Widget* widget)
 {
+    // FIXME: <http://webkit.org/b/184343> We should assert here if in WebContent process.
     return screen(widget).colorSpace.CGColorSpace;
 }
 
@@ -203,6 +222,7 @@ bool screenSupportsExtendedColor(Widget* widget)
     if (!widget)
         return false;
 
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
 }
 

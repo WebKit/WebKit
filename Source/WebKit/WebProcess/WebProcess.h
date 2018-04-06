@@ -34,7 +34,7 @@
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include <WebCore/ActivityState.h>
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
 #include <WebCore/ScreenProperties.h>
 #endif
 #include <WebCore/Timer.h>
@@ -371,9 +371,11 @@ private:
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
     void setScreenProperties(const HashMap<uint32_t, WebCore::ScreenProperties>&);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
+#endif
 #endif
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;

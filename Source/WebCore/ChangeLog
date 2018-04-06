@@ -1,3 +1,47 @@
+2018-04-05  Brent Fulgham  <bfulgham@apple.com>
+
+        WebContent process is calling CGDisplayUsesInvertedPolarity
+        https://bugs.webkit.org/show_bug.cgi?id=184337
+        <rdar://problem/39215702>
+
+        Reviewed by Zalan Bujtas.
+
+        The PlatformScreenMac code is still calling display-related routines directly, specifically
+        CGDisplayUsesInvertedPolarity and CGDisplayUsesForceToGray. These should be brokered from
+        the UIProcess.
+        
+        There's also no reason to avoid the brokering behavior on current WebKit builds. Remove
+        the compile guards so all macOS builds use this behavior.
+        
+        Finally, add some ProcessPrivilege assertions to guard against accidentally calling these
+        routines in the future.
+
+        Tested by existing regression tests.
+
+        * platform/PlatformScreen.h:
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenProperties::encode const): Add new values.
+        (WebCore::ScreenProperties::decode):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::displayID): Add assertion that this is not calling display-related routines in
+        the WebContent process.
+        (WebCore::firstScreen): Ditto.
+        (WebCore::screenProperties): Moved higher in the file so it can be reused. Add calls to
+        CGDisplayUsesInvertedPolarity and CGDisplayUsesForceToGray.
+        (WebCore::getScreenProperties): Moved higher in the file so it can be reused. Stop
+        double-hashing displayID.
+        (WebCore::screenIsMonochrome): Use cached values in WebContent process. Assert if this
+        code attempts a display-related routine in the WebContent process.
+        (WebCore::screenHasInvertedColors): Ditto.
+        (WebCore::screenDepth): Add assertion that this is not calling display-related routines in
+        the WebContent process.
+        (WebCore::screenDepthPerComponent): Ditto.
+        (WebCore::screenRect): Ditto.
+        (WebCore::screenAvailableRect): Ditto.
+        (WebCore::screen): Ditto.
+        (WebCore::screenColorSpace): Ditto.
+        (WebCore::screenSupportsExtendedColor): Ditto.
+
 2018-04-05  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Apply cookie blocking to setCookiesFromDOM()

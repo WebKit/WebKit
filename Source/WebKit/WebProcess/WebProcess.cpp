@@ -1698,7 +1698,7 @@ void WebProcess::registerServiceWorkerClients()
 
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC)
 void WebProcess::setScreenProperties(const HashMap<uint32_t, WebCore::ScreenProperties>& properties)
 {
     WebCore::setScreenProperties(properties);

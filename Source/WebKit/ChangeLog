@@ -1,3 +1,27 @@
+2018-04-05  Brent Fulgham  <bfulgham@apple.com>
+
+        WebContent process is calling CGDisplayUsesInvertedPolarity
+        https://bugs.webkit.org/show_bug.cgi?id=184337
+        <rdar://problem/39215702>
+
+        Reviewed by Zalan Bujtas.
+
+        The PlatformScreenMac code is still calling display-related routines directly, specifically
+        CGDisplayUsesInvertedPolarity and CGDisplayUsesForceToGray. These should be brokered from
+        the UIProcess.
+        
+        There's also no reason to avoid the brokering behavior on current WebKit builds. Remove
+        the compile guards so all macOS builds use this behavior.
+        
+        Finally, add some ProcessPrivilege assertions to guard against accidentally calling these
+        routines in the future.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess): Activate screen brokering code for all builds.
+        * WebProcess/WebProcess.cpp: Ditto.
+        * WebProcess/WebProcess.h: Ditto.
+        * WebProcess/WebProcess.messages.in: Ditto.
+
 2018-04-05  Brady Eidson  <beidson@apple.com>
 
         Process Swap on Navigation causes many webpages to hang due to attempted process swap for iframe navigations.
