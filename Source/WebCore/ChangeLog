@@ -1,3 +1,18 @@
+2018-04-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [Extra zoom mode] Block playback until fullscreen begins
+        https://bugs.webkit.org/show_bug.cgi?id=184371
+        <rdar://problem/39250891>
+
+        Reviewed by Youenn Fablet.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState): Return early when waiting to enter fullscreen.
+        (WebCore::HTMLMediaElement::enterFullscreen): Set m_waitingToEnterFullscreen.
+        (WebCore::HTMLMediaElement::exitFullscreen): Clear m_waitingToEnterFullscreen.
+        (WebCore::HTMLMediaElement::didBecomeFullscreenElement): Ditto.
+        * html/HTMLMediaElement.h:
+
 2018-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         WebCore::screenSupportsExtendedColor improperly calls NSScreen functions in the WebContent process
