@@ -32,6 +32,7 @@
 #include "Encoder.h"
 #include "HandleMessage.h"
 #include "MessageReceiver.h"
+#include <WebCore/ScriptDisallowedScope.h>
 #include <atomic>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
@@ -386,6 +387,9 @@ void Connection::sendWithReply(T&& message, uint64_t destinationID, FunctionDisp
 template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sendSyncOptions.contains(SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)
+        || WebCore::ScriptDisallowedScope::isEventAllowedInMainThread());
 
     uint64_t syncRequestID = 0;
     std::unique_ptr<Encoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);
