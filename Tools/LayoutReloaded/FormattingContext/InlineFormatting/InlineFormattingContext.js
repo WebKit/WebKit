@@ -102,13 +102,13 @@ class InlineFormattingContext extends FormattingContext {
     _handleFloatingBox(floatingBox) {
         this._computeFloatingWidth(floatingBox);
         this._computeFloatingHeight(floatingBox);
-        let displayFloatingBox = this.displayBox(floatingBox);
-        if (displayFloatingBox.width() > this._line().availableWidth())
+        let displayBox = this.displayBox(floatingBox);
+        if (displayBox.width() > this._line().availableWidth())
             this._commitLine();
         // Position this float statically first, the floating context will figure it out the final position.
-        displayFloatingBox.setTopLeft(this._line().rect().topLeft());
+        displayBox.setTopLeft(this._line().rect().topLeft());
         this.floatingContext().computePosition(floatingBox);
-        this._line().addFloatingBox(displayFloatingBox.size());
+        this._line().addFloatingBox(displayBox, Utils.isFloatingLeft(floatingBox));
     }
 
     _commitLine() {
@@ -151,7 +151,7 @@ class InlineFormattingContext extends FormattingContext {
         if (root == floatFormattingRoot)
             return verticalPosition;
         let rootTop = Utils.mapPosition(root.topLeft(), root, floatFormattingRoot).top();
-        return rootTop += root.contentBox().top();
+        return (rootTop + root.contentBox().top() + verticalPosition);
     }
 
     _mapFloatingHorizontalPosition(horizontalPosition) {

@@ -55,12 +55,15 @@ class Line {
         this.m_lineRect.growBy(new LayoutSize(size.width(), 0));
     }
 
-    addFloatingBox(size) {
-        ASSERT(size.width() <= this.m_availableWidth);
+    addFloatingBox(floatingDisplayBox, isFloatingLeft) {
+        let width = floatingDisplayBox.width();
+        ASSERT(width <= this.m_availableWidth);
         // Push non-floating boxes to the right.
-        this.m_availableWidth -= size.width();
+        this.m_availableWidth -= width;
+        if (!isFloatingLeft)
+            return;
         for (let lineBox of this.m_lineBoxes)
-            lineBox.lineBoxRect.moveHorizontally(size.width());
-        this.m_lineRect.moveHorizontally(size.width());
+            lineBox.lineBoxRect.moveHorizontally(width);
+        this.m_lineRect.moveHorizontally(width);
     }
 }

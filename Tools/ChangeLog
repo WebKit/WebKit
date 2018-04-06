@@ -1,5 +1,22 @@
 2018-04-05  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Add support for right floating boxes in inline formatting context
+        https://bugs.webkit.org/show_bug.cgi?id=184351
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._handleFloatingBox):
+        (InlineFormattingContext.prototype._mapFloatingVerticalPosition):
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js:
+        (Line.prototype.addFloatingBox):
+        (Line):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-with-right-float-simple.html: Added.
+        * LayoutReloaded/test/inline-with-right-floats2.html: Added.
+
+2018-04-05  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Move floating box to the next line when needed
         https://bugs.webkit.org/show_bug.cgi?id=184349
 
