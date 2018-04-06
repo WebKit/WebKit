@@ -49,9 +49,9 @@ PASS createImageBitmap from an ImageBitmap scaled down, and drawImage on the cre
 PASS createImageBitmap from an ImageBitmap scaled up, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from an ImageBitmap resized, and drawImage on the created ImageBitmap 
 FAIL createImageBitmap from an ImageBitmap with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
-FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
-FAIL createImageBitmap from a Blob scaled down, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
-FAIL createImageBitmap from a Blob scaled up, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
-FAIL createImageBitmap from a Blob resized, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
+PASS createImageBitmap from a Blob, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from a Blob scaled down, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from a Blob scaled up, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from a Blob resized, and drawImage on the created ImageBitmap 
 FAIL createImageBitmap from a Blob with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
 

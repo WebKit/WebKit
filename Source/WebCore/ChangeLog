@@ -1,3 +1,28 @@
+2018-04-06  Ms2ger  <Ms2ger@igalia.com>
+
+        Implement createImageBitmap(Blob)
+        https://bugs.webkit.org/show_bug.cgi?id=183247
+
+        Reviewed by Dean Jackson.
+
+        Tests:
+            - imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html
+            - imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html
+
+        * fileapi/FileReaderLoader.h:
+        (WebCore::FileReaderLoader::url): expose the Blob's URL.
+        * html/ImageBitmap.cpp: implement createImageBitmap(Blob).
+        * html/ImageBitmap.h: allow the BlobImageObserver class access to the creation function.
+        * loader/cache/CachedImage.cpp: reuse extracted code.
+        (WebCore::CachedImage::isPDFResource const):
+        (WebCore::CachedImage::isPostScriptResource const):
+        (WebCore::CachedImage::createImage):
+        * platform/graphics/Image.cpp: extract some code from CachedImage to reuse.
+        (WebCore::Image::create):
+        (WebCore::Image::isPDFResource):
+        (WebCore::Image::isPostScriptResource):
+        * platform/graphics/Image.h: add declarations.
+
 2018-04-06  Zalan Bujtas  <zalan@apple.com>
 
         Flex child does not get repainted when it is inserted back to the render tree.

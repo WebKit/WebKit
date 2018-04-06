@@ -82,6 +82,8 @@ public:
     void setEncoding(const String&);
     void setDataType(const String& dataType) { m_dataType = dataType; }
 
+    const URL& url() { return m_urlForReading; }
+
 private:
     void terminate();
     void cleanup();

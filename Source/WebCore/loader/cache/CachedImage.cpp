@@ -310,16 +310,12 @@ void CachedImage::checkShouldPaintBrokenImage()
 
 bool CachedImage::isPDFResource() const
 {
-    if (m_response.mimeType().isEmpty())
-        return url().path().endsWithIgnoringASCIICase(".pdf");
-    return MIMETypeRegistry::isPDFMIMEType(m_response.mimeType());
+    return Image::isPDFResource(m_response.mimeType(), url());
 }
 
 bool CachedImage::isPostScriptResource() const
 {
-    if (m_response.mimeType().isEmpty())
-        return url().path().endsWithIgnoringASCIICase(".ps");
-    return MIMETypeRegistry::isPostScriptMIMEType(m_response.mimeType());
+    return Image::isPostScriptResource(m_response.mimeType(), url());
 }
 
 void CachedImage::clear()
@@ -339,18 +335,12 @@ inline void CachedImage::createImage()
 
     m_imageObserver = CachedImageObserver::create(*this);
 
-    if (m_response.mimeType() == "image/svg+xml") {
-        auto svgImage = SVGImage::create(*m_imageObserver);
-        m_svgImageCache = std::make_unique<SVGImageCache>(svgImage.ptr());
-        m_image = WTFMove(svgImage);
-    } else if (isPDFResource() || isPostScriptResource()) {
-#if USE(CG) && !USE(WEBKIT_IMAGE_DECODERS)
-        m_image = PDFDocumentImage::create(m_imageObserver.get());
-#endif
-    } else
-        m_image = BitmapImage::create(m_imageObserver.get());
+    m_image = Image::create(*m_imageObserver);
 
     if (m_image) {
+        if (is<SVGImage>(*m_image))
+            m_svgImageCache = std::make_unique<SVGImageCache>(&downcast<SVGImage>(*m_image));
+
         // Send queued container size requests.
         if (m_image->usesContainerSize()) {
             for (auto& request : m_pendingContainerContextRequests)

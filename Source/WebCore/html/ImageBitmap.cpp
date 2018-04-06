@@ -490,6 +490,37 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& ex
     promise.resolve(WTFMove(imageBitmap));
 }
 
+class ImageBitmapImageObserver final : public RefCounted<ImageBitmapImageObserver>, public ImageObserver {
+public:
+    static Ref<ImageBitmapImageObserver> create(String mimeType, long long expectedContentLength, const URL& sourceUrl)
+    {
+        return adoptRef(*new ImageBitmapImageObserver(mimeType, expectedContentLength, sourceUrl));
+    }
+
+    URL sourceUrl() const override { return m_sourceUrl; }
+    String mimeType() const override { return m_mimeType; }
+    long long expectedContentLength() const override { return m_expectedContentLength; }
+
+    void decodedSizeChanged(const Image&, long long) override { }
+
+    void didDraw(const Image&) override { }
+
+    bool canDestroyDecodedData(const Image&) override { return true; }
+    void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
+    void changedInRect(const Image&, const IntRect* = nullptr) override { }
+
+private:
+    ImageBitmapImageObserver(String mimeType, long long expectedContentLength, const URL& sourceUrl)
+        : m_mimeType(mimeType)
+        , m_expectedContentLength(expectedContentLength)
+        , m_sourceUrl(sourceUrl)
+    { }
+
+    String m_mimeType;
+    long long m_expectedContentLength;
+    URL m_sourceUrl;
+};
+
 class PendingImageBitmap final : public ActiveDOMObject, public FileReaderLoaderClient {
 public:
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
@@ -550,33 +581,14 @@ private:
         delete this;
     }
 
-    void createImageBitmap(RefPtr<ArrayBuffer> arrayBuffer)
+    void createImageBitmap(RefPtr<ArrayBuffer>&& arrayBuffer)
     {
-        UNUSED_PARAM(arrayBuffer);
+        if (!arrayBuffer) {
+            m_promise.reject(InvalidStateError, "An error occured reading the Blob argument to createImageBitmap");
+            return;
+        }
 
-        // 3. Read the Blob object's data. If an error occurs during reading of the object,
-        //    then reject the promise with an "InvalidStateError" DOMException, and abort
-        //    these steps.
-
-        // 4. Apply the image sniffing rules to determine the file format of the image data,
-        //    with MIME type of the Blob (as given by the Blob object's type attribute) giving
-        //    the official type.
-
-        // 5. If the image data is not in a supported image file format (e.g. it's not an image
-        //    at all), or if the image data is corrupted in some fatal way such that the image
-        //    dimensions cannot be obtained (e.g. a vector graphic with no intrinsic size), then
-        //    reject the promise with an "InvalidStateError" DOMException, and abort these steps.
-
-        // 6. Create a new ImageBitmap object.
-
-        // 7. Let the ImageBitmap object's bitmap data be the image data read from the Blob object,
-        //    cropped to the source rectangle with formatting. If this is an animated image, the
-        //    ImageBitmap object's bitmap data must only be taken from the default image of the
-        //    animation (the one that the format defines is to be used when animation is not supported
-        //    or is disabled), or, if there is no such image, the first frame of the animation.
-
-        // 8. Resolve the promise with the new ImageBitmap object as the value.
-        m_promise.reject(TypeError, "createImageBitmap with ArrayBuffer or Blob is not implemented");
+        ImageBitmap::createFromBuffer(arrayBuffer.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_promise));
     }
 
     FileReaderLoader m_blobLoader;
@@ -585,6 +597,58 @@ private:
     std::optional<IntRect> m_rect;
     ImageBitmap::Promise m_promise;
 };
+
+void ImageBitmap::createFromBuffer(
+    Ref<ArrayBuffer>&& arrayBuffer,
+    String mimeType,
+    long long expectedContentLength,
+    const URL& sourceUrl,
+    ImageBitmapOptions&& options,
+    std::optional<IntRect> rect,
+    ImageBitmap::Promise&& promise)
+{
+    if (!arrayBuffer->byteLength()) {
+        promise.reject(InvalidStateError, "Cannot create an ImageBitmap from an empty buffer");
+        return;
+    }
+
+    auto sharedBuffer = SharedBuffer::create(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
+    auto observer = ImageBitmapImageObserver::create(mimeType, expectedContentLength, sourceUrl);
+    auto image = Image::create(observer.get());
+    if (!image) {
+        promise.reject(InvalidStateError, "The type of the argument to createImageBitmap is not supported");
+        return;
+    }
+
+    auto result = image->setData(sharedBuffer.copyRef(), true);
+    if (result != EncodedDataStatus::Complete) {
+        promise.reject(InvalidStateError, "Cannot decode the data in the argument to createImageBitmap");
+        return;
+    }
+
+    auto sourceRectangle = croppedSourceRectangleWithFormatting(roundedIntSize(image->size()), options, rect);
+    if (sourceRectangle.hasException()) {
+        promise.reject(sourceRectangle.releaseException());
+        return;
+    }
+
+    auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
+    auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
+    if (!bitmapData) {
+        promise.reject(InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap");
+        return;
+    }
+
+    FloatRect destRect(FloatPoint(), outputSize);
+    ImagePaintingOptions paintingOptions;
+    paintingOptions.m_interpolationQuality = interpolationQualityForResizeQuality(options.resizeQuality);
+
+    bitmapData->context().drawImage(*image, destRect, sourceRectangle.releaseReturnValue(), paintingOptions);
+
+    auto imageBitmap = create(WTFMove(bitmapData));
+
+    promise.resolve(WTFMove(imageBitmap));
+}
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
