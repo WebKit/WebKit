@@ -1,3 +1,15 @@
+2018-04-05  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix a bug introduced in r230295 that A/B test result is not shown.
+        https://bugs.webkit.org/show_bug.cgi?id=184350
+
+        Reviewed by Ryosuke Niwa.
+
+        result.label should be assigned in `TestGroup._computeRequestedCommitSets`.
+
+        * public/v3/models/test-group.js:
+        (TestGroup.prototype._computeRequestedCommitSets):
+
 2018-03-29  Dewei Zhu  <dewei_zhu@apple.com>
 
         Added UI to show potential regressions in chart with t-testing against segmentations.

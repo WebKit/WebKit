@@ -146,7 +146,7 @@ class TestGroup extends LabeledObject {
         if (beforeValues.length && afterValues.length) {
             const summary = metric.labelForDifference(beforeMean, afterMean, 'better', 'worse');
             result.changeType = summary.changeType;
-            result.changeLabel = summary.changeLabel;
+            result.label = summary.changeLabel;
             var isSignificant = Statistics.testWelchsT(beforeValues, afterValues);
             var significanceLabel = isSignificant ? 'significant' : 'insignificant';
 
