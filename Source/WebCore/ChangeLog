@@ -1,3 +1,25 @@
+2018-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        WebCore::screenColorSpace is retrieving CGColorSpace from NSScreen directly
+        https://bugs.webkit.org/show_bug.cgi?id=184343
+        <rdar://problem/39224881>
+
+        Reviewed by Per Arne Vollan.
+
+        Revise ScreenProperties to serialize the screen's color space, and later
+        retrieve that in the WebContent process. This allows us to close off
+        the CGSWindowServer connection.
+
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenProperties::encode const): Add CGColorSpaceRef support.
+        (WebCore::ScreenProperties::decode): Ditto.
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::displayID): Add assertion to prevent use in WebContent process.
+        (WebCore::firstScreen): Ditto.
+        (WebCore::getScreenProperties): Add support for CGColorSpaceRef.
+        (WebCore::screenColorSpace): Retrieve cached version when in WebContent process.
+        Assert that NSScreen is not accessed in WebContent process.
+
 2018-04-06  Ms2ger  <Ms2ger@igalia.com>
 
         Implement createImageBitmap(Blob)

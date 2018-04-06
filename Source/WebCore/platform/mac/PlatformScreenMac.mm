@@ -48,7 +48,7 @@ namespace WebCore {
 
 static PlatformDisplayID displayID(NSScreen *screen)
 {
-    // FIXME: <http://webkit.org/b/184343> We should assert here if in WebContent process.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
 }
 
@@ -71,7 +71,7 @@ static PlatformDisplayID displayID(Widget* widget)
 // Screen containing the menubar.
 static NSScreen *firstScreen()
 {
-    // FIXME: <http://webkit.org/b/184343> We should assert here if in WebContent process.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSArray *screens = [NSScreen screens];
     if (![screens count])
         return nil;
@@ -102,16 +102,20 @@ static HashMap<PlatformDisplayID, ScreenProperties>& screenProperties()
 
 void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenProperties)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     for (NSScreen *screen in [NSScreen screens]) {
-        FloatRect screenAvailableRect = [screen visibleFrame];
-        screenAvailableRect.setY(NSMaxY([screen frame]) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
-        FloatRect screenRect = [screen frame];
+        FloatRect screenAvailableRect = screen.visibleFrame;
+        screenAvailableRect.setY(NSMaxY(screen.frame) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
+        FloatRect screenRect = screen.frame;
+
+        RetainPtr<CGColorSpaceRef> colorSpace = screen.colorSpace.CGColorSpace;
+
         int screenDepth = NSBitsPerPixelFromDepth(screen.depth);
         int screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
         bool screenHasInvertedColors = CGDisplayUsesInvertedPolarity();
         bool screenIsMonochrome = CGDisplayUsesForceToGray();
 
-        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, screenDepth, screenDepthPerComponent, screenHasInvertedColors, screenIsMonochrome });
+        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenHasInvertedColors, screenIsMonochrome });
     }
 }
 
@@ -213,7 +217,10 @@ NSScreen *screen(PlatformDisplayID displayID)
 
 CGColorSpaceRef screenColorSpace(Widget* widget)
 {
-    // FIXME: <http://webkit.org/b/184343> We should assert here if in WebContent process.
+    if (!screenProperties().isEmpty())
+        return getScreenProperties(widget).colorSpace.get();
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return screen(widget).colorSpace.CGColorSpace;
 }
 
