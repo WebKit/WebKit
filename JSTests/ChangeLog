@@ -1,3 +1,10 @@
+2018-04-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, annotate test with @skip if $memoryLimited
+        https://bugs.webkit.org/show_bug.cgi?id=183894
+
+        * stress/json-stringified-overflow.js:
+
 2018-04-06  Alexey Proskuryakov  <ap@apple.com>
 
         Add svn:eol-style to line-terminator-normalisation-CR.js
