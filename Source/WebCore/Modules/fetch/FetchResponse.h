@@ -109,6 +109,8 @@ public:
 
     const std::optional<ResourceError>& loadingError() const { return m_loadingError; }
 
+    const HTTPHeaderMap& internalResponseHeaders() const { return m_internalResponse.httpHeaderFields(); }
+
 private:
     FetchResponse(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 

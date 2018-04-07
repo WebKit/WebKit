@@ -335,10 +335,12 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     bool shouldWaitContinueDidReceiveResponse = isMainResource();
     if (shouldSendDidReceiveResponse) {
+        // FIXME: Sanitize response.
+        auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
         if (isSynchronous())
-            m_synchronousLoadData->response = m_response;
+            m_synchronousLoadData->response = WTFMove(response);
         else
-            send(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse));
+            send(Messages::WebResourceLoader::DidReceiveResponse { response, shouldWaitContinueDidReceiveResponse });
     }
 
     // For main resources, the web process is responsible for sending back a NetworkResourceLoader::ContinueDidReceiveResponse message.
@@ -459,13 +461,21 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
     if (canUseCachedRedirect(request))
         m_cache->storeRedirect(request, redirectResponse, redirectRequest);
 
-    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeRedirectResponseIfPossible(WTFMove(redirectResponse))));
+    send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
 }
 
-ResourceResponse NetworkResourceLoader::sanitizeRedirectResponseIfPossible(ResourceResponse&& response)
+ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceResponse&& response, ResourceResponse::SanitizationType type)
 {
-    if (m_parameters.shouldRestrictHTTPResponseAccess)
-        response.sanitizeRedirectionHTTPHeaderFields();
+    if (m_parameters.shouldRestrictHTTPResponseAccess) {
+        if (type == ResourceResponse::SanitizationType::CrossOriginSafe) {
+            // We reduce filtering when it would otherwise be visible to scripts.
+            // FIXME: We should use response tainting once computed in Network Process.
+            bool isSameOrigin = m_parameters.sourceOrigin ? m_parameters.sourceOrigin->canRequest(response.url()) : protocolHostAndPortAreEqual(response.url(), m_parameters.request.url());
+            if (isSameOrigin && m_parameters.destination == FetchOptions::Destination::EmptyString)
+                type = ResourceResponse::SanitizationType::RemoveCookies;
+        }
+        response.sanitizeHTTPHeaderFields(type);
+    }
     return WTFMove(response);
 }
 
@@ -568,15 +578,16 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
 
 void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
+    auto response = sanitizeResponseIfPossible(ResourceResponse { entry->response() }, ResourceResponse::SanitizationType::CrossOriginSafe);
     if (isSynchronous()) {
-        m_synchronousLoadData->response = entry->response();
+        m_synchronousLoadData->response = WTFMove(response);
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
         cleanup();
         return;
     }
 
     bool needsContinueDidReceiveResponseMessage = isMainResource();
-    send(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
+    send(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
 
     if (needsContinueDidReceiveResponseMessage)
         m_cacheEntryWaitingForContinueDidReceiveResponse = WTFMove(entry);
@@ -672,7 +683,7 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr
     LOG(NetworkCache, "(NetworkProcess) Executing cached redirect");
 
     ++m_redirectCount;
-    send(Messages::WebResourceLoader::WillSendRequest { *entry->redirectRequest(), sanitizeRedirectResponseIfPossible(ResourceResponse { entry->response() }) });
+    send(Messages::WebResourceLoader::WillSendRequest { *entry->redirectRequest(), sanitizeResponseIfPossible(ResourceResponse { entry->response() }, ResourceResponse::SanitizationType::Redirection) });
     m_isWaitingContinueWillSendRequestForCachedRedirect = true;
 }
 

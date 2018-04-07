@@ -80,6 +80,15 @@ Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(Scri
     return fetchResponse;
 }
 
+Vector<String> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& response)
+{
+    Vector<String> headerNames;
+    headerNames.reserveInitialCapacity(response.internalResponseHeaders().size());
+    for (auto keyValue : response.internalResponseHeaders())
+        headerNames.uncheckedAppend(keyValue.key);
+    return headerNames;
+}
+
 } // namespace WebCore
 
 #endif

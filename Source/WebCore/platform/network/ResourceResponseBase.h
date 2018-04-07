@@ -102,7 +102,9 @@ public:
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
     void setHTTPHeaderFields(HTTPHeaderMap&&);
-    WEBCORE_EXPORT void sanitizeRedirectionHTTPHeaderFields();
+
+    enum class SanitizationType { Redirection, RemoveCookies, CrossOriginSafe };
+    WEBCORE_EXPORT void sanitizeHTTPHeaderFields(SanitizationType);
 
     String httpHeaderField(const String& name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;

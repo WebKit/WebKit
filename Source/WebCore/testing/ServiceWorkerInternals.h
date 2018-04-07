@@ -47,6 +47,8 @@ public:
     Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
     Ref<FetchResponse> createOpaqueWithBlobBodyResponse(ScriptExecutionContext&);
 
+    Vector<String> fetchResponseHeaderList(FetchResponse&);
+
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);
 

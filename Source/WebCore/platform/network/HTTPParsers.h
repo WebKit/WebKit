@@ -119,4 +119,43 @@ inline StringView stripLeadingAndTrailingHTTPSpaces(StringView string)
     return string.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
 }
 
+template<class HashType>
+void addToAccessControlAllowList(const String& string, unsigned start, unsigned end, HashSet<String, HashType>& set)
+{
+    StringImpl* stringImpl = string.impl();
+    if (!stringImpl)
+        return;
+
+    // Skip white space from start.
+    while (start <= end && isSpaceOrNewline((*stringImpl)[start]))
+        ++start;
+
+    // only white space
+    if (start > end)
+        return;
+
+    // Skip white space from end.
+    while (end && isSpaceOrNewline((*stringImpl)[end]))
+        --end;
+
+    set.add(string.substring(start, end - start + 1));
+}
+
+template<class HashType = DefaultHash<String>::Hash>
+std::optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& string)
+{
+    HashSet<String, HashType> set;
+    unsigned start = 0;
+    size_t end;
+    while ((end = string.find(',', start)) != notFound) {
+        if (start != end)
+            addToAccessControlAllowList(string, start, end - 1, set);
+        start = end + 1;
+    }
+    if (start != string.length())
+        addToAccessControlAllowList(string, start, string.length() - 1, set);
+
+    return set;
+}
+
 }

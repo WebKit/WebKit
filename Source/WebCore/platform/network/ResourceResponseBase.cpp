@@ -317,7 +317,7 @@ void ResourceResponseBase::setHTTPVersion(const String& versionText)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-static bool isSafeToKeepRedirectionHeader(HTTPHeaderName name)
+static bool isSafeRedirectionResponseHeader(HTTPHeaderName name)
 {
     // WebCore needs to keep location and cache related headers as it does caching.
     // We also keep CORS/ReferrerPolicy headers until CORS checks/Referrer computation are done in NetworkProcess.
@@ -330,6 +330,7 @@ static bool isSafeToKeepRedirectionHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::LastModified
         || name == HTTPHeaderName::Age
         || name == HTTPHeaderName::Pragma
+        || name == HTTPHeaderName::ReferrerPolicy
         || name == HTTPHeaderName::Refresh
         || name == HTTPHeaderName::Vary
         || name == HTTPHeaderName::AccessControlAllowCredentials
@@ -341,16 +342,90 @@ static bool isSafeToKeepRedirectionHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::TimingAllowOrigin;
 }
 
-void ResourceResponseBase::sanitizeRedirectionHTTPHeaderFields()
+static bool isSafeCrossOriginResponseHeader(HTTPHeaderName name)
+{
+    // All known response headers used in WebProcesses.
+    return name == HTTPHeaderName::AcceptRanges
+        || name == HTTPHeaderName::AccessControlAllowCredentials
+        || name == HTTPHeaderName::AccessControlAllowHeaders
+        || name == HTTPHeaderName::AccessControlAllowMethods
+        || name == HTTPHeaderName::AccessControlAllowOrigin
+        || name == HTTPHeaderName::AccessControlExposeHeaders
+        || name == HTTPHeaderName::AccessControlMaxAge
+        || name == HTTPHeaderName::AccessControlRequestHeaders
+        || name == HTTPHeaderName::AccessControlRequestMethod
+        || name == HTTPHeaderName::Age
+        || name == HTTPHeaderName::CacheControl
+        || name == HTTPHeaderName::ContentDisposition
+        || name == HTTPHeaderName::ContentEncoding
+        || name == HTTPHeaderName::ContentLanguage
+        || name == HTTPHeaderName::ContentLength
+        || name == HTTPHeaderName::ContentRange
+        || name == HTTPHeaderName::ContentSecurityPolicy
+        || name == HTTPHeaderName::ContentSecurityPolicyReportOnly
+        || name == HTTPHeaderName::ContentType
+        || name == HTTPHeaderName::Date
+        || name == HTTPHeaderName::ETag
+        || name == HTTPHeaderName::Expires
+        || name == HTTPHeaderName::IcyMetaInt
+        || name == HTTPHeaderName::IcyMetadata
+        || name == HTTPHeaderName::LastEventID
+        || name == HTTPHeaderName::LastModified
+        || name == HTTPHeaderName::Link
+        || name == HTTPHeaderName::Pragma
+        || name == HTTPHeaderName::Range
+        || name == HTTPHeaderName::ReferrerPolicy
+        || name == HTTPHeaderName::Refresh
+        || name == HTTPHeaderName::SourceMap
+        || name == HTTPHeaderName::XSourceMap
+        || name == HTTPHeaderName::TimingAllowOrigin
+        || name == HTTPHeaderName::Trailer
+        || name == HTTPHeaderName::Vary
+        || name == HTTPHeaderName::XContentTypeOptions
+        || name == HTTPHeaderName::XDNSPrefetchControl
+        || name == HTTPHeaderName::XFrameOptions
+        || name == HTTPHeaderName::XWebKitCSP
+        || name == HTTPHeaderName::XWebKitCSPReportOnly
+        || name == HTTPHeaderName::XXSSProtection;
+}
+
+void ResourceResponseBase::sanitizeHTTPHeaderFields(SanitizationType type)
 {
     lazyInit(AllFields);
 
-    auto commonHeaders = WTFMove(m_httpHeaderFields.commonHeaders());
-    for (auto& header : commonHeaders) {
-        if (isSafeToKeepRedirectionHeader(header.key))
-            m_httpHeaderFields.add(header.key, WTFMove(header.value));
+    m_httpHeaderFields.commonHeaders().remove(HTTPHeaderName::SetCookie);
+    m_httpHeaderFields.commonHeaders().remove(HTTPHeaderName::SetCookie2);
+
+    switch (type) {
+    case SanitizationType::RemoveCookies:
+        return;
+    case SanitizationType::Redirection: {
+        auto commonHeaders = WTFMove(m_httpHeaderFields.commonHeaders());
+        for (auto& header : commonHeaders) {
+            if (isSafeRedirectionResponseHeader(header.key))
+                m_httpHeaderFields.add(header.key, WTFMove(header.value));
+        }
+        m_httpHeaderFields.uncommonHeaders().clear();
+        return;
     }
-    m_httpHeaderFields.uncommonHeaders().clear();
+    case SanitizationType::CrossOriginSafe: {
+        HTTPHeaderMap filteredHeaders;
+        for (auto& header : m_httpHeaderFields.commonHeaders()) {
+            if (isSafeCrossOriginResponseHeader(header.key))
+                filteredHeaders.add(header.key, WTFMove(header.value));
+        }
+        if (auto corsSafeHeaderSet = parseAccessControlAllowList(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders))) {
+            for (auto& headerName : *corsSafeHeaderSet) {
+                if (!filteredHeaders.contains(headerName)) {
+                    auto value = m_httpHeaderFields.get(headerName);
+                    if (!value.isNull())
+                        filteredHeaders.add(headerName, value);
+                }
+            }
+        }
+        m_httpHeaderFields = WTFMove(filteredHeaders);
+    }
+    }
 }
 
 bool ResourceResponseBase::isHTTP09() const

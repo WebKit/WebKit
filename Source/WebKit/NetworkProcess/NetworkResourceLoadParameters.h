@@ -57,6 +57,7 @@ public:
     Vector<String> derivedCachedDataTypesToRetrieve;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WebCore::FetchOptions::Mode mode;
+    WebCore::FetchOptions::Destination destination;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     bool shouldRestrictHTTPResponseAccess { false };
 

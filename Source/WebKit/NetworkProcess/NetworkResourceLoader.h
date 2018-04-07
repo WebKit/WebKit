@@ -32,6 +32,7 @@
 #include "NetworkLoadClient.h"
 #include "NetworkResourceLoadParameters.h"
 #include "ShareableResource.h"
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/Timer.h>
 
 namespace WebCore {
@@ -146,7 +147,7 @@ private:
     void logCookieInformation() const;
 #endif
 
-    WebCore::ResourceResponse sanitizeRedirectResponseIfPossible(WebCore::ResourceResponse&&);
+    WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
     const NetworkResourceLoadParameters m_parameters;
 

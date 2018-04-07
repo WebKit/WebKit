@@ -1,3 +1,33 @@
+2018-04-06  Youenn Fablet  <youenn@apple.com>
+
+        Response headers should be filtered when sent from NetworkProcess to WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184310
+
+        Reviewed by Ryosuke Niwa.
+
+        Did some refactoring to allow ResourceResponse to use header value parsing routines.
+        We add sanitization levels for regular responses in case responses might be exposed to scripts or not.
+        If not exposed to scripts, additional filtering is done.
+
+        Add internal API to get unfiltered response headers from a fetch response.
+        Test: http/wpt/service-workers/header-filtering.https.html
+
+        * Modules/fetch/FetchResponse.h:
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        * platform/network/HTTPParsers.h:
+        (WebCore::addToAccessControlAllowList):
+        (WebCore::parseAccessControlAllowList):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isSafeToKeepRedirectionResponseHeader):
+        (WebCore::isCrossOriginSafeToKeepResponseHeader):
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFields):
+        * platform/network/ResourceResponseBase.h:
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::fetchResponseHeaderList):
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.idl:
+
 2018-04-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix unused parameter warning when credential storage is disabled

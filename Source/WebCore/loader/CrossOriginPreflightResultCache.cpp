@@ -52,57 +52,23 @@ static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
     return ok;
 }
 
-template<class HashType>
-static void addToAccessControlAllowList(const String& string, unsigned start, unsigned end, HashSet<String, HashType>& set)
-{
-    StringImpl* stringImpl = string.impl();
-    if (!stringImpl)
-        return;
-
-    // Skip white space from start.
-    while (start <= end && isSpaceOrNewline((*stringImpl)[start]))
-        ++start;
-
-    // only white space
-    if (start > end) 
-        return;
-
-    // Skip white space from end.
-    while (end && isSpaceOrNewline((*stringImpl)[end]))
-        --end;
-
-    set.add(string.substring(start, end - start + 1));
-}
-
-template<class HashType>
-static bool parseAccessControlAllowList(const String& string, HashSet<String, HashType>& set)
-{
-    unsigned start = 0;
-    size_t end;
-    while ((end = string.find(',', start)) != notFound) {
-        if (start != end)
-            addToAccessControlAllowList(string, start, end - 1, set);
-        start = end + 1;
-    }
-    if (start != string.length())
-        addToAccessControlAllowList(string, start, string.length() - 1, set);
-
-    return true;
-}
-
 bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response, String& errorDescription)
 {
     m_methods.clear();
-    if (!parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods), m_methods)) {
+    auto methods = parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods));
+    if (!methods) {
         errorDescription = "Cannot parse Access-Control-Allow-Methods response header field.";
         return false;
     }
+    m_methods = WTFMove(methods.value());
 
     m_headers.clear();
-    if (!parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders), m_headers)) {
+    auto headers = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders));
+    if (!headers) {
         errorDescription = "Cannot parse Access-Control-Allow-Headers response header field.";
         return false;
     }
+    m_headers = WTFMove(headers.value());
 
     Seconds expiryDelta = 0_s;
     if (parseAccessControlMaxAge(response.httpHeaderField(HTTPHeaderName::AccessControlMaxAge), expiryDelta)) {
