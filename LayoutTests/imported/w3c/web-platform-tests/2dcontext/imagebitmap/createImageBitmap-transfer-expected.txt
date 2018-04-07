@@ -9,5 +9,5 @@ FAIL Transfer ImageBitmap created from a vector SVGImageElement promise_test: Un
 FAIL Transfer ImageBitmap created from an OffscreenCanvas promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
 FAIL Transfer ImageBitmap created from an ImageData promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
 PASS Transfer ImageBitmap created from an ImageBitmap 
-FAIL Transfer ImageBitmap created from a Blob promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
+PASS Transfer ImageBitmap created from a Blob 
 
