@@ -59,7 +59,7 @@ public:
     Color platformActiveSelectionForegroundColor() const override;
     Color platformInactiveSelectionForegroundColor() const override;
 
-    Color systemColor(CSSValueID, bool) const override;
+    Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;
 
     bool paintCheckbox(const RenderObject& o, const PaintInfo& i, const IntRect& r) override
     { return paintButton(o, i, r); }

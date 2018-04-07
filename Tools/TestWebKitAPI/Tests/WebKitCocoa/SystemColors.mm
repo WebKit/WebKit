@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <AppKit/NSColor.h>
+#include "config.h"
 
-#if PLATFORM(MAC) && USE(APPLE_INTERNAL_SDK)
+#if WK_API_ENABLED
 
-#import <AppKit/NSColor_Private.h>
+#import "PlatformUtilities.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
-#else
+namespace TestWebKitAPI {
 
-@interface NSColor ()
-+ (NSColor *)systemRedColor;
-+ (NSColor *)systemGreenColor;
-+ (NSColor *)systemBlueColor;
-+ (NSColor *)systemOrangeColor;
-+ (NSColor *)systemYellowColor;
-+ (NSColor *)systemBrownColor;
-+ (NSColor *)systemPinkColor;
-+ (NSColor *)systemPurpleColor;
-+ (NSColor *)systemGrayColor;
-+ (NSColor *)linkColor;
-@end
+TEST(WebKit, LinkColor)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@"<a href>Test</a>"];
+
+    NSString *linkColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.links[0]).color"];
+    EXPECT_WK_STREQ("rgb(0, 0, 238)", linkColor);
+}
+
+#if PLATFORM(MAC)
+TEST(WebKit, LinkColorWithSystemAppearance)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView _setUseSystemAppearance:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<a href>Test</a>"];
+
+    NSString *linkColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.links[0]).color"];
+    EXPECT_WK_STREQ("rgb(0, 105, 217)", linkColor);
+}
+#endif
+
+} // namespace TestWebKitAPI
 
 #endif

@@ -189,6 +189,7 @@
 #include "SocketProvider.h"
 #include "StorageEvent.h"
 #include "StringCallback.h"
+#include "StyleColor.h"
 #include "StyleProperties.h"
 #include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
@@ -801,17 +802,17 @@ String Document::compatMode() const
 
 void Document::resetLinkColor()
 {
-    m_linkColor = Color(0, 0, 238);
+    m_linkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions());
 }
 
 void Document::resetVisitedLinkColor()
 {
-    m_visitedLinkColor = Color(85, 26, 139);    
+    m_visitedLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitLink, styleColorOptions() | StyleColor::Options::ForVisitedLink);
 }
 
 void Document::resetActiveLinkColor()
 {
-    m_activeLinkColor = Color(255, 0, 0);
+    m_activeLinkColor = StyleColor::colorFromKeyword(CSSValueWebkitActivelink, styleColorOptions());
 }
 
 DOMImplementation& Document::implementation()
@@ -7027,7 +7028,7 @@ float Document::deviceScaleFactor() const
         deviceScaleFactor = documentPage->deviceScaleFactor();
     return deviceScaleFactor;
 }
-    
+
 bool Document::useSystemAppearance() const
 {
     bool useSystemAppearance = false;
@@ -7035,7 +7036,15 @@ bool Document::useSystemAppearance() const
         useSystemAppearance = documentPage->useSystemAppearance();
     return useSystemAppearance;
 }
-    
+
+OptionSet<StyleColor::Options> Document::styleColorOptions() const
+{
+    OptionSet<StyleColor::Options> options;
+    if (useSystemAppearance())
+        options |= StyleColor::Options::UseSystemAppearance;
+    return options;
+}
+
 void Document::didAssociateFormControl(Element* element)
 {
     if (!frame() || !frame()->page() || !frame()->page()->chrome().client().shouldNotifyOnFormChanges())

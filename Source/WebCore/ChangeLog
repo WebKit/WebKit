@@ -1,3 +1,57 @@
+2018-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        Use the system's link color when system appearance is desired for a WebView.
+
+        https://bugs.webkit.org/show_bug.cgi?id=184353
+        rdar://problem/9420053
+
+        Reviewed by Wenson Hsieh.
+
+        Have Document consult RenderTheme via StyleColor for the various link colors.
+        This allows the system to have different colors than the standard hardcoded ones.
+        This adds StyleColor::Options, to avoid multiple booleans being passed around,
+        since the "for visited link" state is now needed in RenderTheme.
+
+        * WebCore.xcodeproj/project.pbxproj: Made StyleColor.h private, since RenderTheme.h includes it.
+        * css/StyleColor.cpp:
+        (WebCore::StyleColor::colorFromKeyword): Use options instead of a bool.
+        (WebCore::StyleColor::isSystemColor): Consider CSSValueWebkitLink the start of system colors.
+        * css/StyleColor.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::colorFromPrimitiveValue const): Use StyleColor::Options.
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemColor): Use StyleColor::Options.
+        * dom/Document.cpp:
+        (WebCore::Document::resetLinkColor): Ask StyleColor for the link color instead of hardcoding it.
+        (WebCore::Document::resetVisitedLinkColor): Ditto.
+        (WebCore::Document::resetActiveLinkColor): Ditto.
+        (WebCore::Document::styleColorOptions const): Added. Helper to get the options used.
+        * dom/Document.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal): Use StyleColor::Options.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::systemColor const): Add default values here, moved from Document.
+        (WebCore::RenderTheme::focusRingColor): Use StyleColor::Options.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformFocusRingColor const): Use StyleColor::Options.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::systemColor const): Use StyleColor::Options.
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor const): Use StyleColor::Options.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformFocusRingColor const): Use StyleColor::Options.
+        (WebCore::RenderThemeMac::platformColorsDidChange): Clear m_systemVisitedLinkColor.
+        (WebCore::RenderThemeMac::systemColor const): Use StyleColor::Options.
+        (WebCore::RenderThemeMac::adjustMenuListStyle const): Ditto.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::systemColor const): Use StyleColor::Options.
+        * rendering/RenderThemeWin.h:
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::computeTextPaintStyle): Use StyleColor::Options.
+
 2018-04-06  Youenn Fablet  <youenn@apple.com>
 
         Response headers should be filtered when sent from NetworkProcess to WebProcess

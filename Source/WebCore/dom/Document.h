@@ -45,6 +45,7 @@
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
+#include "StyleColor.h"
 #include "Supplementable.h"
 #include "TextResourceDecoder.h"
 #include "Timer.h"
@@ -543,8 +544,9 @@ public:
     Settings& mutableSettings() { return m_settings.get(); }
 
     float deviceScaleFactor() const;
-        
+
     bool useSystemAppearance() const;
+    OptionSet<StyleColor::Options> styleColorOptions() const;
 
     WEBCORE_EXPORT Ref<Range> createRange();
 

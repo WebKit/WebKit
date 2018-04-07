@@ -1397,8 +1397,18 @@ String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String&
 
 #endif // ENABLE(VIDEO)
 
-Color RenderThemeIOS::systemColor(CSSValueID cssValueID, bool) const
+Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
 {
+    const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
+
+    // The system color cache below can't handle visited links. The only color value
+    // that cares about visited links is CSSValueWebkitLink, so handle it here by
+    // calling through to RenderTheme's base implementation.
+    if (forVisitedLink && cssValueID == CSSValueWebkitLink)
+        return RenderTheme::systemColor(cssValueID, options);
+
+    ASSERT(!forVisitedLink);
+
     auto addResult = m_systemColorCache.add(cssValueID, Color());
     if (!addResult.isNewEntry)
         return addResult.iterator->value;
@@ -1434,7 +1444,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, bool) const
     }
 
     if (!color.isValid())
-        color = RenderTheme::systemColor(cssValueID, false);
+        color = RenderTheme::systemColor(cssValueID, options);
 
     addResult.iterator->value = color;
 

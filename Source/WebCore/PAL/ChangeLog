@@ -1,3 +1,14 @@
+2018-04-07  Timothy Hatcher  <timothy@apple.com>
+
+        Use the system's link color when system appearance is desired for a WebView.
+
+        https://bugs.webkit.org/show_bug.cgi?id=184353
+        rdar://problem/9420053
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/cocoa/NSColorSPI.h: Added linkColor.
+
 2018-04-05  John Wilander  <wilander@apple.com>
 
         Add necessary colon to CFNetwork selector

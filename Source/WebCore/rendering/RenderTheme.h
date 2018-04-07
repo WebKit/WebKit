@@ -24,6 +24,7 @@
 #include "PaintInfo.h"
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
+#include "StyleColor.h"
 #include "ThemeTypes.h"
 
 namespace WebCore {
@@ -149,8 +150,8 @@ public:
 
     virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    static Color focusRingColor(bool useSystemAppearance);
-    virtual Color platformFocusRingColor(bool) const { return Color(0, 0, 0); }
+    static Color focusRingColor(OptionSet<StyleColor::Options>);
+    virtual Color platformFocusRingColor(OptionSet<StyleColor::Options>) const { return Color(0, 0, 0); }
     static void setCustomFocusRingColor(const Color&);
     static float platformFocusRingWidth() { return 3; }
     static float platformFocusRingOffset(float outlineWidth) { return std::max<float>(outlineWidth - platformFocusRingWidth(), 0); }
@@ -164,7 +165,7 @@ public:
 
     // System fonts and colors for CSS.
     void systemFont(CSSValueID, FontCascadeDescription&) const;
-    virtual Color systemColor(CSSValueID, bool useSystemAppearance) const;
+    virtual Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const;
 
     virtual int minimumMenuListSize(const RenderStyle&) const { return 0; }
 

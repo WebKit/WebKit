@@ -59,7 +59,7 @@ public:
     Color platformActiveListBoxSelectionForegroundColor() const final;
     Color platformInactiveListBoxSelectionBackgroundColor(bool) const final;
     Color platformInactiveListBoxSelectionForegroundColor() const final;
-    Color platformFocusRingColor(bool useSystemAppearance) const final;
+    Color platformFocusRingColor(OptionSet<StyleColor::Options>) const final;
 
     ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) final { return SmallScrollbar; }
 
@@ -169,7 +169,7 @@ private:
 private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
-    Color systemColor(CSSValueID, bool useSystemAppearance) const final;
+    Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const final;
 
     void purgeCaches() final;
 
@@ -243,6 +243,7 @@ private:
     bool m_isSliderThumbVerticalPressed { false };
 
     mutable HashMap<int, Color> m_systemColorCache;
+    mutable Color m_systemVisitedLinkColor;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 

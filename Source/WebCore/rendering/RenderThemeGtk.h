@@ -86,7 +86,7 @@ public:
     void platformColorsDidChange() override;
 
     // System colors.
-    Color systemColor(CSSValueID, bool) const override;
+    Color systemColor(CSSValueID, OptionSet<StyleColor::Options>) const override;
 
     bool popsMenuBySpaceOrReturn() const override { return true; }
 

@@ -315,12 +315,11 @@ Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor() const
     return Color::black;
 }
 
-Color RenderThemeMac::platformFocusRingColor(bool useSystemAppearance) const
+Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> options) const
 {
     if (usesTestModeFocusRingColor())
         return oldAquaFocusRingColor();
-
-    return systemColor(CSSValueWebkitFocusRingColor, useSystemAppearance);
+    return systemColor(CSSValueWebkitFocusRingColor, options);
 }
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(bool useSystemAppearance) const
@@ -425,15 +424,42 @@ static RGBA32 menuBackgroundColor()
 void RenderThemeMac::platformColorsDidChange()
 {
     m_systemColorCache.clear();
+    m_systemVisitedLinkColor = Color();
     RenderTheme::platformColorsDidChange();
 }
 
-Color RenderThemeMac::systemColor(CSSValueID cssValueID, bool useSystemAppearance) const
+Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
 {
+    const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
+    const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
+
     LocalDefaultSystemAppearance localAppearance(useSystemAppearance);
-    return m_systemColorCache.ensure(cssValueID, [this, cssValueID, useSystemAppearance] () -> Color {
-        auto selectCocoaColor = [cssValueID] () -> SEL {
+
+    // The system color cache below can't handle visited links. The only color value
+    // that cares about visited links is CSSValueWebkitLink, so handle it here.
+    if (forVisitedLink && cssValueID == CSSValueWebkitLink) {
+        // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
+        if (useSystemAppearance) {
+            if (!m_systemVisitedLinkColor.isValid())
+                m_systemVisitedLinkColor = colorFromNSColor([NSColor systemPurpleColor]);
+            return m_systemVisitedLinkColor;
+        }
+
+        return RenderTheme::systemColor(cssValueID, options);
+    }
+
+    ASSERT(!forVisitedLink);
+
+    return m_systemColorCache.ensure(cssValueID, [this, cssValueID, useSystemAppearance, options] () -> Color {
+        auto selectCocoaColor = [cssValueID, useSystemAppearance] () -> SEL {
             switch (cssValueID) {
+            case CSSValueWebkitLink:
+                // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
+                return useSystemAppearance ? @selector(linkColor) : nullptr;
+            case CSSValueWebkitActivelink:
+                // Only use NSColor when the system appearance is desired, otherwise use RenderTheme's default.
+                // FIXME: Use a semantic system color for this, instead of systemRedColor. <rdar://problem/39256684>
+                return useSystemAppearance ? @selector(systemRedColor) : nullptr;
             case CSSValueActiveborder:
                 return @selector(keyboardFocusIndicatorColor);
             case CSSValueActivecaption:
@@ -524,10 +550,12 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, bool useSystemAppearanc
                 return nullptr;
             }
         };
+
         if (auto selector = selectCocoaColor()) {
             if (auto color = wtfObjcMsgSend<NSColor *>([NSColor class], selector))
                 return colorFromNSColor(color);
         }
+
         switch (cssValueID) {
         case CSSValueActivebuttontext:
             // No corresponding NSColor for this so we use a hard coded value.
@@ -546,7 +574,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, bool useSystemAppearanc
             // Use platform-independent value returned by base class.
             FALLTHROUGH;
         default:
-            return RenderTheme::systemColor(cssValueID, useSystemAppearance);
+            return RenderTheme::systemColor(cssValueID, options);
         }
     }).iterator->value;
 }
@@ -1297,8 +1325,8 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver& styleResolver, RenderSty
     // Set the foreground color to black or gray when we have the aqua look.
     Color c = Color::darkGray;
     if (e) {
-        bool useSystemAppearance = e->document().page()->useSystemAppearance();
-        c = !e->isDisabledFormControl() ? systemColor(CSSValueButtontext, useSystemAppearance) : systemColor(CSSValueGraytext, useSystemAppearance);
+        OptionSet<StyleColor::Options> options = e->document().styleColorOptions();
+        c = !e->isDisabledFormControl() ? systemColor(CSSValueButtontext, options) : systemColor(CSSValueGraytext, options);
     }
     style.setColor(c);
 

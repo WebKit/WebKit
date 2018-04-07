@@ -37,13 +37,14 @@
 
 namespace WebCore {
 
-Color StyleColor::colorFromKeyword(CSSValueID keyword, bool useSystemAppearance)
+Color StyleColor::colorFromKeyword(CSSValueID keyword, OptionSet<Options> options)
 {
     if (const char* valueName = getValueName(keyword)) {
         if (const NamedColor* namedColor = findColor(valueName, strlen(valueName)))
             return Color(namedColor->ARGBValue);
     }
-    return RenderTheme::singleton().systemColor(keyword, useSystemAppearance);
+
+    return RenderTheme::singleton().systemColor(keyword, options);
 }
 
 bool StyleColor::isColorKeyword(CSSValueID id)
@@ -53,7 +54,7 @@ bool StyleColor::isColorKeyword(CSSValueID id)
 
 bool StyleColor::isSystemColor(CSSValueID id)
 {
-    return (id >= CSSValueActiveborder && id <= CSSValueWebkitFocusRingColor) || id == CSSValueMenu || id == CSSValueText;
+    return (id >= CSSValueWebkitLink && id <= CSSValueWebkitFocusRingColor) || id == CSSValueMenu || id == CSSValueText;
 }
 
 } // namespace WebCore

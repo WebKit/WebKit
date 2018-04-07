@@ -1012,11 +1012,11 @@ static int cssValueIdToSysColorIndex(CSSValueID cssValueId)
     }
 }
 
-Color RenderThemeWin::systemColor(CSSValueID cssValueId, bool) const
+Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Options> options) const
 {
     int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
     if (sysColorIndex == -1)
-        return RenderTheme::systemColor(cssValueId, false);
+        return RenderTheme::systemColor(cssValueId, options);
 
     COLORREF color = GetSysColor(sysColorIndex);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color));

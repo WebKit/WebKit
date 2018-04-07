@@ -1208,11 +1208,13 @@ void RenderTheme::systemFont(CSSValueID systemFontID, FontCascadeDescription& fo
     updateCachedSystemFontDescription(systemFontID, fontDescription);
 }
 
-Color RenderTheme::systemColor(CSSValueID cssValueId, bool useSystemAppearance) const
+Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Options> options) const
 {
-    UNUSED_PARAM(useSystemAppearance);
-    
     switch (cssValueId) {
+    case CSSValueWebkitLink:
+        return options.contains(StyleColor::Options::ForVisitedLink) ? 0xFF551A8B : 0xFF0000EE;
+    case CSSValueWebkitActivelink:
+        return 0xFFFF0000;
     case CSSValueActiveborder:
         return 0xFFFFFFFF;
     case CSSValueActivebuttontext:
@@ -1327,9 +1329,9 @@ void RenderTheme::setCustomFocusRingColor(const Color& color)
     customFocusRingColor() = color;
 }
 
-Color RenderTheme::focusRingColor(bool useSystemAppearance)
+Color RenderTheme::focusRingColor(OptionSet<StyleColor::Options> options)
 {
-    return customFocusRingColor().isValid() ? customFocusRingColor() : RenderTheme::singleton().platformFocusRingColor(useSystemAppearance);
+    return customFocusRingColor().isValid() ? customFocusRingColor() : RenderTheme::singleton().platformFocusRingColor(options);
 }
 
 String RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const

@@ -1756,7 +1756,7 @@ Color RenderThemeGtk::platformInactiveListBoxSelectionForegroundColor() const
     return styleColor(ListBox, GTK_STATE_FLAG_SELECTED, StyleColorForeground);
 }
 
-Color RenderThemeGtk::systemColor(CSSValueID cssValueId, bool) const
+Color RenderThemeGtk::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Options> options) const
 {
     switch (cssValueId) {
     case CSSValueButtontext:
@@ -1764,7 +1764,7 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId, bool) const
     case CSSValueCaptiontext:
         return styleColor(Entry, GTK_STATE_FLAG_ACTIVE, StyleColorForeground);
     default:
-        return RenderTheme::systemColor(cssValueId, false);
+        return RenderTheme::systemColor(cssValueId, options);
     }
 }
 
