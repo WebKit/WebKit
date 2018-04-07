@@ -1,3 +1,13 @@
+2018-04-06  Saam Barati  <sbarati@apple.com>
+
+        bmalloc's tryLargeZeroedMemalignVirtual shouldn't treat the entire virtual size as dirty towards its footprint
+        https://bugs.webkit.org/show_bug.cgi?id=184207
+
+        Reviewed by Mark Lam.
+
+        * wtf/Gigacage.cpp:
+        (Gigacage::freeVirtualPages):
+
 2018-04-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove StaticLock

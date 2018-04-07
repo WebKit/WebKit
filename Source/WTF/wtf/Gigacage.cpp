@@ -108,12 +108,12 @@ void* tryAllocateZeroedVirtualPages(Kind kind, size_t size)
     return result;
 }
 
-void freeVirtualPages(Kind kind, void* basePtr, size_t)
+void freeVirtualPages(Kind kind, void* basePtr, size_t size)
 {
     if (!basePtr)
         return;
     RELEASE_ASSERT(isCaged(kind, basePtr));
-    bmalloc::api::freeLargeVirtual(basePtr, bmalloc::heapKind(kind));
+    bmalloc::api::freeLargeVirtual(basePtr, size, bmalloc::heapKind(kind));
     WTF::compilerFence();
 }
 

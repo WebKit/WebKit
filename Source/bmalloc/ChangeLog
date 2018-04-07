@@ -1,3 +1,25 @@
+2018-04-06  Saam Barati  <sbarati@apple.com>
+
+        bmalloc virtual allocation API should not treat memory it vends as dirty with respect to how it drives the scavenger
+        https://bugs.webkit.org/show_bug.cgi?id=184342
+
+        Reviewed by Mark Lam.
+
+        Currently, the only user of this API is Wasm. Ideally, Wasm would tell
+        us exactly which page is dirtied. We should really do that at some point:
+        https://bugs.webkit.org/show_bug.cgi?id=184207
+        
+        However, until we do that, it's better to treat none of the virtual memory
+        we vend as dirty, versus what we do now, which is treat it all as dirty.
+        This dirty memory tracking helps drive the scavenger, so on iOS, having the
+        scavenger think its under memory pressure because of memory it can't free isn't
+        useful.
+
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        * bmalloc/bmalloc.h:
+
 2018-04-05  Saam Barati  <sbarati@apple.com>
 
         IsoHeapImpl not IsoHeapImplBase should add itself to AllIsoHeaps
