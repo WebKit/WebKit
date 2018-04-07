@@ -87,14 +87,6 @@ protected:
     WriteBarrier<JSString> m_originalName;
 };
 
-InternalFunction* asInternalFunction(JSValue);
-
-inline InternalFunction* asInternalFunction(JSValue value)
-{
-    ASSERT(asObject(value)->inherits<InternalFunction>(*value.getObject()->vm()));
-    return static_cast<InternalFunction*>(asObject(value));
-}
-
 ALWAYS_INLINE Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue newTarget, Structure* baseClass)
 {
     // We allow newTarget == JSValue() because the API needs to be able to create classes without having a real JS frame.

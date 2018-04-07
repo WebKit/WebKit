@@ -3479,7 +3479,7 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
             getterSetter->setGetter(vm, exec->lexicalGlobalObject(), getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, customGetterSetter, JSCustomGetterSetterFunction::Type::Getter));
     } else {
         ASSERT(accessor.isGetterSetter());
-        getterSetter = asGetterSetter(accessor);
+        getterSetter = jsCast<GetterSetter*>(accessor);
     }
     if (descriptor.setterPresent()) {
         getterSetter = getterSetter->withSetter(vm, exec->lexicalGlobalObject(), descriptor.setterObject());

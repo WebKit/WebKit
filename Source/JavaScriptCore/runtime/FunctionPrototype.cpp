@@ -117,7 +117,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     }
 
     if (thisValue.inherits<InternalFunction>(vm)) {
-        InternalFunction* function = asInternalFunction(thisValue);
+        InternalFunction* function = jsCast<InternalFunction*>(thisValue);
         scope.release();
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));
     }

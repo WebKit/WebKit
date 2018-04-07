@@ -41,14 +41,14 @@ const ClassInfo FunctionConstructor::s_info = { "Function", &Base::s_info, nullp
 static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Function, exec->newTarget()));
+    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Function, exec->newTarget()));
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function
 static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args));
+    return JSValue::encode(constructFunction(exec, jsCast<InternalFunction*>(exec->jsCallee())->globalObject(), args));
 }
 
 FunctionConstructor::FunctionConstructor(VM& vm, Structure* structure)

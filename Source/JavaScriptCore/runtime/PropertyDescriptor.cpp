@@ -120,7 +120,7 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
     if (value.isGetterSetter()) {
         m_attributes &= ~PropertyAttribute::ReadOnly; // FIXME: we should be able to ASSERT this!
 
-        GetterSetter* accessor = asGetterSetter(value);
+        GetterSetter* accessor = jsCast<GetterSetter*>(value);
         m_getter = !accessor->isGetterNull() ? accessor->getter() : jsUndefined();
         m_setter = !accessor->isSetterNull() ? accessor->setter() : jsUndefined();
         m_seenAttributes = EnumerablePresent | ConfigurablePresent;
