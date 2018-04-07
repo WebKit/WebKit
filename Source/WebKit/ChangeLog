@@ -1,3 +1,22 @@
+2018-04-06  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r228371): WebAutomationSession::deleteAllCookies doesn't delete some cookies
+        https://bugs.webkit.org/show_bug.cgi?id=184334
+        <rdar://problem/39212863>
+
+        Reviewed by Timothy Hatcher.
+
+        When WebDriver adds a cookie for 'localhost', it actually uses the domain '.localhost' per RFC.
+        When deleting cookies, we first fetch all cookies matching the document's hostname, and
+        then delete them one by one. However, this code path does not add the dot prefix. This causes
+        no cookies to match the requested domain, and thus none of them are deleted.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::domainByAddingDotPrefixIfNeeded): Extract this helper method.
+        (WebKit::WebAutomationSession::addSingleCookie): Use helper method.
+        (WebKit::WebAutomationSession::deleteAllCookies): Add a dot prefix when
+        requesting to delete all cookies for a hostname.
+
 2018-04-06  Youenn Fablet  <youenn@apple.com>
 
         Response headers should be filtered when sent from NetworkProcess to WebProcess
