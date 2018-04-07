@@ -28,7 +28,7 @@ function withFrame(url)
 async function registerServiceWorker(scope)
 {
     const registration = await navigator.serviceWorker.register("header-filtering-worker.js", { scope : scope });
-    const activeWorker = registration.active;
+    let activeWorker = registration.active;
     if (activeWorker)
         return registration;
     activeWorker = registration.installing;
@@ -50,7 +50,7 @@ promise_test(async (test) => {
             resolve();
         };
     });
-}, "Setup worker and register the client");
+}, "Prepare tests: setup worker and register the client");
 
 var processMessage;
 promise_test(async (test) => {
@@ -58,7 +58,7 @@ promise_test(async (test) => {
     navigator.serviceWorker.onmessage = (event) => {
         processMessage(event.data);
     };
-}, "Add a frame controlled by service worker");
+}, "Prepare tests: Add a frame controlled by service worker");
 
 promise_test(async (test) => {
     const promise = new Promise((resolve) => {
@@ -148,7 +148,7 @@ promise_test(async (test) => {
 promise_test(async (test) => {
     await registration.unregister();
     frame.remove();
-}, "Do some clean-up");
+}, "After tests clean-up");
 
 </script>
 </body>

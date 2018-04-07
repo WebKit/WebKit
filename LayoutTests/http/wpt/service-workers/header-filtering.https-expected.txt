@@ -1,7 +1,7 @@
 
 
-PASS Setup worker 
-PASS Frame controlled by service worker 
+PASS Prepare tests: setup worker and register the client 
+PASS Prepare tests: Add a frame controlled by service worker 
 PASS Test same-origin fetch 
 FAIL Test cors cross-origin fetch assert_array_equals: lengths differ, expected 13 got 15
 FAIL Test no-cors cross-origin fetch assert_array_equals: lengths differ, expected 13 got 15
@@ -9,5 +9,5 @@ PASS Test same-origin script load
 PASS Test no-cors script load 
 PASS Test cors script load 
 FAIL Test HTML load assert_array_equals: lengths differ, expected 13 got 17
-PASS Clean-up 
+PASS After tests clean-up 
 
