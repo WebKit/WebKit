@@ -1,3 +1,9 @@
+2018-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        Rebaseline LayoutReloaded patch file.
+
+        * LayoutReloaded/misc/LayoutReloadedWebKit.patch:
+
 2018-04-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebCore] Expose a constant for scrollbar pixels per line (cScrollbarPixelsPerLine)

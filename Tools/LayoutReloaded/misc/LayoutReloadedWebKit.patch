@@ -1058,7 +1058,7 @@ index 00000000000..8cf678fd5c5
 +}
 diff --git a/Source/WebCore/rendering/InlineTextRunIterator.cpp b/Source/WebCore/rendering/InlineTextRunIterator.cpp
 new file mode 100644
-index 00000000000..bbeb73bb57a
+index 00000000000..6714a5df199
 --- /dev/null
 +++ b/Source/WebCore/rendering/InlineTextRunIterator.cpp
 @@ -0,0 +1,167 @@
@@ -1174,7 +1174,7 @@ index 00000000000..bbeb73bb57a
 +{
 +    ASSERT(startPosition < m_text.length());
 +    unsigned position = startPosition;
-+    for (; position < m_text.length() - 1; ++position) {
++    for (; position < m_text.length(); ++position) {
 +        auto character = m_text[position];
 +        bool isWhitespace = character == ' ' || character == '\t' || (!m_style.preserveNewline && character == '\n');
 +        if (!isWhitespace)
