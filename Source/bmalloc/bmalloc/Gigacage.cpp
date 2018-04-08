@@ -42,7 +42,7 @@
 // If this were less than 32GB, those OOB accesses could reach outside of the cage.
 #define GIGACAGE_RUNWAY (32llu * 1024 * 1024 * 1024)
 
-char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
+alignas(GIGACAGE_BASE_PTRS_SIZE) char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 
 using namespace bmalloc;
 

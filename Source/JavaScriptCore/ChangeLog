@@ -1,5 +1,49 @@
 2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Use alignas instead of compiler-specific attributes
+        https://bugs.webkit.org/show_bug.cgi?id=183508
+
+        Reviewed by Mark Lam.
+
+        Use C++11 alignas specifier. It is portable compared to compiler-specific aligned attributes.
+
+        * heap/RegisterState.h:
+        * jit/JIT.h:
+        (JSC::JIT::compile): Deleted.
+        (JSC::JIT::compileGetByVal): Deleted.
+        (JSC::JIT::compileGetByValWithCachedId): Deleted.
+        (JSC::JIT::compilePutByVal): Deleted.
+        (JSC::JIT::compileDirectPutByVal): Deleted.
+        (JSC::JIT::compilePutByValWithCachedId): Deleted.
+        (JSC::JIT::compileHasIndexedProperty): Deleted.
+        (JSC::JIT::appendCall): Deleted.
+        (JSC::JIT::appendCallWithSlowPathReturnType): Deleted.
+        (JSC::JIT::exceptionCheck): Deleted.
+        (JSC::JIT::exceptionCheckWithCallFrameRollback): Deleted.
+        (JSC::JIT::emitInt32Load): Deleted.
+        (JSC::JIT::emitInt32GetByVal): Deleted.
+        (JSC::JIT::emitInt32PutByVal): Deleted.
+        (JSC::JIT::emitDoublePutByVal): Deleted.
+        (JSC::JIT::emitContiguousPutByVal): Deleted.
+        (JSC::JIT::emitStoreCell): Deleted.
+        (JSC::JIT::getSlowCase): Deleted.
+        (JSC::JIT::linkSlowCase): Deleted.
+        (JSC::JIT::linkDummySlowCase): Deleted.
+        (JSC::JIT::linkAllSlowCases): Deleted.
+        (JSC::JIT::callOperation): Deleted.
+        (JSC::JIT::callOperationWithProfile): Deleted.
+        (JSC::JIT::callOperationWithResult): Deleted.
+        (JSC::JIT::callOperationNoExceptionCheck): Deleted.
+        (JSC::JIT::callOperationWithCallFrameRollbackOnException): Deleted.
+        (JSC::JIT::emitEnterOptimizationCheck): Deleted.
+        (JSC::JIT::sampleCodeBlock): Deleted.
+        (JSC::JIT::canBeOptimized): Deleted.
+        (JSC::JIT::canBeOptimizedOrInlined): Deleted.
+        (JSC::JIT::shouldEmitProfiling): Deleted.
+        * runtime/VM.h:
+
+2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, follow-up patch for DFG 32bit
         https://bugs.webkit.org/show_bug.cgi?id=183970
 

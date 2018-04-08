@@ -32,7 +32,7 @@
 
 #if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
 
-char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
+alignas(GIGACAGE_BASE_PTRS_SIZE) char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 
 namespace Gigacage {
 

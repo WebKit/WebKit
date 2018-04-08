@@ -68,7 +68,7 @@ static_assert(bmalloc::isPowerOfTwo(STRING_GIGACAGE_SIZE), "");
 #define GIGACAGE_BASE_PTRS_SIZE 4096
 #endif
 
-extern "C" BEXPORT char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
+extern "C" alignas(GIGACAGE_BASE_PTRS_SIZE) BEXPORT char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 
 namespace Gigacage {
 
@@ -133,7 +133,7 @@ BINLINE void*& basePtr(BasePtrs& basePtrs, Kind kind)
 
 BINLINE BasePtrs& basePtrs()
 {
-    return *reinterpret_cast<BasePtrs*>(g_gigacageBasePtrs);
+    return *reinterpret_cast<BasePtrs*>(reinterpret_cast<void*>(g_gigacageBasePtrs));
 }
 
 BINLINE void*& basePtr(Kind kind)

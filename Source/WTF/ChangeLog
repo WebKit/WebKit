@@ -1,3 +1,17 @@
+2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use alignas instead of compiler-specific attributes
+        https://bugs.webkit.org/show_bug.cgi?id=183508
+
+        Reviewed by Mark Lam.
+
+        Use alignas for g_gigacageBasePtr. We also add reinterpret_cast to fix
+        compile errors in ARMv7 and MIPS JSCOnly ports.
+
+        * wtf/Gigacage.cpp:
+        * wtf/Gigacage.h:
+        (Gigacage::basePtrs):
+
 2018-04-06  Saam Barati  <sbarati@apple.com>
 
         bmalloc's tryLargeZeroedMemalignVirtual shouldn't treat the entire virtual size as dirty towards its footprint
