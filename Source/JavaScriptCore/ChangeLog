@@ -1,5 +1,13 @@
 2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, follow-up patch for DFG 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=183970
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+
+2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Fix incorrect assertion for VM's regexp buffer lock
         https://bugs.webkit.org/show_bug.cgi?id=184398
 
