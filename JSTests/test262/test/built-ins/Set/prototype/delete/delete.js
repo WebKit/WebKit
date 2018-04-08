@@ -11,9 +11,9 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    typeof Set.prototype.delete,
-    "function",
-    "`typeof Set.prototype.delete` is `'function'`"
+  typeof Set.prototype.delete,
+  "function",
+  "`typeof Set.prototype.delete` is `'function'`"
 );
 
 verifyNotEnumerable(Set.prototype, "delete");

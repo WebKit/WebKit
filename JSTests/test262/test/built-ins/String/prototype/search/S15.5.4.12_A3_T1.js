@@ -13,8 +13,8 @@ var aString = new String("power of the power of the power of the power of the po
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (aString.search(/the/)!== aString.search(/the/g)) {
-  $ERROR('#1: var aString = new String("power of the power of the power of the power of the power of the power of the great sword"); aString.search(/the/)=== aString.search(/the/g). Actual: '+aString.search(/the/));
+if (aString.search(/the/) !== aString.search(/the/g)) {
+  $ERROR('#1: var aString = new String("power of the power of the power of the power of the power of the power of the great sword"); aString.search(/the/)=== aString.search(/the/g). Actual: ' + aString.search(/the/));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

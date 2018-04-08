@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-not-undefined.case
 // - src/function-forms/default/cls-expr-async-gen-meth.template
 /*---
-description: Use of intializer when argument value is not `undefined` (class expression async generator method)
+description: Use of initializer when argument value is not `undefined` (class expression async generator method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 features: [default-parameters, async-iteration]
 flags: [generated, async]

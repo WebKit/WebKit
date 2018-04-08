@@ -8,4 +8,4 @@ description: >
     undefined
 ---*/
 
-    Object.seal(undefined);
+Object.seal(undefined);

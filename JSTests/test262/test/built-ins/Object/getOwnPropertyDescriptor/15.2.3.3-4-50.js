@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.splice)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "splice");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "splice");
 
 assert.sameValue(desc.value, Array.prototype.splice, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

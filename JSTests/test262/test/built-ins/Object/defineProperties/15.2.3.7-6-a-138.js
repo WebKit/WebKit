@@ -9,12 +9,12 @@ description: >
     containing an exponential number (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            length: {
-                value: "2E3"
-            }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: "2E3"
+  }
+});
 
 assert.sameValue(arr.length, 2E3, 'arr.length');

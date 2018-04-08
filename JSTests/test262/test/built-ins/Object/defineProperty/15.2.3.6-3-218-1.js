@@ -9,13 +9,13 @@ description: >
     prototype object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Function.prototype.get = function () {
-                return "functionGetProperty";
-            };
-            var funObj = function () { };
+Function.prototype.get = function() {
+  return "functionGetProperty";
+};
+var funObj = function() {};
 
-            Object.defineProperty(obj, "property", funObj);
+Object.defineProperty(obj, "property", funObj);
 
 assert.sameValue(obj.property, "functionGetProperty", 'obj.property');

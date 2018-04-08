@@ -32,7 +32,7 @@ var p = new Promise(function(resolve, reject) {
 assert.sameValue(returnValue, undefined, '"reject" function return value');
 
 p.then(function() {
-    $DONE('The promise should not be fulfilled.');
-  }, function() {
-    $DONE();
-  });
+  $DONE('The promise should not be fulfilled.');
+}, function() {
+  $DONE();
+});

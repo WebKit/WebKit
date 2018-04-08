@@ -9,22 +9,22 @@ description: >
     attribute
 ---*/
 
-        var obj = {};
-        var fun = function () {
-            return "ownSetProperty";
-        };
-        Object.defineProperty(obj, "property", {
-            set: fun,
-            configurable: true
-        });
+var obj = {};
+var fun = function() {
+  return "ownSetProperty";
+};
+Object.defineProperty(obj, "property", {
+  set: fun,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
-        var accessed = false;
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var accessed = false;
 
-        for (var prop in desc) {
-            if (prop === "set") {
-                accessed = true;
-            }
-        }
+for (var prop in desc) {
+  if (prop === "set") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

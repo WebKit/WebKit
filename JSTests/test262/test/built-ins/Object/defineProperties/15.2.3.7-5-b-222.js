@@ -8,11 +8,11 @@ description: >
     applied to Array object (8.10.5 step 7.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                property: {
-                    get: []
-                }
-            });
+  Object.defineProperties(obj, {
+    property: {
+      get: []
+    }
+  });
 });

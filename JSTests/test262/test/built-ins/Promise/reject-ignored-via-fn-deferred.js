@@ -30,10 +30,10 @@ var p = new Promise(function(_resolve, _reject) {
 });
 
 p.then(function() {
-    $DONE();
-  }, function() {
-    $DONE('The promise should not be rejected.');
-  });
+  $DONE();
+}, function() {
+  $DONE('The promise should not be rejected.');
+});
 
 resolve();
 returnValue = reject(thenable);

@@ -12,9 +12,9 @@ flags: [onlyStrict]
 var my_eval = eval;
 
 assert.throws(TypeError, function() {
-    my_eval("gNonStrict();");
+  my_eval("gNonStrict();");
 });
 
 function gNonStrict() {
-    return gNonStrict.caller;
+  return gNonStrict.caller;
 }

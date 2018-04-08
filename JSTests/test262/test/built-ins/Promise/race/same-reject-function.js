@@ -13,14 +13,17 @@ info: |
   ...
 ---*/
 
-function rejectFunction() { }
+function rejectFunction() {}
 
 function Constructor(executor) {
   executor($ERROR, rejectFunction);
 }
-Constructor.resolve = function(v) { return v; };
+Constructor.resolve = function(v) {
+  return v;
+};
 
-var callCount1 = 0, callCount2 = 0;
+var callCount1 = 0,
+  callCount2 = 0;
 
 var p1 = {
   then: function(onFulfilled, onRejected) {

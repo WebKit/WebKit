@@ -6,6 +6,6 @@ es5id: 15.11.4.2-1
 description: Error.prototype.name is not enumerable.
 ---*/
 
-        for (var i in Error.prototype) {
-            assert.notSameValue(i, "name", 'i');
-        }
+for (var i in Error.prototype) {
+  assert.notSameValue(i, "name", 'i');
+}

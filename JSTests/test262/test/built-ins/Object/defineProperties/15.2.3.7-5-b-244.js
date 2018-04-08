@@ -9,18 +9,18 @@ description: >
     step 8.a)
 ---*/
 
-        var data = "data";
-        var setFun = function (value) {
-            data = value;
-        };
+var data = "data";
+var setFun = function(value) {
+  data = value;
+};
 
-            Math.prop = {
-                set: setFun
-            };
+Math.prop = {
+  set: setFun
+};
 
-            var obj = {};
-            Object.defineProperties(obj, Math);
-            obj.prop = "mathData";
+var obj = {};
+Object.defineProperties(obj, Math);
+obj.prop = "mathData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "mathData", 'data');

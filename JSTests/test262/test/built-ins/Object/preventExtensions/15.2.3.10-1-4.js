@@ -8,4 +8,4 @@ description: >
     string primitive value
 ---*/
 
-    Object.preventExtensions("abc");
+Object.preventExtensions("abc");

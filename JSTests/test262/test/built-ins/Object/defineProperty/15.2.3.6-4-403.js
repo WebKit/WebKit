@@ -9,14 +9,14 @@ description: >
     attribute is set to true (Array instance)
 ---*/
 
-            Object.defineProperty(Array.prototype, "prop", {
-                value: 1001,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
-            var arrObj = [];
-            arrObj.prop = 1002;
+Object.defineProperty(Array.prototype, "prop", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var arrObj = [];
+arrObj.prop = 1002;
 
 assert(arrObj.hasOwnProperty("prop"), 'arrObj.hasOwnProperty("prop") !== true');
 assert.sameValue(arrObj.prop, 1002, 'arrObj.prop');

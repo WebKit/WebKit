@@ -9,11 +9,10 @@ description: >
     and initialValue is not present
 ---*/
 
-  function callbackfn(prevVal, curVal, idx, obj)
-  {
-  }
+function callbackfn(prevVal, curVal, idx, obj)
+{}
 
-  var arr = new Array(10);
+var arr = new Array(10);
 assert.throws(TypeError, function() {
-    arr.reduceRight(callbackfn);
+  arr.reduceRight(callbackfn);
 });

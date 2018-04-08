@@ -8,18 +8,18 @@ description: >
     'descObj' is a Function object (8.10.5 step 3.b)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        Object.defineProperties(obj, {
-            prop: {
-                enumerable: function () { }
-            }
-        });
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+Object.defineProperties(obj, {
+  prop: {
+    enumerable: function() {}
+  }
+});
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

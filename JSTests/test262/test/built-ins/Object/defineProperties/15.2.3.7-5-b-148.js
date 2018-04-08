@@ -14,11 +14,11 @@ var obj = {};
 var descObj = {};
 
 Object.defineProperty(descObj, "writable", {
-    set: function () { }
+  set: function() {}
 });
 
 Object.defineProperties(obj, {
-    property: descObj
+  property: descObj
 });
 
 assert(obj.hasOwnProperty("property"));

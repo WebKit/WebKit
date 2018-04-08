@@ -9,16 +9,16 @@ description: >
     after the call
 ---*/
 
-        var result = false;
-        var arr = [1, 2, 3, 4, 5];
+var result = false;
+var arr = [1, 2, 3, 4, 5];
 
-        function callbackfn(val, Idx, obj) {
-            arr[4] = 6;
-            if (val >= 6) {
-                result = true;
-            }
-        }
+function callbackfn(val, Idx, obj) {
+  arr[4] = 6;
+  if (val >= 6) {
+    result = true;
+  }
+}
 
-        arr.forEach(callbackfn);
+arr.forEach(callbackfn);
 
 assert(result, 'result !== true');

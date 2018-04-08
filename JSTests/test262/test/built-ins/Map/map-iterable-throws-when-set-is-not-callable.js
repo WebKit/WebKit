@@ -23,5 +23,8 @@ info: |
 Map.prototype.set = null;
 
 assert.throws(TypeError, function() {
-  new Map([[1,1], [2,2]]);
+  new Map([
+    [1, 1],
+    [2, 2]
+  ]);
 });

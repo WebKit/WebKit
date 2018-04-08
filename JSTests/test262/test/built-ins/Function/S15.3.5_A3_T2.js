@@ -9,8 +9,8 @@ description: >
     this.y=arg1+arg2;return \"OK\";")
 ---*/
 
-var FACTORY = new Function("arg1,arg2","var x =1; this.y=arg1+arg2;return \"OK\";");
-var obj = new FACTORY("1",2);
+var FACTORY = new Function("arg1,arg2", "var x =1; this.y=arg1+arg2;return \"OK\";");
+var obj = new FACTORY("1", 2);
 
 //CHECK#1
 if (typeof obj !== "object") {

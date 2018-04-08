@@ -9,10 +9,10 @@ description: >
     that overrides an inherited data property on an Array
 ---*/
 
-        var targetObj = {};
-        var arrProtoLen;
+var targetObj = {};
+var arrProtoLen;
 
-            arrProtoLen = Array.prototype.length;
-            Array.prototype.length = 0;
+arrProtoLen = Array.prototype.length;
+Array.prototype.length = 0;
 
 assert.sameValue([0, targetObj, 2].lastIndexOf(targetObj), 1, '[0, targetObj, 2].lastIndexOf(targetObj)');

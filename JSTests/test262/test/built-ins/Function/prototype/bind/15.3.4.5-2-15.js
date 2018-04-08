@@ -10,5 +10,5 @@ description: >
 
 
 assert.throws(TypeError, function() {
-            Function.prototype.bind.call({});
+  Function.prototype.bind.call({});
 });

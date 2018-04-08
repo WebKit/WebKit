@@ -7,7 +7,7 @@ esid: sec-object.getownpropertydescriptors
 author: Jordan Harband
 ---*/
 
-var F = function () {};
+var F = function() {};
 F.prototype.a = {};
 F.prototype.b = {};
 

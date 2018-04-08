@@ -10,10 +10,10 @@ flags: [async]
 
 var p = Promise.race([]);
 
-p.then(function () {
-    $ERROR("Never settles.");
-}, function () {
-    $ERROR("Never settles.");
+p.then(function() {
+  $ERROR("Never settles.");
+}, function() {
+  $ERROR("Never settles.");
 }).then($DONE, $DONE);
 
 // use three 'then's to allow above to settle 

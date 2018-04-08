@@ -9,8 +9,8 @@ description: Checking if enumerating the Boolean.prototype property fails
 ---*/
 
 //CHECK#1
-for(x in Boolean) {
-  if(x === "prototype") {
+for (x in Boolean) {
+  if (x === "prototype") {
     $ERROR('#1: Boolean.prototype has the attribute DontEnum');
   }
 }

@@ -9,7 +9,9 @@ es5id: 15.2.1.1_A2_T12
 description: Calling Object function with numeric expression as argument value
 ---*/
 
-var obj = Object(1.1*([].length+{q:1}["q"]));
+var obj = Object(1.1 * ([].length + {
+  q: 1
+}["q"]));
 
 //CHECK#2
 if (typeof obj !== "object") {
@@ -22,7 +24,7 @@ if (obj.constructor !== Number) {
 }
 
 //CHECK#4
-if ((obj != 1.1)||(obj === 1.1)) {
+if ((obj != 1.1) || (obj === 1.1)) {
   $ERROR('#4: Object(expression) returns ToObject(expression)');
 }
 //

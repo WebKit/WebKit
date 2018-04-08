@@ -9,23 +9,23 @@ description: >
     [[Configurable]] is false) to different value
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: 2010,
-            writable: true,
-            enumerable: false,
-            configurable: false
-        });
-
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
-assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "prop", {
-                enumerable: true
-            });
+Object.defineProperty(obj, "prop", {
+  value: 2010,
+  writable: true,
+  enumerable: false,
+  configurable: false
 });
-            var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
+
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
+assert.throws(TypeError, function() {
+  Object.defineProperty(obj, "prop", {
+    enumerable: true
+  });
+});
+var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');
 assert.sameValue(desc1.enumerable, false, 'desc1.enumerable');
 assert.sameValue(obj.prop, 2010, 'obj.prop');

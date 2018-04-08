@@ -9,27 +9,27 @@ description: >
     deleted index property not to be visited
 ---*/
 
-        var accessed = false;
-        var testResult = true;
+var accessed = false;
+var testResult = true;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            if (idx === 2) {
-                testResult = false;
-            }
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  if (idx === 2) {
+    testResult = false;
+  }
+}
 
-        var arr = [0, 1, 2, 3];
+var arr = [0, 1, 2, 3];
 
-        Object.defineProperty(arr, "3", {
-            get: function () {
-                arr.length = 2;
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "3", {
+  get: function() {
+    arr.length = 2;
+    return 0;
+  },
+  configurable: true
+});
 
-        arr.reduceRight(callbackfn, "initialValue");
+arr.reduceRight(callbackfn, "initialValue");
 
 assert(testResult, 'testResult !== true');
 assert(accessed, 'accessed !== true');

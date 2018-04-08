@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.3.2
+esid: sec-get-%typedarray%.prototype.bytelength
 description: >
   get %TypedArray%.prototype.byteLength.length is 0.
 info: |
@@ -20,6 +20,7 @@ info: |
     object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
     [[Configurable]]: true }.
 includes: [propertyHelper.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var desc = Object.getOwnPropertyDescriptor(TypedArray.prototype, "byteLength");

@@ -12,14 +12,14 @@ includes: [propertyHelper.js]
 ---*/
 
 var arrObj = [];
-var setFunc = function (value) {
-    arrObj.setVerifyHelpProp = value;
+var setFunc = function(value) {
+  arrObj.setVerifyHelpProp = value;
 };
 
 Object.defineProperty(arrObj, "0", {
-    set: setFunc,
-    enumerable: true,
-    configurable: true
+  set: setFunc,
+  enumerable: true,
+  configurable: true
 });
 
 verifyWritable(arrObj, "0", "setVerifyHelpProp");

@@ -8,16 +8,16 @@ description: Compare Number('0x2') and Number('0X2') with 2
 ---*/
 
 // CHECK#1
-if (+("2") !== 2)  {
+if (+("2") !== 2) {
   $ERROR('#1: +("2") === 2. Actual: ' + (+("2")));
 }
 
 // CHECK#2
-if (Number("0x2") !== 2)  {
+if (Number("0x2") !== 2) {
   $ERROR('#2: Number("0x2") === 2. Actual: ' + (Number("0x2")));
 }
 
 // CHECK#3
-if (Number("0X2") !== 2)  {
+if (Number("0X2") !== 2) {
   $ERROR('#3: Number("0X2") === 2. Actual: ' + (Number("0X2")));
 }

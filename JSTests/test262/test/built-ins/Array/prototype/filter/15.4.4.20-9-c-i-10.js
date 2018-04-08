@@ -9,19 +9,19 @@ description: >
     property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return idx === 2 && val === 12;
-        }
+function callbackfn(val, idx, obj) {
+  return idx === 2 && val === 12;
+}
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "2", {
-            get: function () {
-                return 12;
-            },
-            configurable: true
-        });
-        var newArr = arr.filter(callbackfn);
+Object.defineProperty(arr, "2", {
+  get: function() {
+    return 12;
+  },
+  configurable: true
+});
+var newArr = arr.filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 12, 'newArr[0]');

@@ -8,7 +8,7 @@ description: >
     to Array.isArray
 ---*/
 
-        var obj = {};
-        var result = Object.getOwnPropertyNames(obj);
+var obj = {};
+var result = Object.getOwnPropertyNames(obj);
 
 assert(Array.isArray(result), 'Array.isArray(result) !== true');

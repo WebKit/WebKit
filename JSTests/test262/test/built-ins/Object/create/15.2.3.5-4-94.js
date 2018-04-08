@@ -8,18 +8,20 @@ description: >
     'Properties' is an Arguments object (8.10.5 step 3.b)
 ---*/
 
-        var accessed = false;
-        var argObj = (function () { return arguments; })();
+var accessed = false;
+var argObj = (function() {
+  return arguments;
+})();
 
-        var newObj = Object.create({}, {
-            prop: {
-                enumerable: argObj
-            }
-        });
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+var newObj = Object.create({}, {
+  prop: {
+    enumerable: argObj
+  }
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

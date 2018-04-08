@@ -9,13 +9,13 @@ description: >
     step 9.a)
 ---*/
 
-        var setFun = function () {};
-        var obj = {};
+var setFun = function() {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                prop: {
-                    value: 12,
-                    set: setFun
-                }
-            });
+  Object.defineProperties(obj, {
+    prop: {
+      value: 12,
+      set: setFun
+    }
+  });
 });

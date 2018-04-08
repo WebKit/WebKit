@@ -10,6 +10,7 @@ info: |
 
   The value of the [[Prototype]] internal slot of the Atomics object is the
   intrinsic object %ObjectPrototype%.
+features: [Atomics]
 ---*/
 
 var proto = Object.getPrototypeOf(Atomics);

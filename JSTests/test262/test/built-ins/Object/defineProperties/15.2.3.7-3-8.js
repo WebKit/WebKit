@@ -8,23 +8,23 @@ description: >
     when 'Properties' doesn't contain enumerable own property
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var props = {};
+var props = {};
 
-        Object.defineProperty(props, "prop1", {
-            value: {},
-            enumerable: false
-        });
+Object.defineProperty(props, "prop1", {
+  value: {},
+  enumerable: false
+});
 
-        Object.defineProperty(props, "prop2", {
-            get: function () {
-                return {};
-            },
-            enumerable: true
-        });
+Object.defineProperty(props, "prop2", {
+  get: function() {
+    return {};
+  },
+  enumerable: true
+});
 
-        Object.defineProperties(obj, props);
+Object.defineProperties(obj, props);
 
 assert.sameValue(obj.hasOwnProperty("prop1"), false, 'obj.hasOwnProperty("prop1")');
 assert(obj.hasOwnProperty("prop2"), 'obj.hasOwnProperty("prop2") !== true');

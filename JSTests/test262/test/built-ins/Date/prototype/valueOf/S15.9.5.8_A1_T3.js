@@ -12,8 +12,8 @@ if (Date.prototype.propertyIsEnumerable('valueOf')) {
   $ERROR('#1: The Date.prototype.valueOf property has the attribute DontEnum');
 }
 
-for(var x in Date.prototype) {
-  if(x === "valueOf") {
+for (var x in Date.prototype) {
+  if (x === "valueOf") {
     $ERROR('#2: The Date.prototype.valueOf has the attribute DontEnum');
   }
 }

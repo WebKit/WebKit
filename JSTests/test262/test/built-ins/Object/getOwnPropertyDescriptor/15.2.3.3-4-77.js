@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.toUpperCase)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "toUpperCase");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "toUpperCase");
 
 assert.sameValue(desc.value, String.prototype.toUpperCase, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

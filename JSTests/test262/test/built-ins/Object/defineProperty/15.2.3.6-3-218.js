@@ -9,14 +9,14 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var funObj = function () { };
+var funObj = function() {};
 
-        funObj.get = function () {
-            return "functionGetProperty";
-        };
+funObj.get = function() {
+  return "functionGetProperty";
+};
 
-        Object.defineProperty(obj, "property", funObj);
+Object.defineProperty(obj, "property", funObj);
 
 assert.sameValue(obj.property, "functionGetProperty", 'obj.property');

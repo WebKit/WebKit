@@ -8,18 +8,22 @@ description: >
 info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
+features: [SharedArrayBuffer]
 ---*/
 
 var arrayBuffer = new SharedArrayBuffer(8);
 
-var start = 2, end = -4;
+var start = 2,
+  end = -4;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 2, "slice(2, -4)");
 
-var start = 2, end = -10;
+var start = 2,
+  end = -10;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 0, "slice(2, -10)");
 
-var start = 2, end = -Infinity;
+var start = 2,
+  end = -Infinity;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 0, "slice(2, -Infinity)");

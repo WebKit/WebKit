@@ -7,17 +7,17 @@ es5id: 15.4.4.22-1-9
 description: Array.prototype.reduceRight applied to Function object
 ---*/
 
-        var obj = function (a, b) {
-            return a + b;
-        };
-        obj[0] = 11;
-        obj[1] = 9;
-        var accessed = false;
+var obj = function(a, b) {
+  return a + b;
+};
+obj[0] = 11;
+obj[1] = 9;
+var accessed = false;
 
-        function callbackfn(prevVal, curVal, idx, o) {
-            accessed = true;
-            return o instanceof Function;
-        }
+function callbackfn(prevVal, curVal, idx, o) {
+  accessed = true;
+  return o instanceof Function;
+}
 
 assert(Array.prototype.reduceRight.call(obj, callbackfn, 11), 'Array.prototype.reduceRight.call(obj, callbackfn, 11) !== true');
 assert(accessed, 'accessed !== true');

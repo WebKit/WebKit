@@ -8,7 +8,7 @@ description: >
     built-ins (Object.create)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Object, "create");
+var desc = Object.getOwnPropertyDescriptor(Object, "create");
 
 assert.sameValue(desc.value, Object.create, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

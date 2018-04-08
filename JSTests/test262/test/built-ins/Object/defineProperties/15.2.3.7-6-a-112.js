@@ -8,17 +8,19 @@ description: >
     property of 'O' is own data property (15.4.5.1 step 1)
 ---*/
 
-        var arr = [0, 1];
-        Object.defineProperty(arr, "1", {
-            value: 1,
-            configurable: false
-        });
-assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                length: { value: 1 }
-            });
+var arr = [0, 1];
+Object.defineProperty(arr, "1", {
+  value: 1,
+  configurable: false
 });
-            var desc = Object.getOwnPropertyDescriptor(arr, "length");
+assert.throws(TypeError, function() {
+  Object.defineProperties(arr, {
+    length: {
+      value: 1
+    }
+  });
+});
+var desc = Object.getOwnPropertyDescriptor(arr, "length");
 
 assert.sameValue(desc.value, 2, 'desc.value');
 assert(desc.writable, 'desc.writable !== true');

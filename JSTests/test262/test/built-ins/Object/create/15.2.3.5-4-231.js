@@ -8,12 +8,12 @@ description: >
     present (8.10.5 step 7)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                get: function () {
-                    return "present";
-                }
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    get: function() {
+      return "present";
+    }
+  }
+});
 
 assert.sameValue(newObj.prop, "present", 'newObj.prop');

@@ -9,12 +9,19 @@ description: >
     function with this object as argument
 ---*/
 
-var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}
+var __obj = {
+  toString: function() {
+    return {};
+  },
+  valueOf: function() {
+    return 1;
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if ("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj)[0] !=="1") {
-  $ERROR('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; "ABB\\u0041B\\u0031ABAB\\u0031BBAA".match(__obj)[0] ==="1". Actual: '+("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj)[0]) );
+if ("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj)[0] !== "1") {
+  $ERROR('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; "ABB\\u0041B\\u0031ABAB\\u0031BBAA".match(__obj)[0] ==="1". Actual: ' + ("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj)[0]));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +29,7 @@ if ("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj)[0] !=="1") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if ("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj).length !== 1) {
-  $ERROR('#3: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; "ABB\\u0041B\\u0031ABAB\\u0031BBAA".match(__obj).length === 1. Actual: '+("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj).length) );
+  $ERROR('#3: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; "ABB\\u0041B\\u0031ABAB\\u0031BBAA".match(__obj).length === 1. Actual: ' + ("ABB\u0041B\u0031ABAB\u0031BBAA".match(__obj).length));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

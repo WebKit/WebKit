@@ -10,15 +10,17 @@ description: >
 
 var propertyFound = false;
 
-        var obj = { "": "empty" };
+var obj = {
+  "": "empty"
+};
 
-        var result = Object.getOwnPropertyNames(obj);
+var result = Object.getOwnPropertyNames(obj);
 
-        for (var p in result) {
-            if (result[p] === "") {
-                propertyFound = true;
-                break;
-            }
-        }
+for (var p in result) {
+  if (result[p] === "") {
+    propertyFound = true;
+    break;
+  }
+}
 
 assert(propertyFound, 'Property not found');

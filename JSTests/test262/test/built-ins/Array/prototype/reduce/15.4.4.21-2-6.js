@@ -9,18 +9,20 @@ description: >
     an inherited data property
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (obj.length === 2);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (obj.length === 2);
+}
 
-        var proto = { length: 2 };
+var proto = {
+  length: 2
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child[0] = 12;
-        child[1] = 11;
-        child[2] = 9;
+var child = new Con();
+child[0] = 12;
+child[1] = 11;
+child[2] = 9;
 
 assert.sameValue(Array.prototype.reduce.call(child, callbackfn, 1), true, 'Array.prototype.reduce.call(child, callbackfn, 1)');

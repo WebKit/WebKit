@@ -15,8 +15,8 @@ delete String.prototype.toString;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (String.prototype.toString() !== "[object "+"String"+"]") {
-  $ERROR('#1: delete String.prototype.toString; String.prototype.toString() === "[object "+"String"+"]". Actual: String.prototype.toString() ==='+String.prototype.toString() );
+if (String.prototype.toString() !== "[object " + "String" + "]") {
+  $ERROR('#1: delete String.prototype.toString; String.prototype.toString() === "[object "+"String"+"]". Actual: String.prototype.toString() ===' + String.prototype.toString());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -8,20 +8,20 @@ description: >
     is set to true is enumerable (Boolean instance)
 ---*/
 
-            Object.defineProperty(Boolean.prototype, "prop", {
-                value: 1001,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
-            var boolObj = new Boolean();
+Object.defineProperty(Boolean.prototype, "prop", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var boolObj = new Boolean();
 
-            var verifyEnumerable = false;
-            for (var p in boolObj) {
-                if (p === "prop") {
-                    verifyEnumerable = true;
-                }
-            }
+var verifyEnumerable = false;
+for (var p in boolObj) {
+  if (p === "prop") {
+    verifyEnumerable = true;
+  }
+}
 
 assert.sameValue(boolObj.hasOwnProperty("prop"), false, 'boolObj.hasOwnProperty("prop")');
 assert(verifyEnumerable, 'verifyEnumerable !== true');

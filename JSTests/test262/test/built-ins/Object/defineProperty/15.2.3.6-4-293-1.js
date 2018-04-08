@@ -12,20 +12,19 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-(function () {
-    Object.defineProperty(arguments, "0", {
-        value: 10,
-        writable: false
-    });
-    Object.defineProperty(arguments, "0", {
-        value: 20
-    });
-    verifyEqualTo(arguments, "0", 20);
+(function() {
+  Object.defineProperty(arguments, "0", {
+    value: 10,
+    writable: false
+  });
+  Object.defineProperty(arguments, "0", {
+    value: 20
+  });
+  verifyEqualTo(arguments, "0", 20);
 
-    verifyNotWritable(arguments, "0");
+  verifyNotWritable(arguments, "0");
 
-    verifyEnumerable(arguments, "0");
+  verifyEnumerable(arguments, "0");
 
-    verifyConfigurable(arguments, "0");
+  verifyConfigurable(arguments, "0");
 }(0, 1, 2));
-

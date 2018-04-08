@@ -9,7 +9,7 @@ esid: sec-promise.prototype.finally
 features: [Promise.prototype.finally]
 ---*/
 
-var thrower = new Promise(function () {});
+var thrower = new Promise(function() {});
 thrower.then = function() {
   throw new Test262Error();
 };

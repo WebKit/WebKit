@@ -14,15 +14,15 @@ var __str = String({});
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String({}); typeof __str === "string". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#1: __str = String({}); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (__str !== "[object "+"Object"+"]") {
-  $ERROR('#2: __str = String({}); __str === "[object Object]". Actual: __str ==='+__str ); 
+if (__str !== "[object " + "Object" + "]") {
+  $ERROR('#2: __str = String({}); __str === "[object Object]". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

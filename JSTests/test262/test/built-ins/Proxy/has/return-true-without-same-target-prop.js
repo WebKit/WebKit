@@ -8,9 +8,9 @@ description: >
 ---*/
 
 var p = new Proxy({}, {
-    has: function(t, prop) {
-        return true;
-    }
+  has: function(t, prop) {
+    return true;
+  }
 });
 
 assert.sameValue(("attr" in p), true);

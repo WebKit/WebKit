@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 var obj = {};
 
 var attr = {
-    value: 100
+  value: 100
 };
 
 Object.defineProperty(obj, "property", attr);

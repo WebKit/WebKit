@@ -10,33 +10,33 @@ description: >
     accessor property on an Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return typeof val === "undefined";
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return typeof val === "undefined";
+  }
+  return false;
+}
 
-        var proto = {};
+var proto = {};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.length = 2;
+var child = new Con();
+child.length = 2;
 
-        Object.defineProperty(child, "0", {
-            set: function () { },
-            configurable: true
-        });
+Object.defineProperty(child, "0", {
+  set: function() {},
+  configurable: true
+});
 
-        Object.defineProperty(proto, "0", {
-            get: function () {
-                return 100;
-            },
-            configurable: true
-        });
+Object.defineProperty(proto, "0", {
+  get: function() {
+    return 100;
+  },
+  configurable: true
+});
 
-        var testResult = Array.prototype.map.call(child, callbackfn);
+var testResult = Array.prototype.map.call(child, callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

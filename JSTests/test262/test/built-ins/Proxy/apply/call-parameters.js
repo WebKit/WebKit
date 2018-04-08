@@ -12,14 +12,16 @@ info: |
 ---*/
 
 var _target, _args, _handler, _context;
-var target = function(a, b) { return a + b; };
+var target = function(a, b) {
+  return a + b;
+};
 var handler = {
-    apply: function(t, c, args) {
-        _handler = this;
-        _target = t;
-        _context = c;
-        _args = args;
-    }
+  apply: function(t, c, args) {
+    _handler = this;
+    _target = t;
+    _context = c;
+    _args = args;
+  }
 };
 var p = new Proxy(target, handler);
 

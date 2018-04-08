@@ -8,19 +8,19 @@ description: >
     an inherited data property (8.10.5 step 7.a)
 ---*/
 
-        var proto = {
-            get: function () {
-                return "inheritedDataProperty";
-            }
-        };
+var proto = {
+  get: function() {
+    return "inheritedDataProperty";
+  }
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var descObj = new ConstructFun();
+var descObj = new ConstructFun();
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
 assert.sameValue(newObj.prop, "inheritedDataProperty", 'newObj.prop');

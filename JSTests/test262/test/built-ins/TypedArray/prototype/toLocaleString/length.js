@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 22.2.3.27
+esid: sec-%typedarray%.prototype.tolocalestring
 description: >
   %TypedArray%.prototype.toLocaleString.length is 0.
 info: |
@@ -20,6 +20,7 @@ info: |
     object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
     [[Configurable]]: true }.
 includes: [propertyHelper.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 assert.sameValue(TypedArray.prototype.toLocaleString.length, 0);

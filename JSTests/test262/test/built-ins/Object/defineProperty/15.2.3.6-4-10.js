@@ -14,22 +14,31 @@ description: >
     properties
 ---*/
 
-  var o = {};
+var o = {};
 
-  // create an accessor property; all other attributes default to false.
-  // dummy getter
-  var getter = function () { return 1; }
-  var d1 = { get: getter, enumerable: false, configurable: false };
-  Object.defineProperty(o, "foo", d1);
+// create an accessor property; all other attributes default to false.
+// dummy getter
+var getter = function() {
+  return 1;
+}
+var d1 = {
+  get: getter,
+  enumerable: false,
+  configurable: false
+};
+Object.defineProperty(o, "foo", d1);
 
-  // now, setting enumerable to true should fail, since [[Configurable]]
-  // on the original property will be false.
-  var desc = { get: getter, enumerable: true };
+// now, setting enumerable to true should fail, since [[Configurable]]
+// on the original property will be false.
+var desc = {
+  get: getter,
+  enumerable: true
+};
 assert.throws(TypeError, function() {
-    Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
-      // the property should remain unchanged.
-      var d2 = Object.getOwnPropertyDescriptor(o, "foo");
+// the property should remain unchanged.
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
 assert.sameValue(d2.get, getter, 'd2.get');
 assert.sameValue(d2.enumerable, false, 'd2.enumerable');
 assert.sameValue(d2.configurable, false, 'd2.configurable');

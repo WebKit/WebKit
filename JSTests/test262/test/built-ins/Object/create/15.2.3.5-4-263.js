@@ -8,11 +8,11 @@ description: >
     a function (8.10.5 step 7.b)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                get: function () { }
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    get: function() {}
+  }
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(typeof newObj.prop, "undefined", 'typeof newObj.prop');

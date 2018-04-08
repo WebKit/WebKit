@@ -8,14 +8,14 @@ description: >
     'Properties' is a RegExp object (8.10.5 step 6.b)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                writable: new RegExp()
-            }
-        });
-        var hasProperty = newObj.hasOwnProperty("prop");
+var newObj = Object.create({}, {
+  prop: {
+    writable: new RegExp()
+  }
+});
+var hasProperty = newObj.hasOwnProperty("prop");
 
-        newObj.prop = 121;
+newObj.prop = 121;
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(newObj.prop, 121, 'newObj.prop');

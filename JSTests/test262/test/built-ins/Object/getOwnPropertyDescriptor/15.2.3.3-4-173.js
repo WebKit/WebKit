@@ -8,7 +8,7 @@ description: >
     built-ins (SyntaxError.prototype.constructor)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(SyntaxError.prototype, "constructor");
+var desc = Object.getOwnPropertyDescriptor(SyntaxError.prototype, "constructor");
 
 assert.sameValue(desc.value, SyntaxError.prototype.constructor, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

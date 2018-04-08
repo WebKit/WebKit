@@ -9,14 +9,14 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var arr = [1, 2, 3];
+var arr = [1, 2, 3];
 
-        arr.value = "Array";
+arr.value = "Array";
 
-        Object.defineProperties(obj, {
-            property: arr
-        });
+Object.defineProperties(obj, {
+  property: arr
+});
 
 assert.sameValue(obj.property, "Array", 'obj.property');

@@ -8,16 +8,16 @@ description: >
     (15.2.3.7 step 2)
 ---*/
 
-        var props = function () { };
-        var result = false;
+var props = function() {};
+var result = false;
 
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                result = this instanceof Function;
-                return {};
-            },
-            enumerable: true
-        });
-        Object.create({}, props);
+Object.defineProperty(props, "prop", {
+  get: function() {
+    result = this instanceof Function;
+    return {};
+  },
+  enumerable: true
+});
+Object.create({}, props);
 
 assert(result, 'result !== true');

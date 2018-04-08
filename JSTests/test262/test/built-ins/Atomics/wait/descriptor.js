@@ -6,6 +6,7 @@
 esid: sec-atomics.wait
 description: Testing descriptor property of Atomics.wait
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "wait");

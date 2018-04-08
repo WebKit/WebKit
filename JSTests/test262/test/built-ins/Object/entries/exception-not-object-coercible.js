@@ -7,10 +7,10 @@ description: Object.entries should fail if given a null or undefined value
 author: Jordan Harband
 ---*/
 
-assert.throws(TypeError, function () {
-    Object.entries(null);
+assert.throws(TypeError, function() {
+  Object.entries(null);
 });
 
-assert.throws(TypeError, function () {
-    Object.entries(undefined);
+assert.throws(TypeError, function() {
+  Object.entries(undefined);
 });

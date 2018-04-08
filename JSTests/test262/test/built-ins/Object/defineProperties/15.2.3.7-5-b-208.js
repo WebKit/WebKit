@@ -9,16 +9,16 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var descObj = new Number(-9);
+var descObj = new Number(-9);
 
-        descObj.get = function () {
-            return "Number";
-        };
+descObj.get = function() {
+  return "Number";
+};
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "Number", 'obj.property');

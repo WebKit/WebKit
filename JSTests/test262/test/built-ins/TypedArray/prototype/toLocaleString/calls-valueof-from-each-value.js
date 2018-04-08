@@ -48,7 +48,7 @@ Number.prototype.toLocaleString = function() {
 var arr = [42, 0];
 var expected = ["hacks1", "hacks2"].join(separator);
 
-testWithTypedArrayConstructors(function(TA) {
+testWithTypedArrayConstructors(function(TA, N) {
   var sample = new TA(arr);
   calls = 0;
   assert.sameValue(sample.toLocaleString(), expected, "returns expected value");

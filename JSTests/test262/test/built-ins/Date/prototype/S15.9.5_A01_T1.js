@@ -8,6 +8,6 @@ es5id: 15.9.5_A01_T1
 description: The Date.prototype has the property "constructor"
 ---*/
 
-if(Date.prototype.hasOwnProperty("constructor") !== true){
+if (Date.prototype.hasOwnProperty("constructor") !== true) {
   $ERROR('#1: The Date.prototype has the property "constructor"');
 }

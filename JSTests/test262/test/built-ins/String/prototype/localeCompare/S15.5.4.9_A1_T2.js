@@ -12,6 +12,6 @@ description: >
 //CHECK#1
 var str1 = "h";
 var str2 = "H";
-if (str1.localeCompare(str2)!==-str2.localeCompare(str1)){
-  $ERROR('#1.1: var str1 = "h"; var str2 = "H"; str1.localeCompare(str2)===-str2.localeCompare(str1). Actual: '+str1.localeCompare(str2));
+if (str1.localeCompare(str2) !== -str2.localeCompare(str1)) {
+  $ERROR('#1.1: var str1 = "h"; var str2 = "H"; str1.localeCompare(str2)===-str2.localeCompare(str1). Actual: ' + str1.localeCompare(str2));
 }

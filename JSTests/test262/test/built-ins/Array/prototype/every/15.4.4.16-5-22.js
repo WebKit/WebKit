@@ -7,12 +7,12 @@ es5id: 15.4.4.16-5-22
 description: Array.prototype.every - boolean primitive can be used as thisArg
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this.valueOf() === false;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this.valueOf() === false;
+}
 
 assert([11].every(callbackfn, false), '[11].every(callbackfn, false) !== true');
 assert(accessed, 'accessed !== true');

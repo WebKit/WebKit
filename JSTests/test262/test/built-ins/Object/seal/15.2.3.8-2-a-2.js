@@ -9,15 +9,17 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var proto = { foo: 0 };
+var proto = {
+  foo: 0
+};
 
-var ConstructFun = function () { };
+var ConstructFun = function() {};
 ConstructFun.prototype = proto;
 
 var obj = new ConstructFun();
 Object.defineProperty(obj, "foo", {
-    value: 10,
-    configurable: true
+  value: 10,
+  configurable: true
 });
 
 assert(Object.isExtensible(obj));

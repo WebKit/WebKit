@@ -11,14 +11,18 @@ description: >
     instance.substring(...).substring(...)
 ---*/
 
-var __instance = { toString: function() { return "function(){}";} };
- 
+var __instance = {
+  toString: function() {
+    return "function(){}";
+  }
+};
+
 __instance.substring = String.prototype.substring;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__instance.substring(-Infinity,8) !== "function") {
-  $ERROR('#1: __instance = function(){}; __instance.substring = String.prototype.substring;  __instance.substring(-Infinity,8) === "function". Actual: '+__instance.substring(8,Infinity).substring(-Infinity,1) );
+if (__instance.substring(-Infinity, 8) !== "function") {
+  $ERROR('#1: __instance = function(){}; __instance.substring = String.prototype.substring;  __instance.substring(-Infinity,8) === "function". Actual: ' + __instance.substring(8, Infinity).substring(-Infinity, 1));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

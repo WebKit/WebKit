@@ -13,7 +13,7 @@ description: >
 ---*/
 
 //CHECK#1
-var x = [0,1,2];
+var x = [0, 1, 2];
 x[4294967294] = 4294967294;
 x.length = 2;
 

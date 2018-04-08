@@ -19,17 +19,17 @@ info: |
 
 var arrayLike = {};
 
-arrayLike.length = 2**53 - 1;
+arrayLike.length = 2 ** 53 - 1;
 assert.throws(TypeError, function() {
   Array.prototype.splice.call(arrayLike, 0, 0, null);
 }, "Length is 2**53 - 1");
 
-arrayLike.length = 2**53;
+arrayLike.length = 2 ** 53;
 assert.throws(TypeError, function() {
   Array.prototype.splice.call(arrayLike, 0, 0, null);
 }, "Length is 2**53");
 
-arrayLike.length = 2**53 + 2;
+arrayLike.length = 2 ** 53 + 2;
 assert.throws(TypeError, function() {
   Array.prototype.splice.call(arrayLike, 0, 0, null);
 }, "Length is 2**53 + 2");

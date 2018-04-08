@@ -10,7 +10,10 @@ description: thisArg is function variable that return this
 flags: [noStrict]
 ---*/
 
-f = function(){this.touched= true; return this;};
+f = function() {
+  this.touched = true;
+  return this;
+};
 
 retobj = f.apply(obj);
 

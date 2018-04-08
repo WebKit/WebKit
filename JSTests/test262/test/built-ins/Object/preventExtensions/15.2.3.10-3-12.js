@@ -18,4 +18,3 @@ assert(!Object.isExtensible(obj));
 verifyNotWritable(obj, "exName", "nocheck");
 
 assert(!obj.hasOwnProperty("exName"));
-

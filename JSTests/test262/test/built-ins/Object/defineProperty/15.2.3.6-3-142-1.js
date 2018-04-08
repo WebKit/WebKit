@@ -9,11 +9,11 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Boolean.prototype.value = "Boolean";
-            var boolObj = new Boolean(true);
+Boolean.prototype.value = "Boolean";
+var boolObj = new Boolean(true);
 
-            Object.defineProperty(obj, "property", boolObj);
+Object.defineProperty(obj, "property", boolObj);
 
 assert.sameValue(obj.property, "Boolean", 'obj.property');

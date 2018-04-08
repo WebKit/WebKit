@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.some)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "some");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "some");
 
 assert.sameValue(desc.value, Array.prototype.some, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

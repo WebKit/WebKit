@@ -8,7 +8,7 @@ description: >
     converts to a string
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, new Number(123), {});
+var obj = {};
+Object.defineProperty(obj, new Number(123), {});
 
 assert(obj.hasOwnProperty("123"), 'obj.hasOwnProperty("123") !== true');

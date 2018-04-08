@@ -9,18 +9,21 @@ description: >
     when an exception occurs
 ---*/
 
-        var obj = { 0: 11, 1: 12 };
+var obj = {
+  0: 11,
+  1: 12
+};
 
-        var accessed = false;
+var accessed = false;
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                accessed = true;
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    accessed = true;
+    return 2;
+  },
+  configurable: true
+});
 assert.throws(TypeError, function() {
-            Array.prototype.map.call(obj, null);
+  Array.prototype.map.call(obj, null);
 });
 assert(accessed, 'accessed !== true');

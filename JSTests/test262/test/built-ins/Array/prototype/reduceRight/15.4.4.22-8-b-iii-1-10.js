@@ -9,22 +9,23 @@ description: >
     accessor property on an Array
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 2) {
-                testResult = (curVal === 2);
-            }
-        }
+var testResult = false;
 
-        var arr = [0, 1, , 3];
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 2) {
+    testResult = (curVal === 2);
+  }
+}
 
-        Object.defineProperty(arr, "2", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+var arr = [0, 1, , 3];
 
-        arr.reduceRight(callbackfn);
+Object.defineProperty(arr, "2", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
+
+arr.reduceRight(callbackfn);
 
 assert(testResult, 'testResult !== true');

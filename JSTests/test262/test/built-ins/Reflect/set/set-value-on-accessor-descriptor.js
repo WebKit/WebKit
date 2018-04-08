@@ -42,4 +42,3 @@ assert.sameValue(
 assert.sameValue(args.length, 1, 'target.p set is called with 1 argument');
 assert.sameValue(args[0], 42, 'target.p set is called with V');
 assert.sameValue(count, 1, 'target.p set is called once');
-

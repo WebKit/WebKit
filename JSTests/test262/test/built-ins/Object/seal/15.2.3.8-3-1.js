@@ -6,9 +6,9 @@ es5id: 15.2.3.8-3-1
 description: Object.seal - returned object is not extensible
 ---*/
 
-        var obj = {};
-        var preCheck = Object.isExtensible(obj);
-        Object.seal(obj);
+var obj = {};
+var preCheck = Object.isExtensible(obj);
+Object.seal(obj);
 
 assert(preCheck, 'preCheck !== true');
 assert.sameValue(Object.isExtensible(obj), false, 'Object.isExtensible(obj)');

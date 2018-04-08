@@ -12,8 +12,8 @@ description: "[[Put]] (length, 4294967296)"
 //CHECK#1
 var x = [];
 x.length = 4294967295;
-if (x.length !== 4294967295) {  
-  $ERROR('#1: x = []; x.length = 4294967295; x.length === 4294967295');    
+if (x.length !== 4294967295) {
+  $ERROR('#1: x = []; x.length = 4294967295; x.length === 4294967295');
 }
 
 //CHECK#2
@@ -21,8 +21,8 @@ try {
   x = [];
   x.length = 4294967296;
   $ERROR('#2.1: x = []; x.length = 4294967296 throw RangeError. Actual: x.length === ' + (x.length));
-} catch(e) {    
+} catch (e) {
   if ((e instanceof RangeError) !== true) {
     $ERROR('#2.2: x = []; x.length = 4294967296 throw RangeError. Actual: ' + (e));
-  }    
+  }
 }

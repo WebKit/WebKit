@@ -7,5 +7,5 @@ description: Object.defineProperties throws TypeError if 'O' is null
 ---*/
 
 assert.throws(TypeError, function() {
-            Object.defineProperties(null, {});
+  Object.defineProperties(null, {});
 });

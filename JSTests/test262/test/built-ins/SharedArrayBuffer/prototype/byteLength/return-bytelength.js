@@ -3,6 +3,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: Return value from [[ByteLength]] internal slot
+features: [SharedArrayBuffer]
 ---*/
 
 var ab1 = new SharedArrayBuffer(0);

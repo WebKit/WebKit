@@ -9,35 +9,39 @@ description: >
     iteration is observed subsequetly on an Array-like object
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (prevVal === 2 && curVal === 1);
-            }
-        }
+var testResult = false;
 
-        var obj = { 0: 0, length: 3 };
-        var preIterVisible = false;
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (prevVal === 2 && curVal === 1);
+  }
+}
 
-        Object.defineProperty(obj, "1", {
-            get: function () {
-                if (preIterVisible) {
-                    return 1;
-                } else {
-                    return "20";
-                }
-            },
-            configurable: true
-        });
+var obj = {
+  0: 0,
+  length: 3
+};
+var preIterVisible = false;
 
-        Object.defineProperty(obj, "2", {
-            get: function () {
-                preIterVisible = true;
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "1", {
+  get: function() {
+    if (preIterVisible) {
+      return 1;
+    } else {
+      return "20";
+    }
+  },
+  configurable: true
+});
 
-        Array.prototype.reduceRight.call(obj, callbackfn);
+Object.defineProperty(obj, "2", {
+  get: function() {
+    preIterVisible = true;
+    return 2;
+  },
+  configurable: true
+});
+
+Array.prototype.reduceRight.call(obj, callbackfn);
 
 assert(testResult, 'testResult !== true');

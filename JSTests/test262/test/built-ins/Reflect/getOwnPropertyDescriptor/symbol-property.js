@@ -29,8 +29,7 @@ var result = Reflect.getOwnPropertyDescriptor(o, s);
 
 assert(
   compareArray(
-    Object.keys(result),
-    ['value', 'writable', 'enumerable', 'configurable']
+    Object.keys(result), ['value', 'writable', 'enumerable', 'configurable']
   )
 );
 assert.sameValue(result.value, 42);

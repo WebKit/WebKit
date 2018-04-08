@@ -10,9 +10,9 @@ description: >
 
 
 assert.throws(TypeError, function() {
-            Object.create({}, {
-                prop: {
-                    get: "string"
-                }
-            });
+  Object.create({}, {
+    prop: {
+      get: "string"
+    }
+  });
 });

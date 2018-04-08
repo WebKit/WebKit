@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var numObj = new Number(123);
+var numObj = new Number(123);
 
-        numObj.value = "NumValue";
+numObj.value = "NumValue";
 
-        var newObj = Object.create({}, {
-            prop: numObj
-        });
+var newObj = Object.create({}, {
+  prop: numObj
+});
 
 assert.sameValue(newObj.prop, "NumValue", 'newObj.prop');

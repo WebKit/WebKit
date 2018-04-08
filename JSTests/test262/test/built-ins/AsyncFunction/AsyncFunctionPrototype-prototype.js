@@ -6,5 +6,5 @@ author: Brian Terlson <brian.terlson@microsoft.com>
 esid: sec-sync-function-prototype-properties
 description: AsyncFunction.prototype has a [[prototype]] of Function.prototype
 ---*/
-var AsyncFunction = async function foo() { }.constructor;
+var AsyncFunction = async function foo() {}.constructor;
 assert.sameValue(Object.getPrototypeOf(AsyncFunction.prototype), Function.prototype);

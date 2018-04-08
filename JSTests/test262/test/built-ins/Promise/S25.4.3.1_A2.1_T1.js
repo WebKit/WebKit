@@ -10,5 +10,5 @@ description: Promise.call("non-object") throws TypeError
 ---*/
 
 assert.throws(TypeError, function() {
-  Promise.call("non-object", function () {});
+  Promise.call("non-object", function() {});
 });

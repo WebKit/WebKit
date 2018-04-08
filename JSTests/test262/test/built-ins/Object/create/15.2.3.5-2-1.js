@@ -9,9 +9,9 @@ es5id: 15.2.3.5-2-1
 description: Object.create creates new Object
 ---*/
 
-    function base() {}
-    var b = new base();
-    var prop = new Object();
-    var d = Object.create(b);
+function base() {}
+var b = new base();
+var prop = new Object();
+var d = Object.create(b);
 
 assert.sameValue(typeof d, 'object', 'typeof d');

@@ -10,23 +10,23 @@ description: >
     return primitive value (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [];
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var arrObj = [];
+var toStringAccessed = false;
+var valueOfAccessed = false;
 assert.throws(TypeError, function() {
-            Object.defineProperty(arrObj, "length", {
-                value: {
-                    toString: function () {
-                        toStringAccessed = true;
-                        return {};
-                    },
+  Object.defineProperty(arrObj, "length", {
+    value: {
+      toString: function() {
+        toStringAccessed = true;
+        return {};
+      },
 
-                    valueOf: function () {
-                        valueOfAccessed = true;
-                        return {};
-                    }
-                }
-            });
+      valueOf: function() {
+        valueOfAccessed = true;
+        return {};
+      }
+    }
+  });
 });
 assert(toStringAccessed, 'toStringAccessed !== true');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

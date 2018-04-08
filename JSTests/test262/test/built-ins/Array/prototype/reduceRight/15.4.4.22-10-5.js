@@ -9,10 +9,10 @@ description: >
     indices(initialvalue present)
 ---*/
 
-  function callbackfn(prevVal, curVal,  idx, obj)
-  {
-    return prevVal + curVal;
-  }
-  var srcArr = ['1','2','3','4','5'];
+function callbackfn(prevVal, curVal, idx, obj)
+{
+  return prevVal + curVal;
+}
+var srcArr = ['1', '2', '3', '4', '5'];
 
-assert.sameValue(srcArr.reduceRight(callbackfn,'6'), '654321', 'srcArr.reduceRight(callbackfn,"6")');
+assert.sameValue(srcArr.reduceRight(callbackfn, '6'), '654321', 'srcArr.reduceRight(callbackfn,"6")');

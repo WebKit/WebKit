@@ -8,6 +8,6 @@ description: >
     (Array.prototype)
 ---*/
 
-  var b = Object.isSealed(Array.prototype);
+var b = Object.isSealed(Array.prototype);
 
 assert.sameValue(b, false, 'b');

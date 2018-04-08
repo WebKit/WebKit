@@ -8,14 +8,14 @@ description: >
     into the returned array
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, "a", {
-            get: function () {
-                return "a";
-            },
-            configurable: true
-        });
+var obj = {};
+Object.defineProperty(obj, "a", {
+  get: function() {
+    return "a";
+  },
+  configurable: true
+});
 
-        var result = Object.getOwnPropertyNames(obj);
+var result = Object.getOwnPropertyNames(obj);
 
 assert.sameValue(result[0], "a", 'result[0]');

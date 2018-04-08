@@ -11,5 +11,5 @@ description: Checking if Math.round(x) is -Infinity, where x is -Infinity
 var x = -Infinity;
 if (Math.round(x) !== -Infinity)
 {
-	$ERROR("#1: 'var x=-Infinity; Math.round(x) !== -Infinity'");
+  $ERROR("#1: 'var x=-Infinity; Math.round(x) !== -Infinity'");
 }

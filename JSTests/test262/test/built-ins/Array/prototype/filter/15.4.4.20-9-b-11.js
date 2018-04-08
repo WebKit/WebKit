@@ -9,21 +9,21 @@ description: >
     prototype index property not to be visited on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return true;
-        }
-        var arr = [0, , 2];
+function callbackfn(val, idx, obj) {
+  return true;
+}
+var arr = [0, , 2];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                delete Array.prototype[1];
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    delete Array.prototype[1];
+    return 0;
+  },
+  configurable: true
+});
 
-            Array.prototype[1] = 1;
-            var newArr = arr.filter(callbackfn);
+Array.prototype[1] = 1;
+var newArr = arr.filter(callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');
 assert.notSameValue(newArr[1], 1, 'newArr[1]');

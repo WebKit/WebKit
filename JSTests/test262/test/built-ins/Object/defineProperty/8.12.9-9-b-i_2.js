@@ -8,19 +8,25 @@ description: >
     on a newly non-extensible object
 ---*/
 
-    var o = {};
-    Object.defineProperty(o, "foo", 
-                          { value: "hello", 
-                            configurable: true,
-                            enumerable: true,
-                            writable: true});
-    Object.preventExtensions(o);
-    Object.defineProperty(o, "foo", { get: function() { return 5;} });
+var o = {};
+Object.defineProperty(o, "foo",
+{
+  value: "hello",
+  configurable: true,
+  enumerable: true,
+  writable: true
+});
+Object.preventExtensions(o);
+Object.defineProperty(o, "foo", {
+  get: function() {
+    return 5;
+  }
+});
 
-    var fooDescrip = Object.getOwnPropertyDescriptor(o, "foo");
+var fooDescrip = Object.getOwnPropertyDescriptor(o, "foo");
 
 assert.sameValue(o.foo, 5, 'o.foo');
-assert(fooDescrip.get!==undefined, 'fooDescrip.get!==undefined !== true');
+assert(fooDescrip.get !== undefined, 'fooDescrip.get!==undefined !== true');
 assert.sameValue(fooDescrip.set, undefined, 'fooDescrip.set');
 assert.sameValue(fooDescrip.value, undefined, 'fooDescrip.value');
 assert.sameValue(fooDescrip.configurable, true, 'fooDescrip.configurable');

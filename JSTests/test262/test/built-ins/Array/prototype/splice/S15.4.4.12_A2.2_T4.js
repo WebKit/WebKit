@@ -8,8 +8,8 @@ es5id: 15.4.4.12_A2.2_T4
 description: deleteCount = -Infinity
 ---*/
 
-var x = [0,1];
-var arr = x.splice(0,Number.NEGATIVE_INFINITY);
+var x = [0, 1];
+var arr = x.splice(0, Number.NEGATIVE_INFINITY);
 
 //CHECK#0
 arr.getClass = Object.prototype.toString;

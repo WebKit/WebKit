@@ -9,12 +9,14 @@ features: [Promise.prototype.finally]
 
 
 class MyPromise extends Promise {
-  static get [Symbol.species]() { return Promise; }
+  static get[Symbol.species]() {
+    return Promise;
+  }
 }
 
 var p = Promise
-    .resolve()
-    .finally(() => MyPromise.resolve());
+  .resolve()
+  .finally(() => MyPromise.resolve());
 
 assert.sameValue(p instanceof Promise, true);
 assert.sameValue(p instanceof MyPromise, false);

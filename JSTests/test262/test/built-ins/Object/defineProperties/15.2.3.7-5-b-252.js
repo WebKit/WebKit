@@ -8,19 +8,19 @@ description: >
     undefined (8.10.5 step 8.b)
 ---*/
 
-        var getFun = function () {
-            return 11;
-        };
+var getFun = function() {
+  return 11;
+};
 
-        var obj = {};
-        Object.defineProperties(obj, {
-            prop: {
-                get: getFun,
-                set: undefined
-            }
-        });
+var obj = {};
+Object.defineProperties(obj, {
+  prop: {
+    get: getFun,
+    set: undefined
+  }
+});
 
-            var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
-assert.sameValue(typeof (desc.set), "undefined", 'typeof (desc.set)');
+assert.sameValue(typeof(desc.set), "undefined", 'typeof (desc.set)');

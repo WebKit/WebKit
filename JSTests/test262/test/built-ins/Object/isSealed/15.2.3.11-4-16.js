@@ -8,6 +8,6 @@ description: >
     (Date.prototype)
 ---*/
 
-  var b = Object.isSealed(Date.prototype);
+var b = Object.isSealed(Date.prototype);
 
 assert.sameValue(b, false, 'b');

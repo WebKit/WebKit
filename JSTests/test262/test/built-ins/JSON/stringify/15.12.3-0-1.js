@@ -17,6 +17,6 @@ es5id: 15.12.3-0-1
 description: JSON.stringify must exist as be a function
 ---*/
 
-  var f = JSON.stringify;
+var f = JSON.stringify;
 
 assert.sameValue(typeof(f), "function", 'typeof(f)');

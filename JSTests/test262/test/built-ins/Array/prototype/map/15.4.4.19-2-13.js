@@ -9,23 +9,23 @@ description: >
     'length' is inherited accessor property without a get function
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val > 10;
+}
 
-        var proto = {};
-        Object.defineProperty(proto, "length", {
-            set: function () { },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "length", {
+  set: function() {},
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child[0] = 11;
-        child[1] = 12;
+var child = new Con();
+child[0] = 11;
+child[1] = 12;
 
-        var testResult = Array.prototype.map.call(child, callbackfn);
+var testResult = Array.prototype.map.call(child, callbackfn);
 
 assert.sameValue(testResult.length, 0, 'testResult.length');

@@ -11,16 +11,18 @@ description: Creating string object with "new String(function(){})"
 
 var __stored__Function__prototype__toString = Function.prototype.toString;
 
-Function.prototype.toString=function(){return "SHIFTED"};
+Function.prototype.toString = function() {
+  return "SHIFTED"
+};
 
-var __str = new String(function(){});
+var __str = new String(function() {});
 
 Function.prototype.toString = __stored__Function__prototype__toString;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "object") {
-  $ERROR('#1: __str = new String(function(){}); typeof __str === "object". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#1: __str = new String(function(){}); typeof __str === "object". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -28,15 +30,15 @@ if (typeof __str !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1.5
 if (__str.constructor !== String) {
-  $ERROR('#1.5: __str = new String(function(){}); __str.constructor === String. Actual: __str.constructor ==='+__str.constructor ); 
+  $ERROR('#1.5: __str = new String(function(){}); __str.constructor === String. Actual: __str.constructor ===' + __str.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (__str !="SHIFTED") {
-  $ERROR('#2: Function.prototype.toString=function(){return "SHIFTED"}; __str = new String(function(){}); __str =="SHIFTED". Actual: __str =='+__str ); 
+if (__str != "SHIFTED") {
+  $ERROR('#2: Function.prototype.toString=function(){return "SHIFTED"}; __str = new String(function(){}); __str =="SHIFTED". Actual: __str ==' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

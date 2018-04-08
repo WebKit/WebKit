@@ -9,13 +9,13 @@ flags: [noStrict]
 ---*/
 
 (function() {
-        this._15_4_4_17_5_1 = false;
-        var _15_4_4_17_5_1 = true;
+  this._15_4_4_17_5_1 = false;
+  var _15_4_4_17_5_1 = true;
 
-        function callbackfn(val, idx, obj) {
-            return this._15_4_4_17_5_1;
-        }
-        var arr = [1];
+  function callbackfn(val, idx, obj) {
+    return this._15_4_4_17_5_1;
+  }
+  var arr = [1];
 
-assert.sameValue(arr.some(callbackfn), false, 'arr.some(callbackfn)');
+  assert.sameValue(arr.some(callbackfn), false, 'arr.some(callbackfn)');
 })();

@@ -9,12 +9,12 @@ description: >
 ---*/
 
 var target = {
-    attr: 1
+  attr: 1
 };
 var p = new Proxy(target, {
-    get: function() {
-        return 2;
-    }
+  get: function() {
+    return 2;
+  }
 });
 
 assert.sameValue(p.attr, 2);

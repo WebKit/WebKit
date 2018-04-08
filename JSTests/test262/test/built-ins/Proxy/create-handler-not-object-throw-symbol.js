@@ -11,5 +11,5 @@ features: [Symbol]
 ---*/
 
 assert.throws(TypeError, function() {
-    new Proxy({}, Symbol());
+  new Proxy({}, Symbol());
 });

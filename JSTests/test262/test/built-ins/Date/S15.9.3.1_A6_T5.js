@@ -10,7 +10,7 @@ es5id: 15.9.3.1_A6_T5
 description: 6 arguments, (year, month, date, hours, minutes, seconds)
 ---*/
 
-function DateValue(year, month, date, hours, minutes, seconds, ms){
+function DateValue(year, month, date, hours, minutes, seconds, ms) {
   return new Date(year, month, date, hours, minutes, seconds, ms).valueOf();
 }
 

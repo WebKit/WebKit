@@ -6,6 +6,6 @@ es5id: 15.2.3.8-0-1
 description: Object.seal must exist as a function
 ---*/
 
-  var f = Object.seal;
+var f = Object.seal;
 
 assert.sameValue(typeof(f), "function", 'typeof(f)');

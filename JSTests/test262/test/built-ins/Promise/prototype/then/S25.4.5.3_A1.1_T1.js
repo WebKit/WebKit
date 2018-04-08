@@ -10,5 +10,5 @@ description: Promise.prototype.then is a function of two arguments
 ---*/
 
 if (!(Promise.prototype.then instanceof Function)) {
-    $ERROR("Expected Promise.prototype.then to be a function");
+  $ERROR("Expected Promise.prototype.then to be a function");
 }

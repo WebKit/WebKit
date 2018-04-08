@@ -8,19 +8,21 @@ description: >
     'Properties' is an Arguments object (8.10.5 step 4.b)
 ---*/
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        var newObj = Object.create({}, {
-            prop: {
-                configurable: argObj
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    configurable: argObj
+  }
+});
 
-        var beforeDeleted = newObj.hasOwnProperty("prop");
+var beforeDeleted = newObj.hasOwnProperty("prop");
 
-        delete newObj.prop;
+delete newObj.prop;
 
-        var afterDeleted = newObj.hasOwnProperty("prop");
+var afterDeleted = newObj.hasOwnProperty("prop");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

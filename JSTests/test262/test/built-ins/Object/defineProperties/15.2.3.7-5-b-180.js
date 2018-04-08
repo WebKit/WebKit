@@ -8,14 +8,14 @@ description: >
     'descObj' is Number object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: new Number(123)
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: new Number(123)
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

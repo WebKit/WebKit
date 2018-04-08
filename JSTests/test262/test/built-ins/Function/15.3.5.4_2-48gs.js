@@ -9,12 +9,16 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-var o = { get foo() { gNonStrict(); } }
+var o = {
+  get foo() {
+    gNonStrict();
+  }
+}
 
 assert.throws(TypeError, function() {
-    o.foo;
+  o.foo;
 });
 
 function gNonStrict() {
-    return gNonStrict.caller;
+  return gNonStrict.caller;
 }

@@ -9,10 +9,12 @@ description: >
     with value false (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [0, 1];
+var arr = [0, 1];
 
-        Object.defineProperties(arr, {
-            length: { value: false }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: false
+  }
+});
 
 assert.sameValue(arr.length, 0, 'arr.length');

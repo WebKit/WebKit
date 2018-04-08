@@ -34,31 +34,31 @@ var arrayLike = {
   /* "9007199254740989": hole */
   "9007199254740990": "9007199254740990",
   "9007199254740991": "9007199254740991",
-  length: 2**53 + 2,
+  length: 2 ** 53 + 2,
 };
 
 var result = Array.prototype.splice.call(arrayLike, 9007199254740987, 1);
 
-assert.compareArray(result, [ "9007199254740987" ],
-                    "arrayLike['9007199254740987'] is removed");
+assert.compareArray(result, ["9007199254740987"],
+  "arrayLike['9007199254740987'] is removed");
 
-assert.sameValue(arrayLike.length, 2**53 - 2,
-                 "New length is 2**53 - 2");
+assert.sameValue(arrayLike.length, 2 ** 53 - 2,
+  "New length is 2**53 - 2");
 
 assert.sameValue(arrayLike["9007199254740986"], "9007199254740986",
-                 "arrayLike['9007199254740986'] is unchanged");
+  "arrayLike['9007199254740986'] is unchanged");
 
 assert.sameValue(arrayLike["9007199254740987"], "9007199254740988",
-                 "arrayLike['9007199254740988'] is moved to arrayLike['9007199254740987']");
+  "arrayLike['9007199254740988'] is moved to arrayLike['9007199254740987']");
 
 assert.sameValue("9007199254740988" in arrayLike, false,
-                 "arrayLike['9007199254740990'] is removed");
+  "arrayLike['9007199254740990'] is removed");
 
 assert.sameValue(arrayLike["9007199254740989"], "9007199254740990",
-                 "arrayLike['9007199254740990'] is moved to arrayLike['9007199254740989']");
+  "arrayLike['9007199254740990'] is moved to arrayLike['9007199254740989']");
 
 assert.sameValue("9007199254740990" in arrayLike, false,
-                 "arrayLike['9007199254740990'] is removed");
+  "arrayLike['9007199254740990'] is removed");
 
 assert.sameValue(arrayLike["9007199254740991"], "9007199254740991",
-                 "arrayLike['9007199254740991'] is unchanged");
+  "arrayLike['9007199254740991'] is unchanged");

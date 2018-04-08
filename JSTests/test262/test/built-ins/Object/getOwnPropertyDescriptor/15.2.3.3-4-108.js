@@ -8,7 +8,7 @@ description: >
     built-ins (Math.pow)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "pow");
+var desc = Object.getOwnPropertyDescriptor(Math, "pow");
 
 assert.sameValue(desc.value, Math.pow, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

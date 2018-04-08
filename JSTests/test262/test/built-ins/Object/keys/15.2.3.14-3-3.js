@@ -8,8 +8,8 @@ description: >
     enumerable properties (array)
 ---*/
 
-  var o = [1, 2];
-  var a = Object.keys(o);
+var o = [1, 2];
+var a = Object.keys(o);
 
 assert.sameValue(a.length, 2, 'a.length');
 assert.sameValue(a[0], '0', 'a[0]');

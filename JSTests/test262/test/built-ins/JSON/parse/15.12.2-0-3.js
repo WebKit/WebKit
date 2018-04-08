@@ -10,7 +10,7 @@ es5id: 15.12.2-0-3
 description: JSON.parse must be deletable (configurable)
 ---*/
 
-  var o = JSON;
-  var desc = Object.getOwnPropertyDescriptor(o, "parse");
+var o = JSON;
+var desc = Object.getOwnPropertyDescriptor(o, "parse");
 
 assert.sameValue(desc.configurable, true, 'desc.configurable');

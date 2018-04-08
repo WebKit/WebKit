@@ -9,8 +9,8 @@ description: >
     (empty array)
 ---*/
 
-  function cb(){}
-  var a = [].filter(cb);
+function cb() {}
+var a = [].filter(cb);
 
 assert(Array.isArray(a), 'Array.isArray(a) !== true');
 assert.sameValue(a.length, 0, 'a.length');

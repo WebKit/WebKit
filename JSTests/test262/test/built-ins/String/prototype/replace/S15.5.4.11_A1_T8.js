@@ -9,12 +9,14 @@ description: >
     expression and void 0 arguments of String object
 ---*/
 
-var __obj = {toString:function(){}};
+var __obj = {
+  toString: function() {}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (String(__obj).replace(/e/g,void 0) !== "undundefinedfinundefinedd") {
-  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).replace(/e/g,void 0) === "undundefinedfinundefinedd". Actual: '+String(__obj).replace(/e/g,void 0) );
+if (String(__obj).replace(/e/g, void 0) !== "undundefinedfinundefinedd") {
+  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).replace(/e/g,void 0) === "undundefinedfinundefinedd". Actual: ' + String(__obj).replace(/e/g, void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -9,21 +9,29 @@ es5id: 15.5.4.6_A4_T2
 description: Override toString function onto function, that throw exception
 ---*/
 
-var __instance = {toString:function(){throw "intostring";}};
-var __obj = {toString:function(){throw "infirstarg";}};
+var __instance = {
+  toString: function() {
+    throw "intostring";
+  }
+};
+var __obj = {
+  toString: function() {
+    throw "infirstarg";
+  }
+};
 
 __instance.concat = String.prototype.concat;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 try {
-  String.prototype.concat.call(__instance,__obj, notexist);
+  String.prototype.concat.call(__instance, __obj, notexist);
   $ERROR('#1: "String.prototype.concat.call(__instance,__obj, notexist)" lead to throwing exception');
 } catch (e) {
   if (e !== "intostring") {
-    $ERROR('#1: e === "intostring". Actual: '+e ); 
+    $ERROR('#1: e === "intostring". Actual: ' + e);
   }
-} 
+}
 //
 //////////////////////////////////////////////////////////////////////////////
 

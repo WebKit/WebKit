@@ -8,16 +8,16 @@ description: >
     primitive value is true (15.2.3.7 step 2).
 ---*/
 
-        var props = new Boolean(true);
-        var result = false;
+var props = new Boolean(true);
+var result = false;
 
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                result = this instanceof Boolean;
-                return {};
-            },
-            enumerable: true
-        });
-        Object.create({}, props);
+Object.defineProperty(props, "prop", {
+  get: function() {
+    result = this instanceof Boolean;
+    return {};
+  },
+  enumerable: true
+});
+Object.create({}, props);
 
 assert(result, 'result !== true');

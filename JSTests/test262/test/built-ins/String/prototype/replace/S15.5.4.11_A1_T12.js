@@ -11,19 +11,30 @@ description: >
     have overrided toString function, that throw exception
 ---*/
 
-var __obj = {toString:function(){return {};}, valueOf:function(){throw "insearchValue";}};
-var __obj2 = {toString:function(){throw "inreplaceValue";}};
+var __obj = {
+  toString: function() {
+    return {};
+  },
+  valueOf: function() {
+    throw "insearchValue";
+  }
+};
+var __obj2 = {
+  toString: function() {
+    throw "inreplaceValue";
+  }
+};
 var __str = new String("ABB\u0041BABAB");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-    try {
-      var x = __str.replace(__obj, __obj2);
-      $ERROR('#1: "var x = __str.replace(__obj,__obj2)" lead to throwing exception');
-    } catch (e) {
-      if (e!=="insearchValue") {
-        $ERROR('#1.1: Exception === "insearchValue". Actual: '+e);
-      }
-    }
+try {
+  var x = __str.replace(__obj, __obj2);
+  $ERROR('#1: "var x = __str.replace(__obj,__obj2)" lead to throwing exception');
+} catch (e) {
+  if (e !== "insearchValue") {
+    $ERROR('#1.1: Exception === "insearchValue". Actual: ' + e);
+  }
+}
 //
 //////////////////////////////////////////////////////////////////////////////

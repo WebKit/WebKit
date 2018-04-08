@@ -11,8 +11,8 @@ var aString = new String("test string");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (aString.search("String")!== -1) {
-  $ERROR('#1: var aString = new String("test string"); aString.search("String")=== -1. Actual: '+aString.search("String"));
+if (aString.search("String") !== -1) {
+  $ERROR('#1: var aString = new String("test string"); aString.search("String")=== -1. Actual: ' + aString.search("String"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

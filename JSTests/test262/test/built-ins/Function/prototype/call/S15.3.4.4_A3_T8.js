@@ -12,8 +12,10 @@ description: >
 flags: [noStrict]
 ---*/
 
-(function FACTORY(){
-  (function(){this.feat="kamon beyba"}).call(undefined);
+(function FACTORY() {
+  (function() {
+    this.feat = "kamon beyba"
+  }).call(undefined);
 })();
 
 

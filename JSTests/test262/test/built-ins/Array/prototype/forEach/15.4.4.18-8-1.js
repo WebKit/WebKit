@@ -9,8 +9,11 @@ description: >
     (empty array)
 ---*/
 
-  var callCnt = 0;
-  function cb(){callCnt++}
-  var i = [].forEach(cb);
+var callCnt = 0;
+
+function cb() {
+  callCnt++
+}
+var i = [].forEach(cb);
 
 assert.sameValue(callCnt, 0, 'callCnt');

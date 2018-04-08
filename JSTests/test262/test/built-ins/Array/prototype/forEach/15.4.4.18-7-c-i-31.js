@@ -9,33 +9,33 @@ description: >
     terminate iteration on an Array-like object
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            if (idx > 1) {
-                accessed = true;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx > 1) {
+    accessed = true;
+  }
+}
 
-        var arr = [];
-        arr[5] = 10;
-        arr[10] = 100;
+var arr = [];
+arr[5] = 10;
+arr[10] = 100;
 
-        Object.defineProperty(arr, "1", {
-            get: function () {
-                throw new RangeError("unhandle exception happened in getter");
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "1", {
+  get: function() {
+    throw new RangeError("unhandle exception happened in getter");
+  },
+  configurable: true
+});
 
-        Object.defineProperty(arr, "2", {
-            get: function () {
-                accessed = true;
-                return 100;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "2", {
+  get: function() {
+    accessed = true;
+    return 100;
+  },
+  configurable: true
+});
 assert.throws(RangeError, function() {
-            arr.forEach(callbackfn);
+  arr.forEach(callbackfn);
 });
 assert.sameValue(accessed, false, 'accessed');

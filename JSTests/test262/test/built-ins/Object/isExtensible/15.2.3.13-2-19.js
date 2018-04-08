@@ -8,6 +8,6 @@ description: >
     (Date.prototype)
 ---*/
 
-  var e = Object.isExtensible(Date.prototype);
+var e = Object.isExtensible(Date.prototype);
 
 assert.sameValue(e, true, 'e');

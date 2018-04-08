@@ -14,7 +14,7 @@ description: >
 
 //CHECK#1
 Array.prototype.myproperty = 1;
-var x = new Array(); 
+var x = new Array();
 if (x.myproperty !== 1) {
   $ERROR('#1: Array.prototype.myproperty = 1; var x = new Array(); x.myproperty === 1. Actual: ' + (x.myproperty));
 }

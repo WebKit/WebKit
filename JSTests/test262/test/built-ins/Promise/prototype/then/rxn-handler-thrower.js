@@ -12,13 +12,13 @@ flags: [async]
 
 var obj = {};
 
-var p = Promise.reject(obj).then(/*Identity, Thrower*/)
-        .then(function () {
-            $DONE("Unexpected fulfillment - promise should reject.");
-        }, function (arg) {
-            if (arg !== obj) {
-                $DONE("Expected reject reason to be obj, actually " + arg);
-                return;
-            }
-            $DONE();
-        });
+var p = Promise.reject(obj).then( /*Identity, Thrower*/ )
+  .then(function() {
+    $DONE("Unexpected fulfillment - promise should reject.");
+  }, function(arg) {
+    if (arg !== obj) {
+      $DONE("Expected reject reason to be obj, actually " + arg);
+      return;
+    }
+    $DONE();
+  });

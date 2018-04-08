@@ -9,29 +9,31 @@ description: >
     visited on an Array-like object
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 0 && curVal === 0) {
-                testResult = true;
-            }
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 0 && curVal === 0) {
+    testResult = true;
+  }
+}
 
-        var obj = { length: 2 };
+var obj = {
+  length: 2
+};
 
-        Object.defineProperty(obj, "1", {
-            get: function () {
-                Object.defineProperty(obj, "0", {
-                    get: function () {
-                        return 0;
-                    },
-                    configurable: true
-                });
-                return 1;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "1", {
+  get: function() {
+    Object.defineProperty(obj, "0", {
+      get: function() {
+        return 0;
+      },
+      configurable: true
+    });
+    return 1;
+  },
+  configurable: true
+});
 
-        Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
+Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
 
 assert(testResult, 'testResult !== true');

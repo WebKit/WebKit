@@ -9,10 +9,10 @@ description: >
     containing a number with leading zeros (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "length", {
-            value: "0002.0"
-        });
+Object.defineProperty(arrObj, "length", {
+  value: "0002.0"
+});
 
 assert.sameValue(arrObj.length, 2, 'arrObj.length');

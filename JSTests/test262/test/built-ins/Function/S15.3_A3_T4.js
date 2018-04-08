@@ -9,14 +9,14 @@ es5id: 15.3_A3_T4
 description: First argument is this, and this have needed variable
 ---*/
 
-var f=Function.call(this, "return planet;");
+var f = Function.call(this, "return planet;");
 
 //CHECK#1
 if (f() !== undefined) {
   $ERROR('#1: ');
-}  
+}
 
-var planet="mars";
+var planet = "mars";
 
 //CHECK#2
 if (f() !== "mars") {

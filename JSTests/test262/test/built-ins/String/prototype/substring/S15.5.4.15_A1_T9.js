@@ -11,14 +11,14 @@ description: >
 ---*/
 
 var __obj = {
-    valueOf:function(){},
-    toString:void 0
+  valueOf: function() {},
+  toString: void 0
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (new String(__obj).substring(/*(function(){})()*/undefined,undefined) !== "undefined") {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).substring(/*(function(){})()*/undefined,undefined) === "undefined". Actual: '+new String(__obj).substring(/*(function(){})()*/undefined,undefined) );
+if (new String(__obj).substring( /*(function(){})()*/ undefined, undefined) !== "undefined") {
+  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).substring(/*(function(){})()*/undefined,undefined) === "undefined". Actual: ' + new String(__obj).substring( /*(function(){})()*/ undefined, undefined));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -6,27 +6,27 @@ es5id: 15.2.3.6-4-605
 description: ES5 Attributes - all attributes in Object.freeze are correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Object, "freeze");
+var desc = Object.getOwnPropertyDescriptor(Object, "freeze");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Object.freeze;
+var temp = Object.freeze;
 
-            Object.freeze = "2010";
+Object.freeze = "2010";
 
-            var isWritable = (Object.freeze === "2010");
+var isWritable = (Object.freeze === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Object) {
-                if (prop === "freeze") {
-                    isEnumerable = true;
-                }
-            }
-        
-            delete Object.freeze;
+for (var prop in Object) {
+  if (prop === "freeze") {
+    isEnumerable = true;
+  }
+}
 
-            var isConfigurable = !Object.hasOwnProperty("freeze");
+delete Object.freeze;
+
+var isConfigurable = !Object.hasOwnProperty("freeze");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

@@ -8,6 +8,6 @@ description: >
     (RegExp.prototype)
 ---*/
 
-  var b = Object.isFrozen(RegExp.prototype);
+var b = Object.isFrozen(RegExp.prototype);
 
 assert.sameValue(b, false, 'b');

@@ -14,20 +14,27 @@ description: >
     properties
 ---*/
 
-  var o = {};
+var o = {};
 
-  // create a data valued property; all other attributes default to false.
-  var d1 = { value: 101, enumerable: false, configurable: false };
-  Object.defineProperty(o, "foo", d1);
+// create a data valued property; all other attributes default to false.
+var d1 = {
+  value: 101,
+  enumerable: false,
+  configurable: false
+};
+Object.defineProperty(o, "foo", d1);
 
-  // now, setting enumerable to true should fail, since [[Configurable]]
-  // on the original property will be false.
-  var desc = { value: 101, enumerable: true };
+// now, setting enumerable to true should fail, since [[Configurable]]
+// on the original property will be false.
+var desc = {
+  value: 101,
+  enumerable: true
+};
 assert.throws(TypeError, function() {
-    Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
-      // the property should remain unchanged.
-      var d2 = Object.getOwnPropertyDescriptor(o, "foo");
+// the property should remain unchanged.
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
 assert.sameValue(d2.value, 101, 'd2.value');
 assert.sameValue(d2.enumerable, false, 'd2.enumerable');
 assert.sameValue(d2.configurable, false, 'd2.configurable');

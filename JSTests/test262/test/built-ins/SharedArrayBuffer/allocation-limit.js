@@ -18,6 +18,7 @@ info: |
        bytes. If it is impossible to create such a Shared Data Block,
        throw a RangeError exception.
     ...
+features: [SharedArrayBuffer]
 ---*/
 
 assert.throws(RangeError, function() {

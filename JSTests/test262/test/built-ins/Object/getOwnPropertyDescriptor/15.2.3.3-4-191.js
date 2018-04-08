@@ -8,7 +8,7 @@ description: >
     on built-ins (String.length)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String, "length");
+var desc = Object.getOwnPropertyDescriptor(String, "length");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

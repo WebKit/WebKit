@@ -20,6 +20,7 @@ info: |
     a. Let integerIndex be ? ToInteger(value).
     b. If integerIndex < 0, throw a RangeError exception.
   ...
+features: [SharedArrayBuffer]
 ---*/
 
 assert.throws(RangeError, function() {

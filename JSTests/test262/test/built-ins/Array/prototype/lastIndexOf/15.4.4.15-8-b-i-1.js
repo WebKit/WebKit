@@ -9,7 +9,12 @@ description: >
     property on an Array-like object
 ---*/
 
-        var obj = { 0: 0, 1: 1, 2: 2, length: 3 };
+var obj = {
+  0: 0,
+  1: 1,
+  2: 2,
+  length: 3
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, 0), 0, 'Array.prototype.lastIndexOf.call(obj, 0)');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, 1), 1, 'Array.prototype.lastIndexOf.call(obj, 1)');

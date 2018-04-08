@@ -9,21 +9,21 @@ description: >
     accessor property on an Array
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                testResult = (val === 11);
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    testResult = (val === 11);
+  }
+}
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 11;
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 11;
+  },
+  configurable: true
+});
 
-            [, , , ].forEach(callbackfn);
+[, , , ].forEach(callbackfn);
 
 assert(testResult, 'testResult !== true');

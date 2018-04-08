@@ -9,19 +9,19 @@ description: >
     prototype object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Error.prototype.writable = true;
+Error.prototype.writable = true;
 
-            var errObj = new Error();
+var errObj = new Error();
 
-            Object.defineProperty(obj, "property", errObj);
+Object.defineProperty(obj, "property", errObj);
 
-            var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-            obj.property = "isWritable";
+obj.property = "isWritable";
 
-            var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

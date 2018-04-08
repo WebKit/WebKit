@@ -13,13 +13,13 @@ var a = [0, 1, 2];
 a.splice(1, 2, 4);
 
 if (a.length !== 2) {
-    $ERROR("Expected a.length === 2, actually " + a.length);
+  $ERROR("Expected a.length === 2, actually " + a.length);
 }
 
 if (a[0] !== 0) {
-    $ERROR("Expected a[0] === 0, actually " + a[0]);
+  $ERROR("Expected a[0] === 0, actually " + a[0]);
 }
 
 if (a[1] !== 4) {
-    $ERROR("Expected a[1] === 4, actually " + a[1]);
+  $ERROR("Expected a[1] === 4, actually " + a[1]);
 }

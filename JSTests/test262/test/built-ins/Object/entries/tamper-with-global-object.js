@@ -9,7 +9,7 @@ author: Jordan Harband
 ---*/
 
 function fakeObject() {
-    $ERROR('The overriden version of Object was called!');
+  $ERROR('The overriden version of Object was called!');
 }
 fakeObject.entries = Object.entries;
 

@@ -15,17 +15,19 @@ info: |
 
 var _handler, _target, _value;
 var target = {};
-var val = {foo: 1};
+var val = {
+  foo: 1
+};
 var handler = {
-    setPrototypeOf: function(t, v) {
-        _handler = this;
-        _target = t;
-        _value = v;
+  setPrototypeOf: function(t, v) {
+    _handler = this;
+    _target = t;
+    _value = v;
 
-        Object.setPrototypeOf(t, v);
+    Object.setPrototypeOf(t, v);
 
-        return true;
-    }
+    return true;
+  }
 };
 var p = new Proxy(target, handler);
 

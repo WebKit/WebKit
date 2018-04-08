@@ -9,13 +9,17 @@ description: >
     iterations is observed
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                obj[idx + 1] = 11;
-            }
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    obj[idx + 1] = 11;
+  }
+  return val > 10;
+}
 
-        var obj = { 0: 9, 1: 8, length: 2 };
+var obj = {
+  0: 9,
+  1: 8,
+  length: 2
+};
 
 assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');

@@ -13,9 +13,9 @@ description: Promise.prototype.then throws if Get(promise, "constructor") throws
 var p = Promise.resolve("foo");
 
 Object.defineProperty(p, "constructor", {
-    get: function () {
-        throw new Test262Error();
-    }
+  get: function() {
+    throw new Test262Error();
+  }
 });
 
 assert.throws(Test262Error, function() {

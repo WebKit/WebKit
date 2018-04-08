@@ -12,7 +12,7 @@ description: Create simple functions and check returned values
 var f = Function("return arguments[0];");
 
 //CHECK#1
-if (!(f instanceof Function)){
+if (!(f instanceof Function)) {
   $ERROR('#1: f instanceof Function');
 }
 

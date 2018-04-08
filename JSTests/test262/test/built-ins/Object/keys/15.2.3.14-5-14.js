@@ -10,23 +10,23 @@ description: >
 
 var propertyFound = false;
 
-        var obj = [1, , 3, , 5];
+var obj = [1, , 3, , 5];
 
-        Object.defineProperty(obj, "10000", {
-            get: function () {
-                return "ElementWithLargeIndex";
-            },
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(obj, "10000", {
+  get: function() {
+    return "ElementWithLargeIndex";
+  },
+  enumerable: true,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
-        for (var p in arr) {
-            if (arr[p] === "10000") {
-                propertyFound = true;
-                break;
-            }
-        }
+for (var p in arr) {
+  if (arr[p] === "10000") {
+    propertyFound = true;
+    break;
+  }
+}
 
 assert(propertyFound, 'Property not found');

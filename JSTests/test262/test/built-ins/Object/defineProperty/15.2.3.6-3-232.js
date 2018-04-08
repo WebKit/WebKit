@@ -8,13 +8,13 @@ description: >
     a function (8.10.5 step 7.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", {
-            get: function () {
-                return "getFunction";
-            }
-        });
+Object.defineProperty(obj, "property", {
+  get: function() {
+    return "getFunction";
+  }
+});
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(obj.property, "getFunction", 'obj.property');

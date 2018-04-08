@@ -13,7 +13,7 @@ var obj = {};
 
 var attributes = {};
 Object.defineProperty(attributes, "set", {
-    set: function () { }
+  set: function() {}
 });
 
 Object.defineProperty(obj, "property", attributes);
@@ -25,4 +25,3 @@ var desc = Object.getOwnPropertyDescriptor(obj, "property");
 assert(obj.hasOwnProperty("property"));
 assert.sameValue(typeof obj.property, "undefined");
 assert.sameValue(typeof desc.set, "undefined");
-

@@ -75,4 +75,3 @@ assert.sameValue(
 verifyWritable(receiver, 'p');
 verifyEnumerable(receiver, 'p');
 verifyConfigurable(receiver, 'p');
-

@@ -16,10 +16,12 @@ info: |
     4. If IsCallable(func) is false, throw a TypeError exception.
 ---*/
 
-var p = new Proxy({attr:1}, {
-    ownKeys: {}
+var p = new Proxy({
+  attr: 1
+}, {
+  ownKeys: {}
 });
 
 assert.throws(TypeError, function() {
-    Object.keys(p);
+  Object.keys(p);
 });

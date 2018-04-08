@@ -7,6 +7,6 @@ es5id: 15.4.4.19-6-2
 description: Array.prototype.map - the returned array is instanceof Array
 ---*/
 
-        var newArr = [11].map(function () { });
+var newArr = [11].map(function() {});
 
 assert(newArr instanceof Array, 'newArr instanceof Array !== true');

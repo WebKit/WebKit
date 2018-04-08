@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-undefined.case
 // - src/function-forms/default/cls-decl-meth-static.template
 /*---
-description: Use of intializer when argument value is `undefined` (static class expression method)
+description: Use of initializer when argument value is `undefined` (static class expression method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 features: [default-parameters]
 flags: [generated]

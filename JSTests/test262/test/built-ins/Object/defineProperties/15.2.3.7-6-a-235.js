@@ -15,27 +15,27 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperty(arr, "1", {
-    value: +0
+  value: +0
 });
 
 try {
-    Object.defineProperties(arr, {
-        "1": {
-            value: -0
-        }
-    });
-    $ERROR("Expected an exception.");
-} catch (e) {
-    verifyEqualTo(arr, "1", +0);
-
-    verifyNotWritable(arr, "1");
-
-    verifyNotEnumerable(arr, "1");
-
-    verifyNotConfigurable(arr, "1");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(arr, {
+    "1": {
+      value: -0
     }
+  });
+  $ERROR("Expected an exception.");
+} catch (e) {
+  verifyEqualTo(arr, "1", +0);
+
+  verifyNotWritable(arr, "1");
+
+  verifyNotEnumerable(arr, "1");
+
+  verifyNotConfigurable(arr, "1");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

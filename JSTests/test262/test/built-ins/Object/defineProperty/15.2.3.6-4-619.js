@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Array.prototype, "reduce");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "reduce");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Array.prototype.reduce;
+var temp = Array.prototype.reduce;
 
-            Array.prototype.reduce = "2010";
+Array.prototype.reduce = "2010";
 
-            var isWritable = (Array.prototype.reduce === "2010");
+var isWritable = (Array.prototype.reduce === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Array.prototype) {
-                if (prop === "reduce") {
-                    isEnumerable = true;
-                }
-            }
+for (var prop in Array.prototype) {
+  if (prop === "reduce") {
+    isEnumerable = true;
+  }
+}
 
-            delete Array.prototype.reduce;
+delete Array.prototype.reduce;
 
-            var isConfigurable = !Array.prototype.hasOwnProperty("reduce");
+var isConfigurable = !Array.prototype.hasOwnProperty("reduce");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

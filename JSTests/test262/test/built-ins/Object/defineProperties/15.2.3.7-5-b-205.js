@@ -9,16 +9,16 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var arr = [];
+var arr = [];
 
-        arr.get = function () {
-            return "Array";
-        };
+arr.get = function() {
+  return "Array";
+};
 
-        Object.defineProperties(obj, {
-            property: arr
-        });
+Object.defineProperties(obj, {
+  property: arr
+});
 
 assert.sameValue(obj.property, "Array", 'obj.property');

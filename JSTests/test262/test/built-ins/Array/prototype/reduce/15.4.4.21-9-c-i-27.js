@@ -10,18 +10,19 @@ description: >
     greater than number of parameters)
 ---*/
 
-        var testResult = false;
-        var initialValue = 0;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 3) {
-                testResult = (curVal === 3);
-            }
-        }
+var testResult = false;
+var initialValue = 0;
 
-        var func = function (a, b, c) {
-            Array.prototype.reduce.call(arguments, callbackfn, initialValue);
-        };
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 3) {
+    testResult = (curVal === 3);
+  }
+}
 
-        func(0, 1, 2, 3);
+var func = function(a, b, c) {
+  Array.prototype.reduce.call(arguments, callbackfn, initialValue);
+};
+
+func(0, 1, 2, 3);
 
 assert(testResult, 'testResult !== true');

@@ -8,8 +8,10 @@ description: >
     value is true
 ---*/
 
-        var obj = { "true": 1 };
+var obj = {
+  "true": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, true);
+var desc = Object.getOwnPropertyDescriptor(obj, true);
 
 assert.sameValue(desc.value, 1, 'desc.value');

@@ -26,12 +26,12 @@ var poisonedThen = Object.defineProperty({}, 'then', {
 });
 
 Promise.resolve(poisonedThen).then(function() {
-    $DONE('The promise should not be fulfilled.');
-  }, function(val) {
-    if (val !== value) {
-      $DONE('The promise should be rejected with the provided value.');
-      return;
-    }
+  $DONE('The promise should not be fulfilled.');
+}, function(val) {
+  if (val !== value) {
+    $DONE('The promise should be rejected with the provided value.');
+    return;
+  }
 
-    $DONE();
-  });
+  $DONE();
+});

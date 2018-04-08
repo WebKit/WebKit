@@ -14,42 +14,42 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function set_func(value) {
-    obj.setVerifyHelpProp = value;
+  obj.setVerifyHelpProp = value;
 }
+
 function get_func1() {
-    return 10;
+  return 10;
 }
 
 Object.defineProperty(obj, "foo", {
-    get: get_func1,
-    set: set_func,
-    enumerable: false,
-    configurable: false
+  get: get_func1,
+  set: set_func,
+  enumerable: false,
+  configurable: false
 });
 
 function get_func2() {
-    return 20;
+  return 20;
 }
 
 try {
-    Object.defineProperties(obj, {
-        foo: {
-            get: get_func2
-        }
-    });
-    $ERROR("Expected an exception");
-} catch (e) {
-    verifyEqualTo(obj, "foo", get_func1());
-
-    verifyWritable(obj, "foo", "setVerifyHelpProp");
-
-    verifyNotEnumerable(obj, "foo");
-
-    verifyNotConfigurable(obj, "foo");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(obj, {
+    foo: {
+      get: get_func2
     }
+  });
+  $ERROR("Expected an exception");
+} catch (e) {
+  verifyEqualTo(obj, "foo", get_func1());
+
+  verifyWritable(obj, "foo", "setVerifyHelpProp");
+
+  verifyNotEnumerable(obj, "foo");
+
+  verifyNotConfigurable(obj, "foo");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }
-

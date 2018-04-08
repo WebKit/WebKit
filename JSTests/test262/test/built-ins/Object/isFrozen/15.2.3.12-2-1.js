@@ -8,18 +8,18 @@ description: >
     the for each loop
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "Father", {
-            value: 10,
-            writable: false,
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "Father", {
+  value: 10,
+  writable: false,
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        Object.preventExtensions(child);
+Object.preventExtensions(child);
 
 assert(Object.isFrozen(child), 'Object.isFrozen(child) !== true');

@@ -9,34 +9,34 @@ description: >
     index property not to be visited on an Array
 ---*/
 
-        var accessed = false;
-        var testResult = true;
+var accessed = false;
+var testResult = true;
 
-        function callbackfn(accum, val, idx, obj) {
-            accessed = true;
-            if (idx === 1) {
-                testResult = false;
-            }
-        }
+function callbackfn(accum, val, idx, obj) {
+  accessed = true;
+  if (idx === 1) {
+    testResult = false;
+  }
+}
 
-        var arr = [1, 2, 4];
+var arr = [1, 2, 4];
 
-        Object.defineProperty(arr, "1", {
-            get: function () {
-                return "6.99";
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "1", {
+  get: function() {
+    return "6.99";
+  },
+  configurable: true
+});
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                delete arr[1];
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    delete arr[1];
+    return 0;
+  },
+  configurable: true
+});
 
-        arr.reduce(callbackfn, "initialValue");
+arr.reduce(callbackfn, "initialValue");
 
 assert(testResult, 'testResult !== true');
 assert(accessed, 'accessed !== true');

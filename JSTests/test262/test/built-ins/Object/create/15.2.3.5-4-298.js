@@ -8,17 +8,17 @@ description: >
     a function (8.10.5 step 8.b)
 ---*/
 
-        var data = "data";
+var data = "data";
 
-        var newObj = Object.create({}, {
-            prop: {
-                set: function (value) {
-                    data = value;
-                }
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    set: function(value) {
+      data = value;
+    }
+  }
+});
 
-        newObj.prop = "overrideData";
+newObj.prop = "overrideData";
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "overrideData", 'data');

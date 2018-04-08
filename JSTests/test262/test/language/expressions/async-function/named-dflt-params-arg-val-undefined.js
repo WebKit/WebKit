@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-undefined.case
 // - src/function-forms/default/async-func-expr-named.template
 /*---
-description: Use of intializer when argument value is `undefined` (async function named expression)
+description: Use of initializer when argument value is `undefined` (async function named expression)
 esid: sec-async-function-definitions
 features: [default-parameters]
 flags: [generated, async]

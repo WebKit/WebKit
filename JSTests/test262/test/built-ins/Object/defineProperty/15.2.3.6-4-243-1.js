@@ -16,11 +16,11 @@ flags: [noStrict]
 var arrObj = [];
 
 function getFunc() {
-    return 3;
+  return 3;
 }
 Object.defineProperty(arrObj, "1", {
-    get: getFunc,
-    configurable: true
+  get: getFunc,
+  configurable: true
 });
 
 arrObj[1] = 4;

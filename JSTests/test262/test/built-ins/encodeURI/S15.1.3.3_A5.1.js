@@ -16,7 +16,7 @@ if (encodeURI.propertyIsEnumerable('length') !== false) {
 
 //CHECK#2
 var result = true;
-for (var p in encodeURI){
+for (var p in encodeURI) {
   if (p === "length") {
     result = false;
   }

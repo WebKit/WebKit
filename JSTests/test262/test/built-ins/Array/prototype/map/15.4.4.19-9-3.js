@@ -7,13 +7,14 @@ es5id: 15.4.4.19-9-3
 description: Array.prototype.map - subclassed array when length is reduced
 ---*/
 
-  foo.prototype = new Array(1, 2, 3);
-  function foo() {}
-  var f = new foo();
-  f.length = 1;
+foo.prototype = new Array(1, 2, 3);
 
-  function cb(){}
-  var a = f.map(cb);
+function foo() {}
+var f = new foo();
+f.length = 1;
+
+function cb() {}
+var a = f.map(cb);
 
 
 assert(Array.isArray(a), 'Array.isArray(a) !== true');

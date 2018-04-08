@@ -24,20 +24,30 @@ flags: [noStrict]
 ---*/
 
 var thisVals = [];
-var nextResult = { done: false, value: {} };
-var nextNextResult = { done: false, value: {} };
+var nextResult = {
+  done: false,
+  value: {}
+};
+var nextNextResult = {
+  done: false,
+  value: {}
+};
 var mapFn = function() {
   thisVals.push(this);
 };
 var items = {};
-var global = function() { return this; }();
+var global = function() {
+  return this;
+}();
 
 items[Symbol.iterator] = function() {
   return {
     next: function() {
       var result = nextResult;
       nextResult = nextNextResult;
-      nextNextResult = { done: true };
+      nextNextResult = {
+        done: true
+      };
 
       return result;
     }

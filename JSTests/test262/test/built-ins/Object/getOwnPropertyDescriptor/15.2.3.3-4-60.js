@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.reduceRight)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "reduceRight");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "reduceRight");
 
 assert.sameValue(desc.value, Array.prototype.reduceRight, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

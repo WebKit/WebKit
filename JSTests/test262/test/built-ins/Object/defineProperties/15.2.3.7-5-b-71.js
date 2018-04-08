@@ -14,15 +14,15 @@ var obj = {};
 var proto = {};
 
 Object.defineProperty(proto, "configurable", {
-    set: function () { }
+  set: function() {}
 });
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 var descObj = new Con();
 
 Object.defineProperties(obj, {
-    prop: descObj
+  prop: descObj
 });
 
 assert(obj.hasOwnProperty("prop"));

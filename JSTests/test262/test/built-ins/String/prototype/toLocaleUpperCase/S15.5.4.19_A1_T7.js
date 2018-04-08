@@ -11,8 +11,8 @@ Number.prototype.toLocaleUpperCase = String.prototype.toLocaleUpperCase;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (NaN.toLocaleUpperCase()!== "NAN") {
-  $ERROR('#1: Number.prototype.toLocaleUpperCase = String.prototype.toLocaleUpperCase; NaN.toLocaleUpperCase()=== "NAN". Actual: '+NaN.toLocaleUpperCase());
+if (NaN.toLocaleUpperCase() !== "NAN") {
+  $ERROR('#1: Number.prototype.toLocaleUpperCase = String.prototype.toLocaleUpperCase; NaN.toLocaleUpperCase()=== "NAN". Actual: ' + NaN.toLocaleUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

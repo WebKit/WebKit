@@ -10,5 +10,5 @@ description: Checking if Math.min() equals to +Infinity
 // CHECK#1
 if (Math.min() != +Infinity)
 {
-	$ERROR("#1: 'Math.min() != +Infinity'");
+  $ERROR("#1: 'Math.min() != +Infinity'");
 }

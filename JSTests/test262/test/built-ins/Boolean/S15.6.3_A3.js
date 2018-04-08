@@ -9,7 +9,7 @@ description: Checking Boolean.length property
 ---*/
 
 //CHECK#1
-if (!Boolean.hasOwnProperty("length")){
+if (!Boolean.hasOwnProperty("length")) {
   $ERROR('#1: Boolean constructor has length property');
 }
 

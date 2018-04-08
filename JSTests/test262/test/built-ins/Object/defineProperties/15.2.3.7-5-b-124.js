@@ -9,22 +9,22 @@ description: >
     5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "value", {
-            set: function () { }
-        });
+Object.defineProperty(proto, "value", {
+  set: function() {}
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
+var descObj = new Con();
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
-assert.sameValue(typeof (obj.property), "undefined", 'typeof (obj.property)');
+assert.sameValue(typeof(obj.property), "undefined", 'typeof (obj.property)');

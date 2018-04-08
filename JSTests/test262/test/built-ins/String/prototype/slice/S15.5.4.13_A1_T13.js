@@ -10,18 +10,29 @@ description: >
     overrided toString function, that return exception
 ---*/
 
-var __obj = {valueOf:function(){return {};}, toString:function(){return 1;}};
-var __obj2 = {toString:function(){throw "inend";}};
+var __obj = {
+  valueOf: function() {
+    return {};
+  },
+  toString: function() {
+    return 1;
+  }
+};
+var __obj2 = {
+  toString: function() {
+    throw "inend";
+  }
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 try {
-    var x = "ABB\u0041BABAB\u0031BBAA".slice(__obj, __obj2);
-    $ERROR('#1: "var x = slice(__obj,__obj2)" lead to throwing exception');
+  var x = "ABB\u0041BABAB\u0031BBAA".slice(__obj, __obj2);
+  $ERROR('#1: "var x = slice(__obj,__obj2)" lead to throwing exception');
 } catch (e) {
-    if (e!=="inend") {
-        $ERROR('#1.1: Exception === "inend". Actual: '+e);
-    }
+  if (e !== "inend") {
+    $ERROR('#1.1: Exception === "inend". Actual: ' + e);
+  }
 }
 //
 //////////////////////////////////////////////////////////////////////////////

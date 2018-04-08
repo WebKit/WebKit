@@ -10,11 +10,11 @@ includes: [propertyHelper.js]
 ---*/
 
 var descObj = {
-    writable: ""
+  writable: ""
 };
 
 var newObj = Object.create({}, {
-    prop: descObj
+  prop: descObj
 });
 
 assert(newObj.hasOwnProperty("prop"))

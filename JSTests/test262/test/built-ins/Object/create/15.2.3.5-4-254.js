@@ -9,14 +9,16 @@ description: >
     property (8.10.5 step 7.a)
 ---*/
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        argObj.get = function () {
-            return "VerifyArgumentsObject";
-        };
+argObj.get = function() {
+  return "VerifyArgumentsObject";
+};
 
-        var newObj = Object.create({}, {
-            prop: argObj
-        });
+var newObj = Object.create({}, {
+  prop: argObj
+});
 
 assert.sameValue(newObj.prop, "VerifyArgumentsObject", 'newObj.prop');

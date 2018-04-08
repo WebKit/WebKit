@@ -15,8 +15,10 @@ description: >
 
 function foo() {}
 
-Object.defineProperty(foo, 'prototype', { value: {} });
+Object.defineProperty(foo, 'prototype', {
+  value: {}
+});
 if (foo.prototype !==
-    Object.getOwnPropertyDescriptor(foo, 'prototype').value) {
+  Object.getOwnPropertyDescriptor(foo, 'prototype').value) {
   $ERROR("A function.prototype's descriptor lies");
 }

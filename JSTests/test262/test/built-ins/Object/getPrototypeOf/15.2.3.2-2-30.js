@@ -8,6 +8,6 @@ description: >
     (the global object)
 ---*/
 
-        var proto = Object.getPrototypeOf(this);
+var proto = Object.getPrototypeOf(this);
 
 assert.sameValue(proto.isPrototypeOf(this), true, 'proto.isPrototypeOf(this)');

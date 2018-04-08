@@ -12,28 +12,28 @@ description: >
     properties (15.4.5.1 step 3.l.ii)
 ---*/
 
-        var arr = [0, 1];
+var arr = [0, 1];
 
 assert.throws(TypeError, function() {
-            Object.defineProperty(arr, "1", {
-                get: function () {
-                    return 1;
-                },
-                configurable: false
-            });
+  Object.defineProperty(arr, "1", {
+    get: function() {
+      return 1;
+    },
+    configurable: false
+  });
 
-            Object.defineProperty(Array.prototype, "1", {
-                get: function () {
-                    return 2;
-                },
-                configurable: true
-            });
+  Object.defineProperty(Array.prototype, "1", {
+    get: function() {
+      return 2;
+    },
+    configurable: true
+  });
 
-            Object.defineProperties(arr, {
-                length: {
-                    value: 1
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 1
+    }
+  });
 });
 assert.sameValue(arr.length, 2, 'arr.length');
 assert(arr.hasOwnProperty("1"), 'arr.hasOwnProperty("1") !== true');

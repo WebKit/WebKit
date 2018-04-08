@@ -13,6 +13,7 @@ info: |
 ---*/
 
 var o = {};
+
 function fn() {
   return o;
 }

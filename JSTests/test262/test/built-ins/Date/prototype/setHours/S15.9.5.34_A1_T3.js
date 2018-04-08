@@ -12,8 +12,8 @@ if (Date.prototype.propertyIsEnumerable('setHours')) {
   $ERROR('#1: The Date.prototype.setHours property has the attribute DontEnum');
 }
 
-for(var x in Date.prototype) {
-  if(x === "setHours") {
+for (var x in Date.prototype) {
+  if (x === "setHours") {
     $ERROR('#2: The Date.prototype.setHours has the attribute DontEnum');
   }
 }

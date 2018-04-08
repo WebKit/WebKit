@@ -16,17 +16,17 @@ info: |
 ---*/
 
 var target = {
-    foo: 1
+  foo: 1
 };
 
 var p = new Proxy(target, {
-    getOwnPropertyDescriptor: function(t, prop) {
-        return;
-    }
+  getOwnPropertyDescriptor: function(t, prop) {
+    return;
+  }
 });
 
 Object.preventExtensions(target);
 
 assert.throws(TypeError, function() {
-    Object.getOwnPropertyDescriptor(p, "foo");
+  Object.getOwnPropertyDescriptor(p, "foo");
 });

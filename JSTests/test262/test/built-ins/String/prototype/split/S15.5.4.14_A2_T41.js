@@ -15,12 +15,12 @@ var __instance = new String("hello");
 
 var __split = __instance.split("l", 2);
 
-var __expected = ["he",""];
+var __expected = ["he", ""];
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __instance = new String("hello"); __split = __instance.split("l", 2); __expected = ["he",""]; __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __instance = new String("hello"); __split = __instance.split("l", 2); __expected = ["he",""]; __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -28,17 +28,17 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== __expected.length) {
-  $ERROR('#2: var __instance = new String("hello"); __split = __instance.split("l", 2); __expected = ["he",""]; __split.length === __expected.length. Actual: '+__split.length );
+  $ERROR('#2: var __instance = new String("hello"); __split = __instance.split("l", 2); __expected = ["he",""]; __split.length === __expected.length. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
-for(var index=0; index<__expected.length; index++) {
+for (var index = 0; index < __expected.length; index++) {
   if (__split[index] !== __expected[index]) {
-     $ERROR('#3.'+index+': var __instance = new String("hello"); __split = __instance.split("l", 2); __expected = ["he",""]; __split[index] === '+__expected[index]+'. Actual: '+__split[index] );
-    }
+    $ERROR('#3.' + index + ': var __instance = new String("hello"); __split = __instance.split("l", 2); __expected = ["he",""]; __split[index] === ' + __expected[index] + '. Actual: ' + __split[index]);
+  }
 }
 //
 //////////////////////////////////////////////////////////////////////////////

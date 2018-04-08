@@ -8,8 +8,15 @@ description: >
     inherited getter/setter property)
 ---*/
 
-    var base = {};
-    Object.defineProperty(base, "foo", {get: function() {return 42;}, set: function() {;}, enumerable:true});
-    var o = Object.create(base);
+var base = {};
+Object.defineProperty(base, "foo", {
+  get: function() {
+    return 42;
+  },
+  set: function() {;
+  },
+  enumerable: true
+});
+var o = Object.create(base);
 
 assert.sameValue(o.hasOwnProperty("foo"), false, 'o.hasOwnProperty("foo")');

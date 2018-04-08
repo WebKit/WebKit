@@ -9,18 +9,18 @@ description: >
     (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Boolean.prototype.configurable = true;
-            var boolObj = new Boolean(true);
+Boolean.prototype.configurable = true;
+var boolObj = new Boolean(true);
 
-            Object.defineProperty(obj, "property", boolObj);
+Object.defineProperty(obj, "property", boolObj);
 
-            var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-            delete obj.property;
+delete obj.property;
 
-            var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

@@ -6,13 +6,13 @@ es5id: 15.2.3.6-4-382
 description: ES5 Attributes - [[Value]] attribute of data property is a number
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: 1001
-        });
+Object.defineProperty(obj, "prop", {
+  value: 1001
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(obj.prop, 1001, 'obj.prop');
 assert.sameValue(desc.value, 1001, 'desc.value');

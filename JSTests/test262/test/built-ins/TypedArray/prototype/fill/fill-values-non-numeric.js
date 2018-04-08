@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.fill
-es6id: 22.2.3.8
 description: >
   Fills all the elements with non numeric values values.
 info: |
@@ -59,10 +58,10 @@ testWithTypedArrayConstructors(function(TA) {
   sample = new TA([42]);
   sample.fill({
     toString: function() {
-      return 1;
+      return "1";
     },
     valueOf: function() {
-      return 7; 
+      return 7;
     }
   });
   assert.sameValue(sample[0], 7, "object valueOf conversion before toString");
@@ -70,7 +69,7 @@ testWithTypedArrayConstructors(function(TA) {
   sample = new TA([42]);
   sample.fill({
     toString: function() {
-      return 7;
+      return "7";
     }
   });
   assert.sameValue(sample[0], 7, "object toString when valueOf is absent");

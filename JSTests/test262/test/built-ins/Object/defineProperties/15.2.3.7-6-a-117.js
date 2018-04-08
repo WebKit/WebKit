@@ -10,9 +10,11 @@ description: >
     the length property from false to true (15.4.5.1 step 3.a.i)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                length: { enumerable: true }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      enumerable: true
+    }
+  });
 });

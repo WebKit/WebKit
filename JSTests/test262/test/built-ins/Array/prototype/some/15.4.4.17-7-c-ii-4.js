@@ -9,19 +9,19 @@ description: >
     order
 ---*/
 
-        var arr = [0, 1, 2, 3, 4, 5];
-        var lastIdx = 0;
-        var called = 0;
+var arr = [0, 1, 2, 3, 4, 5];
+var lastIdx = 0;
+var called = 0;
 
-        function callbackfn(val, idx, o) {
-            called++;
-            if (lastIdx !== idx) {
-                return true;
-            } else {
-                lastIdx++;
-                return false;
-            }
-        }
+function callbackfn(val, idx, o) {
+  called++;
+  if (lastIdx !== idx) {
+    return true;
+  } else {
+    lastIdx++;
+    return false;
+  }
+}
 
 assert.sameValue(arr.some(callbackfn), false, 'arr.some(callbackfn)');
 assert.sameValue(arr.length, called, 'arr.length');

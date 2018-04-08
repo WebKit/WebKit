@@ -9,10 +9,12 @@ description: >
     number (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            length: { value: 12 }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: 12
+  }
+});
 
 assert.sameValue(arr.length, 12, 'arr.length');

@@ -9,7 +9,9 @@ description: >
     overridden to '0' (type conversion))
 ---*/
 
- var i = Array.prototype.indexOf.call({length: '0'}, 1);
+var i = Array.prototype.indexOf.call({
+  length: '0'
+}, 1);
 
 
 assert.sameValue(i, -1, 'i');

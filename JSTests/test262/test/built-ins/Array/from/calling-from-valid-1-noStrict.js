@@ -34,7 +34,7 @@ var list = {
 };
 var calls = [];
 
-function mapFn (value) {
+function mapFn(value) {
   calls.push({
     args: arguments,
     thisArg: this

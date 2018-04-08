@@ -12,10 +12,12 @@ includes: [propertyHelper.js]
 
 var arr = [];
 
-Object.defineProperties(arr, { length: {} });
+Object.defineProperties(arr, {
+  length: {}
+});
 
 if (arr.length !== 0) {
-    $ERROR("Expected arr.length to be 0, actually " + arr.length);
+  $ERROR("Expected arr.length to be 0, actually " + arr.length);
 }
 
 arr.length = 2;

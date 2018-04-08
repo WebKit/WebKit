@@ -7,17 +7,18 @@ es5id: 15.4.4.19-8-c-ii-2
 description: Array.prototype.map - callbackfn takes 3 arguments
 ---*/
 
-  var parCnt = 3;
-  var bCalled = false
-  function callbackfn(val, idx, obj)
-  {
-    bCalled = true;
-    if(arguments.length !== 3)
-      parCnt = arguments.length;   //verify if callbackfn was called with 3 parameters
-  }
+var parCnt = 3;
+var bCalled = false
 
-  var srcArr = [0,1,2,3,4,5,6,7,8,9];
-  var resArr = srcArr.map(callbackfn);
+function callbackfn(val, idx, obj)
+{
+  bCalled = true;
+  if (arguments.length !== 3)
+    parCnt = arguments.length; //verify if callbackfn was called with 3 parameters
+}
+
+var srcArr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+var resArr = srcArr.map(callbackfn);
 
 assert.sameValue(bCalled, true, 'bCalled');
 assert.sameValue(parCnt, 3, 'parCnt');

@@ -9,24 +9,24 @@ description: >
     returned array
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "prop", {
-            value: 1003,
-            enumerable: true,
-            configurable: true
-        });
-        var Con = function () { };
-        Con.prototype = proto;
+var proto = {};
+Object.defineProperty(proto, "prop", {
+  value: 1003,
+  enumerable: true,
+  configurable: true
+});
+var Con = function() {};
+Con.prototype = proto;
 
-        var obj = new Con();
-        Object.defineProperty(obj, "prop", {
-            value: 1004,
-            enumerable: false,
-            configurable: true
-        });
+var obj = new Con();
+Object.defineProperty(obj, "prop", {
+  value: 1004,
+  enumerable: false,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
-        for (var p in arr) {
-            assert.notSameValue(arr[p], "prop", 'arr[p]');
-        }
+for (var p in arr) {
+  assert.notSameValue(arr[p], "prop", 'arr[p]');
+}

@@ -9,19 +9,19 @@ description: >
     thisArg
 ---*/
 
-        var accessed = false;
-        var arg;
+var accessed = false;
+var arg;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this === arg;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this === arg;
+}
 
-        (function fun() {
-            arg = arguments;
-        }(1, 2, 3));
+(function fun() {
+  arg = arguments;
+}(1, 2, 3));
 
-        var newArr = [11].filter(callbackfn, arg);
+var newArr = [11].filter(callbackfn, arg);
 
 assert.sameValue(newArr[0], 11, 'newArr[0]');
 assert(accessed, 'accessed !== true');

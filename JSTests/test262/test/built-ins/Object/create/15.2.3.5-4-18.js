@@ -8,14 +8,14 @@ description: >
     'Properties' is not defined in 'obj' (15.2.3.7 step 3)
 ---*/
 
-        var proto = {};
+var proto = {};
 
-        proto.prop = {};
+proto.prop = {};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var child = new ConstructFun();
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var child = new ConstructFun();
 
-        var newObj = Object.create({}, child);
+var newObj = Object.create({}, child);
 
 assert.sameValue(newObj.hasOwnProperty("prop"), false, 'newObj.hasOwnProperty("prop")');

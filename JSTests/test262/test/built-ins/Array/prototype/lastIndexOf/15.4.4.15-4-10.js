@@ -7,7 +7,11 @@ es5id: 15.4.4.15-4-10
 description: Array.prototype.lastIndexOf - 'length' is a number of value -6e-1
 ---*/
 
-        var targetObj = [];
-        var obj = { 0: targetObj, 100: targetObj, length: -6e-1 };
+var targetObj = [];
+var obj = {
+  0: targetObj,
+  100: targetObj,
+  length: -6e-1
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, targetObj), -1, 'Array.prototype.lastIndexOf.call(obj, targetObj)');

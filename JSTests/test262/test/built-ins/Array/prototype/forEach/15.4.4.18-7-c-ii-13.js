@@ -7,11 +7,12 @@ es5id: 15.4.4.18-7-c-ii-13
 description: Array.prototype.forEach - callbackfn that uses arguments
 ---*/
 
-        var result = false;
-        function callbackfn() {
-            result = (arguments[2][arguments[1]] === arguments[0]);
-        }
+var result = false;
 
-        [11].forEach(callbackfn);
+function callbackfn() {
+  result = (arguments[2][arguments[1]] === arguments[0]);
+}
+
+[11].forEach(callbackfn);
 
 assert(result, 'result !== true');

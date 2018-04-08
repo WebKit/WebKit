@@ -9,15 +9,15 @@ description: >
     (subclassed Array, length overridden to null (type conversion))
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val > 10;
+}
 
-        var Foo = function () { };
-        Foo.prototype = [1, 2, 3];
-        var obj = new Foo();
-        obj.length = null;
+var Foo = function() {};
+Foo.prototype = [1, 2, 3];
+var obj = new Foo();
+obj.length = null;
 
-        var testResult = Array.prototype.map.call(obj, callbackfn);
+var testResult = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(testResult.length, 0, 'testResult.length');

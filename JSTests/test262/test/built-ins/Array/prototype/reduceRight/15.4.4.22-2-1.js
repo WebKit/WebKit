@@ -9,18 +9,18 @@ description: >
     is an own data property
 ---*/
 
-        var accessed = false;
-        var obj = {
-            0: 12,
-            1: 11,
-            2: 9,
-            length: 2
-        };
+var accessed = false;
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: 2
+};
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            return obj.length === 2;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  return obj.length === 2;
+}
 
 assert(Array.prototype.reduceRight.call(obj, callbackfn, 11), 'Array.prototype.reduceRight.call(obj, callbackfn, 11) !== true');
 assert(accessed, 'accessed !== true');

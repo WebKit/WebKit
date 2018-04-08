@@ -9,18 +9,22 @@ description: >
     toString function, that throw exception
 ---*/
 
-var __obj = {toString:function(){throw "intostr";}}
+var __obj = {
+  toString: function() {
+    throw "intostr";
+  }
+}
 var __str = "ABB\u0041BABAB";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-    try {
-      var x = __str.search(__obj);
-      $ERROR('#1: var x = __str.search(__obj) lead to throwing exception');
-    } catch (e) {
-      if (e!=="intostr") {
-        $ERROR('#1.1: Exception === "intostr". Actual: '+e);
-      }
-    }
+try {
+  var x = __str.search(__obj);
+  $ERROR('#1: var x = __str.search(__obj) lead to throwing exception');
+} catch (e) {
+  if (e !== "intostr") {
+    $ERROR('#1.1: Exception === "intostr". Actual: ' + e);
+  }
+}
 //
 //////////////////////////////////////////////////////////////////////////////

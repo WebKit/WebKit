@@ -10,12 +10,12 @@ description: >
     property is not writable (15.4.5.1 step 3.f.i)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "length", {
-            writable: false
-        });
+Object.defineProperty(arrObj, "length", {
+  writable: false
+});
 
-            Object.defineProperty(arrObj, "length", {
-                value: 0
-            });
+Object.defineProperty(arrObj, "length", {
+  value: 0
+});

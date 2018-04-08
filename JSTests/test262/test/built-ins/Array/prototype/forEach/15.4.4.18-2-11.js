@@ -9,20 +9,21 @@ description: >
     an own accessor property without a get function
 ---*/
 
-        var accessed = false;
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-        }
+var accessed = false;
 
-        var obj = {
-            0: 11,
-            1: 12
-        };
-        Object.defineProperty(obj, "length", {
-            set: function () { },
-            configurable: true
-        });
+function callbackfn(val, idx, obj) {
+  accessed = true;
+}
 
-        Array.prototype.forEach.call(obj, callbackfn);
+var obj = {
+  0: 11,
+  1: 12
+};
+Object.defineProperty(obj, "length", {
+  set: function() {},
+  configurable: true
+});
+
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert.sameValue(accessed, false, 'accessed');

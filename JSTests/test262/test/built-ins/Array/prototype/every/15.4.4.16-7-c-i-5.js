@@ -10,32 +10,32 @@ description: >
     Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === 5;
-            } else {
-                return true;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === 5;
+  } else {
+    return true;
+  }
+}
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "0", {
-            get: function () {
-                return 5;
-            },
-            configurable: true
-        });
+Object.defineProperty(proto, "0", {
+  get: function() {
+    return 5;
+  },
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.length = 2;
-        Object.defineProperty(child, "0", {
-            value: 11,
-            configurable: true
-        });
-        child[1] = 12;
+var child = new Con();
+child.length = 2;
+Object.defineProperty(child, "0", {
+  value: 11,
+  configurable: true
+});
+child[1] = 12;
 
 assert.sameValue(Array.prototype.every.call(child, callbackfn), false, 'Array.prototype.every.call(child, callbackfn)');

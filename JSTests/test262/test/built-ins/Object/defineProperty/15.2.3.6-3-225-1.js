@@ -9,14 +9,14 @@ description: >
     object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            RegExp.prototype.get = function () {
-                return "regExpGetProperty";
-            };
-            var regObj = new RegExp();
+RegExp.prototype.get = function() {
+  return "regExpGetProperty";
+};
+var regObj = new RegExp();
 
 
-            Object.defineProperty(obj, "property", regObj);
+Object.defineProperty(obj, "property", regObj);
 
 assert.sameValue(obj.property, "regExpGetProperty", 'obj.property');

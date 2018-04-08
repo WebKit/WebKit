@@ -7,7 +7,7 @@ es5id: 15.4.4.18-4-6
 description: Array.prototype.forEach throws TypeError if callbackfn is string
 ---*/
 
-  var arr = new Array(10);
+var arr = new Array(10);
 assert.throws(TypeError, function() {
-    arr.forEach("abc");
+  arr.forEach("abc");
 });

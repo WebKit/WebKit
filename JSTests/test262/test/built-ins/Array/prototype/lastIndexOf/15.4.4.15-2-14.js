@@ -9,6 +9,9 @@ description: >
     Array-like object
 ---*/
 
-        var obj = { 0: null, 1: undefined };
+var obj = {
+  0: null,
+  1: undefined
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, null), -1, 'Array.prototype.lastIndexOf.call(obj, null)');

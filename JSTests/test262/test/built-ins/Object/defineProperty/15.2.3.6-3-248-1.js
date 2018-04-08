@@ -9,16 +9,16 @@ description: >
     prototype object (8.10.5 step 8.a)
 ---*/
 
-        var obj = {};
-        var data = "data";
+var obj = {};
+var data = "data";
 
-            Function.prototype.set = function (value) {
-                data = value;
-            };
-            var funObj = function () { };
+Function.prototype.set = function(value) {
+  data = value;
+};
+var funObj = function() {};
 
-            Object.defineProperty(obj, "property", funObj);
-            obj.property = "overrideData";
+Object.defineProperty(obj, "property", funObj);
+obj.property = "overrideData";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(data, "overrideData", 'data');

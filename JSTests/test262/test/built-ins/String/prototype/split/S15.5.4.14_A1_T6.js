@@ -18,7 +18,7 @@ var __split = new String("1undefined").split(x);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __split !== "object") {
-  $ERROR('#1: var x; __split = new String("1undefined").split(x); typeof __split === "object". Actual: '+typeof __split );
+  $ERROR('#1: var x; __split = new String("1undefined").split(x); typeof __split === "object". Actual: ' + typeof __split);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (typeof __split !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.constructor !== Array) {
-  $ERROR('#2: var x; __split = new String("1undefined").split(x); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#2: var x; __split = new String("1undefined").split(x); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split.length !== 1) {
-  $ERROR('#3: var x; __split = new String("1undefined").split(x); __split.length === 1. Actual: '+__split.length );
+  $ERROR('#3: var x; __split = new String("1undefined").split(x); __split.length === 1. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ if (__split.length !== 1) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__split[0] !== "1undefined") {
-  $ERROR('#4: var x; __split = new String("1undefined").split(x); __split[0] === "1undefined". Actual: '+__split[0] );
+  $ERROR('#4: var x; __split = new String("1undefined").split(x); __split[0] === "1undefined". Actual: ' + __split[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

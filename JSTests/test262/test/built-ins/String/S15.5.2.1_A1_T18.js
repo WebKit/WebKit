@@ -15,7 +15,7 @@ var __str = new String(1000000000000000000000);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "object") {
-  $ERROR('#1: __str = new String(1000000000000000000000); typeof __str === "object". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#1: __str = new String(1000000000000000000000); typeof __str === "object". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,15 +23,15 @@ if (typeof __str !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1.5
 if (__str.constructor !== String) {
-  $ERROR('#1.5: __str = new String(1000000000000000000000); __str.constructor === String. Actual: __str.constructor ==='+__str.constructor ); 
+  $ERROR('#1.5: __str = new String(1000000000000000000000); __str.constructor === String. Actual: __str.constructor ===' + __str.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (__str !="1e+21") {
-  $ERROR('#2: __str = new String(1000000000000000000000); __str =="1e+21". Actual: __str =='+__str ); 
+if (__str != "1e+21") {
+  $ERROR('#2: __str = new String(1000000000000000000000); __str =="1e+21". Actual: __str ==' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ __str = new String(10000000000000000000000);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (typeof __str !== "object") {
-  $ERROR('#3: __str = new String(10000000000000000000000); typeof __str === "object". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#3: __str = new String(10000000000000000000000); typeof __str === "object". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -48,15 +48,15 @@ if (typeof __str !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3.5
 if (__str.constructor !== String) {
-  $ERROR('#3.5: __str = new String(10000000000000000000000); __str.constructor === String. Actual: __str.constructor ==='+__str.constructor ); 
+  $ERROR('#3.5: __str = new String(10000000000000000000000); __str.constructor === String. Actual: __str.constructor ===' + __str.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
-if (__str !="1e+22") {
-  $ERROR('#4: __str = new String(10000000000000000000000); __str =="1e+22". Actual: __str =='+__str ); 
+if (__str != "1e+22") {
+  $ERROR('#4: __str = new String(10000000000000000000000); __str =="1e+22". Actual: __str ==' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

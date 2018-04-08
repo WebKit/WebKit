@@ -11,33 +11,33 @@ description: >
     [[DefineOwnProperty]] step 4)
 ---*/
 
-        var arg;
+var arg;
 
-        (function fun(a, b, c) {
-            arg = arguments;
-        } (0, 1, 2));
+(function fun(a, b, c) {
+  arg = arguments;
+}(0, 1, 2));
 
-        function get_func1() {
-            return 0;
-        }
+function get_func1() {
+  return 0;
+}
 
-        Object.defineProperty(arg, "0", {
-            get: get_func1,
-            enumerable: false,
-            configurable: false
-        });
-
-        function get_func2() {
-            return 10;
-        }
-assert.throws(TypeError, function() {
-            Object.defineProperties(arg, {
-                "0": {
-                    get: get_func2
-                }
-            });
+Object.defineProperty(arg, "0", {
+  get: get_func1,
+  enumerable: false,
+  configurable: false
 });
-            var desc = Object.getOwnPropertyDescriptor(arg, "0");
+
+function get_func2() {
+  return 10;
+}
+assert.throws(TypeError, function() {
+  Object.defineProperties(arg, {
+    "0": {
+      get: get_func2
+    }
+  });
+});
+var desc = Object.getOwnPropertyDescriptor(arg, "0");
 assert.sameValue(desc.get, get_func1, 'desc.get');
 assert.sameValue(typeof desc.set, "undefined", 'typeof desc.set');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

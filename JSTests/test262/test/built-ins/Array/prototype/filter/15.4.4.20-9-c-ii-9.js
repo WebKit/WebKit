@@ -9,10 +9,10 @@ description: >
     parameter
 ---*/
 
-        function callbackfn() {
-            return true;
-        }
-        var newArr = [11].filter(callbackfn);
+function callbackfn() {
+  return true;
+}
+var newArr = [11].filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

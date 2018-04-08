@@ -10,62 +10,62 @@ description: calling on Number prototype object
 ---*/
 
 //CHECK#1
-if(Number.prototype.toFixed() !== "0"){
+if (Number.prototype.toFixed() !== "0") {
   $ERROR('#1: Number.prototype.toFixed() === "0"');
 }
 
 //CHECK#2
-if(Number.prototype.toFixed(0) !== "0"){
+if (Number.prototype.toFixed(0) !== "0") {
   $ERROR('#2: Number.prototype.toFixed(0) === "0"');
 }
 
 //CHECK#3
-if(Number.prototype.toFixed(1) !== "0.0"){
+if (Number.prototype.toFixed(1) !== "0.0") {
   $ERROR('#3: Number.prototype.toFixed(1) === "0.0"');
 }
 
 //CHECK#4
-if(Number.prototype.toFixed(1.1) !== "0.0"){
+if (Number.prototype.toFixed(1.1) !== "0.0") {
   $ERROR('#4: Number.prototype.toFixed(1.1) === "0.0"');
 }
 
 //CHECK#5
-if(Number.prototype.toFixed(0.9) !== "0"){
+if (Number.prototype.toFixed(0.9) !== "0") {
   $ERROR('#5: Number.prototype.toFixed(0.9) === "0"');
 }
 
 
 //CHECK#6
-if(Number.prototype.toFixed("1") !== "0.0"){
+if (Number.prototype.toFixed("1") !== "0.0") {
   $ERROR('#6: Number.prototype.toFixed("1") === "0.0"');
 }
 
 //CHECK#7
-if(Number.prototype.toFixed("1.1") !== "0.0"){
+if (Number.prototype.toFixed("1.1") !== "0.0") {
   $ERROR('#7: Number.prototype.toFixed("1.1") === "0.0"');
 }
 
 //CHECK#8
-if(Number.prototype.toFixed("0.9") !== "0"){
+if (Number.prototype.toFixed("0.9") !== "0") {
   $ERROR('#8: Number.prototype.toFixed("0.9") === "0"');
 }
 
 //CHECK#9
-if(Number.prototype.toFixed(Number.NaN) !== "0"){
+if (Number.prototype.toFixed(Number.NaN) !== "0") {
   $ERROR('#9: Number.prototype.toFixed(Number.NaN) === "0"');
 }
 
 //CHECK#10
-if(Number.prototype.toFixed("some string") !== "0"){
+if (Number.prototype.toFixed("some string") !== "0") {
   $ERROR('#9: Number.prototype.toFixed("some string") === "0"');
 }
 
 //CHECK#11
-try{
-  if(Number.prototype.toFixed(-0.1) !== "0"){
+try {
+  if (Number.prototype.toFixed(-0.1) !== "0") {
     $ERROR('#10: Number.prototype.toFixed(-0.1) === "0"');
   }
 }
-catch(e){
-  $ERROR('#10: Number.prototype.toFixed(-0.1) should not throw '+e);
+catch (e) {
+  $ERROR('#10: Number.prototype.toFixed(-0.1) should not throw ' + e);
 }

@@ -27,7 +27,9 @@ var items = {};
 items[Symbol.iterator] = function() {
   return {
     next: function() {
-      return { done: true };
+      return {
+        done: true
+      };
     }
   };
 };

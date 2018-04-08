@@ -19,19 +19,19 @@ obj.unshift = Array.prototype.unshift;
 if (obj.length !== undefined) {
   $ERROR('#0: var obj = {}; obj.length === undefined. Actual: ' + (obj.length));
 } else {
-    //CHECK#1
-    var unshift = obj.unshift(-1);
-    if (unshift !== 1) {
-      $ERROR('#1: var obj = {}; obj.unshift = Array.prototype.unshift; obj.unshift(-1) === 1. Actual: ' + (unshift));
-    }
-    //CHECK#2
-    if (obj.length !== 1) {
-      $ERROR('#2: var obj = {}; obj.unshift = Array.prototype.unshift; obj.unshift(-1); obj.length === 1. Actual: ' + (obj.length));
-    }
-    //CHECK#3
-    if (obj["0"] !== -1) {
-      $ERROR('#3: var obj = {}; obj.unshift = Array.prototype.unshift; obj.unshift(-1); obj["0"] === -1. Actual: ' + (obj["0"]));
-    }
+  //CHECK#1
+  var unshift = obj.unshift(-1);
+  if (unshift !== 1) {
+    $ERROR('#1: var obj = {}; obj.unshift = Array.prototype.unshift; obj.unshift(-1) === 1. Actual: ' + (unshift));
+  }
+  //CHECK#2
+  if (obj.length !== 1) {
+    $ERROR('#2: var obj = {}; obj.unshift = Array.prototype.unshift; obj.unshift(-1); obj.length === 1. Actual: ' + (obj.length));
+  }
+  //CHECK#3
+  if (obj["0"] !== -1) {
+    $ERROR('#3: var obj = {}; obj.unshift = Array.prototype.unshift; obj.unshift(-1); obj["0"] === -1. Actual: ' + (obj["0"]));
+  }
 }
 
 //CHECK#4

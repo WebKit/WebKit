@@ -9,16 +9,16 @@ description: >
     the call when same index is also present in prototype
 ---*/
 
-  function callbackfn(prevVal, curVal, idx, obj)
-  {
-    delete arr[1];
-    delete arr[2];
-    return prevVal + curVal;
-  }
-  Array.prototype[2] = 6;
-  var arr = ['1',2,3,4,5];
-  var res = arr.reduceRight(callbackfn);
-  delete Array.prototype[2];
+function callbackfn(prevVal, curVal, idx, obj)
+{
+  delete arr[1];
+  delete arr[2];
+  return prevVal + curVal;
+}
+Array.prototype[2] = 6;
+var arr = ['1', 2, 3, 4, 5];
+var res = arr.reduceRight(callbackfn);
+delete Array.prototype[2];
 
 //one element deleted
 assert.sameValue(res, "151", 'res');

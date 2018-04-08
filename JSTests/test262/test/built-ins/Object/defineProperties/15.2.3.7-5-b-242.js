@@ -9,18 +9,18 @@ description: >
     step 8.a)
 ---*/
 
-        var data = "data";
-        var descObj = new Boolean(false);
-        var setFun = function (value) {
-            data = value;
-        };
-        descObj.prop = {
-            set: setFun
-        };
+var data = "data";
+var descObj = new Boolean(false);
+var setFun = function(value) {
+  data = value;
+};
+descObj.prop = {
+  set: setFun
+};
 
-        var obj = {};
-        Object.defineProperties(obj, descObj);
-        obj.prop = "booleanData";
+var obj = {};
+Object.defineProperties(obj, descObj);
+obj.prop = "booleanData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "booleanData", 'data');

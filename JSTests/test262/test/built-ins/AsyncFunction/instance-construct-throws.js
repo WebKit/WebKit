@@ -25,7 +25,7 @@ info: |
     ...
 ---*/
 
-async function foo() { }
+async function foo() {}
 assert.throws(TypeError, function() {
   new foo();
 });

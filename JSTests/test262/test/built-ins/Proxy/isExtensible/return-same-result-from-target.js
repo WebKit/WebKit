@@ -8,9 +8,9 @@ description: >
 
 var target = {};
 var p = new Proxy(target, {
-    isExtensible: function(t) {
-        return Object.isExtensible(t);
-    }
+  isExtensible: function(t) {
+    return Object.isExtensible(t);
+  }
 });
 
 assert.sameValue(Object.isExtensible(p), true);

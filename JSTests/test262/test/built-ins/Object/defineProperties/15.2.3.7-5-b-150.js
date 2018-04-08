@@ -15,16 +15,16 @@ var obj = {};
 var proto = {};
 
 Object.defineProperty(proto, "writable", {
-    set: function () { }
+  set: function() {}
 });
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var descObj = new Con();
 
 Object.defineProperties(obj, {
-    property: descObj
+  property: descObj
 });
 
 assert(obj.hasOwnProperty("property"));

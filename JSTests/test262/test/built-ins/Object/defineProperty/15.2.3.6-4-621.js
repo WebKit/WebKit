@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(String.prototype, "trim");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "trim");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = String.prototype.trim;
+var temp = String.prototype.trim;
 
-            String.prototype.trim = "2010";
+String.prototype.trim = "2010";
 
-            var isWritable = (String.prototype.trim === "2010");
+var isWritable = (String.prototype.trim === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in String.prototype) {
-                if (prop === "trim") {
-                    isEnumerable = true;
-                }
-            }
+for (var prop in String.prototype) {
+  if (prop === "trim") {
+    isEnumerable = true;
+  }
+}
 
-            delete String.prototype.trim;
+delete String.prototype.trim;
 
-            var isConfigurable = !String.prototype.hasOwnProperty("trim");
+var isConfigurable = !String.prototype.hasOwnProperty("trim");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

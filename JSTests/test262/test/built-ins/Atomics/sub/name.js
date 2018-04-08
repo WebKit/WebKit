@@ -7,6 +7,7 @@ esid: sec-atomics.sub
 description: >
   Atomics.sub.name is "sub".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.sub.name, "sub");

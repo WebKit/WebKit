@@ -13,25 +13,26 @@ description: >
 includes: [propertyHelper.js]
  ---*/
 
-;(function (a, b, c) {
-    delete arguments[0];
+;
+(function(a, b, c) {
+  delete arguments[0];
 
-    Object.defineProperty(arguments, "0", {
-        value: 10,
-        writable: true,
-        enumerable: true,
-        configurable: true
-    });
+  Object.defineProperty(arguments, "0", {
+    value: 10,
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
 
-    if (a !== 0) {
-        $ERROR("Expected a === 0, actually " + a);
-    }
-    
-    verifyEqualTo(arguments, "0", 10);
+  if (a !== 0) {
+    $ERROR("Expected a === 0, actually " + a);
+  }
 
-    verifyWritable(arguments, "0");
+  verifyEqualTo(arguments, "0", 10);
 
-    verifyEnumerable(arguments, "0");
+  verifyWritable(arguments, "0");
 
-    verifyConfigurable(arguments, "0");
+  verifyEnumerable(arguments, "0");
+
+  verifyConfigurable(arguments, "0");
 }(0, 1, 2));

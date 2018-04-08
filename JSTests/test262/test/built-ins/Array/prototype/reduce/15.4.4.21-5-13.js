@@ -9,23 +9,26 @@ description: >
     was thrown by step 3
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (curVal > 10);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (curVal > 10);
+}
 
-        var obj = { 0: 11, 1: 12 };
+var obj = {
+  0: 11,
+  1: 12
+};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                return {
-                    toString: function () {
-                        throw new Test262Error();
-                    }
-                };
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    return {
+      toString: function() {
+        throw new Test262Error();
+      }
+    };
+  },
+  configurable: true
+});
 
 assert.throws(Test262Error, function() {
-            Array.prototype.reduce.call(obj, callbackfn);
+  Array.prototype.reduce.call(obj, callbackfn);
 });

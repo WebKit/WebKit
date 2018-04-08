@@ -9,7 +9,9 @@ es5id: 15.2.2.1_A2_T2
 description: The value is a function variable
 ---*/
 
-var func = function(){return 1;};
+var func = function() {
+  return 1;
+};
 
 var n_obj = new Object(func);
 

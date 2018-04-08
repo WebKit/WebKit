@@ -11,6 +11,6 @@ description: Promise.call(new Promise()) throws TypeError
 
 var p = new Promise(function() {});
 
-assert.throws(TypeError, function () {
-    Promise.call(p, function () {});
+assert.throws(TypeError, function() {
+  Promise.call(p, function() {});
 });

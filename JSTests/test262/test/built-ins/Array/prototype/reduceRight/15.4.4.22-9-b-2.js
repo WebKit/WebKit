@@ -9,24 +9,24 @@ description: >
     visible here
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 2 && curVal === "2") {
-                testResult = true;
-            }
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 2 && curVal === "2") {
+    testResult = true;
+  }
+}
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                obj[2] = "2";
-                return 3;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    obj[2] = "2";
+    return 3;
+  },
+  configurable: true
+});
 
-        Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
+Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
 
 assert(testResult, 'testResult !== true');

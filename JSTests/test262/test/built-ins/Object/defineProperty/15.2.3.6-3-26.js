@@ -8,22 +8,22 @@ description: >
     own accessor property (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        var attr = {};
-        Object.defineProperty(attr, "enumerable", {
-            get: function () {
-                return true;
-            }
-        });
+var attr = {};
+Object.defineProperty(attr, "enumerable", {
+  get: function() {
+    return true;
+  }
+});
 
-        Object.defineProperty(obj, "property", attr);
+Object.defineProperty(obj, "property", attr);
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

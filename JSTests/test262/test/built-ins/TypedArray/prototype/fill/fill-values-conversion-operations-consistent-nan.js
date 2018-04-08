@@ -2,9 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.fill
-es6id: 22.2.3.8
-description: Consistent canonicalization of NaN values
+description: >
+  An implementation must always choose either the same encoding for each implementation distinguishable *NaN* value, or an implementation-defined canonical value.
 info: |
+  This test does not compare the actual byte values, instead it simply checks that
+  the value is some valid NaN encoding.
+
+  ---
+
   22.2.3.8 %TypedArray%.prototype.fill (value [ , start [ , end ] ] )
 
   %TypedArray%.prototype.fill is a distinct function that implements the same
@@ -18,7 +23,8 @@ info: |
 
   ...
 
-  22.1.3.6 Array.prototype.fill (value [ , start [ , end ] ] )
+  #sec-array.prototype.fill
+  Array.prototype.fill (value [ , start [ , end ] ] )
 
   ...
   7. Repeat, while k < final
@@ -26,45 +32,70 @@ info: |
     b. Perform ? Set(O, Pk, value, true).
   ...
 
-  24.1.1.6 SetValueInBuffer ( arrayBuffer, byteIndex, type, value [ ,
+  #sec-setvalueinbuffer
+  SetValueInBuffer ( arrayBuffer, byteIndex, type, value [ ,
   isLittleEndian ] )
 
-  ...
-  8. If type is "Float32", then
+  8. Let rawBytes be NumberToRawBytes(type, value, isLittleEndian).
+
+  #sec-numbertorawbytes
+  NumberToRawBytes( type, value, isLittleEndian )
+
+  1. If type is "Float32", then
      a. Set rawBytes to a List containing the 4 bytes that are the result
         of converting value to IEEE 754-2008 binary32 format using “Round to
         nearest, ties to even” rounding mode. If isLittleEndian is false, the
         bytes are arranged in big endian order. Otherwise, the bytes are
         arranged in little endian order. If value is NaN, rawValue may be set
         to any implementation chosen IEEE 754-2008 binary64 format Not-a-Number
-        encoding. An implementation must always choose the same encoding for
-        each implementation distinguishable NaN value.
-  9. Else, if type is "Float64", then
-     a. Set rawBytes to a List containing the 8 bytes that are the IEEE
-        754-2008 binary64 format encoding of value. If isLittleEndian is false,
-        the bytes are arranged in big endian order. Otherwise, the bytes are
-        arranged in little endian order. If value is NaN, rawValue may be set
-        to any implementation chosen IEEE 754-2008 binary32 format Not-a-Number
-        encoding. An implementation must always choose the same encoding for
-        each implementation distinguishable NaN value.
+        encoding. An implementation must always choose either the same encoding
+        for each implementation distinguishable *NaN* value, or an
+        implementation-defined canonical value.
+  2. Else, if type is "Float64", then
+     a. Set _rawBytes_ to a List containing the 8 bytes that are the IEEE
+        754-2008 binary64 format encoding of _value_. If _isLittleEndian_ is
+        *false*, the bytes are arranged in big endian order. Otherwise,
+        the bytes are arranged in little endian order. If _value_ is *NaN*,
+        _rawValue_ may be set to any implementation chosen IEEE 754-2008
+        binary64 format Not-a-Number encoding. An implementation must
+        always choose either the same encoding for each implementation
+        distinguishable *NaN* value, or an implementation-defined
+        canonical value.
   ...
-includes: [nans.js, testTypedArray.js, compareArray.js]
+
+  #sec-isnan-number
+
+  NOTE: A reliable way for ECMAScript code to test if a value X is a NaN is 
+  an expression of the form  X !== X. The result will be true if and only 
+  if X is a NaN.
+includes: [nans.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
-function body(FloatArray) {
-  var sample = new FloatArray(3);
-  var control, idx, someNaN, sampleBytes, controlBytes;
+testWithTypedArrayConstructors(function(FA) {
+  var precision = FA === Float32Array ? "single" : "double";
+  var samples = new FA(3);
+  var controls, idx, aNaN;
 
-  for (idx = 0; idx < distinctNaNs.length; ++idx) {
-    someNaN = distinctNaNs[idx];
-    control = new FloatArray([someNaN, someNaN, someNaN]);
+  for (idx = 0; idx < NaNs.length; ++idx) {
+    aNaN = NaNs[idx];
+    controls = new Float32Array([aNaN, aNaN, aNaN]);
 
-    sample.fill(someNaN);
+    samples.fill(aNaN);
 
-    sampleBytes = new Uint8Array(sample.buffer);
-    controlBytes = new Uint8Array(control.buffer);
-    assert(compareArray(sampleBytes, controlBytes), 'NaN value #' + idx);
+    for (var i = 0; i < samples.length; i++) {
+      var sample = samples[i];
+      var control = controls[i];
+
+      assert(
+        samples[i] !== samples[i],
+        `samples (index=${idx}) produces a valid NaN (${precision} precision)`
+      );
+
+      assert(
+        controls[i] !== controls[i],
+        `controls (index=${idx}) produces a valid NaN (${precision} precision)`
+      );
+    }
   }
-}
-
-testWithTypedArrayConstructors(body, [Float32Array, Float64Array]);
+}, [Float32Array, Float64Array]);

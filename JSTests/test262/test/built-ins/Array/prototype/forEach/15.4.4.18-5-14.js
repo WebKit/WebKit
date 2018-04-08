@@ -7,11 +7,12 @@ es5id: 15.4.4.18-5-14
 description: Array.prototype.forEach - the Math object can be used as thisArg
 ---*/
 
-        var result = false;
-        function callbackfn(val, idx, obj) {
-            result = (this === Math);
-        }
+var result = false;
 
-        [11].forEach(callbackfn, Math);
+function callbackfn(val, idx, obj) {
+  result = (this === Math);
+}
+
+[11].forEach(callbackfn, Math);
 
 assert(result, 'result !== true');

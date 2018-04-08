@@ -8,14 +8,14 @@ description: >
     Function object
 ---*/
 
-        var obj = {};
-        var funObj = function () { };
+var obj = {};
+var funObj = function() {};
 
-        Object.defineProperty(obj, "prop", {
-            value: funObj
-        });
+Object.defineProperty(obj, "prop", {
+  value: funObj
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(obj.prop, funObj, 'obj.prop');
 assert.sameValue(desc.value, funObj, 'desc.value');

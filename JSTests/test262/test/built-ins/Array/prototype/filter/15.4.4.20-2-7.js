@@ -9,23 +9,23 @@ description: >
     an own accessor property
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return obj.length === 2;
-        }
+function callbackfn(val, idx, obj) {
+  return obj.length === 2;
+}
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
-        obj[0] = 12;
-        obj[1] = 11;
-        obj[2] = 9;
+obj[0] = 12;
+obj[1] = 11;
+obj[2] = 9;
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');

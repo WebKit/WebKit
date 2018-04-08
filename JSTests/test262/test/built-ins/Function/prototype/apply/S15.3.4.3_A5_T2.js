@@ -9,7 +9,7 @@ es5id: 15.3.4.3_A5_T2
 description: thisArg is boolean true
 ---*/
 
-var obj=true;
+var obj = true;
 
 var retobj = new Function("this.touched= true; return this;").apply(obj);
 

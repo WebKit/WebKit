@@ -9,16 +9,20 @@ description: >
     Array
 ---*/
 
-        var called = 0;
+var called = 0;
 
-        function callbackfn(val, idx, obj) {
-            called++;
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  called++;
+  return val > 10;
+}
 
-        var obj = { 0: 11, 1: 8, length: 20 };
+var obj = {
+  0: 11,
+  1: 8,
+  length: 20
+};
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.notSameValue(newArr[0], 8, 'newArr[0]');

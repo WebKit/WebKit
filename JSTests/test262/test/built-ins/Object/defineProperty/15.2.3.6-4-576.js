@@ -8,17 +8,17 @@ description: >
     return statement
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var setFunc = function () {
-            return 2010;
-        };
+var setFunc = function() {
+  return 2010;
+};
 
-        Object.defineProperty(obj, "prop", {
-            set: setFunc
-        });
+Object.defineProperty(obj, "prop", {
+  set: setFunc
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(desc.set, setFunc, 'desc.set');

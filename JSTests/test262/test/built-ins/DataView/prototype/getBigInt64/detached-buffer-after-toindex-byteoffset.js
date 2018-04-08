@@ -30,7 +30,7 @@ var sample = new DataView(buffer, 0);
 $DETACHBUFFER(buffer);
 
 assert.throws(RangeError, () => sample.getBigInt64(Infinity),
-              "DataView access at index Infinity should throw");
+  "DataView access at index Infinity should throw");
 
 assert.throws(RangeError, () => sample.getBigInt64(-1),
-              "DataView access at index -1 should throw");
+  "DataView access at index -1 should throw");

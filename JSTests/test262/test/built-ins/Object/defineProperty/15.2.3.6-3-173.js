@@ -9,17 +9,17 @@ description: >
     step 6.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            JSON.writable = true;
+JSON.writable = true;
 
-            Object.defineProperty(obj, "property", JSON);
+Object.defineProperty(obj, "property", JSON);
 
-            var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-            obj.property = "isWritable";
+obj.property = "isWritable";
 
-            var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

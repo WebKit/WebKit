@@ -8,8 +8,8 @@ description: >
     built-ins (Global.parseFloat)
 ---*/
 
-  var global = this;
-  var desc = Object.getOwnPropertyDescriptor(global, "parseFloat");
+var global = this;
+var desc = Object.getOwnPropertyDescriptor(global, "parseFloat");
 
 assert.sameValue(desc.value, global.parseFloat, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

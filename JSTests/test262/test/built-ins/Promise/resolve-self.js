@@ -24,20 +24,20 @@ var promise = new Promise(function(_resolve) {
 });
 
 promise.then(function() {
-    $DONE('The promise should not be fulfilled.');
-  }, function(reason) {
-    if (!reason) {
-      $DONE('The promise should be rejected with a value.');
-      return;
-    }
+  $DONE('The promise should not be fulfilled.');
+}, function(reason) {
+  if (!reason) {
+    $DONE('The promise should be rejected with a value.');
+    return;
+  }
 
-    if (reason.constructor !== TypeError) {
-      $DONE('The promise should be rejected with a TypeError instance.');
-      return;
-    }
+  if (reason.constructor !== TypeError) {
+    $DONE('The promise should be rejected with a TypeError instance.');
+    return;
+  }
 
-    $DONE();
-  });
+  $DONE();
+});
 
 returnValue = resolve(promise);
 

@@ -10,22 +10,22 @@ description: >
 
 var propertyFound = false;
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: 2010,
-            writable: true,
-            enumerable: true,
-            configurable: true
-        });
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
-        for (var property in obj) {
-            if (property === "prop") {
-                propertyFound = true;
-                break;
-            }
-        }
+Object.defineProperty(obj, "prop", {
+  value: 2010,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+for (var property in obj) {
+  if (property === "prop") {
+    propertyFound = true;
+    break;
+  }
+}
 
 assert(propertyFound, 'Property not found');
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');

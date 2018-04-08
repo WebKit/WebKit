@@ -23,14 +23,18 @@ var s = '\u00C5\u2ADC\u0958\u2126\u0344';
 var nfc = '\xC5\u2ADD\u0338\u0915\u093C\u03A9\u0308\u0301';
 var nfd = 'A\u030A\u2ADD\u0338\u0915\u093C\u03A9\u0308\u0301';
 var o = {
-  toString: function() { return 'NFC'; }
+  toString: function() {
+    return 'NFC';
+  }
 };
 
 assert.sameValue(s.normalize(['NFC']), nfc, 'coerced array - NFC');
 assert.sameValue(s.normalize(o), nfc, 'coerced object - NFC');
 
 o = {
-  toString: function() { return 'NFD'; }
+  toString: function() {
+    return 'NFD';
+  }
 };
 
 assert.sameValue(s.normalize(['NFD']), nfd, 'coerced array - NFD');

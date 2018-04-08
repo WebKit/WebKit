@@ -12,7 +12,7 @@ description: Argument value is NaN
 var num = NaN;
 
 //CHECK#1
-if (typeof num  !== 'number') {
+if (typeof num !== 'number') {
   $ERROR('#1: NaN is NOT a number');
 }
 

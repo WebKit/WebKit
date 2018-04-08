@@ -8,8 +8,10 @@ description: >
     the returned array
 ---*/
 
-        var obj = { "a": "a" };
+var obj = {
+  "a": "a"
+};
 
-        var result = Object.getOwnPropertyNames(obj);
+var result = Object.getOwnPropertyNames(obj);
 
 assert.sameValue(result[0], "a", 'result[0]');

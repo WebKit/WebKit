@@ -9,15 +9,15 @@ description: >
     property (8.10.5 step 5.a)
 ---*/
 
-        var Func = function (a, b) {
-            return a + b;
-        };
+var Func = function(a, b) {
+  return a + b;
+};
 
-        var fun = new Func();
-        fun.value = "FunValue";
+var fun = new Func();
+fun.value = "FunValue";
 
-        var newObj = Object.create({}, {
-            prop: fun
-        });
+var newObj = Object.create({}, {
+  prop: fun
+});
 
 assert.sameValue(newObj.prop, "FunValue", 'newObj.prop');

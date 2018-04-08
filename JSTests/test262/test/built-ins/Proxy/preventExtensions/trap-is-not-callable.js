@@ -21,9 +21,9 @@ info: |
 
 var target = {};
 var p = new Proxy(target, {
-    preventExtensions: {}
+  preventExtensions: {}
 });
 
 assert.throws(TypeError, function() {
-    Object.preventExtensions(p);
+  Object.preventExtensions(p);
 });

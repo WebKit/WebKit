@@ -8,21 +8,23 @@ description: >
     the Argument object  (8.10.5 step 4.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var argObj = (function () { return arguments; })(1, true, "a");
+var argObj = (function() {
+  return arguments;
+})(1, true, "a");
 
-        var attr = {
-            configurable: argObj
-        };
+var attr = {
+  configurable: argObj
+};
 
-        Object.defineProperty(obj, "property", attr);
+Object.defineProperty(obj, "property", attr);
 
-        var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-        delete obj.property;
+delete obj.property;
 
-        var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

@@ -8,8 +8,8 @@ description: >
     built-ins (Global.eval)
 ---*/
 
-  var global = this;
-  var desc = Object.getOwnPropertyDescriptor(global,  "eval");
+var global = this;
+var desc = Object.getOwnPropertyDescriptor(global, "eval");
 
 assert.sameValue(desc.value, global.eval, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

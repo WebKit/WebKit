@@ -9,19 +9,19 @@ description: >
     (8.10.5 step 8.a)
 ---*/
 
-        var data = "data";
+var data = "data";
 
-            JSON.set = function (value) {
-                data = value;
-            };
+JSON.set = function(value) {
+  data = value;
+};
 
-            var newObj = Object.create({}, {
-                prop: JSON
-            });
+var newObj = Object.create({}, {
+  prop: JSON
+});
 
-            var hasProperty = newObj.hasOwnProperty("prop");
+var hasProperty = newObj.hasOwnProperty("prop");
 
-            newObj.prop = "overrideData";
+newObj.prop = "overrideData";
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(data, "overrideData", 'data');

@@ -9,9 +9,11 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = { };
+var obj = {};
 
-Object.defineProperty(obj, "property", { configurable: false });
+Object.defineProperty(obj, "property", {
+  configurable: false
+});
 
 assert(obj.hasOwnProperty("property"));
 verifyNotConfigurable(obj, "property");

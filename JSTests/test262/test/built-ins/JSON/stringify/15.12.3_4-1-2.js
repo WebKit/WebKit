@@ -6,9 +6,9 @@ es5id: 15.12.3_4-1-2
 description: JSON.stringify a circular object throws a TypeError
 ---*/
 
-  var obj = {};
-  obj.prop = obj;
+var obj = {};
+obj.prop = obj;
 
 assert.throws(TypeError, function() {
-     JSON.stringify(obj);
+  JSON.stringify(obj);
 });

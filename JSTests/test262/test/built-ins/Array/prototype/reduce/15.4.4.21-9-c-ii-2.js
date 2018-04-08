@@ -9,18 +9,19 @@ description: >
     (initialvalue passed)
 ---*/
 
-  var bParCorrect = false;
-  function callbackfn(prevVal, curVal, idx, obj)
-  {
-    if(idx === 0 && obj[idx] === curVal && prevVal === initialValue)
-      return curVal;
-    else if(idx > 0 && obj[idx] === curVal && obj[idx-1] === prevVal)
-      return curVal;
-    else
-      return false;
-  }
+var bParCorrect = false;
 
-  var arr = [0,1,true,null,new Object(),"five"];
-  var initialValue = 5.5;
+function callbackfn(prevVal, curVal, idx, obj)
+{
+  if (idx === 0 && obj[idx] === curVal && prevVal === initialValue)
+    return curVal;
+  else if (idx > 0 && obj[idx] === curVal && obj[idx - 1] === prevVal)
+    return curVal;
+  else
+    return false;
+}
 
-assert.sameValue(arr.reduce(callbackfn,initialValue), "five", 'arr.reduce(callbackfn,initialValue)');
+var arr = [0, 1, true, null, new Object(), "five"];
+var initialValue = 5.5;
+
+assert.sameValue(arr.reduce(callbackfn, initialValue), "five", 'arr.reduce(callbackfn,initialValue)');

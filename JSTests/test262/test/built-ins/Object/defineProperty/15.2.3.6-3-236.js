@@ -12,9 +12,9 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "property", {
-    get: function () {
-        return 11;
-    }
+  get: function() {
+    return 11;
+  }
 });
 
 assert(obj.hasOwnProperty("property"));

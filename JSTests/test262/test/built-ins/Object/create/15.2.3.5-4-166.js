@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var arr = [1, 2, 3];
+var arr = [1, 2, 3];
 
-        arr.value = "ArrValue";
+arr.value = "ArrValue";
 
-        var newObj = Object.create({}, {
-            prop: arr
-        });
+var newObj = Object.create({}, {
+  prop: arr
+});
 
 assert.sameValue(newObj.prop, "ArrValue", 'newObj.prop');

@@ -9,9 +9,9 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    String.prototype.padEnd.name,
-    'padEnd',
-    'Expected String#padEnd.name to be "padEnd"'
+  String.prototype.padEnd.name,
+  'padEnd',
+  'Expected String#padEnd.name to be "padEnd"'
 );
 
 verifyNotEnumerable(String.prototype.padEnd, 'name');

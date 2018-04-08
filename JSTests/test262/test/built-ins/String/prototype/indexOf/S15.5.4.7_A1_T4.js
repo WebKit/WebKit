@@ -13,7 +13,7 @@ description: >
 //CHECK#1
 //since ToString() evaluates to "" indexOf() evaluates to indexOf("",0)
 if ("".indexOf() !== -1) {
-  $ERROR('#1: "".indexOf() === -1. Actual: '+("".indexOf()) ); 
+  $ERROR('#1: "".indexOf() === -1. Actual: ' + ("".indexOf()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

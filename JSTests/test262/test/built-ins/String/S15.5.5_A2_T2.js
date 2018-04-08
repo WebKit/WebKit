@@ -14,7 +14,7 @@ try {
   $ERROR('#1: "new new String" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#1.1: Exception is instance of TypeError. Actual: exception is '+e);
+    $ERROR('#1.1: Exception is instance of TypeError. Actual: exception is ' + e);
   }
 }
 //

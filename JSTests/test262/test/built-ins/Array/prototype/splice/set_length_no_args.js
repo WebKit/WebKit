@@ -14,7 +14,8 @@ es5id: 15.4.4.12
 es6id: 22.1.3.25
 ---*/
 
-var getCallCount = 0, setCallCount = 0;
+var getCallCount = 0,
+  setCallCount = 0;
 var lengthValue;
 
 var obj = {

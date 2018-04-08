@@ -8,8 +8,10 @@ description: >
     converts to a string (value is 1(following 22 zeros))
 ---*/
 
-        var obj = { "1e+22": 1 };
+var obj = {
+  "1e+22": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, 10000000000000000000000);
+var desc = Object.getOwnPropertyDescriptor(obj, 10000000000000000000000);
 
 assert.sameValue(desc.value, 1, 'desc.value');

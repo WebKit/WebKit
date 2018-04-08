@@ -9,13 +9,13 @@ description: >
     overrides an inherited data property on an Array
 ---*/
 
-        var storeProtoLength;
+var storeProtoLength;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (obj.length === 2);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (obj.length === 2);
+}
 
-            storeProtoLength = Array.prototype.length;
-            Array.prototype.length = 0;
+storeProtoLength = Array.prototype.length;
+Array.prototype.length = 0;
 
 assert.sameValue([12, 11].reduce(callbackfn, 1), true, '[12, 11].reduce(callbackfn, 1)');

@@ -11,22 +11,22 @@ description: >
 
 assert.sameValue(Object.is({}, {}), false, "`Object.is({}, {})` returns `false`");
 assert.sameValue(
-    Object.is(Object(), Object()),
-    false,
-    "`Object.is(Object(), Object())` returns `false`"
+  Object.is(Object(), Object()),
+  false,
+  "`Object.is(Object(), Object())` returns `false`"
 );
 assert.sameValue(
-    Object.is(new Object(), new Object()),
-    false,
-    "`Object.is(new Object(), new Object())` returns `false`"
+  Object.is(new Object(), new Object()),
+  false,
+  "`Object.is(new Object(), new Object())` returns `false`"
 );
 assert.sameValue(
-    Object.is(Object(0), Object(0)),
-    false,
-    "`Object.is(Object(0), Object(0))` returns `false`"
+  Object.is(Object(0), Object(0)),
+  false,
+  "`Object.is(Object(0), Object(0))` returns `false`"
 );
 assert.sameValue(
-    Object.is(new Object(''), new Object('')),
-    false,
-    "`Object.is(new Object(''), new Object(''))` returns `false`"
+  Object.is(new Object(''), new Object('')),
+  false,
+  "`Object.is(new Object(''), new Object(''))` returns `false`"
 );

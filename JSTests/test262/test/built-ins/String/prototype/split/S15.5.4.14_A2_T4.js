@@ -18,7 +18,7 @@ var __split = __string.split("");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __string = new String("one two three"); __split = __string.split(""); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __string = new String("one two three"); __split = __string.split(""); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== __string.length) {
-  $ERROR('#2: var __string = new String("one two three"); __split = __string.split(""); __split.length === __string.length. Actual: '+__split.length );
+  $ERROR('#2: var __string = new String("one two three"); __split = __string.split(""); __split.length === __string.length. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ if (__split.length !== __string.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split[0] !== "o") {
-  $ERROR('#3: var __string = new String("one two three"); __split = __string.split(""); __split[0] === "o". Actual: '+__split[0] );
+  $ERROR('#3: var __string = new String("one two three"); __split = __string.split(""); __split[0] === "o". Actual: ' + __split[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ if (__split[0] !== "o") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__split[1] !== "n") {
-  $ERROR('#4: var __string = new String("one two three"); __split = __string.split(""); __split[1] === "n". Actual: '+__split[1] );
+  $ERROR('#4: var __string = new String("one two three"); __split = __string.split(""); __split[1] === "n". Actual: ' + __split[1]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ if (__split[1] !== "n") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#5
 if (__split[11] !== "e") {
-  $ERROR('#5: var __string = new String("one two three"); __split = __string.split(""); __split[11] === "e". Actual: '+__split[11] );
+  $ERROR('#5: var __string = new String("one two three"); __split = __string.split(""); __split[11] === "e". Actual: ' + __split[11]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ if (__split[11] !== "e") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#6
 if (__split[12] !== "e") {
-  $ERROR('#6: var __string = new String("one two three"); __split = __string.split(""); __split[12] === "e". Actual: '+__split[12] );
+  $ERROR('#6: var __string = new String("one two three"); __split = __string.split(""); __split[12] === "e". Actual: ' + __split[12]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

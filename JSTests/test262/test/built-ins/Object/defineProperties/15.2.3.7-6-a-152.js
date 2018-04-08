@@ -9,12 +9,12 @@ description: >
     field of 'desc' is boundary value 2^32 (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: 4294967296
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 4294967296
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

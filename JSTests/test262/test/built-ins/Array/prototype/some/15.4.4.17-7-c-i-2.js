@@ -9,13 +9,13 @@ description: >
     property on an Array
 ---*/
 
-        var kValue = {};
+var kValue = {};
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return kValue === val;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return kValue === val;
+  }
+  return false;
+}
 
 assert([kValue].some(callbackfn), '[kValue].some(callbackfn) !== true');

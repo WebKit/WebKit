@@ -19,14 +19,18 @@ description: >
 ---*/
 
 var body = "return this;";
-var p={toString:function(){return "z;x"}};
+var p = {
+  toString: function() {
+    return "z;x"
+  }
+};
 
 //CHECK#1
 try {
-  var f = new Function(p,body);
+  var f = new Function(p, body);
   $ERROR('#1: If P is not parsable as a FormalParameterList_opt then throw a SyntaxError exception');
 } catch (e) {
   if (!(e instanceof SyntaxError)) {
-  	$ERROR('#1.1: If P is not parsable as a FormalParameterList_opt then throw a SyntaxError exception');
+    $ERROR('#1.1: If P is not parsable as a FormalParameterList_opt then throw a SyntaxError exception');
   }
 }

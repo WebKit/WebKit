@@ -26,7 +26,7 @@ if (reverse !== x) {
 }
 
 //CHECK#3
-x = new Array(1,2);
+x = new Array(1, 2);
 var reverse = x.reverse();
 if (reverse !== x) {
   $ERROR('#3: x = new Array(1,2); x.reverse() === x. Actual: ' + (reverse));

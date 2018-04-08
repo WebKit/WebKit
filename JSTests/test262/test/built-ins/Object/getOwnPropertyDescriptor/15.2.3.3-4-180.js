@@ -8,8 +8,8 @@ description: >
     properties on built-ins (Global.undefined)
 ---*/
 
-  // in non-strict mode, 'this' is bound to the global object.
-  var desc = Object.getOwnPropertyDescriptor(this,  "undefined");
+// in non-strict mode, 'this' is bound to the global object.
+var desc = Object.getOwnPropertyDescriptor(this, "undefined");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

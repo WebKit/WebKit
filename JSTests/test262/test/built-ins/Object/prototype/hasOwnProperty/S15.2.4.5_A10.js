@@ -19,7 +19,9 @@ if (!(Object.prototype.hasOwnProperty.hasOwnProperty('length'))) {
 
 var obj = Object.prototype.hasOwnProperty.length;
 
-verifyNotWritable(Object.prototype.hasOwnProperty, "length", null, function(){return "shifted";});
+verifyNotWritable(Object.prototype.hasOwnProperty, "length", null, function() {
+  return "shifted";
+});
 
 //CHECK#2
 if (Object.prototype.hasOwnProperty.length !== obj) {

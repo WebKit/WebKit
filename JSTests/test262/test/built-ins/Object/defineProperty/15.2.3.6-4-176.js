@@ -12,20 +12,20 @@ description: >
     properties (15.4.5.1 step 3.l.ii)
 ---*/
 
-        var arrObj = [0, 1];
+var arrObj = [0, 1];
 
 assert.throws(TypeError, function() {
-            Object.defineProperty(arrObj, "1", {
-                get: function () {
-                    return 2;
-                },
-                configurable: false
-            });
-            
-            Array.prototype[1] = 2;
-            Object.defineProperty(arrObj, "length", {
-                value: 1
-            });
+  Object.defineProperty(arrObj, "1", {
+    get: function() {
+      return 2;
+    },
+    configurable: false
+  });
+
+  Array.prototype[1] = 2;
+  Object.defineProperty(arrObj, "length", {
+    value: 1
+  });
 });
 assert.sameValue(arrObj.length, 2, 'arrObj.length');
 assert(arrObj.hasOwnProperty("1"), 'arrObj.hasOwnProperty("1") !== true');

@@ -11,6 +11,6 @@ description: Checking prototype of Function.prototype
 
 if (Object.getPrototypeOf(Function.prototype) !== Object.prototype) {
   $ERROR('#1: The value of the internal [[Prototype]] property of ' +
-         'the Function prototype object is the Object prototype ' +
-         'object (15.3.4)');
+    'the Function prototype object is the Object prototype ' +
+    'object (15.3.4)');
 }

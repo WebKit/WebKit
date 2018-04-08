@@ -10,10 +10,10 @@ description: >
 ---*/
 
 var target = {
-    attr: 1
+  attr: 1
 };
 var p = new Proxy(target, {
-    get: undefined
+  get: undefined
 });
 
 assert.sameValue(p.attr, 1, 'return target.attr');

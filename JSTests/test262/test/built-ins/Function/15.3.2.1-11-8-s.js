@@ -11,4 +11,4 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-        var foo = new Function("baz", "qux", "baz", "return 0;");
+var foo = new Function("baz", "qux", "baz", "return 0;");

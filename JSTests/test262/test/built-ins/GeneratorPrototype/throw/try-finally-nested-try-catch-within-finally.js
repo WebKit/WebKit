@@ -10,6 +10,7 @@ features: [generators]
 ---*/
 
 var unreachable = 0;
+
 function* g() {
   try {
     yield 1;
@@ -38,7 +39,9 @@ result = iter.next();
 assert.sameValue(result.value, 4, 'Second result `value`');
 assert.sameValue(result.done, false, 'First result `done` flag');
 
-assert.throws(Test262Error, function() { iter.throw(new Test262Error()); });
+assert.throws(Test262Error, function() {
+  iter.throw(new Test262Error());
+});
 
 assert.sameValue(
   unreachable,

@@ -9,29 +9,29 @@ description: >
     visible when an exception occurs
 ---*/
 
-        var stepTwoOccurs = false;
-        var stepFiveOccurs = false;
-        var obj = {};
+var stepTwoOccurs = false;
+var stepFiveOccurs = false;
+var obj = {};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                stepTwoOccurs = true;
-                if (stepFiveOccurs) {
-                    throw new Error("Step 5 occurred out of order");
-                }
-                return 20;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    stepTwoOccurs = true;
+    if (stepFiveOccurs) {
+      throw new Error("Step 5 occurred out of order");
+    }
+    return 20;
+  },
+  configurable: true
+});
 
-        var fromIndex = {
-            valueOf: function () {
-                stepFiveOccurs = true;
-                return 0;
-            }
-        };
+var fromIndex = {
+  valueOf: function() {
+    stepFiveOccurs = true;
+    return 0;
+  }
+};
 
-            Array.prototype.lastIndexOf.call(obj, undefined, fromIndex);
+Array.prototype.lastIndexOf.call(obj, undefined, fromIndex);
 
 assert(stepTwoOccurs, 'stepTwoOccurs !== true');
 assert(stepFiveOccurs, 'stepFiveOccurs !== true');

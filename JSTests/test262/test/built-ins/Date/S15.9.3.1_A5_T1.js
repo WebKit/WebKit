@@ -33,7 +33,7 @@ assertRelativeDateMs(new Date(1999, 11), 944006400000);
 
 assertRelativeDateMs(new Date(1999, 12), 946684800000);
 
-assertRelativeDateMs(new Date(2000, 0),  946684800000);
+assertRelativeDateMs(new Date(2000, 0), 946684800000);
 
 assertRelativeDateMs(new Date(2099, 11), 4099766400000);
 

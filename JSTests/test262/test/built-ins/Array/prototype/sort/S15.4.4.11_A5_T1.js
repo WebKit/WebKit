@@ -9,14 +9,14 @@ description: comparefn function throw "error"
 ---*/
 
 //CHECK#1
-var myComparefn = function(x,y) {
+var myComparefn = function(x, y) {
   throw "error";
 }
-var x = [1,0];
+var x = [1, 0];
 try {
   x.sort(myComparefn)
   $ERROR('#1.1: Array.sort should not eat exceptions');
-} catch(e) {
+} catch (e) {
   if (e !== "error") {
     $ERROR('#1.2: Array.sort should not eat exceptions');
   }

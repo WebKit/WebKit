@@ -8,17 +8,17 @@ description: >
     'Properties' is a positive number primitive (8.10.5 step 3.b)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        var newObj = Object.create({}, {
-            prop: {
-                enumerable: 12
-            }
-        });
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+var newObj = Object.create({}, {
+  prop: {
+    enumerable: 12
+  }
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

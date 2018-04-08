@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var str = new String("abc");
+var str = new String("abc");
 
-        str.value = "StrValue";
+str.value = "StrValue";
 
-        var newObj = Object.create({}, {
-            prop: str
-        });
+var newObj = Object.create({}, {
+  prop: str
+});
 
 assert.sameValue(newObj.prop, "StrValue", 'newObj.prop');

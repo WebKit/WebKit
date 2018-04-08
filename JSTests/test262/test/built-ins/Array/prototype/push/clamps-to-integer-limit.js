@@ -18,18 +18,18 @@ info: |
 
 var arrayLike = {};
 
-arrayLike.length = 2**53 - 1;
+arrayLike.length = 2 ** 53 - 1;
 Array.prototype.push.call(arrayLike);
-assert.sameValue(arrayLike.length, 2**53 - 1, "Length is 2**53 - 1");
+assert.sameValue(arrayLike.length, 2 ** 53 - 1, "Length is 2**53 - 1");
 
-arrayLike.length = 2**53;
+arrayLike.length = 2 ** 53;
 Array.prototype.push.call(arrayLike);
-assert.sameValue(arrayLike.length, 2**53 - 1, "Length is 2**53");
+assert.sameValue(arrayLike.length, 2 ** 53 - 1, "Length is 2**53");
 
-arrayLike.length = 2**53 + 2;
+arrayLike.length = 2 ** 53 + 2;
 Array.prototype.push.call(arrayLike);
-assert.sameValue(arrayLike.length, 2**53 - 1, "Length is 2**53 + 2");
+assert.sameValue(arrayLike.length, 2 ** 53 - 1, "Length is 2**53 + 2");
 
 arrayLike.length = Infinity;
 Array.prototype.push.call(arrayLike);
-assert.sameValue(arrayLike.length, 2**53 - 1, "Length is Infinity");
+assert.sameValue(arrayLike.length, 2 ** 53 - 1, "Length is Infinity");

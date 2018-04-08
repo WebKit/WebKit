@@ -13,21 +13,21 @@ description: >
 ---*/
 
 //CHECK#1
-if( typeof Boolean() !== "boolean" ) {
-  $ERROR('#1: typeof Boolean() should be "boolean", actual is "'+typeof Boolean()+'"');
+if (typeof Boolean() !== "boolean") {
+  $ERROR('#1: typeof Boolean() should be "boolean", actual is "' + typeof Boolean() + '"');
 }
 
 //CHECK#2
-if( typeof Boolean(1) !== "boolean" ) {
-  $ERROR('#2: typeof Boolean(1) should be "boolean", actual is "'+typeof Boolean(1)+'"');
+if (typeof Boolean(1) !== "boolean") {
+  $ERROR('#2: typeof Boolean(1) should be "boolean", actual is "' + typeof Boolean(1) + '"');
 }
 
 //CHECK#3
-if( typeof Boolean(new String("1")) !== "boolean" ) {
-  $ERROR('#3: typeof Boolean(new String("1")) should be "boolean", actual is "'+typeof Boolean(new String("1"))+'"');
+if (typeof Boolean(new String("1")) !== "boolean") {
+  $ERROR('#3: typeof Boolean(new String("1")) should be "boolean", actual is "' + typeof Boolean(new String("1")) + '"');
 }
 
 //CHECK#4
-if( typeof Boolean(new Object(1)) !== "boolean" ) {
-  $ERROR('#4: typeof Boolean(new Object(1)) should be "boolean", actual is "'+typeof Boolean(new Object(1))+'"');
+if (typeof Boolean(new Object(1)) !== "boolean") {
+  $ERROR('#4: typeof Boolean(new Object(1)) should be "boolean", actual is "' + typeof Boolean(new Object(1)) + '"');
 }

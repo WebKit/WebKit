@@ -10,21 +10,39 @@ description: Uint32 use ToNumber and ToPrimitve
 
 //CHECK#1
 var x = [];
-x.length = {valueOf: function() {return 2}};
+x.length = {
+  valueOf: function() {
+    return 2
+  }
+};
 if (x.length !== 2) {
   $ERROR('#1: x = []; x.length = {valueOf: function() {return 2}};  x.length === 2. Actual: ' + (x.length));
 }
 
 //CHECK#2
 x = [];
-x.length = {valueOf: function() {return 2}, toString: function() {return 1}};
+x.length = {
+  valueOf: function() {
+    return 2
+  },
+  toString: function() {
+    return 1
+  }
+};
 if (x.length !== 2) {
   $ERROR('#0: x = []; x.length = {valueOf: function() {return 2}, toString: function() {return 1}};  x.length === 2. Actual: ' + (x.length));
 }
 
 //CHECK#3
 x = [];
-x.length = {valueOf: function() {return 2}, toString: function() {return {}}};
+x.length = {
+  valueOf: function() {
+    return 2
+  },
+  toString: function() {
+    return {}
+  }
+};
 if (x.length !== 2) {
   $ERROR('#3: x = []; x.length = {valueOf: function() {return 2}, toString: function() {return {}}};  x.length === 2. Actual: ' + (x.length));
 }
@@ -32,7 +50,14 @@ if (x.length !== 2) {
 //CHECK#4
 try {
   x = [];
-  x.length = {valueOf: function() {return 2}, toString: function() {throw "error"}};
+  x.length = {
+    valueOf: function() {
+      return 2
+    },
+    toString: function() {
+      throw "error"
+    }
+  };
   if (x.length !== 2) {
     $ERROR('#4.1: x = []; x.length = {valueOf: function() {return 2}, toString: function() {throw "error"}}; x.length === ",". Actual: ' + (x.length));
   }
@@ -47,14 +72,25 @@ catch (e) {
 
 //CHECK#5
 x = [];
-x.length = {toString: function() {return 1}};
+x.length = {
+  toString: function() {
+    return 1
+  }
+};
 if (x.length !== 1) {
   $ERROR('#5: x = []; x.length = {toString: function() {return 1}};  x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#6
 x = [];
-x.length = {valueOf: function() {return {}}, toString: function() {return 1}}
+x.length = {
+  valueOf: function() {
+    return {}
+  },
+  toString: function() {
+    return 1
+  }
+}
 if (x.length !== 1) {
   $ERROR('#6: x = []; x.length = {valueOf: function() {return {}}, toString: function() {return 1}};  x.length === 1. Actual: ' + (x.length));
 }
@@ -62,7 +98,14 @@ if (x.length !== 1) {
 //CHECK#7
 try {
   x = [];
-  x.length = {valueOf: function() {throw "error"}, toString: function() {return 1}};
+  x.length = {
+    valueOf: function() {
+      throw "error"
+    },
+    toString: function() {
+      return 1
+    }
+  };
   x.length;
   $ERROR('#7.1: x = []; x.length = {valueOf: function() {throw "error"}, toString: function() {return 1}}; x.length throw "error". Actual: ' + (x.length));
 }
@@ -75,7 +118,14 @@ catch (e) {
 //CHECK#8
 try {
   x = [];
-  x.length = {valueOf: function() {return {}}, toString: function() {return {}}};
+  x.length = {
+    valueOf: function() {
+      return {}
+    },
+    toString: function() {
+      return {}
+    }
+  };
   x.length;
   $ERROR('#8.1: x = []; x.length = {valueOf: function() {return {}}, toString: function() {return {}}}  x.length throw TypeError. Actual: ' + (x.length));
 }

@@ -9,7 +9,7 @@ es5id: 15.3.4.5-2-5
 description: Function.prototype.bind allows Target to be a constructor (Boolean)
 ---*/
 
-  var bbc = Boolean.bind(null);
-  var b = bbc(true);
+var bbc = Boolean.bind(null);
+var b = bbc(true);
 
 assert.sameValue(b, true, 'b');

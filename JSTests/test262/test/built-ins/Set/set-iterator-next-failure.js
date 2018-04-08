@@ -15,6 +15,7 @@ features: [Symbol.iterator]
 ---*/
 
 var iterable = {};
+
 function MyError() {};
 iterable[Symbol.iterator] = function() {
   return {

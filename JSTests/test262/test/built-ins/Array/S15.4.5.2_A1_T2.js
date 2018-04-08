@@ -13,14 +13,14 @@ description: P = "2^32 - 1" is not index array
 //CHECK#1
 var x = [];
 x[4294967295] = 1;
-if (x.length !== 0) {  
-  $ERROR('#1: x = []; x[4294967295] = 1; x.length === 0. Actual: ' + (x.length));    
+if (x.length !== 0) {
+  $ERROR('#1: x = []; x[4294967295] = 1; x.length === 0. Actual: ' + (x.length));
 }
 
 //CHECK#2
-var y =[];
+var y = [];
 y[1] = 1;
 y[4294967295] = 1;
-if (y.length !== 2) {      
+if (y.length !== 2) {
   $ERROR('#2: y = []; y[1] = 1; y[4294967295] = 1; y.length === 2. Actual: ' + (y.length));
 }

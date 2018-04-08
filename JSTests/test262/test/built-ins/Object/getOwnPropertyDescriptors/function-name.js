@@ -9,9 +9,9 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    Object.getOwnPropertyDescriptors.name,
-    'getOwnPropertyDescriptors',
-    'Expected Object.getOwnPropertyDescriptors.name to be "getOwnPropertyDescriptors"'
+  Object.getOwnPropertyDescriptors.name,
+  'getOwnPropertyDescriptors',
+  'Expected Object.getOwnPropertyDescriptors.name to be "getOwnPropertyDescriptors"'
 );
 
 verifyNotEnumerable(Object.getOwnPropertyDescriptors, 'name');

@@ -16,21 +16,21 @@ info: |
 
 var target = {};
 var handler = {
-    set: function(t, prop, value, receiver) {
-        return true;
-    }
+  set: function(t, prop, value, receiver) {
+    return true;
+  }
 };
 var p = new Proxy(target, handler);
 
 Object.defineProperty(target, 'attr', {
-    configurable: false,
-    set: undefined
+  configurable: false,
+  set: undefined
 });
 
 assert.throws(TypeError, function() {
-    p.attr = 'bar';
+  p.attr = 'bar';
 });
 
 assert.throws(TypeError, function() {
-    p['attr'] = 'bar';
+  p['attr'] = 'bar';
 });

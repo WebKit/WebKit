@@ -6,6 +6,7 @@ description: >
   get SharedArrayBuffer.prototype.byteLength
 
 includes: [propertyHelper.js]
+features: [SharedArrayBuffer]
 ---*/
 
 var descriptor = Object.getOwnPropertyDescriptor(

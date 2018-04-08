@@ -27,7 +27,7 @@ exponent[7] = Math.PI;
 var exponentnum = 8;
 
 for (var i = 0; i < basenum; i++) {
-	for (var j = 0; j < exponentnum; j++) {
+  for (var j = 0; j < exponentnum; j++) {
     assert.sameValue(
       Math.pow(base[i], exponent[j]),
       NaN,

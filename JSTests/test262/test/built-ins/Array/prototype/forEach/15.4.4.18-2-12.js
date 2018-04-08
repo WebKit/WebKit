@@ -10,24 +10,28 @@ description: >
     property on an Array
 ---*/
 
-        var accessed = false;
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-        }
+var accessed = false;
 
-            Object.defineProperty(Object.prototype, "length", {
-                get: function () {
-                    return 2;
-                },
-                configurable: true
-            });
+function callbackfn(val, idx, obj) {
+  accessed = true;
+}
 
-            var obj = { 0: 12, 1: 11 };
-            Object.defineProperty(obj, "length", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Object.prototype, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
-            Array.prototype.forEach.call(obj, callbackfn);
+var obj = {
+  0: 12,
+  1: 11
+};
+Object.defineProperty(obj, "length", {
+  set: function() {},
+  configurable: true
+});
+
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert.sameValue(accessed, false, 'accessed');

@@ -2,8 +2,8 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description: lastIndex is read and reset to 0 when global is set and the match
-             fails.
+description: >
+    lastIndex is read and reset to 0 when global is set and the match fails.
 es6id: 21.2.5.2.2
 info: |
     21.2.5.2.2 Runtime Semantics: RegExpBuiltinExec ( R, S )

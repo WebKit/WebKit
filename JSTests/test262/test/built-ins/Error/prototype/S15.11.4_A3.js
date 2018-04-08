@@ -10,10 +10,10 @@ description: Checking if call of Error prototype as a function fails
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 try {
-	Error.prototype();
-	$ERROR('#1: "Error.prototype()" lead to throwing exception');
+  Error.prototype();
+  $ERROR('#1: "Error.prototype()" lead to throwing exception');
 } catch (e) {
-    if (e instanceof Test262Error) throw e;
+  if (e instanceof Test262Error) throw e;
 }
 //
 //////////////////////////////////////////////////////////////////////////////

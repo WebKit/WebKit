@@ -22,4 +22,3 @@ var o1 = {
 assert.throws(Test262Error, function() {
   [].copyWithin(0, o1);
 });
-

@@ -8,14 +8,14 @@ description: >
     Object
 ---*/
 
-        var obj = {};
-        var boolObj = new Boolean();
+var obj = {};
+var boolObj = new Boolean();
 
-        Object.defineProperty(obj, "prop", {
-            value: boolObj
-        });
+Object.defineProperty(obj, "prop", {
+  value: boolObj
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(obj.prop, boolObj, 'obj.prop');
 assert.sameValue(desc.value, boolObj, 'desc.value');

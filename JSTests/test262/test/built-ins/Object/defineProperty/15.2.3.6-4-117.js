@@ -9,21 +9,21 @@ description: >
     property (15.4.5.1 step 1)
 ---*/
 
-        var arrObj = [0, 1, 2];
-        var arrProtoLen;
+var arrObj = [0, 1, 2];
+var arrProtoLen;
 
 assert.throws(TypeError, function() {
-            arrProtoLen = Array.prototype.length;
-            Array.prototype.length = 0;
+  arrProtoLen = Array.prototype.length;
+  Array.prototype.length = 0;
 
-            
-            Object.defineProperty(arrObj, "2", {
-                configurable: false
-            });
 
-            Object.defineProperty(arrObj, "length", {
-                value: 1
-            });
+  Object.defineProperty(arrObj, "2", {
+    configurable: false
+  });
+
+  Object.defineProperty(arrObj, "length", {
+    value: 1
+  });
 });
 assert.sameValue(arrObj.length, 3, 'arrObj.length');
 assert.sameValue(Array.prototype.length, 0, 'Array.prototype.length');

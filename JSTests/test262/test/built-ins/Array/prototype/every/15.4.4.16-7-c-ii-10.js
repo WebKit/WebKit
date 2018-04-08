@@ -9,12 +9,12 @@ description: >
     parameter
 ---*/
 
-        var called = 0;
+var called = 0;
 
-        function callbackfn(val) {
-            called++;
-            return val > 10;
-        }
+function callbackfn(val) {
+  called++;
+  return val > 10;
+}
 
 assert([11, 12].every(callbackfn), '[11, 12].every(callbackfn) !== true');
 assert.sameValue(called, 2, 'called');

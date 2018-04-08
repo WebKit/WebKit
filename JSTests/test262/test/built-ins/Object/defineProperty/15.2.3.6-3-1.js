@@ -12,12 +12,17 @@ description: >
     'value' present(8.10.5 step 9.a)
 ---*/
 
-    var o = {};
+var o = {};
 
-    // dummy getter
-    var getter = function () { return 1; }
-    var desc = { get: getter, value: 101};
+// dummy getter
+var getter = function() {
+  return 1;
+}
+var desc = {
+  get: getter,
+  value: 101
+};
 assert.throws(TypeError, function() {
-      Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
 assert.sameValue(o.hasOwnProperty("foo"), false, 'o.hasOwnProperty("foo")');

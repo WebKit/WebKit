@@ -8,17 +8,17 @@ description: >
     own data property (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            prop: {
-                configurable: true
-            }
-        });
+Object.defineProperties(obj, {
+  prop: {
+    configurable: true
+  }
+});
 
-        var result1 = obj.hasOwnProperty("prop");
-        delete obj.prop;
-        var result2 = obj.hasOwnProperty("prop");
+var result1 = obj.hasOwnProperty("prop");
+delete obj.prop;
+var result2 = obj.hasOwnProperty("prop");
 
 assert.sameValue(result1, true, 'result1');
 assert.sameValue(result2, false, 'result2');

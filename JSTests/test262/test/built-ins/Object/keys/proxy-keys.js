@@ -32,22 +32,34 @@ let target = {
 
 let ownKeys = {
   get length() {
-    log.push({ name: "get ownKeys['length']", receiver: this });
+    log.push({
+      name: "get ownKeys['length']",
+      receiver: this
+    });
     return 3;
   },
 
   get 0() {
-    log.push({ name: "get ownKeys[0]", receiver: this });
+    log.push({
+      name: "get ownKeys[0]",
+      receiver: this
+    });
     return "a";
   },
 
   get 1() {
-    log.push({ name: "get ownKeys[1]", receiver: this });
+    log.push({
+      name: "get ownKeys[1]",
+      receiver: this
+    });
     return s;
   },
 
   get 2() {
-    log.push({ name: "get ownKeys[2]", receiver: this });
+    log.push({
+      name: "get ownKeys[2]",
+      receiver: this
+    });
     return "b";
   }
 };
@@ -74,15 +86,25 @@ let ownKeysDescriptors = {
 
 let handler = {
   get ownKeys() {
-    log.push({ name: "get handler.ownKeys", receiver: this });
+    log.push({
+      name: "get handler.ownKeys",
+      receiver: this
+    });
     return (...args) => {
-      log.push({ name: "call handler.ownKeys", receiver: this, args });
+      log.push({
+        name: "call handler.ownKeys",
+        receiver: this,
+        args
+      });
       return ownKeys;
     };
   },
 
   get getOwnPropertyDescriptor() {
-    log.push({ name: "get handler.getOwnPropertyDescriptor", receiver: this });
+    log.push({
+      name: "get handler.getOwnPropertyDescriptor",
+      receiver: this
+    });
     return (...args) => {
       log.push({
         name: "call handler.getOwnPropertyDescriptor",

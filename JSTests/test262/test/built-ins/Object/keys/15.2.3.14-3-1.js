@@ -8,9 +8,12 @@ description: >
     enumerable properties
 ---*/
 
-  var o = { x: 1, y: 2};
+var o = {
+  x: 1,
+  y: 2
+};
 
-  var a = Object.keys(o);
+var a = Object.keys(o);
 
 assert.sameValue(a.length, 2, 'a.length');
 assert.sameValue(a[0], 'x', 'a[0]');

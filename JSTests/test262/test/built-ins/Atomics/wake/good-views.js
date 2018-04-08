@@ -20,10 +20,10 @@ assert.sameValue(Atomics.wake(view, 0, 1), 0);
 
 // In-bounds boundary cases for indexing
 testWithAtomicsInBoundsIndices(function(IdxGen) {
-    let Idx = IdxGen(view);
-    view.fill(0);
-    // Atomics.store() computes an index from Idx in the same way as other
-    // Atomics operations, not quite like view[Idx].
-    Atomics.store(view, Idx, 37);
-    assert.sameValue(Atomics.wake(view, Idx, 1), 0);
+  let Idx = IdxGen(view);
+  view.fill(0);
+  // Atomics.store() computes an index from Idx in the same way as other
+  // Atomics operations, not quite like view[Idx].
+  Atomics.store(view, Idx, 37);
+  assert.sameValue(Atomics.wake(view, Idx, 1), 0);
 });

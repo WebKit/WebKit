@@ -62,4 +62,3 @@ if (b.hasOwnProperty('1') !== false) {
 if (b.hasOwnProperty('2') !== true) {
   $ERROR("expected b.hasOwnProperty('2') === true, actually " + b.hasOwnProperty('2'));
 }
-

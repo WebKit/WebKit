@@ -9,9 +9,9 @@ description: >
     accessor property without a get function on an Array
 ---*/
 
-            Object.defineProperty(Array.prototype, "0", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  set: function() {},
+  configurable: true
+});
 
 assert.sameValue([, ].lastIndexOf(undefined), 0, '[, ].lastIndexOf(undefined)');

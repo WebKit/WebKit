@@ -1,7 +1,7 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 22.2.3.3
+esid: sec-get-%typedarray%.prototype.byteoffset
 description: >
   "byteOffset" property of TypedArrayPrototype
 info: |
@@ -11,6 +11,7 @@ info: |
   Section 17: Every accessor property described in clauses 18 through 26 and in
   Annex B.2 has the attributes {[[Enumerable]]: false, [[Configurable]]: true }
 includes: [propertyHelper.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var TypedArrayPrototype = TypedArray.prototype;

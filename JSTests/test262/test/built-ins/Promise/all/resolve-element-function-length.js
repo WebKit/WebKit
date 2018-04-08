@@ -20,10 +20,13 @@ var thenable = {
     resolveElementFunction = fulfill;
   }
 };
+
 function NotPromise(executor) {
-  executor(function(){}, function(){});
+  executor(function() {}, function() {});
 }
-NotPromise.resolve = function(v) { return v; };
+NotPromise.resolve = function(v) {
+  return v;
+};
 Promise.all.call(NotPromise, [thenable]);
 
 assert.sameValue(resolveElementFunction.length, 1);

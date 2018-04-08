@@ -13,17 +13,17 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function set_func(value) {
-    obj.setVerifyHelpProp = value;
+  obj.setVerifyHelpProp = value;
 }
 
 Object.defineProperty(obj, "foo", {
-    set: set_func
+  set: set_func
 });
 
 Object.defineProperties(obj, {
-    foo: {
-        set: set_func
-    }
+  foo: {
+    set: set_func
+  }
 });
 verifyWritable(obj, "foo", "setVerifyHelpProp");
 

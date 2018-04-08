@@ -9,21 +9,22 @@ description: >
     property without a get function on an Array
 ---*/
 
-        var testResult = false;
-        var initialValue = 0;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (curVal === undefined);
-            }
-        }
+var testResult = false;
+var initialValue = 0;
 
-        var arr = [0, , 2];
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (curVal === undefined);
+  }
+}
 
-        Object.defineProperty(arr, "1", {
-            set: function () { },
-            configurable: true
-        });
+var arr = [0, , 2];
 
-        arr.reduce(callbackfn, initialValue);
+Object.defineProperty(arr, "1", {
+  set: function() {},
+  configurable: true
+});
+
+arr.reduce(callbackfn, initialValue);
 
 assert(testResult, 'testResult !== true');

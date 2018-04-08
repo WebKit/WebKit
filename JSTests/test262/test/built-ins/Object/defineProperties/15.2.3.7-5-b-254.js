@@ -8,11 +8,11 @@ description: >
     primitive values boolean (8.10.5 step 8.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                prop: {
-                    set: true
-                }
-            });
+  Object.defineProperties(obj, {
+    prop: {
+      set: true
+    }
+  });
 });

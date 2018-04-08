@@ -9,21 +9,21 @@ description: >
     non-enumerable
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            get: undefined,
-            set: undefined,
-            enumerable: false,
-            configurable: false
-        });
+Object.defineProperty(obj, "prop", {
+  get: undefined,
+  set: undefined,
+  enumerable: false,
+  configurable: false
+});
 
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
-        for (var p in obj) {
-            assert.notSameValue(p, "prop", 'p');
-        }
+for (var p in obj) {
+  assert.notSameValue(p, "prop", 'p');
+}
 
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

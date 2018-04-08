@@ -17,7 +17,10 @@ features:
   - Symbol.iterator
 ---*/
 
-var set = new Set([[1, 11], [2, 22]]);
+var set = new Set([
+  [1, 11],
+  [2, 22]
+]);
 var iterator = set[Symbol.iterator]();
 
 assert.throws(TypeError, function() {

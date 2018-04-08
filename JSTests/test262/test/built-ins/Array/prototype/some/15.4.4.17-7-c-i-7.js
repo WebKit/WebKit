@@ -9,21 +9,23 @@ description: >
     property on an Array-like object
 ---*/
 
-        var kValue = 'abc';
+var kValue = 'abc';
 
-        function callbackfn(val, idx, obj) {
-            if (5 === idx) {
-                return kValue === val;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (5 === idx) {
+    return kValue === val;
+  }
+  return false;
+}
 
-        var proto = { 5: kValue };
+var proto = {
+  5: kValue
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.length = 10;
+var child = new Con();
+child.length = 10;
 
 assert(Array.prototype.some.call(child, callbackfn), 'Array.prototype.some.call(child, callbackfn) !== true');

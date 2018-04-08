@@ -9,12 +9,12 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            this.value = "global";
+this.value = "global";
 
-            Object.defineProperties(obj, {
-                property: this
-            });
+Object.defineProperties(obj, {
+  property: this
+});
 
 assert.sameValue(obj.property, "global", 'obj.property');

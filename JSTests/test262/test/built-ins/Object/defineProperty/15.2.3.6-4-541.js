@@ -11,33 +11,33 @@ description: >
 
 var propertyFound = false;
 
-        var obj = {};
+var obj = {};
 
-        var getFunc = function () {
-            return 1001;
-        };
+var getFunc = function() {
+  return 1001;
+};
 
-        var verifySetFunc = "data";
-        var setFunc = function (value) {
-            verifySetFunc = value;
-        };
+var verifySetFunc = "data";
+var setFunc = function(value) {
+  verifySetFunc = value;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: getFunc,
-            set: setFunc,
-            enumerable: true,
-            configurable: false
-        });
+Object.defineProperty(obj, "prop", {
+  get: getFunc,
+  set: setFunc,
+  enumerable: true,
+  configurable: false
+});
 
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
-        for (var p in obj) {
-            if (p === "prop") {
-                propertyFound = true;
-                break;
-            }
-        }
+for (var p in obj) {
+  if (p === "prop") {
+    propertyFound = true;
+    break;
+  }
+}
 
 assert(propertyFound, 'Property not found');
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');

@@ -9,13 +9,13 @@ description: >
     object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Date.prototype.get = function () {
-                return "dateGetProperty";
-            };
-            var dateObj = new Date();
+Date.prototype.get = function() {
+  return "dateGetProperty";
+};
+var dateObj = new Date();
 
-            Object.defineProperty(obj, "property", dateObj);
+Object.defineProperty(obj, "property", dateObj);
 
 assert.sameValue(obj.property, "dateGetProperty", 'obj.property');

@@ -18,34 +18,34 @@ var count = 0;
 var indexP;
 var indexO = 0;
 
-l :
-for (var index = 0x0000; index <= 0x007F; index++) {
-  count++;
-  var str = String.fromCharCode(index);
+l:
+  for (var index = 0x0000; index <= 0x007F; index++) {
+    count++;
+    var str = String.fromCharCode(index);
     for (var indexC = 0; indexC < uriUnescaped.length; indexC++) {
-    if (uriUnescaped[indexC] === str) continue l;
-  }
-  if (encodeURIComponent(str).toUpperCase() === decimalToPercentHexString(index)) continue l;
-
-  if (indexO === 0) {
-    indexO = index;
-  } else {
-    if ((index - indexP) !== 1) {
-      if ((indexP - indexO) !== 0) {
-        var hexP = decimalToHexString(indexP);
-        var hexO = decimalToHexString(indexO);
-        $ERROR('#' + hexO + '-' + hexP + ' ');
-      }
-      else {
-        var hexP = decimalToHexString(indexP);
-        $ERROR('#' + hexP + ' ');
-      }
-      indexO = index;
+      if (uriUnescaped[indexC] === str) continue l;
     }
+    if (encodeURIComponent(str).toUpperCase() === decimalToPercentHexString(index)) continue l;
+
+    if (indexO === 0) {
+      indexO = index;
+    } else {
+      if ((index - indexP) !== 1) {
+        if ((indexP - indexO) !== 0) {
+          var hexP = decimalToHexString(indexP);
+          var hexO = decimalToHexString(indexO);
+          $ERROR('#' + hexO + '-' + hexP + ' ');
+        }
+        else {
+          var hexP = decimalToHexString(indexP);
+          $ERROR('#' + hexP + ' ');
+        }
+        indexO = index;
+      }
+    }
+    indexP = index;
+    errorCount++;
   }
-  indexP = index;
-  errorCount++;
-}
 
 if (errorCount > 0) {
   if ((indexP - indexO) !== 0) {

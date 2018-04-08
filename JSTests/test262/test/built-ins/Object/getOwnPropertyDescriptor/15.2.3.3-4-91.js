@@ -8,7 +8,7 @@ description: >
     built-ins (Number.prototype.toFixed)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Number.prototype, "toFixed");
+var desc = Object.getOwnPropertyDescriptor(Number.prototype, "toFixed");
 
 assert.sameValue(desc.value, Number.prototype.toFixed, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

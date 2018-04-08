@@ -22,15 +22,15 @@ includes: [testTypedArray.js, compareArray.js]
 features: [Symbol, TypedArray]
 ---*/
 
-var obj = {
-  length: 4,
-  "0": 42,
-  "1": 43,
-  "2": Symbol("1"),
-  "3": 44
-};
-
 testWithTypedArrayConstructors(function(TA) {
+  var obj = {
+      length: 4,
+      "0": 42,
+      "1": 43,
+      "2": Symbol("1"),
+      "3": 44
+  };
+
   var sample = new TA([1, 2, 3, 4]);
 
   assert.throws(TypeError, function() {

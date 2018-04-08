@@ -9,19 +9,19 @@ description: >
     (8.10.5 step 8.a)
 ---*/
 
-        var numObj = new Number(5);
-        var data = "data";
-        numObj.set = function (value) {
-            data = value;
-        };
+var numObj = new Number(5);
+var data = "data";
+numObj.set = function(value) {
+  data = value;
+};
 
-        var newObj = Object.create({}, {
-            prop: numObj
-        });
+var newObj = Object.create({}, {
+  prop: numObj
+});
 
-        var hasProperty = newObj.hasOwnProperty("prop");
+var hasProperty = newObj.hasOwnProperty("prop");
 
-        newObj.prop = "overrideData";
+newObj.prop = "overrideData";
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(data, "overrideData", 'data');

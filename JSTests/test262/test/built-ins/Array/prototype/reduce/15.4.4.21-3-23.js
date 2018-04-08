@@ -9,35 +9,35 @@ description: >
     an object with an own toString and inherited valueOf methods
 ---*/
 
-        var valueOfAccessed = false;
-        var toStringAccessed = false;
+var valueOfAccessed = false;
+var toStringAccessed = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (curVal === 11 && idx === 1);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (curVal === 11 && idx === 1);
+}
 
-        var proto = {
-            valueOf: function () {
-                valueOfAccessed = true;
-                return 2;
-            }
-        };
+var proto = {
+  valueOf: function() {
+    valueOfAccessed = true;
+    return 2;
+  }
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        child.toString = function () {
-            toStringAccessed = true;
-            return '1';
-        };
+child.toString = function() {
+  toStringAccessed = true;
+  return '1';
+};
 
-        var obj = {
-            1: 11,
-            2: 9,
-            length: child
-        };
+var obj = {
+  1: 11,
+  2: 9,
+  length: child
+};
 
 assert.sameValue(Array.prototype.reduce.call(obj, callbackfn, 1), true, 'Array.prototype.reduce.call(obj, callbackfn, 1)');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

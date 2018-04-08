@@ -7,6 +7,7 @@ esid: sec-atomics.wake
 description: >
   Atomics.wake.name is "wake".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.wake.name, "wake");

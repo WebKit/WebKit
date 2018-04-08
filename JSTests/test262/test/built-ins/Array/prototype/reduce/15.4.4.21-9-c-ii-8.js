@@ -9,19 +9,24 @@ description: >
     iterations is observed
 ---*/
 
-        var result = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 0) {
-                obj[idx + 1] = 8;
-            }
+var result = false;
 
-            if (idx === 1) {
-                result = (curVal === 8);
-            }
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 0) {
+    obj[idx + 1] = 8;
+  }
 
-        var obj = { 0: 11, 1: 12, length: 2 };
+  if (idx === 1) {
+    result = (curVal === 8);
+  }
+}
 
-        Array.prototype.reduce.call(obj, callbackfn, 1);
+var obj = {
+  0: 11,
+  1: 12,
+  length: 2
+};
+
+Array.prototype.reduce.call(obj, callbackfn, 1);
 
 assert(result, 'result !== true');

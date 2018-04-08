@@ -13,22 +13,22 @@ description: Checking for null and undefined
 var x = [];
 x[null] = 0;
 if (x[0] !== undefined) {
-  $ERROR('#1: x = []; x[null] = 1; x[0] === undefined. Actual: ' + (x[0]));  
+  $ERROR('#1: x = []; x[null] = 1; x[0] === undefined. Actual: ' + (x[0]));
 }
 
 //CHECK#2
 if (x["null"] !== 0) {
-  $ERROR('#2: x = []; x[null] = 1; x["null"] === 0. Actual: ' + (x["null"]));  
+  $ERROR('#2: x = []; x[null] = 1; x["null"] === 0. Actual: ' + (x["null"]));
 }
 
 //CHECK#3
 var y = [];
 y[undefined] = 0;
 if (y[0] !== undefined) {
-  $ERROR('#3: y = []; y[undefined] = 0; y[0] === undefined. Actual: ' + (y[0]));  
+  $ERROR('#3: y = []; y[undefined] = 0; y[0] === undefined. Actual: ' + (y[0]));
 }
 
 //CHECK#4
 if (y["undefined"] !== 0) {
-  $ERROR('#4: y = []; y[undefined] = 1; y["undefined"] === 0. Actual: ' + (y["undefined"]));  
+  $ERROR('#4: y = []; y[undefined] = 1; y["undefined"] === 0. Actual: ' + (y["undefined"]));
 }

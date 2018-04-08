@@ -8,13 +8,13 @@ description: >
     present (8.10.5 step 5)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: true
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: true
+  }
+});
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
-assert.sameValue(typeof (obj.property), "undefined", 'typeof (obj.property)');
+assert.sameValue(typeof(obj.property), "undefined", 'typeof (obj.property)');

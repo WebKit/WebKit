@@ -9,18 +9,18 @@ description: >
     step 8.a)
 ---*/
 
-        var data = "data";
-        var descObj = new Date();
-        var setFun = function (value) {
-            data = value;
-        };
-        descObj.prop = {
-            set: setFun
-        };
+var data = "data";
+var descObj = new Date();
+var setFun = function(value) {
+  data = value;
+};
+descObj.prop = {
+  set: setFun
+};
 
-        var obj = {};
-        Object.defineProperties(obj, descObj);
-        obj.prop = "dateData";
+var obj = {};
+Object.defineProperties(obj, descObj);
+obj.prop = "dateData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "dateData", 'data');

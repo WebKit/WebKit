@@ -8,7 +8,7 @@ description: >
     built-ins (Math.asin)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "asin");
+var desc = Object.getOwnPropertyDescriptor(Math, "asin");
 
 assert.sameValue(desc.value, Math.asin, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

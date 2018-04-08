@@ -7,6 +7,7 @@ esid: sec-atomics.islockfree
 description: >
   Atomics.isLockFree.name is "isLockFree".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.isLockFree.name, "isLockFree");

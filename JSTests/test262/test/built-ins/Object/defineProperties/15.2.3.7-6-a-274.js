@@ -14,36 +14,37 @@ includes: [propertyHelper.js]
 var arr = [];
 
 function get_fun() {
-    return 37;
+  return 37;
 }
+
 function set_fun(value) {
-    arr.verifySetFun = value;
+  arr.verifySetFun = value;
 }
 Object.defineProperty(arr, "property", {
-    get: get_fun,
-    set: set_fun
+  get: get_fun,
+  set: set_fun
 });
 
 try {
-    Object.defineProperties(arr, {
-        "property": {
-            get: function () {
-                return 36;
-            }
-        }
-    });
-    $ERROR("Expected an exception.");
-} catch (e) {
-    verifyEqualTo(arr, "property", get_fun());
-
-    verifyWritable(arr, "property", "verifySetFun");
-
-    verifyNotEnumerable(arr, "property");
-
-    verifyNotConfigurable(arr, "property");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(arr, {
+    "property": {
+      get: function() {
+        return 36;
+      }
     }
+  });
+  $ERROR("Expected an exception.");
+} catch (e) {
+  verifyEqualTo(arr, "property", get_fun());
+
+  verifyWritable(arr, "property", "verifySetFun");
+
+  verifyNotEnumerable(arr, "property");
+
+  verifyNotConfigurable(arr, "property");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

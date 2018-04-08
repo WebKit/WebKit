@@ -9,14 +9,18 @@ description: >
     positive)
 ---*/
 
-        var testResult1 = false;
+var testResult1 = false;
 
-        function callbackfn(val, idx, obj) {
-            testResult1 = (val > 10);
-        }
+function callbackfn(val, idx, obj) {
+  testResult1 = (val > 10);
+}
 
-        var obj = { 1: 11, 2: 9, length: 2 };
+var obj = {
+  1: 11,
+  2: 9,
+  length: 2
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(testResult1, 'testResult1 !== true');

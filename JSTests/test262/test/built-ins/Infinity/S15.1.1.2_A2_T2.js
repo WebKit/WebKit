@@ -11,5 +11,5 @@ flags: [noStrict]
 // CHECK#1
 Infinity = true;
 if (typeof(Infinity) === "boolean") {
-	$ERROR('#1: Infinity = true; typeof(Infinity) !== "boolean". Actual: ' + (typeof(Infinity)));
+  $ERROR('#1: Infinity = true; typeof(Infinity) !== "boolean". Actual: ' + (typeof(Infinity)));
 }

@@ -9,14 +9,14 @@ description: >
     overrides an inherited data property on an Array
 ---*/
 
-        var arrProtoLen;
+var arrProtoLen;
 
-        function callbackfn(val, idx, obj) {
-            return obj.length === 2;
-        }
+function callbackfn(val, idx, obj) {
+  return obj.length === 2;
+}
 
-            arrProtoLen = Array.prototype.length;
-            Array.prototype.length = 0;
-            var newArr = [12, 11].filter(callbackfn);
+arrProtoLen = Array.prototype.length;
+Array.prototype.length = 0;
+var newArr = [12, 11].filter(callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');

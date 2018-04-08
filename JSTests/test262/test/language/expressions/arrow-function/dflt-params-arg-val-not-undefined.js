@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-not-undefined.case
 // - src/function-forms/default/arrow-function.template
 /*---
-description: Use of intializer when argument value is not `undefined` (arrow function expression)
+description: Use of initializer when argument value is not `undefined` (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 features: [default-parameters]
 flags: [generated]

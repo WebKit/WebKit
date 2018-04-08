@@ -9,23 +9,23 @@ description: >
     is an own accessor property
 ---*/
 
-        var accessed = true;
-        var obj = {};
-        obj[0] = 12;
-        obj[1] = 11;
-        obj[2] = 9;
+var accessed = true;
+var obj = {};
+obj[0] = 12;
+obj[1] = 11;
+obj[2] = 9;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            return obj.length === 2;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  return obj.length === 2;
+}
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
 assert(Array.prototype.reduceRight.call(obj, callbackfn, 11), 'Array.prototype.reduceRight.call(obj, callbackfn, 11) !== true');
 assert(accessed, 'accessed !== true');

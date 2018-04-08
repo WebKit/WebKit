@@ -8,4 +8,4 @@ description: >
     boolean primitive value
 ---*/
 
-    Object.preventExtensions(true);
+Object.preventExtensions(true);

@@ -8,4 +8,4 @@ description: >
     body is not strict mode
 ---*/
 
-  Function('eval', 'return;');
+Function('eval', 'return;');

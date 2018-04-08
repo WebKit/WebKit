@@ -9,10 +9,10 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Object.prototype.value = "Math";
+Object.prototype.value = "Math";
 
-            Object.defineProperty(obj, "property", Math);
+Object.defineProperty(obj, "property", Math);
 
 assert.sameValue(obj.property, "Math", 'obj.property');

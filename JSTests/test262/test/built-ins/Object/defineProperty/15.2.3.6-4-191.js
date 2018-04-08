@@ -10,27 +10,27 @@ description: >
 ---*/
 
 try {
-    Object.defineProperty(Array.prototype, "0", {
-        value: 11,
-        configurable: true
-    });
+  Object.defineProperty(Array.prototype, "0", {
+    value: 11,
+    configurable: true
+  });
 
-    var arrObj = [];
+  var arrObj = [];
 
-    Object.defineProperty(arrObj, "0", {
-        configurable: false
-    });
+  Object.defineProperty(arrObj, "0", {
+    configurable: false
+  });
 
-    if (!arrObj.hasOwnProperty("0")) {
-        $ERROR("Expected arrObj.hasOwnProperty('0') === true, actually " + arrObj.hasOwnProperty("0"));
-    }
-    if (Array.prototype[0] !== 11) {
-        $ERROR("Expected Array.prototype[0] === 11), actually " + Array.prototype[0]);
-    }
-    if (typeof arrObj[0] !== "undefined") {
-        $ERROR("Expected typeof arrObj[0] === 'undefined'), actually " + typeof arrObj[0]);
-    }
+  if (!arrObj.hasOwnProperty("0")) {
+    $ERROR("Expected arrObj.hasOwnProperty('0') === true, actually " + arrObj.hasOwnProperty("0"));
+  }
+  if (Array.prototype[0] !== 11) {
+    $ERROR("Expected Array.prototype[0] === 11), actually " + Array.prototype[0]);
+  }
+  if (typeof arrObj[0] !== "undefined") {
+    $ERROR("Expected typeof arrObj[0] === 'undefined'), actually " + typeof arrObj[0]);
+  }
 
 } finally {
-    delete Array.prototype[0];
+  delete Array.prototype[0];
 }

@@ -9,18 +9,18 @@ description: >
     the call
 ---*/
 
-  var calledForThree = false;
+var calledForThree = false;
 
-  function callbackfn(val, Idx, obj)
-  {
-    arr[2] = 3;
-    if(val == 3)
-      calledForThree = true;
-    return true;
-  }
+function callbackfn(val, Idx, obj)
+{
+  arr[2] = 3;
+  if (val == 3)
+    calledForThree = true;
+  return true;
+}
 
-  var arr = [1,2,,4,5];
+var arr = [1, 2, , 4, 5];
 
-  var res = arr.every(callbackfn);
+var res = arr.every(callbackfn);
 
 assert(calledForThree, 'calledForThree !== true');

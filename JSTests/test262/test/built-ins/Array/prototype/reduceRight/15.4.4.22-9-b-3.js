@@ -9,27 +9,30 @@ description: >
     visible here
 ---*/
 
-        var accessed = false;
-        var testResult = true;
+var accessed = false;
+var testResult = true;
 
-        function callbackfn(preVal, curVal, idx, obj) {
-            accessed = true;
-            if (idx === 2) {
-                testResult = false;
-            }
-        }
+function callbackfn(preVal, curVal, idx, obj) {
+  accessed = true;
+  if (idx === 2) {
+    testResult = false;
+  }
+}
 
-        var obj = { 2: "2", 3: 10 };
+var obj = {
+  2: "2",
+  3: 10
+};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                delete obj[2];
-                return 5;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    delete obj[2];
+    return 5;
+  },
+  configurable: true
+});
 
-        Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
+Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
 
 assert(accessed, 'accessed !== true');
 assert(testResult, 'testResult !== true');

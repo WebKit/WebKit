@@ -10,19 +10,19 @@ description: >
 flags: [noStrict]
 ---*/
 
-var o = { 
-    get gNonStrict() {
-        var tmp = Object.getOwnPropertyDescriptor(o, "gNonStrict").get;
-        return tmp.caller || tmp.caller.throwTypeError;
-    }
+var o = {
+  get gNonStrict() {
+    var tmp = Object.getOwnPropertyDescriptor(o, "gNonStrict").get;
+    return tmp.caller || tmp.caller.throwTypeError;
+  }
 };
 
 
 function f() {
-    "use strict";
-    return o.gNonStrict;
+  "use strict";
+  return o.gNonStrict;
 }
 
 assert.throws(TypeError, function() {
-    f();
+  f();
 });

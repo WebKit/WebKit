@@ -7,12 +7,12 @@ es5id: 15.4.3.2-0-4
 description: Array.isArray return false if its argument is not an Array
 ---*/
 
-var b_num   = Array.isArray(42);
+var b_num = Array.isArray(42);
 var b_undef = Array.isArray(undefined);
-var b_bool  = Array.isArray(true);
-var b_str   = Array.isArray("abc");
-var b_obj   = Array.isArray({});
-var b_null  = Array.isArray(null);
+var b_bool = Array.isArray(true);
+var b_str = Array.isArray("abc");
+var b_obj = Array.isArray({});
+var b_null = Array.isArray(null);
 
 
 assert.sameValue(b_num, false, 'b_num');

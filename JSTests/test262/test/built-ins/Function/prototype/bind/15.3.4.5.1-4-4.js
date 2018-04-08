@@ -9,10 +9,10 @@ description: >
     'boundThis'
 ---*/
 
-        var func = function () {
-            return arguments.length === 0;
-        };
+var func = function() {
+  return arguments.length === 0;
+};
 
-        var newFunc = Function.prototype.bind.call(func);
+var newFunc = Function.prototype.bind.call(func);
 
 assert(newFunc(), 'newFunc() !== true');

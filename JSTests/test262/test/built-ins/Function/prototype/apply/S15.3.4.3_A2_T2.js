@@ -7,7 +7,7 @@ es5id: 15.3.4.3_A2_T2
 description: Checking f.apply.length, where f is new Function
 ---*/
 
-var f=new Function;
+var f = new Function;
 
 //CHECK#1
 if (typeof f.apply !== "function") {

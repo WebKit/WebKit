@@ -7,15 +7,16 @@ es5id: 15.4.4.20-5-3
 description: Array.prototype.filter - thisArg is Array
 ---*/
 
-  var res = false;
-  var a = new Array();
-  a.res = true;
-  function callbackfn(val, idx, obj)
-  {
-    return this.res;
-  }
+var res = false;
+var a = new Array();
+a.res = true;
 
-  var srcArr = [1];
-  var resArr = srcArr.filter(callbackfn,a);
+function callbackfn(val, idx, obj)
+{
+  return this.res;
+}
+
+var srcArr = [1];
+var resArr = srcArr.filter(callbackfn, a);
 
 assert.sameValue(resArr.length, 1, 'resArr.length');

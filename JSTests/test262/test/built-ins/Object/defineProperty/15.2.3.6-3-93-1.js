@@ -9,18 +9,18 @@ description: >
     (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            RegExp.prototype.configurable = true;
-            var regObj = new RegExp();
+RegExp.prototype.configurable = true;
+var regObj = new RegExp();
 
-            Object.defineProperty(obj, "property", regObj);
+Object.defineProperty(obj, "property", regObj);
 
-            var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-            delete obj.property;
+delete obj.property;
 
-            var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

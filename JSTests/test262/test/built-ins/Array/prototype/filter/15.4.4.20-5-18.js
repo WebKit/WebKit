@@ -7,15 +7,15 @@ es5id: 15.4.4.20-5-18
 description: Array.prototype.filter - Error Object can be used as thisArg
 ---*/
 
-        var accessed = false;
-        var objError = new RangeError();
+var accessed = false;
+var objError = new RangeError();
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this === objError;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this === objError;
+}
 
-        var newArr = [11].filter(callbackfn, objError);
+var newArr = [11].filter(callbackfn, objError);
 
 assert.sameValue(newArr[0], 11, 'newArr[0]');
 assert(accessed, 'accessed !== true');

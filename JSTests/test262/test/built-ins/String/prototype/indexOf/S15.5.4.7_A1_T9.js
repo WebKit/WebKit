@@ -10,15 +10,15 @@ description: >
 ---*/
 
 var __obj = {
-    valueOf:function(){},
-    toString:void 0
+  valueOf: function() {},
+  toString: void 0
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(undefined) evaluates to "undefined" indexOf(undefined) evaluates to indexOf("undefined")
-if (new String(__obj).indexOf(function(){}()) !== 0) {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).indexOf(function(){}()) === 0. Actual: '+new String(__obj).indexOf(function(){}()) ); 
+if (new String(__obj).indexOf(function() {}()) !== 0) {
+  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).indexOf(function(){}()) === 0. Actual: ' + new String(__obj).indexOf(function() {}()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -17,24 +17,21 @@ includes: [compareArray.js]
 
 assert(
   compareArray(
-    [0, 1, 2, 3].copyWithin(-1, 0),
-    [0, 1, 2, 0]
+    [0, 1, 2, 3].copyWithin(-1, 0), [0, 1, 2, 0]
   ),
   '[0, 1, 2, 3].copyWithin(-1, 0) -> [0, 1, 2, 0]'
 );
 
 assert(
   compareArray(
-    [0, 1, 2, 3, 4].copyWithin(-2, 2),
-    [0, 1, 2, 2, 3]
+    [0, 1, 2, 3, 4].copyWithin(-2, 2), [0, 1, 2, 2, 3]
   ),
   '[0, 1, 2, 3, 4].copyWithin(-2, 2) -> [0, 1, 2, 2, 3]'
 );
 
 assert(
   compareArray(
-    [0, 1, 2, 3].copyWithin(-1, 2),
-    [0, 1, 2, 2]
+    [0, 1, 2, 3].copyWithin(-1, 2), [0, 1, 2, 2]
   ),
   '[0, 1, 2, 3].copyWithin(-1, 2) -> [0, 1, 2, 2]'
 );

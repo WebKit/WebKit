@@ -9,12 +9,12 @@ description: >
     callbackfn is treated as true value
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return new Boolean(false);
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return new Boolean(false);
+}
 
 assert([11].every(callbackfn), '[11].every(callbackfn) !== true');
 assert(accessed, 'accessed !== true');

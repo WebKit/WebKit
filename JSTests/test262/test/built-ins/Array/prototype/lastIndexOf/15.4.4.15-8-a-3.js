@@ -9,15 +9,15 @@ description: >
     visible here on an Array
 ---*/
 
-        var arr = [];
-        arr.length = 30;
-        var targetObj = function () { };
+var arr = [];
+arr.length = 30;
+var targetObj = function() {};
 
-        var fromIndex = {
-            valueOf: function () {
-                arr[4] = targetObj;
-                return 11;
-            }
-        };
+var fromIndex = {
+  valueOf: function() {
+    arr[4] = targetObj;
+    return 11;
+  }
+};
 
 assert.sameValue(arr.lastIndexOf(targetObj, fromIndex), 4, 'arr.lastIndexOf(targetObj, fromIndex)');

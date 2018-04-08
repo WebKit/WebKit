@@ -9,26 +9,26 @@ description: >
     [[Configurable]] is false) to a data property
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var verifySetFunc = "data";
-        var setFunc = function (value) {
-            verifySetFunc = value;
-        };
+var verifySetFunc = "data";
+var setFunc = function(value) {
+  verifySetFunc = value;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: undefined,
-            set: setFunc,
-            enumerable: true,
-            configurable: false
-        });
-        var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
-assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "prop", {
-                value: 1001
-            });
+Object.defineProperty(obj, "prop", {
+  get: undefined,
+  set: setFunc,
+  enumerable: true,
+  configurable: false
 });
-            var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
+assert.throws(TypeError, function() {
+  Object.defineProperty(obj, "prop", {
+    value: 1001
+  });
+});
+var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(desc1.hasOwnProperty("get"), 'desc1.hasOwnProperty("get") !== true');
 assert.sameValue(desc2.hasOwnProperty("value"), false, 'desc2.hasOwnProperty("value")');

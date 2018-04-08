@@ -10,29 +10,29 @@ description: >
     (15.4.5.1 step 3.c), test that the inherited valueOf method is used
 ---*/
 
-        var arrObj = [];
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var arrObj = [];
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var proto = {
-            valueOf: function () {
-                valueOfAccessed = true;
-                return 2;
-            }
-        };
+var proto = {
+  valueOf: function() {
+    valueOfAccessed = true;
+    return 2;
+  }
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        child.toString = function () {
-            toStringAccessed = true;
-            return 3;
-        };
+var child = new ConstructFun();
+child.toString = function() {
+  toStringAccessed = true;
+  return 3;
+};
 
-        Object.defineProperty(arrObj, "length", {
-            value: child
-        });
+Object.defineProperty(arrObj, "length", {
+  value: child
+});
 
 assert.sameValue(arrObj.length, 2, 'arrObj.length');
 assert.sameValue(toStringAccessed, false, 'toStringAccessed');

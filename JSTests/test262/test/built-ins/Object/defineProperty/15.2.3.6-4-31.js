@@ -9,21 +9,21 @@ description: >
     step 1)
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "foo", {
-            get: function () { },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "foo", {
+  get: function() {},
+  configurable: true
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var obj = new ConstructFun();
-        Object.defineProperty(obj, "foo", {
-            set: function () { },
-            configurable: false
-        });
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var obj = new ConstructFun();
+Object.defineProperty(obj, "foo", {
+  set: function() {},
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "foo", {
-                configurable: true
-            });
+  Object.defineProperty(obj, "foo", {
+    configurable: true
+  });
 });

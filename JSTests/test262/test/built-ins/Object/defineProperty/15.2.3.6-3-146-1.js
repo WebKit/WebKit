@@ -9,11 +9,11 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            RegExp.prototype.value = "RegExp";
-            var regObj = new RegExp();
+RegExp.prototype.value = "RegExp";
+var regObj = new RegExp();
 
-            Object.defineProperty(obj, "property", regObj);
+Object.defineProperty(obj, "property", regObj);
 
 assert.sameValue(obj.property, "RegExp", 'obj.property');

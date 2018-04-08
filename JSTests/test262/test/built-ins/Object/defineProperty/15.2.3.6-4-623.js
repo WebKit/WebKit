@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Date.prototype, "toISOString");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "toISOString");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Date.prototype.toISOString;
+var temp = Date.prototype.toISOString;
 
-            Date.prototype.toISOString = "2010";
+Date.prototype.toISOString = "2010";
 
-            var isWritable = (Date.prototype.toISOString === "2010");
+var isWritable = (Date.prototype.toISOString === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Date.prototype) {
-                if (prop === "toISOString") {
-                    isEnumerable = true;
-                }
-            }
+for (var prop in Date.prototype) {
+  if (prop === "toISOString") {
+    isEnumerable = true;
+  }
+}
 
-            delete Date.prototype.toISOString;
+delete Date.prototype.toISOString;
 
-            var isConfigurable = !Date.prototype.hasOwnProperty("toISOString");
+var isConfigurable = !Date.prototype.hasOwnProperty("toISOString");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

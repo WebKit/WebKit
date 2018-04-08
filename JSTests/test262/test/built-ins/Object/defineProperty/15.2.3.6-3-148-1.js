@@ -9,11 +9,11 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Error.prototype.value = "Error";
-            var errObj = new Error();
+Error.prototype.value = "Error";
+var errObj = new Error();
 
-            Object.defineProperty(obj, "property", errObj);
+Object.defineProperty(obj, "property", errObj);
 
 assert.sameValue(obj.property, "Error", 'obj.property');

@@ -8,13 +8,13 @@ description: >
     [[Prototype]] internal property is correct (Error Instance)
 ---*/
 
-            Object.defineProperty(Error.prototype, "prop", {
-                value: 1001,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
-            var errObj = new Error();
+Object.defineProperty(Error.prototype, "prop", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var errObj = new Error();
 
 assert.sameValue(errObj.hasOwnProperty("prop"), false, 'errObj.hasOwnProperty("prop")');
 assert.sameValue(errObj.prop, 1001, 'errObj.prop');

@@ -9,15 +9,15 @@ description: >
     here on an Array
 ---*/
 
-        var arr = [];
-        arr[10] = "10";
-        arr.length = 20;
+var arr = [];
+arr[10] = "10";
+arr.length = 20;
 
-        var fromIndex = {
-            valueOf: function () {
-                delete arr[10];
-                return 3;
-            }
-        };
+var fromIndex = {
+  valueOf: function() {
+    delete arr[10];
+    return 3;
+  }
+};
 
 assert.sameValue(arr.indexOf("10", fromIndex), -1, 'arr.indexOf("10", fromIndex)');

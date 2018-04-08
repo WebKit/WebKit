@@ -10,28 +10,31 @@ description: >
     Object
 ---*/
 
-        var accessed = false;
-        var testResult = true;
+var accessed = false;
+var testResult = true;
 
-        function callbackfn(accum, val, idx, obj) {
-            accessed = true;
-            if (idx === 3) {
-                testResult = false;
-            }
-        }
+function callbackfn(accum, val, idx, obj) {
+  accessed = true;
+  if (idx === 3) {
+    testResult = false;
+  }
+}
 
-        var obj = { 2: 2, length: 20 };
+var obj = {
+  2: 2,
+  length: 20
+};
 
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                delete Object.prototype[3];
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "0", {
+  get: function() {
+    delete Object.prototype[3];
+    return 0;
+  },
+  configurable: true
+});
 
-            Object.prototype[3] = 1;
-            Array.prototype.reduce.call(obj, callbackfn);
+Object.prototype[3] = 1;
+Array.prototype.reduce.call(obj, callbackfn);
 
 assert(testResult, 'testResult !== true');
 assert(accessed, 'accessed !== true');

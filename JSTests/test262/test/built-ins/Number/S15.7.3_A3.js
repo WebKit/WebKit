@@ -7,6 +7,6 @@ es5id: 15.7.3_A3
 description: Checking existence of the property "MIN_VALUE"
 ---*/
 
-if(!Number.hasOwnProperty("MIN_VALUE")){
+if (!Number.hasOwnProperty("MIN_VALUE")) {
   $ERROR('#1: The Number constructor has the property "MIN_VALUE"');
 }

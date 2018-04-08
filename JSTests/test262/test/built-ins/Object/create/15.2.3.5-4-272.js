@@ -8,24 +8,24 @@ description: >
     own accessor property (8.10.5 step 8.a)
 ---*/
 
-        var data = "data";
-        var descObj = {};
+var data = "data";
+var descObj = {};
 
-        Object.defineProperty(descObj, "set", {
-            get: function () {
-                return function (value) {
-                    data = value;
-                };
-            }
-        });
+Object.defineProperty(descObj, "set", {
+  get: function() {
+    return function(value) {
+      data = value;
+    };
+  }
+});
 
-        var newObj = Object.create({}, {
-            prop: descObj 
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
-        var hasProperty = newObj.hasOwnProperty("prop");
+var hasProperty = newObj.hasOwnProperty("prop");
 
-        newObj.prop = "overrideData";
+newObj.prop = "overrideData";
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(data, "overrideData", 'data');

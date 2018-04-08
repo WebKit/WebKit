@@ -9,12 +9,14 @@ description: >
     'value' property (8.10.5 step 5.a)
 ---*/
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        argObj.value = "ArgValue";
+argObj.value = "ArgValue";
 
-        var newObj = Object.create({}, {
-            prop: argObj
-        });
+var newObj = Object.create({}, {
+  prop: argObj
+});
 
 assert.sameValue(newObj.prop, "ArgValue", 'newObj.prop');

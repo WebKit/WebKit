@@ -9,12 +9,14 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        argObj.value = "arguments";
+argObj.value = "arguments";
 
-        Object.defineProperty(obj, "property", argObj);
+Object.defineProperty(obj, "property", argObj);
 
 assert.sameValue(obj.property, "arguments", 'obj.property');

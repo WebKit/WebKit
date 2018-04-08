@@ -8,7 +8,7 @@ es5id: 15.9.5.5_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 
-if (delete Date.prototype.toLocaleString  === false) {
+if (delete Date.prototype.toLocaleString === false) {
   $ERROR('#1: The Date.prototype.toLocaleString property has not the attributes DontDelete');
 }
 

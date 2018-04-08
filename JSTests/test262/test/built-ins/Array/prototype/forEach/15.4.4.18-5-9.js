@@ -7,13 +7,13 @@ es5id: 15.4.4.18-5-9
 description: Array.prototype.forEach - Function Object can be used as thisArg
 ---*/
 
-        var result = false;
-        var objString = function () { };
+var result = false;
+var objString = function() {};
 
-        function callbackfn(val, idx, obj) {
-            result = (this === objString);
-        }
+function callbackfn(val, idx, obj) {
+  result = (this === objString);
+}
 
-        [11].forEach(callbackfn, objString);
+[11].forEach(callbackfn, objString);
 
 assert(result, 'result !== true');

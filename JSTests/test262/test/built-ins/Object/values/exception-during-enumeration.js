@@ -8,14 +8,14 @@ author: Jordan Harband
 ---*/
 
 var trappedKey = {
-    get a() {
-        throw new RangeError('This error should be re-thrown');
-    },
-    get b() {
-        $ERROR('Should not try to get the second element');
-    }
+  get a() {
+    throw new RangeError('This error should be re-thrown');
+  },
+  get b() {
+    $ERROR('Should not try to get the second element');
+  }
 };
 
-assert.throws(RangeError, function () {
-    Object.values(trappedKey);
+assert.throws(RangeError, function() {
+  Object.values(trappedKey);
 });

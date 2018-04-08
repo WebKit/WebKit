@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.map)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "map");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "map");
 
 assert.sameValue(desc.value, Array.prototype.map, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

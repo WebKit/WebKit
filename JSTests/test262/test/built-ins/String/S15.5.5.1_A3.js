@@ -13,7 +13,7 @@ var __str__instance = new String("globglob");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(__str__instance.hasOwnProperty("length"))) {
-  $ERROR('#1: var __str__instance = new String("globglob"); __str__instance.hasOwnProperty("length") return true. Actual: '+__str__instance.hasOwnProperty("length"));
+  $ERROR('#1: var __str__instance = new String("globglob"); __str__instance.hasOwnProperty("length") return true. Actual: ' + __str__instance.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ try {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (!(__str__instance.hasOwnProperty("length"))) {
-  $ERROR('#3: var __str__instance = new String("globglob"); delete __str__instance.length; __str__instance.hasOwnProperty("length") return true. Actual: '+__str__instance.hasOwnProperty("length"));
+  $ERROR('#3: var __str__instance = new String("globglob"); delete __str__instance.length; __str__instance.hasOwnProperty("length") return true. Actual: ' + __str__instance.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

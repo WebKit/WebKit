@@ -11,9 +11,9 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    typeof Set.prototype.values,
-    "function",
-    "`typeof Set.prototype.values` is `'function'`"
+  typeof Set.prototype.values,
+  "function",
+  "`typeof Set.prototype.values` is `'function'`"
 );
 
 verifyNotEnumerable(Set.prototype, "values");

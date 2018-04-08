@@ -9,31 +9,31 @@ description: >
     property causes prototype index property to be visited
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 2 && val === "prototype") {
-                return false;
-            } else {
-                return true;
-            }
-        }
-        var arr = [0, 1, 2];
+function callbackfn(val, idx, obj) {
+  if (idx === 2 && val === "prototype") {
+    return false;
+  } else {
+    return true;
+  }
+}
+var arr = [0, 1, 2];
 
-            Object.defineProperty(Array.prototype, "2", {
-                get: function () {
-                    return "prototype";
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "2", {
+  get: function() {
+    return "prototype";
+  },
+  configurable: true
+});
 
-            Object.defineProperty(arr, "1", {
-                get: function () {
-                    arr.length = 2;
-                    return 1;
-                },
-                configurable: true
-            });
+Object.defineProperty(arr, "1", {
+  get: function() {
+    arr.length = 2;
+    return 1;
+  },
+  configurable: true
+});
 
-            var testResult = arr.map(callbackfn);
+var testResult = arr.map(callbackfn);
 
 assert.sameValue(testResult.length, 3, 'testResult.length');
 assert.sameValue(testResult[2], false, 'testResult[2]');

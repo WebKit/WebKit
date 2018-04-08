@@ -10,33 +10,33 @@ description: >
     value
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var getFunc = function () {
-            return 1001;
-        };
+var getFunc = function() {
+  return 1001;
+};
 
-        var verifySetFunc = "data";
-        var setFunc = function (value) {
-            verifySetFunc = value;
-        };
+var verifySetFunc = "data";
+var setFunc = function(value) {
+  verifySetFunc = value;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: undefined,
-            set: setFunc,
-            enumerable: true,
-            configurable: false
-        });
-
-        var result1 = typeof obj.prop === "undefined";
-        var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
-assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "prop", {
-                get: getFunc
-            });
+Object.defineProperty(obj, "prop", {
+  get: undefined,
+  set: setFunc,
+  enumerable: true,
+  configurable: false
 });
-            var result2 = typeof obj.prop === "undefined";
-            var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
+
+var result1 = typeof obj.prop === "undefined";
+var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
+assert.throws(TypeError, function() {
+  Object.defineProperty(obj, "prop", {
+    get: getFunc
+  });
+});
+var result2 = typeof obj.prop === "undefined";
+var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(result1, 'result1 !== true');
 assert(result2, 'result2 !== true');

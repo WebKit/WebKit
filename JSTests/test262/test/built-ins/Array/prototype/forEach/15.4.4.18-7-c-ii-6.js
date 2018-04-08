@@ -9,17 +9,20 @@ description: >
     consistent
 ---*/
 
-        var result = false;
-        var obj = { 0: 11, length: 1 };
-        var thisArg = {};
+var result = false;
+var obj = {
+  0: 11,
+  length: 1
+};
+var thisArg = {};
 
-        function callbackfn() {
-            result = (this === thisArg &&
-                arguments[0] === 11 &&
-                arguments[1] === 0 &&
-                arguments[2] === obj);
-        }
+function callbackfn() {
+  result = (this === thisArg &&
+    arguments[0] === 11 &&
+    arguments[1] === 0 &&
+    arguments[2] === obj);
+}
 
-        Array.prototype.forEach.call(obj, callbackfn, thisArg);
+Array.prototype.forEach.call(obj, callbackfn, thisArg);
 
 assert(result, 'result !== true');

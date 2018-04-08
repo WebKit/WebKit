@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Array.prototype)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array, "prototype");
+var desc = Object.getOwnPropertyDescriptor(Array, "prototype");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

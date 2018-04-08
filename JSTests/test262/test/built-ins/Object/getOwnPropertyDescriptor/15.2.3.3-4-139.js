@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.setMonth)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setMonth");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setMonth");
 
 assert.sameValue(desc.value, Date.prototype.setMonth, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

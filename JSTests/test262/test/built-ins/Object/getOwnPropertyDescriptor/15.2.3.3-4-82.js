@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.trim)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "trim");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "trim");
 
 assert.sameValue(desc.value, String.prototype.trim, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

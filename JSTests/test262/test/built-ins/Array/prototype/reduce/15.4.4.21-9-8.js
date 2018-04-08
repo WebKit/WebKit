@@ -7,23 +7,26 @@ es5id: 15.4.4.21-9-8
 description: Array.prototype.reduce - no observable effects occur if 'len' is 0
 ---*/
 
-        var accessed = false;
-        var callbackAccessed = false;
-        function callbackfn() {
-            callbackAccessed = true;
-        }
+var accessed = false;
+var callbackAccessed = false;
 
-        var obj = { length: 0 };
+function callbackfn() {
+  callbackAccessed = true;
+}
 
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                accessed = true;
-                return 10;
-            },
-            configurable: true
-        });
+var obj = {
+  length: 0
+};
 
-        Array.prototype.reduce.call(obj, function () { }, "initialValue");
+Object.defineProperty(obj, "0", {
+  get: function() {
+    accessed = true;
+    return 10;
+  },
+  configurable: true
+});
+
+Array.prototype.reduce.call(obj, function() {}, "initialValue");
 
 assert.sameValue(accessed, false, 'accessed');
 assert.sameValue(callbackAccessed, false, 'callbackAccessed');

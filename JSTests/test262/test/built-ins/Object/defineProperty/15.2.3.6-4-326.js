@@ -8,16 +8,16 @@ description: >
     true, [[Configurable]] is true) is writable
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: 2010,
-            writable: true,
-            enumerable: true,
-            configurable: true
-        });
-        var propertyDefineCorrect = (obj.prop === 2010);
-        obj.prop = 1001;
+Object.defineProperty(obj, "prop", {
+  value: 2010,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var propertyDefineCorrect = (obj.prop === 2010);
+obj.prop = 1001;
 
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');
 assert.sameValue(obj.prop, 1001, 'obj.prop');

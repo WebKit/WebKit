@@ -13,14 +13,14 @@ flags: [noStrict]
 var gNonStrict = gNonStrictBindee.bind(null);
 
 function f() {
-    "use strict";
-    gNonStrict();
+  "use strict";
+  gNonStrict();
 }
 
 assert.throws(TypeError, function() {
-    f();
+  f();
 });
 
 function gNonStrictBindee() {
-    return gNonStrictBindee.caller || gNonStrictBindee.caller.throwTypeError;
+  return gNonStrictBindee.caller || gNonStrictBindee.caller.throwTypeError;
 }

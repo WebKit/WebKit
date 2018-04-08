@@ -8,16 +8,16 @@ description: >
     (8.10.5 step 7)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var getter = function () {
-            return "present";
-        };
+var getter = function() {
+  return "present";
+};
 
-        Object.defineProperties(obj, {
-            property: {
-                get: getter
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    get: getter
+  }
+});
 
 assert.sameValue(obj.property, "present", 'obj.property');

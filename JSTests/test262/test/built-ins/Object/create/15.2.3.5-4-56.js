@@ -9,19 +9,19 @@ description: >
     (8.10.5 step 3.a)
 ---*/
 
-        var accessed = false;
-        var descObj = {};
-        Object.defineProperty(descObj, "enumerable", {
-            set: function () { }
-        });
+var accessed = false;
+var descObj = {};
+Object.defineProperty(descObj, "enumerable", {
+  set: function() {}
+});
 
-        var newObj = Object.create({}, {
-            prop: descObj 
-        });
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+var newObj = Object.create({}, {
+  prop: descObj
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

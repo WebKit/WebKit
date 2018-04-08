@@ -8,26 +8,26 @@ description: >
     that overrides an inherited accessor property
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "property", {
-            get: function () {
-                return "inheritedAccessorProperty";
-            },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "property", {
+  get: function() {
+    return "inheritedAccessorProperty";
+  },
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.ptototype = proto;
+var Con = function() {};
+Con.ptototype = proto;
 
-        var child = new Con();
-        var fun = function () {
-            return "ownAccessorProperty";
-        };
-        Object.defineProperty(child, "property", {
-            get: fun,
-            configurable: true
-        });
+var child = new Con();
+var fun = function() {
+  return "ownAccessorProperty";
+};
+Object.defineProperty(child, "property", {
+  get: fun,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(child, "property");
+var desc = Object.getOwnPropertyDescriptor(child, "property");
 
 assert.sameValue(desc.get, fun, 'desc.get');

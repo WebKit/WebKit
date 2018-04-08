@@ -8,15 +8,19 @@ description: >
     accessor desc for valid accessor properties
 ---*/
 
-    var o = {};
+var o = {};
 
-    // dummy getter
-    var getter = function () { return 1; }
-    var d = { get: getter };
+// dummy getter
+var getter = function() {
+  return 1;
+}
+var d = {
+  get: getter
+};
 
-    Object.defineProperty(o, "foo", d);
+Object.defineProperty(o, "foo", d);
 
-    var desc = Object.getOwnPropertyDescriptor(o, "foo");
+var desc = Object.getOwnPropertyDescriptor(o, "foo");
 
 assert.sameValue(desc.get, getter, 'desc.get');
 assert.sameValue(desc.set, undefined, 'desc.set');

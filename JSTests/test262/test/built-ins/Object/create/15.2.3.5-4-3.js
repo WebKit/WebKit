@@ -10,5 +10,5 @@ description: >
 
 
 assert.throws(TypeError, function() {
-            Object.create({}, null);
+  Object.create({}, null);
 });

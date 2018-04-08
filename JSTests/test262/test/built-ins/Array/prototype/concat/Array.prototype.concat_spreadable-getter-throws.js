@@ -12,7 +12,9 @@ features: [Symbol.isConcatSpreadable]
 function MyError() {}
 var obj = {};
 Object.defineProperty(obj, Symbol.isConcatSpreadable, {
-  get: function() { throw new MyError(); }
+  get: function() {
+    throw new MyError();
+  }
 });
 
 assert.throws(MyError, function() {

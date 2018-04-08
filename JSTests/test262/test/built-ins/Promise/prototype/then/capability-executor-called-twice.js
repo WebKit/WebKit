@@ -33,14 +33,14 @@ var promise = new class extends Promise {
     }
     return super(executor);
   }
-}(function(){});
+}(function() {});
 
 var checkPoint = "";
 constructorFunction = function(executor) {
   checkPoint += "a";
   executor();
   checkPoint += "b";
-  executor(function(){}, function(){});
+  executor(function() {}, function() {});
   checkPoint += "c";
 };
 promise.then();
@@ -51,7 +51,7 @@ constructorFunction = function(executor) {
   checkPoint += "a";
   executor(undefined, undefined);
   checkPoint += "b";
-  executor(function(){}, function(){});
+  executor(function() {}, function() {});
   checkPoint += "c";
 };
 promise.then();
@@ -61,9 +61,9 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   constructorFunction = function(executor) {
     checkPoint += "a";
-    executor(undefined, function(){});
+    executor(undefined, function() {});
     checkPoint += "b";
-    executor(function(){}, function(){});
+    executor(function() {}, function() {});
     checkPoint += "c";
   };
   promise.then();
@@ -74,9 +74,9 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   constructorFunction = function(executor) {
     checkPoint += "a";
-    executor(function(){}, undefined);
+    executor(function() {}, undefined);
     checkPoint += "b";
-    executor(function(){}, function(){});
+    executor(function() {}, function() {});
     checkPoint += "c";
   };
   promise.then();
@@ -89,7 +89,7 @@ assert.throws(TypeError, function() {
     checkPoint += "a";
     executor("invalid value", 123);
     checkPoint += "b";
-    executor(function(){}, function(){});
+    executor(function() {}, function() {});
     checkPoint += "c";
   };
   promise.then();

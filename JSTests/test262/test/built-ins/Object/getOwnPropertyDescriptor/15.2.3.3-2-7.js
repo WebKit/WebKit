@@ -8,8 +8,10 @@ description: >
     converts to a string (value is NaN)
 ---*/
 
-        var obj = { "NaN": 1 };
+var obj = {
+  "NaN": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, NaN);
+var desc = Object.getOwnPropertyDescriptor(obj, NaN);
 
 assert.sameValue(desc.value, 1, 'desc.value');

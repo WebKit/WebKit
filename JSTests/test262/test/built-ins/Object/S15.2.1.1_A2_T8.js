@@ -9,7 +9,9 @@ es5id: 15.2.1.1_A2_T8
 description: Calling Object function with function variable argument value
 ---*/
 
-var func = function(){return 1;};
+var func = function() {
+  return 1;
+};
 
 //CHECK#1
 if (typeof func !== 'function') {
@@ -19,6 +21,6 @@ if (typeof func !== 'function') {
 var n_obj = Object(func);
 
 //CHECK#2
-if ((n_obj !== func)||(n_obj()!==1)) {
+if ((n_obj !== func) || (n_obj() !== 1)) {
   $ERROR('#2: Object(function) returns function');
 }

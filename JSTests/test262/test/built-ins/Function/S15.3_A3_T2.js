@@ -9,8 +9,8 @@ es5id: 15.3_A3_T2
 description: First argument is string and null
 ---*/
 
-this.color="red";
-var planet="mars";
+this.color = "red";
+var planet = "mars";
 
 var f = Function.call("blablastring", "return this.color;");
 

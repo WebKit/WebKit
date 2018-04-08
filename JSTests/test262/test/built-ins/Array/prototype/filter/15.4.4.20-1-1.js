@@ -9,5 +9,5 @@ description: Array.prototype.filter applied to undefined throws a TypeError
 
 
 assert.throws(TypeError, function() {
-            Array.prototype.filter.call(undefined); // TypeError is thrown if value is undefined
+  Array.prototype.filter.call(undefined); // TypeError is thrown if value is undefined
 });

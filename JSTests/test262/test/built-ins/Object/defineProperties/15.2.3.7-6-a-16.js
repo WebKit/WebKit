@@ -13,29 +13,29 @@ includes: [propertyHelper.js]
 var obj = new Number(-9);
 
 Object.defineProperty(obj, "prop", {
-    value: 11,
-    configurable: false
+  value: 11,
+  configurable: false
 });
 
 try {
-    Object.defineProperties(obj, {
-        prop: {
-            value: 12,
-            configurable: true
-        }
-    });
-    $ERROR("Expected an exception.");
-} catch (e) {
-    verifyEqualTo(obj, "prop", 11);
-
-    verifyNotWritable(obj, "prop");
-
-    verifyNotEnumerable(obj, "prop");
-
-    verifyNotConfigurable(obj, "prop");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(obj, {
+    prop: {
+      value: 12,
+      configurable: true
     }
+  });
+  $ERROR("Expected an exception.");
+} catch (e) {
+  verifyEqualTo(obj, "prop", 11);
+
+  verifyNotWritable(obj, "prop");
+
+  verifyNotEnumerable(obj, "prop");
+
+  verifyNotConfigurable(obj, "prop");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

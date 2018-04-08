@@ -8,34 +8,34 @@ description: >
     [[Prototype]] internal property is correct(Object.create)
 ---*/
 
-        var appointment = {};
+var appointment = {};
 
-        Object.defineProperty(appointment, "startTime", {
-            value: 1001,
-            writable: true,
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(appointment, "name", {
-            value: "NAME",
-            writable: true,
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(appointment, "startTime", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+Object.defineProperty(appointment, "name", {
+  value: "NAME",
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
 
-        var meeting = Object.create(appointment);
-        Object.defineProperty(meeting, "conferenceCall", {
-            value: "In-person meeting",
-            writable: true,
-            enumerable: true,
-            configurable: true
-        });
+var meeting = Object.create(appointment);
+Object.defineProperty(meeting, "conferenceCall", {
+  value: "In-person meeting",
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
 
-        var teamMeeting = Object.create(meeting);
+var teamMeeting = Object.create(meeting);
 
-        var hasOwnProperty = !teamMeeting.hasOwnProperty("name") &&
-            !teamMeeting.hasOwnProperty("startTime") &&
-            !teamMeeting.hasOwnProperty('conferenceCall');
+var hasOwnProperty = !teamMeeting.hasOwnProperty("name") &&
+  !teamMeeting.hasOwnProperty("startTime") &&
+  !teamMeeting.hasOwnProperty('conferenceCall');
 
 assert(hasOwnProperty, 'hasOwnProperty !== true');
 assert.sameValue(teamMeeting.name, "NAME", 'teamMeeting.name');

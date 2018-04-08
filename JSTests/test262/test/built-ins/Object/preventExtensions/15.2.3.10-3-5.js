@@ -8,11 +8,13 @@ description: >
     a String object
 ---*/
 
-        var strObj = new String();
-        var preCheck = Object.isExtensible(strObj);
-        Object.preventExtensions(strObj);
+var strObj = new String();
+var preCheck = Object.isExtensible(strObj);
+Object.preventExtensions(strObj);
 assert.throws(TypeError, function() {
-            Object.defineProperty(strObj, "0", { value: "c" });
+  Object.defineProperty(strObj, "0", {
+    value: "c"
+  });
 });
 assert(preCheck, 'preCheck !== true');
 assert.sameValue(strObj.hasOwnProperty("0"), false, 'strObj.hasOwnProperty("0")');

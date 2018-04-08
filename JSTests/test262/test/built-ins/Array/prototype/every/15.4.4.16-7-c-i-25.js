@@ -10,16 +10,16 @@ description: >
     less than number of parameters)
 ---*/
 
-        var called = 0;
+var called = 0;
 
-        function callbackfn(val, idx, obj) {
-            called++;
-            return val === 11;
-        }
+function callbackfn(val, idx, obj) {
+  called++;
+  return val === 11;
+}
 
-        var func = function (a, b) {
-            return Array.prototype.every.call(arguments, callbackfn);
-        };
+var func = function(a, b) {
+  return Array.prototype.every.call(arguments, callbackfn);
+};
 
 assert(func(11), 'func(11) !== true');
 assert.sameValue(called, 1, 'called');

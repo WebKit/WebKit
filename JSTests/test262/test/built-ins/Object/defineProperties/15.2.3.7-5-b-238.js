@@ -8,28 +8,28 @@ description: >
     accessor property without a get function (8.10.5 step 8.a)
 ---*/
 
-        var fun = function () {
-            return 10; 
-        };
-        var proto = {};
-        Object.defineProperty(proto, "set", {
-            set: function () { }
-        });
+var fun = function() {
+  return 10;
+};
+var proto = {};
+Object.defineProperty(proto, "set", {
+  set: function() {}
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
-        descObj.get = fun;
+var descObj = new Con();
+descObj.get = fun;
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            prop: descObj
-        });
+Object.defineProperties(obj, {
+  prop: descObj
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
-assert.sameValue(typeof (desc.set), "undefined", 'typeof (desc.set)');
+assert.sameValue(typeof(desc.set), "undefined", 'typeof (desc.set)');
 assert.sameValue(obj.prop, 10, 'obj.prop');

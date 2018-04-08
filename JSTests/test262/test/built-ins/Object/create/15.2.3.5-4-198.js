@@ -9,19 +9,19 @@ description: >
     property (8.10.5 step 6.a)
 ---*/
 
-        var regObj = new RegExp();
+var regObj = new RegExp();
 
-        regObj.writable = true;
+regObj.writable = true;
 
-        var newObj = Object.create({}, {
-            prop: regObj
-        });
+var newObj = Object.create({}, {
+  prop: regObj
+});
 
-        var beforeWrite = (newObj.hasOwnProperty("prop") && typeof (newObj.prop) === "undefined");
+var beforeWrite = (newObj.hasOwnProperty("prop") && typeof(newObj.prop) === "undefined");
 
-        newObj.prop = "isWritable";
+newObj.prop = "isWritable";
 
-        var afterWrite = (newObj.prop === "isWritable");
+var afterWrite = (newObj.prop === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

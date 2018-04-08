@@ -9,14 +9,18 @@ description: >
     number
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(val, idx, obj) {
-            testResult = (val > 10);
-        }
+function callbackfn(val, idx, obj) {
+  testResult = (val > 10);
+}
 
-        var obj = { 1: 11, 2: 9, length: "0x0002" };
+var obj = {
+  1: 11,
+  2: 9,
+  length: "0x0002"
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(testResult, 'testResult !== true');

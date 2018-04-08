@@ -8,26 +8,26 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Object, "defineProperty");
+var desc = Object.getOwnPropertyDescriptor(Object, "defineProperty");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
-        var temp = Object.defineProperty;
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var temp = Object.defineProperty;
 
-            Object.defineProperty = "2010";
+Object.defineProperty = "2010";
 
-            var isWritable = (Object.defineProperty === "2010");
+var isWritable = (Object.defineProperty === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Object) {
-                if (prop === "defineProperty") {
-                    isEnumerable = true;
-                }
-            }
+for (var prop in Object) {
+  if (prop === "defineProperty") {
+    isEnumerable = true;
+  }
+}
 
-            delete Object.defineProperty;
+delete Object.defineProperty;
 
-            var isConfigurable = !Object.hasOwnProperty("defineProperty");
+var isConfigurable = !Object.hasOwnProperty("defineProperty");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

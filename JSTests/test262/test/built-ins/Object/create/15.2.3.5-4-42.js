@@ -10,7 +10,7 @@ description: >
 
 
 assert.throws(TypeError, function() {
-            Object.create({}, {
-                prop: null 
-            });
+  Object.create({}, {
+    prop: null
+  });
 });

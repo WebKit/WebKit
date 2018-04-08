@@ -16,7 +16,7 @@ if (decodeURI.propertyIsEnumerable('length') !== false) {
 
 //CHECK#2
 var result = true;
-for (var p in decodeURI){
+for (var p in decodeURI) {
   if (p === "length") {
     result = false;
   }

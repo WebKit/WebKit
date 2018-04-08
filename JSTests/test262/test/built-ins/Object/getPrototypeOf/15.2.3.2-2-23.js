@@ -8,6 +8,6 @@ description: >
     (Boolean object)
 ---*/
 
-        var obj = new Boolean(true);
+var obj = new Boolean(true);
 
 assert.sameValue(Object.getPrototypeOf(obj), Boolean.prototype, 'Object.getPrototypeOf(obj)');

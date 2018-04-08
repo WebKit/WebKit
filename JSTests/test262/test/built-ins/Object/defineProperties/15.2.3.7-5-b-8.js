@@ -8,19 +8,21 @@ description: >
     own data property (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        var descObj = { enumerable: true };
+var descObj = {
+  enumerable: true
+};
 
-        Object.defineProperties(obj, {
-            prop: descObj
-        });
+Object.defineProperties(obj, {
+  prop: descObj
+});
 
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

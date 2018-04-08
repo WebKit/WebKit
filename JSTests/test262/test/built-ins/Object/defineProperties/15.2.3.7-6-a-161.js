@@ -12,15 +12,15 @@ description: >
     absent (15.4.5.1 step 3.h)
 ---*/
 
-        var arr = [0, 1];
+var arr = [0, 1];
 
-        Object.defineProperties(arr, {
-            length: {
-                value: 1
-            }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: 1
+  }
+});
 
-        arr.length = 10; //try to overwrite length value of arr
+arr.length = 10; //try to overwrite length value of arr
 
 assert.sameValue(arr.hasOwnProperty("1"), false, 'arr.hasOwnProperty("1")');
 assert.sameValue(arr.length, 10, 'arr.length');

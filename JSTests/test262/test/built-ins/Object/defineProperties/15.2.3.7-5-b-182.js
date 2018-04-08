@@ -8,14 +8,14 @@ description: >
     'descObj' is  Date object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: new Date()
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: new Date()
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

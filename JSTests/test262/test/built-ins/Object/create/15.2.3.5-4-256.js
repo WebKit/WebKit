@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        this.get = function () {
-            return "VerifyGlobalObject";
-        };
+this.get = function() {
+  return "VerifyGlobalObject";
+};
 
-            var newObj = Object.create({}, {
-                prop: this
-            });
+var newObj = Object.create({}, {
+  prop: this
+});
 
 assert.sameValue(newObj.prop, "VerifyGlobalObject", 'newObj.prop');

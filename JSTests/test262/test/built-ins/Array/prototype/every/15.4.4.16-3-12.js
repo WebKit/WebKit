@@ -17,7 +17,12 @@ function callbackfn2(val, idx, obj) {
   return val > 11;
 }
 
-var obj = { 0: 11, 1: 12, 2: 9, length: "-4294967294" };
+var obj = {
+  0: 11,
+  1: 12,
+  2: 9,
+  length: "-4294967294"
+};
 
 assert(Array.prototype.every.call(obj, callbackfn1), 'Array.prototype.every.call(obj, callbackfn1) !== true');
 assert(Array.prototype.every.call(obj, callbackfn2), 'Array.prototype.every.call(obj, callbackfn2) !== true');

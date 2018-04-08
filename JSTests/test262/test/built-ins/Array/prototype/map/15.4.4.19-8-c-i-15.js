@@ -9,29 +9,31 @@ description: >
     accessor property on an Array-like object
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === kValue;
+  }
+  return false;
+}
 
-        var proto = { length: 2 };
+var proto = {
+  length: 2
+};
 
-        Object.defineProperty(proto, "0", {
-            get: function () {
-                return kValue;
-            },
-            configurable: true
-        });
+Object.defineProperty(proto, "0", {
+  get: function() {
+    return kValue;
+  },
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        var testResult = Array.prototype.map.call(child, callbackfn);
+var testResult = Array.prototype.map.call(child, callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

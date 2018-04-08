@@ -9,20 +9,22 @@ description: >
     data property (15.4.5.1 step 1)
 ---*/
 
-        var arrProtoLen;
-        var arr = [0, 1, 2];
+var arrProtoLen;
+var arr = [0, 1, 2];
 
 assert.throws(TypeError, function() {
-            arrProtoLen = Array.prototype.length;
-            Array.prototype.length = 0;
+  arrProtoLen = Array.prototype.length;
+  Array.prototype.length = 0;
 
-            Object.defineProperty(arr, "2", {
-                configurable: false
-            });
+  Object.defineProperty(arr, "2", {
+    configurable: false
+  });
 
-            Object.defineProperties(arr, {
-                length: { value: 1 }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 1
+    }
+  });
 });
 
 var desc = Object.getOwnPropertyDescriptor(arr, "length");

@@ -16,12 +16,12 @@ var arr = [];
 arr[0] = 100; // default value of attributes: writable: true, configurable: true, enumerable: true
 
 Object.defineProperties(arr, {
-    "0": {
-        value: 100,
-        writable: true,
-        enumerable: true,
-        configurable: true
-    }
+  "0": {
+    value: 100,
+    writable: true,
+    enumerable: true,
+    configurable: true
+  }
 });
 
 verifyEqualTo(arr, "0", 100);

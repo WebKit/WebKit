@@ -11,5 +11,5 @@ flags: [onlyStrict]
 
 
 assert.throws(TypeError, function() {
-            undefined = 12;
+  undefined = 12;
 });

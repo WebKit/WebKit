@@ -11,32 +11,32 @@ includes: [propertyHelper.js]
 ---*/
 
 
-var obj = (function () {
-    return arguments;
+var obj = (function() {
+  return arguments;
 }());
 
 obj.verifySetFunction = "data";
 Object.defineProperty(obj, "property", {
-    get: function () {
-        return obj.verifySetFunction;
-    },
-    set: function (value) {
-        obj.verifySetFunction = value;
-    },
-    configurable: true
+  get: function() {
+    return obj.verifySetFunction;
+  },
+  set: function(value) {
+    obj.verifySetFunction = value;
+  },
+  configurable: true
 });
 
 obj.verifySetFunction1 = "data1";
-var getFunc = function () {
-    return obj.verifySetFunction1;
+var getFunc = function() {
+  return obj.verifySetFunction1;
 };
-var setFunc = function (value) {
-    obj.verifySetFunction1 = value;
+var setFunc = function(value) {
+  obj.verifySetFunction1 = value;
 };
 
 Object.defineProperty(obj, "property", {
-    get: getFunc,
-    set: setFunc
+  get: getFunc,
+  set: setFunc
 });
 
 verifyEqualTo(obj, "property", getFunc());

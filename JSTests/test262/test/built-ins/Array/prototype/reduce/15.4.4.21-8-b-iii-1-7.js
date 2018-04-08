@@ -9,20 +9,26 @@ description: >
     property on an Array-like object
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (prevVal === 0);
-            }
-        }
+var testResult = false;
 
-        var proto = { 0: 0, 1: 1, 2: 2, length: 3 };
-        var Con = function () { };
-        Con.prototype = proto;
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (prevVal === 0);
+  }
+}
 
-        var child = new Con();
-        child.length = 3;
+var proto = {
+  0: 0,
+  1: 1,
+  2: 2,
+  length: 3
+};
+var Con = function() {};
+Con.prototype = proto;
 
-        Array.prototype.reduce.call(child, callbackfn);
+var child = new Con();
+child.length = 3;
+
+Array.prototype.reduce.call(child, callbackfn);
 
 assert(testResult, 'testResult !== true');

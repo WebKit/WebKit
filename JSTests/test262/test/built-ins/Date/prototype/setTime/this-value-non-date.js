@@ -23,7 +23,9 @@ var arg = {
     return 1;
   }
 };
-var args = (function() { return arguments; }());
+var args = (function() {
+  return arguments;
+}());
 
 assert.sameValue(typeof setTime, 'function');
 

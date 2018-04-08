@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Number.POSITIVE_INFINITY)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Number, "POSITIVE_INFINITY");
+var desc = Object.getOwnPropertyDescriptor(Number, "POSITIVE_INFINITY");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

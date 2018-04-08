@@ -9,11 +9,11 @@ description: >
     equal to the existing value of length (15.4.5.1 step 3.f)
 ---*/
 
-        var arrObj = [0, , 2];
+var arrObj = [0, , 2];
 
-        Object.defineProperty(arrObj, "length", {
-            value: 3
-        });
+Object.defineProperty(arrObj, "length", {
+  value: 3
+});
 
 assert.sameValue(arrObj.length, 3, 'arrObj.length');
 assert.sameValue(arrObj[0], 0, 'arrObj[0]');

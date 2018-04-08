@@ -18,11 +18,15 @@ features: [Symbol.iterator]
 ---*/
 
 var C = function() {
-  Object.defineProperty(this, '0', { configurable: false });
+  Object.defineProperty(this, '0', {
+    configurable: false
+  });
 };
 var closeCount = 0;
 var items = {};
-var nextResult = { done: false };
+var nextResult = {
+  done: false
+};
 
 items[Symbol.iterator] = function() {
   return {
@@ -32,7 +36,9 @@ items[Symbol.iterator] = function() {
     next: function() {
       var result = nextResult;
 
-      nextResult = { done: true };
+      nextResult = {
+        done: true
+      };
 
       return result;
     }

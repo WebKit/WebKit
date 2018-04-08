@@ -29,7 +29,9 @@ var returnCount = 0;
 iter[Symbol.iterator] = function() {
   return {
     next: function() {
-      return { done: false };
+      return {
+        done: false
+      };
     },
     return: function() {
       returnCount += 1;

@@ -15,6 +15,6 @@ assert.throws(TypeError, () => Date.prototype.toString.call(undefined));
 assert.throws(TypeError, () => Date.prototype.toString.call(0));
 assert.throws(TypeError, () => Date.prototype.toString.call({}));
 assert.throws(TypeError, () =>
-    Date.prototype.toString.call("Tue Mar 21 2017 12:16:43 GMT-0400 (EDT)"));
+  Date.prototype.toString.call("Tue Mar 21 2017 12:16:43 GMT-0400 (EDT)"));
 assert.throws(TypeError, () =>
-    Date.prototype.toString.call(1490113011493));
+  Date.prototype.toString.call(1490113011493));

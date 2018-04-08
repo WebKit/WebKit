@@ -8,17 +8,17 @@ description: >
     step 2)
 ---*/
 
-        var result = false;
-        Object.defineProperty(Math, "prop", {
-            get: function () {
-                result = (this === Math);
-                return {};
-            },
-            enumerable: true,
-            configurable: true
-        });
+var result = false;
+Object.defineProperty(Math, "prop", {
+  get: function() {
+    result = (this === Math);
+    return {};
+  },
+  enumerable: true,
+  configurable: true
+});
 
-            var newObj = Object.create({}, Math);
+var newObj = Object.create({}, Math);
 
 assert(result, 'result !== true');
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

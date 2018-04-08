@@ -9,19 +9,19 @@ description: >
     (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
-        var descObj = [];
+var obj = {};
+var accessed = false;
+var descObj = [];
 
-        descObj.enumerable = true;
+descObj.enumerable = true;
 
-        Object.defineProperties(obj, {
-            prop: descObj
-        });
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+Object.defineProperties(obj, {
+  prop: descObj
+});
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

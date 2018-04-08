@@ -17,11 +17,11 @@ function callbackfn2(val, idx, obj) {
   return val > 11;
 }
 
-var obj = { };
+var obj = {};
 
 Object.defineProperty(obj, "length", {
-  get: function () {
-      return 2;
+  get: function() {
+    return 2;
   },
   configurable: true
 });

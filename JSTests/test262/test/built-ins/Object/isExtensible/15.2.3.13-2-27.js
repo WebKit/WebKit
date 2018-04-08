@@ -8,13 +8,13 @@ description: >
     prototype that is not extensible
 ---*/
 
-        var proto = {};
-        Object.preventExtensions(proto);
+var proto = {};
+Object.preventExtensions(proto);
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var obj = new ConstructFun();
-        Object.preventExtensions(obj);
+var obj = new ConstructFun();
+Object.preventExtensions(obj);
 
 assert.sameValue(Object.isExtensible(obj), false, 'Object.isExtensible(obj)');

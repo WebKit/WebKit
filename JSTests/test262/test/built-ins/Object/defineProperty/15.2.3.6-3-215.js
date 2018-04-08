@@ -8,14 +8,14 @@ description: >
     accessor property without a get function (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var attributes = {};
-        Object.defineProperty(attributes, "get", {
-            set: function () { }
-        });
+var attributes = {};
+Object.defineProperty(attributes, "get", {
+  set: function() {}
+});
 
-        Object.defineProperty(obj, "property", attributes);
+Object.defineProperty(obj, "property", attributes);
 
 assert.sameValue(typeof obj.property, "undefined", 'typeof obj.property');
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');

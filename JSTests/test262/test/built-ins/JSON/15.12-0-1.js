@@ -10,6 +10,6 @@ es5id: 15.12-0-1
 description: JSON must be a built-in object
 ---*/
 
-  var o = JSON;
+var o = JSON;
 
 assert.sameValue(typeof(o), "object", 'typeof(o)');

@@ -8,23 +8,23 @@ description: >
     'descObj' is the Arguments object (8.10.5 step 3.b)
 ---*/
 
-        var obj = {};
-        var accessed = false;
-        var arg; 
-        
-        (function fun() {
-            arg = arguments;
-        }(1, 2, 3));
+var obj = {};
+var accessed = false;
+var arg;
 
-        Object.defineProperties(obj, {
-            prop: {
-                enumerable: arg
-            }
-        });
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+(function fun() {
+  arg = arguments;
+}(1, 2, 3));
+
+Object.defineProperties(obj, {
+  prop: {
+    enumerable: arg
+  }
+});
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

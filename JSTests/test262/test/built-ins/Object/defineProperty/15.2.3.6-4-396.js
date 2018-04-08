@@ -6,13 +6,13 @@ es5id: 15.2.3.6-4-396
 description: ES5 Attributes - [[Value]] attribute of data property is NaN
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: NaN
-        });
+Object.defineProperty(obj, "prop", {
+  value: NaN
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.prop !== obj.prop, 'obj.prop !== obj.prop !== true');
 assert(desc.value !== desc.value, 'desc.value !== desc.value !== true');

@@ -8,22 +8,22 @@ description: >
     instance)
 ---*/
 
-        var data = "data";
+var data = "data";
 
-            Object.defineProperty(Function.prototype, "prop", {
-                get: function () {
-                    return data;
-                },
-                enumerable: false,
-                configurable: true
-            });
-            var funObj = function () { };
-            var verifyEnumerable = false;
-            for (var p in funObj) {
-                if (p === "prop") {
-                    verifyEnumerable = true;
-                }
-            }
+Object.defineProperty(Function.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  enumerable: false,
+  configurable: true
+});
+var funObj = function() {};
+var verifyEnumerable = false;
+for (var p in funObj) {
+  if (p === "prop") {
+    verifyEnumerable = true;
+  }
+}
 
 assert.sameValue(funObj.hasOwnProperty("prop"), false, 'funObj.hasOwnProperty("prop")');
 assert.sameValue(verifyEnumerable, false, 'verifyEnumerable');

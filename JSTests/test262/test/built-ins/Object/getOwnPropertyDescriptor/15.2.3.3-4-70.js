@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.search)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "search");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "search");
 
 assert.sameValue(desc.value, String.prototype.search, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

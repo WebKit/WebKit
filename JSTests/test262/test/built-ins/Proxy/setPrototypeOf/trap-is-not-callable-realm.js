@@ -29,7 +29,7 @@ var p = new OProxy({}, {
 });
 
 assert.throws(TypeError, function() {
- Object.setPrototypeOf(p, {
-   value: 1
- });
+  Object.setPrototypeOf(p, {
+    value: 1
+  });
 });

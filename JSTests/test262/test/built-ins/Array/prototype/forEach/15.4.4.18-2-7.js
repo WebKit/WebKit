@@ -9,24 +9,25 @@ description: >
     an own accessor property
 ---*/
 
-        var result = false;
-        function callbackfn(val, idx, obj) {
-            result = (obj.length === 2);
-        }
+var result = false;
 
-        var obj = {};
+function callbackfn(val, idx, obj) {
+  result = (obj.length === 2);
+}
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+var obj = {};
 
-        obj[0] = 12;
-        obj[1] = 11;
-        obj[2] = 9;
+Object.defineProperty(obj, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
-        Array.prototype.forEach.call(obj, callbackfn);
+obj[0] = 12;
+obj[1] = 11;
+obj[2] = 9;
+
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(result, 'result !== true');

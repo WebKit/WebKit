@@ -11,38 +11,39 @@ includes: [propertyHelper.js]
 ---*/
 
 function getFunc() {
-    return arrObj.helpVerifySet;
+  return arrObj.helpVerifySet;
 }
+
 function setFunc(value) {
-    arrObj.helpVerifySet = value;
+  arrObj.helpVerifySet = value;
 }
 
 try {
-    Object.defineProperty(Array.prototype, "0", {
-        get: function () {
-            return 11;
-        },
-        configurable: true
-    });
+  Object.defineProperty(Array.prototype, "0", {
+    get: function() {
+      return 11;
+    },
+    configurable: true
+  });
 
-    var arrObj = [];
+  var arrObj = [];
 
 
-    Object.defineProperty(arrObj, "0", {
-        get: getFunc,
-        set: setFunc,
-        configurable: false
-    });
+  Object.defineProperty(arrObj, "0", {
+    get: getFunc,
+    set: setFunc,
+    configurable: false
+  });
 
-    arrObj[0] = 13;
+  arrObj[0] = 13;
 
-    verifyEqualTo(arrObj, "0", getFunc());
+  verifyEqualTo(arrObj, "0", getFunc());
 
-    verifyWritable(arrObj, "0", "helpVerifySet");
+  verifyWritable(arrObj, "0", "helpVerifySet");
 
-    verifyNotEnumerable(arrObj, "0");
+  verifyNotEnumerable(arrObj, "0");
 
-    verifyNotConfigurable(arrObj, "0");
+  verifyNotConfigurable(arrObj, "0");
 } finally {
-    delete Array.prototype[0];
+  delete Array.prototype[0];
 }

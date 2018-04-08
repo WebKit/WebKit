@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var dateObj = new Date();
+var dateObj = new Date();
 
-        dateObj.value = "DateValue";
+dateObj.value = "DateValue";
 
-        var newObj = Object.create({}, {
-            prop: dateObj
-        });
+var newObj = Object.create({}, {
+  prop: dateObj
+});
 
 assert.sameValue(newObj.prop, "DateValue", 'newObj.prop');

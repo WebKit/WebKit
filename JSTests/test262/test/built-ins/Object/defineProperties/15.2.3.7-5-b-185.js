@@ -8,14 +8,14 @@ description: >
     'descObj' is Error object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: new SyntaxError()
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: new SyntaxError()
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

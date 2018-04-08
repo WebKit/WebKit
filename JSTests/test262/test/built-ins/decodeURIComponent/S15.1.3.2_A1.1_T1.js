@@ -15,7 +15,7 @@ var result = true;
 try {
   decodeURIComponent("%");
   result = false;
-} catch(e) {
+} catch (e) {
   if ((e instanceof URIError) !== true) {
     result = false;
   }
@@ -25,7 +25,7 @@ try {
 try {
   decodeURIComponent("%A");
   result = false;
-} catch(e) {
+} catch (e) {
   if ((e instanceof URIError) !== true) {
     result = false;
   }
@@ -35,7 +35,7 @@ try {
 try {
   decodeURIComponent("%1");
   result = false;
-} catch(e) {
+} catch (e) {
   if ((e instanceof URIError) !== true) {
     result = false;
   }
@@ -45,7 +45,7 @@ try {
 try {
   decodeURIComponent("% ");
   result = false;
-} catch(e) {
+} catch (e) {
   if ((e instanceof URIError) !== true) {
     result = false;
   }

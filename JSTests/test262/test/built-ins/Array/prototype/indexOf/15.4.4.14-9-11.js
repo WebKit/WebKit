@@ -9,14 +9,14 @@ description: >
     adding elements to the array during iteration
 ---*/
 
-        var arr = [20];
+var arr = [20];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                arr[1] = 1;
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    arr[1] = 1;
+    return 0;
+  },
+  configurable: true
+});
 
 assert.sameValue(arr.indexOf(1), -1, 'arr.indexOf(1)');

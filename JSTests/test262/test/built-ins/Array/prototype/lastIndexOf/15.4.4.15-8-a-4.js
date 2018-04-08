@@ -9,14 +9,16 @@ description: >
     visible here
 ---*/
 
-        var arr = { 2: 6.99 };
+var arr = {
+  2: 6.99
+};
 
-        Object.defineProperty(arr, "length", {
-            get: function () {
-                delete arr[2];
-                return 3;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "length", {
+  get: function() {
+    delete arr[2];
+    return 3;
+  },
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.lastIndexOf.call(arr, 6.99), -1, 'Array.prototype.lastIndexOf.call(arr, 6.99)');

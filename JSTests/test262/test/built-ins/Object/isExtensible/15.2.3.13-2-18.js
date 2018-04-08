@@ -8,6 +8,6 @@ description: >
     (Number.prototype)
 ---*/
 
-  var e = Object.isExtensible(Number.prototype);
+var e = Object.isExtensible(Number.prototype);
 
 assert.sameValue(e, true, 'e');

@@ -10,32 +10,32 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var fun = function () { };
+var fun = function() {};
 
 Object.defineProperty(fun, "prop", {
-    value: 11,
-    configurable: false
+  value: 11,
+  configurable: false
 });
 
 try {
-    Object.defineProperties(fun, {
-        prop: {
-            value: 12,
-            configurable: true
-        }
-    });
-    $ERROR("Expected an exception.");
-} catch (e) {
-    verifyEqualTo(fun, "prop", 11);
-
-    verifyNotWritable(fun, "prop");
-
-    verifyNotEnumerable(fun, "prop");
-
-    verifyNotConfigurable(fun, "prop");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(fun, {
+    prop: {
+      value: 12,
+      configurable: true
     }
+  });
+  $ERROR("Expected an exception.");
+} catch (e) {
+  verifyEqualTo(fun, "prop", 11);
+
+  verifyNotWritable(fun, "prop");
+
+  verifyNotEnumerable(fun, "prop");
+
+  verifyNotConfigurable(fun, "prop");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

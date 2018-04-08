@@ -8,20 +8,20 @@ description: >
     property
 ---*/
 
-        var proto = {};
-        var fun = function () {
-            return "ownAccessorProperty";
-        };
-        Object.defineProperty(proto, "property", {
-            get: fun,
-            configurable: true
-        });
+var proto = {};
+var fun = function() {
+  return "ownAccessorProperty";
+};
+Object.defineProperty(proto, "property", {
+  get: fun,
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        var desc = Object.getOwnPropertyDescriptor(child, "property");
+var desc = Object.getOwnPropertyDescriptor(child, "property");
 
 assert.sameValue(typeof desc, "undefined", 'typeof desc');

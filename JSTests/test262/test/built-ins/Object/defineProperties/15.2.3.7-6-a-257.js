@@ -15,22 +15,21 @@ includes: [propertyHelper.js]
 var arr = [];
 
 function set_fun(value) {
-    arr.setVerifyHelpProp = value;
+  arr.setVerifyHelpProp = value;
 }
 
 Object.defineProperty(arr, "0", {
-    set: function () { },
-    configurable: true
+  set: function() {},
+  configurable: true
 });
 
 Object.defineProperties(arr, {
-    "0": {
-        set: set_fun
-    }
+  "0": {
+    set: set_fun
+  }
 });
 verifyWritable(arr, "0", "setVerifyHelpProp");
 
 verifyNotEnumerable(arr, "0");
 
 verifyConfigurable(arr, "0");
-

@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-undefined.case
 // - src/function-forms/default/func-expr.template
 /*---
-description: Use of intializer when argument value is `undefined` (function expression)
+description: Use of initializer when argument value is `undefined` (function expression)
 esid: sec-function-definitions-runtime-semantics-evaluation
 features: [default-parameters]
 flags: [generated]

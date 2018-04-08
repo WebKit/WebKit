@@ -8,11 +8,11 @@ author: Jordan Harband
 ---*/
 
 var bAddsC = {
-    a: 'A',
-    get b() {
-        this.c = 'C';
-        return 'B';
-    }
+  a: 'A',
+  get b() {
+    this.c = 'C';
+    return 'B';
+  }
 };
 
 var result = Object.values(bAddsC);

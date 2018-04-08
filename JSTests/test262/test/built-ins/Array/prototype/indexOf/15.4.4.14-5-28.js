@@ -9,14 +9,14 @@ description: >
     visible when an exception occurs
 ---*/
 
-        var stepFiveOccurs = false;
-        var fromIndex = {
-            valueOf: function () {
-                stepFiveOccurs = true;
-                return 0;
-            }
-        };
+var stepFiveOccurs = false;
+var fromIndex = {
+  valueOf: function() {
+    stepFiveOccurs = true;
+    return 0;
+  }
+};
 assert.throws(TypeError, function() {
-            Array.prototype.indexOf.call(undefined, undefined, fromIndex);
+  Array.prototype.indexOf.call(undefined, undefined, fromIndex);
 });
 assert.sameValue(stepFiveOccurs, false, 'stepFiveOccurs');

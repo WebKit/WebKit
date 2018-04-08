@@ -8,7 +8,7 @@ description: >
     built-ins (Number.prototype.constructor)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Number.prototype, "constructor");
+var desc = Object.getOwnPropertyDescriptor(Number.prototype, "constructor");
 
 assert.sameValue(desc.value, Number.prototype.constructor, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

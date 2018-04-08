@@ -8,7 +8,7 @@ description: >
     built-ins (RangeError.prototype.constructor)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(RangeError.prototype, "constructor");
+var desc = Object.getOwnPropertyDescriptor(RangeError.prototype, "constructor");
 
 assert.sameValue(desc.value, RangeError.prototype.constructor, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

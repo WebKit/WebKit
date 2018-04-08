@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-undefined.case
 // - src/function-forms/default/cls-expr-gen-meth.template
 /*---
-description: Use of intializer when argument value is `undefined` (class expression method)
+description: Use of initializer when argument value is `undefined` (class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 features: [default-parameters, generators]
 flags: [generated]

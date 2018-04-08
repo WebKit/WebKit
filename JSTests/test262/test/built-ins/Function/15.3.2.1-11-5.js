@@ -8,4 +8,4 @@ description: >
     if body is not strict
 ---*/
 
-    Function('a,a','return;');
+Function('a,a', 'return;');

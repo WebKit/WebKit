@@ -14,13 +14,16 @@ features: [BigInt]
 
 assert.throws(Test262Error, function() {
   BigInt({
-    valueOf: function() { throw new Test262Error(); }
+    valueOf: function() {
+      throw new Test262Error();
+    }
   });
 });
 
 assert.throws(Test262Error, function() {
   BigInt({
-    toString: function() { throw new Test262Error(); }
+    toString: function() {
+      throw new Test262Error();
+    }
   });
 });
-

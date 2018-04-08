@@ -8,7 +8,7 @@ description: >
     built-ins (RegExp.prototype.test)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "test");
+var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "test");
 
 assert.sameValue(desc.value, RegExp.prototype.test, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

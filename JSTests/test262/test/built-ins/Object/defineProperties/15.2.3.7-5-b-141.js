@@ -12,16 +12,16 @@ includes: [propertyHelper.js]
 var obj = {};
 
 var proto = {
-    writable: false
+  writable: false
 };
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var descObj = new Con();
 
 Object.defineProperties(obj, {
-    property: descObj
+  property: descObj
 });
 
 assert(obj.hasOwnProperty("property"));

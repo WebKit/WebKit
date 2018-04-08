@@ -9,4 +9,4 @@ includes: [nativeFunctionMatcher.js]
 
 let f = function(){}.bind(null);
 
-assert(NATIVE_FUNCTION_RE.test("" + f), "looks pretty much like a NativeFunction");
+assertNativeFunction(f);

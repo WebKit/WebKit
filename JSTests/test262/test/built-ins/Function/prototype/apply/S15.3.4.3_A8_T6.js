@@ -11,12 +11,12 @@ description: >
 
 //CHECK#1
 try {
-  var obj = new (Function("function f(){this.p1=1;};return f").apply());
+  var obj = new(Function("function f(){this.p1=1;};return f").apply());
 } catch (e) {
   $ERROR('#1: Function.prototype.apply can\'t be used as [[Construct]] caller');
 }
 
 //CHECK#2
-if (obj.p1!== 1) {
+if (obj.p1 !== 1) {
   $ERROR('#2: Function.prototype.apply can\'t be used as [[Construct]] caller');
 }

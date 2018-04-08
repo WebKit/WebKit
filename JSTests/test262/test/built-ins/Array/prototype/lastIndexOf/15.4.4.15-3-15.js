@@ -9,7 +9,11 @@ description: >
     containing an exponential number
 ---*/
 
-        var obj = {229: 229, 230: 2.3E2, length: "2.3E2"};
+var obj = {
+  229: 229,
+  230: 2.3E2,
+  length: "2.3E2"
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, 229), 229, 'Array.prototype.lastIndexOf.call(obj, 229)');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, 2.3E2), -1, 'Array.prototype.lastIndexOf.call(obj, 2.3E2)');

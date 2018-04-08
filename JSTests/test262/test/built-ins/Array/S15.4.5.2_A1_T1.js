@@ -12,30 +12,30 @@ description: Checking boundary points
 
 //CHECK#1
 var x = [];
-if (x.length !== 0) {  
-  $ERROR('#1: x = []; x.length === 0. Actual: ' + (x.length));    
+if (x.length !== 0) {
+  $ERROR('#1: x = []; x.length === 0. Actual: ' + (x.length));
 }
 
 //CHECK#2
 x[0] = 1;
-if (x.length !== 1) {      
+if (x.length !== 1) {
   $ERROR('#2: x = []; x[1] = 1; x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#3
 x[1] = 1;
-if (x.length !== 2) {      
+if (x.length !== 2) {
   $ERROR('#3: x = []; x[0] = 1; x[1] = 1; x.length === 2. Actual: ' + (x.length));
 }
 
 //CHECK#4
 x[2147483648] = 1;
-if (x.length !== 2147483649) {      
+if (x.length !== 2147483649) {
   $ERROR('#4: x = []; x[0] = 1; x[1] = 1; x[2147483648] = 1; x.length === 2147483649. Actual: ' + (x.length));
 }
 
 //CHECK#5
 x[4294967294] = 1;
-if (x.length !== 4294967295) {      
+if (x.length !== 4294967295) {
   $ERROR('#5: x = []; x[0] = 1; x[1] = 1; x[2147483648] = 1; x[42949672954] = 1; x.length === 4294967295. Actual: ' + (x.length));
 }

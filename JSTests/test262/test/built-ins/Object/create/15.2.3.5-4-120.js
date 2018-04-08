@@ -9,15 +9,15 @@ description: >
     property (8.10.5 step 4.a)
 ---*/
 
-            JSON.configurable = true;
+JSON.configurable = true;
 
-            var newObj = Object.create({}, {
-                prop: JSON 
-            });
+var newObj = Object.create({}, {
+  prop: JSON
+});
 
-            var result1 = newObj.hasOwnProperty("prop");
-            delete newObj.prop;
-            var result2 = newObj.hasOwnProperty("prop");
+var result1 = newObj.hasOwnProperty("prop");
+delete newObj.prop;
+var result2 = newObj.hasOwnProperty("prop");
 
 assert.sameValue(result1, true, 'result1');
 assert.sameValue(result2, false, 'result2');

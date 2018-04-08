@@ -22,11 +22,11 @@ features: [cross-realm, Symbol]
 
 var other = $262.createRealm().global;
 var p = new other.Proxy({}, {
-    ownKeys: function() {
-        return undefined;
-    }
+  ownKeys: function() {
+    return undefined;
+  }
 });
 
 assert.throws(TypeError, function() {
-    Object.keys(p);
+  Object.keys(p);
 });

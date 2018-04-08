@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.localeCompare)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "localeCompare");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "localeCompare");
 
 assert.sameValue(desc.value, String.prototype.localeCompare, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

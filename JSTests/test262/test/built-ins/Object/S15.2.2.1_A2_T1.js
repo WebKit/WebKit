@@ -9,7 +9,9 @@ es5id: 15.2.2.1_A2_T1
 description: The value is Object
 ---*/
 
-var obj = {prop:1};
+var obj = {
+  prop: 1
+};
 
 var n_obj = new Object(obj);
 

@@ -13,7 +13,13 @@ var __instance = new Number(1100.00777001);
 
 Number.prototype.replace = String.prototype.replace;
 
-var __obj = {toString:function(){return function(a1,a2,a3){return a2+"z"};}}
+var __obj = {
+  toString: function() {
+    return function(a1, a2, a3) {
+      return a2 + "z"
+    };
+  }
+}
 //__obj = function(a1,a2,a3){return a2+"z"};
 
 
@@ -24,7 +30,7 @@ try {
   $ERROR('#1.0: x = __instance.replace(__obj, 1) === "1100.007z7001" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#1.1: Exception is instance of TypeError. Actual: '+e);
+    $ERROR('#1.1: Exception is instance of TypeError. Actual: ' + e);
   }
 }
 //

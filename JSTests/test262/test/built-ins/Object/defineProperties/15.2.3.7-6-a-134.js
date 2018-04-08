@@ -9,12 +9,12 @@ description: >
     containing a negative number (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: "-42"
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: "-42"
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

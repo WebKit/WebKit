@@ -14,7 +14,7 @@ if (Number("+0") !== Number("0")) {
   $ERROR('#1.1: Number("+0") === Number("0")');
 } else {
   // CHECK#2
-  if (1/Number("+0") !== 1/Number("0")) {
+  if (1 / Number("+0") !== 1 / Number("0")) {
     $ERROR('#2.2: 1/Number("+0") === 1/Number("0")');
   }
 }

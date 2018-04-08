@@ -9,10 +9,10 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Math.value = "Math";
+Math.value = "Math";
 
-            Object.defineProperty(obj, "property", Math);
+Object.defineProperty(obj, "property", Math);
 
 assert.sameValue(obj.property, "Math", 'obj.property');

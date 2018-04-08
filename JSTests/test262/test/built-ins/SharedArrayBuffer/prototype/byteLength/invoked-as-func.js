@@ -3,6 +3,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: Throws a TypeError exception when invoked as a function
+features: [SharedArrayBuffer]
 ---*/
 
 var getter = Object.getOwnPropertyDescriptor(

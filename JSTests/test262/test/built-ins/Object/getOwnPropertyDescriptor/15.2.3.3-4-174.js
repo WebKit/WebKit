@@ -8,7 +8,7 @@ description: >
     built-ins (TypeError.prototype.constructor)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(TypeError.prototype, "constructor");
+var desc = Object.getOwnPropertyDescriptor(TypeError.prototype, "constructor");
 
 assert.sameValue(desc.value, TypeError.prototype.constructor, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

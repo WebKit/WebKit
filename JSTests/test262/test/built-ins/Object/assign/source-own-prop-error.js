@@ -13,7 +13,9 @@ info: |
 features: [Proxy]
 ---*/
 
-var source = new Proxy({ attr: null }, {
+var source = new Proxy({
+  attr: null
+}, {
   getOwnPropertyDescriptor: function() {
     throw new Test262Error();
   }

@@ -8,16 +8,17 @@ description: >
     property in F set as false
 ---*/
 
-        var canEnumerable = false;
-        var hasProperty = false;
-        function foo() { }
-        var obj = foo.bind({});
-        hasProperty = obj.hasOwnProperty("length");
-        for (var prop in obj) {
-            if (prop === "length") {
-                canEnumerable = true;
-            }
-        }
+var canEnumerable = false;
+var hasProperty = false;
+
+function foo() {}
+var obj = foo.bind({});
+hasProperty = obj.hasOwnProperty("length");
+for (var prop in obj) {
+  if (prop === "length") {
+    canEnumerable = true;
+  }
+}
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(canEnumerable, false, 'canEnumerable');

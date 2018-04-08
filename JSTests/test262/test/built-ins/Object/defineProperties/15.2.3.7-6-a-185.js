@@ -10,17 +10,17 @@ description: >
     of the length property in 'O'  (15.4.5.1 step 4.b)
 ---*/
 
-        var arr = [1, 2, 3];
+var arr = [1, 2, 3];
 
-        Object.defineProperty(arr, "length", {
-            writable: false
-        });
+Object.defineProperty(arr, "length", {
+  writable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                "4": {
-                    value: "abc"
-                }
-            });
+  Object.defineProperties(arr, {
+    "4": {
+      value: "abc"
+    }
+  });
 });
 assert.sameValue(arr[0], 1, 'arr[0]');
 assert.sameValue(arr[1], 2, 'arr[1]');

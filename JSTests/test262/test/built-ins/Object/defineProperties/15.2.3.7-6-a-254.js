@@ -15,20 +15,20 @@ includes: [propertyHelper.js]
 var arr = [];
 
 function get_fun() {
-    return 36;
+  return 36;
 }
 
 Object.defineProperty(arr, "0", {
-    get: function () {
-        return 12;
-    },
-    configurable: true
+  get: function() {
+    return 12;
+  },
+  configurable: true
 });
 
 Object.defineProperties(arr, {
-    "0": {
-        get: get_fun
-    }
+  "0": {
+    get: get_fun
+  }
 });
 verifyEqualTo(arr, "0", get_fun());
 

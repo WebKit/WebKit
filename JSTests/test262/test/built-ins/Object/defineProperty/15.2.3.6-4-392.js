@@ -8,14 +8,14 @@ description: >
     object
 ---*/
 
-        var obj = {};
-        var dateObj = new Date();
+var obj = {};
+var dateObj = new Date();
 
-        Object.defineProperty(obj, "prop", {
-            value: dateObj
-        });
+Object.defineProperty(obj, "prop", {
+  value: dateObj
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(obj.prop, dateObj, 'obj.prop');
 assert.sameValue(desc.value, dateObj, 'desc.value');

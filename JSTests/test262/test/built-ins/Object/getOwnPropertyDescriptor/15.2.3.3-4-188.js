@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Function (instance).name)
 ---*/
 
-  var f = Function('return 42;');
-  var desc = Object.getOwnPropertyDescriptor(f, "functionNameHopefullyDoesNotExist");
+var f = Function('return 42;');
+var desc = Object.getOwnPropertyDescriptor(f, "functionNameHopefullyDoesNotExist");
 
 assert.sameValue(desc, undefined, 'desc');

@@ -17,13 +17,13 @@ var values = byteConversionValues.values;
 values.forEach(function(value, i) {
   if (value === undefined) {
     assert.throws(TypeError,
-                  () => sample.setBigInt64(0, BigInt(value), false),
-                  "value: " + value);
+      () => sample.setBigInt64(0, BigInt(value), false),
+      "value: " + value);
     return;
   } else if (!Number.isInteger(value) || value > 9007199254740991) {
     assert.throws(RangeError,
-                  () => sample.setBigInt64(0, BigInt(value), false),
-                  "value " + value);
+      () => sample.setBigInt64(0, BigInt(value), false),
+      "value " + value);
     return;
   }
 

@@ -14,12 +14,12 @@ features: [Symbol]
 ---*/
 
 assert.sameValue(
-    Object.is(Symbol(), Symbol()),
-    false,
-    "`Object.is(Symbol(), Symbol())` returns `false`"
+  Object.is(Symbol(), Symbol()),
+  false,
+  "`Object.is(Symbol(), Symbol())` returns `false`"
 );
 assert.sameValue(
-    Object.is(Symbol('description'), Symbol('description')),
-    false,
-    "`Object.is(Symbol('description'), Symbol('description'))` returns `false`"
+  Object.is(Symbol('description'), Symbol('description')),
+  false,
+  "`Object.is(Symbol('description'), Symbol('description'))` returns `false`"
 );

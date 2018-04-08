@@ -8,4 +8,4 @@ description: >
     undefined
 ---*/
 
-    Object.freeze(undefined);
+Object.freeze(undefined);

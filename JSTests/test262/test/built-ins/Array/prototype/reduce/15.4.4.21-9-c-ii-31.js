@@ -7,15 +7,19 @@ es5id: 15.4.4.21-9-c-ii-31
 description: Array.prototype.reduce - Date object can be used as accumulator
 ---*/
 
-        var objDate = new Date();
+var objDate = new Date();
 
-        var accessed = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            return prevVal === objDate;
-        }
+var accessed = false;
 
-        var obj = { 0: 11, length: 1 };
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  return prevVal === objDate;
+}
+
+var obj = {
+  0: 11,
+  length: 1
+};
 
 assert.sameValue(Array.prototype.reduce.call(obj, callbackfn, objDate), true, 'Array.prototype.reduce.call(obj, callbackfn, objDate)');
 assert(accessed, 'accessed !== true');

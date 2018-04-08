@@ -10,27 +10,27 @@ description: >
     value
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var verifySetFunc = "data";
-        var setFunc = function (value) {
-            verifySetFunc = value;
-        };
+var verifySetFunc = "data";
+var setFunc = function(value) {
+  verifySetFunc = value;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: undefined,
-            set: setFunc,
-            enumerable: true,
-            configurable: false
-        });
-
-        var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
-assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "prop", {
-                set: undefined
-            });
+Object.defineProperty(obj, "prop", {
+  get: undefined,
+  set: setFunc,
+  enumerable: true,
+  configurable: false
 });
-            var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
+
+var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
+assert.throws(TypeError, function() {
+  Object.defineProperty(obj, "prop", {
+    set: undefined
+  });
+});
+var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(desc1.set, setFunc, 'desc1.set');
 assert.sameValue(desc2.set, setFunc, 'desc2.set');

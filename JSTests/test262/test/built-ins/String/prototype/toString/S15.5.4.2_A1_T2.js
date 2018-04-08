@@ -11,8 +11,8 @@ var __string__obj = new String(true);
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
-if (__string__obj.toString() !== ""+true) {
-  $ERROR('#1: __string__obj = new String(true); __string__obj.toString() === ""+true. Actual: __string__obj.toString() ==='+__string__obj.toString() ); 
+if (__string__obj.toString() !== "" + true) {
+  $ERROR('#1: __string__obj = new String(true); __string__obj.toString() === ""+true. Actual: __string__obj.toString() ===' + __string__obj.toString());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

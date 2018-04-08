@@ -9,8 +9,7 @@ author: Sam Mikes
 description: Promise.reject throws TypeError for bad 'this'
 ---*/
 
-function ZeroArgConstructor() {
-}
+function ZeroArgConstructor() {}
 
 assert.throws(TypeError, function() {
   Promise.reject.call(ZeroArgConstructor, 4);

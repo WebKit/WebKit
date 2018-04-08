@@ -9,18 +9,18 @@ description: >
     property without a get function on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return undefined === val && idx === 0;
-        }
+function callbackfn(val, idx, obj) {
+  return undefined === val && idx === 0;
+}
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "0", {
-            set: function () { },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  set: function() {},
+  configurable: true
+});
 
-        var newArr = arr.filter(callbackfn);
+var newArr = arr.filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], undefined, 'newArr[0]');

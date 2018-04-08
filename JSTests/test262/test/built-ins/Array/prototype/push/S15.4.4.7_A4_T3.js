@@ -25,30 +25,30 @@ if (obj.length !== 3) {
 
 //CHECK#3
 if (obj[4294967295] !== undefined) {
-   $ERROR('#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967295] === undefined. Actual: ' + (obj[4294967295]));
+  $ERROR('#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967295] === undefined. Actual: ' + (obj[4294967295]));
 }
 
 //CHECK#4
 if (obj[4294967296] !== undefined) {
-   $ERROR('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967296] === undefined. Actual: ' + (obj[4294967296]));
+  $ERROR('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967296] === undefined. Actual: ' + (obj[4294967296]));
 }
 
 //CHECK#5
 if (obj[4294967297] !== undefined) {
-   $ERROR('#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967297] === undefined. Actual: ' + (obj[4294967297]));
+  $ERROR('#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967297] === undefined. Actual: ' + (obj[4294967297]));
 }
 
 //CHECK#6
 if (obj[0] !== "x") {
-   $ERROR('#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[0] === "x". Actual: ' + (obj[0]));
+  $ERROR('#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[0] === "x". Actual: ' + (obj[0]));
 }
 
 //CHECK#7
 if (obj[1] !== "y") {
-   $ERROR('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[1] === "y". Actual: ' + (obj[1]));
+  $ERROR('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[1] === "y". Actual: ' + (obj[1]));
 }
 
 //CHECK#8
 if (obj[2] !== "z") {
-   $ERROR('#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[2] === "z". Actual: ' + (obj[2]));
+  $ERROR('#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[2] === "z". Actual: ' + (obj[2]));
 }

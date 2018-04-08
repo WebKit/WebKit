@@ -9,12 +9,12 @@ description: >
     string
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return "";
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return "";
+}
 
 assert.sameValue([11].some(callbackfn), false, '[11].some(callbackfn)');
 assert(accessed, 'accessed !== true');

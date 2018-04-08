@@ -8,21 +8,21 @@ description: >
     'descObj' is the Argument object (8.10.5 step 4.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var func = function (a, b, c) {
-            return arguments;
-        };
+var func = function(a, b, c) {
+  return arguments;
+};
 
-        var args = func(1, true, "a");
+var args = func(1, true, "a");
 
-        Object.defineProperties(obj, {
-            property: {
-                configurable: args
-            }
-        });
-        var preCheck = obj.hasOwnProperty("property");
-        delete obj.property;
+Object.defineProperties(obj, {
+  property: {
+    configurable: args
+  }
+});
+var preCheck = obj.hasOwnProperty("property");
+delete obj.property;
 
 assert(preCheck, 'preCheck !== true');
 assert.sameValue(obj.hasOwnProperty("property"), false, 'obj.hasOwnProperty("property")');

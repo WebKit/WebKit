@@ -9,18 +9,18 @@ description: >
     descriptor (8.12.9 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", {
-            enumerable: true
-        });
+Object.defineProperty(obj, "property", {
+  enumerable: true
+});
 
-        var isEnumerable = false;
-        for (var item in obj) {
-            if (obj.hasOwnProperty(item) && item === "property") {
-                isEnumerable = true;
-            }
-        }
+var isEnumerable = false;
+for (var item in obj) {
+  if (obj.hasOwnProperty(item) && item === "property") {
+    isEnumerable = true;
+  }
+}
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert(isEnumerable, 'isEnumerable !== true');

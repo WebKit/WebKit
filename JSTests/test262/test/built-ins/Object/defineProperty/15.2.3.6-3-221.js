@@ -9,14 +9,14 @@ description: >
     7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var boolObj = new Boolean(true);
+var boolObj = new Boolean(true);
 
-        boolObj.get = function () {
-            return "booleanGetProperty";
-        };
+boolObj.get = function() {
+  return "booleanGetProperty";
+};
 
-        Object.defineProperty(obj, "property", boolObj);
+Object.defineProperty(obj, "property", boolObj);
 
 assert.sameValue(obj.property, "booleanGetProperty", 'obj.property');

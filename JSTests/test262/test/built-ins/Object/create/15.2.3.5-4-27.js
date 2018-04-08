@@ -10,22 +10,22 @@ description: >
     step 5.a)
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "prop", {
-            get: function () {
-                return {};
-            },
-            enumerable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "prop", {
+  get: function() {
+    return {};
+  },
+  enumerable: true
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        Object.defineProperty(child, "prop", {
-            set: function () { },
-            enumerable: true
-        });
+var child = new ConstructFun();
+Object.defineProperty(child, "prop", {
+  set: function() {},
+  enumerable: true
+});
 assert.throws(TypeError, function() {
-            Object.create({}, child);
+  Object.create({}, child);
 });

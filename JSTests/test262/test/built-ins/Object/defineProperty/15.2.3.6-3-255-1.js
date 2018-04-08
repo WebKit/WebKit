@@ -9,16 +9,16 @@ description: >
     object (8.10.5 step 8.a)
 ---*/
 
-        var obj = {};
-        var data = "data";
+var obj = {};
+var data = "data";
 
-            RegExp.prototype.set = function (value) {
-                data = value;
-            };
-            var regObj = new RegExp();
+RegExp.prototype.set = function(value) {
+  data = value;
+};
+var regObj = new RegExp();
 
-            Object.defineProperty(obj, "property", regObj);
-            obj.property = "overrideData";
+Object.defineProperty(obj, "property", regObj);
+obj.property = "overrideData";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(data, "overrideData", 'data');

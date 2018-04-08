@@ -9,13 +9,13 @@ description: >
     array after it is called
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            srcArr[2] = 3;
-            srcArr[5] = 6;
-            return true;
-        }
+function callbackfn(val, idx, obj) {
+  srcArr[2] = 3;
+  srcArr[5] = 6;
+  return true;
+}
 
-        var srcArr = [1, 2, , 4, 5];
-        var resArr = srcArr.filter(callbackfn);
+var srcArr = [1, 2, , 4, 5];
+var resArr = srcArr.filter(callbackfn);
 
 assert.sameValue(resArr.length, 5, 'resArr.length');

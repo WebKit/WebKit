@@ -11,11 +11,15 @@ description: >
     changing function object's valueOf and toString properties
 ---*/
 
-function __obj(){};
+function __obj() {};
 
-__obj.valueOf=function(){return true;};
+__obj.valueOf = function() {
+  return true;
+};
 
-__obj.toString=function(){return {};};
+__obj.toString = function() {
+  return {};
+};
 
 var __str = new String(__obj);
 
@@ -24,7 +28,7 @@ var __str = new String(__obj);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "object") {
-  $ERROR('#1: function __obj(){}; __str = new String(__obj); typeof __str === "object". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#1: function __obj(){}; __str = new String(__obj); typeof __str === "object". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -32,15 +36,15 @@ if (typeof __str !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1.5
 if (__str.constructor !== String) {
-  $ERROR('#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ==='+__str.constructor ); 
+  $ERROR('#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ===' + __str.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (__str !="true") {
-  $ERROR('#2: function __obj(){}; __str = new String(__obj); __str =="true". Actual: __str =='+__str ); 
+if (__str != "true") {
+  $ERROR('#2: function __obj(){}; __str = new String(__obj); __str =="true". Actual: __str ==' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

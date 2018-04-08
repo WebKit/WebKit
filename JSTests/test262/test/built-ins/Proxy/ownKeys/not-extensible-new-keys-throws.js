@@ -13,17 +13,17 @@ info: |
 ---*/
 
 var target = {
-    foo: 1
+  foo: 1
 };
 
 var p = new Proxy(target, {
-    ownKeys: function() {
-        return ["foo", "bar"];
-    }
+  ownKeys: function() {
+    return ["foo", "bar"];
+  }
 });
 
 Object.preventExtensions(target);
 
 assert.throws(TypeError, function() {
-    Object.keys(p);
+  Object.keys(p);
 });

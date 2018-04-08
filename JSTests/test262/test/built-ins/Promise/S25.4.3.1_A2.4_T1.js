@@ -10,14 +10,16 @@ description: Promise.call(rejected Promise) throws TypeError
 flags: [async]
 ---*/
 
-var p = new Promise(function(resolve, reject) { reject(1) });
+var p = new Promise(function(resolve, reject) {
+  reject(1)
+});
 
-p.catch(function () {
-    Promise.call(p, function () {});
-}).then(function () {
-    $ERROR("Unexpected resolution - expected TypeError");
-}, function (err) {
-    if (!(err instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + err);
-    }
+p.catch(function() {
+  Promise.call(p, function() {});
+}).then(function() {
+  $ERROR("Unexpected resolution - expected TypeError");
+}, function(err) {
+  if (!(err instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + err);
+  }
 }).then($DONE, $DONE);

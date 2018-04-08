@@ -18,7 +18,7 @@ var __split = __string.split(",");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== 5) {
-  $ERROR('#2: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split.length === 5. Actual: '+__split.length );
+  $ERROR('#2: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split.length === 5. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ if (__split.length !== 5) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split[0] !== "one") {
-  $ERROR('#3: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[0] === "one". Actual: '+__split[0] );
+  $ERROR('#3: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[0] === "one". Actual: ' + __split[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ if (__split[0] !== "one") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__split[1] !== "two") {
-  $ERROR('#4: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[1] === "two". Actual: '+__split[1] );
+  $ERROR('#4: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[1] === "two". Actual: ' + __split[1]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ if (__split[1] !== "two") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#5
 if (__split[2] !== "three") {
-  $ERROR('#5: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[2] === "three". Actual: '+__split[2] );
+  $ERROR('#5: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[2] === "three". Actual: ' + __split[2]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ if (__split[2] !== "three") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#6
 if (__split[3] !== "four") {
-  $ERROR('#6: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[3] === "four". Actual: '+__split[3] );
+  $ERROR('#6: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[3] === "four". Actual: ' + __split[3]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ if (__split[3] !== "four") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#7
 if (__split[4] !== "five") {
-  $ERROR('#7: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[4] === "five". Actual: '+__split[4] );
+  $ERROR('#7: var __string = new String("one,two,three,four,five"); __split = __string.split(","); __split[4] === "five". Actual: ' + __split[4]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

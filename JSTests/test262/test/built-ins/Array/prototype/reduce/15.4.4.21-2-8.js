@@ -9,26 +9,28 @@ description: >
     an own accessor property that overrides an inherited data property
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (obj.length === 2);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (obj.length === 2);
+}
 
-        var proto = { length: 3 };
+var proto = {
+  length: 3
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        Object.defineProperty(child, "length", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(child, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
-        child[0] = 12;
-        child[1] = 11;
-        child[2] = 9;
+child[0] = 12;
+child[1] = 11;
+child[2] = 9;
 
 assert.sameValue(Array.prototype.reduce.call(child, callbackfn, 1), true, 'Array.prototype.reduce.call(child, callbackfn, 1)');

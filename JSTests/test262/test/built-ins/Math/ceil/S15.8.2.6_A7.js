@@ -10,11 +10,11 @@ description: >
 ---*/
 
 // CHECK#1
-for (var i=-1000; i<1000; i++)
+for (var i = -1000; i < 1000; i++)
 {
-	var x = i/10.0;
-	if (Math.ceil(x) !== -Math.floor(-x))
-	{
-		$ERROR("#1: 'x = " + x + "; Math.ceil(x) !== -Math.floor(-x)'");
-	}
+  var x = i / 10.0;
+  if (Math.ceil(x) !== -Math.floor(-x))
+  {
+    $ERROR("#1: 'x = " + x + "; Math.ceil(x) !== -Math.floor(-x)'");
+  }
 }

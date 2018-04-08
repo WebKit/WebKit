@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.join)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "join");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "join");
 
 assert.sameValue(desc.value, Array.prototype.join, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

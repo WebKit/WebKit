@@ -9,7 +9,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.getMilliseconds;
-if(x === 1)
+if (x === 1)
   Date.prototype.getMilliseconds = 2;
 else
   Date.prototype.getMilliseconds = 1;

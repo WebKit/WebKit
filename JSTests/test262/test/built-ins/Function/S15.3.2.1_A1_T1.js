@@ -14,7 +14,11 @@ es5id: 15.3.2.1_A1_T1
 description: "The body of the function is \"{toString:function(){throw 7;}}\""
 ---*/
 
-var body = {toString:function(){throw 7;}}
+var body = {
+  toString: function() {
+    throw 7;
+  }
+}
 
 //CHECK#1
 try {
@@ -22,6 +26,6 @@ try {
   $ERROR('#1: When the Function constructor is called with one argument then body be that argument the following step are taken: call ToString(body)');
 } catch (e) {
   if (e !== 7) {
-  	$ERROR('#1.1: When the Function constructor is called with one argument then body be that argument the following step are taken: call ToString(body)');
+    $ERROR('#1.1: When the Function constructor is called with one argument then body be that argument the following step are taken: call ToString(body)');
   }
 }

@@ -9,25 +9,27 @@ description: >
     after current position are visited on an Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return true;
-        }
-        var obj = { length: 2 };
+function callbackfn(val, idx, obj) {
+  return true;
+}
+var obj = {
+  length: 2
+};
 
-            Object.defineProperty(obj, "0", {
-                get: function () {
-                    Object.defineProperty(Object.prototype, "1", {
-                        get: function () {
-                            return 6.99;
-                        },
-                        configurable: true
-                    });
-                    return 0;
-                },
-                configurable: true
-            });
+Object.defineProperty(obj, "0", {
+  get: function() {
+    Object.defineProperty(Object.prototype, "1", {
+      get: function() {
+        return 6.99;
+      },
+      configurable: true
+    });
+    return 0;
+  },
+  configurable: true
+});
 
-            var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');
 assert.sameValue(Array[1], 6.99, 'Array[1]');

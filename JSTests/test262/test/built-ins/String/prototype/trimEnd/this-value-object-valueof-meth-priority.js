@@ -57,7 +57,9 @@ var thisVal = {
   },
   get valueOf() {
     valueOfAccessed += 1;
-    return function() { return '42 '; };
+    return function() {
+      return '42 ';
+    };
   },
 };
 

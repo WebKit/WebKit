@@ -13,29 +13,29 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperties(arr, {
-    "0": {
-        get: function () {
-            return 11;
-        },
-        set: function () { },
-        configurable: true,
-        enumerable: true
-    }
+  "0": {
+    get: function() {
+      return 11;
+    },
+    set: function() {},
+    configurable: true,
+    enumerable: true
+  }
 });
 
-var setFun = function (value) {
-    arr.setVerifyHelpProp = value;
+var setFun = function(value) {
+  arr.setVerifyHelpProp = value;
 };
-var getFun = function () {
-    return 14;
+var getFun = function() {
+  return 14;
 };
 Object.defineProperties(arr, {
-    "0": {
-        get: getFun,
-        set: setFun,
-        configurable: false,
-        enumerable: false
-    }
+  "0": {
+    get: getFun,
+    set: setFun,
+    configurable: false,
+    enumerable: false
+  }
 });
 
 verifyEqualTo(arr, "0", getFun());

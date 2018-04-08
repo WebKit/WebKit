@@ -8,22 +8,22 @@ description: >
     object
 ---*/
 
-        var obj = {};
-        var result = false;
+var obj = {};
+var result = false;
 
-        var Fun = function () {
-            return arguments;
-        };        
-        var props = new Fun();
+var Fun = function() {
+  return arguments;
+};
+var props = new Fun();
 
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                result = ('[object Arguments]' === Object.prototype.toString.call(this));
-                return {};
-            },
-            enumerable: true
-        });
+Object.defineProperty(props, "prop", {
+  get: function() {
+    result = ('[object Arguments]' === Object.prototype.toString.call(this));
+    return {};
+  },
+  enumerable: true
+});
 
-        Object.defineProperties(obj, props);
+Object.defineProperties(obj, props);
 
 assert(result, 'result !== true');

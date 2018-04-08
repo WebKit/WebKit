@@ -24,6 +24,7 @@ testWithTypedArrayConstructors(function(TA) {
 
   sample.map(function() {
     results.push(arguments);
+    return 0;
   });
 
   assert.sameValue(results.length, 3, "results.length");

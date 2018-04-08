@@ -20,14 +20,19 @@ var iterable = {};
 iterable[Symbol.iterator] = function() {
   return {
     next: function() {
-      return { value: [], done: false };
+      return {
+        value: [],
+        done: false
+      };
     },
     return: function() {
       count += 1;
     }
   };
 };
-Map.prototype.set = function() { throw new Test262Error(); }
+Map.prototype.set = function() {
+  throw new Test262Error();
+}
 
 assert.throws(Test262Error, function() {
   new Map(iterable);

@@ -21,7 +21,9 @@ info: |
 var foo = {};
 var bar = {};
 var baz = [];
-var map = new WeakMap([[foo,0]]);
+var map = new WeakMap([
+  [foo, 0]
+]);
 
 assert.sameValue(map.get(foo), 0);
 

@@ -8,7 +8,7 @@ description: >
     built-ins (Math.max)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "max");
+var desc = Object.getOwnPropertyDescriptor(Math, "max");
 
 assert.sameValue(desc.value, Math.max, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

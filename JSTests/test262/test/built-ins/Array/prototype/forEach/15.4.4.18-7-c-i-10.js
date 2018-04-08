@@ -9,23 +9,23 @@ description: >
     property on an Array
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 2) {
-                testResult = (val === 12);
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 2) {
+    testResult = (val === 12);
+  }
+}
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "2", {
-            get: function () {
-                return 12;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "2", {
+  get: function() {
+    return 12;
+  },
+  configurable: true
+});
 
-        arr.forEach(callbackfn);
+arr.forEach(callbackfn);
 
 assert(testResult, 'testResult !== true');

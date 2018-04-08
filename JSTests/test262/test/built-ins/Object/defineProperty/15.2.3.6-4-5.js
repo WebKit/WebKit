@@ -13,28 +13,33 @@ description: >
     data desc
 ---*/
 
-  function sameDataDescriptorValues(d1, d2) {
-    return (d1.value === d2.value &&
-            d1.enumerable === d2.enumerable &&
-            d1.writable === d2.writable &&
-            d1.configurable === d2.configurable);
-  }
+function sameDataDescriptorValues(d1, d2) {
+  return (d1.value === d2.value &&
+    d1.enumerable === d2.enumerable &&
+    d1.writable === d2.writable &&
+    d1.configurable === d2.configurable);
+}
 
-  var o = {};
+var o = {};
 
-  // create a data valued property with the following attributes:
-  // value: 101, enumerable: true, writable: true, configurable: true
-  o["foo"] = 101;
+// create a data valued property with the following attributes:
+// value: 101, enumerable: true, writable: true, configurable: true
+o["foo"] = 101;
 
-  // query for, and save, the desc. A subsequent call to defineProperty
-  // with the same desc should not disturb the property definition.
-  var d1 = Object.getOwnPropertyDescriptor(o, "foo");  
+// query for, and save, the desc. A subsequent call to defineProperty
+// with the same desc should not disturb the property definition.
+var d1 = Object.getOwnPropertyDescriptor(o, "foo");
 
-  // now, redefine the property with the same descriptor
-  // the property defintion should not get disturbed.
-  var desc = { value: 101, enumerable: true, writable: true, configurable: true };
-  Object.defineProperty(o, "foo", desc);
+// now, redefine the property with the same descriptor
+// the property defintion should not get disturbed.
+var desc = {
+  value: 101,
+  enumerable: true,
+  writable: true,
+  configurable: true
+};
+Object.defineProperty(o, "foo", desc);
 
-  var d2 = Object.getOwnPropertyDescriptor(o, "foo"); 
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
 
 assert.sameValue(sameDataDescriptorValues(d1, d2), true, 'sameDataDescriptorValues(d1, d2)');

@@ -7,14 +7,18 @@ es5id: 15.5.4.10_A1_T10
 description: Call match (regexp) function with object argument
 ---*/
 
-var __obj = {toString:function(){return "\u0041B";}}
+var __obj = {
+  toString: function() {
+    return "\u0041B";
+  }
+}
 var __str = "ABB\u0041BABAB";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-    if (__str.match(__obj)[0] !=="AB") {
-      $ERROR('#1: var x; var __obj = {toString:function(){return "\u0041B";}}; var __str = "ABB\u0041BABAB"; __str.match(__obj)[0] ==="AB". Actual: '+__str.match(__obj)[0] );
-    }
+if (__str.match(__obj)[0] !== "AB") {
+  $ERROR('#1: var x; var __obj = {toString:function(){return "\u0041B";}}; var __str = "ABB\u0041BABAB"; __str.match(__obj)[0] ==="AB". Actual: ' + __str.match(__obj)[0]);
+}
 //
 //////////////////////////////////////////////////////////////////////////////
 

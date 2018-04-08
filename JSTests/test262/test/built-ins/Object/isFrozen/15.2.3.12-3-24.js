@@ -8,6 +8,6 @@ description: >
     (SyntaxError)
 ---*/
 
-  var b = Object.isFrozen(SyntaxError);
+var b = Object.isFrozen(SyntaxError);
 
 assert.sameValue(b, false, 'b');

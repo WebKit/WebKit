@@ -6,27 +6,27 @@ es5id: 15.2.3.6-4-617
 description: ES5 Attributes - all attributes in Array.prototype.map are correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Array.prototype, "map");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "map");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Array.prototype.map;
+var temp = Array.prototype.map;
 
-            Array.prototype.map = "2010";
+Array.prototype.map = "2010";
 
-            var isWritable = (Array.prototype.map === "2010");
+var isWritable = (Array.prototype.map === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Array.prototype) {
-                if (prop === "map") {
-                    isEnumerable = true;
-                }
-            }
+for (var prop in Array.prototype) {
+  if (prop === "map") {
+    isEnumerable = true;
+  }
+}
 
-            delete Array.prototype.map;
+delete Array.prototype.map;
 
-            var isConfigurable = !Array.prototype.hasOwnProperty("map");
+var isConfigurable = !Array.prototype.hasOwnProperty("map");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

@@ -24,7 +24,9 @@ custom = new String();
 custom[Symbol.toStringTag] = 'test262';
 assert.sameValue(Object.prototype.toString.call(custom), '[object test262]');
 
-custom = (function() { return arguments; }());
+custom = (function() {
+  return arguments;
+}());
 custom[Symbol.toStringTag] = 'test262';
 assert.sameValue(Object.prototype.toString.call(custom), '[object test262]');
 

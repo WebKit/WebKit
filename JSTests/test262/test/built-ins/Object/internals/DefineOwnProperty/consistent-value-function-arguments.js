@@ -19,13 +19,16 @@ info: |
 ---*/
 
 function f() {
-    return Reflect.getOwnPropertyDescriptor(f, 'arguments');
+  return Reflect.getOwnPropertyDescriptor(f, 'arguments');
 }
 
-Reflect.defineProperty(f, 'arguments', { writable: false, configurable: false });
+Reflect.defineProperty(f, 'arguments', {
+  writable: false,
+  configurable: false
+});
 
 var desc = Reflect.getOwnPropertyDescriptor(f, 'arguments');
 if (desc && desc.configurable === false && desc.writable === false) {
-    var desc2 = f();
-    assert.sameValue(desc.value, desc2.value);
+  var desc2 = f();
+  assert.sameValue(desc.value, desc2.value);
 }

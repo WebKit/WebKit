@@ -9,7 +9,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.UTC;
-if(x === 1)
+if (x === 1)
   Date.UTC = 2;
 else
   Date.UTC = 1;

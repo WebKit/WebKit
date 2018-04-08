@@ -9,15 +9,17 @@ description: >
     6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", { writable: "false" });
+Object.defineProperty(obj, "property", {
+  writable: "false"
+});
 
-        var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

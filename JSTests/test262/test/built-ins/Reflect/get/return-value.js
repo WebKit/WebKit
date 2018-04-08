@@ -55,7 +55,9 @@ assert.sameValue(
   'Return Call(getter, Receiver)'
 );
 
-var o2 = Object.create({p: 42});
+var o2 = Object.create({
+  p: 42
+});
 assert.sameValue(
   Reflect.get(o2, 'p'), 42,
   'Return value from prototype without own property.'

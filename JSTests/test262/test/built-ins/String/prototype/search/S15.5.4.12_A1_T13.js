@@ -9,12 +9,19 @@ description: >
     toString and valueOf functions
 ---*/
 
-var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}
+var __obj = {
+  toString: function() {
+    return {};
+  },
+  valueOf: function() {
+    return 1;
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if ("ABB\u0041B\u0031ABAB\u0031BBAA".search(__obj) !==5) {
-  $ERROR('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; "ABB\\u0041B\\u0031ABAB\\u0031BBAA".search(__obj) ===5. Actual: '+("ABB\u0041B\u0031ABAB\u0031BBAA".search(__obj)) );
+if ("ABB\u0041B\u0031ABAB\u0031BBAA".search(__obj) !== 5) {
+  $ERROR('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; "ABB\\u0041B\\u0031ABAB\\u0031BBAA".search(__obj) ===5. Actual: ' + ("ABB\u0041B\u0031ABAB\u0031BBAA".search(__obj)));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

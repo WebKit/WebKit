@@ -10,9 +10,9 @@ description: >
     (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 assert.throws(RangeError, function() {
-            Object.defineProperty(arrObj, "length", {
-                value: "+Infinity"
-            });
+  Object.defineProperty(arrObj, "length", {
+    value: "+Infinity"
+  });
 });

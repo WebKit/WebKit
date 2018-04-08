@@ -12,24 +12,31 @@ description: >
     non-configurable data properties to accessor properties
 ---*/
 
-  var o = {};
+var o = {};
 
-  // create a data valued property; all other attributes default to false.
-  var d1 = { value: 101, configurable: false };
-  Object.defineProperty(o, "foo", d1);
+// create a data valued property; all other attributes default to false.
+var d1 = {
+  value: 101,
+  configurable: false
+};
+Object.defineProperty(o, "foo", d1);
 
-  // changing "foo" to be an accessor should fail, since [[Configurable]]
-  // on the original property will be false.
+// changing "foo" to be an accessor should fail, since [[Configurable]]
+// on the original property will be false.
 
-  // dummy getter
-  var getter = function () { return 1; }
+// dummy getter
+var getter = function() {
+  return 1;
+}
 
-  var desc = { get: getter };
+var desc = {
+  get: getter
+};
 assert.throws(TypeError, function() {
-    Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
-      // the property should remain a data valued property.
-      var d2 = Object.getOwnPropertyDescriptor(o, "foo");
+// the property should remain a data valued property.
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
 assert.sameValue(d2.value, 101, 'd2.value');
 assert.sameValue(d2.writable, false, 'd2.writable');
 assert.sameValue(d2.enumerable, false, 'd2.enumerable');

@@ -6,7 +6,7 @@ es5id: 15.1.1.1-0
 description: Global.NaN is a data property with default attribute values (false)
 ---*/
 
-    var desc = Object.getOwnPropertyDescriptor(this, 'NaN');
+var desc = Object.getOwnPropertyDescriptor(this, 'NaN');
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

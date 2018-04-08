@@ -10,14 +10,14 @@ description: >
     is same as [[Value]] (15.4.5.1 step 3.l.iii.1)
 ---*/
 
-        var arrObj = [0, 1, 2, 3];
+var arrObj = [0, 1, 2, 3];
 
-        Object.defineProperty(arrObj, "1", {
-            configurable: false
-        });
+Object.defineProperty(arrObj, "1", {
+  configurable: false
+});
 
-        Object.defineProperty(arrObj, "length", {
-            value: 3
-        });          
+Object.defineProperty(arrObj, "length", {
+  value: 3
+});
 
 assert.sameValue(arrObj.length, 3, 'arrObj.length');

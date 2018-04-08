@@ -9,30 +9,30 @@ description: >
     (8.12.9 step 12)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        function getFunc() {
-            return 10;
-        }
+function getFunc() {
+  return 10;
+}
 
-        function setFunc(value) {
-            obj.setVerifyHelpProp = value;
-        }
+function setFunc(value) {
+  obj.setVerifyHelpProp = value;
+}
 
-        Object.defineProperty(obj, "foo", {
-            get: getFunc,
-            set: setFunc,
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(obj, "foo", {
+  get: getFunc,
+  set: setFunc,
+  enumerable: true,
+  configurable: true
+});
 
-        Object.defineProperty(obj, "foo", {
-            set: undefined,
-            get: getFunc
-        });
+Object.defineProperty(obj, "foo", {
+  set: undefined,
+  get: getFunc
+});
 
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "foo");
+var desc = Object.getOwnPropertyDescriptor(obj, "foo");
 
 assert(obj.hasOwnProperty("foo"), 'obj.hasOwnProperty("foo") !== true');
-assert.sameValue(typeof (desc.set), "undefined", 'typeof (desc.set)');
+assert.sameValue(typeof(desc.set), "undefined", 'typeof (desc.set)');

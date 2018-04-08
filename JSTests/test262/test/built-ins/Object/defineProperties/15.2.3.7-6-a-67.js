@@ -13,33 +13,32 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function get_Func() {
-    return 10;
+  return 10;
 }
 
 Object.defineProperty(obj, "foo", {
-    get: get_Func,
-    configurable: false
+  get: get_Func,
+  configurable: false
 });
 
 try {
-    Object.defineProperties(obj, {
-        foo: {
-            value: 11
-        }
-    });
+  Object.defineProperties(obj, {
+    foo: {
+      value: 11
+    }
+  });
 
-    $ERROR("Expected TypeError");
+  $ERROR("Expected TypeError");
 } catch (e) {
-    assert(e instanceof TypeError);
-    verifyNotEnumerable(obj, "foo");
+  assert(e instanceof TypeError);
+  verifyNotEnumerable(obj, "foo");
 
-    assert.sameValue(obj.foo, 10);
+  assert.sameValue(obj.foo, 10);
 
-    verifyNotConfigurable(obj, "foo");
+  verifyNotConfigurable(obj, "foo");
 
-    var desc = Object.getOwnPropertyDescriptor(obj, "foo");
+  var desc = Object.getOwnPropertyDescriptor(obj, "foo");
 
-    assert.sameValue(typeof (desc.set), "undefined");
-    assert.sameValue(desc.get, get_Func);
+  assert.sameValue(typeof(desc.set), "undefined");
+  assert.sameValue(desc.get, get_Func);
 }
-

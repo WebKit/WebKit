@@ -7,13 +7,16 @@ es5id: 15.4.4.16-7-c-iii-1
 description: Array.prototype.every - return value of callbackfn is undefined
 ---*/
 
-        var accessed = false;
-        var obj = { 0: 11, length: 1 };
+var accessed = false;
+var obj = {
+  0: 11,
+  length: 1
+};
 
-        function callbackfn(val, idx, o) {
-            accessed = true;
-            return undefined;
-        }
+function callbackfn(val, idx, o) {
+  accessed = true;
+  return undefined;
+}
 
 
 

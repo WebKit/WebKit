@@ -8,23 +8,23 @@ description: >
     data property (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var getter = function () {
-            return "inheritedDataProperty";
-        };
+var getter = function() {
+  return "inheritedDataProperty";
+};
 
-        var proto = {
-            get: getter
-        };
+var proto = {
+  get: getter
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
+var descObj = new Con();
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "inheritedDataProperty", 'obj.property');

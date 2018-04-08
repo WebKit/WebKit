@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        JSON.get = function () {
-            return "VerifyJSONObject";
-        };
+JSON.get = function() {
+  return "VerifyJSONObject";
+};
 
-            var newObj = Object.create({}, {
-                prop: JSON 
-            });
+var newObj = Object.create({}, {
+  prop: JSON
+});
 
 assert.sameValue(newObj.prop, "VerifyJSONObject", 'newObj.prop');

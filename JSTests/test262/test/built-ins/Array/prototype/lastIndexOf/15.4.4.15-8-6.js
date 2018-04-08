@@ -7,8 +7,12 @@ es5id: 15.4.4.15-8-6
 description: Array.prototype.lastIndexOf must return correct index(null)
 ---*/
 
-  var obj = {toString:function (){return null}};
-  var _null = null;
-  var a = new Array(true,undefined,0,false,null,1,"str",0,1,null,true,false,undefined,_null,"null",undefined,"str",obj);
+var obj = {
+  toString: function() {
+    return null
+  }
+};
+var _null = null;
+var a = new Array(true, undefined, 0, false, null, 1, "str", 0, 1, null, true, false, undefined, _null, "null", undefined, "str", obj);
 
 assert.sameValue(a.lastIndexOf(null), 13, 'a.lastIndexOf(null)');

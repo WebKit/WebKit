@@ -9,21 +9,21 @@ description: >
     property that overrides an inherited data property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val === 111 && idx === 0;
-        }
+function callbackfn(val, idx, obj) {
+  return val === 111 && idx === 0;
+}
 
-        var arr = [];
+var arr = [];
 
-            Array.prototype[0] = 10;
+Array.prototype[0] = 10;
 
-            Object.defineProperty(arr, "0", {
-                get: function () {
-                    return 111;
-                },
-                configurable: true
-            });
-            var newArr = arr.filter(callbackfn);
+Object.defineProperty(arr, "0", {
+  get: function() {
+    return 111;
+  },
+  configurable: true
+});
+var newArr = arr.filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 111, 'newArr[0]');

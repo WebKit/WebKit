@@ -11,16 +11,16 @@ flags: [onlyStrict]
 ---*/
 
 function f1() {
-    var f = function () {
-        gNonStrict();
-    }
-    f();
+  var f = function() {
+    gNonStrict();
+  }
+  f();
 }
 
 assert.throws(TypeError, function() {
-    f1();
+  f1();
 });
 
 function gNonStrict() {
-    return gNonStrict.caller;
+  return gNonStrict.caller;
 }

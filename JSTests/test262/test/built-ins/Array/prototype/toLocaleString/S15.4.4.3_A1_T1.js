@@ -13,7 +13,11 @@ description: it is the function that should be invoked
 ---*/
 
 var n = 0;
-var obj = {toLocaleString: function() {n++}};
+var obj = {
+  toLocaleString: function() {
+    n++
+  }
+};
 var arr = [undefined, obj, null, obj, obj];
 arr.toLocaleString();
 

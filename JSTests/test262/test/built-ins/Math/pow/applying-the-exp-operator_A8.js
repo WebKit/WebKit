@@ -13,8 +13,7 @@ base[0] = -1;
 base[1] = 1
 var basenum = 2;
 
-for (var i = 0; i < basenum; i++)
-{
+for (var i = 0; i < basenum; i++) {
   assert.sameValue(
     Math.pow(base[i], exponent),
     NaN,

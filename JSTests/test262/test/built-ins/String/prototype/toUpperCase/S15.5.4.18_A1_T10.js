@@ -9,13 +9,17 @@ description: >
     function
 ---*/
 
-var __obj = {toString:function(){return "\u0041b";}}
+var __obj = {
+  toString: function() {
+    return "\u0041b";
+  }
+}
 __obj.toUpperCase = String.prototype.toUpperCase;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__obj.toUpperCase() !=="AB") {
-  $ERROR('#1: var __obj = {toString:function(){return "\u0041b";}}; __obj.toUpperCase = String.prototype.toUpperCase; __obj.toUpperCase() ==="AB". Actual: '+__obj.toUpperCase() );
+if (__obj.toUpperCase() !== "AB") {
+  $ERROR('#1: var __obj = {toString:function(){return "\u0041b";}}; __obj.toUpperCase = String.prototype.toUpperCase; __obj.toUpperCase() ==="AB". Actual: ' + __obj.toUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

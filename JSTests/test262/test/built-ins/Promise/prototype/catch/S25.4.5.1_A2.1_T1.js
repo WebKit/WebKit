@@ -12,5 +12,5 @@ description: catch is a method on a Promise
 var p = Promise.resolve(3);
 
 if (!(p.catch instanceof Function)) {
-    $ERROR("Expected p.catch to be a function");
+  $ERROR("Expected p.catch to be a function");
 }

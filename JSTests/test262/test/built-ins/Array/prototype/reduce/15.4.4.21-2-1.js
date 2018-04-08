@@ -9,15 +9,15 @@ description: >
     Array-like object
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (obj.length === 2);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (obj.length === 2);
+}
 
-        var obj = {
-            0: 12,
-            1: 11,
-            2: 9,
-            length: 2
-        };
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: 2
+};
 
 assert.sameValue(Array.prototype.reduce.call(obj, callbackfn, 1), true, 'Array.prototype.reduce.call(obj, callbackfn, 1)');

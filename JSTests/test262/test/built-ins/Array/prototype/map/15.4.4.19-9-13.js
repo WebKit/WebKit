@@ -9,16 +9,16 @@ description: >
     functions, O is unmodified
 ---*/
 
-        var called = 0;
+var called = 0;
 
-        function callbackfn(val, idx, obj) {
-            called++;
-            return val > 2;
-        }
+function callbackfn(val, idx, obj) {
+  called++;
+  return val > 2;
+}
 
-        var arr = [1, 2, 3, 4];
+var arr = [1, 2, 3, 4];
 
-        arr.map(callbackfn);
+arr.map(callbackfn);
 
 assert.sameValue(arr[0], 1, 'arr[0]');
 assert.sameValue(arr[1], 2, 'arr[1]');

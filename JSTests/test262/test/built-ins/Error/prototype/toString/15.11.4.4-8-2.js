@@ -11,8 +11,8 @@ description: >
 var errObj = new Error();
 errObj.name = "";
 if (errObj.name !== "") {
-    $ERROR("Expected errObj.name to be '', actually " + errObj.name);
+  $ERROR("Expected errObj.name to be '', actually " + errObj.name);
 }
 if (errObj.toString() !== "") {
-    $ERROR("Expected errObj.toString() to be '', actually " + errObj.toString());
+  $ERROR("Expected errObj.toString() to be '', actually " + errObj.toString());
 }

@@ -10,21 +10,21 @@ description: >
 flags: [noStrict]
 ---*/
 
-        var arr = [0, 1, 2, 3];
+var arr = [0, 1, 2, 3];
 
-        Object.defineProperty(arr, "2", {
-            get: function () {
-                return "unconfigurable";
-            },
-            configurable: false
-        });
+Object.defineProperty(arr, "2", {
+  get: function() {
+    return "unconfigurable";
+  },
+  configurable: false
+});
 
-        Object.defineProperty(arr, "3", {
-            get: function () {
-                arr.length = 2;
-                return 1;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "3", {
+  get: function() {
+    arr.length = 2;
+    return 1;
+  },
+  configurable: true
+});
 
 assert.sameValue(arr.lastIndexOf("unconfigurable"), 2, 'arr.lastIndexOf("unconfigurable")');

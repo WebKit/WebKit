@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.forEach)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "forEach");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "forEach");
 
 assert.sameValue(desc.value, Array.prototype.forEach, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

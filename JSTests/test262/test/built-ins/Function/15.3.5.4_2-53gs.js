@@ -11,12 +11,17 @@ flags: [noStrict]
 ---*/
 
 var o = {};
-Object.defineProperty(o, "foo", { get: function() { "use strict"; gNonStrict(); } });
+Object.defineProperty(o, "foo", {
+  get: function() {
+    "use strict";
+    gNonStrict();
+  }
+});
 
 assert.throws(TypeError, function() {
-    o.foo;
+  o.foo;
 });
 
 function gNonStrict() {
-    return gNonStrict.caller || gNonStrict.caller.throwTypeError;
+  return gNonStrict.caller || gNonStrict.caller.throwTypeError;
 }

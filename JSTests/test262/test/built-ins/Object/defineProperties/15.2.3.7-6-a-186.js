@@ -8,17 +8,17 @@ description: >
     named property, 'P' is own data property  (15.4.5.1 step 4.c)
 ---*/
 
-        var arr = [];
-        Object.defineProperty(arr, 0, {
-            value: "ownDataProperty",
-            configurable: false
-        });
+var arr = [];
+Object.defineProperty(arr, 0, {
+  value: "ownDataProperty",
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                "0": {
-                    value: "abc",
-                    configurable: true
-                }
-            });
+  Object.defineProperties(arr, {
+    "0": {
+      value: "abc",
+      configurable: true
+    }
+  });
 });
 assert.sameValue(arr[0], "ownDataProperty", 'arr[0]');

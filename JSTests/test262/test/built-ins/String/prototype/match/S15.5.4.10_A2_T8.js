@@ -10,7 +10,7 @@ description: >
     = 0
 ---*/
 
-var __matches=["02134", "02134", undefined];
+var __matches = ["02134", "02134", undefined];
 
 var __re = /([\d]{5})([-\ ]?[\d]{4})?$/;
 __re.lastIndex = 0;
@@ -19,25 +19,25 @@ var __string = "Boston, MA 02134";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__string.match(__re).length!== 3) {
-  $ERROR('#1: __string = "Boston, MA 02134"; __re = /([\d]{5})([-\ ]?[\d]{4})?$/; __string.match(__re).length=== 3. Actual: '+__string.match(__re).length);
+if (__string.match(__re).length !== 3) {
+  $ERROR('#1: __string = "Boston, MA 02134"; __re = /([\d]{5})([-\ ]?[\d]{4})?$/; __string.match(__re).length=== 3. Actual: ' + __string.match(__re).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (__string.match(__re).index !==__string.lastIndexOf("0")) {
-  $ERROR('#2: __string = "Boston, MA 02134"; __re = /([\d]{5})([-\ ]?[\d]{4})?$/; __re.lastIndex = 0; __string.match(__re).index ===__string.lastIndexOf("0"). Actual: '+__string.match(__re).index );
+if (__string.match(__re).index !== __string.lastIndexOf("0")) {
+  $ERROR('#2: __string = "Boston, MA 02134"; __re = /([\d]{5})([-\ ]?[\d]{4})?$/; __re.lastIndex = 0; __string.match(__re).index ===__string.lastIndexOf("0"). Actual: ' + __string.match(__re).index);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
-for(var mi=0; mi<__matches.length; mi++) {
-  if (__string.match(__re)[mi]!==__matches[mi]) {
-    $ERROR('#3.'+mi+': __string = "Boston, MA 02134"; __re = /([\d]{5})([-\ ]?[\d]{4})?$/; __matches=["02134", "02134", undefined]; __string.match(__re)['+mi+']===__matches['+mi+']. Actual: '+__string.match(__re)[mi]);
+for (var mi = 0; mi < __matches.length; mi++) {
+  if (__string.match(__re)[mi] !== __matches[mi]) {
+    $ERROR('#3.' + mi + ': __string = "Boston, MA 02134"; __re = /([\d]{5})([-\ ]?[\d]{4})?$/; __matches=["02134", "02134", undefined]; __string.match(__re)[' + mi + ']===__matches[' + mi + ']. Actual: ' + __string.match(__re)[mi]);
   }
 }
 //

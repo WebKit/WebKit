@@ -13,7 +13,10 @@ info: |
 
 var valid = {};
 var o = Object.create(valid, {
-  prototype: {value: 'invalid', enumerable: true}
+  prototype: {
+    value: 'invalid',
+    enumerable: true
+  }
 });
 
 assert.sameValue(

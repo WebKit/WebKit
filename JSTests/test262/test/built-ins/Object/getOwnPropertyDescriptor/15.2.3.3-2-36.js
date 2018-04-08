@@ -8,8 +8,10 @@ description: >
     string '123���¦�cd'
 ---*/
 
-        var obj = { "123���¦�cd": 1 };
+var obj = {
+  "123���¦�cd": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "123���¦�cd");
+var desc = Object.getOwnPropertyDescriptor(obj, "123���¦�cd");
 
 assert.sameValue(desc.value, 1, 'desc.value');

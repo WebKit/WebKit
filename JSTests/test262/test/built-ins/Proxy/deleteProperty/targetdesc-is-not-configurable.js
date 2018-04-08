@@ -13,16 +13,16 @@ info: |
 
 var target = {};
 var p = new Proxy(target, {
-    deleteProperty: function() {
-        return true;
-    }
+  deleteProperty: function() {
+    return true;
+  }
 });
 
 Object.defineProperty(target, "attr", {
-    configurable: false,
-    value: 1
+  configurable: false,
+  value: 1
 });
 
 assert.throws(TypeError, function() {
-    delete p.attr;
+  delete p.attr;
 });

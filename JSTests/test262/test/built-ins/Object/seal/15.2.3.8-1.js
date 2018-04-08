@@ -8,4 +8,4 @@ description: >
     Object
 ---*/
 
-    Object.seal(0);
+Object.seal(0);

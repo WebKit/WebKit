@@ -11,34 +11,36 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-(function () {
-    Object.defineProperty(arguments, "genericProperty", {
-        get: function () {
-            return 1001;
-        },
-        set: function (value) {
-            this.testgetFunction1 = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    function getFunc() {
-        return "getFunctionString";
-    }
-    function setFunc(value) {
-        this.testgetFunction = value;
-    }
-    Object.defineProperty(arguments, "genericProperty", {
-        get: getFunc,
-        set: setFunc,
-        enumerable: false,
-        configurable: false
-    });
-    verifyEqualTo(arguments, "genericProperty", getFunc());
+(function() {
+  Object.defineProperty(arguments, "genericProperty", {
+    get: function() {
+      return 1001;
+    },
+    set: function(value) {
+      this.testgetFunction1 = value;
+    },
+    enumerable: true,
+    configurable: true
+  });
 
-    verifyWritable(arguments, "genericProperty", "testgetFunction");
+  function getFunc() {
+    return "getFunctionString";
+  }
 
-    verifyNotEnumerable(arguments, "genericProperty");
+  function setFunc(value) {
+    this.testgetFunction = value;
+  }
+  Object.defineProperty(arguments, "genericProperty", {
+    get: getFunc,
+    set: setFunc,
+    enumerable: false,
+    configurable: false
+  });
+  verifyEqualTo(arguments, "genericProperty", getFunc());
 
-    verifyNotConfigurable(arguments, "genericProperty");
+  verifyWritable(arguments, "genericProperty", "testgetFunction");
+
+  verifyNotEnumerable(arguments, "genericProperty");
+
+  verifyNotConfigurable(arguments, "genericProperty");
 }(1, 2, 3));

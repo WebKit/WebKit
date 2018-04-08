@@ -9,11 +9,11 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Array.prototype.value = "Array";
-            var arrObj = [1, 2, 3];
+Array.prototype.value = "Array";
+var arrObj = [1, 2, 3];
 
-            Object.defineProperty(obj, "property", arrObj);
+Object.defineProperty(obj, "property", arrObj);
 
 assert.sameValue(obj.property, "Array", 'obj.property');

@@ -9,13 +9,13 @@ description: >
     is thrown when 'O' is not extensible  (15.4.5.1 step 4.c)
 ---*/
 
-        var arr = [];
-        Object.preventExtensions(arr);
+var arr = [];
+Object.preventExtensions(arr);
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                "0": {
-                    value: 1
-                }
-            });
+  Object.defineProperties(arr, {
+    "0": {
+      value: 1
+    }
+  });
 });
 assert.sameValue(arr.hasOwnProperty("0"), false, 'arr.hasOwnProperty("0")');

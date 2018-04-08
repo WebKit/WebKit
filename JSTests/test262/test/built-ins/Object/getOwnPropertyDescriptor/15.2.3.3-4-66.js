@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.indexOf)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "indexOf");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "indexOf");
 
 assert.sameValue(desc.value, String.prototype.indexOf, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

@@ -36,31 +36,43 @@ var p = new Proxy(target, {
 var result;
 
 called = 0;
-result = Reflect.setPrototypeOf(p, { attr: true });
+result = Reflect.setPrototypeOf(p, {
+  attr: true
+});
 assert.sameValue(result, true, "true");
 assert.sameValue(called, 1, "true - isExtensible is called");
 
 called = 0;
-result = Reflect.setPrototypeOf(p, { attr: "false" });
+result = Reflect.setPrototypeOf(p, {
+  attr: "false"
+});
 assert.sameValue(result, true, "string");
 assert.sameValue(called, 1, "string - isExtensible is called");
 
 called = 0;
-result = Reflect.setPrototypeOf(p, { attr: 42 });
+result = Reflect.setPrototypeOf(p, {
+  attr: 42
+});
 assert.sameValue(result, true, "42");
 assert.sameValue(called, 1, "number - isExtensible is called");
 
 called = 0;
-result = Reflect.setPrototypeOf(p, { attr: p });
+result = Reflect.setPrototypeOf(p, {
+  attr: p
+});
 assert.sameValue(result, true, "p");
 assert.sameValue(called, 1, "object - isExtensible is called");
 
 called = 0;
-result = Reflect.setPrototypeOf(p, { attr: [] });
+result = Reflect.setPrototypeOf(p, {
+  attr: []
+});
 assert.sameValue(result, true, "[]");
 assert.sameValue(called, 1, "[] - isExtensible is called");
 
 called = 0;
-result = Reflect.setPrototypeOf(p, { attr: Symbol(1) });
+result = Reflect.setPrototypeOf(p, {
+  attr: Symbol(1)
+});
 assert.sameValue(result, true, "symbol");
 assert.sameValue(called, 1, "symbol - isExtensible is called");

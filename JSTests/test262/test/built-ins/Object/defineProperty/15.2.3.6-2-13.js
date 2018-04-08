@@ -8,7 +8,7 @@ description: >
     a string (value is -Infinity)
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, -Infinity, {});
+var obj = {};
+Object.defineProperty(obj, -Infinity, {});
 
 assert(obj.hasOwnProperty("-Infinity"), 'obj.hasOwnProperty("-Infinity") !== true');

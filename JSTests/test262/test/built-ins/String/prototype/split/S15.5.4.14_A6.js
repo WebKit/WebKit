@@ -10,7 +10,7 @@ description: Checking String.prototype.split.prototype
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.prototype.split.prototype !== undefined) {
-  $ERROR('#1: String.prototype.split.prototype === undefined. Actual: '+String.prototype.split.prototype );
+  $ERROR('#1: String.prototype.split.prototype === undefined. Actual: ' + String.prototype.split.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

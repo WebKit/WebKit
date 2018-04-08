@@ -8,7 +8,7 @@ description: >
     built-ins (Number.prototype.toExponential)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Number.prototype, "toExponential");
+var desc = Object.getOwnPropertyDescriptor(Number.prototype, "toExponential");
 
 assert.sameValue(desc.value, Number.prototype.toExponential, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

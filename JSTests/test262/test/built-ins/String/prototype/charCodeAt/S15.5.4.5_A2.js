@@ -9,7 +9,7 @@ es5id: 15.5.4.5_A2
 description: Call charCodeAt(pos) with negative pos
 ---*/
 
-function __FACTORY(){};
+function __FACTORY() {};
 
 __FACTORY.prototype.charCodeAt = String.prototype.charCodeAt;
 

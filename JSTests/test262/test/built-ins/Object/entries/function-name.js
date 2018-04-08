@@ -9,9 +9,9 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    Object.entries.name,
-    'entries',
-    'Expected Object.entries.name to be "entries"'
+  Object.entries.name,
+  'entries',
+  'Expected Object.entries.name to be "entries"'
 );
 
 verifyNotEnumerable(Object.entries, 'name');

@@ -9,22 +9,27 @@ description: >
     getter terminate iteration on an Array-like object
 ---*/
 
-        var accessed = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx <= 1) {
-                accessed = true;
-            }
-        }
+var accessed = false;
+
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx <= 1) {
+    accessed = true;
+  }
+}
 
 
-        var obj = { 0: 0, 2: 2, length: 3 };
-        Object.defineProperty(obj, "1", {
-            get: function () {
-                throw new RangeError("unhandle exception happened in getter");
-            },
-            configurable: true
-        });
+var obj = {
+  0: 0,
+  2: 2,
+  length: 3
+};
+Object.defineProperty(obj, "1", {
+  get: function() {
+    throw new RangeError("unhandle exception happened in getter");
+  },
+  configurable: true
+});
 assert.throws(RangeError, function() {
-            Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
+  Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
 });
 assert.sameValue(accessed, false, 'accessed');

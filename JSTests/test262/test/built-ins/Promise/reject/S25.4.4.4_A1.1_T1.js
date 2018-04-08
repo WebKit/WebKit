@@ -10,5 +10,5 @@ description: Promise.reject is a function
 ---*/
 
 if ((typeof Promise.reject) !== "function") {
-    $ERROR("Expected Promise.reject to be a function");
+  $ERROR("Expected Promise.reject to be a function");
 }

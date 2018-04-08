@@ -18,7 +18,7 @@ var __split = __string.split("o");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __string = new String("hello"); __split = __string.split("o"); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __string = new String("hello"); __split = __string.split("o"); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== 2) {
-  $ERROR('#2: var __string = new String("hello"); __split = __string.split("o"); __split.length === 2. Actual: '+__split.length );
+  $ERROR('#2: var __string = new String("hello"); __split = __string.split("o"); __split.length === 2. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ if (__split.length !== 2) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split[0] !== "hell") {
-  $ERROR('#3: var __string = new String("hello"); __split = __string.split("o"); __split[0] === "hell". Actual: '+__split[0]);
+  $ERROR('#3: var __string = new String("hello"); __split = __string.split("o"); __split[0] === "hell". Actual: ' + __split[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ if (__split[0] !== "hell") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__split[1] !== "") {
-  $ERROR('#4: var __string = new String("hello"); __split = __string.split("o"); __split[1] === "". Actual: '+__split[1]);
+  $ERROR('#4: var __string = new String("hello"); __split = __string.split("o"); __split[1] === "". Actual: ' + __split[1]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

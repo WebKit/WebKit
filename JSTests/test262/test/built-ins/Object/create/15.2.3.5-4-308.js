@@ -8,23 +8,23 @@ description: >
     data descriptor of one property in 'Properties' (8.12.9 step 4.a.i)
 ---*/
 
-        var isEnumerable = false;
+var isEnumerable = false;
 
-        var newObj = Object.create({}, {
-            prop: {
-                value: 1001,
-                writable: true,
-                configurable: true
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    value: 1001,
+    writable: true,
+    configurable: true
+  }
+});
 
-        var hasProperty = newObj.hasOwnProperty("prop");
+var hasProperty = newObj.hasOwnProperty("prop");
 
-        for (var p in newObj) {
-            if (p === "prop") {
-                isEnumerable = true;
-            }
-        }
+for (var p in newObj) {
+  if (p === "prop") {
+    isEnumerable = true;
+  }
+}
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(isEnumerable, false, 'isEnumerable');

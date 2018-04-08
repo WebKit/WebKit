@@ -12,9 +12,9 @@ description: >
     property.  Prototype of the object is Function.prototype
 ---*/
 
-function FACTORY(){};
+function FACTORY() {};
 
-FACTORY.prototype=Function.prototype;
+FACTORY.prototype = Function.prototype;
 
 var obj = new FACTORY;
 
@@ -29,6 +29,6 @@ try {
   $ERROR('#2: If the object does not have a [[Call]] property, a TypeError exception is thrown');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-  	$ERROR('#2.1: If the object does not have a [[Call]] property, a TypeError exception is thrown');
+    $ERROR('#2.1: If the object does not have a [[Call]] property, a TypeError exception is thrown');
   }
 }

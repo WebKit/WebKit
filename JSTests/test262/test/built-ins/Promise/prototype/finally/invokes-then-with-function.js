@@ -7,7 +7,7 @@ esid: sec-promise.prototype.finally
 features: [Promise.prototype.finally]
 ---*/
 
-var target = new Promise(function () {});
+var target = new Promise(function() {});
 var returnValue = {};
 var callCount = 0;
 var thisValue = null;
@@ -26,8 +26,8 @@ target.then = function(a, b) {
   return returnValue;
 };
 
-var originalFinallyHandler = function () {};
-var anonName = Object(function () {}).name;
+var originalFinallyHandler = function() {};
+var anonName = Object(function() {}).name;
 
 var result = Promise.prototype.finally.call(target, originalFinallyHandler, 2, 3);
 

@@ -11,13 +11,13 @@ description: >
     step 3.g)
 ---*/
 
-        var arrObj = [0, 1];
+var arrObj = [0, 1];
 
-        Object.defineProperty(arrObj, "length", {
-            writable: false
-        });
+Object.defineProperty(arrObj, "length", {
+  writable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(arrObj, "length", {
-                value: 0
-            });
+  Object.defineProperty(arrObj, "length", {
+    value: 0
+  });
 });

@@ -9,7 +9,7 @@ es5id: 15.2.2.1_A6_T2
 description: Creating an object with "new Object(null,2,3)"
 ---*/
 
-var obj = new Object(null,2,3);
+var obj = new Object(null, 2, 3);
 
 //CHECK#1
 if (obj.constructor !== Object) {

@@ -8,13 +8,13 @@ description: >
     data descriptor of one property in 'Properties' (8.12.9 step 4.a.i)
 ---*/
 
-            var newObj = Object.create({}, {
-                prop: {
-                    writable: true,
-                    configurable: true,
-                    enumerable: true
-                }
-            });
+var newObj = Object.create({}, {
+  prop: {
+    writable: true,
+    configurable: true,
+    enumerable: true
+  }
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(newObj.prop, undefined, 'newObj.prop');

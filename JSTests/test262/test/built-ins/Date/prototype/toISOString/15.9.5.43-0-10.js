@@ -10,19 +10,19 @@ description: >
     UTC(0)
 ---*/
 
-        var timeZoneMinutes = new Date().getTimezoneOffset() * (-1);
-        var date, dateStr;
+var timeZoneMinutes = new Date().getTimezoneOffset() * (-1);
+var date, dateStr;
 
-        if (timeZoneMinutes > 0) {
-            date = new Date(1970, 0, -99999999, 0, 0, 0, 1);
+if (timeZoneMinutes > 0) {
+  date = new Date(1970, 0, -99999999, 0, 0, 0, 1);
 
-            assert.throws(RangeError, function() {
-                date.toISOString();
-            });
-        } else {
-            date = new Date(1970, 0, -99999999, 0, 0 + timeZoneMinutes + 60, 0, 1);
+  assert.throws(RangeError, function() {
+    date.toISOString();
+  });
+} else {
+  date = new Date(1970, 0, -99999999, 0, 0 + timeZoneMinutes + 60, 0, 1);
 
-            dateStr = date.toISOString();
+  dateStr = date.toISOString();
 
-            assert.sameValue(dateStr[dateStr.length - 1], "Z");
-        }
+  assert.sameValue(dateStr[dateStr.length - 1], "Z");
+}

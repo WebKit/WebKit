@@ -26,16 +26,16 @@ var valnum = 7;
 var args = new Array();
 for (var i = 0; i <= 1; i++)
 {
-	args[i] = NaN;
-	for (var j = 0; j < valnum; j++)
-	{
-		args[1-i] = vals[j];
-		assert.sameValue(
-			Math.min(args[0], args[1]),
-			NaN,
-			"min(" + args[0] + ", " + args[1] + ")"
-		);
-	}
+  args[i] = NaN;
+  for (var j = 0; j < valnum; j++)
+  {
+    args[1 - i] = vals[j];
+    assert.sameValue(
+      Math.min(args[0], args[1]),
+      NaN,
+      "min(" + args[0] + ", " + args[1] + ")"
+    );
+  }
 }
 
 // CHECK #3
@@ -43,25 +43,25 @@ var k = 1;
 var l = 2;
 for (var i = 0; i <= 2; i++)
 {
-	args[i] = NaN;
-	if (i === 1)
-	{
-		k = 0;
-	} else if (i === 2)
-	{
-	 	l = 1;	
-	}
-	for (var j = 0; j < valnum; j++)
-	{
-		for (var jj = 0; jj < valnum; jj++)
-		{
-			args[k] = vals[j];
-			args[l] = vals[jj];
-			assert.sameValue(
-				Math.min(args[0], args[1], args[2]),
-				NaN,
-				"min(" + args[0] + ", " + args[1] + ", " + args[2] + ")"
-			);
-		}
-	}
+  args[i] = NaN;
+  if (i === 1)
+  {
+    k = 0;
+  } else if (i === 2)
+  {
+    l = 1;
+  }
+  for (var j = 0; j < valnum; j++)
+  {
+    for (var jj = 0; jj < valnum; jj++)
+    {
+      args[k] = vals[j];
+      args[l] = vals[jj];
+      assert.sameValue(
+        Math.min(args[0], args[1], args[2]),
+        NaN,
+        "min(" + args[0] + ", " + args[1] + ", " + args[2] + ")"
+      );
+    }
+  }
 }

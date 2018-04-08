@@ -21,7 +21,7 @@ if (push !== 4294967295) {
 try {
   x.push("x");
   $ERROR('#2.1: x = []; x.length = 4294967295; x.push("x") throw RangeError. Actual: ' + (push));
-} catch(e) {
+} catch (e) {
   if ((e instanceof RangeError) !== true) {
     $ERROR('#2.2: x = []; x.length = 4294967295; x.push("x") throw RangeError. Actual: ' + (e));
   }
@@ -29,10 +29,10 @@ try {
 
 //CHECK#3
 if (x[4294967295] !== "x") {
-   $ERROR('#3: x = []; x.length = 4294967295; try {x.push("x")}catch(e){}; x[4294967295] === "x". Actual: ' + (x[4294967295]));
+  $ERROR('#3: x = []; x.length = 4294967295; try {x.push("x")}catch(e){}; x[4294967295] === "x". Actual: ' + (x[4294967295]));
 }
 
 //CHECK#4
 if (x.length !== 4294967295) {
-   $ERROR('#4: x = []; x.length = 4294967295; try {x.push("x")}catch(e){}; x.length === 4294967295. Actual: ' + (x.length));
+  $ERROR('#4: x = []; x.length = 4294967295; try {x.push("x")}catch(e){}; x.length === 4294967295. Actual: ' + (x.length));
 }

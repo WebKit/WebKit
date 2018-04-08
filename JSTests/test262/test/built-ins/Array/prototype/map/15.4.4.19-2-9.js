@@ -10,35 +10,35 @@ description: >
     property
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val > 10;
+}
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "length", {
-            get: function () {
-                return 3;
-            },
-            configurable: true
-        });
+Object.defineProperty(proto, "length", {
+  get: function() {
+    return 3;
+  },
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        Object.defineProperty(child, "length", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(child, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
-        child[0] = 12;
-        child[1] = 11;
-        child[2] = 9;
+child[0] = 12;
+child[1] = 11;
+child[2] = 9;
 
-        var testResult = Array.prototype.map.call(child, callbackfn);
+var testResult = Array.prototype.map.call(child, callbackfn);
 
 assert.sameValue(testResult.length, 2, 'testResult.length');

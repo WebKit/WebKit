@@ -9,11 +9,11 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            String.prototype.value = "String";
-            var strObj = new String("abc");
+String.prototype.value = "String";
+var strObj = new String("abc");
 
-            Object.defineProperty(obj, "property", strObj);
+Object.defineProperty(obj, "property", strObj);
 
 assert.sameValue(obj.property, "String", 'obj.property');

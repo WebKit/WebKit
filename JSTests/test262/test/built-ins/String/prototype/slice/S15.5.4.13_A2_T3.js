@@ -11,8 +11,8 @@ var __string = new String("");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__string.slice(1,0) !== "") {
-  $ERROR('#1: __string = new String(""); __string.slice(1,0) === "". Actual: '+__string.slice(1,0) );
+if (__string.slice(1, 0) !== "") {
+  $ERROR('#1: __string = new String(""); __string.slice(1,0) === "". Actual: ' + __string.slice(1, 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

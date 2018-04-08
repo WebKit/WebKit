@@ -8,10 +8,12 @@ description: >
     present  (8.10.5 step 5)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var attr = { value: 100 };
+var attr = {
+  value: 100
+};
 
-        Object.defineProperty(obj, "property", attr);
+Object.defineProperty(obj, "property", attr);
 
 assert.sameValue(obj.property, 100, 'obj.property');

@@ -9,17 +9,17 @@ description: >
     property (8.10.5 step 6.a)
 ---*/
 
-            Math.writable = true;
+Math.writable = true;
 
-            var newObj = Object.create({}, {
-                prop: Math
-            });
+var newObj = Object.create({}, {
+  prop: Math
+});
 
-            var beforeWrite = (newObj.hasOwnProperty("prop") && typeof (newObj.prop) === "undefined");
+var beforeWrite = (newObj.hasOwnProperty("prop") && typeof(newObj.prop) === "undefined");
 
-            newObj.prop = "isWritable";
+newObj.prop = "isWritable";
 
-            var afterWrite = (newObj.prop === "isWritable");
+var afterWrite = (newObj.prop === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

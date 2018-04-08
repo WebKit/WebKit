@@ -9,21 +9,21 @@ description: >
     7.a)
 ---*/
 
-        var obj = {};
-        var proto = {
-            get: function () {
-                return "inheritedDataProperty";
-            }
-        };
+var obj = {};
+var proto = {
+  get: function() {
+    return "inheritedDataProperty";
+  }
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        child.get = function () {
-            return "ownDataProperty";
-        };
+var child = new ConstructFun();
+child.get = function() {
+  return "ownDataProperty";
+};
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
 assert.sameValue(obj.property, "ownDataProperty", 'obj.property');

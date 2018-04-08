@@ -13,25 +13,25 @@ flags: [async, onlyStrict]
 ---*/
 
 var expectedThis = undefined,
-    obj = {};
+  obj = {};
 
 var p = Promise.resolve(obj).then(function(arg) {
-    if (this !== expectedThis) {
-        $DONE("'this' must be undefined, got " + this);
-        return;
-    }
+  if (this !== expectedThis) {
+    $DONE("'this' must be undefined, got " + this);
+    return;
+  }
 
-    if (arg !== obj) {
-        $DONE("Expected promise to be fulfilled by obj, actually " + arg);
-        return;
-    }
+  if (arg !== obj) {
+    $DONE("Expected promise to be fulfilled by obj, actually " + arg);
+    return;
+  }
 
-    if (arguments.length !== 1) {
-        $DONE('Expected handler function to be called with exactly 1 argument.');
-        return;
-    }
+  if (arguments.length !== 1) {
+    $DONE('Expected handler function to be called with exactly 1 argument.');
+    return;
+  }
 
-    $DONE();
+  $DONE();
 }, function() {
   $DONE('The promise should not be rejected.');
 });

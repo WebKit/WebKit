@@ -8,19 +8,19 @@ description: >
     is set to false is non-enumerable (Math)
 ---*/
 
-            Object.defineProperty(Object.prototype, "prop", {
-                value: 1001,
-                writable: false,
-                enumerable: false,
-                configurable: true
-            });
+Object.defineProperty(Object.prototype, "prop", {
+  value: 1001,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});
 
-            var verifyEnumerable = false;
-            for (var p in Math) {
-                if (p === "prop") {
-                    verifyEnumerable = true;
-                }
-            }
+var verifyEnumerable = false;
+for (var p in Math) {
+  if (p === "prop") {
+    verifyEnumerable = true;
+  }
+}
 
 assert.sameValue(Math.hasOwnProperty("prop"), false, 'Math.hasOwnProperty("prop")');
 assert.sameValue(verifyEnumerable, false, 'verifyEnumerable');

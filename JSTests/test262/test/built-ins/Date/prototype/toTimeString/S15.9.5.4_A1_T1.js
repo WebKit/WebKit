@@ -9,7 +9,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.toTimeString;
-if(x === 1)
+if (x === 1)
   Date.prototype.toTimeString = 2;
 else
   Date.prototype.toTimeString = 1;

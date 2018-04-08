@@ -17,9 +17,9 @@ description: Value of the function constructor argument is "{}"
 //CHECK#1
 try {
   var f = new Function({});
-  $ERROR('#1: test failed with error '+e);
+  $ERROR('#1: test failed with error ' + e);
 } catch (e) {
   if (!(e instanceof SyntaxError)) {
-  	$ERROR('#1.1: If body is not parsable as FunctionBody then throw a SyntaxError exception');
+    $ERROR('#1.1: If body is not parsable as FunctionBody then throw a SyntaxError exception');
   }
 }

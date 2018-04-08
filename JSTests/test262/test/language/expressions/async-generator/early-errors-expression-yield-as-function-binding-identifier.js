@@ -3,7 +3,7 @@
 
 /*---
 author: Caitlin Potter <caitp@igalia.com>
-esid: pending
+esid: sec-async-generator-function-definitions-static-semantics-early-errors
 description: >
   `yield` is not a valid BindingIdentifier for AsyncGeneratorExpressions.
 negative:

@@ -2,8 +2,9 @@
 // This code is governed by the license found in the LICENSE file.
 
 /*---
-description: test Object.Assign(target,...sources),only one argument was passed,
-             return ToObject(target)
+description: >
+  test Object.Assign(target,...sources),only one argument was passed,
+  return ToObject(target)
 es6id:  19.1.2.1.3
 ---*/
 

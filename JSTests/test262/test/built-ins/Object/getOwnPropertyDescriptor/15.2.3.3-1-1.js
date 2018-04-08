@@ -10,5 +10,5 @@ description: >
 
 
 assert.throws(TypeError, function() {
-            Object.getOwnPropertyDescriptor(undefined, "foo");
+  Object.getOwnPropertyDescriptor(undefined, "foo");
 });

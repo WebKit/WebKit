@@ -16,5 +16,3 @@ var syms = Object.getOwnPropertySymbols(obj);
 
 assert.sameValue(syms[0], sym, "Array of symbols returned by `Object.getOwnPropertySymbols(obj)` includes `sym`");
 assert.sameValue(syms.length, 1, "The value of `syms.length` is `1`");
-
-

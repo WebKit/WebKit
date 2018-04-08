@@ -9,19 +9,19 @@ description: >
     7.a)
 ---*/
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "get", {
-            set: function () { }
-        });
+Object.defineProperty(proto, "get", {
+  set: function() {}
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var descObj = new ConstructFun();
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var descObj = new ConstructFun();
 
-        var newObj = Object.create({}, {
-            prop: descObj 
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
-assert.sameValue(typeof (newObj.prop), "undefined", 'typeof (newObj.prop)');
+assert.sameValue(typeof(newObj.prop), "undefined", 'typeof (newObj.prop)');

@@ -9,7 +9,7 @@ es5id: 15.2.1.1_A3_T3
 description: Creating an object with "Object((null,2,3),1,2)"
 ---*/
 
-var obj = Object((null,2,3),1,2);
+var obj = Object((null, 2, 3), 1, 2);
 
 //CHECK#1
 if (obj.constructor !== Number) {
@@ -22,6 +22,6 @@ if (typeof obj !== "object") {
 }
 
 //CHECK#3
-if ((obj != 3)||(obj === 3)) {
+if ((obj != 3) || (obj === 3)) {
   $ERROR('3#: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
 }

@@ -11,24 +11,24 @@ description: >
 
 var propertyFound = false;
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            get: undefined,
-            set: undefined,
-            enumerable: true,
-            configurable: false
-        });
+Object.defineProperty(obj, "prop", {
+  get: undefined,
+  set: undefined,
+  enumerable: true,
+  configurable: false
+});
 
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
-        for (var p in obj) {
-            if (p === "prop") {
-                propertyFound = true;
-                break;
-            }
-        }
+for (var p in obj) {
+  if (p === "prop") {
+    propertyFound = true;
+    break;
+  }
+}
 
 assert(propertyFound, 'Property not found');
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');

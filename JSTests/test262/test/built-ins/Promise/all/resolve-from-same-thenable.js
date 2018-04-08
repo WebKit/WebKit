@@ -39,7 +39,9 @@ function Constructor(executor) {
   }
   executor(resolve, $ERROR);
 }
-Constructor.resolve = function(v) { return v; };
+Constructor.resolve = function(v) {
+  return v;
+};
 
 var p1OnFulfilled, p2OnFulfilled, p3OnFulfilled;
 

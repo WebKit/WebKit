@@ -20,6 +20,6 @@ if (Object.prototype.toLocaleString() !== Object.prototype.toString()) {
 }
 
 //CHECK#2
-if ({}.toLocaleString()!=={}.toString()) {
+if ({}.toLocaleString() !== {}.toString()) {
   $ERROR('#2: toLocaleString function returns the result of calling toString()');
 }

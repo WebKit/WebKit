@@ -15,24 +15,24 @@ var obj = {};
 var proto = {};
 
 Object.defineProperty(proto, "writable", {
-    get: function () {
-        return true;
-    }
+  get: function() {
+    return true;
+  }
 });
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var descObj = new Con();
 
 Object.defineProperty(descObj, "writable", {
-    get: function () {
-        return false;
-    }
+  get: function() {
+    return false;
+  }
 });
 
 Object.defineProperties(obj, {
-    property: descObj
+  property: descObj
 });
 
 assert(obj.hasOwnProperty("property"));

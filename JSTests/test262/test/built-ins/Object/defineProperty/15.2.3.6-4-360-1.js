@@ -10,23 +10,23 @@ description: >
     object (8.12.9 - step 9.b.i)
 ---*/
 
-        var obj = [];
+var obj = [];
 
-        Object.defineProperty(obj, "0", {
-            value: 2010,
-            writable: false,
-            enumerable: true,
-            configurable: true
-        });
-        var desc1 = Object.getOwnPropertyDescriptor(obj, "0");
+Object.defineProperty(obj, "0", {
+  value: 2010,
+  writable: false,
+  enumerable: true,
+  configurable: true
+});
+var desc1 = Object.getOwnPropertyDescriptor(obj, "0");
 
-        function getFunc() {
-            return 20;
-        }
-        Object.defineProperty(obj, "0", {
-            get: getFunc
-        });
-        var desc2 = Object.getOwnPropertyDescriptor(obj, "0");
+function getFunc() {
+  return 20;
+}
+Object.defineProperty(obj, "0", {
+  get: getFunc
+});
+var desc2 = Object.getOwnPropertyDescriptor(obj, "0");
 
 assert(desc1.hasOwnProperty("value"), 'desc1.hasOwnProperty("value") !== true');
 assert(desc2.hasOwnProperty("get"), 'desc2.hasOwnProperty("get") !== true');

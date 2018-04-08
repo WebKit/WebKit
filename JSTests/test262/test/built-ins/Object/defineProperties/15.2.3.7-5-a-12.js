@@ -8,12 +8,12 @@ description: >
     implements its own [[Get]] method to get enumerable own property
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Math.prop = {
-                value: 12
-            };
-            Object.defineProperties(obj, Math);
+Math.prop = {
+  value: 12
+};
+Object.defineProperties(obj, Math);
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, 12, 'obj.prop');

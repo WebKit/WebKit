@@ -6,27 +6,27 @@ es5id: 15.2.3.6-4-601
 description: ES5 Attributes - all attributes in Object.create are correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Object, "create");
+var desc = Object.getOwnPropertyDescriptor(Object, "create");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Object.create;
+var temp = Object.create;
 
-            Object.create = "2010";
+Object.create = "2010";
 
-            var isWritable = (Object.create === "2010");
+var isWritable = (Object.create === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Object) {
-                if (prop === "create") {
-                    isEnumerable = true;
-                }
-            }
-        
-            delete Object.create;
+for (var prop in Object) {
+  if (prop === "create") {
+    isEnumerable = true;
+  }
+}
 
-            var isConfigurable = !Object.hasOwnProperty("create");
+delete Object.create;
+
+var isConfigurable = !Object.hasOwnProperty("create");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

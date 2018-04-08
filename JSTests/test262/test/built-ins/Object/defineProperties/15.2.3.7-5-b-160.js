@@ -17,7 +17,7 @@ var descObj = new Error();
 descObj.writable = false;
 
 Object.defineProperties(obj, {
-    property: descObj
+  property: descObj
 });
 
 assert(obj.hasOwnProperty("property"));

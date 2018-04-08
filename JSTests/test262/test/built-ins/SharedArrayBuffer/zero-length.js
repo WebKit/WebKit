@@ -15,6 +15,7 @@ info: |
   4. ReturnIfAbrupt(byteLength).
   5. If SameValueZero(numberLength, byteLength) is false, throw a RangeError exception.
   ...
+features: [SharedArrayBuffer]
 ---*/
 
 var positiveZero = new SharedArrayBuffer(+0);

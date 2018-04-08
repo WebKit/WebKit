@@ -8,7 +8,7 @@ description: >
     space, character, number, object and null characters
 ---*/
 
-        var str = "abc" + "   " + 123 + "   " + {} + "    " + "\u0000";
-        var str1 = "    " + str + "    ";
+var str = "abc" + "   " + 123 + "   " + {} + "    " + "\u0000";
+var str1 = "    " + str + "    ";
 
 assert.sameValue(str1.trim(), str, 'str1.trim()');

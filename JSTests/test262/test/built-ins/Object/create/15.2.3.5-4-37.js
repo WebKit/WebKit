@@ -9,16 +9,19 @@ description: >
     5.a)
 ---*/
 
-        var props = new Error("test");
+var props = new Error("test");
 
-        (Object.getOwnPropertyNames(props)).forEach(function(name){
-            props[name] = {value:11, configurable:true}
-        });
+(Object.getOwnPropertyNames(props)).forEach(function(name) {
+  props[name] = {
+    value: 11,
+    configurable: true
+  }
+});
 
-        props.prop15_2_3_5_4_37 = {
-            value: 12,
-            enumerable: true
-        };
-        var newObj = Object.create({}, props);
+props.prop15_2_3_5_4_37 = {
+  value: 12,
+  enumerable: true
+};
+var newObj = Object.create({}, props);
 
 assert(newObj.hasOwnProperty("prop15_2_3_5_4_37"), 'newObj.hasOwnProperty("prop15_2_3_5_4_37") !== true');

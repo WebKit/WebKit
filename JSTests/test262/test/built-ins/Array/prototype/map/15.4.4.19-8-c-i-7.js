@@ -9,22 +9,25 @@ description: >
     property on an Array-like object
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 5) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 5) {
+    return val === kValue;
+  }
+  return false;
+}
 
-        var proto = { 5: kValue, length: 10 };
+var proto = {
+  5: kValue,
+  length: 10
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        var newArr = Array.prototype.map.call(child, callbackfn);
+var newArr = Array.prototype.map.call(child, callbackfn);
 
 assert.sameValue(newArr[5], true, 'newArr[5]');

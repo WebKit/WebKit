@@ -9,11 +9,11 @@ es5id: 15.3.4.3_A7_T5
 description: argArray is (null, arguments), inside function declaration used
 ---*/
 
-function FACTORY(){
-  Function("a1,a2,a3","this.shifted=a1+a2+a3;").apply(null,arguments);
+function FACTORY() {
+  Function("a1,a2,a3", "this.shifted=a1+a2+a3;").apply(null, arguments);
 }
 
-var obj=new FACTORY("",1,2);
+var obj = new FACTORY("", 1, 2);
 
 //CHECK#1
 if (this["shifted"] !== "12") {

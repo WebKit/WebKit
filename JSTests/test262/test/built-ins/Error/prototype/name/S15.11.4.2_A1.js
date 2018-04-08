@@ -10,7 +10,7 @@ description: Checking Error.prototype.name
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#1
 if (!Error.prototype.hasOwnProperty('name')) {
-	$ERROR('#1: Error.prototype.hasOwnProperty(\'name\') return true. Actual: '+Error.prototype.hasOwnProperty('name'));
+  $ERROR('#1: Error.prototype.hasOwnProperty(\'name\') return true. Actual: ' + Error.prototype.hasOwnProperty('name'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

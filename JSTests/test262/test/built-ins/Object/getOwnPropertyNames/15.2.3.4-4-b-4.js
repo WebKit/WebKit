@@ -8,13 +8,15 @@ description: >
     writable
 ---*/
 
-        var obj = { "a": "a" };
+var obj = {
+  "a": "a"
+};
 
-        var result = Object.getOwnPropertyNames(obj);
+var result = Object.getOwnPropertyNames(obj);
 
-            var beforeOverride = (result[0] === "a");
-            result[0] = "b";
-            var afterOverride = (result[0] === "b");
+var beforeOverride = (result[0] === "a");
+result[0] = "b";
+var afterOverride = (result[0] === "b");
 
 assert(beforeOverride, 'beforeOverride !== true');
 assert(afterOverride, 'afterOverride !== true');

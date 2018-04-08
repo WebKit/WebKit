@@ -11,8 +11,8 @@ includes: [propertyHelper.js]
 ---*/
 
 Object.defineProperty(this, "foo", {
-    value: 12,
-    configurable: true
+  value: 12,
+  configurable: true
 });
 
 verifyEqualTo(this, "foo", 12);

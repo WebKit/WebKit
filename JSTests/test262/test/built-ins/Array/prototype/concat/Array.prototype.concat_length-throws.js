@@ -13,7 +13,9 @@ function MyError() {}
 var obj = {};
 obj[Symbol.isConcatSpreadable] = true;
 Object.defineProperty(obj, "length", {
-  get: function() { throw new MyError(); }
+  get: function() {
+    throw new MyError();
+  }
 });
 
 assert.throws(MyError, function() {

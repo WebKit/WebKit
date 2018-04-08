@@ -9,7 +9,7 @@ description: >
 flags: [noStrict]
 ---*/
 
-   
+
 assert.throws(SyntaxError, function() {
-    Function('a,a','"use strict";');
+  Function('a,a', '"use strict";');
 });

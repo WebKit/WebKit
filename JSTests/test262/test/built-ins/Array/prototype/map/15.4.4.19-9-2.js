@@ -9,12 +9,12 @@ description: >
     and values the result of callbackfn
 ---*/
 
-  function callbackfn(val, idx, obj)
-  {
-    return val + 10;
-  }
-  var srcArr = [1,2,3,4,5];
-  var resArr = srcArr.map(callbackfn);
+function callbackfn(val, idx, obj)
+{
+  return val + 10;
+}
+var srcArr = [1, 2, 3, 4, 5];
+var resArr = srcArr.map(callbackfn);
 
 assert.sameValue(resArr[0], 11, 'resArr[0]');
 assert.sameValue(resArr[1], 12, 'resArr[1]');

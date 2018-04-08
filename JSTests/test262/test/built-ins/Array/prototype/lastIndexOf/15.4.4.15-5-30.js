@@ -9,27 +9,27 @@ description: >
     visible when an exception occurs
 ---*/
 
-        var stepFiveOccurs = false;
+var stepFiveOccurs = false;
 
-        var obj = {};
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                return {
-                    valueOf: function () {
-                        throw new TypeError();
-                    }
-                };
-            },
-            configurable: true
-        });
+var obj = {};
+Object.defineProperty(obj, "length", {
+  get: function() {
+    return {
+      valueOf: function() {
+        throw new TypeError();
+      }
+    };
+  },
+  configurable: true
+});
 
-        var fromIndex = {
-            valueOf: function () {
-                stepFiveOccurs = true;
-                return 0;
-            }
-        };
+var fromIndex = {
+  valueOf: function() {
+    stepFiveOccurs = true;
+    return 0;
+  }
+};
 assert.throws(TypeError, function() {
-            Array.prototype.lastIndexOf.call(obj, undefined, fromIndex);
+  Array.prototype.lastIndexOf.call(obj, undefined, fromIndex);
 });
 assert.sameValue(stepFiveOccurs, false, 'stepFiveOccurs');

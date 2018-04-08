@@ -9,19 +9,19 @@ description: >
     step 6.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var regObj = new RegExp();
+var regObj = new RegExp();
 
-        regObj.writable = true;
+regObj.writable = true;
 
-        Object.defineProperty(obj, "property", regObj);
+Object.defineProperty(obj, "property", regObj);
 
-        var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

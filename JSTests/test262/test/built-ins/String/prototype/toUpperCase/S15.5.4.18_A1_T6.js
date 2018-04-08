@@ -12,7 +12,7 @@ Number.prototype.toUpperCase = String.prototype.toUpperCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ((Number.NEGATIVE_INFINITY).toUpperCase() !== "-INFINITY") {
-  $ERROR('#1: Number.prototype.toUpperCase = String.prototype.toUpperCase; (Number.NEGATIVE_INFINITY).toUpperCase() === "-INFINITY". Actual: '+(Number.NEGATIVE_INFINITY).toUpperCase() );
+  $ERROR('#1: Number.prototype.toUpperCase = String.prototype.toUpperCase; (Number.NEGATIVE_INFINITY).toUpperCase() === "-INFINITY". Actual: ' + (Number.NEGATIVE_INFINITY).toUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

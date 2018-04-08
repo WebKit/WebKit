@@ -10,11 +10,11 @@ description: >
     beyond the new length are deleted(15.4.5.1 step 3.f)
 ---*/
 
-        var arrObj = [0, 1];
-        
-        Object.defineProperty(arrObj, "length", {
-            value: 1
-        });
+var arrObj = [0, 1];
+
+Object.defineProperty(arrObj, "length", {
+  value: 1
+});
 
 assert.sameValue(arrObj.length, 1, 'arrObj.length');
 assert.sameValue(arrObj.hasOwnProperty("1"), false, 'arrObj.hasOwnProperty("1")');

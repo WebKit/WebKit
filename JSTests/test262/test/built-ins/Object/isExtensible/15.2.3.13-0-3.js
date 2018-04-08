@@ -11,6 +11,6 @@ description: >
     constructor
 ---*/
 
-  var o = new Object();
+var o = new Object();
 
 assert.sameValue(Object.isExtensible(o), true, 'Object.isExtensible(o)');

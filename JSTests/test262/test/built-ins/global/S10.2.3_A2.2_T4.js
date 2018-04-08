@@ -11,7 +11,7 @@ flags: [noStrict]
 function test() {
   //CHECK#1
   for (var x in this) {
-    if ( x === 'Math' ) {
+    if (x === 'Math') {
       $ERROR("#1: 'Math' have attribute DontEnum");
     }
   }

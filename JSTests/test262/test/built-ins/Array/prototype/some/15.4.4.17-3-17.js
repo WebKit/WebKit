@@ -9,15 +9,20 @@ description: >
     with leading zeros
 ---*/
 
-        function callbackfn1(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn1(val, idx, obj) {
+  return val > 10;
+}
 
-        function callbackfn2(val, idx, obj) {
-            return val > 11;
-        }
+function callbackfn2(val, idx, obj) {
+  return val > 11;
+}
 
-        var obj = { 0: 9, 1: 11, 2: 12, length: "0002.00" };
+var obj = {
+  0: 9,
+  1: 11,
+  2: 12,
+  length: "0002.00"
+};
 
 assert(Array.prototype.some.call(obj, callbackfn1), 'Array.prototype.some.call(obj, callbackfn1) !== true');
 assert.sameValue(Array.prototype.some.call(obj, callbackfn2), false, 'Array.prototype.some.call(obj, callbackfn2)');

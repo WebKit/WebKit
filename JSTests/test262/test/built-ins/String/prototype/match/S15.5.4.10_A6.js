@@ -10,7 +10,7 @@ description: Checking String.prototype.match.prototype
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.prototype.match.prototype !== undefined) {
-  $ERROR('#1: String.prototype.match.prototype === undefined. Actual: '+String.prototype.match.prototype );
+  $ERROR('#1: String.prototype.match.prototype === undefined. Actual: ' + String.prototype.match.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

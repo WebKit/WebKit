@@ -17,7 +17,7 @@ assert.sameValue(typeof descriptor.set, 'function', '%FunctionPrototype%.argumen
 assert.sameValue(descriptor.get, descriptor.set, '%FunctionPrototype%.arguments getter/setter are both %ThrowTypeError%');
 
 assert.throws(TypeError, function() {
-  return FunctionPrototype.arguments;	
+  return FunctionPrototype.arguments;
 });
 
 assert.throws(TypeError, function() {

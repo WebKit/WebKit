@@ -15,16 +15,16 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperty(arr, "0", {
-    get: function () {
-        return 12;
-    },
-    configurable: true
+  get: function() {
+    return 12;
+  },
+  configurable: true
 });
 
 Object.defineProperties(arr, {
-    "0": {
-        get: undefined
-    }
+  "0": {
+    get: undefined
+  }
 });
 verifyNotEnumerable(arr, "0");
 

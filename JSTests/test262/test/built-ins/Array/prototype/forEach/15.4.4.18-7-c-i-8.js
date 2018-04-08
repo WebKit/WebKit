@@ -9,16 +9,16 @@ description: >
     data property on an Array
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 1) {
-                testResult = (val === 13);
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 1) {
+    testResult = (val === 13);
+  }
+}
 
-            Array.prototype[1] = 13;
+Array.prototype[1] = 13;
 
-            [, , , ].forEach(callbackfn);
+[, , , ].forEach(callbackfn);
 
 assert(testResult, 'testResult !== true');

@@ -10,17 +10,18 @@ description: >
     equals number of parameters)
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 2) {
-                testResult = (curVal === 2);
-            }
-        }
+var testResult = false;
 
-        var func = function (a, b, c) {
-            Array.prototype.reduceRight.call(arguments, callbackfn, "initialValue");
-        };
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 2) {
+    testResult = (curVal === 2);
+  }
+}
 
-        func(0, 1, 2);
+var func = function(a, b, c) {
+  Array.prototype.reduceRight.call(arguments, callbackfn, "initialValue");
+};
+
+func(0, 1, 2);
 
 assert(testResult, 'testResult !== true');

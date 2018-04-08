@@ -8,12 +8,12 @@ description: >
     function
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, "foo", {
-            set: function () { },
-            configurable: true
-        });
+var obj = {};
+Object.defineProperty(obj, "foo", {
+  set: function() {},
+  configurable: true
+});
 
-        Object.preventExtensions(obj);
+Object.preventExtensions(obj);
 
 assert.sameValue(Object.isFrozen(obj), false, 'Object.isFrozen(obj)');

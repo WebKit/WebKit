@@ -8,7 +8,7 @@ description: >
     built-ins (Boolean.prototype.valueOf)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Boolean.prototype, "valueOf");
+var desc = Object.getOwnPropertyDescriptor(Boolean.prototype, "valueOf");
 
 assert.sameValue(desc.value, Boolean.prototype.valueOf, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

@@ -12,8 +12,8 @@ if (Date.propertyIsEnumerable('parse')) {
   $ERROR('#1: The Date.parse property has the attribute DontEnum');
 }
 
-for(var x in Date) {
-  if(x === "parse") {
+for (var x in Date) {
+  if (x === "parse") {
     $ERROR('#2: The Date.parse has the attribute DontEnum');
   }
 }

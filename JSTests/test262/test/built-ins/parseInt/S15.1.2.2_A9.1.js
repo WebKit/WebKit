@@ -16,7 +16,7 @@ if (parseInt.propertyIsEnumerable('length') !== false) {
 
 //CHECK#2
 var result = true;
-for (var p in parseInt){
+for (var p in parseInt) {
   if (p === "length") {
     result = false;
   }

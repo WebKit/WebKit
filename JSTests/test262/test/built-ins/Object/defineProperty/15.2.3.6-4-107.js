@@ -14,25 +14,25 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function getFunc() {
-    return 10;
+  return 10;
 }
 
 function setFunc(value) {
-    obj.setVerifyHelpProp = value;
+  obj.setVerifyHelpProp = value;
 }
 
 Object.defineProperty(obj, "foo", {
-    get: getFunc,
-    set: setFunc,
-    configurable: true
+  get: getFunc,
+  set: setFunc,
+  configurable: true
 });
 
 function getFunc2() {
-    return 20;
+  return 20;
 }
 
 Object.defineProperty(obj, "foo", {
-    get: getFunc2
+  get: getFunc2
 });
 verifyEqualTo(obj, "foo", getFunc2());
 

@@ -22,7 +22,7 @@ for (var indexI = 0; indexI <= 65535; indexI++) {
         $ERROR('#' + hex + ' ');
         errorCount++;
       }
-    } catch (e){
+    } catch (e) {
       $ERROR('#' + hex + ' ');
       errorCount++;
     }

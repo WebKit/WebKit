@@ -7,15 +7,16 @@ es5id: 15.4.4.18-1-15
 description: Array.prototype.forEach applied to the Arguments object
 ---*/
 
-        var result = false;
-        function callbackfn(val, idx, obj) {
-            result = ('[object Arguments]' === Object.prototype.toString.call(obj));
-        }
+var result = false;
 
-        var obj = (function () {
-            return arguments;
-        }("a", "b"));
+function callbackfn(val, idx, obj) {
+  result = ('[object Arguments]' === Object.prototype.toString.call(obj));
+}
 
-        Array.prototype.forEach.call(obj, callbackfn);
+var obj = (function() {
+  return arguments;
+}("a", "b"));
+
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(result, 'result !== true');

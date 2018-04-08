@@ -8,8 +8,8 @@ description: >
     defined in 'obj' (15.2.3.7 step 3)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {} 
-        });
+var newObj = Object.create({}, {
+  prop: {}
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

@@ -10,21 +10,21 @@ description: >
     accessor property on an Array
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return typeof val === "undefined";
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return typeof val === "undefined";
+}
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "0", {
-            set: function () { },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  set: function() {},
+  configurable: true
+});
 
-            Array.prototype[0] = 100;
+Array.prototype[0] = 100;
 
 assert(arr.every(callbackfn), 'arr.every(callbackfn) !== true');
 assert(accessed, 'accessed !== true');

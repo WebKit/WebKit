@@ -8,7 +8,7 @@ description: >
     built-ins (JSON.stringify)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(JSON, "stringify");
+var desc = Object.getOwnPropertyDescriptor(JSON, "stringify");
 
 assert.sameValue(desc.value, JSON.stringify, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

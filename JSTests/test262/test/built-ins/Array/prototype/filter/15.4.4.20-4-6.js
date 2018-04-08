@@ -7,7 +7,7 @@ es5id: 15.4.4.20-4-6
 description: Array.prototype.filter throws TypeError if callbackfn is string
 ---*/
 
-  var arr = new Array(10);
+var arr = new Array(10);
 assert.throws(TypeError, function() {
-    arr.filter("abc");
+  arr.filter("abc");
 });

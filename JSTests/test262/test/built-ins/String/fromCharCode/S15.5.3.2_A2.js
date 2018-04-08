@@ -10,7 +10,7 @@ description: Call String.fromCharCode()
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.fromCharCode() !== "") {
-  $ERROR('#1: String.fromCharCode () returns empty string. Actual: '+String.fromCharCode());
+  $ERROR('#1: String.fromCharCode () returns empty string. Actual: ' + String.fromCharCode());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

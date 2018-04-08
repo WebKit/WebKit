@@ -7,7 +7,7 @@ esid: sec-promise.prototype.finally
 features: [Promise.prototype.finally]
 ---*/
 
-var target = new Promise(function () {});
+var target = new Promise(function() {});
 var returnValue = {};
 var callCount = 0;
 var thisValue = null;

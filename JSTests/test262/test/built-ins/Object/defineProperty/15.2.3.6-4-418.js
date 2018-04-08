@@ -9,17 +9,17 @@ description: >
     [[Writable]] set to true (Function.prototype.bind)
 ---*/
 
-        var foo = function () { };
+var foo = function() {};
 
-            Object.defineProperty(Function.prototype, "prop", {
-                value: 1001,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
+Object.defineProperty(Function.prototype, "prop", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
 
-            var obj = foo.bind({});
-            obj.prop = 1002;
+var obj = foo.bind({});
+obj.prop = 1002;
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, 1002, 'obj.prop');

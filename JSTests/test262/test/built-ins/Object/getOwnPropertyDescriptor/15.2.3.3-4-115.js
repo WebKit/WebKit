@@ -8,7 +8,7 @@ description: >
     built-ins (Date.UTC)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date, "UTC");
+var desc = Object.getOwnPropertyDescriptor(Date, "UTC");
 
 assert.sameValue(desc.value, Date.UTC, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

@@ -9,17 +9,17 @@ description: >
     'configurable' property (8.10.5 step 4.a)
 ---*/
 
-        var descObj = function () { };
+var descObj = function() {};
 
-        descObj.configurable = true;
+descObj.configurable = true;
 
-        var newObj = Object.create({}, {
-            prop: descObj 
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
-        var result1 = newObj.hasOwnProperty("prop");
-        delete newObj.prop;
-        var result2 = newObj.hasOwnProperty("prop");
+var result1 = newObj.hasOwnProperty("prop");
+delete newObj.prop;
+var result2 = newObj.hasOwnProperty("prop");
 
 assert.sameValue(result1, true, 'result1');
 assert.sameValue(result2, false, 'result2');

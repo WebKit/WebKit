@@ -34,6 +34,7 @@ testWithTypedArrayConstructors(function(TA) {
     );
 
     newVal++;
+    return 0;
   });
 
   assert.sameValue(sample[0], 7, "changed values after iteration [0] == 7");

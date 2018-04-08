@@ -9,29 +9,29 @@ description: >
     8 are visited on an Array
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(accum, val, idx, obj) {
-            if (idx === 1 && val === 1) {
-                testResult = true;
-            }
-        }
+function callbackfn(accum, val, idx, obj) {
+  if (idx === 1 && val === 1) {
+    testResult = true;
+  }
+}
 
-        var arr = [0, , 2];
+var arr = [0, , 2];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                Object.defineProperty(arr, "1", {
-                    get: function () {
-                        return 1;
-                    },
-                    configurable: true
-                });
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    Object.defineProperty(arr, "1", {
+      get: function() {
+        return 1;
+      },
+      configurable: true
+    });
+    return 0;
+  },
+  configurable: true
+});
 
-        arr.reduce(callbackfn);
+arr.reduce(callbackfn);
 
 assert(testResult, 'testResult !== true');

@@ -15,9 +15,9 @@ var obj = {};
 obj.foo = 101; // default value of attributes: writable: true, configurable: true, enumerable: true
 
 Object.defineProperties(obj, {
-    foo: {
-        value: 102
-    }
+  foo: {
+    value: 102
+  }
 });
 verifyEqualTo(obj, "foo", 102);
 

@@ -8,15 +8,15 @@ description: >
     returned object is data property with correct 'value' attribute
 ---*/
 
-        var obj = {};
-        var fun = function () {
-            return "ownDataProperty";
-        };
-        Object.defineProperty(obj, "property", {
-            get: fun,
-            configurable: true
-        });
+var obj = {};
+var fun = function() {
+  return "ownDataProperty";
+};
+Object.defineProperty(obj, "property", {
+  get: fun,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
 
 assert.sameValue(desc.get, fun, 'desc.get');

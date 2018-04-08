@@ -17,21 +17,21 @@ info: |
 
 var target = {};
 var p = new Proxy(target, {
-    get: function() {
-        return 2;
-    }
+  get: function() {
+    return 2;
+  }
 });
 
 Object.defineProperty(target, 'attr', {
-    configurable: false,
-    writable: false,
-    value: 1
+  configurable: false,
+  writable: false,
+  value: 1
 });
 
 assert.throws(TypeError, function() {
-    p.attr;
+  p.attr;
 });
 
 assert.throws(TypeError, function() {
-    p['attr'];
+  p['attr'];
 });

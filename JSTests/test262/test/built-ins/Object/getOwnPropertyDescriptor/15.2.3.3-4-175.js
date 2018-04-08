@@ -8,7 +8,7 @@ description: >
     built-ins (URIError.prototype.constructor)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(URIError.prototype, "constructor");
+var desc = Object.getOwnPropertyDescriptor(URIError.prototype, "constructor");
 
 assert.sameValue(desc.value, URIError.prototype.constructor, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

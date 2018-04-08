@@ -11,15 +11,15 @@ description: >
     deleting index named properties (15.4.5.1 step 3.l.ii)
 ---*/
 
-        var arr = [0, 1];
+var arr = [0, 1];
 
-            Array.prototype[1] = 2; //we are not allowed to set the [[Configurable]] attribute of property "1" to false here, since Array.prototype is a global object, and non-configurbale property can't revert to configurable
+Array.prototype[1] = 2; //we are not allowed to set the [[Configurable]] attribute of property "1" to false here, since Array.prototype is a global object, and non-configurbale property can't revert to configurable
 
-            Object.defineProperties(arr, {
-                length: {
-                    value: 1
-                }
-            });
+Object.defineProperties(arr, {
+  length: {
+    value: 1
+  }
+});
 
 assert.sameValue(arr.length, 1, 'arr.length');
 assert.sameValue(arr.hasOwnProperty("1"), false, 'arr.hasOwnProperty("1")');

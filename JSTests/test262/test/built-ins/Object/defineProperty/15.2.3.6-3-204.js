@@ -8,15 +8,17 @@ description: >
     treated as true when it is new Boolean(false) (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", { writable: new Boolean(false) });
+Object.defineProperty(obj, "property", {
+  writable: new Boolean(false)
+});
 
-        var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

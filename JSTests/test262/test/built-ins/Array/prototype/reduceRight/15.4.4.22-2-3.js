@@ -9,23 +9,25 @@ description: >
     is an own data property that overrides an inherited data property
 ---*/
 
-        var accessed = true;
+var accessed = true;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            return obj.length === 2;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  return obj.length === 2;
+}
 
-        var proto = { length: 3 };
+var proto = {
+  length: 3
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.length = 2;
-        child[0] = 12;
-        child[1] = 11;
-        child[2] = 9;
+var child = new Con();
+child.length = 2;
+child[0] = 12;
+child[1] = 11;
+child[2] = 9;
 
 assert(Array.prototype.reduceRight.call(child, callbackfn), 'Array.prototype.reduceRight.call(child, callbackfn) !== true');
 assert(accessed, 'accessed !== true');

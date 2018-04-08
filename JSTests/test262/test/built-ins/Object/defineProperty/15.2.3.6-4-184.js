@@ -9,11 +9,11 @@ description: >
     4.a)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, 4294967295, {
-            value: 100
-        });
+Object.defineProperty(arrObj, 4294967295, {
+  value: 100
+});
 
 assert(arrObj.hasOwnProperty("4294967295"), 'arrObj.hasOwnProperty("4294967295") !== true');
 assert.sameValue(arrObj.length, 0, 'arrObj.length');

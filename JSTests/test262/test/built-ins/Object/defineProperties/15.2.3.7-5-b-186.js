@@ -8,18 +8,18 @@ description: >
     'descObj' is the Argument object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var func = function (a, b, c) {
-            return arguments;
-        };
+var func = function(a, b, c) {
+  return arguments;
+};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: func(1, true, "a")
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: func(1, true, "a")
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

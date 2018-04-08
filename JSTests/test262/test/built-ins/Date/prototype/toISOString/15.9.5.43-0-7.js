@@ -11,5 +11,5 @@ description: >
 
 
 assert.throws(TypeError, function() {
-            Date.prototype.toISOString.call(15);
+  Date.prototype.toISOString.call(15);
 });

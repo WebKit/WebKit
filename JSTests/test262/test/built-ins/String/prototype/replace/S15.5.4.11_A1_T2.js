@@ -15,8 +15,12 @@ __instance.replace = String.prototype.replace;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__instance.replace(function(){return false;}(),x) !== "undefined") {
-  $ERROR('#1: var x; __instance = new Boolean; __instance.replace = String.prototype.replace;  __instance.replace(function(){return false;}(),x) === "undefined". Actual: '+__instance.replace(function(){return false;}(),x) );
+if (__instance.replace(function() {
+    return false;
+  }(), x) !== "undefined") {
+  $ERROR('#1: var x; __instance = new Boolean; __instance.replace = String.prototype.replace;  __instance.replace(function(){return false;}(),x) === "undefined". Actual: ' + __instance.replace(function() {
+    return false;
+  }(), x));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

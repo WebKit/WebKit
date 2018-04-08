@@ -9,14 +9,14 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Math.get = function () {
-                return "Math";
-            };
+Math.get = function() {
+  return "Math";
+};
 
-            Object.defineProperties(obj, {
-                property: Math
-            });
+Object.defineProperties(obj, {
+  property: Math
+});
 
 assert.sameValue(obj.property, "Math", 'obj.property');

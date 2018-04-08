@@ -7,6 +7,7 @@ esid: sec-atomics.load
 description: >
   Atomics.load.name is "load".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.load.name, "load");

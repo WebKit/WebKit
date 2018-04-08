@@ -9,11 +9,11 @@ description: >
     callbackfn is treated as true value
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return new Boolean(false);
-        }
+function callbackfn(val, idx, obj) {
+  return new Boolean(false);
+}
 
-        var newArr = [11].filter(callbackfn);
+var newArr = [11].filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

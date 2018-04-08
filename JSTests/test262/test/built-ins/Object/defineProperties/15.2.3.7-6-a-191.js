@@ -8,23 +8,23 @@ description: >
     property, 'P' is inherited accessor property  (15.4.5.1 step 4.c)
 ---*/
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 11;
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 11;
+  },
+  configurable: true
+});
 
-            var arr = [];
+var arr = [];
 
-            Object.defineProperties(arr, {
-                "0": {
-                    get: function () {
-                        return 12;
-                    },
-                    configurable: false
-                }
-            });
+Object.defineProperties(arr, {
+  "0": {
+    get: function() {
+      return 12;
+    },
+    configurable: false
+  }
+});
 
 assert(arr.hasOwnProperty("0"), 'arr.hasOwnProperty("0") !== true');
 assert.sameValue(arr[0], 12, 'arr[0]');

@@ -9,20 +9,22 @@ description: >
     instance passes
 ---*/
 
-__FACTORY.prototype.toString = function() { return this.value+''; };
+__FACTORY.prototype.toString = function() {
+  return this.value + '';
+};
 
 var __instance = new __FACTORY(void 0);
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__instance.slice(0,100) !== "undefined") {
-  $ERROR('#1: __instance.slice(0,100) === "undefined". Actual: '+__instance.slice(0,100) );
+if (__instance.slice(0, 100) !== "undefined") {
+  $ERROR('#1: __instance.slice(0,100) === "undefined". Actual: ' + __instance.slice(0, 100));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
-function __FACTORY( value ) {
-    this.value = value,
-    this.slice= String.prototype.slice;
-    //this.substring = String.prototype.substring;
+function __FACTORY(value) {
+  this.value = value,
+    this.slice = String.prototype.slice;
+  //this.substring = String.prototype.substring;
 }

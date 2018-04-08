@@ -9,12 +9,12 @@ description: >
     (value is -Infinity)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return -Infinity;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return -Infinity;
+}
 
 assert([11].every(callbackfn), '[11].every(callbackfn) !== true');
 assert(accessed, 'accessed !== true');

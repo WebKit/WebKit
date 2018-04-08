@@ -13,21 +13,22 @@ includes: [propertyHelper.js]
 var arr = [];
 
 function get_func() {
-    return 11;
+  return 11;
 }
+
 function set_func(value) {
-    arr.setVerifyHelpProp = value;
+  arr.setVerifyHelpProp = value;
 }
 
 Object.defineProperty(arr, "0", {
-    get: get_func,
-    set: set_func,
-    enumerable: true,
-    configurable: true
+  get: get_func,
+  set: set_func,
+  enumerable: true,
+  configurable: true
 });
 
 Object.defineProperties(arr, {
-    "0": {}
+  "0": {}
 });
 verifyEqualTo(arr, "0", get_func());
 
@@ -36,4 +37,3 @@ verifyWritable(arr, "0", "setVerifyHelpProp");
 verifyEnumerable(arr, "0");
 
 verifyConfigurable(arr, "0");
-

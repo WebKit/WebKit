@@ -8,12 +8,12 @@ description: >
     'boundArgs' is 0, length of 'ExtraArgs' is 0
 ---*/
 
-        var func = function (x) {
-            return new Boolean(arguments.length === 0 && typeof x === "undefined");
-        };
+var func = function(x) {
+  return new Boolean(arguments.length === 0 && typeof x === "undefined");
+};
 
-        var NewFunc = Function.prototype.bind.call(func, {});
+var NewFunc = Function.prototype.bind.call(func, {});
 
-        var newInstance = new NewFunc();
+var newInstance = new NewFunc();
 
 assert.sameValue(newInstance.valueOf(), true, 'newInstance.valueOf()');

@@ -9,7 +9,11 @@ description: >
     containing negative number
 ---*/
 
-        var obj = {1: null, 2: undefined, length: "-4294967294"};
+var obj = {
+  1: null,
+  2: undefined,
+  length: "-4294967294"
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, null), -1, 'Array.prototype.lastIndexOf.call(obj, null)');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, undefined), -1, 'Array.prototype.lastIndexOf.call(obj, undefined)');

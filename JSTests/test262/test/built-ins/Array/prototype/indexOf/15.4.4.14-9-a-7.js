@@ -9,19 +9,21 @@ description: >
     current position are visited on an Array-like object
 ---*/
 
-        var arr = { length: 2 };
+var arr = {
+  length: 2
+};
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                Object.defineProperty(arr, "1", {
-                    get: function () {
-                        return 1;
-                    },
-                    configurable: true
-                });
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    Object.defineProperty(arr, "1", {
+      get: function() {
+        return 1;
+      },
+      configurable: true
+    });
+    return 0;
+  },
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.indexOf.call(arr, 1), 1, 'Array.prototype.indexOf.call(arr, 1)');

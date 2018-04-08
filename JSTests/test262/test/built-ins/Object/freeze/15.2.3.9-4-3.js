@@ -6,12 +6,12 @@ es5id: 15.2.3.9-4-3
 description: Object.freeze - the extensions of 'O' is prevented already
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        obj.foo = 10; // default value of attributes: writable: true, enumerable: true
+obj.foo = 10; // default value of attributes: writable: true, enumerable: true
 
-        Object.preventExtensions(obj);
+Object.preventExtensions(obj);
 
-        Object.freeze(obj);
+Object.freeze(obj);
 
 assert(Object.isFrozen(obj), 'Object.isFrozen(obj) !== true');

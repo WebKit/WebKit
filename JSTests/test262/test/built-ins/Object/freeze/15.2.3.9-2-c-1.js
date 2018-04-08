@@ -13,10 +13,10 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: 10,
-    writable: false,
-    enumerable: true,
-    configurable: true
+  value: 10,
+  writable: false,
+  enumerable: true,
+  configurable: true
 });
 
 Object.freeze(obj);
@@ -24,10 +24,10 @@ Object.freeze(obj);
 var desc = Object.getOwnPropertyDescriptor(obj, "foo");
 
 if (desc.configurable !== false) {
-    $ERROR("Expected desc.configurable to be false, actually " + desc.configurable);
+  $ERROR("Expected desc.configurable to be false, actually " + desc.configurable);
 }
 if (desc.writable !== false) {
-    $ERROR("Expected desc.writable to be false, actually " + desc.writable);
+  $ERROR("Expected desc.writable to be false, actually " + desc.writable);
 }
 
 verifyEqualTo(obj, "foo", 10);
@@ -37,4 +37,3 @@ verifyNotWritable(obj, "foo");
 verifyEnumerable(obj, "foo");
 
 verifyNotConfigurable(obj, "foo");
-

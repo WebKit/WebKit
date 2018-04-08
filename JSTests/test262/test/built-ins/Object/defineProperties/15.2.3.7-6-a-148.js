@@ -9,12 +9,12 @@ description: >
     field of 'desc' is positive non-integer values (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: 123.5
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 123.5
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

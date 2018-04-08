@@ -9,10 +9,13 @@ description: >
     (value is true)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return true;
-        }
+function callbackfn(val, idx, obj) {
+  return true;
+}
 
-        var obj = { 0: 11, length: 2 };
+var obj = {
+  0: 11,
+  length: 2
+};
 
 assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');

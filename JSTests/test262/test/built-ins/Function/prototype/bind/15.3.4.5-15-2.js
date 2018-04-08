@@ -7,11 +7,11 @@ description: >
     Function.prototype.bind, 'length' is a data valued own property
 ---*/
 
-  function foo() { }
-  var o = {};
-  
-  var bf = foo.bind(o);
-  var desc = Object.getOwnPropertyDescriptor(bf, 'length');
+function foo() {}
+var o = {};
+
+var bf = foo.bind(o);
+var desc = Object.getOwnPropertyDescriptor(bf, 'length');
 
 assert.sameValue(desc.value, 0, 'desc.value');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

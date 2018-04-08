@@ -8,15 +8,17 @@ description: >
     'Attributes' is the Math Object (8.10.5 step 3.b)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        Object.defineProperty(obj, "property", { enumerable: Math });
+Object.defineProperty(obj, "property", {
+  enumerable: Math
+});
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

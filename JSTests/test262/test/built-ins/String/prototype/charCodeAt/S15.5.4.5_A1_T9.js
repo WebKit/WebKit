@@ -12,8 +12,8 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToInteger(undefined) evaluates to 0 charCodeAt() evaluates to charCodeAt(0)
-if (new String(42).charCodeAt(function(){}()) !== 0x34) {
-  $ERROR('#1: new String(42).charCodeAt(function(){}()) === 0x34. Actual: new String(42).charCodeAt(function(){}()) ==='+new String(42).charCodeAt(function(){}()) ); 
+if (new String(42).charCodeAt(function() {}()) !== 0x34) {
+  $ERROR('#1: new String(42).charCodeAt(function(){}()) === 0x34. Actual: new String(42).charCodeAt(function(){}()) ===' + new String(42).charCodeAt(function() {}()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

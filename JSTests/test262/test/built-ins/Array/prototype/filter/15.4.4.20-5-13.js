@@ -7,15 +7,15 @@ es5id: 15.4.4.20-5-13
 description: Array.prototype.filter - Number Object can be used as thisArg
 ---*/
 
-        var accessed = false;
-        var objNumber = new Number();
+var accessed = false;
+var objNumber = new Number();
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this === objNumber;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this === objNumber;
+}
 
-        var newArr = [11].filter(callbackfn, objNumber);
+var newArr = [11].filter(callbackfn, objNumber);
 
 assert.sameValue(newArr[0], 11, 'newArr[0]');
 assert(accessed, 'accessed !== true');

@@ -11,26 +11,28 @@ includes: [propertyHelper.js]
 ---*/
 
 var arr = [];
+
 function get_fun() {
-    return 12;
+  return 12;
 }
+
 function set_fun(value) {
-    arr.verifySetFun = value;
+  arr.verifySetFun = value;
 }
 Object.defineProperty(arr, "property", {
-    get: function () {
-        return 36;
-    },
-    enumerable: true,
-    configurable: true
+  get: function() {
+    return 36;
+  },
+  enumerable: true,
+  configurable: true
 });
 
 Object.defineProperties(arr, {
-    "property": {
-        get: get_fun,
-        set: set_fun,
-        enumerable: false
-    }
+  "property": {
+    get: get_fun,
+    set: set_fun,
+    enumerable: false
+  }
 });
 verifyEqualTo(arr, "property", get_fun());
 

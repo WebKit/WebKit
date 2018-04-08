@@ -10,18 +10,18 @@ description: >
 ---*/
 
 var __obj = {
-    valueOf:function(){},
-    toString:void 0
+  valueOf: function() {},
+  toString: void 0
 };
 
-var __matched = new String(__obj).match(function(){}());
+var __matched = new String(__obj).match(function() {}());
 
-var __expected = RegExp(undefined).exec("undefined"); 
+var __expected = RegExp(undefined).exec("undefined");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__matched.length !== __expected.length) {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched.length === __expected.length. Actual: '+__matched.length );
+  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched.length === __expected.length. Actual: ' + __matched.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ if (__matched.length !== __expected.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__matched.index !== __expected.index) {
-  $ERROR('#2: __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched.index === __expected.index. Actual: '+__matched.index );
+  $ERROR('#2: __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched.index === __expected.index. Actual: ' + __matched.index);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -37,16 +37,16 @@ if (__matched.index !== __expected.index) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__matched.input !== __expected.input) {
-  $ERROR('#3: __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched.input === __expected.input. Actual: '+__matched.input );
+  $ERROR('#3: __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched.input === __expected.input. Actual: ' + __matched.input);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
-for(var index=0; index<__expected.length; index++) {
-  if (__matched[index]!==__expected[index]) {
-    $ERROR('#4.'+index+': __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched['+index+']===__expected['+index+']. Actual: '+__matched[index]);
+for (var index = 0; index < __expected.length; index++) {
+  if (__matched[index] !== __expected[index]) {
+    $ERROR('#4.' + index + ': __obj = {valueOf:function(){}, toString:void 0}; __matched = new String(__obj).match(function(){}()); __expected = RegExp(undefined).exec("undefined"); __matched[' + index + ']===__expected[' + index + ']. Actual: ' + __matched[index]);
   }
 }
 //

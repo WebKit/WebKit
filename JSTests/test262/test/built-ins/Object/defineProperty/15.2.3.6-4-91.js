@@ -14,25 +14,27 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: "abcd",
-    writable: false,
-    configurable: false 
+  value: "abcd",
+  writable: false,
+  configurable: false
 });
 
 try {
-    Object.defineProperty(obj, "foo", { value: "fghj" });
-    $ERROR("Expected an exception.");
+  Object.defineProperty(obj, "foo", {
+    value: "fghj"
+  });
+  $ERROR("Expected an exception.");
 } catch (e) {
-    verifyEqualTo(obj, "foo", "abcd");
+  verifyEqualTo(obj, "foo", "abcd");
 
-    verifyNotWritable(obj, "foo");
+  verifyNotWritable(obj, "foo");
 
-    verifyNotEnumerable(obj, "foo");
+  verifyNotEnumerable(obj, "foo");
 
-    verifyNotConfigurable(obj, "foo");
+  verifyNotConfigurable(obj, "foo");
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
-    }
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

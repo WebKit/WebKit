@@ -15,9 +15,9 @@ includes: [propertyHelper.js]
 var arr = [12];
 
 Object.defineProperties(arr, {
-    "0": {
-        enumerable: false
-    }
+  "0": {
+    enumerable: false
+  }
 });
 verifyEqualTo(arr, "0", 12);
 

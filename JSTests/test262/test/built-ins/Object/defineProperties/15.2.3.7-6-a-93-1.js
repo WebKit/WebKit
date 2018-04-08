@@ -15,46 +15,46 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "property", {
-    value: 1001,
-    writable: false,
-    configurable: true
+  value: 1001,
+  writable: false,
+  configurable: true
 });
 
 Object.defineProperty(obj, "property1", {
-    value: 1003,
-    writable: false,
-    configurable: false
+  value: 1003,
+  writable: false,
+  configurable: false
 });
 
 try {
-    Object.defineProperties(obj, {
-        property: {
-            value: 1002
-        },
-        property1: {
-            value: 1004
-        }
-    });
-
-    $ERROR("Expected an exception.");
-} catch (e) {
-    verifyEqualTo(obj, "property", 1002);
-
-    verifyNotWritable(obj, "property");
-
-    verifyNotEnumerable(obj, "property");
-
-    verifyConfigurable(obj, "property");
-    verifyEqualTo(obj, "property1", 1003);
-
-    verifyNotWritable(obj, "property1");
-
-    verifyNotEnumerable(obj, "property1");
-
-    verifyNotConfigurable(obj, "property1");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(obj, {
+    property: {
+      value: 1002
+    },
+    property1: {
+      value: 1004
     }
+  });
+
+  $ERROR("Expected an exception.");
+} catch (e) {
+  verifyEqualTo(obj, "property", 1002);
+
+  verifyNotWritable(obj, "property");
+
+  verifyNotEnumerable(obj, "property");
+
+  verifyConfigurable(obj, "property");
+  verifyEqualTo(obj, "property1", 1003);
+
+  verifyNotWritable(obj, "property1");
+
+  verifyNotEnumerable(obj, "property1");
+
+  verifyNotConfigurable(obj, "property1");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

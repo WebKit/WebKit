@@ -12,11 +12,11 @@ includes: [propertyHelper.js]
 
 var descObj = {};
 Object.defineProperty(descObj, "configurable", {
-    set: function () { }
+  set: function() {}
 });
 
 var newObj = Object.create({}, {
-    prop: descObj 
+  prop: descObj
 });
 
 assert(newObj.hasOwnProperty("prop"));

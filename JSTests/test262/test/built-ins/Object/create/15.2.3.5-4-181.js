@@ -8,24 +8,24 @@ description: >
     'Properties' is an inherited data property (8.10.5 step 6.a)
 ---*/
 
-        var proto = {
-            writable: true
-        };
+var proto = {
+  writable: true
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var descObj = new ConstructFun();
+var descObj = new ConstructFun();
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
-        var beforeWrite = (newObj.hasOwnProperty("prop") && typeof (newObj.prop) === "undefined");
+var beforeWrite = (newObj.hasOwnProperty("prop") && typeof(newObj.prop) === "undefined");
 
-        newObj.prop = "isWritable";
+newObj.prop = "isWritable";
 
-        var afterWrite = (newObj.prop === "isWritable");
+var afterWrite = (newObj.prop === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

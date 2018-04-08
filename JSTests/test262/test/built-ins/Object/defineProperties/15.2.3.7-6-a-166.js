@@ -11,17 +11,17 @@ description: >
     index named properties (15.4.5.1 step 3.l.ii)
 ---*/
 
-        var arr = [0, 1];
+var arr = [0, 1];
 assert.throws(TypeError, function() {
-            Object.defineProperty(arr, "1", {
-                configurable: false
-            });
+  Object.defineProperty(arr, "1", {
+    configurable: false
+  });
 
-            Object.defineProperties(arr, {
-                length: {
-                    value: 1
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 1
+    }
+  });
 });
 assert.sameValue(arr.length, 2, 'arr.length');
 assert(arr.hasOwnProperty("1"), 'arr.hasOwnProperty("1") !== true');

@@ -15,17 +15,17 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperty(arr, "1", {
-    get: function () {
-        return 3;
-    },
-    configurable: true
+  get: function() {
+    return 3;
+  },
+  configurable: true
 
 });
 
 Object.defineProperties(arr, {
-    "1": {
-        value: 12
-    }
+  "1": {
+    value: 12
+  }
 });
 
 verifyEqualTo(arr, "1", 12);

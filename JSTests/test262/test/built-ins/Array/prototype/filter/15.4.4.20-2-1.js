@@ -9,17 +9,17 @@ description: >
     own data property
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return obj.length === 2;
-        }
+function callbackfn(val, idx, obj) {
+  return obj.length === 2;
+}
 
-        var obj = {
-            0: 12,
-            1: 11,
-            2: 9,
-            length: 2
-        };
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: 2
+};
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');

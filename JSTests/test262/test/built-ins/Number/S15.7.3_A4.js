@@ -7,6 +7,6 @@ es5id: 15.7.3_A4
 description: Checking existence of the property "NaN"
 ---*/
 
-if(!Number.hasOwnProperty("NaN")){
+if (!Number.hasOwnProperty("NaN")) {
   $ERROR('#1: The Number constructor has the property "NaN"');
 }

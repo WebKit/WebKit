@@ -9,21 +9,26 @@ description: >
     number of iterations
 ---*/
 
-        var called = 0;
-        function callbackfn(val, idx, obj) {
-            called++;
-        }
+var called = 0;
 
-        var obj = { 1: 12, 2: 9, length: 2 };
+function callbackfn(val, idx, obj) {
+  called++;
+}
 
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                obj.length = 3;
-                return 11;
-            },
-            configurable: true
-        });
+var obj = {
+  1: 12,
+  2: 9,
+  length: 2
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Object.defineProperty(obj, "0", {
+  get: function() {
+    obj.length = 3;
+    return 11;
+  },
+  configurable: true
+});
+
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert.sameValue(called, 2, 'called');

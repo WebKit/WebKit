@@ -8,17 +8,17 @@ description: >
     true, [[Configurable]] is true) is deletable
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: 2010,
-            writable: true,
-            enumerable: true,
-            configurable: true
-        });
-        var beforeDelete = obj.hasOwnProperty("prop");
-        delete obj.prop;
-        var afterDelete = obj.hasOwnProperty("prop");
+Object.defineProperty(obj, "prop", {
+  value: 2010,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var beforeDelete = obj.hasOwnProperty("prop");
+delete obj.prop;
+var afterDelete = obj.hasOwnProperty("prop");
 
 assert(beforeDelete, 'beforeDelete !== true');
 assert.sameValue(afterDelete, false, 'afterDelete');

@@ -8,6 +8,6 @@ es5id: 15.9.5_A26_T1
 description: The Date.prototype has the property "getTimezoneOffset"
 ---*/
 
-if(Date.prototype.hasOwnProperty("getTimezoneOffset") !== true){
+if (Date.prototype.hasOwnProperty("getTimezoneOffset") !== true) {
   $ERROR('#1: The Date.prototype has the property "getTimezoneOffset"');
 }

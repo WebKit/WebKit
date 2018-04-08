@@ -17,14 +17,14 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: 1001,
-    writable: true,
-    enumerable: false,
-    configurable: true
+  value: 1001,
+  writable: true,
+  enumerable: false,
+  configurable: true
 });
 
 Object.defineProperty(obj, "foo", {
-    enumerable: true
+  enumerable: true
 });
 
 verifyEqualTo(obj, "foo", 1001);

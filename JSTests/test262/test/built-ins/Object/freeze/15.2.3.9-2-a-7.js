@@ -9,7 +9,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var argObj = (function () { return arguments; }());
+var argObj = (function() {
+  return arguments;
+}());
 
 argObj.foo = 10; // default [[Configurable]] attribute value of foo: true
 

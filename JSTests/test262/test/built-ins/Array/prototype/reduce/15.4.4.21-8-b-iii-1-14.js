@@ -9,28 +9,29 @@ description: >
     property that overrides an inherited accessor property on an Array
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (prevVal === "9");
-            }
-        }
+var testResult = false;
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 0;
-                },
-                configurable: true
-            });
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (prevVal === "9");
+  }
+}
 
-            var arr = [, 1, 2];
-            Object.defineProperty(arr, "0", {
-                get: function () {
-                    return "9";
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 0;
+  },
+  configurable: true
+});
 
-            arr.reduce(callbackfn);
+var arr = [, 1, 2];
+Object.defineProperty(arr, "0", {
+  get: function() {
+    return "9";
+  },
+  configurable: true
+});
+
+arr.reduce(callbackfn);
 
 assert(testResult, 'testResult !== true');

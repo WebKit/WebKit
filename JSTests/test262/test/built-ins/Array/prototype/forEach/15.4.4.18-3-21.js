@@ -10,30 +10,30 @@ description: >
     returns a string
 ---*/
 
-        var testResult = false;
-        var firstStepOccured = false;
-        var secondStepOccured = false;
+var testResult = false;
+var firstStepOccured = false;
+var secondStepOccured = false;
 
-        function callbackfn(val, idx, obj) {
-            testResult = (val > 10);
-        }
+function callbackfn(val, idx, obj) {
+  testResult = (val > 10);
+}
 
-        var obj = {
-            1: 11,
-            2: 9,
-            length: {
-                valueOf: function () {
-                    firstStepOccured = true;
-                    return {};
-                },
-                toString: function () {
-                    secondStepOccured = true;
-                    return '2';
-                }
-            }
-        };
+var obj = {
+  1: 11,
+  2: 9,
+  length: {
+    valueOf: function() {
+      firstStepOccured = true;
+      return {};
+    },
+    toString: function() {
+      secondStepOccured = true;
+      return '2';
+    }
+  }
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(testResult, 'testResult !== true');
 assert(firstStepOccured, 'firstStepOccured !== true');

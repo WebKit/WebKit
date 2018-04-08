@@ -27,7 +27,7 @@ assert(compareArray([].concat(/abc/), [void 0, void 0, void 0]));
 RegExp.prototype[0] = 1;
 RegExp.prototype[1] = 2;
 RegExp.prototype[2] = 3;
-assert(compareArray([].concat(/abc/), [1,2,3]));
+assert(compareArray([].concat(/abc/), [1, 2, 3]));
 
 delete RegExp.prototype[Symbol.isConcatSpreadable];
 delete RegExp.prototype[0];

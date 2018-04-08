@@ -9,22 +9,22 @@ description: >
     value
 ---*/
 
-        var obj = {};
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var obj = {};
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var ownProp = {
-            toString: function () {
-                toStringAccessed = true;
-                return {};
-            },
-            valueOf: function () {
-                valueOfAccessed = true;
-                return {};
-            }
-        };
+var ownProp = {
+  toString: function() {
+    toStringAccessed = true;
+    return {};
+  },
+  valueOf: function() {
+    valueOfAccessed = true;
+    return {};
+  }
+};
 assert.throws(TypeError, function() {
-            Object.defineProperty(obj, ownProp, {});
+  Object.defineProperty(obj, ownProp, {});
 });
 assert(valueOfAccessed, 'valueOfAccessed !== true');
 assert(toStringAccessed, 'toStringAccessed !== true');

@@ -9,21 +9,24 @@ description: >
     is 0
 ---*/
 
-        var accessed = false;
-        function callbackfn() {
-            accessed = true;
-        }
+var accessed = false;
 
-        var obj = { length: 0 };
+function callbackfn() {
+  accessed = true;
+}
 
-        Object.defineProperty(obj, "5", {
-            get: function () {
-                accessed = true;
-                return 10;
-            },
-            configurable: true
-        });
+var obj = {
+  length: 0
+};
 
-        Array.prototype.reduceRight.call(obj, function () { }, "initialValue");
+Object.defineProperty(obj, "5", {
+  get: function() {
+    accessed = true;
+    return 10;
+  },
+  configurable: true
+});
+
+Array.prototype.reduceRight.call(obj, function() {}, "initialValue");
 
 assert.sameValue(accessed, false, 'accessed');

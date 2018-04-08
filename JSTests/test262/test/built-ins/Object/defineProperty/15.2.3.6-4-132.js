@@ -9,10 +9,10 @@ description: >
     [[Value]] field of 'desc' is a positive number (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "length", {
-            value: 12
-        });
+Object.defineProperty(arrObj, "length", {
+  value: 12
+});
 
 assert.sameValue(arrObj.length, 12, 'arrObj.length');

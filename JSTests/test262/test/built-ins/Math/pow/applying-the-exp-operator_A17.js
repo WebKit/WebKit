@@ -15,7 +15,6 @@ exponent[1] = 1;
 exponent[0] = 0.000000000000001;
 var exponentnum = 4;
 
-for (var i = 0; i < exponentnum; i++)
-{
+for (var i = 0; i < exponentnum; i++) {
   assert.sameValue(Math.pow(base, exponent[i]), 0, exponent[i]);
 }

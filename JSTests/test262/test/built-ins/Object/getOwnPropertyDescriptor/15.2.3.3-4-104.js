@@ -8,7 +8,7 @@ description: >
     built-ins (Math.floor)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "floor");
+var desc = Object.getOwnPropertyDescriptor(Math, "floor");
 
 assert.sameValue(desc.value, Math.floor, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

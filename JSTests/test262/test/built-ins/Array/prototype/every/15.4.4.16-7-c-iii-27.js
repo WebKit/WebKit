@@ -10,12 +10,12 @@ description: >
 ---*/
 
 var global = this;
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return global;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return global;
+}
 
 assert([11].every(callbackfn), '[11].every(callbackfn) !== true');
 assert(accessed, 'accessed !== true');

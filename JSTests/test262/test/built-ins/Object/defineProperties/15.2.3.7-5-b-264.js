@@ -9,14 +9,14 @@ description: >
     step 9.a)
 ---*/
 
-        var getFun = function () {};
+var getFun = function() {};
 
-        var obj = {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                "prop": {
-                    writable: true,
-                    get: getFun
-                }
-            });
+  Object.defineProperties(obj, {
+    "prop": {
+      writable: true,
+      get: getFun
+    }
+  });
 });

@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.sort)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "sort");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "sort");
 
 assert.sameValue(desc.value, Array.prototype.sort, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

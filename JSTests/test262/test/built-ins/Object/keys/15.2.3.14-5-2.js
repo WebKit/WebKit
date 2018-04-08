@@ -8,17 +8,17 @@ description: >
     in returned array
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            get: function () {
-                return 1003;
-            },
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop", {
+  get: function() {
+    return 1003;
+  },
+  enumerable: true,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
 assert(arr.hasOwnProperty(0), 'arr.hasOwnProperty(0) !== true');
 assert.sameValue(arr[0], "prop", 'arr[0]');

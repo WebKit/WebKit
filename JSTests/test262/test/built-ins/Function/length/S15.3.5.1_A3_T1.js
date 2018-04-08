@@ -10,7 +10,7 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var f = new Function("arg1,arg2,arg3","arg4,arg5", null);
+var f = new Function("arg1,arg2,arg3", "arg4,arg5", null);
 
 //CHECK#1
 if (!(f.hasOwnProperty('length'))) {
@@ -19,7 +19,7 @@ if (!(f.hasOwnProperty('length'))) {
 
 var flength = f.length;
 
-verifyNotWritable(f, "length", null, function(){});
+verifyNotWritable(f, "length", null, function() {});
 
 //CHECK#2
 if (f.length !== flength) {

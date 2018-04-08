@@ -27,44 +27,60 @@ var GeneratorPrototype = Object.getPrototypeOf(g).prototype;
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call({}); },
+  function() {
+    GeneratorPrototype.throw.call({});
+  },
   'ordinary object (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call({}, 1); },
+  function() {
+    GeneratorPrototype.throw.call({}, 1);
+  },
   'ordinary object (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call(function() {}); },
+  function() {
+    GeneratorPrototype.throw.call(function() {});
+  },
   'function object (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call(function() {}, 1); },
+  function() {
+    GeneratorPrototype.throw.call(function() {}, 1);
+  },
   'function object (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call(g); },
+  function() {
+    GeneratorPrototype.throw.call(g);
+  },
   'generator function object (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call(g, 1); },
+  function() {
+    GeneratorPrototype.throw.call(g, 1);
+  },
   'generator function object (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call(g.prototype); },
+  function() {
+    GeneratorPrototype.throw.call(g.prototype);
+  },
   'generator function prototype object (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.throw.call(g.prototype, 1); },
+  function() {
+    GeneratorPrototype.throw.call(g.prototype, 1);
+  },
   'generator function prototype object (with value)'
 );

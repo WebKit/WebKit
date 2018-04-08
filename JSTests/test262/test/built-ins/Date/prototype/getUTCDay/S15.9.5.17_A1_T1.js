@@ -9,7 +9,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.getUTCDay;
-if(x === 1)
+if (x === 1)
   Date.prototype.getUTCDay = 2;
 else
   Date.prototype.getUTCDay = 1;

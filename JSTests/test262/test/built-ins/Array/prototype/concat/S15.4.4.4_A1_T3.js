@@ -11,7 +11,7 @@ es5id: 15.4.4.4_A1_T3
 description: Checking this algorithm with no items
 ---*/
 
-var x = [0,1];
+var x = [0, 1];
 var arr = x.concat();
 
 //CHECK#0

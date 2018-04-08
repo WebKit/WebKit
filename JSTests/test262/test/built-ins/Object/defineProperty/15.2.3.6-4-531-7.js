@@ -10,19 +10,19 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = (function () {
-    return arguments;
+var obj = (function() {
+  return arguments;
 }());
 
 var verifySetFunc = "data";
-var getFunc = function () {
-    return verifySetFunc;
+var getFunc = function() {
+  return verifySetFunc;
 };
 
 Object.defineProperty(obj, "prop", {
-    get: getFunc,
-    enumerable: true,
-    configurable: true
+  get: getFunc,
+  enumerable: true,
+  configurable: true
 });
 
 assert(obj.hasOwnProperty("prop"));

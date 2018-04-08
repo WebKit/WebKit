@@ -9,18 +9,18 @@ description: >
     step 8.a)
 ---*/
 
-        var data = "data";
-        var arr = [];
-        var setFun = function (value) {
-            data = value;
-        };
-        arr.prop = {
-            set: setFun
-        };
+var data = "data";
+var arr = [];
+var setFun = function(value) {
+  data = value;
+};
+arr.prop = {
+  set: setFun
+};
 
-        var obj = {};
-        Object.defineProperties(obj, arr);
-        obj.prop = "arrData";
+var obj = {};
+Object.defineProperties(obj, arr);
+obj.prop = "arrData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "arrData", 'data');

@@ -15,15 +15,15 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: false,
-    writable: false,
-    configurable: false 
+  value: false,
+  writable: false,
+  configurable: false
 });
 
 Object.defineProperties(obj, {
-    foo: {
-        value: false
-    }
+  foo: {
+    value: false
+  }
 });
 verifyEqualTo(obj, "foo", false);
 

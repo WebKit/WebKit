@@ -7,13 +7,13 @@ es5id: 15.4.4.16-5-11
 description: Array.prototype.every - String Object can be used as thisArg
 ---*/
 
-        var accessed = false;
-        var objString = new String();
+var accessed = false;
+var objString = new String();
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this === objString;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this === objString;
+}
 
 
 

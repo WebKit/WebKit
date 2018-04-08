@@ -7,7 +7,7 @@ es5id: 15.4.4.21-4-6
 description: Array.prototype.reduce throws TypeError if callbackfn is string
 ---*/
 
-  var arr = new Array(10);
+var arr = new Array(10);
 assert.throws(TypeError, function() {
-    arr.reduce("abc");
+  arr.reduce("abc");
 });

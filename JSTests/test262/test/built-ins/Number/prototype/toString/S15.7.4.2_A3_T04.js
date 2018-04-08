@@ -8,65 +8,57 @@ description: radix is 0
 ---*/
 
 //CHECK#1
-try{
+try {
   var n = Number.prototype.toString(0);
   $ERROR('#1: Number.prototype.toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}
 
 //CHECK#2
-try{
+try {
   var n = (new Number()).toString(0);
   $ERROR('#2: (new Number()).toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}
 
 //CHECK#3
-try{
+try {
   var n = (new Number(0)).toString(0);
   $ERROR('#3: (new Number(0)).toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}
 
 //CHECK#4
-try{
+try {
   var n = (new Number(-1)).toString(0);
   $ERROR('#4: (new Number(-1)).toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}
 
 //CHECK#5
-try{
+try {
   var n = (new Number(1)).toString(0);
   $ERROR('#5: (new Number(1)).toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}
 
 //CHECK#6
-try{
+try {
   var n = (new Number(Number.NaN)).toString(0);
   $ERROR('#6: (new Number(Number.NaN)).toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}
 
 //CHECK#7
-try{
+try {
   var n = (new Number(Number.POSITIVE_INFINITY)).toString(0);
   $ERROR('#7: (new Number(Number.POSITIVE_INFINITY)).toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}
 
 //CHECK#8
-try{
+try {
   var n = (new Number(Number.NEGATIVE_INFINITY)).toString(0);
   $ERROR('#8: (new Number(Number.NEGATIVE_INFINITY)).toString(0) should throw an Error');
 }
-catch(e){
-}
+catch (e) {}

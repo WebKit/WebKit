@@ -7,14 +7,14 @@ es5id: 15.4.4.20-5-22
 description: Array.prototype.filter - boolean primitive can be used as thisArg
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this.valueOf() === false;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this.valueOf() === false;
+}
 
-        var newArr = [11].filter(callbackfn, false);
+var newArr = [11].filter(callbackfn, false);
 
 assert.sameValue(newArr[0], 11, 'newArr[0]');
 assert(accessed, 'accessed !== true');

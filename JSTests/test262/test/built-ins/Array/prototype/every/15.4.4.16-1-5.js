@@ -8,6 +8,7 @@ description: Array.prototype.every applied to number primitive
 ---*/
 
 var accessed = false;
+
 function callbackfn(val, idx, obj) {
   accessed = true;
   return obj instanceof Number;

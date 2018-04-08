@@ -11,20 +11,20 @@ info: |
   ...
 ---*/
 
-function StopReverse() { }
+function StopReverse() {}
 
 // Object with large "length" property and no indexed properties in the uint32 range.
 var arrayLike = {
-  get "9007199254740990"() {
+  get "9007199254740990" () {
     throw new StopReverse();
   },
-  get "9007199254740991"() {
+  get "9007199254740991" () {
     $ERROR("Get 9007199254740991");
   },
-  get "9007199254740992"() {
+  get "9007199254740992" () {
     $ERROR("Get 9007199254740992");
   },
-  length: 2**53 + 2,
+  length: 2 ** 53 + 2,
 };
 
 assert.throws(StopReverse, function() {

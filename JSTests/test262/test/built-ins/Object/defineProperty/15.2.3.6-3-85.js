@@ -14,10 +14,10 @@ var obj = {};
 
 var proto = {};
 Object.defineProperty(proto, "configurable", {
-    set: function () { }
+  set: function() {}
 });
 
-var ConstructFun = function () { };
+var ConstructFun = function() {};
 ConstructFun.prototype = proto;
 
 var child = new ConstructFun();
@@ -29,6 +29,4 @@ assert(obj.hasOwnProperty("property"));
 verifyNotConfigurable(obj, "property");
 
 assert(obj.hasOwnProperty("property"));
-assert.sameValue(typeof (obj.property), "undefined");
-
-
+assert.sameValue(typeof(obj.property), "undefined");

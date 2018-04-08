@@ -48,16 +48,20 @@ var toStringAccessed = 0;
 var valueOfAccessed = 0;
 var thisVal = {
   get [Symbol.toPrimitive]() {
-    toPrimitiveAccessed +=1;
+    toPrimitiveAccessed += 1;
     return undefined;
   },
   get toString() {
     toStringAccessed += 1;
-    return function() { return '42 '; };
+    return function() {
+      return '42 ';
+    };
   },
   get valueOf() {
     valueOfAccessed += 1;
-    return function() { return ''; };
+    return function() {
+      return '';
+    };
   },
 };
 

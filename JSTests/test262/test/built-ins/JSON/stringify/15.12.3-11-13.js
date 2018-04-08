@@ -8,4 +8,8 @@ description: >
     can return an Object.
 ---*/
 
-assert.sameValue(JSON.stringify(42, function(k, v) { return v==42 ? {forty:2}: v}), '{"forty":2}', 'JSON.stringify(42, function(k, v) { return v==42 ? {forty:2}: v})');
+assert.sameValue(JSON.stringify(42, function(k, v) {
+  return v == 42 ? {
+    forty: 2
+  } : v
+}), '{"forty":2}', 'JSON.stringify(42, function(k, v) { return v==42 ? {forty:2}: v})');

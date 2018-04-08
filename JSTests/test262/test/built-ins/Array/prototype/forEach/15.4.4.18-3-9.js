@@ -9,14 +9,17 @@ description: >
     -Infinity)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+}
 
-        var obj = { 0: 9, length: -Infinity };
+var obj = {
+  0: 9,
+  length: -Infinity
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert.sameValue(accessed, false, 'accessed');

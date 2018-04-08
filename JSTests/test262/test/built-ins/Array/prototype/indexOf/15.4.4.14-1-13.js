@@ -7,9 +7,9 @@ es5id: 15.4.4.14-1-13
 description: Array.prototype.indexOf applied to the JSON object
 ---*/
 
-        var targetObj = {};
+var targetObj = {};
 
-            JSON[3] = targetObj;
-            JSON.length = 5;
+JSON[3] = targetObj;
+JSON.length = 5;
 
 assert.sameValue(Array.prototype.indexOf.call(JSON, targetObj), 3, 'Array.prototype.indexOf.call(JSON, targetObj)');

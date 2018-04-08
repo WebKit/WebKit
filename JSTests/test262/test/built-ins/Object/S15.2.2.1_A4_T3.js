@@ -9,7 +9,7 @@ es5id: 15.2.2.1_A4_T3
 description: Argument value is boolean expression
 ---*/
 
-var n_obj = new Object((1===1)&&!(false));
+var n_obj = new Object((1 === 1) && !(false));
 
 //CHECK#2
 if (n_obj.constructor !== Boolean) {
@@ -22,11 +22,11 @@ if (typeof n_obj !== 'object') {
 }
 
 //CHECK#4
-if ( n_obj != true) {
+if (n_obj != true) {
   $ERROR('#4: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }
 
 //CHECK#5
-if ( n_obj === true) {
+if (n_obj === true) {
   $ERROR('#5: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }

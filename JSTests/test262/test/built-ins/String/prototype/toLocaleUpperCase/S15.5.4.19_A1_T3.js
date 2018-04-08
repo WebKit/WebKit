@@ -10,7 +10,7 @@ description: Checking by using eval
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (eval("\"bj\"").toLocaleUpperCase() !== "BJ") {
-  $ERROR('#1: eval("\\"bj\\"").toLocaleUpperCase() === "BJ". Actual: '+eval("\"bj\"").toLocaleUpperCase() );
+  $ERROR('#1: eval("\\"bj\\"").toLocaleUpperCase() === "BJ". Actual: ' + eval("\"bj\"").toLocaleUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

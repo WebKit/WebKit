@@ -8,7 +8,7 @@ es5id: 15.4.4.10_A1.5_T2
 description: end is absent
 ---*/
 
-var x = [0,1,2,3,4];
+var x = [0, 1, 2, 3, 4];
 var arr = x.slice(-2);
 
 //CHECK#1

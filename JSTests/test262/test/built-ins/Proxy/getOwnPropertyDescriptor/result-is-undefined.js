@@ -16,13 +16,13 @@ info: |
 ---*/
 
 var target = {
-    attr: 1
+  attr: 1
 };
 
 var p = new Proxy(target, {
-    getOwnPropertyDescriptor: function(t, prop) {
-        return;
-    }
+  getOwnPropertyDescriptor: function(t, prop) {
+    return;
+  }
 });
 
 assert.sameValue(Object.getOwnPropertyDescriptor(p, "attr"), undefined);

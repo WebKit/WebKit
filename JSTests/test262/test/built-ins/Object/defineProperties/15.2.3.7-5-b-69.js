@@ -13,11 +13,11 @@ var obj = {};
 
 var descObj = {};
 Object.defineProperty(descObj, "configurable", {
-    set: function () { }
+  set: function() {}
 });
 
 Object.defineProperties(obj, {
-    prop: descObj
+  prop: descObj
 });
 
 assert(obj.hasOwnProperty("prop"));

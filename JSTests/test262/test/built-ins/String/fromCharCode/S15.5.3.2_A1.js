@@ -10,7 +10,7 @@ description: Checking String.fromCharCode.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof String.fromCharCode !== "function") {
-  $ERROR('#1: typeof String.fromCharCode === "function". Actual: typeof String.fromCharCode ==='+typeof String.fromCharCode ); 
+  $ERROR('#1: typeof String.fromCharCode === "function". Actual: typeof String.fromCharCode ===' + typeof String.fromCharCode);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (typeof String.fromCharCode !== "function") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (!(String.hasOwnProperty("fromCharCode"))) {
-  $ERROR('#2: String.hasOwnProperty("fromCharCode") return true. Actual: '+String.hasOwnProperty("fromCharCode"));
+  $ERROR('#2: String.hasOwnProperty("fromCharCode") return true. Actual: ' + String.hasOwnProperty("fromCharCode"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (!(String.hasOwnProperty("fromCharCode"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (String.fromCharCode.length !== 1) {
-  $ERROR('#3: String.fromCharCode.length === 1. Actual: String.fromCharCode.length ==='+String.fromCharCode.length ); 
+  $ERROR('#3: String.fromCharCode.length === 1. Actual: String.fromCharCode.length ===' + String.fromCharCode.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

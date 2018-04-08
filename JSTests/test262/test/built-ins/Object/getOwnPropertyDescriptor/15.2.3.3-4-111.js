@@ -8,7 +8,7 @@ description: >
     built-ins (Math.sin)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "sin");
+var desc = Object.getOwnPropertyDescriptor(Math, "sin");
 
 assert.sameValue(desc.value, Math.sin, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

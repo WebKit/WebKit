@@ -9,7 +9,7 @@ es5id: 15.3.4.3_A5_T7
 description: thisArg is new Number()
 ---*/
 
-var obj=new Number(1);
+var obj = new Number(1);
 
 Function("this.touched= true;").apply(obj);
 

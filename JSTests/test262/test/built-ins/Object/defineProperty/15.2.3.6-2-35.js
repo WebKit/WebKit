@@ -8,7 +8,7 @@ description: >
     'undefined'
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, "undefined", {});
+var obj = {};
+Object.defineProperty(obj, "undefined", {});
 
 assert(obj.hasOwnProperty("undefined"), 'obj.hasOwnProperty("undefined") !== true');

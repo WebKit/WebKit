@@ -13,10 +13,10 @@ includes: [propertyHelper.js]
 var obj = {};
 var proto = {};
 Object.defineProperty(proto, "set", {
-    set: function () { }
+  set: function() {}
 });
 
-var ConstructFun = function () { };
+var ConstructFun = function() {};
 ConstructFun.prototype = proto;
 
 var child = new ConstructFun();

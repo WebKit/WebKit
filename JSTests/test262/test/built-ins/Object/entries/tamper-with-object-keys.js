@@ -9,10 +9,12 @@ author: Jordan Harband
 ---*/
 
 function fakeObjectKeys() {
-    $ERROR('The overriden version of Object.keys was called!');
+  $ERROR('The overriden version of Object.keys was called!');
 }
 
 Object.keys = fakeObjectKeys;
 
 assert.sameValue(Object.keys, fakeObjectKeys, 'Sanity check failed: could not modify the global Object.keys');
-assert.sameValue(Object.entries({ a: 1 }).length, 1, 'Expected object with 1 key to have 1 entry');
+assert.sameValue(Object.entries({
+  a: 1
+}).length, 1, 'Expected object with 1 key to have 1 entry');

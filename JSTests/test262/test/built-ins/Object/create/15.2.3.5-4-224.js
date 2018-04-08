@@ -8,13 +8,13 @@ description: >
     'Properties' is the JSON object (8.10.5 step 6.b)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                writable: JSON
-            }
-        });
-        var hasProperty = newObj.hasOwnProperty("prop");
-        newObj.prop = 121;
+var newObj = Object.create({}, {
+  prop: {
+    writable: JSON
+  }
+});
+var hasProperty = newObj.hasOwnProperty("prop");
+newObj.prop = 121;
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(newObj.prop, 121, 'newObj.prop');

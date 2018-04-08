@@ -9,8 +9,8 @@ author: Sam Mikes
 description: Promise.prototype.then throw if 'this' is non-Object
 ---*/
 
-var p = new Promise(function () {});
+var p = new Promise(function() {});
 
 assert.throws(TypeError, function() {
-  p.then.call(3, function () {}, function () {});
+  p.then.call(3, function() {}, function() {});
 });

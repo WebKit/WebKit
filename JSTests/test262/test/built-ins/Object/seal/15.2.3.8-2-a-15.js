@@ -9,7 +9,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = (function () { return arguments; })();
+var obj = (function() {
+  return arguments;
+})();
 
 obj.foo = 10;
 

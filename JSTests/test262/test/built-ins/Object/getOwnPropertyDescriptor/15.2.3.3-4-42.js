@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.reverse)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "reverse");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "reverse");
 
 assert.sameValue(desc.value, Array.prototype.reverse, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

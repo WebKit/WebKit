@@ -8,20 +8,20 @@ description: >
     of 'Properties' is not defined in 'O'
 ---*/
 
-        var obj = {};
-        var proto = {};
+var obj = {};
+var proto = {};
 
-        Object.defineProperty(proto, "prop", {
-            get: function () {
-                return {};
-            },
-            enumerable: true
-        });
+Object.defineProperty(proto, "prop", {
+  get: function() {
+    return {};
+  },
+  enumerable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
-        var child = new Con();
+var Con = function() {};
+Con.prototype = proto;
+var child = new Con();
 
-        Object.defineProperties(obj, child);
+Object.defineProperties(obj, child);
 
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');

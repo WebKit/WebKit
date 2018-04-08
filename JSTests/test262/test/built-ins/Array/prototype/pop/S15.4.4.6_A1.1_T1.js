@@ -23,7 +23,7 @@ if (x.length !== 0) {
 }
 
 //CHECK#3
-var x = Array(1,2,3);
+var x = Array(1, 2, 3);
 x.length = 0;
 var pop = x.pop();
 if (pop !== undefined) {

@@ -17,10 +17,8 @@ base[4] = -0.5;
 base[5] = -0.999999999999999;
 var basenum = 6;
 
-for (var i = 0; i < basenum; i++)
-{
-	if (Math.pow(base[i],exponent) !== +Infinity)
-	{
-		$ERROR("#1: Math.pow(" + base[i] + ", " + exponent + ") !== +Infinity");
-	}
+for (var i = 0; i < basenum; i++) {
+  if (Math.pow(base[i], exponent) !== +Infinity) {
+    $ERROR("#1: Math.pow(" + base[i] + ", " + exponent + ") !== +Infinity");
+  }
 }

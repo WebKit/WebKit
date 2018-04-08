@@ -8,7 +8,7 @@ description: >
     properties on built-ins (URIError.prototype)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(URIError, "prototype");
+var desc = Object.getOwnPropertyDescriptor(URIError, "prototype");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

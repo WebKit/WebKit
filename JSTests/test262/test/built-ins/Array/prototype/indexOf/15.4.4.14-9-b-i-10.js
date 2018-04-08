@@ -9,27 +9,29 @@ description: >
     property on an Array-like object
 ---*/
 
-        var obj = { length: 3 };
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                return 0;
-            },
-            configurable: true
-        });
+var obj = {
+  length: 3
+};
+Object.defineProperty(obj, "0", {
+  get: function() {
+    return 0;
+  },
+  configurable: true
+});
 
-        Object.defineProperty(obj, "1", {
-            get: function () {
-                return 1;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "1", {
+  get: function() {
+    return 1;
+  },
+  configurable: true
+});
 
-        Object.defineProperty(obj, "2", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "2", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.indexOf.call(obj, 0), 0, 'Array.prototype.indexOf.call(obj, 0)');
 assert.sameValue(Array.prototype.indexOf.call(obj, 1), 1, 'Array.prototype.indexOf.call(obj, 1)');

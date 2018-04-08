@@ -8,14 +8,14 @@ description: >
     toString method
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var ownProp = {
-            toString: function () {
-                return "abc";
-            }
-        };
+var ownProp = {
+  toString: function() {
+    return "abc";
+  }
+};
 
-        Object.defineProperty(obj, ownProp, {});
+Object.defineProperty(obj, ownProp, {});
 
 assert(obj.hasOwnProperty("abc"), 'obj.hasOwnProperty("abc") !== true');

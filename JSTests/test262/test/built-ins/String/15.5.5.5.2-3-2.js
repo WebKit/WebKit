@@ -9,7 +9,7 @@ es5id: 15.5.5.5.2-3-2
 description: String value indexing returns undefined for missing data properties
 ---*/
 
-  var s = String("hello world");
-  
+var s = String("hello world");
+
 
 assert.sameValue(s["foo"], undefined, 's["foo"]');

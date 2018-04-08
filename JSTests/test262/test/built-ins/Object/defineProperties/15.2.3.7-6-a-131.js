@@ -9,12 +9,12 @@ description: >
     (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: -Infinity
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: -Infinity
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

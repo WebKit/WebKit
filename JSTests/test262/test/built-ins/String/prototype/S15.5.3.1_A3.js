@@ -11,7 +11,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.hasOwnProperty('prototype'))) {
-  $ERROR('#1: String.hasOwnProperty(\'prototype\') return true. Actual: '+String.hasOwnProperty('prototype'));
+  $ERROR('#1: String.hasOwnProperty(\'prototype\') return true. Actual: ' + String.hasOwnProperty('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ try {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (!(String.hasOwnProperty('prototype'))) {
-  $ERROR('#3: delete String.prototype; String.hasOwnProperty(\'prototype\') return true. Actual: '+String.hasOwnProperty('prototype'));
+  $ERROR('#3: delete String.prototype; String.hasOwnProperty(\'prototype\') return true. Actual: ' + String.hasOwnProperty('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

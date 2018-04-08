@@ -18,10 +18,13 @@ var thenable = {
     resolveElementFunction = fulfill;
   }
 };
+
 function NotPromise(executor) {
-  executor(function(){}, function(){});
+  executor(function() {}, function() {});
 }
-NotPromise.resolve = function(v) { return v; };
+NotPromise.resolve = function(v) {
+  return v;
+};
 Promise.all.call(NotPromise, [thenable]);
 
 assert.sameValue(Object.getPrototypeOf(resolveElementFunction), Function.prototype);

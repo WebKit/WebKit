@@ -7,17 +7,17 @@ es5id: 15.4.4.20-1-9
 description: Array.prototype.filter applied to Function object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return obj instanceof Function;
-        }
+function callbackfn(val, idx, obj) {
+  return obj instanceof Function;
+}
 
-        var obj = function (a, b) {
-            return a + b;
-        };
-        obj[0] = 11;
-        obj[1] = 9;
+var obj = function(a, b) {
+  return a + b;
+};
+obj[0] = 11;
+obj[1] = 9;
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr[0], 11, 'newArr[0]');
 assert.sameValue(newArr[1], 9, 'newArr[1]');

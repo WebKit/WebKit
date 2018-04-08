@@ -33,4 +33,6 @@ Object.defineProperty(Array.prototype, 0, {
   }
 });
 
-Promise.all([42]).then(function(){ $DONE(); }, $DONE);
+Promise.all([42]).then(function() {
+  $DONE();
+}, $DONE);

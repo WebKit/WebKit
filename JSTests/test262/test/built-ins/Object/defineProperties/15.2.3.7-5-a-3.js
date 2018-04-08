@@ -9,30 +9,30 @@ description: >
     'Properties' is defined in 'O'
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "prop", {
-            value: {
-                value: 9
-            },
-            enumerable: true
-        });
+Object.defineProperty(proto, "prop", {
+  value: {
+    value: 9
+  },
+  enumerable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        Object.defineProperty(child, "prop", {
-            get: function () {
-                return {
-                    value: 12
-                };
-            },
-            enumerable: true
-        });
-        Object.defineProperties(obj, child);
+var child = new Con();
+Object.defineProperty(child, "prop", {
+  get: function() {
+    return {
+      value: 12
+    };
+  },
+  enumerable: true
+});
+Object.defineProperties(obj, child);
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, 12, 'obj.prop');

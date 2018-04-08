@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "property", {
-    set: undefined
+  set: undefined
 });
 
 var desc = Object.getOwnPropertyDescriptor(obj, "property");

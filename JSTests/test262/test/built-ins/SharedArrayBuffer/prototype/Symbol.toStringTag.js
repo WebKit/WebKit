@@ -11,7 +11,7 @@ info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: true }.
 includes: [propertyHelper.js]
-features: [Symbol.toStringTag]
+features: [SharedArrayBuffer, Symbol.toStringTag]
 ---*/
 
 assert.sameValue(SharedArrayBuffer.prototype[Symbol.toStringTag], 'SharedArrayBuffer');

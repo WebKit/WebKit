@@ -11,5 +11,5 @@ description: Checking if Math.floor(x) is -Infinity, where x is -Infinity
 var x = -Infinity;
 if (Math.floor(x) !== -Infinity)
 {
-	$ERROR("#1: 'var x = -Infinity; Math.floor(x) !== -Infinity'");
+  $ERROR("#1: 'var x = -Infinity; Math.floor(x) !== -Infinity'");
 }

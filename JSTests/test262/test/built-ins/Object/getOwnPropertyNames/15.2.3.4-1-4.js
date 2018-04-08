@@ -8,4 +8,4 @@ description: >
     boolean
 ---*/
 
-    Object.getOwnPropertyNames(true);
+Object.getOwnPropertyNames(true);

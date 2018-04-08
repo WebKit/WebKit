@@ -8,7 +8,7 @@ description: >
     built-ins (Object.preventExtensions)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Object, "preventExtensions");
+var desc = Object.getOwnPropertyDescriptor(Object, "preventExtensions");
 
 assert.sameValue(desc.value, Object.preventExtensions, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

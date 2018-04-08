@@ -8,11 +8,11 @@ description: >
     which implements its own property get method
 ---*/
 
-        var arg = (function () {
-            return arguments;
-        }("ownProperty", true));
+var arg = (function() {
+  return arguments;
+}("ownProperty", true));
 
-        var desc = Object.getOwnPropertyDescriptor(arg, "0");
+var desc = Object.getOwnPropertyDescriptor(arg, "0");
 
 assert.sameValue(desc.value, "ownProperty", 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

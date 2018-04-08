@@ -9,7 +9,7 @@ es5id: 15.3.4.5-2-4
 description: Function.prototype.bind allows Target to be a constructor (String)
 ---*/
 
-  var bsc = String.bind(null);
-  var s = bsc("hello world");
+var bsc = String.bind(null);
+var s = bsc("hello world");
 
 assert.sameValue(s, "hello world", 's');

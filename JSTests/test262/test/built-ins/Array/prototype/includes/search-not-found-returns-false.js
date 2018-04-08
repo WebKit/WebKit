@@ -35,7 +35,9 @@ assert.sameValue([null].includes(undefined), false, "undefined");
 
 assert.sameValue([Symbol("1")].includes(Symbol("1")), false, "symbol");
 assert.sameValue([{}].includes({}), false, "object");
-assert.sameValue([[]].includes([]), false, "array");
+assert.sameValue([
+  []
+].includes([]), false, "array");
 
 var sample = [42];
 assert.sameValue(sample.includes(sample), false, "this");

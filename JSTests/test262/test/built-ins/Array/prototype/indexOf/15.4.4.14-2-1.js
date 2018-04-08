@@ -9,8 +9,14 @@ description: >
     Array-like object
 ---*/
 
-        var objOne = { 1: true, length: 2 };
-        var objTwo = { 2: true, length: 2 };
+var objOne = {
+  1: true,
+  length: 2
+};
+var objTwo = {
+  2: true,
+  length: 2
+};
 
 assert.sameValue(Array.prototype.indexOf.call(objOne, true), 1, 'Array.prototype.indexOf.call(objOne, true)');
 assert.sameValue(Array.prototype.indexOf.call(objTwo, true), -1, 'Array.prototype.indexOf.call(objTwo, true)');

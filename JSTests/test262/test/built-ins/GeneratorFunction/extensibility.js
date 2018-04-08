@@ -10,6 +10,6 @@ info: |
 features: [generators]
 ---*/
 
-var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;
+var GeneratorFunction = Object.getPrototypeOf(function*() {}).constructor;
 
 assert(Object.isExtensible(GeneratorFunction));

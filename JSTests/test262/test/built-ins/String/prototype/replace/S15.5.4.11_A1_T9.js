@@ -10,16 +10,18 @@ description: >
 ---*/
 
 var __obj = {
-    valueOf:function(){},
-    toString:void 0
+  valueOf: function() {},
+  toString: void 0
 };
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (new String(__obj).replace(function(){}(),__func) !== "undefined0undefined") {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; function __func(a1,a2,a3){return a1+a2+a3;}; new String(__obj).replace(function(){}(),__func) === "undefined0undefined". Actual: '+new String(__obj).replace(function(){}(),__func) );
+if (new String(__obj).replace(function() {}(), __func) !== "undefined0undefined") {
+  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; function __func(a1,a2,a3){return a1+a2+a3;}; new String(__obj).replace(function(){}(),__func) === "undefined0undefined". Actual: ' + new String(__obj).replace(function() {}(), __func));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
-function __func(a1,a2,a3){return a1+a2+a3;};
+function __func(a1, a2, a3) {
+  return a1 + a2 + a3;
+};

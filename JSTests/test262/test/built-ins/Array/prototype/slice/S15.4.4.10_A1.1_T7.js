@@ -10,8 +10,8 @@ es5id: 15.4.4.10_A1.1_T7
 description: end > length > start > 0
 ---*/
 
-var x = [0,1,2,3,4];
-var arr = x.slice(3,6);
+var x = [0, 1, 2, 3, 4];
+var arr = x.slice(3, 6);
 
 //CHECK#1
 arr.getClass = Object.prototype.toString;

@@ -10,7 +10,7 @@ description: Checking String.prototype.localeCompare.prototype
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.prototype.localeCompare.prototype !== undefined) {
-  $ERROR('#1: String.prototype.localeCompare.prototype === undefined. Actual: '+String.prototype.localeCompare.prototype );
+  $ERROR('#1: String.prototype.localeCompare.prototype === undefined. Actual: ' + String.prototype.localeCompare.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

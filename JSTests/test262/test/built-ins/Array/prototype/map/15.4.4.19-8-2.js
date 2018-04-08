@@ -9,17 +9,17 @@ description: >
     it is called
 ---*/
 
-  function callbackfn(val, idx, obj)
-  {
-    srcArr[4] = -1;
-    if(val > 0)
-      return 1;
-    else
-      return 0;
-  }
+function callbackfn(val, idx, obj)
+{
+  srcArr[4] = -1;
+  if (val > 0)
+    return 1;
+  else
+    return 0;
+}
 
-  var srcArr = [1,2,3,4,5];
-  var resArr = srcArr.map(callbackfn);
+var srcArr = [1, 2, 3, 4, 5];
+var resArr = srcArr.map(callbackfn);
 
 assert.sameValue(resArr.length, 5, 'resArr.length');
 assert.sameValue(resArr[4], 0, 'resArr[4]');

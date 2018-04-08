@@ -44,5 +44,8 @@ assert.throws(TypeError, function() {
 });
 
 assert.throws(TypeError, function() {
-  new Map([['a', 1], 2]);
+  new Map([
+    ['a', 1],
+    2
+  ]);
 });

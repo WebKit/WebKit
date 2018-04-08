@@ -8,8 +8,8 @@ es5id: 15.4.4.12_A2.1_T1
 description: start is not integer
 ---*/
 
-var x = [0,1,2,3];
-var arr = x.splice(1.5,3);
+var x = [0, 1, 2, 3];
+var arr = x.splice(1.5, 3);
 
 //CHECK#1
 arr.getClass = Object.prototype.toString;

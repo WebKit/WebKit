@@ -9,12 +9,12 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Math.value = "Math";
+Math.value = "Math";
 
-            Object.defineProperties(obj, {
-                property: Math
-            });
+Object.defineProperties(obj, {
+  property: Math
+});
 
 assert.sameValue(obj.property, "Math", 'obj.property');

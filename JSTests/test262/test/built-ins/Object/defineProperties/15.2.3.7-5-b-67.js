@@ -13,21 +13,21 @@ includes: [propertyHelper.js]
 
 var obj = {};
 var proto = {
-    configurable: true
+  configurable: true
 };
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 var descObj = new Con();
 
 Object.defineProperty(descObj, "configurable", {
-    get: function () {
-        return false;
-    }
+  get: function() {
+    return false;
+  }
 });
 
 Object.defineProperties(obj, {
-    prop: descObj
+  prop: descObj
 });
 
 assert(obj.hasOwnProperty("prop"));

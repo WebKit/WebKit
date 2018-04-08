@@ -15,15 +15,15 @@ includes: [propertyHelper.js]
 var arrObj = [];
 
 function getFunc() {
-    return 12;
+  return 12;
 }
 Object.defineProperty(arrObj, "0", {
-    get: undefined,
-    configurable: true
+  get: undefined,
+  configurable: true
 });
 
 Object.defineProperty(arrObj, "0", {
-    get: getFunc
+  get: getFunc
 });
 verifyEqualTo(arrObj, "0", getFunc());
 

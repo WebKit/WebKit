@@ -9,14 +9,14 @@ description: >
     7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var errObj = new Error();
+var errObj = new Error();
 
-        errObj.get = function () {
-            return "errorGetProperty";
-        };
+errObj.get = function() {
+  return "errorGetProperty";
+};
 
-        Object.defineProperty(obj, "property", errObj);
+Object.defineProperty(obj, "property", errObj);
 
 assert.sameValue(obj.property, "errorGetProperty", 'obj.property');

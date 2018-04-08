@@ -11,9 +11,20 @@ description: >
     throw exception
 ---*/
 
-var __obj = {toString:function(){return {};},valueOf:function(){throw "intostr";}};
+var __obj = {
+  toString: function() {
+    return {};
+  },
+  valueOf: function() {
+    throw "intostr";
+  }
+};
 
-var __obj2 = {valueOf:function(){throw "intointeger";}};
+var __obj2 = {
+  valueOf: function() {
+    throw "intointeger";
+  }
+};
 
 __FACTORY.prototype.indexOf = String.prototype.indexOf;
 
@@ -25,15 +36,19 @@ try {
   var x = __instance.indexOf(__obj, __obj2);
   $ERROR('#1: "var x = __instance.indexOf(__obj, __obj2)" lead to throwing exception');
 } catch (e) {
-  if (e!=="intostr") {
-    $ERROR('#1.1: Exception === "intostr". Actual: '+e); 
+  if (e !== "intostr") {
+    $ERROR('#1.1: Exception === "intostr". Actual: ' + e);
   }
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
-function __FACTORY( value ) {
-    this.value = value;
-    this.toString = function() { return new Number; };
-    this.valueOf=function(){return this.value+""};
+function __FACTORY(value) {
+  this.value = value;
+  this.toString = function() {
+    return new Number;
+  };
+  this.valueOf = function() {
+    return this.value + ""
+  };
 }

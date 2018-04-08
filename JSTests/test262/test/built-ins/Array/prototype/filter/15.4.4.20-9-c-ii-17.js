@@ -9,12 +9,15 @@ description: >
     when T is not an object (T is a number)
 ---*/
 
-        function callbackfn(val, idx, o) {
-            return 5 === this.valueOf();
-        }
+function callbackfn(val, idx, o) {
+  return 5 === this.valueOf();
+}
 
-        var obj = { 0: 11, length: 2 };
-        var newArr = Array.prototype.filter.call(obj, callbackfn, 5);
+var obj = {
+  0: 11,
+  length: 2
+};
+var newArr = Array.prototype.filter.call(obj, callbackfn, 5);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

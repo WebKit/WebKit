@@ -9,34 +9,37 @@ description: >
     index property not to be visited on an Array-like object
 ---*/
 
-        var accessed = false;
-        var testResult = true;
+var accessed = false;
+var testResult = true;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            if (idx === 1) {
-                testResult = false;
-            }
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  if (idx === 1) {
+    testResult = false;
+  }
+}
 
-        var obj = { 0: 10, length: 10 };
+var obj = {
+  0: 10,
+  length: 10
+};
 
-        Object.defineProperty(obj, "1", {
-            get: function () {
-                return 6.99;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "1", {
+  get: function() {
+    return 6.99;
+  },
+  configurable: true
+});
 
-        Object.defineProperty(obj, "5", {
-            get: function () {
-                delete obj[1];
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "5", {
+  get: function() {
+    delete obj[1];
+    return 0;
+  },
+  configurable: true
+});
 
-        Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
+Array.prototype.reduceRight.call(obj, callbackfn, "initialValue");
 
 assert(testResult, 'testResult !== true');
 assert(accessed, 'accessed !== true');

@@ -13,17 +13,17 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo1", {
-    value: 10,
-    writable: false,
-    enumerable: true,
-    configurable: false
+  value: 10,
+  writable: false,
+  enumerable: true,
+  configurable: false
 });
 
 Object.defineProperty(obj, "foo2", {
-    value: 20,
-    writable: true,
-    enumerable: false,
-    configurable: false
+  value: 20,
+  writable: true,
+  enumerable: false,
+  configurable: false
 });
 
 Object.freeze(obj);
@@ -48,18 +48,17 @@ verifyNotEnumerable(obj, "foo2");
 verifyNotConfigurable(obj, "foo2");
 
 if (desc1.configurable !== false) {
-    $ERROR('Expected desc1.configurable === false, actually ' + desc1.configurable);
+  $ERROR('Expected desc1.configurable === false, actually ' + desc1.configurable);
 }
 
 if (desc1.writable !== false) {
-    $ERROR('Expected desc1.writable === false, actually ' + desc1.writable);
+  $ERROR('Expected desc1.writable === false, actually ' + desc1.writable);
 }
 
 if (desc2.configurable !== false) {
-    $ERROR('Expected desc2.configurable === false, actually ' + desc2.configurable);
+  $ERROR('Expected desc2.configurable === false, actually ' + desc2.configurable);
 }
 
 if (desc2.writable !== false) {
-    $ERROR('Expected desc2.writable === false, actually ' + desc2.writable);
+  $ERROR('Expected desc2.writable === false, actually ' + desc2.writable);
 }
-

@@ -10,25 +10,25 @@ description: >
     return primitive value (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var arr = [];
+var toStringAccessed = false;
+var valueOfAccessed = false;
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: {
-                        toString: function () {
-                            toStringAccessed = true;
-                            return {};
-                        },
+  Object.defineProperties(arr, {
+    length: {
+      value: {
+        toString: function() {
+          toStringAccessed = true;
+          return {};
+        },
 
-                        valueOf: function () {
-                            valueOfAccessed = true;
-                            return {};
-                        }
-                    }
-                }
-            });
+        valueOf: function() {
+          valueOfAccessed = true;
+          return {};
+        }
+      }
+    }
+  });
 });
 assert(toStringAccessed, 'toStringAccessed !== true');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

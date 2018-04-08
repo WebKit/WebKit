@@ -10,5 +10,5 @@ features: [SharedArrayBuffer, ArrayBuffer, DataView, Atomics, arrow-function, le
 ---*/
 
 testWithAtomicsNonViewValues(function(view) {
-    assert.throws(TypeError, (() => Atomics.add(view, 0, 0)));
+  assert.throws(TypeError, (() => Atomics.add(view, 0, 0)));
 });

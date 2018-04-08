@@ -6,27 +6,27 @@ es5id: 15.2.3.6-4-607
 description: ES5 Attributes - all attributes in Object.isSealed are correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Object, "isSealed");
+var desc = Object.getOwnPropertyDescriptor(Object, "isSealed");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Object.isSealed;
+var temp = Object.isSealed;
 
-            Object.isSealed = "2010";
+Object.isSealed = "2010";
 
-            var isWritable = (Object.isSealed === "2010");
+var isWritable = (Object.isSealed === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Object) {
-                if (prop === "isSealed") {
-                    isEnumerable = true;
-                }
-            }
-        
-            delete Object.isSealed;
+for (var prop in Object) {
+  if (prop === "isSealed") {
+    isEnumerable = true;
+  }
+}
 
-            var isConfigurable = !Object.hasOwnProperty("isSealed");
+delete Object.isSealed;
+
+var isConfigurable = !Object.hasOwnProperty("isSealed");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

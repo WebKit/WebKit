@@ -10,9 +10,11 @@ features: [Symbol.isConcatSpreadable]
 ---*/
 function MyError() {}
 var obj = {
-  "length": { toString: function() {
+  "length": {
+    toString: function() {
       throw new MyError();
-    }, valueOf: null
+    },
+    valueOf: null
   },
   "1": "A",
   "3": "B",

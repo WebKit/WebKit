@@ -9,12 +9,12 @@ description: >
     (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: NaN
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: NaN
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

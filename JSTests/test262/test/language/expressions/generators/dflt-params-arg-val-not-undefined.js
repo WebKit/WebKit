@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-not-undefined.case
 // - src/function-forms/default/gen-func-expr.template
 /*---
-description: Use of intializer when argument value is not `undefined` (generator function expression)
+description: Use of initializer when argument value is not `undefined` (generator function expression)
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
 features: [default-parameters, generators]
 flags: [generated]

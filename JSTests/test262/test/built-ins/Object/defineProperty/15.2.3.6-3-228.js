@@ -9,14 +9,16 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        argObj.get = function () {
-            return "argumentGetProperty";
-        };
+argObj.get = function() {
+  return "argumentGetProperty";
+};
 
-        Object.defineProperty(obj, "property", argObj);
+Object.defineProperty(obj, "property", argObj);
 
 assert.sameValue(obj.property, "argumentGetProperty", 'obj.property');

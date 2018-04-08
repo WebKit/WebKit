@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.lastIndexOf)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "lastIndexOf");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "lastIndexOf");
 
 assert.sameValue(desc.value, Array.prototype.lastIndexOf, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

@@ -10,9 +10,9 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: 10,
-    enumerable: false,
-    configurable: true
+  value: 10,
+  enumerable: false,
+  configurable: true
 });
 
 Object.freeze(obj);

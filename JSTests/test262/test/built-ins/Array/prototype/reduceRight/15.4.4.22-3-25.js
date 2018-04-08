@@ -9,27 +9,28 @@ description: >
     non-integer
 ---*/
 
-        var testResult1 = true;
-        var testResult2 = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx > 1) {
-                testResult1 = false;
-            }
+var testResult1 = true;
+var testResult2 = false;
 
-            if (idx === 1) {
-                testResult2 = true;
-            }
-            return false;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx > 1) {
+    testResult1 = false;
+  }
 
-        var obj = {
-            0: 12,
-            1: 11,
-            2: 9,
-            length: -4294967294.5
-        };
+  if (idx === 1) {
+    testResult2 = true;
+  }
+  return false;
+}
 
-        Array.prototype.reduceRight.call(obj, callbackfn, 1);
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: -4294967294.5
+};
+
+Array.prototype.reduceRight.call(obj, callbackfn, 1);
 
 assert(testResult1, 'testResult1 !== true');
 assert.sameValue(testResult2, false, 'testResult2');

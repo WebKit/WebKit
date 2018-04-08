@@ -9,22 +9,22 @@ description: >
     property (8.10.5 step 6.a)
 ---*/
 
-        var Func = function (a, b) {
-            return a + b;
-        };
+var Func = function(a, b) {
+  return a + b;
+};
 
-        var fun = new Func();
-        fun.writable = true;
+var fun = new Func();
+fun.writable = true;
 
-        var newObj = Object.create({}, {
-            prop: fun
-        });
+var newObj = Object.create({}, {
+  prop: fun
+});
 
-        var beforeWrite = (newObj.hasOwnProperty("prop") && typeof (newObj.prop) === "undefined");
+var beforeWrite = (newObj.hasOwnProperty("prop") && typeof(newObj.prop) === "undefined");
 
-        newObj.prop = "isWritable";
+newObj.prop = "isWritable";
 
-        var afterWrite = (newObj.prop === "isWritable");
+var afterWrite = (newObj.prop === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

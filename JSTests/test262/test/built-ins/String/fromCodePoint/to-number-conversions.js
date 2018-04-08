@@ -25,6 +25,10 @@ assert.sameValue(String.fromCodePoint(true), '\x01');
 assert.sameValue(String.fromCodePoint('42'), '\x2A');
 assert.sameValue(String.fromCodePoint('042'), '\x2A');
 assert.sameValue(
-  String.fromCodePoint({ valueOf: function() { return 31; } }),
+  String.fromCodePoint({
+    valueOf: function() {
+      return 31;
+    }
+  }),
   '\x1F'
 );

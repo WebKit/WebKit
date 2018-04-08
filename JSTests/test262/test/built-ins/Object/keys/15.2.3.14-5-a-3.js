@@ -8,16 +8,18 @@ description: >
     is correct
 ---*/
 
-        var obj = { prop1: 100 };
+var obj = {
+  prop1: 100
+};
 
-        var array = Object.keys(obj);
-        var desc = Object.getOwnPropertyDescriptor(array, "0");
-        var result = false;
-        for (var index in array) {
-            if (obj.hasOwnProperty(array[index]) && array[index] === "prop1") {
-                result = true;
-            }
-        }
+var array = Object.keys(obj);
+var desc = Object.getOwnPropertyDescriptor(array, "0");
+var result = false;
+for (var index in array) {
+  if (obj.hasOwnProperty(array[index]) && array[index] === "prop1") {
+    result = true;
+  }
+}
 
 assert(result, 'result !== true');
 assert(desc.hasOwnProperty("enumerable"), 'desc.hasOwnProperty("enumerable") !== true');

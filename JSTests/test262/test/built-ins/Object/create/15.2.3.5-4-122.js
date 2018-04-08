@@ -9,16 +9,18 @@ description: >
     'configurable' property (8.10.5 step 4.a)
 ---*/
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        argObj.configurable = true;
+argObj.configurable = true;
 
-        var newObj = Object.create({}, {
-            prop: argObj
-        });
-        var result1 = newObj.hasOwnProperty("prop");
-        delete newObj.prop;
-        var result2 = newObj.hasOwnProperty("prop");
+var newObj = Object.create({}, {
+  prop: argObj
+});
+var result1 = newObj.hasOwnProperty("prop");
+delete newObj.prop;
+var result2 = newObj.hasOwnProperty("prop");
 
 assert.sameValue(result1, true, 'result1');
 assert.sameValue(result2, false, 'result2');

@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.concat)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "concat");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "concat");
 
 assert.sameValue(desc.value, Array.prototype.concat, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

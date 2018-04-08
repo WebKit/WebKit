@@ -11,5 +11,5 @@ description: Checking if Math.ceil(x) is -Infinity, where x is -Infinity
 var x = -Infinity;
 if (Math.ceil(x) !== -Infinity)
 {
-	$ERROR("#1: 'var x = -Infinity; Math.ceil(x) !== -Infinity'");
+  $ERROR("#1: 'var x = -Infinity; Math.ceil(x) !== -Infinity'");
 }

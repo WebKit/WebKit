@@ -16,18 +16,18 @@ includes: [propertyHelper.js]
 var arg;
 
 (function fun(a, b, c) {
-    arg = arguments;
+  arg = arguments;
 }(0, 1, 2));
 
 delete arg[0];
 
 Object.defineProperties(arg, {
-    "0": {
-        value: 10,
-        writable: true,
-        enumerable: true,
-        configurable: true
-    }
+  "0": {
+    value: 10,
+    writable: true,
+    enumerable: true,
+    configurable: true
+  }
 });
 
 verifyEqualTo(arg, "0", 10);

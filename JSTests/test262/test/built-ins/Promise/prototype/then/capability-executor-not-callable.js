@@ -35,7 +35,7 @@ var promise = new class extends Promise {
     }
     return super(executor);
   }
-}(function(){});
+}(function() {});
 
 var checkPoint = "";
 assert.throws(TypeError, function() {
@@ -72,7 +72,7 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   constructorFunction = function(executor) {
     checkPoint += "a";
-    executor(undefined, function(){});
+    executor(undefined, function() {});
     checkPoint += "b";
   };
   promise.then();
@@ -83,7 +83,7 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   constructorFunction = function(executor) {
     checkPoint += "a";
-    executor(function(){}, undefined);
+    executor(function() {}, undefined);
     checkPoint += "b";
   };
   promise.then();

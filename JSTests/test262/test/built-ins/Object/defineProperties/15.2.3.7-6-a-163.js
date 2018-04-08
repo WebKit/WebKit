@@ -13,14 +13,14 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-    
+
 var arr = [0, 1];
 
 Object.defineProperties(arr, {
-    length: {
-        value: 1,
-        writable: false
-    }
+  length: {
+    value: 1,
+    writable: false
+  }
 });
 
 //try to overwrite length value of arr

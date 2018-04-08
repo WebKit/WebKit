@@ -12,30 +12,30 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-(function () {
+(function() {
+  Object.defineProperty(arguments, "0", {
+    value: 10,
+    writable: false,
+    enumerable: false,
+    configurable: false
+  });
+  try {
     Object.defineProperty(arguments, "0", {
-        value: 10,
-        writable: false,
-        enumerable: false,
-        configurable: false
+      value: 20
     });
-    try {
-        Object.defineProperty(arguments, "0", {
-            value: 20
-        });
-        $ERROR("Expected an exception.");	
-    } catch (e) {
-        verifyEqualTo(arguments, "0", 10);
+    $ERROR("Expected an exception.");
+  } catch (e) {
+    verifyEqualTo(arguments, "0", 10);
 
-        verifyNotWritable(arguments, "0");
+    verifyNotWritable(arguments, "0");
 
-        verifyNotEnumerable(arguments, "0");
+    verifyNotEnumerable(arguments, "0");
 
-        verifyNotConfigurable(arguments, "0");
+    verifyNotConfigurable(arguments, "0");
 
-        if (!(e instanceof TypeError)) {
-            $ERROR("Expected TypeError, got " + e);
-        }
-
+    if (!(e instanceof TypeError)) {
+      $ERROR("Expected TypeError, got " + e);
     }
+
+  }
 }(0, 1, 2));

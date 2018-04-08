@@ -1,7 +1,7 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 22.2.3.31
+esid: sec-get-%typedarray%.prototype-@@tostringtag
 description: >
   Return undefined if this value does not have a [[TypedArrayName]] internal slot
 info: |

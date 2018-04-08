@@ -9,15 +9,15 @@ description: >
     step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            prop: {
-                configurable: true,
-                enumerable: true
-            }
-        });
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+Object.defineProperties(obj, {
+  prop: {
+    configurable: true,
+    enumerable: true
+  }
+});
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(desc.hasOwnProperty("value"), 'desc.hasOwnProperty("value") !== true');
 assert.sameValue(typeof desc.value, "undefined", 'typeof desc.value');

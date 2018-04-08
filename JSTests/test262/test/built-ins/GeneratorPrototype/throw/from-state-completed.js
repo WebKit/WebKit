@@ -9,13 +9,16 @@ features: [generators]
 ---*/
 
 function E() {}
+
 function* G() {}
 var iter;
 
 iter = G();
 iter.next();
 
-assert.throws(E, function() { iter.throw(new E()); });
+assert.throws(E, function() {
+  iter.throw(new E());
+});
 
 var result = iter.next();
 

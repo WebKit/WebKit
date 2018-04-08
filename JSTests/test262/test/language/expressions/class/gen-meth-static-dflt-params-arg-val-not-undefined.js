@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-not-undefined.case
 // - src/function-forms/default/cls-expr-gen-meth-static.template
 /*---
-description: Use of intializer when argument value is not `undefined` (static class expression generator method)
+description: Use of initializer when argument value is not `undefined` (static class expression generator method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 features: [default-parameters, generators]
 flags: [generated]

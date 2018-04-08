@@ -20,14 +20,19 @@ var iterable = {};
 iterable[Symbol.iterator] = function() {
   return {
     next: function() {
-      return { value: null, done: false };
+      return {
+        value: null,
+        done: false
+      };
     },
     return: function() {
       count += 1;
     }
   };
 };
-WeakSet.prototype.add = function() { throw new Test262Error(); };
+WeakSet.prototype.add = function() {
+  throw new Test262Error();
+};
 
 assert.throws(Test262Error, function() {
   new WeakSet(iterable);

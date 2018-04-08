@@ -13,13 +13,13 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperty(arr, "0", {
-    value: NaN
+  value: NaN
 });
 
 Object.defineProperties(arr, {
-    "0": {
-        value: NaN
-    }
+  "0": {
+    value: NaN
+  }
 });
 
 verifyEqualTo(arr, "0", NaN);

@@ -8,7 +8,7 @@ description: >
     a string (value is 1(following 22 zeros))
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, 10000000000000000000000, {});
+var obj = {};
+Object.defineProperty(obj, 10000000000000000000000, {});
 
 assert(obj.hasOwnProperty("1e+22"), 'obj.hasOwnProperty("1e+22") !== true');

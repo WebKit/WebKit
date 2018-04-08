@@ -12,36 +12,36 @@ description: no arguments
 ---*/
 
 //CHECK#1
-if(Boolean.prototype.toString() !== "false"){
+if (Boolean.prototype.toString() !== "false") {
   $ERROR('#1: Boolean.prototype.toString() === "false"');
 }
 
 //CHECK#2
-if((new Boolean()).toString() !== "false"){
+if ((new Boolean()).toString() !== "false") {
   $ERROR('#2: (new Boolean()).toString() === "false"');
 }
 
 //CHECK#3
-if((new Boolean(false)).toString() !== "false"){
+if ((new Boolean(false)).toString() !== "false") {
   $ERROR('#3: (new Boolean(false)).toString() === "false"');
 }
 
 //CHECK#4
-if((new Boolean(true)).toString() !== "true"){
+if ((new Boolean(true)).toString() !== "true") {
   $ERROR('#4: (new Boolean(true)).toString() === "true"');
 }
 
 //CHECK#5
-if((new Boolean(1)).toString() !== "true"){
+if ((new Boolean(1)).toString() !== "true") {
   $ERROR('#5: (new Boolean(1)).toString() === "true"');
 }
 
 //CHECK#6
-if((new Boolean(0)).toString() !== "false"){
+if ((new Boolean(0)).toString() !== "false") {
   $ERROR('#6: (new Boolean(0)).toString() === "false"');
 }
 
 //CHECK#7
-if((new Boolean(new Object())).toString() !== "true"){
+if ((new Boolean(new Object())).toString() !== "true") {
   $ERROR('#7: (new Boolean(new Object())).toString() === "true"');
 }

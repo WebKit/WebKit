@@ -6,9 +6,9 @@ es5id: 15.3.4.5-8-1
 description: Function.prototype.bind, type of bound function must be 'function'
 ---*/
 
-  function foo() { }
-  var o = {};
-  
-  var bf = foo.bind(o);
+function foo() {}
+var o = {};
+
+var bf = foo.bind(o);
 
 assert.sameValue(typeof(bf), 'function', 'typeof(bf)');

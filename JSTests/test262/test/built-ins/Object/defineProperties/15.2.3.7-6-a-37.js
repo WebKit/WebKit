@@ -10,20 +10,20 @@ includes: [propertyHelper.js]
 ---*/
 
 var obj = {};
-var getFun = function () {
-    return 10;
+var getFun = function() {
+  return 10;
 };
-var setFun = function (value) {
-    obj.setVerifyHelpProp = value;
+var setFun = function(value) {
+  obj.setVerifyHelpProp = value;
 };
 
 Object.defineProperties(obj, {
-    prop: {
-        get: getFun,
-        set: setFun,
-        enumerable: false,
-        configurable: false
-    }
+  prop: {
+    get: getFun,
+    set: setFun,
+    enumerable: false,
+    configurable: false
+  }
 });
 verifyEqualTo(obj, "prop", getFun());
 
@@ -32,4 +32,3 @@ verifyWritable(obj, "prop", "setVerifyHelpProp");
 verifyNotEnumerable(obj, "prop");
 
 verifyNotConfigurable(obj, "prop");
-

@@ -6,23 +6,23 @@ es5id: 15.2.3.8-2-2
 description: Object.seal - inherited data properties are ignored
 ---*/
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "Father", {
-            value: 10,
-            configurable: true
-        });
+Object.defineProperty(proto, "Father", {
+  value: 10,
+  configurable: true
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        var preCheck = Object.isExtensible(child);
-        Object.seal(child);
+var child = new ConstructFun();
+var preCheck = Object.isExtensible(child);
+Object.seal(child);
 
-        var beforeDeleted = proto.hasOwnProperty("Father");
-        delete proto.Father;
-        var afterDeleted = proto.hasOwnProperty("Father");
+var beforeDeleted = proto.hasOwnProperty("Father");
+delete proto.Father;
+var afterDeleted = proto.hasOwnProperty("Father");
 
 assert(preCheck, 'preCheck !== true');
 assert(beforeDeleted, 'beforeDeleted !== true');

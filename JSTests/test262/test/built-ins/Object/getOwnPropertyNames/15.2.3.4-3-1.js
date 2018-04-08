@@ -8,9 +8,11 @@ description: >
     from index 0
 ---*/
 
-        var obj = { prop1: 1001 };
+var obj = {
+  prop1: 1001
+};
 
-        var arr = Object.getOwnPropertyNames(obj);
+var arr = Object.getOwnPropertyNames(obj);
 
 assert(arr.hasOwnProperty(0), 'arr.hasOwnProperty(0) !== true');
 assert.sameValue(arr[0], "prop1", 'arr[0]');

@@ -12,14 +12,14 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var func = function (a, b) {
-    return a + b;
+var func = function(a, b) {
+  return a + b;
 };
 
 func.writable = false;
 
 Object.defineProperties(obj, {
-    property: func
+  property: func
 });
 
 assert(obj.hasOwnProperty("property"));

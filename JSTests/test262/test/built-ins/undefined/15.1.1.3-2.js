@@ -12,7 +12,7 @@ flags: [onlyStrict]
 var global = this;
 
 assert.throws(TypeError, function() {
-  global["undefined"] = 5;  // Should throw a TypeError as per 8.12.5
+  global["undefined"] = 5; // Should throw a TypeError as per 8.12.5
 });
 assert.sameValue(global["undefined"], void 0);
 assert.sameValue(undefined, void 0);

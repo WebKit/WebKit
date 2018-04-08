@@ -10,17 +10,19 @@ description: >
     property
 ---*/
 
-            Object.defineProperty(Object.prototype, "length", {
-                get: function () {
-                    return 20;
-                },
-                configurable: true
-            });
+Object.defineProperty(Object.prototype, "length", {
+  get: function() {
+    return 20;
+  },
+  configurable: true
+});
 
-            var obj = { 1: 1 };
-            Object.defineProperty(obj, "length", {
-                set: function () { },
-                configurable: true
-            });
+var obj = {
+  1: 1
+};
+Object.defineProperty(obj, "length", {
+  set: function() {},
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.indexOf.call(obj, 1), -1, 'Array.prototype.indexOf.call(obj, 1)');

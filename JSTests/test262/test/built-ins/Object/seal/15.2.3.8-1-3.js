@@ -8,4 +8,4 @@ description: >
     boolean primitive
 ---*/
 
-    Object.seal(false);
+Object.seal(false);

@@ -9,16 +9,16 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var str = new String("abc");
+var str = new String("abc");
 
-        str.get = function () {
-            return "string Object";
-        };
+str.get = function() {
+  return "string Object";
+};
 
-        Object.defineProperties(obj, {
-            property: str
-        });
+Object.defineProperties(obj, {
+  property: str
+});
 
 assert.sameValue(obj.property, "string Object", 'obj.property');

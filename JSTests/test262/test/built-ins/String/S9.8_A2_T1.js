@@ -9,5 +9,5 @@ description: null convert to String by explicit transformation
 
 // CHECK#1
 if (String(null) !== "null") {
-  $ERROR('#1: String(null) === "null". Actual: ' + (String(null))); 
+  $ERROR('#1: String(null) === "null". Actual: ' + (String(null)));
 }

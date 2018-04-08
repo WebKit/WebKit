@@ -6,6 +6,7 @@
 esid: sec-atomics.islockfree
 description: Testing descriptor property of Atomics.add
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "add");

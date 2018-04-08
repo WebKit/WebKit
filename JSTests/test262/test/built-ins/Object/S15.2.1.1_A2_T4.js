@@ -9,7 +9,9 @@ es5id: 15.2.1.1_A2_T4
 description: Calling Object function with object argument value
 ---*/
 
-var obj = {flag:true};
+var obj = {
+  flag: true
+};
 
 //CHECK#1
 if (typeof(obj) !== 'object') {
@@ -19,6 +21,6 @@ if (typeof(obj) !== 'object') {
 var n_obj = Object(obj);
 
 //CHECK#2
-if ((n_obj !== obj)||(!(n_obj['flag']))) {
+if ((n_obj !== obj) || (!(n_obj['flag']))) {
   $ERROR('#2: Object({flag:true}) returns ToObject({flag:true})');
 }

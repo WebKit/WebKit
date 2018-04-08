@@ -8,16 +8,16 @@ description: Compare Number('0x5') and Number('0X5') with 5
 ---*/
 
 // CHECK#1
-if (+("5") !== 5)  {
+if (+("5") !== 5) {
   $ERROR('#1: +("5") === 5. Actual: ' + (+("5")));
 }
 
 // CHECK#2
-if (Number("0x5") !== 5)  {
+if (Number("0x5") !== 5) {
   $ERROR('#2: Number("0x5") === 5. Actual: ' + (Number("0x5")));
 }
 
 // CHECK#3
-if (Number("0X5") !== 5)  {
+if (Number("0X5") !== 5) {
   $ERROR('#3: Number("0X5") === 5. Actual: ' + (Number("0X5")));
 }

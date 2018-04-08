@@ -8,7 +8,7 @@ description: >
     built-ins (Number.prototype.toPrecision)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Number.prototype, "toPrecision");
+var desc = Object.getOwnPropertyDescriptor(Number.prototype, "toPrecision");
 
 assert.sameValue(desc.value, Number.prototype.toPrecision, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

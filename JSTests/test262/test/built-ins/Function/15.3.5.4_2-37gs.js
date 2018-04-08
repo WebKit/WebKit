@@ -11,15 +11,15 @@ flags: [noStrict]
 ---*/
 
 assert.throws(TypeError, function() {
-    (function () {
-        "use strict";
-        var f = function () {
-            gNonStrict();
-        }
-        f();
-    })();
+  (function() {
+    "use strict";
+    var f = function() {
+      gNonStrict();
+    }
+    f();
+  })();
 });
 
 function gNonStrict() {
-    return gNonStrict.caller || gNonStrict.caller.throwTypeError;
+  return gNonStrict.caller || gNonStrict.caller.throwTypeError;
 }

@@ -8,7 +8,11 @@ description: >
     own getter property)
 ---*/
 
-    var o = {};
-    Object.defineProperty(o, "foo", {get: function() {return 42;}});
+var o = {};
+Object.defineProperty(o, "foo", {
+  get: function() {
+    return 42;
+  }
+});
 
 assert(o.hasOwnProperty("foo"), 'o.hasOwnProperty("foo") !== true');

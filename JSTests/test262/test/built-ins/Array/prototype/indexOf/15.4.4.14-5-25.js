@@ -10,24 +10,24 @@ description: >
     valueOf methods
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var proto = {
-            valueOf: function () {
-                valueOfAccessed = true;
-                return 1;
-            }
-        };
+var proto = {
+  valueOf: function() {
+    valueOfAccessed = true;
+    return 1;
+  }
+};
 
-        var Con = function () {};
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.toString = function () {
-            toStringAccessed = true;
-            return 2;
-        };
+var child = new Con();
+child.toString = function() {
+  toStringAccessed = true;
+  return 2;
+};
 
 assert.sameValue([0, true].indexOf(true, child), 1, '[0, true].indexOf(true, child)');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

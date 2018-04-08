@@ -8,6 +8,6 @@ description: >
     (Number object)
 ---*/
 
-        var obj = new Number(-3);
+var obj = new Number(-3);
 
 assert.sameValue(Object.getPrototypeOf(obj), Number.prototype, 'Object.getPrototypeOf(obj)');

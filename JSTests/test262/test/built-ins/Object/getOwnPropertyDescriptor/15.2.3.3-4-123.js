@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.getDay)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "getDay");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "getDay");
 
 assert.sameValue(desc.value, Date.prototype.getDay, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

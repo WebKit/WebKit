@@ -10,5 +10,5 @@ flags: [noStrict]
 
 // CHECK#1
 if (delete NaN !== false) {
-	$ERROR('#1: delete NaN === false. Actual: ' + (delete NaN));
+  $ERROR('#1: delete NaN === false. Actual: ' + (delete NaN));
 }

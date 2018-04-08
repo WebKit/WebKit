@@ -8,6 +8,8 @@ description: >
     to a string
 ---*/
 
-        var argObj = function () { return arguments; } (1, 2, true);
+var argObj = function() {
+  return arguments;
+}(1, 2, true);
 
 assert.sameValue(String.prototype.trim.call(argObj), "[object Arguments]", 'String.prototype.trim.call(argObj)');

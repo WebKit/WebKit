@@ -14,37 +14,36 @@ includes: [propertyHelper.js]
 flags: [noStrict]
 ---*/
 
-(function (a, b, c) {
+(function(a, b, c) {
+  Object.defineProperty(arguments, "0", {
+    value: 10,
+    writable: false,
+    enumerable: false,
+    configurable: false
+  });
+  try {
     Object.defineProperty(arguments, "0", {
-        value: 10,
-        writable: false,
-        enumerable: false,
-        configurable: false
+      writable: true
     });
-    try {
-        Object.defineProperty(arguments, "0", {
-            writable: true
-        });
-        $ERROR("Expected an exception.");	
-    } catch (e) {
+    $ERROR("Expected an exception.");
+  } catch (e) {
 
-        if (!(e instanceof TypeError)) {
-            $ERROR("Expected TypeError, got " + e);
-        }
-
-        verifyEqualTo(arguments, "0", 10);
-
-        verifyNotWritable(arguments, "0");
-
-        verifyNotEnumerable(arguments, "0");
-
-        verifyNotConfigurable(arguments, "0");
-
-        if (a !== 10) {
-            $ERROR('Expected "a === 10", actually ' + a);
-        }
-
+    if (!(e instanceof TypeError)) {
+      $ERROR("Expected TypeError, got " + e);
     }
 
-}(0, 1, 2));
+    verifyEqualTo(arguments, "0", 10);
 
+    verifyNotWritable(arguments, "0");
+
+    verifyNotEnumerable(arguments, "0");
+
+    verifyNotConfigurable(arguments, "0");
+
+    if (a !== 10) {
+      $ERROR('Expected "a === 10", actually ' + a);
+    }
+
+  }
+
+}(0, 1, 2));

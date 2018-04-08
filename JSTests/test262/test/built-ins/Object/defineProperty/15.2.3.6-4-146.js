@@ -9,14 +9,14 @@ description: >
     which has an own toString method (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "length", {
-            value: {
-                toString: function () {
-                    return '2';
-                } 
-            }
-        });
+Object.defineProperty(arrObj, "length", {
+  value: {
+    toString: function() {
+      return '2';
+    }
+  }
+});
 
 assert.sameValue(arrObj.length, 2, 'arrObj.length');

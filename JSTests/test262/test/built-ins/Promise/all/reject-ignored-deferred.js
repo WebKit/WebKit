@@ -30,7 +30,9 @@ flags: [async]
 
 var fulfiller = {
   then: function(resolve) {
-    new Promise(function(resolve) { resolve(); })
+    new Promise(function(resolve) {
+        resolve();
+      })
       .then(function() {
         resolve();
       });
@@ -38,7 +40,9 @@ var fulfiller = {
 };
 var rejector = {
   then: function(resolve, reject) {
-    new Promise(function(resolve) { resolve(); })
+    new Promise(function(resolve) {
+        resolve();
+      })
       .then(function() {
         resolve();
         reject();

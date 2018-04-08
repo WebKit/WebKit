@@ -9,6 +9,6 @@ description: >
     string
 ---*/
 
-        var errObj = new Error("ErrorMessage");
+var errObj = new Error("ErrorMessage");
 
 assert.sameValue(errObj.toString(), "Error: ErrorMessage", 'errObj.toString()');

@@ -11,14 +11,14 @@ info: |
 ---*/
 
 function Target() {
-    this.attr = "done";
+  this.attr = "done";
 };
 var P = new Proxy(Target, {
-    construct: function() {
-        return "";
-    }
+  construct: function() {
+    return "";
+  }
 });
 
 assert.throws(TypeError, function() {
-    new P();
+  new P();
 });

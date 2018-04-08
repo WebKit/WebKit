@@ -9,27 +9,27 @@ description: >
     toString methods
 ---*/
 
-        var obj = {};
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var obj = {};
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var proto = {
-            toString: function () {
-                toStringAccessed = true;
-                return "test";
-            }
-        };
+var proto = {
+  toString: function() {
+    toStringAccessed = true;
+    return "test";
+  }
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        child.valueOf = function () {
-            valueOfAccessed = true;
-            return "10";
-        };
+var child = new ConstructFun();
+child.valueOf = function() {
+  valueOfAccessed = true;
+  return "10";
+};
 
-        Object.defineProperty(obj, child, {});
+Object.defineProperty(obj, child, {});
 
 assert(obj.hasOwnProperty("test"), 'obj.hasOwnProperty("test") !== true');
 assert.sameValue(valueOfAccessed, false, 'valueOfAccessed');

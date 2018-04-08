@@ -13,10 +13,10 @@ includes: [propertyHelper.js]
 var obj = {};
 
 var proto = {
-    writable: true
+  writable: true
 };
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var descObj = new Con();
@@ -24,7 +24,7 @@ var descObj = new Con();
 descObj.writable = false;
 
 Object.defineProperties(obj, {
-    property: descObj
+  property: descObj
 });
 
 assert(obj.hasOwnProperty("property"));

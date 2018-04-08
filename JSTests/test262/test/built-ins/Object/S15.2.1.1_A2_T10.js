@@ -9,7 +9,7 @@ es5id: 15.2.1.1_A2_T10
 description: Calling Object function with array of numbers as argument value
 ---*/
 
-var arr = [1,2,3];
+var arr = [1, 2, 3];
 
 //CHECK#1
 if (typeof arr !== 'object') {
@@ -21,6 +21,6 @@ var n_obj = Object(arr);
 arr.push(4);
 
 //CHECK#2
-if ((n_obj !== arr)||(n_obj[3]!==4)) {
+if ((n_obj !== arr) || (n_obj[3] !== 4)) {
   $ERROR('#2: Object([1,2,3]) returns ToObject([1,2,3])');
 }

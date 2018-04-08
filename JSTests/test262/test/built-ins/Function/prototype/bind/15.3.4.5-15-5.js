@@ -8,13 +8,14 @@ description: >
     property in F set as true
 ---*/
 
-        var canConfigurable = false;
-        var hasProperty = false;
-        function foo() { }
-        var obj = foo.bind({});
-        hasProperty = obj.hasOwnProperty("length");
-        delete obj.length;
-        canConfigurable = !obj.hasOwnProperty("length");
+var canConfigurable = false;
+var hasProperty = false;
+
+function foo() {}
+var obj = foo.bind({});
+hasProperty = obj.hasOwnProperty("length");
+delete obj.length;
+canConfigurable = !obj.hasOwnProperty("length");
 
 assert(hasProperty, 'hasProperty !== true');
 assert(canConfigurable, 'canConfigurable !== true');

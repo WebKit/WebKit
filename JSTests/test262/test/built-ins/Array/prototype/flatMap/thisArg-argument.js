@@ -12,9 +12,21 @@ features: [Array.prototype.flatMap]
 
 var a = {};
 
-assert(compareArray([1].flatMap(function() { return [this]; }, "TestString"), ["TestString"]));
-assert(compareArray([1].flatMap(function() { return [this]; }, 1), [1]));
-assert(compareArray([1].flatMap(function() { return [this]; }, null), [null]));
-assert(compareArray([1].flatMap(function() { return [this]; }, true), [true]));
-assert(compareArray([1].flatMap(function() { return [this]; }, a), [a]));
-assert(compareArray([1].flatMap(function() { return [this]; }, void 0), [undefined]));
+assert(compareArray([1].flatMap(function() {
+  return [this];
+}, "TestString"), ["TestString"]));
+assert(compareArray([1].flatMap(function() {
+  return [this];
+}, 1), [1]));
+assert(compareArray([1].flatMap(function() {
+  return [this];
+}, null), [null]));
+assert(compareArray([1].flatMap(function() {
+  return [this];
+}, true), [true]));
+assert(compareArray([1].flatMap(function() {
+  return [this];
+}, a), [a]));
+assert(compareArray([1].flatMap(function() {
+  return [this];
+}, void 0), [undefined]));

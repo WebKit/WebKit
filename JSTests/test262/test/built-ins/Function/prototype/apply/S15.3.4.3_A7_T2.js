@@ -9,7 +9,7 @@ es5id: 15.3.4.3_A7_T2
 description: argArray is (null,[1,2,3])
 ---*/
 
-new Function("a1,a2","a3","this.shifted=a2;").apply(null,[1,2,3]);
+new Function("a1,a2", "a3", "this.shifted=a2;").apply(null, [1, 2, 3]);
 
 //CHECK#1
 if (this["shifted"] !== 2) {

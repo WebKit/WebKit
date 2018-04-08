@@ -9,30 +9,30 @@ description: >
     inherited accessor property of 'Properties' is defined in 'O'
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "prop", {
-            get: function () {
-                return 12;
-            },
-            enumerable: true
-        });
+Object.defineProperty(proto, "prop", {
+  get: function() {
+    return 12;
+  },
+  enumerable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        Object.defineProperty(child, "prop", {
-            get: function () {
-                return {
-                    set: function () { }
-                };
-            },
-            enumerable: true
-        });
-        Object.defineProperties(obj, child);
+var child = new Con();
+Object.defineProperty(child, "prop", {
+  get: function() {
+    return {
+      set: function() {}
+    };
+  },
+  enumerable: true
+});
+Object.defineProperties(obj, child);
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(typeof obj.prop, "undefined", 'typeof obj.prop');

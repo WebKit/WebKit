@@ -35,7 +35,9 @@ var thenableValue = {
     resolve(value);
   }
 };
-var thenable = new Promise(function(resolve) { resolve(); });
+var thenable = new Promise(function(resolve) {
+  resolve();
+});
 
 thenable.then = function(resolve) {
   resolve(thenableValue);

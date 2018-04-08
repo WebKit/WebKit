@@ -15,7 +15,7 @@ includes: [propertyHelper.js]
 var arrObj = [100];
 
 Object.defineProperty(arrObj, "0", {
-    enumerable: false
+  enumerable: false
 });
 verifyEqualTo(arrObj, "0", 100);
 
@@ -24,4 +24,3 @@ verifyWritable(arrObj, "0");
 verifyNotEnumerable(arrObj, "0");
 
 verifyConfigurable(arrObj, "0");
-

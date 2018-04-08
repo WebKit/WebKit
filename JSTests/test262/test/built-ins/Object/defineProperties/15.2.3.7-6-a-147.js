@@ -10,35 +10,35 @@ description: >
     inherited valueOf methods (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var arr = [];
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var proto = {
-            value: {
-                valueOf: function () {
-                    valueOfAccessed = true;
-                    return 2;
-                }
-            }
-        };
+var proto = {
+  value: {
+    valueOf: function() {
+      valueOfAccessed = true;
+      return 2;
+    }
+  }
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        Object.defineProperty(child, "value", {
-            value: {
-                toString: function () {
-                    toStringAccessed = true;
-                    return 3;
-                }
-            }
-        });
+var child = new Con();
+Object.defineProperty(child, "value", {
+  value: {
+    toString: function() {
+      toStringAccessed = true;
+      return 3;
+    }
+  }
+});
 
-        Object.defineProperties(arr, {
-            length: child
-        });
+Object.defineProperties(arr, {
+  length: child
+});
 
 assert.sameValue(arr.length, 3, 'arr.length');
 assert(toStringAccessed, 'toStringAccessed !== true');

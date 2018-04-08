@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.substring)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "substring");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "substring");
 
 assert.sameValue(desc.value, String.prototype.substring, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

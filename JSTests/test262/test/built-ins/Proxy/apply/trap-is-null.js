@@ -31,7 +31,9 @@ function target(a, b) {
 }
 
 var ctx = {};
-var p = new Proxy(target, {apply: null});
+var p = new Proxy(target, {
+  apply: null
+});
 var res = p.call(ctx, 1, 2);
 assert.sameValue(res, 3, "`apply` trap is `null`");
 assert.sameValue(calls, 1, "target is called once");

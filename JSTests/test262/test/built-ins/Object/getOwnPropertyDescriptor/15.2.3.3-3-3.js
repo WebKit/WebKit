@@ -8,16 +8,16 @@ description: >
     overrides an inherited data property
 ---*/
 
-        var proto = {
-            property: "inheritedDataProperty"
-        };
+var proto = {
+  property: "inheritedDataProperty"
+};
 
-        var Con = function () { };
-        Con.ptototype = proto;
+var Con = function() {};
+Con.ptototype = proto;
 
-        var child = new Con();
-        child.property = "ownDataProperty";
+var child = new Con();
+child.property = "ownDataProperty";
 
-        var desc = Object.getOwnPropertyDescriptor(child, "property");
+var desc = Object.getOwnPropertyDescriptor(child, "property");
 
 assert.sameValue(desc.value, "ownDataProperty", 'desc.value');

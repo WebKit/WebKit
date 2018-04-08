@@ -9,14 +9,14 @@ description: >
     implements its own property get method
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val > 10;
+}
 
-        var func = function (a, b) {
-            return Array.prototype.map.call(arguments, callbackfn);
-        };
+var func = function(a, b) {
+  return Array.prototype.map.call(arguments, callbackfn);
+};
 
-        var testResult = func(12, 11);
+var testResult = func(12, 11);
 
 assert.sameValue(testResult.length, 2, 'testResult.length');

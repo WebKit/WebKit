@@ -9,16 +9,16 @@ description: >
     which has an own valueOf method (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            length: {
-                value: {
-                    valueOf: function () {
-                        return 2;
-                    }
-                }
-            }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: {
+      valueOf: function() {
+        return 2;
+      }
+    }
+  }
+});
 
 assert.sameValue(arr.length, 2, 'arr.length');

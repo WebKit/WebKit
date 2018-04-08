@@ -9,13 +9,17 @@ description: >
     (this object O is correct)
 ---*/
 
-        var called = 0;
-        var obj = { 0: 11, 1: 12, length: 2 };
+var called = 0;
+var obj = {
+  0: 11,
+  1: 12,
+  length: 2
+};
 
-        function callbackfn(val, idx, o) {
-            called++;
-            return obj === o;
-        }
+function callbackfn(val, idx, o) {
+  called++;
+  return obj === o;
+}
 
 assert(Array.prototype.every.call(obj, callbackfn), 'Array.prototype.every.call(obj, callbackfn) !== true');
 assert.sameValue(called, 2, 'called');

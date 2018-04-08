@@ -9,20 +9,22 @@ description: >
     is an inherited data property
 ---*/
 
-        var accessed = false;
-        var proto = { length: 2 };
-        var Con = function () { };
-        Con.prototype = proto;
+var accessed = false;
+var proto = {
+  length: 2
+};
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child[0] = 12;
-        child[1] = 11;
-        child[2] = 9;
+var child = new Con();
+child[0] = 12;
+child[1] = 11;
+child[2] = 9;
 
-        function callbackfn1(prevVal, curVal, idx, obj) {
-            accessed = true;
-            return obj.length === 2;
-        }
+function callbackfn1(prevVal, curVal, idx, obj) {
+  accessed = true;
+  return obj.length === 2;
+}
 
 assert(Array.prototype.reduceRight.call(child, callbackfn1, 11), 'Array.prototype.reduceRight.call(child, callbackfn1, 11) !== true');
 assert(accessed, 'accessed !== true');

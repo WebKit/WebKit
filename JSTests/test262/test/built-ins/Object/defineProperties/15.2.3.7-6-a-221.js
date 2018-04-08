@@ -14,17 +14,17 @@ includes: [propertyHelper.js]
 var arr = [];
 
 function get_func() {
-    return 10;
+  return 10;
 }
 
 Object.defineProperty(arr, "0", {
-    get: get_func
+  get: get_func
 });
 
 Object.defineProperties(arr, {
-    "0": {
-        get: get_func
-    }
+  "0": {
+    get: get_func
+  }
 });
 verifyEqualTo(arr, "0", get_func());
 

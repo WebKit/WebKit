@@ -12,20 +12,20 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var getFunc = function () {
-    return 1001;
+var getFunc = function() {
+  return 1001;
 };
 
 var verifySetFunc = "data";
-var setFunc = function (value) {
-    verifySetFunc = value;
+var setFunc = function(value) {
+  verifySetFunc = value;
 };
 
 Object.defineProperty(obj, "prop", {
-    get: getFunc,
-    set: setFunc,
-    enumerable: false,
-    configurable: false
+  get: getFunc,
+  set: setFunc,
+  enumerable: false,
+  configurable: false
 });
 
 assert(obj.hasOwnProperty("prop"));

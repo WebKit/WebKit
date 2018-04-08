@@ -9,12 +9,12 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var numObj = new Number(-2);
+var numObj = new Number(-2);
 
-        numObj.value = "Number";
+numObj.value = "Number";
 
-        Object.defineProperty(obj, "property", numObj);
+Object.defineProperty(obj, "property", numObj);
 
 assert.sameValue(obj.property, "Number", 'obj.property');

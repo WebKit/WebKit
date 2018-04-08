@@ -26,12 +26,12 @@ var p = new Promise(function(_, reject) {
 assert.sameValue(returnValue, undefined, '"reject" function return value');
 
 p.then(function() {
-    $DONE('The promise should not be fulfilled.');
-  }, function(x) {
-    if (x !== thenable) {
-      $DONE('The promise should be rejected with the resolution value.');
-      return;
-    }
+  $DONE('The promise should not be fulfilled.');
+}, function(x) {
+  if (x !== thenable) {
+    $DONE('The promise should be rejected with the resolution value.');
+    return;
+  }
 
-    $DONE();
-  });
+  $DONE();
+});

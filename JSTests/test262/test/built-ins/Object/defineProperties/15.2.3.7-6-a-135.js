@@ -9,12 +9,12 @@ description: >
     containing a decimal number (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: "200.59"
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: "200.59"
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

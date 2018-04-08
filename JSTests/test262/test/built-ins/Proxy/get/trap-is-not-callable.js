@@ -16,13 +16,13 @@ info: |
 ---*/
 
 var p = new Proxy({}, {
-    get: {}
+  get: {}
 });
 
 assert.throws(TypeError, function() {
-    p.attr;
+  p.attr;
 });
 
 assert.throws(TypeError, function() {
-    p["attr"];
+  p["attr"];
 });

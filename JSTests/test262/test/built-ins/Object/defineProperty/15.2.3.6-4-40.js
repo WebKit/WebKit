@@ -9,16 +9,16 @@ description: >
     step 1)
 ---*/
 
-        var desc = new RegExp();
+var desc = new RegExp();
 
-        Object.defineProperty(desc, "foo", {
-            value: 12,
-            configurable: false
-        });
+Object.defineProperty(desc, "foo", {
+  value: 12,
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(desc, "foo", {
-                value: 11,
-                configurable: true
-            });
+  Object.defineProperty(desc, "foo", {
+    value: 11,
+    configurable: true
+  });
 });
 assert.sameValue(desc.foo, 12, 'desc.foo');

@@ -8,7 +8,7 @@ description: >
     built-ins (Math.cos)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "cos");
+var desc = Object.getOwnPropertyDescriptor(Math, "cos");
 
 assert.sameValue(desc.value, Math.cos, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

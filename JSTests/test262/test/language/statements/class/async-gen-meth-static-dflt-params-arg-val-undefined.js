@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-undefined.case
 // - src/function-forms/default/cls-decl-async-gen-meth-static.template
 /*---
-description: Use of intializer when argument value is `undefined` (static class declaration async generator method)
+description: Use of initializer when argument value is `undefined` (static class declaration async generator method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 features: [default-parameters, async-iteration]
 flags: [generated, async]

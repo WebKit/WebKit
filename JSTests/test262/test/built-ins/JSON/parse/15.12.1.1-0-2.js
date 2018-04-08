@@ -9,5 +9,5 @@ description: >
 ---*/
 
 assert.throws(SyntaxError, function() {
-    JSON.parse('\u000b1234'); // should produce a syntax error 
+  JSON.parse('\u000b1234'); // should produce a syntax error 
 });

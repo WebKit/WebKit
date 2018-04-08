@@ -8,13 +8,13 @@ description: >
     global object
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: this
-        });
+Object.defineProperty(obj, "prop", {
+  value: this
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(obj.prop, this, 'obj.prop');
 assert.sameValue(desc.value, this, 'desc.value');

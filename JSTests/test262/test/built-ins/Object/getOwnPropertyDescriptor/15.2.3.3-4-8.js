@@ -8,8 +8,8 @@ description: >
     built-ins (Global.isFinite)
 ---*/
 
-  var global = this;
-  var desc = Object.getOwnPropertyDescriptor(global,  "isFinite");
+var global = this;
+var desc = Object.getOwnPropertyDescriptor(global, "isFinite");
 
 assert.sameValue(desc.value, global.isFinite, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

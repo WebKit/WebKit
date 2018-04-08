@@ -8,26 +8,26 @@ description: >
     inherited accessor property (8.10.5 step 6.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "writable", {
-            get: function () {
-                return true;
-            }
-        });
+Object.defineProperty(proto, "writable", {
+  get: function() {
+    return true;
+  }
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
+var descObj = new Con();
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(obj.property, "isWritable", 'obj.property');

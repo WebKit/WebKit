@@ -9,7 +9,11 @@ description: >
     is able to be converted into hex number
 ---*/
 
-        var obj = { 2573: 2573, 2574: 0x000A0E, length: "0x000A0E" };
+var obj = {
+  2573: 2573,
+  2574: 0x000A0E,
+  length: "0x000A0E"
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, 2573), 2573, 'Array.prototype.lastIndexOf.call(obj, 2573)');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, 0x000A0E), -1, 'Array.prototype.lastIndexOf.call(obj, 0x000A0E)');

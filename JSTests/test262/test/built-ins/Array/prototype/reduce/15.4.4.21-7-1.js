@@ -9,5 +9,5 @@ description: >
     initialValue is present (empty array)
 ---*/
 
-  function cb(){}
-assert.sameValue([].reduce(cb,1), 1, '[].reduce(cb,1)');
+function cb() {}
+assert.sameValue([].reduce(cb, 1), 1, '[].reduce(cb,1)');

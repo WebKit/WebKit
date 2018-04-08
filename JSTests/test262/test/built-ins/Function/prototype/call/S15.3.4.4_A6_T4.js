@@ -11,13 +11,19 @@ description: >
     arguments;})("a","b","c","d"),"",2)
 ---*/
 
-var i=0;
+var i = 0;
 
-var p={toString:function(){return "a"+(++i);}};
+var p = {
+  toString: function() {
+    return "a" + (++i);
+  }
+};
 
-var obj={};
+var obj = {};
 
-new Function(p,p,p, "this.shifted=a3+a2+a1.length;").call( obj,( function(){return arguments;})("a","b","c","d"),"",2 );
+new Function(p, p, p, "this.shifted=a3+a2+a1.length;").call(obj, (function() {
+  return arguments;
+})("a", "b", "c", "d"), "", 2);
 
 //CHECK#1
 if (obj["shifted"] !== "24") {

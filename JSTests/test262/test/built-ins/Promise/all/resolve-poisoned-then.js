@@ -60,12 +60,12 @@ try {
 }
 
 promise.then(function() {
-    $DONE('The promise should not be fulfilled.');
-  }, function(val) {
-    if (val !== value) {
-      $DONE('The promise should be rejected with the expected value.');
-      return;
-    }
+  $DONE('The promise should not be fulfilled.');
+}, function(val) {
+  if (val !== value) {
+    $DONE('The promise should be rejected with the expected value.');
+    return;
+  }
 
-    $DONE();
-  });
+  $DONE();
+});

@@ -8,10 +8,10 @@ description: >
     'Function'
 ---*/
 
-  function foo() { }
-  var o = {};
-  
-  var bf = foo.bind(o);
-  var s = Object.prototype.toString.call(bf);
+function foo() {}
+var o = {};
+
+var bf = foo.bind(o);
+var s = Object.prototype.toString.call(bf);
 
 assert.sameValue(s, '[object Function]', 's');

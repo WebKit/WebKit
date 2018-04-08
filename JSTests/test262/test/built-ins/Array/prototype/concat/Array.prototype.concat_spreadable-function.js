@@ -21,11 +21,11 @@ assert(compareArray([1, 2, 3], [].concat(fn)));
 
 Function.prototype[Symbol.isConcatSpreadable] = true;
 // Functions may be concat-spreadable
-assert(compareArray([void 0, void 0, void 0], [].concat(function(a,b,c) {})));
+assert(compareArray([void 0, void 0, void 0], [].concat(function(a, b, c) {})));
 Function.prototype[0] = 1;
 Function.prototype[1] = 2;
 Function.prototype[2] = 3;
-assert(compareArray([1,2,3], [].concat(function(a, b, c) {})));
+assert(compareArray([1, 2, 3], [].concat(function(a, b, c) {})));
 
 delete Function.prototype[Symbol.isConcatSpreadable];
 delete Function.prototype[0];

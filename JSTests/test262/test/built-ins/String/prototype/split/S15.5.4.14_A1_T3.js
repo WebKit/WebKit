@@ -14,48 +14,53 @@ description: Checking by using eval
 
 var split = String.prototype.split.bind(this);
 
-var __obj__lim = {valueOf:function(){return 5;}};
+var __obj__lim = {
+  valueOf: function() {
+    return 5;
+  }
+};
 
 try {
-    toString = Object.prototype.toString;
-} catch(e) { ; }
+  toString = Object.prototype.toString;
+} catch (e) {;
+}
 
 //Checks are only valid if we can overwrite the global object's toString method
 //(which ES5 doesn't even require to exist)
-if (toString===Object.prototype.toString) {
-    var __class__ = toString();
+if (toString === Object.prototype.toString) {
+  var __class__ = toString();
 
-    var __split = split(eval("\"[\""),__obj__lim);
+  var __split = split(eval("\"[\""), __obj__lim);
 
-    //////////////////////////////////////////////////////////////////////////////
-    //CHECK#1
-    if (typeof __split !== "object") {
-        $ERROR('#1: typeof __split === "object". Actual: '+typeof __split );
-    }
-    //
-    //////////////////////////////////////////////////////////////////////////////
-    
-    //////////////////////////////////////////////////////////////////////////////
-    //CHECK#2
-    if (__split.constructor !== Array) {
-        $ERROR('#2: __split.constructor === Array. Actual: '+__split.constructor );
-    }
-    //
-    //////////////////////////////////////////////////////////////////////////////
-    
-    //////////////////////////////////////////////////////////////////////////////
-    //CHECK#3
-    if (__split.length !== 2) {
-        $ERROR('#3: __split.length === 2. Actual: '+__split.length );
-    }
-    //
-    //////////////////////////////////////////////////////////////////////////////
-    
-    //////////////////////////////////////////////////////////////////////////////
-    //CHECK#3
-    if (__split[1].substring(0,6) !== "object") {
-        $ERROR('#4: __split[1].substring(0,6) === "object". Actual: '+__split[1].substring(0,6) );
-    }
-    //
-    //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  //CHECK#1
+  if (typeof __split !== "object") {
+    $ERROR('#1: typeof __split === "object". Actual: ' + typeof __split);
+  }
+  //
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  //CHECK#2
+  if (__split.constructor !== Array) {
+    $ERROR('#2: __split.constructor === Array. Actual: ' + __split.constructor);
+  }
+  //
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  //CHECK#3
+  if (__split.length !== 2) {
+    $ERROR('#3: __split.length === 2. Actual: ' + __split.length);
+  }
+  //
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+  //CHECK#3
+  if (__split[1].substring(0, 6) !== "object") {
+    $ERROR('#4: __split[1].substring(0,6) === "object". Actual: ' + __split[1].substring(0, 6));
+  }
+  //
+  //////////////////////////////////////////////////////////////////////////////
 }

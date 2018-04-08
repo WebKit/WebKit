@@ -7,6 +7,7 @@ description: >
   Uses default constructor is `constructor` property is undefined.
 info: |
   SharedArrayBuffer.prototype.slice ( start, end )
+features: [SharedArrayBuffer]
 ---*/
 
 var arrayBuffer = new SharedArrayBuffer(8);

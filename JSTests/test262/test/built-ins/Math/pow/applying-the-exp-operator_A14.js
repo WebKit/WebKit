@@ -16,10 +16,8 @@ exponent[3] = 1.7976931348623157E308; //largest finite number
 exponent[4] = +Infinity;
 var exponentnum = 5;
 
-for (var i = 0; i < exponentnum; i++)
-{
-	if (Math.pow(base,exponent[i]) !== +Infinity)
-	{
-		$ERROR("#1: Math.pow(" + base + ", " + exponent[i] + ") !== +Infinity");
-	}
+for (var i = 0; i < exponentnum; i++) {
+  if (Math.pow(base, exponent[i]) !== +Infinity) {
+    $ERROR("#1: Math.pow(" + base + ", " + exponent[i] + ") !== +Infinity");
+  }
 }

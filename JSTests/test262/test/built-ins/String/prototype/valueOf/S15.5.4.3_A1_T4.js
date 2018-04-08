@@ -9,12 +9,12 @@ description: >
     valueOf()
 ---*/
 
-var __string__obj = new String(function(){}());
+var __string__obj = new String(function() {}());
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
 if (__string__obj.valueOf() !== "undefined") {
-  $ERROR('#1: __string__obj = new String(function(){}()); __string__obj.valueOf() === "undefined". Actual: __string__obj.valueOf() ==='+__string__obj.valueOf() ); 
+  $ERROR('#1: __string__obj = new String(function(){}()); __string__obj.valueOf() === "undefined". Actual: __string__obj.valueOf() ===' + __string__obj.valueOf());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

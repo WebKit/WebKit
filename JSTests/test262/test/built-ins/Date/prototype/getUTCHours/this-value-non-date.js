@@ -16,7 +16,9 @@ info: |
 ---*/
 
 var getUTCHours = Date.prototype.getUTCHours;
-var args = (function() { return arguments; }());
+var args = (function() {
+  return arguments;
+}());
 
 assert.sameValue(typeof getUTCHours, 'function');
 

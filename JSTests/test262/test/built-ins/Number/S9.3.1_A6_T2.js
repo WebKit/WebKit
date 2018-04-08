@@ -11,8 +11,8 @@ description: >
     10e10000, 10E10000 and Number("10e10000")
 ---*/
 
-function dynaString(s1, s2){
-  return String(s1)+String(s2);
+function dynaString(s1, s2) {
+  return String(s1) + String(s2);
 }
 
 

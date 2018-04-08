@@ -12,16 +12,16 @@ includes: [propertyHelper.js]
 
 var target = {};
 var p = new Proxy(target, {
-    defineProperty: function(t, prop, desc) {
-        return Object.defineProperty(t, prop, desc);
-    }
+  defineProperty: function(t, prop, desc) {
+    return Object.defineProperty(t, prop, desc);
+  }
 });
 
 var result = Reflect.defineProperty(p, "attr", {
-    configurable: true,
-    enumerable: true,
-    writable: true,
-    value: 1
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  value: 1
 });
 
 assert.sameValue(result, true, "result === true");
@@ -32,10 +32,10 @@ verifyEnumerable(target, "attr");
 verifyConfigurable(target, "attr");
 
 result = Reflect.defineProperty(p, "attr", {
-    configurable: false,
-    enumerable: false,
-    writable: false,
-    value: 2
+  configurable: false,
+  enumerable: false,
+  writable: false,
+  value: 2
 });
 
 assert.sameValue(result, true, "result === true");

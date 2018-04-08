@@ -8,24 +8,25 @@ description: >
     into the for each loop
 ---*/
 
-        var proto = {};
-        
-        function get_func() {
-            return 10;
-        }
-        function set_func() { }
+var proto = {};
 
-        Object.defineProperty(proto, "Father", {
-            get: get_func,
-            set: set_func,
-            configurable: true
-        });
+function get_func() {
+  return 10;
+}
 
-        var Con = function () { };
-        Con.prototype = proto;
+function set_func() {}
 
-        var child = new Con();
+Object.defineProperty(proto, "Father", {
+  get: get_func,
+  set: set_func,
+  configurable: true
+});
 
-        Object.preventExtensions(child);
+var Con = function() {};
+Con.prototype = proto;
+
+var child = new Con();
+
+Object.preventExtensions(child);
 
 assert(Object.isFrozen(child), 'Object.isFrozen(child) !== true');

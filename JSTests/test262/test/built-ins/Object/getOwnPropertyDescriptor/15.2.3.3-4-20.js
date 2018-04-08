@@ -8,7 +8,7 @@ description: >
     built-ins (Object.seal)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Object, "seal");
+var desc = Object.getOwnPropertyDescriptor(Object, "seal");
 
 assert.sameValue(desc.value, Object.seal, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

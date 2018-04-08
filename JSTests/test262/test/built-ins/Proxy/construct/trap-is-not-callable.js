@@ -8,9 +8,9 @@ description: >
 
 function Target() {}
 var p = new Proxy(Target, {
-    construct: {}
+  construct: {}
 });
 
 assert.throws(TypeError, function() {
-    new p();
+  new p();
 });

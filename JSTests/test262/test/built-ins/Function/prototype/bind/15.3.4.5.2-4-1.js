@@ -9,16 +9,16 @@ description: >
     [[TargetFunction]] when 'F' is called as constructor
 ---*/
 
-        var func = function (x, y, z) {
-            var objResult = {};
-            objResult.returnValue = x + y + z;
-            objResult.returnVerifyResult = arguments[0] === "a" && arguments.length === 3;
-            return objResult;
-        };
+var func = function(x, y, z) {
+  var objResult = {};
+  objResult.returnValue = x + y + z;
+  objResult.returnVerifyResult = arguments[0] === "a" && arguments.length === 3;
+  return objResult;
+};
 
-        var NewFunc = Function.prototype.bind.call(func, {}, "a", "b", "c");
+var NewFunc = Function.prototype.bind.call(func, {}, "a", "b", "c");
 
-        var newInstance = new NewFunc();
+var newInstance = new NewFunc();
 
 assert(newInstance.hasOwnProperty("returnValue"), 'newInstance.hasOwnProperty("returnValue") !== true');
 assert.sameValue(newInstance.returnValue, "abc", 'newInstance.returnValue');

@@ -8,7 +8,7 @@ description: >
     built-ins (Function.prototype.bind)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Function.prototype, "bind");
+var desc = Object.getOwnPropertyDescriptor(Function.prototype, "bind");
 
 assert.sameValue(desc.value, Function.prototype.bind, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

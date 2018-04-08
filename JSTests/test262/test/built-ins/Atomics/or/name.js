@@ -7,6 +7,7 @@ esid: sec-atomics.or
 description: >
   Atomics.or.name is "or".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.or.name, "or");

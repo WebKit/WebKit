@@ -9,11 +9,12 @@ description: >
     parameter
 ---*/
 
-        var result = false;
-        function callbackfn(prevVal, curVal, idx) {
-            result = (prevVal === 1 && arguments[3][idx] === curVal);
-        }
+var result = false;
 
-        [11].reduce(callbackfn, 1);
+function callbackfn(prevVal, curVal, idx) {
+  result = (prevVal === 1 && arguments[3][idx] === curVal);
+}
+
+[11].reduce(callbackfn, 1);
 
 assert(result, 'result !== true');

@@ -8,6 +8,6 @@ description: The test uses hasOwnProperty() method
 ---*/
 
 //CHECK#1
-if(Number.prototype.hasOwnProperty("toLocaleString") !== true){
+if (Number.prototype.hasOwnProperty("toLocaleString") !== true) {
   $ERROR('#1: The Number prototype object has the property toLocaleString');
 }

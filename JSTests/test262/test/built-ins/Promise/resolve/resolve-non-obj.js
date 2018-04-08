@@ -17,12 +17,12 @@ flags: [async]
 ---*/
 
 Promise.resolve(23).then(function(value) {
-    if (value !== 23) {
-      $DONE('The promise should be fulfilled with the provided value.');
-      return;
-    }
+  if (value !== 23) {
+    $DONE('The promise should be fulfilled with the provided value.');
+    return;
+  }
 
-    $DONE();
-  }, function() {
-    $DONE('The promise should not be rejected.');
-  });
+  $DONE();
+}, function() {
+  $DONE('The promise should not be rejected.');
+});

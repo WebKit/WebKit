@@ -9,13 +9,13 @@ description: >
     object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Error.prototype.get = function () {
-                return "errorGetProperty";
-            };
-            var errObj = new Error();
+Error.prototype.get = function() {
+  return "errorGetProperty";
+};
+var errObj = new Error();
 
-            Object.defineProperty(obj, "property", errObj);
+Object.defineProperty(obj, "property", errObj);
 
 assert.sameValue(obj.property, "errorGetProperty", 'obj.property');

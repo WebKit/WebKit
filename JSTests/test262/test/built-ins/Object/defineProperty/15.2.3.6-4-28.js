@@ -8,21 +8,21 @@ description: >
     overrides an inherited data property (8.12.9 step 1)
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "foo", {
-            value: 11,
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "foo", {
+  value: 11,
+  configurable: true
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var obj = new ConstructFun();
-        Object.defineProperty(obj, "foo", {
-            get: function () { },
-            configurable: false
-        });
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var obj = new ConstructFun();
+Object.defineProperty(obj, "foo", {
+  get: function() {},
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "foo", {
-                configurable: true
-            });
+  Object.defineProperty(obj, "foo", {
+    configurable: true
+  });
 });

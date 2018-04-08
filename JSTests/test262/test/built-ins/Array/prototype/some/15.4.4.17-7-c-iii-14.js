@@ -9,8 +9,8 @@ description: >
     string
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return "non-empty string";
-        }
+function callbackfn(val, idx, obj) {
+  return "non-empty string";
+}
 
 assert([11].some(callbackfn), '[11].some(callbackfn) !== true');

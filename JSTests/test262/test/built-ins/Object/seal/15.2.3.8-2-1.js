@@ -8,11 +8,11 @@ description: >
     own property
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var preCheck = Object.isExtensible(obj);
+var preCheck = Object.isExtensible(obj);
 
-        Object.seal(obj);
+Object.seal(obj);
 
 assert(preCheck, 'preCheck !== true');
 assert.sameValue(Object.isExtensible(obj), false, 'Object.isExtensible(obj)');

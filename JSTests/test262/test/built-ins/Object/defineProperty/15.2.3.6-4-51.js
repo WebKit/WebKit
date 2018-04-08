@@ -9,13 +9,15 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = { "property": 1 }; // default value of attributes: writable: true, configurable: true, enumerable: true
+var obj = {
+  "property": 1
+}; // default value of attributes: writable: true, configurable: true, enumerable: true
 
 Object.defineProperty(obj, "property", {
-    value: 1001,
-    writable: false,
-    enumerable: false,
-    configurable: false
+  value: 1001,
+  writable: false,
+  enumerable: false,
+  configurable: false
 });
 
 verifyEqualTo(obj, "property", 1001);
@@ -25,4 +27,3 @@ verifyNotWritable(obj, "property");
 verifyNotEnumerable(obj, "property");
 
 verifyNotConfigurable(obj, "property");
-

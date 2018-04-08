@@ -11,7 +11,7 @@ description: >
     Function("arg1,arg2,arg3","arg1,arg2","arg3", null)
 ---*/
 
-var f = new Function("arg1,arg2,arg3","arg1,arg2","arg3", null);
+var f = new Function("arg1,arg2,arg3", "arg1,arg2", "arg3", null);
 
 //CHECK#1
 if (!(f.hasOwnProperty('length'))) {

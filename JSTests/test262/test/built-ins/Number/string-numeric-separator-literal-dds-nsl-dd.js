@@ -4,14 +4,12 @@
 /*---
 esid: prod-NumericLiteralSeparator
 description: DecimalDigits NumericLiteralSeparator DecimalDigit
-info:
-  NumericLiteralSeparator ::
-    _
+info: |
+  NumericLiteralSeparator :: _
 
   DecimalDigits ::
     ...
     DecimalDigits NumericLiteralSeparator DecimalDigit
-
 features: [numeric-separator-literal]
 ---*/
 

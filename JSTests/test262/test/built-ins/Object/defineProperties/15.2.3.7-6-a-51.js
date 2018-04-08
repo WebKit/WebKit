@@ -12,13 +12,15 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var desc = { value: true };
+var desc = {
+  value: true
+};
 Object.defineProperty(obj, "foo", desc);
 
 Object.defineProperties(obj, {
-    foo: {
-        value: true
-    }
+  foo: {
+    value: true
+  }
 });
 verifyEqualTo(obj, "foo", true);
 

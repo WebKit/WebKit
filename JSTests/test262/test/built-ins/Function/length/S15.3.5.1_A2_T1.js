@@ -17,7 +17,7 @@ if (!(f.hasOwnProperty('length'))) {
 }
 
 //CHECK#2
-if(!delete f.length){
+if (!delete f.length) {
   $ERROR('#2: the function.length property does not have the attributes DontDelete.');
 }
 

@@ -18,7 +18,7 @@ description: Value of the function constructor argument is "null"
 try {
   var f = new Function(null);
 } catch (e) {
-  $ERROR('#1: test fails with error '+e);
+  $ERROR('#1: test fails with error ' + e);
 }
 
 //CHECK#2

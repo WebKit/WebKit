@@ -8,12 +8,14 @@ description: >
     returned array is correct
 ---*/
 
-        var obj = { prop1: 100 };
+var obj = {
+  prop1: 100
+};
 
-        var array = Object.keys(obj);
-        var desc = Object.getOwnPropertyDescriptor(array, "0");
+var array = Object.keys(obj);
+var desc = Object.getOwnPropertyDescriptor(array, "0");
 
-        delete array[0];
+delete array[0];
 
 assert.sameValue(typeof array[0], "undefined", 'typeof array[0]');
 assert(desc.hasOwnProperty("configurable"), 'desc.hasOwnProperty("configurable") !== true');

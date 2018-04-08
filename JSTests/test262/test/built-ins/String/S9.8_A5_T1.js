@@ -26,7 +26,7 @@ if (String(new Number(Number.NaN)) !== "NaN") {
 
 // CHECK#4
 if (String(new Number(null)) !== "0") {
-  $ERROR('#4: String(new Number(null)) === "0". Actual: ' + (String(new Number(null)))); 
+  $ERROR('#4: String(new Number(null)) === "0". Actual: ' + (String(new Number(null))));
 }
 
 // CHECK#5
@@ -55,38 +55,54 @@ if (String(new Boolean(false)) !== "false") {
 }
 
 // CHECK#10
-if (String(new Array(2,4,8,16,32)) !== "2,4,8,16,32") {
-  $ERROR('#10: String(new Array(2,4,8,16,32)) === "2,4,8,16,32". Actual: ' + (String(new Array(2,4,8,16,32))));
+if (String(new Array(2, 4, 8, 16, 32)) !== "2,4,8,16,32") {
+  $ERROR('#10: String(new Array(2,4,8,16,32)) === "2,4,8,16,32". Actual: ' + (String(new Array(2, 4, 8, 16, 32))));
 }
 
 // CHECK#11
 var myobj1 = {
-                toNumber : function(){return 12345;}, 
-                toString : function(){return 67890;},
-                valueOf  : function(){return "[object MyObj]";} 
-            };
+  toNumber: function() {
+    return 12345;
+  },
+  toString: function() {
+    return 67890;
+  },
+  valueOf: function() {
+    return "[object MyObj]";
+  }
+};
 
-if (String(myobj1) !== "67890"){
+if (String(myobj1) !== "67890") {
   $ERROR("#11: String(myobj) calls ToPrimitive with hint String");
 }
 
 // CHECK#12
 var myobj2 = {
-                toNumber : function(){return 12345;},
-                toString : function(){return {}}, 
-                valueOf  : function(){return "[object MyObj]";} 
-            };
+  toNumber: function() {
+    return 12345;
+  },
+  toString: function() {
+    return {}
+  },
+  valueOf: function() {
+    return "[object MyObj]";
+  }
+};
 
-if (String(myobj2) !== "[object MyObj]"){
+if (String(myobj2) !== "[object MyObj]") {
   $ERROR("#12: String(myobj) calls ToPrimitive with hint String");
 }
 
 // CHECK#13
 var myobj3 = {
-                toNumber : function(){return 12345;},
-                valueOf  : function(){return "[object MyObj]";} 
-            };
+  toNumber: function() {
+    return 12345;
+  },
+  valueOf: function() {
+    return "[object MyObj]";
+  }
+};
 
-if (String(myobj3) !== "[object Object]"){
+if (String(myobj3) !== "[object Object]") {
   $ERROR("#13: String(myobj) calls ToPrimitive with hint String");
 }

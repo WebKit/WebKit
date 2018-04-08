@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var errorObj = new Error();
+var errorObj = new Error();
 
-        errorObj.value = "ErrorValue";
+errorObj.value = "ErrorValue";
 
-        var newObj = Object.create({}, {
-            prop: errorObj
-        });
+var newObj = Object.create({}, {
+  prop: errorObj
+});
 
 assert.sameValue(newObj.prop, "ErrorValue", 'newObj.prop');

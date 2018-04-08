@@ -13,7 +13,7 @@ description: Change length of array
 ---*/
 
 //CHECK#1
-var x = [0,,2,,4];
+var x = [0, , 2, , 4];
 x.length = 4;
 if (x[4] !== undefined) {
   $ERROR('#1: x = [0,,2,,4]; x.length = 4; x[4] === undefined. Actual: ' + (x[4]));

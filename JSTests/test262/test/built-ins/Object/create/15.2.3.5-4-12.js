@@ -8,17 +8,17 @@ description: >
     step 2)
 ---*/
 
-        var props = new RegExp();
-        var result = false;
+var props = new RegExp();
+var result = false;
 
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                result = this instanceof RegExp;
-                return {};
-            },
-            enumerable: true
-        });
-        var newObj = Object.create({}, props);
+Object.defineProperty(props, "prop", {
+  get: function() {
+    result = this instanceof RegExp;
+    return {};
+  },
+  enumerable: true
+});
+var newObj = Object.create({}, props);
 
 assert(result, 'result !== true');
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

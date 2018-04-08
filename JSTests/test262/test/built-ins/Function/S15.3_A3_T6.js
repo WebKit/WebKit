@@ -11,14 +11,14 @@ description: >
     return this.var_name
 ---*/
 
-var f=Function.call(this, "return this.planet;");
+var f = Function.call(this, "return this.planet;");
 
 //CHECK#1
 if (f() !== undefined) {
   $ERROR('#1: ');
-}  
+}
 
-var planet="mars";
+var planet = "mars";
 
 //CHECK#2
 if (f() !== "mars") {

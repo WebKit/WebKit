@@ -11,9 +11,9 @@ description: >
 var global = this;
 
 assert.throws(TypeError, function() {
-            Object.create({}, {
-                prop: {
-                    set: global
-                }
-            });
+  Object.create({}, {
+    prop: {
+      set: global
+    }
+  });
 });

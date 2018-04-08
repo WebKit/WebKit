@@ -8,10 +8,10 @@ description: >
     data desc for valid data valued properties
 ---*/
 
-    var o = {};
-    o["foo"] = 101;
+var o = {};
+o["foo"] = 101;
 
-    var desc = Object.getOwnPropertyDescriptor(o, "foo");
+var desc = Object.getOwnPropertyDescriptor(o, "foo");
 
 assert.sameValue(desc.value, 101, 'desc.value');
 assert.sameValue(desc.enumerable, true, 'desc.enumerable');

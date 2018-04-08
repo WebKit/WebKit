@@ -8,8 +8,8 @@ description: >
     in  'F' is thrower
 ---*/
 
-        function foo() { }
-        var obj = foo.bind({});
+function foo() {}
+var obj = foo.bind({});
 assert.throws(TypeError, function() {
-            obj.caller = 12;
+  obj.caller = 12;
 });

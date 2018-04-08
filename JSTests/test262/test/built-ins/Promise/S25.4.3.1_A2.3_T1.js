@@ -10,14 +10,16 @@ description: Promise.call(resolved Promise) throws TypeError
 flags: [async]
 ---*/
 
-var p = new Promise(function(resolve) { resolve(1); });
+var p = new Promise(function(resolve) {
+  resolve(1);
+});
 
-p.then(function () {
-    Promise.call(p, function () {});
-}).then(function () {
-    $ERROR("Unexpected resolution - expected TypeError");
-}, function (err) {
-    if (!(err instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + err);
-    }
+p.then(function() {
+  Promise.call(p, function() {});
+}).then(function() {
+  $ERROR("Unexpected resolution - expected TypeError");
+}, function(err) {
+  if (!(err instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + err);
+  }
 }).then($DONE, $DONE);

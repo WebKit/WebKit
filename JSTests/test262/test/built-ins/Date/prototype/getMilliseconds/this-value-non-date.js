@@ -16,7 +16,9 @@ info: |
 ---*/
 
 var getMilliseconds = Date.prototype.getMilliseconds;
-var args = (function() { return arguments; }());
+var args = (function() {
+  return arguments;
+}());
 
 assert.sameValue(typeof getMilliseconds, 'function');
 

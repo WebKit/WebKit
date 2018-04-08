@@ -8,19 +8,19 @@ description: >
     implements its own [[Get]] method to get enumerable own property
 ---*/
 
-        var obj = {};
-        var props = new Error("test");
-        var obj1 = {
-            value: 11
-        };
-        props.message = obj1;
-        props.name = obj1;
-        props.description = obj1;
+var obj = {};
+var props = new Error("test");
+var obj1 = {
+  value: 11
+};
+props.message = obj1;
+props.name = obj1;
+props.description = obj1;
 
-        props.prop = {
-            value: 16
-        };
-        Object.defineProperties(obj, props);
+props.prop = {
+  value: 16
+};
+Object.defineProperties(obj, props);
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, 16, 'obj.prop');

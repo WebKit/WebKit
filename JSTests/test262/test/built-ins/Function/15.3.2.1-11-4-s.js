@@ -10,4 +10,4 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-     Function('eval', 'return;');
+Function('eval', 'return;');

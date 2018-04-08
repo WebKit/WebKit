@@ -21,8 +21,8 @@ var indexP;
 var indexO = 0;
 for (var index = 0; index <= 65535; index++) {
   if ((index < 0x0030) || (index > 0x0039) &&
-      (index < 0x0041) || (index > 0x005A) &&
-      (index < 0x0061) || (index > 0x007A)) {
+    (index < 0x0041) || (index > 0x005A) &&
+    (index < 0x0061) || (index > 0x007A)) {
     var hex = decimalToHexString(index);
     if (parseInt("1Z" + String.fromCharCode(index), 36) !== 71) {
       if (indexO === 0) {

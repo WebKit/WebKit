@@ -8,11 +8,11 @@ description: >
     undefined (8.10.5 step 7.b)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                get: undefined
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    get: undefined
+  }
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(typeof newObj.prop, "undefined", 'typeof newObj.prop');

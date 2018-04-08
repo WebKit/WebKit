@@ -12,7 +12,10 @@ info: |
   object that is defined once for each realm.
 ---*/
 
-var ThrowTypeError = Object.getOwnPropertyDescriptor(function(){ "use strict"; return arguments; }(), "callee").get;
+var ThrowTypeError = Object.getOwnPropertyDescriptor(function() {
+  "use strict";
+  return arguments;
+}(), "callee").get;
 
 // Test with Function.prototype.arguments and Function.prototype.caller properties.
 var argumentsDesc = Object.getOwnPropertyDescriptor(Function.prototype, "arguments");

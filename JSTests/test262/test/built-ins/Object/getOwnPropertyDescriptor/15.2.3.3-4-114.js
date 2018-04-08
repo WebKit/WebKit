@@ -8,7 +8,7 @@ description: >
     built-ins (Date.parse)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date, "parse");
+var desc = Object.getOwnPropertyDescriptor(Date, "parse");
 
 assert.sameValue(desc.value, Date.parse, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

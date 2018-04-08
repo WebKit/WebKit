@@ -17,26 +17,26 @@ includes: [propertyHelper.js]
 var arrObj = [];
 
 Object.defineProperty(arrObj, "1", {
-    value: +0
+  value: +0
 });
 
 try {
 
-    Object.defineProperty(arrObj, "1", {
-        value: -0
-    });
-    $ERROR("Expected an exception.");
+  Object.defineProperty(arrObj, "1", {
+    value: -0
+  });
+  $ERROR("Expected an exception.");
 } catch (e) {
-    verifyEqualTo(arrObj, "1", +0);
+  verifyEqualTo(arrObj, "1", +0);
 
-    verifyNotWritable(arrObj, "1");
+  verifyNotWritable(arrObj, "1");
 
-    verifyNotEnumerable(arrObj, "1");
+  verifyNotEnumerable(arrObj, "1");
 
-    verifyNotConfigurable(arrObj, "1");
+  verifyNotConfigurable(arrObj, "1");
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
-    }
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

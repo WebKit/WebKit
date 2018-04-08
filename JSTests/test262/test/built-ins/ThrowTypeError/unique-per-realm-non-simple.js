@@ -12,7 +12,10 @@ info: |
   object that is defined once for each realm.
 ---*/
 
-var ThrowTypeError = Object.getOwnPropertyDescriptor(function(){ "use strict"; return arguments; }(), "callee").get;
+var ThrowTypeError = Object.getOwnPropertyDescriptor(function() {
+  "use strict";
+  return arguments;
+}(), "callee").get;
 
 // Test with unmapped arguments object from function with non-simple parameters list.
 function nonSimple(a = 0) {

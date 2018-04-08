@@ -10,12 +10,17 @@ description: >
 flags: [noStrict]
 ---*/
 
-var o = { set foo(stuff) { "use strict"; gNonStrict(); } }
+var o = {
+  set foo(stuff) {
+    "use strict";
+    gNonStrict();
+  }
+}
 
 assert.throws(TypeError, function() {
-    o.foo = 8;
+  o.foo = 8;
 });
 
 function gNonStrict() {
-    return gNonStrict.caller || gNonStrict.caller.throwTypeError;
+  return gNonStrict.caller || gNonStrict.caller.throwTypeError;
 }

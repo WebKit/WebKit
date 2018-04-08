@@ -10,14 +10,14 @@ description: >
     Array
 ---*/
 
-        var arr = [];
+var arr = [];
 
-            Array.prototype[0] = false;
-            Object.defineProperty(arr, "0", {
-                get: function () {
-                    return true;
-                },
-                configurable: true
-            });
+Array.prototype[0] = false;
+Object.defineProperty(arr, "0", {
+  get: function() {
+    return true;
+  },
+  configurable: true
+});
 
 assert.sameValue(arr.lastIndexOf(true), 0, 'arr.lastIndexOf(true)');

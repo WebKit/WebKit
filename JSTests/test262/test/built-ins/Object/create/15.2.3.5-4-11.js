@@ -8,17 +8,17 @@ description: >
     step 2)
 ---*/
 
-        var props = new Date();
-        var result = false;
+var props = new Date();
+var result = false;
 
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                result = this instanceof Date;
-                return {};
-            },
-            enumerable: true
-        });
-        var newObj = Object.create({}, props);
+Object.defineProperty(props, "prop", {
+  get: function() {
+    result = this instanceof Date;
+    return {};
+  },
+  enumerable: true
+});
+var newObj = Object.create({}, props);
 
 assert(result, 'result !== true');
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

@@ -9,21 +9,21 @@ description: >
     property (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var funObj = function (a, b) {
-            return a + b;
-        };
+var funObj = function(a, b) {
+  return a + b;
+};
 
-        funObj.configurable = true;
+funObj.configurable = true;
 
-        Object.defineProperty(obj, "property", funObj);
+Object.defineProperty(obj, "property", funObj);
 
-        var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-        delete obj.property;
+delete obj.property;
 
-        var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

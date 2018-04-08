@@ -8,22 +8,22 @@ description: >
     accessor property  (8.10.5 step 6.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var attr = { };
-        Object.defineProperty(attr, "writable", {
-            get: function () {
-                return true;
-            }
-        });
+var attr = {};
+Object.defineProperty(attr, "writable", {
+  get: function() {
+    return true;
+  }
+});
 
-        Object.defineProperty(obj, "property", attr);
+Object.defineProperty(obj, "property", attr);
 
-        var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

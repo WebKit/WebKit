@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Function.prototype)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Function, "prototype");
+var desc = Object.getOwnPropertyDescriptor(Function, "prototype");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

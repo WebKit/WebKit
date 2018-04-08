@@ -9,7 +9,7 @@ es5id: 15.2.2.1_A2_T3
 description: The value is an array
 ---*/
 
-var arr = [1,2,3];
+var arr = [1, 2, 3];
 
 var n_obj = new Object(arr);
 

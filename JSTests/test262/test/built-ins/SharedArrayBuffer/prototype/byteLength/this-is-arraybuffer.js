@@ -4,6 +4,7 @@
 /*---
 esid: sec-get-sharedarraybuffer.prototype.bytelength
 description: Throws a TypeError exception when `this` is an ArrayBuffer
+features: [SharedArrayBuffer]
 ---*/
 
 var getter = Object.getOwnPropertyDescriptor(

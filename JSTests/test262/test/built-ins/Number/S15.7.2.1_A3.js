@@ -19,6 +19,6 @@ if (x1.valueOf() !== 1) {
 var x2 = new Number();
 if (x2.valueOf() !== 0) {
   $ERROR('#2.1: var x2 = new Number(); x2.valueOf() === 0');
-} else if( 1/x2.valueOf() !== Number.POSITIVE_INFINITY ) {
+} else if (1 / x2.valueOf() !== Number.POSITIVE_INFINITY) {
   $ERROR('#2.2: var x2 = new Number(); x2.valueOf() === +0');
 }

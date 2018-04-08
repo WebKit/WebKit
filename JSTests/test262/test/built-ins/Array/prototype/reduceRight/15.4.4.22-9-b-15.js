@@ -10,30 +10,30 @@ description: >
     visited
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 2 && curVal === "prototype") {
-                testResult = true;
-            }
-        }
-        var arr = [0, 1, 2, 3];
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 2 && curVal === "prototype") {
+    testResult = true;
+  }
+}
+var arr = [0, 1, 2, 3];
 
-            Object.defineProperty(Array.prototype, "2", {
-                get: function () {
-                    return "prototype";
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "2", {
+  get: function() {
+    return "prototype";
+  },
+  configurable: true
+});
 
-            Object.defineProperty(arr, "3", {
-                get: function () {
-                    arr.length = 2;
-                    return 1;
-                },
-                configurable: true
-            });
+Object.defineProperty(arr, "3", {
+  get: function() {
+    arr.length = 2;
+    return 1;
+  },
+  configurable: true
+});
 
-            arr.reduceRight(callbackfn);
+arr.reduceRight(callbackfn);
 
 assert(testResult, 'testResult !== true');

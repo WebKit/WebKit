@@ -10,24 +10,24 @@ description: >
     on an Array
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(accum, val, idx, obj) {
-            if (idx === 1 && val === 1) {
-                testResult = true;
-            }
-        }
-        var arr = [0, 111];
+function callbackfn(accum, val, idx, obj) {
+  if (idx === 1 && val === 1) {
+    testResult = true;
+  }
+}
+var arr = [0, 111];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                delete arr[1];
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    delete arr[1];
+    return 0;
+  },
+  configurable: true
+});
 
-            Array.prototype[1] = 1;
-            arr.reduce(callbackfn);
+Array.prototype[1] = 1;
+arr.reduce(callbackfn);
 
 assert(testResult, 'testResult !== true');

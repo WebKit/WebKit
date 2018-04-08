@@ -9,18 +9,25 @@ description: >
     then call match (regexp) function with this object as argument
 ---*/
 
-var __obj = {toString:function(){return {};},valueOf:function(){throw "intostr";}}
+var __obj = {
+  toString: function() {
+    return {};
+  },
+  valueOf: function() {
+    throw "intostr";
+  }
+}
 var __str = new String("ABB\u0041BABAB");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-    try {
-      var x = __str.match(__obj);
-      $ERROR('#1: "var x = __str.match(__obj)" lead to throwing exception');
-    } catch (e) {
-      if (e!=="intostr") {
-        $ERROR('#1.1: Exception === "intostr". Actual: '+e);
-      }
-    }
+try {
+  var x = __str.match(__obj);
+  $ERROR('#1: "var x = __str.match(__obj)" lead to throwing exception');
+} catch (e) {
+  if (e !== "intostr") {
+    $ERROR('#1.1: Exception === "intostr". Actual: ' + e);
+  }
+}
 //
 //////////////////////////////////////////////////////////////////////////////

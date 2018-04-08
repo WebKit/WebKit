@@ -16,7 +16,11 @@ function callbackfn(val, idx, obj) {
   return val > 10;
 }
 
-var obj = { 0: 9, 1: 8, length: "two" };
+var obj = {
+  0: 9,
+  1: 8,
+  length: "two"
+};
 
 assert(Array.prototype.every.call(obj, callbackfn), 'Array.prototype.every.call(obj, callbackfn) !== true');
 assert.sameValue(accessed, false, 'accessed');

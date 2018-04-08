@@ -8,27 +8,27 @@ description: calling with argument
 ---*/
 
 //CHECK#1
-if(Number.prototype.valueOf("argument") !== 0){
+if (Number.prototype.valueOf("argument") !== 0) {
   $ERROR('#1: Number.prototype.valueOf("argument") === 0');
 }
 
 //CHECK#2
-if((new Number()).valueOf("argument") !== 0){
+if ((new Number()).valueOf("argument") !== 0) {
   $ERROR('#2: (new Number()).valueOf("argument") === 0');
 }
 
 //CHECK#3
-if((new Number(0)).valueOf("argument") !== 0){
+if ((new Number(0)).valueOf("argument") !== 0) {
   $ERROR('#3: (new Number(0)).valueOf("argument") === 0');
 }
 
 //CHECK#4
-if((new Number(-1)).valueOf("argument") !== -1){
+if ((new Number(-1)).valueOf("argument") !== -1) {
   $ERROR('#4: (new Number(-1)).valueOf("argument") === -1');
 }
 
 //CHECK#5
-if((new Number(1)).valueOf("argument") !== 1){
+if ((new Number(1)).valueOf("argument") !== 1) {
   $ERROR('#5: (new Number(1)).valueOf("argument") === 1');
 }
 
@@ -40,11 +40,11 @@ assert.sameValue(
 );
 
 //CHECK#7
-if((new Number(Number.POSITIVE_INFINITY)).valueOf("argument") !== Number.POSITIVE_INFINITY){
+if ((new Number(Number.POSITIVE_INFINITY)).valueOf("argument") !== Number.POSITIVE_INFINITY) {
   $ERROR('#7: (new Number(Number.POSITIVE_INFINITY)).valueOf("argument") === Infinity');
 }
 
 //CHECK#8
-if((new Number(Number.NEGATIVE_INFINITY)).valueOf("argument") !== Number.NEGATIVE_INFINITY){
+if ((new Number(Number.NEGATIVE_INFINITY)).valueOf("argument") !== Number.NEGATIVE_INFINITY) {
   $ERROR('#8: (new Number(Number.NEGATIVE_INFINITY)).valueOf("argument") === -Infinity');
 }

@@ -13,16 +13,16 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: 10,
-    writable: true,
-    enumerable: true,
-    configurable: true
+  value: 10,
+  writable: true,
+  enumerable: true,
+  configurable: true
 });
 var preCheck = Object.isExtensible(obj);
 Object.seal(obj);
 
 if (!preCheck) {
-    $ERROR('Expected preCheck to be true, actually ' + preCheck);
+  $ERROR('Expected preCheck to be true, actually ' + preCheck);
 }
 
 verifyEqualTo(obj, "foo", 10);

@@ -10,8 +10,8 @@ includes: [propertyHelper.js]
 ---*/
 
 var obj;
-(function () {
-    obj = arguments;
+(function() {
+  obj = arguments;
 }());
 
 assert(Object.isExtensible(obj));

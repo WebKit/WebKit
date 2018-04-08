@@ -8,24 +8,24 @@ description: >
     inherited accessor property (8.10.5 step 8.a)
 ---*/
 
-        var obj = {};
-        var proto = {};
-        var data = "data";
-        Object.defineProperty(proto, "set", {
-            get: function () {
-                return function (value) {
-                    data = value;
-                };
-            }
-        });
+var obj = {};
+var proto = {};
+var data = "data";
+Object.defineProperty(proto, "set", {
+  get: function() {
+    return function(value) {
+      data = value;
+    };
+  }
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
+var child = new ConstructFun();
 
-        Object.defineProperty(obj, "property", child);
-        obj.property = "inheritedAccessorProperty";
+Object.defineProperty(obj, "property", child);
+obj.property = "inheritedAccessorProperty";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(data, "inheritedAccessorProperty", 'data');

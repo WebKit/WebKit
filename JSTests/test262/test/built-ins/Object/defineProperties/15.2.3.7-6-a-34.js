@@ -9,20 +9,20 @@ description: >
     'desc' (8.12.9 step 4.b.i)
 ---*/
 
-        var obj = {};
-        var getFunc = function () {
-            return 10; 
-        };
+var obj = {};
+var getFunc = function() {
+  return 10;
+};
 
-        Object.defineProperties(obj, {
-            prop: {
-                get: getFunc,
-                enumerable: true,
-                configurable: true
-            }
-        });
+Object.defineProperties(obj, {
+  prop: {
+    get: getFunc,
+    enumerable: true,
+    configurable: true
+  }
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
-assert.sameValue(typeof (desc.set), "undefined", 'typeof (desc.set)');
+assert.sameValue(typeof(desc.set), "undefined", 'typeof (desc.set)');

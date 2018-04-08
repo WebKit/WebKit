@@ -8,24 +8,27 @@ description: >
     defined in returned array
 ---*/
 
-        var obj = { prop1: 1001, prop2: 1002 };
+var obj = {
+  prop1: 1001,
+  prop2: 1002
+};
 
-        Object.defineProperty(obj, "prop3", {
-            value: 1003,
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop3", {
+  value: 1003,
+  enumerable: true,
+  configurable: true
+});
 
-        Object.defineProperty(obj, "prop4", {
-            value: 1004,
-            enumerable: false,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop4", {
+  value: 1004,
+  enumerable: false,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
-        for (var p in arr) {
-            if (arr.hasOwnProperty(p)) {
-                assert.notSameValue(arr[p], "prop4", 'arr[p]');
-            }
-        }
+for (var p in arr) {
+  if (arr.hasOwnProperty(p)) {
+    assert.notSameValue(arr[p], "prop4", 'arr[p]');
+  }
+}

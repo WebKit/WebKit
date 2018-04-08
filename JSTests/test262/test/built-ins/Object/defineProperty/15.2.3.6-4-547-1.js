@@ -13,51 +13,51 @@ includes: [propertyHelper.js]
 var obj = [];
 
 obj.verifySetFunc = "data";
-var getFunc = function () {
-    return obj.verifySetFunc;
+var getFunc = function() {
+  return obj.verifySetFunc;
 };
 
-var setFunc = function (value) {
-    obj.verifySetFunc = value;
+var setFunc = function(value) {
+  obj.verifySetFunc = value;
 };
 
 Object.defineProperty(obj, "0", {
-    get: getFunc,
-    set: setFunc,
-    enumerable: true,
-    configurable: false
+  get: getFunc,
+  set: setFunc,
+  enumerable: true,
+  configurable: false
 });
 var desc1 = Object.getOwnPropertyDescriptor(obj, "0");
 
 try {
-    Object.defineProperty(obj, "0", {
-        value: 1001
-    });
+  Object.defineProperty(obj, "0", {
+    value: 1001
+  });
 
-    $ERROR("Expected an exception.");
+  $ERROR("Expected an exception.");
 } catch (e) {
-    var desc2 = Object.getOwnPropertyDescriptor(obj, "0");
+  var desc2 = Object.getOwnPropertyDescriptor(obj, "0");
 
-    if (!desc1.hasOwnProperty("get")) {
-        $ERROR('Expected desc1.hasOwnProperty("get") to be true, actually ' + desc1.hasOwnProperty("get"));
-        }
-    
-    if (desc2.hasOwnProperty("value")) {
-        $ERROR('Expected !desc2.hasOwnProperty("value") to be true, actually ' + !desc2.hasOwnProperty("value"));
-        }
-    
+  if (!desc1.hasOwnProperty("get")) {
+    $ERROR('Expected desc1.hasOwnProperty("get") to be true, actually ' + desc1.hasOwnProperty("get"));
+  }
 
-    verifyEqualTo(obj, "0", getFunc());
-
-    verifyWritable(obj, "0", "verifySetFunc");
-
-    verifyEnumerable(obj, "0");
-
-    verifyNotConfigurable(obj, "0");
+  if (desc2.hasOwnProperty("value")) {
+    $ERROR('Expected !desc2.hasOwnProperty("value") to be true, actually ' + !desc2.hasOwnProperty("value"));
+  }
 
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
-    }
+  verifyEqualTo(obj, "0", getFunc());
+
+  verifyWritable(obj, "0", "verifySetFunc");
+
+  verifyEnumerable(obj, "0");
+
+  verifyNotConfigurable(obj, "0");
+
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

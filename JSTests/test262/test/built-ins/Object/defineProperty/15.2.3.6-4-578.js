@@ -8,19 +8,19 @@ description: >
     [[Prototype]] internal property is correct (String instance)
 ---*/
 
-        var data = "data";
+var data = "data";
 
-            Object.defineProperty(String.prototype, "prop", {
-                get: function () {
-                    return data;
-                },
-                set: function (value) {
-                    data = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            var strObj = new String();
+Object.defineProperty(String.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  set: function(value) {
+    data = value;
+  },
+  enumerable: true,
+  configurable: true
+});
+var strObj = new String();
 
 assert.sameValue(strObj.hasOwnProperty("prop"), false, 'strObj.hasOwnProperty("prop")');
 assert.sameValue(strObj.prop, "data", 'strObj.prop');

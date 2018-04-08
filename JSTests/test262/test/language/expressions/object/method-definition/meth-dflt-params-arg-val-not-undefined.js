@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-not-undefined.case
 // - src/function-forms/default/meth.template
 /*---
-description: Use of intializer when argument value is not `undefined` (method)
+description: Use of initializer when argument value is not `undefined` (method)
 esid: sec-runtime-semantics-definemethod
 features: [default-parameters]
 flags: [generated]

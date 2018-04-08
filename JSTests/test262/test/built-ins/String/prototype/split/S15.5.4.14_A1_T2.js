@@ -18,12 +18,14 @@ var __instance = new Boolean;
 
 __instance.split = String.prototype.split;
 
-var __split = __instance.split("A"!=="\u0041", function(){return 0;}(),null);
+var __split = __instance.split("A" !== "\u0041", function() {
+  return 0;
+}(), null);
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __split !== "object") {
-  $ERROR('#1: __instance = new Boolean; __instance.split = String.prototype.split; __split = __instance.split("A"!=="u0041", function(){return 0;}(),null); typeof __split === "object". Actual: '+typeof __split );
+  $ERROR('#1: __instance = new Boolean; __instance.split = String.prototype.split; __split = __instance.split("A"!=="u0041", function(){return 0;}(),null); typeof __split === "object". Actual: ' + typeof __split);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +33,7 @@ if (typeof __split !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.constructor !== Array) {
-  $ERROR('#2: __instance = new Boolean; __instance.split = String.prototype.split; __split = __instance.split("A"!=="u0041", function(){return 0;}(),null); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#2: __instance = new Boolean; __instance.split = String.prototype.split; __split = __instance.split("A"!=="u0041", function(){return 0;}(),null); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +41,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split.length !== 0) {
-  $ERROR('#3: __instance = new Boolean; __instance.split = String.prototype.split; __split = __instance.split("A"!=="u0041", function(){return 0;}(),null); __split.length === 0. Actual: '+__split.length );
+  $ERROR('#3: __instance = new Boolean; __instance.split = String.prototype.split; __split = __instance.split("A"!=="u0041", function(){return 0;}(),null); __split.length === 0. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

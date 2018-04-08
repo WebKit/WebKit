@@ -8,18 +8,18 @@ description: >
     object 'O' is defined in returned array
 ---*/
 
-        var obj = new String("xyz");
-        obj[-20] = -20;
-        obj[20] = 20;
+var obj = new String("xyz");
+obj[-20] = -20;
+obj[20] = 20;
 
-        Object.defineProperty(obj, "prop", {
-            value: 1003,
-            enumerable: false,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop", {
+  value: 1003,
+  enumerable: false,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
-        for (var i = 0; i < arr.length; i++) {
-            assert(obj.hasOwnProperty(arr[i]), 'obj.hasOwnProperty(arr[i]) !== true');
-        }
+for (var i = 0; i < arr.length; i++) {
+  assert(obj.hasOwnProperty(arr[i]), 'obj.hasOwnProperty(arr[i]) !== true');
+}

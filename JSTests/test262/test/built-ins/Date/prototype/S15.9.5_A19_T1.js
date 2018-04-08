@@ -8,6 +8,6 @@ es5id: 15.9.5_A19_T1
 description: The Date.prototype has the property "getUTCHours"
 ---*/
 
-if(Date.prototype.hasOwnProperty("getUTCHours") !== true){
+if (Date.prototype.hasOwnProperty("getUTCHours") !== true) {
   $ERROR('#1: The Date.prototype has the property "getUTCHours"');
 }

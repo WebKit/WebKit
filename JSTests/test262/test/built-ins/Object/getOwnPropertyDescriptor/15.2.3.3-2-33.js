@@ -8,8 +8,10 @@ description: >
     string 'AB  \cd'
 ---*/
 
-        var obj = { "AB\n\\cd": 1 };
+var obj = {
+  "AB\n\\cd": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "AB\n\\cd");
+var desc = Object.getOwnPropertyDescriptor(obj, "AB\n\\cd");
 
 assert.sameValue(desc.value, 1, 'desc.value');

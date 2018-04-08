@@ -10,38 +10,38 @@ description: >
     value
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var verifySetFunc = "data";
-        var setFunc = function (value) {
-            verifySetFunc = value;
-        };
+var verifySetFunc = "data";
+var setFunc = function(value) {
+  verifySetFunc = value;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: undefined,
-            set: setFunc,
-            enumerable: false,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop", {
+  get: undefined,
+  set: setFunc,
+  enumerable: false,
+  configurable: true
+});
 
-        var result1 = false;
-        var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
-        for (var p1 in obj) {
-            if (p1 === "prop") {
-                result1 = true;
-            }
-        }
+var result1 = false;
+var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
+for (var p1 in obj) {
+  if (p1 === "prop") {
+    result1 = true;
+  }
+}
 
-        Object.defineProperty(obj, "prop", {
-            enumerable: true
-        });
-        var result2 = false;
-        var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
-        for (var p2 in obj) {
-            if (p2 === "prop") {
-                result2 = true;
-            }
-        }
+Object.defineProperty(obj, "prop", {
+  enumerable: true
+});
+var result2 = false;
+var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
+for (var p2 in obj) {
+  if (p2 === "prop") {
+    result2 = true;
+  }
+}
 
 assert.sameValue(result1, false, 'result1');
 assert(result2, 'result2 !== true');

@@ -9,26 +9,26 @@ description: >
     current position are visited on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return true;
-        }
+function callbackfn(val, idx, obj) {
+  return true;
+}
 
-        var arr = [0, , 2];
+var arr = [0, , 2];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                Object.defineProperty(arr, "1", {
-                    get: function () {
-                        return 6.99;
-                    },
-                    configurable: true
-                });
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    Object.defineProperty(arr, "1", {
+      get: function() {
+        return 6.99;
+      },
+      configurable: true
+    });
+    return 0;
+  },
+  configurable: true
+});
 
-        var newArr = arr.filter(callbackfn);
+var newArr = arr.filter(callbackfn);
 
 assert.sameValue(newArr.length, 3, 'newArr.length');
 assert.sameValue(newArr[1], 6.99, 'newArr[1]');

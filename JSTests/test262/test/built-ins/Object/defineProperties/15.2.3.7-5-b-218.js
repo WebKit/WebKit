@@ -8,11 +8,11 @@ description: >
     primitive values( value is null) (8.10.5 step 7.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                property: {
-                    get: null
-                }
-            });
+  Object.defineProperties(obj, {
+    property: {
+      get: null
+    }
+  });
 });

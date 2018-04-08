@@ -12,27 +12,29 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var desc = { value: +0 };
+var desc = {
+  value: +0
+};
 Object.defineProperty(obj, "foo", desc);
 
 try {
-    Object.defineProperties(obj, {
-        foo: {
-            value: -0
-        }
-    });
-    $ERROR("Expected an exception.");
-} catch (e) {
-    verifyEqualTo(obj, "foo", +0);
-
-    verifyNotWritable(obj, "foo");
-
-    verifyNotEnumerable(obj, "foo");
-
-    verifyNotConfigurable(obj, "foo");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(obj, {
+    foo: {
+      value: -0
     }
+  });
+  $ERROR("Expected an exception.");
+} catch (e) {
+  verifyEqualTo(obj, "foo", +0);
+
+  verifyNotWritable(obj, "foo");
+
+  verifyNotEnumerable(obj, "foo");
+
+  verifyNotConfigurable(obj, "foo");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

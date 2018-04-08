@@ -9,14 +9,14 @@ description: >
     parameter
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(prevVal, curVal) {
-            if (prevVal === 100) {
-                testResult = true;
-            }
-            return curVal > 10;
-        }
+function callbackfn(prevVal, curVal) {
+  if (prevVal === 100) {
+    testResult = true;
+  }
+  return curVal > 10;
+}
 
 assert.sameValue([11].reduceRight(callbackfn, 100), true, '[11].reduceRight(callbackfn, 100)');
 assert(testResult, 'testResult !== true');

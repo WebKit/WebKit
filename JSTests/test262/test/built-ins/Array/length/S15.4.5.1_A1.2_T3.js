@@ -14,7 +14,7 @@ description: Checking an inherited property
 
 //CHECK#1
 Array.prototype[2] = 2;
-var x = [0,1];
+var x = [0, 1];
 x.length = 3;
 if (x.hasOwnProperty('2') !== false) {
   $ERROR('#1: Array.prototype[2] = 2; x = [0,1]; x.length = 3; x.hasOwnProperty(\'2\') === false. Actual: ' + (x.hasOwnProperty('2')));

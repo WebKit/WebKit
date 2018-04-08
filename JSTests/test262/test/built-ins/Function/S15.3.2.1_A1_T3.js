@@ -18,7 +18,7 @@ description: Value of the function constructor argument is 1
 try {
   var f = new Function(1);
 } catch (e) {
-  $ERROR('#1: test failed with error '+e);
+  $ERROR('#1: test failed with error ' + e);
 }
 
 //CHECK#2
@@ -27,6 +27,6 @@ if (f.constructor !== Function) {
 }
 
 //CHECK#3
-if (f()!==undefined) {
+if (f() !== undefined) {
   $ERROR('#3: When the Function constructor is called with one argument then body be that argument the following steps are taken...');
 }

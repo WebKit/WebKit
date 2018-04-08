@@ -7,9 +7,14 @@ es5id: 15.3.4.5_A1
 description: A bound function should fail to find its "caller"
 ---*/
 
-function foo() { return bar.caller; }
+function foo() {
+  return bar.caller;
+}
 var bar = foo.bind({});
-function baz() { return bar(); }
+
+function baz() {
+  return bar();
+}
 
 assert.throws(TypeError, function() {
   baz();

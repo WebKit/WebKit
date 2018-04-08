@@ -13,24 +13,24 @@ includes: [propertyHelper.js]
 var proto = {};
 
 Object.defineProperty(proto, "writable", {
-    get: function () {
-        return true;
-    }
+  get: function() {
+    return true;
+  }
 });
 
-var ConstructFun = function () { };
+var ConstructFun = function() {};
 ConstructFun.prototype = proto;
 
 var descObj = new ConstructFun();
 
 Object.defineProperty(descObj, "writable", {
-    set: function () { }
+  set: function() {}
 });
 
 var newObj = Object.create({}, {
-    prop: descObj
+  prop: descObj
 });
 
 assert(newObj.hasOwnProperty("prop"))
-assert.sameValue(typeof (newObj.prop), "undefined");
+assert.sameValue(typeof(newObj.prop), "undefined");
 verifyNotWritable(newObj, "prop");

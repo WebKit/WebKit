@@ -9,23 +9,23 @@ description: >
     accessor property
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: 2010,
-            writable: false,
-            enumerable: true,
-            configurable: true
-        });
-        var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
+Object.defineProperty(obj, "prop", {
+  value: 2010,
+  writable: false,
+  enumerable: true,
+  configurable: true
+});
+var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
 
-        function getFunc() {
-            return 20;
-        }
-        Object.defineProperty(obj, "prop", {
-            get: getFunc
-        });
-        var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
+function getFunc() {
+  return 20;
+}
+Object.defineProperty(obj, "prop", {
+  get: getFunc
+});
+var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(desc1.hasOwnProperty("value"), 'desc1.hasOwnProperty("value") !== true');
 assert(desc2.hasOwnProperty("get"), 'desc2.hasOwnProperty("get") !== true');

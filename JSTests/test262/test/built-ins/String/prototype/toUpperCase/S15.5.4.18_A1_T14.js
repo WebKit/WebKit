@@ -12,7 +12,7 @@ __reg.toUpperCase = String.prototype.toUpperCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__reg.toUpperCase() !== "/ABC/") {
-  $ERROR('#1: var __reg = new RegExp("abc"); __reg.toUpperCase = String.prototype.toUpperCase; __reg.toUpperCase() === "/ABC/". Actual: '+__reg.toUpperCase() );
+  $ERROR('#1: var __reg = new RegExp("abc"); __reg.toUpperCase = String.prototype.toUpperCase; __reg.toUpperCase() === "/ABC/". Actual: ' + __reg.toUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

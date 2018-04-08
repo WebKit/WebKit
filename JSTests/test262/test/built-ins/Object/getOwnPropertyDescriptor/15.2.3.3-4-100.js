@@ -8,7 +8,7 @@ description: >
     built-ins (Math.atan2)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "atan2");
+var desc = Object.getOwnPropertyDescriptor(Math, "atan2");
 
 assert.sameValue(desc.value, Math.atan2, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

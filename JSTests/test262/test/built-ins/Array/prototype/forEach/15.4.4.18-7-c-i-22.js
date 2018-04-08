@@ -9,19 +9,19 @@ description: >
     accessor property without a get function on an Array
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                testResult = (typeof val === "undefined");
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    testResult = (typeof val === "undefined");
+  }
+}
 
-            Object.defineProperty(Array.prototype, "0", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  set: function() {},
+  configurable: true
+});
 
-            [, 1].forEach(callbackfn);
+[, 1].forEach(callbackfn);
 
 assert(testResult, 'testResult !== true');

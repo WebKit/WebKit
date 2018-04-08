@@ -9,17 +9,17 @@ description: >
     (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            JSON.configurable = true;
+JSON.configurable = true;
 
-            Object.defineProperties(obj, {
-                prop: JSON
-            });
+Object.defineProperties(obj, {
+  prop: JSON
+});
 
-            var result1 = obj.hasOwnProperty("prop");
-            delete obj.prop;
-            var result2 = obj.hasOwnProperty("prop");
+var result1 = obj.hasOwnProperty("prop");
+delete obj.prop;
+var result2 = obj.hasOwnProperty("prop");
 
 assert.sameValue(result1, true, 'result1');
 assert.sameValue(result2, false, 'result2');

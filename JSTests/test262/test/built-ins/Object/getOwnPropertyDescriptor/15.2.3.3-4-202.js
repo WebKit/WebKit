@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Math.E)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "E");
+var desc = Object.getOwnPropertyDescriptor(Math, "E");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

@@ -17,7 +17,6 @@ base[4] = 1.7976931348623157E308; //largest finite number
 base[5] = +Infinity;
 var basenum = 6;
 
-for (var i = 0; i < basenum; i++)
-{
+for (var i = 0; i < basenum; i++) {
   assert.sameValue(Math.pow(base[i], exponent), 0, base[i]);
 }

@@ -9,16 +9,16 @@ description: >
     property (8.10.5 step 4.a)
 ---*/
 
-        var descObj = new String();
+var descObj = new String();
 
-        descObj.configurable = true;
+descObj.configurable = true;
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
-        var result1 = newObj.hasOwnProperty("prop");
-        delete newObj.prop;
-        var result2 = newObj.hasOwnProperty("prop");
+var newObj = Object.create({}, {
+  prop: descObj
+});
+var result1 = newObj.hasOwnProperty("prop");
+delete newObj.prop;
+var result2 = newObj.hasOwnProperty("prop");
 
 assert.sameValue(result1, true, 'result1');
 assert.sameValue(result2, false, 'result2');

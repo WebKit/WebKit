@@ -20,20 +20,20 @@ function callbackfn2(val, idx, obj) {
 var proto = {};
 
 Object.defineProperty(proto, "length", {
-  get: function () {
-      return 3;
+  get: function() {
+    return 3;
   },
   configurable: true
 });
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var child = new Con();
 
 Object.defineProperty(child, "length", {
-  get: function () {
-      return 2;
+  get: function() {
+    return 2;
   },
   configurable: true
 });

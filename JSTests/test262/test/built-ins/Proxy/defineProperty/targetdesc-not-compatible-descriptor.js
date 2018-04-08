@@ -17,17 +17,17 @@ info: |
 
 var target = {};
 var p = new Proxy(target, {
-    defineProperty: function(t, prop, desc) {
-        return true;
-    }
+  defineProperty: function(t, prop, desc) {
+    return true;
+  }
 });
 
 Object.defineProperty(target, "foo", {
-    value: 1
+  value: 1
 });
 
 assert.throws(TypeError, function() {
-    Object.defineProperty(p, "foo", {
-        value: 2
-    });
+  Object.defineProperty(p, "foo", {
+    value: 2
+  });
 });

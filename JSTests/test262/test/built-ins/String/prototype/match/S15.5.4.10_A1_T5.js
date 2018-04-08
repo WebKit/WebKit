@@ -10,8 +10,12 @@ description: Call match (regexp) function with null argument of function object
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(null) evaluates to "null" match(null) evaluates to match("null")
-if (function(){return "gnulluna"}().match(null)[0] !== "null") {
-  $ERROR('#1: function(){return "gnulluna"}().match(null)[0] === "null". Actual: '+function(){return "gnulluna"}().match(null)[0] );
+if (function() {
+    return "gnulluna"
+  }().match(null)[0] !== "null") {
+  $ERROR('#1: function(){return "gnulluna"}().match(null)[0] === "null". Actual: ' + function() {
+    return "gnulluna"
+  }().match(null)[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

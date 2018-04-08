@@ -38,17 +38,27 @@ result = arr.findIndex(function(val) {
 assert.sameValue(called, 3, 'predicate was called three times');
 assert.sameValue(result, 2);
 
-result = arr.findIndex(function(val) { return 'string'; });
+result = arr.findIndex(function(val) {
+  return 'string';
+});
 assert.sameValue(result, 0, 'coerced string');
 
-result = arr.findIndex(function(val) { return {}; });
+result = arr.findIndex(function(val) {
+  return {};
+});
 assert.sameValue(result, 0, 'coerced object');
 
-result = arr.findIndex(function(val) { return Symbol(''); });
+result = arr.findIndex(function(val) {
+  return Symbol('');
+});
 assert.sameValue(result, 0, 'coerced Symbol');
 
-result = arr.findIndex(function(val) { return 1; });
+result = arr.findIndex(function(val) {
+  return 1;
+});
 assert.sameValue(result, 0, 'coerced number');
 
-result = arr.findIndex(function(val) { return -1; });
+result = arr.findIndex(function(val) {
+  return -1;
+});
 assert.sameValue(result, 0, 'coerced negative number');

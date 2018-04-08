@@ -10,14 +10,16 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var descObj = { value: 100 };
+var descObj = {
+  value: 100
+};
 
 Object.defineProperty(descObj, "writable", {
-    set: function () { }
+  set: function() {}
 });
 
 var newObj = Object.create({}, {
-    prop: descObj
+  prop: descObj
 });
 
 assert.sameValue(newObj.prop, 100);

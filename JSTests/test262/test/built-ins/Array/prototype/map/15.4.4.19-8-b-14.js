@@ -9,20 +9,20 @@ description: >
     property not to be visited
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return idx === 3 && typeof val === "undefined";
-        }
+function callbackfn(val, idx, obj) {
+  return idx === 3 && typeof val === "undefined";
+}
 
-        var arr = [0, 1, 2, "last"];
+var arr = [0, 1, 2, "last"];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                arr.length = 3;
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    arr.length = 3;
+    return 0;
+  },
+  configurable: true
+});
 
-        var testResult = arr.map(callbackfn);
+var testResult = arr.map(callbackfn);
 
 assert.sameValue(typeof testResult[3], "undefined", 'typeof testResult[3]');

@@ -8,18 +8,18 @@ description: >
     'this' object into statement(s)
 ---*/
 
-        var obj = {
-            len: 2010
-        };
-        var getFunc = function () {
-            return this;
-        };
+var obj = {
+  len: 2010
+};
+var getFunc = function() {
+  return this;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: getFunc
-        });
+Object.defineProperty(obj, "prop", {
+  get: getFunc
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, obj, 'obj.prop');

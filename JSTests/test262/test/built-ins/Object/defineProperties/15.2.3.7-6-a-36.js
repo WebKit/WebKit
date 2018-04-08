@@ -12,19 +12,19 @@ includes:
 ---*/
 
 var obj = {};
-var getFun = function () {
-    return 10;
+var getFun = function() {
+  return 10;
 };
-var setFun = function (value) {
-    obj.setVerifyHelpProp = value;
+var setFun = function(value) {
+  obj.setVerifyHelpProp = value;
 };
 
 Object.defineProperties(obj, {
-    prop: {
-        set: setFun,
-        get: getFun,
-        enumerable: true
-    }
+  prop: {
+    set: setFun,
+    get: getFun,
+    enumerable: true
+  }
 });
 
 verifyEqualTo(obj, "prop", 10);

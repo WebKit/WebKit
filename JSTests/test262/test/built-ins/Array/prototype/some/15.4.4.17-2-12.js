@@ -10,25 +10,28 @@ description: >
     Array-like object
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return val > 10;
+}
 
-            Object.defineProperty(Object.prototype, "length", {
-                get: function () {
-                    return 2;
-                },
-                configurable: true
-            });
+Object.defineProperty(Object.prototype, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
-            var obj = { 0: 11, 1: 12 };
-            Object.defineProperty(obj, "length", {
-                set: function () { },
-                configurable: true
-            });
+var obj = {
+  0: 11,
+  1: 12
+};
+Object.defineProperty(obj, "length", {
+  set: function() {},
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.some.call(obj, callbackfn), false, 'Array.prototype.some.call(obj, callbackfn)');
 assert.sameValue(accessed, false, 'accessed');

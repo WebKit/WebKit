@@ -18,6 +18,6 @@ description: >
     (Error.prototype)
 ---*/
 
-  var e = Object.isExtensible(Error.prototype);
+var e = Object.isExtensible(Error.prototype);
 
 assert.sameValue(e, true, 'e');

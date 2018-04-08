@@ -11,5 +11,5 @@ flags: [onlyStrict]
 
 
 assert.throws(TypeError, function() {
-            NaN = 12;
+  NaN = 12;
 });

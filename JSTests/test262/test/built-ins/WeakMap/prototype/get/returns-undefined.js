@@ -24,7 +24,7 @@ var key = {};
 
 assert.sameValue(
   map.get(key), undefined,
- 'returns undefined if key is not on the weakmap'
+  'returns undefined if key is not on the weakmap'
 );
 
 map.set(key, 1);

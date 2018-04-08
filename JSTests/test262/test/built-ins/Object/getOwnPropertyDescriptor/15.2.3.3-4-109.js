@@ -8,7 +8,7 @@ description: >
     built-ins (Math.random)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "random");
+var desc = Object.getOwnPropertyDescriptor(Math, "random");
 
 assert.sameValue(desc.value, Math.random, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

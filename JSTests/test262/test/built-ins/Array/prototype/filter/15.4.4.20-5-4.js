@@ -9,17 +9,18 @@ description: >
     template(prototype)
 ---*/
 
-  var res = false;
-  function callbackfn(val, idx, obj)
-  {
-    return this.res;
-  }
+var res = false;
 
-  function foo(){}
-  foo.prototype.res = true;
-  var f = new foo();
+function callbackfn(val, idx, obj)
+{
+  return this.res;
+}
 
-  var srcArr = [1];
-  var resArr = srcArr.filter(callbackfn,f);
+function foo() {}
+foo.prototype.res = true;
+var f = new foo();
+
+var srcArr = [1];
+var resArr = srcArr.filter(callbackfn, f);
 
 assert.sameValue(resArr.length, 1, 'resArr.length');

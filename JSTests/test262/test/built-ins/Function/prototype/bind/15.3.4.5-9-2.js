@@ -8,9 +8,9 @@ description: >
     (using getPrototypeOf)
 ---*/
 
-  function foo() { }
-  var o = {};
-  
-  var bf = foo.bind(o);
+function foo() {}
+var o = {};
+
+var bf = foo.bind(o);
 
 assert.sameValue(Object.getPrototypeOf(bf), Function.prototype, 'Object.getPrototypeOf(bf)');

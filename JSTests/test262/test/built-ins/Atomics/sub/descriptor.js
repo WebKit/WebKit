@@ -6,6 +6,7 @@
 esid: sec-atomics.sub
 description: Testing descriptor property of Atomics.sub
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "sub");

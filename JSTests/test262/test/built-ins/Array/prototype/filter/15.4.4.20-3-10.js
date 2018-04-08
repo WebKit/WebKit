@@ -9,15 +9,19 @@ description: >
     NaN)
 ---*/
 
-        var accessed = false;
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return true;
-        }
+var accessed = false;
 
-        var obj = { 0: 9, length: NaN };
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return true;
+}
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var obj = {
+  0: 9,
+  length: NaN
+};
+
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 0, 'newArr.length');
 assert.sameValue(accessed, false, 'accessed');

@@ -16,12 +16,12 @@ includes: [propertyHelper.js]
 var arrObj = [];
 
 Object.defineProperty(arrObj, "1", {
-    set: undefined
+  set: undefined
 });
 assert(arrObj.hasOwnProperty("1"));
 
 Object.defineProperty(arrObj, "1", {
-    set: undefined
+  set: undefined
 });
 
 var desc = Object.getOwnPropertyDescriptor(arrObj, "1");
@@ -31,4 +31,3 @@ assert(desc.hasOwnProperty("set") && typeof desc.set === "undefined");
 
 verifyNotEnumerable(arrObj, "1");
 verifyNotConfigurable(arrObj, "1");
-

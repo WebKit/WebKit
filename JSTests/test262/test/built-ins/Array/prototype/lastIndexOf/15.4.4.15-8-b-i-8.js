@@ -9,10 +9,16 @@ description: >
     data property on an Array-like object
 ---*/
 
-            Object.prototype[0] = true;
-            Object.prototype[1] = false;
-            Object.prototype[2] = "true";
+Object.prototype[0] = true;
+Object.prototype[1] = false;
+Object.prototype[2] = "true";
 
-assert.sameValue(Array.prototype.lastIndexOf.call({ length: 3 }, true), 0, 'Array.prototype.lastIndexOf.call({ length: 3 }, true)');
-assert.sameValue(Array.prototype.lastIndexOf.call({ length: 3 }, false), 1, 'Array.prototype.lastIndexOf.call({ length: 3 }, false)');
-assert.sameValue(Array.prototype.lastIndexOf.call({ length: 3 }, "true"), 2, 'Array.prototype.lastIndexOf.call({ length: 3 }, "true")');
+assert.sameValue(Array.prototype.lastIndexOf.call({
+  length: 3
+}, true), 0, 'Array.prototype.lastIndexOf.call({ length: 3 }, true)');
+assert.sameValue(Array.prototype.lastIndexOf.call({
+  length: 3
+}, false), 1, 'Array.prototype.lastIndexOf.call({ length: 3 }, false)');
+assert.sameValue(Array.prototype.lastIndexOf.call({
+  length: 3
+}, "true"), 2, 'Array.prototype.lastIndexOf.call({ length: 3 }, "true")');

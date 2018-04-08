@@ -16,7 +16,7 @@ if (this.propertyIsEnumerable('eval') !== false) {
 
 //CHECK#2
 var result = true;
-for (var p in this){
+for (var p in this) {
   if (p === "eval") {
     result = false;
   }

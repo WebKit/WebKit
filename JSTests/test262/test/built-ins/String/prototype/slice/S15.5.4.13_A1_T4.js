@@ -12,8 +12,12 @@ description: >
 //since ToInteger(null) yelds 0
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (function(){return "gnulluna"}().slice(null, -3) !== "gnull") {
-  $ERROR('#1: function(){return "gnulluna"}().slice(null, -3) === "gnull". Actual: '+function(){return "gnulluna"}().slice(null, -3) );
+if (function() {
+    return "gnulluna"
+  }().slice(null, -3) !== "gnull") {
+  $ERROR('#1: function(){return "gnulluna"}().slice(null, -3) === "gnull". Actual: ' + function() {
+    return "gnulluna"
+  }().slice(null, -3));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

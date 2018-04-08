@@ -8,21 +8,21 @@ description: >
     pushed into the returned array
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "parent", {
-            get: function () {
-                return "parent";
-            },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "parent", {
+  get: function() {
+    return "parent";
+  },
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        var result = Object.getOwnPropertyNames(child);
+var result = Object.getOwnPropertyNames(child);
 
-        for (var p in result) {
-            assert.notSameValue(result[p], "parent", 'result[p]');
-        }
+for (var p in result) {
+  assert.notSameValue(result[p], "parent", 'result[p]');
+}

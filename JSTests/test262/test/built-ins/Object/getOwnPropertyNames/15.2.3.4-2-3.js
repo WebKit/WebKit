@@ -8,7 +8,7 @@ description: >
     initialized to 0
 ---*/
 
-        var obj = {};
-        var result = Object.getOwnPropertyNames(obj);
+var obj = {};
+var result = Object.getOwnPropertyNames(obj);
 
 assert.sameValue(result.length, 0, 'result.length');

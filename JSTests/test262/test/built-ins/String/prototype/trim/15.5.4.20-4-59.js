@@ -8,7 +8,7 @@ description: >
     (\u2029abc as a multiline string)
 ---*/
 
-  var s = "\u2029\
+var s = "\u2029\
            abc";
 
 assert.sameValue(s.trim(), "abc", 's.trim()');

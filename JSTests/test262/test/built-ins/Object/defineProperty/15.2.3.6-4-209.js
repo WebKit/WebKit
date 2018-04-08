@@ -11,27 +11,27 @@ includes: [propertyHelper.js]
 ---*/
 
 var arrObj = [];
-var setFunc = function (value) {
-    arrObj.setVerifyHelpProp = value;
+var setFunc = function(value) {
+  arrObj.setVerifyHelpProp = value;
 };
-var getFunc = function () {
-    return 14;
+var getFunc = function() {
+  return 14;
 };
 
 Object.defineProperty(arrObj, "0", {
-    get: function () {
-        return 11;
-    },
-    set: function () { },
-    configurable: true,
-    enumerable: true
+  get: function() {
+    return 11;
+  },
+  set: function() {},
+  configurable: true,
+  enumerable: true
 });
 
 Object.defineProperty(arrObj, "0", {
-    get: getFunc,
-    set: setFunc,
-    configurable: false,
-    enumerable: false
+  get: getFunc,
+  set: setFunc,
+  configurable: false,
+  enumerable: false
 });
 
 verifyEqualTo(arrObj, "0", getFunc());

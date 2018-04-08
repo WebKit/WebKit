@@ -9,5 +9,5 @@ description: >
 ---*/
 
 assert.throws(TypeError, function() {
-      Object.defineProperties(0, {});
+  Object.defineProperties(0, {});
 });

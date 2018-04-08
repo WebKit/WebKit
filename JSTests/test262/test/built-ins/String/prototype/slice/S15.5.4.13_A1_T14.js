@@ -9,8 +9,8 @@ description: Used one argument, that is function(){}(). Instance is string
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if ("report".slice(function(){}()) !== "report") {
-  $ERROR('#1: "report".slice(function(){}()) === "report". Actual: '+"report".slice(function(){}()) );
+if ("report".slice(function() {}()) !== "report") {
+  $ERROR('#1: "report".slice(function(){}()) === "report". Actual: ' + "report".slice(function() {}()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

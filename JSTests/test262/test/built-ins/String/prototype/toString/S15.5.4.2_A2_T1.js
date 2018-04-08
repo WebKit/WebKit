@@ -15,7 +15,7 @@ var __toString = String.prototype.toString;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __toString !== "function") {
-  $ERROR('#1: __toString = String.prototype.toString; typeof __toString === "function". Actual: typeof __toString ==='+typeof __toString ); 
+  $ERROR('#1: __toString = String.prototype.toString; typeof __toString === "function". Actual: typeof __toString ===' + typeof __toString);
 }
 
 //
@@ -28,7 +28,7 @@ try {
   $ERROR('#2: "__toString = String.prototype.toString; var x = __toString();" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#2.1: "__toString = String.prototype.toString; var x = __toString();" lead to throwing exception. Exception is instance of TypeError. Actual: exception is '+e);
+    $ERROR('#2.1: "__toString = String.prototype.toString; var x = __toString();" lead to throwing exception. Exception is instance of TypeError. Actual: exception is ' + e);
   }
 }
 //

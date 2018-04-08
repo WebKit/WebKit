@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.pop)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "pop");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "pop");
 
 assert.sameValue(desc.value, Array.prototype.pop, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

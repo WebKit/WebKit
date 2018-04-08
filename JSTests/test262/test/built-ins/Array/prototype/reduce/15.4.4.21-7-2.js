@@ -10,10 +10,11 @@ description: >
     null (type conversion))
 ---*/
 
-  foo.prototype = new Array(1, 2, 3);
-  function foo() {}
-  var f = new foo();
-  f.length = null;
+foo.prototype = new Array(1, 2, 3);
 
-  function cb(){}
-assert.sameValue(f.reduce(cb,1), 1, 'f.reduce(cb,1)');
+function foo() {}
+var f = new foo();
+f.length = null;
+
+function cb() {}
+assert.sameValue(f.reduce(cb, 1), 1, 'f.reduce(cb,1)');

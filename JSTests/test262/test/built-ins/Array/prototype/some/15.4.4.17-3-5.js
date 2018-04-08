@@ -7,14 +7,17 @@ es5id: 15.4.4.17-3-5
 description: Array.prototype.some - value of 'length' is a number (value is -0)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return val > 10;
+}
 
-        var obj = { 0: 11, length: -0 };
+var obj = {
+  0: 11,
+  length: -0
+};
 
 assert.sameValue(Array.prototype.some.call(obj, callbackfn), false, 'Array.prototype.some.call(obj, callbackfn)');
 assert.sameValue(accessed, false, 'accessed');

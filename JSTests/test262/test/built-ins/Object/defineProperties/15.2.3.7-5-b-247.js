@@ -9,18 +9,18 @@ description: >
     step 8.a)
 ---*/
 
-        var data = "data";
-        var setFun = function (value) {
-            data = value;
-        };
+var data = "data";
+var setFun = function(value) {
+  data = value;
+};
 
-            JSON.prop = {
-                set: setFun
-            };
+JSON.prop = {
+  set: setFun
+};
 
-            var obj = {};
-            Object.defineProperties(obj, JSON);
-            obj.prop = "JSONData";
+var obj = {};
+Object.defineProperties(obj, JSON);
+obj.prop = "JSONData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "JSONData", 'data');

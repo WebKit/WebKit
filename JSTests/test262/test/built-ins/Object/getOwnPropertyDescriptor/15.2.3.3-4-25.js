@@ -8,7 +8,7 @@ description: >
     built-ins (Object.isExtensible)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Object, "isExtensible");
+var desc = Object.getOwnPropertyDescriptor(Object, "isExtensible");
 
 assert.sameValue(desc.value, Object.isExtensible, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

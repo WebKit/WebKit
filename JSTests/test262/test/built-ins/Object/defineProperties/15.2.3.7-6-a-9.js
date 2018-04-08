@@ -8,16 +8,16 @@ description: >
     get function (8.12.9 step 1 )
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, "prop", {
-            set: function () { },
-            configurable: false
-        });
+var obj = {};
+Object.defineProperty(obj, "prop", {
+  set: function() {},
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                prop: {
-                    get: function () { },
-                    configurable: true
-                }
-            });
+  Object.defineProperties(obj, {
+    prop: {
+      get: function() {},
+      configurable: true
+    }
+  });
 });

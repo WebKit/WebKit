@@ -9,11 +9,11 @@ description: >
     descriptor (15.4.5.1 step 3.a.i)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 assert.throws(TypeError, function() {
-            Object.defineProperty(arrObj, "length", {
-                get: function () {
-                    return 2;
-                }
-            });
+  Object.defineProperty(arrObj, "length", {
+    get: function() {
+      return 2;
+    }
+  });
 });

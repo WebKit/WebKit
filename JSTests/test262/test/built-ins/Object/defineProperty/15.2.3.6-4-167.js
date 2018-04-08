@@ -17,8 +17,8 @@ includes: [propertyHelper.js]
 var arrObj = [0, 1];
 
 Object.defineProperty(arrObj, "length", {
-    value: 1,
-    writable: false
+  value: 1,
+  writable: false
 });
 
 assert(!arrObj.hasOwnProperty("1"))

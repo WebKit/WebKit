@@ -8,4 +8,4 @@ description: >
     null
 ---*/
 
-    Object.freeze(null);
+Object.freeze(null);

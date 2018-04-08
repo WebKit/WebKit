@@ -1,7 +1,7 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 22.2.2
+esid: sec-%typedarray%
 description: >
   TypedArray has a 'name' property whose value is "TypedArray".
 info: |
@@ -15,6 +15,7 @@ info: |
   Function object, if it exists, has the attributes { [[Writable]]: false,
   [[Enumerable]]: false, [[Configurable]]: true }.
 includes: [propertyHelper.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 assert.sameValue(TypedArray.name, 'TypedArray');

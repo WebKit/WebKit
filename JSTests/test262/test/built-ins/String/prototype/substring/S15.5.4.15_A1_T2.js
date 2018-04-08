@@ -15,8 +15,12 @@ __instance.substring = String.prototype.substring;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__instance.substring(function(){return true;}(),x) !== "alse") {
-  $ERROR('#1: var x; __instance = new Boolean; __instance.substring = String.prototype.substring;  __instance.substring(function(){return true;}(),x) === "alse". Actual: '+__instance.substring(function(){return true;}(),x) );
+if (__instance.substring(function() {
+    return true;
+  }(), x) !== "alse") {
+  $ERROR('#1: var x; __instance = new Boolean; __instance.substring = String.prototype.substring;  __instance.substring(function(){return true;}(),x) === "alse". Actual: ' + __instance.substring(function() {
+    return true;
+  }(), x));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

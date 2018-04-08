@@ -9,16 +9,16 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var func = function (a, b) {
-            arguments.value = "arguments";
+var func = function(a, b) {
+  arguments.value = "arguments";
 
-            Object.defineProperties(obj, {
-                property: arguments
-            });
+  Object.defineProperties(obj, {
+    property: arguments
+  });
 
-            return obj.property === "arguments";
-        };
+  return obj.property === "arguments";
+};
 
 assert(func(), 'func() !== true');

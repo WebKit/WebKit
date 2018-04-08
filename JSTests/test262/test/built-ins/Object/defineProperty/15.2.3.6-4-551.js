@@ -9,28 +9,28 @@ description: >
     deletable
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var getFunc = function () {
-            return 1001;
-        };
+var getFunc = function() {
+  return 1001;
+};
 
-        var verifySetFunc = "data";
-        var setFunc = function (value) {
-            verifySetFunc = value;
-        };
+var verifySetFunc = "data";
+var setFunc = function(value) {
+  verifySetFunc = value;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: getFunc,
-            set: setFunc,
-            enumerable: false,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop", {
+  get: getFunc,
+  set: setFunc,
+  enumerable: false,
+  configurable: true
+});
 
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
-        delete obj.prop;
+delete obj.prop;
 
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');
 assert.sameValue(desc.configurable, true, 'desc.configurable');

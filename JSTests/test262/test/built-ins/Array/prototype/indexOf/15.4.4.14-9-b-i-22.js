@@ -9,9 +9,11 @@ description: >
     accessor property without a get function on an Array-like object
 ---*/
 
-            Object.defineProperty(Object.prototype, "0", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Object.prototype, "0", {
+  set: function() {},
+  configurable: true
+});
 
-assert.sameValue(Array.prototype.indexOf.call({ length: 1 }, undefined), 0, 'Array.prototype.indexOf.call({ length: 1 }, undefined)');
+assert.sameValue(Array.prototype.indexOf.call({
+  length: 1
+}, undefined), 0, 'Array.prototype.indexOf.call({ length: 1 }, undefined)');

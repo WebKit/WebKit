@@ -13,33 +13,33 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-(function (a, b, c) {
-    function getFunc() {
-        return 0;
-    }
+(function(a, b, c) {
+  function getFunc() {
+    return 0;
+  }
+  Object.defineProperty(arguments, "0", {
+    get: getFunc,
+    enumerable: true,
+    configurable: false
+  });
+  try {
     Object.defineProperty(arguments, "0", {
-        get: getFunc,
-        enumerable: true,
-        configurable: false
+      configurable: true
     });
-    try {
-        Object.defineProperty(arguments, "0", {
-            configurable: true
-        });
-        $ERROR("Expected an exception.");
-    } catch (e) {
-        if (a !== 0) {
-            $ERROR('Expected a === 0, actually ' + a);
-        }
-        verifyEqualTo(arguments, "0", getFunc());
-
-        verifyEnumerable(arguments, "0");
-
-        verifyNotConfigurable(arguments, "0");
-
-        if (!(e instanceof TypeError)) {
-            $ERROR("Expected TypeError, got " + e);
-        }
-
+    $ERROR("Expected an exception.");
+  } catch (e) {
+    if (a !== 0) {
+      $ERROR('Expected a === 0, actually ' + a);
     }
+    verifyEqualTo(arguments, "0", getFunc());
+
+    verifyEnumerable(arguments, "0");
+
+    verifyNotConfigurable(arguments, "0");
+
+    if (!(e instanceof TypeError)) {
+      $ERROR("Expected TypeError, got " + e);
+    }
+
+  }
 }(0, 1, 2));

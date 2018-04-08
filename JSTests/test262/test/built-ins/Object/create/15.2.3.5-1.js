@@ -8,5 +8,5 @@ description: Object.create throws TypeError if type of first param is not Object
 
 
 assert.throws(TypeError, function() {
-      Object.create(0);
+  Object.create(0);
 });

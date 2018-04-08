@@ -9,21 +9,21 @@ description: >
     own toString method
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val < 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val < 10;
+}
 
-        var obj = {
-            0: 11,
-            1: 9,
+var obj = {
+  0: 11,
+  1: 9,
 
-            length: {
-                toString: function () {
-                    return '2';
-                }
-            }
-        };
+  length: {
+    toString: function() {
+      return '2';
+    }
+  }
+};
 
-        var newArr = Array.prototype.map.call(obj, callbackfn);
+var newArr = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');

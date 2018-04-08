@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.setFullYear)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setFullYear");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setFullYear");
 
 assert.sameValue(desc.value, Date.prototype.setFullYear, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

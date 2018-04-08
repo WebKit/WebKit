@@ -19,9 +19,9 @@ assert.sameValue(Object.is('', true), false, "`Object.is('', true)` returns `fal
 assert.sameValue(Object.is('', 0), false, "`Object.is('', 0)` returns `false`");
 assert.sameValue(Object.is('', {}), false, "`Object.is('', {})` returns `false`");
 assert.sameValue(
-    Object.is('', undefined),
-    false,
-    "`Object.is('', undefined)` returns `false`"
+  Object.is('', undefined),
+  false,
+  "`Object.is('', undefined)` returns `false`"
 );
 assert.sameValue(Object.is('', null), false, "`Object.is('', null)` returns `false`");
 assert.sameValue(Object.is('', NaN), false, "`Object.is('', NaN)` returns `false`");

@@ -11,13 +11,13 @@ description: >
     end is '5'
 ---*/
 
-var __instance = new Array(1,2,3,4,5); 
+var __instance = new Array(1, 2, 3, 4, 5);
 __instance.substring = String.prototype.substring;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.substring('4', '5') !== "3") {
-  $ERROR('#1: __instance = new Array(1,2,3,4,5); __instance.substring = String.prototype.substring; __instance.substring(\'4\', \'5\') === "3". Actual: '+__instance.substring('4', '5') );
+  $ERROR('#1: __instance = new Array(1,2,3,4,5); __instance.substring = String.prototype.substring; __instance.substring(\'4\', \'5\') === "3". Actual: ' + __instance.substring('4', '5'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -9,13 +9,17 @@ es5id: 15.3.4.3_A7_T3
 description: argArray is (empty object, new Array("nine","inch","nails"))
 ---*/
 
-var i=0;
+var i = 0;
 
-var p={toString:function(){return "a"+(++i);}};
+var p = {
+  toString: function() {
+    return "a" + (++i);
+  }
+};
 
-var obj={};
+var obj = {};
 
-Function(p,"a2,a3","this.shifted=a1;").apply(obj, new Array("nine","inch","nails"));
+Function(p, "a2,a3", "this.shifted=a1;").apply(obj, new Array("nine", "inch", "nails"));
 
 //CHECK#1
 if (obj["shifted"] !== "nine") {

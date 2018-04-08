@@ -9,7 +9,7 @@ description: >
     verify truncation occurs in the proper direction
 ---*/
 
-        var targetObj = {};
+var targetObj = {};
 
 assert.sameValue([0, targetObj, 2].indexOf(targetObj, 2.5), -1, '[0, targetObj, 2].indexOf(targetObj, 2.5)');
 assert.sameValue([0, 1, targetObj].indexOf(targetObj, 2.5), 2, '[0, 1, targetObj].indexOf(targetObj, 2.5)');

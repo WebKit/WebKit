@@ -10,9 +10,9 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-async function l0() { }
-async function l1(a) { }
-async function l2(a, b) { }
+async function l0() {}
+async function l1(a) {}
+async function l2(a, b) {}
 assert.sameValue(l0.length, 0);
 assert.sameValue(l1.length, 1);
 assert.sameValue(l2.length, 2)

@@ -7,10 +7,10 @@ es5id: 15.4.4.19-5-14
 description: Array.prototype.map - the Math object can be used as thisArg
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return this === Math;
-        }
+function callbackfn(val, idx, obj) {
+  return this === Math;
+}
 
-        var testResult = [11].map(callbackfn, Math);
+var testResult = [11].map(callbackfn, Math);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

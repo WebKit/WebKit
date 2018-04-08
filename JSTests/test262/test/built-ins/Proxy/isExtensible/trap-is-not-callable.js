@@ -22,9 +22,9 @@ info: |
 
 var target = {};
 var p = new Proxy(target, {
-    isExtensible: {}
+  isExtensible: {}
 });
 
 assert.throws(TypeError, function() {
-    Object.isExtensible(p);
+  Object.isExtensible(p);
 });

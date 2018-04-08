@@ -14,18 +14,18 @@ description: >
 //CHECK#1
 var x = [];
 x.length = 1;
-if (x.length !== 1) {  
-  $ERROR('#1: x = []; x.length = 1; x.length === 1. Actual: ' + (x.length));    
+if (x.length !== 1) {
+  $ERROR('#1: x = []; x.length = 1; x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#2
 x[5] = 1;
 x.length = 10;
-if (x.length !== 10) {      
+if (x.length !== 10) {
   $ERROR('#2: x = []; x.length = 1; x[5] = 1; x.length = 10; x.length === 10. Actual: ' + (x.length));
 }
 
 //CHECK#3
-if (x[5] !== 1) {      
+if (x[5] !== 1) {
   $ERROR('#3: x = []; x.length = 1; x[5] = 1; x.length = 10; x[5] = 1');
 }

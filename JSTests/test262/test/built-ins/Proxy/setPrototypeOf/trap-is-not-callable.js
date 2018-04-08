@@ -23,11 +23,11 @@ features: [Reflect.setPrototypeOf]
 
 var target = {};
 var p = new Proxy(target, {
-    setPrototypeOf: {}
+  setPrototypeOf: {}
 });
 
 assert.throws(TypeError, function() {
-    Reflect.setPrototypeOf(p, {
-        value: 1
-    });
+  Reflect.setPrototypeOf(p, {
+    value: 1
+  });
 });

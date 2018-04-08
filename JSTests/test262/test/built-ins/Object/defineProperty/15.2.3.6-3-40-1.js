@@ -9,18 +9,18 @@ description: >
     prototype object (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-            RegExp.prototype.enumerable = true;
-            var regObj = new RegExp();
+RegExp.prototype.enumerable = true;
+var regObj = new RegExp();
 
-            Object.defineProperty(obj, "property", regObj);
+Object.defineProperty(obj, "property", regObj);
 
-            for (var prop in obj) {
-                if (prop === "property") {
-                    accessed = true;
-                }
-            }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

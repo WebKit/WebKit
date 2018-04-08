@@ -17,15 +17,15 @@ info: |
 var t = {};
 var trapped;
 var p = new Proxy(t, {
-    getOwnPropertyDescriptor: function(target, prop) {
-        trapped = true;
-        return;
-    }
+  getOwnPropertyDescriptor: function(target, prop) {
+    trapped = true;
+    return;
+  }
 });
 
 assert.sameValue(
-    Object.getOwnPropertyDescriptor(p, "attr"),
-    undefined
+  Object.getOwnPropertyDescriptor(p, "attr"),
+  undefined
 );
 
 assert(trapped);

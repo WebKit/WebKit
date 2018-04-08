@@ -10,7 +10,7 @@ description: Checking String.prototype.split.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.split.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.split.hasOwnProperty("length") return true. Actual: '+String.prototype.split.hasOwnProperty("length"));
+  $ERROR('#1: String.prototype.split.hasOwnProperty("length") return true. Actual: ' + String.prototype.split.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.split.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.split.length !== 2) {
-  $ERROR('#2: String.prototype.split.length === 2. Actual: '+String.prototype.split.length );
+  $ERROR('#2: String.prototype.split.length === 2. Actual: ' + String.prototype.split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

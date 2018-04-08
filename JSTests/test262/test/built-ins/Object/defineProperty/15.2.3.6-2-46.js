@@ -8,21 +8,21 @@ description: >
     toString and valueOf method
 ---*/
 
-        var obj = {};
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var obj = {};
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var ownProp = {
-            toString: function () {
-                toStringAccessed = true;
-                return "abc";
-            },
-            valueOf: function () {
-                valueOfAccessed = true;
-                return "prop";
-            }
-        };
-        Object.defineProperty(obj, ownProp, {});
+var ownProp = {
+  toString: function() {
+    toStringAccessed = true;
+    return "abc";
+  },
+  valueOf: function() {
+    valueOfAccessed = true;
+    return "prop";
+  }
+};
+Object.defineProperty(obj, ownProp, {});
 
 assert(obj.hasOwnProperty("abc"), 'obj.hasOwnProperty("abc") !== true');
 assert.sameValue(valueOfAccessed, false, 'valueOfAccessed');

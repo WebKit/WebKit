@@ -10,29 +10,29 @@ description: >
     returns a string
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val < 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val < 10;
+}
 
-        var firstStepOccured = false;
-        var secondStepOccured = false;
-        var obj = {
-            0: 11,
-            1: 9,
+var firstStepOccured = false;
+var secondStepOccured = false;
+var obj = {
+  0: 11,
+  1: 9,
 
-            length: {
-                valueOf: function () {
-                    firstStepOccured = true;
-                    return {};
-                },
-                toString: function () {
-                    secondStepOccured = true;
-                    return '2';
-                }
-            }
-        };
+  length: {
+    valueOf: function() {
+      firstStepOccured = true;
+      return {};
+    },
+    toString: function() {
+      secondStepOccured = true;
+      return '2';
+    }
+  }
+};
 
-        var newArr = Array.prototype.map.call(obj, callbackfn);
+var newArr = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');
 assert(firstStepOccured, 'firstStepOccured !== true');

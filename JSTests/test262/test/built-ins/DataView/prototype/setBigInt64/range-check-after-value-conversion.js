@@ -10,7 +10,11 @@ features: [DataView, ArrayBuffer, BigInt]
 
 var dataView = new DataView(new ArrayBuffer(8), 0);
 
-var poisoned = { valueOf() { throw new Test262Error(); } };
+var poisoned = {
+  valueOf() {
+    throw new Test262Error();
+  }
+};
 
 assert.throws(Test262Error, function() {
   dataView.setBigInt64(100, poisoned);

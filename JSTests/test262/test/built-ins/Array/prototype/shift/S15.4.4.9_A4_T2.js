@@ -11,7 +11,7 @@ description: >
 ---*/
 
 Array.prototype[1] = -1;
-var x = [0,1];
+var x = [0, 1];
 x.length = 2;
 
 //CHECK#1
@@ -33,7 +33,10 @@ if (x[1] !== -1) {
 Object.prototype[1] = -1;
 Object.prototype.length = 2;
 Object.prototype.shift = Array.prototype.shift;
-x = {0:0,1:1};
+x = {
+  0: 0,
+  1: 1
+};
 
 //CHECK#4
 var shift = x.shift();

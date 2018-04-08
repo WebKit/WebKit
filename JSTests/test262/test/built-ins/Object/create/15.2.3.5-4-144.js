@@ -8,17 +8,17 @@ description: >
     'Properties' is a RegExp object (8.10.5 step 4.b)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                configurable: new RegExp()
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    configurable: new RegExp()
+  }
+});
 
-        var beforeDeleted = newObj.hasOwnProperty("prop");
+var beforeDeleted = newObj.hasOwnProperty("prop");
 
-        delete newObj.prop;
+delete newObj.prop;
 
-        var afterDeleted = newObj.hasOwnProperty("prop");
+var afterDeleted = newObj.hasOwnProperty("prop");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

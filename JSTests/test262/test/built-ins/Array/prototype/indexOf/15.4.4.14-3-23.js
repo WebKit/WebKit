@@ -10,29 +10,29 @@ description: >
     methods
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var proto = {
-            valueOf: function () {
-                valueOfAccessed = true;
-                return 2;
-            }
-        };
+var proto = {
+  valueOf: function() {
+    valueOfAccessed = true;
+    return 2;
+  }
+};
 
-        var Con = function () {};
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.toString = function () {
-            toStringAccessed = true;
-            return 2;
-        };
+var child = new Con();
+child.toString = function() {
+  toStringAccessed = true;
+  return 2;
+};
 
-        var obj = {
-            1: true,
-            length: child
-        };
+var obj = {
+  1: true,
+  length: child
+};
 
 assert.sameValue(Array.prototype.indexOf.call(obj, true), 1, 'Array.prototype.indexOf.call(obj, true)');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

@@ -35,16 +35,16 @@ var p1 = new Promise(function(resolve) {
 var p2;
 
 p2 = p1.then(function() {
-    throw value;
-  }, function() {});
+  throw value;
+}, function() {});
 
 p2.then(function() {
-    $DONE('The `onFulfilled` handler should not be invoked.');
-  }, function(x) {
-    if (x !== value) {
-      $DONE('The `onRejected` handler should be invoked with the promise result.');
-      return;
-    }
+  $DONE('The `onFulfilled` handler should not be invoked.');
+}, function(x) {
+  if (x !== value) {
+    $DONE('The `onRejected` handler should be invoked with the promise result.');
+    return;
+  }
 
-    $DONE();
-  });
+  $DONE();
+});

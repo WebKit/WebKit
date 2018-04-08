@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Math.LOG2E)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "LOG2E");
+var desc = Object.getOwnPropertyDescriptor(Math, "LOG2E");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

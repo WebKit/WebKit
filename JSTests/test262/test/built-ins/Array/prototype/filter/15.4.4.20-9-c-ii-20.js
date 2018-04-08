@@ -9,14 +9,19 @@ description: >
     (thisArg is correct)
 ---*/
 
-        var thisArg = { threshold: 10 };
+var thisArg = {
+  threshold: 10
+};
 
-        function callbackfn(val, idx, obj) {
-            return this === thisArg;
-        }
+function callbackfn(val, idx, obj) {
+  return this === thisArg;
+}
 
-        var obj = { 0: 11, length: 1 };
-        var newArr = Array.prototype.filter.call(obj, callbackfn, thisArg);
+var obj = {
+  0: 11,
+  length: 1
+};
+var newArr = Array.prototype.filter.call(obj, callbackfn, thisArg);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

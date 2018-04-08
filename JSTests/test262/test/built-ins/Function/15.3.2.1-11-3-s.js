@@ -11,5 +11,5 @@ flags: [noStrict]
 
 
 assert.throws(SyntaxError, function() {
-    Function('eval', '"use strict";');
+  Function('eval', '"use strict";');
 });

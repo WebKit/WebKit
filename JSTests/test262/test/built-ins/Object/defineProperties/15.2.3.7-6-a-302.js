@@ -11,17 +11,17 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var arg = (function () {
-    return arguments;
+var arg = (function() {
+  return arguments;
 }(1, 2, 3));
 
 Object.defineProperties(arg, {
-    "genericProperty": {
-        value: 1001,
-        writable: true,
-        enumerable: true,
-        configurable: true
-    }
+  "genericProperty": {
+    value: 1001,
+    writable: true,
+    enumerable: true,
+    configurable: true
+  }
 });
 
 verifyEqualTo(arg, "genericProperty", 1001);

@@ -10,21 +10,21 @@ description: >
     1 (15.4.5.1 step 3.l.i)
 ---*/
 
-        var arr = [0, 1, 2];
+var arr = [0, 1, 2];
 
-        Object.defineProperty(arr, "1", {
-            configurable: false
-        });
+Object.defineProperty(arr, "1", {
+  configurable: false
+});
 
-        Object.defineProperty(arr, "2", {
-            configurable: true
-        });
+Object.defineProperty(arr, "2", {
+  configurable: true
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: 1
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 1
+    }
+  });
 });
 assert.sameValue(arr.length, 2, 'arr.length');
 assert.sameValue(arr.hasOwnProperty("2"), false, 'arr.hasOwnProperty("2")');

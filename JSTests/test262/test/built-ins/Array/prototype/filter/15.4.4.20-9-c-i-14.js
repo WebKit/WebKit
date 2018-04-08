@@ -9,26 +9,26 @@ description: >
     property that overrides an inherited accessor property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return idx === 0 && val === 11;
-        }
+function callbackfn(val, idx, obj) {
+  return idx === 0 && val === 11;
+}
 
-        var arr = [];
+var arr = [];
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 5;
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 5;
+  },
+  configurable: true
+});
 
-            Object.defineProperty(arr, "0", {
-                get: function () {
-                    return 11;
-                },
-                configurable: true
-            });
-            var newArr = arr.filter(callbackfn);
+Object.defineProperty(arr, "0", {
+  get: function() {
+    return 11;
+  },
+  configurable: true
+});
+var newArr = arr.filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

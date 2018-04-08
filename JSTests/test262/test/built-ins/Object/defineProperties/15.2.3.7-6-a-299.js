@@ -16,39 +16,39 @@ includes: [propertyHelper.js]
 var arg;
 
 (function fun() {
-    arg = arguments;
+  arg = arguments;
 }());
 
 function get_func() {
-    return 0;
+  return 0;
 }
 
 Object.defineProperty(arg, "0", {
-    get: get_func,
-    set: undefined,
-    enumerable: false,
-    configurable: false
+  get: get_func,
+  set: undefined,
+  enumerable: false,
+  configurable: false
 });
 
 function set_func(value) {
-    arg.setVerifyHelpProp = value;
+  arg.setVerifyHelpProp = value;
 }
 try {
-    Object.defineProperties(arg, {
-        "0": {
-            set: set_func
-        }
-    });
-    $ERROR("Expected an exception.");
-} catch (e) {
-    verifyEqualTo(arg, "0", get_func());
-
-    verifyNotEnumerable(arg, "0");
-
-    verifyNotConfigurable(arg, "0");
-
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
+  Object.defineProperties(arg, {
+    "0": {
+      set: set_func
     }
+  });
+  $ERROR("Expected an exception.");
+} catch (e) {
+  verifyEqualTo(arg, "0", get_func());
+
+  verifyNotEnumerable(arg, "0");
+
+  verifyNotConfigurable(arg, "0");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

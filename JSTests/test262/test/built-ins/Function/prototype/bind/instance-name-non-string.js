@@ -16,42 +16,54 @@ features: [Symbol]
 
 var target;
 
-target = Object.defineProperty(function() {}, 'name', { value: undefined });
+target = Object.defineProperty(function() {}, 'name', {
+  value: undefined
+});
 
 assert.sameValue(target.bind().name, 'bound ');
 verifyNotEnumerable(target.bind(), 'name');
 verifyNotWritable(target.bind(), 'name');
 verifyConfigurable(target.bind(), 'name');
 
-target = Object.defineProperty(function() {}, 'name', { value: null });
+target = Object.defineProperty(function() {}, 'name', {
+  value: null
+});
 
 assert.sameValue(target.bind().name, 'bound ');
 verifyNotEnumerable(target.bind(), 'name');
 verifyNotWritable(target.bind(), 'name');
 verifyConfigurable(target.bind(), 'name');
 
-target = Object.defineProperty(function() {}, 'name', { value: true });
+target = Object.defineProperty(function() {}, 'name', {
+  value: true
+});
 
 assert.sameValue(target.bind().name, 'bound ');
 verifyNotEnumerable(target.bind(), 'name');
 verifyNotWritable(target.bind(), 'name');
 verifyConfigurable(target.bind(), 'name');
 
-target = Object.defineProperty(function() {}, 'name', { value: Symbol('s') });
+target = Object.defineProperty(function() {}, 'name', {
+  value: Symbol('s')
+});
 
 assert.sameValue(target.bind().name, 'bound ');
 verifyNotEnumerable(target.bind(), 'name');
 verifyNotWritable(target.bind(), 'name');
 verifyConfigurable(target.bind(), 'name');
 
-target = Object.defineProperty(function() {}, 'name', { value: 23 });
+target = Object.defineProperty(function() {}, 'name', {
+  value: 23
+});
 
 assert.sameValue(target.bind().name, 'bound ');
 verifyNotEnumerable(target.bind(), 'name');
 verifyNotWritable(target.bind(), 'name');
 verifyConfigurable(target.bind(), 'name');
 
-target = Object.defineProperty(function() {}, 'name', { value: {} });
+target = Object.defineProperty(function() {}, 'name', {
+  value: {}
+});
 
 assert.sameValue(target.bind().name, 'bound ');
 verifyNotEnumerable(target.bind(), 'name');

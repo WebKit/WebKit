@@ -8,22 +8,22 @@ description: >
     named property, 'P' is own accessor property  (15.4.5.1 step 4.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                return 11;
-            },
-            configurable: false
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    return 11;
+  },
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                "0": {
-                    get: function () {
-                        return 12;
-                    },
-                    configurable: true
-                }
-            });
+  Object.defineProperties(arr, {
+    "0": {
+      get: function() {
+        return 12;
+      },
+      configurable: true
+    }
+  });
 });
 assert.sameValue(arr[0], 11, 'arr[0]');

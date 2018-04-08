@@ -11,5 +11,5 @@ flags: [noStrict]
 // CHECK#1
 NaN = true;
 if (typeof(NaN) === "boolean") {
-	$ERROR('#1: NaN = true; typeof(NaN) !== "boolean". Actual: ' + (typeof(NaN)));
+  $ERROR('#1: NaN = true; typeof(NaN) !== "boolean". Actual: ' + (typeof(NaN)));
 }

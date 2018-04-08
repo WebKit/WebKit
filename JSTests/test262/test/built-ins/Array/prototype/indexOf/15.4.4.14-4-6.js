@@ -9,7 +9,13 @@ description: >
     Array, length overridden with obj with valueOf)
 ---*/
 
- var i = Array.prototype.indexOf.call({length: { valueOf: function () { return 0;}}}, 1);
+var i = Array.prototype.indexOf.call({
+  length: {
+    valueOf: function() {
+      return 0;
+    }
+  }
+}, 1);
 
 
 assert.sameValue(i, -1, 'i');

@@ -9,20 +9,21 @@ description: >
     property that overrides an inherited accessor property on an Array
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (prevVal === 0);
-            }
-        }
+var testResult = false;
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return "5";
-                },
-                configurable: true
-            });
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (prevVal === 0);
+  }
+}
 
-            [0, 1, 2].reduce(callbackfn);
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return "5";
+  },
+  configurable: true
+});
+
+[0, 1, 2].reduce(callbackfn);
 
 assert(testResult, 'testResult !== true');

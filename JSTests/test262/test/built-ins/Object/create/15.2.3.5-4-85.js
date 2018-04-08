@@ -8,18 +8,18 @@ description: >
     'Properties' is an Array object (8.10.5 step 3.b)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        var newObj = Object.create({}, {
-            prop: {
-                enumerable: []
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    enumerable: []
+  }
+});
 
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

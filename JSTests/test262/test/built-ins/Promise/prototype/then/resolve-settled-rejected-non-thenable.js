@@ -33,21 +33,25 @@ info: |
 flags: [async]
 ---*/
 
-var nonThenable = { then: null };
-var p1 = new Promise(function(_, reject) { reject(); });
+var nonThenable = {
+  then: null
+};
+var p1 = new Promise(function(_, reject) {
+  reject();
+});
 var p2;
 
 p2 = p1.then(function() {}, function() {
-    return nonThenable;
-  });
+  return nonThenable;
+});
 
 p2.then(function(value) {
-    if (value !== nonThenable) {
-      $DONE('The promise should be fulfilled with the provided value.');
-      return;
-    }
+  if (value !== nonThenable) {
+    $DONE('The promise should be fulfilled with the provided value.');
+    return;
+  }
 
-    $DONE();
-  }, function() {
-    $DONE('The promise should not be rejected.');
-  });
+  $DONE();
+}, function() {
+  $DONE('The promise should not be rejected.');
+});

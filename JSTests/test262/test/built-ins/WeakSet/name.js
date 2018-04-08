@@ -12,8 +12,8 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    WeakSet.name, 'WeakSet',
-    'The value of `WeakSet.name` is "WeakSet"'
+  WeakSet.name, 'WeakSet',
+  'The value of `WeakSet.name` is "WeakSet"'
 );
 
 verifyNotEnumerable(WeakSet, 'name');

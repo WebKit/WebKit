@@ -8,5 +8,5 @@ description: Function.prototype.bind throws TypeError if 'Target' is a number
 
 
 assert.throws(TypeError, function() {
-            Function.prototype.bind.call(5);
+  Function.prototype.bind.call(5);
 });

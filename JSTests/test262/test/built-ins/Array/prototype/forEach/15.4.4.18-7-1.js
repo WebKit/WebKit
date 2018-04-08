@@ -9,15 +9,16 @@ description: >
     array after the call
 ---*/
 
-  var callCnt = 0;
-  function callbackfn(val, idx, obj)
-  {
-    callCnt++;
-    arr[2] = 3;
-    arr[5] = 6;
-  }
+var callCnt = 0;
 
-  var arr = [1,2,,4,5];
-  arr.forEach(callbackfn);
+function callbackfn(val, idx, obj)
+{
+  callCnt++;
+  arr[2] = 3;
+  arr[5] = 6;
+}
+
+var arr = [1, 2, , 4, 5];
+arr.forEach(callbackfn);
 
 assert.sameValue(callCnt, 5, 'callCnt');

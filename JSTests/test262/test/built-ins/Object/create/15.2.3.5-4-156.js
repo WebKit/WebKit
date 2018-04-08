@@ -9,19 +9,19 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var proto = {
-            value: "inheritedDataProperty"
-        };
+var proto = {
+  value: "inheritedDataProperty"
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var descObj = new ConstructFun();
+var descObj = new ConstructFun();
 
-        descObj.value = "ownDataProperty";
+descObj.value = "ownDataProperty";
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
 assert.sameValue(newObj.prop, "ownDataProperty", 'newObj.prop');

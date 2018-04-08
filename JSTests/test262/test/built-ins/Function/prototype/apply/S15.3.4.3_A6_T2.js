@@ -11,10 +11,10 @@ description: argArray is (null,1)
 
 //CHECK#1
 try {
-  Function().apply(null,1);
+  Function().apply(null, 1);
   $ERROR('#1: if argArray is neither an array nor an arguments object (see 10.1.8), a TypeError exception is thrown');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-  	$ERROR('#1.1: if argArray is neither an array nor an arguments object (see 10.1.8), a TypeError exception is thrown');
+    $ERROR('#1.1: if argArray is neither an array nor an arguments object (see 10.1.8), a TypeError exception is thrown');
   }
 }

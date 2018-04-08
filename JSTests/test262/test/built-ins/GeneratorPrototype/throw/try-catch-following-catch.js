@@ -11,6 +11,7 @@ features: [generators]
 
 var obj = {};
 var unreachable = 0;
+
 function* g() {
   yield 1;
   try {
@@ -41,7 +42,9 @@ result = iter.next();
 assert.sameValue(result.value, 3, 'Fourth result `value`');
 assert.sameValue(result.done, false, 'Fourth result `done` flag');
 
-assert.throws(Test262Error, function() { iter.throw(new Test262Error()); });
+assert.throws(Test262Error, function() {
+  iter.throw(new Test262Error());
+});
 
 assert.sameValue(
   unreachable,

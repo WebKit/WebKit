@@ -8,8 +8,8 @@ es5id: 15.4.4.10_A2.1_T3
 description: start = Infinity
 ---*/
 
-var x = [0,1,2,3,4];
-var arr = x.slice(Number.POSITIVE_INFINITY,3);
+var x = [0, 1, 2, 3, 4];
+var arr = x.slice(Number.POSITIVE_INFINITY, 3);
 
 //CHECK#1
 arr.getClass = Object.prototype.toString;

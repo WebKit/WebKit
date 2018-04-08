@@ -11,18 +11,18 @@ description: >
 
 
 assert.throws(TypeError, function() {
-            Object.defineProperty(Array.prototype, "0", {
-                value: 11,
-                configurable: true
-            });
+  Object.defineProperty(Array.prototype, "0", {
+    value: 11,
+    configurable: true
+  });
 
-            var arrObj = [];
-            Object.defineProperty(arrObj, "0", {
-                get: function () { },
-                configurable: false
-            });
+  var arrObj = [];
+  Object.defineProperty(arrObj, "0", {
+    get: function() {},
+    configurable: false
+  });
 
-            Object.defineProperty(arrObj, "0", {
-                configurable: true
-            });
+  Object.defineProperty(arrObj, "0", {
+    configurable: true
+  });
 });

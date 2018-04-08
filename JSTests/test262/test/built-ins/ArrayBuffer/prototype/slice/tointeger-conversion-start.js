@@ -17,10 +17,12 @@ info: |
 
 var arrayBuffer = new ArrayBuffer(8);
 
-var start = 4.5, end = 8;
+var start = 4.5,
+  end = 8;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 4, "slice(4.5, 8)");
 
-var start = NaN, end = 8;
+var start = NaN,
+  end = 8;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 8, "slice(NaN, 8)");

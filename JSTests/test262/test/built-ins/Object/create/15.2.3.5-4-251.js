@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-            Math.get = function () {
-                return "VerifyMathObject";
-            };
+Math.get = function() {
+  return "VerifyMathObject";
+};
 
-            var newObj = Object.create({}, {
-                prop: Math 
-            });
+var newObj = Object.create({}, {
+  prop: Math
+});
 
 assert.sameValue(newObj.prop, "VerifyMathObject", 'newObj.prop');

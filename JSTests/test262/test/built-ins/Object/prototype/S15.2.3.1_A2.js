@@ -13,10 +13,10 @@ if (Object.propertyIsEnumerable('prototype')) {
 }
 
 // CHECK#2
-var cout=0;
+var cout = 0;
 
-for (var p in Object){
-  if (p==="prototype") cout++;
+for (var p in Object) {
+  if (p === "prototype") cout++;
 }
 
 if (cout !== 0) {

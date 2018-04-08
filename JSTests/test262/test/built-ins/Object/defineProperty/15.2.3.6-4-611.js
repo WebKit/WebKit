@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Function.prototype, "bind");
+var desc = Object.getOwnPropertyDescriptor(Function.prototype, "bind");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Function.prototype.bind;
+var temp = Function.prototype.bind;
 
-            Function.prototype.bind = "2010";
+Function.prototype.bind = "2010";
 
-            var isWritable = (Function.prototype.bind === "2010");
+var isWritable = (Function.prototype.bind === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Function.prototype) {
-                if (prop === "bind") {
-                    isEnumerable = true;
-                }
-            }
-        
-            delete Function.prototype.bind;
+for (var prop in Function.prototype) {
+  if (prop === "bind") {
+    isEnumerable = true;
+  }
+}
 
-            var isConfigurable = !Function.prototype.hasOwnProperty("bind");
+delete Function.prototype.bind;
+
+var isConfigurable = !Function.prototype.hasOwnProperty("bind");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

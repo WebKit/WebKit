@@ -8,24 +8,24 @@ description: >
     data property (8.10.5 step 8.a)
 ---*/
 
-        var data = "data";
-        var proto = {
-            set: function (value) {
-                data = value;
-            }
-        };
+var data = "data";
+var proto = {
+  set: function(value) {
+    data = value;
+  }
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        var obj = {};
+var child = new Con();
+var obj = {};
 
-        Object.defineProperties(obj, {
-            prop: child
-        });
+Object.defineProperties(obj, {
+  prop: child
+});
 
-        obj.prop = "overrideData";
+obj.prop = "overrideData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "overrideData", 'data');

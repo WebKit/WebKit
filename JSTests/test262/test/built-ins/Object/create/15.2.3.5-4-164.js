@@ -9,20 +9,20 @@ description: >
     step 5.a)
 ---*/
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "value", {
-            set: function () { }
-        });
+Object.defineProperty(proto, "value", {
+  set: function() {}
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var descObj = new ConstructFun();
+var descObj = new ConstructFun();
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
-assert.sameValue(typeof (newObj.prop), "undefined", 'typeof (newObj.prop)');
+assert.sameValue(typeof(newObj.prop), "undefined", 'typeof (newObj.prop)');

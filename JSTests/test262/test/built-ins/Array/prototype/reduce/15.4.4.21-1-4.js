@@ -7,13 +7,13 @@ es5id: 15.4.4.21-1-4
 description: Array.prototype.reduce applied to Boolean object
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return obj instanceof Boolean;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return obj instanceof Boolean;
+}
 
-        var obj = new Boolean(true);
-        obj.length = 2;
-        obj[0] = 11;
-        obj[1] = 12;
+var obj = new Boolean(true);
+obj.length = 2;
+obj[0] = 11;
+obj[1] = 12;
 
 assert(Array.prototype.reduce.call(obj, callbackfn, 1), 'Array.prototype.reduce.call(obj, callbackfn, 1) !== true');

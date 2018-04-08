@@ -9,12 +9,14 @@ es5id: 15.5.4.3_A2_T2
 description: Checking if creating the object String.prototype.valueOf fails
 ---*/
 
-var __obj={valueOf : String.prototype.valueOf};
+var __obj = {
+  valueOf: String.prototype.valueOf
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __obj["valueOf"] !== "function") {
-  $ERROR('#1: var __obj={valueOf : String.prototype.valueOf}; typeof __obj["valueOf"] === "function". Actual: typeof __obj["valueOf"] ==='+typeof __obj["valueOf"] ); 
+  $ERROR('#1: var __obj={valueOf : String.prototype.valueOf}; typeof __obj["valueOf"] === "function". Actual: typeof __obj["valueOf"] ===' + typeof __obj["valueOf"]);
 }
 
 //
@@ -27,7 +29,7 @@ try {
   $ERROR('#2: "var __obj={valueOf : String.prototype.valueOf}; var x = (__obj == 1)" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#2.1: Exception is instance of TypeError. Actual: exception is '+e);
+    $ERROR('#2.1: Exception is instance of TypeError. Actual: exception is ' + e);
   }
 }
 //

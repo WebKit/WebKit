@@ -7,5 +7,5 @@ description: Object.defineProperties throws TypeError if 'O' is a boolean
 ---*/
 
 assert.throws(TypeError, function() {
-            Object.defineProperties(true, {});
+  Object.defineProperties(true, {});
 });

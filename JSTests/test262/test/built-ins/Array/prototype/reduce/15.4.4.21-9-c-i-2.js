@@ -9,15 +9,16 @@ description: >
     property on an Array
 ---*/
 
-        var testResult = false;
-        var initialValue = 0;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (curVal === 1);
-            }
-        }
+var testResult = false;
+var initialValue = 0;
 
-        var arr = [0, 1];
-        arr.reduce(callbackfn, initialValue);
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (curVal === 1);
+  }
+}
+
+var arr = [0, 1];
+arr.reduce(callbackfn, initialValue);
 
 assert(testResult, 'testResult !== true');

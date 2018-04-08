@@ -21,4 +21,6 @@ if (n_obj() !== 1) {
   $ERROR('When the Object constructor is called and if the value is an Object simply value returns');
 }
 
-function func(){return 1;};
+function func() {
+  return 1;
+};

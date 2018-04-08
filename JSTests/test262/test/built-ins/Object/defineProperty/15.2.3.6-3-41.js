@@ -9,17 +9,17 @@ description: >
     (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-            JSON.enumerable = true;
+JSON.enumerable = true;
 
-            Object.defineProperty(obj, "property", JSON);
+Object.defineProperty(obj, "property", JSON);
 
-            for (var prop in obj) {
-                if (prop === "property") {
-                    accessed = true;
-                }
-            }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

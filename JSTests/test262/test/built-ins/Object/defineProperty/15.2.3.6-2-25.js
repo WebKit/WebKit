@@ -8,7 +8,7 @@ description: >
     a string (value is 1e-5)
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, 1e-5, {});
+var obj = {};
+Object.defineProperty(obj, 1e-5, {});
 
 assert(obj.hasOwnProperty("0.00001"), 'obj.hasOwnProperty("0.00001") !== true');

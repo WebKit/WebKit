@@ -9,20 +9,23 @@ description: >
     property on an Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return (idx === 0) && (val === 11);
-        }
+function callbackfn(val, idx, obj) {
+  return (idx === 0) && (val === 11);
+}
 
-        var obj = { 10: 10, length: 20 };
+var obj = {
+  10: 10,
+  length: 20
+};
 
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                return 11;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "0", {
+  get: function() {
+    return 11;
+  },
+  configurable: true
+});
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

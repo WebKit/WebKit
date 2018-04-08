@@ -7,5 +7,5 @@ description: Object.defineProperties throws TypeError if 'O' is undefined
 ---*/
 
 assert.throws(TypeError, function() {
-            Object.defineProperties(undefined, {});
+  Object.defineProperties(undefined, {});
 });

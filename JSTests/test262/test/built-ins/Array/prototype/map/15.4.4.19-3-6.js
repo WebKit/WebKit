@@ -9,12 +9,17 @@ description: >
     number
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val > 10;
+}
 
-        var obj = { 0: 10, 1: 12, 2: 9, length: 2 };
+var obj = {
+  0: 10,
+  1: 12,
+  2: 9,
+  length: 2
+};
 
-        var newArr = Array.prototype.map.call(obj, callbackfn);
+var newArr = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 2, 'newArr.length');

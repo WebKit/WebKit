@@ -19,19 +19,19 @@ obj.push = Array.prototype.push;
 if (obj.length !== undefined) {
   $ERROR('#0: var obj = {}; obj.length === undefined. Actual: ' + (obj.length));
 } else {
-    //CHECK#1
-    var push = obj.push(-1);
-if (push !== 1) {
-      $ERROR('#1: var obj = {}; obj.push = Array.prototype.push; obj.push(-1) === 1. Actual: ' + (push));
-    }
-    //CHECK#2
-    if (obj.length !== 1) {
-      $ERROR('#2: var obj = {}; obj.push = Array.prototype.push; obj.push(-1); obj.length === 1. Actual: ' + (obj.length));
-    }
-    //CHECK#3
-    if (obj["0"] !== -1) {
-      $ERROR('#3: var obj = {}; obj.push = Array.prototype.push; obj.push(-1); obj["0"] === -1. Actual: ' + (obj["0"]));
-    }
+  //CHECK#1
+  var push = obj.push(-1);
+  if (push !== 1) {
+    $ERROR('#1: var obj = {}; obj.push = Array.prototype.push; obj.push(-1) === 1. Actual: ' + (push));
+  }
+  //CHECK#2
+  if (obj.length !== 1) {
+    $ERROR('#2: var obj = {}; obj.push = Array.prototype.push; obj.push(-1); obj.length === 1. Actual: ' + (obj.length));
+  }
+  //CHECK#3
+  if (obj["0"] !== -1) {
+    $ERROR('#3: var obj = {}; obj.push = Array.prototype.push; obj.push(-1); obj["0"] === -1. Actual: ' + (obj["0"]));
+  }
 }
 
 //CHECK#4

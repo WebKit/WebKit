@@ -17,16 +17,16 @@ function callbackfn2(val, idx, obj) {
   return val > 11;
 }
 
-var proto = { };
+var proto = {};
 
 Object.defineProperty(proto, "length", {
-  get: function () {
-      return 2;
+  get: function() {
+    return 2;
   },
   configurable: true
 });
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var child = new Con();

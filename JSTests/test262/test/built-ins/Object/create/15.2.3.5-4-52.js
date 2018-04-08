@@ -8,23 +8,23 @@ description: >
     'Properties' is own accessor property (8.10.5 step 3.a)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        var descObj = {};
-        Object.defineProperty(descObj, "enumerable", {
-            get: function () {
-                return true;
-            }
-        });
+var descObj = {};
+Object.defineProperty(descObj, "enumerable", {
+  get: function() {
+    return true;
+  }
+});
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

@@ -9,7 +9,7 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-function foo() { }
+function foo() {}
 var obj = foo.bind({});
 var flength = obj.length;
 

@@ -11,19 +11,21 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(Error.hasOwnProperty('prototype'))) {
-  $ERROR('#1: Error.hasOwnProperty(\'prototype\') return true. Actual: '+Error.hasOwnProperty('prototype'));
+  $ERROR('#1: Error.hasOwnProperty(\'prototype\') return true. Actual: ' + Error.hasOwnProperty('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 var __obj = Error.prototype;
 
-verifyNotWritable(Error, "prototype", null, function(){return "shifted";});
+verifyNotWritable(Error, "prototype", null, function() {
+  return "shifted";
+});
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (Error.prototype !== __obj) {
-  $ERROR('#2: __obj = Error.prototype; Error.prototype = function(){return "shifted";}; Error.prototype === __obj. Actual: '+Error.prototype );
+  $ERROR('#2: __obj = Error.prototype; Error.prototype = function(){return "shifted";}; Error.prototype === __obj. Actual: ' + Error.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

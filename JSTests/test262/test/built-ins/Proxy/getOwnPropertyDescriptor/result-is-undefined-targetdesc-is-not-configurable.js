@@ -17,17 +17,17 @@ info: |
 
 var target = {};
 Object.defineProperty(target, "foo", {
-    configurable: false,
-    enumerable: false,
-    value: 1
+  configurable: false,
+  enumerable: false,
+  value: 1
 });
 
 var p = new Proxy(target, {
-    getOwnPropertyDescriptor: function(t, prop) {
-        return;
-    }
+  getOwnPropertyDescriptor: function(t, prop) {
+    return;
+  }
 });
 
 assert.throws(TypeError, function() {
-    Object.getOwnPropertyDescriptor(p, "foo");
+  Object.getOwnPropertyDescriptor(p, "foo");
 });

@@ -13,41 +13,41 @@ includes: [propertyHelper.js]
 var obj = [];
 
 obj.verifySetFunc = "data";
-var getFunc = function () {
-    return obj.verifySetFunc;
+var getFunc = function() {
+  return obj.verifySetFunc;
 };
 
-var setFunc = function (value) {
-    obj.verifySetFunc = value;
+var setFunc = function(value) {
+  obj.verifySetFunc = value;
 };
 
 Object.defineProperty(obj, "prop", {
-    get: getFunc,
-    set: setFunc,
-    enumerable: true,
-    configurable: true
+  get: getFunc,
+  set: setFunc,
+  enumerable: true,
+  configurable: true
 });
 var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
 
 Object.defineProperty(obj, "prop", {
-    value: 1001
+  value: 1001
 });
-var desc2 = Object.getOwnPropertyDescriptor(obj, "prop"); 
+var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");
 
-if (!desc1.hasOwnProperty("get") ) {
-    $ERROR('Expected desc1.hasOwnProperty("get") to be true, actually ' + desc1.hasOwnProperty("get"));
+if (!desc1.hasOwnProperty("get")) {
+  $ERROR('Expected desc1.hasOwnProperty("get") to be true, actually ' + desc1.hasOwnProperty("get"));
 }
 
-if (!desc2.hasOwnProperty("value") ) {
-    $ERROR('Expected desc2.hasOwnProperty("value") to be true, actually ' + desc2.hasOwnProperty("value"));
+if (!desc2.hasOwnProperty("value")) {
+  $ERROR('Expected desc2.hasOwnProperty("value") to be true, actually ' + desc2.hasOwnProperty("value"));
 }
 
-if (typeof desc2.get !== "undefined" ) {
-    $ERROR('Expected typeof desc2.get === "undefined" , actually ' + typeof desc2.get);
+if (typeof desc2.get !== "undefined") {
+  $ERROR('Expected typeof desc2.get === "undefined" , actually ' + typeof desc2.get);
 }
 
-if (typeof desc2.set !== "undefined" ) {
-    $ERROR('Expected typeof desc2.set === "undefined" , actually ' + typeof desc2.set);
+if (typeof desc2.set !== "undefined") {
+  $ERROR('Expected typeof desc2.set === "undefined" , actually ' + typeof desc2.set);
 }
 
 
@@ -58,5 +58,3 @@ verifyNotWritable(obj, "prop");
 verifyEnumerable(obj, "prop");
 
 verifyConfigurable(obj, "prop");
-
-

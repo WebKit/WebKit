@@ -11,19 +11,18 @@ includes: [propertyHelper.js]
 ---*/
 
 try {
-    Object.defineProperty(Math, "foo", {
-        value: 12,
-        configurable: true
-    });
-    
-    verifyEqualTo(Math, "foo", 12);
+  Object.defineProperty(Math, "foo", {
+    value: 12,
+    configurable: true
+  });
 
-    verifyNotWritable(Math, "foo");
+  verifyEqualTo(Math, "foo", 12);
 
-    verifyNotEnumerable(Math, "foo");
+  verifyNotWritable(Math, "foo");
 
-    verifyConfigurable(Math, "foo");
+  verifyNotEnumerable(Math, "foo");
+
+  verifyConfigurable(Math, "foo");
 } finally {
-    delete Math.foo;
+  delete Math.foo;
 }
-

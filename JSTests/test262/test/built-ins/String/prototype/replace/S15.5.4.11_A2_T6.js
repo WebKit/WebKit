@@ -14,8 +14,8 @@ var __re = /sh/;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__str.replace(__re, 'sch')!=='She sells seaschells by the seashore.') {
-  $ERROR('#1: var __str = \'She sells seashells by the seashore.\'; var __re = /sh/; __str.replace(__re, \'sch\')===\'She sells seaschells by the seashore.\'. Actual: '+__str.replace(__re, 'sch'));
+if (__str.replace(__re, 'sch') !== 'She sells seaschells by the seashore.') {
+  $ERROR('#1: var __str = \'She sells seashells by the seashore.\'; var __re = /sh/; __str.replace(__re, \'sch\')===\'She sells seaschells by the seashore.\'. Actual: ' + __str.replace(__re, 'sch'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

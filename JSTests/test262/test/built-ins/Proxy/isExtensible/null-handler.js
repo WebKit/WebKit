@@ -11,5 +11,5 @@ var p = Proxy.revocable({}, {});
 p.revoke();
 
 assert.throws(TypeError, function() {
-    Object.isExtensible(p.proxy);
+  Object.isExtensible(p.proxy);
 });

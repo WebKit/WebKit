@@ -9,22 +9,24 @@ description: >
     method that returns a primitive value
 ---*/
 
-        var obj = { "abc": 1 };
-        var valueOfAccessed = false;
-        var toStringAccessed = false;
+var obj = {
+  "abc": 1
+};
+var valueOfAccessed = false;
+var toStringAccessed = false;
 
-        var ownProp = {
-            toString: function () {
-                toStringAccessed = true;
-                return {};
-            },
-            valueOf: function () {
-                valueOfAccessed = true;
-                return "abc";
-            }
-        };
+var ownProp = {
+  toString: function() {
+    toStringAccessed = true;
+    return {};
+  },
+  valueOf: function() {
+    valueOfAccessed = true;
+    return "abc";
+  }
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, ownProp);
+var desc = Object.getOwnPropertyDescriptor(obj, ownProp);
 
 assert.sameValue(desc.value, 1, 'desc.value');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

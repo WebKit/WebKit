@@ -8,13 +8,13 @@ description: >
     undefined (8.10.5 step 7.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                get: undefined
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    get: undefined
+  }
+});
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(typeof obj.property, "undefined", 'typeof obj.property');

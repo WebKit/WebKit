@@ -9,5 +9,5 @@ description: Array.prototype.forEach applied to undefined
 
 
 assert.throws(TypeError, function() {
-            Array.prototype.forEach.call(undefined); // TypeError is thrown if value is undefined
+  Array.prototype.forEach.call(undefined); // TypeError is thrown if value is undefined
 });

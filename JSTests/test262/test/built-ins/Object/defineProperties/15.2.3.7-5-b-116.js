@@ -9,21 +9,21 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {
-            value: "inheritedDataProperty"
-        };
+var proto = {
+  value: "inheritedDataProperty"
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
+var descObj = new Con();
 
-        descObj.value = "ownDataProperty";
+descObj.value = "ownDataProperty";
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "ownDataProperty", 'obj.property');

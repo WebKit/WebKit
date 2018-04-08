@@ -9,10 +9,10 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-            Math.value = "MathValue";
+Math.value = "MathValue";
 
-            var newObj = Object.create({}, {
-                prop: Math
-            });
+var newObj = Object.create({}, {
+  prop: Math
+});
 
 assert.sameValue(newObj.prop, "MathValue", 'newObj.prop');

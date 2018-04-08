@@ -8,15 +8,15 @@ description: >
     is defined in 'obj' (15.2.3.7 step 3)
 ---*/
 
-        var props = {};
+var props = {};
 
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                return {};
-            },
-            enumerable: true
-        });
+Object.defineProperty(props, "prop", {
+  get: function() {
+    return {};
+  },
+  enumerable: true
+});
 
-        var newObj = Object.create({}, props);
+var newObj = Object.create({}, props);
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

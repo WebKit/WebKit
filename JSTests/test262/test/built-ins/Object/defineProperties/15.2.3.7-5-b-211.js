@@ -9,16 +9,16 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var descObj = new RegExp();
+var descObj = new RegExp();
 
-        descObj.get = function () {
-            return "RegExp";
-        };
+descObj.get = function() {
+  return "RegExp";
+};
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "RegExp", 'obj.property');

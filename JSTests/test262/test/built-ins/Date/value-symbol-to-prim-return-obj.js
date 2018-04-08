@@ -39,7 +39,9 @@ assert.throws(TypeError, function() {
   new Date(y);
 }, 'ordinary object');
 
-retVal = (function() { return arguments; }());
+retVal = (function() {
+  return arguments;
+}());
 assert.throws(TypeError, function() {
   new Date(y);
 }, 'arguments exotic object');

@@ -8,17 +8,17 @@ description: >
     global variable
 ---*/
 
-        var obj = {};
-        var globalVariable = 20;
-        var getFunc = function () {
-            globalVariable = 2010;
-            return globalVariable;
-        };
+var obj = {};
+var globalVariable = 20;
+var getFunc = function() {
+  globalVariable = 2010;
+  return globalVariable;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: getFunc
-        });
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+Object.defineProperty(obj, "prop", {
+  get: getFunc
+});
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(desc.get, getFunc, 'desc.get');

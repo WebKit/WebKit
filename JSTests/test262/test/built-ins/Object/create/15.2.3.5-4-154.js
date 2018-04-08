@@ -8,10 +8,10 @@ description: >
     is own data property (8.10.5 step 5.a)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                value: "ownDataProperty"
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    value: "ownDataProperty"
+  }
+});
 
 assert.sameValue(newObj.prop, "ownDataProperty", 'newObj.prop');

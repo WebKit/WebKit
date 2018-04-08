@@ -9,28 +9,28 @@ description: >
     (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        var proto = {};
-        Object.defineProperty(proto, "enumerable", {
-            value: false
-        });
+var proto = {};
+Object.defineProperty(proto, "enumerable", {
+  value: false
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        Object.defineProperty(child, "enumerable", {
-            value: true
-        });
+var child = new ConstructFun();
+Object.defineProperty(child, "enumerable", {
+  value: true
+});
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

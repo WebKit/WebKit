@@ -9,27 +9,27 @@ description: >
     property (8.10.5 step 3.a)
 ---*/
 
-        var accessed = false;
-        var proto = {
-            enumerable: true
-        };
+var accessed = false;
+var proto = {
+  enumerable: true
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var descObj = new ConstructFun();
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var descObj = new ConstructFun();
 
-        Object.defineProperty(descObj, "enumerable", {
-            value: false
-        });
+Object.defineProperty(descObj, "enumerable", {
+  value: false
+});
 
-        var newObj = Object.create({}, {
-            prop: descObj 
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

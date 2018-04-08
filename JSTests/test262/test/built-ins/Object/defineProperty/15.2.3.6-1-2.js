@@ -7,5 +7,5 @@ description: Object.defineProperty applied to null throws a TypeError
 ---*/
 
 assert.throws(TypeError, function() {
-            Object.defineProperty(null, "foo", {});
+  Object.defineProperty(null, "foo", {});
 });

@@ -9,7 +9,11 @@ description: >
     non-integer
 ---*/
 
-        var obj = { 1: true, 2: false, length: -4294967294.5 }; //length will be 0 finally
+var obj = {
+  1: true,
+  2: false,
+  length: -4294967294.5
+}; //length will be 0 finally
 
 assert.sameValue(Array.prototype.indexOf.call(obj, true), -1, 'Array.prototype.indexOf.call(obj, true)');
 assert.sameValue(Array.prototype.indexOf.call(obj, false), -1, 'Array.prototype.indexOf.call(obj, false)');

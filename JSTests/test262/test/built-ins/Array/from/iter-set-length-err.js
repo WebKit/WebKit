@@ -25,7 +25,11 @@ Object.defineProperty(C.prototype, 'length', {
 });
 items[Symbol.iterator] = function() {
   return {
-    next: function() { return { done: true }; }
+    next: function() {
+      return {
+        done: true
+      };
+    }
   };
 };
 

@@ -10,8 +10,12 @@ description: Call charAt() function with null argument of function object
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToInteger(null) evaluates to 0 charAt() evaluates to charAt(0)
-if (function(){return "lego"}().charAt(null) !== "l") {
-  $ERROR('#1: function(){return "lego"}().charAt(null) === "l". Actual: function(){return "lego"}().charAt(null) ==='+function(){return "lego"}().charAt(null) ); 
+if (function() {
+    return "lego"
+  }().charAt(null) !== "l") {
+  $ERROR('#1: function(){return "lego"}().charAt(null) === "l". Actual: function(){return "lego"}().charAt(null) ===' + function() {
+    return "lego"
+  }().charAt(null));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

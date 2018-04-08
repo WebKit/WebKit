@@ -6,6 +6,7 @@
 esid: sec-atomics.exchange
 description: Testing descriptor property of Atomics.exchange
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "exchange");

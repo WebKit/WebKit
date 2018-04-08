@@ -16,14 +16,17 @@ info: |
 
 var arrayBuffer = new ArrayBuffer(8);
 
-var start = 10, end = 8;
+var start = 10,
+  end = 8;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 0, "slice(10, 8)");
 
-var start = 0x100000000, end = 7;
+var start = 0x100000000,
+  end = 7;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 0, "slice(0x100000000, 7)");
 
-var start = +Infinity, end = 6;
+var start = +Infinity,
+  end = 6;
 var result = arrayBuffer.slice(start, end);
 assert.sameValue(result.byteLength, 0, "slice(+Infinity, 6)");

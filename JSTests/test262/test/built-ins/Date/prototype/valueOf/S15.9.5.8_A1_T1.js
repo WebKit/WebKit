@@ -9,7 +9,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.valueOf;
-if(x === 1)
+if (x === 1)
   Date.prototype.valueOf = 2;
 else
   Date.prototype.valueOf = 1;

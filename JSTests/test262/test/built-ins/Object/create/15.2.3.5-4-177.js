@@ -9,10 +9,10 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-            this.value = "GlobalValue";
+this.value = "GlobalValue";
 
-            var newObj = Object.create({}, {
-                prop: this
-            });
+var newObj = Object.create({}, {
+  prop: this
+});
 
 assert.sameValue(newObj.prop, "GlobalValue", 'newObj.prop');

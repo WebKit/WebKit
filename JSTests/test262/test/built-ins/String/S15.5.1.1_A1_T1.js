@@ -9,12 +9,12 @@ es5id: 15.5.1.1_A1_T1
 description: Call String(function(){}())
 ---*/
 
-var __str = String(function(){}());
+var __str = String(function() {}());
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(function(){}()); typeof __str === "string". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#1: __str = String(function(){}()); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "undefined") {
-  $ERROR('#2: __str = String(function(){}()); __str === "undefined". Actual: __str ==='+__str ); 
+  $ERROR('#2: __str = String(function(){}()); __str === "undefined". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

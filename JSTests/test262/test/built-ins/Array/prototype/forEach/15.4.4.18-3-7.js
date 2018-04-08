@@ -9,14 +9,18 @@ description: >
     negative)
 ---*/
 
-        var testResult1 = false;
+var testResult1 = false;
 
-        function callbackfn(val, idx, obj) {
-            testResult1 = (val > 10);
-        }
+function callbackfn(val, idx, obj) {
+  testResult1 = (val > 10);
+}
 
-        var obj = { 1: 11, 2: 9, length: -4294967294 };
+var obj = {
+  1: 11,
+  2: 9,
+  length: -4294967294
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert.sameValue(testResult1, false, 'testResult1');

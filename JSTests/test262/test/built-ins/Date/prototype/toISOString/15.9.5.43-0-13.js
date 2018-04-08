@@ -9,8 +9,8 @@ description: >
     date is outside the valid range of time.
 ---*/
 
-  // As specified in ES5 15.9.1.14, time > 8.64e15 is not in the valid range.
-  var date = new Date(8.64e15 + 1);
+// As specified in ES5 15.9.1.14, time > 8.64e15 is not in the valid range.
+var date = new Date(8.64e15 + 1);
 assert.throws(RangeError, function() {
-                date.toISOString();
+  date.toISOString();
 });

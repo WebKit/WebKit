@@ -8,11 +8,13 @@ description: >
     extensions have been prevented
 ---*/
 
-        var obj = { prop: 12 };
-        var preCheck = Object.isExtensible(obj);
-        Object.preventExtensions(obj);
+var obj = {
+  prop: 12
+};
+var preCheck = Object.isExtensible(obj);
+Object.preventExtensions(obj);
 
-        delete obj.prop;
+delete obj.prop;
 
 assert(preCheck, 'preCheck !== true');
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');

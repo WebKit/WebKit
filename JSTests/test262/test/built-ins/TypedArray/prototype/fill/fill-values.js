@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.fill
-es6id: 22.2.3.8
 description: >
   Fills all the elements with `value` from a default start and index.
 info: |
@@ -26,6 +25,7 @@ info: |
     a. Let Pk be ! ToString(k).
     b. Perform ? Set(O, Pk, value, true).
 includes: [compareArray.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

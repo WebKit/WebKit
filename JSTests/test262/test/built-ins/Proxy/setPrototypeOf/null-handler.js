@@ -6,10 +6,10 @@ description: >
     Throws a TypeError exception if handler is null
 ---*/
 
-var p = Proxy.revocable({},{});
+var p = Proxy.revocable({}, {});
 
 p.revoke();
 
 assert.throws(TypeError, function() {
-    Object.setPrototypeOf(p.proxy, {});
+  Object.setPrototypeOf(p.proxy, {});
 });

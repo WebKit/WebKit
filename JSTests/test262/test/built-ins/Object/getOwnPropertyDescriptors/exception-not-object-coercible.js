@@ -7,10 +7,10 @@ esid: sec-object.getownpropertydescriptors
 author: Jordan Harband
 ---*/
 
-assert.throws(TypeError, function () {
-    Object.getOwnPropertyDescriptors(null);
+assert.throws(TypeError, function() {
+  Object.getOwnPropertyDescriptors(null);
 });
 
-assert.throws(TypeError, function () {
-    Object.getOwnPropertyDescriptors(undefined);
+assert.throws(TypeError, function() {
+  Object.getOwnPropertyDescriptors(undefined);
 });

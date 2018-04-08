@@ -23,7 +23,7 @@ if (x.join() !== "") {
 }
 
 //CHECK#3
-x = Array(undefined,1,null,3);
+x = Array(undefined, 1, null, 3);
 if (x.join() !== ",1,,3") {
   $ERROR('#3: x = Array(undefined,1,null,3); x.join() === ",1,,3". Actual: ' + (x.join()));
 }

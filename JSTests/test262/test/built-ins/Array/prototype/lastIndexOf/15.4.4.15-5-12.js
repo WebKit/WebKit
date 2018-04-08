@@ -9,7 +9,7 @@ description: >
     (value is Infinity)
 ---*/
 
-        var arr = [];
-        arr[Math.pow(2, 32) - 2] = null; // length is the max value of Uint type
+var arr = [];
+arr[Math.pow(2, 32) - 2] = null; // length is the max value of Uint type
 
 assert.sameValue(arr.lastIndexOf(null, Infinity), Math.pow(2, 32) - 2, 'arr.lastIndexOf(null, Infinity)');

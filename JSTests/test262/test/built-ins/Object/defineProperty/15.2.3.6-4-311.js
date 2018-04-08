@@ -12,30 +12,30 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-(function () {
-    function getFunc() {
-        return 0;
-    }
+(function() {
+  function getFunc() {
+    return 0;
+  }
+  Object.defineProperty(arguments, "0", {
+    get: getFunc,
+    enumerable: true,
+    configurable: false
+  });
+  try {
     Object.defineProperty(arguments, "0", {
-        get: getFunc,
-        enumerable: true,
-        configurable: false
+      enumerable: false
     });
-    try {
-        Object.defineProperty(arguments, "0", {
-            enumerable: false
-        });
-        $ERROR("Expected an exception.");
-    } catch (e) {
-        verifyEqualTo(arguments, "0", getFunc());
+    $ERROR("Expected an exception.");
+  } catch (e) {
+    verifyEqualTo(arguments, "0", getFunc());
 
-        verifyEnumerable(arguments, "0");
+    verifyEnumerable(arguments, "0");
 
-        verifyNotConfigurable(arguments, "0");
+    verifyNotConfigurable(arguments, "0");
 
-        if (!(e instanceof TypeError)) {
-            $ERROR("Expected TypeError, got " + e);
-        }
-
+    if (!(e instanceof TypeError)) {
+      $ERROR("Expected TypeError, got " + e);
     }
+
+  }
 }());

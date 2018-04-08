@@ -27,7 +27,10 @@ WeakMap.prototype.set = function(key, value) {
   });
   return set.call(this, key, value);
 };
-var map = new WeakMap([[first, 42], [second, 43]]);
+var map = new WeakMap([
+  [first, 42],
+  [second, 43]
+]);
 
 assert.sameValue(results.length, 2, 'Called WeakMap#set for each object');
 assert.sameValue(results[0].key, first, 'Adds object in order - first key');

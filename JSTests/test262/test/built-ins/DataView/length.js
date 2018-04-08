@@ -3,14 +3,31 @@
 
 /*---
 esid: sec-dataview-constructor
-es6id: 24.2.2
 description: >
-  The length property of DataView is 3
+  The length property of DataView has the default value of 1
+info: |
+  DataView ( buffer [ , byteOffset [ , byteLength ] ] )
+
+  ECMAScript Standard Built-in Objects:
+
+  Every built-in function object, including constructors, has a length
+  property whose value is an integer. Unless otherwise specified, this
+  value is equal to the largest number of named arguments shown in the
+  subclause headings for the function description. Optional parameters
+  (which are indicated with brackets: [ ]) or rest parameters (which
+  are shown using the form «...name») are not included in the default
+  argument count.
+
+  Unless otherwise specified, the length property of a built-in function
+  object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
+  [[Configurable]]: true }.
 includes: [propertyHelper.js]
+features: [DataView]
 ---*/
 
-assert.sameValue(DataView.length, 3, "The value of `DataView.length` is `3`");
-
-verifyNotEnumerable(DataView, "length");
-verifyNotWritable(DataView, "length");
-verifyConfigurable(DataView, "length");
+verifyProperty(DataView, "length", {
+    value: 1,
+    enumerable: false,
+    writable: false,
+    configurable: true,
+});

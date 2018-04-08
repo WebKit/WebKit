@@ -10,15 +10,15 @@ description: >
 flags: [noStrict]
 ---*/
 
-var gNonStrict = function () {
-    return gNonStrict.caller || gNonStrict.caller.throwTypeError;
+var gNonStrict = function() {
+  return gNonStrict.caller || gNonStrict.caller.throwTypeError;
 }
 
 function f() {
-    "use strict";
-    gNonStrict();
+  "use strict";
+  gNonStrict();
 }
 
 assert.throws(TypeError, function() {
-    f();
+  f();
 });

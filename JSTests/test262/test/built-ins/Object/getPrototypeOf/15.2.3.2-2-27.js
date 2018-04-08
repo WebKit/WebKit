@@ -8,6 +8,6 @@ description: >
     (Error object)
 ---*/
 
-        var obj = new Error();
+var obj = new Error();
 
 assert.sameValue(Object.getPrototypeOf(obj), Error.prototype, 'Object.getPrototypeOf(obj)');

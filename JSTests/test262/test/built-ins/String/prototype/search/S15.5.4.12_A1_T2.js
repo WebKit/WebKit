@@ -13,8 +13,12 @@ __instance.search = String.prototype.search;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__instance.search(function(){return false;}()) !== 0) {
-  $ERROR('#1: __instance = new Boolean; __instance.search = String.prototype.search;  __instance.search(function(){return false;}()) === 0. Actual: '+__instance.search(function(){return false;}()) );
+if (__instance.search(function() {
+    return false;
+  }()) !== 0) {
+  $ERROR('#1: __instance = new Boolean; __instance.search = String.prototype.search;  __instance.search(function(){return false;}()) === 0. Actual: ' + __instance.search(function() {
+    return false;
+  }()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

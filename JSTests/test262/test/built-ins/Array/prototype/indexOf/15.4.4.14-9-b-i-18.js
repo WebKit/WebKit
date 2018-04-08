@@ -9,10 +9,12 @@ description: >
     property without a get function on an Array-like object
 ---*/
 
-        var obj = { length: 1 };
-        Object.defineProperty(obj, "0", {
-            set: function () { },
-            configurable: true
-        });
+var obj = {
+  length: 1
+};
+Object.defineProperty(obj, "0", {
+  set: function() {},
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.indexOf.call(obj, undefined), 0, 'Array.prototype.indexOf.call(obj, undefined)');

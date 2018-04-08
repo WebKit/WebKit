@@ -8,6 +8,6 @@ description: >
     (Boolean.prototype)
 ---*/
 
-  var b = Object.isSealed(Boolean.prototype);
+var b = Object.isSealed(Boolean.prototype);
 
 assert.sameValue(b, false, 'b');

@@ -9,20 +9,20 @@ description: >
     property on an Array-like object
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "length", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
-        var Con = function () {};
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child[1] = 1;
-        child[2] = 2;
+var child = new Con();
+child[1] = 1;
+child[2] = 2;
 
 assert.sameValue(Array.prototype.lastIndexOf.call(child, 1), 1, 'Array.prototype.lastIndexOf.call(child, 1)');
 assert.sameValue(Array.prototype.lastIndexOf.call(child, 2), -1, 'Array.prototype.lastIndexOf.call(child, 2)');

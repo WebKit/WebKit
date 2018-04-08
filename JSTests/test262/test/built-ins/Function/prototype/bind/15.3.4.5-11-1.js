@@ -8,9 +8,9 @@ description: >
     is set as Function.prototype
 ---*/
 
-        var foo = function () { };
+var foo = function() {};
 
-            Function.prototype.property = 12;
-            var obj = foo.bind({});
+Function.prototype.property = 12;
+var obj = foo.bind({});
 
 assert.sameValue(obj.property, 12, 'obj.property');

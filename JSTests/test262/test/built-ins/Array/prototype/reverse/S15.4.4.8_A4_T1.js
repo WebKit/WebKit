@@ -40,7 +40,9 @@ if (x[1] !== 1) {
 Object.prototype[1] = 1;
 Object.prototype.length = 2;
 Object.prototype.reverse = Array.prototype.reverse;
-x = {0:0};
+x = {
+  0: 0
+};
 x.reverse();
 
 //CHECK#5

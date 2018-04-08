@@ -21,5 +21,5 @@ info: |
 var p = new Proxy({}, {});
 
 assert.throws(TypeError, function() {
-    p.call();
+  p.call();
 });

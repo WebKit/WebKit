@@ -15,25 +15,25 @@ description: >
 // CHECK#1
 for (var i = 0; i <= 1000; i++)
 {
-	var x = i/10.0;
-	if (Math.round(x) !== Math.floor(x + 0.5))
-	{
-		$ERROR("#1: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
-	}
+  var x = i / 10.0;
+  if (Math.round(x) !== Math.floor(x + 0.5))
+  {
+    $ERROR("#1: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
+  }
 }
 
 for (i = -5; i >= -1000; i--)
 {
-	if (i === -5)
-	{
-		x = -0.500000000000001;
-	} else
-	{
-		x = i/10.0;
-	}
-	
-	if (Math.round(x) !== Math.floor(x + 0.5))
-	{
-		$ERROR("#2: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
-	}
+  if (i === -5)
+  {
+    x = -0.500000000000001;
+  } else
+  {
+    x = i / 10.0;
+  }
+
+  if (Math.round(x) !== Math.floor(x + 0.5))
+  {
+    $ERROR("#2: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
+  }
 }

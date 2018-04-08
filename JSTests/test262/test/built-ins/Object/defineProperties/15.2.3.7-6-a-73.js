@@ -13,16 +13,16 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-Object.defineProperty(obj, "foo", { 
-    value: undefined, 
-    writable: false, 
-    configurable: false 
+Object.defineProperty(obj, "foo", {
+  value: undefined,
+  writable: false,
+  configurable: false
 });
 
 Object.defineProperties(obj, {
-    foo: {
-        value: undefined
-    }
+  foo: {
+    value: undefined
+  }
 });
 verifyEqualTo(obj, "foo", undefined);
 

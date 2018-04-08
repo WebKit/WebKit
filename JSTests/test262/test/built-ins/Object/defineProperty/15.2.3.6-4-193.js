@@ -15,21 +15,21 @@ description: >
 var arrObj = [];
 
 assert.throws(TypeError, function() {
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 11;
-                },
-                configurable: true
-            });
+  Object.defineProperty(Array.prototype, "0", {
+    get: function() {
+      return 11;
+    },
+    configurable: true
+  });
 
-            Object.defineProperty(arrObj, "0", {
-                value: 12,
-                configurable: false
-            });
+  Object.defineProperty(arrObj, "0", {
+    value: 12,
+    configurable: false
+  });
 
-            Object.defineProperty(arrObj, "0", {
-                configurable: true
-            });
+  Object.defineProperty(arrObj, "0", {
+    configurable: true
+  });
 });
 assert.sameValue(Array.prototype[0], 11, 'Array.prototype[0]');
 assert.sameValue(arrObj[0], 12, 'arrObj[0]');

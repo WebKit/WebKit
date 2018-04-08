@@ -9,7 +9,7 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var funObj = function () { };
+var funObj = function() {};
 
 funObj.foo = 10; // default [[Configurable]] attribute value of foo: true
 

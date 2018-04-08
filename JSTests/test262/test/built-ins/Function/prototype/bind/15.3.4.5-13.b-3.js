@@ -8,9 +8,9 @@ description: >
     expected args (all args prefilled)
 ---*/
 
-  function foo(x, y) { }
-  var o = {};
-  
-  var bf = foo.bind(o, 42, 101);
+function foo(x, y) {}
+var o = {};
+
+var bf = foo.bind(o, 42, 101);
 
 assert.sameValue(bf.length, 0, 'bf.length');

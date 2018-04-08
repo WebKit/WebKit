@@ -10,5 +10,5 @@ description: >
 ---*/
 
 assert.throws(TypeError, function() {
-    new Proxy(false, {});
+  new Proxy(false, {});
 });

@@ -8,27 +8,28 @@ description: >
     not writable and not configurable, and 'O' is not extensible
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "foo1", {
-            value: 20,
-            writable: false,
-            enumerable: false,
-            configurable: false
-        });
+Object.defineProperty(obj, "foo1", {
+  value: 20,
+  writable: false,
+  enumerable: false,
+  configurable: false
+});
 
 
-        function get_func() {
-            return 10;
-        }
-        function set_func() { }
+function get_func() {
+  return 10;
+}
 
-        Object.defineProperty(obj, "foo2", {
-            get: get_func,
-            set: set_func,
-            configurable: false
-        });
+function set_func() {}
 
-        Object.preventExtensions(obj);
+Object.defineProperty(obj, "foo2", {
+  get: get_func,
+  set: set_func,
+  configurable: false
+});
+
+Object.preventExtensions(obj);
 
 assert(Object.isFrozen(obj), 'Object.isFrozen(obj) !== true');

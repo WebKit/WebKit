@@ -16,7 +16,9 @@ info: |
 ---*/
 
 var getUTCDay = Date.prototype.getUTCDay;
-var args = (function() { return arguments; }());
+var args = (function() {
+  return arguments;
+}());
 
 assert.sameValue(typeof getUTCDay, 'function');
 

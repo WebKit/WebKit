@@ -8,7 +8,7 @@ description: >
     built-ins (Math.abs)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "abs");
+var desc = Object.getOwnPropertyDescriptor(Math, "abs");
 
 assert.sameValue(desc.value, Math.abs, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

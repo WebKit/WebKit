@@ -8,18 +8,18 @@ description: >
     step 2)
 ---*/
 
-        var result = false;
+var result = false;
 
-        Object.defineProperty(JSON, "prop", {
-            get: function () {
-                result = (this === JSON);
-                return {};
-            },
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(JSON, "prop", {
+  get: function() {
+    result = (this === JSON);
+    return {};
+  },
+  enumerable: true,
+  configurable: true
+});
 
-            var newObj = Object.create({}, JSON);
+var newObj = Object.create({}, JSON);
 
 assert(result, 'result !== true');
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

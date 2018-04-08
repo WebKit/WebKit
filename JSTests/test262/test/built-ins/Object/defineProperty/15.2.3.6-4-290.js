@@ -11,25 +11,27 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-(function () { 
-    delete arguments[0];
-    function getFunc() {
-        return 10;
-    }
-    function setFunc(value) {
-        this.setVerifyHelpProp = value;
-    }
-    Object.defineProperty(arguments, "0", {
-        get: getFunc,
-        set: setFunc,
-        enumerable: true,
-        configurable: true
-    });
-    verifyEqualTo(arguments, "0", getFunc());
+(function() {
+  delete arguments[0];
 
-    verifyWritable(arguments, "0", "setVerifyHelpProp");
+  function getFunc() {
+    return 10;
+  }
 
-    verifyEnumerable(arguments, "0");
+  function setFunc(value) {
+    this.setVerifyHelpProp = value;
+  }
+  Object.defineProperty(arguments, "0", {
+    get: getFunc,
+    set: setFunc,
+    enumerable: true,
+    configurable: true
+  });
+  verifyEqualTo(arguments, "0", getFunc());
 
-    verifyConfigurable(arguments, "0");
-}(0, 1, 2));    
+  verifyWritable(arguments, "0", "setVerifyHelpProp");
+
+  verifyEnumerable(arguments, "0");
+
+  verifyConfigurable(arguments, "0");
+}(0, 1, 2));

@@ -15,14 +15,14 @@ var __instance = new Number(100111122133144155);
 
 Number.prototype.split = String.prototype.split;
 
-var __split = __instance.split(1,void 0);
+var __split = __instance.split(1, void 0);
 
-var __expected = ["","00","","","","22","33","44","60"];
+var __expected = ["", "00", "", "", "", "22", "33", "44", "60"];
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,17 +30,17 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== __expected.length) {
-  $ERROR('#2: __split.length === __expected.length. Actual: '+__split.length );
+  $ERROR('#2: __split.length === __expected.length. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
-for(var index=0; index<__expected.length; index++) {
+for (var index = 0; index < __expected.length; index++) {
   if (__split[index] !== __expected[index]) {
-     $ERROR('#3: __split[index] === __expected[index]. Actual: '+__split[index] );
-    }
+    $ERROR('#3: __split[index] === __expected[index]. Actual: ' + __split[index]);
+  }
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -8,15 +8,15 @@ description: >
     argument
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var setFunc = function () { };
+var setFunc = function() {};
 
-        Object.defineProperty(obj, "prop", {
-            set: setFunc
-        });
+Object.defineProperty(obj, "prop", {
+  set: setFunc
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(desc.set, setFunc, 'desc.set');

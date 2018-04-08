@@ -9,18 +9,19 @@ description: >
     Array-like object
 ---*/
 
-        var result = false;
-        function callbackfn(val, idx, obj) {
-            result = (obj.length === 2);
-        }
+var result = false;
 
-        var obj = {
-            0: 12,
-            1: 11,
-            2: 9,
-            length: 2
-        };
+function callbackfn(val, idx, obj) {
+  result = (obj.length === 2);
+}
 
-        Array.prototype.forEach.call(obj, callbackfn);
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: 2
+};
+
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(result, 'result !== true');

@@ -9,12 +9,12 @@ description: >
     property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return (idx === 1) && (val === 13);
-        }
+function callbackfn(val, idx, obj) {
+  return (idx === 1) && (val === 13);
+}
 
-            Array.prototype[1] = 13;
-            var newArr = [, , , ].filter(callbackfn);
+Array.prototype[1] = 13;
+var newArr = [, , , ].filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 13, 'newArr[0]');

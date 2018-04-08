@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.match)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "match");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "match");
 
 assert.sameValue(desc.value, String.prototype.match, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

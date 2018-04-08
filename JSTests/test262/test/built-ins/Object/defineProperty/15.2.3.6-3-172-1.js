@@ -9,19 +9,19 @@ description: >
     prototype object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            RegExp.prototype.writable = true;
+RegExp.prototype.writable = true;
 
-            var regObj = new RegExp();
+var regObj = new RegExp();
 
-            Object.defineProperty(obj, "property", regObj);
+Object.defineProperty(obj, "property", regObj);
 
-            var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-            obj.property = "isWritable";
+obj.property = "isWritable";
 
-            var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

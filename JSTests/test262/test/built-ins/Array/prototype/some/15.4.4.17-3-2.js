@@ -9,15 +9,19 @@ description: >
     (length overridden to true(type conversion))
 ---*/
 
-        function callbackfn1(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn1(val, idx, obj) {
+  return val > 10;
+}
 
-        function callbackfn2(val, idx, obj) {
-            return val > 11;
-        }
+function callbackfn2(val, idx, obj) {
+  return val > 11;
+}
 
-        var obj = { 0: 11, 1: 12, length: true };
+var obj = {
+  0: 11,
+  1: 12,
+  length: true
+};
 
 assert(Array.prototype.some.call(obj, callbackfn1), 'Array.prototype.some.call(obj, callbackfn1) !== true');
 assert.sameValue(Array.prototype.some.call(obj, callbackfn2), false, 'Array.prototype.some.call(obj, callbackfn2)');

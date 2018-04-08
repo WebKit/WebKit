@@ -13,8 +13,8 @@ description: Checking this algorithm, items are objects and primitives
 
 var x = [0];
 var y = new Object();
-var z = new Array(1,2);
-var arr = x.concat(y,z, -1, true, "NaN");
+var z = new Array(1, 2);
+var arr = x.concat(y, z, -1, true, "NaN");
 
 //CHECK#0
 arr.getClass = Object.prototype.toString;

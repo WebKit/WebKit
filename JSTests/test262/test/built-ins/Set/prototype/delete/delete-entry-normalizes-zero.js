@@ -15,7 +15,7 @@ description: >
 
 ---*/
 
-var s = new Set([ -0 ]);
+var s = new Set([-0]);
 
 assert.sameValue(s.size, 1, "The value of `s.size` is `1`");
 

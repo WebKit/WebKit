@@ -3,7 +3,7 @@
 
 /*---
 author: Caitlin Potter <caitp@igalia.com>
-esid: pending
+esid: sec-async-generator-function-definitions-static-semantics-early-errors
 description: >
   It is a Syntax Error if ContainsUseStrict of AsyncGeneratorBody is true and
   IsSimpleParameterList of UniqueFormalParameters is false.

@@ -8,18 +8,18 @@ description: >
     whose primitive value is any interesting number
 ---*/
 
-        var obj = {};
-        var props = new Number(-12);
-        var result = false;
-    
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                result = this instanceof Number;
-                return {};
-            },
-            enumerable: true
-        });
+var obj = {};
+var props = new Number(-12);
+var result = false;
 
-        Object.defineProperties(obj, props);
+Object.defineProperty(props, "prop", {
+  get: function() {
+    result = this instanceof Number;
+    return {};
+  },
+  enumerable: true
+});
+
+Object.defineProperties(obj, props);
 
 assert(result, 'result !== true');

@@ -16,7 +16,7 @@ if (this.propertyIsEnumerable('parseFloat') !== false) {
 
 //CHECK#2
 var result = true;
-for (var p in this){
+for (var p in this) {
   if (p === "parseFloat") {
     result = false;
   }

@@ -8,20 +8,23 @@ description: >
     has an own toString and valueOf method
 ---*/
 
-        var obj = { "bbq": 1, "abc": 2 };
-        var valueOfAccessed = false;
+var obj = {
+  "bbq": 1,
+  "abc": 2
+};
+var valueOfAccessed = false;
 
-        var ownProp = {
-            toString: function () {
-                return "bbq";
-            },
-            valueOf: function () {
-                valueOfAccessed = true;
-                return "abc";
-            }
-        };
+var ownProp = {
+  toString: function() {
+    return "bbq";
+  },
+  valueOf: function() {
+    valueOfAccessed = true;
+    return "abc";
+  }
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, ownProp);
+var desc = Object.getOwnPropertyDescriptor(obj, ownProp);
 
 assert.sameValue(desc.value, 1, 'desc.value');
 assert.sameValue(valueOfAccessed, false, 'valueOfAccessed');

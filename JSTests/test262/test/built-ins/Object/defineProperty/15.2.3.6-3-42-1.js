@@ -9,18 +9,18 @@ description: >
     prototype object (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-            Error.prototype.enumerable = true;
-            var errObj = new Error();
+Error.prototype.enumerable = true;
+var errObj = new Error();
 
-            Object.defineProperty(obj, "property", errObj);
+Object.defineProperty(obj, "property", errObj);
 
-            for (var prop in obj) {
-                if (prop === "property") {
-                    accessed = true;
-                }
-            }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

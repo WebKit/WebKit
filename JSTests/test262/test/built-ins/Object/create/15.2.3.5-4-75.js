@@ -8,19 +8,19 @@ description: >
     'Properties' is false (8.10.5 step 3.b)
 ---*/
 
-        var accessed = false;
-        var descObj = {
-            enumerable: false
-        };
+var accessed = false;
+var descObj = {
+  enumerable: false
+};
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+var newObj = Object.create({}, {
+  prop: descObj
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

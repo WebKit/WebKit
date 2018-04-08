@@ -9,11 +9,11 @@ description: >
     5.a)
 ---*/
 
-        var props = new Date();
-        props.prop = {
-            value: 12,
-            enumerable: true
-        };
-        var newObj = Object.create({}, props);
+var props = new Date();
+props.prop = {
+  value: 12,
+  enumerable: true
+};
+var newObj = Object.create({}, props);
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');

@@ -8,6 +8,6 @@ description: >
     (ReferenceError)
 ---*/
 
-  var b = Object.isSealed(ReferenceError);
+var b = Object.isSealed(ReferenceError);
 
 assert.sameValue(b, false, 'b');

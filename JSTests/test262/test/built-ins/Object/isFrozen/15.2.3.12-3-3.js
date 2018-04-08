@@ -8,6 +8,6 @@ description: >
     (Object.prototype)
 ---*/
 
-  var b = Object.isFrozen(Object.prototype);
+var b = Object.isFrozen(Object.prototype);
 
 assert.sameValue(b, false, 'b');

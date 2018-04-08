@@ -12,8 +12,12 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(null) evaluates to "null" concat(null) evaluates to concat("null")
-if (function(){return "lego"}().concat(null) !== "legonull") {
-  $ERROR('#1: function(){return "lego"}().concat(null) === "legonull". Actual: '+function(){return "lego"}().concat(null) ); 
+if (function() {
+    return "lego"
+  }().concat(null) !== "legonull") {
+  $ERROR('#1: function(){return "lego"}().concat(null) === "legonull". Actual: ' + function() {
+    return "lego"
+  }().concat(null));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

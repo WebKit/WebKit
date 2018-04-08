@@ -13,19 +13,19 @@ description: Checking for Number object
 var x = [];
 x[new String("0")] = 0;
 if (x[0] !== 0) {
-  $ERROR('#1: x = []; x[new String("0")] = 0; x[0] === 0. Actual: ' + (x[0]));  
-} 
+  $ERROR('#1: x = []; x[new String("0")] = 0; x[0] === 0. Actual: ' + (x[0]));
+}
 
 //CHECK#2
 var y = [];
 y[new String("1")] = 1;
 if (y[1] !== 1) {
-  $ERROR('#2: y = []; y[new String("1")] = 1; y[1] === 1. Actual: ' + (y[1]));  
+  $ERROR('#2: y = []; y[new String("1")] = 1; y[1] === 1. Actual: ' + (y[1]));
 }
 
 //CHECK#3
 var z = [];
 z[new String("1.1")] = 1;
 if (z["1.1"] !== 1) {
-  $ERROR('#3: z = []; z[new String("1.1")] = 1; z["1.1"] === 1. Actual: ' + (z["1.1"]));  
+  $ERROR('#3: z = []; z[new String("1.1")] = 1; z["1.1"] === 1. Actual: ' + (z["1.1"]));
 }

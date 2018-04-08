@@ -9,14 +9,14 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        var errObj = new Error("error");
+var errObj = new Error("error");
 
-        errObj.get = function () {
-            return "VerifyErrorObject";
-        };
+errObj.get = function() {
+  return "VerifyErrorObject";
+};
 
-        var newObj = Object.create({}, {
-            prop: errObj 
-        });
+var newObj = Object.create({}, {
+  prop: errObj
+});
 
 assert.sameValue(newObj.prop, "VerifyErrorObject", 'newObj.prop');

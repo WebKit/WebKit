@@ -9,31 +9,33 @@ description: >
 includes: [compareArray.js]
 ---*/
 
-  var obj = { "a": "a" };
+var obj = {
+  "a": "a"
+};
 
-  Object.defineProperty(obj, "b", {
-    get: function () {
-      return "b";
-    },
-    enumerable: false,
-    configurable: true
-  });
+Object.defineProperty(obj, "b", {
+  get: function() {
+    return "b";
+  },
+  enumerable: false,
+  configurable: true
+});
 
-  Object.defineProperty(obj, "c", {
-    get: function () {
-      return "c";
-    },
-    enumerable: true,
-    configurable: true
-  });
+Object.defineProperty(obj, "c", {
+  get: function() {
+    return "c";
+  },
+  enumerable: true,
+  configurable: true
+});
 
-  Object.defineProperty(obj, "d", {
-    value: "d",
-    enumerable: false,
-    configurable: true
-  });
+Object.defineProperty(obj, "d", {
+  value: "d",
+  enumerable: false,
+  configurable: true
+});
 
-  var actual = Object.getOwnPropertyNames(obj);
-  var expected = ["a", "b", "c", "d"];
+var actual = Object.getOwnPropertyNames(obj);
+var expected = ["a", "b", "c", "d"];
 
 assert(compareArray(actual, expected), 'compareArray(actual, expected) !== true');

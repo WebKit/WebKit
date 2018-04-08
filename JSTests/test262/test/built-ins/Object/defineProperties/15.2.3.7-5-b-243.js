@@ -9,18 +9,18 @@ description: >
     step 8.a)
 ---*/
 
-        var data = "data";
-        var descObj = new Number(-9);
-        var setFun = function (value) {
-            data = value;
-        };
-        descObj.prop = {
-            set: setFun
-        };
+var data = "data";
+var descObj = new Number(-9);
+var setFun = function(value) {
+  data = value;
+};
+descObj.prop = {
+  set: setFun
+};
 
-        var obj = {};
-        Object.defineProperties(obj, descObj);
-        obj.prop = "numberData";
+var obj = {};
+Object.defineProperties(obj, descObj);
+obj.prop = "numberData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "numberData", 'data');

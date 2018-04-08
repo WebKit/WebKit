@@ -14,10 +14,10 @@ var obj = {};
 
 var proto = {};
 Object.defineProperty(proto, "writable", {
-    set: function () { }
+  set: function() {}
 });
 
-var ConstructFun = function () { };
+var ConstructFun = function() {};
 ConstructFun.prototype = proto;
 
 var child = new ConstructFun();

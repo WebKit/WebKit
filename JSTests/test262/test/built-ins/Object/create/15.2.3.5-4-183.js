@@ -9,32 +9,32 @@ description: >
     accessor property (8.10.5 step 6.a)
 ---*/
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "writable", {
-            get: function () {
-                return false;
-            }
-        });
+Object.defineProperty(proto, "writable", {
+  get: function() {
+    return false;
+  }
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var descObj = new ConstructFun();
+var descObj = new ConstructFun();
 
-        Object.defineProperty(descObj, "writable", {
-            value: true
-        });
+Object.defineProperty(descObj, "writable", {
+  value: true
+});
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
-        var beforeWrite = (newObj.hasOwnProperty("prop") && typeof (newObj.prop) === "undefined");
+var beforeWrite = (newObj.hasOwnProperty("prop") && typeof(newObj.prop) === "undefined");
 
-        newObj.prop = "isWritable";
+newObj.prop = "isWritable";
 
-        var afterWrite = (newObj.prop === "isWritable");
+var afterWrite = (newObj.prop === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

@@ -9,29 +9,29 @@ description: >
     in 'obj' (15.2.3.7 step 5.a)
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "prop", {
-            get: function () {
-                return {
-                    value: 9
-                };
-            },
-            enumerable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "prop", {
+  get: function() {
+    return {
+      value: 9
+    };
+  },
+  enumerable: true
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        Object.defineProperty(child, "prop", {
-            get: function () {
-                return {
-                    value: 12
-                };
-            },
-            enumerable: true
-        });
-        var newObj = Object.create({}, child);
+var child = new ConstructFun();
+Object.defineProperty(child, "prop", {
+  get: function() {
+    return {
+      value: 12
+    };
+  },
+  enumerable: true
+});
+var newObj = Object.create({}, child);
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(newObj.prop, 12, 'newObj.prop');

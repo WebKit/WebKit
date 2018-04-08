@@ -10,8 +10,12 @@ description: Call charCodeAt() function with null argument of function object
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToInteger(null) evaluates to 0 charCodeAt() evaluates to charCodeAt(0)
-if (function(){return "lego"}().charCodeAt(null) !== 0x6C) {
-  $ERROR('#1: function(){return "lego"}().charCodeAt(null) === 0x6C. Actual: '+function(){return "lego"}().charCodeAt(null) ); 
+if (function() {
+    return "lego"
+  }().charCodeAt(null) !== 0x6C) {
+  $ERROR('#1: function(){return "lego"}().charCodeAt(null) === 0x6C. Actual: ' + function() {
+    return "lego"
+  }().charCodeAt(null));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

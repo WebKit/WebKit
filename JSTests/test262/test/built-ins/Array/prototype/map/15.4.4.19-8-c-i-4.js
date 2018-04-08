@@ -9,17 +9,17 @@ description: >
     that overrides an inherited data property on an Array
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === kValue;
+  }
+  return false;
+}
 
-            Array.prototype[0] = 11;
+Array.prototype[0] = 11;
 
-            var testResult = [kValue].map(callbackfn);
+var testResult = [kValue].map(callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

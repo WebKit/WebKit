@@ -7,6 +7,7 @@ esid: sec-atomics.exchange
 description: >
   Atomics.exchange.name is "exchange".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.exchange.name, "exchange");

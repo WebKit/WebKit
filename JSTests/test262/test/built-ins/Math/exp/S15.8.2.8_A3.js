@@ -11,5 +11,5 @@ description: Checking if Math.exp(-0) is 1
 var x = -0;
 if (Math.exp(x) !== 1)
 {
-	$ERROR("#1: 'var x = -0; Math.exp(x) !== 1'");
+  $ERROR("#1: 'var x = -0; Math.exp(x) !== 1'");
 }

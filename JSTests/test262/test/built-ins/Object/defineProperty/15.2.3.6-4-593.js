@@ -9,21 +9,21 @@ description: >
     (Function.prototype.bind)
 ---*/
 
-        var foo = function () { };
-        var data = "data";
+var foo = function() {};
+var data = "data";
 
-            Object.defineProperty(Function.prototype, "prop", {
-                get: function () {
-                    return data;
-                },
-                set: function (value) {
-                    data = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
+Object.defineProperty(Function.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  set: function(value) {
+    data = value;
+  },
+  enumerable: true,
+  configurable: true
+});
 
-            var obj = foo.bind({});
+var obj = foo.bind({});
 
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');
 assert.sameValue(obj.prop, data, 'obj.prop');

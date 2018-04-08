@@ -30,25 +30,25 @@ var arrayLike = {
   "9007199254740989": "9007199254740989",
   "9007199254740990": "9007199254740990",
   "9007199254740991": "9007199254740991",
-  length: 2**53 + 2,
+  length: 2 ** 53 + 2,
 };
 
-var result = Array.prototype.splice.call(arrayLike, 9007199254740989, 2**53 + 4);
+var result = Array.prototype.splice.call(arrayLike, 9007199254740989, 2 ** 53 + 4);
 
-assert.compareArray(result, [ "9007199254740989", "9007199254740990" ],
-                    "arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed");
+assert.compareArray(result, ["9007199254740989", "9007199254740990"],
+  "arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed");
 
-assert.sameValue(arrayLike.length, 2**53 - 3,
-                 "New length is 2**53 - 3");
+assert.sameValue(arrayLike.length, 2 ** 53 - 3,
+  "New length is 2**53 - 3");
 
 assert.sameValue(arrayLike["9007199254740988"], "9007199254740988",
-                 "arrayLike['9007199254740988'] is unchanged");
+  "arrayLike['9007199254740988'] is unchanged");
 
 assert.sameValue("9007199254740989" in arrayLike, false,
-                 "arrayLike['9007199254740989'] is removed");
+  "arrayLike['9007199254740989'] is removed");
 
 assert.sameValue("9007199254740990" in arrayLike, false,
-                 "arrayLike['9007199254740990'] is removed");
+  "arrayLike['9007199254740990'] is removed");
 
 assert.sameValue(arrayLike["9007199254740991"], "9007199254740991",
-                 "arrayLike['9007199254740991'] is unchanged");
+  "arrayLike['9007199254740991'] is unchanged");

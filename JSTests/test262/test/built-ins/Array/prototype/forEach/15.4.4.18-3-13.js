@@ -9,13 +9,17 @@ description: >
     decimal number
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(val, idx, obj) {
-            testResult = (val > 10);
-        }
-        var obj = { 1: 11, 2: 9, length: "2.5" };
+function callbackfn(val, idx, obj) {
+  testResult = (val > 10);
+}
+var obj = {
+  1: 11,
+  2: 9,
+  length: "2.5"
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(testResult, 'testResult !== true');

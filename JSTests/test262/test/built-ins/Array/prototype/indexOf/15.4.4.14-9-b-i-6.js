@@ -10,11 +10,15 @@ description: >
     Array-like object
 ---*/
 
-            Object.defineProperty(Object.prototype, "0", {
-                get: function () {
-                    return false;
-                },
-                configurable: true
-            });
+Object.defineProperty(Object.prototype, "0", {
+  get: function() {
+    return false;
+  },
+  configurable: true
+});
 
-assert.sameValue(Array.prototype.indexOf.call({ 0: true, 1: 1, length: 2 }, true), 0, 'Array.prototype.indexOf.call({ 0: true, 1: 1, length: 2 }, true)');
+assert.sameValue(Array.prototype.indexOf.call({
+  0: true,
+  1: 1,
+  length: 2
+}, true), 0, 'Array.prototype.indexOf.call({ 0: true, 1: 1, length: 2 }, true)');

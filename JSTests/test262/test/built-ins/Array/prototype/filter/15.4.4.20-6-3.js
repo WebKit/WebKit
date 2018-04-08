@@ -9,13 +9,14 @@ description: >
     (subclassed Array, length overridden to false (type conversion))
 ---*/
 
-  foo.prototype = new Array(1, 2, 3);
-  function foo() {}
-  var f = new foo();
-  f.length = false;
+foo.prototype = new Array(1, 2, 3);
 
-  function cb(){}
-  var a = f.filter(cb);
+function foo() {}
+var f = new foo();
+f.length = false;
+
+function cb() {}
+var a = f.filter(cb);
 
 
 assert(Array.isArray(a), 'Array.isArray(a) !== true');

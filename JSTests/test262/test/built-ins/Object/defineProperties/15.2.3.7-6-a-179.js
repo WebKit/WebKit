@@ -8,13 +8,13 @@ description: >
     named property, 'P' is boundary value 2^32 - 2 (15.4.5.1 step 4.a)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            "4294967294": {
-                value: 100
-            }
-        });
+Object.defineProperties(arr, {
+  "4294967294": {
+    value: 100
+  }
+});
 
 assert(arr.hasOwnProperty("4294967294"), 'arr.hasOwnProperty("4294967294") !== true');
 assert.sameValue(arr.length, 4294967295, 'arr.length');

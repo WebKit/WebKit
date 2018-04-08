@@ -10,8 +10,8 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-        function fun() {
-            return (this instanceof Boolean);
-        }
+function fun() {
+  return (this instanceof Boolean);
+}
 
 assert.sameValue(fun.apply(false, Array), false, 'fun.apply(false, Array)');

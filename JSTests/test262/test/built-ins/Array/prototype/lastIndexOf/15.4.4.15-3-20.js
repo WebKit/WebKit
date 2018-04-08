@@ -9,17 +9,17 @@ description: >
     has an own valueOf method
 ---*/
 
-        //valueOf method will be invoked first, since hint is Number
-        var obj = {
-            1: true,
-            2: 2,
+//valueOf method will be invoked first, since hint is Number
+var obj = {
+  1: true,
+  2: 2,
 
-            length: {
-                valueOf: function () {
-                    return 2;
-                }
-            }
-        };
+  length: {
+    valueOf: function() {
+      return 2;
+    }
+  }
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, true), 1, 'Array.prototype.lastIndexOf.call(obj, true)');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, 2), -1, 'Array.prototype.lastIndexOf.call(obj, 2)');

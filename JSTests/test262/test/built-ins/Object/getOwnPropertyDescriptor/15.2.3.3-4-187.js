@@ -8,9 +8,9 @@ description: >
     on built-ins (Function (instance).length)
 ---*/
 
-  var f = Function('return 42;');
+var f = Function('return 42;');
 
-  var desc = Object.getOwnPropertyDescriptor(f, "length");
+var desc = Object.getOwnPropertyDescriptor(f, "length");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

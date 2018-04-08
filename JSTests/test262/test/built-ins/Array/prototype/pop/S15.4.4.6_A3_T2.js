@@ -27,10 +27,10 @@ if (obj.length !== 4294967296) {
 
 //CHECK#3
 if (obj[0] !== "x") {
-   $ERROR('#3: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; obj.pop(); obj[0] === "x". Actual: ' + (obj[0]));
+  $ERROR('#3: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; obj.pop(); obj[0] === "x". Actual: ' + (obj[0]));
 }
 
 //CHECK#4
 if (obj[4294967296] !== undefined) {
-   $ERROR('#4: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; obj.pop(); obj[4294967296] === undefined. Actual: ' + (obj[4294967296]));
+  $ERROR('#4: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967296] = "y"; obj.length = 4294967297; obj.pop(); obj[4294967296] === undefined. Actual: ' + (obj[4294967296]));
 }

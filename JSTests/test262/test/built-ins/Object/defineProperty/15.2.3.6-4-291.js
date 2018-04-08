@@ -11,26 +11,27 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-(function () {
-    function getFunc1() {
-        return 10;
-    }
-    Object.defineProperty(arguments, "0", {
-        get: getFunc1,
-        enumerable: true,
-        configurable: true
-    });
-    function getFunc2() {
-        return 20;
-    }
-    Object.defineProperty(arguments, "0", {
-        get: getFunc2,
-        enumerable: false,
-        configurable: false
-    });
-    verifyEqualTo(arguments, "0", getFunc2());
+(function() {
+  function getFunc1() {
+    return 10;
+  }
+  Object.defineProperty(arguments, "0", {
+    get: getFunc1,
+    enumerable: true,
+    configurable: true
+  });
 
-    verifyNotEnumerable(arguments, "0");
+  function getFunc2() {
+    return 20;
+  }
+  Object.defineProperty(arguments, "0", {
+    get: getFunc2,
+    enumerable: false,
+    configurable: false
+  });
+  verifyEqualTo(arguments, "0", getFunc2());
 
-    verifyNotConfigurable(arguments, "0");
+  verifyNotEnumerable(arguments, "0");
+
+  verifyNotConfigurable(arguments, "0");
 }(0, 1, 2));

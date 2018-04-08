@@ -9,14 +9,14 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        var boolObj = new Boolean(true);
+var boolObj = new Boolean(true);
 
-        boolObj.get = function () {
-            return "VerifyBooleanObject";
-        };
+boolObj.get = function() {
+  return "VerifyBooleanObject";
+};
 
-        var newObj = Object.create({}, {
-            prop: boolObj 
-        });
+var newObj = Object.create({}, {
+  prop: boolObj
+});
 
 assert.sameValue(newObj.prop, "VerifyBooleanObject", 'newObj.prop');

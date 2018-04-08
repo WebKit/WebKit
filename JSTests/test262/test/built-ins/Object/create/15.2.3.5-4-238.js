@@ -8,22 +8,22 @@ description: >
     an inherited accessor property (8.10.5 step 7.a)
 ---*/
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "get", {
-            get: function () {
-                return function () {
-                    return "inheritedAccessorProperty";
-                };
-            }
-        });
+Object.defineProperty(proto, "get", {
+  get: function() {
+    return function() {
+      return "inheritedAccessorProperty";
+    };
+  }
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var descObj = new ConstructFun();
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var descObj = new ConstructFun();
 
-        var newObj = Object.create({}, {
-            prop: descObj 
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
 assert.sameValue(newObj.prop, "inheritedAccessorProperty", 'newObj.prop');

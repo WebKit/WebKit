@@ -8,13 +8,13 @@ description: >
     'Properties' is defined in 'O'
 ---*/
 
-        var obj = {};      
-        var props = {};
-        Object.defineProperty(props, "prop", {
-            value: {},
-            enumerable: true
-        });
+var obj = {};
+var props = {};
+Object.defineProperty(props, "prop", {
+  value: {},
+  enumerable: true
+});
 
-        Object.defineProperties(obj, props);
+Object.defineProperties(obj, props);
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');

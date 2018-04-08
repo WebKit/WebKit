@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Math.LN10)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "LN10");
+var desc = Object.getOwnPropertyDescriptor(Math, "LN10");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

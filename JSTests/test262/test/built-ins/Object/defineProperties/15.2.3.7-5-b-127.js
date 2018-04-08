@@ -9,14 +9,14 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var str = new String("abc");
+var str = new String("abc");
 
-        str.value = "String";
+str.value = "String";
 
-        Object.defineProperties(obj, {
-            property: str
-        });
+Object.defineProperties(obj, {
+  property: str
+});
 
 assert.sameValue(obj.property, "String", 'obj.property');

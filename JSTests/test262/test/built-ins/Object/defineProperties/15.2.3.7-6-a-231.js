@@ -16,13 +16,13 @@ var arr = [];
 arr[1] = 3; // default value of attributes: writable: true, configurable: true, enumerable: true
 
 function set_fun(value) {
-    arr.setVerifyHelpProp = value;
+  arr.setVerifyHelpProp = value;
 }
 
 Object.defineProperties(arr, {
-    "1": {
-        set: set_fun
-    }
+  "1": {
+    set: set_fun
+  }
 });
 
 verifyWritable(arr, "1", "setVerifyHelpProp");

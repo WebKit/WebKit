@@ -10,15 +10,15 @@ description: >
     (15.4.5.1 step 4.e)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        arr.length = 3; // default value of length: writable: true, configurable: false, enumerable: false
+arr.length = 3; // default value of length: writable: true, configurable: false, enumerable: false
 
-        Object.defineProperties(arr, {
-            "1": {
-                value: 26
-            }
-        });
+Object.defineProperties(arr, {
+  "1": {
+    value: 26
+  }
+});
 
 assert.sameValue(arr.length, 3, 'arr.length');
 assert.sameValue(arr[1], 26, 'arr[1]');

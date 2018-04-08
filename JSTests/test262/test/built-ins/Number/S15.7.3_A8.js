@@ -8,7 +8,7 @@ description: Checking Number.length property
 ---*/
 
 //CHECK#1
-if (!Number.hasOwnProperty("length")){
+if (!Number.hasOwnProperty("length")) {
   $ERROR('#1: Number constructor has length property');
 }
 

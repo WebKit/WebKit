@@ -9,7 +9,7 @@ description: >
     'msg' are non-empty string
 ---*/
 
-        var errObj = new Error("ErrorMessage");
-        errObj.name = "ErrorName";
+var errObj = new Error("ErrorMessage");
+errObj.name = "ErrorName";
 
 assert.sameValue(errObj.toString(), "ErrorName: ErrorMessage", 'errObj.toString()');

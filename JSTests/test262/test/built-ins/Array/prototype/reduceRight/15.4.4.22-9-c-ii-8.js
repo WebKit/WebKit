@@ -9,15 +9,20 @@ description: >
     previous iterations is observed
 ---*/
 
-        var accessed = false;
-        var obj = { 0: 11, 1: 12, length: 2 };
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            if (idx === 1) {
-                obj[idx - 1] = 8;
-            }
-            return curVal > 10;
-        }
+var accessed = false;
+var obj = {
+  0: 11,
+  1: 12,
+  length: 2
+};
+
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  if (idx === 1) {
+    obj[idx - 1] = 8;
+  }
+  return curVal > 10;
+}
 
 assert.sameValue(Array.prototype.reduceRight.call(obj, callbackfn, 1), false, 'Array.prototype.reduceRight.call(obj, callbackfn, 1)');
 assert(accessed, 'accessed !== true');

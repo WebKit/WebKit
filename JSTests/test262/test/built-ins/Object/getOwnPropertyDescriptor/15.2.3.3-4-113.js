@@ -8,7 +8,7 @@ description: >
     built-ins (Math.tan)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "tan");
+var desc = Object.getOwnPropertyDescriptor(Math, "tan");
 
 assert.sameValue(desc.value, Math.tan, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

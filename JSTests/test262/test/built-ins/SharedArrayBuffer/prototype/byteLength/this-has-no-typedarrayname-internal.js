@@ -5,7 +5,7 @@
 description: >
   Throws a TypeError exception when `this` does not have a [[ArrayBufferData]]
   internal slot
-features: [DataView, Int8Array]
+features: [SharedArrayBuffer, DataView, Int8Array]
 ---*/
 
 var getter = Object.getOwnPropertyDescriptor(

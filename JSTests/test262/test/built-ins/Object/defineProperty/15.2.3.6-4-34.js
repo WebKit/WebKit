@@ -9,16 +9,16 @@ description: >
     step 1)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "foo", {
-            value: 12,
-            configurable: false
-        });
+Object.defineProperty(arrObj, "foo", {
+  value: 12,
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(arrObj, "foo", {
-                value: 11,
-                configurable: true
-            });
+  Object.defineProperty(arrObj, "foo", {
+    value: 11,
+    configurable: true
+  });
 });
 assert.sameValue(arrObj.foo, 12, 'arrObj.foo');

@@ -10,16 +10,16 @@ description: >
     length property is not writable (15.4.5.1 step 3.f.i)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "length", {
-            writable: false
-        });
+Object.defineProperty(arr, "length", {
+  writable: false
+});
 
-            Object.defineProperties(arr, {
-                length: {
-                    value: 0
-                }
-            });
+Object.defineProperties(arr, {
+  length: {
+    value: 0
+  }
+});
 
 assert.sameValue(arr.length, 0, 'arr.length');

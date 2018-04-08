@@ -9,27 +9,27 @@ description: >
     property not to be visited
 ---*/
 
-        var accessed = false;
-        var testResult = true;
+var accessed = false;
+var testResult = true;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            if (idx === 3) {
-                testResult = false;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  if (idx === 3) {
+    testResult = false;
+  }
+}
 
-        var arr = [0, 1, 2, "last"];
+var arr = [0, 1, 2, "last"];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                arr.length = 3;
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    arr.length = 3;
+    return 0;
+  },
+  configurable: true
+});
 
-        arr.forEach(callbackfn);
+arr.forEach(callbackfn);
 
 assert(testResult, 'testResult !== true');
 assert(accessed, 'accessed !== true');

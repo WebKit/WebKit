@@ -8,15 +8,15 @@ description: >
     'Properties' is not present (8.10.5 step 3)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        var newObj = Object.create({}, {
-            prop: {} 
-        });
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+var newObj = Object.create({}, {
+  prop: {}
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

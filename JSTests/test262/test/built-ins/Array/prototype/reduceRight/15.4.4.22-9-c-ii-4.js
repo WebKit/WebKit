@@ -9,20 +9,20 @@ description: >
     numeric order
 ---*/
 
-        var arr = [0, 1, 2, 3, 4, 5];
-        var lastIdx = arr.length - 1;
-        var accessed = false;
-        var result = true;
+var arr = [0, 1, 2, 3, 4, 5];
+var lastIdx = arr.length - 1;
+var accessed = false;
+var result = true;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            if (lastIdx !== idx) {
-                result = false;
-            } else {
-                lastIdx--;
-            }
-        }
-        arr.reduceRight(callbackfn, 1);
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  if (lastIdx !== idx) {
+    result = false;
+  } else {
+    lastIdx--;
+  }
+}
+arr.reduceRight(callbackfn, 1);
 
 assert(result, 'result !== true');
 assert(accessed, 'accessed !== true');

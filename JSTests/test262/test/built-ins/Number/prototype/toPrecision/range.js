@@ -18,4 +18,3 @@ assert.throws(RangeError, () => (3).toPrecision(-10));
 
 assert.sameValue((3).toPrecision(100), "3.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
 assert.throws(RangeError, () => (3).toPrecision(101));
-

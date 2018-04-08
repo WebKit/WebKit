@@ -12,15 +12,15 @@ description: >
     (15.4.5.1 step 3.h)
 ---*/
 
-        var arrObj = [0, 1];
+var arrObj = [0, 1];
 
-        Object.defineProperty(arrObj, "length", {
-            value: 1
-        });
+Object.defineProperty(arrObj, "length", {
+  value: 1
+});
 
-        var indexDeleted = !arrObj.hasOwnProperty("1");
+var indexDeleted = !arrObj.hasOwnProperty("1");
 
-        arrObj.length = 10;
+arrObj.length = 10;
 
 assert(indexDeleted, 'indexDeleted !== true');
 assert.sameValue(arrObj.length, 10, 'arrObj.length');

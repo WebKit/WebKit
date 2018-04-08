@@ -9,7 +9,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.setFullYear;
-if(x === 1)
+if (x === 1)
   Date.prototype.setFullYear = 2;
 else
   Date.prototype.setFullYear = 1;

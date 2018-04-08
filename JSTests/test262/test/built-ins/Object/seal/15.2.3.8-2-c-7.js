@@ -6,9 +6,9 @@ es5id: 15.2.3.8-2-c-7
 description: Object.seal - 'O' is a RegExp object
 ---*/
 
-        var regObj = new RegExp();
-        var preCheck = Object.isExtensible(regObj);
-        Object.seal(regObj);
+var regObj = new RegExp();
+var preCheck = Object.isExtensible(regObj);
+Object.seal(regObj);
 
 assert(preCheck, 'preCheck !== true');
 assert(Object.isSealed(regObj), 'Object.isSealed(regObj) !== true');

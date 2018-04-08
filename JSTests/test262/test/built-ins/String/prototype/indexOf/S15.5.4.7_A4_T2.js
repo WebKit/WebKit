@@ -11,19 +11,30 @@ description: >
     exception
 ---*/
 
-var __obj = {toString:function(){return "\u0041B";}}
-var __obj2 = {valueOf:function(){return {};},toString:function(){throw "intointeger";}}
+var __obj = {
+  toString: function() {
+    return "\u0041B";
+  }
+}
+var __obj2 = {
+  valueOf: function() {
+    return {};
+  },
+  toString: function() {
+    throw "intointeger";
+  }
+}
 var __str = new String("ABB\u0041BABAB");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-    try {
-      var x = __str.indexOf(__obj, __obj2);
-      $ERROR('#1: "var x = __str.indexOf(__obj, __obj2)" lead to throwing exception');
-    } catch (e) {
-      if (e!=="intointeger") {
-        $ERROR('#1.1: Exception === "intointeger". Actual: '+e); 
-      }
-    }
+try {
+  var x = __str.indexOf(__obj, __obj2);
+  $ERROR('#1: "var x = __str.indexOf(__obj, __obj2)" lead to throwing exception');
+} catch (e) {
+  if (e !== "intointeger") {
+    $ERROR('#1.1: Exception === "intointeger". Actual: ' + e);
+  }
+}
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -11,8 +11,8 @@ flags: [async]
 
 var arg = [];
 
-Promise.all(arg).then(function (result) {
-    if(!(result instanceof Array)) {
-        $ERROR("expected an array from Promise.all, got " + result);
-    }
+Promise.all(arg).then(function(result) {
+  if (!(result instanceof Array)) {
+    $ERROR("expected an array from Promise.all, got " + result);
+  }
 }).then($DONE, $DONE);

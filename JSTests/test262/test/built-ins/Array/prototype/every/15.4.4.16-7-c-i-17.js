@@ -9,18 +9,20 @@ description: >
     property without a get function on an Array-like object
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return typeof val === "undefined";
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return typeof val === "undefined";
+}
 
-        var obj = { length: 2 };
-        Object.defineProperty(obj, "1", {
-            set: function () { },
-            configurable: true
-        });
+var obj = {
+  length: 2
+};
+Object.defineProperty(obj, "1", {
+  set: function() {},
+  configurable: true
+});
 
 assert(Array.prototype.every.call(obj, callbackfn), 'Array.prototype.every.call(obj, callbackfn) !== true');
 assert(accessed, 'accessed !== true');

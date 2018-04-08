@@ -13,9 +13,14 @@ includes: [propertyHelper.js]
 
 var arrObj = [];
 
-Object.defineProperty(arrObj, "0", { writable: false, configurable: true });
+Object.defineProperty(arrObj, "0", {
+  writable: false,
+  configurable: true
+});
 
-Object.defineProperty(arrObj, "0", { writable: true });
+Object.defineProperty(arrObj, "0", {
+  writable: true
+});
 verifyEqualTo(arrObj, "0", undefined);
 
 verifyWritable(arrObj, "0");

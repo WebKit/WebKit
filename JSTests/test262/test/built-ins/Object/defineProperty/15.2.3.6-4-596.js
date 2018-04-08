@@ -9,19 +9,19 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var foo = function () { };
+var foo = function() {};
 var data = "data";
 
-    Object.defineProperty(Function.prototype, "prop", {
-        get: function () {
-            return data;
-        },
-        enumerable: false,
-        configurable: true
-    });
+Object.defineProperty(Function.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  enumerable: false,
+  configurable: true
+});
 
-    var obj = foo.bind({});
+var obj = foo.bind({});
 
-    assert(!obj.hasOwnProperty("prop"));
-    verifyNotWritable(obj, "prop", "nocheck");
-    assert.sameValue(obj.prop, "data");;
+assert(!obj.hasOwnProperty("prop"));
+verifyNotWritable(obj, "prop", "nocheck");
+assert.sameValue(obj.prop, "data");;

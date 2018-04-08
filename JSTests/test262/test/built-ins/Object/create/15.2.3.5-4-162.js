@@ -8,15 +8,15 @@ description: >
     is own accessor property without a get function (8.10.5 step 5.a)
 ---*/
 
-        var descObj = {};
+var descObj = {};
 
-        Object.defineProperty(descObj, "value", {
-            set: function () { }
-        });
+Object.defineProperty(descObj, "value", {
+  set: function() {}
+});
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
-assert.sameValue(typeof (newObj.prop), "undefined", 'typeof (newObj.prop)');
+assert.sameValue(typeof(newObj.prop), "undefined", 'typeof (newObj.prop)');

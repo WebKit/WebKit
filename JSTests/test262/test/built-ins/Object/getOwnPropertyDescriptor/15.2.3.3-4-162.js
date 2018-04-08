@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.toJSON)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "toJSON");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "toJSON");
 
 assert.sameValue(desc.value, Date.prototype.toJSON, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

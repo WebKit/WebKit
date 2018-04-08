@@ -11,24 +11,24 @@ description: >
     (15.4.5.1 step 4.c)
 ---*/
 
-        var arr = [];
-        var isOwnProperty = false;
-        var canEnumerable = false;
+var arr = [];
+var isOwnProperty = false;
+var canEnumerable = false;
 
-        Object.defineProperties(arr, {
-            "0": {
-                value: 1001,
-                writable: true,
-                configurable: true
-            }
-        });
+Object.defineProperties(arr, {
+  "0": {
+    value: 1001,
+    writable: true,
+    configurable: true
+  }
+});
 
-        isOwnProperty = arr.hasOwnProperty("0");
-        for (var i in arr) {
-            if (i === "0") {
-                canEnumerable = true;
-            }
-        }
+isOwnProperty = arr.hasOwnProperty("0");
+for (var i in arr) {
+  if (i === "0") {
+    canEnumerable = true;
+  }
+}
 
 assert(isOwnProperty, 'isOwnProperty !== true');
 assert.sameValue(canEnumerable, false, 'canEnumerable');

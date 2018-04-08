@@ -8,14 +8,14 @@ description: >
     object
 ---*/
 
-        var obj = {};
-        var arrObj = [];
+var obj = {};
+var arrObj = [];
 
-        Object.defineProperty(obj, "prop", {
-            value: arrObj
-        });
+Object.defineProperty(obj, "prop", {
+  value: arrObj
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(obj.prop, arrObj, 'obj.prop');
 assert.sameValue(desc.value, arrObj, 'desc.value');

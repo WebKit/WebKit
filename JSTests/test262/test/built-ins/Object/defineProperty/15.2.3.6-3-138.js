@@ -9,19 +9,21 @@ description: >
     5.a)
 ---*/
 
-        var obj = { property : 120 };
+var obj = {
+  property: 120
+};
 
-        var proto = {};
-        Object.defineProperty(proto, "value", {
-            set: function () { }
-        });
+var proto = {};
+Object.defineProperty(proto, "value", {
+  set: function() {}
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
+var child = new ConstructFun();
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
-assert.sameValue(typeof (obj.property), "undefined", 'typeof (obj.property)');
+assert.sameValue(typeof(obj.property), "undefined", 'typeof (obj.property)');

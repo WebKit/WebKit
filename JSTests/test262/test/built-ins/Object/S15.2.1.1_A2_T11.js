@@ -14,10 +14,12 @@ if (typeof func !== 'undefined') {
   $ERROR('#1:  function expression can\'t be declarated');
 }
 
-var n_obj = Object(function func(){return 1;});
+var n_obj = Object(function func() {
+  return 1;
+});
 
 //CHECK#2
-if ((n_obj.constructor !== Function)||(n_obj()!==1)) {
+if ((n_obj.constructor !== Function) || (n_obj() !== 1)) {
   $ERROR('#2: Object(function func(){return 1;}) returns function');
 }
 

@@ -10,7 +10,7 @@ description: Checking returned result
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ("Hello, WoRlD!".toLowerCase() !== "hello, world!") {
-  $ERROR('#1: "Hello, WoRlD!".toLowerCase() === "hello, world!". Actual: '+("Hello, WoRlD!".toLowerCase()) );
+  $ERROR('#1: "Hello, WoRlD!".toLowerCase() === "hello, world!". Actual: ' + ("Hello, WoRlD!".toLowerCase()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,14 +18,14 @@ if ("Hello, WoRlD!".toLowerCase() !== "hello, world!") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if ("Hello, WoRlD!".toLowerCase() !== String("hello, world!")) {
-  $ERROR('#2: "Hello, WoRlD!".toLowerCase() === String("hello, world!"). Actual: '+("Hello, WoRlD!".toLowerCase()) );
+  $ERROR('#2: "Hello, WoRlD!".toLowerCase() === String("hello, world!"). Actual: ' + ("Hello, WoRlD!".toLowerCase()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
-if ("Hello, WoRlD!".toLowerCase() ===new String("hello, world!")) {
+if ("Hello, WoRlD!".toLowerCase() === new String("hello, world!")) {
   $ERROR('#3: "Hello, WoRlD!".toLowerCase() !== new String("hello, world!")');
 }
 //

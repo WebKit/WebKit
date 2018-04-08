@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Object, "getPrototypeOf");
+var desc = Object.getOwnPropertyDescriptor(Object, "getPrototypeOf");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Object.getPrototypeOf;
+var temp = Object.getPrototypeOf;
 
-            Object.getPrototypeOf = "2010";
+Object.getPrototypeOf = "2010";
 
-            var isWritable = (Object.getPrototypeOf === "2010");
+var isWritable = (Object.getPrototypeOf === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Object) {
-                if (prop === "getPrototypeOf") {
-                    isEnumerable = true;
-                }
-            }
-        
-            delete Object.getPrototypeOf;
+for (var prop in Object) {
+  if (prop === "getPrototypeOf") {
+    isEnumerable = true;
+  }
+}
 
-            var isConfigurable = !Object.hasOwnProperty("getPrototypeOf");
+delete Object.getPrototypeOf;
+
+var isConfigurable = !Object.hasOwnProperty("getPrototypeOf");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

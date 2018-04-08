@@ -8,18 +8,18 @@ description: >
     toString and valueOf method.
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
-        var obj = {
-            toString: function () {
-                toStringAccessed = true;
-                return "abc";
-            },
-            valueOf: function () {
-                valueOfAccessed = true;
-                return "cef";
-            }
-        };
+var toStringAccessed = false;
+var valueOfAccessed = false;
+var obj = {
+  toString: function() {
+    toStringAccessed = true;
+    return "abc";
+  },
+  valueOf: function() {
+    valueOfAccessed = true;
+    return "cef";
+  }
+};
 
 assert.sameValue(String.prototype.trim.call(obj), "abc", 'String.prototype.trim.call(obj)');
 assert.sameValue(valueOfAccessed, false, 'valueOfAccessed');

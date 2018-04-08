@@ -11,10 +11,10 @@ description: >
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-Error.prototype.toString=Object.prototype.toString;
-var err1=new Error();
-if(err1.toString()!=='[object '+ 'Error' +']'){
-  $ERROR('#1: err1.toString()===\'[object Error]\'. Actual: '+err1.toString());
+Error.prototype.toString = Object.prototype.toString;
+var err1 = new Error();
+if (err1.toString() !== '[object ' + 'Error' + ']') {
+  $ERROR('#1: err1.toString()===\'[object Error]\'. Actual: ' + err1.toString());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

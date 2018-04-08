@@ -10,11 +10,11 @@ description: Checking property constructor
 ---*/
 
 //CHECK#1
-if((new Number()).hasOwnProperty("constructor") !== false){
+if ((new Number()).hasOwnProperty("constructor") !== false) {
   $ERROR('#1: Number instance must have no special property "constructor"');
 }
 
 //CHECK#2
-if((new Number()).constructor !== Number.prototype.constructor){
+if ((new Number()).constructor !== Number.prototype.constructor) {
   $ERROR('#2: Number instance property "constructor" must be inherited from Number prototype object');
 }

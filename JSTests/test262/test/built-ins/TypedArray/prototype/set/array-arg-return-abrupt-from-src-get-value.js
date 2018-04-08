@@ -22,19 +22,19 @@ includes: [testTypedArray.js, compareArray.js]
 features: [TypedArray]
 ---*/
 
-var obj = {
-  length: 4,
-  "0": 42,
-  "1": 43,
-  "3": 44
-};
-Object.defineProperty(obj, "2", {
-  get: function() {
-    throw new Test262Error();
-  }
-});
-
 testWithTypedArrayConstructors(function(TA) {
+  var obj = {
+      length: 4,
+      "0": 42,
+      "1": 43,
+      "3": 44
+    };
+    Object.defineProperty(obj, "2", {
+      get: function() {
+        throw new Test262Error();
+      }
+    });
+
   var sample = new TA([1, 2, 3, 4]);
 
   assert.throws(Test262Error, function() {

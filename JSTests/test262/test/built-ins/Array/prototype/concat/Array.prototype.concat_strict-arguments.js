@@ -10,9 +10,14 @@ description: Array.prototype.concat strict arguments
 includes: [compareArray.js]
 features: [Symbol.isConcatSpreadable]
 ---*/
-var args = (function(a, b, c) { "use strict"; return arguments; })(1,2,3);
+var args = (function(a, b, c) {
+  "use strict";
+  return arguments;
+})(1, 2, 3);
 args[Symbol.isConcatSpreadable] = true;
 assert(compareArray([].concat(args, args), [1, 2, 3, 1, 2, 3]));
 
-Object.defineProperty(args, "length", { value: 6 });
+Object.defineProperty(args, "length", {
+  value: 6
+});
 assert(compareArray([].concat(args), [1, 2, 3, void 0, void 0, void 0]));

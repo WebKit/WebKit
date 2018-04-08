@@ -8,19 +8,19 @@ description: >
     present (8.10.5 step 3)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        Object.defineProperties(obj, {
-            prop: {
-                enumerable: true
-            }
-        });
+Object.defineProperties(obj, {
+  prop: {
+    enumerable: true
+  }
+});
 
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

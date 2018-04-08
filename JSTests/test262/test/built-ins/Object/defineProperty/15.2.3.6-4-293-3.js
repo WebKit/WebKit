@@ -14,23 +14,23 @@ includes: [propertyHelper.js]
 flags: [noStrict]
 ---*/
 
-(function (a, b, c) {
-    Object.defineProperty(arguments, "0", {
-        value: 10,
-        writable: false,
-    });
-    Object.defineProperty(arguments, "0", {
-        value: 20
-    });
-    if (a !== 10) {
-        $ERROR('Expected "a === 10", actually ' + a);
-    }
+(function(a, b, c) {
+  Object.defineProperty(arguments, "0", {
+    value: 10,
+    writable: false,
+  });
+  Object.defineProperty(arguments, "0", {
+    value: 20
+  });
+  if (a !== 10) {
+    $ERROR('Expected "a === 10", actually ' + a);
+  }
 
-    verifyEqualTo(arguments, "0", 20);
+  verifyEqualTo(arguments, "0", 20);
 
-    verifyNotWritable(arguments, "0");
+  verifyNotWritable(arguments, "0");
 
-    verifyEnumerable(arguments, "0");
+  verifyEnumerable(arguments, "0");
 
-    verifyConfigurable(arguments, "0");
+  verifyConfigurable(arguments, "0");
 }(0, 1, 2));

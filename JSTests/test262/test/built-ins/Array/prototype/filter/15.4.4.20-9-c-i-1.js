@@ -9,14 +9,18 @@ description: >
     property on an Array-like object
 ---*/
 
-        var kValue = {};
-        function callbackfn(val, idx, obj) {
-            return (idx === 5) && (val === kValue);
-        }
+var kValue = {};
 
-        var obj = { 5: kValue, length: 100 };
+function callbackfn(val, idx, obj) {
+  return (idx === 5) && (val === kValue);
+}
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var obj = {
+  5: kValue,
+  length: 100
+};
+
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], kValue, 'newArr[0]');

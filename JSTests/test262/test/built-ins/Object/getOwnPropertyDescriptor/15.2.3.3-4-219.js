@@ -8,7 +8,7 @@ description: >
     properties on built-ins (ReferenceError.prototype)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(ReferenceError, "prototype");
+var desc = Object.getOwnPropertyDescriptor(ReferenceError, "prototype");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

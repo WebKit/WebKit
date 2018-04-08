@@ -9,24 +9,24 @@ description: >
     toString method will be called first
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var proto = {
-            toString: function () {
-                toStringAccessed = true;
-                return "abc";
-            }
-        };
+var proto = {
+  toString: function() {
+    toStringAccessed = true;
+    return "abc";
+  }
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.valueOf = function () {
-            valueOfAccessed = true;
-            return "efg";
-        };
+var child = new Con();
+child.valueOf = function() {
+  valueOfAccessed = true;
+  return "efg";
+};
 
 assert.sameValue(String.prototype.trim.call(child), "abc", 'String.prototype.trim.call(child)');
 assert(toStringAccessed, 'toStringAccessed !== true');

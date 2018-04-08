@@ -9,20 +9,23 @@ description: >
     here
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return true;
-        }
-        var obj = { 2: 6.99, 8: 19 };
+function callbackfn(val, idx, obj) {
+  return true;
+}
+var obj = {
+  2: 6.99,
+  8: 19
+};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                delete obj[2];
-                return 10;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    delete obj[2];
+    return 10;
+  },
+  configurable: true
+});
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.notSameValue(newArr[0], 6.99, 'newArr[0]');

@@ -11,7 +11,7 @@ es5id: 15.4.4.11_A1.2_T2
 description: If comparefn is not undefined
 ---*/
 
-var myComparefn = function(x,y) {
+var myComparefn = function(x, y) {
   if (x === undefined) return -1;
   if (y === undefined) return 1;
   return 0;

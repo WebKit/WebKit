@@ -9,13 +9,17 @@ description: >
     (subclassed Array, length overridden to false (type conversion))
 ---*/
 
-  foo.prototype = new Array(1, 2, 3);
-  function foo() {}
-  var f = new foo();
-  f.length = false;
+foo.prototype = new Array(1, 2, 3);
 
-  var callCnt = 0;
-  function cb(){callCnt++}
-  var i = f.forEach(cb);
+function foo() {}
+var f = new foo();
+f.length = false;
+
+var callCnt = 0;
+
+function cb() {
+  callCnt++
+}
+var i = f.forEach(cb);
 
 assert.sameValue(callCnt, 0, 'callCnt');

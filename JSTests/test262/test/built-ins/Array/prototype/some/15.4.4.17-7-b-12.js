@@ -10,23 +10,28 @@ description: >
     Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 1 && val === 1) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        var arr = { 0: 0, 1: 111, 2: 2, length: 10 };
+function callbackfn(val, idx, obj) {
+  if (idx === 1 && val === 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+var arr = {
+  0: 0,
+  1: 111,
+  2: 2,
+  length: 10
+};
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                delete arr[1];
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    delete arr[1];
+    return 0;
+  },
+  configurable: true
+});
 
-            Object.prototype[1] = 1;
+Object.prototype[1] = 1;
 
 assert(Array.prototype.some.call(arr, callbackfn), 'Array.prototype.some.call(arr, callbackfn) !== true');

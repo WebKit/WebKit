@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var regObj = new RegExp();
+var regObj = new RegExp();
 
-        regObj.value = "RegExpValue";
+regObj.value = "RegExpValue";
 
-        var newObj = Object.create({}, {
-            prop: regObj
-        });
+var newObj = Object.create({}, {
+  prop: regObj
+});
 
 assert.sameValue(newObj.prop, "RegExpValue", 'newObj.prop');

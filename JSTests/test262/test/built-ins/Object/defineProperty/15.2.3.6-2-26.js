@@ -8,7 +8,7 @@ description: >
     to a string (value is 123)
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, 123, {});
+var obj = {};
+Object.defineProperty(obj, 123, {});
 
 assert(obj.hasOwnProperty("123"), 'obj.hasOwnProperty("123") !== true');

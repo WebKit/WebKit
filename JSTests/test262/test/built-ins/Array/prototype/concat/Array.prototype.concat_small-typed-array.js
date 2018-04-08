@@ -31,7 +31,9 @@ function concatTypedArray(type, elems, modulo) {
   var expected = new Array(4000);
   expected[0] = defValue;
 
-  Object.defineProperty(ta, "length", { value: 4000 });
+  Object.defineProperty(ta, "length", {
+    value: 4000
+  });
   ta[Symbol.isConcatSpreadable] = true;
   assert(compareArray([].concat(ta), expected));
 }

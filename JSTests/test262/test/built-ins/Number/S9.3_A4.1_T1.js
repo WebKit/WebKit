@@ -17,7 +17,7 @@ if (Number(13) !== 13) {
 }
 
 // CHECK#2
-if (Number(-13) !== -13) { 
+if (Number(-13) !== -13) {
   $ERROR('#2: Number(-13) === -13. Actual: ' + (Number(-13)));
 }
 

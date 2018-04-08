@@ -6,6 +6,6 @@ es5id: 15.11.4.3-1
 description: Error.prototype.message is not enumerable.
 ---*/
 
-        for (var i in Error.prototype) {
-            assert.notSameValue(i, "message", 'i');
-        }
+for (var i in Error.prototype) {
+  assert.notSameValue(i, "message", 'i');
+}

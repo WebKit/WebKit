@@ -12,7 +12,7 @@ var __string = new String("this is a string object");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __string.substring() !== "string") {
-  $ERROR('#1: __string = new String("this is a string object"); typeof __string.substring() === "string". Actual: '+typeof __string.substring() );
+  $ERROR('#1: __string = new String("this is a string object"); typeof __string.substring() === "string". Actual: ' + typeof __string.substring());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

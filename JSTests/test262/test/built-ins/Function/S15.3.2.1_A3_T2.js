@@ -18,14 +18,18 @@ description: >
     "{toString:function(){return 'a';}}" and "return a;"
 ---*/
 
-var p = {toString:function(){return "a";}};
+var p = {
+  toString: function() {
+    return "a";
+  }
+};
 var body = "return a;";
 
 //CHECK#1
 try {
-  var f = new Function(p,body);
+  var f = new Function(p, body);
 } catch (e) {
-  $ERROR('#1: test failed with error '+e);
+  $ERROR('#1: test failed with error ' + e);
 }
 
 //CHECK#2
@@ -34,6 +38,6 @@ if (f.constructor !== Function) {
 }
 
 //CHECK#3
-if (f(42)!==42) {
+if (f(42) !== 42) {
   $ERROR('#3: When the Function constructor is called with arguments p, body creates a new Function object as specified in 13.2');
 }

@@ -9,19 +9,19 @@ description: >
     property that overrides an inherited accessor property on an Array
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return val === 11;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return val === 11;
+}
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 9;
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 9;
+  },
+  configurable: true
+});
 
 assert([11].every(callbackfn), '[11].every(callbackfn) !== true');
 assert(accessed, 'accessed !== true');

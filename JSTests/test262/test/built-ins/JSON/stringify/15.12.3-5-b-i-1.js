@@ -8,6 +8,15 @@ description: >
     String values
 ---*/
 
-  var obj = {a1: {b1: [1,2,3,4], b2: {c1: 1, c2: 2}},a2: 'a2'};
+var obj = {
+  a1: {
+    b1: [1, 2, 3, 4],
+    b2: {
+      c1: 1,
+      c2: 2
+    }
+  },
+  a2: 'a2'
+};
 
-assert.sameValue(JSON.stringify(obj,null, new String('xxx')), JSON.stringify(obj,null, 'xxx'), 'JSON.stringify(obj,null, new String("xxx"))');
+assert.sameValue(JSON.stringify(obj, null, new String('xxx')), JSON.stringify(obj, null, 'xxx'), 'JSON.stringify(obj,null, new String("xxx"))');

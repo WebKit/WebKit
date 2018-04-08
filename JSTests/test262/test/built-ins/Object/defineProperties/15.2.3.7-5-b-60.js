@@ -13,7 +13,7 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperties(obj, {
-    prop: {}
+  prop: {}
 });
 
 assert(obj.hasOwnProperty("prop"));

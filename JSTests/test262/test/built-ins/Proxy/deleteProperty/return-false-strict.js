@@ -11,9 +11,9 @@ features: [Reflect]
 ---*/
 
 var p = new Proxy({}, {
-    deleteProperty: function() {
-        return false;
-    }
+  deleteProperty: function() {
+    return false;
+  }
 });
 
 assert.sameValue(Reflect.deleteProperty(p, "attr"), false);

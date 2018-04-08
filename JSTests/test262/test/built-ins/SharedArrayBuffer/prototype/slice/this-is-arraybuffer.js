@@ -5,6 +5,7 @@
 esid: sec-sharedarraybuffer.prototype.slice
 description: >
   Throws a TypeError if `this` is an ArrayBuffer
+features: [SharedArrayBuffer]
 ---*/
 
 assert.throws(TypeError, function() {

@@ -26,7 +26,7 @@ info: |
 function StopUnshift() {}
 
 var arrayLike = {
-  get "9007199254740986"() {
+  get "9007199254740986" () {
     throw new StopUnshift();
   },
   "9007199254740987": "9007199254740987",
@@ -34,27 +34,27 @@ var arrayLike = {
   "9007199254740989": "9007199254740989",
   /* "9007199254740990": empty */
   "9007199254740991": "9007199254740991",
-  length: 2**53 - 2
+  length: 2 ** 53 - 2
 };
 
 assert.throws(StopUnshift, function() {
   Array.prototype.unshift.call(arrayLike, null);
 });
 
-assert.sameValue(arrayLike.length, 2**53 - 2,
-                 "arrayLike.length is unchanged");
+assert.sameValue(arrayLike.length, 2 ** 53 - 2,
+  "arrayLike.length is unchanged");
 
 assert.sameValue(arrayLike["9007199254740987"], "9007199254740987",
-                 "arrayLike['9007199254740987'] is unchanged");
+  "arrayLike['9007199254740987'] is unchanged");
 
 assert.sameValue(arrayLike["9007199254740988"], "9007199254740987",
-                 "arrayLike['9007199254740988'] is replaced with arrayLike['9007199254740987']");
+  "arrayLike['9007199254740988'] is replaced with arrayLike['9007199254740987']");
 
 assert.sameValue("9007199254740989" in arrayLike, false,
-                 "arrayLike['9007199254740989'] is removed");
+  "arrayLike['9007199254740989'] is removed");
 
 assert.sameValue(arrayLike["9007199254740990"], "9007199254740989",
-                 "arrayLike['9007199254740990'] is replaced with arrayLike['9007199254740989']");
+  "arrayLike['9007199254740990'] is replaced with arrayLike['9007199254740989']");
 
 assert.sameValue(arrayLike["9007199254740991"], "9007199254740991",
-                 "arrayLike['9007199254740991'] is unchanged");
+  "arrayLike['9007199254740991'] is unchanged");

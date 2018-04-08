@@ -9,36 +9,36 @@ description: >
     step 8.a)
 ---*/
 
-        var data1 = "data";
-        var data2 = "data";
-        var fun = function (value) {
-            data2 = value;
-        };
-        var proto = {};
-        Object.defineProperty(proto, "set", {
-            get: function () {
-                return fun;
-            },
-            set: function (value) {
-                fun = value;
-            }
-        });
+var data1 = "data";
+var data2 = "data";
+var fun = function(value) {
+  data2 = value;
+};
+var proto = {};
+Object.defineProperty(proto, "set", {
+  get: function() {
+    return fun;
+  },
+  set: function(value) {
+    fun = value;
+  }
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.set = function (value) {
-            data1 = value;
-        };
+var child = new Con();
+child.set = function(value) {
+  data1 = value;
+};
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            prop: child
-        });
+Object.defineProperties(obj, {
+  prop: child
+});
 
-        obj.prop = "overrideData";
+obj.prop = "overrideData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data1, "overrideData", 'data1');

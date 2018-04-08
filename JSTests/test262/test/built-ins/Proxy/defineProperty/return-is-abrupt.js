@@ -15,11 +15,11 @@ info: |
 ---*/
 
 var p = new Proxy({}, {
-    defineProperty: function(t, prop, desc) {
-        throw new Test262Error();
-    }
+  defineProperty: function(t, prop, desc) {
+    throw new Test262Error();
+  }
 });
 
 assert.throws(Test262Error, function() {
-    Object.defineProperty(p, "foo", {});
+  Object.defineProperty(p, "foo", {});
 });

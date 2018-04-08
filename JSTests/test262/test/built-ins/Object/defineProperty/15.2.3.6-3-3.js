@@ -12,12 +12,15 @@ description: >
     'value' present(8.10.5 step 9.a)
 ---*/
 
-    var o = {};
+var o = {};
 
-    // dummy setter
-    var setter = function () { }
-    var desc = { set: setter, value: 101};
+// dummy setter
+var setter = function() {}
+var desc = {
+  set: setter,
+  value: 101
+};
 assert.throws(TypeError, function() {
-      Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
 assert.sameValue(o.hasOwnProperty("foo"), false, 'o.hasOwnProperty("foo")');

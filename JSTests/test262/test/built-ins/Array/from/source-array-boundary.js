@@ -7,14 +7,15 @@ esid: sec-array.from
 es6id: 22.1.2.1
 ---*/
 
-var array = [ Number.MAX_VALUE, Number.MIN_VALUE, Number.NaN, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY ];
+var array = [Number.MAX_VALUE, Number.MIN_VALUE, Number.NaN, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
 var arrayIndex = -1;
-function mapFn(value, index) {
-    this.arrayIndex++;
-    assert.sameValue(value, array[this.arrayIndex], "Value mismatch in mapFn at index " + index + ".");
-    assert.sameValue(index, this.arrayIndex, "Index mismatch in mapFn.");
 
-    return value;
+function mapFn(value, index) {
+  this.arrayIndex++;
+  assert.sameValue(value, array[this.arrayIndex], "Value mismatch in mapFn at index " + index + ".");
+  assert.sameValue(index, this.arrayIndex, "Index mismatch in mapFn.");
+
+  return value;
 }
 
 var a = Array.from(array, mapFn, this);

@@ -9,13 +9,13 @@ description: >
     object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            String.prototype.get = function () {
-                return "stringGetProperty";
-            };
-            var strObj = new String();
+String.prototype.get = function() {
+  return "stringGetProperty";
+};
+var strObj = new String();
 
-            Object.defineProperty(obj, "property", strObj);
+Object.defineProperty(obj, "property", strObj);
 
 assert.sameValue(obj.property, "stringGetProperty", 'obj.property');

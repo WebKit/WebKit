@@ -13,15 +13,15 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: NaN,
-    writable: false,
-    configurable: false
+  value: NaN,
+  writable: false,
+  configurable: false
 });
 
 Object.defineProperty(obj, "foo", {
-    value: NaN,
-    writable: false,
-    configurable: false
+  value: NaN,
+  writable: false,
+  configurable: false
 });
 
 assert.sameValue(obj.foo, NaN);

@@ -12,9 +12,9 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperties(obj, {
-    property: {
-        configurable: null
-    }
+  property: {
+    configurable: null
+  }
 });
 
 assert(obj.hasOwnProperty("property"));

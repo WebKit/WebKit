@@ -10,15 +10,17 @@ description: >
     [[DefineOwnProperty]] step 5.a.i)
 ---*/
 
-        var argObj = (function () { return arguments; })(1, 2, 3);
-        var accessed = false;
+var argObj = (function() {
+  return arguments;
+})(1, 2, 3);
+var accessed = false;
 
-        Object.defineProperty(argObj, 0, {
-            get: function () {
-                accessed = true;
-                return 12;
-            }
-        });
+Object.defineProperty(argObj, 0, {
+  get: function() {
+    accessed = true;
+    return 12;
+  }
+});
 
 assert.sameValue(argObj[0], 12, 'argObj[0]');
 assert(accessed, 'accessed !== true');

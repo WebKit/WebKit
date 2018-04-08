@@ -16,29 +16,29 @@ includes: [propertyHelper.js]
 var arg;
 
 (function fun() {
-    arg = arguments;
+  arg = arguments;
 }(0, 1, 2));
 
 function get_func1() {
-    return 10;
+  return 10;
 }
 
 Object.defineProperty(arg, "0", {
-    get: get_func1,
-    enumerable: true,
-    configurable: true
+  get: get_func1,
+  enumerable: true,
+  configurable: true
 });
 
 function get_func2() {
-    return 20;
+  return 20;
 }
 
 Object.defineProperties(arg, {
-    "0": {
-        get: get_func2,
-        enumerable: false,
-        configurable: false
-    }
+  "0": {
+    get: get_func2,
+    enumerable: false,
+    configurable: false
+  }
 });
 
 verifyEqualTo(arg, "0", get_func2());

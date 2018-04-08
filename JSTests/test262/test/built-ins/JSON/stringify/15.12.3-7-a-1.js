@@ -8,6 +8,15 @@ description: >
     arguments.
 ---*/
 
-  var obj = {a1: {b1: [1,2,3,4], b2: {c1: 1, c2: 2}},a2: 'a2'};
+var obj = {
+  a1: {
+    b1: [1, 2, 3, 4],
+    b2: {
+      c1: 1,
+      c2: 2
+    }
+  },
+  a2: 'a2'
+};
 
-assert.sameValue(JSON.stringify(obj,null, '0123456789xxxxxxxxx'), JSON.stringify(obj,null, '0123456789'), 'JSON.stringify(obj,null, "0123456789xxxxxxxxx")');
+assert.sameValue(JSON.stringify(obj, null, '0123456789xxxxxxxxx'), JSON.stringify(obj, null, '0123456789'), 'JSON.stringify(obj,null, "0123456789xxxxxxxxx")');

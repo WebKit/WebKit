@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.toLowerCase)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "toLowerCase");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "toLowerCase");
 
 assert.sameValue(desc.value, String.prototype.toLowerCase, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

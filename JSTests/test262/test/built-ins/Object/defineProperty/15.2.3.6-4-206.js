@@ -10,16 +10,16 @@ description: >
     is absent in accessor descriptor 'desc' (15.4.5.1 step 4.c)
 ---*/
 
-        var arrObj = [];
-        var getFunc = function () { };
+var arrObj = [];
+var getFunc = function() {};
 
-        Object.defineProperty(arrObj, "0", {
-            get: getFunc,
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(arrObj, "0", {
+  get: getFunc,
+  enumerable: true,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(arrObj, "0");
+var desc = Object.getOwnPropertyDescriptor(arrObj, "0");
 
 assert(arrObj.hasOwnProperty("0"), 'arrObj.hasOwnProperty("0") !== true');
 assert(desc.hasOwnProperty("set"), 'desc.hasOwnProperty("set") !== true');

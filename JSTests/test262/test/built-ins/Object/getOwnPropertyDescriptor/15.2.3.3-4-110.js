@@ -8,7 +8,7 @@ description: >
     built-ins (Math.round)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "round");
+var desc = Object.getOwnPropertyDescriptor(Math, "round");
 
 assert.sameValue(desc.value, Math.round, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

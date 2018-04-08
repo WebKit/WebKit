@@ -9,18 +9,18 @@ description: >
     visible when an exception occurs
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var accessed = false;
+var accessed = false;
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                accessed = true;
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    accessed = true;
+    return 2;
+  },
+  configurable: true
+});
 assert.throws(TypeError, function() {
-            Array.prototype.reduceRight.call(obj, function () { });
+  Array.prototype.reduceRight.call(obj, function() {});
 });
 assert(accessed, 'accessed !== true');

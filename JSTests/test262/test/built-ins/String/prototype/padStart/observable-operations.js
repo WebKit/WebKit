@@ -11,11 +11,11 @@ var log = "";
 
 function createPrimitiveObserver(name, string, value) {
   return {
-    toString: function () {
+    toString: function() {
       log += '|toString:' + name;
       return string;
     },
-    valueOf: function () {
+    valueOf: function() {
       log += '|valueOf:' + name;
       return value;
     }
@@ -33,10 +33,10 @@ var result = String.prototype.padStart.call(receiver, maxLength, fillString);
 assert.sameValue(result, 'defdefdeabc');
 
 assert.sameValue(log, '|' + [
-    'toString:receiver',
-    'valueOf:receiver',
-    'valueOf:maxLength',
-    'toString:maxLength',
-    'toString:fillString',
-    'valueOf:fillString'
+  'toString:receiver',
+  'valueOf:receiver',
+  'valueOf:maxLength',
+  'toString:maxLength',
+  'toString:fillString',
+  'valueOf:fillString'
 ].join('|'), log);

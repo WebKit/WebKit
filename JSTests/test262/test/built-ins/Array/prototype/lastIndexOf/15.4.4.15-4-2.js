@@ -9,7 +9,9 @@ description: >
     overridden to null (type conversion))
 ---*/
 
-  var i = Array.prototype.lastIndexOf.call({length: null}, 1);
+var i = Array.prototype.lastIndexOf.call({
+  length: null
+}, 1);
 
 
 assert.sameValue(i, -1, 'i');

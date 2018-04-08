@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Number.MAX_VALUE)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Number, "MAX_VALUE");
+var desc = Object.getOwnPropertyDescriptor(Number, "MAX_VALUE");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

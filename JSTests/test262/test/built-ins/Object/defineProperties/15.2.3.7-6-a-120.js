@@ -14,7 +14,9 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperties(arr, {
-    length: { writable: false }
+  length: {
+    writable: false
+  }
 });
 
 verifyEqualTo(arr, "length", 0);
@@ -24,4 +26,3 @@ verifyNotWritable(arr, "length");
 verifyNotEnumerable(arr, "length");
 
 verifyNotConfigurable(arr, "length");
-

@@ -8,17 +8,17 @@ description: >
     a Function object (8.10.5 step 4.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", {
-            configurable: function () { }
-        });
+Object.defineProperty(obj, "property", {
+  configurable: function() {}
+});
 
-        var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-        delete obj.property;
+delete obj.property;
 
-        var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

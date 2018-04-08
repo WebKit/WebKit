@@ -13,27 +13,28 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function get_func() {
-    return 0;
+  return 0;
 }
+
 function set_func(value) {
-    obj.setVerifyHelpProp = value;
+  obj.setVerifyHelpProp = value;
 }
 var desc = {
-    get: get_func,
-    set: set_func,
-    enumerable: true,
-    configurable: true
+  get: get_func,
+  set: set_func,
+  enumerable: true,
+  configurable: true
 };
 
 Object.defineProperty(obj, "foo", desc);
 
 Object.defineProperties(obj, {
-    foo: {
-        get: get_func,
-        set: set_func,
-        enumerable: true,
-        configurable: true
-    }
+  foo: {
+    get: get_func,
+    set: set_func,
+    enumerable: true,
+    configurable: true
+  }
 });
 verifyEqualTo(obj, "foo", get_func());
 
@@ -42,4 +43,3 @@ verifyWritable(obj, "foo", "setVerifyHelpProp");
 verifyEnumerable(obj, "foo");
 
 verifyConfigurable(obj, "foo");
-

@@ -8,14 +8,16 @@ description: >
     has an own toString method
 ---*/
 
-        var obj = { "abc": 1 };
+var obj = {
+  "abc": 1
+};
 
-        var ownProp = {
-            toString: function () {
-                return "abc";
-            }
-        };
+var ownProp = {
+  toString: function() {
+    return "abc";
+  }
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, ownProp);
+var desc = Object.getOwnPropertyDescriptor(obj, ownProp);
 
 assert.sameValue(desc.value, 1, 'desc.value');

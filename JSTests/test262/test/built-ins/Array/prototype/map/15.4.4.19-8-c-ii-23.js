@@ -9,12 +9,15 @@ description: >
     (this object O is correct)
 ---*/
 
-        var obj = { 0: 11, length: 2 };
+var obj = {
+  0: 11,
+  length: 2
+};
 
-        function callbackfn(val, idx, o) {
-            return obj === o;
-        }
+function callbackfn(val, idx, o) {
+  return obj === o;
+}
 
-        var testResult = Array.prototype.map.call(obj, callbackfn);
+var testResult = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

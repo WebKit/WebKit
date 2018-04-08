@@ -17,9 +17,11 @@ function callbackfn2(val, idx, obj) {
   return val > 11;
 }
 
-var proto = { length: 2 };
+var proto = {
+  length: 2
+};
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var child = new Con();

@@ -19,7 +19,9 @@ if (!(Object.prototype.toLocaleString.hasOwnProperty('length'))) {
 
 var obj = Object.prototype.toLocaleString.length;
 
-verifyNotWritable(Object.prototype.toLocaleString, "length", null, function(){return "shifted";});
+verifyNotWritable(Object.prototype.toLocaleString, "length", null, function() {
+  return "shifted";
+});
 
 //CHECK#2
 if (Object.prototype.toLocaleString.length !== obj) {

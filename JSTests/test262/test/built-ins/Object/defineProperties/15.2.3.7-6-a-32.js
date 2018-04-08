@@ -9,11 +9,13 @@ description: >
     values (8.12.9 step 4.a.i)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, { prop: {} });
+Object.defineProperties(obj, {
+  prop: {}
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(desc.hasOwnProperty("value"), 'desc.hasOwnProperty("value") !== true');
 assert.sameValue(typeof desc.value, "undefined", 'typeof desc.value');

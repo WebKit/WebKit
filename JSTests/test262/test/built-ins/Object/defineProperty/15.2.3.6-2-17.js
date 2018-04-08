@@ -8,7 +8,7 @@ description: >
     a string (value is 1e+20)
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, 1e+20, {});
+var obj = {};
+Object.defineProperty(obj, 1e+20, {});
 
 assert(obj.hasOwnProperty("100000000000000000000"), 'obj.hasOwnProperty("100000000000000000000") !== true');

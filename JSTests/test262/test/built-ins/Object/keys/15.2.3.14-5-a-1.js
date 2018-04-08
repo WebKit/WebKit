@@ -8,11 +8,13 @@ description: >
     correct.
 ---*/
 
-        var obj = { prop1: 1 };
+var obj = {
+  prop1: 1
+};
 
-        var array = Object.keys(obj);
+var array = Object.keys(obj);
 
-        var desc = Object.getOwnPropertyDescriptor(array, "0");
+var desc = Object.getOwnPropertyDescriptor(array, "0");
 
 assert(desc.hasOwnProperty("value"), 'desc.hasOwnProperty("value") !== true');
 assert.sameValue(desc.value, "prop1", 'desc.value');

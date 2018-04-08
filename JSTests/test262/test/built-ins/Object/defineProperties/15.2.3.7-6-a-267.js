@@ -14,19 +14,20 @@ includes: [propertyHelper.js]
 var arr = [];
 
 function get_fun() {
-    return 12;
+  return 12;
 }
+
 function set_fun(value) {
-    arr.setVerifyHelpProp = value;
+  arr.setVerifyHelpProp = value;
 }
 
 Object.defineProperties(arr, {
-    "property": {
-        get: get_fun,
-        set: set_fun,
-        enumerable: true,
-        configurable: true
-    }
+  "property": {
+    get: get_fun,
+    set: set_fun,
+    enumerable: true,
+    configurable: true
+  }
 });
 verifyEqualTo(arr, "property", get_fun());
 
@@ -37,6 +38,5 @@ verifyEnumerable(arr, "property");
 verifyConfigurable(arr, "property");
 
 if (arr.length !== 0) {
-    $ERROR('Expected arr.length === 0, actually ' + arr.length);
+  $ERROR('Expected arr.length === 0, actually ' + arr.length);
 }
-

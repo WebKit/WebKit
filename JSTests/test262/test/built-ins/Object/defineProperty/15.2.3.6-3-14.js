@@ -12,12 +12,16 @@ description: >
     but not undefined (Object)(8.10.5 step 8.b)
 ---*/
 
-    var o = {};
-    
-    // dummy getter
-    var setter = { a: 1 };
-    var desc = { set: setter };
+var o = {};
+
+// dummy getter
+var setter = {
+  a: 1
+};
+var desc = {
+  set: setter
+};
 assert.throws(TypeError, function() {
-      Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
 assert.sameValue(o.hasOwnProperty("foo"), false, 'o.hasOwnProperty("foo")');

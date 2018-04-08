@@ -9,12 +9,12 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var booleanObj = new Boolean(false);
+var booleanObj = new Boolean(false);
 
-        booleanObj.value = "BooleanValue";
+booleanObj.value = "BooleanValue";
 
-        var newObj = Object.create({}, {
-            prop: booleanObj
-        });
+var newObj = Object.create({}, {
+  prop: booleanObj
+});
 
 assert.sameValue(newObj.prop, "BooleanValue", 'newObj.prop');

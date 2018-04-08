@@ -27,7 +27,7 @@ Promise.all.call(function(executor) {
   checkPoint += "a";
   executor();
   checkPoint += "b";
-  executor(function(){}, function(){});
+  executor(function() {}, function() {});
   checkPoint += "c";
 }, []);
 assert.sameValue(checkPoint, "abc", "executor initially called with no arguments");
@@ -37,7 +37,7 @@ Promise.all.call(function(executor) {
   checkPoint += "a";
   executor(undefined, undefined);
   checkPoint += "b";
-  executor(function(){}, function(){});
+  executor(function() {}, function() {});
   checkPoint += "c";
 }, []);
 assert.sameValue(checkPoint, "abc", "executor initially called with (undefined, undefined)");
@@ -46,9 +46,9 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   Promise.all.call(function(executor) {
     checkPoint += "a";
-    executor(undefined, function(){});
+    executor(undefined, function() {});
     checkPoint += "b";
-    executor(function(){}, function(){});
+    executor(function() {}, function() {});
     checkPoint += "c";
   }, []);
 }, "executor initially called with (undefined, function)");
@@ -58,9 +58,9 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   Promise.all.call(function(executor) {
     checkPoint += "a";
-    executor(function(){}, undefined);
+    executor(function() {}, undefined);
     checkPoint += "b";
-    executor(function(){}, function(){});
+    executor(function() {}, function() {});
     checkPoint += "c";
   }, []);
 }, "executor initially called with (function, undefined)");
@@ -72,7 +72,7 @@ assert.throws(TypeError, function() {
     checkPoint += "a";
     executor("invalid value", 123);
     checkPoint += "b";
-    executor(function(){}, function(){});
+    executor(function() {}, function() {});
     checkPoint += "c";
   }, []);
 }, "executor initially called with (String, Number)");

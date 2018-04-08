@@ -9,22 +9,22 @@ description: >
     attribute
 ---*/
 
-        var obj = {};
-        var fun = function () {
-            return "ownDataProperty";
-        };
-        Object.defineProperty(obj, "property", {
-            get: fun,
-            configurable: true
-        });
+var obj = {};
+var fun = function() {
+  return "ownDataProperty";
+};
+Object.defineProperty(obj, "property", {
+  get: fun,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
-        var accessed = false;
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var accessed = false;
 
-        for (var prop in desc) {
-            if (prop === "get") {
-                accessed = true;
-            }
-        }
+for (var prop in desc) {
+  if (prop === "get") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

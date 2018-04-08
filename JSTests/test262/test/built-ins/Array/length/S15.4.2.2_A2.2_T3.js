@@ -14,7 +14,7 @@ description: Use try statement. len = 1.5, Number.MAX_VALUE, Number.MIN_VALUE
 try {
   new Array(1.5);
   $ERROR('#1.1: new Array(1.5) throw RangeError. Actual: ' + (new Array(1.5)));
-} catch(e) {
+} catch (e) {
   if ((e instanceof RangeError) !== true) {
     $ERROR('#1.2: new Array(1.5) throw RangeError. Actual: ' + (e));
   }
@@ -24,7 +24,7 @@ try {
 try {
   new Array(Number.MAX_VALUE);
   $ERROR('#2.1: new Array(Number.MAX_VALUE) throw RangeError. Actual: ' + (new Array(Number.MAX_VALUE)));
-} catch(e) {
+} catch (e) {
   if ((e instanceof RangeError) !== true) {
     $ERROR('#2.2: new Array(Number.MAX_VALUE) throw RangeError. Actual: ' + (e));
   }
@@ -34,7 +34,7 @@ try {
 try {
   new Array(Number.MIN_VALUE);
   $ERROR('#3.1: new Array(Number.MIN_VALUE) throw RangeError. Actual: ' + (new Array(Number.MIN_VALUE)));
-} catch(e) {
+} catch (e) {
   if ((e instanceof RangeError) !== true) {
     $ERROR('#3.2: new Array(Number.MIN_VALUE) throw RangeError. Actual: ' + (e));
   }

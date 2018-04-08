@@ -13,19 +13,19 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperties(obj, {
-    prop: {
-        value: 1001
-    }
+  prop: {
+    value: 1001
+  }
 });
 
 if (isWritable(obj, "prop")) {
-    $ERROR('Expected obj["prop"] not to be writable.');
+  $ERROR('Expected obj["prop"] not to be writable.');
 }
 
 if (!obj.hasOwnProperty("prop")) {
-    $ERROR('Expected obj.hasOwnProperty("prop") to be true, actually ' + obj.hasOwnProperty("prop"));
+  $ERROR('Expected obj.hasOwnProperty("prop") to be true, actually ' + obj.hasOwnProperty("prop"));
 }
 
 if (obj.prop !== 1001) {
-    $ERROR('Expected obj.prop === 1001, actually ' + obj.prop);
+  $ERROR('Expected obj.prop === 1001, actually ' + obj.prop);
 }

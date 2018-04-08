@@ -10,14 +10,15 @@ description: Checking by using eval
 var match = String.prototype.match.bind(this);
 
 try {
-    this.toString = Object.prototype.toString;
-} catch (e) { ; }
+  this.toString = Object.prototype.toString;
+} catch (e) {;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if ((this.toString === Object.prototype.toString)  && //Ensure we could overwrite global obj's toString
-    (match(eval("\"bj\""))[0] !== "bj")) {
-  $ERROR('#1: match = String.prototype.match.bind(this); match(eval("\\"bj\\""))[0] === "bj". Actual: '+match(eval("\"bj\""))[0] );
+if ((this.toString === Object.prototype.toString) && //Ensure we could overwrite global obj's toString
+  (match(eval("\"bj\""))[0] !== "bj")) {
+  $ERROR('#1: match = String.prototype.match.bind(this); match(eval("\\"bj\\""))[0] === "bj". Actual: ' + match(eval("\"bj\""))[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

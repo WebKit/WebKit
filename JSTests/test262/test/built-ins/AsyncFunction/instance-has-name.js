@@ -8,7 +8,7 @@ description: Async function declarations have a name property
 includes: [propertyHelper.js]
 ---*/
 
-async function foo () { };
+async function foo() {};
 
 assert.sameValue(foo.name, "foo");
 verifyNotWritable(foo, "name");

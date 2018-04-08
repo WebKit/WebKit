@@ -8,5 +8,5 @@ description: >
     boolean primitive
 ---*/
 
-    Object.freeze(false);
-    Object.freeze(true);
+Object.freeze(false);
+Object.freeze(true);

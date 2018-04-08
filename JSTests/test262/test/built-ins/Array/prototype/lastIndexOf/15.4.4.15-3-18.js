@@ -9,7 +9,10 @@ description: >
     can't convert to a number
 ---*/
 
-        var targetObj = new String("123abc123");
-        var obj = { 0: targetObj, length: "123abc123" };
+var targetObj = new String("123abc123");
+var obj = {
+  0: targetObj,
+  length: "123abc123"
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, targetObj), -1, 'Array.prototype.lastIndexOf.call(obj, targetObj)');

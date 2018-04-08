@@ -8,4 +8,4 @@ description: >
     param is not Object
 ---*/
 
-    Object.preventExtensions(0);
+Object.preventExtensions(0);

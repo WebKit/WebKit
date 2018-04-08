@@ -7,7 +7,7 @@ es5id: 15.4.4.17-4-5
 description: Array.prototype.some throws TypeError if callbackfn is number
 ---*/
 
-  var arr = new Array(10);
+var arr = new Array(10);
 assert.throws(TypeError, function() {
-    arr.some(5);
+  arr.some(5);
 });

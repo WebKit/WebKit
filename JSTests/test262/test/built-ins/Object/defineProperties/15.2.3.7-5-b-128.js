@@ -9,14 +9,14 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var descObj = new Boolean(false);
+var descObj = new Boolean(false);
 
-        descObj.value = "Boolean";
+descObj.value = "Boolean";
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "Boolean", 'obj.property');

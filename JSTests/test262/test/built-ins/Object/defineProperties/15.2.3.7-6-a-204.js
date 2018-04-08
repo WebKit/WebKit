@@ -16,19 +16,19 @@ var arr = [];
 arr.verifySetter = 100;
 
 Object.defineProperties(arr, {
-    "0": {
-        set: function (value) {
-            arr.verifySetter = value;
-        },
-        get: function () {
-            return arr.verifySetter;
-        },
-        enumerable: true
-    }
+  "0": {
+    set: function(value) {
+      arr.verifySetter = value;
+    },
+    get: function() {
+      return arr.verifySetter;
+    },
+    enumerable: true
+  }
 });
 
 if (!Object.prototype.hasOwnProperty.call(arr, "0")) {
-    $ERROR("Expected hasOwnProperty to return true.");
+  $ERROR("Expected hasOwnProperty to return true.");
 }
 
 arr[0] = 101;
@@ -36,7 +36,7 @@ arr[0] = 101;
 verifyEqualTo(arr, 0, 101);
 
 if (arr.verifySetter !== 101) {
-    $ERROR('Expected arr.verifySetter === 101, actually ' + arr.verifySetter);
+  $ERROR('Expected arr.verifySetter === 101, actually ' + arr.verifySetter);
 }
 
 verifyNotConfigurable(arr, 0);

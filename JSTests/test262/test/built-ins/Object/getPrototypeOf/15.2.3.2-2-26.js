@@ -8,6 +8,6 @@ description: >
     (RegExp object)
 ---*/
 
-        var obj = new RegExp();
+var obj = new RegExp();
 
 assert.sameValue(Object.getPrototypeOf(obj), RegExp.prototype, 'Object.getPrototypeOf(obj)');

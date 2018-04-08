@@ -8,11 +8,11 @@ description: >
     primitive values string (8.10.5 step 8.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                prop: {
-                    set: "abcdef"
-                }
-            });
+  Object.defineProperties(obj, {
+    prop: {
+      set: "abcdef"
+    }
+  });
 });

@@ -9,12 +9,14 @@ description: >
     when 'F' is called
 ---*/
 
-        var obj = { "prop": "a" };
+var obj = {
+  "prop": "a"
+};
 
-        var func = function () {
-            return this;
-        };
+var func = function() {
+  return this;
+};
 
-        var newFunc = Function.prototype.bind.call(func, obj);
+var newFunc = Function.prototype.bind.call(func, obj);
 
 assert.sameValue(newFunc(), obj, 'newFunc()');

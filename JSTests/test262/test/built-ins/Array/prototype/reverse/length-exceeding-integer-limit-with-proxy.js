@@ -8,7 +8,7 @@ description: >
 includes: [compareArray.js, proxyTrapsHelper.js]
 ---*/
 
-function StopReverse() { }
+function StopReverse() {}
 
 var arrayLike = {
   0: "zero",
@@ -25,7 +25,7 @@ var arrayLike = {
   /* 9007199254740989: hole, */
   9007199254740990: "2**53-2",
 
-  length: 2**53 + 2,
+  length: 2 ** 53 + 2,
 };
 
 var traps = [];
@@ -106,7 +106,7 @@ assert.compareArray(traps, [
   "Get:4",
 ]);
 
-assert.sameValue(arrayLike.length, 2**53 + 2, "Length property is not modified");
+assert.sameValue(arrayLike.length, 2 ** 53 + 2, "Length property is not modified");
 
 assert.sameValue(arrayLike[0], "2**53-2", "Property at index 0");
 assert.sameValue(1 in arrayLike, false, "Property at index 1");

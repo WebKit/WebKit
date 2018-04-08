@@ -17,4 +17,4 @@ sample = new DataView(buffer, 0);
 $DETACHBUFFER(buffer);
 
 assert.throws(TypeError, () => sample.getBigUint64(13),
-              "detached DataView access should throw");
+  "detached DataView access should throw");

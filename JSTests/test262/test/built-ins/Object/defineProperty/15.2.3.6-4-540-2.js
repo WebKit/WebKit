@@ -14,57 +14,57 @@ includes: [propertyHelper.js]
 var obj = [];
 
 obj.verifySetFunction = "data";
-var getFunc = function () {
-    return obj.verifySetFunction;
+var getFunc = function() {
+  return obj.verifySetFunction;
 };
-var setFunc = function (value) {
-    obj.verifySetFunction = value;
+var setFunc = function(value) {
+  obj.verifySetFunction = value;
 };
 Object.defineProperty(obj, "0", {
-    get: getFunc,
-    set: setFunc,
-    configurable: false
+  get: getFunc,
+  set: setFunc,
+  configurable: false
 });
 
 var result = false;
 try {
-    Object.defineProperty(obj, "0", {
-        get: function () {
-            return 100;
-        }
-    });
+  Object.defineProperty(obj, "0", {
+    get: function() {
+      return 100;
+    }
+  });
 } catch (e) {
-    result = e instanceof TypeError;
-    verifyEqualTo(obj, "0", getFunc());
+  result = e instanceof TypeError;
+  verifyEqualTo(obj, "0", getFunc());
 
-    verifyWritable(obj, "0", "verifySetFunction");
+  verifyWritable(obj, "0", "verifySetFunction");
 
-    verifyNotEnumerable(obj, "0");
+  verifyNotEnumerable(obj, "0");
 
-    verifyNotConfigurable(obj, "0");
+  verifyNotConfigurable(obj, "0");
 }
 
 try {
-    Object.defineProperty(obj, "0", {
-        set: function (value) {
-            obj.verifySetFunction1 = value;
-        }
-    });
+  Object.defineProperty(obj, "0", {
+    set: function(value) {
+      obj.verifySetFunction1 = value;
+    }
+  });
 } catch (e) {
-    if (!result ) {
-        $ERROR('Expected result  to be true, actually ' + result );
-    }
-    
-    verifyEqualTo(obj, "0", getFunc());
+  if (!result) {
+    $ERROR('Expected result  to be true, actually ' + result);
+  }
 
-    verifyWritable(obj, "0", "verifySetFunction");
+  verifyEqualTo(obj, "0", getFunc());
 
-    verifyNotEnumerable(obj, "0");
+  verifyWritable(obj, "0", "verifySetFunction");
 
-    verifyNotConfigurable(obj, "0");
+  verifyNotEnumerable(obj, "0");
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
-    }
+  verifyNotConfigurable(obj, "0");
+
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

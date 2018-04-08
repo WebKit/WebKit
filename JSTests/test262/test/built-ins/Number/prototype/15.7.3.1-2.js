@@ -6,6 +6,6 @@ es5id: 15.7.3.1-2
 description: Number.prototype, initial value is the Number prototype object
 ---*/
 
-  // assume that Number.prototype has not been modified.
+// assume that Number.prototype has not been modified.
 
 assert.sameValue(Object.getPrototypeOf(new Number(42)), Number.prototype, 'Object.getPrototypeOf(new Number(42))');

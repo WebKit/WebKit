@@ -9,12 +9,12 @@ description: >
     its own property get method
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return obj.length === 3;
-        }
+function callbackfn(val, idx, obj) {
+  return obj.length === 3;
+}
 
-        var str = new String("012");
+var str = new String("012");
 
-        var newArr = Array.prototype.filter.call(str, callbackfn);
+var newArr = Array.prototype.filter.call(str, callbackfn);
 
 assert.sameValue(newArr.length, 3, 'newArr.length');

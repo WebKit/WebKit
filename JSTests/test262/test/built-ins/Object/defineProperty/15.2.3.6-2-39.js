@@ -8,7 +8,7 @@ description: >
     a string
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, [1, 2], {});
+var obj = {};
+Object.defineProperty(obj, [1, 2], {});
 
 assert(obj.hasOwnProperty("1,2"), 'obj.hasOwnProperty("1,2") !== true');

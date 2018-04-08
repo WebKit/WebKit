@@ -12,7 +12,7 @@ description: Calling Object function with number argument value
 var num = 1.1;
 
 // CHECK#1
-if(typeof num  !== 'number'){
+if (typeof num !== 'number') {
   $ERROR('#1: num = 1.1 should be Number primitive');
 }
 
@@ -29,7 +29,7 @@ if (obj.constructor !== Number) {
 }
 
 //CHECK#4
-if ((obj != 1.1)||(obj === 1.1)) {
+if ((obj != 1.1) || (obj === 1.1)) {
   $ERROR('#4: Object(1.1) returns ToObject(1.1)');
 }
 //

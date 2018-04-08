@@ -9,13 +9,15 @@ description: >
     of string object
 ---*/
 
-var __obj = {toString:function(){}};
+var __obj = {
+  toString: function() {}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(void 0) evaluates to "undefined" indexOf(void 0) evaluates to indexOf("undefined")
 if (String(__obj).indexOf(void 0) !== 0) {
-  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).indexOf(void 0) === 0. Actual: '+String(__obj).indexOf(void 0) ); 
+  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).indexOf(void 0) === 0. Actual: ' + String(__obj).indexOf(void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

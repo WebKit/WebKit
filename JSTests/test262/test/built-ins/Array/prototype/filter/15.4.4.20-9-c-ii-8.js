@@ -9,16 +9,20 @@ description: >
     iterations is observed
 ---*/
 
-        var obj = { 0: 11, 1: 12, length: 2 };
+var obj = {
+  0: 11,
+  1: 12,
+  length: 2
+};
 
-        function callbackfn(val, idx, o) {
-            if (idx === 0) {
-                obj[idx + 1] = 8;
-            }
-            return val > 10;
-        }
+function callbackfn(val, idx, o) {
+  if (idx === 0) {
+    obj[idx + 1] = 8;
+  }
+  return val > 10;
+}
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

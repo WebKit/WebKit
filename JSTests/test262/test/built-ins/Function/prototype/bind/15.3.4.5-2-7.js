@@ -13,5 +13,5 @@ description: >
 
 
 assert.throws(TypeError, function() {
-    JSON.bind();
+  JSON.bind();
 });

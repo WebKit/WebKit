@@ -8,6 +8,6 @@ author: Jordan Harband
 features: [Symbol]
 ---*/
 
-assert.throws(TypeError, function () {
-	'abc'.padEnd(10, Symbol());
+assert.throws(TypeError, function() {
+  'abc'.padEnd(10, Symbol());
 });

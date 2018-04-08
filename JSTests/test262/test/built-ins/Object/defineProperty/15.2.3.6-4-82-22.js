@@ -16,22 +16,22 @@ includes: [propertyHelper.js]
 
 var obj = {};
 obj.verifySetFunction = "data";
-var get_func = function () {
-    return obj.verifySetFunction;
+var get_func = function() {
+  return obj.verifySetFunction;
 };
-var set_func = function (value) {
-    obj.verifySetFunction = value;
+var set_func = function(value) {
+  obj.verifySetFunction = value;
 };
 Object.defineProperty(obj, "0", {
-    get: get_func,
-    set: set_func,
-    enumerable: true,
-    configurable: true
+  get: get_func,
+  set: set_func,
+  enumerable: true,
+  configurable: true
 });
 
 Object.defineProperty(obj, "0", {
-    enumerable: true,
-    configurable: false
+  enumerable: true,
+  configurable: false
 });
 
 verifyEqualTo(obj, "0", get_func());

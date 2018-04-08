@@ -8,7 +8,7 @@ description: >
     property name
 ---*/
 
-    var o = {};
-    var desc = Object.getOwnPropertyDescriptor(o, undefined);
+var o = {};
+var desc = Object.getOwnPropertyDescriptor(o, undefined);
 
 assert.sameValue(desc, undefined, 'desc');

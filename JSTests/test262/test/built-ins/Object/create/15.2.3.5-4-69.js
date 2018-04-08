@@ -9,18 +9,20 @@ description: >
     'enumerable' property (8.10.5 step 3.a)
 ---*/
 
-        var accessed = false;
-        var argObj = (function () { return arguments; })();
+var accessed = false;
+var argObj = (function() {
+  return arguments;
+})();
 
-        argObj.enumerable = true;
+argObj.enumerable = true;
 
-        var newObj = Object.create({}, {
-            prop: argObj
-        });
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+var newObj = Object.create({}, {
+  prop: argObj
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

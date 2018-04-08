@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Array.prototype, "forEach");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "forEach");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Array.prototype.forEach;
+var temp = Array.prototype.forEach;
 
-            Array.prototype.forEach = "2010";
+Array.prototype.forEach = "2010";
 
-            var isWritable = (Array.prototype.forEach === "2010");
+var isWritable = (Array.prototype.forEach === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Array.prototype) {
-                if (prop === "forEach") {
-                    isEnumerable = true;
-                }
-            }
+for (var prop in Array.prototype) {
+  if (prop === "forEach") {
+    isEnumerable = true;
+  }
+}
 
-            delete Array.prototype.forEach;
+delete Array.prototype.forEach;
 
-            var isConfigurable = !Array.prototype.hasOwnProperty("forEach");
+var isConfigurable = !Array.prototype.hasOwnProperty("forEach");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

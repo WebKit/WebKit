@@ -15,11 +15,11 @@ var arr = [];
 arr.property = 12; // default value of attributes: writable: true, configurable: true, enumerable: true
 
 Object.defineProperties(arr, {
-    "property": {
-        writable: false,
-        enumerable: false,
-        configurable: false
-    }
+  "property": {
+    writable: false,
+    enumerable: false,
+    configurable: false
+  }
 });
 verifyEqualTo(arr, "property", 12);
 
@@ -30,6 +30,5 @@ verifyNotEnumerable(arr, "property");
 verifyNotConfigurable(arr, "property");
 
 if (arr.length !== 0) {
-    $ERROR('Expected arr.length === 0, actually ' + arr.length);
+  $ERROR('Expected arr.length === 0, actually ' + arr.length);
 }
-

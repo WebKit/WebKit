@@ -8,9 +8,9 @@ description: >
     expected args (target takes 0 args)
 ---*/
 
-  function foo() { }
-  var o = {};
-  
-  var bf = foo.bind(o);
+function foo() {}
+var o = {};
+
+var bf = foo.bind(o);
 
 assert.sameValue(bf.length, 0, 'bf.length');

@@ -13,10 +13,10 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "prop", {
-    get: undefined,
-    set: undefined,
-    enumerable: true,
-    configurable: false
+  get: undefined,
+  set: undefined,
+  enumerable: true,
+  configurable: false
 });
 
 assert(obj.hasOwnProperty("prop"));

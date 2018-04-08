@@ -10,25 +10,25 @@ description: >
     primitive values
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var obj = {
-            length: {
-                toString: function () {
-                    toStringAccessed = true;
-                    return {};
-                },
+var obj = {
+  length: {
+    toString: function() {
+      toStringAccessed = true;
+      return {};
+    },
 
-                valueOf: function () {
-                    valueOfAccessed = true;
-                    return {};
-                }
-            }
-        };
+    valueOf: function() {
+      valueOfAccessed = true;
+      return {};
+    }
+  }
+};
 
 assert.throws(TypeError, function() {
-            Array.prototype.indexOf.call(obj);
+  Array.prototype.indexOf.call(obj);
 });
 
 assert(toStringAccessed, 'toStringAccessed');

@@ -20,20 +20,20 @@ for (var index = 0; index < uspU.length; index++) {
   var result = true;
   n = false;
   if (parseInt(uspU[index] + "1") !== parseInt("1")) {
-    $ERROR('#1.' +  uspS[index] + ' ');
+    $ERROR('#1.' + uspS[index] + ' ');
     result = false;
   }
-   if (parseInt(uspU[index] + uspU[index] + uspU[index] + "1") !== parseInt("1")) {
-    $ERROR('#2.' +  uspS[index] + ' ');
+  if (parseInt(uspU[index] + uspU[index] + uspU[index] + "1") !== parseInt("1")) {
+    $ERROR('#2.' + uspS[index] + ' ');
     result = false;
   }
   n = parseInt(uspU[index]);
   if (!(n !== n)) {
-    $ERROR('#3.' +  uspS[index] + ' ');
+    $ERROR('#3.' + uspS[index] + ' ');
     result = false;
   }
   if (result !== true) {
-      errorCount++;
+    errorCount++;
   }
   count++;
 }

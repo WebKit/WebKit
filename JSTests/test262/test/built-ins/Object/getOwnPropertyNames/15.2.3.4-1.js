@@ -8,4 +8,4 @@ description: >
     first param is not Object
 ---*/
 
-    Object.getOwnPropertyNames(0);
+Object.getOwnPropertyNames(0);

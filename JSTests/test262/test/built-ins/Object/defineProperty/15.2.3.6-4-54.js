@@ -13,11 +13,11 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "property", {
-    get: function () {
-        return "property";
-    },
-    enumerable: false,
-    configurable: false
+  get: function() {
+    return "property";
+  },
+  enumerable: false,
+  configurable: false
 });
 
 

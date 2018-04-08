@@ -9,22 +9,22 @@ description: >
     step 8.a)
 ---*/
 
-        var data = "data";
-        var fun = function () {
-            return arguments;
-        };
-        var arg = fun();
-        var setFun = function (value) {
-            data = value;
-        };
+var data = "data";
+var fun = function() {
+  return arguments;
+};
+var arg = fun();
+var setFun = function(value) {
+  data = value;
+};
 
-        arg.prop = {
-            set: setFun
-        };
+arg.prop = {
+  set: setFun
+};
 
-        var obj = {};
-        Object.defineProperties(obj, arg);
-        obj.prop = "argData";
+var obj = {};
+Object.defineProperties(obj, arg);
+obj.prop = "argData";
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "argData", 'data');

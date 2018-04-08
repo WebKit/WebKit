@@ -8,18 +8,18 @@ description: >
     inherited data property (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
-        var proto = {
-            get: function () {
-                return "inheritedDataProperty";
-            }
-        };
+var obj = {};
+var proto = {
+  get: function() {
+    return "inheritedDataProperty";
+  }
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
+var child = new ConstructFun();
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
 assert.sameValue(obj.property, "inheritedDataProperty", 'obj.property');

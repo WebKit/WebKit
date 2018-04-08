@@ -9,22 +9,25 @@ description: >
     side-effects that might be produced by step 2
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (curVal > 10);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (curVal > 10);
+}
 
-        var obj = { 0: 11, 1: 12 };
+var obj = {
+  0: 11,
+  1: 12
+};
 
-        var accessed = false;
+var accessed = false;
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                accessed = true;
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    accessed = true;
+    return 0;
+  },
+  configurable: true
+});
 assert.throws(TypeError, function() {
-            Array.prototype.reduce.call(obj, callbackfn);
+  Array.prototype.reduce.call(obj, callbackfn);
 });
 assert(accessed, 'accessed !== true');

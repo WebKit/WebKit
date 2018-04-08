@@ -12,11 +12,11 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-    JSON.writable = false;
+JSON.writable = false;
 
-    Object.defineProperties(obj, {
-        property: JSON
-    });
+Object.defineProperties(obj, {
+  property: JSON
+});
 
-    assert(obj.hasOwnProperty("property"));
-    verifyNotWritable(obj, "property");
+assert(obj.hasOwnProperty("property"));
+verifyNotWritable(obj, "property");

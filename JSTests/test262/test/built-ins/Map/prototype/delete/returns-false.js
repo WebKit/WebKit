@@ -15,7 +15,10 @@ info: |
   6. Return false.
 ---*/
 
-var m = new Map([['a',1], ['b', 2]]);
+var m = new Map([
+  ['a', 1],
+  ['b', 2]
+]);
 
 assert.sameValue(m.delete('not-in-the-map'), false);
 

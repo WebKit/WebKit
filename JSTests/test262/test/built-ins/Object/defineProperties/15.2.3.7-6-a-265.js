@@ -10,13 +10,13 @@ description: >
     length property in 'O' (15.4.5.1 step 4.e.ii)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            "5": {
-                value: 26
-            }
-        });
+Object.defineProperties(arr, {
+  "5": {
+    value: 26
+  }
+});
 
 assert.sameValue(arr.length, 6, 'arr.length');
 assert.sameValue(arr[5], 26, 'arr[5]');

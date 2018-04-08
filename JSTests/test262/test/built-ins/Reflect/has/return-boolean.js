@@ -33,5 +33,7 @@ assert.sameValue(
   'false when property is not present'
 );
 
-var o2 = Object.create({p: 42});
+var o2 = Object.create({
+  p: 42
+});
 assert.sameValue(Reflect.has(o2, 'p'), true, 'true from a prototype property');

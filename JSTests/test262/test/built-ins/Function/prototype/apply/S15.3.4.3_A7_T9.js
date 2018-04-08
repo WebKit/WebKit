@@ -11,13 +11,13 @@ description: >
     used
 ---*/
 
-function FACTORY(){
+function FACTORY() {
   var obj = {};
-  Function("a1,a2,a3","this.shifted=a1+a2+a3;").apply(obj,arguments);
+  Function("a1,a2,a3", "this.shifted=a1+a2+a3;").apply(obj, arguments);
   return obj;
 }
 
-var obj=new FACTORY("",1,2);
+var obj = new FACTORY("", 1, 2);
 
 //CHECK#1
 if (typeof this["shifted"] !== "undefined") {

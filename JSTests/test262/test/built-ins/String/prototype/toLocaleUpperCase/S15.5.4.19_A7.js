@@ -16,6 +16,6 @@ try {
   $ERROR('#1: __FACTORY = String.prototype.toLocaleUpperCase; "__instance = new __FACTORY" lead to throwing exception');
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.1:  var __instance = new __FACTORY;  Object has no construct lead  a TypeError. Actual: ' + (e));  
+    $ERROR('#1.1:  var __instance = new __FACTORY;  Object has no construct lead  a TypeError. Actual: ' + (e));
   }
 }

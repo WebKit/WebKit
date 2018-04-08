@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.split)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "split");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "split");
 
 assert.sameValue(desc.value, String.prototype.split, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

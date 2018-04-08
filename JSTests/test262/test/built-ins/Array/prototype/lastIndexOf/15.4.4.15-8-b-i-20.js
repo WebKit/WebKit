@@ -10,18 +10,18 @@ description: >
     inherited accessor property on an Array
 ---*/
 
-        var arr = [, 1];
+var arr = [, 1];
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 100;
-                },
-                configurable: true
-            });
-            Object.defineProperty(arr, "0", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 100;
+  },
+  configurable: true
+});
+Object.defineProperty(arr, "0", {
+  set: function() {},
+  configurable: true
+});
 
 assert(arr.hasOwnProperty(0), 'arr.hasOwnProperty(0) !== true');
 assert.sameValue(arr.lastIndexOf(undefined), 0, 'arr.lastIndexOf(undefined)');

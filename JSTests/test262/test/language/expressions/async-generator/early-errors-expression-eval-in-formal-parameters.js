@@ -3,7 +3,7 @@
 
 /*---
 author: Caitlin Potter <caitp@igalia.com>
-esid: pending
+esid: sec-strict-mode-of-ecmascript
 description: >
   It is a SyntaxError if FormalParameters contains eval in strict mode.
 negative:

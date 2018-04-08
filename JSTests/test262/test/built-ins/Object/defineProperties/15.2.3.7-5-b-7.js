@@ -8,17 +8,17 @@ description: >
     not present (8.10.5 step 3)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        Object.defineProperties(obj, {
-            prop: {}
-        });
+Object.defineProperties(obj, {
+  prop: {}
+});
 
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

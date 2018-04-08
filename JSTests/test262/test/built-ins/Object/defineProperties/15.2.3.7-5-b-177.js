@@ -8,14 +8,14 @@ description: >
     'descObj' is Array object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: []
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: []
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

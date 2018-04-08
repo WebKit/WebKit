@@ -11,19 +11,30 @@ description: >
     return exception
 ---*/
 
-var __obj = {valueOf:function(){return {};}, toString:function(){throw "instart";}};
-var __obj2 = {valueOf:function(){throw "inend";}};
+var __obj = {
+  valueOf: function() {
+    return {};
+  },
+  toString: function() {
+    throw "instart";
+  }
+};
+var __obj2 = {
+  valueOf: function() {
+    throw "inend";
+  }
+};
 var __str = new String("ABB\u0041BABAB");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-    try {
-      var x = __str.slice(__obj, __obj2);
-      $ERROR('#1: "var x = __str.slice(__obj,__obj2)" lead to throwing exception');
-    } catch (e) {
-      if (e!=="instart") {
-        $ERROR('#1.1: Exception === "instart". Actual: '+e);
-      }
-    }
+try {
+  var x = __str.slice(__obj, __obj2);
+  $ERROR('#1: "var x = __str.slice(__obj,__obj2)" lead to throwing exception');
+} catch (e) {
+  if (e !== "instart") {
+    $ERROR('#1.1: Exception === "instart". Actual: ' + e);
+  }
+}
 //
 //////////////////////////////////////////////////////////////////////////////

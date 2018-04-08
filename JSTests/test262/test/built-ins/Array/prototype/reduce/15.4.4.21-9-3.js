@@ -9,14 +9,14 @@ description: >
     after the call
 ---*/
 
-  function callbackfn(prevVal, curVal, idx, obj)
-  {
-    delete arr[3];
-    delete arr[4];
-    return prevVal + curVal;
-  }
+function callbackfn(prevVal, curVal, idx, obj)
+{
+  delete arr[3];
+  delete arr[4];
+  return prevVal + curVal;
+}
 
-  var arr = ['1',2,3,4,5];
+var arr = ['1', 2, 3, 4, 5];
 
 // two elements deleted
 assert.sameValue(arr.reduce(callbackfn), "123", 'arr.reduce(callbackfn)');

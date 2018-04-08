@@ -16,22 +16,22 @@ var __obj = Object(void 0);
 var n__obj = new Object(void 0);
 
 
-if (__obj.toString() !== n__obj.toString()){
-	$ERROR('#1');	
+if (__obj.toString() !== n__obj.toString()) {
+  $ERROR('#1');
 }
 
 if (__obj.constructor !== n__obj.constructor) {
-	$ERROR('#2');
+  $ERROR('#2');
 }
 
 if (__obj.prototype !== n__obj.prototype) {
-	$ERROR('#3');
-}	
+  $ERROR('#3');
+}
 
 if (__obj.toLocaleString() !== n__obj.toLocaleString()) {
-	$ERROR('#4');
+  $ERROR('#4');
 }
 
 if (typeof __obj !== typeof n__obj) {
-	$ERROR('#5');
+  $ERROR('#5');
 }

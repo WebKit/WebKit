@@ -9,12 +9,13 @@ description: >
     0
 ---*/
 
-        var accessed = false;
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-        }
+var accessed = false;
 
-        var result = [].forEach(callbackfn);
+function callbackfn(val, idx, obj) {
+  accessed = true;
+}
+
+var result = [].forEach(callbackfn);
 
 assert.sameValue(typeof result, "undefined", 'typeof result');
 assert.sameValue(accessed, false, 'accessed');

@@ -8,16 +8,16 @@ description: >
     'descObj' is Boolean object (8.10.5 step 4.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                configurable: new Boolean(true)
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    configurable: new Boolean(true)
+  }
+});
 
-        var preCheck = obj.hasOwnProperty("property");
-        delete obj.property;
+var preCheck = obj.hasOwnProperty("property");
+delete obj.property;
 
 assert(preCheck, 'preCheck !== true');
 assert.sameValue(obj.hasOwnProperty("property"), false, 'obj.hasOwnProperty("property")');

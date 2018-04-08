@@ -8,19 +8,19 @@ description: >
     false, [[Configurable]] is false) is non-enumerable
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            value: 2010,
-            writable: true,
-            enumerable: false,
-            configurable: false
-        });
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
-        for (var p in obj) {
-            assert.notSameValue(p, "prop", 'p');
-        }
+Object.defineProperty(obj, "prop", {
+  value: 2010,
+  writable: true,
+  enumerable: false,
+  configurable: false
+});
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+for (var p in obj) {
+  assert.notSameValue(p, "prop", 'p');
+}
 
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

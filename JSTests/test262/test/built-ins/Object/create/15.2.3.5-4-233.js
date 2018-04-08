@@ -8,12 +8,12 @@ description: >
     own data property (8.10.5 step 7.a)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                get: function () {
-                    return "ownDataProperty";
-                }
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    get: function() {
+      return "ownDataProperty";
+    }
+  }
+});
 
 assert.sameValue(newObj.prop, "ownDataProperty", 'newObj.prop');

@@ -10,13 +10,13 @@ flags: [noStrict]
 ---*/
 
 var global = this;
-  var retVal = 'x'.replace(/x/, 
-                           function() { 
-                               if (this===global) {
-                                   return 'y';
-                               } else {
-                                   return 'z';
-                               }
-                           });
+var retVal = 'x'.replace(/x/,
+  function() {
+    if (this === global) {
+      return 'y';
+    } else {
+      return 'z';
+    }
+  });
 
 assert.sameValue(retVal, 'y', 'retVal');

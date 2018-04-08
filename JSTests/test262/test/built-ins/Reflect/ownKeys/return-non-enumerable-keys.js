@@ -20,7 +20,7 @@ assert(
 );
 
 assert(
-  compareArray(Reflect.ownKeys([,,2]), ['2', 'length']),
+  compareArray(Reflect.ownKeys([, , 2]), ['2', 'length']),
   'return array keys'
 );
 

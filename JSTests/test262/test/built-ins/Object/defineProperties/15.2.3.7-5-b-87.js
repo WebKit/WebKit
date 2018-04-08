@@ -8,17 +8,17 @@ description: >
     'descObj' is true (8.10.5 step 4.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                configurable: true
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    configurable: true
+  }
+});
 
-        var hadOwnProperty = obj.hasOwnProperty("property");
+var hadOwnProperty = obj.hasOwnProperty("property");
 
-        delete obj.property;
+delete obj.property;
 
 assert.sameValue(obj.hasOwnProperty("property"), false, 'obj.hasOwnProperty("property")');
 assert(hadOwnProperty, 'hadOwnProperty !== true');

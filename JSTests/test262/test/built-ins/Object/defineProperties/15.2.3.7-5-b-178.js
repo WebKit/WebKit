@@ -8,14 +8,14 @@ description: >
     'descObj' is String object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: new String("abc")
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: new String("abc")
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

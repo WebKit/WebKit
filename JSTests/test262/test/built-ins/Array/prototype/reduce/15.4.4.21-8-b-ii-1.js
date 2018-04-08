@@ -9,14 +9,14 @@ description: >
     here
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                obj[1] = "accumulator";
-                return 3;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    obj[1] = "accumulator";
+    return 3;
+  },
+  configurable: true
+});
 
-assert.sameValue(Array.prototype.reduce.call(obj, function () { }), "accumulator", 'Array.prototype.reduce.call(obj, function () { })');
+assert.sameValue(Array.prototype.reduce.call(obj, function() {}), "accumulator", 'Array.prototype.reduce.call(obj, function () { })');

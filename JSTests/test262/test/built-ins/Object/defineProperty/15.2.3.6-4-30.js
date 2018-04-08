@@ -8,13 +8,13 @@ description: >
     get function (8.12.9 step 1)
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, "foo", {
-            set: function () { },
-            configurable: false
-        });
+var obj = {};
+Object.defineProperty(obj, "foo", {
+  set: function() {},
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "foo", {
-                configurable: true
-            });
+  Object.defineProperty(obj, "foo", {
+    configurable: true
+  });
 });

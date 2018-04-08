@@ -9,16 +9,16 @@ description: >
     visible here
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        function callbackfn(prevVal, curVal, idx, obj) { }
+function callbackfn(prevVal, curVal, idx, obj) {}
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                obj[2] = "accumulator";
-                return 3;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    obj[2] = "accumulator";
+    return 3;
+  },
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.reduceRight.call(obj, callbackfn), "accumulator", 'Array.prototype.reduceRight.call(obj, callbackfn)');

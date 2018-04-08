@@ -16,7 +16,7 @@ arr[0] = 101; // default value of attributes: writable: true, configurable: true
 
 
 Object.defineProperties(arr, {
-    "0": {}
+  "0": {}
 });
 verifyEqualTo(arr, "0", 101);
 

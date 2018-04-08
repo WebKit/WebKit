@@ -26,66 +26,90 @@ var symbol = Symbol();
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(undefined); },
+  function() {
+    GeneratorPrototype.return.call(undefined);
+  },
   'undefined (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(undefined, 1); },
+  function() {
+    GeneratorPrototype.return.call(undefined, 1);
+  },
   'undefined (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(null); },
+  function() {
+    GeneratorPrototype.return.call(null);
+  },
   'null (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(null, 1); },
+  function() {
+    GeneratorPrototype.return.call(null, 1);
+  },
   'null (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(true); },
+  function() {
+    GeneratorPrototype.return.call(true);
+  },
   'boolean (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(true, 1); },
+  function() {
+    GeneratorPrototype.return.call(true, 1);
+  },
   'boolean (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call('s'); },
+  function() {
+    GeneratorPrototype.return.call('s');
+  },
   'string (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call('s', 1); },
+  function() {
+    GeneratorPrototype.return.call('s', 1);
+  },
   'string (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(1); },
+  function() {
+    GeneratorPrototype.return.call(1);
+  },
   'number (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(1, 1); },
+  function() {
+    GeneratorPrototype.return.call(1, 1);
+  },
   'number (with value)'
 );
 
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(symbol); },
+  function() {
+    GeneratorPrototype.return.call(symbol);
+  },
   'symbol (without value)'
 );
 assert.throws(
   TypeError,
-  function() { GeneratorPrototype.return.call(symbol, 1); },
+  function() {
+    GeneratorPrototype.return.call(symbol, 1);
+  },
   'symbol (with value)'
 );

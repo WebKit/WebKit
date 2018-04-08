@@ -8,24 +8,24 @@ description: >
     inherited data property (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        var proto = {
-            enumerable: true
-        };
-        var Con = function () { };
-        Con.prototype = proto;
-        var descObj = new Con();
+var proto = {
+  enumerable: true
+};
+var Con = function() {};
+Con.prototype = proto;
+var descObj = new Con();
 
-        Object.defineProperties(obj, {
-            prop: descObj
-        });
+Object.defineProperties(obj, {
+  prop: descObj
+});
 
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

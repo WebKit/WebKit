@@ -8,7 +8,7 @@ description: Checking Function.length property
 ---*/
 
 //CHECK#1
-if (!Function.hasOwnProperty("length")){
+if (!Function.hasOwnProperty("length")) {
   $ERROR('#1: Function constructor has length property');
 }
 

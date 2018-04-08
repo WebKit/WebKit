@@ -10,25 +10,25 @@ description: >
 
 var propertyFound = false;
 
-        var obj = [2, 3, 4, 5];
+var obj = [2, 3, 4, 5];
 
-        Object.defineProperty(obj, "prop", {
-            get: function () {
-                return 6;
-            },
-            enumerable: true,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop", {
+  get: function() {
+    return 6;
+  },
+  enumerable: true,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
-        for (var p in arr) {
-            if (arr.hasOwnProperty(p)) {
-                if (arr[p] === "prop") {
-                    propertyFound = true;
-                    break;
-                }
-            }
-        }
+for (var p in arr) {
+  if (arr.hasOwnProperty(p)) {
+    if (arr[p] === "prop") {
+      propertyFound = true;
+      break;
+    }
+  }
+}
 
 assert(propertyFound, 'Property not found');

@@ -14,15 +14,15 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "prop", {
-    get: undefined,
-    set: undefined,
-    enumerable: false,
-    configurable: true
+  get: undefined,
+  set: undefined,
+  enumerable: false,
+  configurable: true
 });
 var desc1 = Object.getOwnPropertyDescriptor(obj, "prop");
 
 Object.defineProperty(obj, "prop", {
-    configurable: false
+  configurable: false
 });
 
 var desc2 = Object.getOwnPropertyDescriptor(obj, "prop");

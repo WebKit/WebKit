@@ -9,11 +9,11 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Date.prototype.value = "Date";
-            var dateObj = new Date();
+Date.prototype.value = "Date";
+var dateObj = new Date();
 
-            Object.defineProperty(obj, "property", dateObj);
+Object.defineProperty(obj, "property", dateObj);
 
 assert.sameValue(obj.property, "Date", 'obj.property');

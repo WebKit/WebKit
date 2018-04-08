@@ -9,14 +9,15 @@ description: >
     element
 ---*/
 
-  var callCnt = 0;
-  function callbackfn(prevVal, curVal, idx, obj)
-  {
-    callCnt++;
-    return 2;
-  }
+var callCnt = 0;
 
-  var arr = [1];
+function callbackfn(prevVal, curVal, idx, obj)
+{
+  callCnt++;
+  return 2;
+}
+
+var arr = [1];
 
 assert.sameValue(arr.reduce(callbackfn), 1, 'arr.reduce(callbackfn)');
 assert.sameValue(callCnt, 0, 'callCnt');

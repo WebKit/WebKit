@@ -7,12 +7,15 @@ es5id: 15.4.4.19-3-10
 description: Array.prototype.map - value of 'length' is a number (value is NaN)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val < 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val < 10;
+}
 
-        var obj = { 0: 9, length: NaN };
+var obj = {
+  0: 9,
+  length: NaN
+};
 
-        var newArr = Array.prototype.map.call(obj, callbackfn);
+var newArr = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 0, 'newArr.length');

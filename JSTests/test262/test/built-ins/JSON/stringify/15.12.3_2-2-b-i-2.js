@@ -8,9 +8,11 @@ description: >
     toJSON call to literal Number.
 ---*/
 
-  var obj = {
-    prop:42,
-    toJSON: function () {return new Number(42)}
-    };
+var obj = {
+  prop: 42,
+  toJSON: function() {
+    return new Number(42)
+  }
+};
 
 assert.sameValue(JSON.stringify([obj]), '[42]', 'JSON.stringify([obj])');

@@ -29,10 +29,10 @@ info: |
 features: [generators, cross-realm, Reflect]
 ---*/
 
-var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;
+var GeneratorFunction = Object.getPrototypeOf(function*() {}).constructor;
 var other = $262.createRealm().global;
 var OtherGeneratorFunction = Object.getPrototypeOf(
-    other.eval('(0, function* () {})')
+  other.eval('(0, function* () {})')
 ).constructor;
 var C = new other.Function();
 C.prototype = null;

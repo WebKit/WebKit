@@ -9,10 +9,10 @@ description: >
     with value true (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "length", {
-            value: true
-        });
+Object.defineProperty(arrObj, "length", {
+  value: true
+});
 
 assert.sameValue(arrObj.length, 1, 'arrObj.length');

@@ -11,18 +11,18 @@ description: >
     stop deleting index named properties (15.4.5.1 step 3.l.ii)
 ---*/
 
-        var arrObj = [0, 1];
+var arrObj = [0, 1];
 
-            Object.defineProperty(Array.prototype, "1", {
-                get: function () {
-                    return 1;
-                },
-                configurable: true // Not setting the [[Configurable]] attribute of property "1" to false here, since Array.prototype is a global object, and non-configurbale property can't revert to configurable
-            });
+Object.defineProperty(Array.prototype, "1", {
+  get: function() {
+    return 1;
+  },
+  configurable: true // Not setting the [[Configurable]] attribute of property "1" to false here, since Array.prototype is a global object, and non-configurbale property can't revert to configurable
+});
 
-            Object.defineProperty(arrObj, "length", {
-                value: 1
-            });
+Object.defineProperty(arrObj, "length", {
+  value: 1
+});
 
 assert.sameValue(arrObj.length, 1, 'arrObj.length');
 assert.sameValue(arrObj.hasOwnProperty("1"), false, 'arrObj.hasOwnProperty("1")');

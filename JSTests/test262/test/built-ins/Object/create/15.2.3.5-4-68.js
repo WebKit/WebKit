@@ -9,18 +9,18 @@ description: >
     property (8.10.5 step 3.a)
 ---*/
 
-        var accessed = false;
-        var descObj = new Error();
+var accessed = false;
+var descObj = new Error();
 
-        descObj.enumerable = true;
+descObj.enumerable = true;
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
-        for (var property in newObj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+var newObj = Object.create({}, {
+  prop: descObj
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

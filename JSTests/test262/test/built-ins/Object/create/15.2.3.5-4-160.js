@@ -9,23 +9,23 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var proto = {
-            value: "inheritedDataProperty"
-        };
+var proto = {
+  value: "inheritedDataProperty"
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var descObj = new ConstructFun();
+var descObj = new ConstructFun();
 
-        Object.defineProperty(descObj, "value", {
-            get: function () {
-                return "ownAccessorProperty";
-            }
-        });
+Object.defineProperty(descObj, "value", {
+  get: function() {
+    return "ownAccessorProperty";
+  }
+});
 
-        var newObj = Object.create({}, {
-            prop: descObj
-        });
+var newObj = Object.create({}, {
+  prop: descObj
+});
 
 assert.sameValue(newObj.prop, "ownAccessorProperty", 'newObj.prop');

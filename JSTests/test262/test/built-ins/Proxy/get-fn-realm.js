@@ -22,6 +22,8 @@ features: [cross-realm]
 var other = $262.createRealm().global;
 var C = new other.Function();
 // Ensure that the proxy does not report a `prototype` property
-var P = new Proxy(C, { get: function() {} });
+var P = new Proxy(C, {
+  get: function() {}
+});
 
 assert.sameValue(Object.getPrototypeOf(new P()), other.Object.prototype);

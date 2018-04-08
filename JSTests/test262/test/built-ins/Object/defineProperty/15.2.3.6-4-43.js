@@ -9,16 +9,18 @@ description: >
     property (8.12.9 step 1)
 ---*/
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        Object.defineProperty(argObj, "foo", {
-            value: 12,
-            configurable: false
-        });
+Object.defineProperty(argObj, "foo", {
+  value: 12,
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(argObj, "foo", {
-                value: 11,
-                configurable: true
-            });
+  Object.defineProperty(argObj, "foo", {
+    value: 11,
+    configurable: true
+  });
 });
 assert.sameValue(argObj.foo, 12, 'argObj.foo');

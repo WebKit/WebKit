@@ -14,10 +14,10 @@ flags: [async, onlyStrict]
 
 var expectedThis = undefined;
 
-var p = new Promise(function (resolve) {
-    if (this !== expectedThis) {
-        $ERROR("'this' must be undefined, got " + this);
-    }
+var p = new Promise(function(resolve) {
+  if (this !== expectedThis) {
+    $ERROR("'this' must be undefined, got " + this);
+  }
 
-    resolve();
+  resolve();
 }).then($DONE, $DONE);

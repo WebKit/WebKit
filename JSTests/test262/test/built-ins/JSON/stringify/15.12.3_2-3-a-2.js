@@ -8,4 +8,6 @@ description: >
     replacer functions to literal numbers.
 ---*/
 
-assert.sameValue(JSON.stringify([42], function(k,v) {return v===42? new Number(84):v}), '[84]', 'JSON.stringify([42], function(k,v) {return v===42? new Number(84):v})');
+assert.sameValue(JSON.stringify([42], function(k, v) {
+  return v === 42 ? new Number(84) : v
+}), '[84]', 'JSON.stringify([42], function(k,v) {return v===42? new Number(84):v})');

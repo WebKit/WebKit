@@ -16,9 +16,18 @@ features: [Symbol.iterator]
 ---*/
 
 var items = {};
-var firstIterResult = { done: false, value: {} };
-var secondIterResult = { done: false, value: {} };
-var thirdIterResult = { done: true, value: {} };
+var firstIterResult = {
+  done: false,
+  value: {}
+};
+var secondIterResult = {
+  done: false,
+  value: {}
+};
+var thirdIterResult = {
+  done: true,
+  value: {}
+};
 var nextIterResult = firstIterResult;
 var nextNextIterResult = secondIterResult;
 var result;

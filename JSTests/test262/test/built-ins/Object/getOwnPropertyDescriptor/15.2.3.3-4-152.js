@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.toLocaleString)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "toLocaleString");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "toLocaleString");
 
 assert.sameValue(desc.value, Date.prototype.toLocaleString, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

@@ -17,8 +17,8 @@ for (var i = 2; i <= 36; i++) {
     var str = "+";
     var sign = 1;
     if (j % 2 !== 0) {
-        str = "-";
-        sign= -1;
+      str = "-";
+      sign = -1;
     }
     var num = 0;
     var pow = 1;

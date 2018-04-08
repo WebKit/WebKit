@@ -15,24 +15,24 @@ includes: [propertyHelper.js]
 var arrObj = [];
 
 Object.defineProperty(arrObj, "property", {
-    writable: false
+  writable: false
 });
 try {
-    Object.defineProperty(arrObj, "property", {
-        writable: true
-    });
-    $ERROR("Expected an exception.");
+  Object.defineProperty(arrObj, "property", {
+    writable: true
+  });
+  $ERROR("Expected an exception.");
 } catch (e) {
-    verifyEqualTo(arrObj, "property", undefined);
+  verifyEqualTo(arrObj, "property", undefined);
 
-    verifyNotWritable(arrObj, "property");
+  verifyNotWritable(arrObj, "property");
 
-    verifyNotEnumerable(arrObj, "property");
+  verifyNotEnumerable(arrObj, "property");
 
-    verifyNotConfigurable(arrObj, "property");
+  verifyNotConfigurable(arrObj, "property");
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
-    }
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

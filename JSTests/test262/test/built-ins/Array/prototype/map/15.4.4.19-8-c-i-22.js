@@ -9,18 +9,18 @@ description: >
     accessor property without a get function on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return typeof val === "undefined";
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return typeof val === "undefined";
+  }
+  return false;
+}
 
-            Object.defineProperty(Array.prototype, "0", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  set: function() {},
+  configurable: true
+});
 
-            var testResult = [,].map(callbackfn);
+var testResult = [, ].map(callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

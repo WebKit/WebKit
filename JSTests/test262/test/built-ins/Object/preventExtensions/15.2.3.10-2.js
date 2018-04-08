@@ -9,10 +9,10 @@ description: >
     extensible property to false
 ---*/
 
-  var o  = {};
-  var o2 = undefined;
+var o = {};
+var o2 = undefined;
 
-  o2 = Object.preventExtensions(o);
+o2 = Object.preventExtensions(o);
 
 assert.sameValue(o2, o, 'o2');
 assert.sameValue(Object.isExtensible(o2), false, 'Object.isExtensible(o2)');

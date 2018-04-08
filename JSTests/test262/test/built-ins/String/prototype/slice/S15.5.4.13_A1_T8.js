@@ -9,13 +9,15 @@ description: >
     String(object), object have overrided toString function
 ---*/
 
-var __obj = {toString:function(){}};
+var __obj = {
+  toString: function() {}
+};
 
 //since void 0 yelds 0
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (String(__obj).slice(-4,void 0) !== "ined") {
-  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).slice(-4,void 0) === "ined". Actual: '+String(__obj).slice(-4,void 0) );
+if (String(__obj).slice(-4, void 0) !== "ined") {
+  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).slice(-4,void 0) === "ined". Actual: ' + String(__obj).slice(-4, void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -8,4 +8,4 @@ description: >
     undefined
 ---*/
 
-    Object.preventExtensions(undefined);
+Object.preventExtensions(undefined);

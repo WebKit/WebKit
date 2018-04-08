@@ -8,5 +8,5 @@ description: Object.getPrototypeOf must take 1 parameter
 
 
 assert.throws(TypeError, function() {
-    Object.getPrototypeOf();
+  Object.getPrototypeOf();
 });

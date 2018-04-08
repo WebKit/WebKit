@@ -13,17 +13,18 @@ includes: [propertyHelper.js]
 
 
 var arrObj = [];
+
 function getFunc() {
-    return 12;
+  return 12;
 }
 
 Object.defineProperty(arrObj, "0", {
-    get: getFunc,
-    configurable: true
+  get: getFunc,
+  configurable: true
 });
 
 Object.defineProperty(arrObj, "0", {
-    get: undefined
+  get: undefined
 });
 verifyNotEnumerable(arrObj, "0");
 

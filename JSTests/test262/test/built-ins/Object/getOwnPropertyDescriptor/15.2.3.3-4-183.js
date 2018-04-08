@@ -8,6 +8,6 @@ description: >
     property (arguments_1) on built-in object (Function)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Function, "arguments_1");
+var desc = Object.getOwnPropertyDescriptor(Function, "arguments_1");
 
 assert.sameValue(desc, undefined, 'desc');

@@ -8,28 +8,28 @@ description: >
     defined in returned array
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "inheritedProp", {
-            get: function () {
-                return 1003;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        var Con = function () { };
-        Con.prototype = proto;
+var proto = {};
+Object.defineProperty(proto, "inheritedProp", {
+  get: function() {
+    return 1003;
+  },
+  enumerable: true,
+  configurable: true
+});
+var Con = function() {};
+Con.prototype = proto;
 
-        var obj = new Con();
-        Object.defineProperty(obj, "prop", {
-            get: function () {
-                return 1004;
-            },
-            enumerable: true,
-            configurable: true
-        });
+var obj = new Con();
+Object.defineProperty(obj, "prop", {
+  get: function() {
+    return 1004;
+  },
+  enumerable: true,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
-        for (var p in arr) {
-            assert.notSameValue(arr[p], "inheritedProp", 'arr[p]');
-        }
+for (var p in arr) {
+  assert.notSameValue(arr[p], "inheritedProp", 'arr[p]');
+}

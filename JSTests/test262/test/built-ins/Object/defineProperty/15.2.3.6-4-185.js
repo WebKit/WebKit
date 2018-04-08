@@ -8,11 +8,11 @@ description: >
     named property, 'name' is boundary value 2^32 (15.4.5.1 step 4.a)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, 4294967296, {
-            value: 100
-        });
+Object.defineProperty(arrObj, 4294967296, {
+  value: 100
+});
 
 assert(arrObj.hasOwnProperty("4294967296"), 'arrObj.hasOwnProperty("4294967296") !== true');
 assert.sameValue(arrObj.length, 0, 'arrObj.length');

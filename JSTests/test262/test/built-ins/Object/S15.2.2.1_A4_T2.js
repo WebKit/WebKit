@@ -12,7 +12,7 @@ description: Argument value is "false"
 var bool = false;
 
 //CHECK#1
-if (typeof bool  !== 'boolean') {
+if (typeof bool !== 'boolean') {
   $ERROR('#1: false is NOT a boolean');
 }
 
@@ -29,11 +29,11 @@ if (typeof n_obj !== 'object') {
 }
 
 //CHECK#4
-if ( n_obj != bool) {
+if (n_obj != bool) {
   $ERROR('#4: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }
 
 //CHECK#5
-if ( n_obj === bool) {
+if (n_obj === bool) {
   $ERROR('#5: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }

@@ -12,11 +12,13 @@ info: |
 ---*/
 
 var p = new Proxy({}, {
-    setPrototypeOf: function() {
-        throw new Test262Error();
-    }
+  setPrototypeOf: function() {
+    throw new Test262Error();
+  }
 });
 
 assert.throws(Test262Error, function() {
-    Object.setPrototypeOf(p, {value: 1});
+  Object.setPrototypeOf(p, {
+    value: 1
+  });
 });

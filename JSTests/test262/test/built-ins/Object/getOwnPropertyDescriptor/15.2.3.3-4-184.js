@@ -8,6 +8,6 @@ description: >
     property (caller) on built-in object (Math)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "caller");
+var desc = Object.getOwnPropertyDescriptor(Math, "caller");
 
 assert.sameValue(desc, undefined, 'desc');

@@ -17,16 +17,19 @@ function callbackfn(val, idx, obj) {
 }
 
 Object.defineProperty(Object.prototype, "length", {
-    get: function () {
-        return 2;
-    },
-    configurable: true
+  get: function() {
+    return 2;
+  },
+  configurable: true
 });
 
-var obj = { 0: 9, 1: 8 };
+var obj = {
+  0: 9,
+  1: 8
+};
 Object.defineProperty(obj, "length", {
-    set: function () { },
-    configurable: true
+  set: function() {},
+  configurable: true
 });
 
 assert(Array.prototype.every.call(obj, callbackfn), 'Array.prototype.every.call(obj, callbackfn) !== true');

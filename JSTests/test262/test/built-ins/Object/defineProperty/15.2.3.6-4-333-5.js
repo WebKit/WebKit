@@ -9,18 +9,18 @@ description: >
     is writable using simple assignment, 'O' is an Arguments object
 ---*/
 
-        var obj = (function () {
-            return arguments;
-        }());
+var obj = (function() {
+  return arguments;
+}());
 
-        Object.defineProperty(obj, "prop", {
-            value: 2010,
-            writable: true,
-            enumerable: true,
-            configurable: false
-        });
-        var verifyValue = (obj.prop === 2010);
-        obj.prop = 1001;
+Object.defineProperty(obj, "prop", {
+  value: 2010,
+  writable: true,
+  enumerable: true,
+  configurable: false
+});
+var verifyValue = (obj.prop === 2010);
+obj.prop = 1001;
 
 assert(verifyValue, 'verifyValue !== true');
 assert.sameValue(obj.prop, 1001, 'obj.prop');

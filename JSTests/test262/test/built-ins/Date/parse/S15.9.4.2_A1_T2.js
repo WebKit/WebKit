@@ -8,7 +8,7 @@ es5id: 15.9.4.2_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 
-if (delete Date.parse  === false) {
+if (delete Date.parse === false) {
   $ERROR('#1: The Date.parse property has not the attributes DontDelete');
 }
 

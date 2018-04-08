@@ -9,14 +9,14 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var descObj = new Number(-9);
+var descObj = new Number(-9);
 
-        descObj.value = "Number";
+descObj.value = "Number";
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "Number", 'obj.property');

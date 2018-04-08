@@ -8,7 +8,7 @@ es5id: 15.4.4.11_A1.5_T1
 description: Checking sort() and sort(undefined)
 ---*/
 
-var x = new Array(1,0);
+var x = new Array(1, 0);
 x.sort();
 
 //CHECK#1
@@ -26,7 +26,7 @@ if (x[1] !== 1) {
   $ERROR('#3: var x = new Array(1,0);  x.sort(); x[1] === 1. Actual: ' + (x[1]));
 }
 
-var x = new Array(1,0);
+var x = new Array(1, 0);
 x.sort(undefined);
 
 //CHECK#4

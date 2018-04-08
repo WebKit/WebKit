@@ -13,8 +13,12 @@ description: >
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if ("$$abcdabcd".indexOf("ab", function(){return -Infinity;}())!==2) {
-  $ERROR('#1: "$$abcdabcd".indexOf("ab", function(){return -Infinity;}())===2. Actual: '+("$$abcdabcd".indexOf("ab", function(){return -Infinity;}()))); 
+if ("$$abcdabcd".indexOf("ab", function() {
+    return -Infinity;
+  }()) !== 2) {
+  $ERROR('#1: "$$abcdabcd".indexOf("ab", function(){return -Infinity;}())===2. Actual: ' + ("$$abcdabcd".indexOf("ab", function() {
+    return -Infinity;
+  }())));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

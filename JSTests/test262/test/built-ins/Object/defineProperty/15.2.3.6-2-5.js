@@ -8,7 +8,7 @@ description: >
     a string (value is NaN)
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, NaN, {});
+var obj = {};
+Object.defineProperty(obj, NaN, {});
 
 assert(obj.hasOwnProperty("NaN"), 'obj.hasOwnProperty("NaN") !== true');

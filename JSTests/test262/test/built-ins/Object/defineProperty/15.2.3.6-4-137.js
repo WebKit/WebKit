@@ -10,10 +10,10 @@ description: >
     (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "length", {
-            value: "2"
-        });
+Object.defineProperty(arrObj, "length", {
+  value: "2"
+});
 
 assert.sameValue(arrObj.length, 2, 'arrObj.length');

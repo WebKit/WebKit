@@ -8,7 +8,7 @@ description: AsyncFunction has a prototype property with writable false, enumera
 includes: [propertyHelper.js]
 ---*/
 
-var AsyncFunction = async function foo() { }.constructor;
+var AsyncFunction = async function foo() {}.constructor;
 verifyNotConfigurable(AsyncFunction, 'prototype');
 verifyNotWritable(AsyncFunction, 'prototype');
 verifyNotEnumerable(AsyncFunction, 'prototype');

@@ -9,14 +9,16 @@ description: >
     'configurable' attribute
 ---*/
 
-        var obj = { "property": "ownDataProperty" };
+var obj = {
+  "property": "ownDataProperty"
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
 
-        var propDefined = "configurable" in desc;
+var propDefined = "configurable" in desc;
 
-            delete desc.configurable;
-            var propDeleted = "configurable" in desc;
+delete desc.configurable;
+var propDeleted = "configurable" in desc;
 
 assert(propDefined, 'propDefined !== true');
 assert.sameValue(propDeleted, false, 'propDeleted');

@@ -9,7 +9,7 @@ description: >
     unreferenced
 ---*/
 
-  var arr = new Array(10);
+var arr = new Array(10);
 assert.throws(ReferenceError, function() {
-    arr.filter(foo);
+  arr.filter(foo);
 });

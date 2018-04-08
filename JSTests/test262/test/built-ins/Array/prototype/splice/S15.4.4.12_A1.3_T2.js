@@ -10,8 +10,8 @@ es5id: 15.4.4.12_A1.3_T2
 description: -length = -start < deleteCount < 0, itemCount = 0
 ---*/
 
-var x = [0,1];
-var arr = x.splice(2,-1);
+var x = [0, 1];
+var arr = x.splice(2, -1);
 
 //CHECK#0
 arr.getClass = Object.prototype.toString;

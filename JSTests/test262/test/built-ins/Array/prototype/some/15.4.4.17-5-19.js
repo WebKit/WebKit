@@ -7,14 +7,14 @@ es5id: 15.4.4.17-5-19
 description: Array.prototype.some - the Arguments object can be used as thisArg
 ---*/
 
-        var arg;
+var arg;
 
-        function callbackfn(val, idx, obj) {
-            return this === arg;
-        }
+function callbackfn(val, idx, obj) {
+  return this === arg;
+}
 
-        (function fun() {
-            arg = arguments;
-        }(1, 2, 3));
+(function fun() {
+  arg = arguments;
+}(1, 2, 3));
 
 assert([11].some(callbackfn, arg), '[11].some(callbackfn, arg) !== true');

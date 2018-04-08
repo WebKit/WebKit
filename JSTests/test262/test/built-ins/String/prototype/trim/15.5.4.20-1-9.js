@@ -8,6 +8,6 @@ description: >
     undefined
 ---*/
 
-        var strObj = new String(undefined);
+var strObj = new String(undefined);
 
 assert.sameValue(strObj.trim(), "undefined", 'strObj.trim()');

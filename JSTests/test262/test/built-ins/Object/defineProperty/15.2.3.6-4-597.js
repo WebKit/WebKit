@@ -8,25 +8,25 @@ description: >
     (Function.prototype.bind)
 ---*/
 
-        var foo = function () { };
-        var data = "data";
+var foo = function() {};
+var data = "data";
 
-            Object.defineProperty(Function.prototype, "prop", {
-                get: function () {
-                    return data;
-                },
-                enumerable: false,
-                configurable: true
-            });
+Object.defineProperty(Function.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  enumerable: false,
+  configurable: true
+});
 
-            var obj = foo.bind({});
+var obj = foo.bind({});
 
-            var verifyEnumerable = false;
-            for (var p in obj) {
-                if (p === "prop") {
-                    verifyEnumerable = true;
-                }
-            }
+var verifyEnumerable = false;
+for (var p in obj) {
+  if (p === "prop") {
+    verifyEnumerable = true;
+  }
+}
 
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');
 assert.sameValue(verifyEnumerable, false, 'verifyEnumerable');

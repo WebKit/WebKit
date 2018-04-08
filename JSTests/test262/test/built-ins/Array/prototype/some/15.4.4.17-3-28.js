@@ -7,17 +7,17 @@ es5id: 15.4.4.17-3-28
 description: Array.prototype.some - value of 'length' is boundary value (2^32)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return val > 10;
+}
 
-        var obj = {
-            0: 12,
-            length: 4294967296
-        };
+var obj = {
+  0: 12,
+  length: 4294967296
+};
 
 assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');
 assert(accessed, 'accessed !== true');

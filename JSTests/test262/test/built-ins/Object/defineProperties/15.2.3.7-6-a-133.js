@@ -9,12 +9,12 @@ description: >
     containing a positive number (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            length: {
-                value: "2"
-            }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: "2"
+  }
+});
 
 assert.sameValue(arr.length, 2, 'arr.length');

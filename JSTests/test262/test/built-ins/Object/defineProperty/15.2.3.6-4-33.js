@@ -9,16 +9,16 @@ description: >
     (8.12.9 step 1)
 ---*/
 
-        var fun = function () { };
+var fun = function() {};
 
-        Object.defineProperty(fun, "foo", {
-            value: 12,
-            configurable: false
-        });
+Object.defineProperty(fun, "foo", {
+  value: 12,
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(fun, "foo", {
-                value: 11,
-                configurable: true
-            });
+  Object.defineProperty(fun, "foo", {
+    value: 11,
+    configurable: true
+  });
 });
 assert.sameValue(fun.foo, 12, 'fun.foo');

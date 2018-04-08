@@ -9,13 +9,16 @@ description: >
     (this object O is correct)
 ---*/
 
-        var obj = { 0: 11, length: 2 };
+var obj = {
+  0: 11,
+  length: 2
+};
 
-        function callbackfn(val, idx, o) {
-            return obj === o;
-        }
+function callbackfn(val, idx, o) {
+  return obj === o;
+}
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

@@ -8,8 +8,10 @@ description: >
     object
 ---*/
 
-        var obj = { "property": 100 };
+var obj = {
+  "property": 100
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
 
 assert(desc instanceof Object, 'desc instanceof Object !== true');

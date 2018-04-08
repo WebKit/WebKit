@@ -12,15 +12,15 @@ info: |
 ---*/
 
 var p = new Proxy({}, {
-    get: function() {
-        throw new Test262Error();
-    }
+  get: function() {
+    throw new Test262Error();
+  }
 });
 
 assert.throws(Test262Error, function() {
-    p.attr;
+  p.attr;
 });
 
 assert.throws(Test262Error, function() {
-    p["attr"];
+  p["attr"];
 });

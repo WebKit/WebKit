@@ -9,18 +9,18 @@ description: >
     (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Date.prototype.configurable = true;
-            var dateObj = new Date();
+Date.prototype.configurable = true;
+var dateObj = new Date();
 
-            Object.defineProperty(obj, "property", dateObj);
+Object.defineProperty(obj, "property", dateObj);
 
-            var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-            delete obj.property;
+delete obj.property;
 
-            var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

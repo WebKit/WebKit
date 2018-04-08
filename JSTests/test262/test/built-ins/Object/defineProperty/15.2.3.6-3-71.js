@@ -9,15 +9,17 @@ description: >
     'false') (8.10.5 step 3.b)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        Object.defineProperty(obj, "property", { enumerable: "false" });
+Object.defineProperty(obj, "property", {
+  enumerable: "false"
+});
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

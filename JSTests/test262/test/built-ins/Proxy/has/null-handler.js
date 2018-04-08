@@ -11,5 +11,5 @@ var p = Proxy.revocable({}, {});
 p.revoke();
 
 assert.throws(TypeError, function() {
-    "attr" in p.proxy;
+  "attr" in p.proxy;
 });

@@ -11,13 +11,13 @@ description: >
     end is 0
 ---*/
 
-var __instance = new Object(); 
+var __instance = new Object();
 __instance.substring = String.prototype.substring;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__instance.substring(8,0) !== "[object ") {
-  $ERROR('#1: __instance = new Object(); __instance.substring = String.prototype.substring; __instance.substring(8,0) === "[object ". Actual: '+__instance.substring(8,0) );
+if (__instance.substring(8, 0) !== "[object ") {
+  $ERROR('#1: __instance = new Object(); __instance.substring = String.prototype.substring; __instance.substring(8,0) === "[object ". Actual: ' + __instance.substring(8, 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,9 @@ if (x.join() !== "0,1") {
 Object.prototype[1] = 1;
 Object.prototype.length = 2;
 Object.prototype.join = Array.prototype.join;
-x = {0:0};
+x = {
+  0: 0
+};
 if (x.join() !== "0,1") {
   $ERROR('#2: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.join = Array.prototype.join; x = {0:0}; x.join() === "0,1". Actual: ' + (x.join()));
 }

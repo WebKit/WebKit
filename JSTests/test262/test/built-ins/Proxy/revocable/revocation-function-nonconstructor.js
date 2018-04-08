@@ -14,4 +14,6 @@ info: |
 var revocationFunction = Proxy.revocable({}, {}).revoke;
 
 assert.sameValue(Object.prototype.hasOwnProperty.call(revocationFunction, "prototype"), false);
-assert.throws(TypeError, function() { new revocationFunction(); });
+assert.throws(TypeError, function() {
+  new revocationFunction();
+});

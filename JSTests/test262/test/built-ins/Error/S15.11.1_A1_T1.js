@@ -11,10 +11,10 @@ description: Checking constructor of the newly constructed Error object
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-Error.prototype.toString=Object.prototype.toString;
-var err1=Error();
-if(err1.constructor!==Error){
-  $ERROR('#1: Error.prototype.toString=Object.prototype.toString; var err1=Error(); err1.constructor===Error. Actual: '+err1.constructor);
+Error.prototype.toString = Object.prototype.toString;
+var err1 = Error();
+if (err1.constructor !== Error) {
+  $ERROR('#1: Error.prototype.toString=Object.prototype.toString; var err1=Error(); err1.constructor===Error. Actual: ' + err1.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

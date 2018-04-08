@@ -8,20 +8,20 @@ description: >
     own accessor property without a get function (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        var attr = {};
-        Object.defineProperty(attr, "enumerable", {
-            set: function () { }
-        });
+var attr = {};
+Object.defineProperty(attr, "enumerable", {
+  set: function() {}
+});
 
-        Object.defineProperty(obj, "property", attr);
+Object.defineProperty(obj, "property", attr);
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

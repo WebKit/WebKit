@@ -12,7 +12,7 @@ description: Argument value is any number
 var num = 1.0;
 
 //CHECK#1
-if (typeof num  !== 'number') {
+if (typeof num !== 'number') {
   $ERROR('#1: 1.0 is NOT a number');
 }
 
@@ -29,11 +29,11 @@ if (typeof n_obj !== 'object') {
 }
 
 //CHECK#4
-if ( n_obj != num) {
+if (n_obj != num) {
   $ERROR('#4: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#5
-if ( n_obj === num) {
+if (n_obj === num) {
   $ERROR('#5: When the Object constructor is called with Number argument return ToObject(number)');
 }

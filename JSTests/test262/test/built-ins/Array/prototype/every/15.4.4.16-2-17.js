@@ -17,10 +17,10 @@ function callbackfn2(val, idx, obj) {
   return val > 11;
 }
 
-var func = function (a, b) {
+var func = function(a, b) {
   arguments[2] = 9;
   return Array.prototype.every.call(arguments, callbackfn1) &&
-      !Array.prototype.every.call(arguments, callbackfn2);
+    !Array.prototype.every.call(arguments, callbackfn2);
 };
 
 assert(func(12, 11), 'func(12, 11) !== true');

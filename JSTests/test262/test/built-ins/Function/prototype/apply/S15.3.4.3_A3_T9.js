@@ -9,7 +9,7 @@ es5id: 15.3.4.3_A3_T9
 description: Checking by using eval, argument at apply function is void 0
 ---*/
 
-eval( " Function(\"this.feat=1\").apply(void 0) " );
+eval(" Function(\"this.feat=1\").apply(void 0) ");
 
 //CHECK#1
 if (this["feat"] !== 1) {

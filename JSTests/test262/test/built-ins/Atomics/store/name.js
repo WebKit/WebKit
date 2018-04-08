@@ -7,6 +7,7 @@ esid: sec-atomics.store
 description: >
   Atomics.store.name is "store".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.store.name, "store");

@@ -9,7 +9,11 @@ description: >
     is a negative number)
 ---*/
 
-        var obj = { 4: -Infinity, 5: Infinity, length: 5 - Math.pow(2, 32) };
+var obj = {
+  4: -Infinity,
+  5: Infinity,
+  length: 5 - Math.pow(2, 32)
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, -Infinity), -1, 'Array.prototype.lastIndexOf.call(obj, -Infinity)');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, Infinity), -1, 'Array.prototype.lastIndexOf.call(obj, Infinity)');

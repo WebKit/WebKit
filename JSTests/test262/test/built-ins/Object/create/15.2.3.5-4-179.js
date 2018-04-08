@@ -10,9 +10,9 @@ includes: [propertyHelper.js]
 ---*/
 
 var newObj = Object.create({}, {
-    prop: {
-        value: 100
-    }
+  prop: {
+    value: 100
+  }
 });
 
 assert.sameValue(newObj.prop, 100);

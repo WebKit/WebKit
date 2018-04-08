@@ -15,7 +15,7 @@ description: >
 ---*/
 
 //CHECK#1
-var x = new Array(0,1,2,3);
+var x = new Array(0, 1, 2, 3);
 if (x.toString() !== x.join()) {
   $ERROR('#1.1: x = new Array(0,1,2,3); x.toString() === x.join(). Actual: ' + (x.toString()));
 } else {
@@ -37,7 +37,7 @@ if (x.toString() !== x.join()) {
 }
 
 //CHECK#3
-x = Array(undefined,1,null,3);
+x = Array(undefined, 1, null, 3);
 if (x.toString() !== x.join()) {
   $ERROR('#3.1: x = Array(undefined,1,null,3); x.toString() === x.join(). Actual: ' + (x.toString()));
 } else {

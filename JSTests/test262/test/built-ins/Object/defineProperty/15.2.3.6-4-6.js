@@ -13,32 +13,32 @@ description: >
     accessor desc
 ---*/
 
-  function sameAccessorDescriptorValues(d1, d2) {
-    return (d1.get == d2.get &&
-            d1.enumerable == d2.enumerable &&
-            d1.configurable == d2.configurable);
-  }
+function sameAccessorDescriptorValues(d1, d2) {
+  return (d1.get == d2.get &&
+    d1.enumerable == d2.enumerable &&
+    d1.configurable == d2.configurable);
+}
 
-  var o = {};
+var o = {};
 
-  // create an accessor property with the following attributes:
-  // enumerable: true, configurable: true
-  var desc = {
-               get: function () {},
-               enumerable: true,
-               configurable: true
-             };
+// create an accessor property with the following attributes:
+// enumerable: true, configurable: true
+var desc = {
+  get: function() {},
+  enumerable: true,
+  configurable: true
+};
 
-  Object.defineProperty(o, "foo", desc);
+Object.defineProperty(o, "foo", desc);
 
-  // query for, and save, the desc. A subsequent call to defineProperty
-  // with the same desc should not disturb the property definition.
-  var d1 = Object.getOwnPropertyDescriptor(o, "foo");  
+// query for, and save, the desc. A subsequent call to defineProperty
+// with the same desc should not disturb the property definition.
+var d1 = Object.getOwnPropertyDescriptor(o, "foo");
 
-  // now, redefine the property with the same descriptor
-  // the property defintion should not get disturbed.
-  Object.defineProperty(o, "foo", desc);
+// now, redefine the property with the same descriptor
+// the property defintion should not get disturbed.
+Object.defineProperty(o, "foo", desc);
 
-  var d2 = Object.getOwnPropertyDescriptor(o, "foo"); 
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
 
 assert.sameValue(sameAccessorDescriptorValues(d1, d2), true, 'sameAccessorDescriptorValues(d1, d2)');

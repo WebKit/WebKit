@@ -8,14 +8,14 @@ description: >
     'descObj' is non-empty string (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: "abc"
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: "abc"
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

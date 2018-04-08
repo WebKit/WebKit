@@ -14,9 +14,9 @@ includes: [propertyHelper.js]
 
 var arrObj = [];
 Object.defineProperty(arrObj, "length", {
-    writable: true,
-    enumerable: false,
-    configurable: false
+  writable: true,
+  enumerable: false,
+  configurable: false
 });
 
 assert.sameValue(arrObj.length, 0);

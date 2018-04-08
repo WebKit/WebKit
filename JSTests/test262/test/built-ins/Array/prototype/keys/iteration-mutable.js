@@ -20,7 +20,7 @@ var result;
 array.push('a');
 
 result = iterator.next();
-assert.sameValue(result.done, false , 'First result `done` flag');
+assert.sameValue(result.done, false, 'First result `done` flag');
 assert.sameValue(result.value, 0, 'First result `value`');
 
 result = iterator.next();

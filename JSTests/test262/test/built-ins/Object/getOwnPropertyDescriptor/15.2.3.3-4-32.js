@@ -8,7 +8,7 @@ description: >
     built-ins (Object.prototype.propertyIsEnumerable)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Object.prototype, "propertyIsEnumerable");
+var desc = Object.getOwnPropertyDescriptor(Object.prototype, "propertyIsEnumerable");
 
 assert.sameValue(desc.value, Object.prototype.propertyIsEnumerable, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

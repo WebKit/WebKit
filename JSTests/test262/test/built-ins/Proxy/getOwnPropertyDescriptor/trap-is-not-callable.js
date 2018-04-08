@@ -22,9 +22,9 @@ info: |
 
 var target = {};
 var p = new Proxy(target, {
-    getOwnPropertyDescriptor: {}
+  getOwnPropertyDescriptor: {}
 });
 
 assert.throws(TypeError, function() {
-    Object.getOwnPropertyDescriptor(p, "foo");
+  Object.getOwnPropertyDescriptor(p, "foo");
 });

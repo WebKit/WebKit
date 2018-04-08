@@ -14,12 +14,12 @@ var __string = new String("hello");
 
 var __re = /l/;
 
-var __split = __string.split(__re,0);
+var __split = __string.split(__re, 0);
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __string = new String("hello"); var __re = /l/; __split = __string.split(__re,0); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __string = new String("hello"); var __re = /l/; __split = __string.split(__re,0); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== 0) {
-  $ERROR('#2: var __string = new String("hello"); var __re = /l/; __split = __string.split(__re,0); __split.length === 0. Actual: '+__split.length );
+  $ERROR('#2: var __string = new String("hello"); var __re = /l/; __split = __string.split(__re,0); __split.length === 0. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

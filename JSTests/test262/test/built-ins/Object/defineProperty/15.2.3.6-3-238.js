@@ -8,22 +8,22 @@ description: >
     inherited data property (8.10.5 step 8.a)
 ---*/
 
-        var obj = {};
-        var data = "data";
-        var proto = {
-            set: function (value) {
-                data = value;
-            }
-        };
+var obj = {};
+var data = "data";
+var proto = {
+  set: function(value) {
+    data = value;
+  }
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
+var child = new ConstructFun();
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
-        obj.property = "overrideData";
+obj.property = "overrideData";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(data, "overrideData", 'data');

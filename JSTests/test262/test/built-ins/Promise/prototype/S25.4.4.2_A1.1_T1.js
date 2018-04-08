@@ -11,5 +11,5 @@ description: Promise prototype exists
 ---*/
 
 if (Promise.prototype === undefined) {
-    $ERROR("Expected Promise.prototype to be defined.");
+  $ERROR("Expected Promise.prototype to be defined.");
 }

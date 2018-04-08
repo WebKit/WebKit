@@ -9,25 +9,25 @@ description: >
     'length' is inherited accessor property without a get function
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            return curVal > 10;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  return curVal > 10;
+}
 
-        var proto = {};
-        Object.defineProperty(proto, "length", {
-            set: function () { },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "length", {
+  set: function() {},
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child[0] = 11;
-        child[1] = 12;
+var child = new Con();
+child[0] = 11;
+child[1] = 12;
 
 assert.sameValue(Array.prototype.reduceRight.call(child, callbackfn, 111), 111, 'Array.prototype.reduceRight.call(child, callbackfn, 111)');
 assert.sameValue(accessed, false, 'accessed');

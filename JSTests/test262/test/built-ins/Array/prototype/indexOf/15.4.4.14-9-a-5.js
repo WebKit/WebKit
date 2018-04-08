@@ -9,13 +9,16 @@ description: >
     here on an Array-like object
 ---*/
 
-        var arr = { 10: false, length: 30 };
+var arr = {
+  10: false,
+  length: 30
+};
 
-        var fromIndex = {
-            valueOf: function () {
-                delete arr[10];
-                return 3;
-            }
-        };
+var fromIndex = {
+  valueOf: function() {
+    delete arr[10];
+    return 3;
+  }
+};
 
 assert.sameValue(Array.prototype.indexOf.call(arr, false, fromIndex), -1, 'Array.prototype.indexOf.call(arr, false, fromIndex)');

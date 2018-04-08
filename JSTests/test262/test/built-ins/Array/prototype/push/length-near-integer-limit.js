@@ -21,19 +21,19 @@ var arrayLike = {
   "9007199254740989": "9007199254740989",
   /* "9007199254740990": empty */
   "9007199254740991": "9007199254740991",
-  length: 2**53 - 2
+  length: 2 ** 53 - 2
 };
 
 Array.prototype.push.call(arrayLike, "new-value");
 
-assert.sameValue(arrayLike.length, 2**53 - 1,
-                 "New arrayLike.length is 2**53 - 1");
+assert.sameValue(arrayLike.length, 2 ** 53 - 1,
+  "New arrayLike.length is 2**53 - 1");
 
 assert.sameValue(arrayLike["9007199254740989"], "9007199254740989",
-                 "arrayLike['9007199254740989'] is unchanged");
+  "arrayLike['9007199254740989'] is unchanged");
 
 assert.sameValue(arrayLike["9007199254740990"], "new-value",
-                 "arrayLike['9007199254740990'] has new value");
+  "arrayLike['9007199254740990'] has new value");
 
 assert.sameValue(arrayLike["9007199254740991"], "9007199254740991",
-                 "arrayLike['9007199254740991'] is unchanged");
+  "arrayLike['9007199254740991'] is unchanged");

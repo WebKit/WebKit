@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.slice
-es6id: 22.2.3.23
 description: Preservation of bit-level encoding
 info: |
   [...]
@@ -22,10 +21,11 @@ info: |
          iii. Increase srcByteIndex by 1.
          iv. Increase targetByteIndex by 1.
 includes: [nans.js, compareArray.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 function body(FloatArray) {
-  var subject = new FloatArray(distinctNaNs);
+  var subject = new FloatArray(NaNs);
   var sliced, subjectBytes, slicedBytes;
 
   sliced = subject.slice();

@@ -12,19 +12,19 @@ includes: [propertyHelper.js]
 var proto = {};
 
 Object.defineProperty(proto, "foo", {
-    get: function () {
-        return 0;
-    },
-    configurable: true
+  get: function() {
+    return 0;
+  },
+  configurable: true
 });
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var child = new Con();
 Object.defineProperty(child, "foo", {
-    value: 10,
-    configurable: true
+  value: 10,
+  configurable: true
 });
 
 Object.freeze(child);

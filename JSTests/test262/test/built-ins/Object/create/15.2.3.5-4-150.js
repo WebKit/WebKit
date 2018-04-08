@@ -9,17 +9,17 @@ description: >
     the value true (8.10.5 step 4.b)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                configurable: "false"
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    configurable: "false"
+  }
+});
 
-        var beforeDeleted = newObj.hasOwnProperty("prop");
+var beforeDeleted = newObj.hasOwnProperty("prop");
 
-        delete newObj.prop;
+delete newObj.prop;
 
-        var afterDeleted = newObj.hasOwnProperty("prop");
+var afterDeleted = newObj.hasOwnProperty("prop");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

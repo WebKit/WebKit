@@ -9,32 +9,32 @@ description: >
     (8.10.5 step 8.a)
 ---*/
 
-        var obj = {};
-        var proto = {};
-        var data1 = "data";
-        var data2 = "data";
-        Object.defineProperty(proto, "set", {
-            get: function () {
-                return function (value) {
-                    data1 = value;
-                };
-            }
-        });
+var obj = {};
+var proto = {};
+var data1 = "data";
+var data2 = "data";
+Object.defineProperty(proto, "set", {
+  get: function() {
+    return function(value) {
+      data1 = value;
+    };
+  }
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        Object.defineProperty(child, "set", {
-            get: function () {
-                return function (value) {
-                    data2 = value;
-                };
-            }
-        });
+var child = new ConstructFun();
+Object.defineProperty(child, "set", {
+  get: function() {
+    return function(value) {
+      data2 = value;
+    };
+  }
+});
 
-        Object.defineProperty(obj, "property", child);
-        obj.property = "ownAccessorProperty";
+Object.defineProperty(obj, "property", child);
+obj.property = "ownAccessorProperty";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(data1, "data", 'data1');

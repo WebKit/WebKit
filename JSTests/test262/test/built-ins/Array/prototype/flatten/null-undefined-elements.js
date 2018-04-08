@@ -11,7 +11,10 @@ features: [Array.prototype.flatten]
 var a = [void 0];
 
 assert(compareArray([1, null, void 0].flatten(), [1, null, undefined]));
-assert(compareArray([1,[null, void 0]].flatten(), [1, null, undefined]));
-assert(compareArray([[null, void 0], [null, void 0]].flatten(), [null, undefined, null, undefined]));
-assert(compareArray([1,[null, a]].flatten(1), [1, null, a]));
-assert(compareArray([1,[null, a]].flatten(2), [1, null, undefined]));
+assert(compareArray([1, [null, void 0]].flatten(), [1, null, undefined]));
+assert(compareArray([
+  [null, void 0],
+  [null, void 0]
+].flatten(), [null, undefined, null, undefined]));
+assert(compareArray([1, [null, a]].flatten(1), [1, null, a]));
+assert(compareArray([1, [null, a]].flatten(2), [1, null, undefined]));

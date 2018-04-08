@@ -10,14 +10,14 @@ description: >
 
 var target = {};
 var p = new Proxy(target, {
-    get: function() {
-        return 2;
-    }
+  get: function() {
+    return 2;
+  }
 });
 
 Object.defineProperty(target, 'attr', {
-    configurable: true,
-    get: undefined
+  configurable: true,
+  get: undefined
 });
 
 assert.sameValue(p.attr, 2);

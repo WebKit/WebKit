@@ -10,13 +10,31 @@ es5id: 15.4.4.11_A3_T2
 description: If comparefn is not undefined
 ---*/
 
-var obj = {valueOf: function() {return 1}, toString: function() {return -2}};
-var alphabetR = {0:undefined, 1:2, 2:1, 3:"X", 4:-1, 5:"a", 6:true, 7:obj, 8:NaN, 9:Infinity};
+var obj = {
+  valueOf: function() {
+    return 1
+  },
+  toString: function() {
+    return -2
+  }
+};
+var alphabetR = {
+  0: undefined,
+  1: 2,
+  2: 1,
+  3: "X",
+  4: -1,
+  5: "a",
+  6: true,
+  7: obj,
+  8: NaN,
+  9: Infinity
+};
 alphabetR.sort = Array.prototype.sort;
 alphabetR.length = 10;
 var alphabet = [true, "a", "X", NaN, Infinity, 2, 1, obj, -1, undefined];
 
- var myComparefn = function(x,y) {
+var myComparefn = function(x, y) {
   var xS = String(x);
   var yS = String(y);
   if (xS < yS) return 1
@@ -26,7 +44,7 @@ var alphabet = [true, "a", "X", NaN, Infinity, 2, 1, obj, -1, undefined];
 
 alphabetR.sort(myComparefn);
 
- //CHECK#0
+//CHECK#0
 alphabetR.getClass = Object.prototype.toString;
 if (alphabetR.getClass() !== "[object " + "Object" + "]") {
   $ERROR('#0: alphabetR.sort() is Object object, not Array object');

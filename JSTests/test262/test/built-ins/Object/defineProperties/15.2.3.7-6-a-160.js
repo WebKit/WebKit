@@ -11,17 +11,17 @@ description: >
     step 3.g)
 ---*/
 
-        var arr = [0, 1];
+var arr = [0, 1];
 
-        Object.defineProperty(arr, "length", {
-            writable: false
-        });
+Object.defineProperty(arr, "length", {
+  writable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: 0
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 0
+    }
+  });
 });
 assert.sameValue(arr.length, 2, 'arr.length');
 assert.sameValue(arr[0], 0, 'arr[0]');

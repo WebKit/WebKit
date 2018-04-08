@@ -10,6 +10,7 @@ features: [generators]
 ---*/
 
 var unreachable = 0;
+
 function* g() {
   yield 1;
   try {
@@ -41,7 +42,9 @@ assert.sameValue(
   'statement following `yield` not executed (following `throw`)'
 );
 
-assert.throws(Test262Error, function() { iter.next(); });
+assert.throws(Test262Error, function() {
+  iter.next();
+});
 
 result = iter.next();
 assert.sameValue(

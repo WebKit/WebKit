@@ -9,14 +9,14 @@ description: >
     (value is NaN)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return NaN;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return NaN;
+}
 
-        var newArr = [11].filter(callbackfn);
+var newArr = [11].filter(callbackfn);
 
 assert.sameValue(newArr.length, 0, 'newArr.length');
 assert(accessed, 'accessed !== true');

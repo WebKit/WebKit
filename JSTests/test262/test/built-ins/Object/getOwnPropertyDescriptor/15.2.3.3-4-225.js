@@ -9,15 +9,17 @@ description: >
     attribute
 ---*/
 
-        var obj = { "property": "ownDataProperty" };
+var obj = {
+  "property": "ownDataProperty"
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
-        var accessed = false;
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var accessed = false;
 
-        for (var prop in desc) {
-            if (prop === "value") {
-                accessed = true;
-            }
-        }
+for (var prop in desc) {
+  if (prop === "value") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

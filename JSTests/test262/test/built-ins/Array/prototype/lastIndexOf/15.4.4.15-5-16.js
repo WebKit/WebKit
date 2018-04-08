@@ -9,7 +9,7 @@ description: >
     containing Infinity
 ---*/
 
-        var arr = [];
-        arr[Math.pow(2, 32) - 2] = true; // length is the max value of Uint type
+var arr = [];
+arr[Math.pow(2, 32) - 2] = true; // length is the max value of Uint type
 
 assert.sameValue(arr.lastIndexOf(true, "Infinity"), Math.pow(2, 32) - 2, 'arr.lastIndexOf(true, "Infinity")');

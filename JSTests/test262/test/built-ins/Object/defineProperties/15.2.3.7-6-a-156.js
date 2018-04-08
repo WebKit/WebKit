@@ -10,13 +10,13 @@ description: >
     deleting any property with large index named (15.4.5.1 step 3.f)
 ---*/
 
-        var arr = [0, , 2];
+var arr = [0, , 2];
 
-            Object.defineProperties(arr, {
-                length: {
-                    value: 3
-                }
-            });
+Object.defineProperties(arr, {
+  length: {
+    value: 3
+  }
+});
 
 assert.sameValue(arr.length, 3, 'arr.length');
 assert.sameValue(arr[0], 0, 'arr[0]');

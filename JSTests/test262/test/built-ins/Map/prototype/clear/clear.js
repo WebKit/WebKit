@@ -11,9 +11,9 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    typeof Map.prototype.clear,
-    'function',
-    'typeof Map.prototype.clear is "function"'
+  typeof Map.prototype.clear,
+  'function',
+  'typeof Map.prototype.clear is "function"'
 );
 
 verifyNotEnumerable(Map.prototype, 'clear');

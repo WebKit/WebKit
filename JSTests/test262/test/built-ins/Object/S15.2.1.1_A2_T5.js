@@ -12,7 +12,7 @@ description: Calling Object function with NaN argument value
 var num = NaN;
 
 // CHECK#1
-if(typeof num  !== 'number'){
+if (typeof num !== 'number') {
   $ERROR('#1: num = NaN should have number type');
 }
 
@@ -24,7 +24,7 @@ if (obj.constructor !== Number) {
 }
 
 //CHECK#3
-if (typeof obj!=="object") {
+if (typeof obj !== "object") {
   $ERROR('#2: Object(NaN) returns ToObject(NaN)');
 }
 //

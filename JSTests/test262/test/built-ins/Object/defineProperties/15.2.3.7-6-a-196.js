@@ -10,15 +10,15 @@ description: >
     [[Value]] is absent in data descriptor 'desc'  (15.4.5.1 step 4.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            "0": {
-                writable: true,
-                enumerable: true,
-                configurable: false
-            }
-        });
+Object.defineProperties(arr, {
+  "0": {
+    writable: true,
+    enumerable: true,
+    configurable: false
+  }
+});
 
 assert(arr.hasOwnProperty("0"), 'arr.hasOwnProperty("0") !== true');
-assert.sameValue(typeof (arr[0]), "undefined", 'typeof (arr[0])');
+assert.sameValue(typeof(arr[0]), "undefined", 'typeof (arr[0])');

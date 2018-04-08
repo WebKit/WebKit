@@ -9,12 +9,12 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var boolObj = new Boolean(true);
+var boolObj = new Boolean(true);
 
-        boolObj.value = "Boolean";
+boolObj.value = "Boolean";
 
-        Object.defineProperty(obj, "property", boolObj);
+Object.defineProperty(obj, "property", boolObj);
 
 assert.sameValue(obj.property, "Boolean", 'obj.property');

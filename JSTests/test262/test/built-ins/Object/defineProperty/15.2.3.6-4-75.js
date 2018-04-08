@@ -13,18 +13,21 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function getFunc() {
-    return 10;
+  return 10;
 }
+
 function setFunc(value) {
-    obj.helpVerifySet = value;
+  obj.helpVerifySet = value;
 }
 
 Object.defineProperty(obj, "foo", {
-    get: getFunc,
-    set: setFunc
+  get: getFunc,
+  set: setFunc
 });
 
-Object.defineProperty(obj, "foo", { get: getFunc });
+Object.defineProperty(obj, "foo", {
+  get: getFunc
+});
 verifyEqualTo(obj, "foo", getFunc());
 
 verifyWritable(obj, "foo", "helpVerifySet");

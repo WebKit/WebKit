@@ -8,6 +8,6 @@ description: >
     (Function.constructor)
 ---*/
 
-  var e = Object.isExtensible(Function.constructor);
+var e = Object.isExtensible(Function.constructor);
 
 assert.sameValue(e, true, 'e');

@@ -10,21 +10,21 @@ flags: [noStrict]
 ---*/
 
 var target = {
-    attr: 1
+  attr: 1
 };
 var p = new Proxy(target, {});
 
 assert.sameValue(delete p.attr, true);
 assert.sameValue(delete p.notThere, true);
 assert.sameValue(
-    Object.getOwnPropertyDescriptor(target, "attr"),
-    undefined
+  Object.getOwnPropertyDescriptor(target, "attr"),
+  undefined
 );
 
 Object.defineProperty(target, "attr", {
-    configurable: false,
-    enumerable: true,
-    value: 1
+  configurable: false,
+  enumerable: true,
+  value: 1
 });
 
 assert.sameValue(delete p.attr, false);

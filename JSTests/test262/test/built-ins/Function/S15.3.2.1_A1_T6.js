@@ -20,7 +20,7 @@ description: >
 try {
   var f = new Function("return true;");
 } catch (e) {
-  $ERROR('#1: test failed with error '+e);
+  $ERROR('#1: test failed with error ' + e);
 }
 
 //CHECK#2

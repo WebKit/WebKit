@@ -13,11 +13,11 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-    this.writable = false;
+this.writable = false;
 
-    Object.defineProperties(obj, {
-        property: this
-    });
+Object.defineProperties(obj, {
+  property: this
+});
 
-    assert(obj.hasOwnProperty("property"));
-    verifyNotWritable(obj, "property");
+assert(obj.hasOwnProperty("property"));
+verifyNotWritable(obj, "property");

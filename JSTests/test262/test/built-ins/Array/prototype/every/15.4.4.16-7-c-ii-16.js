@@ -9,14 +9,17 @@ description: >
     when T is not an object (T is a boolean primitive)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this.valueOf() !== false;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this.valueOf() !== false;
+}
 
-        var obj = { 0: 11, length: 2 };
+var obj = {
+  0: 11,
+  length: 2
+};
 
 assert.sameValue(Array.prototype.every.call(obj, callbackfn, false), false, 'Array.prototype.every.call(obj, callbackfn, false)');
 assert(accessed, 'accessed !== true');

@@ -8,4 +8,4 @@ description: >
     string primitive
 ---*/
 
-    Object.seal("abc");
+Object.seal("abc");

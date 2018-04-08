@@ -9,14 +9,16 @@ description: >
     attribute
 ---*/
 
-        var obj = { "property": "ownDataProperty" };
+var obj = {
+  "property": "ownDataProperty"
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
 
-        var propDefined = ("writable" in desc);
+var propDefined = ("writable" in desc);
 
-            delete desc.writable;
-            var propDeleted = "writable" in desc;
+delete desc.writable;
+var propDeleted = "writable" in desc;
 
 assert(propDefined, 'propDefined !== true');
 assert.sameValue(propDeleted, false, 'propDeleted');

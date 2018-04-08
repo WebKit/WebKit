@@ -9,11 +9,11 @@ description: >
     (value is positive number)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return 5;
-        }
+function callbackfn(val, idx, obj) {
+  return 5;
+}
 
-        var newArr = [11].filter(callbackfn);
+var newArr = [11].filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

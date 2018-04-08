@@ -8,22 +8,22 @@ description: >
     that overrides an inherited data property
 ---*/
 
-        var proto = {
-            property: "inheritedDataProperty"
-        };
+var proto = {
+  property: "inheritedDataProperty"
+};
 
-        var Con = function () { };
-        Con.ptototype = proto;
+var Con = function() {};
+Con.ptototype = proto;
 
-        var child = new Con();
-        var fun = function () {
-            return "ownAccessorProperty";
-        };
-        Object.defineProperty(child, "property", {
-            get: fun,
-            configurable: true
-        });
+var child = new Con();
+var fun = function() {
+  return "ownAccessorProperty";
+};
+Object.defineProperty(child, "property", {
+  get: fun,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(child, "property");
+var desc = Object.getOwnPropertyDescriptor(child, "property");
 
 assert.sameValue(desc.get, fun, 'desc.get');

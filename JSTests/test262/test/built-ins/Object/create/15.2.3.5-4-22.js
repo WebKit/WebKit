@@ -9,19 +9,19 @@ description: >
     'obj' (15.2.3.7 step 5.a)
 ---*/
 
-        var proto = {};
-        proto.prop = {
-            value: "abc"
-        };
+var proto = {};
+proto.prop = {
+  value: "abc"
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        child.prop = {
-            value: "bbq"
-        };
-        var newObj = Object.create({}, child);
+var child = new ConstructFun();
+child.prop = {
+  value: "bbq"
+};
+var newObj = Object.create({}, child);
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(newObj.prop, "bbq", 'newObj.prop');

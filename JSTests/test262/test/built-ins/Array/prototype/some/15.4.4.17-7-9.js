@@ -9,22 +9,26 @@ description: >
     of iterations
 ---*/
 
-        var called = 0;
+var called = 0;
 
-        function callbackfn(val, idx, obj) {
-            called++;
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  called++;
+  return val > 10;
+}
 
-        var obj = { 0: 9, 2: 12, length: 3 };
+var obj = {
+  0: 9,
+  2: 12,
+  length: 3
+};
 
-        Object.defineProperty(obj, "1", {
-            get: function () {
-                obj.length = 2;
-                return 8;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "1", {
+  get: function() {
+    obj.length = 2;
+    return 8;
+  },
+  configurable: true
+});
 
 assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');
 assert.sameValue(called, 3, 'called');

@@ -9,10 +9,10 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            JSON.value = "JSON";
+JSON.value = "JSON";
 
-            Object.defineProperty(obj, "property", JSON);
+Object.defineProperty(obj, "property", JSON);
 
 assert.sameValue(obj.property, "JSON", 'obj.property');

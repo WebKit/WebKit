@@ -9,19 +9,21 @@ description: >
     overrides an inherited data property
 ---*/
 
-        var proto = { length: 0 };
+var proto = {
+  length: 0
+};
 
-        var Con = function () {};
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child[1] = true;
+var child = new Con();
+child[1] = true;
 
-        Object.defineProperty(child, "length", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(child, "length", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.indexOf.call(child, true), 1, 'Array.prototype.indexOf.call(child, true)');

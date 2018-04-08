@@ -12,17 +12,17 @@ description: >
 var accessed = false;
 
 function callbackfn(val, idx, obj) {
-    accessed = true;
-    return val > 10;
+  accessed = true;
+  return val > 10;
 }
 
 var proto = {};
 Object.defineProperty(proto, "length", {
-    set: function () { },
-    configurable: true
+  set: function() {},
+  configurable: true
 });
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var child = new Con();

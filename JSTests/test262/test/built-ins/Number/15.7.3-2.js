@@ -8,6 +8,6 @@ description: >
     object (using getPrototypeOf)
 ---*/
 
-  var p = Object.getPrototypeOf(Number);
+var p = Object.getPrototypeOf(Number);
 
 assert.sameValue(p, Function.prototype, 'p');

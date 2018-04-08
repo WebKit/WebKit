@@ -9,7 +9,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.parse;
-if(x === 1)
+if (x === 1)
   Date.parse = 2;
 else
   Date.parse = 1;

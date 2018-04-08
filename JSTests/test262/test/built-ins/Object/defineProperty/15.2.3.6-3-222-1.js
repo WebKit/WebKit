@@ -9,13 +9,13 @@ description: >
     object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Number.prototype.get = function () {
-                return "numberGetProperty";
-            };
-            var numObj = new Number(-2);
+Number.prototype.get = function() {
+  return "numberGetProperty";
+};
+var numObj = new Number(-2);
 
-            Object.defineProperty(obj, "property", numObj);
+Object.defineProperty(obj, "property", numObj);
 
 assert.sameValue(obj.property, "numberGetProperty", 'obj.property');

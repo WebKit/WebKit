@@ -14,10 +14,10 @@ delete String.fromCharCode;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 try {
-  var __obj = new __fcc__func(65,66,66,65);
+  var __obj = new __fcc__func(65, 66, 66, 65);
   $ERROR('#1: __fcc__func = String.fromCharCode; var __obj = new __fcc__func(65,66,66,65) lead to throwing exception');
 } catch (e) {
-    if (e instanceof Test262Error) throw e;
+  if (e instanceof Test262Error) throw e;
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -13,33 +13,34 @@ var obj = {};
 obj.variableForHelpVerify = "data";
 
 Object.defineProperty(obj, "foo1", {
-    value: 10,
-    writable: true,
-    enumerable: true,
-    configurable: false
+  value: 10,
+  writable: true,
+  enumerable: true,
+  configurable: false
 });
 
 function set_func(value) {
-    obj.variableForHelpVerify = value;
+  obj.variableForHelpVerify = value;
 }
+
 function get_func() {
-    return 10;
+  return 10;
 }
 Object.defineProperty(obj, "foo2", {
-    get: get_func,
-    set: set_func,
-    enumerable: true,
-    configurable: false
+  get: get_func,
+  set: set_func,
+  enumerable: true,
+  configurable: false
 });
 
 if (!Object.isExtensible(obj)) {
-    $ERROR('Expected obj to be extensible, actually ' + Object.isExtensible(obj));
+  $ERROR('Expected obj to be extensible, actually ' + Object.isExtensible(obj));
 }
 
 Object.seal(obj);
 
 if (Object.isExtensible(obj)) {
-    $ERROR('Expected obj NOT to be extensible, actually ' + Object.isExtensible(obj));
+  $ERROR('Expected obj NOT to be extensible, actually ' + Object.isExtensible(obj));
 }
 
 verifyEqualTo(obj, "foo1", 10);

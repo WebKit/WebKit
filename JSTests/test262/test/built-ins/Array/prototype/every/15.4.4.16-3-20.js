@@ -24,10 +24,10 @@ var obj = {
   1: 11,
   2: 9,
   length: {
-      valueOf: function () {
-          valueOfAccessed = true;
-          return 2;
-      }
+    valueOf: function() {
+      valueOfAccessed = true;
+      return 2;
+    }
   }
 };
 

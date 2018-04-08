@@ -21,18 +21,18 @@ info: |
 ---*/
 
 assert.sameValue(
-  [ , , , ].includes(undefined),
+  [, , , ].includes(undefined),
   true,
   "[ , , , ].includes(undefined)"
 );
 
 assert.sameValue(
-  [ , , , 42, ].includes(undefined, 4),
+  [, , , 42, ].includes(undefined, 4),
   false,
   "[ , , , 42, ].includes(undefined, 4)"
 );
 
-var sample = [ , , , 42, , ];
+var sample = [, , , 42, , ];
 
 assert.sameValue(
   sample.includes(undefined),

@@ -9,6 +9,9 @@ description: >
     is 0)
 ---*/
 
-        var obj = { 0: "undefined", length: 0 };
+var obj = {
+  0: "undefined",
+  length: 0
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, "undefined"), -1, 'Array.prototype.lastIndexOf.call(obj, "undefined")');

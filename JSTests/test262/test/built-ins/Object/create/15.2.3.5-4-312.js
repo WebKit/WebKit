@@ -9,20 +9,20 @@ description: >
     4.b)
 ---*/
 
-        var isEnumerable = false;
-        var newObj = Object.create({}, {
-            prop: {
-                set: function () { },
-                get: function () { },
-                configurable: true
-            }
-        });
-        var hasProperty = newObj.hasOwnProperty("prop");
-        for (var p in newObj) {
-            if (p === "prop") {
-                isEnumerable = true;
-            }
-        }
+var isEnumerable = false;
+var newObj = Object.create({}, {
+  prop: {
+    set: function() {},
+    get: function() {},
+    configurable: true
+  }
+});
+var hasProperty = newObj.hasOwnProperty("prop");
+for (var p in newObj) {
+  if (p === "prop") {
+    isEnumerable = true;
+  }
+}
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(isEnumerable, false, 'isEnumerable');

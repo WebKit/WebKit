@@ -12,14 +12,18 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var obj1 = { length: 10 };
-var desc = { value: obj1 };
+var obj1 = {
+  length: 10
+};
+var desc = {
+  value: obj1
+};
 Object.defineProperty(obj, "foo", desc);
 
 Object.defineProperties(obj, {
-    foo: {
-        value: obj1
-    }
+  foo: {
+    value: obj1
+  }
 });
 verifyEqualTo(obj, "foo", obj1);
 

@@ -8,13 +8,15 @@ description: >
     correct
 ---*/
 
-        var obj = { prop1: 100 };
+var obj = {
+  prop1: 100
+};
 
-        var array = Object.keys(obj);
+var array = Object.keys(obj);
 
-            array[0] = "isWritable";
+array[0] = "isWritable";
 
-            var desc = Object.getOwnPropertyDescriptor(array, "0");
+var desc = Object.getOwnPropertyDescriptor(array, "0");
 
 assert.sameValue(array[0], "isWritable", 'array[0]');
 assert(desc.hasOwnProperty("writable"), 'desc.hasOwnProperty("writable") !== true');

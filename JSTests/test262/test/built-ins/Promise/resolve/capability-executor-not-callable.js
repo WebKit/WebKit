@@ -56,7 +56,7 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   Promise.resolve.call(function(executor) {
     checkPoint += "a";
-    executor(undefined, function(){});
+    executor(undefined, function() {});
     checkPoint += "b";
   }, {});
 }, "executor called with (undefined, function)");
@@ -66,7 +66,7 @@ var checkPoint = "";
 assert.throws(TypeError, function() {
   Promise.resolve.call(function(executor) {
     checkPoint += "a";
-    executor(function(){}, undefined);
+    executor(function() {}, undefined);
     checkPoint += "b";
   }, {});
 }, "executor called with (function, undefined)");

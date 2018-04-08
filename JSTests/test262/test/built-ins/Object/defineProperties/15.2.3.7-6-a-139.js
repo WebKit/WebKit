@@ -9,12 +9,12 @@ description: >
     containing an hex number (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            length: {
-                value: "0x00B"
-            }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: "0x00B"
+  }
+});
 
 assert.sameValue(arr.length, 0x00B, 'arr.length');

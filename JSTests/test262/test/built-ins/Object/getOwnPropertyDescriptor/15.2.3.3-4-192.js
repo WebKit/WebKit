@@ -8,8 +8,8 @@ description: >
     properties on built-ins (String (instance).length)
 ---*/
 
-  var s = new String("abc");
-  var desc = Object.getOwnPropertyDescriptor(s, "length");
+var s = new String("abc");
+var desc = Object.getOwnPropertyDescriptor(s, "length");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

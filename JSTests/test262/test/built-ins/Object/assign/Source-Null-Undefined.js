@@ -7,6 +7,6 @@ esid: sec-object.assign
 ---*/
 
 var target = new Object();
-var result = Object.assign(target,undefined,null);
+var result = Object.assign(target, undefined, null);
 
 assert.sameValue(result, target, "null and undefined should be ignored, result should be original object.");

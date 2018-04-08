@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.replace)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "replace");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "replace");
 
 assert.sameValue(desc.value, String.prototype.replace, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

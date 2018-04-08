@@ -9,10 +9,10 @@ description: >
     numbers (15.4.5.1 step 4.a)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "0", {
-            value: 12
-        });
+Object.defineProperty(arrObj, "0", {
+  value: 12
+});
 
 assert.sameValue(arrObj[0], 12, 'arrObj[0]');

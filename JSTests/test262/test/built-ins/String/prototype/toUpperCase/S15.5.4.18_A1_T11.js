@@ -9,16 +9,20 @@ description: >
     toUpperCase() function for this object
 ---*/
 
-var __obj = {toString:function(){throw "intostr";}}
+var __obj = {
+  toString: function() {
+    throw "intostr";
+  }
+}
 __obj.toUpperCase = String.prototype.toUpperCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 try {
   var x = __obj.toUpperCase();
-   	$ERROR('#1: "var x = __obj.toUpperCase()" lead to throwing exception');
+  $ERROR('#1: "var x = __obj.toUpperCase()" lead to throwing exception');
 } catch (e) {
-  if (e!=="intostr") {
-    $ERROR('#1.1: Exception === "intostr". Actual: '+e);
+  if (e !== "intostr") {
+    $ERROR('#1.1: Exception === "intostr". Actual: ' + e);
   }
 }
 //

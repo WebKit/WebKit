@@ -8,7 +8,16 @@ description: >
     same as empty string space argument.
 ---*/
 
-  var obj = {a1: {b1: [1,2,3,4], b2: {c1: 1, c2: 2}},a2: 'a2'};
+var obj = {
+  a1: {
+    b1: [1, 2, 3, 4],
+    b2: {
+      c1: 1,
+      c2: 2
+    }
+  },
+  a2: 'a2'
+};
 
 /* empty string should be same as no space arg */
-assert.sameValue(JSON.stringify(obj,null, 0), JSON.stringify(obj));
+assert.sameValue(JSON.stringify(obj, null, 0), JSON.stringify(obj));

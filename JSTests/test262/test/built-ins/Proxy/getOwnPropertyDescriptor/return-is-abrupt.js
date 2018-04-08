@@ -14,11 +14,11 @@ info: |
 ---*/
 
 var p = new Proxy({}, {
-    getOwnPropertyDescriptor: function(t, prop) {
-        throw new Test262Error();
-    }
+  getOwnPropertyDescriptor: function(t, prop) {
+    throw new Test262Error();
+  }
 });
 
 assert.throws(Test262Error, function() {
-    Object.getOwnPropertyDescriptor(p, "attr");
+  Object.getOwnPropertyDescriptor(p, "attr");
 });

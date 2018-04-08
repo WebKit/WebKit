@@ -10,20 +10,28 @@ description: >
     (toString))
 ---*/
 
-  foo.prototype = new Array(1, 2, 3);
-  function foo() {}
-  var f = new foo();
+foo.prototype = new Array(1, 2, 3);
 
-  var o = { toString: function () { return '0';}};
-  f.length = o;
+function foo() {}
+var f = new foo();
 
-  // objects inherit the default valueOf method of the Object object;
-  // that simply returns the itself. Since the default valueOf() method
-  // does not return a primitive value, ES next tries to convert the object
-  // to a number by calling its toString() method and converting the
-  // resulting string to a number.
-  var callCnt = 0;
-  function cb(){callCnt++}
-  var i = f.forEach(cb);
+var o = {
+  toString: function() {
+    return '0';
+  }
+};
+f.length = o;
+
+// objects inherit the default valueOf method of the Object object;
+// that simply returns the itself. Since the default valueOf() method
+// does not return a primitive value, ES next tries to convert the object
+// to a number by calling its toString() method and converting the
+// resulting string to a number.
+var callCnt = 0;
+
+function cb() {
+  callCnt++
+}
+var i = f.forEach(cb);
 
 assert.sameValue(callCnt, 0, 'callCnt');

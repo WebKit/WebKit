@@ -7,12 +7,12 @@ es5id: 15.4.4.19-5-12
 description: Array.prototype.map - Boolean object can be used as thisArg
 ---*/
 
-        var objBoolean = new Boolean();
+var objBoolean = new Boolean();
 
-        function callbackfn(val, idx, obj) {
-            return this === objBoolean;
-        }
+function callbackfn(val, idx, obj) {
+  return this === objBoolean;
+}
 
-        var testResult = [11].map(callbackfn, objBoolean);
+var testResult = [11].map(callbackfn, objBoolean);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

@@ -17,7 +17,7 @@ var descObj = new Date();
 descObj.writable = false;
 
 Object.defineProperties(obj, {
-    property: descObj
+  property: descObj
 });
 
 assert(obj.hasOwnProperty("property"));

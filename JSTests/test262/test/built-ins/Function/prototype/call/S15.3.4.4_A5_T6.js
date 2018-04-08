@@ -9,9 +9,11 @@ es5id: 15.3.4.4_A5_T6
 description: thisArg is new String()
 ---*/
 
-var obj=new String("soap");
+var obj = new String("soap");
 
-( function(){this.touched= true;}).call(obj);
+(function() {
+  this.touched = true;
+}).call(obj);
 
 //CHECK#1
 if (!(obj.touched)) {

@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.filter)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "filter");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "filter");
 
 assert.sameValue(desc.value, Array.prototype.filter, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

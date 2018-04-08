@@ -8,12 +8,12 @@ description: >
     object 'O' is not pushed into the returned array.
 ---*/
 
-            var arr = [0, 1, 2];
+var arr = [0, 1, 2];
 
-            Array.prototype.protoProperty = "protoArray";
+Array.prototype.protoProperty = "protoArray";
 
-            var result = Object.getOwnPropertyNames(arr);
+var result = Object.getOwnPropertyNames(arr);
 
-            for (var p in result) {
-                assert.notSameValue(result[p], "protoProperty", 'result[p]');
-            }
+for (var p in result) {
+  assert.notSameValue(result[p], "protoProperty", 'result[p]');
+}

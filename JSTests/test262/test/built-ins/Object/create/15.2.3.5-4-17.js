@@ -8,11 +8,11 @@ description: >
     enumerable is not defined in 'obj' (15.2.3.7 step 3)
 ---*/
 
-        var props = {};
-        Object.defineProperty(props, "prop", {
-            value: {},
-            enumerable: false
-        });
-        var newObj = Object.create({}, props);
+var props = {};
+Object.defineProperty(props, "prop", {
+  value: {},
+  enumerable: false
+});
+var newObj = Object.create({}, props);
 
 assert.sameValue(newObj.hasOwnProperty("prop"), false, 'newObj.hasOwnProperty("prop")');

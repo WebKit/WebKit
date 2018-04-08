@@ -12,5 +12,5 @@ description: Promise.all([]) produces a promise
 var p = Promise.all([]);
 
 if (!(p instanceof Promise)) {
-    $ERROR('Expected Promise.all([]) to be instanceof Promise' + err);
+  $ERROR('Expected Promise.all([]) to be instanceof Promise' + err);
 }

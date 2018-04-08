@@ -9,12 +9,14 @@ description: >
     String(object), object have overrided toString function
 ---*/
 
-var __obj = {toString:function(){}};
+var __obj = {
+  toString: function() {}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (String(__obj).substring(-4,void 0) !== "undefined") {
-  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).substring(-4,void 0) === "undefined". Actual: '+String(__obj).substring(-4,void 0) );
+if (String(__obj).substring(-4, void 0) !== "undefined") {
+  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).substring(-4,void 0) === "undefined". Actual: ' + String(__obj).substring(-4, void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

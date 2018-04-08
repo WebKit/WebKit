@@ -9,25 +9,25 @@ description: >
 ---*/
 
 var global = this;
-        var obj = {};
-        var result = false;
+var obj = {};
+var result = false;
 
-        try {
-            Object.defineProperty(this, "prop", {
-                get: function () {
-                    result = (this === global);
-                    return {};
-                },
-                enumerable: true,
-				configurable:true
-            });
+try {
+  Object.defineProperty(this, "prop", {
+    get: function() {
+      result = (this === global);
+      return {};
+    },
+    enumerable: true,
+    configurable: true
+  });
 
-            Object.defineProperties(obj, this);
-        } catch (e) {
-            if (!(e instanceof TypeError)) throw e;
-            result = true;
-        } finally {
-            delete this.prop;
-        }
+  Object.defineProperties(obj, this);
+} catch (e) {
+  if (!(e instanceof TypeError)) throw e;
+  result = true;
+} finally {
+  delete this.prop;
+}
 
 assert(result, 'result !== true');

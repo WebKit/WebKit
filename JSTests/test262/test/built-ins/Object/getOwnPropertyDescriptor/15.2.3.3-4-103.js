@@ -8,7 +8,7 @@ description: >
     built-ins (Math.exp)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "exp");
+var desc = Object.getOwnPropertyDescriptor(Math, "exp");
 
 assert.sameValue(desc.value, Math.exp, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

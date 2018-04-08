@@ -9,19 +9,19 @@ description: >
     step 6.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var errObj = new Error();
+var errObj = new Error();
 
-        errObj.writable = true;
+errObj.writable = true;
 
-        Object.defineProperty(obj, "property", errObj);
+Object.defineProperty(obj, "property", errObj);
 
-        var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

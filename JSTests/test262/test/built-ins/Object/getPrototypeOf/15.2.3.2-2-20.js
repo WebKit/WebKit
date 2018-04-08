@@ -8,8 +8,8 @@ description: >
     (Function Object)
 ---*/
 
-        var obj = function (a, b) {
-            return a + b;
-        };
+var obj = function(a, b) {
+  return a + b;
+};
 
 assert.sameValue(Object.getPrototypeOf(obj), Function.prototype, 'Object.getPrototypeOf(obj)');

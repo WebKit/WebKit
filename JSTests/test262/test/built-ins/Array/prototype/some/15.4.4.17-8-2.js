@@ -9,13 +9,14 @@ description: >
     Array, length overridden to null (type conversion))
 ---*/
 
-  foo.prototype = new Array(1, 2, 3);
-  function foo() {}
-  var f = new foo();
-  f.length = null;
+foo.prototype = new Array(1, 2, 3);
 
-  function cb(){}
-  var i = f.some(cb);
+function foo() {}
+var f = new foo();
+f.length = null;
+
+function cb() {}
+var i = f.some(cb);
 
 
 assert.sameValue(i, false, 'i');

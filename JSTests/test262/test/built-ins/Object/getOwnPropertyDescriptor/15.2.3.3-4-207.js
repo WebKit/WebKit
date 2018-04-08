@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Math.PI)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "PI");
+var desc = Object.getOwnPropertyDescriptor(Math, "PI");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

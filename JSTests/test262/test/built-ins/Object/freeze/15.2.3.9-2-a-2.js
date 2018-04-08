@@ -10,9 +10,11 @@ includes: [propertyHelper.js]
 ---*/
 
 
-var proto = { foo: 0 }; // default [[Configurable]] attribute value of foo: true
+var proto = {
+  foo: 0
+}; // default [[Configurable]] attribute value of foo: true
 
-var Con = function () { };
+var Con = function() {};
 Con.prototype = proto;
 
 var child = new Con();

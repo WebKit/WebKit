@@ -9,12 +9,12 @@ description: >
     called on
 ---*/
 
-  function callbackfn(val, idx, obj)
-  {
-    return true;
-  }
-  var srcArr = [1,2,3,4,5];
-  srcArr.filter(callbackfn);
+function callbackfn(val, idx, obj)
+{
+  return true;
+}
+var srcArr = [1, 2, 3, 4, 5];
+srcArr.filter(callbackfn);
 
 assert.sameValue(srcArr[0], 1, 'srcArr[0]');
 assert.sameValue(srcArr[1], 2, 'srcArr[1]');

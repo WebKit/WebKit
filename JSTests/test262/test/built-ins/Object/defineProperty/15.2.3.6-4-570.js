@@ -8,17 +8,17 @@ description: >
     contains return statement
 ---*/
 
-        var obj = {};
-        var verifyExecute = false;
-        var getFunc = function () {
-            verifyExecute = true;
-        };
+var obj = {};
+var verifyExecute = false;
+var getFunc = function() {
+  verifyExecute = true;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: getFunc
-        });
+Object.defineProperty(obj, "prop", {
+  get: getFunc
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(desc.get, getFunc, 'desc.get');

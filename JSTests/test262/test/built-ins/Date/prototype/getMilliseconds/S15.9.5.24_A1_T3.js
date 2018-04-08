@@ -12,8 +12,8 @@ if (Date.prototype.propertyIsEnumerable('getMilliseconds')) {
   $ERROR('#1: The Date.prototype.getMilliseconds property has the attribute DontEnum');
 }
 
-for(var x in Date.prototype) {
-  if(x === "getMilliseconds") {
+for (var x in Date.prototype) {
+  if (x === "getMilliseconds") {
     $ERROR('#2: The Date.prototype.getMilliseconds has the attribute DontEnum');
   }
 }

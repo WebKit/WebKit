@@ -9,15 +9,19 @@ description: >
     property on an Array-like object
 ---*/
 
-        var kValue = { };
-        function callbackfn(val, idx, obj) {
-            if (idx === 5) {
-                return val !== kValue;
-            } else {
-                return true;
-            }
-        }
+var kValue = {};
 
-        var obj = { 5: kValue, length: 100 };
+function callbackfn(val, idx, obj) {
+  if (idx === 5) {
+    return val !== kValue;
+  } else {
+    return true;
+  }
+}
+
+var obj = {
+  5: kValue,
+  length: 100
+};
 
 assert.sameValue(Array.prototype.every.call(obj, callbackfn), false, 'Array.prototype.every.call(obj, callbackfn)');

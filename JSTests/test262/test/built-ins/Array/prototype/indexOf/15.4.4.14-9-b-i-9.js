@@ -9,27 +9,27 @@ description: >
     property on an Array
 ---*/
 
-        var arr = [, , , ];
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                return 0;
-            },
-            configurable: true
-        });
+var arr = [, , , ];
+Object.defineProperty(arr, "0", {
+  get: function() {
+    return 0;
+  },
+  configurable: true
+});
 
-        Object.defineProperty(arr, "1", {
-            get: function () {
-                return 1;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "1", {
+  get: function() {
+    return 1;
+  },
+  configurable: true
+});
 
-        Object.defineProperty(arr, "2", {
-            get: function () {
-                return 2;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "2", {
+  get: function() {
+    return 2;
+  },
+  configurable: true
+});
 
 assert.sameValue(arr.indexOf(0), 0, 'arr.indexOf(0)');
 assert.sameValue(arr.indexOf(1), 1, 'arr.indexOf(1)');

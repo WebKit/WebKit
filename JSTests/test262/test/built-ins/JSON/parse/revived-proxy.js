@@ -35,7 +35,10 @@ info: |
 features: [Proxy]
 ---*/
 
-var objectProxy = new Proxy({ length: 0, other: 0 }, {});
+var objectProxy = new Proxy({
+  length: 0,
+  other: 0
+}, {});
 var arrayProxy = new Proxy([], {});
 var arrayProxyProxy = new Proxy(arrayProxy, {});
 var visitedOther, injectProxy;

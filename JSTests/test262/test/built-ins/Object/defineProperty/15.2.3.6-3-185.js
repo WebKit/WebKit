@@ -9,13 +9,14 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = { };
+var obj = {};
 
-Object.defineProperty(obj, "property", { writable:  NaN});
+Object.defineProperty(obj, "property", {
+  writable: NaN
+});
 
 assert(obj.hasOwnProperty("property"));
 
 verifyNotWritable(obj, "property");
 
-assert.sameValue(typeof (obj.property), "undefined");
-
+assert.sameValue(typeof(obj.property), "undefined");

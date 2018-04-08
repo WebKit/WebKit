@@ -8,7 +8,7 @@ description: >
     built-ins (Math.min)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "min");
+var desc = Object.getOwnPropertyDescriptor(Math, "min");
 
 assert.sameValue(desc.value, Math.min, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.setHours)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setHours");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setHours");
 
 assert.sameValue(desc.value, Date.prototype.setHours, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

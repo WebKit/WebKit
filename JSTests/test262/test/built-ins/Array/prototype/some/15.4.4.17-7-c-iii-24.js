@@ -9,8 +9,8 @@ description: >
     object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return new EvalError();
-        }
+function callbackfn(val, idx, obj) {
+  return new EvalError();
+}
 
 assert([11].some(callbackfn), '[11].some(callbackfn) !== true');

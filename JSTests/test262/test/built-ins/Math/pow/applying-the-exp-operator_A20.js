@@ -16,7 +16,6 @@ exponent[3] = 1.7976931348623157E308; //largest finite number
 exponent[4] = +Infinity;
 var exponentnum = 5;
 
-for (var i = 0; i < exponentnum; i++)
-{
+for (var i = 0; i < exponentnum; i++) {
   assert.sameValue(Math.pow(base, exponent[i]), 0, exponent[i]);
 }

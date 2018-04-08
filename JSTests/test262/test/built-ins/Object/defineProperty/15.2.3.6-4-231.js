@@ -15,23 +15,25 @@ var arrObj = [];
 arrObj.helpVerifySet = 10;
 
 function getFunc1() {
-    return 20;
+  return 20;
 }
+
 function getFunc2() {
-    return arrObj.helpVerifySet;
+  return arrObj.helpVerifySet;
 }
+
 function setFunc(value) {
-    arrObj.helpVerifySet = value;
+  arrObj.helpVerifySet = value;
 }
 
 Object.defineProperty(arrObj, "0", {
-    get: getFunc1,
-    set: setFunc,
-    configurable: true
+  get: getFunc1,
+  set: setFunc,
+  configurable: true
 });
 
 Object.defineProperty(arrObj, "0", {
-    get: getFunc2
+  get: getFunc2
 });
 
 verifyEqualTo(arrObj, "0", getFunc2());

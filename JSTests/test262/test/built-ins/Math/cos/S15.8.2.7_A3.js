@@ -11,5 +11,5 @@ description: Checking if Math.cos(-0) is 1
 var x = -0;
 if (Math.cos(x) !== 1)
 {
-	$ERROR("#1: 'var x = -0; Math.cos(x) !== 1'");
+  $ERROR("#1: 'var x = -0; Math.cos(x) !== 1'");
 }

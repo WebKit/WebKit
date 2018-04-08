@@ -9,32 +9,32 @@ description: >
     iterations is observed on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 1) {
-                return val === 12;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 1) {
+    return val === 12;
+  }
+  return false;
+}
 
-        var arr = [];
-        var helpVerifyVar = 11;
+var arr = [];
+var helpVerifyVar = 11;
 
-        Object.defineProperty(arr, "1", {
-            get: function () {
-                return helpVerifyVar;
-            },
-            set: function (args) {
-                helpVerifyVar = args;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "1", {
+  get: function() {
+    return helpVerifyVar;
+  },
+  set: function(args) {
+    helpVerifyVar = args;
+  },
+  configurable: true
+});
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                arr[1] = 12;
-                return 9;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    arr[1] = 12;
+    return 9;
+  },
+  configurable: true
+});
 
 assert(arr.some(callbackfn), 'arr.some(callbackfn) !== true');

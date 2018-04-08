@@ -8,24 +8,24 @@ description: >
     (8.12.9 step 1)
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "property", {
-            get: function () {
-                return 11;
-            },
-            configurable: false
-        });
+var proto = {};
+Object.defineProperty(proto, "property", {
+  get: function() {
+    return 11;
+  },
+  configurable: false
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var obj = new ConstructFun();
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var obj = new ConstructFun();
 
-        Object.defineProperty(obj, "property", {
-            get: function () {
-                return 12;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "property", {
+  get: function() {
+    return 12;
+  },
+  configurable: true
+});
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(obj.property, 12, 'obj.property');

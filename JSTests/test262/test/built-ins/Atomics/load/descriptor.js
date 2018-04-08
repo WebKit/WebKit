@@ -6,6 +6,7 @@
 esid: sec-atomics.load
 description: Testing descriptor property of Atomics.load
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "load");

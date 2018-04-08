@@ -12,8 +12,10 @@ description: >
 flags: [noStrict]
 ---*/
 
-function FACTORY(){
-  (function(){this.feat="kamon beyba"}).apply(null);
+function FACTORY() {
+  (function() {
+    this.feat = "kamon beyba"
+  }).apply(null);
 };
 
 var obj = new FACTORY;

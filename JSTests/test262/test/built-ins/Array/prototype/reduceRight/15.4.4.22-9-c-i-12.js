@@ -10,23 +10,24 @@ description: >
     Array
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (curVal === "1");
-            }
-        }
+var testResult = false;
 
-            Array.prototype[1] = 11;
-            var arr = [0, ,2];
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (curVal === "1");
+  }
+}
 
-            Object.defineProperty(arr, "1", {
-                get: function () {
-                    return "1";
-                },
-                configurable: true
-            });
+Array.prototype[1] = 11;
+var arr = [0, , 2];
 
-            arr.reduceRight(callbackfn, "initialValue");
+Object.defineProperty(arr, "1", {
+  get: function() {
+    return "1";
+  },
+  configurable: true
+});
+
+arr.reduceRight(callbackfn, "initialValue");
 
 assert(testResult, 'testResult !== true');

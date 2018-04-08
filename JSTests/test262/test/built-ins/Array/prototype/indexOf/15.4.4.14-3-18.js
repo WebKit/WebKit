@@ -9,6 +9,10 @@ description: >
     convert to a number
 ---*/
 
-        var obj = { 0: true, 100: true, length: "one" };
+var obj = {
+  0: true,
+  100: true,
+  length: "one"
+};
 
 assert.sameValue(Array.prototype.indexOf.call(obj, true), -1, 'Array.prototype.indexOf.call(obj, true)');

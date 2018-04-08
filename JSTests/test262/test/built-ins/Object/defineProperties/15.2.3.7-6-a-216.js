@@ -14,13 +14,13 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperty(arr, "0", {
-    value: "abcd"
+  value: "abcd"
 });
 
 Object.defineProperties(arr, {
-    "0": {
-        value: "abcd"
-    }
+  "0": {
+    value: "abcd"
+  }
 });
 verifyEqualTo(arr, "0", "abcd");
 
@@ -29,4 +29,3 @@ verifyNotWritable(arr, "0");
 verifyNotEnumerable(arr, "0");
 
 verifyNotConfigurable(arr, "0");
-

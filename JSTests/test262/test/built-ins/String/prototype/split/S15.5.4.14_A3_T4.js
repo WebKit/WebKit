@@ -19,7 +19,7 @@ var __split = __instance.split();
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __instance = new Number(NaN); __instance.split = String.prototype.split; __split = __instance.split(); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __instance = new Number(NaN); __instance.split = String.prototype.split; __split = __instance.split(); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== 1) {
-  $ERROR('#2: var __instance = new Number(NaN); __instance.split = String.prototype.split; __split = __instance.split(); __split.length === 1. Actual: '+__split.length );
+  $ERROR('#2: var __instance = new Number(NaN); __instance.split = String.prototype.split; __split = __instance.split(); __split.length === 1. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ if (__split.length !== 1) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split[0] !== "NaN") {
-  $ERROR('#3: var __instance = new Number(NaN); __instance.split = String.prototype.split; __split = __instance.split(); __split[0] === "NaN". Actual: '+__split[0] );
+  $ERROR('#3: var __instance = new Number(NaN); __instance.split = String.prototype.split; __split = __instance.split(); __split[0] === "NaN". Actual: ' + __split[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

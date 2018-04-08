@@ -9,15 +9,17 @@ description: Array.prototype.splice throws if `length` is read-only
 ---*/
 
 var a = {
-    get length() { return 0; },
-    splice: Array.prototype.splice
+  get length() {
+    return 0;
+  },
+  splice: Array.prototype.splice
 };
 
 try {
-    a.splice(1, 2, 4);
-    $ERROR("Expected a TypeError");
+  a.splice(1, 2, 4);
+  $ERROR("Expected a TypeError");
 } catch (e) {
-    if (!(e instanceof TypeError)) {
-        throw e;
-    }
+  if (!(e instanceof TypeError)) {
+    throw e;
+  }
 }

@@ -9,13 +9,13 @@ description: >
     implements its own property get method
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return (obj.length === 2);
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return (obj.length === 2);
+}
 
-        var func = function (a, b) {
-            arguments[2] = 9;
-            return Array.prototype.reduce.call(arguments, callbackfn, 1);
-        };
+var func = function(a, b) {
+  arguments[2] = 9;
+  return Array.prototype.reduce.call(arguments, callbackfn, 1);
+};
 
 assert.sameValue(func(12, 11), true, 'func(12, 11)');

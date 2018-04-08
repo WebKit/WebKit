@@ -10,8 +10,12 @@ description: Call toUpperCase() function of function call
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(null) evaluates to "null" match(null) evaluates to match("null")
-if (function(){return "GnulLuNa"}().toUpperCase() !== "GNULLUNA") {
-  $ERROR('#1: function(){return "GnulLuNa"}().toUpperCase() === "GNULLUNA". Actual: '+function(){return "GnulLuNa"}().toUpperCase() );
+if (function() {
+    return "GnulLuNa"
+  }().toUpperCase() !== "GNULLUNA") {
+  $ERROR('#1: function(){return "GnulLuNa"}().toUpperCase() === "GNULLUNA". Actual: ' + function() {
+    return "GnulLuNa"
+  }().toUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

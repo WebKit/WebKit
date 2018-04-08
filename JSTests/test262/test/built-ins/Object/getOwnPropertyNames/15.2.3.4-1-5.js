@@ -8,4 +8,4 @@ description: >
     string
 ---*/
 
-    Object.getOwnPropertyNames("abc");
+Object.getOwnPropertyNames("abc");

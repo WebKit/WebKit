@@ -8,9 +8,11 @@ description: >
     converts to a string (value is 100000000000000000000.123)
 ---*/
 
-        var obj = { "100000000000000000000": 1 };
+var obj = {
+  "100000000000000000000": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, 100000000000000000000.123);
+var desc = Object.getOwnPropertyDescriptor(obj, 100000000000000000000.123);
 
 assert(typeof desc !== "undefined", 'typeof desc !== "undefined" !== true');
 assert.sameValue(desc.value, 1, 'desc.value');

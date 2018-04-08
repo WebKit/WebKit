@@ -6,6 +6,7 @@
 esid: sec-atomics.wake
 description: Testing descriptor property of Atomics.wake
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "wake");

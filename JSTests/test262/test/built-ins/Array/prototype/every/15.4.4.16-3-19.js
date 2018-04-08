@@ -10,25 +10,25 @@ description: >
 ---*/
 
 function callbackfn1(val, idx, obj) {
-    return val > 10;
+  return val > 10;
 }
 
 function callbackfn2(val, idx, obj) {
-    return val > 11;
+  return val > 11;
 }
 
 var toStringAccessed = false;
 var obj = {
-    0: 12,
-    1: 11,
-    2: 9,
+  0: 12,
+  1: 11,
+  2: 9,
 
-    length: {
-        toString: function () {
-            toStringAccessed = true;
-            return '2';
-        }
+  length: {
+    toString: function() {
+      toStringAccessed = true;
+      return '2';
     }
+  }
 };
 
 // objects inherit the default valueOf() method from Object

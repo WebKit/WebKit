@@ -14,6 +14,6 @@ try {
   $ERROR('#1: __FACTORY = String.prototype.charAt; "__instance = new __FACTORY" lead to throwing exception');
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: undefined = 1 throw a TypeError. Actual: ' + (e));  
+    $ERROR('#1.2: undefined = 1 throw a TypeError. Actual: ' + (e));
   }
 }

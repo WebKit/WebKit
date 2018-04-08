@@ -9,20 +9,20 @@ description: >
     property of prototype object (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Function.prototype.configurable = true;
-            var funObj = function (a, b) {
-                return a + b;
-            };
+Function.prototype.configurable = true;
+var funObj = function(a, b) {
+  return a + b;
+};
 
-            Object.defineProperty(obj, "property", funObj);
+Object.defineProperty(obj, "property", funObj);
 
-            var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-            delete obj.property;
+delete obj.property;
 
-            var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

@@ -8,10 +8,10 @@ description: >
     enumerable properties (function)
 ---*/
 
-  function foo() {}
-  foo.x = 1;
-  
-  var a = Object.keys(foo);
+function foo() {}
+foo.x = 1;
+
+var a = Object.keys(foo);
 
 assert.sameValue(a.length, 1, 'a.length');
 assert.sameValue(a[0], 'x', 'a[0]');

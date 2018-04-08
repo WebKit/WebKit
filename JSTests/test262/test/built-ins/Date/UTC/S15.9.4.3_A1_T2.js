@@ -8,7 +8,7 @@ es5id: 15.9.4.3_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 
-if (delete Date.UTC  === false) {
+if (delete Date.UTC === false) {
   $ERROR('#1: The Date.UTC property has not the attributes DontDelete');
 }
 

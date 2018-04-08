@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Math.SQRT2)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "SQRT2");
+var desc = Object.getOwnPropertyDescriptor(Math, "SQRT2");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

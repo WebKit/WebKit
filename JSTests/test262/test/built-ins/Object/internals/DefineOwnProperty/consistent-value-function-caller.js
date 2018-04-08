@@ -19,17 +19,20 @@ info: |
 ---*/
 
 function f() {
-    return Reflect.getOwnPropertyDescriptor(f, 'caller');
+  return Reflect.getOwnPropertyDescriptor(f, 'caller');
 }
 
 function g() {
-    return f();
+  return f();
 }
 
-Reflect.defineProperty(f, 'caller', { writable: false, configurable: false });
+Reflect.defineProperty(f, 'caller', {
+  writable: false,
+  configurable: false
+});
 
 var desc = Reflect.getOwnPropertyDescriptor(f, 'caller');
 if (desc && desc.configurable === false && desc.writable === false) {
-    var desc2 = g();
-    assert.sameValue(desc.value, desc2.value);
+  var desc2 = g();
+  assert.sameValue(desc.value, desc2.value);
 }

@@ -9,13 +9,13 @@ description: >
     array after it is called
 ---*/
 
-  function callbackfn(prevVal, curVal, idx, obj)
-  {
-    arr[3] = -2;
-    arr[0] = -1;
-    return prevVal + curVal;
-  }
+function callbackfn(prevVal, curVal, idx, obj)
+{
+  arr[3] = -2;
+  arr[0] = -1;
+  return prevVal + curVal;
+}
 
-  var arr = [1,2,3,4,5];
+var arr = [1, 2, 3, 4, 5];
 
 assert.sameValue(arr.reduceRight(callbackfn), 13, 'arr.reduceRight(callbackfn)');

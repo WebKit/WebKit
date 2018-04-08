@@ -30,27 +30,27 @@ array["9007199254740991"] = "9007199254740991";
 var proxy = new Proxy(array, {
   get(t, pk, r) {
     if (pk === "length")
-      return 2**53 + 2;
+      return 2 ** 53 + 2;
     return Reflect.get(t, pk, r);
   }
 });
 
 var result = Array.prototype.slice.call(proxy, 9007199254740989);
-assert.compareArray(result, [ "9007199254740989", "9007199254740990" ],
-                    "slice(9007199254740989)");
+assert.compareArray(result, ["9007199254740989", "9007199254740990"],
+  "slice(9007199254740989)");
 
 var result = Array.prototype.slice.call(proxy, 9007199254740989, 9007199254740990);
-assert.compareArray(result, [ "9007199254740989" ],
-                    "slice(9007199254740989, 9007199254740990)");
+assert.compareArray(result, ["9007199254740989"],
+  "slice(9007199254740989, 9007199254740990)");
 
 var result = Array.prototype.slice.call(proxy, 9007199254740989, 9007199254740996);
-assert.compareArray(result, [ "9007199254740989", "9007199254740990" ],
-                    "slice(9007199254740989, 9007199254740996)");
+assert.compareArray(result, ["9007199254740989", "9007199254740990"],
+  "slice(9007199254740989, 9007199254740996)");
 
 var result = Array.prototype.slice.call(proxy, -2);
-assert.compareArray(result, [ "9007199254740989", "9007199254740990" ],
-                    "slice(-2)");
+assert.compareArray(result, ["9007199254740989", "9007199254740990"],
+  "slice(-2)");
 
 var result = Array.prototype.slice.call(proxy, -2, -1);
-assert.compareArray(result, [ "9007199254740989" ],
-                    "slice(-2, -1)");
+assert.compareArray(result, ["9007199254740989"],
+  "slice(-2, -1)");

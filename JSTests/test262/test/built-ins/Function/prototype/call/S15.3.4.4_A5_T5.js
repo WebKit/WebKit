@@ -9,9 +9,11 @@ es5id: 15.3.4.4_A5_T5
 description: thisArg is function variable
 ---*/
 
-var f = function(){this.touched= true;};
+var f = function() {
+  this.touched = true;
+};
 
-var obj={};
+var obj = {};
 
 f.call(obj);
 

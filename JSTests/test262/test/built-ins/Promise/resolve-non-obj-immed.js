@@ -23,12 +23,12 @@ var promise = new Promise(function(resolve) {
 assert.sameValue(returnValue, undefined, '"resolve" return value');
 
 promise.then(function(value) {
-    if (value !== 45) {
-      $DONE('The promise should be fulfilled with the provided value.');
-      return;
-    }
+  if (value !== 45) {
+    $DONE('The promise should be fulfilled with the provided value.');
+    return;
+  }
 
-    $DONE();
-  }, function() {
-    $DONE('The promise should not be rejected.');
-  });
+  $DONE();
+}, function() {
+  $DONE('The promise should not be rejected.');
+});

@@ -8,16 +8,16 @@ description: >
     a function (8.10.5 step 7.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var getter = function () {
-            return 100;
-        };
+var getter = function() {
+  return 100;
+};
 
-        Object.defineProperties(obj, {
-            property: {
-                get: getter
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    get: getter
+  }
+});
 
 assert.sameValue(obj.property, 100, 'obj.property');

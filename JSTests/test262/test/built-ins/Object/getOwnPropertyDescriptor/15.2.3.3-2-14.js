@@ -8,8 +8,10 @@ description: >
     converts to a string (value is +Infinity)
 ---*/
 
-        var obj = { "Infinity": 1 };
+var obj = {
+  "Infinity": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, +Infinity);
+var desc = Object.getOwnPropertyDescriptor(obj, +Infinity);
 
 assert.sameValue(desc.value, 1, 'desc.value');

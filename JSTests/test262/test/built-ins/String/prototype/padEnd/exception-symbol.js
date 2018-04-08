@@ -8,6 +8,6 @@ author: Jordan Harband
 features: [Symbol]
 ---*/
 
-assert.throws(TypeError, function () {
-    String.prototype.padEnd.call(Symbol());
+assert.throws(TypeError, function() {
+  String.prototype.padEnd.call(Symbol());
 });

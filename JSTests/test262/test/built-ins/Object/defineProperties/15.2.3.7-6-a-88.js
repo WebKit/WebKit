@@ -14,38 +14,38 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function get_Func() {
-    return 0;
+  return 0;
 }
 
 Object.defineProperty(obj, "foo", {
-    set: undefined,
-    get: get_Func,
-    enumerable: false,
-    configurable: false
+  set: undefined,
+  get: get_Func,
+  enumerable: false,
+  configurable: false
 });
 
 function set_Func() {}
 
 try {
-    Object.defineProperties(obj, {
-        foo: {
-            set: set_Func
-        }
-    });
-    $ERROR("Expected an exception.");
+  Object.defineProperties(obj, {
+    foo: {
+      set: set_Func
+    }
+  });
+  $ERROR("Expected an exception.");
 } catch (e) {
-    verifyNotEnumerable(obj, "foo");
+  verifyNotEnumerable(obj, "foo");
 
-    verifyNotConfigurable(obj, "foo");
-    var desc = Object.getOwnPropertyDescriptor(obj, "foo");
+  verifyNotConfigurable(obj, "foo");
+  var desc = Object.getOwnPropertyDescriptor(obj, "foo");
 
-    if (typeof (desc.set) !== "undefined") {
-        $ERROR('Expected typeof (desc.set) === "undefined", actually ' + typeof (desc.set));
-    }
+  if (typeof(desc.set) !== "undefined") {
+    $ERROR('Expected typeof (desc.set) === "undefined", actually ' + typeof(desc.set));
+  }
 
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
-    }
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.every)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "every");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "every");
 
 assert.sameValue(desc.value, Array.prototype.every, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

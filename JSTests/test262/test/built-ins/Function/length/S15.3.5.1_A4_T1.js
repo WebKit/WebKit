@@ -16,10 +16,11 @@ if (!(f.hasOwnProperty('length'))) {
   $ERROR('#1: the function has length property.');
 }
 
-for(var key in f)
-  if(key=="length")
-      var lengthenumed=true;
-      
+for (var key in f) {
+  if (key == "length") {
+    var lengthenumed = true;
+  }
+}
 //CHECK#2
 if (lengthenumed) {
   $ERROR('#2: the length property has the attributes { DontEnum }');

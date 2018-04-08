@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.getMilliseconds)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "getMilliseconds");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "getMilliseconds");
 
 assert.sameValue(desc.value, Date.prototype.getMilliseconds, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

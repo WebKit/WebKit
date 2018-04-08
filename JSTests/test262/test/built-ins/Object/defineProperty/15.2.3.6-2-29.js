@@ -8,7 +8,7 @@ description: >
     a string (value is 1(following 20 zeros).1)
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, 100000000000000000000.1, {});
+var obj = {};
+Object.defineProperty(obj, 100000000000000000000.1, {});
 
 assert(obj.hasOwnProperty("100000000000000000000"), 'obj.hasOwnProperty("100000000000000000000") !== true');

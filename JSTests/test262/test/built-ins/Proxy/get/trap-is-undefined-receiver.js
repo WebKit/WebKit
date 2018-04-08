@@ -13,12 +13,14 @@ info: |
 ---*/
 
 var target = {
-    get attr() {
-        return this;
-    }
+  get attr() {
+    return this;
+  }
 };
 
-var p = new Proxy(target, { get: null });
+var p = new Proxy(target, {
+  get: null
+});
 assert.sameValue(p.attr, p);
 
 var pParent = Object.create(new Proxy(target, {}));

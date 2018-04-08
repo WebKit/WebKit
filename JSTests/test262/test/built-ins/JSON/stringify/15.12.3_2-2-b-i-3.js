@@ -8,9 +8,11 @@ description: >
     toJSON call to literal Boolean values.
 ---*/
 
-  var obj = {
-    prop:42,
-    toJSON: function () {return new Boolean(true)}
-    };
+var obj = {
+  prop: 42,
+  toJSON: function() {
+    return new Boolean(true)
+  }
+};
 
 assert.sameValue(JSON.stringify([obj]), '[true]', 'JSON.stringify([obj])');

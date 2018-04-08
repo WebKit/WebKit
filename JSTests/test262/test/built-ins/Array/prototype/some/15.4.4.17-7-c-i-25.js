@@ -10,15 +10,15 @@ description: >
     less than number of parameters)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === 11;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === 11;
+  }
+  return false;
+}
 
-        var func = function (a, b) {
-            return Array.prototype.some.call(arguments, callbackfn);
-        };
+var func = function(a, b) {
+  return Array.prototype.some.call(arguments, callbackfn);
+};
 
 assert(func(11), 'func(11) !== true');

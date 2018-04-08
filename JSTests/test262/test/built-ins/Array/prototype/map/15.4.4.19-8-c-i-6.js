@@ -9,22 +9,22 @@ description: >
     that overrides an inherited accessor property on an Array
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === kValue;
+  }
+  return false;
+}
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 9;
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 9;
+  },
+  configurable: true
+});
 
-            var testResult = [kValue].map(callbackfn);
+var testResult = [kValue].map(callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

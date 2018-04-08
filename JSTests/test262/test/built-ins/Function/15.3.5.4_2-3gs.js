@@ -9,14 +9,14 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-var f = function () {
-    gNonStrict();
+var f = function() {
+  gNonStrict();
 }
 
 assert.throws(TypeError, function() {
-    f();
+  f();
 });
 
 function gNonStrict() {
-    return gNonStrict.caller;
+  return gNonStrict.caller;
 }

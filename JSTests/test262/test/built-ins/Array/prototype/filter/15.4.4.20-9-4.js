@@ -9,13 +9,13 @@ description: >
     Array.length is decreased
 ---*/
 
-  function callbackfn(val, idx, obj)
-  {
-    srcArr.length = 2;
-    return true;
-  }
+function callbackfn(val, idx, obj)
+{
+  srcArr.length = 2;
+  return true;
+}
 
-  var srcArr = [1,2,3,4,6];
-  var resArr = srcArr.filter(callbackfn);
+var srcArr = [1, 2, 3, 4, 6];
+var resArr = srcArr.filter(callbackfn);
 
 assert.sameValue(resArr.length, 2, 'resArr.length');

@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.slice)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "slice");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "slice");
 
 assert.sameValue(desc.value, Array.prototype.slice, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

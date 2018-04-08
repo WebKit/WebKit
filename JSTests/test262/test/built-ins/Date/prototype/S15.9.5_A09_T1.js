@@ -8,6 +8,6 @@ es5id: 15.9.5_A09_T1
 description: The Date.prototype has the property "getTime"
 ---*/
 
-if(Date.prototype.hasOwnProperty("getTime") !== true){
+if (Date.prototype.hasOwnProperty("getTime") !== true) {
   $ERROR('#1: The Date.prototype has the property "getTime"');
 }

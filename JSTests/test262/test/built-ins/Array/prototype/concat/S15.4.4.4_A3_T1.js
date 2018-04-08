@@ -33,7 +33,9 @@ if (arr.hasOwnProperty('1') !== true) {
 Object.prototype[1] = 1;
 Object.prototype.length = 2;
 Object.prototype.concat = Array.prototype.concat;
-x = {0:0};
+x = {
+  0: 0
+};
 var arr = x.concat();
 
 //CHECK#4

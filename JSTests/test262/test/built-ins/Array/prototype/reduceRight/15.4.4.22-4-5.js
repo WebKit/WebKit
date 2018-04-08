@@ -9,7 +9,7 @@ description: >
     number
 ---*/
 
-  var arr = new Array(10);
+var arr = new Array(10);
 assert.throws(TypeError, function() {
-    arr.reduceRight(5);
+  arr.reduceRight(5);
 });

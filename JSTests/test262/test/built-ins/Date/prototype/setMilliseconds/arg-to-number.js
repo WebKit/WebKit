@@ -54,7 +54,7 @@ assert.sameValue(returnValue, new Date(2016, 6, 1).getTime(), 'false');
 returnValue = date.setMilliseconds('   +00200.000E-0002	');
 
 assert.sameValue(
-  returnValue, new Date(2016, 6, 1, 0, 0, 0 , 2).getTime(), 'string'
+  returnValue, new Date(2016, 6, 1, 0, 0, 0, 2).getTime(), 'string'
 );
 
 returnValue = date.setMilliseconds();

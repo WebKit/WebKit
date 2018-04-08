@@ -8,12 +8,14 @@ description: >
     'boundArgs' is 0, length of 'ExtraArgs' is 0, and with 'boundThis'
 ---*/
 
-        var obj = { prop: "abc" };
+var obj = {
+  prop: "abc"
+};
 
-        var func = function (x) {
-            return this === obj && typeof x === "undefined";
-        };
+var func = function(x) {
+  return this === obj && typeof x === "undefined";
+};
 
-        var newFunc = Function.prototype.bind.call(func, obj);
+var newFunc = Function.prototype.bind.call(func, obj);
 
 assert(newFunc(), 'newFunc() !== true');

@@ -9,15 +9,20 @@ description: >
     negative)
 ---*/
 
-        function callbackfn1(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn1(val, idx, obj) {
+  return val > 10;
+}
 
-        function callbackfn2(val, idx, obj) {
-            return val > 11;
-        }
+function callbackfn2(val, idx, obj) {
+  return val > 11;
+}
 
-        var obj = { 0: 12, 1: 11, 2: 9, length: -4294967294 }; //length used to exec while loop is 0
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: -4294967294
+}; //length used to exec while loop is 0
 
 assert(Array.prototype.every.call(obj, callbackfn1), 'Array.prototype.every.call(obj, callbackfn1) !== true');
 assert(Array.prototype.every.call(obj, callbackfn2), 'Array.prototype.every.call(obj, callbackfn2) !== true');

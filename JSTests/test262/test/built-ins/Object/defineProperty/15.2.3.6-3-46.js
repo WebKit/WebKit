@@ -8,17 +8,17 @@ description: >
     'Attributes' is undefined (8.10.5 step 3.b)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        Object.defineProperty(obj, "property", {
-            enumerable: undefined
-        });
+Object.defineProperty(obj, "property", {
+  enumerable: undefined
+});
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

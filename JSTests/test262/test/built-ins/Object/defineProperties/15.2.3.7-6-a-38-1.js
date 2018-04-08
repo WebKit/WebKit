@@ -12,18 +12,20 @@ includes: [propertyHelper.js]
 
 
 var obj = {};
-var getFunc = function () {
-    return 12;
+var getFunc = function() {
+  return 12;
 };
 Object.defineProperties(obj, {
-    foo: {
-        get: getFunc,
-        enumerable: true,
-        configurable: true
-    }
+  foo: {
+    get: getFunc,
+    enumerable: true,
+    configurable: true
+  }
 });
 
-Object.defineProperties(obj, { foo: {} });
+Object.defineProperties(obj, {
+  foo: {}
+});
 
 verifyEqualTo(obj, "foo", getFunc());
 

@@ -8,19 +8,19 @@ description: >
     [[Prototype]] internal property is correct (Error Instance)
 ---*/
 
-        var data = "data";
+var data = "data";
 
-            Object.defineProperty(Error.prototype, "prop", {
-                get: function () {
-                    return data;
-                },
-                set: function (value) {
-                    data = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            var errObj = new Error();
+Object.defineProperty(Error.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  set: function(value) {
+    data = value;
+  },
+  enumerable: true,
+  configurable: true
+});
+var errObj = new Error();
 
 assert.sameValue(errObj.hasOwnProperty("prop"), false, 'errObj.hasOwnProperty("prop")');
 assert.sameValue(errObj.prop, "data", 'errObj.prop');

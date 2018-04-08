@@ -10,9 +10,9 @@ includes: [propertyHelper.js]
 var obj = {};
 
 Object.defineProperty(obj, "foo", {
-    value: 10,
-    enumerable: false,
-    configurable: true
+  value: 10,
+  enumerable: false,
+  configurable: true
 });
 
 assert(Object.isExtensible(obj));
@@ -20,4 +20,3 @@ Object.seal(obj);
 
 assert(obj.hasOwnProperty("foo"));
 verifyNotConfigurable(obj, "foo");
-

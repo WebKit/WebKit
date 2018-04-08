@@ -14,7 +14,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.slice.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.slice.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.slice.hasOwnProperty('length'));
+  $ERROR('#0: String.prototype.slice.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.slice.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (!delete String.prototype.slice.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.slice.hasOwnProperty('length')) {
-  $ERROR('#2: delete String.prototype.slice.length; String.prototype.slice.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.slice.hasOwnProperty('length'));
+  $ERROR('#2: delete String.prototype.slice.length; String.prototype.slice.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.slice.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

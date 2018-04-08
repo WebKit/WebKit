@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.charCodeAt)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "charCodeAt");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "charCodeAt");
 
 assert.sameValue(desc.value, String.prototype.charCodeAt, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

@@ -9,15 +9,20 @@ description: >
     positive)
 ---*/
 
-        function callbackfn1(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn1(val, idx, obj) {
+  return val > 10;
+}
 
-        function callbackfn2(val, idx, obj) {
-            return val > 11;
-        }
+function callbackfn2(val, idx, obj) {
+  return val > 11;
+}
 
-        var obj = { 0: 12, 1: 11, 2: 9, length: 2 };
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: 2
+};
 
 assert(Array.prototype.every.call(obj, callbackfn1), 'Array.prototype.every.call(obj, callbackfn1) !== true');
 assert.sameValue(Array.prototype.every.call(obj, callbackfn2), false, 'Array.prototype.every.call(obj, callbackfn2)');

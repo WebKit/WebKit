@@ -9,25 +9,27 @@ description: >
     passing undefined for callbackfn
 ---*/
 
-        var obj = { 10: 10 };
-        var lengthAccessed = false;
-        var loopAccessed = false;
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                lengthAccessed = true;
-                return 20;
-            },
-            configurable: true
-        });
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                loopAccessed = true;
-                return 10;
-            },
-            configurable: true
-        });
+var obj = {
+  10: 10
+};
+var lengthAccessed = false;
+var loopAccessed = false;
+Object.defineProperty(obj, "length", {
+  get: function() {
+    lengthAccessed = true;
+    return 20;
+  },
+  configurable: true
+});
+Object.defineProperty(obj, "0", {
+  get: function() {
+    loopAccessed = true;
+    return 10;
+  },
+  configurable: true
+});
 assert.throws(TypeError, function() {
-            Array.prototype.filter.call(obj);
+  Array.prototype.filter.call(obj);
 });
 assert(lengthAccessed, 'lengthAccessed !== true');
 assert.sameValue(loopAccessed, false, 'loopAccessed');

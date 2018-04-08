@@ -12,16 +12,15 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var func = function (a, b) {
-    arguments.writable = false;
+var func = function(a, b) {
+  arguments.writable = false;
 
-    Object.defineProperties(obj, {
-        property: arguments
-    });
+  Object.defineProperties(obj, {
+    property: arguments
+  });
 
-    assert(obj.hasOwnProperty("property"));
-    verifyNotWritable(obj, "property");
+  assert(obj.hasOwnProperty("property"));
+  verifyNotWritable(obj, "property");
 };
 
 func();
-

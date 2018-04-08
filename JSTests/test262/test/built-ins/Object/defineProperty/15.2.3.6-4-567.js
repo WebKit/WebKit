@@ -8,16 +8,16 @@ description: >
     argument
 ---*/
 
-        var obj = {};
-        var getFunc = function (arg1) {
-            return 2010;
-        };
+var obj = {};
+var getFunc = function(arg1) {
+  return 2010;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: getFunc
-        });
+Object.defineProperty(obj, "prop", {
+  get: getFunc
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, 2010, 'obj.prop');

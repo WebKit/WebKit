@@ -10,7 +10,7 @@ description: Array.isArray applied to Arguments object
 var arg;
 
 (function fun() {
-    arg = arguments;
+  arg = arguments;
 }(1, 2, 3));
 
 assert.sameValue(Array.isArray(arg), false, 'Array.isArray(arg)');

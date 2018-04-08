@@ -10,21 +10,21 @@ description: >
 ---*/
 
 // CHECK#1
-if (Number("0xc") !== 12)  {
+if (Number("0xc") !== 12) {
   $ERROR('#1: Number("0xc") === 12. Actual: ' + (Number("0xc")));
 }
 
 // CHECK#2
-if (+("0xC") !== 12)  {
+if (+("0xC") !== 12) {
   $ERROR('#2: +("0xC") === 12. Actual: ' + (+("0xC")));
 }
 
 // CHECK#3
-if (Number("0Xc") !== 12)  {
+if (Number("0Xc") !== 12) {
   $ERROR('#3: Number("0Xc") === 12. Actual: ' + (Number("0Xc")));
 }
 
 // CHECK#4
-if (Number("0XC") !== 12)  {
+if (Number("0XC") !== 12) {
   $ERROR('#4: Number("0XC") === 12. Actual: ' + (Number("0XC")));
 }

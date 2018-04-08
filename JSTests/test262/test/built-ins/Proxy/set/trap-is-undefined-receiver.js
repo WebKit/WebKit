@@ -14,12 +14,14 @@ info: |
 
 var context;
 var target = {
-    set attr(val) {
-        context = this;
-    }
+  set attr(val) {
+    context = this;
+  }
 };
 
-var p = new Proxy(target, { set: null });
+var p = new Proxy(target, {
+  set: null
+});
 p.attr = 1;
 assert.sameValue(context, p);
 

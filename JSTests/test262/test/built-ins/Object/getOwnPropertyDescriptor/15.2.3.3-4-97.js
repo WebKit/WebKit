@@ -8,7 +8,7 @@ description: >
     built-ins (Math.acos)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "acos");
+var desc = Object.getOwnPropertyDescriptor(Math, "acos");
 
 assert.sameValue(desc.value, Math.acos, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

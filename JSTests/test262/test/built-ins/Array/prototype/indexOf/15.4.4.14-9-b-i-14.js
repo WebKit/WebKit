@@ -10,20 +10,22 @@ description: >
     Array-like object
 ---*/
 
-        var obj = { length: 1 };
+var obj = {
+  length: 1
+};
 
-            Object.defineProperty(Object.prototype, "0", {
-                get: function () {
-                    return false;
-                },
-                configurable: true
-            });
+Object.defineProperty(Object.prototype, "0", {
+  get: function() {
+    return false;
+  },
+  configurable: true
+});
 
-            Object.defineProperty(obj, "0", {
-                get: function () {
-                    return true;
-                },
-                configurable: true
-            });
+Object.defineProperty(obj, "0", {
+  get: function() {
+    return true;
+  },
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.indexOf.call(obj, true), 0, 'Array.prototype.indexOf.call(obj, true)');

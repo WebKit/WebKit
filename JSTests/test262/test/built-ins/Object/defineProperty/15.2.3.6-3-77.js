@@ -9,25 +9,25 @@ description: >
     (8.10.5 step 4.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var proto = {
-            configurable: false
-        };
+var proto = {
+  configurable: false
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        child.configurable = true;
+var child = new ConstructFun();
+child.configurable = true;
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
-        var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-        delete obj.property;
+delete obj.property;
 
-        var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

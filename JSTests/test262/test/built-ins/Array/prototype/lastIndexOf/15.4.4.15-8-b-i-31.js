@@ -9,24 +9,26 @@ description: >
     exception on an Array-like object
 ---*/
 
-        var accessed = false;
-        var obj = { length: 3 };
+var accessed = false;
+var obj = {
+  length: 3
+};
 
-        Object.defineProperty(obj, "2", {
-            get: function () {
-                throw new TypeError();
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "2", {
+  get: function() {
+    throw new TypeError();
+  },
+  configurable: true
+});
 
-        Object.defineProperty(obj, "1", {
-            get: function () {
-                accessed = true;
-                return true;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "1", {
+  get: function() {
+    accessed = true;
+    return true;
+  },
+  configurable: true
+});
 assert.throws(TypeError, function() {
-            Array.prototype.lastIndexOf.call(obj, true);
+  Array.prototype.lastIndexOf.call(obj, true);
 });
 assert.sameValue(accessed, false, 'accessed');

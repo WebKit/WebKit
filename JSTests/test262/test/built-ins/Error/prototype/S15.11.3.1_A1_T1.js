@@ -8,7 +8,7 @@ description: Checking if deleting the Error.prototype property fails
 includes: [propertyHelper.js]
 ---*/
 
-var proto=Error.prototype;
+var proto = Error.prototype;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 verifyNotConfigurable(Error, "prototype");
@@ -25,8 +25,8 @@ try {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if(Error.prototype!==proto){
-  $ERROR('#2: var proto=Error.prototype; delete Error.prototype; Error.prototype===proto. Actual: '+Error.prototype);
+if (Error.prototype !== proto) {
+  $ERROR('#2: var proto=Error.prototype; delete Error.prototype; Error.prototype===proto. Actual: ' + Error.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

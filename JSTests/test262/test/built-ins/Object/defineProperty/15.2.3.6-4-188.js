@@ -10,13 +10,13 @@ description: >
     'name' equals to value of the length property (15.4.5.1 step 4.b)
 ---*/
 
-        var arrObj = [1, 2, 3];
+var arrObj = [1, 2, 3];
 
-        Object.defineProperty(arrObj, "length", {
-            writable: false
-        });
+Object.defineProperty(arrObj, "length", {
+  writable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(arrObj, 3, {
-                value: "abc"
-            });
+  Object.defineProperty(arrObj, 3, {
+    value: "abc"
+  });
 });

@@ -9,14 +9,14 @@ description: >
     attribute is set to true (Date instance)
 ---*/
 
-            Object.defineProperty(Date.prototype, "prop", {
-                value: 1001,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
-            var dateObj = new Date();
-            dateObj.prop = 1002;
+Object.defineProperty(Date.prototype, "prop", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var dateObj = new Date();
+dateObj.prop = 1002;
 
 assert(dateObj.hasOwnProperty("prop"), 'dateObj.hasOwnProperty("prop") !== true');
 assert.sameValue(dateObj.prop, 1002, 'dateObj.prop');

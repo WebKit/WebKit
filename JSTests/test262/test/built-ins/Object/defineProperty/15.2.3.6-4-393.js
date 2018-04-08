@@ -8,14 +8,14 @@ description: >
     object
 ---*/
 
-        var obj = {};
-        var regObj = new RegExp();
+var obj = {};
+var regObj = new RegExp();
 
-        Object.defineProperty(obj, "prop", {
-            value: regObj
-        });
+Object.defineProperty(obj, "prop", {
+  value: regObj
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert.sameValue(obj.prop, regObj, 'obj.prop');
 assert.sameValue(desc.value, regObj, 'desc.value');

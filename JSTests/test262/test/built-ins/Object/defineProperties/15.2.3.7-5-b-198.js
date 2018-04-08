@@ -8,25 +8,25 @@ description: >
     accessor property (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "get", {
-            get: function () {
-                return function () {
-                    return "inheritedAccessorProperty";
-                };
-            }
-        });
+Object.defineProperty(proto, "get", {
+  get: function() {
+    return function() {
+      return "inheritedAccessorProperty";
+    };
+  }
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
+var descObj = new Con();
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "inheritedAccessorProperty", 'obj.property');

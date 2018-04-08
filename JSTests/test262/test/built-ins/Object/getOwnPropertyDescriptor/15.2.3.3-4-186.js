@@ -8,7 +8,7 @@ description: >
     on built-ins (Function.length)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Function, "length");
+var desc = Object.getOwnPropertyDescriptor(Function, "length");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

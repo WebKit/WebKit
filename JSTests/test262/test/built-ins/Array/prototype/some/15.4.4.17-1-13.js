@@ -7,11 +7,11 @@ es5id: 15.4.4.17-1-13
 description: Array.prototype.some applied to the JSON object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return '[object JSON]' === Object.prototype.toString.call(obj);
-        }
+function callbackfn(val, idx, obj) {
+  return '[object JSON]' === Object.prototype.toString.call(obj);
+}
 
-            JSON.length = 1;
-            JSON[0] = 1;
+JSON.length = 1;
+JSON[0] = 1;
 
 assert(Array.prototype.some.call(JSON, callbackfn), 'Array.prototype.some.call(JSON, callbackfn) !== true');

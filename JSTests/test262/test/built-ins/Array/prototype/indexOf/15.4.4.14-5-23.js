@@ -10,20 +10,20 @@ description: >
     method that returns a string
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var fromIndex = {
-            toString: function () {
-                toStringAccessed = true;
-                return '1';
-            },
+var fromIndex = {
+  toString: function() {
+    toStringAccessed = true;
+    return '1';
+  },
 
-            valueOf: function () {
-                valueOfAccessed = true;
-                return {};
-            }
-        };
+  valueOf: function() {
+    valueOfAccessed = true;
+    return {};
+  }
+};
 
 assert.sameValue([0, true].indexOf(true, fromIndex), 1, '[0, true].indexOf(true, fromIndex)');
 assert(toStringAccessed, 'toStringAccessed !== true');

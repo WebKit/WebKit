@@ -8,21 +8,21 @@ description: >
     with the order of properties in 'O' (Arguments object)
 ---*/
 
-        var func = function (a, b, c) {
-            return arguments;
-        };
+var func = function(a, b, c) {
+  return arguments;
+};
 
-        var args = func(1, "b", false);
+var args = func(1, "b", false);
 
-        var tempArray = [];
-        for (var p in args) {
-            if (args.hasOwnProperty(p)) {
-                tempArray.push(p);
-            }
-        }
+var tempArray = [];
+for (var p in args) {
+  if (args.hasOwnProperty(p)) {
+    tempArray.push(p);
+  }
+}
 
-        var returnedArray = Object.keys(args);
+var returnedArray = Object.keys(args);
 
-        for (var index in returnedArray) {
-            assert.sameValue(tempArray[index], returnedArray[index], 'tempArray[index]');
-        }
+for (var index in returnedArray) {
+  assert.sameValue(tempArray[index], returnedArray[index], 'tempArray[index]');
+}

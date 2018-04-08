@@ -9,20 +9,25 @@ description: >
     accessor property without a get function on an Array-like object
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (typeof prevVal === "undefined");
-            }
-        }
+var testResult = false;
 
-        var obj = { 0: 0, 1: 1, length: 3 };
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (typeof prevVal === "undefined");
+  }
+}
 
-        Object.defineProperty(obj, "2", {
-            set: function () { },
-            configurable: true
-        });
+var obj = {
+  0: 0,
+  1: 1,
+  length: 3
+};
 
-        Array.prototype.reduceRight.call(obj, callbackfn);
+Object.defineProperty(obj, "2", {
+  set: function() {},
+  configurable: true
+});
+
+Array.prototype.reduceRight.call(obj, callbackfn);
 
 assert(testResult, 'testResult !== true');

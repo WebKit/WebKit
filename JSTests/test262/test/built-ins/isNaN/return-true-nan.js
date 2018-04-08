@@ -14,6 +14,6 @@ info: |
 includes: [nans.js]
 ---*/
 
-distinctNaNs.forEach(function(v, i) {
+NaNs.forEach(function(v, i) {
   assert.sameValue(isNaN(v), true, "value on position: " + i);
 });

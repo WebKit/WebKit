@@ -12,8 +12,8 @@ includes: [propertyHelper.js]
 ---*/
 
 assert.sameValue(
-    WeakMap.name, 'WeakMap',
-    'The value of `WeakMap.name` is "WeakMap"'
+  WeakMap.name, 'WeakMap',
+  'The value of `WeakMap.name` is "WeakMap"'
 );
 
 verifyNotEnumerable(WeakMap, 'name');

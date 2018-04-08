@@ -11,8 +11,8 @@ es5id: 15.4.4.4_A1_T4
 description: Checking this algorithm, items are [], [,]
 ---*/
 
-var x = [,1];
-var arr = x.concat([], [,]);
+var x = [, 1];
+var arr = x.concat([], [, ]);
 
 //CHECK#0
 arr.getClass = Object.prototype.toString;

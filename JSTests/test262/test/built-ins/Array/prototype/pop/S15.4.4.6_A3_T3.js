@@ -26,5 +26,5 @@ if (obj.length !== 0) {
 
 //CHECK#3
 if (obj[4294967294] !== "x") {
-   $ERROR('#3: var obj = {}; obj.pop = Array.prototype.pop; obj[4294967294] = "x"; obj.length = -1; obj.pop(); obj[4294967294] === "x". Actual: ' + (obj[4294967294]));
+  $ERROR('#3: var obj = {}; obj.pop = Array.prototype.pop; obj[4294967294] = "x"; obj.length = -1; obj.pop(); obj[4294967294] === "x". Actual: ' + (obj[4294967294]));
 }

@@ -10,8 +10,8 @@ es5id: 15.4.4.10_A1.2_T4
 description: abs(start) > length = end > 0, start < 0
 ---*/
 
-var x = [0,1,2,3,4];
-var arr = x.slice(-9,5);
+var x = [0, 1, 2, 3, 4];
+var arr = x.slice(-9, 5);
 
 //CHECK#1
 arr.getClass = Object.prototype.toString;

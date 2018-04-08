@@ -13,12 +13,12 @@ info: |
 ---*/
 
 var target = {
-    attr: 1
+  attr: 1
 };
 var p = new Proxy(target, {
-    has: function(t, prop) {
-        return false;
-    }
+  has: function(t, prop) {
+    return false;
+  }
 });
 
 assert.sameValue(("attr" in p), false);

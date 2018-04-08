@@ -9,14 +9,17 @@ description: >
     visible here
 ---*/
 
-        var obj = { 2: "accumulator", 3: "another" };
+var obj = {
+  2: "accumulator",
+  3: "another"
+};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                delete obj[2];
-                return 5;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    delete obj[2];
+    return 5;
+  },
+  configurable: true
+});
 
-assert.notSameValue(Array.prototype.reduceRight.call(obj, function () { }), "accumulator", 'Array.prototype.reduceRight.call(obj, function () { })');
+assert.notSameValue(Array.prototype.reduceRight.call(obj, function() {}), "accumulator", 'Array.prototype.reduceRight.call(obj, function () { })');

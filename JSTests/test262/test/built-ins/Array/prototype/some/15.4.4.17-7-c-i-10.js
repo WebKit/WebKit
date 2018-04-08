@@ -9,22 +9,22 @@ description: >
     property on an Array
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 10) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 10) {
+    return val === kValue;
+  }
+  return false;
+}
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "10", {
-            get: function () {
-                return kValue;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "10", {
+  get: function() {
+    return kValue;
+  },
+  configurable: true
+});
 
 assert(arr.some(callbackfn), 'arr.some(callbackfn) !== true');

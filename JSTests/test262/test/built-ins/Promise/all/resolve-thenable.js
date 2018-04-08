@@ -62,12 +62,12 @@ try {
 }
 
 promise.then(function(val) {
-    if (val !== value) {
-      $DONE('The promise should be resolved with the expected value.');
-      return;
-    }
+  if (val !== value) {
+    $DONE('The promise should be resolved with the expected value.');
+    return;
+  }
 
-    $DONE();
-  }, function() {
-    $DONE('The promise should not be rejected.');
-  });
+  $DONE();
+}, function() {
+  $DONE('The promise should not be rejected.');
+});

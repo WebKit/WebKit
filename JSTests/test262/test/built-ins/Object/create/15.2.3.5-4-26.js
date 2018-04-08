@@ -8,11 +8,11 @@ description: >
     property of 'Properties' without a get function (15.2.3.7 step 5.a)
 ---*/
 
-        var props = {};
-        Object.defineProperty(props, "prop", {
-            set: function () { },
-            enumerable: true
-        });
+var props = {};
+Object.defineProperty(props, "prop", {
+  set: function() {},
+  enumerable: true
+});
 assert.throws(TypeError, function() {
-            Object.create({}, props);
+  Object.create({}, props);
 });

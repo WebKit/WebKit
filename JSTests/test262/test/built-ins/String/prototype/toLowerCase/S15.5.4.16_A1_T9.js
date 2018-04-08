@@ -8,18 +8,18 @@ description: Call toLowerCase() function of string object
 ---*/
 
 var __obj = {
-    valueOf:function(){},
-    toString:void 0
+  valueOf: function() {},
+  toString: void 0
 };
 
 var __lowerCase = new String(__obj).toLowerCase();
 
-var __expected ="undefined"; 
+var __expected = "undefined";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__lowerCase.length !== __expected.length) {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase.length === __expected.length. Actual: '+__lowerCase.length );
+  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase.length === __expected.length. Actual: ' + __lowerCase.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ if (__lowerCase.length !== __expected.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__lowerCase.index !== __expected.index) {
-  $ERROR('#2: __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase.index === __expected.index. Actual: '+__lowerCase.index );
+  $ERROR('#2: __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase.index === __expected.index. Actual: ' + __lowerCase.index);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -35,16 +35,16 @@ if (__lowerCase.index !== __expected.index) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__lowerCase.input !== __expected.input) {
-  $ERROR('#3: __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase.input === __expected.input. Actual: '+__lowerCase.input );
+  $ERROR('#3: __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase.input === __expected.input. Actual: ' + __lowerCase.input);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
-for(var index=0; index<__expected.length; index++) {
-  if (__lowerCase[index]!==__expected[index]) {
-    $ERROR('#4.'+index+': __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase['+index+']==='+__expected[index]+'. Actual: '+__lowerCase[index]);
+for (var index = 0; index < __expected.length; index++) {
+  if (__lowerCase[index] !== __expected[index]) {
+    $ERROR('#4.' + index + ': __obj = {valueOf:function(){}, toString:void 0}; __lowerCase = new String(__obj).toLowerCase(); __expected ="undefined"; __lowerCase[' + index + ']===' + __expected[index] + '. Actual: ' + __lowerCase[index]);
   }
 }
 //

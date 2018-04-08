@@ -11,8 +11,8 @@ var __string = new String("this is a string object");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__string.substring(__string.length+1, 0) !== "this is a string object") {
-  $ERROR('#1: __string = new String("this is a string object"); __string.substring(__string.length+1, 0) === "this is a string object". Actual: '+__string.substring(__string.length+1, 0) );
+if (__string.substring(__string.length + 1, 0) !== "this is a string object") {
+  $ERROR('#1: __string = new String("this is a string object"); __string.substring(__string.length+1, 0) === "this is a string object". Actual: ' + __string.substring(__string.length + 1, 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -8,20 +8,20 @@ description: >
     instance)
 ---*/
 
-        var data = "data";
+var data = "data";
 
-            Object.defineProperty(Array.prototype, "prop", {
-                get: function () {
-                    return data;
-                },
-                set: function (value) {
-                    data = value;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            var arrObj = [];
-            arrObj.prop = "myOwnProperty";
+Object.defineProperty(Array.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  set: function(value) {
+    data = value;
+  },
+  enumerable: true,
+  configurable: true
+});
+var arrObj = [];
+arrObj.prop = "myOwnProperty";
 
 assert.sameValue(arrObj.hasOwnProperty("prop"), false, 'arrObj.hasOwnProperty("prop")');
 assert.sameValue(arrObj.prop, "myOwnProperty", 'arrObj.prop');

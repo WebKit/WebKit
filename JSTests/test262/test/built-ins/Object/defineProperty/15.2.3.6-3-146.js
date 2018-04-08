@@ -9,12 +9,12 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var regObj = new RegExp();
+var regObj = new RegExp();
 
-        regObj.value = "RegExp";
+regObj.value = "RegExp";
 
-        Object.defineProperty(obj, "property", regObj);
+Object.defineProperty(obj, "property", regObj);
 
 assert.sameValue(obj.property, "RegExp", 'obj.property');

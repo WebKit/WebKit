@@ -11,8 +11,8 @@ var __string__obj = new String(1);
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
-if (__string__obj.valueOf() !== ""+1) {
-  $ERROR('#1: __string__obj = new String(1); __string__obj.valueOf() === ""+1. Actual: __string__obj.valueOf() ==='+__string__obj.valueOf() ); 
+if (__string__obj.valueOf() !== "" + 1) {
+  $ERROR('#1: __string__obj = new String(1); __string__obj.valueOf() === ""+1. Actual: __string__obj.valueOf() ===' + __string__obj.valueOf());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

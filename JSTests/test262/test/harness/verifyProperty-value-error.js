@@ -29,7 +29,7 @@ try {
     );
   }
 
-  if (err.message !== 'descriptor value should be 2 Expected SameValue(«1», «0») to be true') {
+  if (err.message !== 'descriptor value should be 2') {
     $ERROR('The error thrown did not define the specified message.');
   }
 }

@@ -9,11 +9,11 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = { };
+var obj = {};
 
 var attr = {};
 Object.defineProperty(attr, "configurable", {
-    set : function () { }
+  set: function() {}
 });
 
 Object.defineProperty(obj, "property", attr);

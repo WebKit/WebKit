@@ -8,14 +8,14 @@ description: >
     pushed into the returned Array
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "nonEnumerableProp", {
-            value: 10,
-            enumerable: false,
-            configurable: true
-        });
+Object.defineProperty(obj, "nonEnumerableProp", {
+  value: 10,
+  enumerable: false,
+  configurable: true
+});
 
-        var result = Object.getOwnPropertyNames(obj);
+var result = Object.getOwnPropertyNames(obj);
 
 assert.sameValue(result[0], "nonEnumerableProp", 'result[0]');

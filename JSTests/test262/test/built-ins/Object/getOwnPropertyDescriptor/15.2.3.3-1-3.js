@@ -8,4 +8,4 @@ description: >
     first param is a boolean
 ---*/
 
-    Object.getOwnPropertyDescriptor(true, "foo");
+Object.getOwnPropertyDescriptor(true, "foo");

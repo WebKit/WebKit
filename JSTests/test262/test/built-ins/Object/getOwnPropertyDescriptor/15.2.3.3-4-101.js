@@ -8,7 +8,7 @@ description: >
     built-ins (Math.ceil)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "ceil");
+var desc = Object.getOwnPropertyDescriptor(Math, "ceil");
 
 assert.sameValue(desc.value, Math.ceil, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

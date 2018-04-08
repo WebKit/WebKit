@@ -8,11 +8,11 @@ description: >
     primitive values( value is number) (8.10.5 step 7.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                property: {
-                    get: 123
-                }
-            });
+  Object.defineProperties(obj, {
+    property: {
+      get: 123
+    }
+  });
 });

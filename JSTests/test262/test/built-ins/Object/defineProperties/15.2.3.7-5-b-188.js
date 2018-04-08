@@ -8,14 +8,14 @@ description: >
     'descObj' is the global object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: this
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: this
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

@@ -10,11 +10,11 @@ description: >
     the length property in 'O' (15.4.5.1 step 4.e.ii)
 ---*/
 
-        var arrObj = [];
+var arrObj = [];
 
-        Object.defineProperty(arrObj, "5", {
-            value: 3
-        });
+Object.defineProperty(arrObj, "5", {
+  value: 3
+});
 
 assert.sameValue(arrObj.length, 6, 'arrObj.length');
 assert.sameValue(arrObj[5], 3, 'arrObj[5]');

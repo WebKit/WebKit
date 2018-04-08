@@ -11,13 +11,17 @@ description: >
     Array("nine","inch","nails"))
 ---*/
 
-var i=0;
+var i = 0;
 
-var p={toString:function(){return "a"+(++i);}};
+var p = {
+  toString: function() {
+    return "a" + (++i);
+  }
+};
 
-var obj={};
+var obj = {};
 
-Function(p,"a2,a3","this.shifted=a1;").call(obj, new Array("nine","inch","nails"));
+Function(p, "a2,a3", "this.shifted=a1;").call(obj, new Array("nine", "inch", "nails"));
 
 //CHECK#1
 if (obj["shifted"].length !== 3) {
@@ -25,7 +29,7 @@ if (obj["shifted"].length !== 3) {
 }
 
 //CHECK#2
-if ((obj["shifted"][0] !== "nine")||(obj["shifted"][1] !== "inch")||(obj["shifted"][2] !== "nails")) {
+if ((obj["shifted"][0] !== "nine") || (obj["shifted"][1] !== "inch") || (obj["shifted"][2] !== "nails")) {
   $ERROR('#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
 }
 

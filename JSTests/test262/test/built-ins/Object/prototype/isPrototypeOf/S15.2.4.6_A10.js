@@ -19,7 +19,9 @@ if (!(Object.prototype.isPrototypeOf.hasOwnProperty('length'))) {
 
 var obj = Object.prototype.isPrototypeOf.length;
 
-verifyNotWritable(Object.prototype.isPrototypeOf, "length", null, function(){return "shifted";});
+verifyNotWritable(Object.prototype.isPrototypeOf, "length", null, function() {
+  return "shifted";
+});
 
 //CHECK#2
 if (Object.prototype.isPrototypeOf.length !== obj) {

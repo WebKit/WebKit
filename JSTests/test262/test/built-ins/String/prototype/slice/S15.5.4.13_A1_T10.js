@@ -9,15 +9,23 @@ description: >
     object have overrided valueOf function
 ---*/
 
-var __obj = {valueOf:function(){return 2;}};
+var __obj = {
+  valueOf: function() {
+    return 2;
+  }
+};
 
 var __str = "\u0035ABBBABAB";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-    if (__str.slice(__obj, function(){return __str.slice(0,1);}()) !== "BBB") {
-      $ERROR('#1: var x; var __obj = {valueOf:function(){return 2;}}; var __str = "\u0035ABBBABAB"; __str.slice(__obj, function(){return __str.slice(0,1);}()) === "BBB". Actual: '+__str.slice(__obj, function(){return __str.slice(0,1);}()) );
-    }
+if (__str.slice(__obj, function() {
+    return __str.slice(0, 1);
+  }()) !== "BBB") {
+  $ERROR('#1: var x; var __obj = {valueOf:function(){return 2;}}; var __str = "\u0035ABBBABAB"; __str.slice(__obj, function(){return __str.slice(0,1);}()) === "BBB". Actual: ' + __str.slice(__obj, function() {
+    return __str.slice(0, 1);
+  }()));
+}
 //
 //////////////////////////////////////////////////////////////////////////////
 

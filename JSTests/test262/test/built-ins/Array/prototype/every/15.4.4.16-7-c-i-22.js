@@ -9,17 +9,17 @@ description: >
     accessor property without a get function on an Array
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return typeof val === "undefined";
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return typeof val === "undefined";
+}
 
-            Object.defineProperty(Array.prototype, "0", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  set: function() {},
+  configurable: true
+});
 
 assert([, ].every(callbackfn), '[, ].every(callbackfn) !== true');
 assert(accessed, 'accessed !== true');

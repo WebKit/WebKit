@@ -9,12 +9,12 @@ description: >
     specified when defined by Object.defineProperty.
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, "property", {
-            set: function () {},
-            configurable: true
-        });
+var obj = {};
+Object.defineProperty(obj, "property", {
+  set: function() {},
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
 
 assert("get" in desc, '"get" in desc !== true');

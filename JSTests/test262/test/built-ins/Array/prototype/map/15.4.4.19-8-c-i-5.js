@@ -10,34 +10,34 @@ description: >
     object
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 5) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 5) {
+    return val === kValue;
+  }
+  return false;
+}
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "5", {
-            get: function () {
-                return 11;
-            },
-            configurable: true
-        });
+Object.defineProperty(proto, "5", {
+  get: function() {
+    return 11;
+  },
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.length = 10;
-        Object.defineProperty(child, "5", {
-            value: kValue,
-            configurable: true
-        });
+var child = new Con();
+child.length = 10;
+Object.defineProperty(child, "5", {
+  value: kValue,
+  configurable: true
+});
 
-        var testResult = Array.prototype.map.call(child, callbackfn);
+var testResult = Array.prototype.map.call(child, callbackfn);
 
 assert.sameValue(testResult[5], true, 'testResult[5]');

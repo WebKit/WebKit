@@ -50,7 +50,9 @@ var iter = {};
 iter[Symbol.iterator] = function() {
   return {
     next: function() {
-      return { done: true };
+      return {
+        done: true
+      };
     },
     return: function() {
       returnCount += 1;
@@ -60,7 +62,9 @@ iter[Symbol.iterator] = function() {
 };
 var P = function(executor) {
   return new Promise(function(_, reject) {
-    executor(function() { throw new Test262Error(); }, reject);
+    executor(function() {
+      throw new Test262Error();
+    }, reject);
   });
 };
 

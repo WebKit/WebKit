@@ -9,20 +9,25 @@ description: >
     callbackfn terminate iteration
 ---*/
 
-        var called = 0;
+var called = 0;
 
-        function callbackfn(val, idx, obj) {
-            called++;
-            if (called === 1) {
-                throw new Test262Error("Exception occurred in callbackfn");
-            }
-            return true;
-        }
+function callbackfn(val, idx, obj) {
+  called++;
+  if (called === 1) {
+    throw new Test262Error("Exception occurred in callbackfn");
+  }
+  return true;
+}
 
-        var obj = { 0: 11, 4: 10, 10: 8, length: 20 };
+var obj = {
+  0: 11,
+  4: 10,
+  10: 8,
+  length: 20
+};
 
 assert.throws(Test262Error, function() {
-            Array.prototype.every.call(obj, callbackfn);
+  Array.prototype.every.call(obj, callbackfn);
 });
 
 assert.sameValue(called, 1, 'called');

@@ -8,17 +8,17 @@ description: >
     which is not enumerable is not defined in 'O'
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var props = {};
+var props = {};
 
-        Object.defineProperty(props, "prop", {
-            get: function () {
-                return {};
-            },
-            enumerable: false
-        });
+Object.defineProperty(props, "prop", {
+  get: function() {
+    return {};
+  },
+  enumerable: false
+});
 
-        Object.defineProperties(obj, props);
+Object.defineProperties(obj, props);
 
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');

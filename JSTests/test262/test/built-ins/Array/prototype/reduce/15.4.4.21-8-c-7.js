@@ -9,15 +9,15 @@ description: >
     was thrown by step 2
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "length", {
-            get: function () {
-                throw new Test262Error();
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "length", {
+  get: function() {
+    throw new Test262Error();
+  },
+  configurable: true
+});
 
 assert.throws(Test262Error, function() {
-            Array.prototype.reduce.call(obj, function () { });
+  Array.prototype.reduce.call(obj, function() {});
 });

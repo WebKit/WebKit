@@ -9,21 +9,21 @@ description: >
     order on an Array
 ---*/
 
-        var arr = [0, 1, 2];
-        var lastIdx = 0;
-        var result = true;
-        var accessed = false;
+var arr = [0, 1, 2];
+var lastIdx = 0;
+var result = true;
+var accessed = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            if (lastIdx !== idx) {
-                result = false;
-            } else {
-                lastIdx++;
-            }
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  if (lastIdx !== idx) {
+    result = false;
+  } else {
+    lastIdx++;
+  }
+}
 
-        arr.reduce(callbackfn, 11);
+arr.reduce(callbackfn, 11);
 
 assert(result, 'result !== true');
 assert(accessed, 'accessed !== true');

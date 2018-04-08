@@ -14,7 +14,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.search.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.search.hasOwnProperty('length'));
+  $ERROR('#0: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.search.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (!delete String.prototype.search.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.search.hasOwnProperty('length')) {
-  $ERROR('#2: delete String.prototype.search.length; String.prototype.search.hasOwnProperty(\'length\') return false. Actual: '+String.prototype.search.hasOwnProperty('length'));
+  $ERROR('#2: delete String.prototype.search.length; String.prototype.search.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.search.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

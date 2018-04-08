@@ -8,16 +8,16 @@ description: >
     [[Prototype]] internal property is correct(Function.prototype.bind)
 ---*/
 
-        var foo = function () { };
+var foo = function() {};
 
-            Object.defineProperty(Function.prototype, "prop", {
-                value: 1001,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
+Object.defineProperty(Function.prototype, "prop", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
 
-            var obj = foo.bind({});
+var obj = foo.bind({});
 
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');
 assert.sameValue(obj.prop, 1001, 'obj.prop');

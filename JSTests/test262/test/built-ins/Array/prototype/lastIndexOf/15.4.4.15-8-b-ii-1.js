@@ -14,4 +14,6 @@ assert.sameValue(["0"].lastIndexOf(0), -1, '["0"].lastIndexOf(0)');
 assert.sameValue([false].lastIndexOf(0), -1, '[false].lastIndexOf(0)');
 assert.sameValue([undefined].lastIndexOf(0), -1, '[undefined].lastIndexOf(0)');
 assert.sameValue([null].lastIndexOf(0), -1, '[null].lastIndexOf(0)');
-assert.sameValue([[]].lastIndexOf(0), -1, '[[]].lastIndexOf(0)');
+assert.sameValue([
+  []
+].lastIndexOf(0), -1, '[[]].lastIndexOf(0)');

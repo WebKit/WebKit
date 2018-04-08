@@ -9,16 +9,16 @@ description: >
     Array.length is decreased
 ---*/
 
-  function callbackfn(val, Idx, obj)
-  {
-    arr.length = 3;
-    if(val < 4)
-       return true;
-    else
-       return false;
-  }
+function callbackfn(val, Idx, obj)
+{
+  arr.length = 3;
+  if (val < 4)
+    return true;
+  else
+    return false;
+}
 
-  var arr = [1,2,3,4,6];
+var arr = [1, 2, 3, 4, 6];
 
 
 assert.sameValue(arr.every(callbackfn), true, 'arr.every(callbackfn)');

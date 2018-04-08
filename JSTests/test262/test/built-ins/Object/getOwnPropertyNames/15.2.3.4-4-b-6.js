@@ -8,13 +8,15 @@ description: >
     configurable
 ---*/
 
-        var obj = { "a": "a" };
+var obj = {
+  "a": "a"
+};
 
-        var result = Object.getOwnPropertyNames(obj);
+var result = Object.getOwnPropertyNames(obj);
 
-        var beforeDeleted = (result.hasOwnProperty("0"));
-        delete result[0];
-        var afterDeleted = (result.hasOwnProperty("0"));
+var beforeDeleted = (result.hasOwnProperty("0"));
+delete result[0];
+var afterDeleted = (result.hasOwnProperty("0"));
 
 assert(beforeDeleted, 'beforeDeleted !== true');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

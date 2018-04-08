@@ -17,21 +17,20 @@ var arr = [0, 1, 2];
 var result = 0;
 
 try {
-    Object.defineProperty(arr, "1", {
-        configurable: false
-    });
+  Object.defineProperty(arr, "1", {
+    configurable: false
+  });
 
-    Object.defineProperties(arr, {
-        length: {
-            value: 0,
-            writable: false
-        }
-    });
+  Object.defineProperties(arr, {
+    length: {
+      value: 0,
+      writable: false
+    }
+  });
 
-    $ERROR("expected to throw TypeError")
+  $ERROR("expected to throw TypeError")
 } catch (e) {
-    assert(e instanceof TypeError);
-    assert.sameValue(arr.length, 2);
-    verifyNotWritable(arr, "length");
+  assert(e instanceof TypeError);
+  assert.sameValue(arr.length, 2);
+  verifyNotWritable(arr, "length");
 }
-

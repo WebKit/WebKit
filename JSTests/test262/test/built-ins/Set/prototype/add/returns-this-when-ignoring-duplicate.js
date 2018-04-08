@@ -14,6 +14,6 @@ description: >
 
 ---*/
 
-var s = new Set([ 1 ]);
+var s = new Set([1]);
 
 assert.sameValue(s.add(1), s, "`s.add(1)` returns `s`");

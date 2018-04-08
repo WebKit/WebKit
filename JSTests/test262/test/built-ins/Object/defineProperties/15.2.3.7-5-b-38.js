@@ -8,18 +8,18 @@ description: >
     'descObj' is -0 (8.10.5 step 3.b)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        Object.defineProperties(obj, {
-            prop: {
-                enumerable: -0
-            }
-        });
-        for (var property in obj) {
-            if (property === "prop") {
-                accessed = true;
-            }
-        }
+Object.defineProperties(obj, {
+  prop: {
+    enumerable: -0
+  }
+});
+for (var property in obj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

@@ -16,13 +16,13 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperty(arr, "1", {
-    set: undefined
+  set: undefined
 });
 
 Object.defineProperties(arr, {
-    "1": {
-        set: undefined
-    }
+  "1": {
+    set: undefined
+  }
 });
 
 verifyNotEnumerable(arr, "1");

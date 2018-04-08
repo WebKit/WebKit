@@ -9,16 +9,16 @@ description: >
     object (8.10.5 step 8.a)
 ---*/
 
-        var obj = {};
-        var data = "data";
+var obj = {};
+var data = "data";
 
-            Array.prototype.set = function (value) {
-                data = value;
-            };
-            var arrObj = [];
+Array.prototype.set = function(value) {
+  data = value;
+};
+var arrObj = [];
 
-            Object.defineProperty(obj, "property", arrObj);
-            obj.property = "overrideData";
+Object.defineProperty(obj, "property", arrObj);
+obj.property = "overrideData";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(data, "overrideData", 'data');

@@ -11,6 +11,6 @@ description: >
     (NaN) is not an array index
 ---*/
 
-  var s = new String("hello world");
+var s = new String("hello world");
 
 assert.sameValue(s[NaN], undefined, 's[NaN]');

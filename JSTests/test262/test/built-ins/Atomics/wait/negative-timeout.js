@@ -5,6 +5,7 @@
 esid: sec-atomics.wait
 description: >
   Test that Atomics.wait times out with a negative timeout
+features: [Atomics]
 ---*/
 
 $262.agent.start(
@@ -22,8 +23,8 @@ $262.agent.broadcast(ia.buffer);
 assert.sameValue(getReport(), "timed-out");
 
 function getReport() {
-    var r;
-    while ((r = $262.agent.getReport()) == null)
-        $262.agent.sleep(100);
-    return r;
+  var r;
+  while ((r = $262.agent.getReport()) == null)
+    $262.agent.sleep(100);
+  return r;
 }

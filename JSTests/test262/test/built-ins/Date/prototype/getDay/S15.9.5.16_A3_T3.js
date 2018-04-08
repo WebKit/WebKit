@@ -14,8 +14,8 @@ if (Date.prototype.getDay.propertyIsEnumerable('length')) {
   $ERROR('#1: The Date.prototype.getDay.length property has the attribute DontEnum');
 }
 
-for(var x in Date.prototype.getDay) {
-  if(x === "length") {
+for (var x in Date.prototype.getDay) {
+  if (x === "length") {
     $ERROR('#2: The Date.prototype.getDay.length has the attribute DontEnum');
   }
 }

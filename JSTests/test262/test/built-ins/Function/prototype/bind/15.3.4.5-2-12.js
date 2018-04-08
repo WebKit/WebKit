@@ -8,5 +8,5 @@ description: Function.prototype.bind throws TypeError if 'Target' is a boolean
 
 
 assert.throws(TypeError, function() {
-            Function.prototype.bind.call(true);
+  Function.prototype.bind.call(true);
 });

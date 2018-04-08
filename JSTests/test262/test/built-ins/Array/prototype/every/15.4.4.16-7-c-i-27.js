@@ -10,22 +10,22 @@ description: >
     greater than number of parameters)
 ---*/
 
-        var called = 0;
+var called = 0;
 
-        function callbackfn(val, idx, obj) {
-            called++;
-            if (idx < 2) {
-                return val > 10;
-            } else if (idx === 2) {
-                return val < 10;
-            } else {
-                return false;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  called++;
+  if (idx < 2) {
+    return val > 10;
+  } else if (idx === 2) {
+    return val < 10;
+  } else {
+    return false;
+  }
+}
 
-        var func = function (a, b) {
-            return Array.prototype.every.call(arguments, callbackfn);
-        };
+var func = function(a, b) {
+  return Array.prototype.every.call(arguments, callbackfn);
+};
 
 assert(func(11, 12, 9), 'func(11, 12, 9) !== true');
 assert.sameValue(called, 3, 'called');

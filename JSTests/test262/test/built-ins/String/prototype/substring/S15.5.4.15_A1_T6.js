@@ -11,8 +11,8 @@ description: >
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (new String("undefined").substring(x,3) !== "und") {
-  $ERROR('#1: var x; new String("undefined").substring(x,3) === "und". Actual: '+new String("undefined").substring(x,3) );
+if (new String("undefined").substring(x, 3) !== "und") {
+  $ERROR('#1: var x; new String("undefined").substring(x,3) === "und". Actual: ' + new String("undefined").substring(x, 3));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

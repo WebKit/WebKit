@@ -8,5 +8,5 @@ description: >
   %AsyncFunction% exists and is a function
 ---*/
 
-var AsyncFunction = async function foo() { }.constructor;
+var AsyncFunction = async function foo() {}.constructor;
 assert.sameValue(typeof AsyncFunction, "function");

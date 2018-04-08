@@ -7,6 +7,7 @@ esid: sec-atomics.compareexchange
 description: >
   Atomics.compareExchange.name is "compareExchange".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.compareExchange.name, "compareExchange");

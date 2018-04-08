@@ -8,7 +8,7 @@ description: >
     built-ins (Function.prototype.call)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Function.prototype, "call");
+var desc = Object.getOwnPropertyDescriptor(Function.prototype, "call");
 
 assert.sameValue(desc.value, Function.prototype.call, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

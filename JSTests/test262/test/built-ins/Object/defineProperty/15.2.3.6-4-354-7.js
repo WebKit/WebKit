@@ -10,15 +10,15 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = (function () {
-    return arguments;
+var obj = (function() {
+  return arguments;
 }());
 
 Object.defineProperty(obj, "prop", {
-    value: 2010,
-    writable: false,
-    enumerable: true,
-    configurable: true
+  value: 2010,
+  writable: false,
+  enumerable: true,
+  configurable: true
 });
 
 assert.sameValue(obj.prop, 2010);

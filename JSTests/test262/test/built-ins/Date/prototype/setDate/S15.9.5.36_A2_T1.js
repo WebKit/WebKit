@@ -8,10 +8,10 @@ es5id: 15.9.5.36_A2_T1
 description: The "length" property of the "setDate" is 1
 ---*/
 
-if(Date.prototype.setDate.hasOwnProperty("length") !== true){
+if (Date.prototype.setDate.hasOwnProperty("length") !== true) {
   $ERROR('#1: The setDate has a "length" property');
 }
 
-if(Date.prototype.setDate.length !== 1){
+if (Date.prototype.setDate.length !== 1) {
   $ERROR('#2: The "length" property of the setDate is 1');
 }

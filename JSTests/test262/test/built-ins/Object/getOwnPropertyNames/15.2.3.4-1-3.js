@@ -8,5 +8,5 @@ description: Object.getOwnPropertyNames throws TypeError if 'O' is null
 
 
 assert.throws(TypeError, function() {
-            Object.getOwnPropertyNames(null);
+  Object.getOwnPropertyNames(null);
 });

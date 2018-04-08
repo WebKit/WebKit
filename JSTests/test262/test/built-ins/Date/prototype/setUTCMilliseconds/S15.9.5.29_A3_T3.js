@@ -14,8 +14,8 @@ if (Date.prototype.setUTCMilliseconds.propertyIsEnumerable('length')) {
   $ERROR('#1: The Date.prototype.setUTCMilliseconds.length property has the attribute DontEnum');
 }
 
-for(var x in Date.prototype.setUTCMilliseconds) {
-  if(x === "length") {
+for (var x in Date.prototype.setUTCMilliseconds) {
+  if (x === "length") {
     $ERROR('#2: The Date.prototype.setUTCMilliseconds.length has the attribute DontEnum');
   }
 }

@@ -9,27 +9,27 @@ description: >
     step 1 )
 ---*/
 
-        var proto = {};
-        Object.defineProperty(proto, "prop", {
-            get: function () {
-                return 11;
-            },
-            set: function () { },
-            configurable: true
-        });
-        var Con = function () { };
-        Con.prototype = proto;
+var proto = {};
+Object.defineProperty(proto, "prop", {
+  get: function() {
+    return 11;
+  },
+  set: function() {},
+  configurable: true
+});
+var Con = function() {};
+Con.prototype = proto;
 
-        var obj = new Con();
-        Object.defineProperty(obj, "prop", {
-            set: function () { },
-            configurable: false
-        });
+var obj = new Con();
+Object.defineProperty(obj, "prop", {
+  set: function() {},
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                prop: {
-                    value: 12,
-                    configurable: true
-                }
-            });
+  Object.defineProperties(obj, {
+    prop: {
+      value: 12,
+      configurable: true
+    }
+  });
 });

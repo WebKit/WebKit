@@ -9,7 +9,7 @@ es5id: 15.2.2.1_A3_T3
 description: Argument value is sum of empty string and number
 ---*/
 
-var n_obj = new Object(""+1);
+var n_obj = new Object("" + 1);
 
 //CHECK#2
 if (n_obj.constructor !== String) {
@@ -22,11 +22,11 @@ if (typeof n_obj !== 'object') {
 }
 
 //CHECK#4
-if ( n_obj != "1") {
+if (n_obj != "1") {
   $ERROR('#4: When the Object constructor is called with String argument return ToObject(string)');
 }
 
 //CHECK#5
-if ( n_obj === "1") {
+if (n_obj === "1") {
   $ERROR('#5: When the Object constructor is called with String argument return ToObject(string)');
 }

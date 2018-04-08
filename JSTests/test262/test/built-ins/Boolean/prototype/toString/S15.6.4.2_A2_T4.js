@@ -12,27 +12,27 @@ description: transferring to the Object objects
 ---*/
 
 //CHECK#1
-try{
+try {
   var s1 = new Object();
   s1.toString = Boolean.prototype.toString;
   var v1 = s1.toString();
   $ERROR('#1: Boolean.prototype.toString on not a Boolean object should throw TypeError');
 }
-catch(e){
-  if(!(e instanceof TypeError)){
-    $ERROR('#1: Boolean.prototype.toString on not a Boolean object should throw TypeError, not '+e);
+catch (e) {
+  if (!(e instanceof TypeError)) {
+    $ERROR('#1: Boolean.prototype.toString on not a Boolean object should throw TypeError, not ' + e);
   }
 }
 
 //CHECK#1
-try{
+try {
   var s2 = new Object();
   s2.myToString = Boolean.prototype.toString;
   var v2 = s2.myToString();
   $ERROR('#2: Boolean.prototype.toString on not a Boolean object should throw TypeError');
 }
-catch(e){
-  if(!(e instanceof TypeError)){
-    $ERROR('#2: Boolean.prototype.toString on not a Boolean object should throw TypeError, not '+e);
+catch (e) {
+  if (!(e instanceof TypeError)) {
+    $ERROR('#2: Boolean.prototype.toString on not a Boolean object should throw TypeError, not ' + e);
   }
 }

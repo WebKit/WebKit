@@ -9,18 +9,18 @@ description: >
     (8.10.5 step 8.a)
 ---*/
 
-        var errObj = new Error("error");
-        var data = "data";
+var errObj = new Error("error");
+var data = "data";
 
-        errObj.set = function (value) {
-            data = value;
-        };
+errObj.set = function(value) {
+  data = value;
+};
 
-        var newObj = Object.create({}, {
-            prop: errObj
-        });
+var newObj = Object.create({}, {
+  prop: errObj
+});
 
-        newObj.prop = "overrideData";
+newObj.prop = "overrideData";
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(data, "overrideData", 'data');

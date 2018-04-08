@@ -18,9 +18,9 @@ if (typeof BigInt !== "undefined") {
 }
 
 testWithTypedArrayConstructors(function(View) {
-    let view = new View(sab);
-    testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
-        let Idx = IdxGen(view);
-        assert.throws(RangeError, () => Atomics.sub(view, Idx, 10));
-    });
+  let view = new View(sab);
+  testWithAtomicsOutOfBoundsIndices(function(IdxGen) {
+    let Idx = IdxGen(view);
+    assert.throws(RangeError, () => Atomics.sub(view, Idx, 10));
+  });
 }, views);

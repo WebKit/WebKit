@@ -8,16 +8,16 @@ description: >
     implements its own [[Get]] method to get enumerable own property
 ---*/
 
-        var obj = {};
-        var props = new RegExp();
+var obj = {};
+var props = new RegExp();
 
-        Object.defineProperty(props, "prop", {
-            value: {
-                value: 14
-            },
-            enumerable: true
-        });
-        Object.defineProperties(obj, props);
+Object.defineProperty(props, "prop", {
+  value: {
+    value: 14
+  },
+  enumerable: true
+});
+Object.defineProperties(obj, props);
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, 14, 'obj.prop');

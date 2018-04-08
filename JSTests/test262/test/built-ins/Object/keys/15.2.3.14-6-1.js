@@ -8,17 +8,17 @@ description: >
     with the order of properties in 'O' (dense array)
 ---*/
 
-        var denseArray = [1, 2, 3];
+var denseArray = [1, 2, 3];
 
-        var tempArray = [];
-        for (var p in denseArray) {
-            if (denseArray.hasOwnProperty(p)) {
-                tempArray.push(p);
-            }
-        }
+var tempArray = [];
+for (var p in denseArray) {
+  if (denseArray.hasOwnProperty(p)) {
+    tempArray.push(p);
+  }
+}
 
-        var returnedArray = Object.keys(denseArray);
+var returnedArray = Object.keys(denseArray);
 
-        for (var index in returnedArray) {
-            assert.sameValue(tempArray[index], returnedArray[index], 'tempArray[index]');
-        }
+for (var index in returnedArray) {
+  assert.sameValue(tempArray[index], returnedArray[index], 'tempArray[index]');
+}

@@ -11,11 +11,11 @@ description: >
     function declaration used
 ---*/
 
-function FACTORY(){
-  Function("a1,a2,a3","this.shifted=a1.length+a2+a3;").call(this,arguments,"",2);
+function FACTORY() {
+  Function("a1,a2,a3", "this.shifted=a1.length+a2+a3;").call(this, arguments, "", 2);
 }
 
-var obj=new FACTORY("",4,2,"A");
+var obj = new FACTORY("", 4, 2, "A");
 
 //CHECK#1
 if (obj["shifted"] !== "42") {

@@ -8,5 +8,5 @@ description: String.prototype.trim throws TypeError when string is undefined
 
 
 assert.throws(TypeError, function() {
-    String.prototype.trim.call(undefined);
+  String.prototype.trim.call(undefined);
 });

@@ -13,19 +13,21 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.search.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.search.hasOwnProperty('length'));
+  $ERROR('#1: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.search.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 var __obj = String.prototype.search.length;
 
-verifyNotWritable(String.prototype.search, "length", null, function(){return "shifted";});
+verifyNotWritable(String.prototype.search, "length", null, function() {
+  return "shifted";
+});
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.search.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.search.length; String.prototype.search.length = function(){return "shifted";}; String.prototype.search.length === __obj. Actual: '+String.prototype.search.length );
+  $ERROR('#2: __obj = String.prototype.search.length; String.prototype.search.length = function(){return "shifted";}; String.prototype.search.length === __obj. Actual: ' + String.prototype.search.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

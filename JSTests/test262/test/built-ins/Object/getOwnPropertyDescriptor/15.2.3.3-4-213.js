@@ -8,7 +8,7 @@ description: >
     accessors on built-ins (RegExp.prototype.global)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "global");
+var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "global");
 
 assert.sameValue(desc.hasOwnProperty('writable'), false, 'desc.hasOwnProperty("writable")');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

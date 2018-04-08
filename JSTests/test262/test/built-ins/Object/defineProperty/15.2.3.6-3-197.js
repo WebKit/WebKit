@@ -8,17 +8,17 @@ description: >
     RegExp object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", {
-            writable: new RegExp()
-        });
+Object.defineProperty(obj, "property", {
+  writable: new RegExp()
+});
 
-        var beforeWrite = obj.hasOwnProperty("property") && typeof obj.property === "undefined";
+var beforeWrite = obj.hasOwnProperty("property") && typeof obj.property === "undefined";
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert(beforeWrite, 'beforeWrite !== true');
 assert(afterWrite, 'afterWrite !== true');

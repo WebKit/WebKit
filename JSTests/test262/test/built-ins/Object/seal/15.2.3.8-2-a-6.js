@@ -12,22 +12,22 @@ includes: [propertyHelper.js]
 var proto = {};
 
 Object.defineProperty(proto, "foo", {
-    get: function () {
-        return 0;
-    },
-    configurable: true
+  get: function() {
+    return 0;
+  },
+  configurable: true
 });
 
-var ConstructFun = function () { };
+var ConstructFun = function() {};
 ConstructFun.prototype = proto;
 
 var obj = new ConstructFun();
 
 Object.defineProperty(obj, "foo", {
-    get: function () {
-        return 10;
-    },
-    configurable: true
+  get: function() {
+    return 10;
+  },
+  configurable: true
 });
 
 assert(Object.isExtensible(obj));

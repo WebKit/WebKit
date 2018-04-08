@@ -23,7 +23,7 @@ var poisoned = {
 };
 
 assert.throws(TypeError, function() {
- sample.sort(null);
+  sample.sort(null);
 }, "sample.sort(null);");
 
 assert.throws(TypeError, function() {

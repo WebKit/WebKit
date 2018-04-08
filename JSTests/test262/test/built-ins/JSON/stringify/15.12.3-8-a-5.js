@@ -8,6 +8,15 @@ description: >
     the same as a missing space argument.
 ---*/
 
-  var obj = {a1: {b1: [1,2,3,4], b2: {c1: 1, c2: 2}},a2: 'a2'};
+var obj = {
+  a1: {
+    b1: [1, 2, 3, 4],
+    b2: {
+      c1: 1,
+      c2: 2
+    }
+  },
+  a2: 'a2'
+};
 
-assert.sameValue(JSON.stringify(obj), JSON.stringify(obj,null, obj), 'JSON.stringify(obj)');
+assert.sameValue(JSON.stringify(obj), JSON.stringify(obj, null, obj), 'JSON.stringify(obj)');

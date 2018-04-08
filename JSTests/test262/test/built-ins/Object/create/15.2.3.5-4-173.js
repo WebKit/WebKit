@@ -9,10 +9,10 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-            JSON.value = "JSONValue";
+JSON.value = "JSONValue";
 
-            var newObj = Object.create({}, {
-                prop: JSON
-            });
+var newObj = Object.create({}, {
+  prop: JSON
+});
 
 assert.sameValue(newObj.prop, "JSONValue", 'newObj.prop');

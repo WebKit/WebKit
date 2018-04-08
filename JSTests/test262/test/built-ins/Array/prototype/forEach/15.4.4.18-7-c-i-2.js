@@ -9,14 +9,14 @@ description: >
     property on an Array
 ---*/
 
-        var testResult = false;
+var testResult = false;
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                testResult = (val === 11);
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    testResult = (val === 11);
+  }
+}
 
-        [11].forEach(callbackfn);
+[11].forEach(callbackfn);
 
 assert(testResult, 'testResult !== true');

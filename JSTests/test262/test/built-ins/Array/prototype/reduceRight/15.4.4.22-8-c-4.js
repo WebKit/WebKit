@@ -9,11 +9,11 @@ description: >
     own properties but prototype contains a single property
 ---*/
 
-        var arr = [, , , ];
+var arr = [, , , ];
 
-        try {
-            Array.prototype[1] = "prototype";
-            arr.reduceRight(function () { });
-        } finally {
-            delete Array.prototype[1];
-        }
+try {
+  Array.prototype[1] = "prototype";
+  arr.reduceRight(function() {});
+} finally {
+  delete Array.prototype[1];
+}

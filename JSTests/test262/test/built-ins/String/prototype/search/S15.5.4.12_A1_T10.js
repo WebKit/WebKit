@@ -9,14 +9,18 @@ description: >
     toString function
 ---*/
 
-var __obj = {toString:function(){return "\u0041B";}};
+var __obj = {
+  toString: function() {
+    return "\u0041B";
+  }
+};
 var __str = "ssABB\u0041BABAB";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-  if (__str.search(__obj) !==2) {
-    $ERROR('#1: var __obj = {toString:function(){return "\u0041B";}}; var __str = "ssABB\u0041BABAB"; __str.search(__obj) ===2. Actual: '+__str.search(__obj) );
-  }
+if (__str.search(__obj) !== 2) {
+  $ERROR('#1: var __obj = {toString:function(){return "\u0041B";}}; var __str = "ssABB\u0041BABAB"; __str.search(__obj) ===2. Actual: ' + __str.search(__obj));
+}
 //
 //////////////////////////////////////////////////////////////////////////////
 

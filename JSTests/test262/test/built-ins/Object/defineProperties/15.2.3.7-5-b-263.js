@@ -9,13 +9,13 @@ description: >
     step 9.a)
 ---*/
 
-        var getFun = function () {};
-        var obj = {};
+var getFun = function() {};
+var obj = {};
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                prop: {
-                    value: 12,
-                    get: getFun
-                }
-            });
+  Object.defineProperties(obj, {
+    prop: {
+      value: 12,
+      get: getFun
+    }
+  });
 });

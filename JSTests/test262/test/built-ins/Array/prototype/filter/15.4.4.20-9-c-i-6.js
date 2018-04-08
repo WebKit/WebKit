@@ -9,17 +9,17 @@ description: >
     property that overrides an inherited accessor property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val === 11;
-        }
+function callbackfn(val, idx, obj) {
+  return val === 11;
+}
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 9;
-                },
-                configurable: true
-            });
-            var newArr = [11].filter(callbackfn);
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 9;
+  },
+  configurable: true
+});
+var newArr = [11].filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

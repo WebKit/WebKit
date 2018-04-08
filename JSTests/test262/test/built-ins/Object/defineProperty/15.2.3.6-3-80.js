@@ -8,27 +8,27 @@ description: >
     an inherited accessor property (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {};
-        Object.defineProperty(proto, "configurable", {
-            get: function () {
-                return true;
-            }
-        });
+var proto = {};
+Object.defineProperty(proto, "configurable", {
+  get: function() {
+    return true;
+  }
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
+var child = new ConstructFun();
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
-        var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-        delete obj.property;
+delete obj.property;
 
-        var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

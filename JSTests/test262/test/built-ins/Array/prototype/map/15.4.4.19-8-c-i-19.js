@@ -10,27 +10,27 @@ description: >
     accessor property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return typeof val === "undefined";
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return typeof val === "undefined";
+  }
+  return false;
+}
 
-        var arr = [];
+var arr = [];
 
-            Object.defineProperty(arr, "0", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(arr, "0", {
+  set: function() {},
+  configurable: true
+});
 
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 100;
-                },
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  get: function() {
+    return 100;
+  },
+  configurable: true
+});
 
-            var testResult = arr.map(callbackfn);
+var testResult = arr.map(callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

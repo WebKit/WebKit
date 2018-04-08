@@ -9,11 +9,11 @@ description: >
     prototype object  (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Number.prototype.value = "Number";
-            var numObj = new Number(-2);
+Number.prototype.value = "Number";
+var numObj = new Number(-2);
 
-            Object.defineProperty(obj, "property", numObj);
+Object.defineProperty(obj, "property", numObj);
 
 assert.sameValue(obj.property, "Number", 'obj.property');

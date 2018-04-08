@@ -8,20 +8,20 @@ description: >
     step 1)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", {
-            get: function () {
-                return 11;
-            },
-            configurable: false
-        });
+Object.defineProperty(obj, "property", {
+  get: function() {
+    return 11;
+  },
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(obj, "property", {
-                get: function () {
-                    return 12;
-                },
-                configurable: true
-            });
+  Object.defineProperty(obj, "property", {
+    get: function() {
+      return 12;
+    },
+    configurable: true
+  });
 });
 assert.sameValue(obj.property, 11, 'obj.property');

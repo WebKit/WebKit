@@ -21,7 +21,7 @@ if (1 / Math.round(-0.5) !== 1 / -0) {
 
 // CHECK#2
 if (1 / Math.round(-0.25) !== 1 / -0) {
-	$ERROR("#2: '1 / Math.round(-0.25) !== 1 / -0'");
+  $ERROR("#2: '1 / Math.round(-0.25) !== 1 / -0'");
 }
 
 // CHECK#3

@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.toLocaleString)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "toLocaleString");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "toLocaleString");
 
 assert.sameValue(desc.value, Array.prototype.toLocaleString, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

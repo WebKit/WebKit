@@ -8,7 +8,7 @@ es5id: 15.9.5.40_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 
-if (delete Date.prototype.setFullYear  === false) {
+if (delete Date.prototype.setFullYear === false) {
   $ERROR('#1: The Date.prototype.setFullYear property has not the attributes DontDelete');
 }
 

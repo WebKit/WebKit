@@ -10,25 +10,25 @@ description: >
     toString method that returns a string (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var arr = [];
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        Object.defineProperties(arr, {
-            length: {
-                value: {
-                    toString: function () {
-                        toStringAccessed = true;
-                        return '2';
-                    },
+Object.defineProperties(arr, {
+  length: {
+    value: {
+      toString: function() {
+        toStringAccessed = true;
+        return '2';
+      },
 
-                    valueOf: function () {
-                        valueOfAccessed = true;
-                        return {};
-                    }
-                }
-            }
-        });
+      valueOf: function() {
+        valueOfAccessed = true;
+        return {};
+      }
+    }
+  }
+});
 
 assert.sameValue(arr.length, 2, 'arr.length');
 assert(toStringAccessed, 'toStringAccessed !== true');

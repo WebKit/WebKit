@@ -20,18 +20,3 @@ verifyProperty(BigInt.prototype, Symbol.toStringTag, {
   enumerable: false,
   configurable: true
 });
-
-assert.sameValue(Object.prototype.toString.call(3n), "[object BigInt]");
-assert.sameValue(Object.prototype.toString.call(Object(3n)), "[object BigInt]");
-
-// Verify that Object.prototype.toString does not have special casing for BigInt
-// as it does for most other primitive types
-Object.defineProperty(BigInt.prototype, Symbol.toStringTag, {
-  value: "FooBar",
-  writable: false,
-  enumerable: false,
-  configurable: true
-});
-
-assert.sameValue(Object.prototype.toString.call(3n), "[object FooBar]");
-assert.sameValue(Object.prototype.toString.call(Object(3n)), "[object FooBar]");

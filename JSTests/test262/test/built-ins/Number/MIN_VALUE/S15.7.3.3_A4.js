@@ -8,8 +8,8 @@ description: Checking if enumerating Number.MIN_VALUE fails
 ---*/
 
 //CHECK#1
-for(var x in Number) {
-  if(x === "MIN_VALUE") {
+for (var x in Number) {
+  if (x === "MIN_VALUE") {
     $ERROR('#1: Number.MIN_VALUE has the attribute DontEnum');
   }
 }

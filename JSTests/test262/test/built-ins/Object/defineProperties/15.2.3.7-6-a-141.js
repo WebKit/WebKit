@@ -9,12 +9,12 @@ description: >
     which doesn't convert to a number (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: "two"
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: "two"
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

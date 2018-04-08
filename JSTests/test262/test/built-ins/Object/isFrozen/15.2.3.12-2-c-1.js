@@ -8,13 +8,13 @@ description: >
     data property
 ---*/
 
-        var obj = {};
-        Object.defineProperty(obj, "foo", {
-            value: 20,
-            writable: false,
-            configurable: true
-        });
+var obj = {};
+Object.defineProperty(obj, "foo", {
+  value: 20,
+  writable: false,
+  configurable: true
+});
 
-        Object.preventExtensions(obj);
+Object.preventExtensions(obj);
 
 assert.sameValue(Object.isFrozen(obj), false, 'Object.isFrozen(obj)');

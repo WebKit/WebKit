@@ -8,7 +8,7 @@ description: >
     built-ins (Math.log)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "log");
+var desc = Object.getOwnPropertyDescriptor(Math, "log");
 
 assert.sameValue(desc.value, Math.log, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

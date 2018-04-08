@@ -11,13 +11,13 @@ description: >
     step 3.f)
 ---*/
 
-        var arr = [0, , 2];
+var arr = [0, , 2];
 
-            Object.defineProperties(arr, {
-                length: {
-                    value: 5
-                }
-            });
+Object.defineProperties(arr, {
+  length: {
+    value: 5
+  }
+});
 
 assert.sameValue(arr.length, 5, 'arr.length');
 assert.sameValue(arr[0], 0, 'arr[0]');

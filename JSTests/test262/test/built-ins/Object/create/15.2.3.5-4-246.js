@@ -9,14 +9,14 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        var strObj = new String("abc");
+var strObj = new String("abc");
 
-        strObj.get = function () {
-            return "VerifyStringObject";
-        };
+strObj.get = function() {
+  return "VerifyStringObject";
+};
 
-        var newObj = Object.create({}, {
-            prop: strObj
-        });
+var newObj = Object.create({}, {
+  prop: strObj
+});
 
 assert.sameValue(newObj.prop, "VerifyStringObject", 'newObj.prop');

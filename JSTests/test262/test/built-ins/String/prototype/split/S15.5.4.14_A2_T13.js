@@ -18,7 +18,7 @@ var __split = __string.split("-4");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== 2) {
-  $ERROR('#2: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split.length === 2. Actual: '+__split.length );
+  $ERROR('#2: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split.length === 2. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ if (__split.length !== 2) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split[0] !== "one-1 two-2 four") {
-  $ERROR('#3: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split[0] === "one-1 two-2 four". Actual: '+__split[0]);
+  $ERROR('#3: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split[0] === "one-1 two-2 four". Actual: ' + __split[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ if (__split[0] !== "one-1 two-2 four") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__split[1] !== "") {
-  $ERROR('#3: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split[1] === "". Actual: '+__split[1] );
+  $ERROR('#3: var __string = new String("one-1 two-2 four-4"); __split = __string.split("-4"); __split[1] === "". Actual: ' + __split[1]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -12,19 +12,19 @@ description: >
     TypeError is thrown (15.4.5.1 step 3.l.i)
 ---*/
 
-        var arrObj = [0, 1, 2];
+var arrObj = [0, 1, 2];
 
-        Object.defineProperty(arrObj, "1", {
-            configurable: false
-        });
+Object.defineProperty(arrObj, "1", {
+  configurable: false
+});
 
-        Object.defineProperty(arrObj, "2", {
-            configurable: true
-        });
+Object.defineProperty(arrObj, "2", {
+  configurable: true
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(arrObj, "length", {
-                value: 1
-            });
+  Object.defineProperty(arrObj, "length", {
+    value: 1
+  });
 });
 assert.sameValue(arrObj.length, 2, 'arrObj.length');
 assert.sameValue(arrObj.hasOwnProperty("2"), false, 'arrObj.hasOwnProperty("2")');

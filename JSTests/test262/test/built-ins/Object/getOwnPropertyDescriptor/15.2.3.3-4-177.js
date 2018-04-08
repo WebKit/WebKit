@@ -8,7 +8,7 @@ description: >
     built-ins (JSON.parse)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(JSON, "parse");
+var desc = Object.getOwnPropertyDescriptor(JSON, "parse");
 
 assert.sameValue(desc.value, JSON.parse, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

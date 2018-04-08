@@ -6,12 +6,12 @@ es5id: 15.2.3.8-4-3
 description: Object.seal - the extension of 'O' is prevented already
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        obj.foo = 10; // default value of attributes: writable: true, configurable: true, enumerable: true
-        var preCheck = Object.isExtensible(obj);
-        Object.preventExtensions(obj);
-        Object.seal(obj);
+obj.foo = 10; // default value of attributes: writable: true, configurable: true, enumerable: true
+var preCheck = Object.isExtensible(obj);
+Object.preventExtensions(obj);
+Object.seal(obj);
 
 assert(preCheck, 'preCheck !== true');
 assert(Object.isSealed(obj), 'Object.isSealed(obj) !== true');

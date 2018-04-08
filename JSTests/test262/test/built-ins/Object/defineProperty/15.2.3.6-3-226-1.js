@@ -9,12 +9,12 @@ description: >
     object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Object.prototype.get = function () {
-                return "jsonGetProperty";
-            };
+Object.prototype.get = function() {
+  return "jsonGetProperty";
+};
 
-            Object.defineProperty(obj, "property", JSON);
+Object.defineProperty(obj, "property", JSON);
 
 assert.sameValue(obj.property, "jsonGetProperty", 'obj.property');

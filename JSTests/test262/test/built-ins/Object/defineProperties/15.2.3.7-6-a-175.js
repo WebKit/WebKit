@@ -11,16 +11,16 @@ description: >
     (15.4.5.1 step 3.l.iii.1)
 ---*/
 
-        var arr = [0, 1, 2, 3];
+var arr = [0, 1, 2, 3];
 
-        Object.defineProperty(arr, "1", {
-            configurable: false
-        });
+Object.defineProperty(arr, "1", {
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperties(arr, {
-                length: {
-                    value: 1
-                }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: 1
+    }
+  });
 });
 assert.sameValue(arr.length, 2, 'arr.length');

@@ -10,9 +10,9 @@ includes: [propertyHelper.js]
 ---*/
 
 var newObj = Object.create({}, {
-    prop: {
-        configurable: ""
-    }
+  prop: {
+    configurable: ""
+  }
 });
 
 assert(newObj.hasOwnProperty("prop"));

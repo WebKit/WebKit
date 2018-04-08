@@ -9,16 +9,16 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var descObj = new Date();
+var descObj = new Date();
 
-        descObj.get = function () {
-            return "Date";
-        };
+descObj.get = function() {
+  return "Date";
+};
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "Date", 'obj.property');

@@ -8,8 +8,8 @@ es5id: 15.4.4.10_A2.1_T2
 description: start = NaN
 ---*/
 
-var x = [0,1,2,3,4];
-var arr = x.slice(NaN,3);
+var x = [0, 1, 2, 3, 4];
+var arr = x.slice(NaN, 3);
 
 //CHECK#1
 arr.getClass = Object.prototype.toString;

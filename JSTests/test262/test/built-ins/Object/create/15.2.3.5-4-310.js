@@ -9,13 +9,13 @@ description: >
     4.b)
 ---*/
 
-        var newObj = Object.create({}, {
-            prop: {
-                set: function () { },
-                enumerable: true,
-                configurable: true
-            }
-        });
+var newObj = Object.create({}, {
+  prop: {
+    set: function() {},
+    enumerable: true,
+    configurable: true
+  }
+});
 
 assert(newObj.hasOwnProperty("prop"), 'newObj.hasOwnProperty("prop") !== true');
 assert.sameValue(newObj.prop, undefined, 'newObj.prop');

@@ -8,18 +8,18 @@ description: >
     property (8.10.5 step 8.a)
 ---*/
 
-        var data = "data";
-        var obj = {};
+var data = "data";
+var obj = {};
 
-        Object.defineProperties(obj, {
-            descObj: {
-                set: function (value) {
-                    data = value;
-                }
-            }
-        });
+Object.defineProperties(obj, {
+  descObj: {
+    set: function(value) {
+      data = value;
+    }
+  }
+});
 
-        obj.descObj = "overrideData";
+obj.descObj = "overrideData";
 
 assert(obj.hasOwnProperty("descObj"), 'obj.hasOwnProperty("descObj") !== true');
 assert.sameValue(data, "overrideData", 'data');

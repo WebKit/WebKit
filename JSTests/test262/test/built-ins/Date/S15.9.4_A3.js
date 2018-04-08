@@ -8,6 +8,6 @@ es5id: 15.9.4_A3
 description: Checking existence of the property "UTC"
 ---*/
 
-if(!Date.hasOwnProperty("UTC")){
+if (!Date.hasOwnProperty("UTC")) {
   $ERROR('#1: The Date constructor has the property "UTC"');
 }

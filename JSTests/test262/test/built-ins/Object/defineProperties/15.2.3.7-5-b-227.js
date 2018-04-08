@@ -13,11 +13,11 @@ var data = "data";
 var obj = {};
 
 Object.defineProperties(obj, {
-    descObj: {
-        get: function () {
-            return data;
-        }
+  descObj: {
+    get: function() {
+      return data;
     }
+  }
 });
 
 
@@ -25,5 +25,4 @@ assert(obj.hasOwnProperty("descObj"));
 verifyNotWritable(obj, "descObj");
 
 var desc = Object.getOwnPropertyDescriptor(obj, "descObj");
-assert.sameValue(typeof (desc.set), "undefined")
-
+assert.sameValue(typeof(desc.set), "undefined")

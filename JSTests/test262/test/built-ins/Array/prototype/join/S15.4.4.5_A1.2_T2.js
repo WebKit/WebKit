@@ -9,7 +9,7 @@ description: Checking this use new Array() and []
 ---*/
 
 //CHECK#1
-var x = new Array(0,1,2,3);
+var x = new Array(0, 1, 2, 3);
 if (x.join(undefined) !== "0,1,2,3") {
   $ERROR('#1: x = new Array(0,1,2,3); x.join(undefined) === "0,1,2,3". Actual: ' + (x.join(undefined)));
 }

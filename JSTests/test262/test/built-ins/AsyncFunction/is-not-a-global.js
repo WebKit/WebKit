@@ -8,6 +8,6 @@ description: >
   %AsyncFunction% is not exposed as a global
 ---*/
 
-assert.throws(ReferenceError, function () {
+assert.throws(ReferenceError, function() {
   AsyncFunction
 }, "AsyncFunction should not be present as a global");

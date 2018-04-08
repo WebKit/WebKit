@@ -8,17 +8,17 @@ description: >
     object 'O' is not pushed into the returned array
 ---*/
 
-            var str = new String("abc");
+var str = new String("abc");
 
-            Object.defineProperty(String.prototype, "protoProperty", {
-                get: function () {
-                    return "protoString";
-                },
-                configurable: true
-            });
+Object.defineProperty(String.prototype, "protoProperty", {
+  get: function() {
+    return "protoString";
+  },
+  configurable: true
+});
 
-            var result = Object.getOwnPropertyNames(str);
+var result = Object.getOwnPropertyNames(str);
 
-            for (var p in result) {
-                assert.notSameValue(result[p], "protoProperty", 'result[p]');
-            }
+for (var p in result) {
+  assert.notSameValue(result[p], "protoProperty", 'result[p]');
+}

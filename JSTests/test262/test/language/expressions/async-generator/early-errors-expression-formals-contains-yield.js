@@ -3,7 +3,7 @@
 
 /*---
 author: Caitlin Potter <caitp@igalia.com>
-esid: sec-identifiers
+esid: sec-identifiers-static-semantics-early-errors
 description: >
   `yield` is a reserved keyword within async generator function bodies and may
   not be used as the binding identifier of a parameter.

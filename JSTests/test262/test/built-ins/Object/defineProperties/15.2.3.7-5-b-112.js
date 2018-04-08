@@ -8,12 +8,12 @@ description: >
     (8.10.5 step 5)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                value: 300
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    value: 300
+  }
+});
 
 assert.sameValue(obj.property, 300, 'obj.property');

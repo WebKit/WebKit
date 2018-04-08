@@ -9,14 +9,17 @@ description: >
     Infinity)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return val > 10;
+}
 
-        var obj = { 0: 11, length: Infinity };
+var obj = {
+  0: 11,
+  length: Infinity
+};
 
 assert(Array.prototype.some.call(obj, callbackfn), 'Array.prototype.some.call(obj, callbackfn) !== true');
 assert(accessed, 'accessed !== true');

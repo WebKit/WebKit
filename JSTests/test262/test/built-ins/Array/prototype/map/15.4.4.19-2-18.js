@@ -9,13 +9,13 @@ description: >
     its own property get method
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return parseInt(val, 10) > 1;
-        }
+function callbackfn(val, idx, obj) {
+  return parseInt(val, 10) > 1;
+}
 
-        var str = new String("432");
+var str = new String("432");
 
-            String.prototype[3] = "1";
-            var testResult = Array.prototype.map.call(str, callbackfn);
+String.prototype[3] = "1";
+var testResult = Array.prototype.map.call(str, callbackfn);
 
 assert.sameValue(testResult.length, 3, 'testResult.length');

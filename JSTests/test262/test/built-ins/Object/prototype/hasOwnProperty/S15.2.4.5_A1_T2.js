@@ -17,7 +17,9 @@ if (typeof Object.prototype.hasOwnProperty !== "function") {
   $ERROR('#1: hasOwnProperty method is defined');
 }
 
-var obj = {the_property:true};
+var obj = {
+  the_property: true
+};
 
 //CHECK#2
 if (typeof obj.hasOwnProperty !== "function") {

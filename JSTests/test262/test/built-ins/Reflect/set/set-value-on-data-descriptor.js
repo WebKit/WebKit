@@ -30,7 +30,9 @@ info: |
   ...
 ---*/
 
-var o1 = {p: 43};
+var o1 = {
+  p: 43
+};
 var result = Reflect.set(o1, 'p', 42);
 assert.sameValue(result, true, 'returns true on a successful setting');
 assert.sameValue(
@@ -38,8 +40,12 @@ assert.sameValue(
   'sets the new value'
 );
 
-var o2 = {p: 43};
-var receiver = {p: 44};
+var o2 = {
+  p: 43
+};
+var receiver = {
+  p: 44
+};
 var result = Reflect.set(o2, 'p', 42, receiver);
 assert.sameValue(result, true, 'returns true on a successful setting');
 assert.sameValue(o2.p, 43, 'with a receiver, does not set a value on target');

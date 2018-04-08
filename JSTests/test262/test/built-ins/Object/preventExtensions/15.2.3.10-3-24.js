@@ -9,15 +9,15 @@ description: >
     from that prototype
 ---*/
 
-        var proto = {};
-        var preCheck = Object.isExtensible(proto);
-        Object.preventExtensions(proto);
+var proto = {};
+var preCheck = Object.isExtensible(proto);
+Object.preventExtensions(proto);
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
-        var child = new ConstructFun();
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
+var child = new ConstructFun();
 
-        child.prop = 10;
+child.prop = 10;
 
 assert(preCheck, 'preCheck !== true');
 assert(child.hasOwnProperty("prop"), 'child.hasOwnProperty("prop") !== true');

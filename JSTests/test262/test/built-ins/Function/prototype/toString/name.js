@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es6id: 19.2.3.5
+esid: sec-function.prototype.tostring
 description: >
   Function.prototype.toString.name is "toString".
 info: |

@@ -13,19 +13,21 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.concat.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.concat.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.concat.hasOwnProperty('length')); 
+  $ERROR('#1: String.prototype.concat.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.concat.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 var __obj = String.prototype.concat.length;
 
-verifyNotWritable(String.prototype.concat, "length", null, function(){return "shifted";});
+verifyNotWritable(String.prototype.concat, "length", null, function() {
+  return "shifted";
+});
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.concat.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.concat.length; String.prototype.concat.length = function(){return "shifted";}; String.prototype.concat.length === __obj. Actual: '+String.prototype.concat.length ); 
+  $ERROR('#2: __obj = String.prototype.concat.length; String.prototype.concat.length = function(){return "shifted";}; String.prototype.concat.length === __obj. Actual: ' + String.prototype.concat.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

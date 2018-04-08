@@ -11,14 +11,16 @@ flags: [async]
 ---*/
 
 var resolveP,
-    p = new Promise(function (resolve) { resolveP = resolve; });
+  p = new Promise(function(resolve) {
+    resolveP = resolve;
+  });
 
 resolveP(p);
 
-p.then(function () {
-    $ERROR("Should not fulfill: should reject with TypeError.");
-}, function (err) {
-    if (!(err instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + err);
-    }
+p.then(function() {
+  $ERROR("Should not fulfill: should reject with TypeError.");
+}, function(err) {
+  if (!(err instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + err);
+  }
 }).then($DONE, $DONE);

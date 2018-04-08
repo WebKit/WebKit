@@ -9,17 +9,17 @@ description: >
     property (8.10.5 step 3.a)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-            Math.enumerable = true;
+Math.enumerable = true;
 
-            var newObj = Object.create({}, {
-                prop: Math 
-            });
-            for (var property in newObj) {
-                if (property === "prop") {
-                    accessed = true;
-                }
-            }
+var newObj = Object.create({}, {
+  prop: Math
+});
+for (var property in newObj) {
+  if (property === "prop") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

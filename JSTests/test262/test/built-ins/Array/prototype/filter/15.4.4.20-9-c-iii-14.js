@@ -9,14 +9,14 @@ description: >
     string
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return "";
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return "";
+}
 
-        var newArr = [11].filter(callbackfn);
+var newArr = [11].filter(callbackfn);
 
 assert.sameValue(newArr.length, 0, 'newArr.length');
 assert(accessed, 'accessed !== true');

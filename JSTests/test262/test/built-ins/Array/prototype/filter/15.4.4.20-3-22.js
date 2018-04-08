@@ -10,32 +10,32 @@ description: >
     primitive values
 ---*/
 
-        var accessed = false;
-        var firstStepOccured = false;
-        var secondStepOccured = false;
+var accessed = false;
+var firstStepOccured = false;
+var secondStepOccured = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return true;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return true;
+}
 
-        var obj = {
-            1: 11,
-            2: 12,
+var obj = {
+  1: 11,
+  2: 12,
 
-            length: {
-                valueOf: function () {
-                    firstStepOccured = true;
-                    return {};
-                },
-                toString: function () {
-                    secondStepOccured = true;
-                    return {};
-                }
-            }
-        };
+  length: {
+    valueOf: function() {
+      firstStepOccured = true;
+      return {};
+    },
+    toString: function() {
+      secondStepOccured = true;
+      return {};
+    }
+  }
+};
 assert.throws(TypeError, function() {
-            Array.prototype.filter.call(obj, callbackfn);
+  Array.prototype.filter.call(obj, callbackfn);
 });
 assert.sameValue(accessed, false, 'accessed');
 assert(firstStepOccured, 'firstStepOccured !== true');

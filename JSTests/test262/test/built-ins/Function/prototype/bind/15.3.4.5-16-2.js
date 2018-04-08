@@ -8,8 +8,8 @@ description: >
     property in F set as true
 ---*/
 
-        function foo() { }
-        var obj = foo.bind({});
-        obj.property = 12;
+function foo() {}
+var obj = foo.bind({});
+obj.property = 12;
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');

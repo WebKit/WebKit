@@ -9,18 +9,18 @@ description: >
     prototype object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Number.prototype.writable = true;
-            var numObj = new Number(-2);
+Number.prototype.writable = true;
+var numObj = new Number(-2);
 
-            Object.defineProperty(obj, "property", numObj);
+Object.defineProperty(obj, "property", numObj);
 
-            var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-            obj.property = "isWritable";
+obj.property = "isWritable";
 
-            var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

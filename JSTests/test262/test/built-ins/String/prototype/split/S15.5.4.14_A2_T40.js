@@ -20,7 +20,7 @@ var __expected = ["he"];
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__split.constructor !== Array) {
-  $ERROR('#1: var __instance = new String("hello"); __split = __instance.split("l", 1); __expected = ["he"]; __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#1: var __instance = new String("hello"); __split = __instance.split("l", 1); __expected = ["he"]; __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.length !== __expected.length) {
-  $ERROR('#2: var __instance = new String("hello"); __split = __instance.split("l", 1); __expected = ["he"]; __split.length === __expected.length. Actual: '+__split.length );
+  $ERROR('#2: var __instance = new String("hello"); __split = __instance.split("l", 1); __expected = ["he"]; __split.length === __expected.length. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -36,6 +36,6 @@ if (__split.length !== __expected.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split[0] !== __expected[0]) {
-  $ERROR('#3: var __instance = new String("hello"); __split = __instance.split("l", 1); __expected = ["he"]; __split[0] === '+__expected[0]+'. Actual: '+__split[index] );
+  $ERROR('#3: var __instance = new String("hello"); __split = __instance.split("l", 1); __expected = ["he"]; __split[0] === ' + __expected[0] + '. Actual: ' + __split[index]);
 }
 //

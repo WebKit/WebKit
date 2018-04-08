@@ -9,27 +9,27 @@ description: >
     (8.10.5 step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "value", {
-            get: function () {
-                return "inheritedAccessorProperty";
-            }
-        });
+Object.defineProperty(proto, "value", {
+  get: function() {
+    return "inheritedAccessorProperty";
+  }
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
+var descObj = new Con();
 
-        Object.defineProperty(descObj, "value", {
-            value: "ownDataProperty"
-        });
+Object.defineProperty(descObj, "value", {
+  value: "ownDataProperty"
+});
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "ownDataProperty", 'obj.property');

@@ -10,12 +10,12 @@ description: >
     property of 'O' can be deleted (15.4.5.1 step 3.l.ii)
 ---*/
 
-        var arr = [0, 1];
+var arr = [0, 1];
 
-        Object.defineProperties(arr, {
-            length: {
-                value: 1
-            }
-        });
+Object.defineProperties(arr, {
+  length: {
+    value: 1
+  }
+});
 
 assert.sameValue(arr.hasOwnProperty("1"), false, 'arr.hasOwnProperty("1")');

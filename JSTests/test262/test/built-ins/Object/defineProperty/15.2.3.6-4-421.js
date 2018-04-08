@@ -8,22 +8,22 @@ description: >
     is set to false is non-enumerable (Function.prototype.bind)
 ---*/
 
-        var foo = function () { };
+var foo = function() {};
 
-            Object.defineProperty(Function.prototype, "prop", {
-                value: 1001,
-                writable: false,
-                enumerable: false,
-                configurable: true
-            });
+Object.defineProperty(Function.prototype, "prop", {
+  value: 1001,
+  writable: false,
+  enumerable: false,
+  configurable: true
+});
 
-            var obj = foo.bind({});
-            var verifyEnumerable = false;
-            for (var p in obj) {
-                if (p === "prop") {
-                    verifyEnumerable = true;
-                }
-            }
+var obj = foo.bind({});
+var verifyEnumerable = false;
+for (var p in obj) {
+  if (p === "prop") {
+    verifyEnumerable = true;
+  }
+}
 
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');
 assert.sameValue(verifyEnumerable, false, 'verifyEnumerable');

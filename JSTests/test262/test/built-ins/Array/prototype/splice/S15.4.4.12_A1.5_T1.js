@@ -8,7 +8,7 @@ es5id: 15.4.4.12_A1.5_T1
 description: start === undefined, end === undefined
 ---*/
 
-var x = [0,1,2,3];
+var x = [0, 1, 2, 3];
 var arr = x.splice(undefined, undefined);
 
 //CHECK#1

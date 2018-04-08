@@ -7,6 +7,7 @@ esid: sec-atomics.wait
 description: >
   Atomics.wait.name is "wait".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.wait.name, "wait");

@@ -12,7 +12,7 @@ description: Checking use typeof, instanceof
 //CHECK#1
 if (typeof Array() !== "object") {
   $ERROR('#1: typeof Array() === "object". Actual: ' + (typeof Array()));
-}  
+}
 
 //CHECK#2
 if ((Array() instanceof Array) !== true) {

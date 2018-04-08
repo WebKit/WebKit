@@ -8,7 +8,7 @@ description: >
     built-ins (String.prototype.lastIndexOf)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String.prototype, "lastIndexOf");
+var desc = Object.getOwnPropertyDescriptor(String.prototype, "lastIndexOf");
 
 assert.sameValue(desc.value, String.prototype.lastIndexOf, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

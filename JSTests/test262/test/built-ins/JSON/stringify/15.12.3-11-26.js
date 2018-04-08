@@ -8,11 +8,11 @@ description: >
     abstract operation JA(value) step 10.b.iii)
 ---*/
 
-        var arrObj = [];
-        arrObj[0] = "a";
-        arrObj[1] = "b";
-        arrObj[2] = "c";
+var arrObj = [];
+arrObj[0] = "a";
+arrObj[1] = "b";
+arrObj[2] = "c";
 
-        var jsonText = JSON.stringify(arrObj, undefined, "").toString();
+var jsonText = JSON.stringify(arrObj, undefined, "").toString();
 
 assert.sameValue(jsonText.charAt(jsonText.length - 1), "]", 'jsonText.charAt(jsonText.length - 1)');

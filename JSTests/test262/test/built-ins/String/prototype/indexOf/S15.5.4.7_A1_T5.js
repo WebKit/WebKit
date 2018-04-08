@@ -12,8 +12,12 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(null) evaluates to "null" indexOf(null) evaluates to indexOf("",0)
-if (function(){return "gnulluna"}().indexOf(null) !== 1) {
-  $ERROR('#1: function(){return "gnulluna"}().indexOf(null) === 1. Actual: '+function(){return "gnulluna"}().indexOf(null) ); 
+if (function() {
+    return "gnulluna"
+  }().indexOf(null) !== 1) {
+  $ERROR('#1: function(){return "gnulluna"}().indexOf(null) === 1. Actual: ' + function() {
+    return "gnulluna"
+  }().indexOf(null));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

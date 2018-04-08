@@ -8,22 +8,22 @@ description: >
     data or accessor properties
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop1", {
-            value: 1001,
-            enumerable: false,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop1", {
+  value: 1001,
+  enumerable: false,
+  configurable: true
+});
 
-        Object.defineProperty(obj, "prop2", {
-            get: function () {
-                return 1002;
-            },
-            enumerable: false,
-            configurable: true
-        });
+Object.defineProperty(obj, "prop2", {
+  get: function() {
+    return 1002;
+  },
+  enumerable: false,
+  configurable: true
+});
 
-        var arr = Object.keys(obj);
+var arr = Object.keys(obj);
 
 assert.sameValue(arr.length, 0, 'arr.length');

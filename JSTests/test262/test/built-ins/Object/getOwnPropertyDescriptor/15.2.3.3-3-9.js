@@ -8,13 +8,13 @@ description: >
     without a get function
 ---*/
 
-        var obj = {};
-        var fun = function () { };
-        Object.defineProperty(obj, "property", {
-            set: fun,
-            configurable: true
-        });
+var obj = {};
+var fun = function() {};
+Object.defineProperty(obj, "property", {
+  set: fun,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
 
 assert.sameValue(desc.set, fun, 'desc.set');

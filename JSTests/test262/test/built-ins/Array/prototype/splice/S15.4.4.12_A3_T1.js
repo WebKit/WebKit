@@ -22,20 +22,20 @@ if (arr.length !== 1) {
 
 //CHECK#2
 if (obj.length !== 4294967295) {
-   $ERROR('#2: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj.length === 4294967295. Actual: ' + (obj.length));
+  $ERROR('#2: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj.length === 4294967295. Actual: ' + (obj.length));
 }
 
 //CHECK#3
 if (obj[0] !== "x") {
-   $ERROR('#3: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj[0] === "x". Actual: ' + (obj[0]));
+  $ERROR('#3: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj[0] === "x". Actual: ' + (obj[0]));
 }
 
 //CHECK#4
 if (obj[4294967295] !== undefined) {
-   $ERROR('#4: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj[4294967295] === undefined. Actual: ' + (obj[4294967295]));
+  $ERROR('#4: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj[4294967295] === undefined. Actual: ' + (obj[4294967295]));
 }
 
 //CHECK#5
 if (arr[0] !== "y") {
-   $ERROR('#5: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); arr[0] === "y". Actual: ' + (arr[0]));
+  $ERROR('#5: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); arr[0] === "y". Actual: ' + (arr[0]));
 }

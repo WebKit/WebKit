@@ -7,7 +7,7 @@ description: Object.getOwnPropertyNames returns array of property names (Object)
 includes: [arrayContains.js]
 ---*/
 
-  var result = Object.getOwnPropertyNames(Object);
-  var expResult = ["getPrototypeOf", "getOwnPropertyDescriptor", "getOwnPropertyNames", "create", "defineProperty", "defineProperties", "seal", "freeze", "preventExtensions", "isSealed", "isFrozen", "isExtensible", "keys", "prototype", "length"];
+var result = Object.getOwnPropertyNames(Object);
+var expResult = ["getPrototypeOf", "getOwnPropertyDescriptor", "getOwnPropertyNames", "create", "defineProperty", "defineProperties", "seal", "freeze", "preventExtensions", "isSealed", "isFrozen", "isExtensible", "keys", "prototype", "length"];
 
 assert(arrayContains(result, expResult), 'arrayContains(result, expResult) !== true');

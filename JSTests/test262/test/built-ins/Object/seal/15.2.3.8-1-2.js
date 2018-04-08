@@ -6,4 +6,4 @@ es5id: 15.2.3.8-1-2
 description: Object.seal does not throw TypeError if type of first param is null
 ---*/
 
-    Object.seal(null);
+Object.seal(null);

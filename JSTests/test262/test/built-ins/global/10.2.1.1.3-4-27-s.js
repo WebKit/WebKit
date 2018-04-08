@@ -10,9 +10,9 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-        var numBak = Number;
-        try {
-            Number = 12;
-        } finally {
-            Number = numBak;
-        }
+var numBak = Number;
+try {
+  Number = 12;
+} finally {
+  Number = numBak;
+}

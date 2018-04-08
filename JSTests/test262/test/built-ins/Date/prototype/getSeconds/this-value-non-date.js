@@ -16,7 +16,9 @@ info: |
 ---*/
 
 var getSeconds = Date.prototype.getSeconds;
-var args = (function() { return arguments; }());
+var args = (function() {
+  return arguments;
+}());
 
 assert.sameValue(typeof getSeconds, 'function');
 

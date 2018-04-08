@@ -9,29 +9,29 @@ description: >
     (8.10.5 step 6.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var proto = {
-            writable: false
-        };
+var proto = {
+  writable: false
+};
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        Object.defineProperty(child, "writable", {
-            get: function () {
-                return true;
-            }
-        });
+var child = new ConstructFun();
+Object.defineProperty(child, "writable", {
+  get: function() {
+    return true;
+  }
+});
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
-        var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

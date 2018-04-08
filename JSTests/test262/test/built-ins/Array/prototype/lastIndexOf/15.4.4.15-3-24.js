@@ -9,7 +9,11 @@ description: >
     non-integer, ensure truncation occurs in the proper direction
 ---*/
 
-        var obj = { 122: true, 123: false, length: 123.5 };
+var obj = {
+  122: true,
+  123: false,
+  length: 123.5
+};
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, true), 122, 'Array.prototype.lastIndexOf.call(obj, true)');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, false), -1, 'Array.prototype.lastIndexOf.call(obj, false)');

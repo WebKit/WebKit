@@ -12,8 +12,12 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(null) evaluates to "null" lastIndexOf(null) evaluates to lastIndexOf("",0)
-if (function(){return "gnullunazzgnull"}().lastIndexOf(null) !== 11) {
-  $ERROR('#1: function(){return "gnullunazzgnull"}().lastIndexOf(null) === 11. Actual: '+function(){return "gnullunazzgnull"}().lastIndexOf(null) );
+if (function() {
+    return "gnullunazzgnull"
+  }().lastIndexOf(null) !== 11) {
+  $ERROR('#1: function(){return "gnullunazzgnull"}().lastIndexOf(null) === 11. Actual: ' + function() {
+    return "gnullunazzgnull"
+  }().lastIndexOf(null));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

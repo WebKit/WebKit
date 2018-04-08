@@ -10,11 +10,11 @@ includes: [propertyHelper.js]
 ---*/
 
 var newObj = Object.create({}, {
-    prop: {
-        get: function () {
-            return "data";
-        }
+  prop: {
+    get: function() {
+      return "data";
     }
+  }
 });
 
 assert(newObj.hasOwnProperty("prop"));

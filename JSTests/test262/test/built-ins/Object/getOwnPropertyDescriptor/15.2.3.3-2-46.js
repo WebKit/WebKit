@@ -9,22 +9,24 @@ description: >
     return primitive value
 ---*/
 
-        var obj = { "1": 1 };
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var obj = {
+  "1": 1
+};
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        var ownProp = {
-            toString: function () {
-                toStringAccessed = true;
-                return [1];
-            },
-            valueOf: function () {
-                valueOfAccessed = true;
-                return [1];
-            }
-        };
+var ownProp = {
+  toString: function() {
+    toStringAccessed = true;
+    return [1];
+  },
+  valueOf: function() {
+    valueOfAccessed = true;
+    return [1];
+  }
+};
 assert.throws(TypeError, function() {
-            Object.getOwnPropertyDescriptor(obj, ownProp);
+  Object.getOwnPropertyDescriptor(obj, ownProp);
 });
 assert(toStringAccessed, 'toStringAccessed !== true');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

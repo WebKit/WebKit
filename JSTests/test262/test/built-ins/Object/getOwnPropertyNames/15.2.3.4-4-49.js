@@ -9,8 +9,8 @@ description: >
 includes: [compareArray.js]
 ---*/
 
-  var arr = [0, 1, 2];
-  var expected = ["0", "1", "2", "length"];
-  var actual = Object.getOwnPropertyNames(arr);
+var arr = [0, 1, 2];
+var expected = ["0", "1", "2", "length"];
+var actual = Object.getOwnPropertyNames(arr);
 
 assert(compareArray(actual, expected), 'compareArray(actual, expected) !== true');

@@ -10,20 +10,21 @@ description: >
     inherited accessor property on an Array
 ---*/
 
-        var testResult = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx === 1) {
-                testResult = (typeof prevVal === "undefined");
-            }
-        }
+var testResult = false;
 
-            Array.prototype[2] = 2;
-            var arr = [0, 1];
-            Object.defineProperty(arr, "2", {
-                set: function () { },
-                configurable: true
-            });
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx === 1) {
+    testResult = (typeof prevVal === "undefined");
+  }
+}
 
-            arr.reduceRight(callbackfn);
+Array.prototype[2] = 2;
+var arr = [0, 1];
+Object.defineProperty(arr, "2", {
+  set: function() {},
+  configurable: true
+});
+
+arr.reduceRight(callbackfn);
 
 assert(testResult, 'testResult !== true');

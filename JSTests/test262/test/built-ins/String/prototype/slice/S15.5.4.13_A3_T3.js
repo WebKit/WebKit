@@ -9,14 +9,18 @@ description: >
     instance.slice(...).slice(...)
 ---*/
 
-var __instance = { toString: function() { return "function(){}";} };
+var __instance = {
+  toString: function() {
+    return "function(){}";
+  }
+};
 
 __instance.slice = String.prototype.slice;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__instance.slice(-Infinity,8).slice(1,Infinity) !== "unction") {
-  $ERROR('#1: __instance = function(){}; __instance.slice = String.prototype.slice; __instance.slice(-Infinity,8).slice(1,Infinity) === "unction". Actual: '+__instance.slice(-Infinity,8).slice(1,Infinity) );
+if (__instance.slice(-Infinity, 8).slice(1, Infinity) !== "unction") {
+  $ERROR('#1: __instance = function(){}; __instance.slice = String.prototype.slice; __instance.slice(-Infinity,8).slice(1,Infinity) === "unction". Actual: ' + __instance.slice(-Infinity, 8).slice(1, Infinity));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -12,18 +12,20 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-function setFunc1() { }
+function setFunc1() {}
 
 Object.defineProperty(obj, "foo", {
-    set: setFunc1,
-    configurable: true
+  set: setFunc1,
+  configurable: true
 });
 
 function setFunc2(value) {
-    obj.setVerifyHelpProp = value;
+  obj.setVerifyHelpProp = value;
 }
 
-Object.defineProperty(obj, "foo", { set: setFunc2 });
+Object.defineProperty(obj, "foo", {
+  set: setFunc2
+});
 verifyWritable(obj, "foo", "setVerifyHelpProp");
 
 verifyNotEnumerable(obj, "foo");

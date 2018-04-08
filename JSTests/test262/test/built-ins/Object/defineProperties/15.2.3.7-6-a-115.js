@@ -14,11 +14,11 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperties(arr, {
-    length: {
-        writable: true,
-        enumerable: false,
-        configurable: false
-    }
+  length: {
+    writable: true,
+    enumerable: false,
+    configurable: false
+  }
 });
 
 assert.sameValue(arr.length, 0);

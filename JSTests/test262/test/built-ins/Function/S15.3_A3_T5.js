@@ -11,15 +11,15 @@ description: >
     Function return this.var_name
 ---*/
 
-var f=Function.call(this, "return this.planet;");
-var g=Function.call(this, "return this.color;");
+var f = Function.call(this, "return this.planet;");
+var g = Function.call(this, "return this.color;");
 
 //CHECK#1
 if (f() !== undefined) {
   $ERROR('#2: ');
 }
 
-var planet="mars";
+var planet = "mars";
 
 //CHECK#2
 if (f() !== "mars") {
@@ -29,9 +29,9 @@ if (f() !== "mars") {
 //CHECK#3
 if (g() !== undefined) {
   $ERROR('#3: ');
-}   
+}
 
-this.color="red";
+this.color = "red";
 
 //CHECK#4
 if (g() !== "red") {

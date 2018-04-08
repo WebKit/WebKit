@@ -9,18 +9,20 @@ description: >
     property (8.10.5 step 3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
+var obj = {};
+var accessed = false;
 
-        var argObj = (function () { return arguments; })();
-        argObj.enumerable = true;
+var argObj = (function() {
+  return arguments;
+})();
+argObj.enumerable = true;
 
-        Object.defineProperty(obj, "property", argObj);
+Object.defineProperty(obj, "property", argObj);
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert(accessed, 'accessed !== true');

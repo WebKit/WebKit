@@ -21,6 +21,7 @@ info: |
   has the attributes { [[Writable]]: false, [[Enumerable]]: false,
   [[Configurable]]: true }.
 includes: [propertyHelper.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 assert.sameValue(TypedArray.of.length, 0);

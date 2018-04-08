@@ -11,9 +11,11 @@ description: >
     function object's prototype.toString property was changed
 ---*/
 
-function __FACTORY(){};
+function __FACTORY() {};
 
-__FACTORY.prototype.toString=function(){return "tostr"};
+__FACTORY.prototype.toString = function() {
+  return "tostr"
+};
 
 var __obj = new __FACTORY;
 
@@ -22,7 +24,7 @@ var __str = new String(__obj);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "object") {
-  $ERROR('#1: __str = new String(__obj); typeof __str === "object". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#1: __str = new String(__obj); typeof __str === "object". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +32,7 @@ if (typeof __str !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1.5
 if (__str.constructor !== String) {
-  $ERROR('#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ==='+__str.constructor ); 
+  $ERROR('#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ===' + __str.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -38,7 +40,7 @@ if (__str.constructor !== String) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str != "tostr") {
-  $ERROR('#2: __str = new String(__obj); __str =="tostr". Actual: __str =='+__str ); 
+  $ERROR('#2: __str = new String(__obj); __str =="tostr". Actual: __str ==' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

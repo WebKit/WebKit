@@ -14,31 +14,31 @@ includes: [propertyHelper.js]
 var obj = {};
 
 function getFunc() {
-    return "property";
+  return "property";
 }
 
 Object.defineProperty(obj, "property", {
-    get: getFunc,
-    configurable: false
+  get: getFunc,
+  configurable: false
 });
 
 try {
-    Object.defineProperty(obj, "property", {
-        get: getFunc,
-        set: function () { },
-        configurable: false
-    });
+  Object.defineProperty(obj, "property", {
+    get: getFunc,
+    set: function() {},
+    configurable: false
+  });
 
-    $ERROR("Expected an exception.");
+  $ERROR("Expected an exception.");
 } catch (e) {
-    verifyEqualTo(obj, "property", getFunc());
+  verifyEqualTo(obj, "property", getFunc());
 
-    verifyNotEnumerable(obj, "property");
+  verifyNotEnumerable(obj, "property");
 
-    verifyNotConfigurable(obj, "property");
+  verifyNotConfigurable(obj, "property");
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e);
-    }
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e);
+  }
 
 }

@@ -15,13 +15,13 @@ features: [Reflect]
 
 var target = {};
 var p = new Proxy(target, {
-    defineProperty: function(t, prop, desc) {
-        return 0;
-    }
+  defineProperty: function(t, prop, desc) {
+    return 0;
+  }
 });
 
 assert.sameValue(Reflect.defineProperty(p, "attr", {}), false);
 assert.sameValue(
-    Object.getOwnPropertyDescriptor(target, "attr"),
-    undefined
+  Object.getOwnPropertyDescriptor(target, "attr"),
+  undefined
 );

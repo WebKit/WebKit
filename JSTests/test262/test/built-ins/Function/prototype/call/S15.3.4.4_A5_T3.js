@@ -10,9 +10,12 @@ description: thisArg is string
 flags: [noStrict]
 ---*/
 
-var obj="soap";
+var obj = "soap";
 
-var retobj = ( function(){this.touched= true; return this;} ).call(obj);
+var retobj = (function() {
+  this.touched = true;
+  return this;
+}).call(obj);
 
 //CHECK#1
 if (typeof obj.touched !== "undefined") {

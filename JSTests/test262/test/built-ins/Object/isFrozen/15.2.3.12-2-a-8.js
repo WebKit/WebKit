@@ -8,24 +8,24 @@ description: >
     function that overrides an inherited accessor property
 ---*/
 
-        var proto = {};
+var proto = {};
 
-        Object.defineProperty(proto, "foo", {
-            get: function () {
-                return 9;
-            },
-            configurable: false
-        });
+Object.defineProperty(proto, "foo", {
+  get: function() {
+    return 9;
+  },
+  configurable: false
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
-        var child = new Con();
+var Con = function() {};
+Con.prototype = proto;
+var child = new Con();
 
-        Object.defineProperty(child, "foo", {
-            set: function () { },
-            configurable: true
-        });
+Object.defineProperty(child, "foo", {
+  set: function() {},
+  configurable: true
+});
 
-        Object.preventExtensions(child);
+Object.preventExtensions(child);
 
 assert.sameValue(Object.isFrozen(child), false, 'Object.isFrozen(child)');

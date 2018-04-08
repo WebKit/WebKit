@@ -9,18 +9,18 @@ description: >
     after it is called
 ---*/
 
-  function callbackfn(val, idx, obj)
-  {
-    srcArr[2] = -1;
-    srcArr[4] = -1;
-    if(val > 0)
-      return true;
-    else
-      return false;
-  }
+function callbackfn(val, idx, obj)
+{
+  srcArr[2] = -1;
+  srcArr[4] = -1;
+  if (val > 0)
+    return true;
+  else
+    return false;
+}
 
-  var srcArr = [1,2,3,4,5];
-  var resArr = srcArr.filter(callbackfn);
+var srcArr = [1, 2, 3, 4, 5];
+var resArr = srcArr.filter(callbackfn);
 
 assert.sameValue(resArr.length, 3, 'resArr.length');
 assert.sameValue(resArr[0], 1, 'resArr[0]');

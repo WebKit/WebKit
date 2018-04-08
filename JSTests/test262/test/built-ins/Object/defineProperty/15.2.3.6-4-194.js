@@ -12,29 +12,29 @@ includes: [propertyHelper.js]
 ---*/
 
 var arrObj = [];
-var getFunc = function () {
-    return 11;
+var getFunc = function() {
+  return 11;
 };
 
 Object.defineProperty(arrObj, "0", {
-    get: getFunc,
-    configurable: false
+  get: getFunc,
+  configurable: false
 });
 
 try {
-    Object.defineProperty(arrObj, "0", {
-        configurable: true
-    });
-    $ERROR("Expected an exception.");
+  Object.defineProperty(arrObj, "0", {
+    configurable: true
+  });
+  $ERROR("Expected an exception.");
 } catch (e) {
-    verifyEqualTo(arrObj, "0", getFunc());
+  verifyEqualTo(arrObj, "0", getFunc());
 
-    verifyNotEnumerable(arrObj, "0");
+  verifyNotEnumerable(arrObj, "0");
 
-    verifyNotConfigurable(arrObj, "0");
+  verifyNotConfigurable(arrObj, "0");
 
-    if (!(e instanceof TypeError)) {
-        $ERROR("Expected TypeError, got " + e.name);
-    }
+  if (!(e instanceof TypeError)) {
+    $ERROR("Expected TypeError, got " + e.name);
+  }
 
 }

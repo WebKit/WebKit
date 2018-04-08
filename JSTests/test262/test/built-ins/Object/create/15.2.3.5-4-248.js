@@ -9,14 +9,14 @@ description: >
     (8.10.5 step 7.a)
 ---*/
 
-        var numObj = new Number(5);
+var numObj = new Number(5);
 
-        numObj.get = function () {
-            return "VerifyNumberObject";
-        };
+numObj.get = function() {
+  return "VerifyNumberObject";
+};
 
-        var newObj = Object.create({}, {
-            prop: numObj 
-        });
+var newObj = Object.create({}, {
+  prop: numObj
+});
 
 assert.sameValue(newObj.prop, "VerifyNumberObject", 'newObj.prop');

@@ -12,25 +12,25 @@ description: >
 var arr = [];
 
 assert.throws(TypeError, function() {
-            Object.defineProperty(Array.prototype, "0", {
-                get: function () {
-                    return 11;
-                },
-                configurable: true
-            });
+  Object.defineProperty(Array.prototype, "0", {
+    get: function() {
+      return 11;
+    },
+    configurable: true
+  });
 
-            Object.defineProperty(arr, "0", {
-                get: function () {
-                    return 12;
-                },
-                configurable: false
-            });
+  Object.defineProperty(arr, "0", {
+    get: function() {
+      return 12;
+    },
+    configurable: false
+  });
 
-            Object.defineProperties(arr, {
-                "0": {
-                    configurable: true
-                }
-            });
+  Object.defineProperties(arr, {
+    "0": {
+      configurable: true
+    }
+  });
 });
 assert.sameValue(arr[0], 12, 'arr[0]');
 assert.sameValue(Array.prototype[0], 11, 'Array.prototype[0]');

@@ -15,10 +15,8 @@ exponent[2] = -1;
 exponent[3] = -0.000000000000001;
 var exponentnum = 4;
 
-for (var i = 0; i < exponentnum; i++)
-{
-	if (Math.pow(base,exponent[i]) !== +Infinity)
-	{
-		$ERROR("#1: Math.pow(" + base + ", " + exponent[i] + ") !== +Infinity");
-	}
+for (var i = 0; i < exponentnum; i++) {
+  if (Math.pow(base, exponent[i]) !== +Infinity) {
+    $ERROR("#1: Math.pow(" + base + ", " + exponent[i] + ") !== +Infinity");
+  }
 }

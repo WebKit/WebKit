@@ -11,23 +11,24 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var arg = (function () {
-    return arguments;
+var arg = (function() {
+  return arguments;
 }(1, 2, 3));
 
 function getFun() {
-    return "getFunctionString";
+  return "getFunctionString";
 }
+
 function setFun(value) {
-    arg.testGetFunction = value;
+  arg.testGetFunction = value;
 }
 Object.defineProperties(arg, {
-    "genericProperty": {
-        get: getFun,
-        set: setFun,
-        enumerable: true,
-        configurable: true
-    }
+  "genericProperty": {
+    get: getFun,
+    set: setFun,
+    enumerable: true,
+    configurable: true
+  }
 });
 
 verifyEqualTo(arg, "genericProperty", getFun());

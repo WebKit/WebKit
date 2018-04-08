@@ -9,21 +9,21 @@ description: Use typeof, isNaN, isFinite
 
 // CHECK#1
 if (typeof(Infinity) !== "number") {
-	$ERROR('#1: typeof(Infinity) === "number". Actual: ' + (typeof(Infinity))); 
+  $ERROR('#1: typeof(Infinity) === "number". Actual: ' + (typeof(Infinity)));
 }
 
 // CHECK#2
 if (isFinite(Infinity) !== false) {
-	$ERROR('#2: Infinity === Not-a-Finite. Actual: ' + (Infinity)); 
+  $ERROR('#2: Infinity === Not-a-Finite. Actual: ' + (Infinity));
 }
 
 // CHECK#3
 if (isNaN(Infinity) !== false) {
-	$ERROR('#3: Infinity === Not-a-Number. Actual: ' + (Infinity)); 
+  $ERROR('#3: Infinity === Not-a-Number. Actual: ' + (Infinity));
 }
 
 
 // CHECK#4
 if (Infinity !== Number.POSITIVE_INFINITY) {
-	$ERROR('#4: Infinity === Number.POSITIVE_INFINITY. Actual: ' + (Infinity)); 
+  $ERROR('#4: Infinity === Number.POSITIVE_INFINITY. Actual: ' + (Infinity));
 }

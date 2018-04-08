@@ -9,11 +9,11 @@ description: Call Boolean() and check result
 ---*/
 
 //CHECK#1
-if( typeof Boolean() !== "boolean" ) {
-  $ERROR('#1: typeof Boolean() should be "boolean", actual is "'+typeof Boolean()+'"');
+if (typeof Boolean() !== "boolean") {
+  $ERROR('#1: typeof Boolean() should be "boolean", actual is "' + typeof Boolean() + '"');
 }
 
 //CHECK#2
-if( Boolean() !== false ) {
+if (Boolean() !== false) {
   $ERROR('#2: Boolean() should be false');
 }

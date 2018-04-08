@@ -16,7 +16,9 @@ info: |
 ---*/
 
 var getUTCMonth = Date.prototype.getUTCMonth;
-var args = (function() { return arguments; }());
+var args = (function() {
+  return arguments;
+}());
 
 assert.sameValue(typeof getUTCMonth, 'function');
 

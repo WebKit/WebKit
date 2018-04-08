@@ -8,10 +8,10 @@ description: >
     valueOf method
 ---*/
 
-        var obj = {
-            valueOf: function () {
-                return "abc";
-            }
-        };
+var obj = {
+  valueOf: function() {
+    return "abc";
+  }
+};
 
 assert.sameValue(String.prototype.trim.call(obj), "[object Object]", 'String.prototype.trim.call(obj)');

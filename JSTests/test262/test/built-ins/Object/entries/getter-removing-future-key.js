@@ -8,12 +8,12 @@ author: Jordan Harband
 ---*/
 
 var bDeletesC = {
-    a: 'A',
-    get b() {
-        delete this.c;
-        return 'B';
-    },
-    c: 'C'
+  a: 'A',
+  get b() {
+    delete this.c;
+    return 'B';
+  },
+  c: 'C'
 };
 
 var result = Object.entries(bDeletesC);

@@ -8,8 +8,8 @@ description: >
     built-ins (Global.encodeURIComponent)
 ---*/
 
-  var global = this;
-  var desc = Object.getOwnPropertyDescriptor(global,  "encodeURIComponent");
+var global = this;
+var desc = Object.getOwnPropertyDescriptor(global, "encodeURIComponent");
 
 assert.sameValue(desc.value, global.encodeURIComponent, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

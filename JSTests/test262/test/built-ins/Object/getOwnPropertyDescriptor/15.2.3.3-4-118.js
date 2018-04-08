@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.getTimezoneOffset)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "getTimezoneOffset");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "getTimezoneOffset");
 
 assert.sameValue(desc.value, Date.prototype.getTimezoneOffset, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

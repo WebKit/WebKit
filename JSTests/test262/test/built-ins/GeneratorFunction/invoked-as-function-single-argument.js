@@ -9,7 +9,7 @@ description: >
 features: [generators]
 ---*/
 
-var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;
+var GeneratorFunction = Object.getPrototypeOf(function*() {}).constructor;
 
 var g = GeneratorFunction('yield 1;');
 var iter = g();

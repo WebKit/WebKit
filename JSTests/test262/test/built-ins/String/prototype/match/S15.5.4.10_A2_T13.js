@@ -9,7 +9,7 @@ description: >
     expression object have property lastIndex = 0
 ---*/
 
-var __matches=["02134"];
+var __matches = ["02134"];
 
 var __re = /([\d]{5})([-\ ]?[\d]{4})?$/g;
 __re.lastIndex = 0;
@@ -18,16 +18,16 @@ var __string = "Boston, MA 02134";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__string.match(__re).length!== __matches.length) {
-  $ERROR('#1: __string.match(__re).length=== __matches.length. Actual: '+__string.match(__re).length);
+if (__string.match(__re).length !== __matches.length) {
+  $ERROR('#1: __string.match(__re).length=== __matches.length. Actual: ' + __string.match(__re).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
-if (__string.match(__re)[0]!==__matches[0]) {
-  $ERROR('#3: __string.match(__re)[0]===__matches[0]. Actual: '+__string.match(__re)[0]);
+if (__string.match(__re)[0] !== __matches[0]) {
+  $ERROR('#3: __string.match(__re)[0]===__matches[0]. Actual: ' + __string.match(__re)[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

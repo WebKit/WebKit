@@ -10,15 +10,15 @@ description: >
     is absent in accessor descriptor 'desc'  (15.4.5.1 step 4.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperties(arr, {
-            "0": {
-                set: function () { },
-                enumerable: true,
-                configurable: true
-            }
-        });
+Object.defineProperties(arr, {
+  "0": {
+    set: function() {},
+    enumerable: true,
+    configurable: true
+  }
+});
 
 assert(arr.hasOwnProperty("0"), 'arr.hasOwnProperty("0") !== true');
-assert.sameValue(typeof (arr[0]), "undefined", 'typeof (arr[0])');
+assert.sameValue(typeof(arr[0]), "undefined", 'typeof (arr[0])');

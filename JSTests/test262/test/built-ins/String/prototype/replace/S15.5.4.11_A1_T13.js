@@ -11,18 +11,29 @@ description: >
     function, that throw exception
 ---*/
 
-var __obj = {toString:function(){return {};}, valueOf:function(){return 1;}};
-var __obj2 = {toString:function(){throw "inreplaceValue";}};
+var __obj = {
+  toString: function() {
+    return {};
+  },
+  valueOf: function() {
+    return 1;
+  }
+};
+var __obj2 = {
+  toString: function() {
+    throw "inreplaceValue";
+  }
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 try {
-    var x = "ABB\u0041BABAB\u0031BBAA".replace(__obj, __obj2);
-    $ERROR('#1: var x = "ABB\\u0041BABAB\\u0031BBAA".replace(__obj,__obj2) lead to throwing exception');
+  var x = "ABB\u0041BABAB\u0031BBAA".replace(__obj, __obj2);
+  $ERROR('#1: var x = "ABB\\u0041BABAB\\u0031BBAA".replace(__obj,__obj2) lead to throwing exception');
 } catch (e) {
-    if (e!=="inreplaceValue") {
-        $ERROR('#1.1: Exception === "inreplaceValue". Actual: '+e);
-    }
+  if (e !== "inreplaceValue") {
+    $ERROR('#1.1: Exception === "inreplaceValue". Actual: ' + e);
+  }
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -22,22 +22,22 @@ var arrayLike = {
   "9007199254740989": "9007199254740989",
   "9007199254740990": "9007199254740990",
   "9007199254740991": "9007199254740991",
-  length: 2**53 - 1
+  length: 2 ** 53 - 1
 };
 
 var value = Array.prototype.pop.call(arrayLike);
 
 assert.sameValue(value, "9007199254740990",
-                 "arrayLike['9007199254740990'] is returned from pop()");
+  "arrayLike['9007199254740990'] is returned from pop()");
 
-assert.sameValue(arrayLike.length, 2**53 - 2,
-                 "New arrayLike.length is 2**53 - 2");
+assert.sameValue(arrayLike.length, 2 ** 53 - 2,
+  "New arrayLike.length is 2**53 - 2");
 
 assert.sameValue(arrayLike["9007199254740989"], "9007199254740989",
-                 "arrayLike['9007199254740989'] is unchanged");
+  "arrayLike['9007199254740989'] is unchanged");
 
 assert.sameValue("9007199254740990" in arrayLike, false,
-                 "arrayLike['9007199254740990'] is removed");
+  "arrayLike['9007199254740990'] is removed");
 
 assert.sameValue(arrayLike["9007199254740991"], "9007199254740991",
-                 "arrayLike['9007199254740991'] is unchanged");
+  "arrayLike['9007199254740991'] is unchanged");

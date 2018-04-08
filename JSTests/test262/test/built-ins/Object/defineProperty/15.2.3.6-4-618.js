@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Array.prototype, "filter");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "filter");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Array.prototype.filter;
+var temp = Array.prototype.filter;
 
-            Array.prototype.filter = "2010";
+Array.prototype.filter = "2010";
 
-            var isWritable = (Array.prototype.filter === "2010");
+var isWritable = (Array.prototype.filter === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Array.prototype) {
-                if (prop === "filter") {
-                    isEnumerable = true;
-                }
-            }
+for (var prop in Array.prototype) {
+  if (prop === "filter") {
+    isEnumerable = true;
+  }
+}
 
-            delete Array.prototype.filter;
+delete Array.prototype.filter;
 
-            var isConfigurable = !Array.prototype.hasOwnProperty("filter");
+var isConfigurable = !Array.prototype.hasOwnProperty("filter");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

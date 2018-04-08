@@ -9,7 +9,9 @@ es5id: 15.2.2.1_A5_T4
 description: Argument value is numeric expression
 ---*/
 
-var n_obj = new Object( 2*([].length + {q:1}["q"]));
+var n_obj = new Object(2 * ([].length + {
+  q: 1
+}["q"]));
 
 //CHECK#2
 if (n_obj.constructor !== Number) {
@@ -22,11 +24,11 @@ if (typeof n_obj !== 'object') {
 }
 
 //CHECK#4
-if ( n_obj != 2) {
+if (n_obj != 2) {
   $ERROR('#4: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#5
-if ( n_obj === 2) {
+if (n_obj === 2) {
   $ERROR('#5: When the Object constructor is called with Number argument return ToObject(number)');
 }

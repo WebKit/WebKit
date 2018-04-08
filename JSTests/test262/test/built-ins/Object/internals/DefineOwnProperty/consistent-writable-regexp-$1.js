@@ -16,7 +16,10 @@ info: |
   one implementation as of January 2017.)
 ---*/
 
-if (Reflect.defineProperty(RegExp, '$1', { writable: false, configurable: false })) {
-    var desc = Reflect.getOwnPropertyDescriptor(RegExp, '$1');
-    assert.sameValue(desc.writable, false);
+if (Reflect.defineProperty(RegExp, '$1', {
+    writable: false,
+    configurable: false
+  })) {
+  var desc = Reflect.getOwnPropertyDescriptor(RegExp, '$1');
+  assert.sameValue(desc.writable, false);
 }

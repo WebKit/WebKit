@@ -23,7 +23,9 @@ info: |
 
 var value = {};
 var rejectCallCount = 0;
-var thenable = new Promise(function(resolve) { resolve(); });
+var thenable = new Promise(function(resolve) {
+  resolve();
+});
 var resolvedValue;
 
 thenable.then = function(resolve) {
@@ -31,10 +33,10 @@ thenable.then = function(resolve) {
 };
 
 Promise.resolve(thenable).then(function(val) {
-    resolvedValue = val;
-  }, function() {
-    rejectCallCount += 1;
-  });
+  resolvedValue = val;
+}, function() {
+  rejectCallCount += 1;
+});
 
 assert.sameValue(resolvedValue, value);
 assert.sameValue(rejectCallCount, 0);

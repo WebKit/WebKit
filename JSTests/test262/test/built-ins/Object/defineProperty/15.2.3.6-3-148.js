@@ -9,12 +9,12 @@ description: >
     step 5.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var errObj = new Error();
+var errObj = new Error();
 
-        errObj.value = "Error";
+errObj.value = "Error";
 
-        Object.defineProperty(obj, "property", errObj);
+Object.defineProperty(obj, "property", errObj);
 
 assert.sameValue(obj.property, "Error", 'obj.property');

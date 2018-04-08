@@ -8,7 +8,7 @@ description: >
     string and 'msg' is empty string
 ---*/
 
-        var errObj = new Error();
-        errObj.name = "ErrorName";
+var errObj = new Error();
+errObj.name = "ErrorName";
 
 assert.sameValue(errObj.toString(), "ErrorName", 'errObj.toString()');

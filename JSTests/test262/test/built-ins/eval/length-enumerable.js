@@ -16,7 +16,7 @@ if (eval.propertyIsEnumerable('length') !== false) {
 
 //CHECK#2
 var result = true;
-for (p in eval){
+for (p in eval) {
   if (p === "length") {
     result = false;
   }

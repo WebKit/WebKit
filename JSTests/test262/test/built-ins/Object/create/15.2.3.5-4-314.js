@@ -8,8 +8,8 @@ description: >
     empty object (15.2.3.7 step 7)
 ---*/
 
-        var newObj = Object.create({}, {
-            foo: {}
-        });
+var newObj = Object.create({}, {
+  foo: {}
+});
 
 assert(newObj.hasOwnProperty("foo"), 'newObj.hasOwnProperty("foo") !== true');

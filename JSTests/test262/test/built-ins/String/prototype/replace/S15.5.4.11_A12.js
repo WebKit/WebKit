@@ -17,7 +17,7 @@ var global = this;
   }
   if (this !== undefined) {
     $ERROR('#2: replaceValue should be called with this===undefined. ' +
-          'Actual: ' + this);
+      'Actual: ' + this);
   }
   return 'y';
 });

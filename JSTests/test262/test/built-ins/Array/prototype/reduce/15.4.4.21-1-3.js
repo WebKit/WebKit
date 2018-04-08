@@ -7,11 +7,11 @@ es5id: 15.4.4.21-1-3
 description: Array.prototype.reduce applied to boolean primitive
 ---*/
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            return  obj instanceof Boolean;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  return obj instanceof Boolean;
+}
 
-            Boolean.prototype[0] = true;
-            Boolean.prototype.length = 1;
+Boolean.prototype[0] = true;
+Boolean.prototype.length = 1;
 
 assert(Array.prototype.reduce.call(false, callbackfn, 1), 'Array.prototype.reduce.call(false, callbackfn, 1) !== true');

@@ -17,7 +17,7 @@ info: |
 features: [generators]
 ---*/
 
-var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;
+var GeneratorFunction = Object.getPrototypeOf(function*() {}).constructor;
 
 // YieldExpression is permitted in function body.
 GeneratorFunction('x = yield');

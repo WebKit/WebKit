@@ -22,7 +22,7 @@ try {
   $ERROR('#2: Object prototype object has not prototype');
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.1: delete Object.prototype.toString; Object.prototype.toString() throw a TypeError. Actual: ' + (e));  
+    $ERROR('#1.1: delete Object.prototype.toString; Object.prototype.toString() throw a TypeError. Actual: ' + (e));
   }
 }
 //

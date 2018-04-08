@@ -9,9 +9,9 @@ description: >
     data property on an Array
 ---*/
 
-            Array.prototype[0] = true;
-            Array.prototype[1] = false;
-            Array.prototype[2] = "true";
+Array.prototype[0] = true;
+Array.prototype[1] = false;
+Array.prototype[2] = "true";
 
 assert.sameValue([, , , ].indexOf(true), 0, '[, , , ].indexOf(true)');
 assert.sameValue([, , , ].indexOf(false), 1, '[, , , ].indexOf(false)');

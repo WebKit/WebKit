@@ -8,13 +8,13 @@ description: >
     [[Prototype]] internal property is correct (String instance)
 ---*/
 
-            Object.defineProperty(String.prototype, "prop", {
-                value: 1001,
-                writable: true,
-                enumerable: true,
-                configurable: true
-            });
-            var strObj = new String();
+Object.defineProperty(String.prototype, "prop", {
+  value: 1001,
+  writable: true,
+  enumerable: true,
+  configurable: true
+});
+var strObj = new String();
 
 assert.sameValue(strObj.hasOwnProperty("prop"), false, 'strObj.hasOwnProperty("prop")');
 assert.sameValue(strObj.prop, 1001, 'strObj.prop');

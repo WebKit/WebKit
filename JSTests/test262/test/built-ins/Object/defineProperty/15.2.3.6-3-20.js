@@ -8,18 +8,18 @@ description: >
     present (8.10.5 step 3)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var accessed = false;
-        Object.defineProperty(obj, "property", {
-            enumerable: false
-        });
+var accessed = false;
+Object.defineProperty(obj, "property", {
+  enumerable: false
+});
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');

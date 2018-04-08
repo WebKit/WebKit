@@ -8,7 +8,7 @@ description: >
     built-ins (Function.prototype.toString)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Function.prototype, "toString");
+var desc = Object.getOwnPropertyDescriptor(Function.prototype, "toString");
 
 assert.sameValue(desc.value, Function.prototype.toString, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

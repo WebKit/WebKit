@@ -11,15 +11,15 @@ description: >
 ---*/
 
 var __obj = {
-    valueOf:function(){},
-    toString:void 0
+  valueOf: function() {},
+  toString: void 0
 };
 
 //since ToInteger(undefined) yelds 0
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (new String(__obj).slice(/*(function(){})()*/undefined,__obj) !== "") {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).slice(//*(function(){})()*//undefined,__obj) === "". Actual: '+new String(__obj).slice(/*(function(){})()*/undefined,__obj) );
+if (new String(__obj).slice( /*(function(){})()*/ undefined, __obj) !== "") {
+  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).slice(//*(function(){})()*//undefined,__obj) === "". Actual: ' + new String(__obj).slice( /*(function(){})()*/ undefined, __obj));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -43,7 +43,7 @@ if (obj.join() !== "") {
 if (obj.length !== -0) {
   $ERROR('#8: var obj = {}; obj.length = -0; obj.join = Array.prototype.join; obj.join(); obj.length === 0. Actual: ' + (obj.length));
 } else {
-  if (1/obj.length !== Number.NEGATIVE_INFINITY) {
+  if (1 / obj.length !== Number.NEGATIVE_INFINITY) {
     $ERROR('#8: var obj = {}; obj.length = -0; obj.join = Array.prototype.join; obj.join(); obj.length === -0. Actual: ' + (obj.length));
   }
 }

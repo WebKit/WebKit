@@ -8,7 +8,7 @@ es5id: 15.9.5.19_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 
-if (delete Date.prototype.getUTCHours  === false) {
+if (delete Date.prototype.getUTCHours === false) {
   $ERROR('#1: The Date.prototype.getUTCHours property has not the attributes DontDelete');
 }
 

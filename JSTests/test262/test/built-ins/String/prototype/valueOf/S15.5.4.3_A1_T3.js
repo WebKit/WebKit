@@ -12,7 +12,7 @@ var __string__obj = new String("metal");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
 if (__string__obj.valueOf() !== "metal") {
-  $ERROR('#1: __string__obj = new String("metal"); __string__obj.valueOf() === "metal". Actual: __string__obj.valueOf() ==='+__string__obj.valueOf() ); 
+  $ERROR('#1: __string__obj = new String("metal"); __string__obj.valueOf() === "metal". Actual: __string__obj.valueOf() ===' + __string__obj.valueOf());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

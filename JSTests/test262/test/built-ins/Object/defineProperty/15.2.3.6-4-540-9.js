@@ -9,27 +9,27 @@ description: >
     step 5.b)
 ---*/
 
-        var obj = [];
+var obj = [];
 
-        obj.verifySetFunc = "data";
-        var getFunc = function () {
-            return obj.verifySetFunc;
-        };
+obj.verifySetFunc = "data";
+var getFunc = function() {
+  return obj.verifySetFunc;
+};
 
-        var setFunc = function (value) {
-            obj.verifySetFunc = value;
-        };
+var setFunc = function(value) {
+  obj.verifySetFunc = value;
+};
 
-        Object.defineProperty(obj, "prop", {
-            get: getFunc,
-            set: setFunc,
-            enumerable: true,
-            configurable: false
-        });
+Object.defineProperty(obj, "prop", {
+  get: getFunc,
+  set: setFunc,
+  enumerable: true,
+  configurable: false
+});
 
-        obj.prop = "overrideData";
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+obj.prop = "overrideData";
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');
 assert.sameValue(desc.set, setFunc, 'desc.set');

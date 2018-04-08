@@ -8,17 +8,17 @@ description: >
     accessor property (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var attributes = {};
-        Object.defineProperty(attributes, "get", {
-            get: function () {
-                return function () {
-                    return "ownAccessorProperty";
-                };
-            }
-        });
+var attributes = {};
+Object.defineProperty(attributes, "get", {
+  get: function() {
+    return function() {
+      return "ownAccessorProperty";
+    };
+  }
+});
 
-        Object.defineProperty(obj, "property", attributes);
+Object.defineProperty(obj, "property", attributes);
 
 assert.sameValue(obj.property, "ownAccessorProperty", 'obj.property');

@@ -9,19 +9,19 @@ description: >
     step 8.a)
 ---*/
 
-        var dateObj = new Date();
-        var data = "data";
-        dateObj.set = function (value) {
-            data = value;
-        };
+var dateObj = new Date();
+var data = "data";
+dateObj.set = function(value) {
+  data = value;
+};
 
-        var newObj = Object.create({}, {
-            prop: dateObj
-        });
+var newObj = Object.create({}, {
+  prop: dateObj
+});
 
-        var hasProperty = newObj.hasOwnProperty("prop");
+var hasProperty = newObj.hasOwnProperty("prop");
 
-        newObj.prop = "overrideData";
+newObj.prop = "overrideData";
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(data, "overrideData", 'data');

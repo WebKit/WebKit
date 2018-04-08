@@ -12,9 +12,9 @@ includes: [proxyTrapsHelper.js]
 var key = "a";
 var ownKeys = [key];
 var badProxyHandlers = allowProxyTraps({
-  getOwnPropertyDescriptor: function () {},
-  ownKeys: function () {
-	return ownKeys;
+  getOwnPropertyDescriptor: function() {},
+  ownKeys: function() {
+    return ownKeys;
   }
 });
 var proxy = new Proxy({}, badProxyHandlers);

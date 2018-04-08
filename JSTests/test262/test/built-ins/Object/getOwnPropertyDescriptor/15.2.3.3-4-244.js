@@ -8,17 +8,17 @@ description: >
     returned object is data property with correct 'writable' attribute
 ---*/
 
-        var obj = {};
-        var fun = function () {
-            return "ownSetProperty";
-        };
-        Object.defineProperty(obj, "property", {
-            set: fun,
-            configurable: true
-        });
+var obj = {};
+var fun = function() {
+  return "ownSetProperty";
+};
+Object.defineProperty(obj, "property", {
+  set: fun,
+  configurable: true
+});
 
-        var desc = Object.getOwnPropertyDescriptor(obj, "property");
+var desc = Object.getOwnPropertyDescriptor(obj, "property");
 
-            desc.set = "overwriteSetProperty";
+desc.set = "overwriteSetProperty";
 
 assert.sameValue(desc.set, "overwriteSetProperty", 'desc.set');

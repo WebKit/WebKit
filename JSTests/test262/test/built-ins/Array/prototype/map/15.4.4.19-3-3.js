@@ -7,12 +7,15 @@ es5id: 15.4.4.19-3-3
 description: Array.prototype.map - value of 'length' is a number (value is 0)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+  return val > 10;
+}
 
-        var obj = { 0: 11, length: 0 };
+var obj = {
+  0: 11,
+  length: 0
+};
 
-        var newArr = Array.prototype.map.call(obj, callbackfn);
+var newArr = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 0, 'newArr.length');

@@ -14,13 +14,13 @@ includes: [propertyHelper.js]
 var arr = [];
 
 Object.defineProperty(arr, "0", {
-    value: 101
+  value: 101
 });
 
 Object.defineProperties(arr, {
-    "0": {
-        value: 101
-    }
+  "0": {
+    value: 101
+  }
 });
 verifyEqualTo(arr, "0", 101);
 

@@ -28,4 +28,3 @@ assert.sameValue(
 verifyNotEnumerable(Object.assign, 'name');
 verifyNotWritable(Object.assign, 'name');
 verifyConfigurable(Object.assign, 'name');
-

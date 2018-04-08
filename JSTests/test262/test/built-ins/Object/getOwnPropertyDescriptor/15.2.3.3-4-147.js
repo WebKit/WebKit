@@ -8,7 +8,7 @@ description: >
     built-ins (Date.prototype.setUTCDate)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setUTCDate");
+var desc = Object.getOwnPropertyDescriptor(Date.prototype, "setUTCDate");
 
 assert.sameValue(desc.value, Date.prototype.setUTCDate, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

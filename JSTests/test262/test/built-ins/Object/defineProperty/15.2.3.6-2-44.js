@@ -8,15 +8,15 @@ description: >
     valueOf method
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var ownProp = {
-            valueOf: function () {
-                return "abc";
-            },
-            toString: undefined
-        };
+var ownProp = {
+  valueOf: function() {
+    return "abc";
+  },
+  toString: undefined
+};
 
-        Object.defineProperty(obj, ownProp, {});
+Object.defineProperty(obj, ownProp, {});
 
 assert(obj.hasOwnProperty("abc"), 'obj.hasOwnProperty("abc") !== true');

@@ -8,8 +8,10 @@ description: >
     converts to a string (value is 123.1234567)
 ---*/
 
-        var obj = { "123.1234567": 1 };
+var obj = {
+  "123.1234567": 1
+};
 
-        var desc = Object.getOwnPropertyDescriptor(obj, 123.1234567);
+var desc = Object.getOwnPropertyDescriptor(obj, 123.1234567);
 
 assert.sameValue(desc.value, 1, 'desc.value');

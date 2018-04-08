@@ -11,7 +11,7 @@ verifyNotConfigurable(Object, "prototype");
 
 //CHECK#1
 try {
-  if((delete Object.prototype) !== false){
+  if ((delete Object.prototype) !== false) {
     $ERROR('#1: Object.prototype has the attribute DontDelete');
   }
 } catch (e) {

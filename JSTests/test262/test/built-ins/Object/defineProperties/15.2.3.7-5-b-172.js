@@ -8,14 +8,14 @@ description: >
     'descObj' is positive number (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperties(obj, {
-            property: {
-                writable: 123
-            }
-        });
+Object.defineProperties(obj, {
+  property: {
+    writable: 123
+  }
+});
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
 assert.sameValue(obj.property, "isWritable", 'obj.property');

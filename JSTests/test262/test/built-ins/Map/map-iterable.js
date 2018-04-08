@@ -17,8 +17,8 @@ info: |
 ---*/
 
 var m = new Map([
-  [ "attr", 1 ],
-  [ "foo", 2 ]
+  ["attr", 1],
+  ["foo", 2]
 ]);
 
 assert.sameValue(m.size, 2, 'The value of `m.size` is `2`');

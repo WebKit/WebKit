@@ -11,7 +11,7 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.toLocaleTimeString;
-if(x === 1)
+if (x === 1)
   Date.prototype.toLocaleTimeString = 2;
 else
   Date.prototype.toLocaleTimeString = 1;

@@ -8,7 +8,7 @@ description: >
     accessors on built-ins (RegExp.prototype.multiline)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "multiline");
+var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "multiline");
 
 assert.sameValue(desc.hasOwnProperty('writable'), false, 'desc.hasOwnProperty("writable")');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

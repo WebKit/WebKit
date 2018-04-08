@@ -10,9 +10,9 @@ includes: [propertyHelper.js]
 ---*/
 
 var newObj = Object.create({}, {
-    prop: {
-        configurable: +0
-    }
+  prop: {
+    configurable: +0
+  }
 });
 
 

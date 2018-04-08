@@ -8,13 +8,13 @@ description: >
     built-in constructor
 ---*/
 
-        var oldArray = Array;
-        Array = function () {
-            throw new Error("invoke customer defined Array!");
-        };
+var oldArray = Array;
+Array = function() {
+  throw new Error("invoke customer defined Array!");
+};
 
-        var obj = {};
+var obj = {};
 
-            var result = Object.getOwnPropertyNames(obj);
+var result = Object.getOwnPropertyNames(obj);
 
 assert.sameValue(Object.prototype.toString.call(result), "[object Array]", 'Object.prototype.toString.call(result)');

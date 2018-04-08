@@ -26,4 +26,4 @@ str = new String(' \b ');
 assert.sameValue(str.length, 3, 'character escape (U+008, "backspace")');
 
 str = new String('\ud834\udf06');
-assert.sameValue(str.length, 2,  'Unicode escape (surrogate pair)');
+assert.sameValue(str.length, 2, 'Unicode escape (surrogate pair)');

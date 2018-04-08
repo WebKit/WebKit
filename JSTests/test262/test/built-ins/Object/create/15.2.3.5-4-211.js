@@ -10,9 +10,9 @@ includes: [propertyHelper.js]
 ---*/
 
 var newObj = Object.create({}, {
-    prop: {
-        writable: NaN
-    }
+  prop: {
+    writable: NaN
+  }
 });
 
 assert(newObj.hasOwnProperty("prop"));

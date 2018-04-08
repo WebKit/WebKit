@@ -8,7 +8,7 @@ description: Checking if creating "new (Function("this.p1=1").apply)" fails
 ---*/
 
 try {
-  var obj = new (Function("this.p1=1").apply);
+  var obj = new(Function("this.p1=1").apply);
   $ERROR('#1: Function.prototype.apply can\'t be used as [[Construct]] caller');
 } catch (e) {
   if (!(e instanceof TypeError)) {

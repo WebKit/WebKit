@@ -8,7 +8,7 @@ es5id: 15.9.5.16_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 
-if (delete Date.prototype.getDay  === false) {
+if (delete Date.prototype.getDay === false) {
   $ERROR('#1: The Date.prototype.getDay property has not the attributes DontDelete');
 }
 

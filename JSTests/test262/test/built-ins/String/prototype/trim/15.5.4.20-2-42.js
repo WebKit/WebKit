@@ -9,20 +9,20 @@ description: >
     primitive value.
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
-        var obj = {
-            toString: function () {
-                toStringAccessed = true;
-                return {};
-            },
-            valueOf: function () {
-                valueOfAccessed = true;
-                return {};
-            }
-        };
+var toStringAccessed = false;
+var valueOfAccessed = false;
+var obj = {
+  toString: function() {
+    toStringAccessed = true;
+    return {};
+  },
+  valueOf: function() {
+    valueOfAccessed = true;
+    return {};
+  }
+};
 assert.throws(TypeError, function() {
-            String.prototype.trim.call(obj);
+  String.prototype.trim.call(obj);
 });
 assert(valueOfAccessed, 'valueOfAccessed !== true');
 assert(toStringAccessed, 'toStringAccessed !== true');

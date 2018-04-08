@@ -10,4 +10,4 @@ description: >
 flags: [onlyStrict]
 ---*/
 
-     Function('arguments', 'return;');
+Function('arguments', 'return;');

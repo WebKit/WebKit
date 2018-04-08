@@ -9,12 +9,12 @@ description: >
     property that overrides an inherited data property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return (idx === 0) && (val === 12);
-        }
+function callbackfn(val, idx, obj) {
+  return (idx === 0) && (val === 12);
+}
 
-            Array.prototype[0] = 11;
-            var newArr = [12].filter(callbackfn);
+Array.prototype[0] = 11;
+var newArr = [12].filter(callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 12, 'newArr[0]');

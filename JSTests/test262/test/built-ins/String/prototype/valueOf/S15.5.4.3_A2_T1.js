@@ -14,7 +14,7 @@ var __valueOf = String.prototype.valueOf;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __valueOf !== "function") {
-  $ERROR('#1: __valueOf = String.prototype.valueOf; typeof __valueOf === "function". Actual: typeof __valueOf ==='+typeof __valueOf ); 
+  $ERROR('#1: __valueOf = String.prototype.valueOf; typeof __valueOf === "function". Actual: typeof __valueOf ===' + typeof __valueOf);
 }
 
 //
@@ -27,7 +27,7 @@ try {
   $ERROR('#2: "__valueOf = String.prototype.valueOf; var x = __valueOf()" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#2.1: Exception is instance of TypeError. Actual: exception is '+e);
+    $ERROR('#2.1: Exception is instance of TypeError. Actual: exception is ' + e);
   }
 }
 //

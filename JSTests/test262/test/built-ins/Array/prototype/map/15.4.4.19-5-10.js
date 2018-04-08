@@ -7,12 +7,12 @@ es5id: 15.4.4.19-5-10
 description: Array.prototype.map - Array object can be used as thisArg
 ---*/
 
-        var objArray = new Array(2);
+var objArray = new Array(2);
 
-        function callbackfn(val, idx, obj) {
-            return this === objArray;
-        }
+function callbackfn(val, idx, obj) {
+  return this === objArray;
+}
 
-        var testResult = [11].map(callbackfn, objArray);
+var testResult = [11].map(callbackfn, objArray);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

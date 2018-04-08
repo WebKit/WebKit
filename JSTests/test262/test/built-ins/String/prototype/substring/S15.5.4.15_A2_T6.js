@@ -11,8 +11,8 @@ var __string = new String("this is a string object");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__string.substring(-0.01,0) !== "") {
-  $ERROR('#1: __string = new String("this is a string object"); __string.substring(-0.01,0) === "". Actual: '+__string.substring(-0.01,0) );
+if (__string.substring(-0.01, 0) !== "") {
+  $ERROR('#1: __string = new String("this is a string object"); __string.substring(-0.01,0) === "". Actual: ' + __string.substring(-0.01, 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

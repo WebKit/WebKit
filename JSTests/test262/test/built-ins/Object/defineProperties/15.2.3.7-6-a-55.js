@@ -12,13 +12,15 @@ includes: [propertyHelper.js]
 
 var obj = {};
 
-var desc = { writable: false };
+var desc = {
+  writable: false
+};
 Object.defineProperty(obj, "foo", desc);
 
 Object.defineProperties(obj, {
-    foo: {
-        writable: false
-    }
+  foo: {
+    writable: false
+  }
 });
 verifyEqualTo(obj, "foo", undefined);
 

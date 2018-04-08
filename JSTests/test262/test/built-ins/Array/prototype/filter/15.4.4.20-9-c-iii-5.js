@@ -9,13 +9,16 @@ description: >
     (value is true)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return true;
-        }
+function callbackfn(val, idx, obj) {
+  return true;
+}
 
-        var obj = { 0: 11, length: 1 };
+var obj = {
+  0: 11,
+  length: 1
+};
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn);
+var newArr = Array.prototype.filter.call(obj, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

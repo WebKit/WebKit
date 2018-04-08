@@ -12,20 +12,26 @@ description: >
     non-configurable accessor properties(8.12.9 step 10.a.ii.1)
 ---*/
 
-  var o = {};
+var o = {};
 
-  // create an accessor property; all other attributes default to false.
-  // dummy getter
-  var getter = function () { return 1;}
-  var d1 = { get: getter };
-  Object.defineProperty(o, "foo", d1);
+// create an accessor property; all other attributes default to false.
+// dummy getter
+var getter = function() {
+  return 1;
+}
+var d1 = {
+  get: getter
+};
+Object.defineProperty(o, "foo", d1);
 
-  // now, trying to set the setter should succeed even though [[Configurable]]
-  // on the original property will be false.
-  var desc = { set: undefined };
-  Object.defineProperty(o, "foo", desc);
+// now, trying to set the setter should succeed even though [[Configurable]]
+// on the original property will be false.
+var desc = {
+  set: undefined
+};
+Object.defineProperty(o, "foo", desc);
 
-  var d2 = Object.getOwnPropertyDescriptor(o, "foo");
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
 
 assert.sameValue(d2.get, getter, 'd2.get');
 assert.sameValue(d2.set, undefined, 'd2.set');

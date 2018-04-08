@@ -9,10 +9,12 @@ description: >
     [[Value]] field of 'desc' to undefined (15.4.5.1 step 3.c)
 ---*/
 
-        var arr = [];
+var arr = [];
 assert.throws(RangeError, function() {
-            Object.defineProperties(arr, {
-                length: { value: undefined }
-            });
+  Object.defineProperties(arr, {
+    length: {
+      value: undefined
+    }
+  });
 });
 assert.sameValue(arr.length, 0, 'arr.length');

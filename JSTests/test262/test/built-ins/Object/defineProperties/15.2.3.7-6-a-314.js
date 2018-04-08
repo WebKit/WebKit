@@ -10,19 +10,19 @@ description: >
     [[DefineOwnProperty]] step 5.a.i)
 ---*/
 
-        var arg = (function () {
-            return arguments;
-        }(1, 2, 3));
-        var accessed = false;
+var arg = (function() {
+  return arguments;
+}(1, 2, 3));
+var accessed = false;
 
-        Object.defineProperties(arg, {
-            "0": {
-                get: function () {
-                    accessed = true;
-                    return 12;
-                }
-            }
-        });
+Object.defineProperties(arg, {
+  "0": {
+    get: function() {
+      accessed = true;
+      return 12;
+    }
+  }
+});
 
 assert.sameValue(arg[0], 12, 'arg[0]');
 assert(accessed, 'accessed !== true');

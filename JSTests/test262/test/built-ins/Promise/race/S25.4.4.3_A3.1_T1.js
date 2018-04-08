@@ -11,8 +11,7 @@ author: Sam Mikes
 description: Promise.race throws if 'this' does not conform to Promise constructor
 ---*/
 
-function ZeroArgConstructor() {
-}
+function ZeroArgConstructor() {}
 
 assert.throws(TypeError, function() {
   Promise.race.call(ZeroArgConstructor, [3]);

@@ -10,7 +10,7 @@ es5id: 15.12-0-2
 description: JSON must not support the [[Construct]] method
 ---*/
 
-  var o = JSON;
+var o = JSON;
 assert.throws(TypeError, function() {
-    var j = new JSON();
+  var j = new JSON();
 });

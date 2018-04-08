@@ -12,17 +12,23 @@ description: >
     [[Configurable]] from false to true
 ---*/
 
-  var o = {};
+var o = {};
 
-  // create a data valued property; all other attributes default to false.
-  var d1 = { value: 101, configurable: false };
-  Object.defineProperty(o, "foo", d1);
+// create a data valued property; all other attributes default to false.
+var d1 = {
+  value: 101,
+  configurable: false
+};
+Object.defineProperty(o, "foo", d1);
 
-  var desc = { value: 101, configurable: true };
+var desc = {
+  value: 101,
+  configurable: true
+};
 assert.throws(TypeError, function() {
-    Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
-      // the property should remain unchanged.
-      var d2 = Object.getOwnPropertyDescriptor(o, "foo");
+// the property should remain unchanged.
+var d2 = Object.getOwnPropertyDescriptor(o, "foo");
 assert.sameValue(d2.value, 101, 'd2.value');
 assert.sameValue(d2.configurable, false, 'd2.configurable');

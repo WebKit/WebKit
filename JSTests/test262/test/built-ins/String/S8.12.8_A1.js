@@ -12,13 +12,17 @@ description: Try to overload toString method
 
 try
 {
-	var __obj = {toString: function() {return new Object();}}  
-	String(__obj);
-	$ERROR('#1.1: var __obj = {toString: function() {return new Object();}}; String(__obj) throw TypeError. Actual: ' + (String(__obj)));
+  var __obj = {
+    toString: function() {
+      return new Object();
+    }
+  }
+  String(__obj);
+  $ERROR('#1.1: var __obj = {toString: function() {return new Object();}}; String(__obj) throw TypeError. Actual: ' + (String(__obj)));
 }
-catch(e)
+catch (e)
 {
-	if ((e instanceof TypeError) !== true) {
-	  $ERROR('#1.2: var __obj = {toString: function() {return new Object();}}; String(__obj) throw TypeError. Actual: ' + (e));
-	}  
+  if ((e instanceof TypeError) !== true) {
+    $ERROR('#1.2: var __obj = {toString: function() {return new Object();}}; String(__obj) throw TypeError. Actual: ' + (e));
+  }
 }

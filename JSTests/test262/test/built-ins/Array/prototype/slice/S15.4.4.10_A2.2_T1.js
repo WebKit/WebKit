@@ -8,8 +8,8 @@ es5id: 15.4.4.10_A2.2_T1
 description: end is not integer
 ---*/
 
-var x = [0,1,2,3,4];
-var arr = x.slice(2,4.5);
+var x = [0, 1, 2, 3, 4];
+var arr = x.slice(2, 4.5);
 
 //CHECK#1
 arr.getClass = Object.prototype.toString;

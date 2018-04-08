@@ -9,13 +9,20 @@ description: >
     function for this object
 ---*/
 
-var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}
+var __obj = {
+  toString: function() {
+    return {};
+  },
+  valueOf: function() {
+    return 1;
+  }
+}
 __obj.toUpperCase = String.prototype.toUpperCase;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__obj.toUpperCase() !=="1") {
-  $ERROR('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toUpperCase = String.prototype.toUpperCase; __obj.toUpperCase() ==="1". Actual: '+__obj.toUpperCase() );
+if (__obj.toUpperCase() !== "1") {
+  $ERROR('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toUpperCase = String.prototype.toUpperCase; __obj.toUpperCase() ==="1". Actual: ' + __obj.toUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +30,7 @@ if (__obj.toUpperCase() !=="1") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__obj.toUpperCase().length !== 1) {
-  $ERROR('#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toUpperCase = String.prototype.toUpperCase; __obj.toUpperCase().length === 1. Actual: '+__obj.toUpperCase().length );
+  $ERROR('#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toUpperCase = String.prototype.toUpperCase; __obj.toUpperCase().length === 1. Actual: ' + __obj.toUpperCase().length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

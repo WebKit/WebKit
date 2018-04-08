@@ -10,13 +10,13 @@ flags: [onlyStrict]
 ---*/
 
 function f() {
-    gNonStrict();
+  gNonStrict();
 }
 
 assert.throws(TypeError, function() {
-    f();
+  f();
 });
 
 function gNonStrict() {
-    return gNonStrict.caller;
+  return gNonStrict.caller;
 }

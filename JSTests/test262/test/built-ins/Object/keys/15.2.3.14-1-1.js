@@ -8,4 +8,4 @@ description: >
     Object
 ---*/
 
-    Object.keys(0);
+Object.keys(0);

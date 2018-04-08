@@ -9,14 +9,14 @@ description: >
     property not to be visited
 ---*/
 
-        var arr = [0, 1, 2, "last"];
+var arr = [0, 1, 2, "last"];
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                arr.length = 3;
-                return 0;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "0", {
+  get: function() {
+    arr.length = 3;
+    return 0;
+  },
+  configurable: true
+});
 
 assert.sameValue(arr.indexOf("last"), -1, 'arr.indexOf("last")');

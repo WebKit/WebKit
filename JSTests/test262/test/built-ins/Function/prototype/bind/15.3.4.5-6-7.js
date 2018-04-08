@@ -8,15 +8,15 @@ description: >
     overrides an inherited data property
 ---*/
 
-        var foo = function () { };
+var foo = function() {};
 
-        var obj = foo.bind({});
+var obj = foo.bind({});
 
-            Function.prototype.property = 3;
-            Object.defineProperty(obj, "property", {
-                get: function () {
-                    return 12;
-                }
-            });
+Function.prototype.property = 3;
+Object.defineProperty(obj, "property", {
+  get: function() {
+    return 12;
+  }
+});
 
 assert.sameValue(obj.property, 12, 'obj.property');

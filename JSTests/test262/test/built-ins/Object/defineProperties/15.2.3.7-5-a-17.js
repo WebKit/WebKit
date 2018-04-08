@@ -9,21 +9,21 @@ description: >
     property
 ---*/
 
-        var obj = {};
-        var arg;
+var obj = {};
+var arg;
 
-        (function fun() {
-            arg = arguments;
-        }());
+(function fun() {
+  arg = arguments;
+}());
 
-        Object.defineProperty(arg, "prop", {
-            value: {
-                value: 17
-            },
-            enumerable: true
-        });
+Object.defineProperty(arg, "prop", {
+  value: {
+    value: 17
+  },
+  enumerable: true
+});
 
-        Object.defineProperties(obj, arg);
+Object.defineProperties(obj, arg);
 
 assert(obj.hasOwnProperty("prop"), 'obj.hasOwnProperty("prop") !== true');
 assert.sameValue(obj.prop, 17, 'obj.prop');

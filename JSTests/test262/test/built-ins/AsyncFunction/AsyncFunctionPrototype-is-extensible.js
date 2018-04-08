@@ -8,7 +8,6 @@ description: >
   %AsyncFunctionPrototype% has a [[Extensible]] of true
 ---*/
 
-var AsyncFunction = async function foo() { }.constructor;
+var AsyncFunction = async function foo() {}.constructor;
 AsyncFunction.prototype.x = 1;
 assert.sameValue(AsyncFunction.prototype.x, 1);
-

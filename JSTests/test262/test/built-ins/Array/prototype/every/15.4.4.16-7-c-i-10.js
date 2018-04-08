@@ -9,21 +9,21 @@ description: >
     property on an Array
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 2) {
-                return val !== 12;
-            } else {
-                return true;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 2) {
+    return val !== 12;
+  } else {
+    return true;
+  }
+}
 
-        var arr = [];
+var arr = [];
 
-        Object.defineProperty(arr, "2", {
-            get: function () {
-                return 12;
-            },
-            configurable: true
-        });
+Object.defineProperty(arr, "2", {
+  get: function() {
+    return 12;
+  },
+  configurable: true
+});
 
 assert.sameValue(arr.every(callbackfn), false, 'arr.every(callbackfn)');

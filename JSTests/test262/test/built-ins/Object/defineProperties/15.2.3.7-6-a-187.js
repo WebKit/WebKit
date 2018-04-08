@@ -8,18 +8,18 @@ description: >
     named property, 'P' is inherited data property  (15.4.5.1 step 4.c)
 ---*/
 
-            Object.defineProperty(Array.prototype, "0", {
-                value: 11,
-                configurable: true
-            });
+Object.defineProperty(Array.prototype, "0", {
+  value: 11,
+  configurable: true
+});
 
-            var arr = [];
+var arr = [];
 
-            Object.defineProperties(arr, {
-                "0": {
-                    configurable: false
-                }
-            });
+Object.defineProperties(arr, {
+  "0": {
+    configurable: false
+  }
+});
 
 assert(arr.hasOwnProperty("0"), 'arr.hasOwnProperty("0") !== true');
 assert.sameValue(typeof arr[0], "undefined", 'typeof arr[0]');

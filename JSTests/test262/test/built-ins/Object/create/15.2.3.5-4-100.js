@@ -10,9 +10,9 @@ includes: [propertyHelper.js]
 ---*/
 
 var newObj = Object.create({}, {
-    prop: {
-        value: "ownDataProperty"
-    }
+  prop: {
+    value: "ownDataProperty"
+  }
 });
 
 assert(newObj.hasOwnProperty("prop"), "expected newObj to have 'prop'");

@@ -8,14 +8,14 @@ description: >
     is thrown when 'O' is not extensible (8.12.9 step 3)
 ---*/
 
-        var obj = {};
-        Object.preventExtensions(obj);
+var obj = {};
+Object.preventExtensions(obj);
 assert.throws(TypeError, function() {
-            Object.defineProperties(obj, {
-                prop: {
-                    value: 12,
-                    configurable: true
-                }
-            });
+  Object.defineProperties(obj, {
+    prop: {
+      value: 12,
+      configurable: true
+    }
+  });
 });
 assert.sameValue(obj.hasOwnProperty("prop"), false, 'obj.hasOwnProperty("prop")');

@@ -9,7 +9,7 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-var obj = function () { };
+var obj = function() {};
 
 assert(Object.isExtensible(obj));
 Object.preventExtensions(obj);

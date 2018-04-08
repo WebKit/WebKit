@@ -8,7 +8,7 @@ description: >
     built-ins (Math.sqrt)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Math, "sqrt");
+var desc = Object.getOwnPropertyDescriptor(Math, "sqrt");
 
 assert.sameValue(desc.value, Math.sqrt, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

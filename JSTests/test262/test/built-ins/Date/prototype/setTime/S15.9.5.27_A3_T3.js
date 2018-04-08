@@ -14,8 +14,8 @@ if (Date.prototype.setTime.propertyIsEnumerable('length')) {
   $ERROR('#1: The Date.prototype.setTime.length property has the attribute DontEnum');
 }
 
-for(var x in Date.prototype.setTime) {
-  if(x === "length") {
+for (var x in Date.prototype.setTime) {
+  if (x === "length") {
     $ERROR('#2: The Date.prototype.setTime.length has the attribute DontEnum');
   }
 }

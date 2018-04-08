@@ -15,8 +15,8 @@ var __str__obj = new String("shocking blue");
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__str__obj["__custom__prop"]!==undefined) {
-  $ERROR('#1: var __str__obj = new String("shocking blue"); __str__obj["__custom__prop"]===undefined. Actual: __str__obj["__custom__prop"]==='+__str__obj["__custom__prop"]); 
+if (__str__obj["__custom__prop"] !== undefined) {
+  $ERROR('#1: var __str__obj = new String("shocking blue"); __str__obj["__custom__prop"]===undefined. Actual: __str__obj["__custom__prop"]===' + __str__obj["__custom__prop"]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@ String.prototype.__custom__prop = "bor";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (__str__obj["__custom__prop"]!=="bor") {
-  $ERROR('#2: var __str__obj = new String("shocking blue"); String.prototype.__custom__prop = "bor"; __str__obj["__custom__prop"]==="bor". Actual: __str__obj["__custom__prop"]==='+__str__obj["__custom__prop"]); 
+if (__str__obj["__custom__prop"] !== "bor") {
+  $ERROR('#2: var __str__obj = new String("shocking blue"); String.prototype.__custom__prop = "bor"; __str__obj["__custom__prop"]==="bor". Actual: __str__obj["__custom__prop"]===' + __str__obj["__custom__prop"]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

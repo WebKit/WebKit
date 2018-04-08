@@ -8,15 +8,15 @@ description: >
     accessor property  (8.10.5 step 5.a)
 ---*/
 
-        var obj = { };
+var obj = {};
 
-        var attr = {};
-        Object.defineProperty(attr, "value", {
-            get: function () {
-                return "ownAccessorProperty";
-            }
-        });
+var attr = {};
+Object.defineProperty(attr, "value", {
+  get: function() {
+    return "ownAccessorProperty";
+  }
+});
 
-        Object.defineProperty(obj, "property", attr);
+Object.defineProperty(obj, "property", attr);
 
 assert.sameValue(obj.property, "ownAccessorProperty", 'obj.property');

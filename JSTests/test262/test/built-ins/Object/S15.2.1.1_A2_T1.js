@@ -11,7 +11,7 @@ description: Calling Object function with boolean argument value
 
 var bool = true;
 
-if(typeof bool !== 'boolean'){
+if (typeof bool !== 'boolean') {
   $ERROR('#1: bool should be boolean primitive');
 }
 

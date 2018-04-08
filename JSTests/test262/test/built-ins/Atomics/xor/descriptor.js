@@ -6,6 +6,7 @@
 esid: sec-atomics.xor
 description: Testing descriptor property of Atomics.xor
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "xor");

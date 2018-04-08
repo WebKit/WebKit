@@ -19,12 +19,12 @@ if (new Date(1899, 11, 31, 23, 59) === undefined) {
 }
 
 var x13 = new Date(1899, 11, 31, 23, 59);
-if(typeof x13 !== "object"){
+if (typeof x13 !== "object") {
   $ERROR("#1.3: typeof new Date(1899, 11, 31, 23, 59) should be 'object'");
 }
 
 var x14 = new Date(1899, 11, 31, 23, 59);
-if(x14 === undefined){
+if (x14 === undefined) {
   $ERROR("#1.4: new Date(1899, 11, 31, 23, 59) should not be undefined");
 }
 
@@ -37,12 +37,12 @@ if (new Date(1899, 12, 1, 0, 0) === undefined) {
 }
 
 var x23 = new Date(1899, 12, 1, 0, 0);
-if(typeof x23 !== "object"){
+if (typeof x23 !== "object") {
   $ERROR("#2.3: typeof new Date(1899, 12, 1, 0, 0) should be 'object'");
 }
 
 var x24 = new Date(1899, 12, 1, 0, 0);
-if(x24 === undefined){
+if (x24 === undefined) {
   $ERROR("#2.4: new Date(1899, 12, 1, 0, 0) should not be undefined");
 }
 
@@ -55,12 +55,12 @@ if (new Date(1900, 0, 1, 0, 0) === undefined) {
 }
 
 var x33 = new Date(1900, 0, 1, 0, 0);
-if(typeof x33 !== "object"){
+if (typeof x33 !== "object") {
   $ERROR("#3.3: typeof new Date(1900, 0, 1, 0, 0) should be 'object'");
 }
 
 var x34 = new Date(1900, 0, 1, 0, 0);
-if(x34 === undefined){
+if (x34 === undefined) {
   $ERROR("#3.4: new Date(1900, 0, 1, 0, 0) should not be undefined");
 }
 
@@ -73,12 +73,12 @@ if (new Date(1969, 11, 31, 23, 59) === undefined) {
 }
 
 var x43 = new Date(1969, 11, 31, 23, 59);
-if(typeof x43 !== "object"){
+if (typeof x43 !== "object") {
   $ERROR("#4.3: typeof new Date(1969, 11, 31, 23, 59) should be 'object'");
 }
 
 var x44 = new Date(1969, 11, 31, 23, 59);
-if(x44 === undefined){
+if (x44 === undefined) {
   $ERROR("#4.4: new Date(1969, 11, 31, 23, 59) should not be undefined");
 }
 
@@ -91,12 +91,12 @@ if (new Date(1969, 12, 1, 0, 0) === undefined) {
 }
 
 var x53 = new Date(1969, 12, 1, 0, 0);
-if(typeof x53 !== "object"){
+if (typeof x53 !== "object") {
   $ERROR("#5.3: typeof new Date(1969, 12, 1, 0, 0) should be 'object'");
 }
 
 var x54 = new Date(1969, 12, 1, 0, 0);
-if(x54 === undefined){
+if (x54 === undefined) {
   $ERROR("#5.4: new Date(1969, 12, 1, 0, 0) should not be undefined");
 }
 
@@ -109,12 +109,12 @@ if (new Date(1970, 0, 1, 0, 0) === undefined) {
 }
 
 var x63 = new Date(1970, 0, 1, 0, 0);
-if(typeof x63 !== "object"){
+if (typeof x63 !== "object") {
   $ERROR("#6.3: typeof new Date(1970, 0, 1, 0, 0) should be 'object'");
 }
 
 var x64 = new Date(1970, 0, 1, 0, 0);
-if(x64 === undefined){
+if (x64 === undefined) {
   $ERROR("#6.4: new Date(1970, 0, 1, 0, 0) should not be undefined");
 }
 
@@ -127,12 +127,12 @@ if (new Date(1999, 11, 31, 23, 59) === undefined) {
 }
 
 var x73 = new Date(1999, 11, 31, 23, 59);
-if(typeof x73 !== "object"){
+if (typeof x73 !== "object") {
   $ERROR("#7.3: typeof new Date(1999, 11, 31, 23, 59) should be 'object'");
 }
 
 var x74 = new Date(1999, 11, 31, 23, 59);
-if(x74 === undefined){
+if (x74 === undefined) {
   $ERROR("#7.4: new Date(1999, 11, 31, 23, 59) should not be undefined");
 }
 
@@ -145,12 +145,12 @@ if (new Date(1999, 12, 1, 0, 0) === undefined) {
 }
 
 var x83 = new Date(1999, 12, 1, 0, 0);
-if(typeof x83 !== "object"){
+if (typeof x83 !== "object") {
   $ERROR("#8.3: typeof new Date(1999, 12, 1, 0, 0) should be 'object'");
 }
 
 var x84 = new Date(1999, 12, 1, 0, 0);
-if(x84 === undefined){
+if (x84 === undefined) {
   $ERROR("#8.4: new Date(1999, 12, 1, 0, 0) should not be undefined");
 }
 
@@ -163,12 +163,12 @@ if (new Date(2000, 0, 1, 0, 0) === undefined) {
 }
 
 var x93 = new Date(2000, 0, 1, 0, 0);
-if(typeof x93 !== "object"){
+if (typeof x93 !== "object") {
   $ERROR("#9.3: typeof new Date(2000, 0, 1, 0, 0) should be 'object'");
 }
 
 var x94 = new Date(2000, 0, 1, 0, 0);
-if(x94 === undefined){
+if (x94 === undefined) {
   $ERROR("#9.4: new Date(2000, 0, 1, 0, 0) should not be undefined");
 }
 
@@ -181,12 +181,12 @@ if (new Date(2099, 11, 31, 23, 59) === undefined) {
 }
 
 var x103 = new Date(2099, 11, 31, 23, 59);
-if(typeof x103 !== "object"){
+if (typeof x103 !== "object") {
   $ERROR("#10.3: typeof new Date(2099, 11, 31, 23, 59) should be 'object'");
 }
 
 var x104 = new Date(2099, 11, 31, 23, 59);
-if(x104 === undefined){
+if (x104 === undefined) {
   $ERROR("#10.4: new Date(2099, 11, 31, 23, 59) should not be undefined");
 }
 
@@ -199,12 +199,12 @@ if (new Date(2099, 12, 1, 0, 0) === undefined) {
 }
 
 var x113 = new Date(2099, 12, 1, 0, 0);
-if(typeof x113 !== "object"){
+if (typeof x113 !== "object") {
   $ERROR("#11.3: typeof new Date(2099, 12, 1, 0, 0) should be 'object'");
 }
 
 var x114 = new Date(2099, 12, 1, 0, 0);
-if(x114 === undefined){
+if (x114 === undefined) {
   $ERROR("#11.4: new Date(2099, 12, 1, 0, 0) should not be undefined");
 }
 
@@ -217,11 +217,11 @@ if (new Date(2100, 0, 1, 0, 0) === undefined) {
 }
 
 var x123 = new Date(2100, 0, 1, 0, 0);
-if(typeof x123 !== "object"){
+if (typeof x123 !== "object") {
   $ERROR("#12.3: typeof new Date(2100, 0, 1, 0, 0) should be 'object'");
 }
 
 var x124 = new Date(2100, 0, 1, 0, 0);
-if(x124 === undefined){
+if (x124 === undefined) {
   $ERROR("#12.4: new Date(2100, 0, 1, 0, 0) should not be undefined");
 }

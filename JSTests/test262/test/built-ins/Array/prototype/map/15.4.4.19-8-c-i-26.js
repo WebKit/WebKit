@@ -10,21 +10,21 @@ description: >
     number of parameters)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === 9;
-            } else if (idx === 1) {
-                return val === 11;
-            } else {
-                return false;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === 9;
+  } else if (idx === 1) {
+    return val === 11;
+  } else {
+    return false;
+  }
+}
 
-        var func = function (a, b) {
-            return Array.prototype.map.call(arguments, callbackfn);
-        };
+var func = function(a, b) {
+  return Array.prototype.map.call(arguments, callbackfn);
+};
 
-        var testResult = func(9, 11);
+var testResult = func(9, 11);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');
 assert.sameValue(testResult[1], true, 'testResult[1]');

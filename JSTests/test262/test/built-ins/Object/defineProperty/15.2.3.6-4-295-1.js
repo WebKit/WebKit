@@ -15,33 +15,33 @@ flags: [noStrict]
 ---*/
 
 
-(function (a, b, c) {
+(function(a, b, c) {
+  Object.defineProperty(arguments, "0", {
+    value: 10,
+    writable: false,
+    enumerable: true,
+    configurable: false
+  });
+  try {
     Object.defineProperty(arguments, "0", {
-        value: 10,
-        writable: false,
-        enumerable: true,
-        configurable: false
+      enumerable: false
     });
-    try {
-        Object.defineProperty(arguments, "0", {
-            enumerable: false
-        });
-        $ERROR("Expected an exception.");
-    } catch (e) {
-        if (!(e instanceof TypeError)) {
-            $ERROR("Expected TypeError, got " + e);
-        }
-
-        verifyEqualTo(arguments, "0", 10);
-
-        verifyNotWritable(arguments, "0");
-
-        verifyEnumerable(arguments, "0");
-
-        verifyNotConfigurable(arguments, "0");
-
-        if (a !== 10) {
-            $ERROR('Expected "a === 10", actually ' + a);
-        }
+    $ERROR("Expected an exception.");
+  } catch (e) {
+    if (!(e instanceof TypeError)) {
+      $ERROR("Expected TypeError, got " + e);
     }
+
+    verifyEqualTo(arguments, "0", 10);
+
+    verifyNotWritable(arguments, "0");
+
+    verifyEnumerable(arguments, "0");
+
+    verifyNotConfigurable(arguments, "0");
+
+    if (a !== 10) {
+      $ERROR('Expected "a === 10", actually ' + a);
+    }
+  }
 }(0, 1, 2));

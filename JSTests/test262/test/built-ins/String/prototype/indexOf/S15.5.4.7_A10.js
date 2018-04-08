@@ -13,19 +13,21 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.indexOf.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.indexOf.hasOwnProperty(\'length\') return true. Actual: '+String.prototype.indexOf.hasOwnProperty('length')); 
+  $ERROR('#1: String.prototype.indexOf.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.indexOf.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 var __obj = String.prototype.indexOf.length;
 
-verifyNotWritable(String.prototype.indexOf, "length", null, function(){return "shifted";});
+verifyNotWritable(String.prototype.indexOf, "length", null, function() {
+  return "shifted";
+});
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.indexOf.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.indexOf.length; String.prototype.indexOf.length = function(){return "shifted";}; String.prototype.indexOf.length === __obj. Actual: '+String.prototype.indexOf.length ); 
+  $ERROR('#2: __obj = String.prototype.indexOf.length; String.prototype.indexOf.length = function(){return "shifted";}; String.prototype.indexOf.length === __obj. Actual: ' + String.prototype.indexOf.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

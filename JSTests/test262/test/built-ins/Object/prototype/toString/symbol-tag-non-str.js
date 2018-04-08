@@ -34,5 +34,9 @@ assert.sameValue(Object.prototype.toString.call(custom), '[object Object]');
 custom[Symbol.toStringTag] = {};
 assert.sameValue(Object.prototype.toString.call(custom), '[object Object]');
 
-custom[Symbol.toStringTag] = { toString: function() { return 'str'; } };
+custom[Symbol.toStringTag] = {
+  toString: function() {
+    return 'str';
+  }
+};
 assert.sameValue(Object.prototype.toString.call(custom), '[object Object]');

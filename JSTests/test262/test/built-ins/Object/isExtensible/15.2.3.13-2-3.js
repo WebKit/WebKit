@@ -8,8 +8,8 @@ description: >
     (Function)
 ---*/
 
-  function foo() {}
- 
-  var e = Object.isExtensible(foo);
+function foo() {}
+
+var e = Object.isExtensible(foo);
 
 assert.sameValue(e, true, 'e');

@@ -17,32 +17,32 @@ Number.prototype.match = String.prototype.match;
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__num.match(__re)[0]!== "02") {
-  $ERROR('#1: __num.match(__re)[0]=== "02". Actual: '+__num.match(__re)[0]);
+if (__num.match(__re)[0] !== "02") {
+  $ERROR('#1: __num.match(__re)[0]=== "02". Actual: ' + __num.match(__re)[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
-if (__num.match(__re).length !==1) {
-  $ERROR('#2: __num.match(__re).length ===1. Actual: '+__num.match(__re).length );
+if (__num.match(__re).length !== 1) {
+  $ERROR('#2: __num.match(__re).length ===1. Actual: ' + __num.match(__re).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
-if (__num.match(__re).index !==1) {
-  $ERROR('#3: __num.match(__re).index ===1. Actual: '+__num.match(__re).index );
+if (__num.match(__re).index !== 1) {
+  $ERROR('#3: __num.match(__re).index ===1. Actual: ' + __num.match(__re).index);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
-if (__num.match(__re).input !==String(__num)) {
-  $ERROR('#4: __num.match(__re).input ===String(__num). Actual: '+__num.match(__re).input );
+if (__num.match(__re).input !== String(__num)) {
+  $ERROR('#4: __num.match(__re).input ===String(__num). Actual: ' + __num.match(__re).input);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

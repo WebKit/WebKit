@@ -22,4 +22,3 @@ verifyWritable(arrObj, "0");
 verifyEnumerable(arrObj, "0");
 
 verifyConfigurable(arrObj, "0");
-

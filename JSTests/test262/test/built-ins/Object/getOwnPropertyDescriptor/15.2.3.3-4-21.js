@@ -8,7 +8,7 @@ description: >
     built-ins (Object.freeze)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Object, "freeze");
+var desc = Object.getOwnPropertyDescriptor(Object, "freeze");
 
 assert.sameValue(desc.value, Object.freeze, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

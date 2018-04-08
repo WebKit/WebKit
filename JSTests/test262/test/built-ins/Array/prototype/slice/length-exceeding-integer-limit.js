@@ -23,25 +23,25 @@ var arrayLike = {
   "9007199254740989": "9007199254740989",
   "9007199254740990": "9007199254740990",
   "9007199254740991": "9007199254740991",
-  length: 2**53 + 2,
+  length: 2 ** 53 + 2,
 };
 
 var result = Array.prototype.slice.call(arrayLike, 9007199254740989);
-assert.compareArray(result, [ "9007199254740989", "9007199254740990" ],
-                    "slice(9007199254740989)");
+assert.compareArray(result, ["9007199254740989", "9007199254740990"],
+  "slice(9007199254740989)");
 
 var result = Array.prototype.slice.call(arrayLike, 9007199254740989, 9007199254740990);
-assert.compareArray(result, [ "9007199254740989" ],
-                    "slice(9007199254740989, 9007199254740990)");
+assert.compareArray(result, ["9007199254740989"],
+  "slice(9007199254740989, 9007199254740990)");
 
 var result = Array.prototype.slice.call(arrayLike, 9007199254740989, 9007199254740996);
-assert.compareArray(result, [ "9007199254740989", "9007199254740990" ],
-                    "slice(9007199254740989, 9007199254740996)");
+assert.compareArray(result, ["9007199254740989", "9007199254740990"],
+  "slice(9007199254740989, 9007199254740996)");
 
 var result = Array.prototype.slice.call(arrayLike, -2);
-assert.compareArray(result, [ "9007199254740989", "9007199254740990" ],
-                    "slice(-2)");
+assert.compareArray(result, ["9007199254740989", "9007199254740990"],
+  "slice(-2)");
 
 var result = Array.prototype.slice.call(arrayLike, -2, -1);
-assert.compareArray(result, [ "9007199254740989" ],
-                    "slice(-2, -1)");
+assert.compareArray(result, ["9007199254740989"],
+  "slice(-2, -1)");

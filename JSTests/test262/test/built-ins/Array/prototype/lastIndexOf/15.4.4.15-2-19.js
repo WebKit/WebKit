@@ -9,11 +9,11 @@ description: >
     implements its own property get method
 ---*/
 
-        var obj = function (a, b) {
-            return a + b;
-        };
-        obj[1] = "b";
-        obj[2] = "c";
+var obj = function(a, b) {
+  return a + b;
+};
+obj[1] = "b";
+obj[2] = "c";
 
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, obj[1]), 1, 'Array.prototype.lastIndexOf.call(obj, obj[1])');
 assert.sameValue(Array.prototype.lastIndexOf.call(obj, obj[2]), -1, 'Array.prototype.lastIndexOf.call(obj, obj[2])');

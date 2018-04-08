@@ -7,6 +7,7 @@ esid: sec-atomics.and
 description: >
   Atomics.and.name is "and".
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 assert.sameValue(Atomics.and.name, "and");

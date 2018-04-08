@@ -11,7 +11,7 @@ description: Function execution context - Other Properties
 
 function test() {
   //CHECK#27
-  if ( Math === null ) {
+  if (Math === null) {
     $ERROR("#27: Math === null");
   }
 }

@@ -7,12 +7,12 @@ description: >
 features: [Symbol]
 ---*/
 assert.sameValue(
-    Object.getPrototypeOf(Symbol('66')).constructor,
-    Symbol,
-    "The value of `Object.getPrototypeOf(Symbol('66')).constructor` is `Symbol`"
+  Object.getPrototypeOf(Symbol('66')).constructor,
+  Symbol,
+  "The value of `Object.getPrototypeOf(Symbol('66')).constructor` is `Symbol`"
 );
 assert.sameValue(
-    Object.getPrototypeOf(Object(Symbol('66'))).constructor,
-    Symbol,
-    "The value of `Object.getPrototypeOf(Object(Symbol('66'))).constructor` is `Symbol`"
+  Object.getPrototypeOf(Object(Symbol('66'))).constructor,
+  Symbol,
+  "The value of `Object.getPrototypeOf(Object(Symbol('66'))).constructor` is `Symbol`"
 );

@@ -23,12 +23,12 @@ flags: [async]
 var value = {};
 
 Promise.resolve(value).then(function(value) {
-    if (value !== value) {
-      $DONE('The promise should be fulfilled with the provided value.');
-      return;
-    }
+  if (value !== value) {
+    $DONE('The promise should be fulfilled with the provided value.');
+    return;
+  }
 
-    $DONE();
-  }, function() {
-    $DONE('The promise should not be rejected.');
-  });
+  $DONE();
+}, function() {
+  $DONE('The promise should not be rejected.');
+});

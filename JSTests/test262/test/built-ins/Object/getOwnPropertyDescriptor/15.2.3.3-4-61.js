@@ -8,7 +8,7 @@ description: >
     built-ins (String.fromCharCode)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(String, "fromCharCode");
+var desc = Object.getOwnPropertyDescriptor(String, "fromCharCode");
 
 assert.sameValue(desc.value, String.fromCharCode, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

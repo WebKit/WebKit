@@ -10,11 +10,11 @@ flags: [noStrict]
 
 var global = this;
 
-  function callbackfn(val, idx, obj)
-  {
-    return this === global;
-  }
+function callbackfn(val, idx, obj)
+{
+  return this === global;
+}
 
-  var arr = [1];
+var arr = [1];
 
 assert.sameValue(arr.every(callbackfn), true, 'arr.every(callbackfn)');

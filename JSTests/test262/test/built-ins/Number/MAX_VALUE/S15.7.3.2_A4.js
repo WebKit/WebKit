@@ -8,8 +8,8 @@ description: Checking if enumerating Number.MAX_VALUE fails
 ---*/
 
 //CHECK#1
-for(var x in Number) {
-  if(x === "MAX_VALUE") {
+for (var x in Number) {
+  if (x === "MAX_VALUE") {
     $ERROR('#1: Number.MAX_VALUE has the attribute DontEnum');
   }
 }

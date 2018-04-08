@@ -8,7 +8,7 @@ description: >
     (false)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Object, 'prototype');
+var desc = Object.getOwnPropertyDescriptor(Object, 'prototype');
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

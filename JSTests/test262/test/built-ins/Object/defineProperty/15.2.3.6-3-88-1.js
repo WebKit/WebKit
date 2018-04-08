@@ -9,18 +9,18 @@ description: >
     (8.10.5 step 4.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            String.prototype.configurable = true;
-            var strObj = new String("abc");
+String.prototype.configurable = true;
+var strObj = new String("abc");
 
-            Object.defineProperty(obj, "property", strObj);
+Object.defineProperty(obj, "property", strObj);
 
-            var beforeDeleted = obj.hasOwnProperty("property");
+var beforeDeleted = obj.hasOwnProperty("property");
 
-            delete obj.property;
+delete obj.property;
 
-            var afterDeleted = obj.hasOwnProperty("property");
+var afterDeleted = obj.hasOwnProperty("property");
 
 assert.sameValue(beforeDeleted, true, 'beforeDeleted');
 assert.sameValue(afterDeleted, false, 'afterDeleted');

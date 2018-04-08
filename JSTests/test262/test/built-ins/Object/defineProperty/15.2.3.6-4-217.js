@@ -12,9 +12,13 @@ includes: [propertyHelper.js]
 
 var arrObj = [];
 
-Object.defineProperty(arrObj, "0", { value: NaN });
+Object.defineProperty(arrObj, "0", {
+  value: NaN
+});
 
-Object.defineProperty(arrObj, "0", { value: NaN });
+Object.defineProperty(arrObj, "0", {
+  value: NaN
+});
 
 assert(arrObj.hasOwnProperty("0"));
 assert(arrObj[0] !== arrObj[0]);

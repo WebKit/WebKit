@@ -9,24 +9,24 @@ description: >
     is inherited accessor property without a get function
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+}
 
-        var proto = {};
-        Object.defineProperty(proto, "length", {
-            set: function () { },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "length", {
+  set: function() {},
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child[0] = 11;
-        child[1] = 12;
+var child = new Con();
+child[0] = 11;
+child[1] = 12;
 
 assert.sameValue(Array.prototype.reduce.call(child, callbackfn, 1), 1, 'Array.prototype.reduce.call(child, callbackfn, 1)');
 assert.sameValue(accessed, false, 'accessed');

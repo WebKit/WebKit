@@ -2,7 +2,7 @@
 // - src/function-forms/dflt-params-arg-val-undefined.case
 // - src/function-forms/default/async-gen-meth.template
 /*---
-description: Use of intializer when argument value is `undefined` (async generator method)
+description: Use of initializer when argument value is `undefined` (async generator method)
 esid: sec-asyncgenerator-definitions-propertydefinitionevaluation
 features: [default-parameters, async-iteration]
 flags: [generated, async]

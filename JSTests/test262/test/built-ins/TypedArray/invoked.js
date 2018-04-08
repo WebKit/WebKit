@@ -1,7 +1,7 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: pending
+esid: sec-%typedarray%
 description: Throw a TypeError exception if directly invoked.
 info: |
   22.2.1.1 %TypedArray% ( )

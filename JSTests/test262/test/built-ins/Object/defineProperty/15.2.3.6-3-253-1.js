@@ -9,15 +9,15 @@ description: >
     object (8.10.5 step 8.a)
 ---*/
 
-        var obj = {};
-        var data = "data";
+var obj = {};
+var data = "data";
 
-            Object.prototype.set = function (value) {
-                data = value;
-            };
+Object.prototype.set = function(value) {
+  data = value;
+};
 
-            Object.defineProperty(obj, "property", Math);
-            obj.property = "overrideData";
+Object.defineProperty(obj, "property", Math);
+obj.property = "overrideData";
 
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');
 assert.sameValue(data, "overrideData", 'data');

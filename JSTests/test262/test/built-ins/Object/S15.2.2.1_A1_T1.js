@@ -32,7 +32,7 @@ if (!(Object.prototype.isPrototypeOf(obj))) {
 }
 
 // CHECK#3
-var to_string_result = '[object '+ 'Object' +']';
+var to_string_result = '[object ' + 'Object' + ']';
 if (obj.toString() !== to_string_result) {
   $ERROR('#3: when new Object() calls the [[Class]] property of the newly constructed object is set to "Object".');
 }

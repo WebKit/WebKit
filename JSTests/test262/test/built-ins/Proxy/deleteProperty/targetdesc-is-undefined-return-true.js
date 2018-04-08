@@ -9,9 +9,9 @@ description: >
 ---*/
 
 var p = new Proxy({}, {
-    deleteProperty: function() {
-        return true;
-    }
+  deleteProperty: function() {
+    return true;
+  }
 });
 
 assert.sameValue(delete p.attr, true);

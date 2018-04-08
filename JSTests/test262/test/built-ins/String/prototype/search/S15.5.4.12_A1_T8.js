@@ -9,13 +9,15 @@ description: >
     toString function
 ---*/
 
-var __obj = {toString:function(){}};
+var __obj = {
+  toString: function() {}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(void 0) evaluates to "undefined" search(void 0) evaluates to search("undefined")
 if (String(__obj).search(void 0) !== 0) {
-  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).search(void 0) === 0. Actual: '+String(__obj).search(void 0) );
+  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).search(void 0) === 0. Actual: ' + String(__obj).search(void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

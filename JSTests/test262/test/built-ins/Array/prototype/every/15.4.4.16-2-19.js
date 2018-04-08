@@ -17,7 +17,7 @@ function callbackfn2(val, idx, obj) {
   return val > 11;
 }
 
-var fun = function (a, b) {
+var fun = function(a, b) {
   return a + b;
 };
 fun[0] = 12;

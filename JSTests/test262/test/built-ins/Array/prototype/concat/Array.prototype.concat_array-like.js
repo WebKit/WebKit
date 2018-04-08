@@ -17,7 +17,12 @@ var obj = {
   "5": "C"
 };
 obj[Symbol.isConcatSpreadable] = true;
-var obj2 = { length: 3, "0": "0", "1": "1", "2": "2" };
+var obj2 = {
+  length: 3,
+  "0": "0",
+  "1": "1",
+  "2": "2"
+};
 var arr = ["X", "Y", "Z"];
 
 var expected = [

@@ -10,31 +10,31 @@ description: >
     return primitive values
 ---*/
 
-        var accessed = false;
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
+var accessed = false;
+var toStringAccessed = false;
+var valueOfAccessed = false;
 
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+}
 
-        var obj = {
-            0: 11,
-            1: 12,
+var obj = {
+  0: 11,
+  1: 12,
 
-            length: {
-                valueOf: function () {
-                    valueOfAccessed = true;
-                    return {};
-                },
-                toString: function () {
-                    toStringAccessed = true;
-                    return {};
-                }
-            }
-        };
+  length: {
+    valueOf: function() {
+      valueOfAccessed = true;
+      return {};
+    },
+    toString: function() {
+      toStringAccessed = true;
+      return {};
+    }
+  }
+};
 assert.throws(TypeError, function() {
-            Array.prototype.reduceRight.call(obj, callbackfn, 1);
+  Array.prototype.reduceRight.call(obj, callbackfn, 1);
 });
 assert(toStringAccessed, 'toStringAccessed !== true');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

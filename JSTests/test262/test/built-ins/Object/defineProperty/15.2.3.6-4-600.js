@@ -8,27 +8,27 @@ description: >
     correct
 ---*/
 
-        var desc = Object.getOwnPropertyDescriptor(Object, "getOwnPropertyNames");
+var desc = Object.getOwnPropertyDescriptor(Object, "getOwnPropertyNames");
 
-        var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
+var propertyAreCorrect = (desc.writable === true && desc.enumerable === false && desc.configurable === true);
 
-        var temp = Object.getOwnPropertyNames;
+var temp = Object.getOwnPropertyNames;
 
-            Object.getOwnPropertyNames = "2010";
+Object.getOwnPropertyNames = "2010";
 
-            var isWritable = (Object.getOwnPropertyNames === "2010");
+var isWritable = (Object.getOwnPropertyNames === "2010");
 
-            var isEnumerable = false;
+var isEnumerable = false;
 
-            for (var prop in Object) {
-                if (prop === "getOwnPropertyNames") {
-                    isEnumerable = true;
-                }
-            }
-        
-            delete Object.getOwnPropertyNames;
+for (var prop in Object) {
+  if (prop === "getOwnPropertyNames") {
+    isEnumerable = true;
+  }
+}
 
-            var isConfigurable = !Object.hasOwnProperty("getOwnPropertyNames");
+delete Object.getOwnPropertyNames;
+
+var isConfigurable = !Object.hasOwnProperty("getOwnPropertyNames");
 
 assert(propertyAreCorrect, 'propertyAreCorrect !== true');
 assert(isWritable, 'isWritable !== true');

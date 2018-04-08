@@ -9,21 +9,23 @@ description: >
     property (8.10.5 step 8.a)
 ---*/
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        var data = "data";
+var data = "data";
 
-        argObj.set = function (value) {
-            data = value;
-        };
+argObj.set = function(value) {
+  data = value;
+};
 
-        var newobj = Object.create({}, {
-            prop: argObj
-        });
+var newobj = Object.create({}, {
+  prop: argObj
+});
 
-        var hasProperty = newobj.hasOwnProperty("prop");
+var hasProperty = newobj.hasOwnProperty("prop");
 
-        newobj.prop = "overrideData";
+newobj.prop = "overrideData";
 
 assert(hasProperty, 'hasProperty !== true');
 assert.sameValue(data, "overrideData", 'data');

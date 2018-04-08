@@ -9,10 +9,12 @@ description: >
     without a get function
 ---*/
 
-        var obj = { 1: true };
-        Object.defineProperty(obj, "length", {
-            set: function () { },
-            configurable: true
-        });
+var obj = {
+  1: true
+};
+Object.defineProperty(obj, "length", {
+  set: function() {},
+  configurable: true
+});
 
 assert.sameValue(Array.prototype.indexOf.call(obj, true), -1, 'Array.prototype.indexOf.call(obj, true)');

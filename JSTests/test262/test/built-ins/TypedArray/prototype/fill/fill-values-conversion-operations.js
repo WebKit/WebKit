@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.fill
-es6id: 22.2.3.8
 description: >
   Fills all the elements with non numeric values values.
 info: |
@@ -45,6 +44,7 @@ info: |
     e. Else,
       ...
 includes: [byteConversionValues.js, testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testTypedArrayConversions(byteConversionValues, function(TA, value, expected, initial) {

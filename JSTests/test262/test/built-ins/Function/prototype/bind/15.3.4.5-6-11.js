@@ -8,13 +8,13 @@ description: >
     without a get function
 ---*/
 
-        var foo = function () { };
+var foo = function() {};
 
-        var obj = foo.bind({});
+var obj = foo.bind({});
 
-            Object.defineProperty(Function.prototype, "property", {
-                set: function () { },
-                configurable: true
-            });
+Object.defineProperty(Function.prototype, "property", {
+  set: function() {},
+  configurable: true
+});
 
-assert.sameValue(typeof (obj.property), "undefined", 'typeof (obj.property)');
+assert.sameValue(typeof(obj.property), "undefined", 'typeof (obj.property)');

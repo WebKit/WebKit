@@ -14,16 +14,18 @@ description: >
 __FACTORY.prototype.substring = String.prototype.substring;
 
 var __instance = new __FACTORY(void 0);
- 
+
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.substring(0, 100) !== "undefined") {
-  $ERROR('#1: __instance.substring(0, 100) === "undefined". Actual: '+__instance.substring(0, 100) );
+  $ERROR('#1: __instance.substring(0, 100) === "undefined". Actual: ' + __instance.substring(0, 100));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
-function __FACTORY( value ) {
-    this.value = value;
-    this.toString = function() { return this.value+''; }
+function __FACTORY(value) {
+  this.value = value;
+  this.toString = function() {
+    return this.value + '';
+  }
 }

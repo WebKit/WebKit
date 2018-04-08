@@ -16,7 +16,7 @@ if (parseFloat.propertyIsEnumerable('length') !== false) {
 
 //CHECK#2
 var result = true;
-for (var p in parseFloat){
+for (var p in parseFloat) {
   if (p === "length") {
     result = false;
   }

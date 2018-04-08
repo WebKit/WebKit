@@ -9,27 +9,27 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
-        var proto = {};
-        var fun = function () {
-            return "inheritedAccessorProperty";
-        };
-        Object.defineProperty(proto, "get", {
-            get: function () {
-                return fun;
-            }
-        });
+var obj = {};
+var proto = {};
+var fun = function() {
+  return "inheritedAccessorProperty";
+};
+Object.defineProperty(proto, "get", {
+  get: function() {
+    return fun;
+  }
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
-        Object.defineProperty(child, "get", {
-            value: function () {
-                return "ownDataProperty";
-            }
-        });
+var child = new ConstructFun();
+Object.defineProperty(child, "get", {
+  value: function() {
+    return "ownDataProperty";
+  }
+});
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
 assert.sameValue(obj.property, "ownDataProperty", 'obj.property');

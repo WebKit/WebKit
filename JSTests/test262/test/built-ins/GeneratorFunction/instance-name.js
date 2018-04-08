@@ -17,7 +17,7 @@ includes: [propertyHelper.js]
 features: [generators]
 ---*/
 
-var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;
+var GeneratorFunction = Object.getPrototypeOf(function*() {}).constructor;
 
 assert.sameValue(GeneratorFunction().name, 'anonymous');
 verifyNotEnumerable(GeneratorFunction(), 'name');

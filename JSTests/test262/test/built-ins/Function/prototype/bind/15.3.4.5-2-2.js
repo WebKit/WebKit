@@ -11,10 +11,10 @@ description: >
     callable (bind attached to object)
 ---*/
 
-  // dummy function 
-  function foo() {}
-  var f = new foo();
-  f.bind = Function.prototype.bind;
+// dummy function 
+function foo() {}
+var f = new foo();
+f.bind = Function.prototype.bind;
 assert.throws(TypeError, function() {
-    f.bind();
+  f.bind();
 });

@@ -8,7 +8,7 @@ description: >
     empty string and 'msg' isn't undefined
 ---*/
 
-        var errObj = new Error("ErrorMessage");
-        errObj.name = "";
+var errObj = new Error("ErrorMessage");
+errObj.name = "";
 
 assert.sameValue(errObj.toString(), "ErrorMessage", 'errObj.toString()');

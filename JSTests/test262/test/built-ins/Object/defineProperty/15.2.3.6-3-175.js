@@ -9,19 +9,21 @@ description: >
     property  (8.10.5 step 6.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var argObj = (function () { return arguments; })();
+var argObj = (function() {
+  return arguments;
+})();
 
-        argObj.writable = true;
+argObj.writable = true;
 
-        Object.defineProperty(obj, "property", argObj);
+Object.defineProperty(obj, "property", argObj);
 
-        var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-        obj.property = "isWritable";
+obj.property = "isWritable";
 
-        var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

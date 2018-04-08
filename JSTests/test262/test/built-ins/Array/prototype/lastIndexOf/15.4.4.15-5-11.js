@@ -9,7 +9,7 @@ description: >
     (value is negative number)
 ---*/
 
-        var targetObj = {};
+var targetObj = {};
 
 assert.sameValue([0, targetObj, true].lastIndexOf(targetObj, -2.5), 1, '[0, targetObj, true].lastIndexOf(targetObj, -2.5)');
 assert.sameValue([0, true, targetObj].lastIndexOf(targetObj, -2.5), -1, '[0, true, targetObj].lastIndexOf(targetObj, -2.5)');

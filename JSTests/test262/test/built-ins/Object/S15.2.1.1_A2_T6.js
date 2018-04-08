@@ -12,7 +12,7 @@ description: Calling Object function with Infinity argument value
 var num = Infinity;
 
 // CHECK#1
-if(typeof num  !== 'number'){
+if (typeof num !== 'number') {
   $ERROR('#1: num = Infinity should be a Number primitive');
 }
 
@@ -24,11 +24,11 @@ if (obj.constructor !== Number) {
 }
 
 //CHECK#3
-if (typeof obj!=="object") {
+if (typeof obj !== "object") {
   $ERROR('#3: Object(Infinity) returns ToObject(Infinity)');
 }
 
 //CHECK#4
-if ((obj != Infinity)||(obj === Infinity)) {
+if ((obj != Infinity) || (obj === Infinity)) {
   $ERROR('#4: Object(Infinity) returns ToObject(Infinity)');
 }

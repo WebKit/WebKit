@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 verifyNotWritable(Number, "NEGATIVE_INFINITY", null, 1);
 if (isFinite(Number.NEGATIVE_INFINITY)) {
   $ERROR('#1: Number.NEGATIVE_INFINITY = 1; Number.NEGATIVE_INFINITY === -Infinity');
-} else { 
+} else {
   if (Number.NEGATIVE_INFINITY >= 0) {
     $ERROR('#1: Number.NEGATIVE_INFINITY = 1; Number.NEGATIVE_INFINITY === -Infinity');
   }

@@ -16,25 +16,26 @@ includes: [propertyHelper.js]
 var arg;
 
 (function fun() {
-    arg = arguments;
+  arg = arguments;
 }(0, 1, 2));
 
 delete arg[0];
 
 function get_func() {
-    return 10;
+  return 10;
 }
+
 function set_func(value) {
-    arg.setVerifyHelpProp = value;
+  arg.setVerifyHelpProp = value;
 }
 
 Object.defineProperties(arg, {
-    "0": {
-        get: get_func,
-        set: set_func,
-        enumerable: false,
-        configurable: false
-    }
+  "0": {
+    get: get_func,
+    set: set_func,
+    enumerable: false,
+    configurable: false
+  }
 });
 
 verifyEqualTo(arg, "0", get_func());

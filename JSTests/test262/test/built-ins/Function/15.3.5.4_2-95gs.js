@@ -13,10 +13,10 @@ flags: [noStrict]
 var gNonStrict = Function("return gNonStrict.caller || gNonStrict.caller.throwTypeError;");
 
 function f() {
-    "use strict";
-    gNonStrict();
+  "use strict";
+  gNonStrict();
 }
 
 assert.throws(TypeError, function() {
-    f();
+  f();
 });

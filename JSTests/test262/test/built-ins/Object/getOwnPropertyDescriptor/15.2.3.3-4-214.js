@@ -8,7 +8,7 @@ description: >
     accessors on built-ins (RegExp.prototype.ignoreCase)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "ignoreCase");
+var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "ignoreCase");
 
 assert.sameValue(desc.hasOwnProperty('writable'), false, 'desc.hasOwnProperty("writable")');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

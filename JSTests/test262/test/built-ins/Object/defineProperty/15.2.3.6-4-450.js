@@ -9,17 +9,17 @@ description: >
     [[Configurable]] is false) is undefined
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "prop", {
-            get: undefined,
-            set: undefined,
-            enumerable: false,
-            configurable: false
-        });
+Object.defineProperty(obj, "prop", {
+  get: undefined,
+  set: undefined,
+  enumerable: false,
+  configurable: false
+});
 
-        var propertyDefineCorrect = obj.hasOwnProperty("prop");
-        var desc = Object.getOwnPropertyDescriptor(obj, "prop");
+var propertyDefineCorrect = obj.hasOwnProperty("prop");
+var desc = Object.getOwnPropertyDescriptor(obj, "prop");
 
 assert(propertyDefineCorrect, 'propertyDefineCorrect !== true');
 assert.sameValue(typeof desc.set, "undefined", 'typeof desc.set');

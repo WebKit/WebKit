@@ -13,15 +13,15 @@ includes: [propertyHelper.js]
 var obj = {};
 
 var verifySetFunc = "data";
-var setFunc = function (value) {
-    verifySetFunc = value;
+var setFunc = function(value) {
+  verifySetFunc = value;
 };
 
 Object.defineProperty(obj, "prop", {
-    get: undefined,
-    set: setFunc,
-    enumerable: false,
-    configurable: false
+  get: undefined,
+  set: setFunc,
+  enumerable: false,
+  configurable: false
 });
 
 assert(obj.hasOwnProperty("prop"));

@@ -9,11 +9,11 @@ description: >
     with value false (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [0, 1];
+var arrObj = [0, 1];
 
-        Object.defineProperty(arrObj, "length", {
-            value: false
-        });
+Object.defineProperty(arrObj, "length", {
+  value: false
+});
 
 assert.sameValue(arrObj.length, 0, 'arrObj.length');
 assert.sameValue(arrObj.hasOwnProperty("0"), false, 'arrObj.hasOwnProperty("0")');

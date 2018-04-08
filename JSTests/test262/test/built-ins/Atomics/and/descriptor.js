@@ -6,6 +6,7 @@
 esid: sec-atomics.and
 description: Testing descriptor property of Atomics.and
 includes: [propertyHelper.js]
+features: [Atomics]
 ---*/
 
 verifyWritable(Atomics, "and");

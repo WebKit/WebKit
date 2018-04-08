@@ -9,34 +9,35 @@ description: >
     has an own valueOf method
 ---*/
 
-        var testResult1 = true;
-        var testResult2 = false;
-        function callbackfn(prevVal, curVal, idx, obj) {
-            if (idx > 1) {
-                testResult1 = false;
-            }
+var testResult1 = true;
+var testResult2 = false;
 
-            if (idx === 1) {
-                testResult2 = true;
-            }
-            return false;
-        }
+function callbackfn(prevVal, curVal, idx, obj) {
+  if (idx > 1) {
+    testResult1 = false;
+  }
 
-        var valueOfAccessed = false;
+  if (idx === 1) {
+    testResult2 = true;
+  }
+  return false;
+}
 
-        var obj = {
-            0: 12,
-            1: 11,
-            2: 9,
-            length: {
-                valueOf: function () {
-                    valueOfAccessed = true;
-                    return 2;
-                }
-            }
-        };
+var valueOfAccessed = false;
 
-        Array.prototype.reduceRight.call(obj, callbackfn, 1);
+var obj = {
+  0: 12,
+  1: 11,
+  2: 9,
+  length: {
+    valueOf: function() {
+      valueOfAccessed = true;
+      return 2;
+    }
+  }
+};
+
+Array.prototype.reduceRight.call(obj, callbackfn, 1);
 
 assert(testResult1, 'testResult1 !== true');
 assert(testResult2, 'testResult2 !== true');

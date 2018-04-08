@@ -14,30 +14,30 @@ includes: [propertyHelper.js]
 ---*/
 
 var arrObj = [];
+
 function getFunc() {
-    return 12;
+  return 12;
 }
 
 Object.defineProperty(arrObj, "1", {
-    get: getFunc
+  get: getFunc
 });
 
 try {
-    Object.defineProperty(arrObj, "1", {
-        get: undefined
-    });
-    $ERROR("Expected TypeError");
+  Object.defineProperty(arrObj, "1", {
+    get: undefined
+  });
+  $ERROR("Expected TypeError");
 } catch (e) {
-    assert(e instanceof TypeError);
-    assert(arrObj.hasOwnProperty("1"));
+  assert(e instanceof TypeError);
+  assert(arrObj.hasOwnProperty("1"));
 
-    var desc = Object.getOwnPropertyDescriptor(arrObj, "1");
+  var desc = Object.getOwnPropertyDescriptor(arrObj, "1");
 
-    assert(arrObj[1] === getFunc());
-    assert(desc.hasOwnProperty("set") && typeof desc.set === "undefined");
+  assert(arrObj[1] === getFunc());
+  assert(desc.hasOwnProperty("set") && typeof desc.set === "undefined");
 
-    verifyNotWritable(arrObj, "1");
+  verifyNotWritable(arrObj, "1");
 
-    verifyNotConfigurable(arrObj, "1");
+  verifyNotConfigurable(arrObj, "1");
 }
-

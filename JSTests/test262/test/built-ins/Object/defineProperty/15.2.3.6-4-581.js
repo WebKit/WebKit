@@ -9,17 +9,17 @@ includes: [propertyHelper.js]
 
 var data = "data";
 
-    Object.defineProperty(Number.prototype, "prop", {
-        get: function () {
-            return data;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    var numObj = new Number();
+Object.defineProperty(Number.prototype, "prop", {
+  get: function() {
+    return data;
+  },
+  enumerable: false,
+  configurable: true
+});
+var numObj = new Number();
 
-    verifyNotWritable(numObj, "prop", "nocheck");
+verifyNotWritable(numObj, "prop", "nocheck");
 
-    assert(!numObj.hasOwnProperty("prop"));
-    assert.sameValue(numObj.prop, "data");
-    assert.sameValue(data, "data");
+assert(!numObj.hasOwnProperty("prop"));
+assert.sameValue(numObj.prop, "data");
+assert.sameValue(data, "data");

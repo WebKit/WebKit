@@ -10,20 +10,22 @@ description: >
     accessor property on an Array-like object
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return typeof val === "undefined";
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return typeof val === "undefined";
+}
 
-        var obj = { length: 2 };
-        Object.defineProperty(obj, "1", {
-            set: function () { },
-            configurable: true
-        });
+var obj = {
+  length: 2
+};
+Object.defineProperty(obj, "1", {
+  set: function() {},
+  configurable: true
+});
 
-            Object.prototype[1] = 10;
+Object.prototype[1] = 10;
 
 assert(Array.prototype.every.call(obj, callbackfn), 'Array.prototype.every.call(obj, callbackfn) !== true');
 assert(accessed, 'accessed !== true');

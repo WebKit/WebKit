@@ -48,7 +48,9 @@ flags: [async]
 var thrown = new Test262Error();
 var P = function(executor) {
   return new Promise(function(_, reject) {
-    executor(function() { throw thrown; }, reject);
+    executor(function() {
+      throw thrown;
+    }, reject);
   });
 };
 

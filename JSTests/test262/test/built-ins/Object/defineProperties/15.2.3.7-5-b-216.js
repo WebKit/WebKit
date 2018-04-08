@@ -9,14 +9,14 @@ description: >
     step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            this.get = function () {
-                return "global";
-            };
+this.get = function() {
+  return "global";
+};
 
-            Object.defineProperties(obj, {
-                property: this
-            });
+Object.defineProperties(obj, {
+  property: this
+});
 
 assert.sameValue(obj.property, "global", 'obj.property');

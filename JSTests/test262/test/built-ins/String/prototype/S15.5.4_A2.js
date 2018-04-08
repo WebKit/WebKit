@@ -9,8 +9,8 @@ description: Checking String.prototype
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (String.prototype !="") {
-  $ERROR('#1: String.prototype =="". Actual: String.prototype =='+String.prototype );
+if (String.prototype != "") {
+  $ERROR('#1: String.prototype =="". Actual: String.prototype ==' + String.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

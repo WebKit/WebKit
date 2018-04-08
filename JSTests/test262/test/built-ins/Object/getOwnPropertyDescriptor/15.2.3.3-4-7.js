@@ -8,8 +8,8 @@ description: >
     built-ins (Global.isNaN)
 ---*/
 
-  var global = this;
-  var desc = Object.getOwnPropertyDescriptor(global,  "isNaN");
+var global = this;
+var desc = Object.getOwnPropertyDescriptor(global, "isNaN");
 
 assert.sameValue(desc.value, global.isNaN, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

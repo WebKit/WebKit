@@ -40,7 +40,9 @@ if (x[0] !== -1) {
 Object.prototype[0] = -1;
 Object.prototype.length = 1;
 Object.prototype.unshift = Array.prototype.unshift;
-x = {0:1};
+x = {
+  0: 1
+};
 
 //CHECK#5
 var unshift = x.unshift(0);

@@ -9,25 +9,25 @@ description: >
     3.a)
 ---*/
 
-        var obj = {};
-        var accessed = false;
-        var proto = {};
+var obj = {};
+var accessed = false;
+var proto = {};
 
-        Object.defineProperty(proto, "enumerable", {
-            set: function () { }
-        });
+Object.defineProperty(proto, "enumerable", {
+  set: function() {}
+});
 
-        var ConstructFun = function () { };
-        ConstructFun.prototype = proto;
+var ConstructFun = function() {};
+ConstructFun.prototype = proto;
 
-        var child = new ConstructFun();
+var child = new ConstructFun();
 
-        Object.defineProperty(obj, "property", child);
+Object.defineProperty(obj, "property", child);
 
-        for (var prop in obj) {
-            if (prop === "property") {
-                accessed = true;
-            }
-        }
+for (var prop in obj) {
+  if (prop === "property") {
+    accessed = true;
+  }
+}
 
 assert.sameValue(accessed, false, 'accessed');

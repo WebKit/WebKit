@@ -7,10 +7,10 @@ es5id: 15.4.4.17-5-16
 description: Array.prototype.some - RegExp object can be used as thisArg
 ---*/
 
-        var objRegExp = new RegExp();
+var objRegExp = new RegExp();
 
-        function callbackfn(val, idx, obj) {
-            return this === objRegExp;
-        }
+function callbackfn(val, idx, obj) {
+  return this === objRegExp;
+}
 
 assert([11].some(callbackfn, objRegExp), '[11].some(callbackfn, objRegExp) !== true');

@@ -6,12 +6,12 @@ es5id: 15.2.3.9-4-1
 description: Object.freeze - 'O' is sealed already
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        obj.foo = 10; // default value of attributes: writable: true, enumerable: true
+obj.foo = 10; // default value of attributes: writable: true, enumerable: true
 
-        Object.seal(obj);
+Object.seal(obj);
 
-        Object.freeze(obj);
+Object.freeze(obj);
 
 assert(Object.isFrozen(obj), 'Object.isFrozen(obj) !== true');

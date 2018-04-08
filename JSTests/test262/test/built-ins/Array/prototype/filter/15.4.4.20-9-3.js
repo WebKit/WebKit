@@ -9,18 +9,18 @@ description: >
     after the call
 ---*/
 
-  function callbackfn(val, idx, obj)
-  {
-    delete srcArr[2];
-    delete srcArr[4];
-    if(val > 0)
-      return true;
-    else
-      return false;
-   }
+function callbackfn(val, idx, obj)
+{
+  delete srcArr[2];
+  delete srcArr[4];
+  if (val > 0)
+    return true;
+  else
+    return false;
+}
 
-  var srcArr = [1,2,3,4,5];
-  var resArr = srcArr.filter(callbackfn);
+var srcArr = [1, 2, 3, 4, 5];
+var resArr = srcArr.filter(callbackfn);
 
 // two elements deleted
 assert.sameValue(resArr.length, 3, 'resArr.length');

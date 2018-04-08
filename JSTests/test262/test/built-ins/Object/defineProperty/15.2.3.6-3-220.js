@@ -9,14 +9,14 @@ description: >
     7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var strObj = new String();
+var strObj = new String();
 
-        strObj.get = function () {
-            return "stringGetProperty";
-        };
+strObj.get = function() {
+  return "stringGetProperty";
+};
 
-        Object.defineProperty(obj, "property", strObj);
+Object.defineProperty(obj, "property", strObj);
 
 assert.sameValue(obj.property, "stringGetProperty", 'obj.property');

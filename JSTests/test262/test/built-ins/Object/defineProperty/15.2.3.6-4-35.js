@@ -9,16 +9,16 @@ description: >
     (8.12.9 step 1)
 ---*/
 
-        var str = new String("abc");
+var str = new String("abc");
 
-        Object.defineProperty(str, "foo", {
-            value: 12,
-            configurable: false
-        });
+Object.defineProperty(str, "foo", {
+  value: 12,
+  configurable: false
+});
 assert.throws(TypeError, function() {
-            Object.defineProperty(str, "foo", {
-                value: 11,
-                configurable: true
-            });
+  Object.defineProperty(str, "foo", {
+    value: 11,
+    configurable: true
+  });
 });
 assert.sameValue(str.foo, 12, 'str.foo');

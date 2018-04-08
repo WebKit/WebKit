@@ -12,12 +12,17 @@ description: >
     'writable' present(8.10.5 step 9.a)
 ---*/
 
-    var o = {};
-    
-    // dummy getter
-    var getter = function () { return 1; }
-    var desc = { get: getter, writable: false };
+var o = {};
+
+// dummy getter
+var getter = function() {
+  return 1;
+}
+var desc = {
+  get: getter,
+  writable: false
+};
 assert.throws(TypeError, function() {
-      Object.defineProperty(o, "foo", desc);
+  Object.defineProperty(o, "foo", desc);
 });
 assert.sameValue(o.hasOwnProperty("foo"), false, 'o.hasOwnProperty("foo")');

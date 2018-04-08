@@ -9,10 +9,10 @@ description: >
     [[Value]] field of 'desc' is +0 (15.4.5.1 step 3.c)
 ---*/
 
-        var arrObj = [0, 1];
+var arrObj = [0, 1];
 
-        Object.defineProperty(arrObj, "length", {
-            value: +0
-        });
+Object.defineProperty(arrObj, "length", {
+  value: +0
+});
 
 assert.sameValue(arrObj.length, 0, 'arrObj.length');

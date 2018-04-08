@@ -8,8 +8,8 @@ description: >
     properties on built-ins (Global.Infinity)
 ---*/
 
-  // in non-strict mode, 'this' is bound to the global object.
-  var desc = Object.getOwnPropertyDescriptor(this,  "Infinity");
+// in non-strict mode, 'this' is bound to the global object.
+var desc = Object.getOwnPropertyDescriptor(this, "Infinity");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

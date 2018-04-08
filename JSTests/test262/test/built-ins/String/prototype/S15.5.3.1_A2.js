@@ -10,7 +10,7 @@ description: Checking if enumerating the String.prototype property fails
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.hasOwnProperty('prototype'))) {
-  $ERROR('#0: String.hasOwnProperty(\'prototype\') return true. Actual: '+String.hasOwnProperty('prototype'));
+  $ERROR('#0: String.hasOwnProperty(\'prototype\') return true. Actual: ' + String.hasOwnProperty('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ if (!(String.hasOwnProperty('prototype'))) {
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#1
 if (String.propertyIsEnumerable('prototype')) {
-  $ERROR('#1: String.propertyIsEnumerable(\'prototype\') return false. Actual: '+String.propertyIsEnumerable('prototype'));
+  $ERROR('#1: String.propertyIsEnumerable(\'prototype\') return false. Actual: ' + String.propertyIsEnumerable('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,14 +27,14 @@ if (String.propertyIsEnumerable('prototype')) {
 
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#2
-var count=0;
+var count = 0;
 
-for (var p in String){
-  if (p==="prototype") count++;
+for (var p in String) {
+  if (p === "prototype") count++;
 }
 
 if (count !== 0) {
-  $ERROR('#2: count=0; for (p in String){ if (p==="prototype") count++;}; count === 0. Actual: count ==='+count ); 
+  $ERROR('#2: count=0; for (p in String){ if (p==="prototype") count++;}; count === 0. Actual: count ===' + count);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

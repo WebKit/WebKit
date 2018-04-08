@@ -9,14 +9,18 @@ description: >
     0)
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+}
 
-        var obj = { 0: 1, 1: 1, length: 0 };
+var obj = {
+  0: 1,
+  1: 1,
+  length: 0
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert.sameValue(accessed, false, 'accessed');

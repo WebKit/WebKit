@@ -9,27 +9,27 @@ description: >
     7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        var getter = function () {
-            return "inheritedDataProperty";
-        };
+var getter = function() {
+  return "inheritedDataProperty";
+};
 
-        var proto = {
-            get: getter
-        };
+var proto = {
+  get: getter
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var descObj = new Con();
+var descObj = new Con();
 
-        descObj.get = function () {
-            return "ownDataProperty";
-        };
+descObj.get = function() {
+  return "ownDataProperty";
+};
 
-        Object.defineProperties(obj, {
-            property: descObj
-        });
+Object.defineProperties(obj, {
+  property: descObj
+});
 
 assert.sameValue(obj.property, "ownDataProperty", 'obj.property');

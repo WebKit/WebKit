@@ -9,13 +9,16 @@ description: >
     (value is false)
 ---*/
 
-        var accessed = false;
-        var obj = { 0: 11, length: 1 };
+var accessed = false;
+var obj = {
+  0: 11,
+  length: 1
+};
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return false;
+}
 
 assert.sameValue(Array.prototype.every.call(obj, callbackfn), false, 'Array.prototype.every.call(obj, callbackfn)');
 assert(accessed, 'accessed !== true');

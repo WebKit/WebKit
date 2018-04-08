@@ -9,22 +9,25 @@ description: >
     property on an Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val !== 11;
-            } else {
-                return true;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val !== 11;
+  } else {
+    return true;
+  }
+}
 
-        var obj = { 10: 10, length: 20 };
+var obj = {
+  10: 10,
+  length: 20
+};
 
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                return 11;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "0", {
+  get: function() {
+    return 11;
+  },
+  configurable: true
+});
 
 
 assert.sameValue(Array.prototype.every.call(obj, callbackfn), false, 'Array.prototype.every.call(obj, callbackfn)');

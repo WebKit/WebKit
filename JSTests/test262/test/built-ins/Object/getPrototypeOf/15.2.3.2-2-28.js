@@ -8,9 +8,9 @@ description: >
     (the Arguments object)
 ---*/
 
-        function fun() {
-            return arguments;
-        }
-        var obj = fun(1, true, 3);
+function fun() {
+  return arguments;
+}
+var obj = fun(1, true, 3);
 
 assert.sameValue(Object.getPrototypeOf(obj), Object.prototype, 'Object.getPrototypeOf(obj)');

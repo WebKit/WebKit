@@ -9,24 +9,26 @@ description: >
     property on an Array-like object
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === kValue;
+  }
+  return false;
+}
 
-        var obj = { length: 2 };
+var obj = {
+  length: 2
+};
 
-        Object.defineProperty(obj, "0", {
-            get: function () {
-                return kValue;
-            },
-            configurable: true
-        });
+Object.defineProperty(obj, "0", {
+  get: function() {
+    return kValue;
+  },
+  configurable: true
+});
 
-        var testResult = Array.prototype.map.call(obj, callbackfn);
+var testResult = Array.prototype.map.call(obj, callbackfn);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

@@ -10,18 +10,18 @@ description: >
     less than number of parameters)
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 0) {
-                return val === 9;
-            } else {
-                return false;
-            }
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 0) {
+    return val === 9;
+  } else {
+    return false;
+  }
+}
 
-        var func = function (a, b) {
-            return Array.prototype.map.call(arguments, callbackfn);
-        };
+var func = function(a, b) {
+  return Array.prototype.map.call(arguments, callbackfn);
+};
 
-        var testResult = func(9);
+var testResult = func(9);
 
 assert.sameValue(testResult[0], true, 'testResult[0]');

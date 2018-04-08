@@ -10,38 +10,38 @@ description: >
     methods
 ---*/
 
-        var testResult = false;
-        var valueOfAccessed = false;
-        var toStringAccessed = false;
+var testResult = false;
+var valueOfAccessed = false;
+var toStringAccessed = false;
 
-        function callbackfn(val, idx, obj) {
-            testResult = (val > 10);
-        }
+function callbackfn(val, idx, obj) {
+  testResult = (val > 10);
+}
 
-        var proto = {
-            valueOf: function () {
-                valueOfAccessed = true;
-                return 2;
-            }
-        };
+var proto = {
+  valueOf: function() {
+    valueOfAccessed = true;
+    return 2;
+  }
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
+var child = new Con();
 
-        child.toString = function () {
-            toStringAccessed = true;
-            return '1';
-        };
+child.toString = function() {
+  toStringAccessed = true;
+  return '1';
+};
 
-        var obj = {
-            1: 11,
-            2: 9,
-            length: child
-        };
+var obj = {
+  1: 11,
+  2: 9,
+  length: child
+};
 
-        Array.prototype.forEach.call(obj, callbackfn);
+Array.prototype.forEach.call(obj, callbackfn);
 
 assert(testResult, 'testResult !== true');
 assert(valueOfAccessed, 'valueOfAccessed !== true');

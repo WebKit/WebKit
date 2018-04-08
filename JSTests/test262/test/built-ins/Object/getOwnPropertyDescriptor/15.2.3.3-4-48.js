@@ -8,7 +8,7 @@ description: >
     built-ins (Array.prototype.shift)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Array.prototype, "shift");
+var desc = Object.getOwnPropertyDescriptor(Array.prototype, "shift");
 
 assert.sameValue(desc.value, Array.prototype.shift, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

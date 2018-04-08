@@ -25,7 +25,10 @@ assert.sameValue(
   "`Object.getPrototypeOf(m1)` returns `Map.prototype`"
 );
 
-var m2 = new Map([[1, 1], [2, 2]]);
+var m2 = new Map([
+  [1, 1],
+  [2, 2]
+]);
 
 assert.sameValue(
   Object.getPrototypeOf(m2),

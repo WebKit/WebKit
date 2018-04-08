@@ -8,8 +8,8 @@ description: >
     built-ins (Global.decodeURI)
 ---*/
 
-  var global = this;
-  var desc = Object.getOwnPropertyDescriptor(global, "decodeURI");
+var global = this;
+var desc = Object.getOwnPropertyDescriptor(global, "decodeURI");
 
 assert.sameValue(desc.value, global.decodeURI, 'desc.value');
 assert.sameValue(desc.writable, true, 'desc.writable');

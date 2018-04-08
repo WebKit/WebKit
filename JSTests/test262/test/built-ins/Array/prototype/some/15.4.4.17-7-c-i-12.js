@@ -9,23 +9,23 @@ description: >
     property that overrides an inherited data property on an Array
 ---*/
 
-        var kValue = "abc";
+var kValue = "abc";
 
-        function callbackfn(val, idx, obj) {
-            if (idx === 1) {
-                return val === kValue;
-            }
-            return false;
-        }
+function callbackfn(val, idx, obj) {
+  if (idx === 1) {
+    return val === kValue;
+  }
+  return false;
+}
 
-        var arr = [];
+var arr = [];
 
-            Array.prototype[1] = 100;
-            Object.defineProperty(arr, "1", {
-                get: function () {
-                    return kValue;
-                },
-                configurable: true
-            });
+Array.prototype[1] = 100;
+Object.defineProperty(arr, "1", {
+  get: function() {
+    return kValue;
+  },
+  configurable: true
+});
 
 assert(arr.some(callbackfn), 'arr.some(callbackfn) !== true');

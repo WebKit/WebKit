@@ -13,17 +13,18 @@ includes: [propertyHelper.js]
 
 
 var arrObj = [];
+
 function setFunc(value) {
-    arrObj.setVerifyHelpProp = value;
+  arrObj.setVerifyHelpProp = value;
 }
 
 Object.defineProperty(arrObj, "0", {
-    set: setFunc,
-    configurable: true
+  set: setFunc,
+  configurable: true
 });
 
 Object.defineProperty(arrObj, "0", {
-    configurable: false
+  configurable: false
 });
 verifyWritable(arrObj, "0", "setVerifyHelpProp");
 

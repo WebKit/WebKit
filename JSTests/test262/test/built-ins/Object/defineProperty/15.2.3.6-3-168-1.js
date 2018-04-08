@@ -9,18 +9,18 @@ description: >
     prototype object (8.10.5 step 6.b)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Boolean.prototype.writable = true;
-            var boolObj = new Boolean(true);
+Boolean.prototype.writable = true;
+var boolObj = new Boolean(true);
 
-            Object.defineProperty(obj, "property", boolObj);
+Object.defineProperty(obj, "property", boolObj);
 
-            var beforeWrite = obj.hasOwnProperty("property");
+var beforeWrite = obj.hasOwnProperty("property");
 
-            obj.property = "isWritable";
+obj.property = "isWritable";
 
-            var afterWrite = (obj.property === "isWritable");
+var afterWrite = (obj.property === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

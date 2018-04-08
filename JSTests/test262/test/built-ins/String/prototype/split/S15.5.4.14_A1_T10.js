@@ -15,8 +15,16 @@ description: >
     function
 ---*/
 
-var __obj = {toString:function(){return "\u0042B";}}
-var __obj2 = {valueOf:function(){return true;}}
+var __obj = {
+  toString: function() {
+    return "\u0042B";
+  }
+}
+var __obj2 = {
+  valueOf: function() {
+    return true;
+  }
+}
 var __str = "ABB\u0041BABAB";
 
 var __split = __str.split(__obj, __obj2);
@@ -24,7 +32,7 @@ var __split = __str.split(__obj, __obj2);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __split !== "object") {
-  $ERROR('#1: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); typeof __split === "object". Actual: '+typeof __split );
+  $ERROR('#1: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); typeof __split === "object". Actual: ' + typeof __split);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +40,7 @@ if (typeof __split !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__split.constructor !== Array) {
-  $ERROR('#2: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); __split.constructor === Array. Actual: '+__split.constructor );
+  $ERROR('#2: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); __split.constructor === Array. Actual: ' + __split.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +48,7 @@ if (__split.constructor !== Array) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__split.length !== 1) {
-  $ERROR('#3: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); __split.length === 1. Actual: '+__split.length );
+  $ERROR('#3: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); __split.length === 1. Actual: ' + __split.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -48,7 +56,7 @@ if (__split.length !== 1) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__split[0] !== "A") {
-  $ERROR('#4: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); __split[0] === "A". Actual: '+__split[0] );
+  $ERROR('#4: var __obj = {toString:function(){return "u0042B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABBu0041BABAB"; var __split = split(__obj, __obj2); __split[0] === "A". Actual: ' + __split[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

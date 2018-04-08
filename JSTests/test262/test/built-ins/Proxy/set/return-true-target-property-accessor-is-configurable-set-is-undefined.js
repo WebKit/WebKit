@@ -12,15 +12,15 @@ features: [Reflect]
 
 var target = {};
 var handler = {
-    set: function(t, prop, value, receiver) {
-        return true;
-    }
+  set: function(t, prop, value, receiver) {
+    return true;
+  }
 };
 var p = new Proxy(target, handler);
 
 Object.defineProperty(target, "attr", {
-    configurable: true,
-    set: undefined
+  configurable: true,
+  set: undefined
 });
 
 assert(Reflect.set(p, "attr", "bar"));

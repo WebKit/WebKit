@@ -9,14 +9,16 @@ es5id: 15.5.1.1_A1_T9
 description: Call String(this)
 ---*/
 
-var toString=function(){return "__THIS__";};
+var toString = function() {
+  return "__THIS__";
+};
 
 var __str = String(this);
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(this); typeof __str === "string". Actual: typeof __str ==='+typeof __str ); 
+  $ERROR('#1: __str = String(this); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -24,7 +26,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "__THIS__") {
-  $ERROR('#2: toString=function(){return "__THIS__";}; __str = String(this); __str === "__THIS__". Actual: __str ==='+__str ); 
+  $ERROR('#2: toString=function(){return "__THIS__";}; __str = String(this); __str === "__THIS__". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

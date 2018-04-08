@@ -8,7 +8,7 @@ description: >
     properties on built-ins (Number.NaN)
 ---*/
 
-  var desc = Object.getOwnPropertyDescriptor(Number, "NaN");
+var desc = Object.getOwnPropertyDescriptor(Number, "NaN");
 
 assert.sameValue(desc.writable, false, 'desc.writable');
 assert.sameValue(desc.enumerable, false, 'desc.enumerable');

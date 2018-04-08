@@ -7,13 +7,13 @@ es5id: 15.4.4.16-5-12
 description: Array.prototype.every - Boolean Object can be used as thisArg
 ---*/
 
-        var accessed = false;
-        var objBoolean = new Boolean();
+var accessed = false;
+var objBoolean = new Boolean();
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return this === objBoolean;
-        }
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return this === objBoolean;
+}
 
 
 

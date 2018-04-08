@@ -12,10 +12,15 @@ description: >
     positive, use min(deleteCount, length - start)
 ---*/
 
-var obj = {0:0,1:1,2:2,3:3};
+var obj = {
+  0: 0,
+  1: 1,
+  2: 2,
+  3: 3
+};
 obj.length = 4;
 obj.splice = Array.prototype.splice;
-var arr = obj.splice(0,3,4,5);
+var arr = obj.splice(0, 3, 4, 5);
 
 //CHECK#1
 arr.getClass = Object.prototype.toString;

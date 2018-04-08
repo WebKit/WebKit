@@ -15,8 +15,8 @@ if (new Array().length !== 0) {
 }
 
 //CHECK#2
-if (new Array(0,1,0,1).length !== 4) {
-  $ERROR('#2: new Array(0,1,0,1).length === 4. Actual: ' + (new Array(0,1,0,1).length));
+if (new Array(0, 1, 0, 1).length !== 4) {
+  $ERROR('#2: new Array(0,1,0,1).length === 4. Actual: ' + (new Array(0, 1, 0, 1).length));
 }
 
 //CHECK#3

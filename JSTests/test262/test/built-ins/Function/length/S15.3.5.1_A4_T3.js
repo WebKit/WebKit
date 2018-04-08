@@ -9,17 +9,19 @@ description: >
     Function("arg1,arg2,arg3","arg1,arg2","arg3", null) fails
 ---*/
 
-var f = new Function("arg1,arg2,arg3","arg1,arg2","arg3", null);
+var f = new Function("arg1,arg2,arg3", "arg1,arg2", "arg3", null);
 
 //CHECK#1
 if (!(f.hasOwnProperty('length'))) {
   $ERROR('#1: the function has length property.');
 }
 
-for(var key in f)
-  if(key=="length")
-    var lengthenumed=true;
-      
+for (var key in f) {
+  if (key == "length") {
+    var lengthenumed = true;
+  }
+}
+
 //CHECK#2
 if (lengthenumed) {
   $ERROR('#2: the length property has the attributes { DontEnum }');

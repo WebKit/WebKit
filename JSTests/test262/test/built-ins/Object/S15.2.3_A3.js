@@ -8,7 +8,7 @@ description: Checking Object.length
 ---*/
 
 //CHECK#1
-if(!Object.hasOwnProperty("length")){
+if (!Object.hasOwnProperty("length")) {
   $ERROR('#1: The Object constructor has the property "length"');
 }
 

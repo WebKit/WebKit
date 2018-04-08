@@ -9,22 +9,23 @@ description: >
     prototype index property not to be visited on an Array
 ---*/
 
-        var accessed = false;
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return idx !== 1;
-        }
-        var arr = [0, , 2];
+var accessed = false;
 
-        Object.defineProperty(arr, "0", {
-            get: function () {
-                delete Array.prototype[1];
-                return 0;
-            },
-            configurable: true
-        });
+function callbackfn(val, idx, obj) {
+  accessed = true;
+  return idx !== 1;
+}
+var arr = [0, , 2];
 
-            Array.prototype[1] = 1;
+Object.defineProperty(arr, "0", {
+  get: function() {
+    delete Array.prototype[1];
+    return 0;
+  },
+  configurable: true
+});
+
+Array.prototype[1] = 1;
 
 assert(arr.every(callbackfn), 'arr.every(callbackfn) !== true');
 assert(accessed, 'accessed !== true');

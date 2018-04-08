@@ -8,11 +8,11 @@ description: >
     present (8.10.5 step 7)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-        Object.defineProperty(obj, "property", {
-            set: function () {}
-        });
+Object.defineProperty(obj, "property", {
+  set: function() {}
+});
 
 assert.sameValue(typeof obj.property, "undefined", 'typeof obj.property');
 assert(obj.hasOwnProperty("property"), 'obj.hasOwnProperty("property") !== true');

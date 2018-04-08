@@ -21,13 +21,13 @@ if (new Number() === undefined) {
 
 //CHECK#3
 var x3 = new Number();
-if(typeof x3 !== "object"){
+if (typeof x3 !== "object") {
   $ERROR("#3: typeof new Number() === 'object'");
 }
 
 //CHECK#4
 var x4 = new Number();
-if(x4 === undefined){
+if (x4 === undefined) {
   $ERROR("#4: new Number() should not be undefined");
 }
 
@@ -43,12 +43,12 @@ if (new Number(10) === undefined) {
 
 //CHECK#7
 var x7 = new Number(10);
-if(typeof x7 !== "object"){
+if (typeof x7 !== "object") {
   $ERROR("#7: typeof new Number(10) === 'object'");
 }
 
 //CHECK#8
 var x8 = new Number(10);
-if(x8 === undefined){
+if (x8 === undefined) {
   $ERROR("#8: new Number(10) should not be undefined");
 }

@@ -9,17 +9,20 @@ description: >
     consistent
 ---*/
 
-        var obj = { 0: 11, length: 1 };
-        var thisArg = {};
+var obj = {
+  0: 11,
+  length: 1
+};
+var thisArg = {};
 
-        function callbackfn() {
-            return this === thisArg &&
-                arguments[0] === 11 &&
-                arguments[1] === 0 &&
-                arguments[2] === obj;
-        }
+function callbackfn() {
+  return this === thisArg &&
+    arguments[0] === 11 &&
+    arguments[1] === 0 &&
+    arguments[2] === obj;
+}
 
-        var newArr = Array.prototype.filter.call(obj, callbackfn, thisArg);
+var newArr = Array.prototype.filter.call(obj, callbackfn, thisArg);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

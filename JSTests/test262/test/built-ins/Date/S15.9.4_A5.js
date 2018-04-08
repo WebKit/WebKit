@@ -9,7 +9,7 @@ description: Checking Date.length property
 ---*/
 
 //CHECK#1
-if (!Date.hasOwnProperty("length")){
+if (!Date.hasOwnProperty("length")) {
   $ERROR('#1: Date constructor has length property');
 }
 

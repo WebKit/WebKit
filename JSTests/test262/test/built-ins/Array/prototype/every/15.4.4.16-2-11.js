@@ -21,7 +21,7 @@ var obj = {
   1: 8
 };
 Object.defineProperty(obj, "length", {
-  set: function () { },
+  set: function() {},
   configurable: true
 });
 

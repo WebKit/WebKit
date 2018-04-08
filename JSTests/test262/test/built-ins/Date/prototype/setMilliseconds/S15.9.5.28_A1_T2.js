@@ -8,7 +8,7 @@ es5id: 15.9.5.28_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/
 
-if (delete Date.prototype.setMilliseconds  === false) {
+if (delete Date.prototype.setMilliseconds === false) {
   $ERROR('#1: The Date.prototype.setMilliseconds property has not the attributes DontDelete');
 }
 

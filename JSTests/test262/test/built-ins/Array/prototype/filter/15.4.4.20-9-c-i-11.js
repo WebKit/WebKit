@@ -10,25 +10,28 @@ description: >
     Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return idx === 0 && val === 11;
-        }
+function callbackfn(val, idx, obj) {
+  return idx === 0 && val === 11;
+}
 
-        var proto = { 0: 5, 1: 6 };
+var proto = {
+  0: 5,
+  1: 6
+};
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.length = 10;
+var child = new Con();
+child.length = 10;
 
-        Object.defineProperty(child, "0", {
-            get: function () {
-                return 11;
-            },
-            configurable: true
-        });
-        var newArr = Array.prototype.filter.call(child, callbackfn);
+Object.defineProperty(child, "0", {
+  get: function() {
+    return 11;
+  },
+  configurable: true
+});
+var newArr = Array.prototype.filter.call(child, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], 11, 'newArr[0]');

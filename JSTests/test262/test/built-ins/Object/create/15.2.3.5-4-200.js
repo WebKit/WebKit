@@ -9,19 +9,19 @@ description: >
     property (8.10.5 step 6.a)
 ---*/
 
-        var errorObj = new Error();
+var errorObj = new Error();
 
-        errorObj.writable = true;
+errorObj.writable = true;
 
-        var newObj = Object.create({}, {
-            prop: errorObj
-        });
+var newObj = Object.create({}, {
+  prop: errorObj
+});
 
-        var beforeWrite = (newObj.hasOwnProperty("prop") && typeof (newObj.prop) === "undefined");
+var beforeWrite = (newObj.hasOwnProperty("prop") && typeof(newObj.prop) === "undefined");
 
-        newObj.prop = "isWritable";
+newObj.prop = "isWritable";
 
-        var afterWrite = (newObj.prop === "isWritable");
+var afterWrite = (newObj.prop === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

@@ -10,18 +10,22 @@ description: >
     functions
 ---*/
 
-__func.valueOf=function(){return "gnulluna"};
-__func.toString=function(){return __func;};
+__func.valueOf = function() {
+  return "gnulluna"
+};
+__func.toString = function() {
+  return __func;
+};
 
-Function.prototype.slice=String.prototype.slice;
+Function.prototype.slice = String.prototype.slice;
 
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
-if (__func.slice(null, Function().slice(__func,5).length) !== "gnull") {
-  $ERROR('#1: __func.slice(null, Function().slice(__func,5).length) === "gnull". Actual: '+__func.slice(null, Function().slice(__func,5).length) );
+if (__func.slice(null, Function().slice(__func, 5).length) !== "gnull") {
+  $ERROR('#1: __func.slice(null, Function().slice(__func,5).length) === "gnull". Actual: ' + __func.slice(null, Function().slice(__func, 5).length));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
 
-function __func(){};
+function __func() {};

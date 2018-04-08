@@ -8,19 +8,19 @@ description: >
     with the order of properties in 'O' (any other built-in object)
 ---*/
 
-        var obj = new Date();
-        obj.prop1 = 100;
-        obj.prop2 = "prop2";
+var obj = new Date();
+obj.prop1 = 100;
+obj.prop2 = "prop2";
 
-        var tempArray = [];
-        for (var p in obj) {
-            if (obj.hasOwnProperty(p)) {
-                tempArray.push(p);
-            }
-        }
+var tempArray = [];
+for (var p in obj) {
+  if (obj.hasOwnProperty(p)) {
+    tempArray.push(p);
+  }
+}
 
-        var returnedArray = Object.keys(obj);
+var returnedArray = Object.keys(obj);
 
-        for (var index in returnedArray) {
-            assert.sameValue(tempArray[index], returnedArray[index], 'tempArray[index]');
-        }
+for (var index in returnedArray) {
+  assert.sameValue(tempArray[index], returnedArray[index], 'tempArray[index]');
+}

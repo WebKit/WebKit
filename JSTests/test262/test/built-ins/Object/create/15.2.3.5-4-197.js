@@ -9,19 +9,19 @@ description: >
     (8.10.5 step 6.a)
 ---*/
 
-        var dateObj = new Date();
+var dateObj = new Date();
 
-        dateObj.writable = true;
+dateObj.writable = true;
 
-        var newObj = Object.create({}, {
-            prop: dateObj
-        });
+var newObj = Object.create({}, {
+  prop: dateObj
+});
 
-        var beforeWrite = (newObj.hasOwnProperty("prop") && typeof (newObj.prop) === "undefined");
+var beforeWrite = (newObj.hasOwnProperty("prop") && typeof(newObj.prop) === "undefined");
 
-        newObj.prop = "isWritable";
+newObj.prop = "isWritable";
 
-        var afterWrite = (newObj.prop === "isWritable");
+var afterWrite = (newObj.prop === "isWritable");
 
 assert.sameValue(beforeWrite, true, 'beforeWrite');
 assert.sameValue(afterWrite, true, 'afterWrite');

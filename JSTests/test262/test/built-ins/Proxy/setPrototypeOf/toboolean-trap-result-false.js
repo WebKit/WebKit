@@ -32,30 +32,44 @@ var p = new Proxy(target, {
 
 var result;
 
-result = Reflect.setPrototypeOf(p, { attr: false });
+result = Reflect.setPrototypeOf(p, {
+  attr: false
+});
 assert.sameValue(result, false, "false");
 assert.sameValue(called, 0, "false - isExtensible is not called");
 
-result = Reflect.setPrototypeOf(p, { attr: "" });
+result = Reflect.setPrototypeOf(p, {
+  attr: ""
+});
 assert.sameValue(result, false, "the empty string");
 assert.sameValue(called, 0, "the empty string - isExtensible is not called");
 
-result = Reflect.setPrototypeOf(p, { attr: 0 });
+result = Reflect.setPrototypeOf(p, {
+  attr: 0
+});
 assert.sameValue(result, false, "0");
 assert.sameValue(called, 0, "0 - isExtensible is not called");
 
-result = Reflect.setPrototypeOf(p, { attr: -0 });
+result = Reflect.setPrototypeOf(p, {
+  attr: -0
+});
 assert.sameValue(result, false, "-0");
 assert.sameValue(called, 0, "-0 - isExtensible is not called");
 
-result = Reflect.setPrototypeOf(p, { attr: null });
+result = Reflect.setPrototypeOf(p, {
+  attr: null
+});
 assert.sameValue(result, false, "null");
 assert.sameValue(called, 0, "null - isExtensible is not called");
 
-result = Reflect.setPrototypeOf(p, { attr: undefined });
+result = Reflect.setPrototypeOf(p, {
+  attr: undefined
+});
 assert.sameValue(result, false, "undefined");
 assert.sameValue(called, 0, "undefined - isExtensible is not called");
 
-result = Reflect.setPrototypeOf(p, { attr: NaN });
+result = Reflect.setPrototypeOf(p, {
+  attr: NaN
+});
 assert.sameValue(result, false, "NaN");
 assert.sameValue(called, 0, "NaN - isExtensible is not called");

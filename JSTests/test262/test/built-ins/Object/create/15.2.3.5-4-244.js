@@ -9,14 +9,14 @@ description: >
     property (8.10.5 step 7.a)
 ---*/
 
-        var funObj = function () {};
+var funObj = function() {};
 
-        funObj.get = function () {
-            return "VerifyFunctionObject";
-        };
+funObj.get = function() {
+  return "VerifyFunctionObject";
+};
 
-        var newObj = Object.create({}, {
-            prop: funObj
-        });
+var newObj = Object.create({}, {
+  prop: funObj
+});
 
 assert.sameValue(newObj.prop, "VerifyFunctionObject", 'newObj.prop');

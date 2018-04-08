@@ -10,22 +10,22 @@ description: >
 
 var propertyFound = false;
 
-        var str = new String("abc");
+var str = new String("abc");
 
-        Object.defineProperty(str, "ownProperty", {
-            get: function () {
-                return "ownString";
-            },
-            configurable: true
-        });
+Object.defineProperty(str, "ownProperty", {
+  get: function() {
+    return "ownString";
+  },
+  configurable: true
+});
 
-        var result = Object.getOwnPropertyNames(str);
+var result = Object.getOwnPropertyNames(str);
 
-        for (var p in result) {
-            if (result[p] === "ownProperty") {
-                propertyFound = true;
-                break;
-            }
-        }
+for (var p in result) {
+  if (result[p] === "ownProperty") {
+    propertyFound = true;
+    break;
+  }
+}
 
 assert(propertyFound, 'Property not found');

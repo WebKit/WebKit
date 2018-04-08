@@ -9,13 +9,13 @@ description: >
     object (8.10.5 step 7.a)
 ---*/
 
-        var obj = {};
+var obj = {};
 
-            Array.prototype.get = function () {
-                return "arrayGetProperty";
-            };
-            var arrObj = [];
+Array.prototype.get = function() {
+  return "arrayGetProperty";
+};
+var arrObj = [];
 
-            Object.defineProperty(obj, "property", arrObj);
+Object.defineProperty(obj, "property", arrObj);
 
 assert.sameValue(obj.property, "arrayGetProperty", 'obj.property');

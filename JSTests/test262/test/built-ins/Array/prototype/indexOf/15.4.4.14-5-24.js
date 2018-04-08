@@ -10,22 +10,22 @@ description: >
     don�t return primitive values
 ---*/
 
-        var toStringAccessed = false;
-        var valueOfAccessed = false;
-        var fromIndex = {
-            toString: function () {
-                toStringAccessed = true;
-                return {};
-            },
+var toStringAccessed = false;
+var valueOfAccessed = false;
+var fromIndex = {
+  toString: function() {
+    toStringAccessed = true;
+    return {};
+  },
 
-            valueOf: function () {
-                valueOfAccessed = true;
-                return {};
-            }
-        };
+  valueOf: function() {
+    valueOfAccessed = true;
+    return {};
+  }
+};
 
 assert.throws(TypeError, function() {
-            [0, true].indexOf(true, fromIndex);
+  [0, true].indexOf(true, fromIndex);
 });
 
 assert(toStringAccessed, 'toStringAccessed');

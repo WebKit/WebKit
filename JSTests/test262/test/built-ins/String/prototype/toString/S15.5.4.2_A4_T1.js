@@ -8,11 +8,11 @@ description: Checking String.prototype.toString.length property
 ---*/
 
 //CHECK#1
-if (String.prototype.toString.hasOwnProperty('length')!==true){
-  $ERROR('#1: String.prototype.toString.hasOwnProperty(\'length\')===true. Actual: '+String.prototype.toString.hasOwnProperty('length')); 
+if (String.prototype.toString.hasOwnProperty('length') !== true) {
+  $ERROR('#1: String.prototype.toString.hasOwnProperty(\'length\')===true. Actual: ' + String.prototype.toString.hasOwnProperty('length'));
 }
-else{
-//CHECK#2
-if (String.prototype.toString.length!==0)
-  $ERROR('#2: String.prototype.toString.length===0. Actual: String.prototype.toString.length==='+String.prototype.toString.length); 
+else {
+  //CHECK#2
+  if (String.prototype.toString.length !== 0)
+    $ERROR('#2: String.prototype.toString.length===0. Actual: String.prototype.toString.length===' + String.prototype.toString.length);
 }

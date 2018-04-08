@@ -20,10 +20,8 @@ base[7] = +Infinity;
 base[8] = NaN;
 var basenum = 9;
 
-for (var i = 0; i < basenum; i++)
-{
-	if (Math.pow(base[i],exponent) !== 1)
-	{
-		$ERROR("#1: Math.pow(" + base[i] + ", -0) !== 1");
-	}
+for (var i = 0; i < basenum; i++) {
+  if (Math.pow(base[i], exponent) !== 1) {
+    $ERROR("#1: Math.pow(" + base[i] + ", -0) !== 1");
+  }
 }

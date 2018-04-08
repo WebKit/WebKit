@@ -10,8 +10,12 @@ description: Argument is null, and instance is function call, that return string
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 //since ToString(null) evaluates to "null" search(null) evaluates to search("null")
-if (function(){return "gnulluna"}().search(null) !== 1) {
-  $ERROR('#1: function(){return "gnulluna"}().search(null) === 1. Actual: '+function(){return "gnulluna"}().search(null) );
+if (function() {
+    return "gnulluna"
+  }().search(null) !== 1) {
+  $ERROR('#1: function(){return "gnulluna"}().search(null) === 1. Actual: ' + function() {
+    return "gnulluna"
+  }().search(null));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

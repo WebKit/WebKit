@@ -9,22 +9,22 @@ description: >
     accessor property without a get function on an Array-like object
 ---*/
 
-        function callbackfn(val, idx, obj) {
-            return val === undefined && idx === 1;
-        }
+function callbackfn(val, idx, obj) {
+  return val === undefined && idx === 1;
+}
 
-        var proto = {};
-        Object.defineProperty(proto, "1", {
-            set: function () { },
-            configurable: true
-        });
+var proto = {};
+Object.defineProperty(proto, "1", {
+  set: function() {},
+  configurable: true
+});
 
-        var Con = function () { };
-        Con.prototype = proto;
+var Con = function() {};
+Con.prototype = proto;
 
-        var child = new Con();
-        child.length = 2;
-        var newArr = Array.prototype.filter.call(child, callbackfn);
+var child = new Con();
+child.length = 2;
+var newArr = Array.prototype.filter.call(child, callbackfn);
 
 assert.sameValue(newArr.length, 1, 'newArr.length');
 assert.sameValue(newArr[0], undefined, 'newArr[0]');

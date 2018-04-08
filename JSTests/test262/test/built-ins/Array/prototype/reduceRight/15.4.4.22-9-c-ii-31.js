@@ -9,14 +9,18 @@ description: >
     accumulator
 ---*/
 
-        var accessed = false;
-        var objDate = new Date();
-        function callbackfn(prevVal, curVal, idx, obj) {
-            accessed = true;
-            return prevVal === objDate;
-        }
+var accessed = false;
+var objDate = new Date();
 
-        var obj = { 0: 11, length: 1 };
+function callbackfn(prevVal, curVal, idx, obj) {
+  accessed = true;
+  return prevVal === objDate;
+}
+
+var obj = {
+  0: 11,
+  length: 1
+};
 
 assert.sameValue(Array.prototype.reduceRight.call(obj, callbackfn, objDate), true, 'Array.prototype.reduceRight.call(obj, callbackfn, objDate)');
 assert(accessed, 'accessed !== true');
