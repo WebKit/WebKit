@@ -102,7 +102,12 @@ ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::Ru
 
     ResourceRequest request { scriptURL.releaseReturnValue() };
     request.setInitiatorIdentifier(worker->m_identifier);
-    worker->m_scriptLoader->loadAsynchronously(context, WTFMove(request), FetchOptions::Mode::SameOrigin, FetchOptions::Cache::Default, FetchOptions::Redirect::Follow, contentSecurityPolicyEnforcement, worker);
+
+    FetchOptions options;
+    options.mode = FetchOptions::Mode::SameOrigin;
+    options.cache = FetchOptions::Cache::Default;
+    options.redirect = FetchOptions::Redirect::Follow;
+    worker->m_scriptLoader->loadAsynchronously(context, WTFMove(request), WTFMove(options), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, worker);
     return WTFMove(worker);
 }
 

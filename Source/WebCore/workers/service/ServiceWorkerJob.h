@@ -78,8 +78,6 @@ private:
     // WorkerScriptLoaderClient
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
     void notifyFinished() final;
-    bool isServiceWorkerClient() const final { return true; }
-
 
     Ref<ServiceWorkerJobClient> m_client;
     ServiceWorkerJobData m_jobData;

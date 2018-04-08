@@ -63,6 +63,7 @@ namespace WebCore {
 
     struct ThreadableLoaderOptions : ResourceLoaderOptions {
         ThreadableLoaderOptions();
+        explicit ThreadableLoaderOptions(FetchOptions&&);
         ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, ContentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy);
         ~ThreadableLoaderOptions();
 

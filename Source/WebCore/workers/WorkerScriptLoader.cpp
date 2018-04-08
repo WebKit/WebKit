@@ -73,7 +73,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(*request), *this, options);
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, FetchOptions::Redirect redirectPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, WorkerScriptLoaderClient& client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client)
 {
     m_client = &client;
     m_url = scriptRequest.url();
@@ -86,20 +86,19 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 
     // Only used for loading worker scripts in classic mode.
     // FIXME: We should add an option to set credential mode.
-    ASSERT(mode == FetchOptions::Mode::SameOrigin);
+    ASSERT(fetchOptions.mode == FetchOptions::Mode::SameOrigin);
 
-    ThreadableLoaderOptions options;
+    ThreadableLoaderOptions options { WTFMove(fetchOptions) };
     options.credentials = FetchOptions::Credentials::SameOrigin;
-    options.mode = mode;
-    options.cache = cachePolicy;
-    options.redirect = redirectPolicy;
     options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
+    // A service worker job can be executed from a worker context or a document context.
+    options.serviceWorkersMode = serviceWorkerMode;
 #if ENABLE(SERVICE_WORKER)
-    options.serviceWorkersMode = m_client->isServiceWorkerClient() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
     if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
+
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);
     m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, *this, WTFMove(*request), options);

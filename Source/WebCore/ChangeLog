@@ -1,3 +1,44 @@
+2018-04-07  Daniel Bates  <dabates@apple.com>
+
+        Have WorkerScriptLoader::loadAsynchronously() take a FetchOptions
+        https://bugs.webkit.org/show_bug.cgi?id=184385
+
+        Reviewed by Youenn Fablet.
+
+        Currently we pass various FetchOptions to WorkerScriptLoader::loadAsynchronously()
+        so that it can build up a ThreadableLoaderOptions structure to pass to the loader.
+        Each time we want to set another FetchOptions option we need to add a new parameter.
+        Instead we should have WorkerScriptLoader::loadAsynchronously() take a FetchOptions.
+        This will make it straightforward for a caller to set new loader options as needed.
+        In particular, this will make it straightforward to support setting the request's
+        destination flag (i.e. FetchOptions::destination) to support blocking scripts with
+        a non-JavaScript MIME type in a subsequent commit.
+
+        No functionality changed. So, no new tests.
+
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions): Modified to take a FetchOptions
+        by value so as to support both move and copy semantics.
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions):  Added helper constructor
+        that takes a FetchOptions.
+        * loader/ThreadableLoader.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::create): Instantiate and pass a FetchOptions to the loader for the mode,
+        cache policy, and redirect policy.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadAsynchronously): Modified to take a FetchOptions and
+        instantiate a ThreadableLoaderOptions from it.
+        * workers/WorkerScriptLoader.h:
+        * workers/WorkerScriptLoaderClient.h:
+        (WebCore::WorkerScriptLoaderClient::isServiceWorkerClient const): Deleted. This function
+        is no longer needed because the Service Worker client now passes the service worker mode
+        directly to the loader.
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::fetchScriptWithContext): Instantiate and pass a FetchOptions
+        to the loader.
+        * workers/service/ServiceWorkerJob.h:
+
 2018-04-07  Timothy Hatcher  <timothy@apple.com>
 
         Use the system's link color when system appearance is desired for a WebView.

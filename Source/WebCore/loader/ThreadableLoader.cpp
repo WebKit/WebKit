@@ -49,6 +49,11 @@ ThreadableLoaderOptions::ThreadableLoaderOptions()
 
 ThreadableLoaderOptions::~ThreadableLoaderOptions() = default;
 
+ThreadableLoaderOptions::ThreadableLoaderOptions(FetchOptions&& baseOptions)
+    : ResourceLoaderOptions { WTFMove(baseOptions) }
+{
+}
+
 ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy filteringPolicy)
     : ResourceLoaderOptions(baseOptions)
     , preflightPolicy(preflightPolicy)

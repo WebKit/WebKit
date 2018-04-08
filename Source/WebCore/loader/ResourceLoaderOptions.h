@@ -114,7 +114,7 @@ enum class ContentEncodingSniffingPolicy {
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions() { }
 
-    ResourceLoaderOptions(const FetchOptions& options) : FetchOptions(options) { }
+    ResourceLoaderOptions(FetchOptions options) : FetchOptions { WTFMove(options) } { }
 
     ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
         : sendLoadCallbacks(sendLoadCallbacks)
