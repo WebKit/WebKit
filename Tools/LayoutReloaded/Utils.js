@@ -556,10 +556,12 @@ class Utils {
         // Skip anonymous boxes for now -This is the case where WebKit does not generate an anon inline container for text content where the text is a direct child
         // of a block container.
         let indentation = " ".repeat(level);
-        if (box instanceof Layout.InlineBox) {
+        if (box.isInlineBox()) {
             if (box.text())
                 return indentation + "#text RenderText\n";
         }
+        if (box.name() == "RenderInline")
+            return indentation + box.node().tagName + " " + box.name() + "\n";
         if (box.isAnonymous())
             return "";
         let displayBox = Utils._findDisplayBox(layoutState, box);
@@ -597,7 +599,7 @@ class Utils {
     }
 
     static precisionRound(number, precision) {
-        var factor = Math.pow(10, precision);
+        let factor = Math.pow(10, precision);
         return Math.round(number * factor) / factor;
     }
 }

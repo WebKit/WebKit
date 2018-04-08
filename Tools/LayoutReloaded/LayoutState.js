@@ -37,10 +37,10 @@ class LayoutState {
 
     _createFormattingState(formattingRoot) {
         ASSERT(formattingRoot.establishesFormattingContext());
-        if (formattingRoot.establishesBlockFormattingContext())
-            return new BlockFormattingState(formattingRoot, this);
         if (formattingRoot.establishesInlineFormattingContext())
             return new InlineFormattingState(formattingRoot, this);
+        if (formattingRoot.establishesBlockFormattingContext())
+            return new BlockFormattingState(formattingRoot, this);
         ASSERT_NOT_REACHED();
         return null;
     }

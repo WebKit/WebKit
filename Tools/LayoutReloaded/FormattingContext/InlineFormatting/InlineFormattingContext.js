@@ -34,39 +34,42 @@ class InlineFormattingContext extends FormattingContext {
         // In an inline formatting context, boxes are laid out horizontally, one after the other, beginning at the top of a containing block.
         if (!this.formattingRoot().firstChild())
             return;
-        // This is a post-order tree traversal layout.
-        // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
         this.m_line = this._createNewLine();
+        let inlineContainerStack = new Array();
         this._addToLayoutQueue(this.formattingRoot().firstInFlowOrFloatChild());
         while (this._descendantNeedsLayout()) {
-            // Travers down on the descendants until we find a leaf node.
-            while (true) {
-                let layoutBox = this._nextInLayoutQueue();
-                if (layoutBox.establishesFormattingContext()) {
-                    this.layoutState().layout(layoutBox);
-                    break;
-                }
-                if (!layoutBox.isContainer() || !layoutBox.hasInFlowOrFloatChild())
-                    break;
-                this._addToLayoutQueue(layoutBox.firstInFlowOrFloatChild());
-            }
-            while (this._descendantNeedsLayout()) {
-                let layoutBox = this._nextInLayoutQueue();
-                this._handleContent(layoutBox);
-                // We are done with laying out this box.
-                this._removeFromLayoutQueue(layoutBox);
-                if (layoutBox.nextInFlowOrFloatSibling()) {
+            let layoutBox = this._nextInLayoutQueue();
+            if (layoutBox.isInlineContainer()) {
+                if (inlineContainerStack.indexOf(layoutBox) == -1) {
+                    inlineContainerStack.push(layoutBox);
+                    this._adjustLineForInlineContainerStart();
+                    if (layoutBox.establishesFormattingContext())
+                        this.layoutState().layout(layoutBox);
+                    else
+                        this._addToLayoutQueue(layoutBox.firstInFlowOrFloatChild());
+                } else {
+                    inlineContainerStack.pop(layoutBox);
+                    this._adjustLineForInlineContainerEnd();
+                    this._removeFromLayoutQueue(layoutBox);
                     this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
-                    break;
+                    // Place the inflow positioned children.
+                    this._placeInFlowPositionedChildren(this.formattingRoot());
                 }
+                continue;
             }
+            this._handleInlineContent(layoutBox);
+            this._removeFromLayoutQueue(layoutBox);
+            this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
         }
-        //this._placeOutOfFlowDescendants(this.formattingRoot());
+        // Place the inflow positioned children.
+        this._placeInFlowPositionedChildren(this.formattingRoot());
+        // And take care of out-of-flow boxes as the final step.
+        this._placeOutOfFlowDescendants(this.formattingRoot());
         this._commitLine();
    }
 
-    _handleContent(layoutBox) {
-        if (layoutBox instanceof Layout.InlineBox) {
+    _handleInlineContent(layoutBox) {
+        if (layoutBox.isInlineBox()) {
             this._handleInlineBox(layoutBox);
             return;
         }
@@ -101,6 +104,7 @@ class InlineFormattingContext extends FormattingContext {
 
     _handleFloatingBox(floatingBox) {
         this._computeFloatingWidth(floatingBox);
+        this.layoutState().layout(floatingBox);
         this._computeFloatingHeight(floatingBox);
         let displayBox = this.displayBox(floatingBox);
         // Position this float statically first, the floating context will figure it out the final position.
@@ -113,6 +117,22 @@ class InlineFormattingContext extends FormattingContext {
         if (displayBox.top() >= this._line().rect().bottom())
             return;
         this._line().addFloatingBox(displayBox, Utils.isFloatingLeft(floatingBox));
+    }
+
+    _adjustLineForInlineContainerStart(inlineContainer) {
+
+    }
+
+    _adjustLineForInlineContainerEnd(inlineContainer) {
+
+    }
+
+    _placeInFlowPositionedChildren(container) {
+
+    }
+
+    _placeOutOfFlowDescendants(container) {
+
     }
 
     _commitLine() {
@@ -140,9 +160,10 @@ class InlineFormattingContext extends FormattingContext {
             // Floats on both sides.
             lineRect.setLeft(floatingLeft);
             lineRect.setWidth(floatingRight - floatingLeft);
-        } else if (!Number.isNaN(floatingLeft))
+        } else if (!Number.isNaN(floatingLeft)) {
             lineRect.setLeft(floatingLeft);
-        else if (!Number.isNaN(floatingRight))
+            lineRect.shrinkBy(new LayoutSize(floatingLeft, 0));
+        } else if (!Number.isNaN(floatingRight))
             lineRect.setRight(floatingRight);
 
         return new Line(lineRect.topLeft(), Utils.computedLineHeight(this.formattingRoot().node()), lineRect.width());

@@ -77,6 +77,8 @@ class FormattingContext {
     }
 
     _addToLayoutQueue(layoutBox) {
+        if (!layoutBox)
+            return;
         // Initialize the corresponding display box.
         let displayBox = this.formattingState().createDisplayBox(layoutBox, this);
         if (layoutBox.node()) {

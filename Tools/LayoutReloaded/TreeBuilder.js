@@ -67,7 +67,7 @@ class TreeBuilder {
         let parentBox = this._findBox(initialBlockContainer, parentId);
         // WebKit does not construct anonymous inline container for text if the text
         // is a direct child of a block container.
-        if (text && !parentBox.isInlineContainer) {
+        if (text) {
             box = new Layout.InlineBox(null, -1);
             box.setIsAnonymous();
             box.setText(text);

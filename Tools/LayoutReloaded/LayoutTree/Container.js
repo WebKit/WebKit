@@ -30,10 +30,6 @@ Layout.Container = class Container extends Layout.Box {
         this.m_lastChild = null;
     }
 
-    isContainer() {
-        return true;
-    }
-
     setFirstChild(firstChild) {
         this.m_firstChild = firstChild;
     }

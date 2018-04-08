@@ -108,7 +108,15 @@ Layout.Box = class Box {
     }
 
     isContainer() {
-        return false;
+        return this instanceof Layout.Container
+    }
+
+    isInlineContainer() {
+        return this instanceof Layout.InlineContainer
+    }
+
+    isInlineBox() {
+        return this instanceof Layout.InlineBox;
     }
 
     isBlockLevelBox() {
