@@ -105,7 +105,6 @@ endif ()
 
 add_definitions(-DBUILDING_WPE__=1)
 add_definitions(-DGETTEXT_PACKAGE="WPE")
-add_definitions(-DDATA_DIR="${CMAKE_INSTALL_DATADIR}")
 add_definitions(-DJSC_GLIB_API_ENABLED)
 
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)

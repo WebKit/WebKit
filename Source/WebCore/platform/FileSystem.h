@@ -175,8 +175,6 @@ RetainPtr<CFURLRef> pathAsURL(const String&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 String filenameForDisplay(const String&);
-CString applicationDirectoryPath();
-CString sharedResourcesPath();
 #endif
 
 #if PLATFORM(WIN)

@@ -255,45 +255,6 @@ String pathGetFileName(const String& pathName)
     return String::fromUTF8(baseName.get());
 }
 
-CString applicationDirectoryPath()
-{
-    CString path = getCurrentExecutablePath();
-    if (!path.isNull())
-        return path;
-
-    // If the above fails, check the PATH env variable.
-    GUniquePtr<char> currentExePath(g_find_program_in_path(g_get_prgname()));
-    if (!currentExePath.get())
-        return CString();
-
-    GUniquePtr<char> dirname(g_path_get_dirname(currentExePath.get()));
-    return dirname.get();
-}
-
-CString sharedResourcesPath()
-{
-    static CString cachedPath;
-    if (!cachedPath.isNull())
-        return cachedPath;
-
-#if PLATFORM(WPE)
-    GUniquePtr<gchar> dataPath(g_build_filename(DATA_DIR, "wpe", nullptr));
-#elif PLATFORM(GTK)
-#if OS(WINDOWS)
-    HMODULE hmodule = 0;
-    GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<char*>(sharedResourcesPath), &hmodule);
-
-    GUniquePtr<gchar> runtimeDir(g_win32_get_package_installation_directory_of_module(hmodule));
-    GUniquePtr<gchar> dataPath(g_build_filename(runtimeDir.get(), "share", "webkitgtk-" WEBKITGTK_API_VERSION_STRING, NULL));
-#else
-    GUniquePtr<gchar> dataPath(g_build_filename(DATA_DIR, "webkitgtk-" WEBKITGTK_API_VERSION_STRING, NULL));
-#endif
-#endif
-
-    cachedPath = dataPath.get();
-    return cachedPath;
-}
-
 bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
 {
     GUniquePtr<gchar> filename = unescapedFilename(path);

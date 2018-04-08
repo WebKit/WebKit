@@ -1,3 +1,17 @@
+2018-04-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Remove applicationDirectoryPath() and sharedResourcePath()
+        https://bugs.webkit.org/show_bug.cgi?id=184381
+
+        Reviewed by Carlos Garcia Campos.
+
+        These are unused.
+
+        * platform/FileSystem.h:
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::FileSystem::applicationDirectoryPath): Deleted.
+        (WebCore::FileSystem::sharedResourcesPath): Deleted.
+
 2018-04-07  Daniel Bates  <dabates@apple.com>
 
         Have WorkerScriptLoader::loadAsynchronously() take a FetchOptions
