@@ -1,5 +1,17 @@
 2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Fix incorrect assertion for VM's regexp buffer lock
+        https://bugs.webkit.org/show_bug.cgi?id=184398
+
+        Reviewed by Mark Lam.
+
+        isLocked check before taking a lock is incorrect.
+
+        * runtime/VM.cpp:
+        (JSC::VM::acquireRegExpPatternContexBuffer):
+
+2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Introduce op_get_by_id_direct
         https://bugs.webkit.org/show_bug.cgi?id=183970
 
