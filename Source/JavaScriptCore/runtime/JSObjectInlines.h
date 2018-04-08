@@ -161,6 +161,14 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
     }
 }
 
+inline bool JSObject::getOwnPropertySlotInline(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+{
+    VM& vm = exec->vm();
+    if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(inlineTypeFlags())))
+        return methodTable(vm)->getOwnPropertySlot(this, exec, propertyName, slot);
+    return JSObject::getOwnPropertySlot(this, exec, propertyName, slot);
+}
+
 inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!value.isGetterSetter() && !(attributes & PropertyAttribute::Accessor));

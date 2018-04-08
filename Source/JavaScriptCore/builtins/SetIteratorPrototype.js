@@ -48,8 +48,8 @@ function next()
     if (this == null)
         @throwTypeError("%SetIteratorPrototype%.next requires that |this| not be null or undefined");
 
-    var bucket = this.@setBucket;
+    var bucket = @getByIdDirectPrivate(this, "setBucket");
     if (bucket === @undefined)
         @throwTypeError("%SetIteratorPrototype%.next requires that |this| be a Set Iterator instance");
-    return @setIteratorNext.@call(this, bucket, this.@setIteratorKind);
+    return @setIteratorNext.@call(this, bucket, @getByIdDirectPrivate(this, "setIteratorKind"));
 }

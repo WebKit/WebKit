@@ -1372,6 +1372,13 @@ private:
             break;
         }
 
+        case GetByIdDirect:
+        case GetByIdDirectFlush: {
+            if (node->child1()->shouldSpeculateCell())
+                fixEdge<CellUse>(node->child1());
+            break;
+        }
+
         case GetById:
         case GetByIdFlush: {
             // FIXME: This should be done in the ByteCodeParser based on reading the

@@ -3954,8 +3954,10 @@ void ByteCodeParser::handleGetById(
     NodeType getById;
     if (type == AccessType::Get)
         getById = getByIdStatus.makesCalls() ? GetByIdFlush : GetById;
-    else
+    else if (type == AccessType::TryGet)
         getById = TryGetById;
+    else
+        getById = getByIdStatus.makesCalls() ? GetByIdDirectFlush : GetByIdDirect;
 
     if (getById != TryGetById && getByIdStatus.isModuleNamespace()) {
         if (handleModuleNamespaceLoad(destinationOperand, prediction, base, getByIdStatus)) {
@@ -3979,7 +3981,7 @@ void ByteCodeParser::handleGetById(
         }
     }
 
-    ASSERT(type == AccessType::Get || !getByIdStatus.makesCalls());
+    ASSERT(type == AccessType::Get || type == AccessType::GetDirect ||  !getByIdStatus.makesCalls());
     if (!getByIdStatus.isSimple() || !getByIdStatus.numVariants() || !Options::useAccessInlining()) {
         set(VirtualRegister(destinationOperand),
             addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
@@ -4049,7 +4051,7 @@ void ByteCodeParser::handleGetById(
     if (UNLIKELY(m_graph.compilation()))
         m_graph.compilation()->noticeInlinedGetById();
 
-    ASSERT(type == AccessType::Get || !variant.callLinkStatus());
+    ASSERT(type == AccessType::Get || type == AccessType::GetDirect || !variant.callLinkStatus());
     if (!variant.callLinkStatus() && variant.intrinsic() == NoIntrinsic) {
         set(VirtualRegister(destinationOperand), loadedValue);
         return;
@@ -5119,6 +5121,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_define_accessor_property);
         }
 
+        case op_get_by_id_direct:
         case op_try_get_by_id:
         case op_get_by_id:
         case op_get_by_id_proto_load:
@@ -5134,15 +5137,25 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock, m_dfgCodeBlock,
                 m_inlineStackTop->m_stubInfos, m_dfgStubInfos,
                 currentCodeOrigin(), uid);
-            AccessType type = op_try_get_by_id == opcodeID ? AccessType::TryGet : AccessType::Get;
 
-            unsigned opcodeLength = opcodeID == op_try_get_by_id ? OPCODE_LENGTH(op_try_get_by_id) : OPCODE_LENGTH(op_get_by_id);
+            AccessType type = AccessType::Get;
+            unsigned opcodeLength = OPCODE_LENGTH(op_get_by_id);
+            if (opcodeID == op_try_get_by_id) {
+                type = AccessType::TryGet;
+                opcodeLength = OPCODE_LENGTH(op_try_get_by_id);
+            } else if (opcodeID == op_get_by_id_direct) {
+                type = AccessType::GetDirect;
+                opcodeLength = OPCODE_LENGTH(op_get_by_id_direct);
+            }
 
             handleGetById(
                 currentInstruction[1].u.operand, prediction, base, identifierNumber, getByIdStatus, type, opcodeLength);
 
-            if (op_try_get_by_id == opcodeID)
-                NEXT_OPCODE(op_try_get_by_id); // Opcode's length is different from others in this case.
+            // Opcode's length is different from others in try and direct cases.
+            if (opcodeID == op_try_get_by_id)
+                NEXT_OPCODE(op_try_get_by_id);
+            else if (opcodeID == op_get_by_id_direct)
+                NEXT_OPCODE(op_get_by_id_direct);
             else
                 NEXT_OPCODE(op_get_by_id);
         }

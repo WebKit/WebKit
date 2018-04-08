@@ -47,6 +47,7 @@ class PolymorphicAccess;
 enum class AccessType : int8_t {
     Get,
     GetWithThis,
+    GetDirect,
     TryGet,
     Put,
     In
@@ -217,6 +218,38 @@ public:
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)
 {
     return structureStubInfo.codeOrigin;
+}
+
+inline J_JITOperation_ESsiJI appropriateOptimizingGetByIdFunction(AccessType type)
+{
+    switch (type) {
+    case AccessType::Get:
+        return operationGetByIdOptimize;
+    case AccessType::TryGet:
+        return operationTryGetByIdOptimize;
+    case AccessType::GetDirect:
+        return operationGetByIdDirectOptimize;
+    case AccessType::GetWithThis:
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
+inline J_JITOperation_EJI appropriateGenericGetByIdFunction(AccessType type)
+{
+    switch (type) {
+    case AccessType::Get:
+        return operationGetByIdGeneric;
+    case AccessType::TryGet:
+        return operationTryGetByIdGeneric;
+    case AccessType::GetDirect:
+        return operationGetByIdDirectGeneric;
+    case AccessType::GetWithThis:
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 #else

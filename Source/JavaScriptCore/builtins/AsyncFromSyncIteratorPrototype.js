@@ -29,15 +29,15 @@ function next(value)
 
     const promiseCapability = @newPromiseCapability(@Promise);
 
-    if (!@isObject(this) || !@isObject(this.@syncIterator)) {
+    if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
         promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator is not an object.'));
         return promiseCapability.@promise;
     }
 
-    const syncIterator = this.@syncIterator;
+    const syncIterator = @getByIdDirectPrivate(this, "syncIterator");
 
     try {
-        const { done: nextDone, value: nextValue } = this.@nextMethod.@call(syncIterator, value);
+        const { done: nextDone, value: nextValue } = @getByIdDirectPrivate(this, "nextMethod").@call(syncIterator, value);
         const valueWrapperCapability = @newPromiseCapability(@Promise);
         valueWrapperCapability.@resolve.@call(@undefined, nextValue);
         valueWrapperCapability.@promise.@then(
@@ -56,12 +56,12 @@ function return(value)
 
     const promiseCapability = @newPromiseCapability(@Promise);
 
-    if (!@isObject(this) || !@isObject(this.@syncIterator)) {
+    if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
         promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator is not an object.'));
         return promiseCapability.@promise;
     }
 
-    const syncIterator = this.@syncIterator;
+    const syncIterator = @getByIdDirectPrivate(this, "syncIterator");
 
     let returnMethod;
 
@@ -105,12 +105,12 @@ function throw(exception)
 
     const promiseCapability = @newPromiseCapability(@Promise);
 
-    if (!@isObject(this) || !@isObject(this.@syncIterator)) {
+    if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
         promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator is not an object.'));
         return promiseCapability.@promise;
     }
 
-    const syncIterator = this.@syncIterator;
+    const syncIterator = @getByIdDirectPrivate(this, "syncIterator");
 
     let throwMethod;
 

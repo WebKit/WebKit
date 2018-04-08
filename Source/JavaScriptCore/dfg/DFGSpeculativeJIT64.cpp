@@ -178,9 +178,9 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     if (slowPathTarget.isSet())
         slowCases.append(slowPathTarget);
     slowCases.append(gen.slowPathJump());
-    
+
     auto slowPath = slowPathCall(
-        slowCases, this, type == AccessType::Get ? operationGetByIdOptimize : operationTryGetByIdOptimize, GetPropertyPtrTag,
+        slowCases, this, appropriateOptimizingGetByIdFunction(type), GetPropertyPtrTag,
         spillMode, ExceptionCheckRequirement::CheckNeeded,
         resultGPR, gen.stubInfo(), baseGPR, identifierUID(identifierNumber));
     
@@ -3708,100 +3708,27 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case TryGetById: {
-        compileTryGetById(node);
+        compileGetById(node, AccessType::TryGet);
+        break;
+    }
+
+    case GetByIdDirect: {
+        compileGetById(node, AccessType::GetDirect);
+        break;
+    }
+
+    case GetByIdDirectFlush: {
+        compileGetByIdFlush(node, AccessType::GetDirect);
         break;
     }
 
     case GetById: {
-        // FIXME https://bugs.webkit.org/show_bug.cgi?id=161158
-        // dedup with SpeculativeJIT::compileTryGetById and 32-bit version of this.
-        switch (node->child1().useKind()) {
-        case CellUse: {
-            SpeculateCellOperand base(this, node->child1());
-            GPRTemporary result(this, Reuse, base);
-            
-            GPRReg baseGPR = base.gpr();
-            GPRReg resultGPR = result.gpr();
-            
-            base.use();
-            
-            cachedGetById(node->origin.semantic, baseGPR, resultGPR, node->identifierNumber());
-            
-            jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
-            break;
-        }
-        
-        case UntypedUse: {
-            JSValueOperand base(this, node->child1());
-            GPRTemporary result(this, Reuse, base);
-        
-            GPRReg baseGPR = base.gpr();
-            GPRReg resultGPR = result.gpr();
-        
-            base.use();
-        
-            JITCompiler::Jump notCell = m_jit.branchIfNotCell(JSValueRegs(baseGPR));
-        
-            cachedGetById(node->origin.semantic, baseGPR, resultGPR, node->identifierNumber(), notCell);
-        
-            jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
-            break;
-        }
-            
-        default:
-            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
-            break;
-        }
+        compileGetById(node, AccessType::Get);
         break;
     }
 
     case GetByIdFlush: {
-        if (!node->prediction()) {
-            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
-            break;
-        }
-
-        switch (node->child1().useKind()) {
-        case CellUse: {
-            SpeculateCellOperand base(this, node->child1());
-            GPRReg baseGPR = base.gpr();
-
-            GPRFlushedCallResult result(this);
-            
-            GPRReg resultGPR = result.gpr();
-            
-            base.use();
-            
-            flushRegisters();
-            
-            cachedGetById(node->origin.semantic, baseGPR, resultGPR, node->identifierNumber(), JITCompiler::Jump(), DontSpill);
-            
-            jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
-            break;
-        }
-        
-        case UntypedUse: {
-            JSValueOperand base(this, node->child1());
-            GPRReg baseGPR = base.gpr();
-
-            GPRFlushedCallResult result(this);
-            GPRReg resultGPR = result.gpr();
-        
-            base.use();
-            flushRegisters();
-        
-            JITCompiler::Jump notCell = m_jit.branchIfNotCell(JSValueRegs(baseGPR));
-        
-            cachedGetById(node->origin.semantic, baseGPR, resultGPR, node->identifierNumber(), notCell, DontSpill);
-        
-            jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
-            break;
-        }
-            
-        default:
-            DFG_CRASH(m_jit.graph(), node, "Bad use kind");
-            break;
-        }
+        compileGetByIdFlush(node, AccessType::Get);
         break;
     }
 

@@ -1,3 +1,163 @@
+2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Introduce op_get_by_id_direct
+        https://bugs.webkit.org/show_bug.cgi?id=183970
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces op_get_by_id_direct bytecode. This is super similar to op_get_by_id.
+        But it just performs [[GetOwnProperty]] operation instead of [[Get]]. We support this
+        in all the tiers, so using this opcode does not lead to inefficiency.
+
+        Main purpose of this op_get_by_id_direct is using it for private properties. We are using
+        properties indexed with private symbols to implement ECMAScript internal fields. Before this
+        patch, we just use get and put operations. However, it is not the correct semantics: accessing
+        to the internal fields should not traverse prototype chain, which is specified in the spec.
+        We use op_get_by_id_direct to access to properties which are used internal fields, so that
+        prototype chains are not traversed.
+
+        To emit op_get_by_id_direct, we introduce a new bytecode intrinsic @getByIdDirectPrivate().
+        When you write `@getByIdDirectPrivate(object, "name")`, the bytecode generator emits the
+        bytecode `op_get_by_id_direct, object, @name`.
+
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        (globalPrivate.arrayIteratorValueNext):
+        (globalPrivate.arrayIteratorKeyNext):
+        (globalPrivate.arrayIteratorKeyValueNext):
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        * builtins/AsyncFunctionPrototype.js:
+        (globalPrivate.asyncFunctionResume):
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorQueueIsEmpty):
+        (globalPrivate.asyncGeneratorQueueEnqueue):
+        (globalPrivate.asyncGeneratorQueueDequeue):
+        (globalPrivate.asyncGeneratorDequeue):
+        (globalPrivate.isExecutionState):
+        (globalPrivate.isSuspendYieldState):
+        (globalPrivate.asyncGeneratorReject):
+        (globalPrivate.asyncGeneratorResolve):
+        (globalPrivate.doAsyncGeneratorBodyCall):
+        (globalPrivate.asyncGeneratorEnqueue):
+        * builtins/GeneratorPrototype.js:
+        (globalPrivate.generatorResume):
+        (next):
+        (return):
+        (throw):
+        * builtins/MapIteratorPrototype.js:
+        (next):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.isPromise):
+        (globalPrivate.rejectPromise):
+        (globalPrivate.fulfillPromise):
+        * builtins/PromisePrototype.js:
+        (then):
+        * builtins/SetIteratorPrototype.js:
+        (next):
+        * builtins/StringIteratorPrototype.js:
+        (next):
+        * builtins/TypedArrayConstructor.js:
+        (of):
+        (from):
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        (JSC::appropriateOptimizingGetByIdFunction):
+        (JSC::appropriateGenericGetByIdFunction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDirectGetById):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getByIdDirect):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getByIdDirectPrivate):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::convertToMultiGetByOffset):
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetById):
+        (JSC::DFG::SpeculativeJIT::compileGetByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compileTryGetById): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        * jit/Repatch.cpp:
+        (JSC::appropriateOptimizingGetByIdFunction):
+        (JSC::appropriateGetByIdFunction):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::appropriateGenericGetByIdFunction): Deleted.
+        * jit/Repatch.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getOwnPropertySlot const):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getOwnPropertySlotInline):
+
 2018-04-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove several asXXX functions

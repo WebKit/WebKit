@@ -1026,6 +1026,17 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         dumpValueProfiling(out, it, hasPrintedProfiling);
         break;
     }
+    case op_get_by_id_direct: {
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int id0 = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "get_by_id_direct");
+        out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
+        it += 2; // Increment up to the value profiler.
+        printGetByIdCacheStatus(out, location, stubInfos);
+        dumpValueProfiling(out, it, hasPrintedProfiling);
+        break;
+    }
     case op_get_by_id:
     case op_get_by_id_proto_load:
     case op_get_by_id_unset:

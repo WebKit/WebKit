@@ -87,6 +87,7 @@
             { "name" : "op_get_by_id_unset", "length" : 9 },
             { "name" : "op_get_by_id_with_this", "length" : 6 },
             { "name" : "op_get_by_val_with_this", "length" : 6 },
+            { "name" : "op_get_by_id_direct", "length" : 7  },
             { "name" : "op_try_get_by_id", "length" : 5 },
             { "name" : "op_put_by_id", "length" : 9 },
             { "name" : "op_put_by_id_with_this", "length" : 5 },

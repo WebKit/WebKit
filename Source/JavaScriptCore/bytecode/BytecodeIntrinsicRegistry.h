@@ -40,6 +40,8 @@ class Identifier;
 #define JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
     macro(argument) \
     macro(argumentCount) \
+    macro(getByIdDirect) \
+    macro(getByIdDirectPrivate) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isJSArray) \
