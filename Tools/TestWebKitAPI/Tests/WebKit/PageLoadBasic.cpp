@@ -174,6 +174,39 @@ TEST(WebKit, PageReload)
     EXPECT_TRUE(WKURLIsEqual(activeUrl.get(), url.get()));
 }
 
+TEST(WebKit, PageLoadTwiceAndReload)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    PlatformWebView webView(context.get());
+
+    test1Done = false;
+    static unsigned loadsCount = 0;
+
+    WKPageLoaderClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    loaderClient.base.version = 0;
+    loaderClient.base.clientInfo = nullptr;
+    loaderClient.didFailProvisionalLoadWithErrorForFrame = [](WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo) {
+        loadsCount++;
+        WKPageReload(page);
+    };
+    loaderClient.didFinishLoadForFrame = [](WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo) {
+        if (++loadsCount == 3) {
+            test1Done = true;
+            return;
+        }
+        WKPageReload(page);
+    };
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient.base);
+
+    WKRetainPtr<WKURLRef> url1(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url2(AdoptWK, Util::createURLForResource("simple2", "html"));
+    WKPageLoadURL(webView.page(), url1.get());
+    WKPageLoadURL(webView.page(), url2.get());
+
+    Util::run(&test1Done);
+}
+
 } // namespace TestWebKitAPI
 
 #endif

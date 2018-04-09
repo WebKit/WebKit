@@ -1349,6 +1349,12 @@ void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExten
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), WTFMove(sandboxExtensionHandle));
     corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), OptionSet<ReloadOption>::fromRaw(reloadOptions));
+
+    if (m_pendingNavigationID) {
+        // This can happen if FrameLoader::reload() returns early because the document URL is empty.
+        // The reload does nothing so we need to reset the pending navigation. See webkit.org/b/153210.
+        m_pendingNavigationID = 0;
+    }
 }
 
 void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)

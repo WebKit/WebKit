@@ -203,6 +203,43 @@ static void testWebViewHistoryLoad(LoadTrackingTest* test, gconstpointer)
     assertNormalLoadHappened(test->m_loadEvents);
 }
 
+class LoadTwiceAndReloadTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(LoadTwiceAndReloadTest);
+
+    static void reloadOnFinishLoad(WebKitWebView* view, WebKitLoadEvent loadEvent, LoadTwiceAndReloadTest* test)
+    {
+        if (++test->m_loadsCount == 3)
+            test->quitMainLoop();
+        webkit_web_view_reload(view);
+    }
+
+    LoadTwiceAndReloadTest()
+    {
+        g_signal_connect(m_webView, "load-changed", G_CALLBACK(reloadOnFinishLoad), this);
+    }
+
+    ~LoadTwiceAndReloadTest()
+    {
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+    }
+
+    void waitUntilFinished()
+    {
+        m_loadsCount = 0;
+        g_main_loop_run(m_mainLoop);
+    }
+
+    unsigned m_loadsCount { 0 };
+};
+
+static void testWebViewLoadTwiceAndReload(LoadTwiceAndReloadTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/normal").data());
+    test->loadURI(kServer->getURIForPath("/normal2").data());
+    test->waitUntilFinished();
+}
+
 class ViewURITrackingTest: public LoadTrackingTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ViewURITrackingTest);
@@ -617,6 +654,7 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebView", "progress", testLoadProgress);
     LoadTrackingTest::add("WebKitWebView", "reload", testWebViewReload);
     LoadTrackingTest::add("WebKitWebView", "history-load", testWebViewHistoryLoad);
+    LoadTwiceAndReloadTest::add("WebKitWebView", "load-twice-and-reload", testWebViewLoadTwiceAndReload);
 
     // This test checks that web view notify::uri signal is correctly emitted
     // and the uri is already updated when loader client signals are emitted.

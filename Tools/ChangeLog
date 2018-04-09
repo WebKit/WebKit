@@ -1,5 +1,24 @@
 2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        ASSERTION FAILED: !m_mainFrame->coreFrame()->loader().frameHasLoaded() || !m_pendingNavigationID when reloading page while a page is loading
+        https://bugs.webkit.org/show_bug.cgi?id=153210
+
+        Reviewed by Alex Christensen.
+
+        Add unit tests to WebKit C API and WebKitGLib.
+
+        * TestWebKitAPI/Tests/WebKit/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (LoadTwiceAndReloadTest::reloadOnFinishLoad):
+        (LoadTwiceAndReloadTest::LoadTwiceAndReloadTest):
+        (LoadTwiceAndReloadTest::~LoadTwiceAndReloadTest):
+        (LoadTwiceAndReloadTest::waitUntilFinished):
+        (testWebViewLoadTwiceAndReload):
+        (beforeAll):
+
+2018-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Test /webkit/WebKitWebPage/context-menu is failing since r229831
         https://bugs.webkit.org/show_bug.cgi?id=184260
 
