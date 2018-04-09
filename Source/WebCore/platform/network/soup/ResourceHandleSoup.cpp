@@ -835,7 +835,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // use HTTP authentication. In the end, this doesn't matter much, because persistent credentials
     // will become session credentials after the first use.
     if (useCredentialStorage && d->m_context && d->m_context->isValid()) {
-        d->m_context->storageSession().getCredentialFromPersistentStorage(challenge.protectionSpace(), [this, protectedThis = makeRef(*this)] (Credential&& credential) {
+        d->m_context->storageSession().getCredentialFromPersistentStorage(challenge.protectionSpace(), d->m_cancellable.get(), [this, protectedThis = makeRef(*this)] (Credential&& credential) {
             continueDidReceiveAuthenticationChallenge(WTFMove(credential));
         });
         return;
