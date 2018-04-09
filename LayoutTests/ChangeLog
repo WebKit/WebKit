@@ -1,3 +1,20 @@
+2018-04-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline WebCryptoAPI tests for High Sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt: Added.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker-expected.txt: Added.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt: Added.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker-expected.txt: Added.
+        * platform/mac-sierra/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker-expected.txt: Added.
+
 2018-04-09  Brendan McLoughlin  <brendan@bocoup.com>
 
         sync remaining web-platform-tests to 94b33b573a069ae5170104ca581a354a35762536
