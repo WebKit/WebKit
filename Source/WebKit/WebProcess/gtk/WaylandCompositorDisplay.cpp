@@ -44,7 +44,7 @@ std::unique_ptr<WaylandCompositorDisplay> WaylandCompositorDisplay::create(const
 
     struct wl_display* display = wl_display_connect(displayName.utf8().data());
     if (!display) {
-        WTFLogAlways("WaylandCompositorDisplay initialization: failed to connect to the Wayland display: %s", displayName.utf8().data());
+        WTFLogAlways("PlatformDisplayWayland initialization: failed to connect to the Wayland display: %s", displayName.utf8().data());
         return nullptr;
     }
 
@@ -61,8 +61,8 @@ void WaylandCompositorDisplay::bindSurfaceToPage(struct wl_surface* surface, Web
 }
 
 WaylandCompositorDisplay::WaylandCompositorDisplay(struct wl_display* display)
-    : PlatformDisplayWayland(display, NativeDisplayOwned::Yes)
 {
+    initialize(display);
     PlatformDisplay::setSharedDisplayForCompositing(*this);
 }
 
