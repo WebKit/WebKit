@@ -1,3 +1,14 @@
+2018-03-22  Zalan Bujtas  <zalan@apple.com>
+
+        [Simple line layout] Text with letter spacing is not positioned properly.
+        https://bugs.webkit.org/show_bug.cgi?id=183079
+        <rdar://problem/38762569>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/simple-line-layout-dynamic-letter-word-spacing-expected.html: Added.
+        * fast/text/simple-line-layout-dynamic-letter-word-spacing.html: Added.
+
 2018-03-22  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Enable WOFF2 support
