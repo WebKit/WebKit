@@ -2077,11 +2077,10 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
     // Backward positional selectors include nth-last-child, nth-last-of-type, last-of-type and only-of-type.
     // We have to invalidate everything following the insertion point in the forward case, and everything before the insertion point in the
     // backward case.
-    // |afterChange| is 0 in the parser callback case, so we won't do any work for the forward case if we don't have to.
-    // For performance reasons we just mark the parent node as changed, since we don't want to make childrenChanged O(n^2) by crawling all our kids
-    // here.  recalcStyle will then force a walk of the children when it sees that this has happened.
-    if (parent.childrenAffectedByBackwardPositionalRules() && elementBeforeChange)
-        parent.invalidateStyleForSubtree();
+    if (parent.childrenAffectedByBackwardPositionalRules()) {
+        for (auto* previous = elementBeforeChange; previous; previous = previous->previousElementSibling())
+            previous->invalidateStyleForSubtree();
+    }
 }
 
 void Element::childrenChanged(const ChildChange& change)
