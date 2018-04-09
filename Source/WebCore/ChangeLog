@@ -1,3 +1,14 @@
+2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] WaylandCompositorDisplay leaks its wl_display
+        https://bugs.webkit.org/show_bug.cgi?id=184406
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the protected default constructor, for good measure.
+
+        * platform/graphics/wayland/PlatformDisplayWayland.h:
+
 2018-04-05  Zalan Bujtas  <zalan@apple.com>
 
         Folding anonymous blocks should not result in deleting content.
