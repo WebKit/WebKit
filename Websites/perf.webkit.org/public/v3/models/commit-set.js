@@ -145,6 +145,82 @@ class CommitSet extends DataModelObject {
         }
         return false;
     }
+
+    static createNameWithoutCollision(name, existingNameSet)
+    {
+        console.assert(existingNameSet instanceof Set);
+        if (!existingNameSet.has(name))
+            return name;
+        const nameWithNumberMatch = name.match(/(.+?)\s*\(\s*(\d+)\s*\)\s*$/);
+        let number = 1;
+        if (nameWithNumberMatch) {
+            name = nameWithNumberMatch[1];
+            number = parseInt(nameWithNumberMatch[2]);
+        }
+
+        let newName;
+        do {
+            number++;
+            newName = `${name} (${number})`;
+        } while (existingNameSet.has(newName));
+
+        return newName;
+    }
+
+    static diff(firstCommitSet, secondCommitSet)
+    {
+        console.assert(!firstCommitSet.equals(secondCommitSet));
+        const allRepositories = new Set([...firstCommitSet.repositories(), ...secondCommitSet.repositories()]);
+        const sortedRepositories = Repository.sortByNamePreferringOnesWithURL([...allRepositories]);
+        const nameParts = [];
+        const missingCommit = {label: () => 'none'};
+        const missingPatch = {filename: () => 'none'};
+        const makeNameGenerator = () => {
+            const existingNameSet = new Set;
+            return (name) => {
+                const newName = CommitSet.createNameWithoutCollision(name, existingNameSet);
+                existingNameSet.add(newName);
+                return newName;
+            }
+        };
+
+        for (const repository of sortedRepositories) {
+            const firstCommit = firstCommitSet.commitForRepository(repository) || missingCommit;
+            const secondCommit = secondCommitSet.commitForRepository(repository) || missingCommit;
+            const firstPatch = firstCommitSet.patchForRepository(repository) || missingPatch;
+            const secondPatch = secondCommitSet.patchForRepository(repository) || missingPatch;
+            const nameGenerator = makeNameGenerator();
+
+            if (firstCommit == secondCommit && firstPatch == secondPatch)
+                continue;
+
+            if (firstCommit != secondCommit && firstPatch == secondPatch)
+                nameParts.push(`${repository.name()}: ${secondCommit.diff(firstCommit).label}`);
+
+            // FIXME: It would be nice if we can abbreviate the name when it's too long.
+            const nameForFirstPatch = nameGenerator(firstPatch.filename());
+            const nameForSecondPath = nameGenerator(secondPatch.filename());
+
+            if (firstCommit == secondCommit && firstPatch != secondPatch)
+                nameParts.push(`${repository.name()}: ${nameForFirstPatch} - ${nameForSecondPath}`);
+
+            if (firstCommit != secondCommit && firstPatch != secondPatch)
+                nameParts.push(`${repository.name()}: ${firstCommit.label()} with ${nameForFirstPatch} - ${secondCommit.label()} with ${nameForSecondPath}`);
+        }
+
+        if (firstCommitSet.allRootFiles().length || secondCommitSet.allRootFiles().length) {
+            const firstRootFileSet = new Set(firstCommitSet.allRootFiles());
+            const secondRootFileSet = new Set(secondCommitSet.allRootFiles());
+            const uniqueInFirstCommitSet = firstCommitSet.allRootFiles().filter((rootFile) => !secondRootFileSet.has(rootFile));
+            const uniqueInSecondCommitSet = secondCommitSet.allRootFiles().filter((rootFile) => !firstRootFileSet.has(rootFile));
+            const nameGenerator = makeNameGenerator();
+            const firstDescription = uniqueInFirstCommitSet.map((rootFile) => nameGenerator(rootFile.filename())).join(', ');
+            const secondDescription = uniqueInSecondCommitSet.map((rootFile) => nameGenerator(rootFile.filename())).join(', ');
+            nameParts.push(`Roots: ${firstDescription || 'none'} - ${secondDescription || 'none'}`);
+        }
+
+        return nameParts.join(' ');
+    }
 }
 
 class MeasurementCommitSet extends CommitSet {

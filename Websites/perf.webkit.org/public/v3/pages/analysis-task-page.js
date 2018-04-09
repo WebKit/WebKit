@@ -785,7 +785,8 @@ class AnalysisTaskPage extends PageWithHeading {
 
     _retryCurrentTestGroup(testGroup, repetitionCount)
     {
-        const newName = this._createRetryNameForTestGroup(testGroup.name());
+        const existingNames = (this._testGroups || []).map((group) => group.name());
+        const newName = CommitSet.createNameWithoutCollision(testGroup.name(), new Set(existingNames));
         const commitSetList = testGroup.requestedCommitSets();
         const platform = this._task.platform() || testGroup.platform();
         return TestGroup.createWithCustomConfiguration(this._task, platform, testGroup.test(), newName, repetitionCount, commitSetList)
@@ -839,24 +840,6 @@ class AnalysisTaskPage extends PageWithHeading {
             .then(this._didFetchTestGroups.bind(this), function (error) {
             alert('Failed to create a new test group: ' + error);
         });
-    }
-
-    _createRetryNameForTestGroup(name)
-    {
-        var nameWithNumberMatch = name.match(/(.+?)\s*\(\s*(\d+)\s*\)\s*$/);
-        var number = 1;
-        if (nameWithNumberMatch) {
-            name = nameWithNumberMatch[1];
-            number = parseInt(nameWithNumberMatch[2]);
-        }
-
-        var newName;
-        do {
-            number++;
-            newName = `${name} (${number})`;
-        } while (this._hasDuplicateTestGroupName(newName));
-
-        return newName;
     }
 
     _hasDuplicateTestGroupName(name)

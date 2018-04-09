@@ -1,3 +1,21 @@
+2018-04-06  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Added 'CommitSet.diff' which will be shared between multiple independent incoming changes.
+        https://bugs.webkit.org/show_bug.cgi?id=184368
+
+        Reviewed by Ryosuke Niwa.
+
+        'CommitSet.diff' will be used in multiple independent incoming changes.
+        It would be easier to make this a separate change to parallelize the changes depends on this API.
+
+        * public/v3/models/commit-set.js:
+        (CommitSet.prototype.createNameWithoutCollision): Moved from 'AnalysisTaskPage' and make it more generic.
+        (CommitSet.prototype.diff): Describe differences between 2 commit sets including commit, root and patch differences.
+        * public/v3/pages/analysis-task-page.js: Move 'AnalysisTaskPage._createRetryNameForTestGroup' to CommitSet in a more generic form.
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup): Use 'CommitSet.withoutRootPatchOrOwnedCommit' instead.
+        (AnalysisTaskPage.prototype._createRetryNameForTestGroup): Moved to CommitSet in a more generic form.
+        * unit-tests/commit-set-tests.js: Added unit tests for 'CommitSet.diff'.
+
 2018-04-05  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix a bug introduced in r230295 that A/B test result is not shown.
