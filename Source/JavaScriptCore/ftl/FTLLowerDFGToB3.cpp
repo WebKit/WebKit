@@ -286,17 +286,19 @@ public:
 
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
                     jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::argumentGPR1);
-                    CCallHelpers::Call throwCall = jit.call(NoPtrTag);
+                    PtrTag throwTag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
+                    CCallHelpers::Call throwCall = jit.call(throwTag);
 
                     jit.move(CCallHelpers::TrustedImmPtr(vm), GPRInfo::argumentGPR0);
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-                    CCallHelpers::Call lookupExceptionHandlerCall = jit.call(NoPtrTag);
+                    PtrTag lookupTag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
+                    CCallHelpers::Call lookupExceptionHandlerCall = jit.call(lookupTag);
                     jit.jumpToExceptionHandler(*vm);
 
                     jit.addLinkTask(
                         [=] (LinkBuffer& linkBuffer) {
-                            linkBuffer.link(throwCall, FunctionPtr(operationThrowStackOverflowError));
-                            linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr(lookupExceptionHandlerFromCallerFrame));
+                            linkBuffer.link(throwCall, FunctionPtr(operationThrowStackOverflowError, throwTag));
+                            linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr(lookupExceptionHandlerFromCallerFrame, lookupTag));
                     });
                 });
             });
@@ -363,7 +365,7 @@ public:
                 CCallHelpers::Jump jump = jit.jump();
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link(jump, linkBuffer.locationOf(*exceptionHandler));
+                        linkBuffer.link(jump, linkBuffer.locationOf(*exceptionHandler, ExceptionHandlerPtrTag));
                     });
             });
         m_out.unreachable();
@@ -7145,8 +7147,9 @@ private:
 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
+                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
 
                         callLinkInfo->setCallLocations(
@@ -7294,7 +7297,7 @@ private:
                         [=] (LinkBuffer& linkBuffer) {
                             CodeLocationLabel patchableJumpLocation = linkBuffer.locationOf(patchableJump);
                             CodeLocationNearCall callLocation = linkBuffer.locationOfNearCall(call);
-                            CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath);
+                            CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath, SlowPathPtrTag);
                             
                             callLinkInfo->setCallLocations(
                                 patchableJumpLocation,
@@ -7342,7 +7345,7 @@ private:
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
                                 CodeLocationNearCall callLocation = linkBuffer.locationOfNearCall(call);
-                                CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath);
+                                CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath, NearCallPtrTag);
                                 
                                 linkBuffer.link(call, slowPathLocation);
                                 
@@ -7466,8 +7469,9 @@ private:
 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
+                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
 
                         callLinkInfo->setCallLocations(
@@ -7610,8 +7614,9 @@ private:
                 };
 
                 auto callWithExceptionCheck = [&] (void* callee) {
-                    jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR0);
-                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, NoPtrTag);
+                    PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
+                    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(callee, tag)), GPRInfo::nonPreservedNonArgumentGPR0);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, tag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
@@ -7765,8 +7770,9 @@ private:
                 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
+                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
                         
                         callLinkInfo->setCallLocations(
@@ -7949,8 +7955,9 @@ private:
                 RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
 
                 auto callWithExceptionCheck = [&] (void* callee) {
-                    jit.move(CCallHelpers::TrustedImmPtr(callee), GPRInfo::nonPreservedNonArgumentGPR0);
-                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, NoPtrTag);
+                    PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
+                    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(callee, tag)), GPRInfo::nonPreservedNonArgumentGPR0);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, tag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
@@ -8048,8 +8055,9 @@ private:
                 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
+                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).code();
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
                         
                         callLinkInfo->setCallLocations(
@@ -8137,8 +8145,9 @@ private:
                 requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
                 jit.subPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
                 jit.setupArguments<decltype(operationCallEval)>(GPRInfo::regT1);
-                jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(operationCallEval)), GPRInfo::nonPreservedNonArgumentGPR0);
-                jit.call(GPRInfo::nonPreservedNonArgumentGPR0, NoPtrTag);
+                PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
+                jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(operationCallEval, tag)), GPRInfo::nonPreservedNonArgumentGPR0);
+                jit.call(GPRInfo::nonPreservedNonArgumentGPR0, tag);
                 exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 
                 CCallHelpers::Jump done = jit.branchTest64(CCallHelpers::NonZero, GPRInfo::returnValueGPR);
@@ -13957,22 +13966,26 @@ private:
 
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
+                                PtrTag thunkTag = ptrTag(FTLLazySlowPathPtrTag, vm);
                                 linkBuffer.link(
                                     generatorJump, CodeLocationLabel(
                                         vm->getCTIStub(
-                                            lazySlowPathGenerationThunkGenerator).code()));
+                                            lazySlowPathGenerationThunkGenerator).retaggedCode(thunkTag, NearJumpPtrTag)));
                                 
+                                std::unique_ptr<LazySlowPath> lazySlowPath = std::make_unique<LazySlowPath>();
+
+                                PtrTag slowPathTag = ptrTag(FTLLazySlowPathPtrTag, bitwise_cast<PtrTag>(lazySlowPath.get()));
                                 CodeLocationJump linkedPatchableJump = CodeLocationJump(
-                                    linkBuffer.locationOf(patchableJump));
-                                CodeLocationLabel linkedDone = linkBuffer.locationOf(done);
+                                    linkBuffer.locationOf(patchableJump, slowPathTag));
+
+                                CodeLocationLabel linkedDone = linkBuffer.locationOf(done, slowPathTag);
 
                                 CallSiteIndex callSiteIndex =
                                     jitCode->common.addUniqueCallSiteIndex(origin);
                                     
-                                std::unique_ptr<LazySlowPath> lazySlowPath =
-                                    std::make_unique<LazySlowPath>(
+                                lazySlowPath->initialize(
                                         linkedPatchableJump, linkedDone,
-                                        exceptionTarget->label(linkBuffer), usedRegisters,
+                                        exceptionTarget->label(linkBuffer, slowPathTag), usedRegisters,
                                         callSiteIndex, generator);
                                     
                                 jitCode->lazySlowPaths[index] = WTFMove(lazySlowPath);

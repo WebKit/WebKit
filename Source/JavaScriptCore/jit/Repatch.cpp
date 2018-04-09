@@ -66,37 +66,40 @@
 
 namespace JSC {
 
-static FunctionPtr readCallTarget(CodeBlock* codeBlock, CodeLocationCall call)
+static FunctionPtr readPutICCallTarget(CodeBlock* codeBlock, CodeLocationCall call)
 {
-    FunctionPtr result = MacroAssembler::readCallTarget(call);
+    FunctionPtr target = MacroAssembler::readCallTarget(call);
 #if ENABLE(FTL_JIT)
     if (codeBlock->jitType() == JITCode::FTLJIT) {
-        return FunctionPtr(codeBlock->vm()->ftlThunks->keyForSlowPathCallThunk(
-            MacroAssemblerCodePtr::createFromExecutableAddress(
-                result.executableAddress())).callTarget(), CodeEntryPtrTag);
+        MacroAssemblerCodePtr slowPathThunk = MacroAssemblerCodePtr::createFromExecutableAddress(target.executableAddress());
+        auto* callTarget = codeBlock->vm()->ftlThunks->keyForSlowPathCallThunk(slowPathThunk).callTarget();
+        return FunctionPtr(callTarget, CFunctionPtrTag);
     }
 #else
     UNUSED_PARAM(codeBlock);
 #endif // ENABLE(FTL_JIT)
-    return result;
+    return FunctionPtr(untagCFunctionPtr(target.executableAddress(), PutPropertyPtrTag), CFunctionPtrTag);
 }
 
-void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall call, FunctionPtr newCalleeFunction)
+void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall call, FunctionPtr newCalleeFunction, PtrTag callTag)
 {
 #if ENABLE(FTL_JIT)
     if (codeBlock->jitType() == JITCode::FTLJIT) {
         VM& vm = *codeBlock->vm();
         FTL::Thunks& thunks = *vm.ftlThunks;
-        FTL::SlowPathCallKey key = thunks.keyForSlowPathCallThunk(
-            MacroAssemblerCodePtr::createFromExecutableAddress(
-                MacroAssembler::readCallTarget(call).executableAddress()));
+        FunctionPtr target = MacroAssembler::readCallTarget(call);
+        MacroAssemblerCodePtr slowPathThunk = MacroAssemblerCodePtr::createFromExecutableAddress(target.executableAddress());
+        FTL::SlowPathCallKey key = thunks.keyForSlowPathCallThunk(slowPathThunk);
         key = key.withCallTarget(newCalleeFunction.executableAddress());
         newCalleeFunction = FunctionPtr(thunks.getSlowPathCallThunk(key).code());
+        assertIsTaggedWith(newCalleeFunction.executableAddress(), key.callPtrTag());
+        MacroAssembler::repatchCall(call, newCalleeFunction);
+        return;
     }
 #else // ENABLE(FTL_JIT)
     UNUSED_PARAM(codeBlock);
 #endif // ENABLE(FTL_JIT)
-    MacroAssembler::repatchCall(call, newCalleeFunction);
+    MacroAssembler::repatchCall(call, FunctionPtr(newCalleeFunction, callTag));
 }
 
 enum InlineCacheAction {
@@ -207,7 +210,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
                     bool generatedCodeInline = InlineAccess::generateArrayLength(stubInfo, jsCast<JSArray*>(baseCell));
                     if (generatedCodeInline) {
-                        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateOptimizingGetByIdFunction(kind), GetPropertyPtrTag));
+                        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind), GetPropertyPtrTag);
                         stubInfo.initArrayLength();
                         return RetryCacheLater;
                     }
@@ -264,7 +267,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
                 if (generatedCodeInline) {
                     LOG_IC((ICEvent::GetByIdSelfPatch, structure->classInfo(), propertyName));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
-                    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateOptimizingGetByIdFunction(kind), GetPropertyPtrTag));
+                    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind), GetPropertyPtrTag);
                     stubInfo.initGetByIdSelf(codeBlock, structure, slot.cachedOffset());
                     return RetryCacheLater;
                 }
@@ -388,7 +391,7 @@ void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& proper
     
     if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache) {
         CodeBlock* codeBlock = exec->codeBlock();
-        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateGetByIdFunction(kind), GetPropertyPtrTag));
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateGetByIdFunction(kind), GetPropertyPtrTag);
     }
 }
 
@@ -460,7 +463,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                     bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(stubInfo, structure, slot.cachedOffset());
                     if (generatedCodeInline) {
                         LOG_IC((ICEvent::PutByIdSelfPatch, structure->classInfo(), ident));
-                        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateOptimizingPutByIdFunction(slot, putKind), PutPropertyPtrTag));
+                        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingPutByIdFunction(slot, putKind), PutPropertyPtrTag);
                         stubInfo.initPutByIdReplace(codeBlock, structure, slot.cachedOffset());
                         return RetryCacheLater;
                     }
@@ -594,7 +597,7 @@ void repatchPutByID(ExecState* exec, JSValue baseValue, Structure* structure, co
     
     if (tryCachePutByID(exec, baseValue, structure, propertyName, slot, stubInfo, putKind) == GiveUpOnCache) {
         CodeBlock* codeBlock = exec->codeBlock();
-        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateGenericPutByIdFunction(slot, putKind), PutPropertyPtrTag));
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateGenericPutByIdFunction(slot, putKind), PutPropertyPtrTag);
     }
 }
 
@@ -683,7 +686,7 @@ void repatchIn(
 {
     SuperSamplerScope superSamplerScope(false);
     if (tryCacheIn(exec, base, ident, wasFound, slot, stubInfo) == GiveUpOnCache)
-        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
+        ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn, CFunctionPtrTag);
 }
 
 static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef, PtrTag linkTag)
@@ -1136,13 +1139,13 @@ void linkPolymorphicCall(
 
 void resetGetByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByIDKind kind)
 {
-    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateOptimizingGetByIdFunction(kind), GetPropertyPtrTag));
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind), GetPropertyPtrTag);
     InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation());
 }
 
 void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    V_JITOperation_ESsiJJI unoptimizedFunction = untagCFunctionPtr<V_JITOperation_ESsiJJI>(readCallTarget(codeBlock, stubInfo.slowPathCallLocation()).executableAddress(), PutPropertyPtrTag);
+    V_JITOperation_ESsiJJI unoptimizedFunction = reinterpret_cast<V_JITOperation_ESsiJJI>(readPutICCallTarget(codeBlock, stubInfo.slowPathCallLocation()).executableAddress());
     V_JITOperation_ESsiJJI optimizedFunction;
     if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictOptimize)
         optimizedFunction = operationPutByIdStrictOptimize;
@@ -1155,7 +1158,7 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
         optimizedFunction = operationPutByIdDirectNonStrictOptimize;
     }
 
-    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(optimizedFunction, PutPropertyPtrTag));
+    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), optimizedFunction, PutPropertyPtrTag);
     InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation());
 }
 

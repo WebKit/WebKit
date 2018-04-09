@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,11 @@ ExceptionTarget::~ExceptionTarget()
 {
 }
 
-CodeLocationLabel ExceptionTarget::label(LinkBuffer& linkBuffer)
+CodeLocationLabel ExceptionTarget::label(LinkBuffer& linkBuffer, PtrTag handlerTag)
 {
     if (m_isDefaultHandler)
-        return linkBuffer.locationOf(*m_defaultHandler);
-    return linkBuffer.locationOf(m_handle->label);
+        return linkBuffer.locationOf(*m_defaultHandler, handlerTag);
+    return linkBuffer.locationOf(m_handle->label, handlerTag);
 }
 
 Box<CCallHelpers::JumpList> ExceptionTarget::jumps(CCallHelpers& jit)
@@ -50,13 +50,13 @@ Box<CCallHelpers::JumpList> ExceptionTarget::jumps(CCallHelpers& jit)
         Box<CCallHelpers::Label> defaultHandler = m_defaultHandler;
         jit.addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(*result, linkBuffer.locationOf(*defaultHandler));
+                linkBuffer.link(*result, linkBuffer.locationOf(*defaultHandler, ExceptionHandlerPtrTag));
             });
     } else {
         RefPtr<OSRExitHandle> handle = m_handle;
         jit.addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(*result, linkBuffer.locationOf(handle->label));
+                linkBuffer.link(*result, linkBuffer.locationOf(handle->label, DFGOSRExitPtrTag));
             });
     }
     return result;

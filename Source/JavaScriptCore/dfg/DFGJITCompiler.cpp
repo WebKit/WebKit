@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,8 @@ void JITCompiler::linkOSRExits()
     }
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitThunkGenerator);
-    CodeLocationLabel osrExitThunkLabel = CodeLocationLabel(osrExitThunk.code());
+    PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm());
+    CodeLocationLabel osrExitThunkLabel = CodeLocationLabel(osrExitThunk.retaggedCode(osrExitThunkTag, NearJumpPtrTag));
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         JumpList& failureJumps = info.m_failureJumps;
@@ -320,7 +321,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     }
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);
-    CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
+    PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm());
+    CodeLocationLabel target = CodeLocationLabel(osrExitThunk.retaggedCode(osrExitThunkTag, NearJumpPtrTag));
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         if (!Options::useProbeOSRExit()) {

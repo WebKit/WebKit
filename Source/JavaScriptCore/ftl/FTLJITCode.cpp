@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLState.h"
+#include "PtrTag.h"
 
 namespace JSC { namespace FTL {
 
@@ -85,6 +86,12 @@ JITCode::CodePtr JITCode::addressForCall(ArityCheckMode arityCheck)
 void* JITCode::executableAddressAtOffset(size_t offset)
 {
     return m_addressForCall.executableAddress<char*>() + offset;
+    assertIsTaggedWith(m_addressForCall.executableAddress(), CodeEntryPtrTag);
+    if (!offset)
+        return m_addressForCall.executableAddress();
+
+    char* executableAddress = untagCodePtr<char*>(m_addressForCall.executableAddress(), CodeEntryPtrTag);
+    return tagCodePtr(executableAddress + offset, CodeEntryPtrTag);
 }
 
 void* JITCode::dataAddressAtOffset(size_t)

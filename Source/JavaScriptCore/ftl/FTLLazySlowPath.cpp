@@ -33,22 +33,22 @@
 
 namespace JSC { namespace FTL {
 
-LazySlowPath::LazySlowPath(
+LazySlowPath::~LazySlowPath()
+{
+}
+
+void LazySlowPath::initialize(
     CodeLocationJump patchableJump, CodeLocationLabel done,
     CodeLocationLabel exceptionTarget,
     const RegisterSet& usedRegisters, CallSiteIndex callSiteIndex, RefPtr<Generator> generator
     )
-    : m_patchableJump(patchableJump)
-    , m_done(done)
-    , m_exceptionTarget(exceptionTarget)
-    , m_usedRegisters(usedRegisters)
-    , m_callSiteIndex(callSiteIndex)
-    , m_generator(generator)
 {
-}
-
-LazySlowPath::~LazySlowPath()
-{
+    m_patchableJump = patchableJump;
+    m_done = done;
+    m_exceptionTarget = exceptionTarget;
+    m_usedRegisters = usedRegisters;
+    m_callSiteIndex = callSiteIndex;
+    m_generator = generator;
 }
 
 void LazySlowPath::generate(CodeBlock* codeBlock)
@@ -63,13 +63,14 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 
     m_generator->run(jit, params);
 
+    PtrTag slowPathTag = ptrTag(FTLLazySlowPathPtrTag, bitwise_cast<PtrTag>(this));
     LinkBuffer linkBuffer(jit, codeBlock, JITCompilationMustSucceed);
-    linkBuffer.link(params.doneJumps, m_done);
+    linkBuffer.link(params.doneJumps, m_done.retagged(slowPathTag, NearJumpPtrTag));
     if (m_exceptionTarget)
-        linkBuffer.link(exceptionJumps, m_exceptionTarget);
-    m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, NoPtrTag, "Lazy slow path call stub");
+        linkBuffer.link(exceptionJumps, m_exceptionTarget.retagged(slowPathTag, NearJumpPtrTag));
+    m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, slowPathTag, "Lazy slow path call stub");
 
-    MacroAssembler::repatchJump(m_patchableJump, CodeLocationLabel(m_stub.code()));
+    MacroAssembler::repatchJump(m_patchableJump.retagged(slowPathTag, NearJumpPtrTag), CodeLocationLabel(m_stub.retaggedCode(slowPathTag, NearJumpPtrTag)));
 }
 
 } } // namespace JSC::FTL

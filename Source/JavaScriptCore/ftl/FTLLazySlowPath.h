@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,14 +63,16 @@ public:
     {
         return createSharedTask<GeneratorFunction>(functor);
     }
-    
-    LazySlowPath(
+
+    LazySlowPath() = default;
+
+    ~LazySlowPath();
+
+    void initialize(
         CodeLocationJump patchableJump, CodeLocationLabel done,
         CodeLocationLabel exceptionTarget, const RegisterSet& usedRegisters,
         CallSiteIndex, RefPtr<Generator>
         );
-
-    ~LazySlowPath();
 
     CodeLocationJump patchableJump() const { return m_patchableJump; }
     CodeLocationLabel done() const { return m_done; }

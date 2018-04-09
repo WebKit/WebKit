@@ -122,7 +122,9 @@ SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr callTarget)
 {
     void* executableAddress = callTarget.executableAddress();
     assertIsCFunctionPtr(executableAddress);
-    SlowPathCall result = SlowPathCall(m_jit.call(NoPtrTag), keyWithTarget(executableAddress));
+    SlowPathCallKey key = keyWithTarget(executableAddress);
+    PtrTag callTag = key.callPtrTag();
+    SlowPathCall result = SlowPathCall(m_jit.call(callTag), key);
 
     m_jit.addLinkTask(
         [result, &vm] (LinkBuffer& linkBuffer) {

@@ -54,7 +54,7 @@ void linkPolymorphicCall(ExecState*, CallLinkInfo&, CallVariant);
 void resetGetByID(CodeBlock*, StructureStubInfo&, GetByIDKind);
 void resetPutByID(CodeBlock*, StructureStubInfo&);
 void resetIn(CodeBlock*, StructureStubInfo&);
-void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall, FunctionPtr newCalleeFunction);
+void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall, FunctionPtr newCalleeFunction, PtrTag callTag);
 
 } // namespace JSC
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,6 +93,8 @@ public:
         : CodeLocationCommon(location) {}
     explicit CodeLocationLabel(void* location)
         : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+
+    CodeLocationLabel retagged(PtrTag oldTag, PtrTag newTag) { return CodeLocationLabel(MacroAssemblerCodePtr::retagged(oldTag, newTag)); }
 };
 
 class CodeLocationJump : public CodeLocationCommon {
@@ -102,6 +104,8 @@ public:
         : CodeLocationCommon(location) {}
     explicit CodeLocationJump(void* location)
         : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+
+    CodeLocationJump retagged(PtrTag oldTag, PtrTag newTag) { return CodeLocationJump(MacroAssemblerCodePtr::retagged(oldTag, newTag)); }
 };
 
 class CodeLocationCall : public CodeLocationCommon {

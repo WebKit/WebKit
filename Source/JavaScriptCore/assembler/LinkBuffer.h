@@ -186,9 +186,9 @@ public:
             call.isFlagSet(Call::Tail) ? NearCallMode::Tail : NearCallMode::Regular);
     }
 
-    CodeLocationLabel locationOf(PatchableJump jump)
+    CodeLocationLabel locationOf(PatchableJump jump, PtrTag tag = NoPtrTag)
     {
-        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_jump.m_label)));
+        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_jump.m_label), tag));
     }
 
     CodeLocationLabel locationOf(Label label, PtrTag tag = NoPtrTag)

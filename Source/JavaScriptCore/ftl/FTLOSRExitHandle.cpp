@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,9 +49,10 @@ void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
         [self, jump, myLabel, compilation, &vm] (LinkBuffer& linkBuffer) {
             self->exit.m_patchableJump = CodeLocationJump(linkBuffer.locationOf(jump));
 
+            PtrTag thunkTag = ptrTag(FTLOSRExitPtrTag, &vm);
             linkBuffer.link(
                 jump.m_jump,
-                CodeLocationLabel(vm.getCTIStub(osrExitGenerationThunkGenerator).code()));
+                CodeLocationLabel(vm.getCTIStub(osrExitGenerationThunkGenerator).retaggedCode(thunkTag, NearJumpPtrTag)));
             if (compilation)
                 compilation->addOSRExitSite({ linkBuffer.locationOf(myLabel).executableAddress() });
         });

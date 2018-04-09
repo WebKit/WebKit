@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -581,7 +581,8 @@ extern "C" void* JIT_OPERATION compileFTLLazySlowPath(ExecState* exec, unsigned 
     LazySlowPath& lazySlowPath = *jitCode->lazySlowPaths[index];
     lazySlowPath.generate(codeBlock);
 
-    return lazySlowPath.stub().code().executableAddress();
+    PtrTag slowPathTag = ptrTag(FTLLazySlowPathPtrTag, bitwise_cast<PtrTag>(&lazySlowPath));
+    return lazySlowPath.stub().retaggedCode(slowPathTag, bitwise_cast<PtrTag>(exec)).executableAddress();
 }
 
 } } // namespace JSC::FTL

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "PtrTag.h"
 #include "RegisterSet.h"
 
 namespace JSC { namespace FTL {
@@ -66,6 +67,7 @@ public:
     
     SlowPathCallKey withCallTarget(void* callTarget)
     {
+        assertIsTaggedWith(callTarget, CFunctionPtrTag);
         return SlowPathCallKey(usedRegisters(), callTarget, argumentRegisters(), offset());
     }
     
@@ -100,6 +102,13 @@ public:
     unsigned hash() const
     {
         return m_usedRegisters.hash() + PtrHash<void*>::hash(m_callTarget) + m_offset;
+    }
+
+    PtrTag callPtrTag() const
+    {
+        // We should only include factors which are invariant for the same slow path site.
+        // m_callTarget can vary and should be excluded.
+        return ptrTag(FTLSlowPathPtrTag, m_usedRegisters.hash(), m_offset);
     }
 
 private:

@@ -45,6 +45,11 @@ namespace JSC {
     v(DFGOSRExitPtrTag) \
     v(DFGOperationPtrTag) \
     v(ExceptionHandlerPtrTag) \
+    v(FTLCodePtrTag) \
+    v(FTLLazySlowPathPtrTag) \
+    v(FTLOSRExitPtrTag) \
+    v(FTLOperationPtrTag) \
+    v(FTLSlowPathPtrTag) \
     v(GetPropertyPtrTag) \
     v(GetterSetterPtrTag) \
     v(HasPropertyPtrTag) \
@@ -66,13 +71,11 @@ namespace JSC {
     v(SpecializedThunkPtrTag) \
     v(SwitchTablePtrTag) \
     v(ThrowExceptionPtrTag) \
-    \
     v(Yarr8BitPtrTag) \
     v(Yarr16BitPtrTag) \
     v(YarrMatchOnly8BitPtrTag) \
     v(YarrMatchOnly16BitPtrTag) \
     v(YarrBacktrackPtrTag) \
-    \
     v(WasmCallPtrTag) \
     v(WasmHelperPtrTag) \
 

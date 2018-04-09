@@ -144,8 +144,8 @@ public:
         };
 
         auto replaceCall = [&] () {
-            PtrTag tag = ptrTag(MathICPtrTag, m_instruction);
-            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation(), FunctionPtr(callReplacement, tag));
+            PtrTag callTag = ptrTag(MathICPtrTag, m_instruction);
+            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation(), callReplacement, callTag);
         };
 
         bool shouldEmitProfiling = !JITCode::isOptimizingJIT(codeBlock->jitType());
@@ -228,7 +228,7 @@ public:
         m_deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
             start, linkBuffer.locationOf(state.slowPathCall));
         m_deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf(state.slowPathStart, NoPtrTag));
+            start, linkBuffer.locationOf(state.slowPathStart));
     }
 
     ArithProfile* arithProfile() const { return m_arithProfile; }

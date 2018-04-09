@@ -1,3 +1,82 @@
+2018-04-08  Mark Lam  <mark.lam@apple.com>
+
+        Add pointer profiling to the FTL and supporting code.
+        https://bugs.webkit.org/show_bug.cgi?id=184395
+        <rdar://problem/39264019>
+
+        Reviewed by Michael Saboff and Filip Pizlo.
+
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationLabel::retagged):
+        (JSC::CodeLocationJump::retagged):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::locationOf):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLExceptionTarget.cpp:
+        (JSC::FTL::ExceptionTarget::label):
+        (JSC::FTL::ExceptionTarget::jumps):
+        * ftl/FTLExceptionTarget.h:
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::executableAddressAtOffset):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::~LazySlowPath):
+        (JSC::FTL::LazySlowPath::initialize):
+        (JSC::FTL::LazySlowPath::generate):
+        (JSC::FTL::LazySlowPath::LazySlowPath): Deleted.
+        * ftl/FTLLazySlowPath.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::lazySlowPath):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLOSRExitHandle.cpp:
+        (JSC::FTL::OSRExitHandle::emitExitThunk):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::compileFTLLazySlowPath):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::callWithoutSideEffects):
+        (JSC::FTL::Output::operation):
+        * ftl/FTLPatchpointExceptionHandle.cpp:
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreationForUnwind):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * ftl/FTLSlowPathCallKey.h:
+        (JSC::FTL::SlowPathCallKey::withCallTarget):
+        (JSC::FTL::SlowPathCallKey::callPtrTag const):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::lazySlowPathGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        * jit/Repatch.cpp:
+        (JSC::readPutICCallTarget):
+        (JSC::ftlThunkAwareRepatchCall):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::repatchIn):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::readCallTarget): Deleted.
+        * jit/Repatch.h:
+        * runtime/PtrTag.h:
+
 2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, attempt to fix Windows build
