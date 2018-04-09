@@ -280,9 +280,14 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
 
     // If this child is a block, and if our previous and next siblings are both anonymous blocks
     // with inline content, then we can fold the inline content back together.
-    RenderObject* prev = oldChild.previousSibling();
-    RenderObject* next = oldChild.nextSibling();
-    bool canMergeAnonymousBlocks = canMergeContiguousAnonymousBlocks(oldChild, prev, next);
+    auto prev = makeWeakPtr(oldChild.previousSibling());
+    auto next = makeWeakPtr(oldChild.nextSibling());
+    bool canMergeAnonymousBlocks = canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
+
+    parent.invalidateLineLayoutPath();
+
+    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild);
+
     if (canMergeAnonymousBlocks && prev && next) {
         prev->setNeedsLayoutAndPrefWidthsRecalc();
         RenderBlock& nextBlock = downcast<RenderBlock>(*next);
@@ -320,15 +325,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
             // Delete the now-empty block's lines and nuke it.
             nextBlock.deleteLines();
             m_builder.destroy(nextBlock);
-            next = nullptr;
         }
     }
 
-    parent.invalidateLineLayoutPath();
-
-    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild);
-
-    RenderObject* child = prev ? prev : next;
+    RenderObject* child = prev ? prev.get() : next.get();
     if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && parent.canDropAnonymousBlockChild()) {
         // The removal has knocked us down to containing only a single anonymous
         // box. We can pull the content right back up into our box.
