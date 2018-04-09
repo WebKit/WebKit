@@ -1,3 +1,10 @@
+2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, remove incorrect entry in test262.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=184266
+
+        * test262.yaml:
+
 2018-04-08  Valerie Young  <valerie@bocoup.com>
 
         [JSC] Update Test262 to April 6 version
