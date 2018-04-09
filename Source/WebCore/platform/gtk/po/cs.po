@@ -2,20 +2,22 @@
 # Copyright (C) 2010 webkit's COPYRIGHT HOLDER
 # This file is distributed under the same license as the webkit package.
 # Lucas Lommer <llommer@svn.gnome.org>, 2010.
+# Daniel Rusek <mail@asciiwolf.com>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
 "POT-Creation-Date: 2013-03-15 17:34-0300\n"
-"PO-Revision-Date: 2010-03-31 13:07+0100\n"
-"Last-Translator: Lucas Lommer <llommer@svn.gnome.org>\n"
+"PO-Revision-Date: 2018-04-08 22:56+0200\n"
+"Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: ErrorsGtk.cpp:37
 msgid "Load request cancelled"
@@ -27,7 +29,7 @@ msgstr ""
 
 #: ErrorsGtk.cpp:49
 msgid "URL cannot be shown"
-msgstr ""
+msgstr "URL nemůže být zobrazen"
 
 #: ErrorsGtk.cpp:55
 msgid "Frame load was interrupted"
@@ -39,7 +41,7 @@ msgstr ""
 
 #: ErrorsGtk.cpp:67
 msgid "File does not exist"
-msgstr ""
+msgstr "Soubor neexistuje"
 
 #: ErrorsGtk.cpp:73
 msgid "Plugin will handle load"
@@ -51,7 +53,7 @@ msgstr "Stahování zrušeno uživatelem"
 
 #: ErrorsGtk.cpp:105
 msgid "Printer not found"
-msgstr ""
+msgstr "Tiskárna nebyla nalezena"
 
 #: ErrorsGtk.cpp:112
 #, fuzzy
@@ -61,7 +63,7 @@ msgstr "Povolit vyrovnávací paměť stránky"
 #: GtkAuthenticationDialog.cpp:171
 #, c-format
 msgid "The site %s:%i requests a username and password"
-msgstr ""
+msgstr "Stránka %s:%i požaduje uživatelské jméno a heslo"
 
 #: GtkAuthenticationDialog.cpp:175
 msgid "_Remember password"
@@ -89,7 +91,7 @@ msgstr "Reset"
 
 #: LocalizedStringsGtk.cpp:71
 msgid "Details"
-msgstr ""
+msgstr "Podrobnosti"
 
 #: LocalizedStringsGtk.cpp:76
 msgid "This is a searchable index. Enter search keywords: "
@@ -100,9 +102,8 @@ msgid "Choose File"
 msgstr "Vybrat soubor"
 
 #: LocalizedStringsGtk.cpp:86
-#, fuzzy
 msgid "Choose Files"
-msgstr "Vybrat soubor"
+msgstr "Vybrat soubory"
 
 #: LocalizedStringsGtk.cpp:91 LocalizedStringsGtk.cpp:96
 msgid "(None)"
@@ -133,54 +134,48 @@ msgid "Cop_y Image"
 msgstr "Ko_pírovat obrázek"
 
 #: LocalizedStringsGtk.cpp:131
-#, fuzzy
 msgid "Copy Image _Address"
-msgstr "Ko_pírovat obrázek"
+msgstr "Kopírovat _adresu obrázku"
 
 #: LocalizedStringsGtk.cpp:136
-#, fuzzy
 msgid "Open _Video in New Window"
-msgstr "Otevřít o_brázek v novém okně"
+msgstr "Otevřít _video v novém okně"
 
 #: LocalizedStringsGtk.cpp:141
-#, fuzzy
 msgid "Open _Audio in New Window"
-msgstr "Otevřít odkaz v novém _okně"
+msgstr "Otevřít _zvukový soubor v novém okně"
 
 #: LocalizedStringsGtk.cpp:146
-#, fuzzy
 msgid "Cop_y Video Link Location"
-msgstr "_Kopírovat adresu odkazu"
+msgstr "_Kopírovat adresu videa"
 
 #: LocalizedStringsGtk.cpp:151
-#, fuzzy
 msgid "Cop_y Audio Link Location"
-msgstr "_Kopírovat adresu odkazu"
+msgstr "_Kopírovat adresu zvukového souboru"
 
 #: LocalizedStringsGtk.cpp:156
 msgid "_Toggle Media Controls"
-msgstr ""
+msgstr "_Přepnout ovladače médií"
 
 #: LocalizedStringsGtk.cpp:161
 msgid "Toggle Media _Loop Playback"
-msgstr ""
+msgstr "Přepnout přehrávání média ve _smyčce"
 
 #: LocalizedStringsGtk.cpp:166
 msgid "Switch Video to _Fullscreen"
-msgstr ""
+msgstr "Přepnout video na _celou obrazovku"
 
 #: LocalizedStringsGtk.cpp:171
 msgid "_Play"
-msgstr ""
+msgstr "_Přehrát"
 
 #: LocalizedStringsGtk.cpp:176
-#, fuzzy
 msgid "_Pause"
-msgstr "pozastavit"
+msgstr "Po_zastavit"
 
 #: LocalizedStringsGtk.cpp:181
 msgid "_Mute"
-msgstr ""
+msgstr "Ztlu_mit"
 
 #: LocalizedStringsGtk.cpp:186
 msgid "Open _Frame in New Window"
@@ -212,7 +207,7 @@ msgstr "_Učit se kontrolu pravopisu"
 
 #: LocalizedStringsGtk.cpp:269
 msgid "_Search the Web"
-msgstr "_Vyhledat na WWW"
+msgstr "_Hledat na webu"
 
 #: LocalizedStringsGtk.cpp:274
 msgid "_Look Up in Dictionary"
@@ -323,13 +318,12 @@ msgid "term"
 msgstr "výraz"
 
 #: LocalizedStringsGtk.cpp:422
-#, fuzzy
 msgid "description"
-msgstr "definice"
+msgstr "popis"
 
 #: LocalizedStringsGtk.cpp:427
 msgid "footer"
-msgstr ""
+msgstr "patička"
 
 #: LocalizedStringsGtk.cpp:432
 msgid "press"
@@ -432,14 +426,12 @@ msgid "status"
 msgstr "stav"
 
 #: LocalizedStringsGtk.cpp:561
-#, fuzzy
 msgid "enter fullscreen"
-msgstr "celá obrazovka"
+msgstr "na celou obrazovku"
 
 #: LocalizedStringsGtk.cpp:563
-#, fuzzy
 msgid "exit fullscreen"
-msgstr "celá obrazovka"
+msgstr "ukončit režim celé obrazovky"
 
 #: LocalizedStringsGtk.cpp:565
 msgid "fast forward"
@@ -526,9 +518,8 @@ msgid "Play movie in fullscreen mode"
 msgstr "Přehrát video na celou obrazovku"
 
 #: LocalizedStringsGtk.cpp:614
-#, fuzzy
 msgid "Exit fullscreen mode"
-msgstr "Přehrát video na celou obrazovku"
+msgstr "Ukončit režim celé obrazovky"
 
 #: LocalizedStringsGtk.cpp:616
 msgid "start displaying closed captions"
@@ -567,7 +558,6 @@ msgid "range overflow"
 msgstr "příliš velký rozsah"
 
 #: LocalizedStringsGtk.cpp:736
-#, fuzzy
 msgid "step mismatch"
 msgstr "krok nesouhlasí"
 
@@ -577,34 +567,31 @@ msgstr ""
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:328
 msgid "Play"
-msgstr ""
+msgstr "Přehrát"
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:330
-#, fuzzy
 msgid "Pause"
-msgstr "pozastavit"
+msgstr "Pozastavit"
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
 msgid "Play / Pause"
-msgstr ""
+msgstr "Přehrát / Pozastavit"
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
 msgid "Play or pause the media"
-msgstr ""
+msgstr "Přehrát nebo pozastavit médium"
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:416
 msgid "Time:"
-msgstr ""
+msgstr "Čas:"
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
-#, fuzzy
 msgid "Exit Fullscreen"
-msgstr "celá obrazovka"
+msgstr "Ukončit celou obrazovku"
 
 #: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
-#, fuzzy
 msgid "Exit from fullscreen mode"
-msgstr "Přehrát video na celou obrazovku"
+msgstr "Odejít z režimu celé obrazovky"
 
 #: ../../../WebKit/gtk/webkit/webkitdownload.cpp:276
 msgid "Network Request"
@@ -680,7 +667,7 @@ msgstr ""
 #: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:253
 #: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:148
 msgid "Path"
-msgstr ""
+msgstr "Cesta"
 
 #: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:254
 #: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:149
@@ -691,7 +678,7 @@ msgstr "Objem již stažených dat"
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:129
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:128
 msgid "MIME types filter"
-msgstr ""
+msgstr "Filtr MIME typů"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:130
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
@@ -701,7 +688,7 @@ msgstr ""
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:145
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:142
 msgid "MIME types"
-msgstr ""
+msgstr "MIME typy"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:146
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
@@ -711,7 +698,7 @@ msgstr ""
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:161
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:157
 msgid "Select multiple files"
-msgstr ""
+msgstr "Vybrat více souborů"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:162
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
@@ -720,9 +707,8 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:177
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:171
-#, fuzzy
 msgid "Selected files"
-msgstr " soubory"
+msgstr "Vybrané soubory"
 
 #: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:178
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
@@ -732,7 +718,7 @@ msgstr ""
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
 msgid "Context"
-msgstr ""
+msgstr "Kontext"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:176
 msgid "Flags indicating the kind of target that received the event."
@@ -740,9 +726,8 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
-#, fuzzy
 msgid "Link URI"
-msgstr "Adresa URI ikony"
+msgstr "Adresa URI odkazu"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:191
 msgid "The URI to which the target that received the event points, if any."
@@ -751,7 +736,7 @@ msgstr ""
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
 msgid "Image URI"
-msgstr ""
+msgstr "Adresa URI obrázku"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:205
 msgid ""
@@ -762,7 +747,7 @@ msgstr ""
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
 msgid "Media URI"
-msgstr ""
+msgstr "Adresa URI média"
 
 #: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:219
 msgid ""
@@ -815,7 +800,7 @@ msgstr ""
 #: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:148
 #: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:157
 msgid "Message"
-msgstr ""
+msgstr "Zpráva"
 
 #: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:149
 msgid "The SoupMessage that backs the request."
@@ -830,7 +815,6 @@ msgid "The SoupMessage that backs the response."
 msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:171
-#, fuzzy
 msgid "Suggested filename"
 msgstr "Navrhovaný název souboru"
 
@@ -841,7 +825,7 @@ msgstr "Cílový rám navigace"
 
 #: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:150
 msgid "Protocol"
-msgstr ""
+msgstr "Protokol"
 
 #: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:151
 msgid "The protocol of the security origin"
@@ -849,7 +833,7 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:164
 msgid "Host"
-msgstr ""
+msgstr "Hostitel"
 
 #: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:165
 #, fuzzy
@@ -858,7 +842,7 @@ msgstr "Nadpis položky historie"
 
 #: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:178
 msgid "Port"
-msgstr ""
+msgstr "Port"
 
 #: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:179
 #, fuzzy
@@ -883,7 +867,7 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:138
 msgid "Device Width"
-msgstr ""
+msgstr "Šířka zařízení"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
 #, fuzzy
@@ -892,7 +876,7 @@ msgstr "Nadpis položky historie"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:160
 msgid "Device Height"
-msgstr ""
+msgstr "Výška zařízení"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
 #, fuzzy
@@ -901,7 +885,7 @@ msgstr "Název rámu"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:184
 msgid "Available Width"
-msgstr ""
+msgstr "Dostupná šířka"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
 #, fuzzy
@@ -910,7 +894,7 @@ msgstr "Nadpis položky historie"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:208
 msgid "Available Height"
-msgstr ""
+msgstr "Dostupná výška"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
 #, fuzzy
@@ -919,7 +903,7 @@ msgstr "Nadpis položky historie"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:230
 msgid "Desktop Width"
-msgstr ""
+msgstr "Šířka plochy"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
 msgid ""
@@ -929,7 +913,7 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:253
 msgid "Device DPI"
-msgstr ""
+msgstr "DPI zařízení"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
 msgid "The number of dots per inch of the screen."
@@ -937,7 +921,7 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:272
 msgid "Width"
-msgstr ""
+msgstr "Šířka"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
 #, fuzzy
@@ -946,7 +930,7 @@ msgstr "Nadpis položky historie"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:291
 msgid "Height"
-msgstr ""
+msgstr "Výška"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
 #, fuzzy
@@ -1003,11 +987,11 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:405
 msgid "valid"
-msgstr ""
+msgstr "platné"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:406
 msgid "Valid"
-msgstr ""
+msgstr "Platné"
 
 #: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
 msgid "Determines whether or not the attributes are valid, and can be used."
@@ -1034,7 +1018,7 @@ msgstr "Název rámu"
 
 #: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:204
 msgid "Display Name"
-msgstr ""
+msgstr "Zobrazovaný název"
 
 #: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:205
 msgid "The display name of the Web Storage database"
@@ -1042,7 +1026,7 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:218
 msgid "Expected Size"
-msgstr ""
+msgstr "Očekávaná velikost"
 
 #: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:219
 msgid "The expected size of the Web Database database"
@@ -1050,7 +1034,7 @@ msgstr ""
 
 #: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:231
 msgid "Size"
-msgstr ""
+msgstr "Velikost"
 
 #: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:232
 msgid "The current size of the Web Database database"
@@ -1206,9 +1190,8 @@ msgid "The target frame for the navigation"
 msgstr "Cílový rám navigace"
 
 #: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:115
-#, fuzzy
 msgid "Enabled"
-msgstr "Upravitelné"
+msgstr "Povoleno"
 
 #: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:116
 #, fuzzy
@@ -1475,7 +1458,7 @@ msgstr "Povolit databázi HTML5"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:459
 msgid "Whether to enable HTML5 database support"
-msgstr "Jeslti povolit podporu pro databázi HTML5"
+msgstr "Jestli povolit podporu pro databázi HTML5"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:474
 msgid "Enable HTML5 Local Storage"
@@ -1483,7 +1466,7 @@ msgstr "Povolit místní úložiště HTML5"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:475
 msgid "Whether to enable HTML5 Local Storage support"
-msgstr "Jestli má být povolena podpora místního úložiště HTML5"
+msgstr "Jestli povolit podporu místního úložiště HTML5"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:490
 msgid "Local Storage Database Path"
@@ -1541,13 +1524,12 @@ msgstr "Jestli smí JavaScript automaticky otevírat okna"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:592
 msgid "JavaScript can access Clipboard"
-msgstr ""
+msgstr "JavaScript smí přistupovat ke schránce"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:593
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:954
-#, fuzzy
 msgid "Whether JavaScript can access Clipboard"
-msgstr "Jestli smí JavaScript automaticky otevírat okna"
+msgstr "Jestli smí JavaScript přistupovat ke schránce"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:609
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:489
@@ -1651,9 +1633,8 @@ msgstr "Jestli použít vyrovnávací paměť pro stránky"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:832
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:857
-#, fuzzy
 msgid "Enable Fullscreen"
-msgstr "celá obrazovka"
+msgstr "Povolit celou obrazovku"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:833
 #, fuzzy
@@ -1663,7 +1644,7 @@ msgstr "Jestli použít vyrovnávací paměť pro stránky"
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:848
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:904
 msgid "Enable WebGL"
-msgstr ""
+msgstr "Povolit WebGL"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:849
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:905
@@ -1883,9 +1864,8 @@ msgid ""
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:139
-#, fuzzy
 msgid "Destination"
-msgstr "Cílová adresa URI"
+msgstr "Cíl"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:140
 msgid "The local URI to where the download will be saved"
@@ -1893,9 +1873,8 @@ msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:152
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
-#, fuzzy
 msgid "Response"
-msgstr "Síťová odpověď"
+msgstr "Odpověď"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:153
 #, fuzzy
@@ -1903,9 +1882,8 @@ msgid "The response of the download"
 msgstr "Údaj o aktuálním průběhu stahování"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:170
-#, fuzzy
 msgid "Estimated Progress"
-msgstr "Průběh"
+msgstr "Odhadovaný průběh"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:141
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:255
@@ -1924,9 +1902,8 @@ msgid "Favicons database not initialized yet"
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:174
-#, fuzzy
 msgid "Search text"
-msgstr "_Vyhledat na WWW"
+msgstr "Hledat text"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:175
 #, fuzzy
@@ -1964,14 +1941,12 @@ msgid "Flags with the context of the WebKitHitTestResult"
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
-#, fuzzy
 msgid "The link URI"
-msgstr "Adresa URI ikony"
+msgstr "Adresa URI odkazu"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
-#, fuzzy
 msgid "Link Title"
-msgstr "Nadpis"
+msgstr "Nadpis odkazu"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
 msgid "The link title"
@@ -1979,7 +1954,7 @@ msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
 msgid "Link Label"
-msgstr ""
+msgstr "Popisek odkazu"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
 msgid "The link label"
@@ -2003,7 +1978,7 @@ msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:123
 msgid "Mouse button"
-msgstr ""
+msgstr "Tlačítko myši"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:124
 msgid "The mouse button used if this decision was triggered by a mouse event"
@@ -2040,9 +2015,8 @@ msgid "The web view that will be printed"
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:167
-#, fuzzy
 msgid "Print Settings"
-msgstr "Nastavení"
+msgstr "Nastavení tisku"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
 msgid "The initial print settings for the print operation"
@@ -2074,19 +2048,16 @@ msgid "The URI response that is associated with this policy decision"
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:442
-#, fuzzy
 msgid "Enable JavaScript"
-msgstr "Povolit skripty"
+msgstr "Povolit JavaScript"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:443
-#, fuzzy
 msgid "Enable JavaScript."
-msgstr "Povolit skripty"
+msgstr "Povolit JavaScript."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:457
-#, fuzzy
 msgid "Auto load images"
-msgstr "Obrázky automaticky"
+msgstr "Automaticky načíst obrázky"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:471
 msgid "Load icons ignoring image load setting"
@@ -2097,39 +2068,33 @@ msgid "Whether to load site icons ignoring image load setting."
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:490
-#, fuzzy
 msgid "Whether to enable offline web application cache."
-msgstr "Povolit ukládání stránek do vyrovnávací paměti k použití při odpojení"
+msgstr ""
+"Jestli povolit ukládání stránek do vyrovnávací paměti k použití při odpojení."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:506
-#, fuzzy
 msgid "Enable HTML5 local storage"
 msgstr "Povolit místní úložiště HTML5"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:507
-#, fuzzy
 msgid "Whether to enable HTML5 Local Storage support."
-msgstr "Jestli má být povolena podpora místního úložiště HTML5"
+msgstr "Jestli má být povolena podpora místního úložiště HTML5."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:524
-#, fuzzy
 msgid "Enable HTML5 database"
 msgstr "Povolit databázi HTML5"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:525
-#, fuzzy
 msgid "Whether to enable HTML5 database support."
-msgstr "Jeslti povolit podporu pro databázi HTML5"
+msgstr "Jeslti povolit podporu pro databázi HTML5."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:538
-#, fuzzy
 msgid "Enable XSS auditor"
 msgstr "Povolit revizi XSS"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:539
-#, fuzzy
 msgid "Whether to enable the XSS auditor."
-msgstr "Jestli povolit revizi XSS"
+msgstr "Jestli povolit revizi XSS."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:554
 #, fuzzy
@@ -2142,12 +2107,10 @@ msgid "Whether to enable frame flattening."
 msgstr "Jestli povolit vkládání DOM"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:567
-#, fuzzy
 msgid "Enable plugins"
 msgstr "Povolit zásuvné moduly"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
-#, fuzzy
 msgid "Enable Java"
 msgstr "Povolit applet jazyka Java"
 
@@ -2193,25 +2156,22 @@ msgid "The font family used as the default for content using monospace font."
 msgstr "Výchozí rodina písma použitého k zobrazení textu s pevnou šířkou."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
-#, fuzzy
 msgid "Serif font family"
-msgstr "Rodina písma Sans Serif"
+msgstr "Rodina písma Serif"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:651
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
-#, fuzzy
 msgid "Sans-serif font family"
-msgstr "Rodina písem Sans Serif"
+msgstr "Rodina písem Sans-serif"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:664
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
-#, fuzzy
 msgid "Cursive font family"
 msgstr "Rodina písma kurzíva"
 
@@ -2220,7 +2180,6 @@ msgid "The font family used as the default for content using cursive font."
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
-#, fuzzy
 msgid "Fantasy font family"
 msgstr "Rodina písma Fantasy"
 
@@ -2237,17 +2196,14 @@ msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:716
-#, fuzzy
 msgid "Default font size"
 msgstr "Výchozí velikost písma"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:730
-#, fuzzy
 msgid "Default monospace font size"
 msgstr "Výchozí velikost písma s pevnou šířkou"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
-#, fuzzy
 msgid "Minimum font size"
 msgstr "Minimální velikost písma"
 
@@ -2262,7 +2218,6 @@ msgid ""
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
-#, fuzzy
 msgid "Enable private browsing"
 msgstr "Povolit soukromé prohlížení"
 
@@ -2277,9 +2232,8 @@ msgid "Enable developer extras"
 msgstr "Povolit rozšíření pro vývojáře"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
-#, fuzzy
 msgid "Whether to enable developer extras"
-msgstr "Povolit rozšíření pro vývojáře"
+msgstr "Jestli mají být povolena rozšíření pro vývojáře"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
 #, fuzzy
@@ -2338,9 +2292,8 @@ msgid "Whether zoom level of web view changes only the text size"
 msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:953
-#, fuzzy
 msgid "JavaScript can access clipboard"
-msgstr "Jestli smí JavaScript automaticky otevírat okna"
+msgstr "Jestli smí JavaScript přistupovat ke schránce"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1000
 msgid "Draw compositing indicators"
@@ -2366,9 +2319,8 @@ msgid "The URI for which the response was made."
 msgstr "Adresa URI položky historie"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:111
-#, fuzzy
 msgid "Status Code"
-msgstr "Stav"
+msgstr "Stavový kód"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:112
 msgid "The status code of the response as returned by the server."
@@ -2465,7 +2417,7 @@ msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
 msgid "Geometry"
-msgstr ""
+msgstr "Geometrie"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
 msgid "The size and position of the window on the screen."
@@ -2473,7 +2425,7 @@ msgstr ""
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:222
 msgid "Toolbar Visible"
-msgstr ""
+msgstr "Viditelný panel nástrojů"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
 #, fuzzy
@@ -2482,7 +2434,7 @@ msgstr "Jestli použít vyrovnávací paměť pro stránky"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:235
 msgid "Statusbar Visible"
-msgstr ""
+msgstr "Viditelná stavová lišta"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
 #, fuzzy
@@ -2491,7 +2443,7 @@ msgstr "Jestli použít vyrovnávací paměť pro stránky"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:248
 msgid "Scrollbars Visible"
-msgstr ""
+msgstr "Viditelné posuvníky"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
 #, fuzzy
@@ -2500,7 +2452,7 @@ msgstr "Jestli použít vyrovnávací paměť pro stránky"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:261
 msgid "Menubar Visible"
-msgstr ""
+msgstr "Viditelná lišta menu"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
 #, fuzzy
@@ -2509,7 +2461,7 @@ msgstr "Jestli použít vyrovnávací paměť pro stránky"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:274
 msgid "Locationbar Visible"
-msgstr ""
+msgstr "Viditelná lišta umístění"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
 #, fuzzy
@@ -2517,9 +2469,8 @@ msgid "Whether the locationbar should be visible for the window."
 msgstr "Jestli použít vyrovnávací paměť pro stránky"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:286
-#, fuzzy
 msgid "Resizable"
-msgstr "Měnitelná velikost textového pole"
+msgstr "Měnitelná velikost"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
 #, fuzzy
@@ -2527,9 +2478,8 @@ msgid "Whether the window can be resized."
 msgstr "Jestli je možno měnit velikost textového pole."
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:299
-#, fuzzy
 msgid "Fullscreen"
-msgstr "celá obrazovka"
+msgstr "Celá obrazovka"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
 msgid "Whether window will be displayed fullscreen."
