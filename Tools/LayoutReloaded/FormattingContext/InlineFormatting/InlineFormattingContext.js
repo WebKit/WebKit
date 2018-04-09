@@ -42,14 +42,14 @@ class InlineFormattingContext extends FormattingContext {
             if (layoutBox.isInlineContainer()) {
                 if (inlineContainerStack.indexOf(layoutBox) == -1) {
                     inlineContainerStack.push(layoutBox);
-                    this._adjustLineForInlineContainerStart();
+                    this._adjustLineForInlineContainerStart(layoutBox);
                     if (layoutBox.establishesFormattingContext())
                         this.layoutState().layout(layoutBox);
                     else
                         this._addToLayoutQueue(layoutBox.firstInFlowOrFloatChild());
                 } else {
                     inlineContainerStack.pop(layoutBox);
-                    this._adjustLineForInlineContainerEnd();
+                    this._adjustLineForInlineContainerEnd(layoutBox);
                     this._removeFromLayoutQueue(layoutBox);
                     this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
                     // Place the inflow positioned children.
@@ -116,15 +116,20 @@ class InlineFormattingContext extends FormattingContext {
         // Check if the floating box is actually on the current line or got pushed further down.
         if (displayBox.top() >= this._line().rect().bottom())
             return;
-        this._line().addFloatingBox(displayBox, Utils.isFloatingLeft(floatingBox));
+        let floatWidth = displayBox.width();
+        this._line().shrink(floatWidth);
+        if (Utils.isFloatingLeft(floatingBox))
+            this._line().moveContentHorizontally(floatWidth);
     }
 
     _adjustLineForInlineContainerStart(inlineContainer) {
-
+        let offset = this.marginLeft(inlineContainer) + Utils.computedBorderAndPaddingLeft(inlineContainer.node());
+        this._line().adjustWithOffset(offset);
     }
 
     _adjustLineForInlineContainerEnd(inlineContainer) {
-
+        let offset = this.marginRight(inlineContainer) + Utils.computedBorderAndPaddingRight(inlineContainer.node());
+        this._line().adjustWithOffset(offset);
     }
 
     _placeInFlowPositionedChildren(container) {

@@ -46,6 +46,22 @@ class Line {
         return this.m_lineBoxes;
     }
 
+    shrink(width) {
+        this.m_availableWidth -= width;
+    }
+
+    adjustWithOffset(offset) {
+        this.m_availableWidth -= offset;
+        this.m_lineRect.growBy(new LayoutSize(offset, 0));
+    }
+
+    moveContentHorizontally(offset) {
+        // Push non-floating boxes to the right.
+        for (let lineBox of this.m_lineBoxes)
+            lineBox.lineBoxRect.moveHorizontally(offset);
+        this.m_lineRect.moveHorizontally(offset);
+    }
+
     addTextLineBox(startPosition, endPosition, size) {
         ASSERT(size.width() <= this.m_availableWidth);
         this.m_availableWidth -= size.width();
@@ -53,17 +69,5 @@ class Line {
         let lineBoxRect = new LayoutRect(this.rect().topRight(), new LayoutSize(size.width(), this.rect().height()));
         this.m_lineBoxes.push({startPosition, endPosition, lineBoxRect});
         this.m_lineRect.growBy(new LayoutSize(size.width(), 0));
-    }
-
-    addFloatingBox(floatingDisplayBox, isFloatingLeft) {
-        let width = floatingDisplayBox.width();
-        ASSERT(width <= this.m_availableWidth);
-        this.m_availableWidth -= width;
-        if (!isFloatingLeft)
-            return;
-        // Push non-floating boxes to the right.
-        for (let lineBox of this.m_lineBoxes)
-            lineBox.lineBoxRect.moveHorizontally(width);
-        this.m_lineRect.moveHorizontally(width);
     }
 }

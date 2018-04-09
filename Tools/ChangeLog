@@ -1,3 +1,26 @@
+2018-04-08  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Adjust line with inline container's margin border and padding
+        https://bugs.webkit.org/show_bug.cgi?id=184409
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleFloatingBox):
+        (InlineFormattingContext.prototype._adjustLineForInlineContainerStart):
+        (InlineFormattingContext.prototype._adjustLineForInlineContainerEnd):
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js:
+        (Line.prototype.shrink):
+        (Line.prototype.adjustWithOffset):
+        (Line.prototype.moveContentHorizontally):
+        (Line.prototype.addTextLineBox):
+        (Line):
+        (Line.prototype.addFloatingBox): Deleted.
+        * LayoutReloaded/misc/LayoutReloadedWebKit.patch:
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-with-padding-border-margin-offsets.html: Added.
+
 2018-04-07  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Add support for InlineContainer

@@ -38,7 +38,7 @@ index ff942b36a44..5bc30f914af 100644
  rendering/LayoutRepainter.cpp
  rendering/LayoutState.cpp
 diff --git a/Source/WebCore/WebCore.xcodeproj/project.pbxproj b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
-index 690b9e941bd..3ffc4406907 100644
+index 2ae0c8a22d5..edcd82aa95a 100644
 --- a/Source/WebCore/WebCore.xcodeproj/project.pbxproj
 +++ b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
 @@ -396,6 +396,10 @@
@@ -578,15 +578,18 @@ index aa030c54617..7457861e142 100644
  }
  
 diff --git a/Source/WebCore/rendering/InlineBox.cpp b/Source/WebCore/rendering/InlineBox.cpp
-index cd23ae0b97c..da072efdfa9 100644
+index cd23ae0b97c..7cfd4bb2d42 100644
 --- a/Source/WebCore/rendering/InlineBox.cpp
 +++ b/Source/WebCore/rendering/InlineBox.cpp
-@@ -123,6 +123,15 @@ void InlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
+@@ -123,6 +123,18 @@ void InlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
      stream.nextLine();
  }
  
 +void InlineBox::outputSimplifiedLineTree(TextStream& stream, int depth) const
 +{
++    // Ignore inline flows for now. LayoutReloaded does not have the concept of flow boxes.
++    if (is<InlineFlowBox>(*this) && !is<RootInlineBox>(*this))
++        return;
 +    int printedCharacters = 0;
 +    while (++printedCharacters <= depth)
 +        stream << " ";
@@ -610,18 +613,23 @@ index 7f1dd6cbba4..eddb048440a 100644
      virtual const char* boxName() const;
  #endif
 diff --git a/Source/WebCore/rendering/InlineFlowBox.cpp b/Source/WebCore/rendering/InlineFlowBox.cpp
-index 063f3b64189..5494aabe546 100644
+index 063f3b64189..ee32b981371 100644
 --- a/Source/WebCore/rendering/InlineFlowBox.cpp
 +++ b/Source/WebCore/rendering/InlineFlowBox.cpp
-@@ -1720,6 +1720,13 @@ void InlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const InlineB
+@@ -1720,6 +1720,18 @@ void InlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const InlineB
          box->outputLineTreeAndMark(stream, markedBox, depth + 1);
  }
  
 +void InlineFlowBox::outputSimplifiedLineTree(WTF::TextStream& stream, int depth) const
 +{
 +    InlineBox::outputSimplifiedLineTree(stream, depth);
-+    for (auto* box = firstChild(); box; box = box->nextOnLine())
-+        box->outputSimplifiedLineTree(stream, depth + 1);
++    for (auto* box = firstChild(); box; box = box->nextOnLine()) {
++        // DO not increment depth for flow boxes. LayoutReloaded does not have the concept of them.
++        if (is<InlineFlowBox>(*box) && !is<RootInlineBox>(*box))
++            box->outputSimplifiedLineTree(stream, depth);
++        else
++            box->outputSimplifiedLineTree(stream, depth + 1);
++    }
 +}
 +
  #endif
