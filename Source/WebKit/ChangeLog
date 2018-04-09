@@ -1,3 +1,19 @@
+2018-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Disable fast clicking by default in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184411
+        <rdar://problem/38726867>
+
+        Reviewed by Andy Estes.
+
+        As it turns out, existing fast-clicking heuristics don't work so well in extra zoom mode. Even at device-width,
+        since the page is scaled to fit within the viewport, having single taps take precedence over double taps leads
+        to a confusing experience when trying to double tap to zoom further on content that contains links and other
+        click targets. Revert to legacy behavior here by disabling these heuristics.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
 2018-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add an SPI hook for clients to opt in to focus overlay UI

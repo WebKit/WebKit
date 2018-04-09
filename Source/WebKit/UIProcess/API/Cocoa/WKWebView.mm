@@ -656,7 +656,16 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
     _initialScaleFactor = 1;
-    _fastClickingIsDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitFastClickingDisabled"];
+
+    if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
+        _fastClickingIsDisabled = enabledValue.boolValue;
+    else {
+#if ENABLE(EXTRA_ZOOM_MODE)
+        _fastClickingIsDisabled = YES;
+#else
+        _fastClickingIsDisabled = NO;
+#endif
+    }
 
     [self _frameOrBoundsChanged];
 
