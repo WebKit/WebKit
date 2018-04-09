@@ -140,8 +140,8 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
         for (auto& language : languages) {
             CString currentLanguage = language.utf8();
             if (enchant_broker_dict_exists(m_broker, currentLanguage.data())) {
-                EnchantDict* dict = enchant_broker_request_dict(m_broker, currentLanguage.data());
-                spellDictionaries.append(dict);
+                if (auto* dict = enchant_broker_request_dict(m_broker, currentLanguage.data()))
+                    spellDictionaries.append(dict);
             }
         }
     } else {
@@ -149,15 +149,15 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
         CString utf8Language = defaultLanguage().utf8();
         const char* language = utf8Language.data();
         if (enchant_broker_dict_exists(m_broker, language)) {
-            EnchantDict* dict = enchant_broker_request_dict(m_broker, language);
-            spellDictionaries.append(dict);
+            if (auto* dict = enchant_broker_request_dict(m_broker, language))
+                spellDictionaries.append(dict);
         } else {
             // No dictionaries selected, we get the first one from the list.
             Vector<CString> allDictionaries;
             enchant_broker_list_dicts(m_broker, enchantDictDescribeCallback, &allDictionaries);
             if (!allDictionaries.isEmpty()) {
-                EnchantDict* dict = enchant_broker_request_dict(m_broker, allDictionaries.first().data());
-                spellDictionaries.append(dict);
+                if (auto* dict = enchant_broker_request_dict(m_broker, allDictionaries.first().data()))
+                    spellDictionaries.append(dict);
             }
         }
     }
