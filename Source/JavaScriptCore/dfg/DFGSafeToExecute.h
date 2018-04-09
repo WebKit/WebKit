@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -503,9 +503,33 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetByOffset:
     case GetGetterSetterByOffset:
     case PutByOffset: {
-        PropertyOffset offset = node->storageAccessData().offset;
+        StorageAccessData& data = node->storageAccessData();
+        PropertyOffset offset = data.offset;
+        UniquedStringImpl* uid = graph.identifiers()[data.identifierNumber];
 
-        if (state.structureClobberState() == StructuresAreWatched) {
+        InferredType::Descriptor inferredType;
+        switch (node->op()) {
+        case GetByOffset:
+        case GetGetterSetterByOffset:
+            inferredType = data.inferredType;
+            break;
+        case PutByOffset:
+            // PutByOffset knows about inferred types because it's the enforcer of that type rather
+            // than the consumer of that type. Therefore, PutByOffset expects TOP for the purpose of
+            // safe-to-execute in the sense that it will be happy with anything as general as TOP
+            // (so any type).
+            inferredType = InferredType::Top;
+            break;
+        default:
+            DFG_CRASH(graph, node, "Bad opcode");
+            break;
+        }
+
+        // Graph::isSafeToLoad() is all about proofs derived from PropertyConditions. Those don't
+        // know anything about inferred types. But if we have a proof derived from watching a
+        // structure that has a type proof, then the next case below will deal with it.
+        if (state.structureClobberState() == StructuresAreWatched
+            && inferredType.kind() == InferredType::Top) {
             if (JSObject* knownBase = node->child1()->dynamicCastConstant<JSObject*>(graph.m_vm)) {
                 if (graph.isSafeToLoad(knownBase, offset))
                     return true;
@@ -516,8 +540,15 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         if (value.isInfinite())
             return false;
         for (unsigned i = value.size(); i--;) {
-            if (!value[i]->isValidOffset(offset))
+            Structure* thisStructure = value[i].get();
+            if (!thisStructure->isValidOffset(offset))
                 return false;
+            if (inferredType.kind() != InferredType::Top) {
+                InferredType::Descriptor thisInferredType =
+                    graph.inferredTypeForProperty(thisStructure, uid);
+                if (!inferredType.subsumes(thisInferredType))
+                    return false;
+            }
         }
         return true;
     }
