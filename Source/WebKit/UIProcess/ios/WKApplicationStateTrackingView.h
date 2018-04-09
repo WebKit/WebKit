@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS) && ENABLE(WKPDFVIEW)
+#if PLATFORM(IOS)
 
-#import "CorePDFSPI.h"
-#import "WKActionSheetAssistant.h"
-#import "WKApplicationStateTrackingView.h"
-#import "WKWebViewContentProvider.h"
+#import <UIKit/UIKit.h>
 
-@interface WKLegacyPDFView : WKApplicationStateTrackingView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate, WKActionSheetAssistantDelegate>
+@class WKWebView;
+
+@interface WKApplicationStateTrackingView : UIView
+
+- (instancetype)initWithFrame:(CGRect)frame webView:(WKWebView *)webView;
+- (void)_applicationDidCreateWindowContext;
+- (void)_applicationWillEnterForeground;
+@property (nonatomic, readonly) BOOL isBackground;
+
 @end
 
-#endif // PLATFORM(IOS) && ENABLE(WKPDFVIEW)
+#endif // PLATFORM(IOS)

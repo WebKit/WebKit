@@ -1,3 +1,56 @@
+2018-04-08  Andy Estes  <aestes@apple.com>
+
+        [iOS] WKContentView and WKLegacyPDFView should share application state tracking logic
+        https://bugs.webkit.org/show_bug.cgi?id=184402
+
+        Reviewed by Dan Bernstein.
+
+        WKContentView and WKLegacyPDFView have nearly identical logic for tracking
+        application foreground state. Let's share it so we can more easily create new
+        content views with proper application state tracking.
+
+        * UIProcess/ios/WKApplicationStateTrackingView.h: Added.
+        * UIProcess/ios/WKApplicationStateTrackingView.mm: Added.
+        (-[WKApplicationStateTrackingView initWithFrame:webView:]):
+        (-[WKApplicationStateTrackingView willMoveToWindow:]):
+        (-[WKApplicationStateTrackingView didMoveToWindow]):
+        (-[WKApplicationStateTrackingView _applicationDidEnterBackground]):
+        (-[WKApplicationStateTrackingView _applicationDidCreateWindowContext]):
+        (-[WKApplicationStateTrackingView _applicationDidFinishSnapshottingAfterEnteringBackground]):
+        (-[WKApplicationStateTrackingView _applicationWillEnterForeground]):
+        (-[WKApplicationStateTrackingView isBackground]):
+
+        Moved common logic from WKContentView and WKLegacyPDFView into
+        WKApplicationStateTrackingView.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView initWithFrame:processPool:configuration:webView:]):
+        (-[WKContentView willMoveToWindow:]):
+        (-[WKContentView _applicationDidCreateWindowContext]):
+        (-[WKContentView didMoveToWindow]): Deleted.
+        (-[WKContentView isBackground]): Deleted.
+        (-[WKContentView _applicationDidEnterBackground]): Deleted.
+        (-[WKContentView _applicationDidFinishSnapshottingAfterEnteringBackground]): Deleted.
+        (-[WKContentView _applicationWillEnterForeground]): Deleted.
+
+        Made WKContentView a subclass of WKApplicationStateTrackingView.
+
+        * UIProcess/ios/WKLegacyPDFView.h:
+        * UIProcess/ios/WKLegacyPDFView.mm:
+        (-[WKLegacyPDFView web_initWithFrame:webView:]):
+        (-[WKLegacyPDFView web_isBackground]):
+        (-[WKLegacyPDFView _applicationWillEnterForeground]):
+        (-[WKLegacyPDFView willMoveToWindow:]): Deleted.
+        (-[WKLegacyPDFView didMoveToWindow]): Deleted.
+        (-[WKLegacyPDFView _applicationDidEnterBackground]): Deleted.
+        (-[WKLegacyPDFView _applicationDidCreateWindowContext]): Deleted.
+        (-[WKLegacyPDFView _applicationDidFinishSnapshottingAfterEnteringBackground]): Deleted.
+
+        Made WKLegacyPDFView a subclass of WKApplicationStateTrackingView.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-04-08  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Keep library validation disabled for WebContent.Development

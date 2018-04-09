@@ -1557,6 +1557,8 @@
 		A118A9EF1907AD6F00F7C92B /* QuickLookDocumentData.h in Headers */ = {isa = PBXBuildFile; fileRef = A118A9ED1907AD6F00F7C92B /* QuickLookDocumentData.h */; };
 		A118A9F21908B8EA00F7C92B /* _WKNSFileManagerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */; };
 		A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */ = {isa = PBXBuildFile; fileRef = A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */; };
+		A13DC683207AA6B20066EF72 /* WKApplicationStateTrackingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13DC681207AA6B20066EF72 /* WKApplicationStateTrackingView.mm */; };
 		A15EEDE51E301CEE000069B0 /* WKPasswordView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A15EEDE31E301CEE000069B0 /* WKPasswordView.mm */; };
 		A15EEDE61E301CEE000069B0 /* WKPasswordView.h in Headers */ = {isa = PBXBuildFile; fileRef = A15EEDE41E301CEE000069B0 /* WKPasswordView.h */; };
 		A182D5B41BE6BD250087A7CC /* AccessibilityIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A182D5B21BE6BD250087A7CC /* AccessibilityIOS.mm */; };
@@ -4043,6 +4045,8 @@
 		A118A9ED1907AD6F00F7C92B /* QuickLookDocumentData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookDocumentData.h; path = ios/QuickLookDocumentData.h; sourceTree = "<group>"; };
 		A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSFileManagerExtras.mm; sourceTree = "<group>"; };
 		A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKNSFileManagerExtras.h; sourceTree = "<group>"; };
+		A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKApplicationStateTrackingView.h; path = ios/WKApplicationStateTrackingView.h; sourceTree = "<group>"; };
+		A13DC681207AA6B20066EF72 /* WKApplicationStateTrackingView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKApplicationStateTrackingView.mm; path = ios/WKApplicationStateTrackingView.mm; sourceTree = "<group>"; };
 		A15EEDE31E301CEE000069B0 /* WKPasswordView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPasswordView.mm; path = ios/WKPasswordView.mm; sourceTree = "<group>"; };
 		A15EEDE41E301CEE000069B0 /* WKPasswordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPasswordView.h; path = ios/WKPasswordView.h; sourceTree = "<group>"; };
 		A182D5B21BE6BD250087A7CC /* AccessibilityIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityIOS.mm; sourceTree = "<group>"; };
@@ -5815,6 +5819,8 @@
 				0FCB4E3918BBE044000FCFC9 /* WKActionSheet.mm */,
 				0FCB4E3A18BBE044000FCFC9 /* WKActionSheetAssistant.h */,
 				0FCB4E3B18BBE044000FCFC9 /* WKActionSheetAssistant.mm */,
+				A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */,
+				A13DC681207AA6B20066EF72 /* WKApplicationStateTrackingView.mm */,
 				0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */,
 				0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */,
 				0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */,
@@ -9414,6 +9420,7 @@
 				2D12DAB520662C73006F00FB /* WKAnimationDelegate.h in Headers */,
 				BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */,
 				512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */,
+				A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */,
 				BC4075F4124FF0270068F20A /* WKArray.h in Headers */,
 				512F58F612A88A5400629530 /* WKAuthenticationChallenge.h in Headers */,
 				512F58F812A88A5400629530 /* WKAuthenticationDecisionListener.h in Headers */,
@@ -11190,6 +11197,7 @@
 				0FCB4E4B18BBE044000FCFC9 /* WKActionSheetAssistant.mm in Sources */,
 				C5FA1ED418E1062200B3F402 /* WKAirPlayRoutePicker.mm in Sources */,
 				512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */,
+				A13DC683207AA6B20066EF72 /* WKApplicationStateTrackingView.mm in Sources */,
 				BC4075F3124FF0270068F20A /* WKArray.cpp in Sources */,
 				512F58F512A88A5400629530 /* WKAuthenticationChallenge.cpp in Sources */,
 				512F58F712A88A5400629530 /* WKAuthenticationDecisionListener.cpp in Sources */,

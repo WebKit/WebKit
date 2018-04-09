@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKApplicationStateTrackingView.h"
 #import "WKBase.h"
 #import "WKBrowsingContextController.h"
 #import "WKBrowsingContextGroup.h"
 #import "WKProcessGroup.h"
-#import <UIKit/UIKit.h>
 #import <wtf/RetainPtr.h>
 
 @class WKContentView;
@@ -49,7 +49,7 @@ class WebPageProxy;
 class WebProcessPool;
 }
 
-@interface WKContentView : UIView {
+@interface WKContentView : WKApplicationStateTrackingView {
 @package
     RefPtr<WebKit::WebPageProxy> _page;
     WKWebView *_webView;
@@ -60,7 +60,6 @@ class WebProcessPool;
 @property (nonatomic, readonly) WebKit::WebPageProxy* page;
 @property (nonatomic, readonly) BOOL isAssistingNode;
 @property (nonatomic, getter=isShowingInspectorIndication) BOOL showingInspectorIndication;
-@property (nonatomic, readonly) BOOL isBackground;
 @property (nonatomic, readonly, getter=isResigningFirstResponder) BOOL resigningFirstResponder;
 @property (nonatomic) BOOL sizeChangedSinceLastVisibleContentRectUpdate;
 
