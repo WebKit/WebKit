@@ -29,4 +29,7 @@ FAIL Errors must be propagated forward: becomes errored after one chunk; dest ne
 FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = false; rejected abort promise Can't find variable: WritableStream
 FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = true Can't find variable: WritableStream
 FAIL Errors must be propagated forward: shutdown must not occur until the final write completes Can't find variable: WritableStream
+FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; preventAbort = true Can't find variable: WritableStream
+FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; becomes errored after first write Can't find variable: WritableStream
+FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; becomes errored after first write; preventAbort = true Can't find variable: WritableStream
 

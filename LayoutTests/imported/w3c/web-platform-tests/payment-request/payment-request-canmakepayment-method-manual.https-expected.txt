@@ -1,0 +1,15 @@
+Tests for PaymentRequest.canMakePayment() method
+
+Click on each button in sequence from top to bottom without refreshing the page. No payment sheet will be shown, but the tests will run in the background.
+
+If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException.
+If request.[[state]] is "closed", then return a promise rejected with an "InvalidStateError" DOMException.
+If you find a buggy test, please file a bug and tag one of the owners.
+
+Harness Error (TIMEOUT), message = null
+
+FAIL If request.[[state]] is "created", then return a promise that resolves to true for known method. assert_equals: if it throws, then it must be a NotAllowedError. expected "NotAllowedError" but got "Error"
+FAIL If payment method identifier and serialized parts are supported, resolve promise with true. assert_true: basic-card should be supported expected true got false
+PASS If payment method identifier is unknown, resolve promise with false. 
+PASS Optionally, at the user agent's discretion, return a promise rejected with a "NotAllowedError" DOMException. 
+

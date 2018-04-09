@@ -4,5 +4,5 @@ CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolve
 CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
 CONSOLE MESSAGE: SyntaxError: Importing binding name 'default' cannot be resolved by star export entries.
 
-FAIL Test that missing exports lead to SyntaxError events on window and load events on script, and that exceptions are remembered null is not an object (evaluating 'exn.constructor')
+FAIL Test that missing exports lead to SyntaxError events on window and load events on script null is not an object (evaluating 'ev.error.constructor')
 

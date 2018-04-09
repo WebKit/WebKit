@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 FAIL Test Window.isSecureContext for HTTP creator assert_false: http: creator should not be a Secure Context expected false got true
 FAIL Test Window.isSecureContext in an iframe loading an http: URI assert_false: an http: URI in an iframe should not create a Secure Context expected false got true
 PASS Test Window.isSecureContext in an iframe loading an https: URI 
@@ -17,5 +15,6 @@ FAIL Test Window.isSecureContext in a popup loading an http: URI assert_false: a
 PASS Test Window.isSecureContext in a popup loading an https: URI 
 PASS Test Window.isSecureContext in a popup loading a blob: URI 
 PASS Test Window.isSecureContext in a popup loading a javascript: URI 
-TIMEOUT Test Window.isSecureContext in a popup loading about:blank Test timed out
+PASS Test Window.isSecureContext in a popup loading about:blank 
+PASS Test Window.isSecureContext in a popup loading initial about:blank 
 

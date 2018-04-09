@@ -2,5 +2,5 @@ CONSOLE MESSAGE: SyntaxError: Indirectly exported binding name 'x' is not found.
 CONSOLE MESSAGE: SyntaxError: Indirectly exported binding name 'x' is not found.
 CONSOLE MESSAGE: SyntaxError: Indirectly exported binding name 'x' is not found.
 
-FAIL Test that unresolvable cycles lead to SyntaxError events on window and load events on script, and that exceptions are remembered null is not an object (evaluating 'exn.constructor')
+FAIL Test that unresolvable cycles lead to SyntaxError events on window and load events on script null is not an object (evaluating 'ev.error.constructor')
 

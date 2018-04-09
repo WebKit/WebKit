@@ -15,14 +15,14 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc_vectors.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr_vectors.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm_vectors.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https.html
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.https.html

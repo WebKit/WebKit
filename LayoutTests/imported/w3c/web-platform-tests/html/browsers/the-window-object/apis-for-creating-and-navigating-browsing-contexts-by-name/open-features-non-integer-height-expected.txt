@@ -1,6 +1,6 @@
 
 PASS top=0,left=0,width=401,: absence of feature "height" should be treated same as "height=0" 
-FAIL top=0,left=0: absence of feature "height" should be treated same as "height=0" assert_equals: expected 401 but got 800
+PASS top=0,left=0: absence of feature "height" should be treated same as "height=0" 
 PASS features "height=/404" should NOT set "height=404" 
 PASS features "height=_404" should NOT set "height=404" 
 PASS features "height=L404" should NOT set "height=404" 

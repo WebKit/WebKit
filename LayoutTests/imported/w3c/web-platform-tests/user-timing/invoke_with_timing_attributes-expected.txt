@@ -24,25 +24,25 @@ PASS performance.mark should throw if used with timing attribute domContentLoade
 PASS performance.mark should throw if used with timing attribute domComplete 
 PASS performance.mark should throw if used with timing attribute loadEventStart 
 PASS performance.mark should throw if used with timing attribute loadEventEnd 
-FAIL performance.measure should throw if used with timing attribute navigationStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute unloadEventStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute unloadEventEnd assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute redirectStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute redirectEnd assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute fetchStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute domainLookupStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute domainLookupEnd assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute connectStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute connectEnd assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute secureConnectionStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute requestStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute responseStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute responseEnd assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute domLoading assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute domInteractive assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute domContentLoadedEventStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute domContentLoadedEventEnd assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute domComplete assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute loadEventStart assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
-FAIL performance.measure should throw if used with timing attribute loadEventEnd assert_throws: function "function () { window.performance.measure(attrName); }" did not throw
+PASS performance.measure should not throw if used with timing attribute navigationStart 
+PASS performance.measure should not throw if used with timing attribute unloadEventStart 
+PASS performance.measure should not throw if used with timing attribute unloadEventEnd 
+PASS performance.measure should not throw if used with timing attribute redirectStart 
+PASS performance.measure should not throw if used with timing attribute redirectEnd 
+PASS performance.measure should not throw if used with timing attribute fetchStart 
+PASS performance.measure should not throw if used with timing attribute domainLookupStart 
+PASS performance.measure should not throw if used with timing attribute domainLookupEnd 
+PASS performance.measure should not throw if used with timing attribute connectStart 
+PASS performance.measure should not throw if used with timing attribute connectEnd 
+PASS performance.measure should not throw if used with timing attribute secureConnectionStart 
+PASS performance.measure should not throw if used with timing attribute requestStart 
+PASS performance.measure should not throw if used with timing attribute responseStart 
+PASS performance.measure should not throw if used with timing attribute responseEnd 
+PASS performance.measure should not throw if used with timing attribute domLoading 
+PASS performance.measure should not throw if used with timing attribute domInteractive 
+PASS performance.measure should not throw if used with timing attribute domContentLoadedEventStart 
+PASS performance.measure should not throw if used with timing attribute domContentLoadedEventEnd 
+PASS performance.measure should not throw if used with timing attribute domComplete 
+PASS performance.measure should not throw if used with timing attribute loadEventStart 
+PASS performance.measure should not throw if used with timing attribute loadEventEnd 
 

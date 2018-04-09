@@ -5,6 +5,7 @@ PASS row-gap accepts em
 PASS row-gap accepts vw 
 PASS row-gap accepts percentage 
 PASS row-gap accepts calc() 
+PASS row-gap accepts calc() mixing fixed and percentage values 
 PASS Initial row-gap is 'normal' 
 PASS Initial row-gap is 'normal' 2 
 PASS Initial inherited row-gap is 'normal' 

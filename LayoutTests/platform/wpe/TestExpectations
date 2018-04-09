@@ -226,21 +226,11 @@ webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ Pass ]
 
 webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/box-sizing-026.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui/outline-006.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
-webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 
 Bug(WPE) imported/w3c/web-platform-tests/css/css-color [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/css/css-multicol [ Skip ]

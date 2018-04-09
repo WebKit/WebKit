@@ -14,12 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey.https.html
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_symmetric_importKey.https.html

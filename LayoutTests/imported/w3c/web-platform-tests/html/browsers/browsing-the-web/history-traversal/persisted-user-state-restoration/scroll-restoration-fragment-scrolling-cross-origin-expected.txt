@@ -1,5 +1,3 @@
-Blocked access to external URL http://www.localhost:8800/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resources/blank1.html
-
 
 PASS Manual scroll restoration should take precedent over scrolling to fragment in cross origin navigation 
 

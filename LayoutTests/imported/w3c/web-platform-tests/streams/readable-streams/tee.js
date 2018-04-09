@@ -207,6 +207,20 @@ promise_test(t => {
 
 }, 'ReadableStream teeing: failing to cancel the original stream should cause cancel() to reject on branches');
 
+test(t => {
+
+  let controller;
+  const stream = new ReadableStream({ start(c) { controller = c; } });
+  const [branch1, branch2] = stream.tee();
+
+  const promise = controller.error("error");
+
+  branch1.cancel().catch(_=>_);
+  branch2.cancel().catch(_=>_);
+
+  return promise;
+}, 'ReadableStream teeing: erroring a teed stream should properly handle canceled branches');
+
 promise_test(() => {
 
   let controller;
@@ -250,5 +264,30 @@ promise_test(t => {
   return promise;
 
 }, 'ReadableStream teeing: erroring the original should immediately error the branches');
+
+test(t => {
+
+  // Copy original global.
+  const oldReadableStream = ReadableStream;
+  const getReader = ReadableStream.prototype.getReader;
+
+  const origRS = new ReadableStream();
+
+  // Replace the global ReadableStream constructor with one that doesn't work.
+  ReadableStream = function() {
+    throw new Error('global ReadableStream constructor called');
+  };
+  t.add_cleanup(() => {
+    ReadableStream = oldReadableStream;
+  });
+
+  // This will probably fail if the global ReadableStream constructor was used.
+  const [rs1, rs2] = origRS.tee();
+
+  // These will definitely fail if the global ReadableStream constructor was used.
+  assert_not_equals(getReader.call(rs1), undefined, 'getReader should work on rs1');
+  assert_not_equals(getReader.call(rs2), undefined, 'getReader should work on rs2');
+
+}, 'ReadableStreamTee should not use a modified ReadableStream constructor from the global object');
 
 done();

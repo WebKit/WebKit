@@ -14,16 +14,16 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa_vectors.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs_vectors.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa.https.html
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_hmac.https.html

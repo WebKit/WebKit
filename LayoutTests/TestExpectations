@@ -272,10 +272,6 @@ webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-010.html [ ImageOnlyFailure ]
 webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-011.html [ ImageOnlyFailure ]
 webkit.org/b/145566 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-012.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/outline-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
@@ -585,9 +581,13 @@ http/tests/loading/text-content-type-with-binary-extension.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
 
 # Tests that are flakey due to unhandled promise rejection error messages
-webkit.org/b/171094 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ Pass Failure ]
 webkit.org/b/171094 streams/brand-checks.html [ Pass Failure ]
 webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Failure ]
+
+# tee.html is flaky with release and crashes with debug builds
+webkit.org/b/171094 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ Pass Failure Crash ]
+[ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https.html [ Failure ]
+[ Debug ] imported/w3c/web-platform-tests/streams/readable-streams/tee.dedicatedworker.html [ Crash ]
 
 # WPT tests that fail after doing full test repository reimport and need further investigation
 imported/w3c/web-platform-tests/dom/nodes/Document-createElement-namespace.html [ Pass Failure ]
@@ -1024,6 +1024,7 @@ webrtc/datachannel/multiple-connections.html [ Slow ]
 webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
 webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 
 fast/mediastream/RTCPeerConnection-closed-state.html [ Skip ]
 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
@@ -1307,22 +1308,22 @@ workers/wasm-long-compile.html [ Slow ]
 
 # Flaky WebCrypto API tests
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Pass Failure Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html [ Pass Failure Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.https.html [ Pass Failure ]
 
 # WebCryptoAPI tests that take too long to complete
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.html [ Skip ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.html [ Slow ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker.html [ Skip ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Slow ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Slow ]
-imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker.html [ Slow ]
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker.html [ Slow ]
 
 # Imported Beacon test that is flaky because its last check is very slow.
 webkit.org/b/175202 imported/w3c/web-platform-tests/beacon/beacon-basic-string.html [ Pass Failure ]
 
 
 # WebCryptoAPI features that haven't been enabled for current OS
-imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Skip ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Skip ]
 crypto/subtle/ecdh-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Skip ]
 crypto/subtle/ecdh-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Skip ]
 crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publickey.html [ Skip ]
@@ -1440,7 +1441,6 @@ webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-cont
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/same-url.html [ Pass Failure ]
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_online.html [ Pass Failure ]
 
-imported/w3c/web-platform-tests/cssom/MediaList.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-adopt-base-url.html [ ImageOnlyFailure ]
 
 webkit.org/b/168066 performance-api/performance-now-api.html [ Pass Failure ]
@@ -1675,7 +1675,6 @@ webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-018.ht
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-019.html [ ImageOnlyFailure ]
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-024.html [ ImageOnlyFailure ]
 webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-025.html [ ImageOnlyFailure ]
-webkit.org/b/175287 imported/w3c/web-platform-tests/css/css-ui/box-sizing-026.html [ ImageOnlyFailure ]
 
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-005.html [ ImageOnlyFailure ]
 webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-007.html [ ImageOnlyFailure ]

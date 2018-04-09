@@ -7,6 +7,9 @@ FAIL Invalid value: year only assert_equals: expected "" but got "2014"
 FAIL Invalid value: no week number assert_equals: expected "" but got "2014W"
 FAIL Invalid value: no '-' (U+002D) assert_equals: expected "" but got "2014W52"
 FAIL Invalid value: yearless week assert_equals: expected "" but got "-W52"
+FAIL Invalid value: should be capital letter 'W' assert_equals: expected "" but got "2017-w52"
+FAIL Invalid value: incorrect with '-' at the end assert_equals: expected "" but got "2017-W52-"
+FAIL Invalid value: value should be two parts assert_equals: expected "" but got "2017-W52-12"
 FAIL Invalid value: yearless week and no '-' (U+002D) assert_equals: expected "" but got "W52"
 PASS Value >= min attribute 
 PASS Value < min attribute 

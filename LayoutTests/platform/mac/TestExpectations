@@ -1454,7 +1454,7 @@ media/modern-media-controls/pip-support/ipad [ Skip ]
 
 webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
 
-webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
+webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html [ Pass Failure Timeout ]
 
 webkit.org/b/173328 [ ElCapitan Sierra ] fast/text/system-font-fallback-emoji.html [ Failure ]
 webkit.org/b/173328 [ ElCapitan Sierra ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
@@ -1560,7 +1560,7 @@ webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 [ HighSierra+ ] media/video-orientation.html [ Failure ]
 
 # WebCryptoAPI features that enabled only for High Sierra/iOS 11
-[ HighSierra+ ] imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
+[ HighSierra+ ] imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
 [ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 [ HighSierra+ ] crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
@@ -1637,7 +1637,6 @@ webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 # <rdar://problem/33437597> Multiple imported/w3c/web-platform-tests/fetch are failing on High Sierra
 [ HighSierra+ ] imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
 [ HighSierra+ ] imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
-[ HighSierra+ ] imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
 
 # <rdar://problem/33731086>
 [ HighSierra+ ] media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]

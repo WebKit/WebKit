@@ -7,6 +7,8 @@ PASS ReadableStream teeing: canceling branch1 should not impact branch2
 PASS ReadableStream teeing: canceling branch2 should not impact branch2 
 PASS ReadableStream teeing: canceling both branches should aggregate the cancel reasons into an array 
 PASS ReadableStream teeing: failing to cancel the original stream should cause cancel() to reject on branches 
+PASS ReadableStream teeing: erroring a teed stream should properly handle canceled branches 
 PASS ReadableStream teeing: closing the original should immediately close the branches 
 PASS ReadableStream teeing: erroring the original should immediately error the branches 
+PASS ReadableStreamTee should not use a modified ReadableStream constructor from the global object 
 

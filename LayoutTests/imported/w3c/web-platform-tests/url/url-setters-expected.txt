@@ -582,12 +582,27 @@ FAIL <area>: Setting <https://example.net?lang=en-US#nav>.hash = '#' assert_equa
 PASS URL: Setting <https://example.net?lang=en-US#nav>.hash = '' 
 PASS <a>: Setting <https://example.net?lang=en-US#nav>.hash = '' 
 PASS <area>: Setting <https://example.net?lang=en-US#nav>.hash = '' 
+FAIL URL: Setting <http://example.net>.hash = '#foo bar' assert_equals: expected "http://example.net/#foo%20bar" but got "http://example.net/#foo bar"
+FAIL <a>: Setting <http://example.net>.hash = '#foo bar' assert_equals: expected "http://example.net/#foo%20bar" but got "http://example.net/#foo bar"
+FAIL <area>: Setting <http://example.net>.hash = '#foo bar' assert_equals: expected "http://example.net/#foo%20bar" but got "http://example.net/#foo bar"
+FAIL URL: Setting <http://example.net>.hash = '#foo"bar' assert_equals: expected "http://example.net/#foo%22bar" but got "http://example.net/#foo\"bar"
+FAIL <a>: Setting <http://example.net>.hash = '#foo"bar' assert_equals: expected "http://example.net/#foo%22bar" but got "http://example.net/#foo\"bar"
+FAIL <area>: Setting <http://example.net>.hash = '#foo"bar' assert_equals: expected "http://example.net/#foo%22bar" but got "http://example.net/#foo\"bar"
+FAIL URL: Setting <http://example.net>.hash = '#foo<bar' assert_equals: expected "http://example.net/#foo%3Cbar" but got "http://example.net/#foo<bar"
+FAIL <a>: Setting <http://example.net>.hash = '#foo<bar' assert_equals: expected "http://example.net/#foo%3Cbar" but got "http://example.net/#foo<bar"
+FAIL <area>: Setting <http://example.net>.hash = '#foo<bar' assert_equals: expected "http://example.net/#foo%3Cbar" but got "http://example.net/#foo<bar"
+FAIL URL: Setting <http://example.net>.hash = '#foo>bar' assert_equals: expected "http://example.net/#foo%3Ebar" but got "http://example.net/#foo>bar"
+FAIL <a>: Setting <http://example.net>.hash = '#foo>bar' assert_equals: expected "http://example.net/#foo%3Ebar" but got "http://example.net/#foo>bar"
+FAIL <area>: Setting <http://example.net>.hash = '#foo>bar' assert_equals: expected "http://example.net/#foo%3Ebar" but got "http://example.net/#foo>bar"
+FAIL URL: Setting <http://example.net>.hash = '#foo`bar' assert_equals: expected "http://example.net/#foo%60bar" but got "http://example.net/#foo`bar"
+FAIL <a>: Setting <http://example.net>.hash = '#foo`bar' assert_equals: expected "http://example.net/#foo%60bar" but got "http://example.net/#foo`bar"
+FAIL <area>: Setting <http://example.net>.hash = '#foo`bar' assert_equals: expected "http://example.net/#foo%60bar" but got "http://example.net/#foo`bar"
 FAIL URL: Setting <a:/>.hash = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; nuls, tabs, and newlines are removed assert_equals: expected "a:/#%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; nuls, tabs, and newlines are removed assert_equals: expected "a:/#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
 FAIL <a>: Setting <a:/>.hash = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; nuls, tabs, and newlines are removed assert_equals: expected "a:/#%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; nuls, tabs, and newlines are removed assert_equals: expected "a:/#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
 FAIL <area>: Setting <a:/>.hash = '\0	
-\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; nuls, tabs, and newlines are removed assert_equals: expected "a:/#%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' Simple percent-encoding; nuls, tabs, and newlines are removed assert_equals: expected "a:/#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
 PASS URL: Setting <http://example.net>.hash = '%c3%89té' Bytes already percent-encoded are left as-is 
 PASS <a>: Setting <http://example.net>.hash = '%c3%89té' Bytes already percent-encoded are left as-is 
 PASS <area>: Setting <http://example.net>.hash = '%c3%89té' Bytes already percent-encoded are left as-is 

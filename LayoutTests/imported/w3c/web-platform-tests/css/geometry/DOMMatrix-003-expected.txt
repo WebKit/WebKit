@@ -14,4 +14,6 @@ PASS test skewY()
 PASS test multiply with inverse is identity 
 PASS test flipX() 
 PASS test flipY() 
+PASS test transformPoint() - 2d matrix 
+PASS test transformPoint() - 3d matrix 
 

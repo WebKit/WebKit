@@ -11,7 +11,7 @@ Do NOT modify or remove this file.
 Properties requiring vendor prefixes:
 None
 Property values requiring vendor prefixes:
-None
+sticky
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-001.html

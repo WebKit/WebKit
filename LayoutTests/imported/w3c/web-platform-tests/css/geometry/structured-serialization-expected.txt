@@ -29,4 +29,5 @@ PASS DOMMatrix clone: custom property
 PASS DOMMatrix clone: throwing getters 
 PASS DOMMatrix clone: non-initial values (2d) 
 PASS DOMMatrix clone: non-initial values (3d) 
+PASS DOMRectList clone 
 

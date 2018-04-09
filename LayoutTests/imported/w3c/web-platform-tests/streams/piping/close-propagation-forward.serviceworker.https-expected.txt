@@ -27,4 +27,6 @@ FAIL Closing must be propagated forward: becomes closed after one chunk; prevent
 FAIL Closing must be propagated forward: becomes closed after one chunk; preventClose = true Can't find variable: WritableStream
 FAIL Closing must be propagated forward: shutdown must not occur until the final write completes Can't find variable: WritableStream
 FAIL Closing must be propagated forward: shutdown must not occur until the final write completes; preventClose = true Can't find variable: WritableStream
+FAIL Closing must be propagated forward: shutdown must not occur until the final write completes; becomes closed after first write Can't find variable: WritableStream
+FAIL Closing must be propagated forward: shutdown must not occur until the final write completes; becomes closed after first write; preventClose = true Can't find variable: WritableStream
 

@@ -23,4 +23,7 @@ PASS Performing stepUp()
 PASS Performing stepDown() 
 FAIL Performing stepUp() beyond the value of the max attribute The object is in an invalid state.
 FAIL Performing stepDown() beyond the value of the min attribute The object is in an invalid state.
+FAIL Skip ASCII whitespace within input assert_equals: expected "123" but got "50"
+PASS Multiply value by ten raised to the exponentth power with `e` 
+PASS Multiply value by ten raised to the exponentth power with `E` 
 

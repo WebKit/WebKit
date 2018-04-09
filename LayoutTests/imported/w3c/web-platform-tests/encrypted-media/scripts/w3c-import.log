@@ -37,6 +37,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-expired.js
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-multikey-sequential.js
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-multisession.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-playduration-keystatus.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-playduration.js
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-setMediaKeys.js
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-two-videos.js
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-waitingforkey.js

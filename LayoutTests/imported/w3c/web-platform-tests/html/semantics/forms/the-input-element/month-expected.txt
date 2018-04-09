@@ -1,6 +1,9 @@
 Inputs Month
 
 
+PASS year can be more than four digits 
+PASS valid value test 
+PASS year can contain prefixes of zero, as long as there are at least four digits 
 FAIL month type support on input element assert_equals: expected "month" but got "text"
 FAIL User agents must not allow the user to set the value to a non-empty string that is not a valid month string. assert_equals: expected "" but got "invalid-month"
 PASS Month value can be empty string. 
@@ -9,4 +12,8 @@ FAIL When value is set with invalid value, the value must return empty string. a
 FAIL When step attribute is given invalid value, it must ignore the invalid value and use defaul value instead. The object is in an invalid state.
 FAIL Month should be <= 13: If the value of the element is not a valid month string, then set it to the empty string instead. assert_equals: expected "" but got "2013-13"
 FAIL Month should be > 0: If the value of the element is not a valid month string, then set it to the empty string instead.> assert_equals: expected "" but got "2013-00"
+FAIL Year should be > 0: If the value of the element is not a valid year string, then set it to the empty string instead.> assert_equals: expected "" but got "0000-10"
+FAIL Month should be two digits: If the value of the element is not a valid month string, then set it to the empty string instead.> assert_equals: expected "" but got "2013-1"
+FAIL Month should be two digits not characters: If the value of the element is not a valid month string, then set it to the empty string instead.> assert_equals: expected "" but got "2013-abc"
+FAIL Value should be two parts: If the value of the element is not a valid month string, then set it to the empty string instead.> assert_equals: expected "" but got "2013-11-1-1"
 

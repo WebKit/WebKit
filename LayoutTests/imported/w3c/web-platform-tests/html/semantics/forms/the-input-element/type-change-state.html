@@ -15,44 +15,85 @@
     { type: "url", sanitizedValue: "foobar" },
     { type: "email", sanitizedValue: "foobar" },
     { type: "password", sanitizedValue: "  foobar  " },
-    { type: "datetime-local", sanitizedValue: "" },
-    { type: "date", sanitizedValue: "" },
-    { type: "month", sanitizedValue: "" },
-    { type: "week", sanitizedValue: "" },
-    { type: "time", sanitizedValue: "" },
-    { type: "number", sanitizedValue: "" },
-    { type: "range", sanitizedValue: "50" },
-    { type: "color", sanitizedValue: "#000000" },
-    { type: "checkbox" },
-    { type: "radio" },
+    { type: "datetime-local", sanitizedValue: "", overridesSanitization: true },
+    { type: "date", sanitizedValue: "", overridesSanitization: true },
+    { type: "month", sanitizedValue: "", overridesSanitization: true },
+    { type: "week", sanitizedValue: "", overridesSanitization: true },
+    { type: "time", sanitizedValue: "", overridesSanitization: true },
+    { type: "number", sanitizedValue: "", overridesSanitization: true },
+    { type: "range", sanitizedValue: "50", overridesSanitization: true },
+    { type: "color", sanitizedValue: "#000000", overridesSanitization: true },
+    { type: "checkbox", defaultValue: "on" },
+    { type: "radio", defaultValue: "on" },
     { type: "file" },
     { type: "submit" },
     { type: "image" },
     { type: "reset" },
     { type: "button" }
   ];
+
+  const selectionStart = 2;
+  const selectionEnd = 5;
+  const selectionDirection = "backward";
+
   for (var i = 0; i < types.length; i++) {
     for (var j = 0; j < types.length; j++) {
       if (types[i] != types[j]) {
         test(function() {
           var input = document.createElement("input");
+          var expected = "  foo\rbar  ";
           input.type = types[i].type;
           if (types[i].type === "file") {
             assert_throws("INVALID_STATE_ERR", function() {
-              input.value = "  foo\rbar  ";
+              input.value = expected;
             });
             assert_equals(input.value, "");
           } else if (types[j].type === "file") {
-            input.value = "  foo\rbar  ";
+            input.value = expected;
             input.type = types[j].type;  // change state
             assert_equals(input.value, "");
           } else {
-            input.value = "  foo\rbar  ";
+            input.value = expected;
+
+            const previouslySelectable = (input.selectionStart !== null);
+
+            if (previouslySelectable) {
+              input.setSelectionRange(selectionStart, selectionEnd, selectionDirection);
+            }
+
             input.type = types[j].type;  // change state
+
+            // type[i] sanitization
+            if (types[i].sanitizedValue || types[i].sanitizedValue === "") {
+              expected = types[i].sanitizedValue;
+            }
+
+            // type[j] sanitization
             if (types[j].sanitizedValue || types[j].sanitizedValue === "") {
-              assert_equals(input.value, types[j].sanitizedValue, "input.value should be " + types[j].sanitizedValue + " after change of state");
-            } else {
-              assert_equals(input.value, "  foo\rbar  ", "input.value should be '  foo\\rbar  ' after change of state");
+              if ((expected !== "" && !types[i].overridesSanitization) || types[j].overridesSanitization) {
+                expected = types[j].sanitizedValue;
+              }
+            }
+
+            // type[j] defaultValue
+            if (expected === "" && types[j].defaultValue) {
+              expected = types[j].defaultValue;
+            }
+
+            assert_equals(input.value, expected, "input.value should be '" + expected + "' after change of state");
+
+            const nowSelectable = (input.selectionStart !== null);
+
+            if (nowSelectable) {
+              if (previouslySelectable) {
+                assert_equals(input.selectionStart, selectionStart, "selectionStart should be unchanged");
+                assert_equals(input.selectionEnd, selectionEnd, "selectionEnd should be unchanged");
+                assert_equals(input.selectionDirection, selectionDirection, "selectionDirection should be unchanged");
+              } else {
+                assert_equals(input.selectionStart, 0, "selectionStart should be 0");
+                assert_equals(input.selectionEnd, 0, "selectionEnd should be 0");
+                assert_equals(input.selectionDirection, "none", "selectionDirection should be 'none'");
+              }
             }
           }
         }, "change state from " + types[i].type + " to " + types[j].type);

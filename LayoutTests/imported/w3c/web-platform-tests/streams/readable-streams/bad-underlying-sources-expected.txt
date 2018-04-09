@@ -1,11 +1,19 @@
 
 PASS Underlying source start: throwing getter 
 PASS Underlying source start: throwing method 
-PASS Underlying source: throwing pull getter (initial pull) 
+FAIL Underlying source: throwing pull getter (initial pull) assert_throws: constructor should throw function "() => new ReadableStream({
+    get pull() {
+      throw theError;
+    }
+  })" did not throw
 PASS Underlying source: throwing pull method (initial pull) 
-PASS Underlying source pull: throwing getter (second pull) 
+FAIL Underlying source pull: throwing getter (second pull does not result in a second get) promise_test: Unhandled rejection with value: object "Error: a unique string"
 PASS Underlying source pull: throwing method (second pull) 
-PASS Underlying source cancel: throwing getter 
+FAIL Underlying source cancel: throwing getter assert_throws: constructor should throw function "() => new ReadableStream({
+    get cancel() {
+      throw theError;
+    }
+  })" did not throw
 PASS Underlying source cancel: throwing method 
 PASS Underlying source: calling enqueue on an empty canceled stream should throw 
 PASS Underlying source: calling enqueue on a non-empty canceled stream should throw 
@@ -16,8 +24,8 @@ PASS Underlying source: calling close twice on a non-empty stream should throw t
 PASS Underlying source: calling close on an empty canceled stream should throw 
 PASS Underlying source: calling close on a non-empty canceled stream should throw 
 PASS Underlying source: calling close after error should throw 
-PASS Underlying source: calling error twice should throw the second time 
-PASS Underlying source: calling error after close should throw 
+FAIL Underlying source: calling error twice should not throw ReadableStream is not readable
+FAIL Underlying source: calling error after close should not throw ReadableStream is not readable
 PASS Underlying source: calling error and returning a rejected promise from start should cause the stream to error with the first error 
 PASS Underlying source: calling error and returning a rejected promise from pull should cause the stream to error with the first error 
 PASS read should not error if it dequeues and pull() throws 

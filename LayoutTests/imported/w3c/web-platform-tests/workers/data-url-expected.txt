@@ -3,8 +3,8 @@ FAIL application/javascript MIME allowed The operation is insecure.
 FAIL text/plain MIME allowed The operation is insecure.
 FAIL empty MIME allowed The operation is insecure.
 FAIL communication goes both ways The operation is insecure.
-FAIL indexedDB inaccessible The operation is insecure.
-FAIL Web SQL Database inaccessible The operation is insecure.
+FAIL indexedDB is present The operation is insecure.
+FAIL indexedDB is inaccessible The operation is insecure.
 FAIL cross-origin worker The operation is insecure.
 FAIL worker has opaque origin The operation is insecure.
 FAIL invalid javascript produces error The operation is insecure.

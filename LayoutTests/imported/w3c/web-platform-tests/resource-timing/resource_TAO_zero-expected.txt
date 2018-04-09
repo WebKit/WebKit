@@ -1,10 +1,14 @@
 Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=zero
 CONSOLE MESSAGE: line 13: NetworkError:  A network error occurred.
+CONSOLE MESSAGE: line 32: TypeError: undefined is not an object (evaluating 'entry.redirectStart')
 Description
 
 This test validates that for a cross origin resource, the timing allow check algorithm will fail when the HTTP response includes zero Timing-Allow-Origin header value.
 
 
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'entry.redirectStart')
+
 PASS window.performance is defined 
 PASS window.performance.getEntriesByType is defined 
+FAIL There should be one resource timing entry. assert_equals: There should be one resource timing entry. expected 1 but got 0
 

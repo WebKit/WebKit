@@ -16,8 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/README.md
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/WebCryptoAPI.idl
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues.any.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.html
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/idlharness.https.worker.js

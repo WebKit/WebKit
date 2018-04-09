@@ -1230,12 +1230,6 @@ PASS link.as: setAttribute() to "xscript"
 PASS link.as: setAttribute() to "script\0" 
 PASS link.as: setAttribute() to "cript" 
 FAIL link.as: setAttribute() to "SCRIPT" assert_equals: IDL get expected "script" but got "SCRIPT"
-FAIL link.as: setAttribute() to "serviceworker" assert_equals: IDL get expected "serviceworker" but got ""
-PASS link.as: setAttribute() to "xserviceworker" 
-PASS link.as: setAttribute() to "serviceworker\0" 
-PASS link.as: setAttribute() to "erviceworker" 
-FAIL link.as: setAttribute() to "SERVICEWORKER" assert_equals: IDL get expected "serviceworker" but got ""
-PASS link.as: setAttribute() to "serviceworKer" 
 FAIL link.as: setAttribute() to "sharedworker" assert_equals: IDL get expected "sharedworker" but got ""
 PASS link.as: setAttribute() to "xsharedworker" 
 PASS link.as: setAttribute() to "sharedworker\0" 
@@ -1334,12 +1328,6 @@ PASS link.as: IDL set to "xscript"
 PASS link.as: IDL set to "script\0" 
 PASS link.as: IDL set to "cript" 
 FAIL link.as: IDL set to "SCRIPT" assert_equals: IDL get expected "script" but got "SCRIPT"
-FAIL link.as: IDL set to "serviceworker" assert_equals: IDL get expected "serviceworker" but got ""
-PASS link.as: IDL set to "xserviceworker" 
-PASS link.as: IDL set to "serviceworker\0" 
-PASS link.as: IDL set to "erviceworker" 
-FAIL link.as: IDL set to "SERVICEWORKER" assert_equals: IDL get expected "serviceworker" but got ""
-PASS link.as: IDL set to "serviceworKer" 
 FAIL link.as: IDL set to "sharedworker" assert_equals: IDL get expected "sharedworker" but got ""
 PASS link.as: IDL set to "xsharedworker" 
 PASS link.as: IDL set to "sharedworker\0" 
@@ -1645,152 +1633,6 @@ FAIL link.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute()
 FAIL link.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "UNSAFE-URL"
 FAIL link.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "UNSAFE-URL"
 FAIL link.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: IDL get expected "unsafe-url" but got "UNSAFE-URL"
-FAIL link.scope: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL link.scope: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
-FAIL link.scope: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.scope: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got (undefined) undefined
-FAIL link.scope: setAttribute() to undefined assert_equals: IDL get expected (string) "undefined" but got (undefined) undefined
-FAIL link.scope: setAttribute() to 7 assert_equals: IDL get expected (string) "7" but got (undefined) undefined
-FAIL link.scope: setAttribute() to 1.5 assert_equals: IDL get expected (string) "1.5" but got (undefined) undefined
-FAIL link.scope: setAttribute() to true assert_equals: IDL get expected (string) "true" but got (undefined) undefined
-FAIL link.scope: setAttribute() to false assert_equals: IDL get expected (string) "false" but got (undefined) undefined
-FAIL link.scope: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "[object Object]" but got (undefined) undefined
-FAIL link.scope: setAttribute() to NaN assert_equals: IDL get expected (string) "NaN" but got (undefined) undefined
-FAIL link.scope: setAttribute() to Infinity assert_equals: IDL get expected (string) "Infinity" but got (undefined) undefined
-FAIL link.scope: setAttribute() to -Infinity assert_equals: IDL get expected (string) "-Infinity" but got (undefined) undefined
-FAIL link.scope: setAttribute() to "\0" assert_equals: IDL get expected (string) "\0" but got (undefined) undefined
-FAIL link.scope: setAttribute() to null assert_equals: IDL get expected (string) "null" but got (undefined) undefined
-FAIL link.scope: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "test-toString" but got (undefined) undefined
-FAIL link.scope: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (undefined) undefined
-FAIL link.scope: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
-FAIL link.scope: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
-FAIL link.scope: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
-FAIL link.scope: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
-FAIL link.scope: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
-FAIL link.scope: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
-FAIL link.scope: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
-FAIL link.scope: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
-FAIL link.scope: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
-FAIL link.scope: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
-FAIL link.scope: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
-FAIL link.scope: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
-FAIL link.scope: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
-FAIL link.scope: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
-FAIL link.scope: IDL set to object "test-valueOf" assert_equals: IDL get expected (string) "test-valueOf" but got (object) object "test-valueOf"
-FAIL link.workerType: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL link.workerType: IDL get with DOM attribute unset assert_equals: expected (string) "classic" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to undefined assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to 7 assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to 1.5 assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to true assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to false assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to NaN assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to -Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to null assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "classic" assert_equals: IDL get expected (string) "classic" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "xclassic" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "classic\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "lassic" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "CLASSIC" assert_equals: IDL get expected (string) "classic" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "module" assert_equals: IDL get expected (string) "module" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "xmodule" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "module\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "odule" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL link.workerType: setAttribute() to "MODULE" assert_equals: IDL get expected (string) "module" but got (undefined) undefined
-FAIL link.workerType: IDL set to "" assert_equals: getAttribute() expected "" but got "MODULE"
-FAIL link.workerType: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "MODULE"
-FAIL link.workerType: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "MODULE"
-FAIL link.workerType: IDL set to 7 assert_equals: getAttribute() expected "7" but got "MODULE"
-FAIL link.workerType: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "MODULE"
-FAIL link.workerType: IDL set to true assert_equals: getAttribute() expected "true" but got "MODULE"
-FAIL link.workerType: IDL set to false assert_equals: getAttribute() expected "false" but got "MODULE"
-FAIL link.workerType: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "MODULE"
-FAIL link.workerType: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "MODULE"
-FAIL link.workerType: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "MODULE"
-FAIL link.workerType: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "MODULE"
-FAIL link.workerType: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "MODULE"
-FAIL link.workerType: IDL set to null assert_equals: IDL get expected (string) "" but got (object) null
-FAIL link.workerType: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "MODULE"
-FAIL link.workerType: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "MODULE"
-FAIL link.workerType: IDL set to "classic" assert_equals: getAttribute() expected "classic" but got "MODULE"
-FAIL link.workerType: IDL set to "xclassic" assert_equals: getAttribute() expected "xclassic" but got "MODULE"
-FAIL link.workerType: IDL set to "classic\0" assert_equals: getAttribute() expected "classic\0" but got "MODULE"
-FAIL link.workerType: IDL set to "lassic" assert_equals: getAttribute() expected "lassic" but got "MODULE"
-FAIL link.workerType: IDL set to "CLASSIC" assert_equals: getAttribute() expected "CLASSIC" but got "MODULE"
-FAIL link.workerType: IDL set to "module" assert_equals: getAttribute() expected "module" but got "MODULE"
-FAIL link.workerType: IDL set to "xmodule" assert_equals: getAttribute() expected "xmodule" but got "MODULE"
-FAIL link.workerType: IDL set to "module\0" assert_equals: getAttribute() expected "module\0" but got "MODULE"
-FAIL link.workerType: IDL set to "odule" assert_equals: getAttribute() expected "odule" but got "MODULE"
-FAIL link.workerType: IDL set to "MODULE" assert_equals: IDL get expected "module" but got "MODULE"
-FAIL link.updateViaCache: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL link.updateViaCache: IDL get with DOM attribute unset assert_equals: expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to undefined assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to 7 assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to 1.5 assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to true assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to false assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to NaN assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to Infinity assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to -Infinity assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "\0" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to null assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "imports" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "ximports" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "imports\0" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "mports" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "IMPORTS" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "all" assert_equals: IDL get expected (string) "all" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "xall" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "all\0" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "ll" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "ALL" assert_equals: IDL get expected (string) "all" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "none" assert_equals: IDL get expected (string) "none" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "xnone" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "none\0" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "one" assert_equals: IDL get expected (string) "imports" but got (undefined) undefined
-FAIL link.updateViaCache: setAttribute() to "NONE" assert_equals: IDL get expected (string) "none" but got (undefined) undefined
-FAIL link.updateViaCache: IDL set to "" assert_equals: getAttribute() expected "" but got "NONE"
-FAIL link.updateViaCache: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "NONE"
-FAIL link.updateViaCache: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "NONE"
-FAIL link.updateViaCache: IDL set to 7 assert_equals: getAttribute() expected "7" but got "NONE"
-FAIL link.updateViaCache: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "NONE"
-FAIL link.updateViaCache: IDL set to true assert_equals: getAttribute() expected "true" but got "NONE"
-FAIL link.updateViaCache: IDL set to false assert_equals: getAttribute() expected "false" but got "NONE"
-FAIL link.updateViaCache: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "NONE"
-FAIL link.updateViaCache: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "NONE"
-FAIL link.updateViaCache: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "NONE"
-FAIL link.updateViaCache: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "NONE"
-FAIL link.updateViaCache: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "NONE"
-FAIL link.updateViaCache: IDL set to null assert_equals: IDL get expected (string) "imports" but got (object) null
-FAIL link.updateViaCache: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "NONE"
-FAIL link.updateViaCache: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "NONE"
-FAIL link.updateViaCache: IDL set to "imports" assert_equals: getAttribute() expected "imports" but got "NONE"
-FAIL link.updateViaCache: IDL set to "ximports" assert_equals: getAttribute() expected "ximports" but got "NONE"
-FAIL link.updateViaCache: IDL set to "imports\0" assert_equals: getAttribute() expected "imports\0" but got "NONE"
-FAIL link.updateViaCache: IDL set to "mports" assert_equals: getAttribute() expected "mports" but got "NONE"
-FAIL link.updateViaCache: IDL set to "IMPORTS" assert_equals: getAttribute() expected "IMPORTS" but got "NONE"
-FAIL link.updateViaCache: IDL set to "all" assert_equals: getAttribute() expected "all" but got "NONE"
-FAIL link.updateViaCache: IDL set to "xall" assert_equals: getAttribute() expected "xall" but got "NONE"
-FAIL link.updateViaCache: IDL set to "all\0" assert_equals: getAttribute() expected "all\0" but got "NONE"
-FAIL link.updateViaCache: IDL set to "ll" assert_equals: getAttribute() expected "ll" but got "NONE"
-FAIL link.updateViaCache: IDL set to "ALL" assert_equals: getAttribute() expected "ALL" but got "NONE"
-FAIL link.updateViaCache: IDL set to "none" assert_equals: getAttribute() expected "none" but got "NONE"
-FAIL link.updateViaCache: IDL set to "xnone" assert_equals: getAttribute() expected "xnone" but got "NONE"
-FAIL link.updateViaCache: IDL set to "none\0" assert_equals: getAttribute() expected "none\0" but got "NONE"
-FAIL link.updateViaCache: IDL set to "one" assert_equals: getAttribute() expected "one" but got "NONE"
-FAIL link.updateViaCache: IDL set to "NONE" assert_equals: IDL get expected "none" but got "NONE"
 PASS link.charset: typeof IDL attribute 
 PASS link.charset: IDL get with DOM attribute unset 
 PASS link.charset: setAttribute() to "" 

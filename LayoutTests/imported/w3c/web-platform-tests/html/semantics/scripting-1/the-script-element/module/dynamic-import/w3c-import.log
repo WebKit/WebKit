@@ -23,7 +23,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-inline-classic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-inline-module.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-classic.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-module.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-external-classic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-external-module.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-inline-classic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-inline-module.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-classic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-module.html

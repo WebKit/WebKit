@@ -1,0 +1,4 @@
+
+FAIL receiver.getStats() via addTransceiver should return stats report containing inbound-rtp stats promise_test: Unhandled rejection with value: object "TypeError: receiver.getStats is not a function. (In 'receiver.getStats()', 'receiver.getStats' is undefined)"
+FAIL receiver.getStats() via addTrack should return stats report containing inbound-rtp stats promise_test: Unhandled rejection with value: object "TypeError: receiver.getStats is not a function. (In 'receiver.getStats()', 'receiver.getStats' is undefined)"
+

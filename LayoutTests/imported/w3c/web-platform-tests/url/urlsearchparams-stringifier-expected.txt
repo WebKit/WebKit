@@ -11,4 +11,5 @@ PASS Serialize %
 PASS Serialize \0 
 PASS Serialize 💩 
 PASS URLSearchParams.toString 
+PASS URLSearchParams connected to URL 
 

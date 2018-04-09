@@ -6,19 +6,19 @@ Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
 Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
-CONSOLE MESSAGE: line 816: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language 'undefined' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language '7' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language '1.5' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language 'true' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language 'false' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language '[object Object]' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language 'Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language '-Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language 'null' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language 'test-toString' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 816: The language 'test-valueOf' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language 'undefined' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language '7' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language '1.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language 'true' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language 'false' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language '[object Object]' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language 'Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language '-Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language 'null' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language 'test-toString' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 820: The language 'test-valueOf' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 1489: The language contains a null character and is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 1489: The language 'undefined' is not a valid BCP 47 language tag.
 CONSOLE MESSAGE: line 1489: The language '7' is not a valid BCP 47 language tag.
@@ -878,6 +878,66 @@ FAIL img.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute() 
 FAIL img.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "UNSAFE-URL"
 FAIL img.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "UNSAFE-URL"
 FAIL img.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: IDL get expected "unsafe-url" but got "UNSAFE-URL"
+PASS img.decoding: typeof IDL attribute 
+FAIL img.decoding: IDL get with DOM attribute unset assert_equals: expected "auto" but got ""
+FAIL img.decoding: setAttribute() to "" assert_equals: IDL get expected "auto" but got ""
+FAIL img.decoding: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected "auto" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+FAIL img.decoding: setAttribute() to undefined assert_equals: IDL get expected "auto" but got "undefined"
+FAIL img.decoding: setAttribute() to 7 assert_equals: IDL get expected "auto" but got "7"
+FAIL img.decoding: setAttribute() to 1.5 assert_equals: IDL get expected "auto" but got "1.5"
+FAIL img.decoding: setAttribute() to true assert_equals: IDL get expected "auto" but got "true"
+FAIL img.decoding: setAttribute() to false assert_equals: IDL get expected "auto" but got "false"
+FAIL img.decoding: setAttribute() to object "[object Object]" assert_equals: IDL get expected "auto" but got "[object Object]"
+FAIL img.decoding: setAttribute() to NaN assert_equals: IDL get expected "auto" but got "NaN"
+FAIL img.decoding: setAttribute() to Infinity assert_equals: IDL get expected "auto" but got "Infinity"
+FAIL img.decoding: setAttribute() to -Infinity assert_equals: IDL get expected "auto" but got "-Infinity"
+FAIL img.decoding: setAttribute() to "\0" assert_equals: IDL get expected "auto" but got "\0"
+FAIL img.decoding: setAttribute() to null assert_equals: IDL get expected "auto" but got "null"
+FAIL img.decoding: setAttribute() to object "test-toString" assert_equals: IDL get expected "auto" but got "test-toString"
+FAIL img.decoding: setAttribute() to object "test-valueOf" assert_equals: IDL get expected "auto" but got "test-valueOf"
+PASS img.decoding: setAttribute() to "async" 
+FAIL img.decoding: setAttribute() to "xasync" assert_equals: IDL get expected "auto" but got "xasync"
+FAIL img.decoding: setAttribute() to "async\0" assert_equals: IDL get expected "auto" but got "async\0"
+FAIL img.decoding: setAttribute() to "ASYNC" assert_equals: IDL get expected "async" but got "ASYNC"
+PASS img.decoding: setAttribute() to "sync" 
+FAIL img.decoding: setAttribute() to "xsync" assert_equals: IDL get expected "auto" but got "xsync"
+FAIL img.decoding: setAttribute() to "sync\0" assert_equals: IDL get expected "auto" but got "sync\0"
+FAIL img.decoding: setAttribute() to "ync" assert_equals: IDL get expected "auto" but got "ync"
+FAIL img.decoding: setAttribute() to "SYNC" assert_equals: IDL get expected "sync" but got "SYNC"
+PASS img.decoding: setAttribute() to "auto" 
+FAIL img.decoding: setAttribute() to "xauto" assert_equals: IDL get expected "auto" but got "xauto"
+FAIL img.decoding: setAttribute() to "auto\0" assert_equals: IDL get expected "auto" but got "auto\0"
+FAIL img.decoding: setAttribute() to "uto" assert_equals: IDL get expected "auto" but got "uto"
+FAIL img.decoding: setAttribute() to "AUTO" assert_equals: IDL get expected "auto" but got "AUTO"
+FAIL img.decoding: IDL set to "" assert_equals: IDL get expected "auto" but got ""
+FAIL img.decoding: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected "auto" but got " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+FAIL img.decoding: IDL set to undefined assert_equals: IDL get expected "auto" but got "undefined"
+FAIL img.decoding: IDL set to 7 assert_equals: IDL get expected "auto" but got "7"
+FAIL img.decoding: IDL set to 1.5 assert_equals: IDL get expected "auto" but got "1.5"
+FAIL img.decoding: IDL set to true assert_equals: IDL get expected "auto" but got "true"
+FAIL img.decoding: IDL set to false assert_equals: IDL get expected "auto" but got "false"
+FAIL img.decoding: IDL set to object "[object Object]" assert_equals: IDL get expected "auto" but got "[object Object]"
+FAIL img.decoding: IDL set to NaN assert_equals: IDL get expected "auto" but got "NaN"
+FAIL img.decoding: IDL set to Infinity assert_equals: IDL get expected "auto" but got "Infinity"
+FAIL img.decoding: IDL set to -Infinity assert_equals: IDL get expected "auto" but got "-Infinity"
+FAIL img.decoding: IDL set to "\0" assert_equals: IDL get expected "auto" but got "\0"
+FAIL img.decoding: IDL set to null assert_equals: IDL get expected "auto" but got "null"
+FAIL img.decoding: IDL set to object "test-toString" assert_equals: IDL get expected "auto" but got "test-toString"
+FAIL img.decoding: IDL set to object "test-valueOf" assert_equals: IDL get expected "auto" but got "test-valueOf"
+PASS img.decoding: IDL set to "async" 
+FAIL img.decoding: IDL set to "xasync" assert_equals: IDL get expected "auto" but got "xasync"
+FAIL img.decoding: IDL set to "async\0" assert_equals: IDL get expected "auto" but got "async\0"
+FAIL img.decoding: IDL set to "ASYNC" assert_equals: IDL get expected "async" but got "ASYNC"
+PASS img.decoding: IDL set to "sync" 
+FAIL img.decoding: IDL set to "xsync" assert_equals: IDL get expected "auto" but got "xsync"
+FAIL img.decoding: IDL set to "sync\0" assert_equals: IDL get expected "auto" but got "sync\0"
+FAIL img.decoding: IDL set to "ync" assert_equals: IDL get expected "auto" but got "ync"
+FAIL img.decoding: IDL set to "SYNC" assert_equals: IDL get expected "sync" but got "SYNC"
+PASS img.decoding: IDL set to "auto" 
+FAIL img.decoding: IDL set to "xauto" assert_equals: IDL get expected "auto" but got "xauto"
+FAIL img.decoding: IDL set to "auto\0" assert_equals: IDL get expected "auto" but got "auto\0"
+FAIL img.decoding: IDL set to "uto" assert_equals: IDL get expected "auto" but got "uto"
+FAIL img.decoding: IDL set to "AUTO" assert_equals: IDL get expected "auto" but got "AUTO"
 PASS img.name: typeof IDL attribute 
 PASS img.name: IDL get with DOM attribute unset 
 PASS img.name: setAttribute() to "" 
@@ -1798,6 +1858,36 @@ FAIL iframe.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute
 FAIL iframe.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "UNSAFE-URL"
 FAIL iframe.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "UNSAFE-URL"
 FAIL iframe.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: IDL get expected "unsafe-url" but got "UNSAFE-URL"
+FAIL iframe.delegateStickyUserActivation: typeof IDL attribute assert_equals: expected "string" but got "undefined"
+FAIL iframe.delegateStickyUserActivation: setAttribute() to "vibration" assert_equals: IDL get expected (string) "vibration" but got (undefined) undefined
+FAIL iframe.delegateStickyUserActivation: setAttribute() to "VIBRATION" assert_equals: IDL get expected (string) "vibration" but got (undefined) undefined
+FAIL iframe.delegateStickyUserActivation: setAttribute() to "media" assert_equals: IDL get expected (string) "media" but got (undefined) undefined
+FAIL iframe.delegateStickyUserActivation: setAttribute() to "MEDIA" assert_equals: IDL get expected (string) "media" but got (undefined) undefined
+FAIL iframe.delegateStickyUserActivation: IDL set to "" assert_equals: getAttribute() expected "" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to 7 assert_equals: getAttribute() expected "7" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to true assert_equals: getAttribute() expected "true" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to false assert_equals: getAttribute() expected "false" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "MEDIA"
+PASS iframe.delegateStickyUserActivation: IDL set to null 
+FAIL iframe.delegateStickyUserActivation: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "vibration" assert_equals: getAttribute() expected "vibration" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "xvibration" assert_equals: getAttribute() expected "xvibration" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "vibration\0" assert_equals: getAttribute() expected "vibration\0" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "ibration" assert_equals: getAttribute() expected "ibration" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "VIBRATION" assert_equals: getAttribute() expected "VIBRATION" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "media" assert_equals: getAttribute() expected "media" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "xmedia" assert_equals: getAttribute() expected "xmedia" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "media\0" assert_equals: getAttribute() expected "media\0" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "edia" assert_equals: getAttribute() expected "edia" but got "MEDIA"
+FAIL iframe.delegateStickyUserActivation: IDL set to "MEDIA" assert_equals: IDL get expected "media" but got "MEDIA"
 PASS iframe.align: typeof IDL attribute 
 PASS iframe.align: IDL get with DOM attribute unset 
 PASS iframe.align: setAttribute() to "" 

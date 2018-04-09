@@ -1,14 +1,14 @@
 
-FAIL Firing an event inside a grand child of a detached open mode shadow tree assert_array_equals: EventPath must contain [target, parent, shadow root, shadow host] value is 4, expected array
-FAIL Firing an event inside a grand child of a detached closed mode shadow tree assert_array_equals: EventPath must contain [target, parent, shadow root, shadow host] value is 4, expected array
-FAIL Firing an event inside a grand child of an in-document open mode shadow tree assert_array_equals: EventPath must contain [target, parent, shadow root, shadow host, body, html, document] value is 7, expected array
-FAIL Firing an event inside a grand child of an in-document closed mode shadow tree assert_array_equals: EventPath must contain [target, parent, shadow root, shadow host, body, html, document] value is 7, expected array
-FAIL Firing an event inside a detached open mode shadow tree inside open mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 6, expected array
-FAIL Firing an event inside a detached open mode shadow tree inside closed mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 6, expected array
-FAIL Firing an event inside a detached closed mode shadow tree inside open mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 6, expected array
-FAIL Firing an event inside a detached closed mode shadow tree inside closed mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 6, expected array
-FAIL Firing an event inside an in-document open mode shadow tree inside open mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 9, expected array
-FAIL Firing an event inside an in-document open mode shadow tree inside closed mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 9, expected array
-FAIL Firing an event inside an in-document closed mode shadow tree inside open mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 9, expected array
-FAIL Firing an event inside an in-document closed mode shadow tree inside closed mode shadow tree assert_array_equals: EventPath must contain [target, inner root, inner host, parent, outer root, outer host] value is 9, expected array
+PASS Firing an event inside a grand child of a detached open mode shadow tree 
+PASS Firing an event inside a grand child of a detached closed mode shadow tree 
+PASS Firing an event inside a grand child of an in-document open mode shadow tree 
+PASS Firing an event inside a grand child of an in-document closed mode shadow tree 
+PASS Firing an event inside a detached open mode shadow tree inside open mode shadow tree 
+PASS Firing an event inside a detached open mode shadow tree inside closed mode shadow tree 
+PASS Firing an event inside a detached closed mode shadow tree inside open mode shadow tree 
+PASS Firing an event inside a detached closed mode shadow tree inside closed mode shadow tree 
+PASS Firing an event inside an in-document open mode shadow tree inside open mode shadow tree 
+PASS Firing an event inside an in-document open mode shadow tree inside closed mode shadow tree 
+PASS Firing an event inside an in-document closed mode shadow tree inside open mode shadow tree 
+PASS Firing an event inside an in-document closed mode shadow tree inside closed mode shadow tree 
 

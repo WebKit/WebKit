@@ -1829,8 +1829,6 @@ webkit.org/b/175933 media/audio-controls-timeline-in-media-document.html [ Pass 
 
 webkit.org/b/176105 http/tests/security/video-cross-origin-accessfailure.html [ Pass Failure ]
 
-webkit.org/b/176110 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html [ Pass Failure ]
-
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
 
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
@@ -1841,7 +1839,6 @@ webkit.org/b/176758 animations/3d/transform-origin-vs-functions.html [ Pass Fail
 webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html [ Pass Failure ]
 
 webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
-webkit.org/b/177528 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.html [ Pass Failure ]
 webkit.org/b/177529 crypto/workers/subtle/rsa-oaep-import-key-encrypt.html [ Pass Failure ]
 webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
 
@@ -1855,8 +1852,6 @@ webkit.org/b/179443 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/179444 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html [ Pass Crash ]
 
 webkit.org/b/179755 media/video-empty-source.html [ Pass Crash ]
-
-webkit.org/b/179756 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
 
 webkit.org/b/180095 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html [ Pass Failure ]
 
@@ -1879,8 +1874,6 @@ webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/179947 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdi-element/bdi-auto-dir-default.html [ Pass Timeout ]
 webkit.org/b/182364 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Timeout Crash ]
-
-webkit.org/b/182604 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html [ Pass Failure Slow Crash ]
 
 webkit.org/b/182761 accessibility/gtk/aria-busy-changed-notification.html [ Pass Failure ]
 webkit.org/b/182761 accessibility/gtk/aria-current-changed-notification.html [ Pass Failure ]
@@ -3342,18 +3335,7 @@ imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-
 
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui/box-sizing-026.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui/outline-006.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/cssom/MediaList.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
 
@@ -3395,8 +3377,6 @@ webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass ]
-
-webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
 webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 

@@ -1,8 +1,11 @@
 
 PASS Slots: Basic. 
+FAIL Slots: Basic, elements only. n.s1.assignedElements is not a function. (In 'n.s1.assignedElements()', 'n.s1.assignedElements' is undefined)
 PASS Slots: Slots in closed. 
+FAIL Slots: Slots in closed, elements only. n.s1.assignedElements is not a function. (In 'n.s1.assignedElements()', 'n.s1.assignedElements' is undefined)
 PASS Slots: Slots not in a shadow tree. 
-FAIL Slots: Distributed nooes for Slots not in a shadow tree. assert_array_equals: lengths differ, expected 0 got 1
+FAIL Slots: Slots not in a shadow tree, elements only. n.s1.assignedElements is not a function. (In 'n.s1.assignedElements()', 'n.s1.assignedElements' is undefined)
+FAIL Slots: Distributed nodes for Slots not in a shadow tree. assert_array_equals: lengths differ, expected 0 got 1
 PASS Slots: Name matching 
 PASS Slots: No direct host child. 
 PASS Slots: Default Slot. 

@@ -275,6 +275,10 @@ PASS Parsing origin: <??a=b&c=d> against <http://example.org/foo/bar>
 PASS Parsing origin: <http:> against <http://example.org/foo/bar> 
 FAIL Parsing origin: <sc:> against <https://example.org/foo/bar> assert_equals: origin expected "null" but got "sc://"
 PASS Parsing origin: <http://foo.bar/baz?qux#foobar> against <about:blank> 
+PASS Parsing origin: <http://foo.bar/baz?qux#foo"bar> against <about:blank> 
+PASS Parsing origin: <http://foo.bar/baz?qux#foo<bar> against <about:blank> 
+PASS Parsing origin: <http://foo.bar/baz?qux#foo>bar> against <about:blank> 
+PASS Parsing origin: <http://foo.bar/baz?qux#foo`bar> against <about:blank> 
 PASS Parsing origin: <http://192.168.257> against <http://other.com/> 
 PASS Parsing origin: <http://192.168.257.com> against <http://other.com/> 
 PASS Parsing origin: <http://256> against <http://other.com/> 

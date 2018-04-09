@@ -32,4 +32,6 @@ FAIL Closing must be propagated forward: becomes closed after one chunk; prevent
 PASS Closing must be propagated forward: becomes closed after one chunk; preventClose = true 
 PASS Closing must be propagated forward: shutdown must not occur until the final write completes 
 PASS Closing must be propagated forward: shutdown must not occur until the final write completes; preventClose = true 
+PASS Closing must be propagated forward: shutdown must not occur until the final write completes; becomes closed after first write 
+PASS Closing must be propagated forward: shutdown must not occur until the final write completes; becomes closed after first write; preventClose = true 
 

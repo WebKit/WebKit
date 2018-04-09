@@ -1,10 +1,14 @@
 Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=origin
 CONSOLE MESSAGE: line 13: NetworkError:  A network error occurred.
+CONSOLE MESSAGE: line 33: TypeError: undefined is not an object (evaluating 'entry.redirectStart')
 Description
 
 This test validates that for a cross origin resource, the timing allow check algorithm will pass when the value of Timing-Allow-Origin is a case-sensitive match for the value of the origin of the current document.
 
 
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'entry.redirectStart')
+
 PASS window.performance is defined 
 PASS window.performance.getEntriesByType is defined 
+FAIL The iframe should have one resource timing entry. assert_equals: The iframe should have one resource timing entry. expected 1 but got 0
 

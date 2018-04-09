@@ -4,9 +4,9 @@ PASS ReadableStream can't be constructed with garbage
 PASS ReadableStream can't be constructed with an invalid type 
 FAIL ReadableStream instances should have the correct list of properties assert_equals: getReader should have no parameters expected 0 but got 1
 PASS ReadableStream constructor should throw for non-function start arguments 
-PASS ReadableStream constructor can get initial garbage as cancel argument 
-PASS ReadableStream constructor can get initial garbage as pull argument 
-PASS ReadableStream start should be called with the proper parameters 
+FAIL ReadableStream constructor will not tolerate initial garbage as cancel argument assert_throws: constructor should throw function "() => new ReadableStream({ cancel: '2' })" did not throw
+FAIL ReadableStream constructor will not tolerate initial garbage as pull argument assert_throws: constructor should throw function "() => new ReadableStream({ pull: { } })" did not throw
+FAIL ReadableStream start should be called with the proper parameters assert_equals: constructor should have no parameters expected 0 but got 4
 PASS ReadableStream start controller parameter should be extensible 
 PASS default ReadableStream getReader() should only accept mode:undefined 
 PASS ReadableStream should be able to call start method within prototype chain of its source 

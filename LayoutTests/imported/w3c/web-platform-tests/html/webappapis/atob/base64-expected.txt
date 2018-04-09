@@ -284,89 +284,96 @@ PASS btoa("\ufffe") must raise INVALID_CHARACTER_ERR
 PASS btoa("\uffff") must raise INVALID_CHARACTER_ERR 
 PASS btoa("𐀀") must raise INVALID_CHARACTER_ERR 
 PASS btoa(first 256 code points concatenated) 
-PASS atob("") == "" 
-PASS atob("abcd") == "i·\x1d" 
-PASS atob(" abcd") == "i·\x1d" 
-PASS atob("abcd ") == "i·\x1d" 
-PASS atob(" abcd===") must raise InvalidCharacterError 
-PASS atob("abcd=== ") must raise InvalidCharacterError 
-PASS atob("abcd ===") must raise InvalidCharacterError 
-PASS atob("a") must raise InvalidCharacterError 
-PASS atob("ab") == "i" 
-PASS atob("abc") == "i·" 
-PASS atob("abcde") must raise InvalidCharacterError 
-PASS atob("𐀀") must raise InvalidCharacterError 
-PASS atob("=") must raise InvalidCharacterError 
-PASS atob("==") must raise InvalidCharacterError 
-PASS atob("===") must raise InvalidCharacterError 
-PASS atob("====") must raise InvalidCharacterError 
-PASS atob("=====") must raise InvalidCharacterError 
-PASS atob("a=") must raise InvalidCharacterError 
-PASS atob("a==") must raise InvalidCharacterError 
-PASS atob("a===") must raise InvalidCharacterError 
-PASS atob("a====") must raise InvalidCharacterError 
-PASS atob("a=====") must raise InvalidCharacterError 
-PASS atob("ab=") must raise InvalidCharacterError 
-PASS atob("ab==") == "i" 
-PASS atob("ab===") must raise InvalidCharacterError 
-PASS atob("ab====") must raise InvalidCharacterError 
-PASS atob("ab=====") must raise InvalidCharacterError 
-PASS atob("abc=") == "i·" 
-PASS atob("abc==") must raise InvalidCharacterError 
-PASS atob("abc===") must raise InvalidCharacterError 
-PASS atob("abc====") must raise InvalidCharacterError 
-PASS atob("abc=====") must raise InvalidCharacterError 
-PASS atob("abcd=") must raise InvalidCharacterError 
-PASS atob("abcd==") must raise InvalidCharacterError 
-PASS atob("abcd===") must raise InvalidCharacterError 
-PASS atob("abcd====") must raise InvalidCharacterError 
-PASS atob("abcd=====") must raise InvalidCharacterError 
-PASS atob("abcde=") must raise InvalidCharacterError 
-PASS atob("abcde==") must raise InvalidCharacterError 
-PASS atob("abcde===") must raise InvalidCharacterError 
-PASS atob("abcde====") must raise InvalidCharacterError 
-PASS atob("abcde=====") must raise InvalidCharacterError 
-PASS atob("=a") must raise InvalidCharacterError 
-PASS atob("=a=") must raise InvalidCharacterError 
-PASS atob("a=b") must raise InvalidCharacterError 
-PASS atob("a=b=") must raise InvalidCharacterError 
-PASS atob("ab=c") must raise InvalidCharacterError 
-PASS atob("ab=c=") must raise InvalidCharacterError 
-PASS atob("abc=d") must raise InvalidCharacterError 
-PASS atob("abc=d=") must raise InvalidCharacterError 
-PASS atob("ab\tcd") == "i·\x1d" 
-PASS atob("ab\ncd") == "i·\x1d" 
-PASS atob("ab\fcd") == "i·\x1d" 
-PASS atob("ab\rcd") == "i·\x1d" 
-PASS atob("ab cd") == "i·\x1d" 
-PASS atob("ab cd") must raise InvalidCharacterError 
-PASS atob("ab\t\n\f\r cd") == "i·\x1d" 
-PASS atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ") == "i·\x1d" 
-PASS atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ") == "i" 
-PASS atob("A") must raise InvalidCharacterError 
-PASS atob("/A") == "ü" 
-PASS atob("//A") == "ÿð" 
-PASS atob("///A") == "ÿÿÀ" 
-PASS atob("////A") must raise InvalidCharacterError 
-PASS atob("/") must raise InvalidCharacterError 
-PASS atob("A/") == "\x03" 
-PASS atob("AA/") == "\0\x0f" 
-PASS atob("AAAA/") must raise InvalidCharacterError 
-PASS atob("AAA/") == "\0\0?" 
-PASS atob("\0nonsense") must raise InvalidCharacterError 
-PASS atob("abcd\0nonsense") must raise InvalidCharacterError 
-PASS atob(undefined) must raise InvalidCharacterError 
-PASS atob(null) == "ée" 
-PASS atob(7) must raise InvalidCharacterError 
-PASS atob(12) == "×" 
-PASS atob(1.5) must raise InvalidCharacterError 
-PASS atob(true) == "¶»" 
-PASS atob(false) must raise InvalidCharacterError 
-PASS atob(NaN) == "5£" 
-PASS atob(Infinity) == "\"wâ+r" 
-PASS atob(-Infinity) must raise InvalidCharacterError 
-PASS atob(0) must raise InvalidCharacterError 
-PASS atob(-0) must raise InvalidCharacterError 
-PASS atob(object "foo") == "~" 
-PASS atob(object "abcd") == "i·\x1d" 
+PASS atob() setup. 
+PASS atob("") 
+PASS atob("abcd") 
+PASS atob(" abcd") 
+PASS atob("abcd ") 
+PASS atob(" abcd===") 
+PASS atob("abcd=== ") 
+PASS atob("abcd ===") 
+PASS atob("a") 
+PASS atob("ab") 
+PASS atob("abc") 
+PASS atob("abcde") 
+PASS atob("𐀀") 
+PASS atob("=") 
+PASS atob("==") 
+PASS atob("===") 
+PASS atob("====") 
+PASS atob("=====") 
+PASS atob("a=") 
+PASS atob("a==") 
+PASS atob("a===") 
+PASS atob("a====") 
+PASS atob("a=====") 
+PASS atob("ab=") 
+PASS atob("ab==") 
+PASS atob("ab===") 
+PASS atob("ab====") 
+PASS atob("ab=====") 
+PASS atob("abc=") 
+PASS atob("abc==") 
+PASS atob("abc===") 
+PASS atob("abc====") 
+PASS atob("abc=====") 
+PASS atob("abcd=") 
+PASS atob("abcd==") 
+PASS atob("abcd===") 
+PASS atob("abcd====") 
+PASS atob("abcd=====") 
+PASS atob("abcde=") 
+PASS atob("abcde==") 
+PASS atob("abcde===") 
+PASS atob("abcde====") 
+PASS atob("abcde=====") 
+PASS atob("=a") 
+PASS atob("=a=") 
+PASS atob("a=b") 
+PASS atob("a=b=") 
+PASS atob("ab=c") 
+PASS atob("ab=c=") 
+PASS atob("abc=d") 
+PASS atob("abc=d=") 
+PASS atob("ab\tcd") 
+PASS atob("ab\ncd") 
+PASS atob("ab\fcd") 
+PASS atob("ab\rcd") 
+PASS atob("ab cd") 
+PASS atob("ab cd") 
+PASS atob("ab\t\n\f\r cd") 
+PASS atob(" \t\n\f\r ab\t\n\f\r cd\t\n\f\r ") 
+PASS atob("ab\t\n\f\r =\t\n\f\r =\t\n\f\r ") 
+PASS atob("A") 
+PASS atob("/A") 
+PASS atob("//A") 
+PASS atob("///A") 
+PASS atob("////A") 
+PASS atob("/") 
+PASS atob("A/") 
+PASS atob("AA/") 
+PASS atob("AAAA/") 
+PASS atob("AAA/") 
+PASS atob("\0nonsense") 
+PASS atob("abcd\0nonsense") 
+PASS atob("YQ") 
+PASS atob("YR") 
+PASS atob("~~") 
+PASS atob("..") 
+PASS atob("--") 
+PASS atob("__") 
+PASS atob(undefined) 
+PASS atob(null) 
+PASS atob(7) 
+PASS atob(12) 
+PASS atob(1.5) 
+PASS atob(true) 
+PASS atob(false) 
+PASS atob(NaN) 
+PASS atob(Infinity) 
+PASS atob(-Infinity) 
+PASS atob(0) 
+PASS atob(-0) 
+PASS atob(object "foo") 
+PASS atob(object "abcd") 
 

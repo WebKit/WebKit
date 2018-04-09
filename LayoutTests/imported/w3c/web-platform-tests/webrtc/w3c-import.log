@@ -50,7 +50,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ondatachannel.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ontrack.https.html
@@ -79,10 +78,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getCapabilities.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getParameters.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getCapabilities.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-setParameters.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences.html
@@ -91,7 +90,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCStats-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/datachannel-idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/dictionary-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/getstats.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/historical.html
@@ -99,4 +97,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/interfaces.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/no-media-call.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/promises-call.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall.https.html

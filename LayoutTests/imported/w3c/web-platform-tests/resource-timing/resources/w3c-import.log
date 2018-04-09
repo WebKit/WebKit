@@ -15,9 +15,16 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/TAOResponse.py
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/all_resource_types.htm
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/blank_page_green.htm
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/blue.png
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/empty.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/empty.py
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/empty_script.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/eventsource.py
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/fake_responses.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/fake_responses.py
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/green_frame.htm
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/gzip_xml.py
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_match_origin.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_match_wildcard.html
@@ -29,10 +36,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_wildcard.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/iframe_TAO_zero.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/inject_resource_test.html
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/multi_redirect.py
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/nested.css
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/notify_parent.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.css
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.js
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.png
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/resource_timing_test0.xml
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/self_navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/webperftestharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/webperftestharnessextension.js
+/LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/worker_with_images.js

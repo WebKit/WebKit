@@ -22,14 +22,14 @@ FAIL ReadableStream with byte source: Mix of auto allocate and BYOB ReadableByte
 FAIL ReadableStream with byte source: Automatic pull() after start() and read(view) ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: enqueue(), getReader(), then read() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: Push source that doesn't understand pull signal ReadableByteStreamController is not implemented
-FAIL ReadableStream with byte source: read(), but pull() function is not callable ReadableByteStreamController is not implemented
-FAIL ReadableStream with byte source: read(view), but pull() function is not callable ReadableByteStreamController is not implemented
+PASS ReadableStream with byte source: pull() function is not callable 
 FAIL ReadableStream with byte source: enqueue() with Uint16Array, getReader(), then read() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: enqueue(), read(view) partially, then read() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: getReader(), enqueue(), close(), then read() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: enqueue(), close(), getReader(), then read() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: Respond to pull() by enqueue() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: Respond to pull() by enqueue() asynchronously ReadableByteStreamController is not implemented
+FAIL ReadableStream with byte source: Respond to multiple pull() by separate enqueue() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: read(view), then respond() ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: read(view), then respond() with a transferred ArrayBuffer ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: read(view), then respond() with too big value ReadableByteStreamController is not implemented
@@ -67,6 +67,10 @@ FAIL ReadableStream with byte source: Throwing in pull function must error the s
 FAIL ReadableStream with byte source: Throwing in pull in response to read() must be ignored if the stream is errored in it ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: Throwing in pull in response to read(view) function must error the stream ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: Throwing in pull in response to read(view) must be ignored if the stream is errored in it ReadableByteStreamController is not implemented
+FAIL calling respond() twice on the same byobRequest should throw ReadableByteStreamController is not implemented
+FAIL calling respondWithNewView() twice on the same byobRequest should throw ReadableByteStreamController is not implemented
+FAIL calling respond(0) twice on the same byobRequest should throw even when closed ReadableByteStreamController is not implemented
+FAIL pull() resolving should not make releaseLock() possible ReadableByteStreamController is not implemented
 FAIL ReadableStream with byte source: default reader + autoAllocateChunkSize + byobRequest interaction ReadableByteStreamController is not implemented
 FAIL ReadableStreamBYOBReader can be constructed directly ReadableByteStreamController is not implemented
 FAIL ReadableStreamBYOBReader constructor requires a ReadableStream argument ReadableByteStreamController is not implemented

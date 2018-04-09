@@ -19,6 +19,7 @@ PASS test DOMPoint fromPoint with x, y, z, w, v
 PASS test DOMPoint fromPoint with x, z 
 PASS test DOMPoint fromPoint with undefined value 
 PASS test DOMPoint matrixTransform 
+PASS test DOMPoint matrixTransform with inconsistent input 
 PASS test DOMPoint Attributes undefined 
 PASS test DOMPoint Attributes NaN Infinity 
 PASS test DOMPointReadOnly Constructor no args 

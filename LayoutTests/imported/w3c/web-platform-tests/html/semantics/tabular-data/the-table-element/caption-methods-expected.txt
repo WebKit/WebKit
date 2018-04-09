@@ -11,4 +11,10 @@ PASS Assigning a caption to table.caption
 PASS Assigning null to table.caption 
 PASS Assigning a non-caption to table.caption 
 PASS Assigning a foreign caption to table.caption 
-caption
+PASS Set table.caption when the table doesn't already have a caption 
+PASS Set table.caption when the table has a caption child but with other siblings before it 
+PASS Set table.caption when the table has a caption descendant 
+PASS Set table.caption when the table has two caption children 
+PASS Assigning a caption has a different owner document to table.caption 
+PASS Assigning the caption already in the table to table.caption 
+caption  

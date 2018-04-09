@@ -21,4 +21,8 @@ PASS Setting document.body to a div element.
 PASS Setting document.body when there's no root element. 
 PASS Setting document.body to a new body element. 
 PASS Setting document.body to a new frameset element. 
+PASS Setting document.body to a body will replace an existing frameset if there is one. 
+PASS Setting document.body to a frameset will replace an existing body if there is one. 
+PASS Setting document.body to a frameset will replace the first existing body/frameset. 
+PASS Setting document.body to a new body element when the root element is a test element. 
 

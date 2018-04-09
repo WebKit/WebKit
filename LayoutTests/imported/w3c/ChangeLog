@@ -1,3 +1,980 @@
+2018-04-09  Brendan McLoughlin  <brendan@bocoup.com>
+
+        sync remaining web-platform-tests to 94b33b573a069ae5170104ca581a354a35762536
+        https://bugs.webkit.org/show_bug.cgi?id=184333
+
+        Reviewed by Youenn Fablet.
+
+        * resources/TestRepositories:
+        * resources/resource-files.json:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.worker.html.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.worker.js.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.worker.html.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.worker.js.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.js.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.html.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.js.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/digest/digest.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/digest/digest.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.worker.html.
+        * web-platform-tests/WebCryptoAPI/digest/digest.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.worker.js.
+        * web-platform-tests/WebCryptoAPI/digest/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker.html.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker.js.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.worker.html.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.worker.js.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.worker.html.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_gcm.worker.js.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.js.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes.worker.js: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.html.
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.worker.js.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_failures.https.html: Removed.
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.https.html:
+        * web-platform-tests/WebCryptoAPI/generateKey/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.html.
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.worker.js.
+        * web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.html.
+        * web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker.js.
+        * web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.worker.html.
+        * web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.worker.js.
+        * web-platform-tests/WebCryptoAPI/import_export/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker.html.
+        * web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.worker.js.
+        * web-platform-tests/WebCryptoAPI/sign_verify/hmac.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/sign_verify/hmac.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.worker.html.
+        * web-platform-tests/WebCryptoAPI/sign_verify/hmac.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.worker.js.
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker-expected.txt.
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker.html.
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker.js.
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.html.
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.js.
+        * web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/sign_verify/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/tools/generate.py:
+        * web-platform-tests/WebCryptoAPI/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/w3c-import.log:
+        * web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt.
+        * web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html.
+        * web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.js.
+        * web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker-expected.txt: Removed.
+        * web-platform-tests/XMLHttpRequest/send-authentication-basic-cors-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-network-error-async-events.sub-expected.txt:
+        * web-platform-tests/css/OWNERS: Removed.
+        * web-platform-tests/css/README.md:
+        * web-platform-tests/css/build-css-testsuites.sh:
+        * web-platform-tests/css/css-align/gaps/column-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/column-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/grid-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/row-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/row-gap-parsing-001.html:
+        * web-platform-tests/css/css-color/t31-color-currentColor-b.xht:
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-multiple-boxes-1-c.xht:
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-multiple-boxes-2-c.xht:
+        * web-platform-tests/css/css-color/t421-rgb-func-int-a.xht:
+        * web-platform-tests/css/css-color/t421-rgb-func-no-mixed-f.xht:
+        * web-platform-tests/css/css-color/t421-rgb-func-pct-a.xht:
+        * web-platform-tests/css/css-color/t421-rgb-func-whitespace-b.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex-parsing-f.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex3-a.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex6-a.xht:
+        * web-platform-tests/css/css-color/t422-rgba-a1.0-a.xht:
+        * web-platform-tests/css/css-color/t422-rgba-clamping-a0.0-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-clamping-a1.0-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-clip-outside-device-gamut-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-int-a.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-no-mixed-f.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-pct-a.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-whitespace-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht:
+        * web-platform-tests/css/css-color/t423-transparent-1-a.xht:
+        * web-platform-tests/css/css-color/t423-transparent-2-a.xht:
+        * web-platform-tests/css/css-color/t424-hsl-basic-a.xht:
+        * web-platform-tests/css/css-color/t424-hsl-clip-outside-gamut-b.xht:
+        * web-platform-tests/css/css-color/t424-hsl-parsing-f.xht:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-1.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-10.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-11.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-12.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-13.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-14.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-15.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-2.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-3.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-4.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-5.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-6.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-7.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-8.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-9.html:
+        * web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht:
+        * web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht:
+        * web-platform-tests/css/css-color/t425-hsla-parsing-f.xht:
+        * web-platform-tests/css/css-color/t425-hsla-values-b.xht:
+        * web-platform-tests/css/css-color/t44-currentcolor-background-b.xht:
+        * web-platform-tests/css/css-color/t44-currentcolor-border-b-expected.html:
+        * web-platform-tests/css/css-color/t44-currentcolor-border-b.xht:
+        * web-platform-tests/css/css-display/display-contents-before-after-001-expected.html:
+        * web-platform-tests/css/css-display/display-contents-before-after-001.html:
+        * web-platform-tests/css/css-display/display-contents-before-after-002-expected.html:
+        * web-platform-tests/css/css-display/display-contents-before-after-002.html:
+        * web-platform-tests/css/css-display/display-contents-replaced-001-expected.html: Removed.
+        * web-platform-tests/css/css-display/display-contents-replaced-001.html: Removed.
+        * web-platform-tests/css/css-display/display-contents-td-001-expected.html:
+        * web-platform-tests/css/css-display/display-contents-td-001.html:
+        * web-platform-tests/css/css-display/w3c-import.log:
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-containing-block-001.html:
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-paint-positioned-children-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-children-writing-modes-001-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-children-writing-modes-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-background-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-background-rtl-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-rtl-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-gaps-rtl-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-implicit-grid-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-implicit-grid-line-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-padding-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-unknown-named-grid-line-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-within-grid-implicit-track-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-sizing-positioned-items-001.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-should-not-create-implicit-tracks-001.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-should-not-take-up-space-001.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-sizing-001-expected.html:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-sizing-001.html:
+        * web-platform-tests/css/css-grid/abspos/support/grid.css: Added.
+        (.grid):
+        (.inline-grid):
+        (.firstRowFirstColumn):
+        (.onlyFirstRowOnlyFirstColumn):
+        (.firstRowSecondColumn):
+        (.onlyFirstRowOnlySecondColumn):
+        (.secondRowFirstColumn):
+        (.onlySecondRowOnlyFirstColumn):
+        (.secondRowSecondColumn):
+        (.onlySecondRowOnlySecondColumn):
+        (.endSecondRowEndSecondColumn):
+        (.thirdRowSecondColumn):
+        (.firstRowThirdColumn):
+        (.secondRowThirdColumn):
+        (.firstRowFourthColumn):
+        (.secondRowFourthColumn):
+        (.firstAutoRowSecondAutoColumn):
+        (.autoLastRowAutoLastColumn):
+        (.autoSecondRowAutoFirstColumn):
+        (.firstRowBothColumn):
+        (.secondRowBothColumn):
+        (.bothRowFirstColumn):
+        (.bothRowSecondColumn):
+        (.bothRowBothColumn):
+        (.autoRowAutoColumn):
+        (.firstRowAutoColumn):
+        (.secondRowAutoColumn):
+        (.thirdRowAutoColumn):
+        (.autoRowFirstColumn):
+        (.autoRowSecondColumn):
+        (.autoRowThirdColumn):
+        (.autoRowAutoColumnSpanning2):
+        (.autoRowSpanning2AutoColumn):
+        (.autoRowSpanning2AutoColumnSpanning3):
+        (.autoRowSpanning3AutoColumnSpanning2):
+        (.autoRowFirstColumnSpanning2):
+        (.autoRowSecondColumnSpanning2):
+        (.firstRowSpanning2AutoColumn):
+        (.secondRowSpanning2AutoColumn):
+        (.gridAutoFlowColumnSparse):
+        (.gridAutoFlowColumnDense):
+        (.gridAutoFlowRowSparse):
+        (.gridAutoFlowRowDense):
+        (.constrainedContainer):
+        (.unconstrainedContainer):
+        (.sizedToGridArea):
+        (.verticalRL):
+        (.verticalLR):
+        (.horizontalTB):
+        (.directionRTL):
+        (.directionLTR):
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-003.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-004.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-005.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-006.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-007.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-008.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-009.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-010.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-015.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-016.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-019.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-020.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-021.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-022.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-023.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-024.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-025.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-026.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-027.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-028.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-032.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-033.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-034.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036.html:
+        * web-platform-tests/css/css-grid/alignment/support/100x100-green.png: Added.
+        * web-platform-tests/css/css-grid/alignment/support/style-change.js: Added.
+        (evaluateStyleChange):
+        * web-platform-tests/css/css-grid/alignment/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/custom-elements/resources/w3c-import.log.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-022.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-023.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-024.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-025.html:
+        * web-platform-tests/css/css-grid/grid-items/support/100x100-green.png:
+        * web-platform-tests/css/css-grid/grid-items/support/grid.css: Added.
+        (.grid):
+        (.inline-grid):
+        (.firstRowFirstColumn):
+        (.onlyFirstRowOnlyFirstColumn):
+        (.firstRowSecondColumn):
+        (.onlyFirstRowOnlySecondColumn):
+        (.secondRowFirstColumn):
+        (.onlySecondRowOnlyFirstColumn):
+        (.secondRowSecondColumn):
+        (.onlySecondRowOnlySecondColumn):
+        (.endSecondRowEndSecondColumn):
+        (.thirdRowSecondColumn):
+        (.firstRowThirdColumn):
+        (.secondRowThirdColumn):
+        (.firstRowFourthColumn):
+        (.secondRowFourthColumn):
+        (.firstAutoRowSecondAutoColumn):
+        (.autoLastRowAutoLastColumn):
+        (.autoSecondRowAutoFirstColumn):
+        (.firstRowBothColumn):
+        (.secondRowBothColumn):
+        (.bothRowFirstColumn):
+        (.bothRowSecondColumn):
+        (.bothRowBothColumn):
+        (.autoRowAutoColumn):
+        (.firstRowAutoColumn):
+        (.secondRowAutoColumn):
+        (.thirdRowAutoColumn):
+        (.autoRowFirstColumn):
+        (.autoRowSecondColumn):
+        (.autoRowThirdColumn):
+        (.autoRowAutoColumnSpanning2):
+        (.autoRowSpanning2AutoColumn):
+        (.autoRowSpanning2AutoColumnSpanning3):
+        (.autoRowSpanning3AutoColumnSpanning2):
+        (.autoRowFirstColumnSpanning2):
+        (.autoRowSecondColumnSpanning2):
+        (.firstRowSpanning2AutoColumn):
+        (.secondRowSpanning2AutoColumn):
+        (.gridAutoFlowColumnSparse):
+        (.gridAutoFlowColumnDense):
+        (.gridAutoFlowRowSparse):
+        (.gridAutoFlowRowDense):
+        (.constrainedContainer):
+        (.unconstrainedContainer):
+        (.sizedToGridArea):
+        (.verticalRL):
+        (.verticalLR):
+        (.horizontalTB):
+        (.directionRTL):
+        (.directionLTR):
+        * web-platform-tests/css/css-grid/grid-items/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/support/grid.css: Added.
+        (.grid):
+        (.inline-grid):
+        (.firstRowFirstColumn):
+        (.onlyFirstRowOnlyFirstColumn):
+        (.firstRowSecondColumn):
+        (.onlyFirstRowOnlySecondColumn):
+        (.secondRowFirstColumn):
+        (.onlySecondRowOnlyFirstColumn):
+        (.secondRowSecondColumn):
+        (.onlySecondRowOnlySecondColumn):
+        (.endSecondRowEndSecondColumn):
+        (.thirdRowSecondColumn):
+        (.firstRowThirdColumn):
+        (.secondRowThirdColumn):
+        (.firstRowFourthColumn):
+        (.secondRowFourthColumn):
+        (.firstAutoRowSecondAutoColumn):
+        (.autoLastRowAutoLastColumn):
+        (.autoSecondRowAutoFirstColumn):
+        (.firstRowBothColumn):
+        (.secondRowBothColumn):
+        (.bothRowFirstColumn):
+        (.bothRowSecondColumn):
+        (.bothRowBothColumn):
+        (.autoRowAutoColumn):
+        (.firstRowAutoColumn):
+        (.secondRowAutoColumn):
+        (.thirdRowAutoColumn):
+        (.autoRowFirstColumn):
+        (.autoRowSecondColumn):
+        (.autoRowThirdColumn):
+        (.autoRowAutoColumnSpanning2):
+        (.autoRowSpanning2AutoColumn):
+        (.autoRowSpanning2AutoColumnSpanning3):
+        (.autoRowSpanning3AutoColumnSpanning2):
+        (.autoRowFirstColumnSpanning2):
+        (.autoRowSecondColumnSpanning2):
+        (.firstRowSpanning2AutoColumn):
+        (.secondRowSpanning2AutoColumn):
+        (.gridAutoFlowColumnSparse):
+        (.gridAutoFlowColumnDense):
+        (.gridAutoFlowRowSparse):
+        (.gridAutoFlowRowDense):
+        (.constrainedContainer):
+        (.unconstrainedContainer):
+        (.sizedToGridArea):
+        (.verticalRL):
+        (.verticalLR):
+        (.horizontalTB):
+        (.directionRTL):
+        (.directionLTR):
+        * web-platform-tests/css/css-grid/grid-model/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/custom-elements/resources/w3c-import.log.
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-auto-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-balance-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-fill-balance-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-inherit-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-002-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-002.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-px-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-px-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-shorthand-2-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-stacking-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-rule-stacking-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-shorthand-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-shorthand-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-vertical-align-001-expected.xht:
+        * web-platform-tests/css/css-multicol/multicol-table-cell-vertical-align-001.xht:
+        * web-platform-tests/css/css-pseudo/marker-color-expected.html:
+        * web-platform-tests/css/css-pseudo/marker-color.html:
+        * web-platform-tests/css/css-pseudo/marker-font-properties.html:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-image-threshold-003-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-image-threshold-003.html:
+        * web-platform-tests/css/css-ui/cursor-image-006.html:
+        * web-platform-tests/css/css-ui/outline-016.html:
+        * web-platform-tests/css/css-ui/text-overflow-007.html:
+        * web-platform-tests/css/css-ui/text-overflow-008-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-008.html:
+        * web-platform-tests/css/css-ui/text-overflow-010.html:
+        * web-platform-tests/css/css-ui/text-overflow-011.html:
+        * web-platform-tests/css/css-ui/text-overflow-013-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-013.html:
+        * web-platform-tests/css/css-ui/text-overflow-014.html:
+        * web-platform-tests/css/css-ui/text-overflow-015.html:
+        * web-platform-tests/css/css-ui/text-overflow-016.html:
+        * web-platform-tests/css/css-ui/text-overflow-017.html:
+        * web-platform-tests/css/css-ui/text-overflow-020.html:
+        * web-platform-tests/css/css-ui/text-overflow-023.html:
+        * web-platform-tests/css/geometry/DOMMatrix-003-expected.txt:
+        * web-platform-tests/css/geometry/DOMMatrix-003.html:
+        * web-platform-tests/css/geometry/DOMMatrixInit-validate-fixup.html:
+        * web-platform-tests/css/geometry/DOMPoint-002-expected.txt:
+        * web-platform-tests/css/geometry/DOMPoint-002.html:
+        * web-platform-tests/css/geometry/OWNERS:
+        * web-platform-tests/css/geometry/structured-serialization-expected.txt:
+        * web-platform-tests/css/geometry/structured-serialization.html:
+        * web-platform-tests/css/mediaqueries/min-width-tables-001.html:
+        * web-platform-tests/css/mediaqueries/test_media_queries-expected.txt:
+        * web-platform-tests/css/mediaqueries/test_media_queries.html:
+        * web-platform-tests/css/requirements.txt:
+        * web-platform-tests/css/selectors/OWNERS:
+        * web-platform-tests/css/w3c-import.log:
+        * web-platform-tests/custom-elements/Document-createElement-expected.txt:
+        * web-platform-tests/custom-elements/Document-createElement.html:
+        * web-platform-tests/custom-elements/OWNERS:
+        * web-platform-tests/custom-elements/attribute-changed-callback-expected.txt:
+        * web-platform-tests/custom-elements/attribute-changed-callback.html:
+        * web-platform-tests/custom-elements/custom-element-registry/w3c-import.log:
+        * web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children-expected.txt:
+        * web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children.html:
+        * web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document-expected.txt:
+        * web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document.html:
+        * web-platform-tests/custom-elements/parser/w3c-import.log:
+        * web-platform-tests/custom-elements/reactions/CSSStyleDeclaration-expected.txt:
+        * web-platform-tests/custom-elements/reactions/CSSStyleDeclaration.html:
+        * web-platform-tests/custom-elements/reactions/Document.html:
+        * web-platform-tests/custom-elements/reactions/HTMLElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLElement.html:
+        * web-platform-tests/custom-elements/reactions/w3c-import.log:
+        * web-platform-tests/custom-elements/resources/custom-elements-helpers.js:
+        (CustomElement):
+        (CustomElement.prototype.attributeChangedCallback):
+        (CustomElement.prototype.connectedCallback):
+        (CustomElement.prototype.disconnectedCallback):
+        (CustomElement.prototype.adoptedCallback):
+        (document_types.return.create): Deleted.
+        (document_types.create): Deleted.
+        (document_types.): Deleted.
+        (document_types): Deleted.
+        * web-platform-tests/custom-elements/resources/w3c-import.log:
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode.html:
+        * web-platform-tests/custom-elements/upgrading/w3c-import.log:
+        * web-platform-tests/custom-elements/w3c-import.log:
+        * web-platform-tests/encrypted-media/clearkey-check-initdata-type.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-check-initdata-type.html.
+        * web-platform-tests/encrypted-media/clearkey-events-session-closed-event.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-event.html.
+        * web-platform-tests/encrypted-media/clearkey-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-events.html.
+        * web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.html.
+        * web-platform-tests/encrypted-media/clearkey-invalid-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license.html.
+        * web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.html.
+        * web-platform-tests/encrypted-media/clearkey-keystatuses.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record-events.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.html.
+        * web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.html.
+        * web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession.html.
+        * web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.html.
+        * web-platform-tests/encrypted-media/drm-check-initdata-type.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-check-initdata-type.html.
+        * web-platform-tests/encrypted-media/drm-events-session-closed-event.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-events-session-closed-event.html.
+        * web-platform-tests/encrypted-media/drm-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-events.html.
+        * web-platform-tests/encrypted-media/drm-expiration.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-expiration.html.
+        * web-platform-tests/encrypted-media/drm-generate-request-disallowed-input.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-generate-request-disallowed-input.html.
+        * web-platform-tests/encrypted-media/drm-invalid-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-invalid-license.html.
+        * web-platform-tests/encrypted-media/drm-keystatuses-multiple-sessions.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-keystatuses-multiple-sessions.html.
+        * web-platform-tests/encrypted-media/drm-keystatuses.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-keystatuses.html.
+        * web-platform-tests/encrypted-media/drm-mp4-onencrypted.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-onencrypted.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-destroy-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-destroy-persistent-license.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license-events.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-license.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record-events.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-destroy-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-destroy-persistent-license.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-license.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-license.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-usage-record.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-usage-record.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-clear-encrypted.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-clear-encrypted.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-events.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-events.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-expired.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-expired.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential-readyState.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential-readyState.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multisession.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multisession.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-playduration-keystatus.html: Copied from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-playduration.html: Copied from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-src.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-src.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-update.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-after-update.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-immediately.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-immediately.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-onencrypted.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-setMediaKeys-onencrypted.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-two-videos.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-two-videos.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-waitingforkey.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-waitingforkey.html.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary.html.
+        * web-platform-tests/encrypted-media/drm-mp4-requestmediakeysystemaccess.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-requestmediakeysystemaccess.html.
+        * web-platform-tests/encrypted-media/drm-mp4-reset-src-after-setmediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-reset-src-after-setmediakeys.html.
+        * web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-playback.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-playback.html.
+        * web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-resetting-src.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-again-after-resetting-src.html.
+        * web-platform-tests/encrypted-media/drm-mp4-setmediakeys-at-same-time.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-at-same-time.html.
+        * web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-different-mediakeys.html.
+        * web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.html.
+        * web-platform-tests/encrypted-media/drm-mp4-setmediakeys-to-multiple-video-elements.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys-to-multiple-video-elements.html.
+        * web-platform-tests/encrypted-media/drm-mp4-setmediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-setmediakeys.html.
+        * web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeys.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeys.html.
+        * web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysession.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysession.html.
+        * web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysystemaccess.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-syntax-mediakeysystemaccess.html.
+        * web-platform-tests/encrypted-media/drm-mp4-unique-origin.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-unique-origin.html.
+        * web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.html.
+        * web-platform-tests/encrypted-media/drm-not-callable-after-createsession.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.html.
+        * web-platform-tests/encrypted-media/drm-temporary-license-type.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.html.
+        * web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html:
+        * web-platform-tests/encrypted-media/polyfill/make-polyfill-tests.py:
+        * web-platform-tests/encrypted-media/resources/clearkey-retrieve-destroy-persistent-license.html:
+        * web-platform-tests/encrypted-media/resources/clearkey-retrieve-persistent-license.html:
+        * web-platform-tests/encrypted-media/resources/drm-retrieve-destroy-persistent-license.html:
+        * web-platform-tests/encrypted-media/resources/drm-retrieve-persistent-license.html:
+        * web-platform-tests/encrypted-media/resources/drm-retrieve-persistent-usage-record.html:
+        * web-platform-tests/encrypted-media/resources/retrieve-persistent-usage-record.html:
+        * web-platform-tests/encrypted-media/scripts/playback-retrieve-persistent-license.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-retrieve-persistent-usage-record.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-temporary-playduration-keystatus.js: Added.
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-temporary-playduration.js: Added.
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/unique-origin.js:
+        (runTest.load_iframe):
+        (runTest.):
+        * web-platform-tests/encrypted-media/scripts/w3c-import.log:
+        * web-platform-tests/encrypted-media/util/drm-messagehandler.js:
+        (const.requestConstructors.string_appeared_here):
+        * web-platform-tests/encrypted-media/util/utils.js:
+        * web-platform-tests/encrypted-media/w3c-import.log:
+        * web-platform-tests/fetch/data-urls/resources/base64.json: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/PopStateEvent-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/PopStateEvent.html:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/hashchange_event-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/hashchange_event.html:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html:
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/frame-with-then.html: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-height.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/Document.body-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/Document.body.html:
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-01.html:
+        * web-platform-tests/html/dom/elements-embedded.js:
+        * web-platform-tests/html/dom/elements-forms.js:
+        * web-platform-tests/html/dom/elements-metadata.js:
+        * web-platform-tests/html/dom/elements-misc.js:
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        * web-platform-tests/html/dom/reflection.js:
+        (ReflectionTests.reflects):
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-event.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/readyState-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/readyState.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/activeCues.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-to-other-document.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-move-within-document.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cloneNode.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/user-interface/muted-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/user-interface/muted.html:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/resources/area-download-click.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/imagedata-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/imagedata.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-value-interactions-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-value-interactions.html:
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/disabled-001-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/disabled-001.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-local-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/month-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/month.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/range-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/range.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/week-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/week.html:
+        * web-platform-tests/html/semantics/forms/the-progress-element/progress-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-progress-element/progress.html:
+        * web-platform-tests/html/semantics/forms/the-select-element/selected-index-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-select-element/selected-index.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-script-error-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-script-error.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-external-classic-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-external-classic.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-external-module-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-external-module.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-inline-classic-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-module-expected.txt.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-inline-classic.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-classic.html.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-inline-module-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-classic-expected.txt.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-inline-module.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-module.html.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-2-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-2.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-3-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-3.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/load-error-events-inline.html:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-in-xhtml.xhtml:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/caption-methods-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/caption-methods.html:
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html:
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-expected.txt:
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html:
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/resources/a-download-click.html: Added.
+        * web-platform-tests/html/syntax/parsing/DOMContentLoaded-defer-support.js:
+        (t.step):
+        * web-platform-tests/html/syntax/parsing/the-end-expected.txt:
+        * web-platform-tests/html/syntax/parsing/the-end.html:
+        * web-platform-tests/html/tools/update_html5lib_tests.py:
+        * web-platform-tests/html/webappapis/animation-frames/same-dispatch-time.html:
+        * web-platform-tests/html/webappapis/atob/base64-expected.txt:
+        * web-platform-tests/html/webappapis/atob/base64.html:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example.html:
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator.any.js:
+        (async_test):
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol-expected.txt:
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol.html:
+        * web-platform-tests/innerText/getter.html:
+        * web-platform-tests/innerText/setter.html:
+        * web-platform-tests/mathml/tools/utils/w3c-import.log:
+        * web-platform-tests/media-source/mediasource-addsourcebuffer.html:
+        * web-platform-tests/media-source/mediasource-config-changes.js:
+        (mediaSourceConfigChangeTest):
+        * web-platform-tests/media-source/mediasource-endofstream.html:
+        * web-platform-tests/media-source/mediasource-is-type-supported.html:
+        * web-platform-tests/media-source/mediasource-play.html:
+        * web-platform-tests/mediacapture-fromelement/capture.html:
+        * web-platform-tests/mediacapture-fromelement/creation.html:
+        * web-platform-tests/mediacapture-fromelement/ended.html:
+        * web-platform-tests/payment-request/OWNERS:
+        * web-platform-tests/payment-request/PaymentAddress/attributes-and-toJSON-method-manual.https.html:
+        * web-platform-tests/payment-request/payment-request-abort-method-manual.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-abort-method-manual.https.html: Added.
+        * web-platform-tests/payment-request/payment-request-abort-method.https.html: Removed.
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method-manual.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method-manual.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html.
+        * web-platform-tests/payment-request/payment-request-constructor-crash.https.html:
+        * web-platform-tests/payment-request/payment-request-constructor.https.html:
+        * web-platform-tests/payment-request/payment-request-ctor-pmi-handling.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-ctor-pmi-handling.https.html:
+        * web-platform-tests/payment-request/payment-request-id-attribute.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-id-attribute.https.html:
+        * web-platform-tests/payment-request/payment-request-response-id.html: Removed.
+        * web-platform-tests/payment-request/payment-request-show-method.https.html:
+        * web-platform-tests/payment-request/w3c-import.log:
+        * web-platform-tests/resource-timing/resource_TAO_origin-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_origin.htm:
+        * web-platform-tests/resource-timing/resource_TAO_zero-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_zero.htm:
+        * web-platform-tests/resource-timing/resource_connection_reuse.html:
+        * web-platform-tests/resource-timing/resource_dynamic_insertion.html:
+        * web-platform-tests/resource-timing/resources/fake_responses.py:
+        * web-platform-tests/resource-timing/resources/w3c-import.log:
+        * web-platform-tests/resource-timing/test_resource_timing.js:
+        (resource_load):
+        * web-platform-tests/secure-contexts/basic-dedicated-worker.html:
+        * web-platform-tests/secure-contexts/basic-dedicated-worker.https.html:
+        * web-platform-tests/secure-contexts/basic-popup-and-iframe-tests-expected.txt:
+        * web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.https.js:
+        (LoadTarget.prototype.load_and_get_result_for):
+        * web-platform-tests/secure-contexts/shared-worker-insecure-first.https.html:
+        * web-platform-tests/secure-contexts/shared-worker-secure-first.https.html:
+        * web-platform-tests/secure-contexts/support/https-subframe-dedicated.html:
+        * web-platform-tests/secure-contexts/support/parent-dedicated-worker-script.js:
+        (typeof.Worker.string_appeared_here.w.onmessage):
+        (w.onmessage): Deleted.
+        * web-platform-tests/secure-contexts/support/parent-shared-worker-script.js:
+        (typeof.Worker.string_appeared_here.w.onmessage):
+        (w.onmessage): Deleted.
+        * web-platform-tests/shadow-dom/event-composed-path-with-related-target-expected.txt:
+        * web-platform-tests/shadow-dom/event-composed-path-with-related-target.html:
+        * web-platform-tests/shadow-dom/event-inside-shadow-tree-expected.txt:
+        * web-platform-tests/shadow-dom/event-inside-shadow-tree.html:
+        * web-platform-tests/shadow-dom/slots-expected.txt:
+        * web-platform-tests/shadow-dom/slots-fallback-expected.txt:
+        * web-platform-tests/shadow-dom/slots-fallback.html:
+        * web-platform-tests/shadow-dom/slots.html:
+        * web-platform-tests/streams/piping/close-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.js:
+        (promise_test):
+        * web-platform-tests/streams/piping/close-propagation-forward.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward.js:
+        (promise_test):
+        (promise_test.t.string_appeared_here.then):
+        (promise_test.t.then):
+        * web-platform-tests/streams/piping/error-propagation-forward-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward.js:
+        (promise_test.t.const.ws.recordingWritableStream.write):
+        (promise_test.t.then):
+        (promise_test.t.return.writeCalledPromise.then):
+        (promise_test.t.then.flushAsyncEvents.then):
+        (promise_test.t.rs.pipeTo.ws.then):
+        (promise_test.t.return.writeCalledPromise.then.flushAsyncEvents.then):
+        * web-platform-tests/streams/piping/error-propagation-forward.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/piping/multiple-propagation.js:
+        (promise_test.t.string_appeared_here.then):
+        * web-platform-tests/streams/readable-byte-streams/general.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.html:
+        * web-platform-tests/streams/readable-byte-streams/general.js:
+        (promise_test):
+        (test):
+        * web-platform-tests/streams/readable-byte-streams/general.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/properties-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/properties.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/properties.js:
+        (promise_test.t.const.rs.new.ReadableStream.pull):
+        (test):
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.js:
+        (test):
+        (promise_test):
+        (promise_test.t.const.rs.new.ReadableStream.get cancel): Deleted.
+        (promise_test.t.const.rs.new.ReadableStream.cancel): Deleted.
+        * web-platform-tests/streams/readable-streams/bad-underlying-sources.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.js:
+        (test):
+        * web-platform-tests/streams/readable-streams/default-reader.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/garbage-collection-expected.txt:
+        * web-platform-tests/streams/readable-streams/garbage-collection.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/garbage-collection.js:
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/garbage-collection.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/general-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.js:
+        (test):
+        * web-platform-tests/streams/readable-streams/general.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.dedicatedworker-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.js:
+        (test.t.const.stream.new.ReadableStream.start):
+        (test.t.ReadableStream):
+        (test.t.t.add_cleanup):
+        * web-platform-tests/streams/readable-streams/tee.serviceworker.https-expected.txt:
+        * web-platform-tests/streams/resources/recording-streams.js:
+        (self.recordingTransformStream):
+        * web-platform-tests/streams/resources/test-utils.js:
+        (self.getterRejectsForAll):
+        (self.methodRejectsForAll):
+        (self.getterThrowsForAll):
+        (self.methodThrowsForAll):
+        (self.constructorThrowsForAll):
+        * web-platform-tests/touch-events/historical.html:
+        * web-platform-tests/touch-events/multi-touch-interactions.js:
+        (debug_print):
+        (check_list_subset_of_two_targetlists):
+        (is_at_least_one_item_in_targetlist):
+        (check_no_item_in_targetlist):
+        (check_targets):
+        (run.):
+        (run):
+        * web-platform-tests/url/OWNERS:
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/setters_tests.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+        * web-platform-tests/url/urlsearchparams-stringifier-expected.txt:
+        * web-platform-tests/url/urlsearchparams-stringifier.html:
+        * web-platform-tests/url/urltestdata.json:
+        * web-platform-tests/user-timing/invoke_with_timing_attributes-expected.txt:
+        * web-platform-tests/user-timing/invoke_with_timing_attributes.html:
+        * web-platform-tests/user-timing/measure_exceptions_navigation_timing-expected.txt:
+        * web-platform-tests/user-timing/measure_exceptions_navigation_timing.html:
+        * web-platform-tests/webrtc/OWNERS:
+        * web-platform-tests/webrtc/RTCCertificate.html:
+        * web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy-expected.txt:
+        * web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html:
+        * web-platform-tests/webrtc/RTCDTMFSender-helper.js:
+        (createDtmfSender.then.):
+        (createDtmfSender):
+        * web-platform-tests/webrtc/RTCDTMFSender-insertDTMF.https-expected.txt:
+        * web-platform-tests/webrtc/RTCDTMFSender-insertDTMF.https.html:
+        * web-platform-tests/webrtc/RTCDTMFSender-ontonechange.https.html:
+        * web-platform-tests/webrtc/RTCDtlsTransport-getRemoteCertificates.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-constructor.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-getStats.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-helper.js:
+        * web-platform-tests/webrtc/RTCPeerConnection-peerIdentity.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer.html:
+        * web-platform-tests/webrtc/RTCRtpCapabilities-helper.js:
+        (validateHeaderExtensionCapability):
+        * web-platform-tests/webrtc/RTCRtpReceiver-getStats.https-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.html.
+        * web-platform-tests/webrtc/RTCRtpSender-getStats.https-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCRtpSender-getStats.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.html.
+        * web-platform-tests/webrtc/RTCStats-helper.js:
+        (findStatsFromReport):
+        (validateRtcStats):
+        (validateRtpStreamStats):
+        (validateCodecStats):
+        (validateReceivedRtpStreamStats):
+        (validateInboundRtpStreamStats):
+        (validateRemoteInboundRtpStreamStats):
+        (validateSentRtpStreamStats):
+        (validateOutboundRtpStreamStats):
+        (validateRemoteOutboundRtpStreamStats):
+        (validateMediaStreamTrackStats):
+        (validateDataChannelStats):
+        (validateTransportStats):
+        (validateIceCandidateStats):
+        (validateIceCandidatePairStats):
+        (validateCertificateStats):
+        * web-platform-tests/webrtc/RTCTrackEvent-constructor-expected.txt:
+        * web-platform-tests/webrtc/RTCTrackEvent-constructor.html:
+        * web-platform-tests/webrtc/historical-expected.txt:
+        * web-platform-tests/webrtc/historical.html:
+        * web-platform-tests/webrtc/simplecall.https-expected.txt: Added.
+        * web-platform-tests/webrtc/simplecall.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall.html.
+        * web-platform-tests/webrtc/w3c-import.log:
+        * web-platform-tests/workers/data-url-expected.txt:
+        * web-platform-tests/workers/data-url-shared.html:
+        * web-platform-tests/workers/data-url.html:
+        * web-platform-tests/workers/name-property-expected.txt:
+        * web-platform-tests/workers/support/name-as-accidental-global.js:
+        (test):
+        * web-platform-tests/workers/worker-performance.worker.js:
+        (test.testPerformanceMark):
+        (test.testPerformanceHasToJSON):
+        (test.testPerformanceHasNoToJSON): Deleted.
+        * web-platform-tests/xhr/resources/inspect-headers.py: Added.
+        (get_response):
+        (main):
+
 2018-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html after r230350.

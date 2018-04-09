@@ -14,6 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/digest.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/digest/test_digest.https.html

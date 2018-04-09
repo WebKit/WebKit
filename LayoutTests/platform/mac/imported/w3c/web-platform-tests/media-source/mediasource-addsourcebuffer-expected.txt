@@ -9,5 +9,4 @@ PASS Test addSourceBuffer() video only
 PASS Test addSourceBuffer() audio only 
 PASS Test addSourceBuffer() with AAC and H.264 
 PASS Test addSourceBuffer() with AAC and H.264 in separate SourceBuffers 
-FAIL Test addSourceBuffer() QuotaExceededError. assert_true: Reached SourceBuffer limit. expected true got false
 

@@ -19,8 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/change-shipping-option-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/historical.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/interfaces.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-abort-method-manual.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method-manual.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-ctor-currency-code-checks.https.html
@@ -28,7 +28,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-id-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-onshippingaddresschange-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-onshippingoptionchange-attribute.https.html
-/LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-response-id.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-shippingAddress-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-shippingOption-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/payment-request/payment-request-shippingType-attribute.https.html

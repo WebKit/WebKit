@@ -3,9 +3,9 @@ PASS Indeterminate progress bar should have position -1
 PASS Revoming the value attribute makes an intermediate progress bar, which should have position -1 
 PASS Determinate progress bar should have fractional position 
 PASS Indeterminate progress bar should have value 0 
-FAIL Value must equal max if the parsed value is larger than max assert_array_equals: value is 1, expected array
+PASS Value must equal max if the parsed value is larger than max 
 PASS Max must be 1 by default 
-FAIL Max must be 1 by default, even if value is specified assert_array_equals: value is 1, expected array
+PASS Max must be 1 by default, even if value is specified 
 PASS Max must be 1 if max value is invalid 
 PASS Max must be 1 if the parsed max value is less than or equal to zero 
 PASS Value must be 0 if value is invalid 

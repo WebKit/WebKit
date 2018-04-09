@@ -14,15 +14,15 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf_vectors.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https.html
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https.html

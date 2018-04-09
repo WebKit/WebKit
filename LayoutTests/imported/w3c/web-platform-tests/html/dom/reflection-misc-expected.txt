@@ -3616,4 +3616,116 @@ PASS undefinedelement.tabIndex: IDL set to 0
 PASS undefinedelement.tabIndex: IDL set to 1 
 PASS undefinedelement.tabIndex: IDL set to 2147483647 
 PASS undefinedelement.tabIndex: IDL set to -2147483648 
+FAIL undefinedelement.inputMode: typeof IDL attribute assert_equals: expected "string" but got "undefined"
+FAIL undefinedelement.inputMode: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to undefined assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to 7 assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to 1.5 assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to true assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to false assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to NaN assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to -Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to null assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "none" assert_equals: IDL get expected (string) "none" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xnone" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "none\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "one" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "NONE" assert_equals: IDL get expected (string) "none" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "text" assert_equals: IDL get expected (string) "text" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xtext" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "text\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "ext" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "TEXT" assert_equals: IDL get expected (string) "text" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "tel" assert_equals: IDL get expected (string) "tel" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xtel" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "tel\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "el" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "TEL" assert_equals: IDL get expected (string) "tel" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "url" assert_equals: IDL get expected (string) "url" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xurl" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "url\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "rl" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "URL" assert_equals: IDL get expected (string) "url" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "email" assert_equals: IDL get expected (string) "email" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xemail" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "email\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "mail" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "EMAIL" assert_equals: IDL get expected (string) "email" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "numeric" assert_equals: IDL get expected (string) "numeric" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xnumeric" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "numeric\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "umeric" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "NUMERIC" assert_equals: IDL get expected (string) "numeric" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "decimal" assert_equals: IDL get expected (string) "decimal" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xdecimal" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "decimal\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "ecimal" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "DECIMAL" assert_equals: IDL get expected (string) "decimal" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "search" assert_equals: IDL get expected (string) "search" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "xsearch" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "search\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "earch" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL undefinedelement.inputMode: setAttribute() to "SEARCH" assert_equals: IDL get expected (string) "search" but got (undefined) undefined
+FAIL undefinedelement.inputMode: IDL set to "" assert_equals: getAttribute() expected "" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to 7 assert_equals: getAttribute() expected "7" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to true assert_equals: getAttribute() expected "true" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to false assert_equals: getAttribute() expected "false" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to null assert_equals: IDL get expected (string) "" but got (object) null
+FAIL undefinedelement.inputMode: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "none" assert_equals: getAttribute() expected "none" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xnone" assert_equals: getAttribute() expected "xnone" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "none\0" assert_equals: getAttribute() expected "none\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "one" assert_equals: getAttribute() expected "one" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "NONE" assert_equals: getAttribute() expected "NONE" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "text" assert_equals: getAttribute() expected "text" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xtext" assert_equals: getAttribute() expected "xtext" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "text\0" assert_equals: getAttribute() expected "text\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "ext" assert_equals: getAttribute() expected "ext" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "TEXT" assert_equals: getAttribute() expected "TEXT" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "tel" assert_equals: getAttribute() expected "tel" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xtel" assert_equals: getAttribute() expected "xtel" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "tel\0" assert_equals: getAttribute() expected "tel\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "el" assert_equals: getAttribute() expected "el" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "TEL" assert_equals: getAttribute() expected "TEL" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "url" assert_equals: getAttribute() expected "url" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xurl" assert_equals: getAttribute() expected "xurl" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "url\0" assert_equals: getAttribute() expected "url\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "rl" assert_equals: getAttribute() expected "rl" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "URL" assert_equals: getAttribute() expected "URL" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "email" assert_equals: getAttribute() expected "email" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xemail" assert_equals: getAttribute() expected "xemail" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "email\0" assert_equals: getAttribute() expected "email\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "mail" assert_equals: getAttribute() expected "mail" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "EMAIL" assert_equals: getAttribute() expected "EMAIL" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "numeric" assert_equals: getAttribute() expected "numeric" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xnumeric" assert_equals: getAttribute() expected "xnumeric" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "numeric\0" assert_equals: getAttribute() expected "numeric\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "umeric" assert_equals: getAttribute() expected "umeric" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "NUMERIC" assert_equals: getAttribute() expected "NUMERIC" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "decimal" assert_equals: getAttribute() expected "decimal" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xdecimal" assert_equals: getAttribute() expected "xdecimal" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "decimal\0" assert_equals: getAttribute() expected "decimal\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "ecimal" assert_equals: getAttribute() expected "ecimal" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "DECIMAL" assert_equals: getAttribute() expected "DECIMAL" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "search" assert_equals: getAttribute() expected "search" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "xsearch" assert_equals: getAttribute() expected "xsearch" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "search\0" assert_equals: getAttribute() expected "search\0" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "earch" assert_equals: getAttribute() expected "earch" but got "SEARCH"
+FAIL undefinedelement.inputMode: IDL set to "SEARCH" assert_equals: IDL get expected "search" but got "SEARCH"
 (Note: missing tests for types tokenlist.)
