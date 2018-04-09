@@ -1,0 +1,18 @@
+Tests that ReplaceState should not change document URL if URL argument is null.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Push item one
+Replace item one with null url
+Push item two
+Going back to item one
+PASS document.location.href is "http://127.0.0.1:8000/one"
+Replace item one with empty url
+Push item two
+Going back to item one
+PASS document.location.href is "http://127.0.0.1:8000/"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
