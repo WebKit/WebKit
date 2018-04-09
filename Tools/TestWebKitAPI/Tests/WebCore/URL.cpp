@@ -213,6 +213,108 @@ TEST_F(URLTest, URLRemoveQueryAndFragmentIdentifier)
     EXPECT_EQ(url.string(), url5.string());
 }
 
+TEST_F(URLTest, EqualIgnoringFragmentIdentifier)
+{
+    struct TestCase {
+        const char* url1;
+        const char* url2;
+        bool expected;
+    } cases[] = {
+        {"http://example.com/", "http://example.com/", true},
+        {"http://example.com/#hash", "http://example.com/", true},
+        {"http://example.com/path", "http://example.com/", false},
+        {"http://example.com/path", "http://example.com/path", true},
+        {"http://example.com/path#hash", "http://example.com/path", true},
+        {"http://example.com/path?query", "http://example.com/path", false},
+        {"http://example.com/path?query#hash", "http://example.com/path", false},
+        {"http://example.com/otherpath", "http://example.com/path", false},
+        {"http://example.com:80/", "http://example.com/", true},
+        {"http://example.com:80/#hash", "http://example.com/", true},
+        {"http://example.com:80/path", "http://example.com/", false},
+        {"http://example.com:80/path#hash", "http://example.com/path", true},
+        {"http://example.com:80/path?query", "http://example.com/path", false},
+        {"http://example.com:80/path?query#hash", "http://example.com/path", false},
+        {"http://example.com:80/otherpath", "http://example.com/path", false},
+        {"http://not-example.com:80/", "http://example.com/", false},
+        {"http://example.com:81/", "http://example.com/", false},
+        {"http://example.com:81/#hash", "http://example.com:81/", true},
+        {"http://example.com:81/path", "http://example.com:81", false},
+        {"http://example.com:81/path#hash", "http://example.com:81/path", true},
+        {"http://example.com:81/path?query", "http://example.com:81/path", false},
+        {"http://example.com:81/path?query#hash", "http://example.com:81/path", false},
+        {"http://example.com:81/otherpath", "http://example.com:81/path", false},
+        {"file:///path/to/file.html", "file:///path/to/file.html", true},
+        {"file:///path/to/file.html#hash", "file:///path/to/file.html", true},
+        {"file:///path/to/file.html?query", "file:///path/to/file.html", false},
+        {"file:///path/to/file.html?query#hash", "file:///path/to/file.html", false},
+        {"file:///path/to/other_file.html", "file:///path/to/file.html", false},
+        {"file:///path/to/other/file.html", "file:///path/to/file.html", false},
+        {"data:text/plain;charset=utf-8;base64,76O/76O/76O/", "data:text/plain;charset=utf-8;base64,760/760/760/", false},
+        {"http://example.com", "file://example.com", false},
+        {"http://example.com/#hash", "file://example.com", false},
+        {"http://example.com/?query", "file://example.com/", false},
+        {"http://example.com/?query#hash", "file://example.com/", false},
+    };
+
+    for (const auto& test : cases) {
+        URL url1 = createURL(test.url1);
+        URL url2 = createURL(test.url2);
+        EXPECT_EQ(test.expected, equalIgnoringFragmentIdentifier(url1, url2))
+            << "Test failed for " << test.url1 << " vs. " << test.url2;
+    }
+}
+
+TEST_F(URLTest, EqualIgnoringQueryAndFragment)
+{
+    struct TestCase {
+        const char* url1;
+        const char* url2;
+        bool expected;
+    } cases[] = {
+        {"http://example.com/", "http://example.com/", true},
+        {"http://example.com/#hash", "http://example.com/", true},
+        {"http://example.com/path", "http://example.com/", false},
+        {"http://example.com/path", "http://example.com/path", true},
+        {"http://example.com/path#hash", "http://example.com/path", true},
+        {"http://example.com/path?query", "http://example.com/path", true},
+        {"http://example.com/path?query#hash", "http://example.com/path", true},
+        {"http://example.com/otherpath", "http://example.com/path", false},
+        {"http://example.com:80/", "http://example.com/", true},
+        {"http://example.com:80/#hash", "http://example.com/", true},
+        {"http://example.com:80/path", "http://example.com/", false},
+        {"http://example.com:80/path#hash", "http://example.com/path", true},
+        {"http://example.com:80/path?query", "http://example.com/path", true},
+        {"http://example.com:80/path?query#hash", "http://example.com/path", true},
+        {"http://example.com:80/otherpath", "http://example.com/path", false},
+        {"http://not-example.com:80/", "http://example.com:80/", false},
+        {"http://example.com:81/", "http://example.com/", false},
+        {"http://example.com:81/#hash", "http://example.com:81/", true},
+        {"http://example.com:81/path", "http://example.com:81", false},
+        {"http://example.com:81/path#hash", "http://example.com:81/path", true},
+        {"http://example.com:81/path?query", "http://example.com:81/path", true},
+        {"http://example.com:81/path?query#hash", "http://example.com:81/path", true},
+        {"http://example.com:81/otherpath", "http://example.com:81/path", false},
+        {"file:///path/to/file.html", "file:///path/to/file.html", true},
+        {"file:///path/to/file.html#hash", "file:///path/to/file.html", true},
+        {"file:///path/to/file.html?query", "file:///path/to/file.html", true},
+        {"file:///path/to/file.html?query#hash", "file:///path/to/file.html", true},
+        {"file:///path/to/other_file.html", "file:///path/to/file.html", false},
+        {"file:///path/to/other/file.html", "file:///path/to/file.html", false},
+        {"data:text/plain;charset=utf-8;base64,76O/76O/76O/", "data:text/plain;charset=utf-8;base64,760/760/760/", false},
+        {"http://example.com", "file://example.com", false},
+        {"http://example.com/#hash", "file://example.com", false},
+        {"http://example.com/?query", "file://example.com/", false},
+        {"http://example.com/?query#hash", "file://example.com/", false},
+    };
+
+    for (const auto& test : cases) {
+        URL url1 = createURL(test.url1);
+        URL url2 = createURL(test.url2);
+        EXPECT_EQ(test.expected, equalIgnoringQueryAndFragment(url1, url2))
+            << "Test failed for " << test.url1 << " vs. " << test.url2;
+    }
+}
+
 TEST_F(URLTest, ProtocolIsInHTTPFamily)
 {
     EXPECT_FALSE(protocolIsInHTTPFamily({}));

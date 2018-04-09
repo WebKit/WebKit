@@ -307,6 +307,7 @@ bool operator!=(const URL&, const String&);
 bool operator!=(const String&, const URL&);
 
 WEBCORE_EXPORT bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+WEBCORE_EXPORT bool equalIgnoringQueryAndFragment(const URL&, const URL&);
 WEBCORE_EXPORT bool protocolHostAndPortAreEqual(const URL&, const URL&);
 WEBCORE_EXPORT bool hostsAreEqual(const URL&, const URL&);
 
