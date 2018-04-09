@@ -43,10 +43,6 @@
 
 #endif
 
-#if ENABLE_VCP_ENCODER
-
-#include <VideoProcessing/VideoProcessing.h>
-
 #define ALWAYS_INLINE inline
 
 #ifdef __cplusplus
@@ -82,6 +78,36 @@
     {\
         return functionNamespace::softLink##framework##functionName parameterNames; \
     }
+
+#define SOFT_LINK_FRAMEWORK_OPTIONAL(framework) \
+    static void* framework##Library() \
+    { \
+        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+        return frameworkLibrary; \
+    }
+
+#define SOFT_LINK_POINTER_OPTIONAL(framework, name, type) \
+    static type init##name(); \
+    static type (*get##name)() = init##name; \
+    static type pointer##name; \
+    \
+    static type name##Function() \
+    { \
+        return pointer##name; \
+    } \
+    \
+    static type init##name() \
+    { \
+        void** pointer = static_cast<void**>(dlsym(framework##Library(), #name)); \
+        if (pointer) \
+            pointer##name = static_cast<type>(*pointer); \
+        get##name = name##Function; \
+        return pointer##name; \
+    }
+
+#if ENABLE_VCP_ENCODER
+
+#include <VideoProcessing/VideoProcessing.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(webrtc, VideoProcessing)
 

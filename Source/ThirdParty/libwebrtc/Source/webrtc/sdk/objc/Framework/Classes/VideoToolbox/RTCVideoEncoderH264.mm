@@ -38,6 +38,40 @@
 #include "sdk/WebKit/EncoderUtilities.h"
 #include "sdk/WebKit/WebKitUtilities.h"
 
+#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
+#import <dlfcn.h>
+#import <objc/runtime.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolBox)
+SOFT_LINK_POINTER_OPTIONAL(VideoToolBox, kVTVideoEncoderSpecification_Usage, NSString *)
+
+static inline bool isStandardFrameSize(int32_t width, int32_t height)
+{
+    // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
+    if (width == 1280)
+        return height == 720;
+    if (width == 720)
+        return height == 1280;
+    if (width == 960)
+        return height == 540;
+    if (width == 540)
+        return height == 960;
+    if (width == 640)
+        return height == 480;
+    if (width == 480)
+        return height == 640;
+    if (width == 288)
+        return height == 352;
+    if (width == 352)
+        return height == 288;
+    if (width == 320)
+        return height == 240;
+    if (width == 240)
+        return height == 320;
+    return false;
+}
+#endif
+
 @interface RTCVideoEncoderH264 ()
 
 - (void)frameWasEncoded:(OSStatus)status
@@ -616,6 +650,78 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
   } else {
     RTC_LOG(LS_INFO) << "Compression session created with hw accl disabled";
+
+#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
+    if (!isStandardFrameSize(_width, _height)) {
+      RTC_LOG(LS_ERROR) << "Using H264 software encoder with non standard size is not supported";
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+
+    if (!getkVTVideoEncoderSpecification_Usage()) {
+      RTC_LOG(LS_ERROR) << "RTCVideoEncoderH264 cannot create a H264 software encoder";
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+
+    CFDictionaryRef ioSurfaceValue = CreateCFTypeDictionary(nullptr, nullptr, 0);
+    int64_t pixelFormatType = framePixelFormat;
+    CFNumberRef pixelFormat = CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType);
+
+    const size_t attributesSize = 3;
+    CFTypeRef keys[attributesSize] = {
+      kCVPixelBufferOpenGLCompatibilityKey,
+      kCVPixelBufferIOSurfacePropertiesKey,
+      kCVPixelBufferPixelFormatTypeKey
+    };
+    CFTypeRef values[attributesSize] = {
+      kCFBooleanTrue,
+      ioSurfaceValue,
+      pixelFormat};
+    CFDictionaryRef sourceAttributes = CreateCFTypeDictionary(keys, values, attributesSize);
+
+    if (ioSurfaceValue) {
+      CFRelease(ioSurfaceValue);
+      ioSurfaceValue = nullptr;
+    }
+    if (pixelFormat) {
+      CFRelease(pixelFormat);
+      pixelFormat = nullptr;
+    }
+
+    CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanFalse);
+    int usageValue = 1;
+    CFNumberRef usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
+    CFDictionarySetValue(encoderSpecs, getkVTVideoEncoderSpecification_Usage(), usage);
+    if (usage) {
+      CFRelease(usage);
+      usage = nullptr;
+    }
+
+    [self destroyCompressionSession];
+
+    OSStatus status =
+      CompressionSessionCreate(nullptr,  // use default allocator
+                                 _width,
+                                 _height,
+                                 kCodecTypeH264,
+                                 encoderSpecs,
+                                 sourceAttributes,
+                                 nullptr,  // use default compressed data allocator
+                                 compressionOutputCallback,
+                                 nullptr,
+                                 &_compressionSession);
+    if (sourceAttributes) {
+      CFRelease(sourceAttributes);
+      sourceAttributes = nullptr;
+    }
+    if (encoder_specs) {
+      CFRelease(encoder_specs);
+      encoder_specs = nullptr;
+    }
+    if (status != noErr) {
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
+#endif
   }
 #endif
   [self configureCompressionSession];
