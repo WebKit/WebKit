@@ -39,6 +39,7 @@
 #include <webkit2/WebKitWebExtension.h>
 #include <webkit2/WebKitWebHitTestResult.h>
 #include <webkit2/WebKitWebPage.h>
+#include <webkit2/WebKitWebProcessEnumTypes.h>
 
 #include <webkit2/WebKitWebExtensionAutocleanups.h>
 
