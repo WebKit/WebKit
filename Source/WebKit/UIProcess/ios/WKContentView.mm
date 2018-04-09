@@ -348,7 +348,9 @@ private:
         return;
 
     [_textSelectionAssistant deactivateSelection];
+#if !ENABLE(MINIMAL_SIMULATOR)
     [[_webSelectionAssistant selectionView] setHidden:YES];
+#endif
 }
 
 - (CGRect)_computeUnobscuredContentRectRespectingInputViewBounds:(CGRect)unobscuredContentRect inputViewBounds:(CGRect)inputViewBounds

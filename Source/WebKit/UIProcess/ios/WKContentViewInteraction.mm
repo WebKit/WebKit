@@ -4481,7 +4481,9 @@ static bool isAssistableInputType(InputType type)
     if (!state.isMissingPostLayoutData && state.postLayoutData().isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
         [[self selectionInteractionAssistant] showSelectionCommands];
         [_webSelectionAssistant didEndScrollingOrZoomingPage];
+#if !ENABLE(MINIMAL_SIMULATOR)
         [[_webSelectionAssistant selectionView] setHidden:NO];
+#endif
 
         if (!self.suppressAssistantSelectionView)
             [_textSelectionAssistant activateSelection];

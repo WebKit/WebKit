@@ -1,3 +1,17 @@
+2018-04-09  Jer Noble  <jer.noble@apple.com>
+
+        Fix the selection assistant selectionView build
+        https://bugs.webkit.org/show_bug.cgi?id=184423
+        <rdar://problem/39288235>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didExitStableState]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateChangedSelection:]):
+
 2018-04-09  Megan Gardner  <megan_gardner@apple.com>
 
         Switch to UIWKTextInteractionAssistant for non-editable text
