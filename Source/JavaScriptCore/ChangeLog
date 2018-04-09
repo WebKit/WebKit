@@ -1,3 +1,15 @@
+2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Don't install JSC C API headers
+        https://bugs.webkit.org/show_bug.cgi?id=184375
+
+        Reviewed by Žan Doberšek.
+
+        None of the functions declared in these headers are exported in WPE. Use the new jsc API
+        instead.
+
+        * PlatformWPE.cmake:
+
 2018-04-08  Mark Lam  <mark.lam@apple.com>
 
         Add pointer profiling to the FTL and supporting code.
