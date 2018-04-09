@@ -48,7 +48,7 @@ namespace WebCore {
 
 static PlatformDisplayID displayID(NSScreen *screen)
 {
-    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [[[screen deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
 }
 
@@ -71,7 +71,7 @@ static PlatformDisplayID displayID(Widget* widget)
 // Screen containing the menubar.
 static NSScreen *firstScreen()
 {
-    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSArray *screens = [NSScreen screens];
     if (![screens count])
         return nil;
@@ -80,6 +80,7 @@ static NSScreen *firstScreen()
 
 static NSWindow *window(Widget* widget)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     if (!widget)
         return nil;
     return widget->platformWidget().window;
@@ -87,6 +88,7 @@ static NSWindow *window(Widget* widget)
 
 static NSScreen *screen(Widget* widget)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     // If the widget is in a window, use that, otherwise use the display ID from the host window.
     // First case is for when the NSWindow is in the same process, second case for when it's not.
     if (auto screenFromWindow = window(widget).screen)
@@ -100,10 +102,21 @@ static HashMap<PlatformDisplayID, ScreenProperties>& screenProperties()
     return screenProperties;
 }
 
-void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenProperties)
+static PlatformDisplayID& primaryScreenDisplayID()
+{
+    static PlatformDisplayID primaryScreenDisplayID = 0;
+    return primaryScreenDisplayID;
+}
+
+std::pair<PlatformDisplayID, HashMap<PlatformDisplayID, ScreenProperties>> getScreenProperties()
 {
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+
+    HashMap<PlatformDisplayID, ScreenProperties> screenProperties;
+    std::optional<PlatformDisplayID> firstScreen;
+
     for (NSScreen *screen in [NSScreen screens]) {
+        auto displayID = WebCore::displayID(screen);
         FloatRect screenAvailableRect = screen.visibleFrame;
         screenAvailableRect.setY(NSMaxY(screen.frame) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
         FloatRect screenRect = screen.frame;
@@ -116,26 +129,40 @@ void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>& screenPro
         bool screenHasInvertedColors = CGDisplayUsesInvertedPolarity();
         bool screenIsMonochrome = CGDisplayUsesForceToGray();
 
-        screenProperties.set(WebCore::displayID(screen), ScreenProperties { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome });
+        screenProperties.set(displayID, ScreenProperties { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenIsMonochrome });
+
+        if (!firstScreen)
+            firstScreen = displayID;
     }
+
+    return { WTFMove(*firstScreen), WTFMove(screenProperties) };
 }
 
-void setScreenProperties(const HashMap<PlatformDisplayID, ScreenProperties>& properties)
+void setScreenProperties(PlatformDisplayID primaryScreenID, const HashMap<PlatformDisplayID, ScreenProperties>& properties)
 {
+    primaryScreenDisplayID() = primaryScreenID;
     screenProperties() = properties;
 }
-    
-static ScreenProperties getScreenProperties(Widget* widget)
+
+ScreenProperties screenProperties(PlatformDisplayID screendisplayID)
 {
-    auto displayIDForWidget = displayID(widget);
-    if (displayIDForWidget) {
-        auto screenPropertiesForDisplay = screenProperties().find(displayIDForWidget);
+    RELEASE_ASSERT(!screenProperties().isEmpty());
+
+    // Return property of the first screen if the screen is not found in the map.
+    auto displayID = screendisplayID ? screendisplayID : primaryScreenDisplayID();
+    if (displayID) {
+        auto screenPropertiesForDisplay = screenProperties().find(displayID);
         if (screenPropertiesForDisplay != screenProperties().end())
             return screenPropertiesForDisplay->value;
     }
 
-    // Return property of the first screen if the screen is not found in the map.
+    // Last resort: use the first item in the screen list.
     return screenProperties().begin()->value;
+}
+
+static ScreenProperties getScreenProperties(Widget* widget)
+{
+    return screenProperties(displayID(widget));
 }
 
 bool screenIsMonochrome(Widget* widget)
@@ -151,7 +178,7 @@ bool screenIsMonochrome(Widget* widget)
 bool screenHasInvertedColors()
 {
     if (!screenProperties().isEmpty())
-        return screenProperties().begin()->value.screenHasInvertedColors;
+        return screenProperties(primaryScreenDisplayID()).screenHasInvertedColors;
 
     // This is a system-wide accessibility setting, same on all screens.
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -182,6 +209,18 @@ int screenDepthPerComponent(Widget* widget)
     return NSBitsPerSampleFromDepth(screen(widget).depth);
 }
 
+FloatRect screenRectForDisplay(PlatformDisplayID displayID)
+{
+    if (!screenProperties().isEmpty()) {
+        auto screenRect = screenProperties(displayID).screenRect;
+        ASSERT(!screenRect.isEmpty());
+        return screenRect;
+    }
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    return screen(displayID).frame;
+}
+
 FloatRect screenRect(Widget* widget)
 {
     if (!screenProperties().isEmpty())
@@ -202,13 +241,13 @@ FloatRect screenAvailableRect(Widget* widget)
 
 NSScreen *screen(NSWindow *window)
 {
-    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     return [window screen] ?: firstScreen();
 }
 
 NSScreen *screen(PlatformDisplayID displayID)
 {
-    // FIXME: <https://webkit.org/b/184344> We should assert here if in WebContent process.
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     for (NSScreen *screen in [NSScreen screens]) {
         if (WebCore::displayID(screen) == displayID)
             return screen;
@@ -241,6 +280,13 @@ FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
 {
     FloatRect userRect = rect;
     userRect.setY(NSMaxY([screen(destination) frame]) - (userRect.y() + userRect.height())); // flip
+    return userRect;
+}
+
+FloatRect toUserSpaceForPrimaryScreen(const NSRect& rect)
+{
+    FloatRect userRect = rect;
+    userRect.setY(NSMaxY(screenRectForDisplay(primaryScreenDisplayID())) - (userRect.y() + userRect.height())); // flip
     return userRect;
 }
 

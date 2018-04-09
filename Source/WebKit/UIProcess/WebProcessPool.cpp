@@ -749,11 +749,9 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
 #if PLATFORM(MAC)
 static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
-    HashMap<PlatformDisplayID, ScreenProperties> screenProperties;
-    WebCore::getScreenProperties(screenProperties);
-
+    auto screenProperties = WebCore::getScreenProperties();
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+        processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties.first, screenProperties.second));
 }
 
 static void registerDisplayConfigurationCallback()
@@ -918,9 +916,8 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #if PLATFORM(MAC)
     registerDisplayConfigurationCallback();
 
-    HashMap<PlatformDisplayID, ScreenProperties> screenProperties;
-    WebCore::getScreenProperties(screenProperties);
-    process.send(Messages::WebProcess::SetScreenProperties(screenProperties), 0);
+    auto screenProperties = WebCore::getScreenProperties();
+    process.send(Messages::WebProcess::SetScreenProperties(screenProperties.first, screenProperties.second), 0);
 #endif
 }
 

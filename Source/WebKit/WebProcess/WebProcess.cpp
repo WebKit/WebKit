@@ -1699,9 +1699,9 @@ void WebProcess::registerServiceWorkerClients()
 #endif
 
 #if PLATFORM(MAC)
-void WebProcess::setScreenProperties(const HashMap<uint32_t, WebCore::ScreenProperties>& properties)
+void WebProcess::setScreenProperties(uint32_t primaryScreenID, const HashMap<uint32_t, WebCore::ScreenProperties>& properties)
 {
-    WebCore::setScreenProperties(properties);
+    WebCore::setScreenProperties(primaryScreenID, properties);
 }
 #endif
 

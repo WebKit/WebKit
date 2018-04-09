@@ -84,13 +84,17 @@ struct ScreenProperties;
 NSScreen *screen(NSWindow *);
 NSScreen *screen(PlatformDisplayID);
 
+FloatRect screenRectForDisplay(PlatformDisplayID);
+
 WEBCORE_EXPORT FloatRect toUserSpace(const NSRect&, NSWindow *destination);
+FloatRect toUserSpaceForPrimaryScreen(const NSRect&);
 WEBCORE_EXPORT NSRect toDeviceSpace(const FloatRect&, NSWindow *source);
 
 NSPoint flipScreenPoint(const NSPoint&, NSScreen *);
 
-WEBCORE_EXPORT void getScreenProperties(HashMap<PlatformDisplayID, ScreenProperties>&);
-WEBCORE_EXPORT void setScreenProperties(const HashMap<PlatformDisplayID, ScreenProperties>&);
+WEBCORE_EXPORT std::pair<PlatformDisplayID, HashMap<PlatformDisplayID, ScreenProperties>> getScreenProperties();
+WEBCORE_EXPORT void setScreenProperties(PlatformDisplayID primaryScreenID, const HashMap<PlatformDisplayID, ScreenProperties>&);
+ScreenProperties screenProperties(PlatformDisplayID);
 
 #endif
 

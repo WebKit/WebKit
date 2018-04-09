@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,12 +49,14 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformEventFactoryMac.h"
+#include "PlatformScreen.h"
 #include "Range.h"
 #include "RenderLayer.h"
 #include "RenderListBox.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
+#include "ScreenProperties.h"
 #include "ScrollAnimator.h"
 #include "ScrollLatchingState.h"
 #include "ScrollableArea.h"
@@ -1164,7 +1166,7 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
     if (!page)
         return m_lastKnownMousePosition;
 
-    auto frame = toUserSpace(screen(page->chrome().displayID()).frame, nil);
+    auto frame = toUserSpaceForPrimaryScreen(screenRectForDisplay(page->chrome().displayID()));
     return m_lastKnownMousePosition + autoscrollAdjustmentFactorForScreenBoundaries(m_lastKnownMouseGlobalPosition, frame);
 }
 

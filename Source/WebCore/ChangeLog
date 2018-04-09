@@ -1,3 +1,45 @@
+2018-04-09  Brent Fulgham  <bfulgham@apple.com>
+
+        WebCore::EventHandler::targetPositionInWindowForSelectionAutoscroll is directly accessing NSScreen
+        https://bugs.webkit.org/show_bug.cgi?id=184344
+        <rdar://problem/39224969>
+
+        Reviewed by Per Arne Vollan.
+
+        The implementation of targetPositionInWindowForSelectionAutoscroll uses the display ID to get the
+        screen boundaries of the current display. This causes a bunch of interaction with NSScreen that
+        we do not want to allow in the WebContent process.
+
+        Instead, we should just use the cached screen information the WebContent process already possesses.
+
+        This patch makes the following changes:
+        1. We now retrieve the screen rect of the page's display from the cache, rather than interacting with
+           the WindowServer directly.
+        2. Add a new 'toUserSpaceForPrimaryScreen' so we don't have to deal with a nil NSWindow when computing
+           the user space version of the coordinates. A nil Window just means we want to get coordinates in
+           terms of the primary display.
+        3. Keep track of the primary display so we can refer to it later.
+        4. Modify the IPC messages to include the primary display's ID so we can easily access it later.
+        5. Modify the PlatformScreen methods to actually use the primary display when appropriate, rather
+           than whichever screen happened to hash to the lowest value.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::targetPositionInWindowForSelectionAutoscroll const): Use new methods that
+        don't require WindowServer access.
+        * platform/PlatformScreen.h:
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::displayID): Assert if we hit this code in the WebContent process.
+        (WebCore::firstScreen): Ditto.
+        (WebCore::window): Ditto.
+        (WebCore::screen): Ditto.
+        (WebCore::primaryScreenID): Added.
+        (WebCore::getScreenProperties): Modify to return a pair consisting of the primary display ID and
+        the HashSet of screen settings.
+        (WebCore::setScreenProperties): Update to also track the primary display ID.
+        (WebCore::screenProperties): Update to use the primary display ID.
+        (WebCore::screenHasInvertedColors): Ditto.
+        (WebCore::toUserSpaceForPrimaryScreen): Added.
+
 2018-04-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make InlineTextBox::createTextRun() take a const lvalue reference String
