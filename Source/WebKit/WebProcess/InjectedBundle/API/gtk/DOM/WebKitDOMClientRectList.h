@@ -68,7 +68,7 @@ webkit_dom_client_rect_list_get_length(WebKitDOMClientRectList* self);
  *
  * Returns the #WebKitDOMClientRect object that @self contains at @index.
  *
- * Returns: (transfer none): A #WebKitDOMClientRect
+ * Returns: (transfer full): A #WebKitDOMClientRect
  *
  * Since: 2.18
 **/

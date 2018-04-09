@@ -44,10 +44,6 @@ static void testUIProcessAutocleanups(WebViewTest* test, gconstpointer)
 
 static void testWebProcessAutocleanups(WebViewTest* test, gconstpointer)
 {
-    static const char* testHTML = "<html><body></body></html>";
-    test->loadHtml(testHTML, nullptr);
-    test->waitUntilLoadFinished();
-
     g_assert(test->runWebProcessTest("Autocleanups", "web-process-autocleanups"));
 }
 

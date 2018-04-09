@@ -26,19 +26,13 @@
 static void testWebKitDOMXPathNSResolverNative(WebViewTest* test, gconstpointer)
 {
     static const char* nativeXML = "<root xmlns:foo='http://www.example.org'><foo:child>SUCCESS</foo:child></root>";
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(nativeXML, strlen(nativeXML)));
-    test->loadBytes(bytes.get(), "text/xml", nullptr, nullptr);
-    test->waitUntilLoadFinished();
-    g_assert(test->runWebProcessTest("WebKitDOMXPathNSResolver", "native"));
+    g_assert(test->runWebProcessTest("WebKitDOMXPathNSResolver", "native", nativeXML, "text/xml"));
 }
 
 static void testWebKitDOMXPathNSResolverCustom(WebViewTest* test, gconstpointer)
 {
     static const char* customXML = "<root xmlns='http://www.example.com'><child>SUCCESS</child></root>";
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(customXML, strlen(customXML)));
-    test->loadBytes(bytes.get(), "text/xml", nullptr, nullptr);
-    test->waitUntilLoadFinished();
-    g_assert(test->runWebProcessTest("WebKitDOMXPathNSResolver", "custom"));
+    g_assert(test->runWebProcessTest("WebKitDOMXPathNSResolver", "custom", customXML, "text/xml"));
 }
 
 void beforeAll()

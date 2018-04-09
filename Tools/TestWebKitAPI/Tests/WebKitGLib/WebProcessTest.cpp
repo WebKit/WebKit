@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebProcessTest.h"
 
+#include "WebKitWebExtensionPrivate.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <gio/gio.h>
 #include <wtf/HashSet.h>
@@ -64,14 +65,7 @@ static JSValueRef runTest(JSContextRef context, JSObjectRef function, JSObjectRe
 
     WebKitWebPage* webPage = WEBKIT_WEB_PAGE(JSObjectGetPrivate(thisObject));
     g_assert(WEBKIT_IS_WEB_PAGE(webPage));
-    // Test /WebKitDOMNode/dom-cache is an exception, because it's called 3 times, so
-    // the WebPage is destroyed after the third time.
-    if (g_str_equal(testPath.get(), "WebKitDOMNode/dom-cache")) {
-        static unsigned domCacheTestRunCount = 0;
-        if (++domCacheTestRunCount == 3)
-            WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
-    } else
-        WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
+    WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webPage));
 
     std::unique_ptr<WebProcessTest> test = WebProcessTest::create(String::fromUTF8(testPath.get()));
     return JSValueMakeBoolean(context, test->runTest(g_strrstr(testPath.get(), "/") + 1, webPage));
@@ -100,6 +94,9 @@ static void webProcessTestRunnerFinalize(JSObjectRef object)
 
 static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage* webPage, WebKitFrame* frame, WebKitWebExtension* extension)
 {
+    if (g_strcmp0(webkit_web_page_get_uri(webPage), "webprocess://test"))
+        return;
+
     JSGlobalContextRef context = webkit_frame_get_javascript_context_for_script_world(frame, world);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
 
@@ -117,5 +114,6 @@ static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage*
 
 extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)
 {
+    webkitWebExtensionSetGarbageCollectOnPageDestroy(extension);
     g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectClearedCallback), extension);
 }

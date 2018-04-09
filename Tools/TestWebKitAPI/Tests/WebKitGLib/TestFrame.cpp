@@ -21,28 +21,19 @@
 
 #include "WebViewTest.h"
 
-static void webkitFrameTestRun(WebViewTest* test, const char* testName)
-{
-    static const char* testHTML = "<html><body></body></html>";
-    test->loadHtml(testHTML, 0);
-    test->waitUntilLoadFinished();
-
-    g_assert(test->runWebProcessTest("WebKitFrame", testName));
-}
-
 static void testWebKitFrameMainFrame(WebViewTest* test, gconstpointer)
 {
-    webkitFrameTestRun(test, "main-frame");
+    g_assert(test->runWebProcessTest("WebKitFrame", "main-frame"));
 }
 
 static void testWebKitFrameURI(WebViewTest* test, gconstpointer)
 {
-    webkitFrameTestRun(test, "uri");
+    g_assert(test->runWebProcessTest("WebKitFrame", "uri"));
 }
 
 static void testWebKitFrameJavaScriptContext(WebViewTest* test, gconstpointer)
 {
-    webkitFrameTestRun(test, "javascript-context");
+    g_assert(test->runWebProcessTest("WebKitFrame", "javascript-context"));
 }
 
 void beforeAll()

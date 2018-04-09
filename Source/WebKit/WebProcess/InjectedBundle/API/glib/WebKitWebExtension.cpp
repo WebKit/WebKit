@@ -26,6 +26,7 @@
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
+#include <WebCore/GCController.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -118,6 +119,9 @@ typedef HashMap<WebPage*, GRefPtr<WebKitWebPage> > WebPageMap;
 
 struct _WebKitWebExtensionPrivate {
     WebPageMap pages;
+#if ENABLE(DEVELOPER_MODE)
+    bool garbageCollectOnPageDestroy;
+#endif
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -162,6 +166,10 @@ private:
     void willDestroyPage(InjectedBundle&, WebPage& page) override
     {
         m_extension->priv->pages.remove(&page);
+#if ENABLE(DEVELOPER_MODE)
+        if (m_extension->priv->garbageCollectOnPageDestroy)
+            WebCore::GCController::singleton().garbageCollectNow();
+#endif
     }
 
     void didReceiveMessage(InjectedBundle&, const String& messageName, API::Object* messageBody) override
@@ -190,6 +198,13 @@ WebKitWebExtension* webkitWebExtensionCreate(InjectedBundle* bundle)
     WebKitWebExtension* extension = WEBKIT_WEB_EXTENSION(g_object_new(WEBKIT_TYPE_WEB_EXTENSION, NULL));
     bundle->setClient(std::make_unique<WebExtensionInjectedBundleClient>(extension));
     return extension;
+}
+
+void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension* extension)
+{
+#if ENABLE(DEVELOPER_MODE)
+    extension->priv->garbageCollectOnPageDestroy = true;
+#endif
 }
 
 /**

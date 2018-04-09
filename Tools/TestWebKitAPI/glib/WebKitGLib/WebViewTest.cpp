@@ -380,11 +380,22 @@ cairo_surface_t* WebViewTest::getSnapshotAndWaitUntilReady(WebKitSnapshotRegion 
 }
 #endif
 
-bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName)
+bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName, const char* contents, const char* contentType)
 {
+    if (!contentType) {
+        static const char* emptyHTML = "<html><body></body></html>";
+        loadHtml(contents ? contents : emptyHTML, "webprocess://test");
+    } else {
+        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(contents, strlen(contents)));
+        loadBytes(bytes.get(), contentType, nullptr, "webprocess://test");
+    }
+    waitUntilLoadFinished();
+
     GUniquePtr<char> script(g_strdup_printf("WebProcessTestRunner.runTest('%s/%s');", suiteName, testName));
     GUniqueOutPtr<GError> error;
     WebKitJavascriptResult* javascriptResult = runJavaScriptAndWaitUntilFinished(script.get(), &error.outPtr());
     g_assert(!error);
+    loadURI("about:blank");
+    waitUntilLoadFinished();
     return javascriptResultToBoolean(javascriptResult);
 }

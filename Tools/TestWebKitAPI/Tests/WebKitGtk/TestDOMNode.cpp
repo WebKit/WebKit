@@ -26,61 +26,39 @@
 static void testWebKitDOMNodeHierarchyNavigation(WebViewTest* test, gconstpointer)
 {
     static const char* testHTML = "<html><head><title>This is the title</title></head><body><p>1</p><p>2</p><p>3</p></body></html>";
-    test->loadHtml(testHTML, 0);
-    test->waitUntilLoadFinished();
-
-    g_assert(test->runWebProcessTest("WebKitDOMNode", "hierarchy-navigation"));
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "hierarchy-navigation", testHTML));
 }
 
 static void testWebKitDOMNodeInsertion(WebViewTest* test, gconstpointer)
 {
-    static const char* testHTML = "<html><body></body></html>";
-    test->loadHtml(testHTML, 0);
-    test->waitUntilLoadFinished();
-
     g_assert(test->runWebProcessTest("WebKitDOMNode", "insertion"));
 }
 
-static void prepareDOMForTagNamesTests(WebViewTest* test)
-{
-    static const char* testHTML = "<html><head></head><body>"
-        "<video id='video' preload='none'>"
-        "    <source src='movie.ogg' type='video/ogg'>"
-        "        Your browser does not support the video tag."
-        "</video>"
-        "<video id='video2' preload='none'>"
-        "     <source src='movie.ogg' type='video/ogg'>"
-        "        Your browser does not support the video tag."
-        "</video>"
-        "<input type='hidden' id='test' name='finish' value='false'></body></html>";
-    test->loadHtml(testHTML, nullptr);
-    test->waitUntilLoadFinished();
-}
+static const char* tagNamesTestHTML = "<html><head></head><body>"
+    "<video id='video' preload='none'>"
+    "    <source src='movie.ogg' type='video/ogg'>"
+    "        Your browser does not support the video tag."
+    "</video>"
+    "<video id='video2' preload='none'>"
+    "     <source src='movie.ogg' type='video/ogg'>"
+    "        Your browser does not support the video tag."
+    "</video>"
+    "<input type='hidden' id='test' name='finish' value='false'></body></html>";
 
 static void testWebKitDOMNodeTagNamesNodeList(WebViewTest* test, gconstpointer)
 {
-    prepareDOMForTagNamesTests(test);
-    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names-node-list"));
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names-node-list", tagNamesTestHTML));
 }
 
 static void testWebKitDOMNodeTagNamesHTMLCollection(WebViewTest* test, gconstpointer)
 {
-    prepareDOMForTagNamesTests(test);
-    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names-html-collection"));
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names-html-collection", tagNamesTestHTML));
 }
 
 static void testWebKitDOMObjectCache(WebViewTest* test, gconstpointer)
 {
     static const char* testHTML = "<html><body><div id='container'><p>DOM Cache test</p><a id='link href='#'>link</a></div></body></html>";
-
-    // Run the test 3 times to make sure the DOM objects are correctly released when the
-    // document is detached from the frame for every new document created.
-    for (unsigned i = 0; i < 3; ++i) {
-        test->loadHtml(testHTML, nullptr);
-        test->waitUntilLoadFinished();
-
-        g_assert(test->runWebProcessTest("WebKitDOMNode", "dom-cache"));
-    }
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "dom-cache", testHTML));
 }
 
 

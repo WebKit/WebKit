@@ -17,12 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitWebExtensionPrivate_h
-#define WebKitWebExtensionPrivate_h
+#pragma once
 
 #include "InjectedBundle.h"
 #include "WebKitWebExtension.h"
 
 WebKitWebExtension* webkitWebExtensionCreate(WebKit::InjectedBundle*);
-
-#endif // WebKitWebExtensionPrivate_h
+void webkitWebExtensionSetGarbageCollectOnPageDestroy(WebKitWebExtension*);
