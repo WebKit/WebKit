@@ -20,6 +20,7 @@
 #pragma once
 
 
+#if USE(GSTREAMER)
 #include "FloatSize.h"
 #include <gst/gst.h>
 #include <gst/video/video-format.h>
@@ -84,3 +85,4 @@ bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* caps
 #ifndef GST_BUFFER_DTS_OR_PTS
 #define GST_BUFFER_DTS_OR_PTS(buffer) (GST_BUFFER_DTS_IS_VALID(buffer) ? GST_BUFFER_DTS(buffer) : GST_BUFFER_PTS(buffer))
 #endif
+#endif // USE(GSTREAMER)
