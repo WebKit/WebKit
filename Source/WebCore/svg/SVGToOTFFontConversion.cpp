@@ -421,14 +421,6 @@ void SVGToOTFFontConverter::appendHEADTable()
     append16(0); // Glyph data format
 }
 
-// Assumption: T2 can hold every value that a T1 can hold.
-template<typename T1, typename T2> static inline T1 clampTo(T2 x)
-{
-    x = std::min(x, static_cast<T2>(std::numeric_limits<T1>::max()));
-    x = std::max(x, static_cast<T2>(std::numeric_limits<T1>::min()));
-    return static_cast<T1>(x);
-}
-
 void SVGToOTFFontConverter::appendHHEATable()
 {
     append32(0x00010000); // Version
