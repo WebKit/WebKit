@@ -24,12 +24,15 @@
  */
 #pragma once
 
+#include "TransformationMatrix.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class VREyeParameters;
 class VRPose;
+struct VRPlatformTrackingInfo;
 
 class VRFrameData : public RefCounted<VRFrameData> {
 public:
@@ -38,20 +41,27 @@ public:
         return adoptRef(*new VRFrameData);
     }
 
-    double timestamp() const;
+    double timestamp() const { return m_timestamp; }
 
-    Float32Array* leftProjectionMatrix() const;
-    Float32Array* leftViewMatrix() const;
+    Ref<Float32Array> leftProjectionMatrix() const;
+    Ref<Float32Array> leftViewMatrix() const;
 
-    Float32Array* rightProjectionMatrix() const;
-    Float32Array* rightViewMatrix() const;
+    Ref<Float32Array> rightProjectionMatrix() const;
+    Ref<Float32Array> rightViewMatrix() const;
 
     const VRPose& pose() const;
+
+    void update(const VRPlatformTrackingInfo&, const VREyeParameters& leftEye, const VREyeParameters& rightEye, double depthNear, double depthFar);
 
 private:
     VRFrameData();
 
+    double m_timestamp { 0 };
     Ref<VRPose> m_pose;
+    TransformationMatrix m_leftProjectionMatrix;
+    TransformationMatrix m_rightProjectionMatrix;
+    TransformationMatrix m_leftViewMatrix;
+    TransformationMatrix m_rightViewMatrix;
 };
 
 } // namespace WebCore

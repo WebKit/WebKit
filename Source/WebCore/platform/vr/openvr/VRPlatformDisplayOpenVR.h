@@ -34,6 +34,7 @@ public:
 
     ~VRPlatformDisplayOpenVR() = default;
     VRPlatformDisplayInfo getDisplayInfo() override { return m_displayInfo; }
+    VRPlatformTrackingInfo getTrackingInfo() override;
 
 private:
     VRPlatformDisplayInfo::FieldOfView computeFieldOfView(vr::Hmd_Eye);
@@ -47,6 +48,7 @@ private:
     vr::IVRCompositor* m_compositor;
 
     VRPlatformDisplayInfo m_displayInfo;
+    VRPlatformTrackingInfo m_trackingInfo;
 };
 
 }; // namespace WebCore

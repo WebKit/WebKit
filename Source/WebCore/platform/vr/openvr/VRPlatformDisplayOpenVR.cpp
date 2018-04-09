@@ -50,6 +50,8 @@ VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR(vr::IVRSystem* system, vr::IVRC
     // FIXME: We're assuming an HTC Vive HMD here. Get this info from OpenVR?.
     m_displayInfo.setCapabilityFlags(VRDisplayCapabilityFlag::None | VRDisplayCapabilityFlag::Position | VRDisplayCapabilityFlag::Orientation | VRDisplayCapabilityFlag::ExternalDisplay | VRDisplayCapabilityFlag::Present);
 
+    m_compositor->SetTrackingSpace(vr::TrackingUniverseSeated);
+
     updateEyeParameters();
     updateStageParameters();
 }
@@ -97,6 +99,63 @@ void VRPlatformDisplayOpenVR::updateStageParameters()
         m_displayInfo.setSittingToStandingTransform(WTFMove(matrix));
     }
     m_displayInfo.setPlayAreaBounds(FloatSize(playAreaWidth, playAreaDepth));
+}
+
+// FIXME: we might want to generalize this function for other backends.
+static VRPlatformTrackingInfo::Quaternion rotationMatrixToQuaternion(const float (&matrix)[3][4])
+{
+    // See https://d3cw3dd2w32x2b.cloudfront.net/wp-content/uploads/2015/01/matrix-to-quat.pdf.
+    VRPlatformTrackingInfo::Quaternion quaternion;
+    float trace;
+    if (matrix[2][2] < 0) {
+        if (matrix[0][0] > matrix[1][1]) {
+            trace = 1 + matrix[0][0] - matrix[1][1] - matrix[2][2];
+            quaternion = { trace, matrix[0][1]+matrix[1][0], matrix[2][0]+matrix[0][2], matrix[1][2] - matrix[2][1] };
+        } else {
+            trace = 1 - matrix[0][0] + matrix[1][1] - matrix[2][2];
+            quaternion = { matrix[0][1]+matrix[1][0], trace, matrix[1][2]+matrix[2][1], matrix[2][0] - matrix[0][2] };
+        }
+    } else {
+        if (matrix[0][0] < -matrix[1][1]) {
+            trace = 1 - matrix[0][0] - matrix[1][1] + matrix[2][2];
+            quaternion = { matrix[2][0]+matrix[0][2], matrix[1][2]+matrix[2][1], trace , matrix[0][1] - matrix[1][0] };
+        } else {
+            trace = 1 + matrix[0][0] + matrix[1][1] + matrix[2][2];
+            quaternion = { matrix[1][2] - matrix[2][1], matrix[2][0] - matrix[0][2], matrix[0][1] - matrix[1][0], trace };
+        }
+    }
+    return quaternion * (0.5 / sqrt(trace));
+}
+
+VRPlatformTrackingInfo VRPlatformDisplayOpenVR::getTrackingInfo()
+{
+    vr::TrackedDevicePose_t poses[vr::k_unMaxTrackedDeviceCount];
+
+    m_compositor->WaitGetPoses(nullptr, 0, poses, vr::k_unMaxTrackedDeviceCount);
+
+    m_trackingInfo.clear();
+
+    vr::Compositor_FrameTiming timing;
+    timing.m_nSize = sizeof(vr::Compositor_FrameTiming);
+    m_compositor->GetFrameTiming(&timing);
+    m_trackingInfo.timestamp = timing.m_flSystemTimeInSeconds;
+
+    if (!poses[vr::k_unTrackedDeviceIndex_Hmd].bDeviceIsConnected
+        || !poses[vr::k_unTrackedDeviceIndex_Hmd].bPoseIsValid
+        || poses[vr::k_unTrackedDeviceIndex_Hmd].eTrackingResult != vr::TrackingResult_Running_OK) {
+        // FIXME: Init some data maybe???.
+        return m_trackingInfo;
+    }
+
+    const auto& HMDPose = poses[vr::k_unTrackedDeviceIndex_Hmd];
+    const auto& transform = HMDPose.mDeviceToAbsoluteTracking;
+    m_trackingInfo.orientation = rotationMatrixToQuaternion(transform.m);
+    m_trackingInfo.orientation->conjugate();
+    m_trackingInfo.position = FloatPoint3D(transform.m[0][3], transform.m[1][3], transform.m[2][3]);
+    m_trackingInfo.angularVelocity = VRPlatformTrackingInfo::Float3(HMDPose.vAngularVelocity.v[0], HMDPose.vAngularVelocity.v[1], HMDPose.vAngularVelocity.v[2]);
+    m_trackingInfo.linearVelocity = VRPlatformTrackingInfo::Float3(HMDPose.vVelocity.v[0], HMDPose.vVelocity.v[1], HMDPose.vVelocity.v[2]);
+
+    return m_trackingInfo;
 }
 
 }; // namespace WebCore

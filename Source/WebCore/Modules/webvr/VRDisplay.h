@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class RequestAnimationFrameCallback;
+class ScriptedAnimationController;
 class VRDisplayCapabilities;
 class VREyeParameters;
 class VRFrameData;
@@ -72,8 +73,8 @@ public:
     double depthFar() const { return m_depthFar; }
     void setDepthFar(double depthFar) { m_depthFar = depthFar; }
 
-    long requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
-    void cancelAnimationFrame(unsigned);
+    uint32_t requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
+    void cancelAnimationFrame(uint32_t);
 
     void requestPresent(const Vector<VRLayerInit>&, Ref<DeferredPromise>&&);
     void exitPresent(Ref<DeferredPromise>&&);
@@ -111,6 +112,8 @@ private:
 
     double m_depthNear { 0.01 }; // Default value from the specs.
     double m_depthFar { 10000 }; // Default value from the specs.
+
+    RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
 };
 
 } // namespace WebCore

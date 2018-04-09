@@ -24,6 +24,7 @@
  */
 #pragma once
 
+#include "VRPlatformDisplay.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/RefCounted.h>
 
@@ -36,16 +37,30 @@ public:
         return adoptRef(*new VRPose);
     }
 
-    Float32Array* position() const;
-    Float32Array* linearVelocity() const;
-    Float32Array* linearAcceleration() const;
+    static Ref<VRPose> create(const VRPlatformTrackingInfo& trackingInfo)
+    {
+        return adoptRef(*new VRPose(trackingInfo));
+    }
 
-    Float32Array* orientation() const;
-    Float32Array* angularVelocity() const;
-    Float32Array* angularAcceleration() const;
+    RefPtr<Float32Array> position() const;
+    RefPtr<Float32Array> linearVelocity() const;
+    RefPtr<Float32Array> linearAcceleration() const;
+
+    RefPtr<Float32Array> orientation() const;
+    RefPtr<Float32Array> angularVelocity() const;
+    RefPtr<Float32Array> angularAcceleration() const;
+
+    void update(const VRPlatformTrackingInfo& trackingInfo) { m_trackingInfo = trackingInfo; };
 
 private:
-    VRPose();
+    VRPose() = default;
+
+    VRPose(const VRPlatformTrackingInfo& trackingInfo)
+        : m_trackingInfo(trackingInfo)
+    {
+    }
+
+    VRPlatformTrackingInfo m_trackingInfo;
 };
 
 } // namespace WebCore

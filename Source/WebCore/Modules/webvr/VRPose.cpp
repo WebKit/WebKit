@@ -27,36 +27,52 @@
 
 namespace WebCore {
 
-VRPose::VRPose() = default;
-
-Float32Array* VRPose::position() const
+static RefPtr<Float32Array> optionalFloat3ToJSCArray(const std::optional<VRPlatformTrackingInfo::Float3>& data)
 {
-    return nullptr;
+    if (!data)
+        return nullptr;
+
+    return Float32Array::create(data->data, 3).releaseNonNull();
 }
 
-Float32Array* VRPose::linearVelocity() const
+RefPtr<Float32Array> VRPose::position() const
 {
-    return nullptr;
+    if (!m_trackingInfo.position)
+        return nullptr;
+
+    auto& position = *m_trackingInfo.position;
+    float positionData[3] = { position.x(), position.y(), position.z() };
+    return Float32Array::create(positionData, 3).releaseNonNull();
 }
 
-Float32Array* VRPose::linearAcceleration() const
+RefPtr<Float32Array> VRPose::linearVelocity() const
 {
-    return nullptr;
+    return optionalFloat3ToJSCArray(m_trackingInfo.linearVelocity);
 }
 
-Float32Array* VRPose::orientation() const
+RefPtr<Float32Array> VRPose::linearAcceleration() const
 {
-    return nullptr;
+    return optionalFloat3ToJSCArray(m_trackingInfo.linearAcceleration);
 }
 
-Float32Array* VRPose::angularVelocity() const
+RefPtr<Float32Array> VRPose::orientation() const
 {
-    return nullptr;
+    if (!m_trackingInfo.orientation)
+        return nullptr;
+
+    auto& orientation = *m_trackingInfo.orientation;
+    float orientationData[4] = { orientation.x, orientation.y, orientation.z, orientation.w };
+    return Float32Array::create(orientationData, 4).releaseNonNull();
 }
 
-Float32Array* VRPose::angularAcceleration() const
+RefPtr<Float32Array> VRPose::angularVelocity() const
 {
-    return nullptr;
+    return optionalFloat3ToJSCArray(m_trackingInfo.angularVelocity);
+}
+
+RefPtr<Float32Array> VRPose::angularAcceleration() const
+{
+    return optionalFloat3ToJSCArray(m_trackingInfo.angularAcceleration);
 }
 
 } // namespace WebCore

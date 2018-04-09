@@ -26,8 +26,12 @@
 #include "config.h"
 #include "VRDisplay.h"
 
+#include "Chrome.h"
+#include "Page.h"
+#include "ScriptedAnimationController.h"
 #include "VRDisplayCapabilities.h"
 #include "VREyeParameters.h"
+#include "VRFrameData.h"
 #include "VRLayerInit.h"
 #include "VRPlatformDisplay.h"
 #include "VRPose.h"
@@ -85,27 +89,47 @@ const VREyeParameters& VRDisplay::getEyeParameters(VREye eye) const
     return eye == VREye::Left ? *m_leftEyeParameters : *m_rightEyeParameters;
 }
 
-bool VRDisplay::getFrameData(VRFrameData&) const
+bool VRDisplay::getFrameData(VRFrameData& frameData) const
 {
-    return false;
+    if (!m_capabilities->hasPosition() || !m_capabilities->hasOrientation())
+        return false;
+
+    // FIXME: ensure that this is only called inside WebVR's rAF.
+    frameData.update(m_display->getTrackingInfo(), getEyeParameters(VREye::Left), getEyeParameters(VREye::Right), m_depthNear, m_depthFar);
+    return true;
 }
 
 Ref<VRPose> VRDisplay::getPose() const
 {
-    return VRPose::create();
+    return VRPose::create(m_display->getTrackingInfo());
 }
 
 void VRDisplay::resetPose()
 {
 }
 
-long VRDisplay::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&)
+uint32_t VRDisplay::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
-    return 0;
+    if (!m_scriptedAnimationController) {
+        auto* document = downcast<Document>(scriptExecutionContext());
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+        // FIXME: Get the display id of the HMD as it should use the HMD native refresh rate.
+        PlatformDisplayID displayID = document->page() ? document->page()->chrome().displayID() : 0;
+        m_scriptedAnimationController = ScriptedAnimationController::create(*document, displayID);
+#else
+        m_scriptedAnimationController = ScriptedAnimationController::create(*document, 0);
+#endif
+    }
+
+    return m_scriptedAnimationController->registerCallback(WTFMove(callback));
 }
 
-void VRDisplay::cancelAnimationFrame(unsigned)
+void VRDisplay::cancelAnimationFrame(uint32_t id)
 {
+    if (!m_scriptedAnimationController)
+        return;
+
+    m_scriptedAnimationController->cancelCallback(id);
 }
 
 void VRDisplay::requestPresent(const Vector<VRLayerInit>&, Ref<DeferredPromise>&&)

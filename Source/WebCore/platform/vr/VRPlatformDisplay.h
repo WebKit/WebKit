@@ -103,9 +103,64 @@ private:
     std::optional<TransformationMatrix> m_sittingToStandingTransform;
 };
 
+struct VRPlatformTrackingInfo {
+    struct Quaternion {
+        Quaternion()
+            : x(0), y(0), z(0), w(1) { }
+
+        Quaternion(float x, float y, float z, float w)
+            : x(x), y(y), z(z), w(w) { }
+
+        Quaternion& conjugate()
+        {
+            x *= -1;
+            y *= -1;
+            z *= -1;
+            return *this;
+        }
+
+        Quaternion& operator*(float factor)
+        {
+            x *= factor;
+            y *= factor;
+            z *= factor;
+            w *= factor;
+            return *this;
+        }
+        float x, y, z, w;
+    };
+
+    struct Float3 {
+        Float3(float a, float b, float c)
+            : data { a, b, c } { }
+
+        float data[3];
+    };
+
+    void clear()
+    {
+        timestamp = 0;
+        position = std::nullopt;
+        orientation = std::nullopt;
+        angularAcceleration = std::nullopt;
+        angularVelocity = std::nullopt;
+        linearAcceleration = std::nullopt;
+        linearVelocity = std::nullopt;
+    }
+
+    std::optional<Quaternion> orientation;
+    std::optional<FloatPoint3D> position;
+    std::optional<Float3> angularAcceleration;
+    std::optional<Float3> angularVelocity;
+    std::optional<Float3> linearAcceleration;
+    std::optional<Float3> linearVelocity;
+    double timestamp { 0 };
+};
+
 class VRPlatformDisplay {
 public:
     virtual VRPlatformDisplayInfo getDisplayInfo() = 0;
+    virtual VRPlatformTrackingInfo getTrackingInfo() = 0;
     virtual ~VRPlatformDisplay() = default;
 
     WeakPtr<VRPlatformDisplay> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }

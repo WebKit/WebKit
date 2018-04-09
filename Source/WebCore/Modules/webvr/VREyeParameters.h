@@ -43,6 +43,7 @@ public:
     }
 
     Ref<Float32Array> offset() const;
+    const FloatPoint3D& rawOffset() const { return m_offset; }
 
     const VRFieldOfView& fieldOfView() const;
 

@@ -1,3 +1,62 @@
+2018-04-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [OpenVR][WebVR] Retrieve FrameData in WebVR's rAF
+        https://bugs.webkit.org/show_bug.cgi?id=184265
+
+        Reviewed by Žan Doberšek.
+
+        VRFrameData contains all the required information to properly render a VR scene like view
+        and projection matrices, pose data (position & orientation) and linear & angular velocity
+        among others. The getFrameData() call must be issued inside a WebVR's own
+        requestAnimationFrame.
+
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::getFrameData const):
+        (WebCore::VRDisplay::getPose const):
+        (WebCore::VRDisplay::requestAnimationFrame):
+        (WebCore::VRDisplay::cancelAnimationFrame):
+        * Modules/webvr/VRDisplay.h:
+        * Modules/webvr/VREyeParameters.h:
+        (WebCore::VREyeParameters::rawOffset const): Required to compute view matrices.
+        * Modules/webvr/VRFrameData.cpp:
+        (WebCore::matrixToArray):
+        (WebCore::VRFrameData::leftProjectionMatrix const):
+        (WebCore::VRFrameData::leftViewMatrix const):
+        (WebCore::VRFrameData::rightProjectionMatrix const):
+        (WebCore::VRFrameData::rightViewMatrix const):
+        (WebCore::projectionMatrixFromFieldOfView):
+        (WebCore::rotationMatrixFromQuaternion):
+        (WebCore::applyHeadToEyeTransform):
+        (WebCore::VRFrameData::update):
+        (WebCore::VRFrameData::timestamp const): Deleted.
+        * Modules/webvr/VRFrameData.h:
+        (WebCore::VRFrameData::timestamp const):
+        * Modules/webvr/VRPose.cpp:
+        (WebCore::optionalFloat3ToJSCArray):
+        (WebCore::VRPose::position const):
+        (WebCore::VRPose::linearVelocity const):
+        (WebCore::VRPose::linearAcceleration const):
+        (WebCore::VRPose::orientation const):
+        (WebCore::VRPose::angularVelocity const):
+        (WebCore::VRPose::angularAcceleration const):
+        * Modules/webvr/VRPose.h:
+        (WebCore::VRPose::create):
+        (WebCore::VRPose::update):
+        (WebCore::VRPose::VRPose):
+        * platform/vr/VRPlatformDisplay.h:
+        (WebCore::VRPlatformTrackingInfo::Quaternion::Quaternion):
+        (WebCore::VRPlatformTrackingInfo::Quaternion::conjugate):
+        (WebCore::VRPlatformTrackingInfo::Quaternion::operator*):
+        (WebCore::VRPlatformTrackingInfo::Float3::Float3): Just a group of 3 floats used to store
+        both velocity and acceleration in a format which is very convenient to later generate JSC
+        arrays.
+        (WebCore::VRPlatformTrackingInfo::clear):
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.cpp:
+        (WebCore::VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR):
+        (WebCore::rotationMatrixToQuaternion):
+        (WebCore::VRPlatformDisplayOpenVR::getTrackingInfo):
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.h:
+
 2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] WaylandCompositorDisplay leaks its wl_display
