@@ -50,7 +50,6 @@ private:
     Type type() const override { return PlatformDisplay::Type::Wayland; }
 
 protected:
-    PlatformDisplayWayland() = default;
     void initialize(struct wl_display*);
 
     virtual void registryGlobal(const char* interface, uint32_t name);
