@@ -151,6 +151,7 @@ void ensureGigacage()
                 if (GIGACAGE_ALLOCATION_CAN_FAIL)
                     return;
                 fprintf(stderr, "FATAL: Could not allocate gigacage memory with maxAlignment = %lu, totalSize = %lu.\n", maxAlignment, totalSize);
+                fprintf(stderr, "(Make sure you have not set a virtual memory limit.)\n");
                 BCRASH();
             }
 
