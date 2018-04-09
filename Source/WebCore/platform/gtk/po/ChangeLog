@@ -1,3 +1,12 @@
+2018-04-08  Daniel Rusek  <mail@asciiwolf.com>
+
+        Updated Czech translation
+        https://bugs.webkit.org/show_bug.cgi?id=184403
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * cs.po:
+
 2018-03-29  Rafael Fontenelle  <rafaelff@gnome.org>
 
         [l10n] [pt_BR] Updated Brazilian Portuguese translation
