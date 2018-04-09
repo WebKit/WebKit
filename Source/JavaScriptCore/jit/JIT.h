@@ -170,6 +170,10 @@ namespace JSC {
 
     // We've run into some problems where changing the size of the class JIT leads to
     // performance fluctuations. Try forcing alignment in an attempt to stabilize this.
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4324) // Disable "structure was padded due to alignment specifier" warning
+#endif
     class alignas(32) JIT : private JSInterfaceJIT {
         friend class JITSlowPathCall;
         friend class JITStubCall;
@@ -943,6 +947,9 @@ namespace JSC {
         bool m_shouldUseIndexMasking;
         unsigned m_loopOSREntryBytecodeOffset { 0 };
     };
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 } // namespace JSC
 
