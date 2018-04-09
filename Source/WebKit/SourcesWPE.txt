@@ -74,6 +74,7 @@ Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp
 
+Shared/glib/ProcessExecutablePathGLib.cpp
 Shared/glib/WebContextMenuItemGlib.cpp
 
 Shared/linux/WebMemorySamplerLinux.cpp
@@ -87,7 +88,6 @@ Shared/wpe/NativeWebKeyboardEventWPE.cpp
 Shared/wpe/NativeWebMouseEventWPE.cpp
 Shared/wpe/NativeWebTouchEventWPE.cpp
 Shared/wpe/NativeWebWheelEventWPE.cpp
-Shared/wpe/ProcessExecutablePathWPE.cpp
 Shared/wpe/WebEventFactory.cpp
 
 StorageProcess/glib/StorageProcessMainGLib.cpp

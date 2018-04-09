@@ -84,6 +84,7 @@ Shared/Plugins/unix/PluginSearchPath.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp @no-unify
 
+Shared/glib/ProcessExecutablePathGLib.cpp @no-unify
 Shared/glib/WebContextMenuItemGlib.cpp
 
 Shared/gtk/ArgumentCodersGtk.cpp
@@ -92,7 +93,6 @@ Shared/gtk/NativeWebMouseEventGtk.cpp
 Shared/gtk/NativeWebTouchEventGtk.cpp
 Shared/gtk/NativeWebWheelEventGtk.cpp
 Shared/gtk/PrintInfoGtk.cpp
-Shared/gtk/ProcessExecutablePathGtk.cpp @no-unify
 Shared/gtk/WebErrorsGtk.cpp
 Shared/gtk/WebEventFactory.cpp
 Shared/gtk/WebSelectionData.cpp
