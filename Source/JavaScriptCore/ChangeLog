@@ -1,3 +1,15 @@
+2018-03-28  Robin Morisset  <rmorisset@apple.com>
+
+        appendQuotedJSONString stops on arithmetic overflow instead of propagating it upwards
+        https://bugs.webkit.org/show_bug.cgi?id=183894
+
+        Reviewed by Saam Barati.
+
+        Use the return value of appendQuotedJSONString to fail more gracefully when given a string that is too large to handle.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
 2018-03-25  Saam Barati  <sbarati@apple.com>
 
         r228149 accidentally removed code that resets m_emptyCursor at the end of a GC
