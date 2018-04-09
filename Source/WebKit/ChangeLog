@@ -1,3 +1,9 @@
+2018-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix title of 2.20 new symbols section in docs.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+
 2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] WaylandCompositorDisplay leaks its wl_display

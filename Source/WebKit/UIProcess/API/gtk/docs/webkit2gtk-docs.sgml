@@ -128,7 +128,7 @@
   </index>
 
   <index id="api-index-2-20" role="2.20">
-    <title>Index of new symbols in 2.18</title>
+    <title>Index of new symbols in 2.20</title>
     <xi:include href="xml/api-index-2.20.xml"><xi:fallback /></xi:include>
   </index>
 
