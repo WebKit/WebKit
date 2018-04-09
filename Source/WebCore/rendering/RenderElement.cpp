@@ -792,12 +792,6 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 }
 #endif
 
-bool RenderElement::noLongerAffectsParentBlock(const RenderStyle& oldStyle) const
-{
-    return parent() && parent()->isRenderBlock()
-        && ((!oldStyle.isFloating() && style().isFloating()) || (!oldStyle.hasOutOfFlowPosition() && style().hasOutOfFlowPosition()));
-}
-
 void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, m_style.backgroundLayers());
@@ -805,21 +799,6 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, m_style.borderImage().image());
     updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, m_style.maskBoxImage().image());
     updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, m_style.shapeOutside());
-
-    bool affectsParentBlock = oldStyle && (oldStyle->isFloating() || oldStyle->hasOutOfFlowPosition())
-        && !style().isFloating() && !style().hasOutOfFlowPosition()
-        && parent() && (parent()->isRenderBlockFlow() || parent()->isRenderInline());
-    if (affectsParentBlock) {
-        // We have gone from not affecting the inline status of the parent flow to suddenly
-        // having an impact. See if there is a mismatch between the parent flow's
-        // childrenInline() state and our state.
-        setInline(style().isDisplayInlineType());
-        if (isInline() != parent()->childrenInline())
-            RenderTreeBuilder::current()->childFlowStateChangesAndAffectsParentBlock(*this);
-    }
-
-    if (oldStyle && noLongerAffectsParentBlock(*oldStyle))
-        RenderTreeBuilder::current()->childFlowStateChangesAndNoLongerAffectsParentBlock(*this);
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 

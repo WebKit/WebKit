@@ -294,6 +294,13 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
     return false;
 }
 
+void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle&& newStyle, StyleDifference minimalStyleDifference)
+{
+    auto oldStyle = RenderStyle::clone(renderer.style());
+    renderer.setStyle(WTFMove(newStyle), minimalStyleDifference);
+    m_builder.normalizeTreeAfterStyleChange(renderer, oldStyle);
+}
+
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
 {
 #if PLATFORM(IOS)
@@ -335,19 +342,19 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto& renderer = *element.renderer();
 
     if (update.recompositeLayer) {
-        renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceRecompositeLayer);
+        updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifferenceRecompositeLayer);
         return;
     }
 
     if (update.change == Style::NoChange) {
         if (pseudoStyleCacheIsInvalid(&renderer, update.style.get())) {
-            renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceEqual);
+            updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifferenceEqual);
             return;
         }
         return;
     }
 
-    renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceEqual);
+    updateRendererStyle(renderer, RenderStyle::clone(*update.style), StyleDifferenceEqual);
 }
 
 void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
