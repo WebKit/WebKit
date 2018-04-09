@@ -314,6 +314,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 void NetworkProcess::destroySession(PAL::SessionID sessionID)
 {
     SessionTracker::destroySession(sessionID);
+    m_sessionsControlledByAutomation.remove(sessionID);
 }
 
 void NetworkProcess::grantSandboxExtensionsToStorageProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler)
@@ -388,6 +389,19 @@ void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vect
         networkStorageSession->removePrevalentDomains(domains);
 }
 #endif
+
+bool NetworkProcess::sessionIsControlledByAutomation(PAL::SessionID sessionID) const
+{
+    return m_sessionsControlledByAutomation.contains(sessionID);
+}
+
+void NetworkProcess::setSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled)
+{
+    if (controlled)
+        m_sessionsControlledByAutomation.add(sessionID);
+    else
+        m_sessionsControlledByAutomation.remove(sessionID);
+}
 
 static void fetchDiskCacheEntries(PAL::SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void (Vector<WebsiteData::Entry>)>&& completionHandler)
 {

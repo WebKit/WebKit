@@ -1263,8 +1263,11 @@ void WebPageProxy::setControlledByAutomation(bool controlled)
 
     m_controlledByAutomation = controlled;
 
-    if (isValid())
-        m_process->send(Messages::WebPage::SetControlledByAutomation(controlled), m_pageID);
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetControlledByAutomation(controlled), m_pageID);
+    m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::SetSessionIsControlledByAutomation(m_websiteDataStore->sessionID(), m_controlledByAutomation));
 }
 
 #if ENABLE(REMOTE_INSPECTOR)

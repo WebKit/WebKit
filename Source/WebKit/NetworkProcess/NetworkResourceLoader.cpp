@@ -701,6 +701,9 @@ void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool r
 
 bool NetworkResourceLoader::isAlwaysOnLoggingAllowed() const
 {
+    if (NetworkProcess::singleton().sessionIsControlledByAutomation(sessionID()))
+        return true;
+
     return sessionID().isAlwaysOnLoggingAllowed();
 }
 
