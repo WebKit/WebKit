@@ -49,7 +49,7 @@ TextFragmentIterator::Style::Style(const RenderStyle& style, bool useSimplifiedT
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
     , shouldHyphenate(style.hyphens() == HyphensAuto && canHyphenate(style.locale()))
-    , hyphenStringWidth(shouldHyphenate ? (useSimplifiedTextMeasuring ? font.widthForSimpleText(style.hyphenString()) : font.width(TextRun(style.hyphenString()))) : 0)
+    , hyphenStringWidth(shouldHyphenate ? (useSimplifiedTextMeasuring ? font.widthForSimpleText(style.hyphenString()) : font.width(TextRun(String(style.hyphenString())))) : 0)
     , hyphenLimitBefore(style.hyphenationLimitBefore() < 0 ? 2 : style.hyphenationLimitBefore())
     , hyphenLimitAfter(style.hyphenationLimitAfter() < 0 ? 2 : style.hyphenationLimitAfter())
     , locale(style.locale())

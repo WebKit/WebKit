@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2007, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,7 +44,7 @@ struct WidthIterator;
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TextRun(StringView text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+    explicit TextRun(const String& text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
         , m_tabSize(0)
         , m_xpos(xpos)
@@ -59,17 +59,21 @@ public:
     {
     }
 
+    explicit TextRun(StringView stringView, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
+        : TextRun(stringView.toStringWithoutCopying(), xpos, expansion, expansionBehavior, direction, directionalOverride, characterScanForCodePath)
+    {
+    }
+
     TextRun subRun(unsigned startOffset, unsigned length) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(startOffset < m_text.length());
 
-        TextRun result = *this;
+        auto result { *this };
 
-        if (is8Bit()) {
+        if (is8Bit())
             result.setText(data8(startOffset), length);
-            return result;
-        }
-        result.setText(data16(startOffset), length);
+        else
+            result.setText(data16(startOffset), length);
         return result;
     }
 
@@ -82,11 +86,10 @@ public:
 
     bool is8Bit() const { return m_text.is8Bit(); }
     unsigned length() const { return m_text.length(); }
-    String string() const { return m_text.toString(); }
 
-    void setText(const LChar* c, unsigned len) { m_text = StringView(c, len); }
-    void setText(const UChar* c, unsigned len) { m_text = StringView(c, len); }
-    void setText(StringView stringView) { m_text = stringView; }
+    void setText(const LChar* text, unsigned length) { setText({ text, length }); }
+    void setText(const UChar* text, unsigned length) { setText({ text, length }); }
+    void setText(StringView text) { m_text = text.toStringWithoutCopying(); }
 
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
     void setHorizontalGlyphStretch(float scale) { m_horizontalGlyphStretch = scale; }
@@ -113,7 +116,7 @@ public:
     StringView text() const { return m_text; }
 
 private:
-    StringView m_text;
+    String m_text;
 
     unsigned m_tabSize;
 

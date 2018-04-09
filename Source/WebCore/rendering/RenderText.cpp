@@ -1243,7 +1243,7 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
         return false;
 
     // Additional check on the font codepath.
-    TextRun run(text());
+    TextRun run(m_text);
     run.setCharacterScanForCodePath(false);
     if (font.codePath(run) != FontCascade::Simple)
         return false;

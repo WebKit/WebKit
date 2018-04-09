@@ -1,3 +1,66 @@
+2018-04-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Make InlineTextBox::createTextRun() take a const lvalue reference String
+        https://bugs.webkit.org/show_bug.cgi?id=184182
+
+        Reviewed by Zalan Bujtas.
+
+        InlineTextBox::createTextRun() takes a non-const lvalue reference String.
+        It is tempting to change the signature of this method to take a const lvalue 
+        reference. But this was done intentionally. TextRun is effectively a StringView:
+        it does not own the passed string. Having the argument a non-const lvalue
+        reference makes the compiler prevent calls like createTextRun("abc").
+
+        To have a better way to express the lifetime of TextRun, this patch does
+        the following:
+
+        -- It makes TextRun::m_text of type String instead of StringView.
+        -- It adds a new constructor which takes const String&. This constructor
+           will addRef the underlying StringImpl when assigning it to m_text.
+        -- It keeps the constructor which takes a StringView. The caller of this
+           constructor still has to make sure the underlying String outlives the
+           TextRun. To avoid copying the underlying buffer of the StringView, we
+           will not use  StringView::toString(). Instead we will use
+           StringView::toStringWithoutCopying() which makes the returned String 
+           accesses the same buffer the StringView uses. In this case, the returned
+           String is effectively a StringView.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::drawRightAlignedText):
+        * platform/graphics/TextRun.cpp:
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::subRun const):
+        (WebCore::TextRun::length const):
+        (WebCore::TextRun::setText):
+        (WebCore::TextRun::string const): Deleted.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect const):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintPlatformDocumentMarker):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        (WebCore::InlineTextBox::offsetForPosition const):
+        (WebCore::InlineTextBox::positionForOffset const):
+        (WebCore::InlineTextBox::createTextRun const):
+        There is no need for this function to take a String argument anymore. The
+        reason for passing the String was to guarantee its lifetime by keeping
+        a copy of it in the caller side. Now there is no need for that. The TextRun
+        itself will keep this copy.
+
+        * rendering/InlineTextBox.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computeCanUseSimplifiedTextMeasuring const):
+        RenderText::text() returns StringImpl. The compiler wants us to be more
+        explicit about which constructor of TextRun to call.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForFontAndText):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        RenderStyle::hyphenString() returns an AtomicString.
+
 2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r230390.

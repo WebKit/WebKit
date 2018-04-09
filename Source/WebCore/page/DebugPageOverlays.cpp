@@ -169,7 +169,7 @@ static void drawRightAlignedText(const String& text, GraphicsContext& context, c
     float textGap = 10;
     float textBaselineFromTop = 14;
 
-    TextRun textRun = TextRun(StringView(text));
+    TextRun textRun = TextRun(text);
     context.setFillColor(Color::transparent);
     float textWidth = context.drawText(font, textRun, { });
     context.setFillColor(Color::black);

@@ -200,8 +200,7 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
     LayoutUnit selectionTop = this->selectionTop();
     LayoutUnit selectionHeight = this->selectionHeight();
 
-    auto text = this->text();
-    TextRun textRun = createTextRun(text);
+    TextRun textRun = createTextRun();
 
     LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid measuring the text when the entire line box is selected as an optimization.
@@ -570,8 +569,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
     if (textDecorations != TextDecorationNone && paintInfo.phase != PaintPhaseSelection) {
-        auto text = this->text();
-        TextRun textRun = createTextRun(text);
+        TextRun textRun = createTextRun();
         unsigned length = textRun.length();
         if (m_truncation != cNoTruncation)
             length = m_truncation;
@@ -676,8 +674,7 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        auto text = this->text();
-        TextRun run = createTextRun(text);
+        TextRun run = createTextRun();
 
         LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
         lineFont().adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
@@ -974,8 +971,7 @@ void InlineTextBox::paintMarkedTextBackground(GraphicsContext& context, const Fl
 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
-    auto text = this->text();
-    TextRun textRun = createTextRun(text);
+    TextRun textRun = createTextRun();
 
     const RootInlineBox& rootBox = root();
     LayoutUnit selectionBottom = rootBox.selectionBottom();
@@ -1022,8 +1018,7 @@ void InlineTextBox::paintMarkedTextForeground(GraphicsContext& context, const Fl
         context.setAlpha(markedText.style.alpha);
     }
     // TextPainter wants the box rectangle and text origin of the entire line box.
-    auto text = this->text();
-    textPainter.paintRange(createTextRun(text), boxRect, textOriginFromBoxRect(boxRect), markedText.startOffset, markedText.endOffset);
+    textPainter.paintRange(createTextRun(), boxRect, textOriginFromBoxRect(boxRect), markedText.startOffset, markedText.endOffset);
 }
 
 void InlineTextBox::paintMarkedTextDecoration(GraphicsContext& context, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText& markedText)
@@ -1045,8 +1040,7 @@ void InlineTextBox::paintMarkedTextDecoration(GraphicsContext& context, const Fl
 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own decoration.
-    auto text = this->text();
-    TextRun textRun = createTextRun(text);
+    TextRun textRun = createTextRun();
 
     // Avoid measuring the text when the entire line box is selected as an optimization.
     FloatRect snappedSelectionRect = boxRect;
@@ -1190,8 +1184,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
         return isLeftToRightDirection() ? 0 : len();
     bool ignoreCombinedText = true;
     bool ignoreHyphen = true;
-    auto text = this->text(ignoreCombinedText, ignoreHyphen);
-    return lineFont().offsetForPosition(createTextRun(text), lineOffset - logicalLeft(), includePartialGlyphs);
+    return lineFont().offsetForPosition(createTextRun(ignoreCombinedText, ignoreHyphen), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
 float InlineTextBox::positionForOffset(unsigned offset) const
@@ -1216,16 +1209,15 @@ float InlineTextBox::positionForOffset(unsigned offset) const
     LayoutRect selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
     bool ignoreCombinedText = true;
     bool ignoreHyphen = true;
-    auto text = this->text(ignoreCombinedText, ignoreHyphen);
-    TextRun textRun = createTextRun(text);
+    TextRun textRun = createTextRun(ignoreCombinedText, ignoreHyphen);
     lineFont().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
 }
 
-TextRun InlineTextBox::createTextRun(String& string) const
+TextRun InlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen) const
 {
     const auto& style = lineStyle();
-    TextRun textRun { string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath() };
+    TextRun textRun { text(ignoreCombinedText, ignoreHyphen), textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath() };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     return textRun;
 }

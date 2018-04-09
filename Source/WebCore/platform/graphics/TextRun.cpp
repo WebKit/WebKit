@@ -29,7 +29,7 @@
 namespace WebCore {
 
 struct ExpectedTextRunSize {
-    StringView text;
+    String text;
     unsigned integer1;
     float float1;
     float float2;
