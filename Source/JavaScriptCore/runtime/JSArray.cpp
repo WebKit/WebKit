@@ -1060,10 +1060,13 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
             scope.release();
             return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm));
         }
-        
+
+        if (oldLength + count > MAX_STORAGE_VECTOR_LENGTH)
+            return false;
+
         if (!ensureLength(vm, oldLength + count)) {
             throwOutOfMemoryError(exec, scope);
-            return false;
+            return true;
         }
         butterfly = this->butterfly();
 
@@ -1104,10 +1107,13 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
             scope.release();
             return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(vm));
         }
-        
+
+        if (oldLength + count > MAX_STORAGE_VECTOR_LENGTH)
+            return false;
+
         if (!ensureLength(vm, oldLength + count)) {
             throwOutOfMemoryError(exec, scope);
-            return false;
+            return true;
         }
         butterfly = this->butterfly();
         
