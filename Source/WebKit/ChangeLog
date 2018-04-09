@@ -1,3 +1,13 @@
+2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Add API version to library soname and pkg-config files
+        https://bugs.webkit.org/show_bug.cgi?id=180608
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformWPE.cmake:
+        * wpe/wpe-webkit.pc.in:
+
 2018-04-09  Jer Noble  <jer.noble@apple.com>
 
         Fix the selection assistant selectionView build

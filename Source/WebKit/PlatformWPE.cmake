@@ -1,6 +1,6 @@
 include(InspectorGResources.cmake)
 
-set(WebKit_OUTPUT_NAME WPEWebKit)
+set(WebKit_OUTPUT_NAME WPEWebKit-${WPE_API_VERSION})
 set(WebKit_WebProcess_OUTPUT_NAME WPEWebProcess)
 set(WebKit_NetworkProcess_OUTPUT_NAME WPENetworkProcess)
 set(WebKit_StorageProcess_OUTPUT_NAME WPEStorageProcess)
@@ -10,7 +10,7 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DOM_DIR})
 
-configure_file(wpe/wpe-webkit.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit.pc @ONLY)
+configure_file(wpe/wpe-webkit.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}.pc @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
 
@@ -322,7 +322,7 @@ target_link_libraries(WPEInjectedBundle WebKit)
 target_include_directories(WPEInjectedBundle PRIVATE ${WebKit_INCLUDE_DIRECTORIES})
 target_include_directories(WPEInjectedBundle SYSTEM PRIVATE ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
-install(FILES "${CMAKE_BINARY_DIR}/wpe-webkit.pc"
+install(FILES "${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}.pc"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
     COMPONENT "Development"
 )
