@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSWebAnimation.h"
 
+#include "Document.h"
 #include "JSAnimationEffect.h"
 #include "JSAnimationTimeline.h"
 #include "JSDOMConstructor.h"
