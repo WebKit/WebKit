@@ -8066,3 +8066,16 @@ index 6daa78330..98931fe31 100644
      bool EndObject(SizeType memberCount = 0) {
          (void)memberCount;
          RAPIDJSON_ASSERT(level_stack_.GetSize() >= sizeof(Level));
+diff --git a/include/EGL/eglplatform.h b/include/EGL/eglplatform.h
+index 333448be348..47d18093c96 100644
+--- a/include/EGL/eglplatform.h
++++ b/include/EGL/eglplatform.h
+@@ -100,7 +100,7 @@ typedef struct ANativeWindow*           EGLNativeWindowType;
+ typedef struct egl_native_pixmap_t*     EGLNativePixmapType;
+ typedef void*                           EGLNativeDisplayType;
+ 
+-#elif defined(USE_OZONE)
++#elif defined(USE_OZONE) || defined(USE_WPE)
+ 
+ typedef intptr_t EGLNativeDisplayType;
+ typedef intptr_t EGLNativeWindowType;
