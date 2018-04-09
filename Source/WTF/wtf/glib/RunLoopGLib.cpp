@@ -120,7 +120,7 @@ void RunLoop::stop()
 
 void RunLoop::wakeUp()
 {
-    g_source_set_ready_time(m_source.get(), g_get_monotonic_time());
+    g_source_set_ready_time(m_source.get(), 0);
 }
 
 class DispatchAfterContext {
