@@ -123,10 +123,6 @@ static bool isLoopbackIPAddress(const String& host)
 // https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy (Editor's Draft, 17 November 2016)
 static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, const String& host)
 {
-    // FIXME: despite the following SchemeRegistry functions using locks internally, we still
-    // have a potential thread-safety issue with the strings being passed in. This is because
-    // String::hash() will be called during lookup and it potentially modifies the String for
-    // caching the hash.
     if (SchemeRegistry::shouldTreatURLSchemeAsSecure(protocol))
         return true;
 
@@ -588,13 +584,6 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin& other) const
         return false;
 
     return true;
-}
-
-URL SecurityOrigin::urlWithUniqueSecurityOrigin()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<URL> uniqueSecurityOriginURL(ParsedURLString, MAKE_STATIC_STRING_IMPL("data:,"));
-    return uniqueSecurityOriginURL;
 }
 
 bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(const String& host)

@@ -199,8 +199,6 @@ public:
     // https://html.spec.whatwg.org/multipage/browsers.html#same-origin
     WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin&) const;
 
-    static URL urlWithUniqueSecurityOrigin();
-
     WEBCORE_EXPORT bool isPotentiallyTrustworthy() const;
 
     static bool isLocalHostOrLoopbackIPAddress(const String& host);
