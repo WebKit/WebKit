@@ -1142,6 +1142,18 @@ void WebAutomationSession::didDeleteCookie(uint64_t callbackID, const String& er
     callback->sendSuccess();
 }
 
+static String domainByAddingDotPrefixIfNeeded(String domain)
+{
+    if (domain[0] != '.') {
+        // RFC 2965: If an explicitly specified value does not start with a dot, the user agent supplies a leading dot.
+        // Assume that any host that ends with a digit is trying to be an IP address.
+        if (!WebCore::URL::hostIsIPAddress(domain))
+            return makeString('.', domain);
+    }
+    
+    return domain;
+}
+
 void WebAutomationSession::addSingleCookie(ErrorString& errorString, const String& browsingContextHandle, const JSON::Object& cookieObject, Ref<AddSingleCookieCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
@@ -1166,13 +1178,8 @@ void WebAutomationSession::addSingleCookie(ErrorString& errorString, const Strin
     // Inherit the domain/host from the main frame's URL if it is not explicitly set.
     if (domain.isEmpty())
         domain = activeURL.host();
-    else if (domain[0] != '.') {
-        // RFC 2965: If an explicitly specified value does not start with a dot, the user agent supplies a leading dot.
-        // Assume that any host that ends with a digit is trying to be an IP address.
-        if (!WebCore::URL::hostIsIPAddress(domain))
-            domain = makeString('.', domain);
-    }
-    cookie.domain = domain;
+
+    cookie.domain = domainByAddingDotPrefixIfNeeded(domain);
 
     if (!cookieObject.getString(WTF::ASCIILiteral("path"), cookie.path))
         FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'path' was not found.");
@@ -1214,7 +1221,7 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     ASSERT(activeURL.isValid());
 
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();
-    cookieManager->deleteCookiesForHostname(page->websiteDataStore().sessionID(), activeURL.host());
+    cookieManager->deleteCookiesForHostname(page->websiteDataStore().sessionID(), domainByAddingDotPrefixIfNeeded(activeURL.host()));
 }
 
 void WebAutomationSession::getSessionPermissions(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions)
