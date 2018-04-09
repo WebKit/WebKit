@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -39,100 +39,100 @@ struct HashTable;
 
 struct MethodTable {
     using DestroyFunctionPtr = void (*)(JSCell*);
-    DestroyFunctionPtr destroy;
+    DestroyFunctionPtr WTF_METHOD_TABLE_ENTRY(destroy);
 
     using VisitChildrenFunctionPtr = void (*)(JSCell*, SlotVisitor&);
-    VisitChildrenFunctionPtr visitChildren;
+    VisitChildrenFunctionPtr WTF_METHOD_TABLE_ENTRY(visitChildren);
 
     using GetCallDataFunctionPtr = CallType (*)(JSCell*, CallData&);
-    GetCallDataFunctionPtr getCallData;
+    GetCallDataFunctionPtr WTF_METHOD_TABLE_ENTRY(getCallData);
 
     using GetConstructDataFunctionPtr = ConstructType (*)(JSCell*, ConstructData&);
-    GetConstructDataFunctionPtr getConstructData;
+    GetConstructDataFunctionPtr WTF_METHOD_TABLE_ENTRY(getConstructData);
 
     using PutFunctionPtr = bool (*)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
-    PutFunctionPtr put;
+    PutFunctionPtr WTF_METHOD_TABLE_ENTRY(put);
 
     using PutByIndexFunctionPtr = bool (*)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-    PutByIndexFunctionPtr putByIndex;
+    PutByIndexFunctionPtr WTF_METHOD_TABLE_ENTRY(putByIndex);
 
     using DeletePropertyFunctionPtr = bool (*)(JSCell*, ExecState*, PropertyName);
-    DeletePropertyFunctionPtr deleteProperty;
+    DeletePropertyFunctionPtr WTF_METHOD_TABLE_ENTRY(deleteProperty);
 
     using DeletePropertyByIndexFunctionPtr = bool (*)(JSCell*, ExecState*, unsigned);
-    DeletePropertyByIndexFunctionPtr deletePropertyByIndex;
+    DeletePropertyByIndexFunctionPtr WTF_METHOD_TABLE_ENTRY(deletePropertyByIndex);
 
     using GetOwnPropertySlotFunctionPtr = bool (*)(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    GetOwnPropertySlotFunctionPtr getOwnPropertySlot;
+    GetOwnPropertySlotFunctionPtr WTF_METHOD_TABLE_ENTRY(getOwnPropertySlot);
 
     using GetOwnPropertySlotByIndexFunctionPtr = bool (*)(JSObject*, ExecState*, unsigned, PropertySlot&);
-    GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
+    GetOwnPropertySlotByIndexFunctionPtr WTF_METHOD_TABLE_ENTRY(getOwnPropertySlotByIndex);
 
     using ToThisFunctionPtr = JSValue (*)(JSCell*, ExecState*, ECMAMode);
-    ToThisFunctionPtr toThis;
+    ToThisFunctionPtr WTF_METHOD_TABLE_ENTRY(toThis);
 
     using DefaultValueFunctionPtr = JSValue (*)(const JSObject*, ExecState*, PreferredPrimitiveType);
-    DefaultValueFunctionPtr defaultValue;
+    DefaultValueFunctionPtr WTF_METHOD_TABLE_ENTRY(defaultValue);
 
     using GetOwnPropertyNamesFunctionPtr = void (*)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    GetOwnPropertyNamesFunctionPtr getOwnPropertyNames;
+    GetOwnPropertyNamesFunctionPtr WTF_METHOD_TABLE_ENTRY(getOwnPropertyNames);
 
     using GetOwnNonIndexPropertyNamesFunctionPtr = void (*)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    GetOwnNonIndexPropertyNamesFunctionPtr getOwnNonIndexPropertyNames;
+    GetOwnNonIndexPropertyNamesFunctionPtr WTF_METHOD_TABLE_ENTRY(getOwnNonIndexPropertyNames);
 
     using GetPropertyNamesFunctionPtr = void (*)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    GetPropertyNamesFunctionPtr getPropertyNames;
+    GetPropertyNamesFunctionPtr WTF_METHOD_TABLE_ENTRY(getPropertyNames);
 
     using GetEnumerableLengthFunctionPtr = uint32_t (*)(ExecState*, JSObject*);
-    GetEnumerableLengthFunctionPtr getEnumerableLength;
+    GetEnumerableLengthFunctionPtr WTF_METHOD_TABLE_ENTRY(getEnumerableLength);
 
-    GetPropertyNamesFunctionPtr getStructurePropertyNames;
-    GetPropertyNamesFunctionPtr getGenericPropertyNames;
+    GetPropertyNamesFunctionPtr WTF_METHOD_TABLE_ENTRY(getStructurePropertyNames);
+    GetPropertyNamesFunctionPtr WTF_METHOD_TABLE_ENTRY(getGenericPropertyNames);
 
     using ClassNameFunctionPtr = String (*)(const JSObject*);
-    ClassNameFunctionPtr className;
+    ClassNameFunctionPtr WTF_METHOD_TABLE_ENTRY(className);
 
     using ToStringNameFunctionPtr = String (*)(const JSObject*, ExecState*);
-    ToStringNameFunctionPtr toStringName;
+    ToStringNameFunctionPtr WTF_METHOD_TABLE_ENTRY(toStringName);
 
     using CustomHasInstanceFunctionPtr = bool (*)(JSObject*, ExecState*, JSValue);
-    CustomHasInstanceFunctionPtr customHasInstance;
+    CustomHasInstanceFunctionPtr WTF_METHOD_TABLE_ENTRY(customHasInstance);
 
     using DefineOwnPropertyFunctionPtr = bool (*)(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool);
-    DefineOwnPropertyFunctionPtr defineOwnProperty;
+    DefineOwnPropertyFunctionPtr WTF_METHOD_TABLE_ENTRY(defineOwnProperty);
 
     using SlowDownAndWasteMemory = ArrayBuffer* (*)(JSArrayBufferView*);
-    SlowDownAndWasteMemory slowDownAndWasteMemory;
+    SlowDownAndWasteMemory WTF_METHOD_TABLE_ENTRY(slowDownAndWasteMemory);
 
     using GetTypedArrayImpl = RefPtr<ArrayBufferView> (*)(JSArrayBufferView*);
-    GetTypedArrayImpl getTypedArrayImpl;
+    GetTypedArrayImpl WTF_METHOD_TABLE_ENTRY(getTypedArrayImpl);
 
     using PreventExtensionsFunctionPtr = bool (*)(JSObject*, ExecState*);
-    PreventExtensionsFunctionPtr preventExtensions;
+    PreventExtensionsFunctionPtr WTF_METHOD_TABLE_ENTRY(preventExtensions);
 
     using IsExtensibleFunctionPtr = bool (*)(JSObject*, ExecState*);
-    IsExtensibleFunctionPtr isExtensible;
+    IsExtensibleFunctionPtr WTF_METHOD_TABLE_ENTRY(isExtensible);
 
     using SetPrototypeFunctionPtr = bool (*)(JSObject*, ExecState*, JSValue, bool shouldThrowIfCantSet);
-    SetPrototypeFunctionPtr setPrototype;
+    SetPrototypeFunctionPtr WTF_METHOD_TABLE_ENTRY(setPrototype);
 
     using GetPrototypeFunctionPtr = JSValue (*)(JSObject*, ExecState*);
-    GetPrototypeFunctionPtr getPrototype;
+    GetPrototypeFunctionPtr WTF_METHOD_TABLE_ENTRY(getPrototype);
 
     using DumpToStreamFunctionPtr = void (*)(const JSCell*, PrintStream&);
-    DumpToStreamFunctionPtr dumpToStream;
+    DumpToStreamFunctionPtr WTF_METHOD_TABLE_ENTRY(dumpToStream);
 
     using HeapSnapshotFunctionPtr = void (*)(JSCell*, HeapSnapshotBuilder&);
-    HeapSnapshotFunctionPtr heapSnapshot;
+    HeapSnapshotFunctionPtr WTF_METHOD_TABLE_ENTRY(heapSnapshot);
 
     using EstimatedSizeFunctionPtr = size_t (*)(JSCell*);
-    EstimatedSizeFunctionPtr estimatedSize;
+    EstimatedSizeFunctionPtr WTF_METHOD_TABLE_ENTRY(estimatedSize);
 
     using VisitOutputConstraintsPtr = void (*)(JSCell*, SlotVisitor&);
-    VisitOutputConstraintsPtr visitOutputConstraints;
+    VisitOutputConstraintsPtr WTF_METHOD_TABLE_ENTRY(visitOutputConstraints);
 
     using ReifyPropertyNameIfNeededPtr = PropertyReificationResult (*)(JSCell*, ExecState*, PropertyName&);
-    ReifyPropertyNameIfNeededPtr reifyPropertyNameIfNeeded;
+    ReifyPropertyNameIfNeededPtr WTF_METHOD_TABLE_ENTRY(reifyPropertyNameIfNeeded);
 };
 
 #define CREATE_MEMBER_CHECKER(member) \

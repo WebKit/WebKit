@@ -37,3 +37,6 @@
 #define WTF_SET_POINTER_PREPARATION_OPTIONS() do { } while (false)
 #endif
 
+#ifndef WTF_METHOD_TABLE_ENTRY
+#define WTF_METHOD_TABLE_ENTRY(method) method
+#endif
