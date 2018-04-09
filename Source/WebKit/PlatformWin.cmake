@@ -129,9 +129,10 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 
     list(APPEND WebKit_LIBRARIES
-        ${OPENSSL_LIBRARIES}
-        mfuuid.lib
-        strmiids.lib
+        PRIVATE
+            ${OPENSSL_LIBRARIES}
+            mfuuid.lib
+            strmiids.lib
     )
 endif ()
 

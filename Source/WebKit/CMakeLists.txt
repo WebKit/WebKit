@@ -726,9 +726,16 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap.messages.in
 )
 
-set(WebKit_LIBRARIES
-    WebCore
-)
+if (${WebCore_LIBRARY_TYPE} STREQUAL STATIC)
+    # Link with WebCore as PRIVATE not to propagate WebCore to all users of WebKit.
+    set(WebKit_LIBRARIES
+        PRIVATE WebCore
+        PUBLIC WebCoreHeaderInterface
+    )
+else ()
+    # All users of WebKit need to link WebCore if WebCore is a shared library.
+    set(WebKit_LIBRARIES PUBLIC WebCore)
+endif ()
 
 set(WebProcess_LIBRARIES
     WebKit
@@ -755,7 +762,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
             ${LIBEPOXY_INCLUDE_DIRS}
         )
         list(APPEND WebKit_LIBRARIES
-            ${LIBEPOXY_LIBRARIES}
+            PRIVATE ${LIBEPOXY_LIBRARIES}
         )
         add_definitions(${LIBEPOXY_DEFINITIONS})
     else ()
@@ -764,7 +771,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
                 ${OPENGL_INCLUDE_DIRS}
             )
             list(APPEND WebKit_LIBRARIES
-                ${OPENGL_LIBRARIES}
+                PRIVATE ${OPENGL_LIBRARIES}
             )
             add_definitions(${OPENGL_DEFINITIONS})
         elseif (USE_OPENGL_ES)
@@ -772,7 +779,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
                 ${OPENGLES2_INCLUDE_DIRS}
             )
             list(APPEND WebKit_LIBRARIES
-                ${OPENGLES2_LIBRARIES}
+                PRIVATE ${OPENGLES2_LIBRARIES}
             )
             add_definitions(${OPENGLES2_DEFINITIONS})
         endif ()
@@ -782,7 +789,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
                 ${EGL_INCLUDE_DIRS}
             )
             list(APPEND WebKit_LIBRARIES
-                ${EGL_LIBRARIES}
+                PRIVATE ${EGL_LIBRARIES}
             )
             add_definitions(${EGL_DEFINITIONS})
         endif ()
@@ -812,7 +819,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
         set(CMAKE_REQUIRED_LIBRARIES atomic)
         check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_REQUIRES_LIBATOMIC)
         if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
-            list(APPEND WebKit_LIBRARIES atomic)
+            list(APPEND WebKit_LIBRARIES PRIVATE atomic)
         endif ()
         unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
@@ -824,7 +831,7 @@ if (UNIX)
         set(CMAKE_REQUIRED_LIBRARIES rt)
         check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
         if (SHM_OPEN_REQUIRES_LIBRT)
-            list(APPEND WebKit_LIBRARIES rt)
+            list(APPEND WebKit_LIBRARIES PRIVATE rt)
         endif ()
         unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()

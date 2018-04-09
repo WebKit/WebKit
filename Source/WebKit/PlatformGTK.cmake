@@ -456,16 +456,18 @@ set(SharedWebKitLibraries
     ${WebKit_LIBRARIES}
 )
 
-
 list(APPEND WebKit_LIBRARIES
-    # WebCore should be specifed before and after WebCorePlatformGTK
-    WebCorePlatformGTK WebCore
-    ${GTK_UNIX_PRINT_LIBRARIES}
+    PRIVATE
+        WebCorePlatformGTK
+        ${GTK_UNIX_PRINT_LIBRARIES}
 )
+
+# WebCore should be specifed before and after WebCorePlatformGTK
+list(APPEND WebKit_LIBRARIES PRIVATE WebCore)
 
 if (LIBNOTIFY_FOUND)
 list(APPEND WebKit_LIBRARIES
-    ${LIBNOTIFY_LIBRARIES}
+    PRIVATE ${LIBNOTIFY_LIBRARIES}
 )
 endif ()
 
@@ -674,7 +676,7 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
     set(WebKitPluginProcess2_LIBRARIES
         ${SharedWebKitLibraries}
-        WebCorePlatformGTK2
+        PRIVATE WebCorePlatformGTK2
     )
     ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKitPluginProcess2_LIBRARIES)
     target_link_libraries(WebKitPluginProcess2 ${WebKitPluginProcess2_LIBRARIES})
