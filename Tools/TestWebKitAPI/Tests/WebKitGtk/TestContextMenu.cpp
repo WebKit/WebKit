@@ -975,6 +975,7 @@ static void testContextMenuWebExtensionMenu(ContextMenuWebExtensionTest* test, g
 
     // Custom menu.
     test->loadHtml("<html><body></body></html>", "ContextMenuTestCustom");
+    test->waitUntilLoadFinished();
     test->showContextMenuAndWaitUntilFinished();
     g_assert_cmpuint(test->m_actions.size(), ==, 4);
     g_assert_cmpuint(test->m_actions[0], ==, WEBKIT_CONTEXT_MENU_ACTION_STOP);
@@ -984,6 +985,7 @@ static void testContextMenuWebExtensionMenu(ContextMenuWebExtensionTest* test, g
 
     // Menu cleared by the web process.
     test->loadHtml("<html><body></body></html>", "ContextMenuTestClear");
+    test->waitUntilLoadFinished();
     test->showContextMenuAndWaitUntilFinished();
     g_assert_cmpuint(test->m_actions.size(), ==, 0);
 }
