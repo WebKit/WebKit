@@ -1,3 +1,20 @@
+2018-04-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Non-Cocoa ports use default directory for ServiceWorker data during testing
+        https://bugs.webkit.org/show_bug.cgi?id=183784
+
+        Reviewed by Youenn Fablet.
+
+        Add API to WKWebsiteDataStore that enables setting and retrieving the
+        service worker registration directory for a given data store object.
+        This enables setting the temporary directory for testing purposes in
+        WebKitTestRunner.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreCopyServiceWorkerRegistrationDirectory):
+        (WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2018-04-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] WebKit should link to WebCore as a PRIVATE library if WebCore is a static library

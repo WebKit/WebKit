@@ -101,6 +101,9 @@ WK_EXPORT void WKWebsiteDataStoreGetFetchCacheOrigins(WKWebsiteDataStoreRef data
 typedef void (*WKWebsiteDataStoreGetFetchCacheSizeForOriginFunction)(uint64_t, void*);
 WK_EXPORT void WKWebsiteDataStoreGetFetchCacheSizeForOrigin(WKWebsiteDataStoreRef dataStoreRef, WKStringRef origin, void* context, WKWebsiteDataStoreGetFetchCacheSizeForOriginFunction function);
 
+WK_EXPORT WKStringRef WKWebsiteDataStoreCopyServiceWorkerRegistrationDirectory(WKWebsiteDataStoreRef dataStoreRef);
+WK_EXPORT void WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(WKWebsiteDataStoreRef dataStoreRef, WKStringRef serviceWorkerRegistrationDirectory);
+
 #ifdef __cplusplus
 }
 #endif

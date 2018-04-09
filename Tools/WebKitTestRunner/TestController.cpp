@@ -2396,6 +2396,14 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
 {
     auto* dataStore = WKContextGetWebsiteDataStore(context);
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(dataStore, true);
+
+    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
+        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+        const char separator = '/';
+
+        WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(dataStore, toWK(temporaryFolder + separator + "ServiceWorkerRegistration").get());
+    }
+
     return context;
 }
 

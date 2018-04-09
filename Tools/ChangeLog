@@ -1,3 +1,14 @@
+2018-04-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Non-Cocoa ports use default directory for ServiceWorker data during testing
+        https://bugs.webkit.org/show_bug.cgi?id=183784
+
+        Reviewed by Youenn Fablet.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::platformAdjustContext): Set the service worker registration
+        directory through the new WKWebsiteDataStore API for non-Cocoa ports.
+
 2018-04-08  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Adjust line with inline container's margin border and padding

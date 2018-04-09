@@ -493,3 +493,13 @@ void WKWebsiteDataStoreGetFetchCacheSizeForOrigin(WKWebsiteDataStoreRef dataStor
         callback(0, context);
     });
 }
+
+WKStringRef WKWebsiteDataStoreCopyServiceWorkerRegistrationDirectory(WKWebsiteDataStoreRef dataStoreRef)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(dataStoreRef)->websiteDataStore().serviceWorkerRegistrationDirectory());
+}
+
+void WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(WKWebsiteDataStoreRef dataStoreRef, WKStringRef serviceWorkerRegistrationDirectory)
+{
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().setServiceWorkerRegistrationDirectory(WebKit::toImpl(serviceWorkerRegistrationDirectory)->string());
+}
