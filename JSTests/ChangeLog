@@ -1,3 +1,17 @@
+2018-04-04  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r222563): removed DoubleReal type check causes tons of crashes because CSE has never known how to handle SaneChain
+        https://bugs.webkit.org/show_bug.cgi?id=184319
+
+        Reviewed by Saam Barati.
+
+        * stress/array-push-nan-to-double-array-cse-sane-and-insane-chain.js: Added.
+        (foo):
+        (bar):
+        * stress/array-push-nan-to-double-array.js: Added.
+        (foo):
+        (bar):
+
 2018-03-31  Filip Pizlo  <fpizlo@apple.com>
 
         JSC crash in JIT code with for-of loop and Array/Set iterators

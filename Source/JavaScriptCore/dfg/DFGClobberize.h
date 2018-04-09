@@ -825,7 +825,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedDoubleProperties);
-                def(HeapLocation(indexedPropertyLoc, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                LocationKind kind = mode.isSaneChain() ? IndexedPropertyDoubleSaneChainLoc : IndexedPropertyDoubleLoc;
+                def(HeapLocation(kind, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(World);
@@ -944,7 +945,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(IndexedDoubleProperties);
             if (node->arrayMode().mayStoreToHole())
                 write(Butterfly_publicLength);
-            def(HeapLocation(indexedPropertyLoc, IndexedDoubleProperties, base, index), LazyNode(value));
+            def(HeapLocation(IndexedPropertyDoubleLoc, IndexedDoubleProperties, base, index), LazyNode(value));
+            def(HeapLocation(IndexedPropertyDoubleSaneChainLoc, IndexedDoubleProperties, base, index), LazyNode(value));
             return;
             
         case Array::Contiguous:

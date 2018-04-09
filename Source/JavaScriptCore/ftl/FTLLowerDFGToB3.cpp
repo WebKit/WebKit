@@ -4447,11 +4447,11 @@ private:
                 if (m_node->arrayMode().type() != Array::Double) {
                     value = lowJSValue(element, ManualOperandSpeculation);
                     if (m_node->arrayMode().type() == Array::Int32)
-                        RELEASE_ASSERT(!m_interpreter.needsTypeCheck(element, SpecInt32Only));
+                        DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecInt32Only));
                     storeType = Output::Store64;
                 } else {
                     value = lowDouble(element);
-                    RELEASE_ASSERT(!m_interpreter.needsTypeCheck(element, SpecDoubleReal));
+                    DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecDoubleReal));
                     storeType = Output::StoreDouble;
                 }
 
@@ -4527,11 +4527,11 @@ private:
                 if (m_node->arrayMode().type() != Array::Double) {
                     value = lowJSValue(element, ManualOperandSpeculation);
                     if (m_node->arrayMode().type() == Array::Int32)
-                        RELEASE_ASSERT(!m_interpreter.needsTypeCheck(element, SpecInt32Only));
+                        DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecInt32Only));
                     storeType = Output::Store64;
                 } else {
                     value = lowDouble(element);
-                    RELEASE_ASSERT(!m_interpreter.needsTypeCheck(element, SpecDoubleReal));
+                    DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecDoubleReal));
                     storeType = Output::StoreDouble;
                 }
 

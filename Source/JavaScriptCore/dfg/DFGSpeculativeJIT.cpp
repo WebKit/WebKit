@@ -7965,7 +7965,7 @@ void SpeculativeJIT::compileArrayPush(Node* node)
             JSValueRegs valueRegs = value.jsValueRegs();
 
             if (node->arrayMode().type() == Array::Int32)
-                RELEASE_ASSERT(!needsTypeCheck(element, SpecInt32Only));
+                DFG_ASSERT(m_jit.graph(), node, !needsTypeCheck(element, SpecInt32Only));
 
             m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
             MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
@@ -8010,7 +8010,7 @@ void SpeculativeJIT::compileArrayPush(Node* node)
             JSValueRegs valueRegs = value.jsValueRegs();
 
             if (node->arrayMode().type() == Array::Int32)
-                RELEASE_ASSERT(!needsTypeCheck(element, SpecInt32Only));
+                DFG_ASSERT(m_jit.graph(), node, !needsTypeCheck(element, SpecInt32Only));
 
             m_jit.storeValue(valueRegs, MacroAssembler::Address(bufferGPR, sizeof(EncodedJSValue) * elementIndex));
             value.use();
@@ -8037,7 +8037,7 @@ void SpeculativeJIT::compileArrayPush(Node* node)
             SpeculateDoubleOperand value(this, element);
             FPRReg valueFPR = value.fpr();
 
-            RELEASE_ASSERT(!needsTypeCheck(element, SpecDoubleReal));
+            DFG_ASSERT(m_jit.graph(), node, !needsTypeCheck(element, SpecDoubleReal));
 
             m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
             MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
@@ -8081,7 +8081,7 @@ void SpeculativeJIT::compileArrayPush(Node* node)
             SpeculateDoubleOperand value(this, element);
             FPRReg valueFPR = value.fpr();
 
-            RELEASE_ASSERT(!needsTypeCheck(element, SpecDoubleReal));
+            DFG_ASSERT(m_jit.graph(), node, !needsTypeCheck(element, SpecDoubleReal));
 
             m_jit.storeDouble(valueFPR, MacroAssembler::Address(bufferGPR, sizeof(double) * elementIndex));
             value.use();
