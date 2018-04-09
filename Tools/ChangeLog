@@ -1,3 +1,13 @@
+2018-04-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r230389.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::platformAdjustContext): Use the 'ServiceWorkers'
+        subdirectory for the temporary testing-purpose SW registration directory
+        like it's used in Cocoa's TestController, addressing the review comment
+        that I forgot about.
+
 2018-04-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Non-Cocoa ports use default directory for ServiceWorker data during testing

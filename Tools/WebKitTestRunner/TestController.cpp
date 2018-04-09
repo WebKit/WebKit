@@ -2401,7 +2401,7 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
         const char separator = '/';
 
-        WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(dataStore, toWK(temporaryFolder + separator + "ServiceWorkerRegistration").get());
+        WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(dataStore, toWK(temporaryFolder + separator + "ServiceWorkers").get());
     }
 
     return context;
