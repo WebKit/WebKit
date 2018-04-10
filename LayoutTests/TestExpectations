@@ -1837,3 +1837,5 @@ webkit.org/b/184198 imported/w3c/web-platform-tests/html/browsers/offline/appcac
 webkit.org/b/184058 storage/indexeddb/dont-wedge-private.html [ Pass Failure ]
 
 webkit.org/b/184061 http/tests/appcache/interrupted-update.html [ Pass Failure ]
+
+webkit.org/b/184453 imported/w3c/web-platform-tests/workers/name-property.html [ Pass Failure ]

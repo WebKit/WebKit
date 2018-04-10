@@ -1,3 +1,12 @@
+2018-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/workers/name-property.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=184453
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2018-04-10  Per Arne Vollan  <pvollan@apple.com>
 
         Update test expectations in the new legacy-animation-engine directory.
