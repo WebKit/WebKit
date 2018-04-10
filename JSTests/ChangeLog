@@ -1,3 +1,25 @@
+2018-04-09  Leo Balter  <leonardo.balter@gmail.com>
+
+        Fix errant Test262 files CRLF to LF for consistency with the original source
+        https://bugs.webkit.org/show_bug.cgi?id=184425
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/test/built-ins/Math/acosh/nan-returns.js:
+        * test262/test/built-ins/Math/asinh/asinh-specialVals.js:
+        * test262/test/built-ins/Math/atanh/atanh-specialVals.js:
+        * test262/test/built-ins/Math/cbrt/cbrt-specialValues.js:
+        * test262/test/built-ins/Math/cbrt/prop-desc.js:
+        * test262/test/built-ins/Math/cosh/cosh-specialVals.js:
+        * test262/test/built-ins/Math/expm1/expm1-specialVals.js:
+        * test262/test/built-ins/Math/log10/Log10-specialVals.js:
+        * test262/test/built-ins/Math/log2/log2-basicTests.js:
+        * test262/test/built-ins/Math/sign/sign-specialVals.js:
+        * test262/test/built-ins/Math/sinh/sinh-specialVals.js:
+        * test262/test/built-ins/Math/tanh/tanh-specialVals.js:
+        * test262/test/built-ins/Math/trunc/trunc-sampleTests.js:
+        * test262/test/built-ins/Math/trunc/trunc-specialVals.js:
+
 2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, remove incorrect entry in test262.yaml
