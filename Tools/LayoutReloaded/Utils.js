@@ -208,6 +208,10 @@ class LayoutRect {
         this.m_topLeft.moveBy(distance);
     }
 
+    growHorizontally(distance) {
+        this.m_size.setWidth(this.m_size.width() + distance);
+    }
+
     moveHorizontally(distance) {
         this.m_topLeft.shiftLeft(distance);
     }
@@ -423,7 +427,7 @@ class Utils {
     }
 
     static isBlockContainerElement(node) {
-        if (node.nodeType != Node.ELEMENT_NODE)
+        if (!node || node.nodeType != Node.ELEMENT_NODE)
             return false;
         let display = window.getComputedStyle(node).display;
         return  display == "block" || display == "list-item" || display == "inline-block" || display == "table-cell" || display == "table-caption"; //TODO && !replaced element
@@ -437,6 +441,13 @@ class Utils {
     static isTableElement(node) {
         let display = window.getComputedStyle(node).display;
         return  display == "table" || display == "inline-table";
+    }
+
+    static isInlineBlockElement(node) {
+        if (!node || node.nodeType != Node.ELEMENT_NODE)
+            return false;
+        let display = window.getComputedStyle(node).display;
+        return  display == "inline-block";
     }
 
     static isRelativelyPositioned(box) {
@@ -580,7 +591,8 @@ class Utils {
             content += indentation + "RootInlineBox at (" + lineRect.left() + "," + lineRect.top() + ") size " + Utils.precisionRound(lineRect.width(), 2) + "x" + lineRect.height() + "\n";
             line.lineBoxes().forEach(function(lineBox) {
                 let indentation = " ".repeat(level + 1);
-                content += indentation + "InlineTextBox at (" + Utils.precisionRound(lineBox.lineBoxRect.left(), 2) + "," + Utils.precisionRound(lineBox.lineBoxRect.top(), 2) + ") size " + Utils.precisionRound(lineBox.lineBoxRect.width(), 2) + "x" + lineBox.lineBoxRect.height() + "\n";
+                let inlineBoxName = lineBox.startPosition === undefined ? "InlineBox" : "InlineTextBox";
+                content += indentation +  inlineBoxName + " at (" + Utils.precisionRound(lineBox.lineBoxRect.left(), 2) + "," + Utils.precisionRound(lineBox.lineBoxRect.top(), 2) + ") size " + Utils.precisionRound(lineBox.lineBoxRect.width(), 2) + "x" + lineBox.lineBoxRect.height() + "\n";
             });
         });
         return content;

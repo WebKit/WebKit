@@ -27,6 +27,7 @@ class InlineFormattingContext extends FormattingContext {
     constructor(inlineFormattingState) {
         super(inlineFormattingState);
         ASSERT(this.formattingRoot().isBlockContainerBox());
+        this.m_inlineContainerStack = new Array();
     }
 
     layout() {
@@ -39,45 +40,64 @@ class InlineFormattingContext extends FormattingContext {
         this._addToLayoutQueue(this.formattingRoot().firstInFlowOrFloatChild());
         while (this._descendantNeedsLayout()) {
             let layoutBox = this._nextInLayoutQueue();
-            if (layoutBox.isInlineContainer()) {
-                if (inlineContainerStack.indexOf(layoutBox) == -1) {
-                    inlineContainerStack.push(layoutBox);
-                    this._adjustLineForInlineContainerStart(layoutBox);
-                    if (layoutBox.establishesFormattingContext())
-                        this.layoutState().layout(layoutBox);
-                    else
-                        this._addToLayoutQueue(layoutBox.firstInFlowOrFloatChild());
-                } else {
-                    inlineContainerStack.pop(layoutBox);
-                    this._adjustLineForInlineContainerEnd(layoutBox);
-                    this._removeFromLayoutQueue(layoutBox);
-                    this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
-                    // Place the inflow positioned children.
-                    this._placeInFlowPositionedChildren(this.formattingRoot());
-                }
-                continue;
-            }
-            this._handleInlineContent(layoutBox);
-            this._removeFromLayoutQueue(layoutBox);
-            this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
+            if (layoutBox.isInlineContainer())
+                this._handleInlineContainer(layoutBox);
+            else if (layoutBox.isInlineBlockBox())
+                this._handleInlineBlockContainer(layoutBox);
+            else
+                this._handleInlineContent(layoutBox);
         }
         // Place the inflow positioned children.
         this._placeInFlowPositionedChildren(this.formattingRoot());
         // And take care of out-of-flow boxes as the final step.
         this._placeOutOfFlowDescendants(this.formattingRoot());
         this._commitLine();
+        ASSERT(!this.m_inlineContainerStack.length);
    }
 
+    _handleInlineContainer(inlineContainer) {
+        ASSERT(!inlineContainer.establishesFormattingContext());
+        let inlineContainerStart = this.m_inlineContainerStack.indexOf(inlineContainer) == -1;
+        if (inlineContainerStart) {
+            this.m_inlineContainerStack.push(inlineContainer);
+            this._adjustLineForInlineContainerStart(inlineContainer);
+            this._addToLayoutQueue(inlineContainer.firstInFlowOrFloatChild());
+            // Keep the inline container in the layout stack so that we can finish it when all the descendants are all set.
+            return;
+        }
+        this.m_inlineContainerStack.pop(inlineContainer);
+        this._adjustLineForInlineContainerEnd(inlineContainer);
+        this._removeFromLayoutQueue(inlineContainer);
+        this._addToLayoutQueue(inlineContainer.nextInFlowOrFloatSibling());
+        // Place the in- and out-of-flow positioned children.
+        this._placeInFlowPositionedChildren(inlineContainer);
+        this._placeOutOfFlowDescendants(inlineContainer);
+    }
+
+
+    _handleInlineBlockContainer(inlineBlockContainer) {
+        ASSERT(inlineBlockContainer.establishesFormattingContext());
+        this._adjustLineForInlineContainerStart(inlineBlockContainer);
+        // TODO: auto width/height
+        let displayBox = this.displayBox(inlineBlockContainer);
+        displayBox.setWidth(Utils.width(inlineBlockContainer) + Utils.computedHorizontalBorderAndPadding(inlineBlockContainer.node()));
+        displayBox.setHeight(Utils.height(inlineBlockContainer) + Utils.computedVerticalBorderAndPadding(inlineBlockContainer.node()));
+        this.layoutState().layout(inlineBlockContainer);
+        this._line().addInlineContainerBox(displayBox.size());
+        this._adjustLineForInlineContainerEnd(inlineBlockContainer);
+        this._removeFromLayoutQueue(inlineBlockContainer);
+        this._addToLayoutQueue(inlineBlockContainer.nextInFlowOrFloatSibling());
+    }
+
     _handleInlineContent(layoutBox) {
-        if (layoutBox.isInlineBox()) {
+        if (layoutBox.isInlineBox())
             this._handleInlineBox(layoutBox);
-            return;
-        }
-        if (layoutBox.isFloatingPositioned()) {
+        else if (layoutBox.isFloatingPositioned())
             this._handleFloatingBox(layoutBox);
-            return;
-        }
-        ASSERT_NOT_REACHED();
+        else
+            ASSERT_NOT_REACHED();
+        this._removeFromLayoutQueue(layoutBox);
+        this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
     }
 
     _handleInlineBox(inlineBox) {

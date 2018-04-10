@@ -62,12 +62,22 @@ class Line {
         this.m_lineRect.moveHorizontally(offset);
     }
 
+    addInlineContainerBox(size) {
+        let width = size.width();
+        ASSERT(width <= this.m_availableWidth);
+        this.shrink(width);
+        let lineBoxRect = new LayoutRect(this.rect().topRight(), size);
+        this.m_lineBoxes.push({lineBoxRect});
+        this.m_lineRect.growHorizontally(width);
+    }
+
     addTextLineBox(startPosition, endPosition, size) {
-        ASSERT(size.width() <= this.m_availableWidth);
-        this.m_availableWidth -= size.width();
+        let width = size.width();
+        ASSERT(width <= this.m_availableWidth);
+        this.shrink(width);
         // TODO: use the actual height instead of the line height.
-        let lineBoxRect = new LayoutRect(this.rect().topRight(), new LayoutSize(size.width(), this.rect().height()));
+        let lineBoxRect = new LayoutRect(this.rect().topRight(), new LayoutSize(width, this.rect().height()));
         this.m_lineBoxes.push({startPosition, endPosition, lineBoxRect});
-        this.m_lineRect.growBy(new LayoutSize(size.width(), 0));
+        this.m_lineRect.growHorizontally(width);
     }
 }

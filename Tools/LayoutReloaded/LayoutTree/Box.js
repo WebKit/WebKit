@@ -127,6 +127,10 @@ Layout.Box = class Box {
         return Utils.isBlockContainerElement(this.node());
     }
 
+    isInlineBlockBox() {
+        return Utils.isInlineBlockElement(this.node());
+    }
+
     isInlineLevelBox() {
         return Utils.isInlineLevelElement(this.node());
     }
