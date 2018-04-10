@@ -537,6 +537,7 @@ webkit.org/b/85532 fast/sub-pixel [ Skip ]
 
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect/  [ Skip ]
+legacy-animation-engine/compositing/visible-rect/ [ Skip ]
 
 # TODO CSS image-orientation property not yet supported
 fast/css/image-orientation/ [ Skip ]

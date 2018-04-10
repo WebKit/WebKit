@@ -1,3 +1,11 @@
+2018-04-10  Per Arne Vollan  <pvollan@apple.com>
+
+        Update test expectations in the new legacy-animation-engine directory.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-04-09  Antoine Quint  <graouts@apple.com>
 
         Attempt to fix some test reported test failures in the new legacy-animation-engine directory. 
