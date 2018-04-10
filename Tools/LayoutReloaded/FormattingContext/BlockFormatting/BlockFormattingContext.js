@@ -118,20 +118,6 @@ class BlockFormattingContext extends FormattingContext {
         this.displayBox(layoutBox).setTopLeft(position);
     }
 
-    _placeInFlowPositionedChildren(container) {
-        if (!container.isContainer())
-            return;
-        // If this layoutBox also establishes a formatting context, then positioning already has happend at the formatting context.
-        if (container.establishesFormattingContext() && container != this.formattingRoot())
-            return;
-        ASSERT(container.isContainer());
-        for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
-            if (!inFlowChild.isInFlowPositioned())
-                continue;
-            this._computeInFlowPositionedPosition(inFlowChild);
-        }
-    }
-
     _layoutOutOfFlowDescendants() {
         // This lays out all the out-of-flow boxes that belong to this formatting context even if
         // the root container is not the containing block.
@@ -277,23 +263,6 @@ class BlockFormattingContext extends FormattingContext {
                 bottom = Math.max(floatingBottom, bottom);
         }
         return bottom;
-    }
-
-    _computeInFlowPositionedPosition(layoutBox) {
-        // Start with the original, static position.
-        let displayBox = this.displayBox(layoutBox);
-        let relativePosition = displayBox.topLeft();
-        // Top/bottom
-        if (!Utils.isTopAuto(layoutBox))
-            relativePosition.shiftTop(Utils.top(layoutBox));
-        else if (!Utils.isBottomAuto(layoutBox))
-            relativePosition.shiftTop(-Utils.bottom(layoutBox));
-        // Left/right
-        if (!Utils.isLeftAuto(layoutBox))
-            relativePosition.shiftLeft(Utils.left(layoutBox));
-        else if (!Utils.isRightAuto(layoutBox))
-            relativePosition.shiftLeft(-Utils.right(layoutBox));
-        displayBox.setTopLeft(relativePosition);
     }
 
     _computeOutOfFlowPosition(layoutBox) {

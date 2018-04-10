@@ -152,10 +152,6 @@ class InlineFormattingContext extends FormattingContext {
         this._line().adjustWithOffset(offset);
     }
 
-    _placeInFlowPositionedChildren(container) {
-
-    }
-
     _placeOutOfFlowDescendants(container) {
 
     }

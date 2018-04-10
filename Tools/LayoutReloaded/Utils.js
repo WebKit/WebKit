@@ -571,8 +571,14 @@ class Utils {
             if (box.text())
                 return indentation + "#text RenderText\n";
         }
-        if (box.name() == "RenderInline")
+        if (box.name() == "RenderInline") {
+            if (box.isInFlowPositioned()) {
+                let displayBox = Utils._findDisplayBox(layoutState, box);
+                let boxRect = displayBox.rect();
+                return indentation + box.node().tagName + " " + box.name() + "  (" + Utils.precisionRoundWithDecimals(boxRect.left()) + ", " + Utils.precisionRoundWithDecimals(boxRect.top()) + ")\n";
+            }
             return indentation + box.node().tagName + " " + box.name() + "\n";
+        }
         if (box.isAnonymous())
             return "";
         let displayBox = Utils._findDisplayBox(layoutState, box);
@@ -588,11 +594,11 @@ class Utils {
         let indentation = " ".repeat(level);
         lines.forEach(function(line) {
             let lineRect = line.rect();
-            content += indentation + "RootInlineBox at (" + lineRect.left() + "," + lineRect.top() + ") size " + Utils.precisionRound(lineRect.width(), 2) + "x" + lineRect.height() + "\n";
+            content += indentation + "RootInlineBox at (" + lineRect.left() + "," + lineRect.top() + ") size " + Utils.precisionRound(lineRect.width()) + "x" + lineRect.height() + "\n";
             line.lineBoxes().forEach(function(lineBox) {
                 let indentation = " ".repeat(level + 1);
                 let inlineBoxName = lineBox.startPosition === undefined ? "InlineBox" : "InlineTextBox";
-                content += indentation +  inlineBoxName + " at (" + Utils.precisionRound(lineBox.lineBoxRect.left(), 2) + "," + Utils.precisionRound(lineBox.lineBoxRect.top(), 2) + ") size " + Utils.precisionRound(lineBox.lineBoxRect.width(), 2) + "x" + lineBox.lineBoxRect.height() + "\n";
+                content += indentation +  inlineBoxName + " at (" + Utils.precisionRound(lineBox.lineBoxRect.left()) + "," + Utils.precisionRound(lineBox.lineBoxRect.top()) + ") size " + Utils.precisionRound(lineBox.lineBoxRect.width()) + "x" + lineBox.lineBoxRect.height() + "\n";
             });
         });
         return content;
@@ -610,8 +616,12 @@ class Utils {
         return content;
     }
 
-    static precisionRound(number, precision) {
-        let factor = Math.pow(10, precision);
+    static precisionRoundWithDecimals(number) {
+        return number.toFixed(2);
+    }
+
+    static precisionRound(number) {
+        let factor = Math.pow(10, 2);
         return Math.round(number * factor) / factor;
     }
 }

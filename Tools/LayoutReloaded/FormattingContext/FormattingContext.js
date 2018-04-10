@@ -117,6 +117,37 @@ class FormattingContext {
         this.displayBox(layoutBox).setHeight(Utils.height(layoutBox) + Utils.computedVerticalBorderAndPadding(layoutBox.node()));
     }
 
+    _computeInFlowPositionedPosition(layoutBox) {
+        // Start with the original, static position.
+        let displayBox = this.displayBox(layoutBox);
+        let relativePosition = displayBox.topLeft();
+        // Top/bottom
+        if (!Utils.isTopAuto(layoutBox))
+            relativePosition.shiftTop(Utils.top(layoutBox));
+        else if (!Utils.isBottomAuto(layoutBox))
+            relativePosition.shiftTop(-Utils.bottom(layoutBox));
+        // Left/right
+        if (!Utils.isLeftAuto(layoutBox))
+            relativePosition.shiftLeft(Utils.left(layoutBox));
+        else if (!Utils.isRightAuto(layoutBox))
+            relativePosition.shiftLeft(-Utils.right(layoutBox));
+        displayBox.setTopLeft(relativePosition);
+    }
+
+    _placeInFlowPositionedChildren(container) {
+        if (!container.isContainer())
+            return;
+        // If this layoutBox also establishes a formatting context, then positioning already has happend at the formatting context.
+        if (container.establishesFormattingContext() && container != this.formattingRoot())
+            return;
+        ASSERT(container.isContainer());
+        for (let inFlowChild = container.firstInFlowChild(); inFlowChild; inFlowChild = inFlowChild.nextInFlowSibling()) {
+            if (!inFlowChild.isInFlowPositioned())
+                continue;
+            this._computeInFlowPositionedPosition(inFlowChild);
+        }
+    }
+
     _outOfFlowDescendants() {
         // FIXME: This is highly inefficient but will do for now.
         // 1. Collect all the out-of-flow descendants first.

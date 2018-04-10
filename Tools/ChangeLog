@@ -1,5 +1,30 @@
 2018-04-09  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Add support for relatively positioned containers in inline formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=184439
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._placeInFlowPositionedChildren): Deleted.
+        (BlockFormattingContext.prototype._computeInFlowPositionedPosition): Deleted.
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype._computeInFlowPositionedPosition):
+        (FormattingContext.prototype._placeInFlowPositionedChildren):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._placeInFlowPositionedChildren): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils._dumpBox):
+        (Utils._dumpLines.):
+        (Utils._dumpLines):
+        (Utils.precisionRoundWithDecimals):
+        (Utils.precisionRound):
+        (Utils):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-with-relative-positioning.html: Added.
+
+2018-04-09  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Remove Layout.InitialContainingBlock class
         https://bugs.webkit.org/show_bug.cgi?id=184436
 
