@@ -1,3 +1,35 @@
+2018-04-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] TextureMapperLayer unnecessarily duplicates state in GraphicsLayerTransform
+        https://bugs.webkit.org/show_bug.cgi?id=183868
+
+        Reviewed by Carlos Garcia Campos.
+
+        Drop the GraphicsLayerTransform member variable from TextureMapperLayer
+        and instead compute all the required transform information in the
+        computeTransformsRecursive() method. These computations are not too
+        expensive, and in turn we can drop an object from this class' state that
+        was only duplicating a bunch of state variables.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeTransformsRecursive):
+        (WebCore::TextureMapperLayer::paintSelf):
+        (WebCore::TextureMapperLayer::paintSelfAndChildren):
+        (WebCore::TextureMapperLayer::paintSelfAndChildrenWithReplica):
+        (WebCore::TextureMapperLayer::replicaTransform):
+        (WebCore::TextureMapperLayer::computeOverlapRegions):
+        (WebCore::TextureMapperLayer::setPosition):
+        (WebCore::TextureMapperLayer::setSize):
+        (WebCore::TextureMapperLayer::setAnchorPoint):
+        (WebCore::TextureMapperLayer::setPreserves3D):
+        (WebCore::TextureMapperLayer::setTransform):
+        (WebCore::TextureMapperLayer::setChildrenTransform):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        (WebCore::TextureMapperLayer::setScrollPositionDeltaIfNeeded):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2018-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         Add ProcessPrivilege assertions to places that access NSApp

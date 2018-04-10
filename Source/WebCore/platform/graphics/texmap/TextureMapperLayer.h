@@ -22,7 +22,6 @@
 
 #include "FilterOperations.h"
 #include "FloatRect.h"
-#include "GraphicsLayerTransform.h"
 #include "TextureMapper.h"
 #include "TextureMapperAnimation.h"
 #include "TextureMapperBackingStore.h"
@@ -149,7 +148,6 @@ private:
     TextureMapperLayer* m_parent { nullptr };
     TextureMapperLayer* m_effectTarget { nullptr };
     RefPtr<TextureMapperBackingStore> m_backingStore;
-    GraphicsLayerTransform m_currentTransform;
     TextureMapperPlatformLayer* m_contentsLayer { nullptr };
     float m_currentOpacity { 1.0 };
     FilterOperations m_currentFilters;
@@ -208,6 +206,13 @@ private:
     FloatSize m_scrollPositionDelta;
     bool m_fixedToViewport { false };
     uint32_t m_id { 0 };
+
+    struct {
+        TransformationMatrix localTransform;
+
+        TransformationMatrix combined;
+        TransformationMatrix combinedForChildren;
+    } m_layerTransforms;
 };
 
 }
