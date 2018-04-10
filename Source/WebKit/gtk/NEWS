@@ -1,4 +1,19 @@
 ==================
+WebKitGTK+  2.20.1
+==================
+
+What's new in WebKitGTK+ 2.20.1?
+
+  - Improve error message when Gigacage cannot allocate virtual memory.
+  - Add missing WebKitWebProcessEnumTypes.h to webkit-web-extension.h.
+  - Improve web process memory monitor thresholds.
+  - Fix a web process crash when the web view is created and destroyed quickly.
+  - Fix a network process crash when load is cancelled while searching for stored HTTP auth credentials.
+  - Fix the build when ENABLE_VIDEO, ENABLE_WEB_AUDIO and ENABLE_XSLT are disabled.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese, Czech.
+
+==================
 WebKitGTK+  2.20.0
 ==================
 
