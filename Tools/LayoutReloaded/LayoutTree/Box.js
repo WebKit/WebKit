@@ -150,6 +150,9 @@ Layout.Box = class Box {
     }
 
     establishesBlockFormattingContext() {
+        // Initial Containing Block always creates a new (inital) block formatting context.
+        if (!this.parent())
+            return true;
         // 9.4.1 Block formatting contexts
         // Floats, absolutely positioned elements, block containers (such as inline-blocks, table-cells, and table-captions)
         // that are not block boxes, and block boxes with 'overflow' other than 'visible' (except when that value has been propagated to the viewport)

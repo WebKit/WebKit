@@ -28,7 +28,7 @@ class TreeBuilder {
 
     createTree(document, renderTreeDump) {
         // Root.
-        let initialBlockContainer = new Layout.InitialBlockContainer(document, parseInt(renderTreeDump.substring(0, renderTreeDump.indexOf("("))));
+        let initialBlockContainer = new Layout.BlockContainer(document, parseInt(renderTreeDump.substring(0, renderTreeDump.indexOf("("))));
         initialBlockContainer.setRendererName("RenderView");
         renderTreeDump = renderTreeDump.substring(renderTreeDump.indexOf("|") + 1);
 
