@@ -1,3 +1,38 @@
+2018-04-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Add support for out-of-flow descendants in inline formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=184454
+
+        Reviewed by Antti Koivisto.
+
+        When the containing block of an out-of-flow positioned element establishes an inline formatting context.
+        This is mostly about moving out-of-flow logic from BlockFormattingContext to the base class.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._adjustBottomWithFIXME):
+        (BlockFormattingContext):
+        (BlockFormattingContext.prototype._layoutOutOfFlowDescendants): Deleted.
+        (BlockFormattingContext.prototype._computeOutOfFlowWidth): Deleted.
+        (BlockFormattingContext.prototype._computeInFlowWidth): Deleted.
+        (BlockFormattingContext.prototype._computeOutOfFlowHeight): Deleted.
+        (BlockFormattingContext.prototype._computeOutOfFlowPosition): Deleted.
+        (BlockFormattingContext.prototype._shrinkToFitWidth): Deleted.
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype._placeInFlowPositionedChildren):
+        (FormattingContext.prototype._computeInFlowWidth):
+        (FormattingContext.prototype._layoutOutOfFlowDescendants):
+        (FormattingContext.prototype._computeOutOfFlowWidth):
+        (FormattingContext.prototype._computeOutOfFlowHeight):
+        (FormattingContext.prototype._computeOutOfFlowPosition):
+        (FormattingContext.prototype._shrinkToFitWidth):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleInlineContainer):
+        (InlineFormattingContext.prototype._handleInlineBlockContainer):
+        (InlineFormattingContext.prototype._placeOutOfFlowDescendants): Deleted.
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-with-out-of-flow-descendant.html: Added.
+
 2018-04-09  Zan Dobersek  <zdobersek@igalia.com>
 
         WKTR: Enable DOM cache, SW registration directory cleanup on non-Cocoa platforms

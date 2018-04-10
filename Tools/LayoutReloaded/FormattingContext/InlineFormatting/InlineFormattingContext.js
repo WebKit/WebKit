@@ -50,7 +50,7 @@ class InlineFormattingContext extends FormattingContext {
         // Place the inflow positioned children.
         this._placeInFlowPositionedChildren(this.formattingRoot());
         // And take care of out-of-flow boxes as the final step.
-        this._placeOutOfFlowDescendants(this.formattingRoot());
+        this._layoutOutOfFlowDescendants(this.formattingRoot());
         this._commitLine();
         ASSERT(!this.m_inlineContainerStack.length);
    }
@@ -69,22 +69,23 @@ class InlineFormattingContext extends FormattingContext {
         this._adjustLineForInlineContainerEnd(inlineContainer);
         this._removeFromLayoutQueue(inlineContainer);
         this._addToLayoutQueue(inlineContainer.nextInFlowOrFloatSibling());
-        // Place the in- and out-of-flow positioned children.
+        // Place inflow positioned children.
         this._placeInFlowPositionedChildren(inlineContainer);
-        this._placeOutOfFlowDescendants(inlineContainer);
     }
 
 
     _handleInlineBlockContainer(inlineBlockContainer) {
         ASSERT(inlineBlockContainer.establishesFormattingContext());
-        this._adjustLineForInlineContainerStart(inlineBlockContainer);
-        // TODO: auto width/height
         let displayBox = this.displayBox(inlineBlockContainer);
+
+        // TODO: auto width/height
+        this._adjustLineForInlineContainerStart(inlineBlockContainer);
         displayBox.setWidth(Utils.width(inlineBlockContainer) + Utils.computedHorizontalBorderAndPadding(inlineBlockContainer.node()));
-        displayBox.setHeight(Utils.height(inlineBlockContainer) + Utils.computedVerticalBorderAndPadding(inlineBlockContainer.node()));
         this.layoutState().layout(inlineBlockContainer);
-        this._line().addInlineContainerBox(displayBox.size());
+        displayBox.setHeight(Utils.height(inlineBlockContainer) + Utils.computedVerticalBorderAndPadding(inlineBlockContainer.node()));
         this._adjustLineForInlineContainerEnd(inlineBlockContainer);
+
+        this._line().addInlineContainerBox(displayBox.size());
         this._removeFromLayoutQueue(inlineBlockContainer);
         this._addToLayoutQueue(inlineBlockContainer.nextInFlowOrFloatSibling());
     }
@@ -150,10 +151,6 @@ class InlineFormattingContext extends FormattingContext {
     _adjustLineForInlineContainerEnd(inlineContainer) {
         let offset = this.marginRight(inlineContainer) + Utils.computedBorderAndPaddingRight(inlineContainer.node());
         this._line().adjustWithOffset(offset);
-    }
-
-    _placeOutOfFlowDescendants(container) {
-
     }
 
     _commitLine() {
