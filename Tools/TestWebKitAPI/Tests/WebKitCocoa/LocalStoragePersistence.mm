@@ -78,7 +78,7 @@ TEST(WKWebView, LocalStorageEmptyString)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         receivedScriptMessage = false;
         RetainPtr<NSString> string1 = (NSString *)[lastScriptMessage body];
-        EXPECT_WK_STREQ(@"", string1.get());
+        EXPECT_WK_STREQ(@"setItem EmptyString", string1.get());
     
         // Ditch this web view (ditch the in-memory local storage).
         webView = nil;

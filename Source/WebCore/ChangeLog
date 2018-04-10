@@ -1,3 +1,24 @@
+2018-04-09  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION(r229929): localStorage is broken for WebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=184382
+        <rdar://problem/39257355>
+
+        Reviewed by Chris Dumez.
+
+        Removed an if condition that caused false positive cases of database error. As per 
+        https://www.sqlite.org/c3ref/errcode.html, return value of sqlite3_errcode() is undefined
+        on successful API call, so we should not use the code to check if there is an error. We
+        should only use it when there is an error.
+        After moving this condition, LocalStorage might return empty string instead of NULL on
+        sqlite3_column_blob() error.
+
+        Modified a test to cover this case: 
+        TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::getColumnBlobAsString):
+
 2018-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         WebCore::EventHandler::targetPositionInWindowForSelectionAutoscroll is directly accessing NSScreen

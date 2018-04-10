@@ -7,10 +7,10 @@
   if (!localStorage.getItem(testKey)) {
     localStorage.setItem(key, value);
     localStorage.setItem(testKey, 'test');
+    window.webkit.messageHandlers.testHandler.postMessage("setItem " + key);
+  } else {
+    window.webkit.messageHandlers.testHandler.postMessage("" + localStorage.getItem(key));
   }
-    
-  var result = localStorage.getItem(key);
-  window.webkit.messageHandlers.testHandler.postMessage("" + result);
 </script>
 </body>
 </html>

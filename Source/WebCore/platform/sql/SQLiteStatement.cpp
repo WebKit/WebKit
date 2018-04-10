@@ -383,8 +383,6 @@ String SQLiteStatement::getColumnBlobAsString(int col)
         return String();
 
     const void* blob = sqlite3_column_blob(m_statement, col);
-    if (m_database.lastError() != SQLITE_OK)
-        return String();
     if (!blob)
         return emptyString();
 
