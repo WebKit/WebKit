@@ -1,3 +1,15 @@
+2018-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add missing availability macros after r230462
+        https://bugs.webkit.org/show_bug.cgi?id=184426
+
+        Reviewed by Timothy Hatcher.
+
+        Annotate new SPI added in r230462 with the appropriate availability macros.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         Add ProcessPrivilege assertions to places that access NSApp

@@ -82,7 +82,7 @@
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (copy, nonatomic) NSColor *underlayColor;
 
-@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor;
+@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 #if WK_API_ENABLED
 @property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_API_AVAILABLE(macosx(10.11));

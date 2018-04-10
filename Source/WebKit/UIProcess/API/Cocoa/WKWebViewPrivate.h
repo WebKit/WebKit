@@ -260,7 +260,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, setter=_setRubberBandingEnabled:) _WKRectEdge _rubberBandingEnabled WK_API_AVAILABLE(macosx(10.13.4));
 
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
-@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor;
+@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground;
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 
