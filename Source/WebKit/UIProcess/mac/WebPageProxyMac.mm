@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,7 @@
 #import <WebCore/ValidationBubble.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/text/StringConcatenate.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
@@ -99,16 +100,19 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 
 void WebPageProxy::getIsSpeaking(bool& isSpeaking)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     isSpeaking = [NSApp isSpeaking];
 }
 
 void WebPageProxy::speak(const String& string)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp speakString:nsStringFromWebCoreString(string)];
 }
 
 void WebPageProxy::stopSpeaking()
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp stopSpeaking:nil];
 }
 
@@ -608,6 +612,7 @@ _WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 void WebPageProxy::startDisplayLink(unsigned observerID)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     if (!m_displayLink) {
         uint32_t displayID = [[[[platformWindow() screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue];
         m_displayLink = std::make_unique<DisplayLink>(displayID, *this);

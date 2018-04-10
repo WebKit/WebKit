@@ -69,6 +69,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjcRuntimeExtras.h>
+#include <wtf/ProcessPrivilege.h>
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 #import <WebKitAdditions/EventHandlerMacGesture.cpp>
@@ -200,6 +201,7 @@ static bool lastEventIsMouseUp()
     // It's not clear in what cases this is helpful now -- it's possible it can be removed. 
 
     ASSERT([NSApp isRunning]);
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
@@ -569,6 +571,8 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
     FrameView* view = m_frame.view();
     if (!view)
         return;
+
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

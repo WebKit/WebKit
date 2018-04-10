@@ -1,3 +1,49 @@
+2018-04-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Add ProcessPrivilege assertions to places that access NSApp
+        https://bugs.webkit.org/show_bug.cgi?id=184322
+        <rdar://problem/39194560>
+
+        Reviewed by Per Arne Vollan.
+
+        Add ProcessPrivilege assertions to places where we interact with NSApp so
+        that we can prevent accidentally using them in the WebContent process.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::stopNSAppRunLoop):
+        * Shared/mac/HangDetectionDisablerMac.mm:
+        (WebKit::setClientsMayIgnoreEvents):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::pluginFocusOrWindowFocusChanged):
+        (WebKit::WebViewImpl::validateUserInterfaceItem):
+        (WebKit::WebViewImpl::startSpeaking):
+        (WebKit::WebViewImpl::stopSpeaking):
+        (WebKit::applicationFlagsForDrag):
+        (WebKit::WebViewImpl::doneWithKeyEvent):
+        * UIProcess/Gamepad/mac/UIGamepadProviderMac.mm:
+        (WebKit::UIGamepadProvider::platformWebPageProxyForGamepadInput):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::enterFullscreen):
+        (WebKit::PluginProcessProxy::beginModal):
+        (WebKit::PluginProcessProxy::endModal):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::~DisplayLink):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::setCursor):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getIsSpeaking):
+        (WebKit::WebPageProxy::speak):
+        (WebKit::WebPageProxy::stopSpeaking):
+        (WebKit::WebPageProxy::startDisplayLink):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+
 2018-04-09  John Wilander  <wilander@apple.com>
 
         Refactor Ignore HSTS code

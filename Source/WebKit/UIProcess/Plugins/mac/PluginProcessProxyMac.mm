@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #import <mach-o/dyld.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <spawn.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/text/CString.h>
 
 @interface WKPlaceholderModalWindow : NSWindow 
@@ -131,6 +132,7 @@ void PluginProcessProxy::setFullscreenWindowIsShowing(bool fullscreenWindowIsSho
 
 void PluginProcessProxy::enterFullscreen()
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     // Get the current presentation options.
     m_preFullscreenAppPresentationOptions = [NSApp presentationOptions];
 
@@ -191,7 +193,8 @@ void PluginProcessProxy::beginModal()
 {
     ASSERT(!m_placeholderWindow);
     ASSERT(!m_activationObserver);
-    
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+
     m_placeholderWindow = adoptNS([[WKPlaceholderModalWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1, 1) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [m_placeholderWindow setReleasedWhenClosed:NO];
     
@@ -212,7 +215,8 @@ void PluginProcessProxy::endModal()
 {
     ASSERT(m_placeholderWindow);
     ASSERT(m_activationObserver);
-    
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
     m_activationObserver = nullptr;
     

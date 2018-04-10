@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,7 @@
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <wtf/ProcessPrivilege.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -160,6 +161,7 @@ NSWindow *PageClientImpl::activeWindow() const
 
 bool PageClientImpl::isViewWindowActive()
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSWindow *activeViewWindow = activeWindow();
     return activeViewWindow.isKeyWindow || [NSApp keyWindow] == activeViewWindow;
 }
@@ -290,6 +292,7 @@ void PageClientImpl::didChangeContentSize(const WebCore::IntSize& newSize)
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     // FIXME: Would be nice to share this code with WebKit1's WebChromeClient.
 
     // The Web process may have asked to change the cursor when the view was in an active window, but

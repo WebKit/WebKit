@@ -182,6 +182,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #if PLATFORM(MAC)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     parameters.accessibilityEnhancedUserInterfaceEnabled = [[NSApp accessibilityAttributeValue:@"AXEnhancedUserInterface"] boolValue];
 #pragma clang diagnostic pop
 #else

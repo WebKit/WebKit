@@ -1,3 +1,22 @@
+2018-04-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Add ProcessPrivilege assertions to places that access NSApp
+        https://bugs.webkit.org/show_bug.cgi?id=184322
+        <rdar://problem/39194560>
+
+        Reviewed by Per Arne Vollan.
+
+        Add ProcessPrivilege assertions to places where we interact with NSApp so
+        that we can prevent accidentally using them in the WebContent process.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::lastEventIsMouseUp):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        * platform/mac/EventLoopMac.mm:
+        (WebCore::EventLoop::cycle):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::setDragImage):
+
 2018-04-09  John Wilander  <wilander@apple.com>
 
         Refactor Ignore HSTS code
