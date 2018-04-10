@@ -14043,7 +14043,8 @@ private:
         if (edge->hasConstant()) {
             JSValue value = edge->asJSValue();
             if (!value.isInt32()) {
-                terminate(Uncountable);
+                if (mayHaveTypeCheck(edge.useKind()))
+                    terminate(Uncountable);
                 return m_out.int32Zero;
             }
             LValue result = m_out.constInt32(value.asInt32());
@@ -14074,7 +14075,8 @@ private:
         }
 
         DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecInt32Only), provenType(edge));
-        terminate(Uncountable);
+        if (mayHaveTypeCheck(edge.useKind()))
+            terminate(Uncountable);
         return m_out.int32Zero;
     }
     
@@ -14108,7 +14110,8 @@ private:
         }
 
         DFG_ASSERT(m_graph, m_node, !provenType(edge), provenType(edge));
-        terminate(Uncountable);
+        if (mayHaveTypeCheck(edge.useKind()))
+            terminate(Uncountable);
         return m_out.int64Zero;
     }
     
@@ -14160,7 +14163,8 @@ private:
         if (edge->op() == JSConstant) {
             FrozenValue* value = edge->constant();
             if (!value->value().isCell()) {
-                terminate(Uncountable);
+                if (mayHaveTypeCheck(edge.useKind()))
+                    terminate(Uncountable);
                 return m_out.intPtrZero;
             }
             LValue result = frozenPointer(value);
@@ -14177,7 +14181,8 @@ private:
         }
         
         DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecCellCheck), provenType(edge));
-        terminate(Uncountable);
+        if (mayHaveTypeCheck(edge.useKind()))
+            terminate(Uncountable);
         return m_out.intPtrZero;
     }
     
@@ -14269,7 +14274,8 @@ private:
         if (edge->hasConstant()) {
             JSValue value = edge->asJSValue();
             if (!value.isBoolean()) {
-                terminate(Uncountable);
+                if (mayHaveTypeCheck(edge.useKind()))
+                    terminate(Uncountable);
                 return m_out.booleanFalse;
             }
             LValue result = m_out.constBool(value.asBoolean());
@@ -14290,9 +14296,10 @@ private:
             setBoolean(edge.node(), result);
             return result;
         }
-        
+
         DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecBoolean), provenType(edge));
-        terminate(Uncountable);
+        if (mayHaveTypeCheck(edge.useKind()))
+            terminate(Uncountable);
         return m_out.booleanFalse;
     }
     
@@ -14304,7 +14311,8 @@ private:
         if (isValid(value))
             return value.value();
         DFG_ASSERT(m_graph, m_node, !provenType(edge), provenType(edge));
-        terminate(Uncountable);
+        if (mayHaveTypeCheck(edge.useKind()))
+            terminate(Uncountable);
         return m_out.doubleZero;
     }
     
@@ -14763,6 +14771,9 @@ private:
     
     void speculateCellOrOther(Edge edge)
     {
+        if (shouldNotHaveTypeCheck(edge.useKind()))
+            return;
+        
         LValue value = lowJSValue(edge, ManualOperandSpeculation);
 
         LBasicBlock isNotCell = m_out.newBlock();
@@ -15172,6 +15183,9 @@ private:
     
     void speculateStringOrOther(Edge edge, LValue value)
     {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        
         LBasicBlock cellCase = m_out.newBlock();
         LBasicBlock notCellCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
