@@ -194,7 +194,8 @@ void StorageProcess::initializeWebsiteDataStore(const StorageProcessCreationPara
     });
     if (addResult.isNewEntry) {
         SandboxExtension::consumePermanently(parameters.indexedDatabaseDirectoryExtensionHandle);
-        postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
+        if (!parameters.indexedDatabaseDirectory.isEmpty())
+            postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.indexedDatabaseDirectory));
     }
 #endif
 #if ENABLE(SERVICE_WORKER)
@@ -206,7 +207,8 @@ void StorageProcess::initializeWebsiteDataStore(const StorageProcessCreationPara
     });
     if (addResult.isNewEntry) {
         SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-        postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.serviceWorkerRegistrationDirectory));
+        if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
+            postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.serviceWorkerRegistrationDirectory));
     }
 
     for (auto& scheme : parameters.urlSchemesServiceWorkersCanHandle)

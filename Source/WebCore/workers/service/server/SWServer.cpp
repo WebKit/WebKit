@@ -165,7 +165,8 @@ void SWServer::removeRegistration(const ServiceWorkerRegistrationKey& key)
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 
     m_originStore->remove(topOrigin);
-    m_registrationStore.removeRegistration(*registration);
+    if (m_registrationStore)
+        m_registrationStore->removeRegistration(*registration);
 }
 
 Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL)
@@ -202,7 +203,8 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
     ASSERT(m_registrationsByID.isEmpty());
     m_pendingContextDatas.clear();
     m_originStore->clearAll();
-    m_registrationStore.clearAll(WTFMove(completionHandler));
+    if (m_registrationStore)
+        m_registrationStore->clearAll(WTFMove(completionHandler));
 }
 
 void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler<void()>&& completionHandler)
@@ -240,7 +242,8 @@ void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler
     for (auto* registration : registrationsToRemove)
         registration->clear();
 
-    m_registrationStore.flushChanges(WTFMove(completionHandler));
+    if (m_registrationStore)
+        m_registrationStore->flushChanges(WTFMove(completionHandler));
 }
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
@@ -271,9 +274,14 @@ void SWServer::Connection::syncTerminateWorker(ServiceWorkerIdentifier identifie
 
 SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registrationDatabaseDirectory, PAL::SessionID sessionID)
     : m_originStore(WTFMove(originStore))
-    , m_registrationStore(*this, WTFMove(registrationDatabaseDirectory))
     , m_sessionID(sessionID)
 {
+    ASSERT(!registrationDatabaseDirectory.isEmpty() || m_sessionID.isEphemeral());
+    if (!m_sessionID.isEphemeral())
+        m_registrationStore = std::make_unique<RegistrationStore>(*this, WTFMove(registrationDatabaseDirectory));
+    else
+        registrationStoreImportComplete();
+
     UNUSED_PARAM(registrationDatabaseDirectory);
     allServers().add(this);
 }
@@ -406,7 +414,8 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
     if (!registration)
         return;
 
-    m_registrationStore.updateRegistration(worker.contextData());
+    if (m_registrationStore)
+        m_registrationStore->updateRegistration(worker.contextData());
     registration->didFinishActivation(worker.identifier());
 }
 

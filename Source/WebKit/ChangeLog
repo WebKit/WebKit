@@ -1,3 +1,18 @@
+2018-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Avoid constructing a service worker RegistrationStore for private sessions
+        https://bugs.webkit.org/show_bug.cgi?id=184463
+        <rdar://problem/36613948>
+
+        Reviewed by Youenn Fablet.
+
+        Avoid constructing a service worker RegistrationStore for private sessions since there
+        is no need for persistence and the registrationDatabaseDirectory is the empty string in
+        such cases.
+
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::initializeWebsiteDataStore):
+
 2018-04-10  Andy Estes  <aestes@apple.com>
 
         [iOS] Navigate to URL and page number annotations in WKPDFView

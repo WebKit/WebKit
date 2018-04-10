@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerData.h"
 #include "ServiceWorkerIdentifier.h"

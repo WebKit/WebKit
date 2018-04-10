@@ -29,7 +29,6 @@
 
 #include "ClientOrigin.h"
 #include "DocumentIdentifier.h"
-#include "RegistrationStore.h"
 #include "SWServerWorker.h"
 #include "SecurityOriginData.h"
 #include "ServiceWorkerClientData.h"
@@ -49,6 +48,7 @@
 
 namespace WebCore {
 
+class RegistrationStore;
 class SWOriginStore;
 class SWServerJobQueue;
 class SWServerRegistration;
@@ -228,7 +228,7 @@ private:
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerRegistrationIdentifier> m_clientToControllingRegistration;
 
     UniqueRef<SWOriginStore> m_originStore;
-    RegistrationStore m_registrationStore;
+    std::unique_ptr<RegistrationStore> m_registrationStore;
     HashMap<SecurityOriginData, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
     HashMap<SecurityOriginData, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
