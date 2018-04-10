@@ -1,3 +1,31 @@
+2018-04-10  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r227341 and r227742): AI and clobberize should be precise and consistent about the effectfulness of CompareEq
+        https://bugs.webkit.org/show_bug.cgi?id=184455
+
+        Reviewed by Michael Saboff.
+        
+        LICM is sort of an assertion that AI is as precise as clobberize about effects. If clobberize
+        says that something is not effectful, then LICM will try to hoist it. But LICM's AI hack
+        (AtTailAbstractState) cannot handle hoisting of things that have effects. So, if AI thinks that
+        the thing being hoisted does have effects, then we get a crash.
+        
+        In r227341, we incorrectly told AI that CompareEq(Untyped:, _) is effectful. In fact, only
+        ComapreEq(Untyped:, Untyped:) is effectful, and clobberize knew this already. As a result, LICM
+        would blow up if we hoisted CompareEq(Untyped:, Other:), which clobberize knew wasn't
+        effectful.
+        
+        Instead of fixing this by making AI precise, in r227742 we made matters worse by then breaking
+        clobberize to also think that CompareEq(Untyped:, _) is effectful.
+        
+        This fixes the whole situation by teaching both clobberize and AI that the only effectful form
+        of CompareEq is ComapreEq(Untyped:, Untyped:).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2018-04-09  Filip Pizlo  <fpizlo@apple.com>
 
         Executing known edge types may reveal a contradiction causing us to emit an exit at a node that is not allowed to exit
