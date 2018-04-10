@@ -1,3 +1,21 @@
+2018-04-09  John Wilander  <wilander@apple.com>
+
+        Refactor Ignore HSTS code
+        https://bugs.webkit.org/show_bug.cgi?id=184433
+        <rdar://problem/39298238>
+
+        Reviewed by Darin Adler.
+
+        This patch refactors our ignore HSTS code. The convenience functions are moved
+        out of CFNetwork SPI in PAL, and into where they are used. It also switches
+        from performSelector: calls to straight function calls, after checking that
+        there is a responder.
+
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::schemeWasUpgradedDueToDynamicHSTS):
+            Add convenience function here since it was moved out of
+            CFNetworkSPI.h.
+
 2018-04-09  Brady Eidson  <beidson@apple.com>
 
         Expand WebCore policy concept of "shouldContinue" to allow for more than true/false

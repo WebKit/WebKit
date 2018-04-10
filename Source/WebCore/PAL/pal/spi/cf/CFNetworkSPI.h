@@ -337,24 +337,4 @@ WTF_EXTERN_C_END
 - (void)_setMIMEType:(NSString *)type;
 @end
 
-static bool schemeWasUpgradedDueToDynamicHSTS(NSURLRequest *request)
-{
-    if ([request respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)])
-        return [request performSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)];
-    return false;
-}
-
-static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
-{
-    if ([request respondsToSelector:@selector(_setIgnoreHSTS:)])
-        [request performSelector:@selector(_setIgnoreHSTS:) withObject:[NSNumber numberWithBool:ignoreHSTS]];
-}
-
-static bool ignoreHSTS(NSURLRequest *request)
-{
-    if ([request respondsToSelector:@selector(_ignoreHSTS)])
-        return [request performSelector:@selector(_ignoreHSTS)];
-    return false;
-}
-
 #endif // defined(__OBJC__)

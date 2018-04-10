@@ -182,6 +182,24 @@ static NSURLRequest* downgradeRequest(NSURLRequest *request)
     ASSERT_NOT_REACHED();
     return request;
 }
+
+static bool schemeWasUpgradedDueToDynamicHSTS(NSURLRequest *request)
+{
+    return [request respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)]
+        && [request _schemeWasUpgradedDueToDynamicHSTS];
+}
+
+static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
+{
+    if ([request respondsToSelector:@selector(_setIgnoreHSTS:)])
+        [request _setIgnoreHSTS:ignoreHSTS];
+}
+
+static bool ignoreHSTS(NSURLRequest *request)
+{
+    return [request respondsToSelector:@selector(_ignoreHSTS)]
+        && [request _ignoreHSTS];
+}
 #endif
 
 static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURLRequest *request, bool shouldIgnoreHSTS)
