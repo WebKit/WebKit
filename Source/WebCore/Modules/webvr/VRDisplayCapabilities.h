@@ -39,10 +39,10 @@ public:
         return adoptRef(*new VRDisplayCapabilities(capabilityFlags));
     }
 
-    bool hasPosition() const { return m_flags & VRDisplayCapabilityFlag::Position; }
-    bool hasOrientation() const { return m_flags & VRDisplayCapabilityFlag::Orientation; }
-    bool hasExternalDisplay() const { return m_flags & VRDisplayCapabilityFlag::ExternalDisplay; }
-    bool canPresent() const { return m_flags & VRDisplayCapabilityFlag::Present; }
+    bool hasPosition() const { return m_flags & VRDisplayCapabilityFlagPosition; }
+    bool hasOrientation() const { return m_flags & VRDisplayCapabilityFlagOrientation; }
+    bool hasExternalDisplay() const { return m_flags & VRDisplayCapabilityFlagExternalDisplay; }
+    bool canPresent() const { return m_flags & VRDisplayCapabilityFlagPresent; }
     unsigned maxLayer() const { return canPresent() ? 1 : 0; }
 
 private:

@@ -1,5 +1,20 @@
 2018-04-10  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed build fix.
+
+        Those enum value names were too generic and would cause conflicts.
+
+        * Modules/webvr/VRDisplayCapabilities.h:
+        (WebCore::VRDisplayCapabilities::hasPosition const):
+        (WebCore::VRDisplayCapabilities::hasOrientation const):
+        (WebCore::VRDisplayCapabilities::hasExternalDisplay const):
+        (WebCore::VRDisplayCapabilities::canPresent const):
+        * platform/vr/VRPlatformDisplay.h:
+        * platform/vr/openvr/VRPlatformDisplayOpenVR.cpp:
+        (WebCore::VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR):
+
+2018-04-10  Chris Dumez  <cdumez@apple.com>
+
         Avoid constructing a service worker RegistrationStore for private sessions
         https://bugs.webkit.org/show_bug.cgi?id=184463
         <rdar://problem/36613948>

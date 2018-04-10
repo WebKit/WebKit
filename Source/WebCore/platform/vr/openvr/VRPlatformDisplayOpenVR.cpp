@@ -48,7 +48,7 @@ VRPlatformDisplayOpenVR::VRPlatformDisplayOpenVR(vr::IVRSystem* system, vr::IVRC
     m_displayInfo.setDisplayName(stringBuilder.toString());
     m_displayInfo.setIsMounted(false);
     // FIXME: We're assuming an HTC Vive HMD here. Get this info from OpenVR?.
-    m_displayInfo.setCapabilityFlags(VRDisplayCapabilityFlag::None | VRDisplayCapabilityFlag::Position | VRDisplayCapabilityFlag::Orientation | VRDisplayCapabilityFlag::ExternalDisplay | VRDisplayCapabilityFlag::Present);
+    m_displayInfo.setCapabilityFlags(VRDisplayCapabilityFlagNone | VRDisplayCapabilityFlagPosition | VRDisplayCapabilityFlagOrientation | VRDisplayCapabilityFlagExternalDisplay | VRDisplayCapabilityFlagPresent);
 
     m_compositor->SetTrackingSpace(vr::TrackingUniverseSeated);
 

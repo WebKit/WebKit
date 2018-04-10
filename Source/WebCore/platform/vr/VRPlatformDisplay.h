@@ -31,11 +31,11 @@ namespace WebCore {
 typedef unsigned VRDisplayCapabilityFlags;
 
 enum VRDisplayCapabilityFlag {
-    None = 0,
-    Position = 1 << 1,
-    Orientation = 1 << 2,
-    ExternalDisplay = 1 << 3,
-    Present = 1 << 4
+    VRDisplayCapabilityFlagNone = 0,
+    VRDisplayCapabilityFlagPosition = 1 << 1,
+    VRDisplayCapabilityFlagOrientation = 1 << 2,
+    VRDisplayCapabilityFlagExternalDisplay = 1 << 3,
+    VRDisplayCapabilityFlagPresent = 1 << 4
 };
 
 /* The purpose of this class is to encapsulate all the info about the display in a single class/data
