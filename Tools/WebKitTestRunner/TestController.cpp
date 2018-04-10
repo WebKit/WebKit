@@ -2420,9 +2420,12 @@ void TestController::removeAllSessionCredentials()
 {
 }
 
+void TestController::getAllStorageAccessEntries()
+{
+}
+
 #endif
 
-#if PLATFORM(COCOA) && WK_API_ENABLED
 struct ClearServiceWorkerRegistrationsCallbackContext {
     explicit ClearServiceWorkerRegistrationsCallbackContext(TestController& controller)
         : testController(controller)
@@ -2439,20 +2442,16 @@ static void clearServiceWorkerRegistrationsCallback(void* userData)
     context->done = true;
     context->testController.notifyDone();
 }
-#endif
 
 void TestController::clearServiceWorkerRegistrations()
 {
-#if PLATFORM(COCOA) && WK_API_ENABLED
     auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
     ClearServiceWorkerRegistrationsCallbackContext context(*this);
 
     WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore, &context, clearServiceWorkerRegistrationsCallback);
     runUntil(context.done, noTimeout);
-#endif
 }
 
-#if PLATFORM(COCOA) && WK_API_ENABLED
 struct ClearDOMCacheCallbackContext {
     explicit ClearDOMCacheCallbackContext(TestController& controller)
         : testController(controller)
@@ -2469,29 +2468,24 @@ static void clearDOMCacheCallback(void* userData)
     context->done = true;
     context->testController.notifyDone();
 }
-#endif
 
 void TestController::clearDOMCache(WKStringRef origin)
 {
-#if PLATFORM(COCOA) && WK_API_ENABLED
     auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
     ClearDOMCacheCallbackContext context(*this);
 
     auto cacheOrigin = adoptWK(WKSecurityOriginCreateFromString(origin));
     WKWebsiteDataStoreRemoveFetchCacheForOrigin(websiteDataStore, cacheOrigin.get(), &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
-#endif
 }
 
 void TestController::clearDOMCaches()
 {
-#if PLATFORM(COCOA) && WK_API_ENABLED
     auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
     ClearDOMCacheCallbackContext context(*this);
 
     WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore, &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
-#endif
 }
 
 struct FetchCacheOriginsCallbackContext {
@@ -2828,12 +2822,5 @@ void TestController::statisticsResetToConsistentState()
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
     WKWebsiteDataStoreStatisticsResetToConsistentState(dataStore);
 }
-
-#if !PLATFORM(COCOA)
-void TestController::getAllStorageAccessEntries()
-{
-    // FIXME: Implement C API version of this test.
-}
-#endif
 
 } // namespace WTR

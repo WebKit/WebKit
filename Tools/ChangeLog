@@ -1,3 +1,31 @@
+2018-04-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        WKTR: Enable DOM cache, SW registration directory cleanup on non-Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=184414
+
+        Reviewed by Michael Catanzaro.
+
+        Enable clearServiceWorkerRegistrations(), clearDOMCache() and
+        clearDOMCaches() implementations in WebKitTestRunner's TestController
+        class for non-Cocoa platforms. Implementations depend on the generic
+        WK2 C API that other ports can leverage as well.
+
+        The clearDOMCache() and clearDOMCaches() calls are now operational for
+        tests that invoke them. clearServiceWorkerRegistrations() and
+        clearDOMCaches() are also called between each test, cleaning up relevant
+        resources.
+
+        The TestController::getAllStorageAccessEntries() stub for non-Cocoa
+        platforms is moved into the main !PLATFORM(COCOA) block.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::getAllStorageAccessEntries):
+        (WTR::clearServiceWorkerRegistrationsCallback):
+        (WTR::TestController::clearServiceWorkerRegistrations):
+        (WTR::clearDOMCacheCallback):
+        (WTR::TestController::clearDOMCache):
+        (WTR::TestController::clearDOMCaches):
+
 2018-04-09  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Add support for relatively positioned containers in inline formatting context.
