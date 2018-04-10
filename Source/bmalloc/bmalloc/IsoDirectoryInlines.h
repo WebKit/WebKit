@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,8 @@ EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligibl
     m_firstEligible = pageIndex;
     if (pageIndex >= numPages)
         return EligibilityKind::Full;
+
+    m_highWatermark = std::max(pageIndex, m_highWatermark);
     
     Scavenger& scavenger = *PerProcess<Scavenger>::get();
     scavenger.didStartGrowing();
@@ -74,6 +76,9 @@ EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligibl
 
         m_committed[pageIndex] = true;
         this->m_heap.didCommit(page, IsoPageBase::pageSize);
+    } else {
+        if (m_empty[pageIndex])
+            this->m_heap.isNoLongerFreeable(page, IsoPageBase::pageSize);
     }
     
     RELEASE_BASSERT(page);
@@ -100,6 +105,8 @@ void IsoDirectory<Config, passedNumPages>::didBecome(IsoPage<Config>* page, IsoP
     case IsoPageTrigger::Empty:
         if (verbose)
             fprintf(stderr, "%p: %p did become empty.\n", this, page);
+        BASSERT(!!m_committed[pageIndex]);
+        this->m_heap.isNowFreeable(page, IsoPageBase::pageSize);
         m_empty[pageIndex] = true;
         PerProcess<Scavenger>::get()->schedule(IsoPageBase::pageSize);
         return;
@@ -114,8 +121,19 @@ void IsoDirectory<Config, passedNumPages>::didDecommit(unsigned index)
     // to be a frequently executed path, in the sense that decommitting perf will be dominated by the
     // syscall itself (which has to do many hard things).
     std::lock_guard<Mutex> locker(this->m_heap.lock);
+    BASSERT(!!m_committed[index]);
+    this->m_heap.isNoLongerFreeable(m_pages[index], IsoPageBase::pageSize);
     m_committed[index] = false;
     this->m_heap.didDecommit(m_pages[index], IsoPageBase::pageSize);
+}
+
+template<typename Config, unsigned passedNumPages>
+void IsoDirectory<Config, passedNumPages>::scavengePage(size_t index, Vector<DeferredDecommit>& decommits)
+{
+    // Make sure that this page is now off limits.
+    m_empty[index] = false;
+    m_eligible[index] = false;
+    decommits.push(DeferredDecommit(this, m_pages[index], index));
 }
 
 template<typename Config, unsigned passedNumPages>
@@ -123,21 +141,20 @@ void IsoDirectory<Config, passedNumPages>::scavenge(Vector<DeferredDecommit>& de
 {
     (m_empty & m_committed).forEachSetBit(
         [&] (size_t index) {
-            // Make sure that this page is now off limits.
-            m_empty[index] = false;
-            m_eligible[index] = false;
-            decommits.push(DeferredDecommit(this, m_pages[index], index));
+            scavengePage(index, decommits);
         });
+    m_highWatermark = 0;
 }
 
 template<typename Config, unsigned passedNumPages>
-size_t IsoDirectory<Config, passedNumPages>::freeableMemory()
+void IsoDirectory<Config, passedNumPages>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
 {
-    size_t result = 0;
-    (m_empty & m_committed).forEachSetBit([&] (size_t) {
-        result += IsoPageBase::pageSize;
-    });
-    return result;
+    (m_empty & m_committed).forEachSetBit(
+        [&] (size_t index) {
+            if (index > m_highWatermark)
+                scavengePage(index, decommits);
+        });
+    m_highWatermark = 0;
 }
 
 template<typename Config, unsigned passedNumPages>

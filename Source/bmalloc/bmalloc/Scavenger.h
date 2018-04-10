@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "Mutex.h"
 #include "PerProcess.h"
 #include "Vector.h"
+#include <chrono>
 #include <condition_variable>
 #include <mutex>
 
@@ -85,21 +86,27 @@ private:
     void setSelfQOSClass();
     void setThreadName(const char*);
 
+    std::chrono::milliseconds timeSinceLastFullScavenge();
+    std::chrono::milliseconds timeSinceLastPartialScavenge();
+    void partialScavenge();
+
     std::atomic<State> m_state { State::Sleep };
     size_t m_scavengerBytes { 0 };
     bool m_isProbablyGrowing { false };
     
     Mutex m_mutex;
+    Mutex m_scavengingMutex;
     std::condition_variable_any m_condition;
 
     std::thread m_thread;
+    std::chrono::steady_clock::time_point m_lastFullScavengeTime { std::chrono::steady_clock::now() };
+    std::chrono::steady_clock::time_point m_lastPartialScavengeTime { std::chrono::steady_clock::now() };
     
 #if BOS(DARWIN)
     dispatch_source_t m_pressureHandlerDispatchSource;
     qos_class_t m_requestedScavengerThreadQOSClass { QOS_CLASS_USER_INITIATED };
 #endif
     
-    Mutex m_isoScavengeLock;
     Vector<DeferredDecommit> m_deferredDecommits;
 };
 

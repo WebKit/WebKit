@@ -60,7 +60,7 @@ void* Allocator::tryAllocate(size_t size)
     if (size <= smallMax)
         return allocate(size);
 
-    std::lock_guard<Mutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     return m_heap.tryAllocateLarge(lock, alignment, size);
 }
 
@@ -89,7 +89,7 @@ void* Allocator::allocateImpl(size_t alignment, size_t size, bool crashOnFailure
     if (size <= smallMax && alignment <= smallMax)
         return allocate(roundUpToMultipleOf(alignment, size));
 
-    std::lock_guard<Mutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     if (crashOnFailure)
         return m_heap.allocateLarge(lock, alignment, size);
     return m_heap.tryAllocateLarge(lock, alignment, size);
@@ -112,7 +112,7 @@ void* Allocator::reallocate(void* object, size_t newSize)
         break;
     }
     case ObjectType::Large: {
-        std::lock_guard<Mutex> lock(Heap::mutex());
+        std::unique_lock<Mutex> lock(Heap::mutex());
         oldSize = m_heap.largeSize(lock, object);
 
         if (newSize < oldSize && newSize > smallMax) {
@@ -153,7 +153,7 @@ BNO_INLINE void Allocator::refillAllocatorSlowCase(BumpAllocator& allocator, siz
 {
     BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
 
-    std::lock_guard<Mutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     m_deallocator.processObjectLog(lock);
     m_heap.allocateSmallBumpRanges(lock, sizeClass, allocator, bumpRangeCache, m_deallocator.lineCache(lock));
 }
@@ -168,7 +168,7 @@ BINLINE void Allocator::refillAllocator(BumpAllocator& allocator, size_t sizeCla
 
 BNO_INLINE void* Allocator::allocateLarge(size_t size)
 {
-    std::lock_guard<Mutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     return m_heap.allocateLarge(lock, alignment, size);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,16 +80,26 @@ public:
 
     std::pair<LargeRange, LargeRange> split(size_t) const;
 
+    void setEligible(bool eligible) { m_isEligible = eligible; }
+    bool isEligibile() const { return m_isEligible; }
+
     bool operator<(const void* other) const { return begin() < other; }
     bool operator<(const LargeRange& other) const { return begin() < other.begin(); }
 
 private:
     size_t m_startPhysicalSize;
     size_t m_totalPhysicalSize;
+    bool m_isEligible { true };
 };
 
 inline bool canMerge(const LargeRange& a, const LargeRange& b)
 {
+    if (!a.isEligibile() || !b.isEligibile()) {
+        // FIXME: We can make this work if we find it's helpful as long as the merged
+        // range is only eligible if a and b are eligible.
+        return false;
+    }
+
     if (a.end() == b.begin())
         return true;
     

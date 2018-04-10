@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,11 +60,13 @@ EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible()
     
     for (; m_firstEligibleDirectory; m_firstEligibleDirectory = m_firstEligibleDirectory->next) {
         EligibilityResult<Config> result = m_firstEligibleDirectory->payload.takeFirstEligible();
-        if (result.kind != EligibilityKind::Full)
+        if (result.kind != EligibilityKind::Full) {
+            m_directoryHighWatermark = std::max(m_directoryHighWatermark, m_firstEligibleDirectory->index());
             return result;
+        }
     }
     
-    auto* newDirectory = new IsoDirectoryPage<Config>(*this, m_numDirectoryPages++);
+    auto* newDirectory = new IsoDirectoryPage<Config>(*this, m_nextDirectoryPageIndex++);
     if (m_headDirectory) {
         m_tailDirectory->next = newDirectory;
         m_tailDirectory = newDirectory;
@@ -73,6 +75,7 @@ EligibilityResult<Config> IsoHeapImpl<Config>::takeFirstEligible()
         m_headDirectory = newDirectory;
         m_tailDirectory = newDirectory;
     }
+    m_directoryHighWatermark = newDirectory->index();
     m_firstEligibleDirectory = newDirectory;
     EligibilityResult<Config> result = newDirectory->payload.takeFirstEligible();
     RELEASE_BASSERT(result.kind != EligibilityKind::Full);
@@ -102,17 +105,25 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
         [&] (auto& directory) {
             directory.scavenge(decommits);
         });
+    m_directoryHighWatermark = 0;
+}
+
+template<typename Config>
+void IsoHeapImpl<Config>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
+{
+    if (!m_directoryHighWatermark)
+        m_inlineDirectory.scavengeToHighWatermark(decommits);
+    for (IsoDirectoryPage<Config>* page = m_headDirectory; page; page = page->next) {
+        if (page->index() >= m_directoryHighWatermark)
+            page->payload.scavengeToHighWatermark(decommits);
+    }
+    m_directoryHighWatermark = 0;
 }
 
 template<typename Config>
 size_t IsoHeapImpl<Config>::freeableMemory()
 {
-    size_t result = 0;
-    forEachDirectory(
-        [&] (auto& directory) {
-            result += directory.freeableMemory();
-        });
-    return result;
+    return m_freeableMemory;
 }
 
 template<typename Config>
@@ -205,6 +216,20 @@ void IsoHeapImpl<Config>::didDecommit(void* ptr, size_t bytes)
 #if ENABLE_PHYSICAL_PAGE_MAP
     m_physicalPageMap.decommit(ptr, bytes);
 #endif
+}
+
+template<typename Config>
+void IsoHeapImpl<Config>::isNowFreeable(void* ptr, size_t bytes)
+{
+    BUNUSED_PARAM(ptr);
+    m_freeableMemory += bytes;
+}
+
+template<typename Config>
+void IsoHeapImpl<Config>::isNoLongerFreeable(void* ptr, size_t bytes)
+{
+    BUNUSED_PARAM(ptr);
+    m_freeableMemory -= bytes;
 }
 
 } // namespace bmalloc

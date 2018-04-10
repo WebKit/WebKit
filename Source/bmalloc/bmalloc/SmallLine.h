@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,9 @@ namespace bmalloc {
 
 class SmallLine {
 public:
-    void ref(std::lock_guard<Mutex>&, unsigned char = 1);
-    bool deref(std::lock_guard<Mutex>&);
-    unsigned refCount(std::lock_guard<Mutex>&) { return m_refCount; }
+    void ref(std::unique_lock<Mutex>&, unsigned char = 1);
+    bool deref(std::unique_lock<Mutex>&);
+    unsigned refCount(std::unique_lock<Mutex>&) { return m_refCount; }
     
     char* begin();
     char* end();
@@ -51,13 +51,13 @@ static_assert(
 
 };
 
-inline void SmallLine::ref(std::lock_guard<Mutex>&, unsigned char refCount)
+inline void SmallLine::ref(std::unique_lock<Mutex>&, unsigned char refCount)
 {
     BASSERT(!m_refCount);
     m_refCount = refCount;
 }
 
-inline bool SmallLine::deref(std::lock_guard<Mutex>&)
+inline bool SmallLine::deref(std::unique_lock<Mutex>&)
 {
     BASSERT(m_refCount);
     --m_refCount;

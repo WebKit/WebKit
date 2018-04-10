@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ public:
     virtual ~IsoHeapImplBase();
     
     virtual void scavenge(Vector<DeferredDecommit>&) = 0;
+    virtual void scavengeToHighWatermark(Vector<DeferredDecommit>&) = 0;
     virtual size_t freeableMemory() = 0;
     virtual size_t footprint() = 0;
     
@@ -71,11 +72,8 @@ public:
     void didBecomeEligible(IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>*);
     
     void scavenge(Vector<DeferredDecommit>&) override;
+    void scavengeToHighWatermark(Vector<DeferredDecommit>&) override;
 
-    // This is only here for debugging purposes.
-    // FIXME: Make this fast so we can use it to help determine when to
-    // run the scavenger:
-    // https://bugs.webkit.org/show_bug.cgi?id=184176
     size_t freeableMemory() override;
 
     size_t footprint() override;
@@ -99,6 +97,9 @@ public:
 
     void didCommit(void* ptr, size_t bytes);
     void didDecommit(void* ptr, size_t bytes);
+
+    void isNowFreeable(void* ptr, size_t bytes);
+    void isNoLongerFreeable(void* ptr, size_t bytes);
     
     // It's almost always the caller's responsibility to grab the lock. This lock comes from the
     // PerProcess<IsoTLSDeallocatorEntry<Config>>::get()->lock. That's pretty weird, and we don't
@@ -112,10 +113,12 @@ private:
     IsoDirectoryPage<Config>* m_headDirectory { nullptr };
     IsoDirectoryPage<Config>* m_tailDirectory { nullptr };
     size_t m_footprint { 0 };
+    size_t m_freeableMemory { 0 };
 #if ENABLE_PHYSICAL_PAGE_MAP
     PhysicalPageMap m_physicalPageMap;
 #endif
-    unsigned m_numDirectoryPages { 0 };
+    unsigned m_nextDirectoryPageIndex { 1 }; // We start at 1 so that the high water mark being zero means we've only allocated in the inline directory since the last scavenge.
+    unsigned m_directoryHighWatermark { 0 };
     
     bool m_isInlineDirectoryEligible { true };
     IsoDirectoryPage<Config>* m_firstEligibleDirectory { nullptr };

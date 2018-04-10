@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,15 +38,15 @@ class SmallLine;
 
 class SmallPage : public ListNode<SmallPage> {
 public:
-    void ref(std::lock_guard<Mutex>&);
-    bool deref(std::lock_guard<Mutex>&);
-    unsigned refCount(std::lock_guard<Mutex>&) { return m_refCount; }
+    void ref(std::unique_lock<Mutex>&);
+    bool deref(std::unique_lock<Mutex>&);
+    unsigned refCount(std::unique_lock<Mutex>&) { return m_refCount; }
     
     size_t sizeClass() { return m_sizeClass; }
     void setSizeClass(size_t sizeClass) { m_sizeClass = sizeClass; }
     
-    bool hasFreeLines(std::lock_guard<Mutex>&) const { return m_hasFreeLines; }
-    void setHasFreeLines(std::lock_guard<Mutex>&, bool hasFreeLines) { m_hasFreeLines = hasFreeLines; }
+    bool hasFreeLines(std::unique_lock<Mutex>&) const { return m_hasFreeLines; }
+    void setHasFreeLines(std::unique_lock<Mutex>&, bool hasFreeLines) { m_hasFreeLines = hasFreeLines; }
     
     bool hasPhysicalPages() { return m_hasPhysicalPages; }
     void setHasPhysicalPages(bool hasPhysicalPages) { m_hasPhysicalPages = hasPhysicalPages; }
@@ -70,14 +70,14 @@ static_assert(
 
 using LineCache = std::array<List<SmallPage>, sizeClassCount>;
 
-inline void SmallPage::ref(std::lock_guard<Mutex>&)
+inline void SmallPage::ref(std::unique_lock<Mutex>&)
 {
     BASSERT(!m_slide);
     ++m_refCount;
     BASSERT(m_refCount);
 }
 
-inline bool SmallPage::deref(std::lock_guard<Mutex>&)
+inline bool SmallPage::deref(std::unique_lock<Mutex>&)
 {
     BASSERT(!m_slide);
     BASSERT(m_refCount);

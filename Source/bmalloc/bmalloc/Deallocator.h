@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,9 +47,9 @@ public:
     void deallocate(void*);
     void scavenge();
     
-    void processObjectLog(std::lock_guard<Mutex>&);
+    void processObjectLog(std::unique_lock<Mutex>&);
     
-    LineCache& lineCache(std::lock_guard<Mutex>&) { return m_lineCache; }
+    LineCache& lineCache(std::unique_lock<Mutex>&) { return m_lineCache; }
 
 private:
     bool deallocateFastCase(void*);

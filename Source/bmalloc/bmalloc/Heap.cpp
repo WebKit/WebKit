@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "Heap.h"
 
 #include "AvailableMemory.h"
+#include "BulkDecommit.h"
 #include "BumpAllocator.h"
 #include "Chunk.h"
 #include "Environment.h"
@@ -38,6 +39,7 @@
 #include "VMHeap.h"
 #include "bmalloc.h"
 #include <thread>
+#include <vector>
 
 namespace bmalloc {
 
@@ -140,20 +142,7 @@ void Heap::initializePageMetadata()
 
 size_t Heap::freeableMemory(std::lock_guard<Mutex>&)
 {
-    size_t result = 0;
-    for (auto& list : m_freePages) {
-        for (auto* chunk : list) {
-            for (auto* page : chunk->freePages()) {
-                if (page->hasPhysicalPages())
-                    result += physicalPageSizeSloppy(page->begin()->begin(), pageSize(&list - &m_freePages[0]));
-            }
-        }
-    }
-    
-    for (auto& range : m_largeFree)
-        result += range.totalPhysicalSize();
-
-    return result;
+    return m_freeableMemory;
 }
 
 size_t Heap::footprint()
@@ -162,7 +151,29 @@ size_t Heap::footprint()
     return m_footprint;
 }
 
-void Heap::scavenge(std::lock_guard<Mutex>&)
+void Heap::markAllLargeAsEligibile(std::lock_guard<Mutex>&)
+{
+    m_largeFree.markAllAsEligibile();
+    m_hasPendingDecommits = false;
+    m_condition.notify_all();
+}
+
+void Heap::decommitLargeRange(std::lock_guard<Mutex>&, LargeRange& range, BulkDecommit& decommitter)
+{
+    m_footprint -= range.totalPhysicalSize();
+    m_freeableMemory -= range.totalPhysicalSize();
+    decommitter.addLazy(range.begin(), range.size());
+    m_hasPendingDecommits = true;
+    range.setStartPhysicalSize(0);
+    range.setTotalPhysicalSize(0);
+    BASSERT(range.isEligibile());
+    range.setEligible(false);
+#if ENABLE_PHYSICAL_PAGE_MAP 
+    m_physicalPageMap.decommit(range.begin(), range.size());
+#endif
+}
+
+void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
 {
     for (auto& list : m_freePages) {
         for (auto* chunk : list) {
@@ -171,8 +182,10 @@ void Heap::scavenge(std::lock_guard<Mutex>&)
                     continue;
 
                 size_t pageSize = bmalloc::pageSize(&list - &m_freePages[0]);
-                m_footprint -= physicalPageSizeSloppy(page->begin()->begin(), pageSize);
-                vmDeallocatePhysicalPagesSloppy(page->begin()->begin(), pageSize);
+                size_t decommitSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
+                m_freeableMemory -= decommitSize;
+                m_footprint -= decommitSize;
+                decommitter.addEager(page->begin()->begin(), pageSize);
                 page->setHasPhysicalPages(false);
 #if ENABLE_PHYSICAL_PAGE_MAP 
                 m_physicalPageMap.decommit(page->begin()->begin(), pageSize);
@@ -186,18 +199,27 @@ void Heap::scavenge(std::lock_guard<Mutex>&)
             deallocateSmallChunk(list.pop(), &list - &m_chunkCache[0]);
     }
 
-    for (auto& range : m_largeFree) {
-        m_footprint -= range.totalPhysicalSize();
-        vmDeallocatePhysicalPagesSloppy(range.begin(), range.size());
-        range.setStartPhysicalSize(0);
-        range.setTotalPhysicalSize(0);
-#if ENABLE_PHYSICAL_PAGE_MAP 
-        m_physicalPageMap.decommit(range.begin(), range.size());
-#endif
+    for (LargeRange& range : m_largeFree) {
+        m_highWatermark = std::min(m_highWatermark, static_cast<void*>(range.begin()));
+        decommitLargeRange(lock, range, decommitter);
     }
+
+    m_freeableMemory = 0;
 }
 
-void Heap::deallocateLineCache(std::lock_guard<Mutex>&, LineCache& lineCache)
+void Heap::scavengeToHighWatermark(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
+{
+    void* newHighWaterMark = nullptr;
+    for (LargeRange& range : m_largeFree) {
+        if (range.begin() <= m_highWatermark)
+            newHighWaterMark = std::min(newHighWaterMark, static_cast<void*>(range.begin()));
+        else
+            decommitLargeRange(lock, range, decommitter);
+    }
+    m_highWatermark = newHighWaterMark;
+}
+
+void Heap::deallocateLineCache(std::unique_lock<Mutex>&, LineCache& lineCache)
 {
     for (auto& list : lineCache) {
         while (!list.isEmpty()) {
@@ -207,7 +229,7 @@ void Heap::deallocateLineCache(std::lock_guard<Mutex>&, LineCache& lineCache)
     }
 }
 
-void Heap::allocateSmallChunk(std::lock_guard<Mutex>& lock, size_t pageClass)
+void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
     
@@ -228,6 +250,8 @@ void Heap::allocateSmallChunk(std::lock_guard<Mutex>& lock, size_t pageClass)
             page->setHasFreeLines(lock, true);
             chunk->freePages().push(page);
         });
+
+        m_freeableMemory += chunkSize;
         
         m_scavenger->schedule(0);
 
@@ -244,19 +268,26 @@ void Heap::deallocateSmallChunk(Chunk* chunk, size_t pageClass)
     size_t size = m_largeAllocated.remove(chunk);
     size_t totalPhysicalSize = size;
 
+    size_t accountedInFreeable = 0;
+
     bool hasPhysicalPages = true;
     forEachPage(chunk, pageSize(pageClass), [&](SmallPage* page) {
+        size_t physicalSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize(pageClass));
         if (!page->hasPhysicalPages()) {
-            totalPhysicalSize -= physicalPageSizeSloppy(page->begin()->begin(), pageSize(pageClass));
+            totalPhysicalSize -= physicalSize;
             hasPhysicalPages = false;
-        }
+        } else
+            accountedInFreeable += physicalSize;
     });
+
+    m_freeableMemory -= accountedInFreeable;
+    m_freeableMemory += totalPhysicalSize;
 
     size_t startPhysicalSize = hasPhysicalPages ? size : 0;
     m_largeFree.add(LargeRange(chunk, size, startPhysicalSize, totalPhysicalSize));
 }
 
-SmallPage* Heap::allocateSmallPage(std::lock_guard<Mutex>& lock, size_t sizeClass, LineCache& lineCache)
+SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeClass, LineCache& lineCache)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
@@ -282,10 +313,13 @@ SmallPage* Heap::allocateSmallPage(std::lock_guard<Mutex>& lock, size_t sizeClas
         if (chunk->freePages().isEmpty())
             m_freePages[pageClass].remove(chunk);
 
-        if (!page->hasPhysicalPages()) {
-            size_t pageSize = bmalloc::pageSize(pageClass);
+        size_t pageSize = bmalloc::pageSize(pageClass);
+        size_t physicalSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
+        if (page->hasPhysicalPages())
+            m_freeableMemory -= physicalSize;
+        else {
             m_scavenger->scheduleIfUnderMemoryPressure(pageSize);
-            m_footprint += physicalPageSizeSloppy(page->begin()->begin(), pageSize);
+            m_footprint += physicalSize;
             vmAllocatePhysicalPagesSloppy(page->begin()->begin(), pageSize);
             page->setHasPhysicalPages(true);
 #if ENABLE_PHYSICAL_PAGE_MAP 
@@ -300,7 +334,7 @@ SmallPage* Heap::allocateSmallPage(std::lock_guard<Mutex>& lock, size_t sizeClas
     return page;
 }
 
-void Heap::deallocateSmallLine(std::lock_guard<Mutex>& lock, Object object, LineCache& lineCache)
+void Heap::deallocateSmallLine(std::unique_lock<Mutex>& lock, Object object, LineCache& lineCache)
 {
     BASSERT(!object.line()->refCount(lock));
     SmallPage* page = object.page();
@@ -316,6 +350,8 @@ void Heap::deallocateSmallLine(std::lock_guard<Mutex>& lock, Object object, Line
 
     size_t sizeClass = page->sizeClass();
     size_t pageClass = m_pageClasses[sizeClass];
+
+    m_freeableMemory += physicalPageSizeSloppy(page->begin()->begin(), pageSize(pageClass));
 
     List<SmallPage>::remove(page); // 'page' may be in any thread's line cache.
     
@@ -339,7 +375,7 @@ void Heap::deallocateSmallLine(std::lock_guard<Mutex>& lock, Object object, Line
 }
 
 void Heap::allocateSmallBumpRangesByMetadata(
-    std::lock_guard<Mutex>& lock, size_t sizeClass,
+    std::unique_lock<Mutex>& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache)
 {
@@ -403,7 +439,7 @@ void Heap::allocateSmallBumpRangesByMetadata(
 }
 
 void Heap::allocateSmallBumpRangesByObject(
-    std::lock_guard<Mutex>& lock, size_t sizeClass,
+    std::unique_lock<Mutex>& lock, size_t sizeClass,
     BumpAllocator& allocator, BumpRangeCache& rangeCache,
     LineCache& lineCache)
 {
@@ -459,7 +495,7 @@ void Heap::allocateSmallBumpRangesByObject(
     }
 }
 
-LargeRange Heap::splitAndAllocate(std::lock_guard<Mutex>&, LargeRange& range, size_t alignment, size_t size)
+LargeRange Heap::splitAndAllocate(std::unique_lock<Mutex>&, LargeRange& range, size_t alignment, size_t size)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
@@ -491,11 +527,15 @@ LargeRange Heap::splitAndAllocate(std::lock_guard<Mutex>&, LargeRange& range, si
 #endif
     }
     
-    if (prev)
+    if (prev) {
+        m_freeableMemory += prev.totalPhysicalSize();
         m_largeFree.add(prev);
+    }
 
-    if (next)
+    if (next) {
+        m_freeableMemory += next.totalPhysicalSize();
         m_largeFree.add(next);
+    }
 
     m_objectTypes.set(Chunk::get(range.begin()), ObjectType::Large);
 
@@ -503,7 +543,7 @@ LargeRange Heap::splitAndAllocate(std::lock_guard<Mutex>&, LargeRange& range, si
     return range;
 }
 
-void* Heap::tryAllocateLarge(std::lock_guard<Mutex>& lock, size_t alignment, size_t size)
+void* Heap::tryAllocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, size_t size)
 {
     RELEASE_BASSERT(isActiveHeapKind(m_kind));
 
@@ -526,6 +566,12 @@ void* Heap::tryAllocateLarge(std::lock_guard<Mutex>& lock, size_t alignment, siz
 
     LargeRange range = m_largeFree.remove(alignment, size);
     if (!range) {
+        if (m_hasPendingDecommits) {
+            m_condition.wait(lock, [&]() { return !m_hasPendingDecommits; });
+            // Now we're guaranteed we're looking at all available memory.
+            return tryAllocateLarge(lock, alignment, size);
+        }
+
         if (usingGigacage())
             return nullptr;
 
@@ -534,31 +580,34 @@ void* Heap::tryAllocateLarge(std::lock_guard<Mutex>& lock, size_t alignment, siz
             return nullptr;
         
         m_largeFree.add(range);
-
         range = m_largeFree.remove(alignment, size);
     }
 
-    return splitAndAllocate(lock, range, alignment, size).begin();
+    m_freeableMemory -= range.totalPhysicalSize();
+
+    void* result = splitAndAllocate(lock, range, alignment, size).begin();
+    m_highWatermark = std::max(m_highWatermark, result);
+    return result;
 }
 
-void* Heap::allocateLarge(std::lock_guard<Mutex>& lock, size_t alignment, size_t size)
+void* Heap::allocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, size_t size)
 {
     void* result = tryAllocateLarge(lock, alignment, size);
     RELEASE_BASSERT(result);
     return result;
 }
 
-bool Heap::isLarge(std::lock_guard<Mutex>&, void* object)
+bool Heap::isLarge(std::unique_lock<Mutex>&, void* object)
 {
     return m_objectTypes.get(Object(object).chunk()) == ObjectType::Large;
 }
 
-size_t Heap::largeSize(std::lock_guard<Mutex>&, void* object)
+size_t Heap::largeSize(std::unique_lock<Mutex>&, void* object)
 {
     return m_largeAllocated.get(object);
 }
 
-void Heap::shrinkLarge(std::lock_guard<Mutex>& lock, const Range& object, size_t newSize)
+void Heap::shrinkLarge(std::unique_lock<Mutex>& lock, const Range& object, size_t newSize)
 {
     BASSERT(object.size() > newSize);
 
@@ -569,23 +618,24 @@ void Heap::shrinkLarge(std::lock_guard<Mutex>& lock, const Range& object, size_t
     m_scavenger->schedule(size);
 }
 
-void Heap::deallocateLarge(std::lock_guard<Mutex>&, void* object)
+void Heap::deallocateLarge(std::unique_lock<Mutex>&, void* object)
 {
     if (m_debugHeap)
         return m_debugHeap->freeLarge(object);
 
     size_t size = m_largeAllocated.remove(object);
     m_largeFree.add(LargeRange(object, size, size, size));
+    m_freeableMemory += size;
     m_scavenger->schedule(size);
 }
 
 void Heap::externalCommit(void* ptr, size_t size)
 {
-    std::lock_guard<Mutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     externalCommit(lock, ptr, size);
 }
 
-void Heap::externalCommit(std::lock_guard<Mutex>&, void* ptr, size_t size)
+void Heap::externalCommit(std::unique_lock<Mutex>&, void* ptr, size_t size)
 {
     BUNUSED_PARAM(ptr);
 
@@ -597,11 +647,11 @@ void Heap::externalCommit(std::lock_guard<Mutex>&, void* ptr, size_t size)
 
 void Heap::externalDecommit(void* ptr, size_t size)
 {
-    std::lock_guard<Mutex> lock(Heap::mutex());
+    std::unique_lock<Mutex> lock(Heap::mutex());
     externalDecommit(lock, ptr, size);
 }
 
-void Heap::externalDecommit(std::lock_guard<Mutex>&, void* ptr, size_t size)
+void Heap::externalDecommit(std::unique_lock<Mutex>&, void* ptr, size_t size)
 {
     BUNUSED_PARAM(ptr);
 

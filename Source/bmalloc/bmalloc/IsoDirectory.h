@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,17 +75,14 @@ public:
     // Iterate over all empty and committed pages, and put them into the vector. This also records the
     // pages as being decommitted. It's the caller's job to do the actual decommitting.
     void scavenge(Vector<DeferredDecommit>&);
-
-    // This is only here for debugging purposes.
-    // FIXME: Make this fast so we can use it to help determine when to
-    // run the scavenger:
-    // https://bugs.webkit.org/show_bug.cgi?id=184176
-    size_t freeableMemory();
+    void scavengeToHighWatermark(Vector<DeferredDecommit>&);
 
     template<typename Func>
     void forEachCommittedPage(const Func&);
     
 private:
+    void scavengePage(size_t, Vector<DeferredDecommit>&);
+
     // NOTE: I suppose that this could be two bitvectors. But from working on the GC, I found that the
     // number of bitvectors does not matter as much as whether or not they make intuitive sense.
     Bits<numPages> m_eligible;
@@ -93,6 +90,7 @@ private:
     Bits<numPages> m_committed;
     std::array<IsoPage<Config>*, numPages> m_pages;
     unsigned m_firstEligible { 0 };
+    unsigned m_highWatermark { 0 };
 };
 
 } // namespace bmalloc

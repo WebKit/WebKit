@@ -132,6 +132,7 @@
 		4426E2831C839547008EB042 /* BSoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E2821C839547008EB042 /* BSoftLinking.h */; };
 		6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */; };
 		6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7939885B2076EEB60074A2E7 /* BulkDecommit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7939885A2076EEB50074A2E7 /* BulkDecommit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = AD0934321FCF405000E85EB5 /* BCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = AD14AD27202529A600890E3B /* ProcessCheck.h */; };
@@ -291,6 +292,7 @@
 		4426E2821C839547008EB042 /* BSoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BSoftLinking.h; path = bmalloc/darwin/BSoftLinking.h; sourceTree = "<group>"; };
 		6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AvailableMemory.cpp; path = bmalloc/AvailableMemory.cpp; sourceTree = "<group>"; };
 		6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AvailableMemory.h; path = bmalloc/AvailableMemory.h; sourceTree = "<group>"; };
+		7939885A2076EEB50074A2E7 /* BulkDecommit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BulkDecommit.h; path = bmalloc/BulkDecommit.h; sourceTree = "<group>"; };
 		795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PhysicalPageMap.h; path = bmalloc/PhysicalPageMap.h; sourceTree = "<group>"; };
 		AD0934321FCF405000E85EB5 /* BCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCompiler.h; path = bmalloc/BCompiler.h; sourceTree = "<group>"; };
 		AD14AD27202529A600890E3B /* ProcessCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessCheck.h; path = bmalloc/ProcessCheck.h; sourceTree = "<group>"; };
@@ -472,6 +474,7 @@
 		14D9DB4E17F2866E00EAAB79 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				7939885A2076EEB50074A2E7 /* BulkDecommit.h */,
 				140FA00219CE429C00FFD3C8 /* BumpRange.h */,
 				147DC6E21CA5B70B00724E8D /* Chunk.h */,
 				142B44341E2839E7001DA6E9 /* DebugHeap.cpp */,
@@ -573,6 +576,7 @@
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
 				0F7EB84D1F9541C700F1ABCB /* BMalloced.h in Headers */,
 				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
+				7939885B2076EEB60074A2E7 /* BulkDecommit.h in Headers */,
 				4426E2831C839547008EB042 /* BSoftLinking.h in Headers */,
 				14DD789C18F48D4A00950702 /* BumpAllocator.h in Headers */,
 				140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */,

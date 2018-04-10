@@ -1,3 +1,150 @@
+2018-04-10  Saam Barati  <sbarati@apple.com>
+
+        bmalloc should do partial scavenges more frequently
+        https://bugs.webkit.org/show_bug.cgi?id=184176
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds the ability for bmalloc to do a partial scavenge.
+        bmalloc will now do a partial scavenge with some frequency even
+        when the heap is growing.
+        
+        For Heap, this means tracking the high water mark of where the Heap
+        has allocated since the last scavenge. Partial scavenging is just
+        decommitting entries in the LargeMap that are past this high water
+        mark. Because we allocate in first fit order out of LargeMap, tracking
+        the high water mark is a good heuristic of how much memory a partial
+        scavenge should decommit.
+        
+        For IsoHeaps, each IsoDirectory also keeps track of its high water mark
+        for the furthest page it allocates into. Similar to Heap, we scavenge pages
+        past that high water mark. IsoHeapImpl then tracks the high water mark
+        for the IsoDirectory it allocates into. We then scavenge all directories 
+        including and past the directory high water mark. This includes scavenging
+        the inline directory when its the only thing we allocate out of since
+        the last scavenge.
+        
+        This patch also adds some other capabilities to bmalloc:
+        
+        Heaps and IsoHeaps now track how much memory is freeable. Querying
+        this number is now cheap.
+        
+        Heaps no longer hold the global lock when decommitting large ranges.
+        Instead, that range is just marked as non eligible to be allocated.
+        Then, without the lock held, the scavenger will decommit those ranges.
+        Once this is done, the scavenger will then reacquire the lock and mark
+        these ranges as eligible. This lessens lock contention between the
+        scavenger and the allocation slow path since threads that are taking an
+        allocation slow path can now allocate concurrently to the scavenger's
+        decommits. The main consideration in adding this functionality is that
+        a large allocation may fail while the scavenger is in the process of
+        decommitting memory. When the Heap fails to allocate a large range when
+        the scavenger is in the middle of a decommit, Heap will wait for the
+        Scavenger to finish and then it will try to allocate a large range again.
+        
+        Decommitting from Heap now aggregates the ranges to decommit and tries to
+        merge them together to lower the number of calls to vmDeallocatePhysicalPages.
+        This is analogous to what IsoHeaps already do.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::tryAllocate):
+        (bmalloc::Allocator::allocateImpl):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::allocateLarge):
+        * bmalloc/BulkDecommit.h: Added.
+        (bmalloc::BulkDecommit::addEager):
+        (bmalloc::BulkDecommit::addLazy):
+        (bmalloc::BulkDecommit::processEager):
+        (bmalloc::BulkDecommit::processLazy):
+        (bmalloc::BulkDecommit::add):
+        (bmalloc::BulkDecommit::process):
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::processObjectLog):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::lineCache):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::freeableMemory):
+        (bmalloc::Heap::markAllLargeAsEligibile):
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeToHighWatermark):
+        (bmalloc::Heap::deallocateLineCache):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::deallocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        (bmalloc::Heap::allocateSmallBumpRangesByObject):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::isLarge):
+        (bmalloc::Heap::largeSize):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::externalCommit):
+        (bmalloc::Heap::externalDecommit):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        (bmalloc::Heap::derefSmallLine):
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        (bmalloc::passedNumPages>::didDecommit):
+        (bmalloc::passedNumPages>::scavengePage):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::scavengeToHighWatermark):
+        (bmalloc::passedNumPages>::freeableMemory): Deleted.
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::takeFirstEligible):
+        (bmalloc::IsoHeapImpl<Config>::scavenge):
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+        (bmalloc::IsoHeapImpl<Config>::freeableMemory):
+        (bmalloc::IsoHeapImpl<Config>::isNowFreeable):
+        (bmalloc::IsoHeapImpl<Config>::isNoLongerFreeable):
+        * bmalloc/LargeMap.cpp:
+        (bmalloc::LargeMap::remove):
+        (bmalloc::LargeMap::markAllAsEligibile):
+        * bmalloc/LargeMap.h:
+        (bmalloc::LargeMap::size):
+        (bmalloc::LargeMap::at):
+        * bmalloc/LargeRange.h:
+        (bmalloc::LargeRange::setEligible):
+        (bmalloc::LargeRange::isEligibile const):
+        (bmalloc::canMerge):
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::PrintTime::PrintTime):
+        (bmalloc::PrintTime::~PrintTime):
+        (bmalloc::PrintTime::print):
+        (bmalloc::Scavenger::timeSinceLastFullScavenge):
+        (bmalloc::Scavenger::timeSinceLastPartialScavenge):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::partialScavenge):
+        (bmalloc::Scavenger::freeableMemory):
+        (bmalloc::Scavenger::threadRunLoop):
+        * bmalloc/Scavenger.h:
+        * bmalloc/SmallLine.h:
+        (bmalloc::SmallLine::refCount):
+        (bmalloc::SmallLine::ref):
+        (bmalloc::SmallLine::deref):
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::refCount):
+        (bmalloc::SmallPage::hasFreeLines const):
+        (bmalloc::SmallPage::setHasFreeLines):
+        (bmalloc::SmallPage::ref):
+        (bmalloc::SmallPage::deref):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+
 2018-04-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [bmalloc] Name Scavenger thread "bmalloc scavenger"
