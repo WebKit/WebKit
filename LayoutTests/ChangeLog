@@ -1,3 +1,12 @@
+2018-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark legacy-animation-engine/animations/animation-callback-timestamp.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=184459
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-04-10  Keith Rollin  <krollin@apple.com>
 
         http/tests/security/shape-image-cors-redirect-error-message-logging-*.html tests are flaky
