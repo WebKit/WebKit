@@ -51,7 +51,9 @@ public:
     using RequestOrError = Expected<WebCore::ResourceRequest, WebCore::ResourceError>;
     using ValidationHandler = CompletionHandler<void(RequestOrError&&)>;
     void check(WebCore::ResourceRequest&&, ValidationHandler&&);
-    void checkRedirection(WebCore::ResourceRequest&&, ValidationHandler&&);
+    void checkRedirection(WebCore::ResourceResponse&, WebCore::ResourceRequest&&, ValidationHandler&&);
+
+    WebCore::ResourceError validateResponse(WebCore::ResourceResponse&);
 
     void setCSPResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders&& headers) { m_cspResponseHeaders = WTFMove(headers); }
 #if ENABLE(CONTENT_EXTENSIONS)

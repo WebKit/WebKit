@@ -1,0 +1,4 @@
+
+PASS CORS redirection failure test 
+PASS CORS redirection success test 
+

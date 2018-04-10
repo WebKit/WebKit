@@ -64,9 +64,15 @@ void NetworkLoadChecker::check(ResourceRequest&& request, ValidationHandler&& ha
     checkRequest(WTFMove(request), WTFMove(handler));
 }
 
-void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ValidationHandler&& handler)
+void NetworkLoadChecker::checkRedirection(WebCore::ResourceResponse& redirectResponse, ResourceRequest&& request, ValidationHandler&& handler)
 {
     ASSERT(!isChecking());
+
+    auto error = validateResponse(redirectResponse);
+    if (!error.isNull()) {
+        handler(makeUnexpected(WTFMove(error)));
+        return;
+    }
 
     m_previousURL = WTFMove(m_url);
     m_url = request.url();
@@ -87,6 +93,31 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ValidationH
     }
 
     checkRequest(WTFMove(request), WTFMove(handler));
+}
+
+ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
+{
+    if (m_redirectCount)
+        response.setRedirected(true);
+
+    if (m_isSameOriginRequest) {
+        response.setTainting(ResourceResponse::Tainting::Basic);
+        return { };
+    }
+
+    if (m_mode == FetchOptions::Mode::NoCors) {
+        response.setTainting(ResourceResponse::Tainting::Opaque);
+        return { };
+    }
+
+    ASSERT(m_mode == FetchOptions::Mode::Cors);
+
+    String errorMessage;
+    if (!WebCore::passesAccessControlCheck(response, m_storedCredentialsPolicy, *m_origin, errorMessage))
+        return ResourceError { errorDomainWebKitInternal, 0, m_url, WTFMove(errorMessage), ResourceError::Type::AccessControl };
+
+    response.setTainting(ResourceResponse::Tainting::Cors);
+    return { };
 }
 
 NetworkLoadChecker::RequestOrError NetworkLoadChecker::returnError(String&& error)

@@ -1,3 +1,20 @@
+2018-04-10  Youenn Fablet  <youenn@apple.com>
+
+        Beacon redirect responses should be CORS validated
+        https://bugs.webkit.org/show_bug.cgi?id=184378
+
+        Reviewed by Chris Dumez.
+
+        Add CORS checks to any redirection response if mode is CORS.
+        Update response tainting and redirected accordingly.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::validateResponse):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+
 2018-04-10  Sihui Liu  <sihui_liu@apple.com>
 
         Loading of multipart response was cancelled because of content policy set in WebFrameLoaderClient::dispatchDecidePolicyForResponse

@@ -1004,6 +1004,8 @@ http/tests/contentextensions [ Skip ]
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 http/wpt/beacon/contentextensions [ Skip ]
 
+http/wpt/beacon/cors/cors-redirect-failure.html [ DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/149072 svg/animations/svgboolean-animation-1.html [ Pass Failure ]
 
 webkit.org/b/143085 media/track/track-mode.html [ Pass Timeout ]

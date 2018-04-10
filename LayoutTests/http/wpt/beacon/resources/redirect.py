@@ -8,9 +8,10 @@ def main(request, response):
                ("Cache-Control", "no-cache"),
                ("Pragma", "no-cache"),
                ("Access-Control-Allow-Credentials", "true")]
-    headers.append(("Access-Control-Allow-Origin", request.headers.get("Origin", "*")))
-    token = None
+    if not "disallowCorsOnResponseNotPreflight" in request.GET or request.method == "OPTIONS":
+        headers.append(("Access-Control-Allow-Origin", request.headers.get("Origin", "*")))
 
+    token = None
     if "token" in request.GET:
         token = request.GET.first("token")
         data = request.server.stash.take(token)

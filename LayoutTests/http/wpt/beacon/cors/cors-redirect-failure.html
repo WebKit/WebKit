@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SendBeacon CORS checks on redirect</title>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+  </head>
+  <body>
+    <script src="/common/utils.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+var RESOURCES_DIR = "/WebKit/beacon/resources/";
+
+function pollResult(test, id) {
+  var checkUrl = RESOURCES_DIR + "beacon-preflight.py?cmd=get&id=" + id;
+
+  return new Promise(resolve => {
+    step_timeout(test.step_func(() => {
+      fetch(checkUrl).then(response => {
+        response.json().then(body => {
+          resolve(body);
+        });
+      });
+    }), 1000);
+  });
+}
+
+function testCORSRedirectFailure(what) {
+  var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
+  var id = self.token();
+  var target = encodeURIComponent(testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id);
+
+  var testUrl = testBase + "redirect.py?redirect_status=307&disallowCorsOnResponseNotPreflight&location=" + target;
+
+  promise_test(function(test) {
+    assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
+    return pollResult(test, id) .then(result => {
+      assert_equals(result['preflight'], 0, "Received preflight")
+      assert_equals(result['beacon'], 0, "Did not receive beacon")
+    });
+  }, "CORS redirection failure test");
+}
+
+function testCORSRedirectSuccess(what) {
+  var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
+  var id = self.token();
+  var target = encodeURIComponent(testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id);
+
+  var testUrl = testBase + "redirect.py?redirect_status=307&location=" + target;
+
+  promise_test(function(test) {
+    assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
+    return pollResult(test, id) .then(result => {
+      assert_equals(result['preflight'], 1, "Received preflight")
+      assert_equals(result['beacon'], 1, "Did not receive beacon")
+    });
+  }, "CORS redirection success test");
+}
+
+let blob = new Blob(["123"], {type: "text/plain-specific"});
+testCORSRedirectFailure(blob);
+testCORSRedirectSuccess(blob);
+    </script>
+  </body>
+</html>
