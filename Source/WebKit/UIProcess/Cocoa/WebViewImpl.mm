@@ -1391,6 +1391,18 @@ bool WebViewImpl::drawsBackground() const
     return m_page->drawsBackground();
 }
 
+void WebViewImpl::setBackgroundColor(NSColor *backgroundColor)
+{
+    m_backgroundColor = backgroundColor;
+}
+
+NSColor *WebViewImpl::backgroundColor() const
+{
+    if (!m_backgroundColor)
+        return [NSColor whiteColor];
+    return m_backgroundColor.get();
+}
+
 bool WebViewImpl::isOpaque() const
 {
     return m_page->drawsBackground();
@@ -1607,7 +1619,11 @@ void WebViewImpl::setDrawingAreaSize(CGSize size)
 
 void WebViewImpl::updateLayer()
 {
-    [m_view layer].backgroundColor = CGColorGetConstantColor(drawsBackground() ? kCGColorWhite : kCGColorClear);
+    bool draws = drawsBackground();
+    if (!draws || !m_backgroundColor)
+        [m_view layer].backgroundColor = CGColorGetConstantColor(draws ? kCGColorWhite : kCGColorClear);
+    else
+        [m_view layer].backgroundColor = [m_backgroundColor CGColor];
 
     // If asynchronous geometry updates have been sent by forceAsyncDrawingAreaSizeUpdate,
     // then subsequent calls to setFrameSize should not result in us waiting for the did

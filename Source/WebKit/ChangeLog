@@ -1,3 +1,24 @@
+2018-04-09  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for setting a background color on WKWebView and WKView
+        https://bugs.webkit.org/show_bug.cgi?id=184426
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h: Added _backgroundColor property.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _backgroundColor]): Added. Call through to WebViewImpl.
+        (-[WKWebView _setBackgroundColor:]): Added. Call through to WebViewImpl.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Added _backgroundColor property.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _backgroundColor]): Added. Call through to WebViewImpl.
+        (-[WKView _setBackgroundColor:]): Added. Call through to WebViewImpl.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setBackgroundColor): Added.
+        (WebKit::WebViewImpl::backgroundColor const): Added.
+        (WebKit::WebViewImpl::updateLayer): Use m_backgroundColor when set.
+
 2018-04-09  Yousuke Kimoto <yousuke.kimoto@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Add WebKit Shared/win event files for wincairo webkit

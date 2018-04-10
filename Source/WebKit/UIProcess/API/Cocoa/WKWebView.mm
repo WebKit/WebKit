@@ -5526,6 +5526,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _impl->setDrawsBackground(drawsBackground);
 }
 
+- (NSColor *)_backgroundColor
+{
+    return _impl->backgroundColor();
+}
+
+- (void)_setBackgroundColor:(NSColor *)backgroundColor
+{
+    _impl->setBackgroundColor(backgroundColor);
+}
+
 - (void)_setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
 {
     static BOOL hasLoggedDeprecationWarning;

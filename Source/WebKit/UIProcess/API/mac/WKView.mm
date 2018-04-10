@@ -110,6 +110,16 @@ using namespace WebCore;
     return _data->_impl->drawsBackground();
 }
 
+- (NSColor *)_backgroundColor
+{
+    return _data->_impl->backgroundColor();
+}
+
+- (void)_setBackgroundColor:(NSColor *)backgroundColor
+{
+    _data->_impl->setBackgroundColor(backgroundColor);
+}
+
 - (void)setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
 {
     _data->_impl->setDrawsBackground(!drawsTransparentBackground);
