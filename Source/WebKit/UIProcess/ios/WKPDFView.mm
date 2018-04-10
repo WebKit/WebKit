@@ -162,9 +162,20 @@
     _fixedOverlayView = fixedOverlayView;
 }
 
+- (void)_scrollToURLFragment:(NSString *)fragment
+{
+    NSInteger pageIndex = 0;
+    if ([fragment hasPrefix:@"page"])
+        pageIndex = [[fragment substringFromIndex:4] integerValue] - 1;
+
+    if (pageIndex >= 0 && pageIndex < [_hostViewController pageCount] && pageIndex != [_hostViewController currentPageIndex])
+        [_hostViewController goToPageIndex:pageIndex];
+}
+
 - (void)web_didSameDocumentNavigation:(WKSameDocumentNavigationType)navigationType
 {
-    // FIXME: Implement page number navigations.
+    if (navigationType == kWKSameDocumentNavigationSessionStatePop)
+        [self _scrollToURLFragment:[_webView URL].fragment];
 }
 
 - (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
@@ -220,6 +231,36 @@
 - (BOOL)web_isBackground
 {
     return self.isBackground;
+}
+
+#pragma mark PDFHostViewControllerDelegate
+
+- (void)pdfHostViewController:(PDFHostViewController *)controller updatePageCount:(NSInteger)pageCount
+{
+    [self _scrollToURLFragment:[_webView URL].fragment];
+}
+
+- (void)pdfHostViewController:(PDFHostViewController *)controller goToURL:(NSURL *)url
+{
+    WKWebView *webView = _webView.getAutoreleased();
+    if (!webView)
+        return;
+
+    // FIXME: We'd use the real tap location if we knew it.
+    WebCore::IntPoint point;
+    webView->_page->navigateToPDFLinkWithSimulatedClick(url.absoluteString, point, point);
+}
+
+- (void)pdfHostViewController:(PDFHostViewController *)controller goToPageIndex:(NSInteger)pageIndex withViewFrustum:(CGRect)documentViewRect
+{
+    WKWebView *webView = _webView.getAutoreleased();
+    if (!webView)
+        return;
+
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"#page%ld", (long)pageIndex + 1] relativeToURL:webView.URL];
+    CGPoint documentPoint = documentViewRect.origin;
+    CGPoint screenPoint = [self.window convertPoint:[self convertPoint:documentPoint toView:nil] toWindow:nil];
+    webView->_page->navigateToPDFLinkWithSimulatedClick(url.absoluteString, WebCore::roundedIntPoint(documentPoint), WebCore::roundedIntPoint(screenPoint));
 }
 
 @end
