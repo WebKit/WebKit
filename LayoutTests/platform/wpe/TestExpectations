@@ -1,4 +1,5 @@
 Bug(WPE) compositing/ [ Skip ]
+Bug(WPE) legacy-animation-engine/compositing/ [ Skip ]
 Bug(WPE) editing/ [ Skip ]
 Bug(WPE) fonts/ [ Skip ]
 Bug(WPE) fullscreen/ [ Skip ]

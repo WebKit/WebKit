@@ -114,6 +114,7 @@ webkit.org/b/74716 legacy-animation-engine/css3/filters/animation-from-initial-v
 webkit.org/b/74716 css3/filters/filter-is-on-subpixel-position.html [ Skip ]
 webkit.org/b/74716 css3/masking/clip-path-filter.html [ Skip ]
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
+webkit.org/b/74716 legacy-animation-engine/css3/filters/backdrop [ Skip ]
 
 # TODO Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
@@ -371,6 +372,7 @@ webkit.org/b/43458 http/tests/appcache/origin-quota-continued-download-multiple-
 
 # TODO Full Screen support is not yet enabled.
 fullscreen/ [ Skip ]
+legacy-animation-engine/fullscreen/ [ Skip ]
 
 # viewport meta tag support
 fast/viewport/ [ Skip ]
@@ -2610,6 +2612,7 @@ webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
+[ Debug ] legacy-animation-engine/compositing [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
 
