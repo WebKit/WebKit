@@ -1,3 +1,16 @@
+2018-04-10  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Race condition when destroying webprocesses
+        https://bugs.webkit.org/show_bug.cgi?id=184445
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ensure that the WebProcess is properly closing its pages when it's exiting because
+        the UIProcess has invalidated the IPC connection.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose):
+
 2018-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add missing availability macros after r230462

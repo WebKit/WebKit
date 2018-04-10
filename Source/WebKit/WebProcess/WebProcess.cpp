@@ -686,10 +686,12 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 
 void WebProcess::didClose(IPC::Connection&)
 {
-#ifndef NDEBUG
+#if !defined(NDEBUG) || PLATFORM(GTK) || PLATFORM(WPE)
     for (auto& page : copyToVector(m_pageMap.values()))
         page->close();
+#endif
 
+#ifndef NDEBUG
     GCController::singleton().garbageCollectSoon();
     FontCache::singleton().invalidate();
     MemoryCache::singleton().setDisabled(true);
