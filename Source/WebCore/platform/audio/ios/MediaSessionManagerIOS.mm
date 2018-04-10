@@ -106,15 +106,12 @@ using namespace WebCore;
 #if HAVE(MEDIA_PLAYER)
     RetainPtr<MPVolumeView> _volumeView;
     RetainPtr<MPAVRoutingController> _airPlayPresenceRoutingController;
+    bool _monitoringAirPlayRoutes;
+    bool _startMonitoringAirPlayRoutesPending;
 #endif
 }
 
 - (id)initWithCallback:(MediaSessionManageriOS*)callback;
-
-#if HAVE(MEDIA_PLAYER)
-- (void)allocateVolumeView;
-- (void)setVolumeView:(RetainPtr<MPVolumeView>)volumeView;
-#endif
 
 - (void)clearCallback;
 - (void)interruption:(NSNotification *)notification;
@@ -325,39 +322,6 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 
 @implementation WebMediaSessionHelper
 
-#if HAVE(MEDIA_PLAYER)
-- (void)allocateVolumeView
-{
-    if (pthread_main_np()) {
-        [self setVolumeView:adoptNS([allocMPVolumeViewInstance() init])];
-        return;
-    }
-
-    RetainPtr<WebMediaSessionHelper> strongSelf = self;
-    dispatch_async(dispatch_get_main_queue(), [strongSelf]() {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        RetainPtr<MPVolumeView> volumeView = adoptNS([allocMPVolumeViewInstance() init]);
-        callOnWebThreadOrDispatchAsyncOnMainThread([strongSelf, volumeView]() {
-            BEGIN_BLOCK_OBJC_EXCEPTIONS
-            [strongSelf setVolumeView:volumeView];
-            END_BLOCK_OBJC_EXCEPTIONS
-        });
-        END_BLOCK_OBJC_EXCEPTIONS
-    });
-}
-
-- (void)setVolumeView:(RetainPtr<MPVolumeView>)volumeView
-{
-    if (_volumeView)
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
-
-    _volumeView = volumeView;
-
-    if (_volumeView)
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:_volumeView.get()];
-}
-#endif
-
 - (id)initWithCallback:(MediaSessionManageriOS*)callback
 {
     LOG(Media, "-[WebMediaSessionHelper initWithCallback]");
@@ -379,10 +343,6 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:WebUIApplicationDidEnterBackgroundNotification object:nil];
 
-#if HAVE(MEDIA_PLAYER)
-    [self allocateVolumeView];
-#endif
-
     // Now playing won't work unless we turn on the delivery of remote control events.
     dispatch_async(dispatch_get_main_queue(), ^ {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -393,24 +353,29 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
     return self;
 }
 
+#if HAVE(MEDIA_PLAYER)
+static void safelyTearDown(RetainPtr<MPVolumeView> volumeView, RetainPtr<MPAVRoutingController> routingController)
+{
+    dispatch_async(dispatch_get_main_queue(), [volumeView = WTFMove(volumeView), routingController = WTFMove(routingController)] () mutable {
+        LOG(Media, "safelyTearDown - dipatched to UI thread.");
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
+        volumeView.clear();
+        routingController.clear();
+        END_BLOCK_OBJC_EXCEPTIONS
+    });
+}
+#endif
+
 - (void)dealloc
 {
     LOG(Media, "-[WebMediaSessionHelper dealloc]");
 
 #if HAVE(MEDIA_PLAYER)
-    if (!isMainThread()) {
-        callOnMainThread([volumeView = WTFMove(_volumeView), routingController = WTFMove(_airPlayPresenceRoutingController)] () mutable {
-            LOG(Media, "-[WebMediaSessionHelper dealloc] - dipatched to MainThread");
-
-            volumeView.clear();
-
-            if (!routingController)
-                return;
-
-            [routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
-            routingController.clear();
-        });
-    }
+    if (!pthread_main_np())
+        safelyTearDown(WTFMove(_volumeView), WTFMove(_airPlayPresenceRoutingController));
+    else
+        [_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
 #endif
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -436,38 +401,68 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 #if HAVE(MEDIA_PLAYER)
 - (void)startMonitoringAirPlayRoutes
 {
-    if (_airPlayPresenceRoutingController)
+    if (_monitoringAirPlayRoutes)
         return;
+
+    _monitoringAirPlayRoutes = true;
+
+    if (_startMonitoringAirPlayRoutesPending)
+        return;
+
+    _startMonitoringAirPlayRoutesPending = true;
 
     LOG(Media, "-[WebMediaSessionHelper startMonitoringAirPlayRoutes]");
 
-    callOnMainThread([protectedSelf = RetainPtr<WebMediaSessionHelper>(self)] () {
-        LOG(Media, "-[WebMediaSessionHelper startMonitoringAirPlayRoutes] - dipatched to MainThread");
+    dispatch_async(dispatch_get_main_queue(), [protectedSelf = RetainPtr<WebMediaSessionHelper>(self)] () mutable {
+        LOG(Media, "-[WebMediaSessionHelper startMonitoringAirPlayRoutes] - dipatched to main queue");
 
-        if (protectedSelf->_airPlayPresenceRoutingController)
-            return;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        RetainPtr<MPVolumeView> volumeView = adoptNS([allocMPVolumeViewInstance() init]);
+        RetainPtr<MPAVRoutingController> routingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebCore - HTML media element checking for AirPlay route presence"]);
 
-        protectedSelf->_airPlayPresenceRoutingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebCore - HTML media element checking for AirPlay route presence"]);
-        [protectedSelf->_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModePresence];
+        [routingController setDiscoveryMode:MPRouteDiscoveryModePresence];
+
+        callOnWebThreadOrDispatchAsyncOnMainThread([protectedSelf = WTFMove(protectedSelf), volumeView = WTFMove(volumeView), routingController = WTFMove(routingController)]() mutable {
+
+            protectedSelf->_startMonitoringAirPlayRoutesPending = false;
+
+            if (!protectedSelf->_monitoringAirPlayRoutes) {
+                safelyTearDown(WTFMove(volumeView), WTFMove(routingController));
+                return;
+            }
+
+            ASSERT(!protectedSelf->_volumeView);
+            protectedSelf->_volumeView = volumeView;
+
+            [[NSNotificationCenter defaultCenter] addObserver:protectedSelf.get() selector:@selector(wirelessRoutesAvailableDidChange:) name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:volumeView.get()];
+
+            ASSERT(!protectedSelf->_airPlayPresenceRoutingController);
+            protectedSelf->_airPlayPresenceRoutingController = routingController;
+        });
+        END_BLOCK_OBJC_EXCEPTIONS
+
     });
 }
 
 - (void)stopMonitoringAirPlayRoutes
 {
-    if (!_airPlayPresenceRoutingController)
+    if (!_monitoringAirPlayRoutes)
         return;
+
+    _monitoringAirPlayRoutes = false;
 
     LOG(Media, "-[WebMediaSessionHelper stopMonitoringAirPlayRoutes]");
 
-    callOnMainThread([protectedSelf = RetainPtr<WebMediaSessionHelper>(self)] () {
-        LOG(Media, "-[WebMediaSessionHelper stopMonitoringAirPlayRoutes] - dipatched to MainThread");
+    RetainPtr<MPVolumeView> volumeView = _volumeView;
+    RetainPtr<MPAVRoutingController> airPlayPresenceRoutingController = _airPlayPresenceRoutingController;
 
-        if (!protectedSelf->_airPlayPresenceRoutingController)
-            return;
+    _volumeView.clear();
+    _airPlayPresenceRoutingController.clear();
 
-        [protectedSelf->_airPlayPresenceRoutingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
-        protectedSelf->_airPlayPresenceRoutingController = nil;
-    });
+    if (volumeView)
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPVolumeViewWirelessRoutesAvailableDidChangeNotification object:volumeView.get()];
+
+    safelyTearDown(WTFMove(volumeView), WTFMove(airPlayPresenceRoutingController));
 }
 #endif // HAVE(MEDIA_PLAYER)
 

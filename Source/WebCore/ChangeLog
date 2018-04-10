@@ -1,3 +1,26 @@
+2018-04-10  Jeremy Jones  <jeremyj@apple.com>
+
+        MediaSessionManageriOS should defer creation of MPVolumeView until it needs to monitor AirPlay routes
+        https://bugs.webkit.org/show_bug.cgi?id=184373
+        <rdar://problem/35177606>
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        This delays the creation of MPVolumeView until airplay routes are monitored.
+        MPVolumeView is now also released when monitoring ends. 
+        This makes sure the MP* objects are only accessed from a UI safe thread. WebCore's "MainThread" may be different that the UI thread.
+        Since this state change is necessarily asynchronous, starting and stopping must prevent races to keep state coherent.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (-[WebMediaSessionHelper initWithCallback:]):
+        (-[WebMediaSessionHelper dealloc]):
+        (-[WebMediaSessionHelper startMonitoringAirPlayRoutes]):
+        (-[WebMediaSessionHelper stopMonitoringAirPlayRoutes]):
+        (-[WebMediaSessionHelper allocateVolumeView]): Deleted.
+        (-[WebMediaSessionHelper setVolumeView:]): Deleted.
+
 2018-04-10  Sihui Liu  <sihui_liu@apple.com>
 
         Loading of multipart response was cancelled because of content policy set in WebFrameLoaderClient::dispatchDecidePolicyForResponse
