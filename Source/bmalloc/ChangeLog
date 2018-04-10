@@ -1,3 +1,15 @@
+2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Rename UNUSED to BUNUSED
+        https://bugs.webkit.org/show_bug.cgi?id=184093
+
+        Reviewed by Yusuke Suzuki.
+
+        * bmalloc/BAssert.h:
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmValidate):
+        (bmalloc::vmValidatePhysical):
+
 2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use alignas instead of compiler-specific attributes

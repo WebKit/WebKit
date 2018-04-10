@@ -4477,7 +4477,7 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 {
 #if ENABLE(APPLICATION_MANIFEST)
     _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ApplicationManifest>& manifest, WebKit::CallbackBase::Error error) {
-        UNUSED(error);
+        UNUSED_PARAM(error);
         if (completionHandler) {
             if (manifest) {
                 auto apiManifest = API::ApplicationManifest::create(*manifest);

@@ -100,7 +100,7 @@
 } while (0)
 #endif
 
-#define UNUSED(x) ((void)x)
+#define BUNUSED(x) ((void)x)
 
 // ===== Release build =====
 

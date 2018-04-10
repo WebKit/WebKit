@@ -76,7 +76,7 @@ inline size_t vmSize(size_t size)
 
 inline void vmValidate(size_t vmSize)
 {
-    UNUSED(vmSize);
+    BUNUSED(vmSize);
     BASSERT(vmSize);
     BASSERT(vmSize == roundUpToMultipleOf(vmPageSize(), vmSize));
 }
@@ -85,7 +85,7 @@ inline void vmValidate(void* p, size_t vmSize)
 {
     vmValidate(vmSize);
     
-    UNUSED(p);
+    BUNUSED(p);
     BASSERT(p);
     BASSERT(p == mask(p, ~(vmPageSize() - 1)));
 }
@@ -104,7 +104,7 @@ inline size_t vmPageSizePhysical()
 
 inline void vmValidatePhysical(size_t vmSize)
 {
-    UNUSED(vmSize);
+    BUNUSED(vmSize);
     BASSERT(vmSize);
     BASSERT(vmSize == roundUpToMultipleOf(vmPageSizePhysical(), vmSize));
 }
@@ -113,7 +113,7 @@ inline void vmValidatePhysical(void* p, size_t vmSize)
 {
     vmValidatePhysical(vmSize);
     
-    UNUSED(p);
+    BUNUSED(p);
     BASSERT(p);
     BASSERT(p == mask(p, ~(vmPageSizePhysical() - 1)));
 }
