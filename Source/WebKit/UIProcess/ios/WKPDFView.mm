@@ -31,6 +31,7 @@
 #import "WKWebViewInternal.h"
 #import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
+#import "_WKWebViewPrintFormatterInternal.h"
 #import <PDFKit/PDFHostViewController.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -222,5 +223,32 @@
 }
 
 @end
+
+#pragma mark _WKWebViewPrintProvider
+
+#if !ENABLE(MINIMAL_SIMULATOR)
+
+@interface WKPDFView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
+@end
+
+@implementation WKPDFView (_WKWebViewPrintFormatter)
+
+- (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
+{
+    NSUInteger pageCount = std::max<NSInteger>([_hostViewController pageCount], 0);
+    if (printFormatter.snapshotFirstPage)
+        return std::min<NSUInteger>(pageCount, 1);
+    return pageCount;
+}
+
+- (CGPDFDocumentRef)_wk_printedDocument
+{
+    auto dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)_data.get()));
+    return adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get())).autorelease();
+}
+
+@end
+
+#endif // !ENABLE(MINIMAL_SIMULATOR)
 
 #endif // ENABLE(WKPDFVIEW)

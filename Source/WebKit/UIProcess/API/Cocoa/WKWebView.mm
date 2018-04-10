@@ -6462,9 +6462,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (id <_WKWebViewPrintProvider>)_printProvider
 {
-    id contentView = self._currentContentView;
-    if ([contentView conformsToProtocol:@protocol(_WKWebViewPrintProvider)])
-        return contentView;
+    id printProvider = _customContentView ? _customContentView.get() : _contentView.get();
+    if ([printProvider conformsToProtocol:@protocol(_WKWebViewPrintProvider)])
+        return printProvider;
     return nil;
 }
 

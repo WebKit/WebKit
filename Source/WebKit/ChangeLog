@@ -1,3 +1,26 @@
+2018-04-10  Andy Estes  <aestes@apple.com>
+
+        [iOS] WKPDFView should conform to _WKWebViewPrintProvider
+        https://bugs.webkit.org/show_bug.cgi?id=184471
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _printProvider]):
+
+        The print provider will always be either _contentView or _customContentView, but
+        might not be _currentContentView.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _wk_pageCountForPrintFormatter:]):
+
+        Asked _hostViewController for the page count, clamped to 1 if
+        -[_WKWebViewPrintFormatter snapshotFirstPage] is YES.
+
+        (-[WKPDFView _wk_printedDocument]):
+
+        Created a CGPDFDocumentRef from _data and returned it.
+
 2018-04-10  Youenn Fablet  <youenn@apple.com>
 
         Beacon redirect responses should be CORS validated
