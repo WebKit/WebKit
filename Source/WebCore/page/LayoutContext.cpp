@@ -41,6 +41,7 @@
 
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -115,6 +116,10 @@ LayoutContext::LayoutContext(FrameView& frameView)
     : m_frameView(frameView)
     , m_layoutTimer(*this, &LayoutContext::layoutTimerFired)
     , m_asynchronousTasksTimer(*this, &LayoutContext::runAsynchronousTasks)
+{
+}
+
+LayoutContext::~LayoutContext()
 {
 }
 

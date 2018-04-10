@@ -47,6 +47,7 @@ class RenderView;
 class LayoutContext {
 public:
     LayoutContext(FrameView&);
+    ~LayoutContext();
 
     void layout();
 

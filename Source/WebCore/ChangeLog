@@ -1,3 +1,11 @@
+2018-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix.
+
+        * page/LayoutContext.cpp:
+        (WebCore::LayoutContext::~LayoutContext):
+        * page/LayoutContext.h:
+
 2018-04-10  Jeremy Jones  <jeremyj@apple.com>
 
         MediaSessionManageriOS should defer creation of MPVolumeView until it needs to monitor AirPlay routes
