@@ -1,3 +1,62 @@
+2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Introduce @putByIdDirectPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=184400
+
+        Reviewed by Saam Barati.
+
+        This patch adds @putByIdDirectPrivate() to use it for builtin JS.
+        @getByIdDirectPrivate and @putByIdDirectPrivate are pair of intrinsics
+        accessing to ECMAScript internal fields.
+
+        This change removes accidental [[Put]] operation to an object whose [[Prototype]]
+        has internal fields (not direct properties). By using @getByIdDirectPrivate() and
+        @putByIdDirectPrivate(), we strongly keep the semantics of the ECMAScript internal
+        fields that accessing to the internal fields does not traverse prototype chains.
+
+        * builtins/ArrayIteratorPrototype.js:
+        (globalPrivate.arrayIteratorValueNext):
+        (globalPrivate.arrayIteratorKeyNext):
+        (globalPrivate.arrayIteratorKeyValueNext):
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.createArrayIterator):
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        (globalPrivate.AsyncFromSyncIteratorConstructor):
+        * builtins/AsyncFunctionPrototype.js:
+        (globalPrivate.asyncFunctionResume):
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorQueueEnqueue):
+        (globalPrivate.asyncGeneratorQueueDequeue):
+        (asyncGeneratorYieldAwaited):
+        (globalPrivate.asyncGeneratorYield):
+        (globalPrivate.doAsyncGeneratorBodyCall):
+        (globalPrivate.asyncGeneratorResumeNext):
+        * builtins/GeneratorPrototype.js:
+        (globalPrivate.generatorResume):
+        * builtins/MapIteratorPrototype.js:
+        (globalPrivate.mapIteratorNext):
+        * builtins/MapPrototype.js:
+        (globalPrivate.createMapIterator):
+        * builtins/ModuleLoaderPrototype.js:
+        (forceFulfillPromise):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newHandledRejectedPromise):
+        (globalPrivate.rejectPromise):
+        (globalPrivate.fulfillPromise):
+        (globalPrivate.initializePromise):
+        * builtins/PromisePrototype.js:
+        (then):
+        * builtins/SetIteratorPrototype.js:
+        (globalPrivate.setIteratorNext):
+        * builtins/SetPrototype.js:
+        (globalPrivate.createSetIterator):
+        * builtins/StringIteratorPrototype.js:
+        (next):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirect):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate):
+
 2018-04-09  Mark Lam  <mark.lam@apple.com>
 
         Decorate method table entries to support pointer profiling.

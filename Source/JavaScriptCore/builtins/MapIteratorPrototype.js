@@ -31,7 +31,7 @@ function mapIteratorNext(bucket, kind)
     var value;
 
     bucket = @mapBucketNext(bucket);
-    this.@mapBucket = bucket;
+    @putByIdDirectPrivate(this, "mapBucket", bucket);
     var done = bucket === @sentinelMapBucket;
     if (!done) {
         var key = @mapBucketKey(bucket);

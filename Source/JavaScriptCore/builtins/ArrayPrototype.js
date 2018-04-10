@@ -30,11 +30,11 @@ function createArrayIterator(iteratedObject, kind, iterationFunction)
 {
     "use strict";
 
-    this.@iteratedObject = iteratedObject;
-    this.@arrayIteratorKind = kind;
-    this.@arrayIteratorNextIndex = 0;
-    this.@arrayIteratorNext = iterationFunction;
-    this.@arrayIteratorIsDone = false;
+    @putByIdDirectPrivate(this, "iteratedObject", iteratedObject);
+    @putByIdDirectPrivate(this, "arrayIteratorKind", kind);
+    @putByIdDirectPrivate(this, "arrayIteratorNextIndex", 0);
+    @putByIdDirectPrivate(this, "arrayIteratorNext", iterationFunction);
+    @putByIdDirectPrivate(this, "arrayIteratorIsDone", false);
 }
 
 function values()

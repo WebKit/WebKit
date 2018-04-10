@@ -59,7 +59,7 @@ function then(onFulfilled, onRejected)
         @enqueueJob(@promiseReactionJob, [state, reaction, @getByIdDirectPrivate(this, "promiseResult")]);
     }
 
-    this.@promiseIsHandled = true;
+    @putByIdDirectPrivate(this, "promiseIsHandled", true);
 
     return resultCapability.@promise;
 }
