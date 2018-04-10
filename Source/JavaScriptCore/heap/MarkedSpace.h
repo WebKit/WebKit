@@ -79,7 +79,7 @@ public:
     
     static size_t sizeClassToIndex(size_t size)
     {
-        ASSERT(size);
+        RELEASE_ASSERT(size);
         return (size + sizeStep - 1) / sizeStep - 1;
     }
     
