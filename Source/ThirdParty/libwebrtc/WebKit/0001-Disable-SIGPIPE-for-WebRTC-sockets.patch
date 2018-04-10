@@ -1,0 +1,25 @@
+From ca7c3a4683bbafaaf8a7bbe9fcf7b99cd0a55441 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Mon, 9 Apr 2018 13:27:57 -0700
+Subject: [PATCH] Disable SIGPIPE for WebRTC sockets
+
+---
+ .../ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+index 0d5fc525242..bba921b6692 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+@@ -632,7 +632,7 @@ bool SocketDispatcher::Initialize() {
+ #elif defined(WEBRTC_POSIX)
+   fcntl(s_, F_SETFL, fcntl(s_, F_GETFL, 0) | O_NONBLOCK);
+ #endif
+-#if defined(WEBRTC_IOS)
++#if defined(WEBRTC_IOS) || (defined(WEBRTC_MAC) && defined(WEBRTC_WEBKIT_BUILD))
+   // iOS may kill sockets when the app is moved to the background
+   // (specifically, if the app doesn't use the "voip" UIBackgroundMode). When
+   // we attempt to write to such a socket, SIGPIPE will be raised, which by
+-- 
+2.15.1 (Apple Git-101)
+
