@@ -699,6 +699,12 @@ bool RenderImage::canHaveChildren() const
 
 void RenderImage::layout()
 {
+    // Recomputing overflow is required only when child content is present. 
+    if (needsSimplifiedNormalFlowLayout() && !m_hasShadowControls) {
+        clearNeedsLayout();
+        return;
+    }
+
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     LayoutSize oldSize = contentBoxRect().size();

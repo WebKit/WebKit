@@ -1,3 +1,17 @@
+2018-04-10  Zalan Bujtas  <zalan@apple.com>
+
+        Do not layout images when we only need the overflow information.
+        https://bugs.webkit.org/show_bug.cgi?id=175331
+
+        Reviewed by Simon Fraser.
+
+        This improves MotionMark's Simple Leaves by ~10%. 
+
+        Covered by existing tests.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layout):
+
 2018-04-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] TextureMapperLayer unnecessarily duplicates state in GraphicsLayerTransform
