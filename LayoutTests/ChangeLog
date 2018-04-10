@@ -1,3 +1,17 @@
+2018-04-10  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/datachannel/bufferedAmountLowThreshold tests are failing on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=184427
+
+        Reviewed by Eric Carlson.
+
+        Decrease the size of the string sent as one chunk as it may create timeouts.
+        Instead, we will call more often the send method untile reaching the threshold.
+
+        * platform/mac-wk1/TestExpectations:
+        * webrtc/datachannel/bufferedAmountLowThreshold-default.html:
+        * webrtc/datachannel/bufferedAmountLowThreshold.html:
+
 2018-04-10  Sihui Liu  <sihui_liu@apple.com>
 
         Loading of multipart response was cancelled because of content policy set in WebFrameLoaderClient::dispatchDecidePolicyForResponse

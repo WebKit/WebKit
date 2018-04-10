@@ -151,8 +151,6 @@ http/tests/webrtc [ Skip ]
 http/wpt/webrtc [ Skip ]
 webrtc/datachannel [ Pass ]
 webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
-webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
-webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
