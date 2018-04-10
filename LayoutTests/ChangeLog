@@ -1,3 +1,23 @@
+2018-04-10  Keith Rollin  <krollin@apple.com>
+
+        http/tests/security/shape-image-cors-redirect-error-message-logging-*.html tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=155634
+        <rdar://problem/39326489>
+
+        Reviewed by Youenn Fablet.
+
+        These tests no longer appear to be flaky. I believe they were
+        addressed in <https://trac.webkit.org/changeset/217069/webkit>. After
+        enabling the test and rebasing the results, I ran run-webkit-tests
+        with --repeat-each=20 --iterations=20, and then I wrapped the
+        run-webkit-tests command in a loop that invoked it 20 times.
+
+        * TestExpectations:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-1-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-2-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-3-expected.txt:
+        * http/tests/security/shape-image-cors-redirect-error-message-logging-4-expected.txt:
+
 2018-04-10  Youenn Fablet  <youenn@apple.com>
 
         Beacon redirect responses should be CORS validated

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Cross-origin redirection denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8080/security/resources/image-access-control.php?file=../../resources/square100.png&allow=true denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 Verify the error message in console in case of CORS failing checks.
 
 
