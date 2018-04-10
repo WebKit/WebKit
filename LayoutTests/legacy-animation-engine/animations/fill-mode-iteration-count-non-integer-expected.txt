@@ -1,0 +1,23 @@
+This test performs an animation of the left property with four different fill modes. It animates over 0.1 second with a 0.1 second delay. It takes snapshots at document load and the end of the animation.
+None
+Backwards
+Forwards
+Both
+Both iterating
+Both reverse alternate
+Ease function
+PASS - start of animation - id: a expected: 100 actual: 100
+PASS - start of animation - id: b expected: 200 actual: 200
+PASS - start of animation - id: c expected: 100 actual: 100
+PASS - start of animation - id: d expected: 200 actual: 200
+PASS - start of animation - id: e expected: 200 actual: 200
+PASS - start of animation - id: f expected: 300 actual: 300
+PASS - start of animation - id: g expected: 300 actual: 300
+PASS - end of animation - id: a close to expected: 100
+PASS - end of animation - id: b close to expected: 100
+PASS - end of animation - id: c close to expected: 225
+PASS - end of animation - id: d close to expected: 225
+PASS - end of animation - id: e close to expected: 225
+PASS - end of animation - id: f close to expected: 275
+PASS - end of animation - id: g close to expected: 291
+

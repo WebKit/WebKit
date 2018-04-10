@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+@keyframes my-animation {        
+  from {
+    left : 0px;
+  }
+  to {
+    left : 100px;
+  }      
+}
+
+.run-animation {
+  position: relative;
+  animation: my-animation 0.5s infinite;
+  animation-direction: alternate;
+}
+</style>
+</head>
+<body>
+<p id="testElement" class="run-animation">Test text</p>
+<script>
+description("Tests that CSS animations are throttled in low power mode.");
+jsTestIsAsync = true;
+
+const element = document.getElementById("testElement");
+element.onanimationstart = function() {
+    element.onanimationstart = null;
+
+    shouldBe("internals.animationsInterval", "0.015");
+    evalAndLog("internals.setLowPowerModeEnabled(true)");
+    shouldBe("internals.animationsInterval", "0.030");
+    evalAndLog("internals.setLowPowerModeEnabled(false)");
+    shouldBe("internals.animationsInterval", "0.015");
+    finishJSTest();
+};
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

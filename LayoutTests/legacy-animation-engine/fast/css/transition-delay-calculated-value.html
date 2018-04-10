@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="testDiv"></div>
+<script>
+description("Tests assigning a calculated value to 'transition-delay' CSS property.");
+
+var testDiv = document.getElementById("testDiv");
+
+shouldBeEmptyString("testDiv.style['transition-delay']");
+evalAndLog("testDiv.style['transition-delay'] = 'calc(300ms/2)'");
+shouldBeEqualToString("testDiv.style['transition-delay']", "calc(150ms)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "0.15s");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

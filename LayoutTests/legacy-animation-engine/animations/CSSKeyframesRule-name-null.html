@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@keyframes test1 {
+    from { left: 10px; }
+    to { left: 20px; }
+  }
+</style>
+</head>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the parameters are mandatory in CSSKeyframesRule API.");
+
+var keyframes = document.styleSheets.item(0).cssRules.item(0);
+shouldBe("keyframes.__proto__", "CSSKeyframesRule.prototype");
+shouldBeEqualToString("keyframes.name", "test1");
+shouldNotThrow("keyframes.name = null");
+shouldBeEqualToString("keyframes.name", "null");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        var currentFrame = 0;
+        var timestamp1 = 0;
+        var failed = false;
+
+        function finishTest()
+        {
+            if (failed)
+                testFailed("Some of the multiple requestAnimationFrame() callbacks, which were fired at the same time, received different timestamps.");
+            else
+                testPassed("All the multiple requestAnimationFrame() callbacks, which were fired at the same time, received the same timestamp.");
+            finishJSTest();
+        }
+
+        function doAnimation1(timestamp)
+        {
+            timestamp1 = timestamp;
+            
+            const MaxFrames = 25;
+            if (currentFrame == MaxFrames)
+                finishTest();
+            else {
+                requestAnimationFrame(doAnimation1);
+                requestAnimationFrame(doAnimation2);
+            }
+        }
+
+        function doAnimation2(timestamp)
+        {
+            const WarmupFrames = 5;
+            if (++currentFrame > WarmupFrames && timestamp != timestamp1) {
+                testFailed("timestamp1 = " + timestamp1 + ", timestamp2 = " + timestamp2  + ", window.performance.now() = " + window.performance.now());
+                failed = true;
+            }
+        }
+        
+        window.jsTestIsAsync = true;
+        requestAnimationFrame(doAnimation1);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

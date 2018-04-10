@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/animation-test-helpers.js"></script>
+<style>
+@font-face {
+    font-family: "Boxis";
+    src: url("resources/Boxis-VF.ttf");
+}
+
+@keyframes TheAnimation {
+    from {
+        font-variation-settings: "hght" 400, "wdth" 500;
+    }
+    to {
+        font-variation-settings: "hght" 600;
+    }
+}
+
+#box {
+    font: 100px "Boxis";
+    animation-duration: 3s;
+    animation-timing-function: linear;
+}
+</style>
+</head>
+<body>
+<div id="box">Hello</div>
+<div id="result"></div>
+<script>
+var expectedValues = [
+    // [animation-name, time, element-id, property, expected-value, tolerance]
+    ["TheAnimation", 0.5, "box", "font-variation-settings", "normal", 5],
+    ["TheAnimation", 1.0, "box", "font-variation-settings", "normal", 5],
+    ["TheAnimation", 2.0, "box", "font-variation-settings", "normal", 5],
+];
+
+var promises = [];
+
+document.fonts.forEach(function(f) {
+    promises.push(f.loaded);
+});
+
+Promise.all(promises).then(function() {
+    document.getElementById("box").style.animationName = "TheAnimation";
+    runAnimationTest(expectedValues, undefined, undefined, undefined, false, undefined);
+});
+</script>
+</body>
+</html>

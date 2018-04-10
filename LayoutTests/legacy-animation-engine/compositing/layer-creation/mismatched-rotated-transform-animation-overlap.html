@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            width: 120px;
+            height: 100px;
+            background-color: blue;
+            margin: 100px 100px;
+            position: relative;
+            box-shadow: 0 0 10px black;
+            -webkit-transform-origin: 80% 20%;
+            transition: -webkit-transform 10s;
+            -webkit-transform: translateX(10px);
+        }
+        
+        .dot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            width: 4px;
+            background-color: silver;
+        }
+        
+        body.changed .box {
+            animation: move 10s linear;
+        }
+        
+        @keyframes move {
+            from {
+                -webkit-transform: translatex(10px);
+            }
+            to {
+                -webkit-transform: scale(1.3) rotate(1deg);
+            }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function dumpLayers()
+        {
+            if (window.testRunner) {
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }
+
+        function makeDots()
+        {
+            const width = 30;
+            const height = 30;
+            
+            const spacing = 10;
+            
+            for (var row = 0; row < height; ++row) {
+                for (var col = 0; col < width; ++col) {
+                    var dot = document.createElement('div');
+                    dot.className = 'dot';
+                    dot.style.left = spacing * col + 'px';
+                    dot.style.top = spacing * row + 'px';
+                    document.body.appendChild(dot);
+                }
+            }
+            
+            window.setTimeout(function() {
+                document.getElementById('target').addEventListener('animationstart', dumpLayers, false);
+                document.body.classList.add('changed');
+            }, 0);
+        }
+        
+        window.addEventListener('load', makeDots, false);
+    </script>
+</head>
+<body>
+
+    <div id="target" class="box">
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

@@ -1,0 +1,3 @@
+This test performs an animation of the border-top-width property from a given value to 0. It tests if an intermediate value is correct.
+PASS - "border-top-width" property for "box" element at 0.1s saw something close to: 200
+

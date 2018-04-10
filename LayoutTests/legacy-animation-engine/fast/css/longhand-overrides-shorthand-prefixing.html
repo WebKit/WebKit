@@ -1,0 +1,72 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<script>
+
+description("Test the prefixed or the unprefixed variant of a property allows reading from the CSS OM with both the prefixed and unprefixed variant.");
+
+const PREFIX = "-webkit-";
+
+function accessorForProperty(property)
+{
+    var firstIndexToTranspose = property.indexOf(PREFIX) === 0 ? 2 : 1;
+    return property.split("-").map(function(component, index) {
+        if (index < firstIndexToTranspose)
+            return component;
+        return component.charAt(0).toUpperCase() + component.substr(1);
+    }).join("");
+}
+
+function testPropertyVariants(shorthandProperty, longhandProperty, initialShorthandValue, finalShorthandValue, longhandValue)
+{
+    var shorthandAccessor = accessorForProperty(shorthandProperty);
+    var prefixedShorthandProperty = PREFIX + shorthandProperty;
+    var prefixedShorthandAccessor = accessorForProperty(prefixedShorthandProperty);
+
+    var longhandAccessor = accessorForProperty(shorthandProperty);
+    var prefixedLonghandProperty = PREFIX + longhandProperty;
+    var prefixedLonghandAccessor = accessorForProperty(prefixedLonghandProperty);
+
+    testProperty(shorthandProperty, shorthandProperty, longhandProperty, shorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+    testProperty(shorthandProperty, shorthandProperty, longhandProperty, prefixedShorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+
+    testProperty(prefixedShorthandProperty, shorthandProperty, longhandProperty, shorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+    testProperty(prefixedShorthandProperty, shorthandProperty, longhandProperty, prefixedShorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+
+    testProperty(shorthandProperty, shorthandProperty, prefixedLonghandProperty, shorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+    testProperty(shorthandProperty, shorthandProperty, prefixedLonghandProperty, prefixedShorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+
+    testProperty(prefixedShorthandProperty, shorthandProperty, prefixedLonghandProperty, shorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+    testProperty(prefixedShorthandProperty, shorthandProperty, prefixedLonghandProperty, prefixedShorthandAccessor, initialShorthandValue, finalShorthandValue, longhandValue);
+}
+
+function testProperty(shorthandProperty, unprefixedShorthandProperty, longhandProperty, accessor, initialShorthandValue, finalShorthandValue, longhandValue)
+{
+    function test(message, actual, expected) {
+        if (actual === expected)
+            testPassed(message);
+        else
+            testFailed(`expected ${message} to be "${expected}" but got "${actual}"`);
+    }
+
+    var element = document.body.appendChild(document.createElement("div"));
+    element.style.setProperty(shorthandProperty, initialShorthandValue);
+    element.style.setProperty(longhandProperty, longhandValue);
+
+    debug(`Setting "${shorthandProperty}" to "${initialShorthandValue}" then "${longhandProperty}" to "${longhandValue}" accessing "${accessor}"`);
+
+    var style = element.style;
+    test(`element.style.${accessorForProperty(shorthandProperty)}`, style[accessorForProperty(shorthandProperty)], finalShorthandValue);
+    test(`element.style.cssText`, element.style.cssText, `${unprefixedShorthandProperty}: ${finalShorthandValue};`, longhandValue);
+
+    element.remove();
+
+    debug("");
+}
+
+testPropertyVariants("animation", "animation-duration", "move 2s", "move 10s", "10s");
+
+successfullyParsed = true;
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

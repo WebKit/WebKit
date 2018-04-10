@@ -1,0 +1,86 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<script>
+
+description("Test the prefixed or the unprefixed variant of a property allows reading from the CSS OM with both the prefixed and unprefixed variant.");
+
+const PREFIX = "-webkit-";
+
+function testPropertyVariants(property, value) {
+
+    function accessorForProperty(property) {
+        var firstIndexToTranspose = property.indexOf(PREFIX) === 0 ? 2 : 1;
+        return property.split("-").map(function(component, index) {
+            if (index < firstIndexToTranspose)
+                return component;
+            return component.charAt(0).toUpperCase() + component.substr(1);
+        }).join("");
+    }
+
+    var accessor = accessorForProperty(property);
+    var prefixedProperty = PREFIX + property;
+    var prefixedAccessor = accessorForProperty(prefixedProperty);
+
+    testProperty(property, property, prefixedProperty, accessor, prefixedAccessor, value);
+    testProperty(prefixedProperty, property, prefixedProperty, accessor, prefixedAccessor, value);
+}
+
+function testProperty(propertyToSet, unprefixedProperty, prefixedProperty, unprefixedAccessor, prefixedAccessor, value) {
+
+    function test(message, actual, expected) {
+        expected = expected || value;
+        if (actual === expected)
+            testPassed(message);
+        else
+            testFailed(`expected ${message} to be "${expected}" but got "${actual}"`);
+    }
+
+    var element = document.body.appendChild(document.createElement("div"));
+    element.style.setProperty(propertyToSet, value);
+
+    debug(`Setting "${propertyToSet}" to "${value}"`);
+
+    var style = element.style;
+    test(`element.style.${unprefixedAccessor}`, style[unprefixedAccessor]);
+    test(`element.style.${prefixedAccessor}`, style[prefixedAccessor]);
+    test(`element.style.getPropertyValue("${unprefixedProperty}")`, style.getPropertyValue(unprefixedProperty));
+    test(`element.style.getPropertyValue("${prefixedProperty}")`, style.getPropertyValue(prefixedProperty));
+    test(`element.style.getPropertyCSSValue("${unprefixedProperty}")`, style.getPropertyCSSValue(unprefixedProperty).cssText);
+    test(`element.style.getPropertyCSSValue("${prefixedProperty}")`, style.getPropertyCSSValue(prefixedProperty).cssText);
+
+    var computedStyle = window.getComputedStyle(element);
+    test(`getComputedStyle(element).${unprefixedAccessor}`, computedStyle[unprefixedAccessor]);
+    test(`getComputedStyle(element).${prefixedAccessor}`, computedStyle[prefixedAccessor]);
+    test(`getComputedStyle(element).getPropertyValue("${unprefixedProperty}")`, computedStyle.getPropertyValue(unprefixedProperty));
+    test(`getComputedStyle(element).getPropertyValue("${prefixedProperty}")`, computedStyle.getPropertyValue(prefixedProperty));
+    test(`getComputedStyle(element).getPropertyCSSValue("${unprefixedProperty}")`, computedStyle.getPropertyCSSValue(unprefixedProperty).cssText);
+    test(`getComputedStyle(element).getPropertyCSSValue("${prefixedProperty}")`, computedStyle.getPropertyCSSValue(prefixedProperty).cssText);
+
+    test(`element.style.cssText`, element.style.cssText, `${unprefixedProperty}: ${value};`);
+
+    element.remove();
+
+    debug("");
+}
+
+testPropertyVariants("transition-property", "width");
+testPropertyVariants("transition-duration", "1s");
+testPropertyVariants("transition-timing-function", "linear");
+testPropertyVariants("transition-delay", "0.5s");
+
+testPropertyVariants("animation-name", "foo");
+testPropertyVariants("animation-duration", "1s");
+testPropertyVariants("animation-timing-function", "linear");
+testPropertyVariants("animation-iteration-count", "5");
+testPropertyVariants("animation-direction", "reverse");
+testPropertyVariants("animation-play-state", "paused");
+testPropertyVariants("animation-delay", "0.5s");
+testPropertyVariants("animation-fill-mode", "forwards");
+
+testPropertyVariants("transform", "matrix(1, 0, 0, 1, 1, 1)");
+
+successfullyParsed = true;
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

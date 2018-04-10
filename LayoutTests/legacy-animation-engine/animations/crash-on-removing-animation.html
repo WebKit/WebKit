@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    var successfullyParsed = false;
+    window.jsTestIsAsync = true;
+
+    function setup() {
+        if (window.testRunner) {
+            testRunner.setCanOpenWindows();
+            window.open("resources/crash-on-removing-animation-window.html");
+        } else {
+            document.write("This test must be run in DRT/WKTR.");
+        }
+    }
+    </script>
+
+    <style>
+    #test {
+        background-color: blue;
+        width: 10px;
+        height: 10px;
+    }
+    </style>
+<head>
+
+<body onload="setup()">
+    <div id="test"></div>
+    <script>
+        successfullyParsed = true;
+    </script>
+    <p>If you are reading this, we managed to avoid crashing!</p>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>image-copy-memory-usage.html</title>
+		<script src="../../../resources/js-test.js"></script>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			description("This is an automated test related to " +
+			    "<a href=\"https://bugs.webkit.org/show_bug.cgi?id=152374\">Bug 152374 - Reduce resource usage when " +
+			    "copying image to clipboard</a>.<br />" +
+			    "<br />" +
+			    "This tests how much memory is used while copying an animation into the clipboard. The animation " +
+			    "consists of 50 500x500 frames and, assuming 32 bits per pixel, will use 50 MB of memory when " +
+			    "uncompressed. To pass the test, after copying the animation to the clipboard, the memory usage of " +
+			    "the browser must not have increased by more than 200 MBs.<br />" +
+			    "<br />" +
+			    "In order to make this test more accurate it should be performed in a freshly started browser " +
+			    "session that has nothing else open and which has an empty cache.");
+
+			window.jsTestIsAsync = true;
+
+			var changeInCommittedVMBytes; // Needs to be global for shouldBeTrue() to see it.
+
+			function tryToSetUpAndRunTest()
+			{
+			    // Exit if the mallocStatistics() function is not available since it is needed to automatically
+			    // determine the results of the test.
+			    if (!window.internals || !window.internals.mallocStatistics) {
+			        debug("The mallocStatistics() function is not available, you will need to check memory usage " +
+			            "manually. First record the memory usage of the browser. Then copy the animation into the " +
+			            "clipboard. Finally check the memory usage of the browser again and subtract the amount of " +
+			            "memory that it was using previously. If the difference is greater than 200 MBs, the browser " +
+			           "has failed the test.<br />");
+			        return;
+			    }
+
+			    var initialCommittedVMBytes = window.internals.mallocStatistics().committedVMBytes;
+			    // Add a listener for clipboard copy events which will then check how much memory was used to perform
+			    // the copy and also finish the test. setTimeout() is used with a zero delay in order to cause this to
+			    // run after the copy is finished.
+			    document.getElementById("animationFrame").contentWindow.document.addEventListener("copy", function() {
+			        setTimeout(
+			        	function()
+			            {
+			                var finalCommittedVMBytes = window.internals.mallocStatistics().committedVMBytes;
+			                changeInCommittedVMBytes = finalCommittedVMBytes - initialCommittedVMBytes;
+			                shouldBeTrue("changeInCommittedVMBytes < 200000000");
+			                window.finishJSTest();
+			            },
+			            0) },
+			        false);
+
+			    // Exit if execCommand("copy") is not supported since that is needed to automatically copy the animation
+			    // to the clipboard.
+			    if (!document.queryCommandSupported('copy')) {
+			        debug("execCommand(\"copy\") is not supported. You will need to manually copy the animation into " +
+			            "the clipboard to finish the test.<br />");
+			        return;
+			    }
+
+			    document.getElementById("animationFrame").contentWindow.document.execCommand("copy");
+			}
+		</script>
+
+		<!-- The "Copy Image" option doesn't show up in the image context menu if using a data URI and that might make
+		-    it difficult to perform a copy manually so load the image from a file instead.
+		-->
+		<iframe id="animationFrame" width="500" height="500" onload="tryToSetUpAndRunTest()"
+		  src="../../../fast/images/resources/dot-moving-in-a-circle-animation.gif">
+		</iframe>
+	</body>
+</html>

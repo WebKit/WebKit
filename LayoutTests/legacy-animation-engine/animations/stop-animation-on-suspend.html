@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Test that animations stop on suspend</title>
+  <style type="text/css" media="screen">
+    iframe {
+        border: 1px solid black;
+        padding: 5px;
+        margin: 20px;
+        height: 200px;
+        width: 600px;
+    }
+    
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 35px;
+        padding: 5px;
+        background-color: green;
+        overflow:hidden;
+        -webkit-animation: move 400ms alternate infinite linear;
+    }
+
+    @-webkit-keyframes move {
+        from { -webkit-transform: translate3d(0px, 0px, 0px); }
+        to   { -webkit-transform: translate3d(400px, 0px, 0px); }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+  
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move", 0.2, "box", "webkitTransform", [1,0,0,1, 100, 0], 30],
+      ["move", 0.2, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 100, 0], 30],
+      ["move", 0.4, "box", "webkitTransform", [1,0,0,1, 200, 0], 30],
+      ["move", 0.4, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 200, 0], 30],
+    ];
+    
+    function suspend()
+    {
+        if (window.internals)
+            internals.suspendAnimations();
+    }
+    
+    function resume()
+    {
+        if (window.internals)
+            internals.resumeAnimations();
+    }
+    
+    function setTimers()
+    {
+        setTimeout(suspend, 100);
+        setTimeout(resume, 300);
+    }
+
+    runAnimationTest(expectedValues, setTimers, undefined, true);
+    
+  </script>
+</head>
+<body>
+    <div class="box" id="box"></div>
+    <!-- The parent document may into compositing mode by the iframe. -->
+    <iframe id="iframe" src="resources/stop-animation-on-suspend-subframe.html"></iframe>
+    <div id="result"></div>
+</body>
+</html>

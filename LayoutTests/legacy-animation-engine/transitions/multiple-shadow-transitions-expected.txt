@@ -1,0 +1,7 @@
+BOX
+BOX
+BOX
+PASS - "-webkit-box-shadow" property for "box" element at 0.5s saw something close to: 0,0,0,0
+PASS - "-webkit-box-shadow" property for "box2" element at 0.5s saw something close to: 0,-20,0,10
+PASS - "-webkit-box-shadow" property for "box3" element at 0.5s saw something close to: 0,0,0,10
+

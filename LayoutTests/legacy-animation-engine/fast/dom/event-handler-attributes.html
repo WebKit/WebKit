@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Test which event listeners are set up by event handler attributes (the ones with names like onclick).");
+
+const unusualEventNames = {
+    "webkitanimationend": "webkitAnimationEnd",
+    "webkitanimationiteration": "webkitAnimationIteration",
+    "webkitanimationstart": "webkitAnimationStart",
+    "webkittransitionend": "webkitTransitionEnd",
+};
+
+const eventsInGlobalEventHandlers = [
+    "abort",
+    "animationend",
+    "animationiteration",
+    "animationstart",
+    "blur",
+    "canplay",
+    "canplaythrough",
+    "change",
+    "click",
+    "contextmenu",
+    "dblclick",
+    "drag",
+    "dragend",
+    "dragenter",
+    "dragleave",
+    "dragover",
+    "dragstart",
+    "drop",
+    "durationchange",
+    "emptied",
+    "ended",
+    "error",
+    "focus",
+    "input",
+    "invalid",
+    "keydown",
+    "keypress",
+    "keyup",
+    "load",
+    "loadeddata",
+    "loadedmetadata",
+    "loadstart",
+    "mousedown",
+    "mouseenter",
+    "mouseleave",
+    "mousemove",
+    "mouseout",
+    "mouseover",
+    "mouseup",
+    "mousewheel",
+    "pause",
+    "play",
+    "playing",
+    "progress",
+    "ratechange",
+    "reset",
+    "resize",
+    "scroll",
+    "seeked",
+    "seeking",
+    "select",
+    "stalled",
+    "submit",
+    "suspend",
+    "timeupdate",
+    "transitionend",
+    "volumechange",
+    "waiting",
+    "search",
+    "wheel"
+];
+
+const eventsInWindowEventHandlers = [
+    "beforeunload",
+    "hashchange",
+    "message",
+    "offline",
+    "online",
+    "pagehide",
+    "pageshow",
+    "popstate",
+    "storage",
+    "unload",
+];
+
+const elementAndDocumentEvents = [
+    "beforecopy",
+    "beforecut",
+    "beforepaste",
+    "copy",
+    "cut",
+    "paste",
+    "selectstart",
+];
+
+const elementAndWindowEvents = [
+    "webkitanimationend",
+    "webkitanimationiteration",
+    "webkitanimationstart",
+    "webkittransitionend"
+];
+
+const uniqueWindowEvents = [
+];
+
+const uniqueDocumentEvents = [
+    "selectionchange",
+    "readystatechange"
+];
+
+const uniqueElementEvents = [
+    "beforeload"
+];
+
+const elementBodyAndFrameSetEvents = [
+    "focusin",
+    "focusout"
+];
+
+const bodyElementWindowForwardedEvents = [
+    "beforeunload",
+    "blur",
+    "error",
+    "focus",
+    "focusin",
+    "focusout",
+    "hashchange",
+    "load",
+    "message",
+    "offline",
+    "online",
+    "pagehide",
+    "pageshow",
+    "popstate",
+    "resize",
+    "storage",
+    "unload",
+];
+
+const bodyElementDocumentForwardedEvents = [
+    "selectionchange",
+];
+
+const nonEventNames = [
+    "noneventname",
+];
+
+var magicNumber = 2;
+var sideEffect;
+
+function testHandler(object, install, remove, eventName)
+{
+    const capturedMagicNumber = ++magicNumber;
+    install(capturedMagicNumber);
+
+    if (unusualEventNames[eventName])
+        eventName = unusualEventNames[eventName];
+
+    sideEffect = capturedMagicNumber - 1;
+    if (object !== window && object !== document)
+        object.dispatchEvent(new Event(eventName));
+    const handlerOnTarget = sideEffect === capturedMagicNumber;
+    sideEffect = capturedMagicNumber - 1;
+    window.dispatchEvent(new Event(eventName));
+    const handlerOnWindow = sideEffect === capturedMagicNumber;
+    sideEffect = capturedMagicNumber - 1;
+    document.dispatchEvent(new Event(eventName));
+    const handlerOnDocument = sideEffect === capturedMagicNumber;
+
+    remove();
+
+    sideEffect = capturedMagicNumber - 1;
+
+    object.dispatchEvent(new Event(eventName));
+    window.dispatchEvent(new Event(eventName));
+    document.dispatchEvent(new Event(eventName));
+
+    const misfire = sideEffect === capturedMagicNumber;
+
+    var result;
+
+    if (!handlerOnTarget && !handlerOnWindow && !handlerOnDocument)
+        result = "none";
+    else
+        result = ((handlerOnTarget ? ", target" : "") + (handlerOnWindow ? ", window" : "") + (handlerOnDocument ? ", document" : "")).substring(2);
+
+    if (misfire)
+        result += ", remove failed";
+
+    return result;
+}
+
+function testScriptAttribute(object, eventName)
+{
+    const attributeName = "on" + eventName;
+    return testHandler(object, function(capturedMagicNumber) {
+        object[attributeName] = function() { sideEffect = capturedMagicNumber };
+    }, function() {
+        object[attributeName] = null;
+    }, eventName);
+}
+
+function testContentAttribute(element, eventName)
+{
+    const attributeName = "on" + eventName;
+    return testHandler(element, function(capturedMagicNumber) {
+        element.setAttribute(attributeName, "sideEffect = " + capturedMagicNumber);
+    }, function() {
+        element.removeAttribute(attributeName);
+    }, eventName);
+}
+
+function testElementAttribute(object, eventName)
+{
+    const scriptAttributeResult = testScriptAttribute(object, eventName);
+    const contentAttributeResult = testContentAttribute(object, eventName);
+    if (scriptAttributeResult === contentAttributeResult)
+        return scriptAttributeResult;
+    return "script: " + scriptAttributeResult + "; content: " + contentAttributeResult;
+}
+
+function sortUnique(array)
+{
+    return array.sort().filter(function(item, i) {
+        return i === 0 || item !== array[i - 1];
+    });
+}
+
+function arrayUnion()
+{
+    var combined = [];
+    for (var i = 0; i < arguments.length; ++i)
+        combined = combined.concat(arguments[i]);
+    return sortUnique(combined);
+}
+
+function arrayDifference(a, b)
+{
+    return a.filter(function(item) {
+        return b.indexOf(item) < 0;
+    });
+}
+
+const windowEvents = arrayUnion(eventsInGlobalEventHandlers, eventsInWindowEventHandlers, elementAndWindowEvents, uniqueWindowEvents);
+const documentEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, uniqueDocumentEvents);
+const elementEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, elementAndWindowEvents, elementBodyAndFrameSetEvents, uniqueElementEvents);
+
+const allEventNames = arrayUnion(windowEvents, documentEvents, elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents, nonEventNames);
+
+var sectionOpen = false;
+
+function endSection()
+{
+    if (sectionOpen) {
+        debug("");
+        sectionOpen = false;
+    }
+}
+
+function section(title)
+{
+    endSection();
+    debug(title);
+    debug("");
+    sectionOpen = true;
+}
+
+function testArray(array, prefix, expected, sectionName)
+{
+    section(sectionName);
+    for (var i = 0; i < array.length; ++i) {
+        shouldBeEqualToString(prefix + ", \"" + array[i] + "\")", expected);
+    }
+}
+
+var nonHTMLElement = document.createElementNS("foo", "foo");
+var element = document.documentElement;
+var bodyElement = document.body;
+var audioElement = document.createElement("video");
+var framesetElement = document.createElement("frameset");
+var inputElement = document.createElement("input");
+var videoElement = document.createElement("video");
+var rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+testArray(windowEvents, "testScriptAttribute(window", "window", "Event names we expect to be able to set on the window object");
+testArray(arrayDifference(allEventNames, windowEvents), "testScriptAttribute(window", "none", "Event names we expect not to be able to set on the window object");
+
+testArray(documentEvents, "testScriptAttribute(document", "document", "Event names we expect to be able to set on the document");
+testArray(arrayDifference(allEventNames, documentEvents), "testScriptAttribute(document", "none", "Event names we expect not to be able to set on the document");
+
+testArray(elementEvents, "testElementAttribute(element", "target", "Event names we expect to be able to set on an element (tested on the &lt;html> element)");
+testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(element", "none", "Event names we expect not to be able to set on an element (tested on the &lt;html> element)");
+
+testArray(elementEvents, "testElementAttribute(inputElement", "target", "Event names we expect to be able to set on an element (tested on the &lt;input> element)");
+testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(inputElement", "none", "Event names we expect not to be able to set on an element (tested on the &lt;input> element)");
+
+testArray(elementEvents, "testElementAttribute(audioElement", "target", "Event names we expect to be able to set on an element (tested on the &lt;audio> element)");
+testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(audioElement", "none", "Event names we expect not to be able to set on an element (tested on the &lt;audio> element)");
+
+testArray(elementEvents, "testElementAttribute(videoElement", "target", "Event names we expect to be able to set on an element (tested on the &lt;video> element)");
+testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(videoElement", "none", "Event names we expect not to be able to set on an element (tested on the &lt;video> element)");
+
+testArray(bodyElementWindowForwardedEvents, "testElementAttribute(bodyElement", "window", "Event names we expect to be forwarded from &lt;body> element to window object)");
+testArray(bodyElementDocumentForwardedEvents, "testElementAttribute(bodyElement", "document", "Event names we expect to be forwarded from &lt;body> element to document)");
+testArray(arrayDifference(elementEvents, arrayUnion(bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(bodyElement", "target", "Non-forwarded event names on &lt;body> element");
+testArray(arrayDifference(allEventNames, arrayUnion(elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(bodyElement", "none", "Event names we expect to not be able to set on &lt;body> element");
+
+testArray(bodyElementWindowForwardedEvents, "testElementAttribute(framesetElement", "window", "Event names we expect to be forwarded from &lt;frameset> element to window object)");
+testArray(bodyElementDocumentForwardedEvents, "testElementAttribute(framesetElement", "document", "Event names we expect to be forwarded from &lt;frameset> element to document)");
+testArray(arrayDifference(elementEvents, arrayUnion(bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(framesetElement", "target", "Non-forwarded event names on &lt;frameset> element");
+testArray(arrayDifference(allEventNames, arrayUnion(elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents)), "testElementAttribute(framesetElement", "none", "Event names we expect to not be able to set on &lt;frameset> element");
+
+testArray(elementEvents, "testElementAttribute(rectElement", "target", "Event names we expect to be able to set on an element (tested on the SVG &lt;rect> element)");
+testArray(arrayDifference(allEventNames, elementEvents), "testElementAttribute(rectElement", "none", "Event names we expect not to be able to set on an element (tested on the SVG &lt;rect> element)");
+
+testArray(allEventNames, "testElementAttribute(nonHTMLElement", "none", "Event names on a non-HTML element");
+
+endSection();
+
+/*
+
+----------------
+
+To make the results of this test platform independent, there is no testing here for conditional events.
+An alternative would be to always make these event handler attributes work even if the feature
+that sends the events is turned off. See list here of IDL files that include these conditional events.
+
+html/HTMLBodyElement.idl:    [Conditional=ORIENTATION_EVENTS, NotEnumerable, JSWindowEventListener] attribute EventListener onorientationchange;
+
+html/HTMLFrameSetElement.idl:    [Conditional=ORIENTATION_EVENTS, NotEnumerable, JSWindowEventListener] attribute EventListener onorientationchange;
+
+----------------
+
+It would be good to extend this test to cover more objects.
+See list below of IDL files that indicate objects have these attributes as of the writing of this test.
+
+Modules/encryptedmedia/MediaKeySession.idl:    attribute EventListener onwebkitkeyadded;
+Modules/encryptedmedia/MediaKeySession.idl:    attribute EventListener onwebkitkeyerror;
+Modules/encryptedmedia/MediaKeySession.idl:    attribute EventListener onwebkitkeymessage;
+
+Modules/indexeddb/IDBDatabase.idl:    attribute EventListener onabort;
+Modules/indexeddb/IDBDatabase.idl:    attribute EventListener onerror;
+Modules/indexeddb/IDBDatabase.idl:    attribute EventListener onversionchange;
+
+Modules/indexeddb/IDBOpenDBRequest.idl:    attribute EventListener onblocked;
+Modules/indexeddb/IDBOpenDBRequest.idl:    attribute EventListener onupgradeneeded;
+
+Modules/indexeddb/IDBRequest.idl:    attribute EventListener onsuccess;
+Modules/indexeddb/IDBRequest.idl:    attribute EventListener onerror;
+
+Modules/indexeddb/IDBTransaction.idl:    attribute EventListener onabort;
+Modules/indexeddb/IDBTransaction.idl:    attribute EventListener oncomplete;
+Modules/indexeddb/IDBTransaction.idl:    attribute EventListener onerror;
+
+Modules/mediastream/MediaStream.idl:    attribute EventListener onactive;
+Modules/mediastream/MediaStream.idl:    attribute EventListener oninactive;
+Modules/mediastream/MediaStream.idl:    attribute EventListener onaddtrack;
+Modules/mediastream/MediaStream.idl:    attribute EventListener onremovetrack;
+Modules/mediastream/MediaStreamTrack.idl:    attribute EventListener onmute;
+Modules/mediastream/MediaStreamTrack.idl:    attribute EventListener onunmute;
+Modules/mediastream/MediaStreamTrack.idl:    attribute EventListener onstarted;
+Modules/mediastream/MediaStreamTrack.idl:    attribute EventListener onended;
+Modules/mediastream/MediaStreamTrack.idl:    attribute EventListener onoverconstrained;
+Modules/mediastream/RTCDTMFSender.idl:    attribute EventListener ontonechange;
+Modules/mediastream/RTCDataChannel.idl:    attribute EventListener onopen;
+Modules/mediastream/RTCDataChannel.idl:    attribute EventListener onerror;
+Modules/mediastream/RTCDataChannel.idl:    attribute EventListener onclose;
+Modules/mediastream/RTCDataChannel.idl:    attribute EventListener onmessage;
+Modules/mediastream/RTCPeerConnection.idl:    attribute EventListener onnegotiationneeded;
+Modules/mediastream/RTCPeerConnection.idl:    attribute EventListener onicecandidate;
+Modules/mediastream/RTCPeerConnection.idl:    attribute EventListener onsignalingstatechange;
+Modules/mediastream/RTCPeerConnection.idl:    attribute EventListener onaddstream;
+Modules/mediastream/RTCPeerConnection.idl:    attribute EventListener onremovestream;
+Modules/mediastream/RTCPeerConnection.idl:    attribute EventListener oniceconnectionstatechange;
+Modules/mediastream/RTCPeerConnection.idl:    attribute EventListener ondatachannel;
+
+Modules/notifications/Notification.idl:    attribute EventListener onshow;
+Modules/notifications/Notification.idl:    attribute EventListener ondisplay;
+Modules/notifications/Notification.idl:    attribute EventListener onerror;
+Modules/notifications/Notification.idl:    attribute EventListener onclose;
+Modules/notifications/Notification.idl:    attribute EventListener onclick;
+
+Modules/speech/SpeechSynthesisUtterance.idl:    attribute EventListener onstart;
+Modules/speech/SpeechSynthesisUtterance.idl:    attribute EventListener onend;
+Modules/speech/SpeechSynthesisUtterance.idl:    attribute EventListener onerror;
+Modules/speech/SpeechSynthesisUtterance.idl:    attribute EventListener onpause;
+Modules/speech/SpeechSynthesisUtterance.idl:    attribute EventListener onresume;
+Modules/speech/SpeechSynthesisUtterance.idl:    attribute EventListener onmark;
+Modules/speech/SpeechSynthesisUtterance.idl:    attribute EventListener onboundary;
+
+Modules/webaudio/AudioBufferSourceNode.idl:    attribute EventListener onended;
+Modules/webaudio/AudioContext.idl:    attribute EventListener oncomplete;
+Modules/webaudio/OscillatorNode.idl:    attribute EventListener onended;
+Modules/webaudio/ScriptProcessorNode.idl:    attribute EventListener onaudioprocess;
+
+Modules/websockets/WebSocket.idl:    attribute EventListener onopen;
+Modules/websockets/WebSocket.idl:    attribute EventListener onmessage;
+Modules/websockets/WebSocket.idl:    attribute EventListener onerror;
+Modules/websockets/WebSocket.idl:    attribute EventListener onclose;
+
+css/FontLoader.idl:    attribute EventListener onloading;
+css/FontLoader.idl:    attribute EventListener onloadingdone;
+css/FontLoader.idl:    attribute EventListener onloadstart;
+css/FontLoader.idl:    attribute EventListener onload;
+css/FontLoader.idl:    attribute EventListener onerror;
+
+dom/MessagePort.idl:    attribute EventListener onmessage;
+
+fileapi/FileReader.idl:    attribute EventListener onloadstart;
+fileapi/FileReader.idl:    attribute EventListener onprogress;
+fileapi/FileReader.idl:    attribute EventListener onload;
+fileapi/FileReader.idl:    attribute EventListener onabort;
+fileapi/FileReader.idl:    attribute EventListener onerror;
+fileapi/FileReader.idl:    attribute EventListener onloadend;
+
+html/track/AudioTrackList.idl:    attribute EventListener onchange;
+html/track/AudioTrackList.idl:    attribute EventListener onaddtrack;
+html/track/AudioTrackList.idl:    attribute EventListener onremovetrack;
+
+html/track/TextTrack.idl:             attribute EventListener oncuechange;
+html/track/TextTrackCue.idl:    attribute EventListener onenter;
+
+html/track/TextTrackCue.idl:    attribute EventListener onexit;
+html/track/TextTrackList.idl:    attribute EventListener onaddtrack;
+html/track/TextTrackList.idl:    attribute EventListener onchange;
+html/track/TextTrackList.idl:    attribute EventListener onremovetrack;
+
+html/track/VideoTrackList.idl:    attribute EventListener onchange;
+html/track/VideoTrackList.idl:    attribute EventListener onaddtrack;
+html/track/VideoTrackList.idl:    attribute EventListener onremovetrack;
+
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onchecking;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onerror;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onnoupdate;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener ondownloading;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onprogress;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onupdateready;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener oncached;
+loader/appcache/DOMApplicationCache.idl:    attribute EventListener onobsolete;
+
+page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondevicemotion;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=ORIENTATION_EVENTS] attribute EventHandler onorientationchange;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=PROXIMITY_EVENTS] attribute EventHandler onwebkitdeviceproximity;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+ 
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+dom/Document.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
+dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+dom/Document.idl:    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
+dom/Document.idl:    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror;
+ 
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
+dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
+dom/Element.idl:    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyadded;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyerror;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeymessage;
+dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventHandler onwebkitneedkey;
+dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
+dom/Element.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
+dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocomplete;
+dom/Element.idl:    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventHandler onautocompleteerror;
+dom/Element.idl:    [NotEnumerable, Conditional=VIDEO_PRESENTATION_MODE] attribute EventHandler onwebkitpresentationmodechanged;
+dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitcurrentplaybacktargetiswirelesschanged;
+dom/Element.idl:    [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
+
+page/EventSource.idl:    attribute EventListener onopen;
+page/EventSource.idl:    attribute EventListener onmessage;
+page/EventSource.idl:    attribute EventListener onerror;
+
+page/Performance.idl:    attribute EventListener onwebkitresourcetimingbufferfull;
+
+workers/AbstractWorker.idl:    attribute EventListener onerror;
+
+workers/DedicatedWorkerGlobalScope.idl:             attribute EventListener onmessage;
+
+workers/Worker.idl:    attribute EventListener onmessage;
+
+workers/WorkerGlobalScope.idl:    attribute EventListener onerror;
+workers/WorkerGlobalScope.idl:    attribute EventListener onoffline;
+workers/WorkerGlobalScope.idl:    attribute EventListener ononline;
+
+xml/XMLHttpRequest.idl:    attribute EventListener onabort;
+xml/XMLHttpRequest.idl:    attribute EventListener onerror;
+xml/XMLHttpRequest.idl:    attribute EventListener onload;
+xml/XMLHttpRequest.idl:    attribute EventListener onloadend;
+xml/XMLHttpRequest.idl:    attribute EventListener onloadstart;
+xml/XMLHttpRequest.idl:    attribute EventListener onprogress;
+xml/XMLHttpRequest.idl:    [Conditional=XHR_TIMEOUT] attribute EventListener ontimeout;
+xml/XMLHttpRequest.idl:    attribute EventListener onreadystatechange;
+
+xml/XMLHttpRequestUpload.idl:    attribute EventListener onabort;
+xml/XMLHttpRequestUpload.idl:    attribute EventListener onerror;
+xml/XMLHttpRequestUpload.idl:    attribute EventListener onload;
+xml/XMLHttpRequestUpload.idl:    attribute EventListener onloadend;
+xml/XMLHttpRequestUpload.idl:    attribute EventListener onloadstart;
+xml/XMLHttpRequestUpload.idl:    attribute EventListener onprogress;
+
+----------------
+
+*/
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

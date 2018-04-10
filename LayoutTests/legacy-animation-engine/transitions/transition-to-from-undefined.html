@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        position: relative;
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: gray;
+        transition: max-height 2s linear;
+    }
+    
+    #test1 {
+        max-height: 100px;
+    }
+    
+    body.final #test1 {
+        max-height: none;
+    }
+
+    #test2 {
+        max-height: none;
+    }
+    
+    body.final #test2 {
+        max-height: 100px
+    }
+
+    #test3 {
+        max-height: 0;
+    }
+    
+    body.final #test3 {
+        max-height: 100px
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [1, 'test1', 'max-height', 'none', 2],
+      [1, 'test2', 'max-height', '100', 2],
+      [1, 'test3', 'max-height', '50', 2],
+    ];
+  
+    function setupTest()
+    {
+        document.body.classList.add('final');
+    }
+    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  <div id="test1" class="box"></div>
+  <div id="test2" class="box"></div>
+  <div id="test3" class="box"></div>
+
+  <div id="result"></div>
+</body>
+</html>

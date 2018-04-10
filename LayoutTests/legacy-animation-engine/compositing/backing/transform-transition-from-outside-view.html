@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            width: 120px;
+            height: 100px;
+            background-color: blue;
+            margin: 100px 100px;
+            position: relative;
+            box-shadow: 0 0 10px black;
+            transition: transform 5s;
+            transform: translateX(-400px);
+        }
+
+        .sublayer {
+            width: 20px;
+            height: 20px;
+            background-color: green;
+            position: relative;
+            box-shadow: 0 0 10px black;
+            will-change: transform;
+        }
+        
+        body.changed .box {
+            transform: translateX(0px);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function dumpLayers()
+        {
+            if (window.testRunner) {
+                output.innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+                testRunner.notifyDone();
+            }
+        }
+
+        window.addEventListener("load", function() {
+            document.body.classList.add('changed');
+            window.setTimeout(dumpLayers, 0);
+        });
+    </script>
+</head>
+<body>
+
+    <div class="box">
+        <div class="sublayer"></div>
+    </div>
+<pre id="output"></pre>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test end values with fill modes after animation is removed</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 100px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      -webkit-animation-delay: 0.1s;
+      -webkit-animation-duration: 0.1s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "anim";
+    }
+    @-webkit-keyframes "anim" {
+        from { left: 200px; }
+        to   { left: 300px; }
+    }
+    #a {
+      background-color: blue;
+      -webkit-animation-fill-mode: none;
+    }
+    #b {
+      background-color: red;
+      -webkit-animation-fill-mode: backwards;
+    }
+    #c {
+      background-color: green;
+      -webkit-animation-fill-mode: forwards;
+    }
+    #d {
+      background-color: yellow;
+      -webkit-animation-fill-mode: both;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    const numAnims = 4;
+    var animsFinished = 0;
+    const expectedEndValues = [
+      {id: "a", value: 100},
+      {id: "b", value: 100},
+      {id: "c", value: 100},
+      {id: "d", value: 100}
+    ];
+  
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+  
+    function animationEnded(event) {
+        event.target.style.webkitAnimationName = "none";
+        if (++animsFinished == numAnims) {
+            setTimeout(endTest, 0); // this set timeout should be ok in the test environment
+                                    // since we're just giving style a chance to resolve
+        }
+    };
+  
+    function endTest() {
+
+        var result = "";
+        for (var i=0; i < expectedEndValues.length; i++) {
+            var el = document.getElementById(expectedEndValues[i].id);
+            var expectedValue = expectedEndValues[i].value;
+            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            if (Math.abs(expectedValue - realValue) < 5) {
+              result += "PASS";
+            } else {
+              result += "FAIL";
+            }
+            result += " - id: " + expectedEndValues[i].id + " expected: " + expectedValue + " actual: " + realValue + "<br>";
+        }
+        document.getElementById('result').innerHTML = result;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+  
+    window.onload = function () {
+        document.addEventListener("webkitAnimationEnd", animationEnded, false);
+    };
+  
+  </script>
+</head>
+<body>
+This test performs an animation of the left property with four different
+fill modes. It animates over 0.1 second with a 0.1 second delay.
+At the end of the animations, we remove the animation name which should
+cause the value to jump back to the unanimated style.
+<div id="a" class="box">
+  None
+</div>
+<div id="b" class="box">
+  Backwards
+</div>
+<div id="c" class="box">
+  Forwards
+</div>
+<div id="d" class="box">
+  Both
+</div>
+<div id="result">
+</div>
+</body>
+</html>

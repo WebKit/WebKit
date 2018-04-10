@@ -1,0 +1,57 @@
+<style>
+    #overlay {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 200px;
+        height: 200px;
+        transform: translate(100px);
+        background-color: green;
+    }
+
+    #container .child {
+        position: absolute;
+        left: 150px;
+        top: 150px;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        animation: 5s anim;
+    }
+
+    @keyframes anim {
+        0% {
+            transform: translate(80%, 0);
+        }
+        100% {
+            transform: translate(80%, 100px);
+        }
+    }
+
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function test() {
+    var el = document.getElementById("container");
+    var child = document.createElement("div");
+
+    child.classList.add("child");
+    el.appendChild(child);
+    setTimeout(function () {
+        child.style.webkitAnimationPlayState = "paused";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 10);
+}
+
+window.addEventListener("load", function () {
+    setTimeout(test, 10);
+}, false);
+</script>
+<body>
+    <div id="container"></div>
+    <div id="overlay"></div>
+</body>
+</html>

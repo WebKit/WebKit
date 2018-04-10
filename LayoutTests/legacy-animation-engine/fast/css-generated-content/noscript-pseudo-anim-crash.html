@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+:before {
+    -webkit-animation-name: name1;
+    -webkit-animation-duration: 8s;
+    -webkit-animation-timing-function: ease-in ! important;
+    @-webkit-keyframes name1 {
+        from {
+            margin-bottom: auto;
+        }
+        to {
+            margin-bottom: 256in;
+        }
+    }
+};
+</style>
+<body>
+<noscript></noscript>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(() => testRunner.notifyDone(), 50);
+}
+document.body.offsetLeft;
+document.body.innerHTML = "This test passes if it doesn't assert or crash";
+</script>

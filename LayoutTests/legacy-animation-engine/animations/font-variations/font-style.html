@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/animation-test-helpers.js"></script>
+<style>
+
+@keyframes TheAnimation {
+    from {
+        font-style: oblique 21deg;
+    }
+    to {
+        font-style: oblique 89deg;
+    }
+}
+
+#box {
+    font-size: 100px;
+    animation-duration: 3s;
+    animation-timing-function: linear;
+}
+</style>
+</head>
+<body>
+<div id="box">Hello</div>
+<div id="result"></div>
+<script>
+var expectedValues = [
+    // [animation-name, time, element-id, property, expected-value, tolerance]
+    ["TheAnimation", 0.5, "box", "font-style", "oblique 32.3666", 10],
+    ["TheAnimation", 1.0, "box", "font-style", "oblique 43.6666", 10],
+    ["TheAnimation", 2.0, "box", "font-style", "oblique 66.3333", 10],
+];
+
+var promises = [];
+
+document.fonts.forEach(function(f) {
+    promises.push(f.loaded);
+});
+
+Promise.all(promises).then(function() {
+    document.getElementById("box").style.animationName = "TheAnimation";
+    runAnimationTest(expectedValues, undefined, undefined, undefined, false, undefined);
+});
+</script>
+</body>
+</html>

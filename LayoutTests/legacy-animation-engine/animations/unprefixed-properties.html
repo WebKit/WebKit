@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test the unprefixed animation properties.");
+
+// These have to be global for the test helpers to see them.
+var stylesheet, cssRule, declaration, animationRule, subRule, animationStyle;
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+stylesheet = styleElement.sheet;
+
+function testAnimationRule(description, property, value, expectedTexts)
+{
+    debug("");
+    debug("Parsing - " + description + " : " + value);
+
+    stylesheet.insertRule("section { " + property + ": " + value + "; }", 0);
+    cssRule = stylesheet.cssRules.item(0);
+
+    shouldBe("cssRule.type", "1");
+
+    declaration = cssRule.style;
+    shouldBe("declaration.length", "1");
+    shouldBe("declaration.getPropertyValue('" + property + "')", "'" + value + "'");
+    shouldBe("declaration.getPropertyValue('-webkit-" + property + "')", "'" + value + "'");
+
+    animationRule = declaration.getPropertyCSSValue(property);
+
+    if (animationRule && animationRule.length > 1 && expectedTexts && expectedTexts.length > 1) {
+        for (var i = 0; i < expectedTexts.length; i++) {
+            subRule = animationRule[i];
+            shouldBe("subRule.cssText", "'" + expectedTexts[i] + "'");
+        }
+    }
+
+    stylesheet.deleteRule(0);
+}
+
+function testInvalidAnimationRule(description, property, value)
+{
+    debug("");
+    debug("Invalid - " + description + " : " + value);
+
+    stylesheet.insertRule("section { " + property + ": " + value + "; }", 0);
+    cssRule = stylesheet.cssRules.item(0);
+
+    shouldBe("cssRule.type", "1");
+
+    declaration = cssRule.style;
+    shouldBe("declaration.length", "0");
+    shouldBeEqualToString("declaration.getPropertyValue('" + property + "')", "");
+
+    stylesheet.deleteRule(0);
+}
+
+function testComputedAnimationRule(description, property, value, expectedTexts)
+{
+    debug("");
+    debug("Computed Style - " + description + " : " + value);
+
+    stylesheet.insertRule("body { " + property + ": " + value + "; }", 0);
+
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue(property);
+
+    if (animationStyle && animationStyle.length > 1 && expectedTexts && expectedTexts.length > 1) {
+        for (var i = 0; i < expectedTexts.length; i++) {
+            subRule = animationStyle[i];
+            shouldBe("subRule.cssText", "'" + expectedTexts[i] + "'");
+        }
+    } else
+        shouldBe("animationStyle.cssText", "'" + value + "'");
+
+    stylesheet.deleteRule(0);
+}
+
+
+testAnimationRule("Basic animation-name",
+                  "animation-name", "waldo");
+
+testAnimationRule("Multiple animation-names",
+                  "animation-name", "waldo, wally",
+                  ["waldo", "wally"]);
+
+testAnimationRule("Basic animation-duration",
+                  "animation-duration", "5s");
+
+testAnimationRule("Multiple animation-durations",
+                  "animation-duration", "10s, 20ms",
+                  ["10s", "20ms"]);
+
+testAnimationRule("Basic animation-delay",
+                  "animation-delay", "5s");
+
+testAnimationRule("Multiple animation-delays",
+                  "animation-delay", "10s, 20ms",
+                  ["10s", "20ms"]);
+
+testAnimationRule("Basic animation-timing-function",
+                  "animation-timing-function", "ease-in-out");
+
+testAnimationRule("animation-timing-function with bezier",
+                  "animation-timing-function", "cubic-bezier(0.2, 0.3, 0.4, 0.5)");
+
+testAnimationRule("Multiple animation-timing-functions",
+                  "animation-timing-function", "ease-in, ease-out",
+                  ["ease-in", "ease-out"]);
+
+testAnimationRule("Basic animation-iteration-count",
+                  "animation-iteration-count", "4");
+
+testAnimationRule("animation-iteration-count with keyword",
+                  "animation-iteration-count", "infinite");
+
+testAnimationRule("Multiple animation-iteration-counts",
+                  "animation-iteration-count", "2, infinite, 4",
+                  ["2", "infinite", "4"]);
+
+testAnimationRule("Normal animation-direction",
+                  "animation-direction", "normal");
+
+testAnimationRule("Alternate animation-direction",
+                  "animation-direction", "alternate");
+
+testAnimationRule("Reverse animation-direction",
+                  "animation-direction", "reverse");
+
+testAnimationRule("Alternate Reverse animation-direction",
+                  "animation-direction", "alternate-reverse");
+
+testAnimationRule("Multiple animation-directions",
+                  "animation-direction", "alternate, alternate, normal",
+                  ["alternate", "alternate", "normal"]);
+
+testAnimationRule("None animation-fill-mode",
+                  "animation-fill-mode", "none");
+
+testAnimationRule("Forwards animation-fill-mode",
+                  "animation-fill-mode", "forwards");
+
+testAnimationRule("Backwards animation-fill-mode",
+                  "animation-fill-mode", "backwards");
+
+testAnimationRule("Both animation-fill-mode",
+                  "animation-fill-mode", "both");
+
+testAnimationRule("Multiple animation-fill-modes",
+                  "animation-fill-mode", "none, forwards, backwards, both",
+                  ["none", "forwards", "backwards", "both"]);
+
+testInvalidAnimationRule("duration - Bad value", "animation-duration", "10cm");
+testInvalidAnimationRule("duration - List with bad value", "animation-duration", "10ms, 10cm, 10s");
+
+testInvalidAnimationRule("delay - Bad value", "animation-delay", "10cm");
+testInvalidAnimationRule("delay - List with bad value", "animation-delay", "10ms, 10cm, 10s");
+
+testInvalidAnimationRule("timing-function - Wrong keyword parameter", "animation-timing-function", "egg");
+testInvalidAnimationRule("timing-function - List with wrong keyword parameter", "animation-timing-function", "ease-in, egg, ease-out");
+
+testInvalidAnimationRule("iteration-count - Wrong keyword parameter", "animation-iteration-count", "banana");
+testInvalidAnimationRule("iteration-count - List with wrong keyword parameter", "animation-iteration-count", "infinite, 10, banana");
+
+testInvalidAnimationRule("direction - Wrong keyword parameter", "animation-direction", "all");
+testInvalidAnimationRule("direction - List with wrong keyword parameter", "animation-direction", "normal, alternate, none");
+
+testInvalidAnimationRule("fill-mode - Wrong keyword parameter", "animation-fill-mode", "all");
+testInvalidAnimationRule("fill-mode - List with wrong keyword parameter", "animation-fill-mode", "none, backwards, left, alternate, forwards");
+
+testComputedAnimationRule("Basic animation-name",
+                          "animation-name", "waldo");
+
+testComputedAnimationRule("Multiple animation-names",
+                          "animation-name", "waldo, wally",
+                          ["waldo", "wally"]);
+
+testComputedAnimationRule("Basic animation-duration",
+                          "animation-duration", "5s");
+
+testComputedAnimationRule("Multiple animation-durations",
+                          "animation-duration", "10s, 20ms",
+                          ["10s", "0.02s"]);
+
+testComputedAnimationRule("Basic animation-delay",
+                          "animation-delay", "5s");
+
+testComputedAnimationRule("Multiple animation-delays",
+                          "animation-delay", "10s, 20ms",
+                          ["10s", "0.02s"]);
+
+testComputedAnimationRule("Basic animation-timing-function",
+                          "animation-timing-function", "ease-in-out");
+
+testComputedAnimationRule("animation-timing-function with bezier",
+                          "animation-timing-function", "cubic-bezier(0.2, 0.3, 0.4, 0.5)");
+
+testComputedAnimationRule("Multiple animation-timing-functions",
+                          "animation-timing-function", "ease-in, ease-out",
+                          ["ease-in", "ease-out"]);
+
+testComputedAnimationRule("Basic animation-iteration-count",
+                          "animation-iteration-count", "4");
+
+testComputedAnimationRule("animation-iteration-count with keyword",
+                          "animation-iteration-count", "infinite");
+
+testComputedAnimationRule("Multiple animation-iteration-counts",
+                          "animation-iteration-count", "2, infinite, 4",
+                          ["2", "infinite", "4"]);
+
+testComputedAnimationRule("Normal animation-direction",
+                          "animation-direction", "normal");
+
+testComputedAnimationRule("Alternate animation-direction",
+                          "animation-direction", "alternate");
+
+testComputedAnimationRule("Reverse animation-direction",
+                          "animation-direction", "reverse");
+
+testComputedAnimationRule("Alternate Reverse animation-direction",
+                          "animation-direction", "alternate-reverse");
+
+testComputedAnimationRule("Multiple animation-directions",
+                          "animation-direction", "alternate, alternate, normal",
+                          ["alternate", "alternate", "normal"]);
+
+testComputedAnimationRule("None animation-fill-mode",
+                          "animation-fill-mode", "none");
+
+testComputedAnimationRule("Forwards animation-fill-mode",
+                          "animation-fill-mode", "forwards");
+
+testComputedAnimationRule("Backwards animation-fill-mode",
+                          "animation-fill-mode", "backwards");
+
+testComputedAnimationRule("Both animation-fill-mode",
+                          "animation-fill-mode", "both");
+
+testComputedAnimationRule("Multiple animation-fill-modes",
+                          "animation-fill-mode", "none, forwards, backwards, both",
+                          ["none", "forwards", "backwards", "both"]);
+
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

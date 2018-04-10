@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test events when the animation has a short duration and is delayed</title>
+  <style>
+    #box {
+      position: relative;
+      left: 100px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      -webkit-animation-duration: 0.001s;
+      -webkit-animation-delay: 0.001s;
+      -webkit-animation-name: anim;
+      background-color: #999;
+      -webkit-animation-iteration-count: 2;
+    }
+    @-webkit-keyframes anim {
+        from { left: 200px; }
+        to   { left: 300px; }
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+  
+    onload = function()
+    {
+        document.addEventListener('webkitAnimationStart', function() {
+            document.getElementById('result').innerHTML = 'PASS: got webkitAnimationStart event';
+        }, false);
+        document.addEventListener('webkitAnimationEnd', function() {
+            document.getElementById('result').innerHTML += '<br>PASS: got webkitAnimationEnd event';
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+        
+        // Animation begins once we append the DOM node to the document.
+        var boxNode = document.createElement('div');
+        boxNode.id = 'box';
+        document.body.appendChild(boxNode);
+    }
+  </script>
+</head>
+<body>
+Test events when the animation has a short duration and is delayed.
+<pre id="result">FAIL: No events received</pre>
+</body>
+</html>

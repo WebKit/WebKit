@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+const animationEventHandlers = ["onanimationend", "onanimationiteration", "onanimationstart"];
+test(function() {
+    for (let animationEventHandler of animationEventHandlers) {
+        assert_own_property(HTMLElement.prototype, animationEventHandler, animationEventHandler + " on HTMLElement.prototype");
+        assert_idl_attribute(document.createElement("div"), animationEventHandler, "div." + animationEventHandler);
+    }
+}, "HTMLElement should have onanimation* event handlers.");
+
+test(function() {
+    for (let animationEventHandler of animationEventHandlers)
+        assert_own_property(window, animationEventHandler, "window." + animationEventHandler);
+}, "Window should have onanimation* event handlers.");
+
+test(function() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    for (let animationEventHandler of animationEventHandlers) {
+        assert_own_property(SVGElement.prototype, animationEventHandler, animationEventHandler + " on SVGElement.prototype");
+        assert_idl_attribute(svg, animationEventHandler, "svg." + animationEventHandler);
+    }
+}, "SVGElement should have onanimation* event handlers.");
+
+test(function() {
+    for (let animationEventHandler of animationEventHandlers) {
+        assert_own_property(Document.prototype, animationEventHandler, animationEventHandler + " on Document.prototype");
+        assert_idl_attribute(document, animationEventHandler, "document." + animationEventHandler);
+    }
+}, "Document should have onanimation* event handlers.");
+</script>
+</body>
+</html>

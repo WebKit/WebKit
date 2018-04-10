@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        var currentFrame = 0;
+        var failed = false;
+
+        function finishTest()
+        {
+            if (failed)
+                testFailed("Some of the requestAnimationFrame() callback timestamps were larger than Performance.now() by more than 3ms.");
+            else
+                testPassed("All the differences between requestAnimationFrame() callback timestamps and Performance.now() were within 3ms.")
+            finishJSTest();
+        }
+        
+        function doAnimation(timestamp)
+        {
+            const Tolerance = 3;
+            const WarmupFrames = 5;
+
+            var performanceNow = window.performance.now();
+            if (++currentFrame > WarmupFrames && Math.abs(timestamp - performanceNow) >= Tolerance) {
+                debug("requestAnimationFrame() timestamp = " + timestamp + ", window.performance.now() = " + performanceNow);
+                failed = true;
+            }
+
+            const MaxFrames = 25;
+            if (currentFrame == MaxFrames)
+                finishTest();
+            else
+                requestAnimationFrame(doAnimation);
+        }
+        
+        window.jsTestIsAsync = true;
+        requestAnimationFrame(doAnimation);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

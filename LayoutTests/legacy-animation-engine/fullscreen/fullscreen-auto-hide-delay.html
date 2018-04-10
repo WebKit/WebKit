@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../fullscreen/full-screen-test.js"></script>
+    <script>
+        window.addEventListener('load', event => {
+            window.target = document.querySelector('#target');
+            run('internals.setFullscreenAutoHideDelay(1)');
+            testExpected('window.getComputedStyle(target).transitionDuration', '1s');
+            run('internals.setFullscreenAutoHideDelay(20)');
+            testExpected('window.getComputedStyle(target).transitionDuration', '20s');
+            run('internals.setFullscreenAutoHideDelay(0)');
+            testExpected('window.getComputedStyle(target).transitionDuration', '0s');
+            endTest();
+        });
+    </script>
+    <style>
+        #target {
+            position: relative;
+            transition-property: opacity;
+            transition-duration: env(fullscreen-auto-hide-delay);
+        }
+    </style>
+</head>
+<body>
+    <div id="target">&nbsp;</div>
+</body>
+</html>

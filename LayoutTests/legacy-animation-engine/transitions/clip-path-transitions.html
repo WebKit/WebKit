@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 50px;
+        background-color: gray;
+        -webkit-transition-duration: 1s;
+        -webkit-transition-timing-function: linear;
+        -webkit-transition-property: -webkit-clip-path;
+    }
+    
+    #circle {
+        -webkit-clip-path: circle(100px at 50px 30px);
+    }
+    
+    body.final #circle {
+        -webkit-clip-path: circle(20px at 50px 50px);
+    }
+
+    #ellipse {
+        -webkit-clip-path: ellipse(10px 20px at 50px 30px);
+    }
+    
+    body.final #ellipse {
+        -webkit-clip-path: ellipse(20px 40px at 50px 50px);
+    }
+
+    #inset {
+        -webkit-clip-path: inset(10px 20px);
+    }
+    
+    body.final #inset {
+        -webkit-clip-path: inset(20px 24px);
+    }
+
+    #polygon {
+        -webkit-clip-path: polygon(20px 0px, 100px 0, 100px 50px, 0 50px);
+    }
+    
+    body.final #polygon {
+        -webkit-clip-path: polygon(10px 0px, 50px 0, 20px 40px, 0 40px);
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'circle', '-webkit-clip-path', 'circle(60px at 50px 40px)', 1],
+      [0.5, 'ellipse', '-webkit-clip-path', 'ellipse(15px 30px at 50px 40px)', 1],
+      [0.5, 'inset', '-webkit-clip-path', 'inset(15px 22px)', 1],
+      [0.5, 'polygon', '-webkit-clip-path', 'polygon(15px 0px, 75px 0, 60px 45px, 0 45px)', 1],
+    ];
+  
+    function setupTest()
+    {
+        document.body.classList.add('final');
+    }
+    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  <div id="circle" class="box"></div>
+  <div id="ellipse" class="box"></div>
+  <div id="inset" class="box"></div>
+  <div id="polygon" class="box"></div>
+
+  <div id="result"></div>
+
+</body>
+</html>

@@ -48,22 +48,36 @@ webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Fa
 
 # Require ENABLE_CSS_ANIMATIONS_LEVEL_2
 Bug(WPE) animations/trigger-computed-style.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/trigger-computed-style.html [ Failure ]
 Bug(WPE) animations/trigger-container-scroll-boundaries.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/trigger-container-scroll-boundaries.html [ Failure ]
 Bug(WPE) animations/trigger-container-scroll-empty.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Failure ]
 Bug(WPE) animations/trigger-container-scroll-simple.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/trigger-container-scroll-simple.html [ Failure ]
 Bug(WPE) animations/trigger-parsing.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/trigger-parsing.html [ Failure ]
 # Font variations
 Bug(WPE) animations/font-variations/font-stretch.html [ Timeout ]
+Bug(WPE) legacy-animation-engine/animations/font-variations/font-stretch.html [ Timeout ]
 Bug(WPE) animations/font-variations/font-style.html [ Timeout ]
+Bug(WPE) legacy-animation-engine/animations/font-variations/font-style.html [ Timeout ]
 Bug(WPE) animations/font-variations/font-variation-settings.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/font-variations/font-variation-settings.html [ Failure ]
 Bug(WPE) animations/font-variations/font-variation-settings-order.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/font-variations/font-variation-settings-order.html [ Failure ]
 Bug(WPE) animations/font-variations/font-variation-settings-unlike.html [ Failure ]
+Bug(WPE) legacy-animation-engine/animations/font-variations/font-variation-settings-unlike.html [ Failure ]
 # Unknown
 Bug(WPE) animations/fill-forwards-auto-height.html [ ImageOnlyFailure Pass ]
+Bug(WPE) legacy-animation-engine/animations/fill-forwards-auto-height.html [ ImageOnlyFailure Pass ]
 webkit.org/b/137883 animations/negative-delay.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/animations/negative-delay.html [ Pass Failure ]
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+webkit.org/b/120839 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
+webkit.org/b/111612 legacy-animation-engine/animations/animation-delay-changed.html [ Failure Pass ]
 
 Bug(WPE) canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
@@ -888,7 +902,9 @@ webkit.org/b/175199 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivate
 
 # ENABLE_CSS_COMPOSITING
 Bug(WPE) transitions/blendmode-transitions.html [ Failure ]
+Bug(WPE) legacy-animation-engine/transitions/blendmode-transitions.html [ Failure ]
 transitions/svg-text-shadow-transition.html [ Pass ]
+legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Pass ]
 
 # ENABLE_MEDIA_SOURCE
 media/media-source/ [ Pass ]

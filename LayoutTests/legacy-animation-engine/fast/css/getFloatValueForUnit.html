@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="test-div" style="font-size: 10pt; -webkit-transform: rotate(100grad); -webkit-animation-delay: 0.2s;"></div>
+<script>
+description("Testing whether CSSPrimitiveValue.getFloatValue() converts units correctly.");
+
+function getFloatValue(propertyName, unit)
+{
+    var result = document.getElementById("test-div").style.getPropertyCSSValue(propertyName).getFloatValue(unit);
+    return Number(result.toFixed(6));
+}
+
+function getFirstFloatValueInList(propertyName, unit)
+{
+    var result = document.getElementById("test-div").style.getPropertyCSSValue(propertyName)[0][0].getFloatValue(unit);
+    return Number(result.toFixed(6));
+}
+
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PT)", "10");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_MM)", "3.527778");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_CM)", "0.352778");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_IN)", "0.138889");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PC)", "0.833333");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PX)", "13.333333");
+shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_NUMBER)", "13.333333");
+shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_MS)", "200");
+shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_S)", "0.2");
+shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_NUMBER)", "200");
+
+shouldThrowErrorName("getFloatValue('font-size', CSSPrimitiveValue.CSS_PERCENTAGE)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('font-size', CSSPrimitiveValue.CSS_MS)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('font-size', CSSPrimitiveValue.CSS_HZ)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('font-size', CSSPrimitiveValue.CSS_DEG)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('font-size', CSSPrimitiveValue.CSS_RGBCOLOR)", "InvalidAccessError");
+
+shouldThrowErrorName("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PERCENTAGE)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PX)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_DEG)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_HZ)", "InvalidAccessError");
+shouldThrowErrorName("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_RGBCOLOR)", "InvalidAccessError");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

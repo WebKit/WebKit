@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+      position: relative;
+      height: 300px;
+      width: 300px;
+      margin: 10px;
+      background-color: green;
+      -webkit-transition-property: opacity;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-duration: 5s;
+    }
+  
+    #first {
+      opacity: 0.5;
+    }
+
+    .box {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      height: 200px;
+      width: 200px;
+      background-color: blue;
+    }
+
+    .indicator {
+      position: absolute;
+      top: 150px;
+      left: 150px;
+      height: 100px;
+      width: 100px;
+      background-color: orange;
+      z-index: -1;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
+    function runTest()
+    {
+      var container = document.getElementById('first');
+      container.style.opacity = 1;
+      
+      // dump the tree in the middle of the transition
+      if (window.testRunner)
+        window.setTimeout(function() {
+          internals.pauseTransitionAtTimeOnElement("opacity", 2.5, first);
+          testRunner.notifyDone();
+        }, 0);
+    }
+    // FIXME: this should use runTransitionTest().
+    window.addEventListener('load', runTest, false);
+  </script>
+</head>
+<body>
+
+  <div class="container" id="first">
+    <div class="box"></div>
+    <div class="indicator"></div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .mover {
+            height: 100px;
+            width: 3000px;
+            background-color: gray;
+            border: 1px solid black;
+        }
+        
+        .mover.animating {
+            animation: move 0.25s forwards linear;
+        }
+        
+        @keyframes move {
+            from { transform: translateX(1000px); }
+            to { transform: translateX(-2000px); }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        function doTest()
+        {
+            window.setTimeout(function() {
+                var mover = document.getElementById('mover');
+                mover.addEventListener('animationstart', function() {
+                    if (window.internals)
+                        internals.startTrackingLayerFlushes();
+                });
+
+                mover.addEventListener('animationend', function() {
+                    if (window.internals) {
+                        var flushCount = internals.layerFlushCount();
+                        document.getElementById('result').textContent = flushCount ? "Saw layer flushes during animation: PASS" : "No layer flushes during animation: FAIL";
+                    }
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+                mover.classList.add('animating');
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div id="mover" class="mover"></div>
+<div id="result">This test must be run in the test harness.</div>
+</body>
+</html>

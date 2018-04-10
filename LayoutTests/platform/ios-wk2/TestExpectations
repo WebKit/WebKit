@@ -71,7 +71,9 @@ applicationmanifest/ [ Pass ]
 
 # Animation tests with issues
 animations/animation-direction-normal.html [ Pass Crash ]
+legacy-animation-engine/animations/animation-direction-normal.html [ Pass Crash ]
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/157105 compositing/contents-scale/incremental-change.html [ Pass ImageOnlyFailure ]
 
@@ -509,6 +511,7 @@ fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
 
 fast/filter-image/filter-image-animation.html
+legacy-animation-engine/fast/filter-image/filter-image-animation.html
 fast/forms/formmethod-attribute-input-2.html
 fast/forms/formtarget-attribute-input-2.html
 fast/forms/interactive-validation-formnovalidate-2.html
@@ -516,14 +519,18 @@ fast/forms/mailto/formenctype-attribute-input-2.html
 fast/frames/flattening/iframe-flattening-resize-event-count.html
 fast/history/history-scroll-restoration.html [ Skip ]
 fast/images/animate-list-item-image-assertion.html
+legacy-animation-engine/fast/images/animate-list-item-image-assertion.html
 fast/loader/document-with-fragment-url-2.html
 fast/loader/fragment-after-redirect-gets-back-entry.html
 fast/replaced/no-focus-ring-embed.html
 fast/replaced/no-focus-ring-iframe.html
 fast/replaced/no-focus-ring-object.html
 fast/shapes/shape-outside-floats/shape-outside-animation.html
+legacy-animation-engine/fast/shapes/shape-outside-floats/shape-outside-animation.html
 fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html
+legacy-animation-engine/fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html
 fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
+legacy-animation-engine/fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
 fast/workers/worker-cloneport.html
 fast/borders/bidi-009a.html
 fast/box-shadow/box-shadow-currentcolor.html
@@ -909,6 +916,7 @@ tables/mozilla_expected_failures/bugs/bug128876.html [ Failure ImageOnlyFailure 
 tables/mozilla_expected_failures/bugs/bug178855.xml [ Failure ImageOnlyFailure Pass ]
 tables/mozilla_expected_failures/bugs/bug3517.html [ Failure ImageOnlyFailure Pass ]
 transitions/svg-text-shadow-transition.html [ Failure Pass ]
+legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Failure Pass ]
 
 # Flaky tests that time out:
 fast/dom/Geolocation/delayed-permission-denied.html
@@ -943,9 +951,13 @@ svg/webarchive/svg-cursor-subresources.svg
 svg/webarchive/svg-feimage-subresources.svg
 svg/webarchive/svg-script-subresouces.svg
 transitions/cubic-bezier-overflow-transform.html
+legacy-animation-engine/transitions/cubic-bezier-overflow-transform.html
 transitions/default-timing-function.html
+legacy-animation-engine/transitions/default-timing-function.html
 transitions/extra-transition.html
+legacy-animation-engine/transitions/extra-transition.html
 transitions/interrupt-transform-transition.html
+legacy-animation-engine/transitions/interrupt-transform-transition.html
 
 # Crashes when running all tests, but not by itself.
 webkit.org/b/141436 fast/loader/subframe-navigate-during-main-frame-load.html [ Crash Pass ]
@@ -1027,6 +1039,7 @@ loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with
 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html
 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
 transitions/transition-hit-test-transform.html
+legacy-animation-engine/transitions/transition-hit-test-transform.html
 
 # Flaky as of 06/09/2015
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure Pass ]
@@ -1044,9 +1057,13 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Timeout ]
 platform/ios/ios/fast/coordinates/document-elementFromPoint.html [ Failure Pass ]
 transitions/transition-on-element-with-content.html [ Failure Pass ]
+legacy-animation-engine/transitions/transition-on-element-with-content.html [ Failure Pass ]
 transitions/visited-link-color.html [ Failure Pass ]
+legacy-animation-engine/transitions/visited-link-color.html [ Failure Pass ]
 transitions/zero-duration-in-list.html [ Failure Pass ]
+legacy-animation-engine/transitions/zero-duration-in-list.html [ Failure Pass ]
 transitions/zero-duration-with-non-zero-delay-end.html [ Failure Pass ]
+legacy-animation-engine/transitions/zero-duration-with-non-zero-delay-end.html [ Failure Pass ]
 
 
 # Skip flaky/timeout tests
@@ -1112,16 +1129,20 @@ webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass F
 webkit.org/b/155056 fast/viewport/ios/force-always-user-scalable.html [ Skip ]
 
 webkit.org/b/155501 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
+webkit.org/b/155501 legacy-animation-engine/animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Pass Failure ]
+webkit.org/b/155495 legacy-animation-engine/compositing/visible-rect/animated-from-none.html [ Pass Failure ]
 
 webkit.org/b/155755 perf/document-contains.html [ Pass Timeout ]
 
 webkit.org/b/155737 compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
+webkit.org/b/155737 legacy-animation-engine/compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
 
 webkit.org/b/155947 [ Debug ] fast/loader/scroll-position-restored-on-back.html [ Pass Failure ]
 
 webkit.org/b/155948 transitions/cancel-transition.html [ Pass Failure ]
+webkit.org/b/155948 legacy-animation-engine/transitions/cancel-transition.html [ Pass Failure ]
 
 # <a download> does not work on iOS.
 webkit.org/b/156067 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Skip ]
@@ -1154,6 +1175,7 @@ webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ P
 
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html [ Pass Failure ]
 webkit.org/b/156620 fast/animation/request-animation-frame-iframe2.html [ Pass Failure ]
+webkit.org/b/156620 legacy-animation-engine/fast/animation/request-animation-frame-iframe2.html [ Pass Failure ]
 
 webkit.org/b/153049 perf/array-binary-search.html [ Pass Failure Timeout ]
 
@@ -1163,6 +1185,7 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 
 # started to fail after new snapshotting in r202532
 webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
+webkit.org/b/150942 legacy-animation-engine/animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
 compositing/contents-scale/rasterization-scale.html [ ImageOnlyFailure ]
 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
@@ -1194,7 +1217,9 @@ webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Failure ]
 webkit.org/b/160591 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker.html [ Failure Timeout ]
 
 webkit.org/b/153809 transitions/clip-path-transitions.html [ Pass Failure ]
+webkit.org/b/153809 legacy-animation-engine/transitions/clip-path-transitions.html [ Pass Failure ]
 webkit.org/b/153809 transitions/clip-path-path-transitions.html [ Pass Failure ]
+webkit.org/b/153809 legacy-animation-engine/transitions/clip-path-path-transitions.html [ Pass Failure ]
 webkit.org/b/153029 fast/css-generated-content/details-summary-before-after.html [ Failure ]
 
 webkit.org/b/165815 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-frag-percent-encoded.html [ Pass Failure ]
@@ -1281,6 +1306,7 @@ webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
 webkit.org/b/17373 fast/forms/file/input-file-write-files-using-open-panel.html [ Skip ]
 
 webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
+webkit.org/b/173726 legacy-animation-engine/animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/171985 [ Release ] workers/bomb.html [ Pass Timeout ]
 
@@ -1296,6 +1322,7 @@ webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Skip ]
 webkit.org/b/177501 webrtc/video-mute.html [ Pass Timeout ]
 
 webkit.org/b/172397 [ Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
+webkit.org/b/172397 [ Debug ] legacy-animation-engine/animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/179176 [ Release ] svg/wicd/test-rightsizing-a.xhtml [ Pass Failure ]
 

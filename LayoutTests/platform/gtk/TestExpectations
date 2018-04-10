@@ -322,6 +322,7 @@ webkit.org/b/169916 inspector/layers/layers-blending-compositing-reasons.html [ 
 
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/animation/animation-backing.html [ Failure Pass ]
+webkit.org/b/169918 legacy-animation-engine/compositing/animation/animation-backing.html [ Failure Pass ]
 webkit.org/b/169918 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
 webkit.org/b/169918 compositing/clipping/border-radius-overflow-hidden-stacking-context.html [ Failure ]
 webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style.html [ Failure ]
@@ -329,6 +330,7 @@ webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-config
 webkit.org/b/169918 compositing/contents-format/subpixel-antialiased-text-enabled.html [ Failure ]
 webkit.org/b/169918 compositing/contents-opaque/control-layer.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/animating.html [ Failure ]
+webkit.org/b/169918 legacy-animation-engine/compositing/contents-scale/animating.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/rounded-contents-scale.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/scaled-ancestor.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/simple-scale.html [ Failure ]
@@ -423,9 +425,11 @@ webkit.org/b/169918 compositing/video/video-clip-change-src.html [ ImageOnlyFail
 webkit.org/b/169918 compositing/reflections/compositing-change-inside-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/deeply-nested-reflections.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/load-video-in-reflection.html [ Missing Failure ]
+webkit.org/b/169918 legacy-animation-engine/compositing/reflections/load-video-in-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/masked-reflection-on-composited.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection-anchor-point.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection-animated.html [ Missing Failure ]
+webkit.org/b/169918 legacy-animation-engine/compositing/reflections/nested-reflection-animated.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection-mask-change.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection-on-overflow.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection-opacity.html [ Missing Failure ]
@@ -433,6 +437,7 @@ webkit.org/b/169918 compositing/reflections/nested-reflection-size-change.html [
 webkit.org/b/169918 compositing/reflections/nested-reflection-transformed.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection-transformed2.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection-transition.html [ Missing Failure ]
+webkit.org/b/169918 legacy-animation-engine/compositing/reflections/nested-reflection-transition.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/nested-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/reflection-on-composited.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/reflection-opacity.html [ Missing Failure ]
@@ -444,13 +449,16 @@ webkit.org/b/169918 compositing/reflections/transform-inside-reflection.html [ M
 webkit.org/b/169918 compositing/tiling/rotated-tiled-clamped.html [ Missing Failure ]
 webkit.org/b/169918 compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing Failure ]
 webkit.org/b/169918 compositing/transitions/scale-transition-no-start.html [ Missing Failure ]
+webkit.org/b/169918 legacy-animation-engine/compositing/transitions/scale-transition-no-start.html [ Missing Failure ]
 webkit.org/b/169918 compositing/transitions/singular-scale-transition.html [ Missing Failure ]
+webkit.org/b/169918 legacy-animation-engine/compositing/transitions/singular-scale-transition.html [ Missing Failure ]
 webkit.org/b/169918 compositing/visibility/visibility-composited-transforms.html [ Missing Failure ]
 webkit.org/b/169918 compositing/visibility/visibility-composited.html [ Missing Failure ]
 webkit.org/b/169918 compositing/webgl/webgl-no-alpha.html [ Missing Failure ]
 webkit.org/b/169918 compositing/webgl/webgl-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/plugins/composited-plugin.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/animation-inside-reflection.html [ Missing Failure ]
+webkit.org/b/169918 legacy-animation-engine/compositing/reflections/animation-inside-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
 webkit.org/b/169918 compositing/video/video-background-color.html [ Missing Crash ]
 
@@ -754,9 +762,13 @@ css3/scroll-snap [ Skip ]
 
 # TODO Animation triggers not supported
 animations/trigger-computed-style.html [ Skip ]
+legacy-animation-engine/animations/trigger-computed-style.html [ Skip ]
 animations/trigger-parsing.html [ Skip ]
+legacy-animation-engine/animations/trigger-parsing.html [ Skip ]
 animations/trigger-container-scroll-simple.html [ Skip ]
+legacy-animation-engine/animations/trigger-container-scroll-simple.html [ Skip ]
 animations/trigger-container-scroll-boundaries.html [ Skip ]
+legacy-animation-engine/animations/trigger-container-scroll-boundaries.html [ Skip ]
 
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
@@ -1054,6 +1066,7 @@ webkit.org/b/161962 fast/forms/implicit-submission.html [ Failure ]
 # Font variations build flag is turned off
 webkit.org/b/162815 fast/text/variations/ [ Skip ]
 webkit.org/b/162815 animations/font-variations/ [ Skip ]
+webkit.org/b/162815 legacy-animation-engine/animations/font-variations/ [ Skip ]
 
 webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 
@@ -1234,6 +1247,7 @@ webkit.org/b/105870 [ Debug ] webaudio/audionode-channel-rules.html [ Crash Pass
 webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Crash ]
 
 webkit.org/b/135050 animations/animation-end-event-short-iterations.html [ Crash Pass ]
+webkit.org/b/135050 legacy-animation-engine/animations/animation-end-event-short-iterations.html [ Crash Pass ]
 
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
@@ -1352,6 +1366,7 @@ webkit.org/b/84856 media/media-controller-playback.html [ Crash Failure Timeout 
 webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 
 webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
+webkit.org/b/49179 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Failure Pass ]
 
 webkit.org/b/61121 http/tests/appcache/interrupted-update.html [ Failure Pass ]
 
@@ -1386,6 +1401,7 @@ webkit.org/b/107258 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failu
 webkit.org/b/110864 svg/custom/animation-currentColor.svg [ Failure Pass ]
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
+webkit.org/b/111612 legacy-animation-engine/animations/animation-delay-changed.html [ Failure Pass ]
 
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure Pass ]
@@ -1396,6 +1412,7 @@ webkit.org/b/112918 http/tests/appcache/abort-cache-ondownloading-resource-404.h
 
 webkit.org/b/114254 css3/bdi-element.html [ Timeout Pass ]
 webkit.org/b/114254 css3/masking/clip-path-animation.html [ Timeout Pass ]
+webkit.org/b/114254 legacy-animation-engine/css3/masking/clip-path-animation.html [ Timeout Pass ]
 webkit.org/b/114254 css3/images/cross-fade-background-size.html [ Timeout Pass ]
 webkit.org/b/114254 css3/calc/background-position-parsing.html [ Timeout Pass ]
 webkit.org/b/114254 css3/flexbox/align-absolute-child.html [ Timeout Pass ]
@@ -1508,6 +1525,7 @@ webkit.org/b/131533 media/track/track-remove-active-cue-crash.html [ Timeout Pas
 webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure Timeout Pass ]
 
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure Pass ]
+webkit.org/b/132182 legacy-animation-engine/css3/calc/transitions-dependent.html [ Failure Pass ]
 webkit.org/b/132183 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
 webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure Pass ]
 webkit.org/b/132185 editing/pasteboard/gtk/middle-button-paste.html [ Failure Pass ]
@@ -1602,6 +1620,7 @@ webkit.org/b/132425 fast/multicol/scrolling-overflow.html [ Failure Pass ]
 webkit.org/b/132425 fast/multicol/span/span-as-immediate-child-generated-content.html [ Failure Pass ]
 
 webkit.org/b/132995 transitions/cancel-transition.html [ Failure Pass ]
+webkit.org/b/132995 legacy-animation-engine/transitions/cancel-transition.html [ Failure Pass ]
 webkit.org/b/132996 js/slow-stress/fold-strict-eq.html [ Pass Timeout ]
 webkit.org/b/132997 js/dom/cross-frame-bad-time.html [ Pass Timeout ]
 webkit.org/b/132998 media/track/track-change-event.html [ Pass Timeout ]
@@ -1650,9 +1669,12 @@ webkit.org/b/135087 fast/frames/frame-with-noresize-can-be-resized-after-setting
 webkit.org/b/135088 media/video-colorspace-yuv420.html [ Crash Pass ]
 
 webkit.org/b/135089 animations/animation-welcome-safari.html [ Failure Timeout Pass Crash ]
+webkit.org/b/135089 legacy-animation-engine/animations/animation-welcome-safari.html [ Failure Timeout Pass Crash ]
 
 webkit.org/b/135534 animations/animation-matrix-negative-scale-unmatrix.html [ Failure Timeout Pass ]
+webkit.org/b/135534 legacy-animation-engine/animations/animation-matrix-negative-scale-unmatrix.html [ Failure Timeout Pass ]
 webkit.org/b/135534 animations/fill-mode-forwards.html [ Crash Timeout Pass ]
+webkit.org/b/135534 legacy-animation-engine/animations/fill-mode-forwards.html [ Crash Timeout Pass ]
 
 webkit.org/b/135583 http/tests/media/video-play-progress.html [ Crash Timeout Pass ]
 
@@ -1661,10 +1683,15 @@ webkit.org/b/135584 media/track/track-cue-empty-text-crash.html [ Crash Timeout 
 webkit.org/b/121646 webaudio/delaynode-max-default-delay.html [ Failure Pass ]
 
 webkit.org/b/136066 animations/big-rotation.html [ Crash Pass ]
+webkit.org/b/136066 legacy-animation-engine/animations/big-rotation.html [ Crash Pass ]
 webkit.org/b/136066 animations/missing-from-to.html [ Crash Pass ]
+webkit.org/b/136066 legacy-animation-engine/animations/missing-from-to.html [ Crash Pass ]
 webkit.org/b/136066 animations/missing-keyframe-properties.html [ Crash Pass ]
+webkit.org/b/136066 legacy-animation-engine/animations/missing-keyframe-properties.html [ Crash Pass ]
 webkit.org/b/136066 animations/missing-values-first-keyframe.html [ Crash Pass ]
+webkit.org/b/136066 legacy-animation-engine/animations/missing-values-first-keyframe.html [ Crash Pass ]
 webkit.org/b/136066 animations/state-at-end-event.html [ Crash Pass ]
+webkit.org/b/136066 legacy-animation-engine/animations/state-at-end-event.html [ Crash Pass ]
 
 webkit.org/b/136070 fast/forms/label/label-becomes-visible-while-clicking-on-label.html [ Failure Pass ]
 
@@ -1725,6 +1752,7 @@ webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
 webkit.org/b/132126 media/video-poster-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Pass ]
+webkit.org/b/153771 legacy-animation-engine/animations/resume-after-page-cache.html [ Timeout Pass ]
 
 webkit.org/b/153942 plugins/private-browsing-mode-2.html [ Failure Pass ]
 webkit.org/b/153942 plugins/private-browsing-mode.html [ Failure Pass ]
@@ -1751,6 +1779,7 @@ webkit.org/b/157731 fast/events/touch/touch-inside-iframe-scrolled.html [ Timeou
 webkit.org/b/158472 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/158912 imported/blink/compositing/animation/hidden-animated-layer-should-not-have-scrollbars.html [ ImageOnlyFailure Pass ]
+webkit.org/b/158912 legacy-animation-engine/imported/blink/compositing/animation/hidden-animated-layer-should-not-have-scrollbars.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/158913 media/media-controls-play-button-updates.html [ Failure Pass ]
 
@@ -1805,8 +1834,10 @@ webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-success-event
 webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
 webkit.org/b/171599 animations/trigger-container-scroll-empty.html [ Pass Failure ]
+webkit.org/b/171599 legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Pass Failure ]
 
 webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
+webkit.org/b/171600 legacy-animation-engine/css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
 # Crash is bug #175574
 webkit.org/b/171844 compositing/visibility/visibility-simple-video-layer.html [ Pass ImageOnlyFailure Timeout Crash ]
@@ -1835,6 +1866,7 @@ webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/176758 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
+webkit.org/b/176758 legacy-animation-engine/animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html [ Pass Failure ]
 
@@ -1868,6 +1900,7 @@ webkit.org/b/181139 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt
 webkit.org/b/181528 http/tests/cache/memory-cache-pruning.html [ Pass Crash ]
 
 webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash ]
+webkit.org/b/181529 legacy-animation-engine/imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash ]
 
 webkit.org/b/181766 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors.html [ Pass Timeout ]
 webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
@@ -2089,6 +2122,7 @@ webkit.org/b/135053 html5lib/webkit-resumer.html [ Timeout Pass ]
 webkit.org/b/135086 media/video-seek-with-negative-playback.html [ Timeout Pass ]
 
 webkit.org/b/135091 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Timeout Pass ]
+webkit.org/b/135091 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Timeout Pass ]
 
 webkit.org/b/135092 js/cached-window-prototype-properties.html [ Timeout Pass ]
 
@@ -2237,6 +2271,7 @@ webkit.org/b/183181 inspector/heap/getPreview.html [ Pass Timeout ]
 webkit.org/b/183186 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html [ Pass Timeout ]
 
 webkit.org/b/184080 animations/animation-iteration-event-destroy-renderer.html [ Timeout ]
+webkit.org/b/184080 legacy-animation-engine/animations/animation-iteration-event-destroy-renderer.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2627,6 +2662,7 @@ webkit.org/b/123097 media/video-controls-captions.html [ Skip ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
+webkit.org/b/98950 legacy-animation-engine/transitions/blendmode-transitions.html [ Failure ]
 
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
@@ -2683,6 +2719,7 @@ webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailur
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+webkit.org/b/120839 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
@@ -2756,6 +2793,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timesta
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
+webkit.org/b/103926 legacy-animation-engine/media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
 webkit.org/b/107818 media/controls-styling.html [ Failure Timeout ]
@@ -3085,6 +3123,7 @@ webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
 # [GTK] Some reftest fail with only one or two pixel differences in diff image
 webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
 webkit.org/b/168426 imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure ]
+webkit.org/b/168426 legacy-animation-engine/imported/blink/animations/display-inline-style-adjust.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/forms/button-set-display-flex-justifyContent-center.html [ ImageOnlyFailure ]
 
@@ -3307,10 +3346,15 @@ webkit.org/b/183613 imported/w3c/web-platform-tests/media-source/interfaces.html
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
 webkit.org/b/184080 animations/animation-direction-normal.html [ Failure ]
+webkit.org/b/184080 legacy-animation-engine/animations/animation-direction-normal.html [ Failure ]
 webkit.org/b/184080 animations/animation-direction-reverse.html [ Failure ]
+webkit.org/b/184080 legacy-animation-engine/animations/animation-direction-reverse.html [ Failure ]
 webkit.org/b/184080 animations/change-keyframes.html [ Failure ]
+webkit.org/b/184080 legacy-animation-engine/animations/change-keyframes.html [ Failure ]
 webkit.org/b/184080 animations/play-state-in-shorthand.html [ Failure ]
+webkit.org/b/184080 legacy-animation-engine/animations/play-state-in-shorthand.html [ Failure ]
 webkit.org/b/184080 animations/transform-non-accelerated.html [ Failure ]
+webkit.org/b/184080 legacy-animation-engine/animations/transform-non-accelerated.html [ Failure ]
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
@@ -3369,6 +3413,7 @@ fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scr
 webkit.org/b/156437 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ ImageOnlyFailure Pass ]
 
 transitions/svg-text-shadow-transition.html [ Pass ]
+legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Pass ]
 
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
 
@@ -3431,6 +3476,7 @@ webkit.org/b/160119 storage/indexeddb/index-cursor.html [ Timeout Pass ]
 webkit.org/b/160119 storage/indexeddb/objectstore-cursor.html [ Timeout Pass ]
 
 webkit.org/b/160119 animations/negative-delay.html [ Pass Failure ]
+webkit.org/b/160119 legacy-animation-engine/animations/negative-delay.html [ Pass Failure ]
 
 webkit.org/b/160119 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
 

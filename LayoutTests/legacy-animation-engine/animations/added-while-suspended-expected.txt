@@ -1,0 +1,15 @@
+This test adds some elements to the document when animations should be paused. It will only have reproducible output when run in the test system
+
+Animations should not be suspended: PASS
+*** Suspending Animations
+Animations should be suspended: PASS
+*** Adding first box with animation
+*** Adding second box with animation and delay
+*** Resuming Animations
+Animation started on element with id: box
+Animation ended on element with id: box
+Animation started on element with id: box-with-delay
+Animation ended on element with id: box-with-delay
+Animations should not be suspended: PASS
+*** Animations finished
+

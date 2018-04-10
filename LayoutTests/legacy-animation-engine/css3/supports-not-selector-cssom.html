@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<style>
+div { color: red; }
+</style>
+<style>
+@supports (display:block) {
+    div:not(.outside).valid { color: green; }
+}
+div:not(.inside).valid {
+    color:green;
+}
+</style>
+<style>
+div.nocondition.inside { color: green; }
+@supports {
+    div:not(.outside).nocondition { color: red; }
+}
+div:not(.inside).nocondition {
+    color:green;
+}
+</style>
+<style>
+div.norule.outside { color: green; }
+@supports (display:block)
+div:not(.inside).norule {
+    color:red;
+}
+</style>
+<style>
+@supports;
+div:not(.inside).semicolon {
+    color:green;
+}
+</style>
+<div class="result inside valid">This should be green if not() pseudo class selector works inside @supports rule.</div>
+<div class="result outside valid">This should be green if not() pseudo class selector works after/outside @supports rule.</div>
+
+<div class="result inside nocondition">This should be green if not() pseudo class selector DOES NOT work inside @supports rule without condition.</div>
+<div class="result outside nocondition">This should be green if not() pseudo class selector works after/outside @supports rule without condition.</div>
+
+<div class="result outside norule">This should be green if not() pseudo class selector DOES NOT work after/outside @supports rule without rule.</div>
+
+<div class="result outside semicolon">This should be green if not() pseudo class selector works after/outside @supports rule without condition and rule.</div>
+
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Test that @supports doesn't break 'not' pseudo class selector.");
+
+
+    shouldBeDefined("CSSRule.SUPPORTS_RULE");
+
+    evalAndLog("rules = document.styleSheets[1].cssRules");
+    shouldEvaluateTo("rules.length", 2);
+    shouldBe("rules[0].type", "CSSRule.SUPPORTS_RULE");
+    shouldEvaluateTo("rules[0].cssRules.length", 1);
+    shouldBe("rules[0].cssRules[0].type", "CSSRule.STYLE_RULE");
+    shouldBeEqualToString("rules[0].cssRules[0].style.color", "green");
+    shouldBe("rules[1].type", "CSSRule.STYLE_RULE");
+    shouldBeEqualToString("rules[1].style.color", "green");
+
+    evalAndLog("rules = document.styleSheets[2].cssRules");
+    shouldEvaluateTo("rules.length", 2);
+    shouldBe("rules[1].type", "CSSRule.STYLE_RULE");
+    shouldBeEqualToString("rules[1].style.color", "green");
+
+    evalAndLog("rules = document.styleSheets[3].cssRules");
+    shouldEvaluateTo("rules.length", 1);
+    shouldBe("rules[0].type", "CSSRule.STYLE_RULE");
+    shouldBeEqualToString("rules[0].style.color", "green");
+
+    debug("Checks all elements are green.");
+    var results = document.getElementsByClassName("result");
+    for (var i = 0; i < results.length; i++) {
+        var result = results[i];
+        shouldBeEqualToString("getComputedStyle(result, null).color", "rgb(0, 128, 0)");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>

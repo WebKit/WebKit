@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test the unprefixed animation shorthand.");
+
+// These have to be global for the test helpers to see them.
+var stylesheet, animationStyle;
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+stylesheet = styleElement.sheet;
+
+function testAnimationShorthand(value, expectedName, expectedDuration, expectedDelay, expectedTimingFunction, expectedIterationCount, expectedDirection, expectedFillMode)
+{
+    debug("");
+    debug("Setting animation: " + value);
+    stylesheet.insertRule("body { animation: " + value + "; }", 0);
+
+    debug("Check animation-name");
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue("animation-name");
+    shouldBe("animationStyle.cssText", "'" + expectedName + "'");
+
+    debug("Check animation-duration");
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue("animation-duration");
+    shouldBe("animationStyle.cssText", "'" + expectedDuration + "'");
+
+    debug("Check animation-delay");
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue("animation-delay");
+    shouldBe("animationStyle.cssText", "'" + expectedDelay + "'");
+
+    debug("Check animation-timing-function");
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue("animation-timing-function");
+    shouldBe("animationStyle.cssText", "'" + expectedTimingFunction + "'");
+
+    debug("Check animation-iteration-count");
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue("animation-iteration-count");
+    shouldBe("animationStyle.cssText", "'" + expectedIterationCount + "'");
+
+    debug("Check animation-direction");
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue("animation-direction");
+    shouldBe("animationStyle.cssText", "'" + expectedDirection + "'");
+
+    debug("Check animation-fill-mode");
+    animationStyle = window.getComputedStyle(document.body).getPropertyCSSValue("animation-fill-mode");
+    shouldBe("animationStyle.cssText", "'" + expectedFillMode + "'");
+
+    stylesheet.deleteRule(0);
+}
+
+testAnimationShorthand("waldo",
+                       "waldo",
+                       "0s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("waldo 2s",
+                       "waldo",
+                       "2s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("3s banana 500ms",
+                       "banana",
+                       "3s",
+                       "0.5s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("infinite alternate eggs 5s",
+                       "eggs",
+                       "5s",
+                       "0s",
+                       "ease",
+                       "infinite",
+                       "alternate",
+                       "none");
+
+testAnimationShorthand("forwards normal ease-in-out bacon 1s 2s",
+                       "bacon",
+                       "1s",
+                       "2s",
+                       "ease-in-out",
+                       "1",
+                       "normal",
+                       "forwards");
+
+testAnimationShorthand("pastrami 100ms cubic-bezier(0, 0, 1, 1) alternate-reverse",
+                       "pastrami",
+                       "0.1s",
+                       "0s",
+                       "cubic-bezier(0, 0, 1, 1)",
+                       "1",
+                       "alternate-reverse",
+                       "none");
+
+testAnimationShorthand("slightly-invalid 2s a",
+                       "none",
+                       "0s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+testAnimationShorthand("completely invalid",
+                       "none",
+                       "0s",
+                       "0s",
+                       "ease",
+                       "1",
+                       "normal",
+                       "none");
+
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

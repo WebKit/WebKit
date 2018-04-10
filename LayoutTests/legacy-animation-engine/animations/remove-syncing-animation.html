@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #container {
+            
+        }
+        
+        .box {
+            height: 100px;
+            width: 100px;
+            margin: 10px;
+            background-color: blue;
+        }
+
+        #container.changed #first {
+            -webkit-animation: fade 0.1s linear;
+        }
+
+        #container.changed #second {
+            -webkit-animation: colors 0.1s linear;
+        }
+        
+        @-webkit-keyframes fade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @-webkit-keyframes colors {
+            from { background-color: orange; }
+            to { background-color: green; }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function log(message)
+        {
+            var results = document.getElementById("results");
+            results.innerHTML = results.innerHTML + message + "<br>";
+        }
+
+        var watchdogTimeoutID;
+
+        function testComplete()
+        {
+            window.clearTimeout(watchdogTimeoutID);
+            watchdogTimeoutID = 0;
+            log('PASS - colors animation ran.');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.getElementById('second').addEventListener('animationend', testComplete);
+                document.getElementById('container').classList.add('changed');
+                
+                window.setTimeout(function() {
+                    document.getElementById('first').remove();
+                }, 0);
+            }, 0);
+
+            watchdogTimeoutID = window.setTimeout(function() {
+                log('FAIL - colors animation did not run.');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 500);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<p>The remaining square should show a color animation from orange to green.</p>
+<div id="container">
+    <div id="first" class="box">
+        Opacity keyframes.
+    </div>
+    <div id="second" class="box">
+        Color keyframes.
+    </div>
+</div>
+
+<div id="results"></div>
+</body>
+</html>

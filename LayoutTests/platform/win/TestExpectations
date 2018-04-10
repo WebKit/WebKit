@@ -110,6 +110,7 @@ webkit.org/b/74716 css3/filters/effect-opacity-hw.html [ Skip ]
 webkit.org/b/74716 css3/filters/effect-saturate-hw.html [ Skip ]
 webkit.org/b/74716 css3/filters/effect-sepia-hw.html [ Skip ]
 webkit.org/b/74716 css3/filters/animation-from-initial-values-with-color-matrix.html [ Skip ]
+webkit.org/b/74716 legacy-animation-engine/css3/filters/animation-from-initial-values-with-color-matrix.html [ Skip ]
 webkit.org/b/74716 css3/filters/filter-is-on-subpixel-position.html [ Skip ]
 webkit.org/b/74716 css3/masking/clip-path-filter.html [ Skip ]
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
@@ -553,6 +554,7 @@ fast/dom/timer-throttling-hidden-page.html [ Skip ]
 # TODO CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
 css3/blending/ [ Skip ]
 transitions/blendmode-transitions.html [ Skip ]
+legacy-animation-engine/transitions/blendmode-transitions.html [ Skip ]
 
 # Backdrop Filters do not work on Windows
 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ] 
@@ -599,9 +601,13 @@ webkit.org/b/142731 fast/images/animated-png.html [ Skip ]
 
 # TODO Animation triggers not supported
 animations/trigger-computed-style.html [ Skip ]
+legacy-animation-engine/animations/trigger-computed-style.html [ Skip ]
 animations/trigger-parsing.html [ Skip ]
+legacy-animation-engine/animations/trigger-parsing.html [ Skip ]
 animations/trigger-container-scroll-simple.html [ Skip ]
+legacy-animation-engine/animations/trigger-container-scroll-simple.html [ Skip ]
 animations/trigger-container-scroll-boundaries.html [ Skip ]
+legacy-animation-engine/animations/trigger-container-scroll-boundaries.html [ Skip ]
 
 # TODO aria-current is not supported
 webkit.org/b/149018 accessibility/aria-current.html [ Skip ]
@@ -778,7 +784,9 @@ webkit.org/b/47091 http/tests/misc/copy-resolves-urls.html [ Skip ]
 
 # Sometimes fail or timeout
 webkit.org/b/48455 transitions/cancel-transition.html [ Pass Failure ]
+webkit.org/b/48455 legacy-animation-engine/transitions/cancel-transition.html [ Pass Failure ]
 webkit.org/b/48456 transitions/change-values-during-transition.html [ Pass Failure ]
+webkit.org/b/48456 legacy-animation-engine/transitions/change-values-during-transition.html [ Pass Failure ]
 webkit.org/b/48750 fast/frames/sandboxed-iframe-storage.html [ Failure ]
 webkit.org/b/48753 http/tests/security/window-events-clear-port.html [ Pass Timeout ]
 webkit.org/b/48753 http/tests/security/window-properties-clear-port.html [ Pass Timeout ]
@@ -854,6 +862,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timesta
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
+webkit.org/b/103926 legacy-animation-engine/media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
 # Tests for MediaSource API. Feature is not yet functional.
@@ -1440,6 +1449,7 @@ webkit.org/b/140798 [ Debug ] accessibility/th-as-title-ui.html [ Skip ] # Debug
 webkit.org/b/140798 [ Release ] accessibility/title-ui-element-correctness.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/title-ui-element-correctness.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Debug ] accessibility/transformed-bounds.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Debug ] legacy-animation-engine/accessibility/transformed-bounds.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/aria-switch-checked.html [ Skip ]
 webkit.org/b/140798 [ Debug ] accessibility/aria-switch-checked.html [ Skip ]
 webkit.org/b/140798 [ Release ] accessibility/aria-switch-text.html [ Skip ]
@@ -1520,6 +1530,7 @@ webkit.org/b/140867 [ Debug ] accessibility/button-title-uses-inner-img-alt.html
 webkit.org/b/140867 [ Debug ] accessibility/canvas-fallback-content-2.html [ Skip ]
 [ Debug ] accessibility/container-node-delete-causes-crash.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/content-changed-notification-causes-crash.html [ Skip ] # Crash (Debug Assertion)
+[ Debug ] legacy-animation-engine/accessibility/content-changed-notification-causes-crash.html [ Skip ] # Crash (Debug Assertion)
 [ Release ] accessibility/content-editable.html [ Failure ]
 [ Debug ] accessibility/content-editable.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/contenteditable-hidden-div.html [ Skip ] # Crash (Debug Assertion)
@@ -1698,50 +1709,90 @@ webkit.org/b/153292 accessibility/text-marker [ Skip ]
 ################################################################################
 # Sometimes fail
 webkit.org/b/49182 [ Release ] animations/stop-animation-on-suspend.html [ Pass Failure ]
+webkit.org/b/49182 [ Release ] legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
 webkit.org/b/49182 [ Debug ] animations/stop-animation-on-suspend.html [ Failure ]
+webkit.org/b/49182 [ Debug ] legacy-animation-engine/animations/stop-animation-on-suspend.html [ Failure ]
 webkit.org/b/48997 [ Release ] animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
+webkit.org/b/48997 [ Release ] legacy-animation-engine/animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
 webkit.org/b/48997 [ Debug ] animations/animation-iteration-event-destroy-renderer.html [ Skip ] # Debug assertion
+webkit.org/b/48997 [ Debug ] legacy-animation-engine/animations/animation-iteration-event-destroy-renderer.html [ Skip ] # Debug assertion
 
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/resume-after-page-cache.html [ Pass Failure ]
+legacy-animation-engine/animations/resume-after-page-cache.html [ Pass Failure ]
 animations/cross-fade-webkit-mask-box-image.html [ Pass Failure ImageOnlyFailure ]
+legacy-animation-engine/animations/cross-fade-webkit-mask-box-image.html [ Pass Failure ImageOnlyFailure ]
 animations/transition-and-animation-2.html [ Pass Failure ]
+legacy-animation-engine/animations/transition-and-animation-2.html [ Pass Failure ]
 
 # Actual values are sometimes slightly out of range of expected values
 webkit.org/b/48451 animations/combo-transform-translate+scale.html [ Pass Failure ]
+webkit.org/b/48451 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
 webkit.org/b/48451 animations/play-state.html [ Pass Failure ]
+webkit.org/b/48451 legacy-animation-engine/animations/play-state.html [ Pass Failure ]
 webkit.org/b/48451 animations/suspend-resume-animation.html [ Pass Failure ]
+webkit.org/b/48451 legacy-animation-engine/animations/suspend-resume-animation.html [ Pass Failure ]
 webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
+webkit.org/b/48451 legacy-animation-engine/animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 # Debug assertions
 [ Debug ] animations/animation-controller-drt-api.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-controller-drt-api.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-hardware.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse-hardware.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-hit-test-transform.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-hit-test-transform.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-hit-test.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-hit-test.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-internals-api.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-internals-api.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-internals-api-multiple-keyframes.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-internals-api-multiple-keyframes.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-shorthand-name-order.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-shorthand-name-order.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-offscreen-to-onscreen.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-offscreen-to-onscreen.html [ Skip ] # Debug assertion
 [ Debug ] animations/additive-transform-animations.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/additive-transform-animations.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-fill-mode.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse-fill-mode.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-matrix-negative-scale-unmatrix.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-matrix-negative-scale-unmatrix.html [ Skip ] # Debug assertion
 [ Debug ] animations/added-while-suspended.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/added-while-suspended.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-events-create.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-events-create.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-end-event-short-iterations.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-end-event-short-iterations.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-shorthand-overriding.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-shorthand-overriding.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-hardware-opacity.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse-hardware-opacity.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-on-inline-crash.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-on-inline-crash.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-css-rule-types.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-css-rule-types.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-alternate-reverse.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-alternate-reverse.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-timing-functions.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse-timing-functions.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-add-events-in-handler.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-add-events-in-handler.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-end-event-destroy-renderer.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-end-event-destroy-renderer.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-non-hardware.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse-non-hardware.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-border-overflow.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-border-overflow.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-timing-functions-hardware.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction-reverse-timing-functions-hardware.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction.html [ Skip ] # Debug assertion
+[ Debug ] legacy-animation-engine/animations/animation-direction.html [ Skip ] # Debug assertion
 ################################################################################
 ##################       End Animation Issues             ######################
 ################################################################################
@@ -1869,6 +1920,7 @@ svg/text/bidi-text-anchor-direction.svg [ Failure ]
 svg/text/font-size-below-point-five.svg [ Failure ]
 svg/css/shadow-changes.svg [ Failure ]
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html [ Failure ]
+webkit.org/b/116564 legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/117322 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 webkit.org/b/117322 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 
@@ -1975,6 +2027,7 @@ webkit.org/b/117322 fast/css/text-indent-first-line-006.html [ ImageOnlyFailure 
 webkit.org/b/117322 fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 fast/css/image-set-setting.html [ Failure ]
 fast/css/image-set-value-not-removed-crash.html [ Failure ]
+legacy-animation-engine/fast/css/image-set-value-not-removed-crash.html [ Failure ]
 fast/css/input-search-padding.html [ Failure ]
 fast/css/getComputedStyle/getComputedStyle-outline-shorthand.html [ Pass Timeout ]
 webkit.org/b/136484 fast/css-generated-content/initial-letter-basic.html [ Failure ]
@@ -2006,7 +2059,9 @@ webkit.org/b/117322 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFai
 
 # We now show a layer tree where we didn't previously
 css3/filters/composited-during-animation-layertree.html [ Failure ]
+legacy-animation-engine/css3/filters/composited-during-animation-layertree.html [ Failure ]
 css3/filters/composited-during-transition-layertree.html [ Failure ]
+legacy-animation-engine/css3/filters/composited-during-transition-layertree.html [ Failure ]
 css3/filters/should-not-have-compositing-layer.html [ Failure ]
 [ Debug ] css3/filters/filtered-compositing-descendant.html [ Failure ]
 css3/filters/css-opacity-with-drop-shadow.html [ Pass ImageOnlyFailure ]
@@ -2533,8 +2588,11 @@ webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe.htm
 # Some bugs introduced in recent work:
 webkit.org/b/149631 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html [ ImageOnlyFailure ]
 webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
+webkit.org/b/149631 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
 webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
+webkit.org/b/149631 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
 webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
+webkit.org/b/149631 legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
 
 # Errors introduced by either r190209 or r190214:
 webkit.org/b/149632 fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
@@ -2656,6 +2714,7 @@ webkit.org/b/112867 compositing/geometry/limit-layer-bounds-fixed.html [ Failure
 compositing/iframes/fixed-position-iframe.html [ Failure ]
 compositing/iframes/invisible-nested-iframe-show.html [ Failure ]
 webkit.org/b/116564 compositing/layer-creation/animation-overlap-with-children.html [ Failure ]
+webkit.org/b/116564 legacy-animation-engine/compositing/layer-creation/animation-overlap-with-children.html [ Failure ]
 compositing/iframes/overlapped-iframe-iframe.html [ Failure ]
 webkit.org/b/113012 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
@@ -2732,6 +2791,7 @@ fast/frames/sandboxed-iframe-scripting-05.html [ Pass Timeout ]
 webkit.org/b/112764 fast/frames/xss-auditor-handles-file-urls.html [ Failure ]
 
 fast/harness/results.html [ Failure ]
+legacy-animation-engine/fast/harness/results.html [ Failure ]
 
 webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html [ Skip ] #  [ Timeout ]
 fast/history/history-back-initial-vs-final-url.html [ Skip ]
@@ -2847,6 +2907,7 @@ webkit.org/b/97026 scrollbars/custom-scrollbar-with-incomplete-style.html [ Fail
 security/autocomplete-cleared-on-back.html [ Skip ]  # Timeout
 
 transitions/move-after-transition.html [ Failure Timeout ]
+legacy-animation-engine/transitions/move-after-transition.html [ Failure Timeout ]
 
 inspector/css/stylesheet-with-mutations.html [ Skip ] # Timeout
 
@@ -2876,6 +2937,7 @@ http/tests/contentfiltering [ Skip ]
 
 # The following are flaky on EWS bots. Revisit after next Windows update
 [ Release ] animations/trigger-container-scroll-empty.html [ Pass Failure ]
+[ Release ] legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Pass Failure ]
 [ Release ] css3/filters/filtered-compositing-descendant.html [ Pass Failure ]
 [ Release ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ] # Timeout
 [ Release ] fast/images/animated-gif-webkit-transform.html [ Skip ] # Timeout
@@ -2968,6 +3030,7 @@ imported/blink/compositing/perspective-origin-overflow-hidden.html [ ImageOnlyFa
 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
 imported/blink/plugins/empty-per-context-data.html [ Skip ]
 imported/blink/animations/animation-iteration-event-short-iterations.html [ Failure Pass ]
+legacy-animation-engine/imported/blink/animations/animation-iteration-event-short-iterations.html [ Failure Pass ]
 imported/blink/fast/dom/ruby-numeric-overflow.html [ Failure Pass ]
 imported/blink/fast/masking/mask-serializing.html [ Failure Pass ]
 imported/blink/compositing/ancestor-painted-layer-should-appear.html [ ImageOnlyFailure ]
@@ -3013,6 +3076,7 @@ webkit.org/b/150808 fast/text/multiple-feature-properties.html [ ImageOnlyFailur
 webkit.org/b/150946 [ Debug ] scrollbars/custom-scrollbar-appearance-property.html [ Crash ]
 
 webkit.org/b/150948 [ Debug ] imported/blink/transitions/unprefixed-transform.html [ Pass Failure ]
+webkit.org/b/150948 [ Debug ] legacy-animation-engine/imported/blink/transitions/unprefixed-transform.html [ Pass Failure ]
 
 webkit.org/b/151756 fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
 
@@ -3190,6 +3254,7 @@ fast/table/border-collapsing/cached-change-cell-border-width.html [ Failure ]
 fast/table/border-collapsing/cached-change-row-border-width.html [ Failure ]
 fast/table/max-width-integer-overflow.html [ Failure ]
 fast/text/crash-complex-text-surrogate.html [ Failure ]
+legacy-animation-engine/fast/text/crash-complex-text-surrogate.html [ Failure ]
 fast/text/dangling-surrogates.html [ Failure ]
 fast/text/decorations-with-text-combine.html [ Failure ]
 fast/text/emphasis-combined-text.html [ Failure ]
@@ -3345,6 +3410,7 @@ svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 # Crashes tracked in webkit.org/b/160447.
 animations/animation-delay-changed.html [ Skip ]
+legacy-animation-engine/animations/animation-delay-changed.html [ Skip ]
 js/dom/create-lots-of-workers.html [ Crash ]
 # Timeouts tracked in webkit.org/b/160447.
 accessibility/set-selected-text-range-contenteditable.html [ Skip ]
@@ -3460,8 +3526,11 @@ accessibility/win/select-element-role.html [ Failure ]
 accessibility/win/selection-and-focus.html [ Failure ]
 accessibility/win/text-role.html [ Failure ]
 animations/font-variations/font-variation-settings-order.html [ Failure ]
+legacy-animation-engine/animations/font-variations/font-variation-settings-order.html [ Failure ]
 animations/font-variations/font-variation-settings-unlike.html [ Failure ]
+legacy-animation-engine/animations/font-variations/font-variation-settings-unlike.html [ Failure ]
 animations/font-variations/font-variation-settings.html [ Failure ]
+legacy-animation-engine/animations/font-variations/font-variation-settings.html [ Failure ]
 css3/flexbox/flex-item-contains-strict.html [ Failure ]
 editing/caret/emoji.html [ Failure ]
 editing/deleting/skip-virama-001.html [ Failure ]
@@ -3551,6 +3620,7 @@ svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
 svg/custom/second-inline-text.xhtml [ Failure ]
 tables/mozilla/bugs/bug4427.html [ Failure ]
 transitions/clip-path-path-transitions.html [ Failure ]
+legacy-animation-engine/transitions/clip-path-path-transitions.html [ Failure ]
 # Unexpected image-only failures tracked in webkit.org/b/172437.
 editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]
 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
@@ -3578,7 +3648,9 @@ imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 svg/custom/anchor-on-use.svg [ ImageOnlyFailure ]
 # Unexpected timeouts tracked in webkit.org/b/172437.
 animations/font-variations/font-stretch.html [ Skip ]
+legacy-animation-engine/animations/font-variations/font-stretch.html [ Skip ]
 animations/font-variations/font-style.html [ Skip ]
+legacy-animation-engine/animations/font-variations/font-style.html [ Skip ]
 editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]
 editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
 editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
@@ -3737,6 +3809,7 @@ webkit.org/b/176880 storage/indexeddb/modern/idbtransaction-objectstore-failures
 webkit.org/b/176660 svg/animations/animations-paused-in-background-page-iframe.html [ Pass Timeout ]
 webkit.org/b/176901 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/177284 transitions/transition-display-property.html [ ImageOnlyFailure Pass ]
+webkit.org/b/177284 legacy-animation-engine/transitions/transition-display-property.html [ ImageOnlyFailure Pass ]
 webkit.org/b/177077 imported/blink/fast/events/panScroll-panIcon.html [ Pass ImageOnlyFailure Crash ]
 
 # DatatransferItem tests are timing out.
@@ -3763,6 +3836,7 @@ webkit.org/b/176657 imported/w3c/web-platform-tests/ [ Skip ]
 
 # These tests only fail on one of the EWS machines
 webkit.org/b/176998 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure ]
+webkit.org/b/176998 legacy-animation-engine/fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure ]
 webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
 webkit.org/b/176998 fast/harness/snapshot-captures-compositing.html [ ImageOnlyFailure ]
 webkit.org/b/176998 fast/images/composited-animated-gif-outside-viewport.html [ Timeout Pass ]
@@ -3811,7 +3885,9 @@ webkit.org/b/178307 fast/images/animated-gif-scrolling-crash.html [ Timeout Cras
 webkit.org/b/178309 fast/frames/frame-unload-navigate-and-setTimeout-assert-fail.html [ Pass Crash ]
 
 webkit.org/b/178341 animations/play-state-in-shorthand.html [ Pass Failure ]
+webkit.org/b/178341 legacy-animation-engine/animations/play-state-in-shorthand.html [ Pass Failure ]
 webkit.org/b/178341 animations/play-state-suspend.html [ Pass Failure ]
+webkit.org/b/178341 legacy-animation-engine/animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/178413 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 
@@ -3885,6 +3961,7 @@ webkit.org/b/182132 accessibility/aria-combobox-control-owns-elements.html [ Ski
 webkit.org/b/182133 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
 
 webkit.org/b/182158 transitions/default-timing-function.html [ Failure ]
+webkit.org/b/182158 legacy-animation-engine/transitions/default-timing-function.html [ Failure ]
 webkit.org/b/182159 webanimations/opacity-animation-yields-compositing.html [ Failure ]
 
 webkit.org/b/182239 js/dom/array-with-double-assign.html [ Failure ]
@@ -3897,6 +3974,7 @@ webkit.org/b/182694 fast/text/tatechuyoko.html [ Failure ]
 webkit.org/b/182694 fast/css/fontloader-svg-select.svg [ Crash ]
 webkit.org/b/182694 fast/dom/crash-moving-subtree-between-documents.html [ Crash ]
 webkit.org/b/182694 fast/dom/event-handler-attributes.html [ Crash ]
+webkit.org/b/182694 legacy-animation-engine/fast/dom/event-handler-attributes.html [ Crash ]
 webkit.org/b/182694 fast/dom/focus-style-resolution.html [ Crash ]
 webkit.org/b/182694 fast/dom/inline-event-attributes-event-param-name.html [ Crash ]
 webkit.org/b/182694 fast/events/event-function-toString.html [ Crash ]
@@ -3947,5 +4025,6 @@ webkit.org/b/183953 imported/mozilla/css-transitions/test_keyframeeffect-getkeyf
 webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
 
 webkit.org/b/184133 transitions/opacity-transition-zindex.html [ Skip ]
+webkit.org/b/184133 legacy-animation-engine/transitions/opacity-transition-zindex.html [ Skip ]
 
 webkit.org/b/184134 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Failure ]

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+    #box {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: silver;
+        -webkit-transform-origin: top left;
+    }
+    
+    .animating {
+        -webkit-animation: scale 100000000s infinite linear;
+    }
+    
+    @-webkit-keyframes scale {
+        from { -webkit-transform: scale(1.5); }
+        to   { -webkit-transform: scale(3); }
+    }
+</style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function dumpLayers()
+        {
+            if (window.internals)
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        function doTest()
+        {
+            var box = document.getElementById('box');
+            box.addEventListener('webkitAnimationStart', dumpLayers, false);
+            box.classList.add('animating');
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div id="box">Box</div>
+
+    <pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

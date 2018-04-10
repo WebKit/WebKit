@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>-webkit-transform-origin vs. Transform Functions</title>
+    <style type="text/css" media="screen">
+    #a {
+      top: 0px;
+      left: 0px;
+      position: absolute;
+      -webkit-perspective: 800;
+      width: 800px;
+      height: 600px;
+    }
+    #b1 {
+      top: 80px;
+      left: 300px;
+      width: 200px;
+      height: 200px;
+      position: absolute;
+      background-color: #282;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: linear;
+      -webkit-transform-origin: center center 200px;
+    }
+    @-webkit-keyframes b1 {
+        from { -webkit-transform: rotateY(0deg); }
+        5%  { -webkit-transform: rotateY(90deg); }
+        20%  { -webkit-transform: rotateY(90deg); }
+        50%  { -webkit-transform: rotateY(180deg); }
+        75%  { -webkit-transform: rotateY(270deg); }
+        to   { -webkit-transform: rotateY(360deg); }
+    }
+    #b2 {
+      top: 320px;
+      left: 300px;
+      width: 200px;
+      height: 200px;
+      position: absolute;
+      background-color: #282;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: linear;
+    }
+    @-webkit-keyframes b2 {
+        from { -webkit-transform: translateZ(200px) rotateY(0deg) translateZ(-200px) }
+        5%  { -webkit-transform: translateZ(200px) rotateY(90deg) translateZ(-200px) }
+        20%  { -webkit-transform: translateZ(200px) rotateY(90deg) translateZ(-200px) }
+        50%  { -webkit-transform: translateZ(200px) rotateY(180deg) translateZ(-200px) }
+        75%  { -webkit-transform: translateZ(200px) rotateY(270deg) translateZ(-200px) }
+        to   { -webkit-transform: translateZ(200px) rotateY(360deg) translateZ(-200px) }
+    }
+    </style>
+    
+    <script type="text/javascript" charset="utf-8">
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+      }
+
+      resultEntries = [];
+
+      const expected = {
+          "b1" : [ 0,0,-1,0, 0,1,0,0, 1,0,0,0, 0,0,0,1 ],
+          "b2" : [ 0,0,-1,0, 0,1,0,0, 1,0,0,0, -200,0,200,1 ]
+      };
+
+      const tolerance = 0.2;
+      function isEqual(actual, desired)
+      {
+          var diff = Math.abs(actual - desired);
+          return diff <= tolerance;
+      }
+
+      var numSnapshots = 0;
+
+      function snapshot(id)
+      {
+          var e = document.getElementById(id);
+          var t = window.getComputedStyle(e).webkitTransform;
+          var a = t.split("(");
+          var array = a[1].split(",");
+          var pass = true;
+          for (i = 0; i < 16; ++i) {
+              var actual = parseFloat(array[i]);
+              var expect = expected[id][i];
+              if (!isEqual(actual, expect)) {
+                  resultEntries.push("FAIL(element '"+id+"' matrix["+i+"]' was:"+actual+", expected:"+expect+")<br>");
+                  pass = false;
+              }
+          }
+          
+          if (pass)
+            resultEntries.push("PASS(element '"+id+"' matches expected value)<br>");
+          
+          numSnapshots++;
+          if (numSnapshots == 2) {
+              resultEntries.sort();
+              document.getElementById('result').innerHTML = resultEntries.join("");
+              if (window.testRunner)
+                  testRunner.notifyDone();
+          }
+      }
+      
+      function snapshotOnTimeout(id) {
+          setTimeout("snapshot('" + id + "')", 250);
+      }
+
+      function startAnimation(id)
+      {
+          var element = document.getElementById(id);
+          element.addEventListener('webkitAnimationStart', function() {
+              // delay to give hardware animations a chance to start
+              window.setTimeout("snapshotOnTimeout('" + id + "')", 0);
+          }, false);
+          element.style.webkitAnimationName = id;
+      }
+
+      function start()
+      {
+          startAnimation('b1');
+          startAnimation('b2');
+      }
+
+    </script>
+  </head>
+  <body onload="start()">
+    <div id="a">
+        <div id="b1"> </div>
+        <div style="-webkit-transform:translateZ(-200px); -webkit-transform-style:preserve-3d;">
+            <div id="b2"> </div>
+        </div>
+    </div>
+  </body>
+  <div id="result"> </div>
+</html>

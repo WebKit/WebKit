@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Testing Rotations > 180 degrees</title>
+  <style type="text/css" media="screen">
+    #box {
+      //position: absolute;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 3s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "rotate";
+    }
+    @-webkit-keyframes "rotate" {
+        from { -webkit-transform: rotate(0); }
+        to   { -webkit-transform: rotate(540deg); }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["rotate", 1, "box", "webkitTransform", [-1,0,0,-1], 0.2],
+      ["rotate", 2, "box", "webkitTransform", [1,0,0,1], 0.2],
+      ["rotate", 3, "box", "webkitTransform", [-1,0,0,-1], 0.2],
+    ];
+    
+    runAnimationTest(expectedValues);
+    
+  </script>
+</head>
+<body>
+<p>
+This test shows rotation of > 180 degrees. The box should make one and a half rotations.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

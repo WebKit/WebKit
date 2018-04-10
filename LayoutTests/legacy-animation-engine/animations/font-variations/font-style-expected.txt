@@ -1,0 +1,5 @@
+Hello
+PASS - "font-style" property for "box" element at 0.5s saw something close to: oblique 32.3666
+PASS - "font-style" property for "box" element at 1s saw something close to: oblique 43.6666
+PASS - "font-style" property for "box" element at 2s saw something close to: oblique 66.3333
+

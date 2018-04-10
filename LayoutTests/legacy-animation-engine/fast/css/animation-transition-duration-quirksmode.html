@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="test"></div>
+<script>
+    var element = document.getElementById("test");
+    test(function() {
+      element.style.animationDuration = "3";
+      assert_equals(element.style.animationDuration, "");
+      }, "Unit-less non-zero animation-duration should be invalid")
+    test(function() {
+      element.style.transitionDuration = "3";
+      assert_equals(element.style.transitionDuration, "");
+      }, "Unit-less non-zero transition-duration should be invalid")
+</script>
+</body>
+</html>

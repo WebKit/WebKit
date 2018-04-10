@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+          width: 100px;
+          height: 100px;
+          background-color: silver;
+        }
+        
+        .container {
+            -webkit-perspective: 500px;
+            width: 300px;
+            padding: 10px;
+        }
+        
+        #flipper {
+            width: 300px;
+            height: 300px;
+            -webkit-transform-style: preserve-3d;
+        }
+        
+        #flipper > div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .flipping {
+            -webkit-animation: flip 2s forwards;
+        }
+        
+        .front, .back {
+            -webkit-backface-visibility: hidden;
+        }
+        
+        .back {
+            -webkit-transform: rotateY(180deg);
+        }
+        
+        @-webkit-keyframes flip {
+            to { -webkit-transform: rotateY(0); }
+            to { -webkit-transform: rotateY(180deg); }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                var flipper = document.getElementById('flipper');
+                flipper.addEventListener('webkitAnimationStart', testDone, false);
+                flipper.classList.add('flipping');
+            }, 250);
+        }
+        
+        function testDone()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner) {
+                layersResult.innerText = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }
+        window.addEventListener('load', doTest, false)
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="flipper">
+            <div class="front box">
+                Front
+            </div>
+            <div class="back box">
+                Back
+            </div>
+        </div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

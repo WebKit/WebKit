@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test event generation with suspendAnimations()/resumeAnimations() for animations</title>
+  <style type="text/css" media="screen">
+    #box {
+      position: relative;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 0.1s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-iteration-count: 2;
+      -webkit-animation-name: "move";
+    }
+    @-webkit-keyframes "move" {
+        from { left: 0; }
+        to   { left: 500px; }
+    }
+    #log {
+       margin-top: 20px;
+       height: 300px;
+       width: 500px;
+       border: 2px solid gray;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    
+    function suspend()
+    {
+        if (window.internals)
+            internals.suspendAnimations();
+    }
+    
+    function resume()
+    {
+        if (window.internals)
+            internals.resumeAnimations();
+    }
+    
+    function startTest()
+    {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        setTimeout(suspend, 40);
+        setTimeout(resume, 100);
+        setTimeout(function()
+        {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 350);
+    }
+    
+    function logEvent(e, phase)
+    {
+        var log = document.getElementById('log');
+        log.innerHTML = log.innerHTML + phase + ' animation ' + e.animationName + '<br>';
+    }
+
+    
+  </script>
+</head>
+<body onload="startTest()">
+<p>
+Events generated are displayed. There should be one start event one iteration event and one end event. There 
+should not be a start event generated when the animation is resumed.
+<div id="box"
+        onwebkitanimationstart="logEvent(event, 'start'); return false;"
+        onwebkitanimationiteration="logEvent(event, 'iteration'); return false;"
+        onwebkitanimationend="logEvent(event, 'end'); return false;"
+>
+</div>
+<p>Log</p>
+<div id="log">
+</div>
+</body>
+</html>

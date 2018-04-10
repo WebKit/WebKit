@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .text {
+            -webkit-transition-duration: 1s;
+            -webkit-transition-timing-function: linear;
+            -webkit-transition-property: text-shadow;
+        }
+
+        #text {
+            text-shadow: -25px -5px 15px red;
+        }
+
+        #text.final {
+            text-shadow: 5px 5px 15px green;
+        }
+    </style>
+
+    <script src="resources/transition-test-helpers.js"></script>
+    <script type="text/javascript">
+        const expectedValues = [
+            // [time, element-id, property, expected-value, tolerance]
+            [0, 'text', 'text-shadow', [-25, -5, 0, 15], 4],
+            [1, 'text', 'text-shadow', [5, 5, 0, 15], 4]
+        ];
+
+        function setupTest()
+        {
+            document.getElementById('text').className.baseVal = 'text final';
+        }
+
+        var doPixelTest = true;
+        runTransitionTest(expectedValues, setupTest, usePauseAPI, doPixelTest);
+    </script>
+</head>
+<body>
+    <svg width="400" height="100">
+        <text id="text" class="text" x="10" y="50" style="font-size:30pt; font-weight:bold;">Shadow on texts</text>
+    </svg>
+
+    <div id="result">
+    </div>
+</body>
+</html>

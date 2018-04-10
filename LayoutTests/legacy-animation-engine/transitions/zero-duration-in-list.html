@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #box {
+      position: absolute;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transition-duration: 0, 0.5s;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-property: top, left;
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+    
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance, post-completion callback, should-be-transitioning]
+      [0.25, "box", "left", 50, 10, null, shouldBeTransitioning],
+      [0.25, "box", "top", 100, 10, null, shouldNotBeTransitioning],
+    ];
+    
+    function setupTest()
+    {
+      var box = document.getElementById('box');
+      box.style.top = '100px';
+      box.style.left = '100px';
+    }
+    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+
+<p>Tests that with a zero duration transition on top, it does not animate</p>
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

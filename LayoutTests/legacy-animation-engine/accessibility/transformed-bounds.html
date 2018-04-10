@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+
+    <style>
+        
+        .pills .button {
+            display:inline-block;
+        }
+    
+        .ipad .top-section {
+            text-align:center
+        }
+    
+        .pills {
+            display:inline-block;
+            margin:0 auto 10px;
+            padding:0 15px;
+            min-width:292px
+        }
+    
+        .pills div {
+            display:inline-block;
+        }
+    
+        .swoosh-overlay .contents .row .item:not(.software) .card-container {
+            -webkit-transform-origin-x:315px
+        }
+    
+        .swoosh-overlay .contents .row .item .card-container {
+            -webkit-transform-style:preserve-3d;
+            position:absolute
+        }
+    
+        .swoosh-overlay .item .card-back {
+            position:absolute;
+            width:630px;
+            height:630px;
+            -webkit-backface-visibility:hidden;
+            -webkit-transform:rotatey(180deg)
+        }
+    </style>
+</head>
+
+<body class="ipad portrait">
+
+<div class="swoosh-overlay portrait">
+    <div class="contents">
+        <div class="row">
+            <div class="item album" aria-hidden="false" style="-webkit-transform-origin: 0px 0px; -webkit-transform: translate3d(69px, 140px, 0px) scale(1, 1); opacity: 0.9999; -webkit-transition: opacity 300ms ease-in-out; transition: opacity 300ms ease-in-out;">
+                <div class="card-container" style="-webkit-transform: rotateY(180deg);">
+                    <div role="dialog" class="card-back">
+                        <div>
+                            <div class="product-overlay">
+                                <div class="top-section">
+                                    <div class="pills" role="tablist" num-pills="4" aria-hidden="false" style="background-position: -160px 100%;">
+                                        <div role="tab" aria-selected="true" tabindex="0" id="tab">
+                                            <span class="button selected" ><span class="label">Test</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a view is in a transformed layer, the bounds will not be offset by the origin of the transformed layer.");
+
+    if (window.accessibilityController) {
+        var tab = accessibilityController.accessibleElementById("tab");
+        shouldBeTrue("tab.width < 40");
+        shouldBeTrue("tab.height < 30");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</div>
+</body>
+</html>

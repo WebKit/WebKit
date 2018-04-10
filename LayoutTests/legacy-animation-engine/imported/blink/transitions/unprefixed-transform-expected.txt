@@ -1,0 +1,20 @@
+-webkit-transform 10ms
+fired transitionend with propertyName: transform
+
+transform 10ms
+fired transitionend with propertyName: transform
+
+transform 10ms, -webkit-transform 10ms
+fired transitionend with propertyName: transform
+
+-webkit-transform 10ms, transform 10ms
+fired transitionend with propertyName: transform
+
+all 10ms
+fired transitionend with propertyName: transform
+
+all 10ms, -webkit-transform 10ms
+fired transitionend with propertyName: transform
+
+-webkit-transform 10ms, all 10ms
+fired transitionend with propertyName: transform

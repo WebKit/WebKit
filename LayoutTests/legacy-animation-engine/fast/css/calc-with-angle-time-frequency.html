@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <div id="testDiv"></div>
+        <script>
+            description("Tests that using angle, time and frequency units in calc() is working as intended.");
+
+            var testDiv = document.getElementById("testDiv");
+
+            // Angle units.
+            evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300deg/2))'");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(150deg))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(150deg)");
+
+            evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300rad/2))'");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(150rad))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(8594.366926962348deg)");
+
+            evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300grad/2))'");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(150grad))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(135deg)");
+
+            evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(3turn/2))'");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(1.5turn))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(540deg)");
+
+            evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(1turn + 10deg))'");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(370deg))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(370deg)");
+
+            evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300deg + 30deg))'");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(330deg))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(330deg)");
+
+            evalAndLog("testDiv.style['-webkit-filter'] = 'hue-rotate(calc(2turn + 1turn))'");
+            shouldBeEqualToString("testDiv.style['-webkit-filter']", "hue-rotate(calc(3turn))");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "hue-rotate(1080deg)");
+
+            // Time units.
+            evalAndLog("testDiv.style['transition-delay'] = 'calc(300ms/2)'");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(150ms)");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "0.15s");
+
+            evalAndLog("testDiv.style['transition-delay'] = 'calc(300s/2)'");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(150s)");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "150s");
+
+            evalAndLog("testDiv.style['transition-delay'] = 'calc(10s + 100ms)'");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(10100ms)");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "10.1s");
+
+            evalAndLog("testDiv.style['transition-delay'] = 'calc(100ms + 10s)'");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(10100ms)");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "10.1s");
+
+            evalAndLog("testDiv.style['transition-delay'] = 'calc(4s + 1s)'");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(5s)");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "5s");
+
+            evalAndLog("testDiv.style['transition-delay'] = 'calc(4ms + 1ms)'");
+            shouldBeEqualToString("testDiv.style['transition-delay']", "calc(5ms)");
+            shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('transition-delay')", "0.005s");
+
+            // Frequency units.
+            // NOTE: Since there is no CSS property that uses frequency at the moment we only test the parsing.
+            evalAndLog("testDiv.style['width'] = 'calc(300Hz/2)'");
+            shouldBeEqualToString("testDiv.style['width']", "");
+
+            evalAndLog("testDiv.style['width'] = 'calc(300kHz/2)'");
+            shouldBeEqualToString("testDiv.style['width']", "");
+
+            evalAndLog("testDiv.style['width'] = 'calc(10Hz + 20Hz)'");
+            shouldBeEqualToString("testDiv.style['width']", "");
+
+            evalAndLog("testDiv.style['width'] = 'calc(10kHz + 20kHz)'");
+            shouldBeEqualToString("testDiv.style['width']", "");
+
+            evalAndLog("testDiv.style['width'] = 'calc(10kHz + 200Hz)'");
+            shouldBeEqualToString("testDiv.style['width']", "");
+
+            evalAndLog("testDiv.style['width'] = 'calc(200Hz + 10kHz)'");
+            shouldBeEqualToString("testDiv.style['width']", "");
+        </script>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

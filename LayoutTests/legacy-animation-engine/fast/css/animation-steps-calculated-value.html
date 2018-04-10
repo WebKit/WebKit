@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="testDiv"></div>
+<script>
+description("Tests assigning using calculated value in steps() for -webkit-animation-timing-function works.");
+
+var testDiv = document.getElementById("testDiv");
+
+shouldBeEmptyString("testDiv.style['-webkit-animation-timing-function']");
+evalAndLog("testDiv.style['-webkit-animation-timing-function'] = 'steps(calc(1 + 2), end)'");
+shouldBeEqualToString("testDiv.style['-webkit-animation-timing-function']", "steps(3, end)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-animation-timing-function')", "steps(3, end)");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

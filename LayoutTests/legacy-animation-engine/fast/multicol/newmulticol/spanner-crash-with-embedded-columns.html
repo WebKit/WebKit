@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This test that moving a spanner from one flow to another does not end up in a crash.</title>
+<style>
+    html, body { 
+    	-webkit-column-width: 200px; 
+    } 
+</style>
+<script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+	function runTest() {
+        setTimeout(function() { 
+            document.documentElement.style.webkitColumnWidth = "auto";
+            document.body.style.webkitColumnWidth = "auto";
+	        if (window.testRunner)
+      		    testRunner.notifyDone();
+        }, 0);
+    }
+</script>
+</head>
+<body onload="runTest()">
+<div style="-webkit-column-span: all"></div>
+PASS if no crash or assert.
+</body>
+</html>

@@ -122,8 +122,10 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
 
 # transitions/default-timing-function.html failing on WebKit2 since it was added
+# legacy-animation-engine/transitions/default-timing-function.html failing on WebKit2 since it was added
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>
 transitions/default-timing-function.html
+legacy-animation-engine/transitions/default-timing-function.html
 
 # Sometimes fails
 # http://webkit.org/b/58990
@@ -414,6 +416,7 @@ plugins/plugin-initiate-popup-window.html
 storage/websql/open-database-while-transaction-in-progress.html
 svg/hixie/cascade/002.xml
 transitions/font-family-during-transition.html
+legacy-animation-engine/transitions/font-family-during-transition.html
 
 # [WK2] http/tests/navigation/anchor-frames-cross-origin.html fails.
 # https://bugs.webkit.org/show_bug.cgi?id=83581
@@ -454,8 +457,11 @@ webkit.org/b/158703 userscripts/window-onerror-for-isolated-world-3.html [ Skip 
 # These transition tests are flaky, sometimes it seems like the transition timing
 # is off when the test completes
 transitions/color-transition-all.html
+legacy-animation-engine/transitions/color-transition-all.html
 transitions/min-max-width-height-transitions.html
+legacy-animation-engine/transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
+legacy-animation-engine/transitions/text-indent-transition.html
 
 # These storage tests fail in WebKit2 on the bot, but not running locally
 storage/websql/multiple-databases-garbage-collection.html

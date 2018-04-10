@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css" media="screen">
+        .box {
+            height: 100px;
+            width: 100px;
+            margin: 20px;
+            background-color: blue;
+            -webkit-transform: translate3d(0, 0, 0);
+        }
+
+        #movers.moved > .box {
+            -webkit-animation: move 1s 1s linear; /* Note 1 sec delay */
+        }
+
+        /* Test that we fetch the current style, not the one snapshotted when the animation started */
+        #movers.moved > #changedbox {
+            -webkit-transform: translate3d(50px, 0, 0);
+        }
+
+        /* Test that fill-mode: backwards works */
+        #movers.moved > #filledbox {
+            -webkit-animation: move 1s 1s linear backwards;
+        }
+        
+        @-webkit-keyframes move {
+            from { -webkit-transform: translateX(100px);   }
+            to   { -webkit-transform: translateX(400px); }
+        }
+    </style>
+    <script src="../../transitions/resources/transition-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        const expectedValues = [
+          // [time, element-id, property, expected-value, tolerance]
+          [0.1, 'testbox', '-webkit-transform.4', 0, 0],
+          [0.1, 'changedbox', '-webkit-transform.4', 50, 0],
+          [0.1, 'filledbox', '-webkit-transform.4', 100, 0],
+        ];
+
+        function setupTest()
+        {
+          document.getElementById('movers').className = 'moved';
+        }
+
+        runTransitionTest(expectedValues, setupTest, false /* use pause API */);
+    </script>
+</head>
+<body>
+    <p>Test computed style during the delay phase of an accelerated animation.</p>
+    <div id="movers">
+        <div id="testbox" class="box"></div>
+        <div id="changedbox" class="box"></div>
+        <div id="filledbox" class="box"></div>
+    </div>
+    <div id="result">
+    </div>
+</body>
+</html>

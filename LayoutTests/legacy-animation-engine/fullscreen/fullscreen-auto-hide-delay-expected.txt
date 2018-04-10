@@ -1,0 +1,9 @@
+ 
+RUN(internals.setFullscreenAutoHideDelay(1))
+EXPECTED (window.getComputedStyle(target).transitionDuration == '1s') OK
+RUN(internals.setFullscreenAutoHideDelay(20))
+EXPECTED (window.getComputedStyle(target).transitionDuration == '20s') OK
+RUN(internals.setFullscreenAutoHideDelay(0))
+EXPECTED (window.getComputedStyle(target).transitionDuration == '0s') OK
+END OF TEST
+

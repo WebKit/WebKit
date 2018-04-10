@@ -1,0 +1,44 @@
+<style type="text/css">
+.container {
+    transition: -ms-transform 0.1s ease, transform 0.1s ease;
+    transform-origin: 100% 100%;
+}
+
+.container-transform {
+    transform: scale3d(1.3, 1.3, 1);
+    transform-origin: 0% 0%;
+}
+
+.box {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+}
+</style>
+
+<script type='text/javascript'>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function test() {
+    document.querySelector(".container").ontransitionend = (ev) => {
+        log.innerHTML += ev.propertyName +"<br>";
+        if (window.testRunner)
+            setTimeout(() => testRunner.notifyDone(), 0);
+    }
+    a.parentNode.classList.add('container-transform');
+}
+
+</script>
+
+<body onload="test()">
+<div class="container">
+<div id="a" class="box">
+</div>
+</div>
+<br><br>
+Transitioning properties:
+<div id=log></div>

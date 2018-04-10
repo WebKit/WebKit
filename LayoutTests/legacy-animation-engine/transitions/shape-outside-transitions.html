@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+        width: 150px;
+        height: 150px;
+        border: 1px solid black;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: silver;
+        -webkit-transition-duration: 1s;
+        -webkit-transition-timing-function: linear;
+        -webkit-transition-property: -webkit-shape-outside;
+        float: left;
+    }
+    
+    #circle {
+        -webkit-shape-outside: circle(100px at 50px 30px);
+    }
+    
+    body.final #circle {
+        -webkit-shape-outside: circle(20px at 50px 50px);
+    }
+
+    #ellipse {
+        -webkit-shape-outside: ellipse(10px 20px at 50px 30px);
+    }
+    
+    body.final #ellipse {
+        -webkit-shape-outside: ellipse(20px 40px at 50px 50px);
+    }
+
+    #inset {
+        -webkit-shape-outside: inset(10px 20px);
+    }
+    
+    body.final #inset {
+        -webkit-shape-outside: inset(20px 24px);
+    }
+
+    #polygon {
+        -webkit-shape-outside: polygon(20px 0px, 100px 0, 100px 50px, 0 50px);
+    }
+    
+    body.final #polygon {
+        -webkit-shape-outside: polygon(10px 0px, 50px 0, 20px 40px, 0 40px);
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'circle', '-webkit-shape-outside', 'circle(60px at 50px 40px)', 1],
+      [0.5, 'ellipse', '-webkit-shape-outside', 'ellipse(15px 30px at 50px 40px)', 1],
+      [0.5, 'inset', '-webkit-shape-outside', 'inset(15px 22px)', 1],
+      [0.5, 'polygon', '-webkit-shape-outside', 'polygon(15px 0px, 75px 0, 60px 45px, 0 45px)', 1],
+    ];
+  
+    function setupTest()
+    {
+        document.body.classList.add('final');
+    }
+    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+    <div class="container">
+        <div id="circle" class="box"></div>
+        x<br>x<br>x<br>x<br>x<br>x<br>x<br>x<br>
+    </div>
+
+    <div class="container">
+        <div id="ellipse" class="box"></div>
+        x<br>x<br>x<br>x<br>x<br>x<br>x<br>x<br>
+    </div>
+
+    <div class="container">
+        <div id="inset" class="box"></div>
+        x<br>x<br>x<br>x<br>x<br>x<br>x<br>x<br>
+    </div>
+
+    <div class="container">
+        <div id="polygon" class="box"></div>
+        x<br>x<br>x<br>x<br>x<br>x<br>x<br>x<br>
+    </div>
+
+    <div id="result"></div>
+
+</body>
+</html>

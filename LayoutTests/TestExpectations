@@ -365,6 +365,7 @@ webkit.org/b/112521 [ Debug ] webaudio/audioprocessingevent.html [ Skip ]
 webkit.org/b/137359 webaudio/distance-linear.html [ Pass Failure ]
 
 webkit.org/b/139590 animations/cross-fade-webkit-mask-image.html [ Pass Failure ]
+webkit.org/b/139590 legacy-animation-engine/animations/cross-fade-webkit-mask-image.html [ Pass Failure ]
 
 # The test frequently times out, and is just unsuccessful at detecting incorrect behavior when it passes.
 webkit.org/b/72698 media/audio-garbage-collect.html [ Skip ]
@@ -375,6 +376,7 @@ webkit.org/b/172527 fast/mediacapturefromelement/CanvasCaptureMediaStream-reques
 webkit.org/b/53990 fast/forms/search-event-delay.html [ Pass Failure ]
 
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
+webkit.org/b/126142 legacy-animation-engine/css3/calc/transitions-dependent.html [ Pass Failure ]
 
 webkit.org/b/124932 media/video-size.html [ Pass Failure ]
 
@@ -480,6 +482,7 @@ webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure 
 # official flexbox tests
 webkit.org/b/136754 css3/flexbox/csswg/css-box-justify-content.html [ ImageOnlyFailure ]
 webkit.org/b/143294 css3/flexbox/csswg/css-flexbox-height-animation-stretch.html [ Pass ImageOnlyFailure ]
+webkit.org/b/143294 legacy-animation-engine/css3/flexbox/csswg/css-flexbox-height-animation-stretch.html [ Pass ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/css-flexbox-img-expand-evenly.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-align-items-center.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-flexitem-percentage-prescation.html [ ImageOnlyFailure ]
@@ -639,47 +642,89 @@ webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]
+legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
+webkit.org/b/137883 legacy-animation-engine/transitions/background-transitions.html [ Failure Pass ]
 webkit.org/b/137883 transitions/border-radius-transition.html [ Failure Pass ]
+webkit.org/b/137883 legacy-animation-engine/transitions/border-radius-transition.html [ Failure Pass ]
 webkit.org/b/137883 transitions/change-values-during-transition.html [ Failure Pass ]
+webkit.org/b/137883 legacy-animation-engine/transitions/change-values-during-transition.html [ Failure Pass ]
 webkit.org/b/137883 transitions/clip-transition.html [ Failure Pass ]
+webkit.org/b/137883 legacy-animation-engine/transitions/clip-transition.html [ Failure Pass ]
 webkit.org/b/137883 transitions/color-transition-all.html [ Failure Pass ]
+webkit.org/b/137883 legacy-animation-engine/transitions/color-transition-all.html [ Failure Pass ]
 webkit.org/b/137883 transitions/color-transition-premultiplied.html [ Failure Pass ]
+webkit.org/b/137883 legacy-animation-engine/transitions/color-transition-premultiplied.html [ Failure Pass ]
 webkit.org/b/137883 transitions/color-transition-rounding.html [ Failure Pass ]
+webkit.org/b/137883 legacy-animation-engine/transitions/color-transition-rounding.html [ Failure Pass ]
 webkit.org/b/137883 transitions/cross-fade-background-image.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/cross-fade-background-image.html [ Pass Failure ]
 webkit.org/b/137883 transitions/cross-fade-border-image.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/cross-fade-border-image.html [ Pass Failure ]
 webkit.org/b/137883 transitions/cubic-bezier-overflow-color.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/cubic-bezier-overflow-color.html [ Pass Failure ]
 webkit.org/b/137883 transitions/cubic-bezier-overflow-length.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/cubic-bezier-overflow-length.html [ Pass Failure ]
 webkit.org/b/137883 transitions/cubic-bezier-overflow-shadow.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/cubic-bezier-overflow-shadow.html [ Pass Failure ]
 webkit.org/b/137883 transitions/cubic-bezier-overflow-svg-length.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/cubic-bezier-overflow-svg-length.html [ Pass Failure ]
 webkit.org/b/137883 transitions/cubic-bezier-overflow-transform.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/cubic-bezier-overflow-transform.html [ Pass Failure ]
 webkit.org/b/137883 transitions/delay.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/delay.html [ Pass Failure ]
 webkit.org/b/137883 transitions/equivalent-background-image-no-transition.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/equivalent-background-image-no-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/flex-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/flex-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupt-transform-transition.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/interrupt-transform-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupt-zero-duration.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/interrupt-zero-duration.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupted-accelerated-transition.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/interrupted-accelerated-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/longhand-vs-shorthand-initial.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/longhand-vs-shorthand-initial.html [ Pass Failure ]
 webkit.org/b/137883 transitions/mask-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/mask-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/matched-transform-functions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/matched-transform-functions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/mismatched-shadow-styles.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/mismatched-shadow-styles.html [ Pass Failure ]
 webkit.org/b/137883 transitions/mismatched-shadow-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/mismatched-shadow-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/mixed-type.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/mixed-type.html [ Pass Failure ]
 webkit.org/b/137883 transitions/move-after-transition.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/move-after-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/multiple-background-size-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/multiple-background-size-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/multiple-background-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/multiple-background-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/multiple-mask-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/multiple-mask-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/multiple-shadow-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/multiple-shadow-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/negative-delay.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/negative-delay.html [ Pass Failure ]
 webkit.org/b/137883 transitions/opacity-transition-zindex.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/opacity-transition-zindex.html [ Pass Failure ]
 webkit.org/b/137883 transitions/repeated-firing-background-color.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/repeated-firing-background-color.html [ Pass Failure ]
 webkit.org/b/137883 transitions/retargetted-transition.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/retargetted-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/rounded-rect-becomes-non-renderable-while-transitioning.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/rounded-rect-becomes-non-renderable-while-transitioning.html [ Pass Failure ]
 webkit.org/b/137883 transitions/shorthand-border-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/shorthand-border-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/shorthand-transitions.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/shorthand-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/started-while-suspended.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/started-while-suspended.html [ Pass Failure ]
 webkit.org/b/137883 transitions/transition-shorthand-delay.html
+webkit.org/b/137883 legacy-animation-engine/transitions/transition-shorthand-delay.html
 webkit.org/b/137883 transitions/transition-timing-function.html [ Pass Failure ]
+webkit.org/b/137883 legacy-animation-engine/transitions/transition-timing-function.html [ Pass Failure ]
 
 # W3C web platform tests infrastructure directories are skipped as they may contain html files
 imported/w3c/web-platform-tests/common [ Skip ]
@@ -1038,6 +1083,7 @@ fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
 
 webkit.org/b/148026 [ Debug ] animations/restart-after-scroll.html [ Skip ]
+webkit.org/b/148026 [ Debug ] legacy-animation-engine/animations/restart-after-scroll.html [ Skip ]
 
 webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
@@ -1109,6 +1155,7 @@ webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ 
 webkit.org/b/148925 svg/dom/svg-root-lengths.html [ Pass Failure ]
 
 webkit.org/b/150541 imported/blink/transitions/unprefixed-perspective.html [ Pass Failure Timeout ]
+webkit.org/b/150541 legacy-animation-engine/imported/blink/transitions/unprefixed-perspective.html [ Pass Failure Timeout ]
 
 # Subpixel table failures.
 # This test makes no sense (ceil on table and expect the same result)
@@ -1419,6 +1466,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mo
 webkit.org/b/164856 [ Debug ] editing/execCommand/indent-block-in-list.html [ Skip ]
 webkit.org/b/162831 [ Debug ] imported/blink/css3/flexbox/relpos-with-scrollable-with-abspos-crash.html  [ Skip ]
 webkit.org/b/162828 [ Debug ] tables/table-section-overflow-clip-crash.html  [ Skip ]
+webkit.org/b/162828 [ Debug ] legacy-animation-engine/tables/table-section-overflow-clip-crash.html  [ Skip ]
 
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-licm.html [ Pass Timeout ]
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass Timeout ]
@@ -1515,6 +1563,7 @@ webkit.org/b/63186 svg/zoom/page/zoom-svg-through-object-with-text.xhtml [ Skip 
 
 # Test disabled in r37513 for causing next test to hang
 animations/font-size-using-ems.html [ Skip ]
+legacy-animation-engine/animations/font-size-using-ems.html [ Skip ]
 
 # Tests disabled in r18642 due to font-dependent issue with Armenian numbering
 css2.1/t1202-counter-10-b.html [ Skip ]

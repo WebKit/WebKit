@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    body {
+      margin: 0;
+    }
+
+    .animated {
+      -webkit-animation: test 1s;
+    }
+
+    @-webkit-keyframes test {
+      from {
+        padding: 0;
+      }
+      to {
+        padding: 0;
+      }
+    }
+    </style>
+    <script src="../../../fast/repaint/resources/text-based-repaint.js"></script>
+    <script>
+    function repaintTest() {
+      // This should not trigger a repaint.
+      document.body.classList.add('animated');
+    }
+    </script>
+  </head>
+  <body onload="runRepaintTest();">
+    <ul>
+      <li>Test</li>
+    </ul>
+  </body>
+</html>

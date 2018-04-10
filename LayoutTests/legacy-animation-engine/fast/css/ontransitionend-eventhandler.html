@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+test(function() {
+    assert_own_property(HTMLElement.prototype, "ontransitionend", "HTMLElement.prototype");
+    assert_idl_attribute(document.createElement("div"), "ontransitionend", "div.ontransitionend");
+}, "HTMLElement should have ontransitionend event handler.");
+
+test(function() {
+    assert_own_property(window, "ontransitionend", "window.ontransitionend");
+}, "Window should have ontransitionend event handler.");
+
+test(function() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    assert_own_property(SVGElement.prototype, "ontransitionend", "SVGElement.prototype");
+    assert_idl_attribute(svg, "ontransitionend", "svg.ontransitionend");
+}, "SVGElement should have ontransitionend event handler.");
+
+test(function() {
+    assert_own_property(Document.prototype, "ontransitionend", "Document.prototype");
+    assert_idl_attribute(document, "ontransitionend", "document.ontransitionend");
+}, "Document should have ontransitionend event handler.");
+</script>
+</body>
+</html>

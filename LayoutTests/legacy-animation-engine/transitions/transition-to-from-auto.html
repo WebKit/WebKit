@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        position: relative;
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: gray;
+        transition: left 2s linear;
+    }
+    
+    #test1 {
+        left: 100px;
+    }
+    
+    body.final #test1 {
+        left: auto;
+    }
+
+    #test2 {
+        left: auto;
+    }
+    
+    body.final #test2 {
+        left: 100px
+    }
+
+    #test3 {
+        left: 0;
+    }
+    
+    body.final #test3 {
+        left: 100px
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [1, 'test1', 'left', '0', 2],
+      [1, 'test2', 'left', '100', 2],
+      [1, 'test3', 'left', '50', 2],
+    ];
+  
+    function setupTest()
+    {
+        document.body.classList.add('final');
+    }
+    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  <div id="test1" class="box"></div>
+  <div id="test2" class="box"></div>
+  <div id="test3" class="box"></div>
+
+  <div id="result"></div>
+</body>
+</html>

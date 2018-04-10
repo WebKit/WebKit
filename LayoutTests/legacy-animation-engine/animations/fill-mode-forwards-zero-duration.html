@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #box1 {
+      position: relative;
+      left: 10px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      animation: anim1 0 2s linear forwards;
+    }
+    @keyframes anim1 {
+        from { left: 400px; }
+        25%  { left: 0px; }
+        51%  { left: 250px; }
+        to   { left: 100px; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js"></script>
+  <script>
+
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim1", 1, "box1", "left", 100, 2],
+    ];
+
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+<p>Fill-forwards state should be the last keyframe state, even with a zero-duration animation.</p>
+<div id="box1"></div>
+<div id="result"></div>
+</body>
+</html>

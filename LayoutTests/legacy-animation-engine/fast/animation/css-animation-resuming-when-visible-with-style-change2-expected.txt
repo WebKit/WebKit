@@ -1,0 +1,18 @@
+Tests that CSS animations that are created while the page is hidden are properly resumed when the page becomes visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.animationsAreSuspended() is false
+PASS internals.numberOfActiveAnimations() is 1
+Suspend animations
+PASS internals.animationsAreSuspended() is true
+PASS internals.animationsAreSuspended() is true
+PASS internals.animationsAreSuspended() is true
+PASS window.getComputedStyle(testDiv).transform is pausedTransform
+Resume animations...
+PASS window.getComputedStyle(testDiv).transform != pausedTransform became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+TEST

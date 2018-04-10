@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #box {
+      height: 200px;
+      width: 200px;
+      margin: 20px;
+      background-color: blue;
+    }
+    
+    .animated {
+      -webkit-transition: opacity 200ms;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+    }
+
+    function log(s)
+    {
+      var results = document.getElementById('results');
+      results.innerHTML += s + '<br>';
+    }
+
+    function testTransitions()
+    {
+      if (window.testRunner) {
+        var numAnims = internals.numberOfActiveAnimations();
+        if (numAnims == 0)
+          log('No running transitions: PASS');
+        else
+          log('Still ' + numAnims + ' transitions running: FAIL')
+
+        testRunner.notifyDone();
+      }
+    }
+    
+    function removeStyle()
+    {
+      box.className = '';
+      window.setTimeout(testTransitions, 50);
+    }
+
+    function startTransition()
+    {
+      var box = document.getElementById('box');
+      box.className = 'animated';
+      window.setTimeout(function() {
+        box.style.opacity = '0.5';
+        window.setTimeout(removeStyle, 200);
+      }, 0);
+    }
+    
+    window.addEventListener('load', startTransition, false);
+  </script>
+</head>
+<body>
+
+<div id="box"></div>
+
+<div id="results"></div>
+</body>
+</html>

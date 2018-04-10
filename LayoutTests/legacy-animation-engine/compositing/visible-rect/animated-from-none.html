@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            height: 200px;
+            width: 500px;
+            border: 1px solid black;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .box {
+            position: absolute;
+            left: -100px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+            -webkit-animation: move 20000000s linear;
+        }
+        
+        @-webkit-keyframes move {
+            from { -webkit-transform: none; }
+            to   { -webkit-transform: translateX(400px); }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            document.getElementById('animated').addEventListener('webkitAnimationStart', function() {
+                if (window.internals)
+                    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, false);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div id="animated" class="box"></div>
+    </div>
+
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

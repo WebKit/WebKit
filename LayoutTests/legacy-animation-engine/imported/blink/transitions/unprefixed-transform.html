@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<div class="target">-webkit-transform 10ms</div><br>
+<div class="target">transform 10ms</div><br>
+<div class="target">transform 10ms, -webkit-transform 10ms</div><br>
+<div class="target">-webkit-transform 10ms, transform 10ms</div><br>
+<div class="target">all 10ms</div><br>
+<div class="target">all 10ms, -webkit-transform 10ms</div><br>
+<div class="target">-webkit-transform 10ms, all 10ms</div>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+document.addEventListener('transitionend', function(e) {
+  var result = document.createElement('div');
+  result.textContent = 'fired transitionend with propertyName: ' + e.propertyName;
+  e.target.appendChild(result);
+  if (window.testRunner) {
+    // All events should be fired by next frame.
+    requestAnimationFrame(function() {
+      testRunner.notifyDone();
+    });
+  }
+});
+
+onload = function() {
+  var targets = document.querySelectorAll('.target');
+  for (var i = 0; i < targets.length; i++) {
+    targets[i].offsetTop;
+    targets[i].style.transition = targets[i].textContent;
+    targets[i].style.webkitTransform = 'rotate(360deg)';
+    targets[i].style.transform = 'rotate(360deg)';
+  }
+};
+</script>

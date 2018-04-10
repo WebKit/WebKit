@@ -1,0 +1,43 @@
+<html>
+<head>
+<style>
+.shape {
+    width: 100px;
+    height: 100px;
+    float: left;
+    -webkit-shape-outside: url('../resources/svg-shape-003.svg');
+    background: url('../resources/svg-shape-003.svg');
+}
+.container {
+    width: 200px;
+    height: 200px;
+    border: 2px solid blue;
+}
+@-webkit-keyframes threshold-anim {
+        from { -webkit-shape-image-threshold: 0; }
+        to   { -webkit-shape-image-threshold: 1; }
+}
+.shape {
+    -webkit-animation: threshold-anim 2s linear;
+}
+</style>
+<script src="../../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["threshold-anim",  1, "shape", "-webkit-shape-image-threshold", "0.5", 0.05],
+    ];
+
+    runAnimationTest(expectedValues);
+</script>
+</head>
+<body>
+<div class='container'>
+<div class='shape' id='shape'></div>
+Moving Text
+</div>
+
+<div id="result">
+</div>
+</body>
+</html>

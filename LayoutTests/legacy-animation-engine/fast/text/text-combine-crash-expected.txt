@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 149: TypeError: undefined is not an object (evaluating 'document.forms[2].__lookupGetter__')
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '&'
+Test passes if there's no crash.
+
+￼￼￼
+
+￼
+Errlog webtest_fn_1: TypeError: undefined is not an object (evaluating 'document.applets[0].addEventListener')
+Errlog webtest_fn_2: TypeError: Argument 1 ('node') to Range.setStartBefore must be an instance of Node
+Errlog webtest_fn_3: TypeError: undefined is not an object (evaluating 'document.images[2].contentEditable="true"')
+Errlog webtest_fn_8: TypeError: null is not an object (evaluating 'lis.length')
+￼Errlog webtest_fn_9: TypeError: undefined is not an object (evaluating 'document.anchors[4].setAttribute')
+Errlog webtest_fn_10: TypeError: Argument 1 ('node') to Range.setStartAfter must be an instance of Node
+￼￼￼￼Errlog webtest_fn_15: TypeError: Argument 1 ('node') to Range.setStart must be an instance of Node
+Errlog webtest_fn_16: TypeError: undefined is not an object (evaluating 'elem.parentNode')
+￼￼Errlog webtest_fn_18: TypeError: undefined is not an object (evaluating 'document.applets[0].contentEditable="true"')
+Errlog webtest_fn_21: TypeError: undefined is not an object (evaluating 'document.anchors[4].appendChild')
+
+Errlog webtest_fn_24: HierarchyRequestError: The operation would yield an incorrect node tree.
+Errlog webtest_fn_25: ReferenceError: Can't find variable: node_16
+

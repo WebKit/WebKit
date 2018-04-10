@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#testDiv {
+    transition: transform 30s linear, color 2s, left 4s linear, top 4s linear;
+    position: absolute;
+}
+</style>
+</head>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<div id="testDiv">TEST</div>
+<script>
+description("Tests that CSS animations that are created while the page is hidden are properly resumed when the page becomes visible.");
+jsTestIsAsync = true;
+
+function registerAnimation()
+{
+    testDiv.style.transform = "rotate(170deg) scale(0.2781941414347284)";
+}
+
+onload = function() {
+    setTimeout(function() {
+        registerAnimation("170");
+
+        setTimeout(function() {
+            shouldBeFalse("internals.animationsAreSuspended()");
+            shouldBe("internals.numberOfActiveAnimations()", "1");
+
+            debug("Suspend animations");
+            internals.suspendAnimations();
+            setTimeout(function() {
+                shouldBeTrue("internals.animationsAreSuspended()");
+
+                pausedTransform = window.getComputedStyle(testDiv).transform;
+
+                // Change style to make sure it does not make the animation active.
+                testDiv.style.backgroundColor = "green";
+                testDiv.offsetLeft;
+
+                shouldBeTrue("internals.animationsAreSuspended()");
+
+                setTimeout(function() {
+                    shouldBeTrue("internals.animationsAreSuspended()");
+                    shouldBe("window.getComputedStyle(testDiv).transform", "pausedTransform");
+
+                    debug("Resume animations...");
+                    internals.resumeAnimations();
+                    shouldBecomeEqual("window.getComputedStyle(testDiv).transform != pausedTransform", "true", finishJSTest);
+                }, 100);
+            }, 0);
+        }, 500);
+    }, 0);
+}
+</script>
+</body>
+</html>

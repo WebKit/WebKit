@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 505x18
+          text run at (0,0) width 505: "In the pixel result, the green boxes should be coincident with the black outline."
+      RenderBlock {DIV} at (0,34) size 202x202 [border: (1px solid #EEEEEE)]
+      RenderBlock {DIV} at (0,236) size 202x202 [border: (1px solid #EEEEEE)]
+      RenderBlock {DIV} at (0,438) size 784x36
+        RenderText {#text} at (0,0) size 613x18
+          text run at (0,0) width 613: "PASS - \"-webkit-transform.0\" property for \"inner1\" element at 0.5s saw something close to: 1.5"
+        RenderBR {BR} at (612,14) size 1x0
+        RenderText {#text} at (0,18) size 613x18
+          text run at (0,18) width 613: "PASS - \"-webkit-transform.0\" property for \"inner2\" element at 0.5s saw something close to: 1.5"
+        RenderBR {BR} at (612,32) size 1x0
+layer at (34,68) size 150x150
+  RenderBlock (positioned) {DIV} at (34,68) size 150x150 [border: (1px solid #000000)]
+layer at (59,93) size 100x100
+  RenderBlock {DIV} at (51,51) size 100x100 [bgcolor=#008000]
+layer at (34,270) size 150x150
+  RenderBlock (positioned) {DIV} at (34,270) size 150x150 [border: (1px solid #000000)]
+layer at (59,295) size 100x100
+  RenderBlock {DIV} at (51,51) size 100x100 [bgcolor=#008000]

@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test animation with missing from and to keyframes</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 10px;
+      top: 10px;
+      height: 20px;
+      width: 20px;
+      -webkit-transform: translateX(10px);
+      background-color: blue;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+    }
+  
+    #box1 {
+      -webkit-animation-name: anim1;
+    }
+    @-webkit-keyframes anim1 {
+      from { -webkit-transform: translateX(10px); }
+      40% { -webkit-transform: translateX(30px); }
+      60% { -webkit-transform: translateX(10px); }
+      to { -webkit-transform: translateX(20px); }
+    }
+
+    #box2 {
+      -webkit-animation-name: anim2;
+      background-color: red;
+    }
+    @-webkit-keyframes anim2 {
+      40% { -webkit-transform: translateX(30px); }
+      60% { -webkit-transform: translateX(10px); }
+      to { -webkit-transform: translateX(20px); }
+    }
+
+    #box3 {
+      -webkit-transform: translateX(20px);
+      -webkit-animation-name: anim3;
+      background-color: green;
+    }
+    @-webkit-keyframes anim3 {
+      from { -webkit-transform: translateX(10px); }
+      40% { -webkit-transform: translateX(30px); }
+      60% { -webkit-transform: translateX(10px); }
+    }
+
+    #box4 {
+      -webkit-animation-name: anim4;
+      background-color: yellow;
+    }
+    @-webkit-keyframes anim4 {
+      40% { -webkit-transform: translateX(30px); }
+      60% { -webkit-transform: translateX(20px); }
+    }
+
+    #box5 {
+      -webkit-animation-name: anim5;
+      background-color: orange;
+    }
+    @-webkit-keyframes anim5 {
+    }
+    
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim1", 0.4, "box1", "webkitTransform.4", 20, 2],
+      ["anim1", 1.0, "box1", "webkitTransform.4", 20, 2],
+      ["anim1", 1.6, "box1", "webkitTransform.4", 15, 2],
+      ["anim2", 0.4, "box2", "webkitTransform.4", 20, 2],
+      ["anim2", 1.0, "box2", "webkitTransform.4", 20, 2],
+      ["anim2", 1.6, "box2", "webkitTransform.4", 15, 2],
+      ["anim3", 0.4, "box3", "webkitTransform.4", 20, 2],
+      ["anim3", 1.0, "box3", "webkitTransform.4", 20, 2],
+      ["anim3", 1.6, "box3", "webkitTransform.4", 15, 2],
+      ["anim4", 0.4, "box4", "webkitTransform.4", 20, 2],
+      ["anim4", 1.0, "box4", "webkitTransform.4", 25, 2],
+      ["anim4", 1.6, "box4", "webkitTransform.4", 15, 2]
+    ];
+
+    runAnimationTest(expectedValues, function() {
+      if (window.testRunner) {
+          var box5Element = document.getElementById('box5');
+          if (internals.pauseAnimationAtTimeOnElement("anim5", 0.1, box5Element))
+              result += "FAIL - box5 animation was running<br>";
+          else 
+              result += "PASS - box5 animation was not running<br>";
+      }
+    });
+    
+  </script>
+</head>
+<body>
+This test performs animations of the transform property on five boxes over 2 seconds.
+Box 1 has all keyframes. Box 2 has a missing "from" keyframe.
+Box 3 has a missing "to" keyframe.
+Box 4 has both "from" and "to" keyframes missing, but other keyframes which
+should trigger the generation of "from" and "to". Box 5 has no keyframes, and
+should not animate.
+The test takes 3 snapshots each and expects each result to be within a specified range.
+<div class="box" id="box1">
+</div>
+<div class="box" id="box2">
+</div>
+<div class="box" id="box3">
+</div>
+<div class="box" id="box4">
+</div>
+<div class="box" id="box5">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

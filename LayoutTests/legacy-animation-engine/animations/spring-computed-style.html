@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<script src="../../resources/js-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test the computed style of the spring() function on the transition-timing-function property.");
+
+if (window.internals)
+    internals.settings.setSpringTimingFunctionEnabled(true);
+
+// These have to be global for the test helpers to see them.
+var stylesheet, springStyle;
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+stylesheet = styleElement.sheet;
+var div = document.createElement(div);
+div.id = "target";
+document.body.appendChild(div);
+
+function testComputedSpring(description, spring, expectedValue)
+{
+    debug("");
+    debug(description + " : " + spring);
+
+    stylesheet.insertRule("#target { transition-timing-function: " + spring + "; }", 0);
+
+    springStyle = window.getComputedStyle(div).getPropertyCSSValue("transition-timing-function");
+    shouldBe("springStyle.cssText", "'" + expectedValue + "'");
+    
+    stylesheet.deleteRule(0);
+}
+
+debug("")
+debug("Valid spring tests");
+debug("")
+
+testComputedSpring("Basic", "spring(1 100 10 0)", "spring(1 100 10 0)");
+testComputedSpring("Negative Velocity", "spring(1 100 10 -10)", "spring(1 100 10 -10)");
+testComputedSpring("Positive Velocity", "spring(1 100 10 10)", "spring(1 100 10 10)");
+testComputedSpring("Zero Damping", "spring(1 100 0 10)", "spring(1 100 0 10)");
+testComputedSpring("Minimum Values", "spring(1 1 0 -999999)", "spring(1 1 0 -999999)");
+testComputedSpring("Floating Point Values", "spring(1.5 2.3 3.7 -1.8)", "spring(1.5 2.3 3.7 -1.8)");
+
+debug("")
+debug("Invalid spring tests");
+debug("")
+
+testComputedSpring("No parameters", "spring()", "ease");
+testComputedSpring("Not enough parameters", "spring(1 100 10)", "ease");
+testComputedSpring("Too many parameters", "spring(1 100 10 0 0)", "ease");
+testComputedSpring("Non-numeric parameters", "spring(a b c d)", "ease");
+testComputedSpring("Illegal Mass (< 0)", "spring(-1 100 10 0)", "ease");
+testComputedSpring("Illegal Mass (== 0)", "spring(0 100 10 0)", "ease");
+testComputedSpring("Illegal Stiffness (< 0)", "spring(1 -1 10 0)", "ease");
+testComputedSpring("Illegal Stiffness (== 0)", "spring(1 0 10 0)", "ease");
+testComputedSpring("Illegal Damping (< 0)", "spring(1 100 -1 0)", "ease");
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>

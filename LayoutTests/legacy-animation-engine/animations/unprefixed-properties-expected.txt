@@ -1,0 +1,296 @@
+Test the unprefixed animation properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Parsing - Basic animation-name : waldo
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-name') is 'waldo'
+PASS declaration.getPropertyValue('-webkit-animation-name') is 'waldo'
+
+Parsing - Multiple animation-names : waldo, wally
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-name') is 'waldo, wally'
+PASS declaration.getPropertyValue('-webkit-animation-name') is 'waldo, wally'
+PASS subRule.cssText is 'waldo'
+PASS subRule.cssText is 'wally'
+
+Parsing - Basic animation-duration : 5s
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-duration') is '5s'
+PASS declaration.getPropertyValue('-webkit-animation-duration') is '5s'
+
+Parsing - Multiple animation-durations : 10s, 20ms
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-duration') is '10s, 20ms'
+PASS declaration.getPropertyValue('-webkit-animation-duration') is '10s, 20ms'
+PASS subRule.cssText is '10s'
+PASS subRule.cssText is '20ms'
+
+Parsing - Basic animation-delay : 5s
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-delay') is '5s'
+PASS declaration.getPropertyValue('-webkit-animation-delay') is '5s'
+
+Parsing - Multiple animation-delays : 10s, 20ms
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-delay') is '10s, 20ms'
+PASS declaration.getPropertyValue('-webkit-animation-delay') is '10s, 20ms'
+PASS subRule.cssText is '10s'
+PASS subRule.cssText is '20ms'
+
+Parsing - Basic animation-timing-function : ease-in-out
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-timing-function') is 'ease-in-out'
+PASS declaration.getPropertyValue('-webkit-animation-timing-function') is 'ease-in-out'
+
+Parsing - animation-timing-function with bezier : cubic-bezier(0.2, 0.3, 0.4, 0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-timing-function') is 'cubic-bezier(0.2, 0.3, 0.4, 0.5)'
+PASS declaration.getPropertyValue('-webkit-animation-timing-function') is 'cubic-bezier(0.2, 0.3, 0.4, 0.5)'
+
+Parsing - Multiple animation-timing-functions : ease-in, ease-out
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-timing-function') is 'ease-in, ease-out'
+PASS declaration.getPropertyValue('-webkit-animation-timing-function') is 'ease-in, ease-out'
+PASS subRule.cssText is 'ease-in'
+PASS subRule.cssText is 'ease-out'
+
+Parsing - Basic animation-iteration-count : 4
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-iteration-count') is '4'
+PASS declaration.getPropertyValue('-webkit-animation-iteration-count') is '4'
+
+Parsing - animation-iteration-count with keyword : infinite
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-iteration-count') is 'infinite'
+PASS declaration.getPropertyValue('-webkit-animation-iteration-count') is 'infinite'
+
+Parsing - Multiple animation-iteration-counts : 2, infinite, 4
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-iteration-count') is '2, infinite, 4'
+PASS declaration.getPropertyValue('-webkit-animation-iteration-count') is '2, infinite, 4'
+PASS subRule.cssText is '2'
+PASS subRule.cssText is 'infinite'
+PASS subRule.cssText is '4'
+
+Parsing - Normal animation-direction : normal
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-direction') is 'normal'
+PASS declaration.getPropertyValue('-webkit-animation-direction') is 'normal'
+
+Parsing - Alternate animation-direction : alternate
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-direction') is 'alternate'
+PASS declaration.getPropertyValue('-webkit-animation-direction') is 'alternate'
+
+Parsing - Reverse animation-direction : reverse
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-direction') is 'reverse'
+PASS declaration.getPropertyValue('-webkit-animation-direction') is 'reverse'
+
+Parsing - Alternate Reverse animation-direction : alternate-reverse
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-direction') is 'alternate-reverse'
+PASS declaration.getPropertyValue('-webkit-animation-direction') is 'alternate-reverse'
+
+Parsing - Multiple animation-directions : alternate, alternate, normal
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-direction') is 'alternate, alternate, normal'
+PASS declaration.getPropertyValue('-webkit-animation-direction') is 'alternate, alternate, normal'
+PASS subRule.cssText is 'alternate'
+PASS subRule.cssText is 'alternate'
+PASS subRule.cssText is 'normal'
+
+Parsing - None animation-fill-mode : none
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-fill-mode') is 'none'
+PASS declaration.getPropertyValue('-webkit-animation-fill-mode') is 'none'
+
+Parsing - Forwards animation-fill-mode : forwards
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-fill-mode') is 'forwards'
+PASS declaration.getPropertyValue('-webkit-animation-fill-mode') is 'forwards'
+
+Parsing - Backwards animation-fill-mode : backwards
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-fill-mode') is 'backwards'
+PASS declaration.getPropertyValue('-webkit-animation-fill-mode') is 'backwards'
+
+Parsing - Both animation-fill-mode : both
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-fill-mode') is 'both'
+PASS declaration.getPropertyValue('-webkit-animation-fill-mode') is 'both'
+
+Parsing - Multiple animation-fill-modes : none, forwards, backwards, both
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('animation-fill-mode') is 'none, forwards, backwards, both'
+PASS declaration.getPropertyValue('-webkit-animation-fill-mode') is 'none, forwards, backwards, both'
+PASS subRule.cssText is 'none'
+PASS subRule.cssText is 'forwards'
+PASS subRule.cssText is 'backwards'
+PASS subRule.cssText is 'both'
+
+Invalid - duration - Bad value : 10cm
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-duration') is ""
+
+Invalid - duration - List with bad value : 10ms, 10cm, 10s
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-duration') is ""
+
+Invalid - delay - Bad value : 10cm
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-delay') is ""
+
+Invalid - delay - List with bad value : 10ms, 10cm, 10s
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-delay') is ""
+
+Invalid - timing-function - Wrong keyword parameter : egg
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-timing-function') is ""
+
+Invalid - timing-function - List with wrong keyword parameter : ease-in, egg, ease-out
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-timing-function') is ""
+
+Invalid - iteration-count - Wrong keyword parameter : banana
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-iteration-count') is ""
+
+Invalid - iteration-count - List with wrong keyword parameter : infinite, 10, banana
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-iteration-count') is ""
+
+Invalid - direction - Wrong keyword parameter : all
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-direction') is ""
+
+Invalid - direction - List with wrong keyword parameter : normal, alternate, none
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-direction') is ""
+
+Invalid - fill-mode - Wrong keyword parameter : all
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-fill-mode') is ""
+
+Invalid - fill-mode - List with wrong keyword parameter : none, backwards, left, alternate, forwards
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('animation-fill-mode') is ""
+
+Computed Style - Basic animation-name : waldo
+PASS animationStyle.cssText is 'waldo'
+
+Computed Style - Multiple animation-names : waldo, wally
+PASS subRule.cssText is 'waldo'
+PASS subRule.cssText is 'wally'
+
+Computed Style - Basic animation-duration : 5s
+PASS animationStyle.cssText is '5s'
+
+Computed Style - Multiple animation-durations : 10s, 20ms
+PASS subRule.cssText is '10s'
+PASS subRule.cssText is '0.02s'
+
+Computed Style - Basic animation-delay : 5s
+PASS animationStyle.cssText is '5s'
+
+Computed Style - Multiple animation-delays : 10s, 20ms
+PASS subRule.cssText is '10s'
+PASS subRule.cssText is '0.02s'
+
+Computed Style - Basic animation-timing-function : ease-in-out
+PASS animationStyle.cssText is 'ease-in-out'
+
+Computed Style - animation-timing-function with bezier : cubic-bezier(0.2, 0.3, 0.4, 0.5)
+PASS animationStyle.cssText is 'cubic-bezier(0.2, 0.3, 0.4, 0.5)'
+
+Computed Style - Multiple animation-timing-functions : ease-in, ease-out
+PASS subRule.cssText is 'ease-in'
+PASS subRule.cssText is 'ease-out'
+
+Computed Style - Basic animation-iteration-count : 4
+PASS animationStyle.cssText is '4'
+
+Computed Style - animation-iteration-count with keyword : infinite
+PASS animationStyle.cssText is 'infinite'
+
+Computed Style - Multiple animation-iteration-counts : 2, infinite, 4
+PASS subRule.cssText is '2'
+PASS subRule.cssText is 'infinite'
+PASS subRule.cssText is '4'
+
+Computed Style - Normal animation-direction : normal
+PASS animationStyle.cssText is 'normal'
+
+Computed Style - Alternate animation-direction : alternate
+PASS animationStyle.cssText is 'alternate'
+
+Computed Style - Reverse animation-direction : reverse
+PASS animationStyle.cssText is 'reverse'
+
+Computed Style - Alternate Reverse animation-direction : alternate-reverse
+PASS animationStyle.cssText is 'alternate-reverse'
+
+Computed Style - Multiple animation-directions : alternate, alternate, normal
+PASS subRule.cssText is 'alternate'
+PASS subRule.cssText is 'alternate'
+PASS subRule.cssText is 'normal'
+
+Computed Style - None animation-fill-mode : none
+PASS animationStyle.cssText is 'none'
+
+Computed Style - Forwards animation-fill-mode : forwards
+PASS animationStyle.cssText is 'forwards'
+
+Computed Style - Backwards animation-fill-mode : backwards
+PASS animationStyle.cssText is 'backwards'
+
+Computed Style - Both animation-fill-mode : both
+PASS animationStyle.cssText is 'both'
+
+Computed Style - Multiple animation-fill-modes : none, forwards, backwards, both
+PASS subRule.cssText is 'none'
+PASS subRule.cssText is 'forwards'
+PASS subRule.cssText is 'backwards'
+PASS subRule.cssText is 'both'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

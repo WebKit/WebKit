@@ -1,0 +1,4 @@
+Box should animate from left of 400px to 500px.
+
+PASS - "left" property for "test" element at 0.5s saw something close to: 450
+
