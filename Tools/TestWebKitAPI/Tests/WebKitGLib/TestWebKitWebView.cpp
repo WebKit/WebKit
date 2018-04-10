@@ -107,6 +107,18 @@ static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
     g_object_unref(webContext2);
 }
 
+static void testWebViewCloseQuickly(WebViewTest* test, gconstpointer)
+{
+    auto webView = Test::adoptView(Test::createWebView());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
+    g_idle_add([](gpointer userData) -> gboolean {
+        static_cast<WebViewTest*>(userData)->quitMainLoop();
+        return G_SOURCE_REMOVE;
+    }, test);
+    g_main_loop_run(test->m_mainLoop);
+    webView = nullptr;
+}
+
 #if PLATFORM(WPE)
 static void testWebViewWebBackend(Test* test, gconstpointer)
 {
@@ -1188,6 +1200,7 @@ void beforeAll()
 
     WebViewTest::add("WebKitWebView", "web-context", testWebViewWebContext);
     WebViewTest::add("WebKitWebView", "web-context-lifetime", testWebViewWebContextLifetime);
+    WebViewTest::add("WebKitWebView", "close-quickly", testWebViewCloseQuickly);
 #if PLATFORM(WPE)
     Test::add("WebKitWebView", "backend", testWebViewWebBackend);
 #endif

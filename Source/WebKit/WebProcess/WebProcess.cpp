@@ -1121,8 +1121,16 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
     if (!m_networkProcessConnection) {
         IPC::Attachment encodedConnectionIdentifier;
 
-        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply))
+        if (!parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(encodedConnectionIdentifier), 0, Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply)) {
+            if (!parentProcessConnection()->shouldExitOnSyncMessageSendFailure()) {
+                // In this particular case, the network process can be terminated by the UI process while the
+                // Web process is still initializing, so we always want to exit instead of crashing. This can
+                // happen when the WebView is created and then destroyed quickly.
+                // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+                exit(0);
+            }
             CRASH();
+        }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
         IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
