@@ -116,6 +116,11 @@ SOFT_LINK_CLASS(QuickLook, QLPreviewController);
 {
 }
 
+- (UIView *)web_contentView
+{
+    return self;
+}
+
 #pragma mark Find-in-Page
 
 - (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount

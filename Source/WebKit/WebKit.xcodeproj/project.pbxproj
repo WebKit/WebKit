@@ -1551,6 +1551,8 @@
 		9FB5F394169E6A80002C25BF /* WKContextPrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A102A7081EC0EEE900D81D82 /* com.macromedia.Flash Player ESR.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7A5E39491D5BD8A700B4B7CE /* com.macromedia.Flash Player ESR.plugin.sb */; };
+		A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1046E9F2079263100F0C5D8 /* WKPDFView.h */; };
+		A1046EA22079263100F0C5D8 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1046EA02079263100F0C5D8 /* WKPDFView.mm */; };
 		A115DC71191D82D700DA8072 /* _WKWebViewPrintFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */; };
 		A115DC72191D82DA00DA8072 /* _WKWebViewPrintFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A118A9EE1907AD6F00F7C92B /* QuickLookDocumentData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */; };
@@ -4039,6 +4041,8 @@
 		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
 		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
 		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
+		A1046E9F2079263100F0C5D8 /* WKPDFView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKPDFView.h; path = ios/WKPDFView.h; sourceTree = "<group>"; };
+		A1046EA02079263100F0C5D8 /* WKPDFView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPDFView.mm; path = ios/WKPDFView.mm; sourceTree = "<group>"; };
 		A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebViewPrintFormatter.h; sourceTree = "<group>"; };
 		A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuickLookDocumentData.cpp; path = ios/QuickLookDocumentData.cpp; sourceTree = "<group>"; };
@@ -5840,6 +5844,8 @@
 				A15EEDE31E301CEE000069B0 /* WKPasswordView.mm */,
 				2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */,
 				2D6AB540192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm */,
+				A1046E9F2079263100F0C5D8 /* WKPDFView.h */,
+				A1046EA02079263100F0C5D8 /* WKPDFView.mm */,
 				0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */,
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
 				26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */,
@@ -9651,6 +9657,7 @@
 				A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */,
 				A15EEDE61E301CEE000069B0 /* WKPasswordView.h in Headers */,
 				2D6AB541192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h in Headers */,
+				A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */,
 				7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */,
 				2DABA7741A817EE600EF0F1A /* WKPluginLoadPolicy.h in Headers */,
 				1AFDD3171891C94700153970 /* WKPreferences.h in Headers */,
@@ -11339,6 +11346,7 @@
 				BCE17B7D1381F1170012A641 /* WKPagePrivateMac.mm in Sources */,
 				A15EEDE51E301CEE000069B0 /* WKPasswordView.mm in Sources */,
 				2D6AB542192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.mm in Sources */,
+				A1046EA22079263100F0C5D8 /* WKPDFView.mm in Sources */,
 				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,
 				BCD597D1112B56AC00EC8C23 /* WKPreferences.cpp in Sources */,
 				1AFDD3191891CA1200153970 /* WKPreferences.mm in Sources */,

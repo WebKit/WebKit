@@ -1,3 +1,145 @@
+2018-04-10  Andy Estes  <aestes@apple.com>
+
+        [iOS] Use PDFKit to render PDFs in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=184387
+
+        Reviewed by Beth Dakin.
+
+        Adopted PDFHostViewController for rendering PDFs in WKWebView.
+
+        This patch implements rendering the PDF document and page number indicator. Link
+        navigation, find-in-page, and printing will be implemented in follow-up patches.
+
+        WKLegacyPDFView is still the default PDF view.
+
+        * Configurations/WebKit.xcconfig:
+
+        Linked WebKit with PDFKit on iOS.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _currentContentView]):
+        (-[WKWebView viewForZoomingInScrollView:]):
+
+        When WKPDFView loads a PDF document, it replaces itself with a view vended by
+        PDFHostViewController as the WKScrollView's content view. Abstracted WKWebView's
+        concept of the "current content view" to be either the WKContentView or a view of
+        the custom content view's choosing (-web_contentView).
+
+        (-[WKWebView scrollViewWillBeginZooming:withView:]):
+        (-[WKWebView scrollViewDidZoom:]):
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+
+        Forwarded these calls to _customContentView if it responds to the equivalent
+        WKWebViewContentProvider selectors.
+
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+
+        Defined new protocol selectors.
+
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry init]):
+        * UIProcess/ios/WKLegacyPDFView.h:
+        * UIProcess/ios/WKLegacyPDFView.mm:
+
+        Changed ENABLE(WKPDFVIEW) to ENABLE(WKLEGACYPDFVIEW).
+
+        (-[WKLegacyPDFView web_contentView]):
+
+        Added. Returns self as the content view.
+
+        * UIProcess/ios/WKPDFView.h: Added.
+        * UIProcess/ios/WKPDFView.mm: Added.
+        (-[WKPDFView dealloc]):
+
+        Removed the host view and page number indicator from their superviews.
+
+        (-[WKPDFView gestureRecognizerShouldBegin:]):
+
+        Forwarded to _hostViewController.
+
+        (-[WKPDFView web_initWithFrame:webView:]):
+
+        Set ours and the scroll view's background color to UIColor.grayColor to match
+        WKLegacyPDFView.
+
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+
+        Created a PDFHostViewController and set its root view as the scroll view's content
+        view after removing the WKPDFView itself. This allows WKPDFView to act as a
+        placeholder content view until the PDF is loaded. Added the host view controller's
+        page number indicator to the fixed overlay view. Finally, loaded the PDF document
+        by calling -[PDFHostViewController setDocumentData:withScrollView:].
+
+        (-[WKPDFView _offsetForPageNumberIndicator]):
+
+        Computed an offset for the page number indicator like WKLegacyPDFView did, taking
+        into account the overlaid accessory views inset, computed unobscured safe area
+        inset, and computed obscured inset.
+
+        (-[WKPDFView _movePageNumberIndicatorToPoint:animated:]):
+
+        Moved the page number indicator using the margin and animation duration from
+        WKLegacyPDFView.
+
+        (-[WKPDFView _updateLayoutAnimated:]):
+
+        Added a convenience method to update the PDF view layout and position the page
+        number indicator.
+
+        (-[WKPDFView web_setMinimumSize:]):
+
+        Updated our own frame in case we are still the placeholder content view.
+        Called -_updateLayoutAnimated:.
+
+        (-[WKPDFView web_setOverlaidAccessoryViewsInset:]):
+
+        Stored the inset and called -_updateLayoutAnimated:.
+
+        (-[WKPDFView web_computedContentInsetDidChange]):
+
+        Called -_updateLayoutAnimated:.
+
+        (-[WKPDFView web_setFixedOverlayView:]):
+
+        Stored the fixed overlay view.
+
+        (-[WKPDFView web_didSameDocumentNavigation:]):
+        (-[WKPDFView web_countStringMatches:options:maxCount:]):
+        (-[WKPDFView web_findString:options:maxCount:]):
+        (-[WKPDFView web_hideFindUI]):
+
+        Added FIXMEs.
+
+        (-[WKPDFView web_contentView]):
+
+        If there is a host view controller, return its root view. Otherwise, return self.
+
+        (-[WKPDFView web_scrollViewDidScroll:]):
+        (-[WKPDFView web_scrollViewWillBeginZooming:withView:]):
+        (-[WKPDFView web_scrollViewDidEndZooming:withView:atScale:]):
+        (-[WKPDFView web_scrollViewDidZoom:]):
+
+        Called -[PDFHostViewController updatePDFViewLayout].
+
+        (-[WKPDFView web_dataRepresentation]):
+
+        Returned _data.
+
+        (-[WKPDFView web_suggestedFilename]):
+
+        Returned _suggestedFilename.
+
+        (-[WKPDFView web_isBackground]):
+
+        Returned self.isBackground.
+
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView web_contentView]):
+
+        Added. Returns self as the content view.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-04-10  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Race condition when destroying webprocesses

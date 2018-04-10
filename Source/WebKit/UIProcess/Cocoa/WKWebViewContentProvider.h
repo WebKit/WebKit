@@ -52,9 +52,13 @@ struct UIEdgeInsets;
 - (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)web_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)web_hideFindUI;
+@property (nonatomic, readonly) UIView *web_contentView;
 
 @optional
 - (void)web_scrollViewDidScroll:(UIScrollView *)scrollView;
+- (void)web_scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
+- (void)web_scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
+- (void)web_scrollViewDidZoom:(UIScrollView *)scrollView;
 @property (nonatomic, readonly) NSData *web_dataRepresentation;
 @property (nonatomic, readonly) NSString *web_suggestedFilename;
 @property (nonatomic, readonly) BOOL web_isBackground;

@@ -1431,7 +1431,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
 - (UIView *)_currentContentView
 {
-    return _customContentView ? _customContentView.get() : _contentView.get();
+    return _customContentView ? [_customContentView web_contentView] : _contentView.get();
 }
 
 - (WKWebViewContentProviderRegistry *)_contentProviderRegistry
@@ -2357,17 +2357,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
     ASSERT(_scrollView == scrollView);
-
-    if (_customContentView)
-        return _customContentView.get();
-
-    return _contentView.get();
+    return self._currentContentView;
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
-    if (![self usesStandardContentView])
+    if (![self usesStandardContentView]) {
+        if ([_customContentView respondsToSelector:@selector(web_scrollViewWillBeginZooming:withView:)])
+            [_customContentView web_scrollViewWillBeginZooming:scrollView withView:view];
         return;
+    }
 
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         _page->willStartUserTriggeredZooming();
@@ -2460,12 +2459,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
+    if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidZoom:)])
+        [_customContentView web_scrollViewDidZoom:scrollView];
+
     [self _updateScrollViewBackground];
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
+    if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidEndZooming:withView:atScale:)])
+        [_customContentView web_scrollViewDidEndZooming:scrollView withView:view atScale:scale];
+
     ASSERT(scrollView == _scrollView);
     // FIXME: remove when rdar://problem/36065495 is fixed.
     // When rotating with two fingers down, UIScrollView can set a bogus content view position.

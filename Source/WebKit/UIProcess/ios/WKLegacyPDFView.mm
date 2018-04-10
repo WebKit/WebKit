@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKLegacyPDFView.h"
 
-#if PLATFORM(IOS) && ENABLE(WKPDFVIEW)
+#if ENABLE(WKLEGACYPDFVIEW)
 
 #import "APIFindClient.h"
 #import "APIUIClient.h"
@@ -381,6 +381,11 @@ static void detachViewForPage(PDFPageInfo& page)
     // FIXME: restore the scroll position and page scale if navigating back from a fragment.
 
     [self _scrollToFragment:_webView.URL.fragment];
+}
+
+- (UIView *)web_contentView
+{
+    return self;
 }
 
 - (void)_computePageAndDocumentFrames
@@ -857,4 +862,4 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 #pragma clang diagnostic pop
 
-#endif // PLATFORM(IOS) && ENABLE(WKPDFVIEW)
+#endif // ENABLE(WKLEGACYPDFVIEW)
