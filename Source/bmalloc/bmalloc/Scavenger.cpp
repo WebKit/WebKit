@@ -226,6 +226,7 @@ void Scavenger::threadEntryPoint(Scavenger* scavenger)
 void Scavenger::threadRunLoop()
 {
     setSelfQOSClass();
+    setThreadName("bmalloc scavenger");
     
     // This loop ratchets downward from most active to least active state. While
     // we ratchet downward, any other thread may reset our state.
@@ -268,6 +269,20 @@ void Scavenger::threadRunLoop()
 
         scavenge();
     }
+}
+
+void Scavenger::setThreadName(const char* name)
+{
+    BUNUSED(name);
+#if BOS(DARWIN)
+    pthread_setname_np(name);
+#elif BOS(LINUX)
+    // Truncate the given name since Linux limits the size of the thread name 16 including null terminator.
+    std::array<char, 16> buf;
+    strncpy(buf.data(), name, buf.size() - 1);
+    buf[buf.size() - 1] = '\0';
+    pthread_setname_np(pthread_self(), buf.data());
+#endif
 }
 
 void Scavenger::setSelfQOSClass()

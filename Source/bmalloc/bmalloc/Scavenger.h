@@ -83,6 +83,7 @@ private:
     void threadRunLoop();
     
     void setSelfQOSClass();
+    void setThreadName(const char*);
 
     std::atomic<State> m_state { State::Sleep };
     size_t m_scavengerBytes { 0 };

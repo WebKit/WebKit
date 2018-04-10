@@ -1,3 +1,19 @@
+2018-04-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [bmalloc] Name Scavenger thread "bmalloc scavenger"
+        https://bugs.webkit.org/show_bug.cgi?id=166684
+
+        Reviewed by Saam Barati.
+
+        We name the thread for bmalloc Scavenger "bmalloc scavenger".
+        It is useful for debugging. In Linux environment, it will be
+        shown in GDB.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+        (bmalloc::Scavenger::setName):
+        * bmalloc/Scavenger.h:
+
 2018-04-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Rename UNUSED to BUNUSED
