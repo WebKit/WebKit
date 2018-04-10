@@ -19,6 +19,12 @@ list(APPEND WebKit_SOURCES
     Platform/win/ModuleWin.cpp
     Platform/win/SharedMemoryWin.cpp
 
+    Shared/win/NativeWebKeyboardEventWin.cpp
+    Shared/win/NativeWebMouseEventWin.cpp
+    Shared/win/NativeWebTouchEventWin.cpp
+    Shared/win/NativeWebWheelEventWin.cpp
+    Shared/win/WebEventFactory.cpp
+
     StorageProcess/win/StorageProcessMainWin.cpp
 
     WebProcess/InjectedBundle/win/InjectedBundleWin.cpp

@@ -1,3 +1,47 @@
+2018-04-09  Yousuke Kimoto <yousuke.kimoto@sony.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Add WebKit Shared/win event files for wincairo webkit
+        https://bugs.webkit.org/show_bug.cgi?id=183043
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        (WebKit::NativeWebKeyboardEvent::nativeEvent const):
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::nativeEvent const):
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        (WebKit::NativeWebWheelEvent::nativeEvent const):
+        * Shared/win/NativeWebKeyboardEventWin.cpp: Copied from Source/WebKit/Shared/NativeWebMouseEvent.h.
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/win/NativeWebMouseEventWin.cpp: Copied from Source/WebKit/Shared/NativeWebMouseEvent.h.
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/win/NativeWebTouchEventWin.cpp: Copied from Source/WebKit/Shared/NativeWebTouchEvent.h.
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/win/NativeWebWheelEventWin.cpp: Copied from Source/WebKit/Shared/NativeWebMouseEvent.h.
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/win/WebEventFactory.cpp: Added.
+        (WebKit::relativeCursorPosition):
+        (WebKit::point):
+        (WebKit::horizontalScrollChars):
+        (WebKit::verticalScrollLines):
+        (WebKit::clickCount):
+        (WebKit::IsKeyInDownState):
+        (WebKit::modifiersForEvent):
+        (WebKit::modifiersForCurrentKeyState):
+        (WebKit::keyboardEventTypeForEvent):
+        (WebKit::isSystemKeyEvent):
+        (WebKit::isKeypadEvent):
+        (WebKit::textFromEvent):
+        (WebKit::unmodifiedTextFromEvent):
+        (WebKit::keyIdentifierFromEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/win/WebEventFactory.h: Copied from Source/WebKit/Shared/NativeWebMouseEvent.h.
+        (WebKit::createNativeEvent):
+
 2018-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         WebCore::EventHandler::targetPositionInWindowForSelectionAutoscroll is directly accessing NSScreen

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Benjamin Poulain <benjamin@webkit.org>
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +24,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebTouchEvent_h
-#define NativeWebTouchEvent_h
+#include "config.h"
+#include "NativeWebTouchEvent.h"
 
 #if ENABLE(TOUCH_EVENTS)
 
-#include "WebEvent.h"
-
-#if PLATFORM(IOS)
-struct _UIWebTouchEvent;
-#elif PLATFORM(GTK)
-#include <WebCore/GUniquePtrGtk.h>
-#elif PLATFORM(WPE)
-#include <wpe/input.h>
-#endif
+#include "WebEventFactory.h"
 
 namespace WebKit {
 
-class NativeWebTouchEvent : public WebTouchEvent {
-public:
-#if PLATFORM(IOS)
-    explicit NativeWebTouchEvent(const _UIWebTouchEvent*);
-#elif PLATFORM(GTK)
-    NativeWebTouchEvent(GdkEvent*, Vector<WebPlatformTouchPoint>&&);
-    NativeWebTouchEvent(const NativeWebTouchEvent&);
-    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WPE)
-    NativeWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
-    const struct wpe_input_touch_event_raw* nativeFallbackTouchPoint() const { return &m_fallbackTouchPoint; }
-#elif PLATFORM(WIN)
-    NativeWebTouchEvent();
-#endif
-
-private:
-#if PLATFORM(IOS)
-    Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTouchEvent*);
-#endif
-
-#if PLATFORM(GTK)
-    GUniquePtr<GdkEvent> m_nativeEvent;
-#elif PLATFORM(WPE)
-    struct wpe_input_touch_event_raw m_fallbackTouchPoint;
-#endif
-};
+NativeWebTouchEvent::NativeWebTouchEvent()
+    : WebTouchEvent(WebEventFactory::createWebTouchEvent())
+{
+}
 
 } // namespace WebKit
 
 #endif // ENABLE(TOUCH_EVENTS)
-
-#endif // NativeWebTouchEvent_h

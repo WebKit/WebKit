@@ -2,6 +2,7 @@
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2011, 2012 Igalia S.L
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +56,10 @@ OBJC_CLASS WebEvent;
 struct wpe_input_keyboard_event;
 #endif
 
+#if PLATFORM(WIN)
+#include <windows.h>
+#endif
+
 namespace WebKit {
 
 class NativeWebKeyboardEvent : public WebKeyboardEvent {
@@ -68,6 +73,8 @@ public:
     NativeWebKeyboardEvent(::WebEvent *);
 #elif PLATFORM(WPE)
     NativeWebKeyboardEvent(struct wpe_input_keyboard_event*);
+#elif PLATFORM(WIN)
+    NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
 #endif
 
 #if USE(APPKIT)
@@ -78,6 +85,8 @@ public:
     bool isFakeEventForComposition() const { return m_fakeEventForComposition; }
 #elif PLATFORM(IOS)
     ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(WIN)
+    const MSG* nativeEvent() const { return &m_nativeEvent; }
 #else
     const void* nativeEvent() const { return nullptr; }
 #endif
@@ -91,6 +100,8 @@ private:
     bool m_fakeEventForComposition;
 #elif PLATFORM(IOS)
     RetainPtr<::WebEvent> m_nativeEvent;
+#elif PLATFORM(WIN)
+    MSG m_nativeEvent;
 #endif
 };
 

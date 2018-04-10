@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Benjamin Poulain <benjamin@webkit.org>
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +24,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NativeWebTouchEvent_h
-#define NativeWebTouchEvent_h
+#include "config.h"
+#include "NativeWebKeyboardEvent.h"
 
-#if ENABLE(TOUCH_EVENTS)
+#include "WebEventFactory.h"
 
-#include "WebEvent.h"
-
-#if PLATFORM(IOS)
-struct _UIWebTouchEvent;
-#elif PLATFORM(GTK)
-#include <WebCore/GUniquePtrGtk.h>
-#elif PLATFORM(WPE)
-#include <wpe/input.h>
-#endif
+using namespace WebCore;
 
 namespace WebKit {
 
-class NativeWebTouchEvent : public WebTouchEvent {
-public:
-#if PLATFORM(IOS)
-    explicit NativeWebTouchEvent(const _UIWebTouchEvent*);
-#elif PLATFORM(GTK)
-    NativeWebTouchEvent(GdkEvent*, Vector<WebPlatformTouchPoint>&&);
-    NativeWebTouchEvent(const NativeWebTouchEvent&);
-    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WPE)
-    NativeWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
-    const struct wpe_input_touch_event_raw* nativeFallbackTouchPoint() const { return &m_fallbackTouchPoint; }
-#elif PLATFORM(WIN)
-    NativeWebTouchEvent();
-#endif
-
-private:
-#if PLATFORM(IOS)
-    Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTouchEvent*);
-#endif
-
-#if PLATFORM(GTK)
-    GUniquePtr<GdkEvent> m_nativeEvent;
-#elif PLATFORM(WPE)
-    struct wpe_input_touch_event_raw m_fallbackTouchPoint;
-#endif
-};
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(hwnd, message, wParam, lParam))
+    , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))
+{
+}
 
 } // namespace WebKit
-
-#endif // ENABLE(TOUCH_EVENTS)
-
-#endif // NativeWebTouchEvent_h
