@@ -1,3 +1,19 @@
+2018-04-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Loading of multipart response was cancelled because of content policy set in WebFrameLoaderClient::dispatchDecidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=184268
+        <rdar://problem/39144446>
+
+        Reviewed by Chris Dumez.
+
+        Webpage for multipart stream responses failed to refresh because content policy was set to 
+        be ignore when provisonalDocumentLoader was null and navigation ID could not be retrieved. 
+        As loading should not stop in this case, we set navigation ID 0 and still ask for content 
+        policy.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
 2018-04-10  Andy Estes  <aestes@apple.com>
 
         [iOS] Use PDFKit to render PDFs in WKWebView

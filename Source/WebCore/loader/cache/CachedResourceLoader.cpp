@@ -1257,7 +1257,8 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const U
 
 void CachedResourceLoader::removeCachedResource(CachedResource& resource)
 {
-    ASSERT(!m_documentResources.contains(resource.url()) || m_documentResources.get(resource.url()).get() == &resource);
+    if (m_documentResources.contains(resource.url()) && m_documentResources.get(resource.url()).get() != &resource)
+        return;
     m_documentResources.remove(resource.url());
 }
 

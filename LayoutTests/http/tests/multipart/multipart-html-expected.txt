@@ -1,1 +1,1 @@
-This text should only appear once 10
+PASS: This is message 10.

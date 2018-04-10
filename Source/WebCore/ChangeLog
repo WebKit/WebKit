@@ -1,3 +1,20 @@
+2018-04-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Loading of multipart response was cancelled because of content policy set in WebFrameLoaderClient::dispatchDecidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=184268
+        <rdar://problem/39144446>
+
+        Reviewed by Chris Dumez.
+
+        The assertion is no longer true after the change, because multiple resources could have same
+        url. Used if condition here to make sure we only delete specified resource.
+
+        No new tests. Updated an existing test to test the stop loading case by not using injected 
+        bundle policy: http/tests/multipart/multipart-html.php.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::removeCachedResource):
+
 2018-04-10  Zalan Bujtas  <zalan@apple.com>
 
         Do not layout images when we only need the overflow information.

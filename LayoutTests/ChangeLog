@@ -1,3 +1,14 @@
+2018-04-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Loading of multipart response was cancelled because of content policy set in WebFrameLoaderClient::dispatchDecidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=184268
+        <rdar://problem/39144446>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/multipart/multipart-html-expected.txt:
+        * http/tests/multipart/multipart-html.php:
+
 2018-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/workers/name-property.html as flaky.
