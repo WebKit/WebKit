@@ -92,7 +92,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
     if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
-        function(ResourceRequest(request), nullptr, true);
+        function(ResourceRequest(request), nullptr, ShouldContinue::Yes);
         loader->setLastCheckedRequest(WTFMove(request));
         return;
     }
@@ -107,7 +107,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
 #endif
         if (isBackForwardLoadType(m_loadType))
             m_loadType = FrameLoadType::Reload;
-        function(WTFMove(request), nullptr, shouldContinue);
+        function(WTFMove(request), nullptr, shouldContinue ? ShouldContinue::Yes : ShouldContinue::No);
         return;
     }
 
@@ -117,19 +117,19 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
             // reveal that the frame was blocked. This way, it looks like any other cross-origin page load.
             m_frame.ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
         }
-        function(WTFMove(request), nullptr, false);
+        function(WTFMove(request), nullptr, ShouldContinue::No);
         return;
     }
 
     loader->setLastCheckedRequest(ResourceRequest(request));
 
     if (request.url() == blankURL())
-        return function(WTFMove(request), formState, true);
+        return function(WTFMove(request), formState, ShouldContinue::Yes);
 
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
     if (!request.isNull() && isQuickLookPreviewURL(request.url()))
-        return function(WTFMove(request), formState, true);
+        return function(WTFMove(request), formState, ShouldContinue::Yes);
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
@@ -139,7 +139,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
             if (unblocked)
                 frame->loader().reload();
         });
-        return function({ }, nullptr, false);
+        return function({ }, nullptr, ShouldContinue::No);
     }
     m_contentFilterUnblockHandler = { };
 #endif
@@ -160,16 +160,15 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
             m_frame.loader().client().startDownload(request, suggestedFilename);
             FALLTHROUGH;
         case PolicyAction::Ignore:
-            return function({ }, nullptr, false);
+            return function({ }, nullptr, ShouldContinue::No);
         case PolicyAction::Suspend:
-            LOG(Loading, "PolicyAction::Suspend encountered - Treating as PolicyAction::Ignore for now");
-            return function({ }, nullptr, false);
+            return function({ }, nullptr, ShouldContinue::ForSuspension);
         case PolicyAction::Use:
             if (!m_frame.loader().client().canHandleRequest(request)) {
                 handleUnimplementablePolicy(m_frame.loader().client().cannotShowURLError(request));
-                return function({ }, nullptr, false);
+                return function({ }, nullptr, ShouldContinue::No);
             }
-            return function(WTFMove(request), formState.get(), true);
+            return function(WTFMove(request), formState.get(), ShouldContinue::Yes);
         }
         ASSERT_NOT_REACHED();
     });
@@ -178,10 +177,10 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
 void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, const ResourceRequest& request, FormState* formState, const String& frameName, NewWindowPolicyDecisionFunction&& function)
 {
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxPopups))
-        return function({ }, nullptr, { }, { }, false);
+        return function({ }, nullptr, { }, { }, ShouldContinue::No);
 
     if (!DOMWindow::allowPopUp(m_frame))
-        return function({ }, nullptr, { }, { }, false);
+        return function({ }, nullptr, { }, { }, ShouldContinue::No);
 
     m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState, frameName, [frame = makeRef(m_frame), request, formState = makeRefPtr(formState), frameName, navigationAction, function = WTFMove(function)](PolicyAction policyAction) mutable {
         switch (policyAction) {
@@ -189,13 +188,13 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, co
             frame->loader().client().startDownload(request);
             FALLTHROUGH;
         case PolicyAction::Ignore:
-            function({ }, nullptr, { }, { }, false);
+            function({ }, nullptr, { }, { }, ShouldContinue::No);
             return;
         case PolicyAction::Suspend:
             // It is invalid to get a "Suspend" policy for new windows, as the old document is not going away.
             RELEASE_ASSERT_NOT_REACHED();
         case PolicyAction::Use:
-            function(request, formState.get(), frameName, navigationAction, true);
+            function(request, formState.get(), frameName, navigationAction, ShouldContinue::Yes);
             return;
         }
         ASSERT_NOT_REACHED();

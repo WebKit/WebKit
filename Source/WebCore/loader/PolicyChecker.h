@@ -50,8 +50,14 @@ class NavigationAction;
 class ResourceError;
 class ResourceResponse;
 
-using NewWindowPolicyDecisionFunction = WTF::CompletionHandler<void(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, bool shouldContinue)>;
-using NavigationPolicyDecisionFunction = WTF::CompletionHandler<void(ResourceRequest&&, FormState*, bool shouldContinue)>;
+enum class ShouldContinue {
+    Yes,
+    No,
+    ForSuspension
+};
+
+using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, ShouldContinue)>;
+using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, FormState*, ShouldContinue)>;
 
 class PolicyChecker {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);

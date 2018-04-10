@@ -639,10 +639,19 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     ASSERT(!m_waitingForNavigationPolicy);
     m_waitingForNavigationPolicy = true;
-    frameLoader()->policyChecker().checkNavigationPolicy(ResourceRequest(newRequest), didReceiveRedirectResponse, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, FormState*, bool shouldContinue) mutable {
+    frameLoader()->policyChecker().checkNavigationPolicy(ResourceRequest(newRequest), didReceiveRedirectResponse, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, FormState*, ShouldContinue shouldContinue) mutable {
         m_waitingForNavigationPolicy = false;
-        if (!shouldContinue)
+        switch (shouldContinue) {
+        case ShouldContinue::ForSuspension:
+            FALLTHROUGH;
+            // FIXME: Setup this page for suspension (e.g. Page Cache) here.
+        case ShouldContinue::No:
             stopLoadingForPolicyChange();
+            break;
+        case ShouldContinue::Yes:
+            break;
+        }
+
         completionHandler(WTFMove(request));
     });
 }

@@ -1,3 +1,32 @@
+2018-04-09  Brady Eidson  <beidson@apple.com>
+
+        Expand WebCore policy concept of "shouldContinue" to allow for more than true/false
+        https://bugs.webkit.org/show_bug.cgi?id=184424
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change, refactor only)
+
+        Specifically this expands the "shouldContinue" bool to be an enum class with:
+        -Yes
+        -No
+        -ForSuspension
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        * loader/FrameLoader.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        * loader/PolicyChecker.h:
+
 2018-04-09  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r229929): localStorage is broken for WebInspector
