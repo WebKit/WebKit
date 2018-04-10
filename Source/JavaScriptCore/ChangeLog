@@ -1,3 +1,61 @@
+2018-04-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI and clobberize should agree with each other
+        https://bugs.webkit.org/show_bug.cgi?id=184440
+
+        Reviewed by Saam Barati.
+        
+        One way to fix bugs involving underapproximation in AI or clobberize is to assert that they
+        agree with each other. That's what this patch does: it adds an assertion that AI's structure
+        state tracking must be equivalent to JSCell_structureID being clobbered.
+        
+        One subtlety is that AI sometimes folds away structure clobbering using information that
+        clobberize doesn't have. So, we track this wuth special kinds of AI states (FoldedClobber and
+        ObservedTransitions).
+        
+        This fixes a bunch of cases of AI missing clobberStructures/clobberWorld and one case of
+        clobberize missing a write(Heap).
+        
+        This also makes some cases more precise in order to appease the assertion. Making things more
+        precise might make things faster, but I didn't measure it because that wasn't the goal.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterClobberState.cpp: Added.
+        (WTF::printInternal):
+        * dfg/DFGAbstractInterpreterClobberState.h: Added.
+        (JSC::DFG::mergeClobberStates):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::startExecuting):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::didFoldClobberWorld):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::clobberStructures):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::didFoldClobberStructures):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransition):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::observeTransitions):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::setDidClobber): Deleted.
+        * dfg/DFGAtTailAbstractState.h:
+        (JSC::DFG::AtTailAbstractState::setClobberState):
+        (JSC::DFG::AtTailAbstractState::mergeClobberState):
+        (JSC::DFG::AtTailAbstractState::setDidClobber): Deleted.
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGClobberSet.cpp:
+        (JSC::DFG::writeSet):
+        * dfg/DFGClobberSet.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::clobberState const):
+        (JSC::DFG::InPlaceAbstractState::didClobberOrFolded const):
+        (JSC::DFG::InPlaceAbstractState::didClobber const):
+        (JSC::DFG::InPlaceAbstractState::setClobberState):
+        (JSC::DFG::InPlaceAbstractState::mergeClobberState):
+        (JSC::DFG::InPlaceAbstractState::setDidClobber): Deleted.
+
 2018-04-10  Filip Pizlo  <fpizlo@apple.com>
 
         ExecutableToCodeBlockEdge::visitChildren() should be cool with m_codeBlock being null since we clear it in finalizeUnconditionally()

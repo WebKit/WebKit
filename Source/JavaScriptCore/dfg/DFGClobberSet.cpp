@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,6 +156,13 @@ void addReadsAndWrites(Graph& graph, Node* node, ClobberSet& readSet, ClobberSet
     ClobberSetAdd addWrite(writeSet);
     NoOpClobberize noOp;
     clobberize(graph, node, addRead, addWrite, noOp);
+}
+
+ClobberSet writeSet(Graph& graph, Node* node)
+{
+    ClobberSet result;
+    addWrites(graph, node, result);
+    return result;
 }
 
 bool readsOverlap(Graph& graph, Node* node, ClobberSet& readSet)

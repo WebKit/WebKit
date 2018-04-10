@@ -1,3 +1,28 @@
+2018-04-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI and clobberize should agree with each other
+        https://bugs.webkit.org/show_bug.cgi?id=184440
+
+        Reviewed by Saam Barati.
+        
+        Add tests for all of the bugs I fixed.
+
+        * stress/direct-arguments-out-of-bounds-change-structure.js: Added.
+        (foo):
+        * stress/new-typed-array-cse-effects.js: Added.
+        (foo):
+        * stress/scoped-arguments-out-of-bounds-change-structure.js: Added.
+        (foo.theO):
+        (foo):
+        * stress/string-from-char-code-change-structure-not-dead.js: Added.
+        (foo):
+        (i.valueOf):
+        (weirdValue.valueOf):
+        * stress/string-from-char-code-change-structure.js: Added.
+        (foo):
+        (i.valueOf):
+        (weirdValue.valueOf):
+
 2018-04-09  Leo Balter  <leonardo.balter@gmail.com>
 
         Fix errant Test262 files CRLF to LF for consistency with the original source

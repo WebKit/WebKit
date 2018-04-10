@@ -685,9 +685,10 @@ private:
         }
             
         case StringFromCharCode:
-            if (node->child1()->shouldSpeculateInt32())
+            if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
-            else
+                node->clearFlags(NodeMustGenerate);
+            } else
                 fixEdge<UntypedUse>(node->child1());
             break;
 

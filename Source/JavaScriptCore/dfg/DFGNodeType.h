@@ -282,7 +282,7 @@ namespace JSC { namespace DFG {
     /* Optimizations for string access */ \
     macro(StringCharCodeAt, NodeResultInt32) \
     macro(StringCharAt, NodeResultJS) \
-    macro(StringFromCharCode, NodeResultJS) \
+    macro(StringFromCharCode, NodeResultJS | NodeMustGenerate) \
     \
     /* Nodes for comparison operations. */\
     macro(CompareLess, NodeResultBoolean | NodeMustGenerate) \

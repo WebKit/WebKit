@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGAbstractInterpreterClobberState.h"
 #include "DFGAbstractValue.h"
 #include "DFGBranchDirection.h"
 #include "DFGFlowMap.h"
@@ -90,8 +91,13 @@ public:
     // you can safely call beginBasicBlock() on any basic block.
     void reset();
     
+    AbstractInterpreterClobberState clobberState() const { return m_clobberState; }
+    
+    // Would have the last executed node clobbered things had we not found a way to fold it?
+    bool didClobberOrFolded() const { return clobberState() != AbstractInterpreterClobberState::NotClobbered; }
+    
     // Did the last executed node clobber the world?
-    bool didClobber() const { return m_didClobber; }
+    bool didClobber() const { return clobberState() == AbstractInterpreterClobberState::ClobberedStructures; }
     
     // Are structures currently clobbered?
     StructureClobberState structureClobberState() const { return m_structureClobberState; }
@@ -114,7 +120,8 @@ public:
     bool mergeToSuccessors(BasicBlock*);
     
     // Methods intended to be called from AbstractInterpreter.
-    void setDidClobber(bool didClobber) { m_didClobber = didClobber; }
+    void setClobberState(AbstractInterpreterClobberState state) { m_clobberState = state; }
+    void mergeClobberState(AbstractInterpreterClobberState state) { m_clobberState = mergeClobberStates(m_clobberState, state); }
     void setStructureClobberState(StructureClobberState value) { m_structureClobberState = value; }
     void setIsValid(bool isValid) { m_isValid = isValid; }
     void setBranchDirection(BranchDirection branchDirection) { m_branchDirection = branchDirection; }
@@ -145,7 +152,7 @@ private:
     bool m_foundConstants;
     
     bool m_isValid;
-    bool m_didClobber;
+    AbstractInterpreterClobberState m_clobberState;
     StructureClobberState m_structureClobberState;
     
     BranchDirection m_branchDirection; // This is only set for blocks that end in Branch and that execute to completion (i.e. m_isValid == true).

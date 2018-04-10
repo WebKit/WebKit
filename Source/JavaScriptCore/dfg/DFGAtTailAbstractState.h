@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGAbstractInterpreterClobberState.h"
 #include "DFGAbstractValue.h"
 #include "DFGBasicBlock.h"
 #include "DFGBlockMap.h"
@@ -59,7 +60,8 @@ public:
     
     StructureClobberState structureClobberState() const { return m_block->cfaStructureClobberStateAtTail; }
     
-    void setDidClobber(bool) { }
+    void setClobberState(AbstractInterpreterClobberState) { }
+    void mergeClobberState(AbstractInterpreterClobberState) { }
     void setStructureClobberState(StructureClobberState state) { RELEASE_ASSERT(state == m_block->cfaStructureClobberStateAtTail); }
     void setIsValid(bool isValid) { m_block->cfaDidFinish = isValid; }
     void setBranchDirection(BranchDirection) { }

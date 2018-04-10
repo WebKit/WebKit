@@ -342,6 +342,7 @@
 		0F5CF9811E96F17F00C18692 /* AirTmpMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5CF9801E96F17D00C18692 /* AirTmpMap.h */; };
 		0F5CF9841E9D537700C18692 /* AirLowerStackArgs.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5CF9831E9D537500C18692 /* AirLowerStackArgs.h */; };
 		0F5CF9891E9ED65200C18692 /* AirStackAllocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5CF9871E9ED64E00C18692 /* AirStackAllocation.h */; };
+		0F5E0FD8207C72730097F0DE /* DFGAbstractInterpreterClobberState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5E0FD6207C72710097F0DE /* DFGAbstractInterpreterClobberState.h */; };
 		0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5EF91C16878F78003E5C25 /* JITThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F60FE901FFC37020003320A /* ExecutableToCodeBlockEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F60FE8E1FFC36FD0003320A /* ExecutableToCodeBlockEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2346,6 +2347,8 @@
 		0F5CF9861E9ED64E00C18692 /* AirStackAllocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirStackAllocation.cpp; path = b3/air/AirStackAllocation.cpp; sourceTree = "<group>"; };
 		0F5CF9871E9ED64E00C18692 /* AirStackAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirStackAllocation.h; path = b3/air/AirStackAllocation.h; sourceTree = "<group>"; };
 		0F5D085C1B8CF99D001143B4 /* DFGNodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNodeOrigin.cpp; path = dfg/DFGNodeOrigin.cpp; sourceTree = "<group>"; };
+		0F5E0FD6207C72710097F0DE /* DFGAbstractInterpreterClobberState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractInterpreterClobberState.h; path = dfg/DFGAbstractInterpreterClobberState.h; sourceTree = "<group>"; };
+		0F5E0FD7207C72710097F0DE /* DFGAbstractInterpreterClobberState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAbstractInterpreterClobberState.cpp; path = dfg/DFGAbstractInterpreterClobberState.cpp; sourceTree = "<group>"; };
 		0F5EF91B16878F78003E5C25 /* JITThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITThunks.cpp; sourceTree = "<group>"; };
 		0F5EF91C16878F78003E5C25 /* JITThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITThunks.h; sourceTree = "<group>"; };
 		0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnconditionalFinalizer.h; sourceTree = "<group>"; };
@@ -7091,6 +7094,8 @@
 				A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */,
 				A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */,
 				A704D8FE17A0BAA8006BA554 /* DFGAbstractInterpreter.h */,
+				0F5E0FD7207C72710097F0DE /* DFGAbstractInterpreterClobberState.cpp */,
+				0F5E0FD6207C72710097F0DE /* DFGAbstractInterpreterClobberState.h */,
 				A704D8FF17A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h */,
 				0F55C19317276E4600CEABFD /* DFGAbstractValue.cpp */,
 				0F62016F143FCD2F0068B77C /* DFGAbstractValue.h */,
@@ -8215,6 +8220,7 @@
 				8BC064921E1ADCC400B2B8CA /* AsyncGeneratorPrototype.h in Headers */,
 				8B3BF5E41E3D368B0076A87A /* AsyncGeneratorPrototype.lut.h in Headers */,
 				8BC064961E1D845C00B2B8CA /* AsyncIteratorPrototype.h in Headers */,
+				0F5E0FD8207C72730097F0DE /* DFGAbstractInterpreterClobberState.h in Headers */,
 				6A38CFAA1E32B5AB0060206F /* AsyncStackTrace.h in Headers */,
 				0F7CF9571DC125900098CC12 /* AtomicsObject.h in Headers */,
 				0FB4677F1FDDA6E9003FCB09 /* AtomIndices.h in Headers */,
