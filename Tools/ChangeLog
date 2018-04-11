@@ -1,3 +1,16 @@
+2018-04-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Expose strong password fields on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=184465
+        <rdar://problem/39325104>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::boolAttributeValue):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::boolAttributeValue):
+
 2018-04-10  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Add support for out-of-flow descendants in inline formatting context.
