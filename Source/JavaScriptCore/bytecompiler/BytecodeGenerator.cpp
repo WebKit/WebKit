@@ -2697,6 +2697,22 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, Re
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitDirectGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
+{
+    ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val_direct.");
+
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_get_by_id_direct);
+    instructions().append(kill(dst));
+    instructions().append(base->index());
+    instructions().append(addConstant(property));
+    instructions().append(0);
+    instructions().append(0);
+    instructions().append(profile);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with put_by_val.");

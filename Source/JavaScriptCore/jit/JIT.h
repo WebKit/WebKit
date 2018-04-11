@@ -497,6 +497,7 @@ namespace JSC {
         void emit_op_try_get_by_id(Instruction*);
         void emit_op_get_by_id(Instruction*);
         void emit_op_get_by_id_with_this(Instruction*);
+        void emit_op_get_by_id_direct(Instruction*);
         void emit_op_get_arguments_length(Instruction*);
         void emit_op_get_by_val(Instruction*);
         void emit_op_get_argument_by_val(Instruction*);
@@ -604,6 +605,7 @@ namespace JSC {
         void emitSlow_op_try_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id_with_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id_direct(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_arguments_length(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_argument_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);

@@ -2459,6 +2459,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).makeHeapTop();
         break;
 
+    case GetByIdDirect:
+    case GetByIdDirectFlush:
     case GetById:
     case GetByIdFlush: {
         if (!node->prediction()) {

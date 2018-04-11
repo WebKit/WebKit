@@ -31,7 +31,7 @@ function isPromise(promise)
 {
     "use strict";
 
-    return @isObject(promise) && !!promise.@promiseState;
+    return @isObject(promise) && !!@getByIdDirectPrivate(promise, "promiseState");
 }
 
 @globalPrivate
@@ -106,14 +106,14 @@ function rejectPromise(promise, reason)
 {
     "use strict";
 
-    var reactions = promise.@promiseReactions;
+    var reactions = @getByIdDirectPrivate(promise, "promiseReactions");
     promise.@promiseResult = reason;
     promise.@promiseReactions = @undefined;
     promise.@promiseState = @promiseStateRejected;
 
     @InspectorInstrumentation.promiseRejected(promise, reason, reactions);
 
-    if (!promise.@promiseIsHandled)
+    if (!@getByIdDirectPrivate(promise, "promiseIsHandled"))
         @hostPromiseRejectionTracker(promise, @promiseRejectionReject);
 
     @triggerPromiseReactions(@promiseStateRejected, reactions, reason);
@@ -124,7 +124,7 @@ function fulfillPromise(promise, value)
 {
     "use strict";
 
-    var reactions = promise.@promiseReactions;
+    var reactions = @getByIdDirectPrivate(promise, "promiseReactions");
     promise.@promiseResult = value;
     promise.@promiseReactions = @undefined;
     promise.@promiseState = @promiseStateFulfilled;

@@ -27,7 +27,7 @@
 function asyncFunctionResume(generator, promiseCapability, sentValue, resumeMode)
 {
     "use strict";
-    let state = generator.@generatorState;
+    let state = @getByIdDirectPrivate(generator, "generatorState");
     let value = @undefined;
 
     if (state === @GeneratorStateCompleted || (resumeMode !== @GeneratorResumeModeNormal && resumeMode !== @GeneratorResumeModeThrow))
@@ -35,8 +35,8 @@ function asyncFunctionResume(generator, promiseCapability, sentValue, resumeMode
 
     try {
         generator.@generatorState = @GeneratorStateExecuting;
-        value = generator.@generatorNext.@call(generator.@generatorThis, generator, state, sentValue, resumeMode, generator.@generatorFrame);
-        if (generator.@generatorState === @GeneratorStateExecuting) {
+        value = @getByIdDirectPrivate(generator, "generatorNext").@call(@getByIdDirectPrivate(generator, "generatorThis"), generator, state, sentValue, resumeMode, @getByIdDirectPrivate(generator, "generatorFrame"));
+        if (@getByIdDirectPrivate(generator, "generatorState") === @GeneratorStateExecuting) {
             generator.@generatorState = @GeneratorStateCompleted;
             promiseCapability.@resolve(value);
             return promiseCapability.@promise;

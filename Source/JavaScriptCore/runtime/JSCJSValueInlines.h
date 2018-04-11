@@ -853,6 +853,24 @@ ALWAYS_INLINE bool JSValue::getPropertySlot(ExecState* exec, PropertyName proper
     return object->getPropertySlot(exec, propertyName, slot);
 }
 
+ALWAYS_INLINE bool JSValue::getOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
+{
+    // If this is a primitive, we'll need to synthesize the prototype -
+    // and if it's a string there are special properties to check first.
+    auto scope = DECLARE_THROW_SCOPE(exec->vm());
+    if (UNLIKELY(!isObject())) {
+        if (isString()) {
+            scope.release();
+            return asString(*this)->getStringPropertySlot(exec, propertyName, slot);
+        }
+        if (isUndefinedOrNull())
+            throwException(exec, scope, createNotAnObjectError(exec, *this));
+        return false;
+    }
+    scope.release();
+    return asObject(asCell())->getOwnPropertySlotInline(exec, propertyName, slot);
+}
+
 ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
 {
     PropertySlot slot(asValue(), PropertySlot::InternalMethodType::Get);

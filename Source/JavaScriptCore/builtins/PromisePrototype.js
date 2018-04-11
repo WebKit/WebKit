@@ -49,13 +49,14 @@ function then(onFulfilled, onRejected)
 
     var reaction = @newPromiseReaction(resultCapability, onFulfilled, onRejected);
 
-    var state = this.@promiseState;
-    if (state === @promiseStatePending)
-        @putByValDirect(this.@promiseReactions, this.@promiseReactions.length, reaction);
-    else {
-        if (state === @promiseStateRejected && !this.@promiseIsHandled)
+    var state = @getByIdDirectPrivate(this, "promiseState");
+    if (state === @promiseStatePending) {
+        var reactions = @getByIdDirectPrivate(this, "promiseReactions");
+        @putByValDirect(reactions, reactions.length, reaction);
+    } else {
+        if (state === @promiseStateRejected && !@getByIdDirectPrivate(this, "promiseIsHandled"))
             @hostPromiseRejectionTracker(this, @promiseRejectionHandle);
-        @enqueueJob(@promiseReactionJob, [state, reaction, this.@promiseResult]);
+        @enqueueJob(@promiseReactionJob, [state, reaction, @getByIdDirectPrivate(this, "promiseResult")]);
     }
 
     this.@promiseIsHandled = true;

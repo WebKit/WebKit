@@ -32,7 +32,7 @@ function of(/* items... */)
 {
     "use strict";
     let len = arguments.length;
-    let constructFunction = this.@allocateTypedArray;
+    let constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
     if (constructFunction === @undefined)
         @throwTypeError("TypedArray.of requires its this argument to subclass a TypedArray constructor");
 
@@ -85,7 +85,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
             k++;
         }
 
-        let constructFunction = this.@allocateTypedArray;
+        let constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
         if (constructFunction === @undefined)
             @throwTypeError("TypedArray.from requires its this argument subclass a TypedArray constructor");
 
@@ -100,7 +100,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
     let arrayLikeLength = @toLength(arrayLike.length);
 
-    let constructFunction = this.@allocateTypedArray;
+    let constructFunction = @getByIdDirectPrivate(this, "allocateTypedArray");
     if (constructFunction === @undefined)
         @throwTypeError("this does not subclass a TypedArray constructor");
 

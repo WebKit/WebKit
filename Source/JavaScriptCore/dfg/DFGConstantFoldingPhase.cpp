@@ -488,6 +488,8 @@ private:
                 break;
             }
         
+            case GetByIdDirect:
+            case GetByIdDirectFlush:
             case GetById:
             case GetByIdFlush: {
                 Edge childEdge = node->child1();

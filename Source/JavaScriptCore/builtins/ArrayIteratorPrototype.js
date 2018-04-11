@@ -31,7 +31,7 @@ function next()
     if (this == null)
         @throwTypeError("%ArrayIteratorPrototype%.next requires that |this| not be null or undefined");
 
-    let next = this.@arrayIteratorNext;
+    let next = @getByIdDirectPrivate(this, "arrayIteratorNext");
     if (next === @undefined)
         @throwTypeError("%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance");
 
@@ -45,9 +45,9 @@ function arrayIteratorValueNext()
     var done = true;
     var value;
 
-    var array = this.@iteratedObject;
-    if (!this.@arrayIteratorIsDone) {
-        var index = this.@arrayIteratorNextIndex;
+    var array = @getByIdDirectPrivate(this, "iteratedObject");
+    if (!@getByIdDirectPrivate(this, "arrayIteratorIsDone")) {
+        var index = @getByIdDirectPrivate(this, "arrayIteratorNextIndex");
         var length = array.length >>> 0;
         if (index >= length) {
             this.@arrayIteratorIsDone = true;
@@ -68,9 +68,9 @@ function arrayIteratorKeyNext()
     var done = true;
     var value;
 
-    var array = this.@iteratedObject;
-    if (!this.@arrayIteratorIsDone) {
-        var index = this.@arrayIteratorNextIndex;
+    var array = @getByIdDirectPrivate(this, "iteratedObject");
+    if (!@getByIdDirectPrivate(this, "arrayIteratorIsDone")) {
+        var index = @getByIdDirectPrivate(this, "arrayIteratorNextIndex");
         var length = array.length >>> 0;
         if (index >= length) {
             this.@arrayIteratorIsDone = true;
@@ -91,9 +91,9 @@ function arrayIteratorKeyValueNext()
     var done = true;
     var value;
 
-    var array = this.@iteratedObject;
-    if (!this.@arrayIteratorIsDone) {
-        var index = this.@arrayIteratorNextIndex;
+    var array = @getByIdDirectPrivate(this, "iteratedObject");
+    if (!@getByIdDirectPrivate(this, "arrayIteratorIsDone")) {
+        var index = @getByIdDirectPrivate(this, "arrayIteratorNextIndex");
         var length = array.length >>> 0;
         if (index >= length) {
             this.@arrayIteratorIsDone = true;

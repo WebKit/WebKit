@@ -220,6 +220,61 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, Struct
     return JSValue::encode(slot.getPureResult());
 }
 
+EncodedJSValue JIT_OPERATION operationGetByIdDirect(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Identifier ident = Identifier::fromUid(&vm, uid);
+    stubInfo->tookSlowPath = true;
+
+    JSValue baseValue = JSValue::decode(base);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
+
+    bool found = baseValue.getOwnPropertySlot(exec, ident, slot);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    scope.release();
+    return JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined());
+}
+
+EncodedJSValue JIT_OPERATION operationGetByIdDirectGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Identifier ident = Identifier::fromUid(&vm, uid);
+
+    JSValue baseValue = JSValue::decode(base);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
+
+    bool found = baseValue.getOwnPropertySlot(exec, ident, slot);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    scope.release();
+    return JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined());
+}
+
+EncodedJSValue JIT_OPERATION operationGetByIdDirectOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    Identifier ident = Identifier::fromUid(&vm, uid);
+
+    JSValue baseValue = JSValue::decode(base);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
+
+    bool found = baseValue.getOwnPropertySlot(exec, ident, slot);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    if (stubInfo->considerCaching(exec->codeBlock(), baseValue.structureOrNull()))
+        repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Direct);
+
+    scope.release();
+    return JSValue::encode(found ? slot.getValue(exec, ident) : jsUndefined());
+}
+
 EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
 {
     SuperSamplerScope superSamplerScope(false);
@@ -269,7 +324,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
     }));
 }
 
-EncodedJSValue JIT_OPERATION operationGetByIdWithThisGeneric(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, EncodedJSValue thisEncoded, UniquedStringImpl* uid)
+EncodedJSValue JIT_OPERATION operationGetByIdWithThis(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, EncodedJSValue thisEncoded, UniquedStringImpl* uid)
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -278,6 +333,21 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThisGeneric(ExecState* exec, St
     Identifier ident = Identifier::fromUid(vm, uid);
 
     stubInfo->tookSlowPath = true;
+
+    JSValue baseValue = JSValue::decode(base);
+    JSValue thisValue = JSValue::decode(thisEncoded);
+    PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
+
+    return JSValue::encode(baseValue.get(exec, ident, slot));
+}
+
+EncodedJSValue JIT_OPERATION operationGetByIdWithThisGeneric(ExecState* exec, EncodedJSValue base, EncodedJSValue thisEncoded, UniquedStringImpl* uid)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    Identifier ident = Identifier::fromUid(vm, uid);
 
     JSValue baseValue = JSValue::decode(base);
     JSValue thisValue = JSValue::decode(thisEncoded);

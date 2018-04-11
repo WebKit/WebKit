@@ -1352,6 +1352,25 @@ end
 # convert opcode into a get_by_id_proto_load/get_by_id_unset, respectively, after an
 # execution counter hits zero.
 
+_llint_op_get_by_id_direct:
+    traceExecution()
+    loadi 8[PC], t0
+    loadi 16[PC], t1
+    loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdDirectSlow)
+    loadi 20[PC], t2
+    bineq JSCell::m_structureID[t3], t1, .opGetByIdDirectSlow
+    loadPropertyAtVariableOffset(t2, t3, t0, t1)
+    loadi 4[PC], t2
+    storei t0, TagOffset[cfr, t2, 8]
+    storei t1, PayloadOffset[cfr, t2, 8]
+    valueProfile(t0, t1, 24, t2)
+    dispatch(constexpr op_get_by_id_direct_length)
+
+.opGetByIdDirectSlow:
+    callSlowPath(_llint_slow_path_get_by_id_direct)
+    dispatch(constexpr op_get_by_id_direct_length)
+
+
 _llint_op_get_by_id:
     traceExecution()
     loadi 8[PC], t0

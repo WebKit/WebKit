@@ -593,6 +593,56 @@ LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
     LLINT_RETURN_PROFILED(op_try_get_by_id, result);
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
+{
+    LLINT_BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    const Identifier& ident = codeBlock->identifier(pc[3].u.operand);
+    JSValue baseValue = LLINT_OP_C(2).jsValue();
+    PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::GetOwnProperty);
+
+    bool found = baseValue.getOwnPropertySlot(exec, ident, slot);
+    LLINT_CHECK_EXCEPTION();
+    JSValue result = found ? slot.getValue(exec, ident) : jsUndefined();
+    LLINT_CHECK_EXCEPTION();
+
+    if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable()) {
+        {
+            StructureID oldStructureID = pc[4].u.structureID;
+            if (oldStructureID) {
+                Structure* a = vm.heap.structureIDTable().get(oldStructureID);
+                Structure* b = baseValue.asCell()->structure(vm);
+
+                if (Structure::shouldConvertToPolyProto(a, b)) {
+                    ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
+                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                }
+            }
+        }
+
+        JSCell* baseCell = baseValue.asCell();
+        Structure* structure = baseCell->structure();
+        if (slot.isValue()) {
+            // Start out by clearing out the old cache.
+            pc[4].u.pointer = nullptr; // old structure
+            pc[5].u.pointer = nullptr; // offset
+
+            if (structure->propertyAccessesAreCacheable()
+                && !structure->needImpurePropertyWatchpoint()) {
+                vm.heap.writeBarrier(codeBlock);
+
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+
+                pc[4].u.structureID = structure->id();
+                pc[5].u.operand = slot.cachedOffset();
+            }
+        }
+    }
+
+    LLINT_RETURN_PROFILED(op_get_by_id_direct, result);
+}
+
+
 static void setupGetByIdPrototypeCache(ExecState* exec, VM& vm, Instruction* pc, JSCell* baseCell, PropertySlot& slot, const Identifier& ident)
 {
     CodeBlock* codeBlock = exec->codeBlock();

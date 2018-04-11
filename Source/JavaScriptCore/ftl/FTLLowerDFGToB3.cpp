@@ -701,6 +701,10 @@ private:
         case GetByIdWithThis:
             compileGetByIdWithThis();
             break;
+        case GetByIdDirect:
+        case GetByIdDirectFlush:
+            compileGetById(AccessType::GetDirect);
+            break;
         case In:
             compileIn();
             break;
@@ -3014,7 +3018,7 @@ private:
     
     void compileGetById(AccessType type)
     {
-        ASSERT(type == AccessType::Get || type == AccessType::TryGet);
+        ASSERT(type == AccessType::Get || type == AccessType::TryGet || type == AccessType::GetDirect);
         switch (m_node->child1().useKind()) {
         case CellUse: {
             setJSValue(getById(lowCell(m_node->child1()), type));
@@ -3038,11 +3042,7 @@ private:
             ValueFromBlock cellResult = m_out.anchor(getById(value, type));
             m_out.jump(continuation);
 
-            J_JITOperation_EJI getByIdFunction;
-            if (type == AccessType::Get)
-                getByIdFunction = operationGetByIdGeneric;
-            else
-                getByIdFunction = operationTryGetByIdGeneric;
+            J_JITOperation_EJI getByIdFunction = appropriateGenericGetByIdFunction(type);
 
             m_out.appendTo(notCellCase, continuation);
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
@@ -3089,7 +3089,7 @@ private:
 
             m_out.appendTo(notCellCase, continuation);
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
-                Int64, m_out.operation(operationGetByIdWithThis),
+                Int64, m_out.operation(operationGetByIdWithThisGeneric),
                 m_callFrame, base, thisValue,
                 m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
             m_out.jump(continuation);
@@ -11010,7 +11010,7 @@ private:
         patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
 
-        // FIXME: If this is a GetByIdFlush, we might get some performance boost if we claim that it
+        // FIXME: If this is a GetByIdFlush/GetByIdDirectFlush, we might get some performance boost if we claim that it
         // clobbers volatile registers late. It's not necessary for correctness, though, since the
         // IC code is super smart about saving registers.
         // https://bugs.webkit.org/show_bug.cgi?id=152848
@@ -11049,11 +11049,7 @@ private:
                     [=] (CCallHelpers& jit) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
 
-                        J_JITOperation_ESsiJI optimizationFunction;
-                        if (type == AccessType::Get)
-                            optimizationFunction = operationGetByIdOptimize;
-                        else
-                            optimizationFunction = operationTryGetByIdOptimize;
+                        J_JITOperation_ESsiJI optimizationFunction = appropriateOptimizingGetByIdFunction(type);
 
                         generator->slowPathJump().link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
