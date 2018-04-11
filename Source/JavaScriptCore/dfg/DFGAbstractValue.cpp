@@ -150,6 +150,9 @@ void AbstractValue::set(Graph& graph, const InferredType::Descriptor& descriptor
     case InferredType::Symbol:
         set(graph, graph.m_vm.symbolStructure.get());
         return;
+    case InferredType::BigInt:
+        set(graph, graph.m_vm.bigIntStructure.get());
+        return;
     case InferredType::ObjectWithStructure:
         set(graph, descriptor.structure());
         return;

@@ -70,6 +70,7 @@ public:
         case StringUse:
         case StringOrOtherUse:
         case SymbolUse:
+        case BigIntUse:
         case StringObjectUse:
         case StringOrStringObjectUse:
         case NotStringVarUse:

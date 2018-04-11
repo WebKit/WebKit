@@ -145,6 +145,8 @@ InferredType::Descriptor InferredType::Descriptor::forValue(JSValue value)
             return String;
         if (cell->isSymbol())
             return Symbol;
+        if (cell->isBigInt())
+            return BigInt;
         if (cell->isObject()) {
             if (cell->structure()->transitionWatchpointSetIsStillValid())
                 return Descriptor(ObjectWithStructure, cell->structure());
@@ -184,6 +186,7 @@ PutByIdFlags InferredType::Descriptor::putByIdFlags() const
         return static_cast<PutByIdFlags>(PutByIdPrimaryTypeSecondary | PutByIdSecondaryTypeSymbol);
     case Object:
         return static_cast<PutByIdFlags>(PutByIdPrimaryTypeSecondary | PutByIdSecondaryTypeObject);
+    case BigInt:
     case ObjectOrOther:
         return static_cast<PutByIdFlags>(PutByIdPrimaryTypeSecondary | PutByIdSecondaryTypeObjectOrOther);
     case Top:
@@ -214,6 +217,7 @@ void InferredType::Descriptor::merge(const Descriptor& other)
     case Boolean:
     case String:
     case Symbol:
+    case BigInt:
         *this = Top;
         return;
     case Other:
@@ -532,6 +536,9 @@ void printInternal(PrintStream& out, InferredType::Kind kind)
         return;
     case InferredType::Symbol:
         out.print("Symbol");
+        return;
+    case InferredType::BigInt:
+        out.print("BigInt");
         return;
     case InferredType::ObjectWithStructure:
         out.print("ObjectWithStructure");

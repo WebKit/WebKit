@@ -37,6 +37,7 @@ namespace JSC {
 
 class JSBigInt final : public JSCell {
     using Base = JSCell;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesToThis;
 
 public:
 

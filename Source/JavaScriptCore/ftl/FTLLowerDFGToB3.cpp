@@ -6863,6 +6863,29 @@ private:
             return;
         }
         
+        if (m_node->isBinaryUseKind(BigIntUse)) {
+            // FIXME: [ESNext][BigInt] Create specialized version of strict equals for BigIntUse
+            // https://bugs.webkit.org/show_bug.cgi?id=182895
+            LValue left = lowBigInt(m_node->child1());
+            LValue right = lowBigInt(m_node->child2());
+
+            LBasicBlock notTriviallyEqualCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            ValueFromBlock fastResult = m_out.anchor(m_out.booleanTrue);
+            m_out.branch(m_out.equal(left, right), rarely(continuation), usually(notTriviallyEqualCase));
+
+            LBasicBlock lastNext = m_out.appendTo(notTriviallyEqualCase, continuation);
+
+            ValueFromBlock slowResult = m_out.anchor(m_out.notNull(vmCall(
+                pointerType(), m_out.operation(operationCompareStrictEq), m_callFrame, left, right)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setBoolean(m_out.phi(Int32, fastResult, slowResult));
+            return;
+        }
+
         if (m_node->isBinaryUseKind(SymbolUse, UntypedUse)
             || m_node->isBinaryUseKind(UntypedUse, SymbolUse)) {
             Edge symbolEdge = m_node->child1();
@@ -11108,6 +11131,11 @@ private:
             speculate(BadType, jsValueValue(value), edge.node(), isNotSymbol(value, provenType(edge)));
             return;
 
+        case InferredType::BigInt:
+            speculate(BadType, jsValueValue(value), edge.node(), isNotCell(value, provenType(edge)));
+            speculate(BadType, jsValueValue(value), edge.node(), isNotBigInt(value, provenType(edge)));
+            return;
+
         case InferredType::ObjectWithStructure: {
             RegisteredStructure structure = m_graph.registerStructure(type.structure());
             speculate(BadType, jsValueValue(value), edge.node(), isNotCell(value, provenType(edge)));
@@ -14257,6 +14285,15 @@ private:
         speculateSymbol(edge, result);
         return result;
     }
+
+    LValue lowBigInt(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BigIntUse);
+
+        LValue result = lowCell(edge, mode);
+        speculateBigInt(edge, result);
+        return result;
+    }
     
     LValue lowNonNullObject(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
@@ -14727,6 +14764,9 @@ private:
         case BooleanUse:
             speculateBoolean(edge);
             break;
+        case BigIntUse:
+            speculateBigInt(edge);
+            break;
         case NotStringVarUse:
             speculateNotStringVar(edge);
             break;
@@ -14869,6 +14909,15 @@ private:
         return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
             m_out.constInt32(vm().symbolStructure->id()));
+    }
+
+    LValue isNotBigInt(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, ~SpecBigInt))
+            return proven;
+        return m_out.notEqual(
+            m_out.load32(cell, m_heaps.JSCell_structureID),
+            m_out.constInt32(vm().bigIntStructure->id()));
     }
 
     LValue isArrayTypeForArrayify(LValue cell, ArrayMode arrayMode)
@@ -15286,6 +15335,16 @@ private:
     void speculateSymbol(Edge edge)
     {
         speculateSymbol(edge, lowCell(edge));
+    }
+
+    void speculateBigInt(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecBigInt, isNotBigInt(cell));
+    }
+
+    void speculateBigInt(Edge edge)
+    {
+        speculateBigInt(edge, lowCell(edge));
     }
 
     void speculateNonNullObject(Edge edge, LValue cell)

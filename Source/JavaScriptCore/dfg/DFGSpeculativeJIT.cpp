@@ -5950,6 +5950,11 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
     
+    if (node->isBinaryUseKind(BigIntUse)) {
+        compileBigIntEquality(node);
+        return false;
+    }
+    
     if (node->isBinaryUseKind(SymbolUse, UntypedUse)) {
         compileSymbolUntypedEquality(node, node->child1(), node->child2());
         return false;
@@ -9896,6 +9901,20 @@ void SpeculativeJIT::speculateSymbol(Edge edge)
     speculateSymbol(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateBigInt(Edge edge, GPRReg cell)
+{
+    DFG_TYPE_CHECK(JSValueSource::unboxedCell(cell), edge, ~SpecCellCheck | SpecBigInt, m_jit.branchIfNotBigInt(cell));
+}
+
+void SpeculativeJIT::speculateBigInt(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecBigInt))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateBigInt(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateNotCell(Edge edge, JSValueRegs regs)
 {
     DFG_TYPE_CHECK(regs, edge, ~SpecCellCheck, m_jit.branchIfCell(regs));
@@ -10061,6 +10080,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case SymbolUse:
         speculateSymbol(edge);
+        break;
+    case BigIntUse:
+        speculateBigInt(edge);
         break;
     case StringObjectUse:
         speculateStringObject(edge);

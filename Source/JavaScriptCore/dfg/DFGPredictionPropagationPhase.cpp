@@ -424,6 +424,11 @@ private:
                     changed |= mergePrediction(SpecSymbol);
                     break;
                 }
+                
+                if (node->child1()->shouldSpeculateBigInt()) {
+                    changed |= mergePrediction(SpecBigInt);
+                    break;
+                }
 
                 if (node->child1()->shouldSpeculateStringIdent()) {
                     changed |= mergePrediction(SpecStringIdent);

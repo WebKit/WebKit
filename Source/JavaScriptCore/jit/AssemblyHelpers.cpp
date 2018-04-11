@@ -100,6 +100,11 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfNotType(
         result.append(branchIfNotSymbol(regs.payloadGPR()));
         break;
 
+    case InferredType::BigInt:
+        result.append(branchIfNotCell(regs, mode));
+        result.append(branchIfNotBigInt(regs.payloadGPR()));
+        break;
+
     case InferredType::ObjectWithStructure:
         result.append(branchIfNotCell(regs, mode));
         result.append(

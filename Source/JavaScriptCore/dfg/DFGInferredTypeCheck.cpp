@@ -67,6 +67,10 @@ void insertInferredTypeCheck(
         insertionSet.insertNode(nodeIndex, SpecNone, Check, origin, Edge(baseNode, SymbolUse));
         return;
 
+    case InferredType::BigInt:
+        insertionSet.insertNode(nodeIndex, SpecNone, Check, origin, Edge(baseNode, BigIntUse));
+        return;
+
     case InferredType::ObjectWithStructure:
         insertionSet.insertNode(
             nodeIndex, SpecNone, CheckStructure, origin,

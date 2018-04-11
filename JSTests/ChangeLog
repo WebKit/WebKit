@@ -1,3 +1,16 @@
+2018-04-10  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Add support for BigInt in SpeculatedType
+        https://bugs.webkit.org/show_bug.cgi?id=182470
+
+        Reviewed by Saam Barati.
+
+        * stress/big-int-spec-to-primitive.js: Added.
+        * stress/big-int-spec-to-this.js: Added.
+        * stress/big-int-strict-equals-jit.js: Added.
+        * stress/big-int-strict-spec-to-this.js: Added.
+        * stress/big-int-type-of-proven-type.js: Added.
+
 2018-04-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG AI and clobberize should agree with each other

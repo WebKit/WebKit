@@ -31,6 +31,7 @@
 
 #include "DirectArguments.h"
 #include "JSArray.h"
+#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSMap.h"
@@ -221,6 +222,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             strOut.print("Symbol");
         else
             isTop = false;
+
+        if (value & SpecBigInt)
+            strOut.print("BigInt");
+        else
+            isTop = false;
     }
     
     if (value == SpecInt32Only)
@@ -389,6 +395,9 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
 
     if (classInfo == Symbol::info())
         return SpecSymbol;
+    
+    if (classInfo == JSBigInt::info())
+        return SpecBigInt;
 
     if (classInfo == JSFinalObject::info())
         return SpecFinalObject;
@@ -444,6 +453,8 @@ SpeculatedType speculationFromStructure(Structure* structure)
         return SpecString;
     if (structure->typeInfo().type() == SymbolType)
         return SpecSymbol;
+    if (structure->typeInfo().type() == BigIntType)
+        return SpecBigInt;
     if (structure->typeInfo().type() == DerivedArrayType)
         return SpecDerivedArray;
     return speculationFromClassInfo(structure->classInfo());
@@ -526,6 +537,8 @@ SpeculatedType speculationFromJSType(JSType type)
         return SpecString;
     case SymbolType:
         return SpecSymbol;
+    case BigIntType:
+        return SpecBigInt;
     case ArrayType:
         return SpecArray;
     case DerivedArrayType:
@@ -743,6 +756,8 @@ SpeculatedType speculationFromString(const char* speculation)
         return SpecString;
     if (!strncmp(speculation, "SpecSymbol", strlen("SpecSymbol")))
         return SpecSymbol;
+    if (!strncmp(speculation, "SpecBigInt", strlen("SpecBigInt")))
+        return SpecBigInt;
     if (!strncmp(speculation, "SpecCellOther", strlen("SpecCellOther")))
         return SpecCellOther;
     if (!strncmp(speculation, "SpecCell", strlen("SpecCell")))

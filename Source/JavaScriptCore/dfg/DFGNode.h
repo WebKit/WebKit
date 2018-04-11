@@ -2344,6 +2344,11 @@ public:
         return isSymbolSpeculation(prediction());
     }
     
+    bool shouldSpeculateBigInt()
+    {
+        return isBigIntSpeculation(prediction());
+    }
+    
     bool shouldSpeculateFinalObject()
     {
         return isFinalObjectSpeculation(prediction());
@@ -2532,6 +2537,11 @@ public:
     static bool shouldSpeculateSymbol(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateSymbol() && op2->shouldSpeculateSymbol();
+    }
+    
+    static bool shouldSpeculateBigInt(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateBigInt() && op2->shouldSpeculateBigInt();
     }
     
     static bool shouldSpeculateFinalObject(Node* op1, Node* op2)

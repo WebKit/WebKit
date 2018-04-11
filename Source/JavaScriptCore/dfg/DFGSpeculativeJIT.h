@@ -1261,6 +1261,7 @@ public:
     void compileMiscStrictEq(Node*);
 
     void compileSymbolEquality(Node*);
+    void compileBigIntEquality(Node*);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
     void compileSymbolUntypedEquality(Node*, Edge symbolEdge, Edge untypedEdge);
 
@@ -1661,6 +1662,8 @@ public:
     void speculateStringOrStringObject(Edge);
     void speculateSymbol(Edge, GPRReg cell);
     void speculateSymbol(Edge);
+    void speculateBigInt(Edge, GPRReg cell);
+    void speculateBigInt(Edge);
     void speculateNotCell(Edge, JSValueRegs);
     void speculateNotCell(Edge);
     void speculateOther(Edge, JSValueRegs, GPRReg temp);

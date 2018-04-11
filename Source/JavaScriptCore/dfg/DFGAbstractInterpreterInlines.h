@@ -1486,6 +1486,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
+        if (isBigIntSpeculation(abstractChild.m_type)) {
+            setConstant(node, *m_graph.freeze(m_vm.smallStrings.bigintString()));
+            break;
+        }
+
         forNode(node).setType(m_graph, SpecStringIdent);
         break;
     }
@@ -2114,7 +2119,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         ASSERT(node->child1().useKind() == UntypedUse);
         
-        if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecSymbol))) {
+        if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecSymbol | SpecBigInt))) {
             m_state.setFoundConstants(true);
             didFoldClobberWorld();
             forNode(node) = forNode(node->child1());

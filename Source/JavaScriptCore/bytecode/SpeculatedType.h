@@ -68,8 +68,7 @@ static const SpeculatedType SpecStringIdent        = 1ull << 23; // It's definit
 static const SpeculatedType SpecStringVar          = 1ull << 24; // It's definitely a JSString, and it's not an identifier.
 static const SpeculatedType SpecString             = SpecStringIdent | SpecStringVar; // It's definitely a JSString.
 static const SpeculatedType SpecSymbol             = 1ull << 25; // It's definitely a Symbol.
-static const SpeculatedType SpecCellOther          = 1ull << 26; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString or a Symbol.
-static const SpeculatedType SpecCell               = SpecObject | SpecString | SpecSymbol | SpecCellOther; // It's definitely a JSCell.
+static const SpeculatedType SpecCellOther          = 1ull << 26; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString, BigInt, or Symbol.
 static const SpeculatedType SpecBoolInt32          = 1ull << 27; // It's definitely an Int32 with value 0 or 1.
 static const SpeculatedType SpecNonBoolInt32       = 1ull << 28; // It's definitely an Int32 with value other than 0 or 1.
 static const SpeculatedType SpecInt32Only          = SpecBoolInt32 | SpecNonBoolInt32; // It's definitely an Int32.
@@ -90,9 +89,11 @@ static const SpeculatedType SpecFullNumber         = SpecAnyInt | SpecFullDouble
 static const SpeculatedType SpecBoolean            = 1ull << 34; // It's definitely a Boolean.
 static const SpeculatedType SpecOther              = 1ull << 35; // It's definitely either Null or Undefined.
 static const SpeculatedType SpecMisc               = SpecBoolean | SpecOther; // It's definitely either a boolean, Null, or Undefined.
-static const SpeculatedType SpecHeapTop            = SpecCell | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN.
-static const SpeculatedType SpecPrimitive          = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc; // It's any non-Object JSValue.
 static const SpeculatedType SpecEmpty              = 1ull << 36; // It's definitely an empty value marker.
+static const SpeculatedType SpecBigInt             = 1ull << 37; // It's definitely a BigInt.
+static const SpeculatedType SpecPrimitive          = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc | SpecBigInt; // It's any non-Object JSValue.
+static const SpeculatedType SpecCell               = SpecObject | SpecString | SpecSymbol | SpecCellOther | SpecBigInt; // It's definitely a JSCell.
+static const SpeculatedType SpecHeapTop            = SpecCell | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN.
 static const SpeculatedType SpecBytecodeTop        = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
 static const SpeculatedType SpecFullTop            = SpecBytecodeTop | SpecFullNumber; // It can be anything that bytecode could see plus exotic encodings of numbers.
 
@@ -172,6 +173,11 @@ inline bool isStringOrOtherSpeculation(SpeculatedType value)
 inline bool isSymbolSpeculation(SpeculatedType value)
 {
     return value == SpecSymbol;
+}
+
+inline bool isBigIntSpeculation(SpeculatedType value)
+{
+    return value == SpecBigInt;
 }
 
 inline bool isArraySpeculation(SpeculatedType value)

@@ -429,6 +429,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case StringObjectUse:
                 case StringOrStringObjectUse:
                 case SymbolUse:
+                case BigIntUse:
                 case MapObjectUse:
                 case SetObjectUse:
                 case WeakMapObjectUse:

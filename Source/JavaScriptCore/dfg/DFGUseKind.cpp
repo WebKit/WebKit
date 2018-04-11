@@ -136,6 +136,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case SymbolUse:
         out.print("Symbol");
         return;
+    case BigIntUse:
+        out.print("BigInt");
+        return;
     case StringObjectUse:
         out.print("StringObject");
         return;

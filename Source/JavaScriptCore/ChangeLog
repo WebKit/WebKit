@@ -1,3 +1,83 @@
+2018-04-10  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Add support for BigInt in SpeculatedType
+        https://bugs.webkit.org/show_bug.cgi?id=182470
+
+        Reviewed by Saam Barati.
+
+        This patch introduces the SpecBigInt type to DFG to enable BigInt
+        speculation into DFG and FTL.
+
+        With SpecBigInt introduction, we can then specialize "===" operations
+        to BigInts. As we are doing for some cells, we first check if operands
+        are pointing to the same JSCell, and if it is false, we
+        fallback to "operationCompareStrictEqCell". The idea in further
+        patches is to implement BigInt equality check directly in
+        assembly.
+
+        We are also adding support for BigInt constant folding into
+        TypeOf operation.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromStructure):
+        (JSC::speculationFromJSType):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        (JSC::isBigIntSpeculation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::set):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToThis):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        * dfg/DFGInferredTypeCheck.cpp:
+        (JSC::DFG::insertInferredTypeCheck):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateBigInt):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::speculateBigInt):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBigIntEquality):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBigIntEquality):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::checkInferredType):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotBigInt):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateBigInt):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfNotType):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfBigInt):
+        (JSC::AssemblyHelpers::branchIfNotBigInt):
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::Descriptor::forValue):
+        (JSC::InferredType::Descriptor::putByIdFlags const):
+        (JSC::InferredType::Descriptor::merge):
+        (WTF::printInternal):
+        * runtime/InferredType.h:
+        * runtime/JSBigInt.h:
+
 2018-04-10  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix cloop build.
