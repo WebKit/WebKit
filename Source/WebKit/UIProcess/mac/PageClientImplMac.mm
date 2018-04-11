@@ -161,7 +161,7 @@ NSWindow *PageClientImpl::activeWindow() const
 
 bool PageClientImpl::isViewWindowActive()
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSWindow *activeViewWindow = activeWindow();
     return activeViewWindow.isKeyWindow || [NSApp keyWindow] == activeViewWindow;
 }
@@ -292,7 +292,7 @@ void PageClientImpl::didChangeContentSize(const WebCore::IntSize& newSize)
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     // FIXME: Would be nice to share this code with WebKit1's WebChromeClient.
 
     // The Web process may have asked to change the cursor when the view was in an active window, but

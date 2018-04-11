@@ -201,7 +201,7 @@ static bool lastEventIsMouseUp()
     // It's not clear in what cases this is helpful now -- it's possible it can be removed. 
 
     ASSERT([NSApp isRunning]);
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
@@ -572,7 +572,7 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
     if (!view)
         return;
 
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
