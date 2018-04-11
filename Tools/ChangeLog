@@ -1,3 +1,23 @@
+2018-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Missing label when focusing a <select> with a title attribute but no associated <label>
+        https://bugs.webkit.org/show_bug.cgi?id=184352
+        <rdar://problem/39237683>
+
+        Reviewed by Andy Estes.
+
+        Add support for UIScriptController::selectFormPopoverTitle, which returns the title of the current select
+        popover's UITableViewController (for testing purposes).
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectFormPopoverTitle const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::selectFormPopoverTitle const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::selectFormPopoverTitle const):
+
 2018-04-10  Nan Wang  <n_wang@apple.com>
 
         AX: Expose strong password fields on iOS

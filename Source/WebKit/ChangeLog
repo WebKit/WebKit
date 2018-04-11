@@ -1,3 +1,46 @@
+2018-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Missing label when focusing a <select> with a title attribute but no associated <label>
+        https://bugs.webkit.org/show_bug.cgi?id=184352
+        <rdar://problem/39237683>
+
+        Reviewed by Andy Estes.
+
+        Currently, AssistedNodeInformation only sends the `title` of input elements to the UI process. This means that
+        any information requested in the UI process that is dependent on the `title` of the focused element is broken
+        in the case of select elements. An existing example of this is the title of the table view controller used to
+        present select menus on iPad.
+
+        To fix this, we simply send the `title` of the focused element across, as long as the focused element is an
+        HTMLElement. This ensures that there's label text when focusing unlabeled select elements with titles in extra
+        zoom mode, and also fixes a currenly broken codepath where we show the title of the select in the presented view
+        controller's title.
+
+        Test: fast/forms/ios/ipad/select-with-title.html
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView selectFormPopoverTitle]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add new testing SPI to fetch the title of the UITableViewController presented for the currently focused select
+        element.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectFormPopoverTitle]):
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl selectFormPopoverTitle]):
+        * UIProcess/ios/forms/WKFormSelectPopover.h:
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover initWithView:hasGroups:]):
+        (-[WKSelectPopover tableViewController]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
+        Always send the title across if the focused node is an HTMLElement.
+
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-04-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230508.

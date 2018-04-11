@@ -41,6 +41,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, c
 
 @interface WKFormSelectControl(WKTesting)
 - (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection;
+@property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @end
 
 @protocol WKSelectTesting

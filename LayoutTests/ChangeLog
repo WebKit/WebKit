@@ -1,3 +1,29 @@
+2018-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Missing label when focusing a <select> with a title attribute but no associated <label>
+        https://bugs.webkit.org/show_bug.cgi?id=184352
+        <rdar://problem/39237683>
+
+        Reviewed by Andy Estes.
+
+        Add a new layout test to check that the title of select elements is propagated to the UI process upon focus.
+        This title is used for several purposes, one of them being the title of select menus in the table view
+        controller presented when tapping on a select on an iPad, so the test checks that the title of the select is
+        shown here.
+
+        Also moves a select-related helper into UIHelper from basic-gestures.js (since this doesn't involve user gesture
+        simulation in any way) and also introduces a new UIHelper method for querying the title of the select menu that
+        is currently being presented.
+
+        * fast/forms/ios/ipad/multiple-select-updates-renderer.html:
+        * fast/forms/ios/ipad/select-with-title-expected.txt: Added.
+        * fast/forms/ios/ipad/select-with-title.html: Copied from LayoutTests/fast/forms/ios/ipad/multiple-select-updates-renderer.html.
+        * resources/basic-gestures.js:
+        * resources/ui-helper.js:
+        (window.UIHelper.selectFormAccessoryPickerRow):
+        (window.UIHelper.selectFormPopoverTitle):
+        (window.UIHelper):
+
 2018-04-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html as flaky.

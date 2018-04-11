@@ -418,6 +418,12 @@ void UIScriptController::dismissFormAccessoryView()
     [webView dismissFormAccessoryView];
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    return JSStringCreateWithCFString((CFStringRef)webView.selectFormPopoverTitle);
+}
+
 void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

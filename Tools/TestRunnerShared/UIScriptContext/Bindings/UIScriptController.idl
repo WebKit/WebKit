@@ -187,6 +187,7 @@ interface UIScriptController {
 
     // <select> picker
     void selectFormAccessoryPickerRow(long rowIndex);
+    readonly attribute DOMString selectFormPopoverTitle;
 
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();

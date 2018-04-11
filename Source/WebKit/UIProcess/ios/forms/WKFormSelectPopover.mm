@@ -389,8 +389,7 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     [_tableViewController setPopover:self];
     UIViewController *popoverViewController = _tableViewController.get();
     UINavigationController *navController = nil;
-    NSString *title = view.assistedNodeInformation.title;
-    BOOL needsNavigationController = !!title.length;
+    BOOL needsNavigationController = !view.assistedNodeInformation.title.isEmpty();
     if (needsNavigationController) {
         navController = [[UINavigationController alloc] initWithRootViewController:_tableViewController.get()];
         popoverViewController = navController;
@@ -440,6 +439,11 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
 - (void)_userActionDismissedPopover:(id)sender
 {
     [self accessoryDone];
+}
+
+- (UITableViewController *)tableViewController
+{
+    return _tableViewController.get();
 }
 
 @end

@@ -111,6 +111,14 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
         [id<WKSelectTesting>(_control.get()) selectRow:rowIndex inComponent:componentIndex extendingSelection:extendingSelection];
 }
 
+- (NSString *)selectFormPopoverTitle
+{
+    if (![_control isKindOfClass:[WKSelectPopover class]])
+        return nil;
+
+    return [(WKSelectPopover *)_control.get() tableViewController].title;
+}
+
 @end
 
 #endif  // PLATFORM(IOS)

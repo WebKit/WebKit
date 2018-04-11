@@ -2786,6 +2786,9 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         }
     }
 
+    if (is<HTMLElement>(m_assistedNode.get()))
+        information.title = downcast<HTMLElement>(*m_assistedNode).title();
+
     if (is<HTMLSelectElement>(*m_assistedNode)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);
         information.elementType = InputType::Select;
@@ -2866,7 +2869,6 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.isReadOnly = element.isReadOnly();
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
-        information.title = element.title();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
     } else if (m_assistedNode->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;

@@ -161,4 +161,19 @@ window.UIHelper = class UIHelper {
     {
         internals.withUserGesture(callback);
     }
+
+    static selectFormAccessoryPickerRow(rowIndex)
+    {
+        const selectRowScript = `(() => uiController.selectFormAccessoryPickerRow(${rowIndex}))()`;
+        return new Promise(resolve => testRunner.runUIScript(selectRowScript, resolve));
+    }
+
+    static selectFormPopoverTitle()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.selectFormPopoverTitle);
+            })()`, resolve);
+        });
+    }
 }

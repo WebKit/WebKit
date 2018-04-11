@@ -363,6 +363,8 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
+@property (nonatomic, readonly) NSString *selectFormPopoverTitle;
+
 @end
 
 #if HAVE(LINK_PREVIEW)

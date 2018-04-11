@@ -158,6 +158,11 @@ void UIScriptController::dismissFormAccessoryView()
 void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
 {
 }
+
+JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
+{
+    return nullptr;
+}
     
 JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {

@@ -14,6 +14,7 @@
     }
 </style>
 <script src="../../../../resources/basic-gestures.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
 <script>
     async function run()
     {
@@ -21,7 +22,7 @@
             return;
 
         await tapAtPoint(100, 100);
-        await selectFormAccessoryPickerRow(0);
+        await UIHelper.selectFormAccessoryPickerRow(0);
         doneEvaluatingUIScript = true;
         checkDone();
     }

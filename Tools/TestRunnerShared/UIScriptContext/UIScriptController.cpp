@@ -298,6 +298,11 @@ void UIScriptController::selectFormAccessoryPickerRow(long)
 {
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
+{
+    return nullptr;
+}
+
 void UIScriptController::scrollToOffset(long x, long y)
 {
 }
