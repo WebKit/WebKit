@@ -3471,6 +3471,15 @@ void WebPage::didReceivePasswordForQuickLookDocument(const String& password)
 }
 #endif
 
+bool WebPage::platformPrefersTextLegibilityBasedZoomScaling() const
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    return true;
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(MEDIA_STREAM)
 void WebPage::prepareToSendUserMediaPermissionRequest()
 {

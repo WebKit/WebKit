@@ -1,3 +1,20 @@
+2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add a mechanism to zoom to fixed scales when double tapping in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184435
+        <rdar://problem/38726260>
+
+        Reviewed by Dean Jackson.
+
+        Expose the size of the platform view. By default, in extra zoom mode, this *not* the same as the minimum layout
+        size, since we lay out at a large width and then shrink down to real device dimensions when computing the
+        initial scale (see r229063).
+
+        ViewGestureGeometryCollector uses this in the process of computing a target zoom scale when double tapping.
+
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::viewSize const):
+
 2018-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKit] LibWebRTCProvider::webRTCAvailable is an undefined symbol

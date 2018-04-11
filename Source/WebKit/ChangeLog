@@ -1,5 +1,75 @@
 2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [Extra zoom mode] Add a mechanism to zoom to fixed scales when double tapping in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184435
+        <rdar://problem/38726260>
+
+        Reviewed by Dean Jackson.
+
+        Adds support for an alternate codepath when computing a zoom rect when double tapping that doesn't take the hit-
+        tested node into account, and instead cycles the zoom scale between 2 fixed values (in addition to the initial
+        scale). In the next patch, these fixed scales will be determined by computing zoom scales needed to make most of
+        the text on the page legible (i.e. the first text legibility zoom scale), and another to make all of the text on
+        the page legible, with the exception of outliers (this is the second text legibility zoom scale).
+
+        See comments below for more detail.
+
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/Cocoa/ViewGestureController.messages.in:
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/SmartMagnificationController.messages.in:
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::didCollectGeometryForSmartMagnificationGesture):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture):
+
+        Rename the boolean `isReplacedElement` argument to `fitEntireRect` instead. The UI process only uses this on iOS
+        to determine whether or not to fit the entire element rect to the viewport and add padding. This patch renames
+        this variable because we are not zooming to a replaced element in the case where text legibility on the page
+        (rather than element geometry) is being used to figure out the zoom scale, but we still want to fit the entire
+        target rect to the viewport.
+
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+
+        If text legiblity zoom scaling is preferred, then compute first and second-level text legibility zoom scales to
+        zoom to upon double tap (where the second zoom scale is greater than the first). To choose a target zoom
+        scale, choose the lowest target zoom scale that is at least a small amount less than the current scale. If
+        neither of the two scales fulfill this description, then zoom back out to the initial scale. This has the effect
+        of consistently cycling between all three zoom scales as the user double taps.
+
+        (WebKit::ViewGestureGeometryCollector::computeTextLegibilityScales):
+
+        Introduce a new helper method that computes and caches target scales to zoom to when double tapping to zoom. If
+        a cached pair of target scales is already present, it skips this computation and immediately returns it.
+
+        (WebKit::ViewGestureGeometryCollector::computeZoomInformationForNode):
+        (WebKit::ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales const):
+
+        Factor out logic to compute min and max zoom scales into a separate helper, and call it from both
+        computeZoomInformationForNode and computeTextLegibilityScales.
+
+        (WebKit::ViewGestureGeometryCollector::mainFrameDidLayout):
+
+        Invalidate cached text legibility scales when layout is triggered.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewportConfiguration const):
+
+        Expose WebPage's ViewportConfiguration as a const reference.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformPrefersTextLegibilityBasedZoomScaling const):
+
+        Adds a platform hook for opting into text-legibility-based zoom scaling instead of regular hit-testing-based
+        zoom scaling heuristics.
+
+2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Fix availability annotations for _WKAttachment SPI
         https://bugs.webkit.org/show_bug.cgi?id=184473
         <rdar://problem/39319732>

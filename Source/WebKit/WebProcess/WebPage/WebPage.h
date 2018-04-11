@@ -891,6 +891,9 @@ public:
     void applicationWillEnterForeground(bool isSuspendedUnderLock);
     void applicationDidBecomeActive();
     void completePendingSyntheticClickForContentChangeObserver();
+
+    bool platformPrefersTextLegibilityBasedZoomScaling() const;
+    const WebCore::ViewportConfiguration& viewportConfiguration() const { return m_viewportConfiguration; }
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
