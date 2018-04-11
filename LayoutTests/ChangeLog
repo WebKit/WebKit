@@ -1,3 +1,12 @@
+2018-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Updating expectations and moving baselines
+        for EME and WebCryptoAPI tests after W3C sync in r230445.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/: Updated.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/: Updated.
+
 2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         FrameSelection::appearanceUpdateTimerFired should be robust against layout passes underneath it
