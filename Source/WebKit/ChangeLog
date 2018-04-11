@@ -1,3 +1,15 @@
+2018-04-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r230508.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Remove block selection code"
+        https://bugs.webkit.org/show_bug.cgi?id=184470
+        https://trac.webkit.org/changeset/230508
+
 2018-04-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations on by default

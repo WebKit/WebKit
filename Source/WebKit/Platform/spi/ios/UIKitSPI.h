@@ -540,6 +540,9 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @end
 
 @interface UIWKSelectionAssistant ()
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
+- (void)blockSelectionChangedWithTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags growThreshold:(CGFloat)grow shrinkThreshold:(CGFloat)shrink;
+#endif
 - (BOOL)shouldHandleSingleTapAtPoint:(CGPoint)point;
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags;
 - (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags;
@@ -589,6 +592,15 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @property (nonatomic, readonly, assign) UITapGestureRecognizer *singleTapGesture;
 @end
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
+typedef NS_ENUM(NSInteger, UIWKHandlePosition) {
+    UIWKHandleTop = 0,
+    UIWKHandleRight = 1,
+    UIWKHandleBottom = 2,
+    UIWKHandleLeft = 3,
+};
+#endif
+
 @protocol UIWKInteractionViewProtocol
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state;
 - (void)changeSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch baseIsStart:(BOOL)baseIsStart withFlags:(UIWKSelectionFlags)flags;
@@ -613,6 +625,10 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)_cancelLongPressGestureRecognizer;
 
 @optional
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
+- (void)changeBlockSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch forHandle:(UIWKHandlePosition)handle;
+#endif
+
 - (void)clearSelection;
 - (void)replaceDictatedText:(NSString *)oldText withText:(NSString *)newText;
 - (void)requestDictationContext:(void (^)(NSString *selectedText, NSString *prefixText, NSString *postfixText))completionHandler;

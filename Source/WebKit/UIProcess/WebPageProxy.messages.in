@@ -184,6 +184,9 @@ messages -> WebPageProxy {
     SelectionContextCallback(String selectedText, String beforeText, String afterText, WebKit::CallbackID callbackID)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled)
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
+    DidUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
+#endif
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, uint64_t size)
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect)
     CommitPotentialTapFailed()
