@@ -26,6 +26,7 @@
 
 #include "CharacterProperties.h"
 #include "ComplexTextController.h"
+#include "DisplayListRecorder.h"
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "GlyphBuffer.h"
@@ -305,6 +306,32 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
         drawEmphasisMarksForComplexText(context, run, mark, point, from, destination);
 }
 
+std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
+{
+    ASSERT(!context.paintingDisabled());
+    unsigned destination = to.value_or(run.length());
+    
+    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
+    CodePath codePathToUse = codePath(run);
+    if (codePathToUse != Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
+        codePathToUse = Complex;
+    
+    GlyphBuffer glyphBuffer;
+    float startX = glyphBufferForTextRun(codePathToUse, run, from, destination, glyphBuffer);
+    // We couldn't generate any glyphs for the run. Give up.
+    if (glyphBuffer.isEmpty())
+        return nullptr;
+    
+    std::unique_ptr<DisplayList::DisplayList> displayList = std::make_unique<DisplayList::DisplayList>();
+    GraphicsContext recordingContext([&](GraphicsContext& displayListContext) {
+        return std::make_unique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform());
+    });
+    
+    FloatPoint startPoint(startX, 0);
+    drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);
+    return displayList;
+}
+    
 float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned to, HashSet<const Font*>* fallbackFonts, float* outWidthBeforeRange, float* outWidthAfterRange) const
 {
     ASSERT(from <= to);

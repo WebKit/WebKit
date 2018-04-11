@@ -120,6 +120,8 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         TextRun textRun { run.hasHyphen() ? textWithHyphen : run.text(), 0, run.expansion(), run.expansionBehavior() };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin { rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor) };
+
+        textPainter.setGlyphDisplayListIfNeeded(run.simpleRun(), paintInfo, style.fontCascade(), paintInfo.context(), textRun);
         textPainter.paint(textRun, rect, textOrigin);
         if (textDecorationPainter) {
             textDecorationPainter->setWidth(rect.width());
@@ -259,6 +261,12 @@ Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject& renderer, uns
 const RenderObject& rendererForPosition(const FlowContents& flowContents, unsigned position)
 {
     return flowContents.segmentForPosition(position).renderer;
+}
+
+void simpleLineLayoutWillBeDeleted(const Layout& layout)
+{
+    for (unsigned i = 0; i < layout.runCount(); ++i)
+        TextPainter::removeGlyphDisplayList(layout.runAt(i));
 }
 
 #if ENABLE(TREE_DEBUGGING)

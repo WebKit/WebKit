@@ -1,3 +1,87 @@
+2018-04-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Cache glyphs (using display lists) when painting at high frequency
+        https://bugs.webkit.org/show_bug.cgi?id=178750
+        <rdar://problem/35201729>
+
+        Reviewed by Antti Koivisto.
+
+        This patch adds support for caching of glyph drawing commands when painting
+        at high frequency. Caching the glyph drawing will be done using DisplayLists.
+
+        GlyphDisplayListCache is basically a hash map which maps InlineTextBox
+        or SimpleLineLayout::Run to DisplayList. Before adding a new entry to it
+        we have to check whether the conditions for caching the glyph DisplayList
+        are met or not. If no entry is found for a given run, a new DisplayList
+        is created and a new entry is add to the cache.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory): Make GlyphDisplayListCache respond
+        to memory pressure.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::displayListForTextRun const):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::displayListForTextRun):
+        Record the drawing of a glyph run into a DisplayList.
+
+        * rendering/GlyphDisplayListCache.h: Added.
+        (WebCore::GlyphDisplayListCache::singleton):
+        (WebCore::GlyphDisplayListCache::get):
+        (WebCore::GlyphDisplayListCache::remove):
+        (WebCore::GlyphDisplayListCache::clear):
+        (WebCore::GlyphDisplayListCache::size const):
+        (WebCore::GlyphDisplayListCache::sizeInBytes const):
+        A simple cache for the TextRun DisplayList. Adding a new entry in the
+        cache happens under restricted conditions. So this cache is not expected
+        to grow much.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::~InlineTextBox):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintMarkedTexts):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintMarkedTextForeground):
+        (WebCore::InlineTextBox::paintMarkedTextDecoration):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintCompositionUnderlines const):
+        (WebCore::InlineTextBox::paintCompositionUnderline const):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::paintMarkedTexts):
+        InlineTextBox::paintMarkedTextForeground() now requires PaintInfo to know
+        whether the entry in the GlyphDisplayListCache should be removed or not.
+        Change all the GraphicsContext arguments to be PaintInfo.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::Layout::~Layout):
+        * rendering/SimpleLineLayout.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        (WebCore::SimpleLineLayout::simpleLineLayoutWillBeDeleted):
+        * rendering/SimpleLineLayoutFunctions.h:
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::simpleRun const):
+        Implement the glyph caching for SimpleLineLayout::Run.
+
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextOrEmphasisMarks): If the DisplayList is
+        available, replay it back into the GraphicsContext. Make sure to reset to
+        the DisplayList pointer to nullptr after painting.
+
+        (WebCore::TextPainter::clearGlyphDisplayLists):
+        (WebCore::TextPainter::shouldUseGlyphDisplayList): Check whether we should
+        use DisplayList to the draw glyph run.
+
+        * rendering/TextPainter.h:
+        (WebCore::TextPainter::setGlyphDisplayListIfNeeded): Check whether we should
+        should use DisplayList to the draw glyph run and if we should, ensure first
+        the DisplayList is cached and set it in the TextPainter so it uses it when
+        the run is painted.
+
+        (WebCore::TextPainter::removeGlyphDisplayList): Remove the cached DisplayList
+        entry for a glyph layout run.
+
 2018-04-11  Brent Fulgham  <bfulgham@apple.com>
 
         GraphicsLayerCA::createPlatformCALayer always disables extended color in its backing store

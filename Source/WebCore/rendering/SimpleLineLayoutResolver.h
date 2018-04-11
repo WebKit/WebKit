@@ -56,6 +56,7 @@ public:
         String textWithHyphen() const;
         bool isEndOfLine() const;
         bool hasHyphen() const { return m_iterator.simpleRun().hasHyphen; }
+        const SimpleLineLayout::Run& simpleRun() const { return m_iterator.simpleRun(); }
 
         unsigned lineIndex() const;
 

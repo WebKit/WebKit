@@ -73,6 +73,7 @@ InlineTextBox::~InlineTextBox()
 {
     if (!knownToHaveNoOverflow() && gTextBoxesWithOverflow)
         gTextBoxesWithOverflow->remove(this);
+    TextPainter::removeGlyphDisplayList(*this);
 }
 
 void InlineTextBox::markDirty(bool dirty)
@@ -503,7 +504,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
         if (containsComposition && !useCustomUnderlines)
-            paintCompositionBackground(context, boxOrigin);
+            paintCompositionBackground(paintInfo, boxOrigin);
 
         Vector<MarkedText> markedTexts = collectMarkedTextsForDocumentMarkers(TextPaintPhase::Background);
 #if ENABLE(TEXT_SELECTION)
@@ -518,7 +519,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
         auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areBackgroundMarkedTextStylesEqual);
 
-        paintMarkedTexts(context, TextPaintPhase::Background, boxRect, coalescedStyledMarkedTexts);
+        paintMarkedTexts(paintInfo, TextPaintPhase::Background, boxRect, coalescedStyledMarkedTexts);
     }
 
     // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
@@ -564,7 +565,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
     auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areForegroundMarkedTextStylesEqual);
 
-    paintMarkedTexts(context, TextPaintPhase::Foreground, boxRect, coalescedStyledMarkedTexts);
+    paintMarkedTexts(paintInfo, TextPaintPhase::Foreground, boxRect, coalescedStyledMarkedTexts);
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
@@ -601,7 +602,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
         auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areDecorationMarkedTextStylesEqual);
 
-        paintMarkedTexts(context, TextPaintPhase::Decoration, boxRect, coalescedStyledMarkedTexts, textDecorationSelectionClipOutRect);
+        paintMarkedTexts(paintInfo, TextPaintPhase::Decoration, boxRect, coalescedStyledMarkedTexts, textDecorationSelectionClipOutRect);
     }
 
     // 3. Paint fancy decorations, including composition underlines and platform-specific underlines for spelling errors, grammar errors, et cetera.
@@ -609,7 +610,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         paintPlatformDocumentMarkers(context, boxOrigin);
 
         if (useCustomUnderlines)
-            paintCompositionUnderlines(context, boxOrigin);
+            paintCompositionUnderlines(paintInfo, boxOrigin);
     }
     
     if (shouldRotate)
@@ -943,29 +944,30 @@ FloatPoint InlineTextBox::textOriginFromBoxRect(const FloatRect& boxRect) const
     return textOrigin;
 }
 
-void InlineTextBox::paintMarkedTexts(GraphicsContext& context, TextPaintPhase phase, const FloatRect& boxRect, const Vector<StyledMarkedText>& markedTexts, const FloatRect& decorationClipOutRect)
+void InlineTextBox::paintMarkedTexts(PaintInfo& paintInfo, TextPaintPhase phase, const FloatRect& boxRect, const Vector<StyledMarkedText>& markedTexts, const FloatRect& decorationClipOutRect)
 {
     switch (phase) {
     case TextPaintPhase::Background:
         for (auto& markedText : markedTexts)
-            paintMarkedTextBackground(context, boxRect.location(), markedText.style.backgroundColor, markedText.startOffset, markedText.endOffset);
+            paintMarkedTextBackground(paintInfo, boxRect.location(), markedText.style.backgroundColor, markedText.startOffset, markedText.endOffset);
         return;
     case TextPaintPhase::Foreground:
         for (auto& markedText : markedTexts)
-            paintMarkedTextForeground(context, boxRect, markedText);
+            paintMarkedTextForeground(paintInfo, boxRect, markedText);
         return;
     case TextPaintPhase::Decoration:
         for (auto& markedText : markedTexts)
-            paintMarkedTextDecoration(context, boxRect, decorationClipOutRect, markedText);
+            paintMarkedTextDecoration(paintInfo, boxRect, decorationClipOutRect, markedText);
         return;
     }
 }
 
-void InlineTextBox::paintMarkedTextBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const Color& color, unsigned clampedStartOffset, unsigned clampedEndOffset)
+void InlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const Color& color, unsigned clampedStartOffset, unsigned clampedEndOffset)
 {
     if (clampedStartOffset >= clampedEndOffset)
         return;
 
+    GraphicsContext& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver { context };
     updateGraphicsContext(context, TextPaintStyle { color }); // Don't draw text at all!
 
@@ -989,11 +991,12 @@ void InlineTextBox::paintMarkedTextBackground(GraphicsContext& context, const Fl
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), color);
 }
 
-void InlineTextBox::paintMarkedTextForeground(GraphicsContext& context, const FloatRect& boxRect, const StyledMarkedText& markedText)
+void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatRect& boxRect, const StyledMarkedText& markedText)
 {
     if (markedText.startOffset >= markedText.endOffset)
         return;
 
+    GraphicsContext& context = paintInfo.context();
     const FontCascade& font = lineFont();
     const RenderStyle& lineStyle = this->lineStyle();
 
@@ -1012,20 +1015,24 @@ void InlineTextBox::paintMarkedTextForeground(GraphicsContext& context, const Fl
         textPainter.setShadow(&markedText.style.textShadow.value());
     textPainter.setEmphasisMark(emphasisMark, emphasisMarkOffset, combinedText());
 
+    TextRun textRun = createTextRun();
+    textPainter.setGlyphDisplayListIfNeeded(*this, paintInfo, font, context, textRun);
+
     GraphicsContextStateSaver stateSaver { context, false };
     if (markedText.type == MarkedText::DraggedContent) {
         stateSaver.save();
         context.setAlpha(markedText.style.alpha);
     }
     // TextPainter wants the box rectangle and text origin of the entire line box.
-    textPainter.paintRange(createTextRun(), boxRect, textOriginFromBoxRect(boxRect), markedText.startOffset, markedText.endOffset);
+    textPainter.paintRange(textRun, boxRect, textOriginFromBoxRect(boxRect), markedText.startOffset, markedText.endOffset);
 }
 
-void InlineTextBox::paintMarkedTextDecoration(GraphicsContext& context, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText& markedText)
+void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText& markedText)
 {
     if (m_truncation == cFullTruncation)
         return;
 
+    GraphicsContext& context = paintInfo.context();
     updateGraphicsContext(context, markedText.style.textStyles);
 
     bool isCombinedText = combinedText();
@@ -1073,12 +1080,12 @@ void InlineTextBox::paintMarkedTextDecoration(GraphicsContext& context, const Fl
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin)
+void InlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin)
 {
-    paintMarkedTextBackground(context, boxOrigin, Color::compositionFill, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
+    paintMarkedTextBackground(paintInfo, boxOrigin, Color::compositionFill, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
 }
 
-void InlineTextBox::paintCompositionUnderlines(GraphicsContext& context, const FloatPoint& boxOrigin) const
+void InlineTextBox::paintCompositionUnderlines(PaintInfo& paintInfo, const FloatPoint& boxOrigin) const
 {
     if (m_truncation == cFullTruncation)
         return;
@@ -1095,7 +1102,7 @@ void InlineTextBox::paintCompositionUnderlines(GraphicsContext& context, const F
             break; // Underline is completely after this run, bail. A later run will paint it.
 
         // Underline intersects this run. Paint it.
-        paintCompositionUnderline(context, boxOrigin, underline);
+        paintCompositionUnderline(paintInfo, boxOrigin, underline);
 
         if (underline.endOffset > end() + 1)
             break; // Underline also runs into the next run. Bail now, no more marker advancement.
@@ -1109,7 +1116,7 @@ static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction,
     start = logicalWidth - width - start;
 }
 
-void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const FloatPoint& boxOrigin, const CompositionUnderline& underline) const
+void InlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const CompositionUnderline& underline) const
 {
     if (m_truncation == cFullTruncation)
         return;
@@ -1150,6 +1157,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext& context, const Fl
     start += 1;
     width -= 2;
 
+    GraphicsContext& context = paintInfo.context();
     context.setStrokeColor(underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? renderer().style().visitedDependentColor(CSSPropertyWebkitTextFillColor) : underline.color);
     context.setStrokeThickness(lineThickness);
     context.drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());

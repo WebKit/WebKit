@@ -48,6 +48,10 @@ class RenderText;
 class TextLayout;
 class TextRun;
 
+namespace DisplayList {
+class DisplayList;
+}
+    
 struct GlyphData;
 
 struct GlyphOverflow {
@@ -197,6 +201,8 @@ public:
 
     WeakPtr<FontCascade> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(*const_cast<FontCascade*>(this)); }
 
+    std::unique_ptr<DisplayList::DisplayList> displayListForTextRun(GraphicsContext&, const TextRun&, unsigned from = 0, std::optional<unsigned> to = { }, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
+    
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
 

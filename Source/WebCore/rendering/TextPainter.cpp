@@ -23,9 +23,11 @@
 #include "config.h"
 #include "TextPainter.h"
 
+#include "DisplayListReplayer.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "RenderCombineText.h"
+#include "RenderLayer.h"
 #include "ShadowData.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -98,10 +100,18 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     float emphasisMarkOffset, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(startOffset < endOffset);
-    if (emphasisMark.isEmpty())
-        m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
-    else
+    if (!emphasisMark.isEmpty())
         m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + FloatSize(0, emphasisMarkOffset), startOffset, endOffset);
+    else if (startOffset || endOffset < textRun.length() || !m_glyphDisplayList)
+        m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
+    else {
+        // Replaying back a whole cached glyph run to the GraphicsContext.
+        m_context.translate(textOrigin);
+        DisplayList::Replayer replayer(m_context, *m_glyphDisplayList);
+        replayer.replay();
+        m_context.translate(-textOrigin);
+    }
+    m_glyphDisplayList = nullptr;
 }
 
 void TextPainter::paintTextWithShadows(const ShadowData* shadow, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin,
@@ -193,6 +203,17 @@ void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, c
     GraphicsContextStateSaver stateSaver(m_context, m_style.strokeWidth > 0);
     updateGraphicsContext(m_context, m_style);
     paintTextAndEmphasisMarksIfNeeded(textRun, boxRect, textOrigin, start, end, m_style, m_shadow);
+}
+
+void TextPainter::clearGlyphDisplayLists()
+{
+    GlyphDisplayListCache<InlineTextBox>::singleton().clear();
+    GlyphDisplayListCache<SimpleLineLayout::Run>::singleton().clear();
+}
+
+bool TextPainter::shouldUseGlyphDisplayList(const PaintInfo& paintInfo)
+{
+    return !paintInfo.context().paintingDisabled() && paintInfo.enclosingSelfPaintingLayer() && paintInfo.enclosingSelfPaintingLayer()->paintingFrequently();
 }
 
 } // namespace WebCore

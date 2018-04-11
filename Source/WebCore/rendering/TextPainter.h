@@ -24,6 +24,7 @@
 
 #include "AffineTransform.h"
 #include "FloatRect.h"
+#include "GlyphDisplayListCache.h"
 #include "TextFlags.h"
 #include "TextPaintStyle.h"
 #include <wtf/text/AtomicString.h>
@@ -58,6 +59,21 @@ public:
     void paint(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin);
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
+    template<typename LayoutRun>
+    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const FontCascade& font, GraphicsContext& context, const TextRun& textRun)
+    {
+        if (!TextPainter::shouldUseGlyphDisplayList(paintInfo))
+            TextPainter::removeGlyphDisplayList(run);
+        else
+            m_glyphDisplayList = GlyphDisplayListCache<LayoutRun>::singleton().get(run, font, context, textRun);
+    }
+
+    template<typename LayoutRun>
+    static void removeGlyphDisplayList(const LayoutRun& run) { GlyphDisplayListCache<LayoutRun>::singleton().remove(run); }
+
+    static void clearGlyphDisplayLists();
+    static bool shouldUseGlyphDisplayList(const PaintInfo&);
+
 private:
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomicString& emphasisMark, float emphasisMarkOffset,
         const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
@@ -74,6 +90,7 @@ private:
     const RenderCombineText* m_combinedText { nullptr };
     float m_emphasisMarkOffset { 0 };
     bool m_textBoxIsHorizontal { true };
+    DisplayList::DisplayList* m_glyphDisplayList { nullptr };
 };
 
 inline void TextPainter::setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText* combinedText)

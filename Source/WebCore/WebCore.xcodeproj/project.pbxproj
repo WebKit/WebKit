@@ -8254,6 +8254,7 @@
 		555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDecoderCG.h; sourceTree = "<group>"; };
 		5576A5621D88A70800CCC04C /* ImageFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrame.cpp; sourceTree = "<group>"; };
 		5576A5631D88A70800CCC04C /* ImageFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrame.h; sourceTree = "<group>"; };
+		5597FCCB2076C06800D35BB0 /* GlyphDisplayListCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphDisplayListCache.h; sourceTree = "<group>"; };
 		55A336F61D8209F40022C4C7 /* NativeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImage.h; sourceTree = "<group>"; };
 		55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBackingStore.h; sourceTree = "<group>"; };
 		55AF14E31EAAC59B0026EEAA /* UTIRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UTIRegistry.cpp; sourceTree = "<group>"; };
@@ -25478,6 +25479,7 @@
 				9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */,
 				9A528E8217D7F52F00AA9518 /* FloatingObjects.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
+				5597FCCB2076C06800D35BB0 /* GlyphDisplayListCache.h */,
 				E112F4701E3A85F200D6CDFD /* Grid.cpp */,
 				E112F46F1E3A85D800D6CDFD /* Grid.h */,
 				E12DE7151E4B748700F9ACCF /* GridTrackSizingAlgorithm.cpp */,

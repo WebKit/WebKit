@@ -978,5 +978,10 @@ Layout::Layout(const RunVector& runVector, unsigned lineCount)
     memcpy(m_runs, runVector.data(), m_runCount * sizeof(Run));
 }
 
+Layout::~Layout()
+{
+    simpleLineLayoutWillBeDeleted(*this);
+}
+
 }
 }

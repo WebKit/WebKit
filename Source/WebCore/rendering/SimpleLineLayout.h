@@ -81,6 +81,8 @@ public:
     using SimpleLineStruts = Vector<SimpleLineStrut, 4>;
     static std::unique_ptr<Layout> create(const RunVector&, unsigned lineCount);
 
+    ~Layout();
+
     unsigned lineCount() const { return m_lineCount; }
 
     unsigned runCount() const { return m_runCount; }

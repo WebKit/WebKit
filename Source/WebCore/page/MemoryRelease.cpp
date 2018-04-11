@@ -46,6 +46,7 @@
 #include "ScrollingThread.h"
 #include "StyleScope.h"
 #include "StyledElement.h"
+#include "TextPainter.h"
 #include "WorkerThread.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/SystemTracing.h>
@@ -64,6 +65,7 @@ static void releaseNoncriticalMemory()
     FontDescription::invalidateCaches();
 
     clearWidthCaches();
+    TextPainter::clearGlyphDisplayLists();
 
     for (auto* document : Document::allDocuments())
         document->clearSelectorQueryCache();

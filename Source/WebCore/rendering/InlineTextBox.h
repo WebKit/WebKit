@@ -168,18 +168,18 @@ private:
 
     FloatPoint textOriginFromBoxRect(const FloatRect&) const;
 
-    void paintMarkedTexts(GraphicsContext&, TextPaintPhase, const FloatRect& boxRect, const Vector<StyledMarkedText>&, const FloatRect& decorationClipOutRect = { });
+    void paintMarkedTexts(PaintInfo&, TextPaintPhase, const FloatRect& boxRect, const Vector<StyledMarkedText>&, const FloatRect& decorationClipOutRect = { });
 
     void paintPlatformDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkedText&);
     void paintPlatformDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin);
 
-    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin);
-    void paintCompositionUnderlines(GraphicsContext&, const FloatPoint& boxOrigin) const;
-    void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&) const;
+    void paintCompositionBackground(PaintInfo&, const FloatPoint& boxOrigin);
+    void paintCompositionUnderlines(PaintInfo&, const FloatPoint& boxOrigin) const;
+    void paintCompositionUnderline(PaintInfo&, const FloatPoint& boxOrigin, const CompositionUnderline&) const;
 
-    void paintMarkedTextBackground(GraphicsContext&, const FloatPoint& boxOrigin, const Color&, unsigned clampedStartOffset, unsigned clampedEndOffset);
-    void paintMarkedTextForeground(GraphicsContext&, const FloatRect& boxRect, const StyledMarkedText&);
-    void paintMarkedTextDecoration(GraphicsContext&, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText&);
+    void paintMarkedTextBackground(PaintInfo&, const FloatPoint& boxOrigin, const Color&, unsigned clampedStartOffset, unsigned clampedEndOffset);
+    void paintMarkedTextForeground(PaintInfo&, const FloatRect& boxRect, const StyledMarkedText&);
+    void paintMarkedTextDecoration(PaintInfo&, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText&);
 
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;

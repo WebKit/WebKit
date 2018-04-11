@@ -66,6 +66,8 @@ LayoutUnit baselineFromFlow(const RenderBlockFlow&);
 
 const RenderObject& rendererForPosition(const FlowContents&, unsigned);
 
+void simpleLineLayoutWillBeDeleted(const Layout&);
+
 #if ENABLE(TREE_DEBUGGING)
 void outputLineLayoutForFlow(WTF::TextStream&, const RenderBlockFlow&, const Layout&, int depth);
 #endif
