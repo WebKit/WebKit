@@ -622,6 +622,7 @@ public:
     void setMediaStreamTrackMuted(MediaStreamTrack&, bool);
     void removeMediaStreamTrack(MediaStream&, MediaStreamTrack&);
     void simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack&);
+    void setMediaStreamTrackIdentifier(MediaStreamTrack&, String&& id);
 #endif
 
     String audioSessionCategory() const;

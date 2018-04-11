@@ -1,3 +1,44 @@
+2018-04-11  Youenn Fablet  <youenn@apple.com>
+
+        Preventively expect UTF8 strings from libwebrtc SDP and error messages
+        https://bugs.webkit.org/show_bug.cgi?id=184509
+
+        Reviewed by Eric Carlson.
+
+        Make WebCore code expect any libwebrtc string to contain UTF-8.
+        Currently SDPs do not contain any UTF-8 specific character
+        but https://tools.ietf.org/html/rfc4566 allows it.
+
+        Add Internals API to set track id so that we can inject UTF-8 inside some WebRTC tests.
+        Test: webrtc/utf8-sdp.html
+
+        * Modules/mediastream/MediaStreamTrack.h:
+        (WebCore::MediaStreamTrack::setIdForTesting):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::fromStdString):
+        (WebCore::fromSessionDescription):
+        (WebCore::LibWebRTCMediaEndpoint::doSetLocalDescription):
+        (WebCore::LibWebRTCMediaEndpoint::doSetRemoteDescription):
+        (WebCore::LibWebRTCMediaEndpoint::mediaStreamFromRTCStream):
+        (WebCore::LibWebRTCMediaEndpoint::addRemoteTrack):
+        (WebCore::LibWebRTCMediaEndpoint::addDataChannel):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceCandidate):
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed):
+        (WebCore::trackId): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::fromStdString):
+        (WebCore::LibWebRTCPeerConnectionBackend::doAddIceCandidate):
+        (WebCore::createReceiverForSource):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::setIdForTesting):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaStreamTrackIdentifier):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-04-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Cache glyphs (using display lists) when painting at high frequency

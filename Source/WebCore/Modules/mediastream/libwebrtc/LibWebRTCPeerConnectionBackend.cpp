@@ -209,8 +209,7 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
     std::unique_ptr<webrtc::IceCandidateInterface> rtcCandidate(webrtc::CreateIceCandidate(candidate.sdpMid().utf8().data(), sdpMLineIndex, candidate.candidate().utf8().data(), &error));
 
     if (!rtcCandidate) {
-        String message(error.description.data(), error.description.size());
-        addIceCandidateFailed(Exception { OperationError, WTFMove(message) });
+        addIceCandidateFailed(Exception { OperationError, String::fromUTF8(error.description.data(), error.description.length()) });
         return;
     }
 
@@ -237,8 +236,7 @@ void LibWebRTCPeerConnectionBackend::addVideoSource(Ref<RealtimeOutgoingVideoSou
 
 static inline Ref<RTCRtpReceiver> createReceiverForSource(ScriptExecutionContext& context, Ref<RealtimeMediaSource>&& source)
 {
-    String id = source->id();
-    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(WTFMove(source), WTFMove(id));
+    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(WTFMove(source), String { source->id() });
     auto remoteTrack = MediaStreamTrack::create(context, WTFMove(remoteTrackPrivate));
 
     return RTCRtpReceiver::create(WTFMove(remoteTrack));

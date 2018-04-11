@@ -4286,6 +4286,10 @@ void Internals::simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack& t
     track.source().captureFailed();
 }
 
+void Internals::setMediaStreamTrackIdentifier(MediaStreamTrack& track, String&& id)
+{
+    track.setIdForTesting(WTFMove(id));
+}
 #endif
 
 String Internals::audioSessionCategory() const

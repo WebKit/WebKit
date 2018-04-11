@@ -138,6 +138,8 @@ public:
     // ActiveDOMObject API.
     bool hasPendingActivity() const final;
 
+    void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
+
 protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
 

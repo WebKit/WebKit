@@ -566,6 +566,7 @@ enum EventThrottlingBehavior {
     [Conditional=MEDIA_STREAM] void setMediaStreamTrackMuted(MediaStreamTrack track, boolean muted);
     [Conditional=MEDIA_STREAM] void removeMediaStreamTrack(MediaStream stream, MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] void simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] void setMediaStreamTrackIdentifier(MediaStreamTrack track, DOMString identifier);
 
     Promise<void> clearCacheStorageMemoryRepresentation();
     Promise<DOMString> cacheStorageEngineRepresentation();

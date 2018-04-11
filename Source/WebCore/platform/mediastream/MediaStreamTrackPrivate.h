@@ -100,6 +100,8 @@ public:
     enum class ReadyState { None, Live, Ended };
     ReadyState readyState() const { return m_readyState; }
 
+    void setIdForTesting(String&& id) { m_id = WTFMove(id); }
+
 private:
     MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&&, String&& id);
 
