@@ -1000,8 +1000,6 @@ security/block-test-no-port.html
 security/block-test.html
 
 # Animation tests that fail:
-animations/combo-transform-translate+scale.html [ Pass Failure ]
-legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/fill-forwards-auto-height.html [ ImageOnlyFailure ]

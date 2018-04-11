@@ -1730,14 +1730,6 @@ animations/transition-and-animation-2.html [ Pass Failure ]
 legacy-animation-engine/animations/transition-and-animation-2.html [ Pass Failure ]
 
 # Actual values are sometimes slightly out of range of expected values
-webkit.org/b/48451 animations/combo-transform-translate+scale.html [ Pass Failure ]
-webkit.org/b/48451 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
-webkit.org/b/48451 animations/play-state.html [ Pass Failure ]
-webkit.org/b/48451 legacy-animation-engine/animations/play-state.html [ Pass Failure ]
-webkit.org/b/48451 animations/suspend-resume-animation.html [ Pass Failure ]
-webkit.org/b/48451 legacy-animation-engine/animations/suspend-resume-animation.html [ Pass Failure ]
-webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
-webkit.org/b/48451 legacy-animation-engine/animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 # Debug assertions
 [ Debug ] animations/animation-controller-drt-api.html [ Skip ] # Debug assertion

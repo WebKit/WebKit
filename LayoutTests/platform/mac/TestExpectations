@@ -155,8 +155,6 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
-webkit.org/b/42821 animations/play-state.html [ Pass Failure ]
-webkit.org/b/42821 legacy-animation-engine/animations/play-state.html [ Pass Failure ]
 webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/184459 legacy-animation-engine/animations/animation-callback-timestamp.html [ Pass Failure ]
 webkit.org/b/113598 legacy-animation-engine/animations/animation-delay-changed.html [ Pass Failure ]
@@ -677,10 +675,6 @@ webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 webkit.org/b/49182 legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
 webkit.org/b/50959 animations/play-state-suspend.html [ Pass Failure ]
 webkit.org/b/50959 legacy-animation-engine/animations/play-state-suspend.html [ Pass Failure ]
-webkit.org/b/122040 animations/combo-transform-translate+scale.html [ Pass Failure ]
-webkit.org/b/122040 legacy-animation-engine/animations/combo-transform-translate+scale.html [ Pass Failure ]
-webkit.org/b/128379 animations/suspend-resume-animation.html [ Pass Failure ]
-webkit.org/b/128379 legacy-animation-engine/animations/suspend-resume-animation.html [ Pass Failure ]
 
 # Skipped for ios-simulator as well:
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]

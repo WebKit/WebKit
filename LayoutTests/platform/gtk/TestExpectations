@@ -1865,8 +1865,6 @@ webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/176758 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
-webkit.org/b/176758 legacy-animation-engine/animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html [ Pass Failure ]
 
@@ -3358,6 +3356,12 @@ webkit.org/b/184080 legacy-animation-engine/animations/transform-non-accelerated
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
+
+webkit.org/b/184501 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.worker.html [ Failure ]
+
+webkit.org/b/184503 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Failure ]
+webkit.org/b/184503 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Failure ]
+webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

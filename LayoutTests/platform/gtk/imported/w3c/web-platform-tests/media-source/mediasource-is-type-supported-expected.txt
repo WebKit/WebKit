@@ -8,18 +8,19 @@ FAIL Test invalid MIME format "video/webm;codecs=" assert_equals: supported expe
 PASS Test invalid MIME format "video/webm;codecs="" 
 FAIL Test invalid MIME format "video/webm;codecs=""" assert_equals: supported expected false but got true
 PASS Test invalid MIME format "video/webm;codecs=","" 
+PASS Test invalid MIME format "unsupported_mediatype" 
 PASS Test invalid MIME format "" 
 PASS Test invalid MIME format "null" 
 PASS Test invalid MSE MIME media type "xxx" 
 PASS Test invalid MSE MIME media type "text/html" 
 PASS Test invalid MSE MIME media type "image/jpeg" 
-FAIL Test invalid mismatch between major type and codec ID "audio/webm;codecs="vp8"" assert_equals: supported expected false but got true
-FAIL Test invalid mismatch between major type and codec ID "audio/mp4;codecs="avc1.4d001e"" assert_equals: supported expected false but got true
-FAIL Test invalid mismatch between minor type and codec ID "audio/mp4;codecs="vorbis"" assert_equals: supported expected false but got true
-FAIL Test invalid mismatch between minor type and codec ID "audio/webm;codecs="mp4a.40.2"" assert_equals: supported expected false but got true
-FAIL Test invalid mismatch between minor type and codec ID "video/mp4;codecs="vp8"" assert_equals: supported expected false but got true
-FAIL Test invalid mismatch between minor type and codec ID "video/webm;codecs="mp4a.40.2"" assert_equals: supported expected false but got true
-FAIL Test invalid mismatch between minor type and codec ID "video/mp4;codecs="vorbis"" assert_equals: supported expected false but got true
+FAIL Test invalid mismatch between MIME type and codec ID "audio/webm;codecs="vp8"" assert_equals: supported expected false but got true
+FAIL Test invalid mismatch between MIME type and codec ID "audio/mp4;codecs="avc1.4d001e"" assert_equals: supported expected false but got true
+FAIL Test invalid mismatch between MIME type and codec ID "audio/mp4;codecs="vorbis"" assert_equals: supported expected false but got true
+FAIL Test invalid mismatch between MIME type and codec ID "audio/webm;codecs="mp4a.40.2"" assert_equals: supported expected false but got true
+FAIL Test invalid mismatch between MIME type and codec ID "video/mp4;codecs="vp8"" assert_equals: supported expected false but got true
+FAIL Test invalid mismatch between MIME type and codec ID "video/mp4;codecs="vorbis"" assert_equals: supported expected false but got true
+FAIL Test invalid mismatch between MIME type and codec ID "video/webm;codecs="mp4a.40.2"" assert_equals: supported expected false but got true
 FAIL Test invalid codec ID "audio/mp4;codecs="mp4a"" assert_equals: supported expected false but got true
 FAIL Test invalid codec ID "audio/mp4;codecs="mp4a.40"" assert_equals: supported expected false but got true
 FAIL Test invalid codec ID "audio/mp4;codecs="mp4a.40."" assert_equals: supported expected false but got true

@@ -1836,3 +1836,8 @@ webkit.org/b/184058 storage/indexeddb/dont-wedge-private.html [ Pass Failure ]
 webkit.org/b/184061 http/tests/appcache/interrupted-update.html [ Pass Failure ]
 
 webkit.org/b/184453 imported/w3c/web-platform-tests/workers/name-property.html [ Pass Failure ]
+
+webkit.org/b/48451 animations/combo-transform-translate+scale.html [ Pass Failure ]
+webkit.org/b/48451 animations/play-state.html [ Pass Failure ]
+webkit.org/b/48451 animations/suspend-resume-animation.html [ Pass Failure ]
+webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
