@@ -52,7 +52,7 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 
 WK_CLASS_AVAILABLE(macosx(10.13.4), ios(11.3))
 @interface _WKAttachment : NSObject
-- (void)requestInfo:(void(^)(_WKAttachmentInfo * _Nullable, NSError * _Nullable))completionHandler;
+- (void)requestInfo:(void(^)(_WKAttachmentInfo * _Nullable, NSError * _Nullable))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)requestData:(void(^)(NSData * _Nullable, NSError * _Nullable))completionHandler;
 - (void)setDisplayOptions:(_WKAttachmentDisplayOptions *)options completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler;
 - (void)setData:(NSData *)data newContentType:(nullable NSString *)newContentType newFilename:(nullable NSString *)newFilename completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler;

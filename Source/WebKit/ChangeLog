@@ -1,3 +1,17 @@
+2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix availability annotations for _WKAttachment SPI
+        https://bugs.webkit.org/show_bug.cgi?id=184473
+        <rdar://problem/39319732>
+
+        Reviewed by Dan Bernstein.
+
+        _WKAttachmentInfo is available in WK_MAC_TBA and WK_IOS_TBA, but the SPI method -[_WKAttachment requestInfo:]
+        is currently available in macOS 10.13.4 and iOS 11.3. Instead, the availability of this SPI should match the
+        availability of the SPI object it depends on.
+
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+
 2018-04-10  Chris Dumez  <cdumez@apple.com>
 
         Avoid constructing a service worker RegistrationStore for private sessions
