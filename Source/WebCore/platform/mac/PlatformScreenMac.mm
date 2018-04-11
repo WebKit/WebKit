@@ -266,9 +266,6 @@ CGColorSpaceRef screenColorSpace(Widget* widget)
 
 bool screenSupportsExtendedColor(Widget* widget)
 {
-    if (!widget)
-        return false;
-
     if (!screenProperties().isEmpty())
         return getScreenProperties(widget).screenSupportsExtendedColor;
 

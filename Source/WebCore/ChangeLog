@@ -1,3 +1,19 @@
+2018-04-11  Brent Fulgham  <bfulgham@apple.com>
+
+        GraphicsLayerCA::createPlatformCALayer always disables extended color in its backing store
+        https://bugs.webkit.org/show_bug.cgi?id=184367
+        <rdar://problem/39249074>
+
+        Reviewed by Simon Fraser.
+
+        'createPlatformCALayer' always passes a nil widget, which early returns from 'screenSupportsExtendedColor'
+        with false. Instead, we should just pass the widget (nil or not) to the screen properties methods,
+        which will use the primary screen if no screen is specified. I.e., we shouldn't do an early return
+        here if the passed widget is nil.
+
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenSupportsExtendedColor):
+
 2018-04-11  Youenn Fablet  <youenn@apple.com>
 
         Pass FetchOptions and SecurityOrigin as load parameters from WebProcess to NetworkProcess
