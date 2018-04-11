@@ -180,7 +180,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     slowCases.append(gen.slowPathJump());
 
     auto slowPath = slowPathCall(
-        slowCases, this, appropriateOptimizingGetByIdFunction(type), GetPropertyPtrTag,
+        slowCases, this, appropriateOptimizingGetByIdFunction(type),
         spillMode, ExceptionCheckRequirement::CheckNeeded,
         resultGPR, gen.stubInfo(), baseGPR, identifierUID(identifierNumber));
     

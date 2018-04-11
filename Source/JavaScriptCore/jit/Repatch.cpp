@@ -388,7 +388,7 @@ void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& proper
     
     if (tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo, kind) == GiveUpOnCache) {
         CodeBlock* codeBlock = exec->codeBlock();
-        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateGetByIdFunction(kind), GetPropertyPtrTag));
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), FunctionPtr(appropriateGetByIdFunction(kind)));
     }
 }
 
