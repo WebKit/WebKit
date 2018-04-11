@@ -101,6 +101,7 @@ void IsoHeapImpl<Config>::didBecomeEligible(IsoDirectory<Config, IsoDirectoryPag
 template<typename Config>
 void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
 {
+    std::lock_guard<Mutex> locker(this->lock);
     forEachDirectory(
         [&] (auto& directory) {
             directory.scavenge(decommits);
@@ -111,6 +112,7 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
 template<typename Config>
 void IsoHeapImpl<Config>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
 {
+    std::lock_guard<Mutex> locker(this->lock);
     if (!m_directoryHighWatermark)
         m_inlineDirectory.scavengeToHighWatermark(decommits);
     for (IsoDirectoryPage<Config>* page = m_headDirectory; page; page = page->next) {

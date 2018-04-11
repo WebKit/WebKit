@@ -1,5 +1,18 @@
 2018-04-10  Saam Barati  <sbarati@apple.com>
 
+        IsoHeapImpl::scavenge* needs to grab the lock
+        https://bugs.webkit.org/show_bug.cgi?id=184461
+
+        Reviewed by Filip Pizlo.
+
+        Another thread could be modifying the linked list that the scavenge* methods traverse.
+
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::scavenge):
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+
+2018-04-10  Saam Barati  <sbarati@apple.com>
+
         bmalloc should do partial scavenges more frequently
         https://bugs.webkit.org/show_bug.cgi?id=184176
 
