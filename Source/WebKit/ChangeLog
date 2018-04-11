@@ -1,3 +1,52 @@
+2018-04-11  Youenn Fablet  <youenn@apple.com>
+
+        Pass FetchOptions and SecurityOrigin as load parameters from WebProcess to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184374
+
+        Reviewed by Chris Dumez.
+
+        Pass full FetchOptions parameters as part of NetworkResourceLoadParameters.
+        This will allow handling redirection mode as well as credentials in case of cross origin redirections.
+        In case of SameOrigin credentials and there is a redirection from same-origin to cross-origin,
+        we will be able to stop using credentials without going to WebProcess.
+
+        To handle properly cross-origin checks, we have to be able to use SecurityOrigin as in WebProcess.
+        We make WebProcess sends Origin Access White list information to NetworkProcess.
+        This allows supporting the white list when doing loading in NetworkProcess.
+        This only works consistently if all WebProcesses share the same whitelist.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::addOriginAccessWhitelistEntry):
+        (WebKit::NetworkConnectionToWebProcess::removeOriginAccessWhitelistEntry):
+        (WebKit::NetworkConnectionToWebProcess::resetOriginAccessWhitelists):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::continueCheckingRequest):
+        (WebKit::NetworkLoadChecker::checkCORSRequest):
+        (WebKit::NetworkLoadChecker::checkCORSRedirectedRequest):
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        (WebKit::NetworkLoadChecker::doesNotNeedCORSCheck const):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::create):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        * NetworkProcess/PingLoad.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addOriginAccessWhitelistEntry):
+        (WebKit::InjectedBundle::removeOriginAccessWhitelistEntry):
+        (WebKit::InjectedBundle::resetOriginAccessWhitelists):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::startPingLoad):
+
 2018-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] WaylandCompositorDisplay leaks its wl_display

@@ -44,7 +44,7 @@ class NetworkLoadChecker;
 
 class PingLoad final : private NetworkDataTaskClient {
 public:
-    PingLoad(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders, WTF::CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);
+    PingLoad(NetworkResourceLoadParameters&&, WTF::CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);
     
 private:
     ~PingLoad();

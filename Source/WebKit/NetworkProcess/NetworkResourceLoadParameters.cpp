@@ -87,10 +87,10 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
     encoder << static_cast<bool>(sourceOrigin);
     if (sourceOrigin)
-        encoder << sourceOrigin->data();
-    encoder.encodeEnum(mode);
-    encoder.encodeEnum(destination);
+        encoder << *sourceOrigin;
+    encoder << options;
     encoder << cspResponseHeaders;
+    encoder << originalRequestHeaders;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     encoder << mainDocumentURL;
@@ -171,18 +171,20 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(hasSourceOrigin))
         return false;
     if (hasSourceOrigin) {
-        std::optional<SecurityOriginData> sourceOriginData;
-        decoder >> sourceOriginData;
-        if (!sourceOriginData)
+        result.sourceOrigin = SecurityOrigin::decode(decoder);
+        if (!result.sourceOrigin)
             return false;
-        ASSERT(!sourceOriginData->isEmpty());
-        result.sourceOrigin = sourceOriginData->securityOrigin();
     }
-    if (!decoder.decodeEnum(result.mode))
+
+    std::optional<FetchOptions> options;
+    decoder >> options;
+    if (!options)
         return false;
-    if (!decoder.decodeEnum(result.destination))
-        return false;
+    result.options = *options;
+
     if (!decoder.decode(result.cspResponseHeaders))
+        return false;
+    if (!decoder.decode(result.originalRequestHeaders))
         return false;
 
 #if ENABLE(CONTENT_EXTENSIONS)

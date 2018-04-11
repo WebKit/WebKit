@@ -24,7 +24,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<char> data) Delayed
-    LoadPing(WebKit::NetworkResourceLoadParameters resourceLoadParameters, WebCore::HTTPHeaderMap originalRequestHeaders)
+    LoadPing(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     SetDefersLoading(uint64_t resourceLoadIdentifier, bool defers)
     PrefetchDNS(String hostname)
@@ -60,4 +60,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
     RemoveStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID);
+
+    AddOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
+    RemoveOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
+    ResetOriginAccessWhitelists();
 }

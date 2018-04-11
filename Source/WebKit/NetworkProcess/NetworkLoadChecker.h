@@ -42,9 +42,9 @@ class NetworkCORSPreflightChecker;
 
 class NetworkLoadChecker : public RefCounted<NetworkLoadChecker> {
 public:
-    static Ref<NetworkLoadChecker> create(WebCore::FetchOptions::Mode mode, bool shouldFollowRedirects, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PAL::SessionID sessionID, WebCore::HTTPHeaderMap&& originalHeaders, WebCore::URL&& url, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin)
+    static Ref<NetworkLoadChecker> create(WebCore::FetchOptions&& options, PAL::SessionID sessionID, WebCore::HTTPHeaderMap&& originalHeaders, WebCore::URL&& url, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin)
     {
-        return adoptRef(*new NetworkLoadChecker { mode, shouldFollowRedirects, storedCredentialsPolicy, sessionID, WTFMove(originalHeaders), WTFMove(url), WTFMove(sourceOrigin) });
+        return adoptRef(*new NetworkLoadChecker { WTFMove(options), sessionID, WTFMove(originalHeaders), WTFMove(url), WTFMove(sourceOrigin) });
     }
     ~NetworkLoadChecker();
 
@@ -68,7 +68,7 @@ public:
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
 
 private:
-    NetworkLoadChecker(WebCore::FetchOptions::Mode, bool shouldFollowRedirects, WebCore::StoredCredentialsPolicy, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&);
+    NetworkLoadChecker(WebCore::FetchOptions&&, PAL::SessionID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&);
 
     WebCore::ContentSecurityPolicy* contentSecurityPolicy() const;
     bool isChecking() const { return !!m_corsPreflightChecker; }
@@ -89,8 +89,7 @@ private:
     void processContentExtensionRulesForLoad(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&, const WebCore::ContentExtensions::BlockedStatus&)>&&);
 #endif
 
-    WebCore::FetchOptions::Mode m_mode;
-    bool m_shouldFollowRedirects;
+    WebCore::FetchOptions m_options;
     WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy;
     PAL::SessionID m_sessionID;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.

@@ -206,6 +206,9 @@ public:
 
     const SecurityOriginData& data() const { return m_data; }
 
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static RefPtr<SecurityOrigin> decode(Decoder&);
+
 private:
     SecurityOrigin();
     explicit SecurityOrigin(const URL&);
@@ -240,5 +243,56 @@ bool shouldTreatAsPotentiallyTrustworthy(const URL&);
 // Returns true if the Origin header values serialized from these two origins would be the same.
 bool originsMatch(const SecurityOrigin&, const SecurityOrigin&);
 bool originsMatch(const SecurityOrigin*, const SecurityOrigin*);
+
+template<class Encoder> inline void SecurityOrigin::encode(Encoder& encoder) const
+{
+    encoder << m_data;
+    encoder << m_domain;
+    encoder << m_filePath;
+    encoder << m_isUnique;
+    encoder << m_universalAccess;
+    encoder << m_domainWasSetInDOM;
+    encoder << m_canLoadLocalResources;
+    encoder.encodeEnum(m_storageBlockingPolicy);
+    encoder << m_enforcesFilePathSeparation;
+    encoder << m_needsStorageAccessFromFileURLsQuirk;
+    encoder << m_isPotentiallyTrustworthy;
+    encoder << m_isLocal;
+}
+
+template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Decoder& decoder)
+{
+    std::optional<SecurityOriginData> data;
+    decoder >> data;
+    if (!data)
+        return nullptr;
+
+    auto origin = SecurityOrigin::create(data->protocol, data->host, data->port);
+
+    if (!decoder.decode(origin->m_domain))
+        return nullptr;
+    if (!decoder.decode(origin->m_filePath))
+        return nullptr;
+    if (!decoder.decode(origin->m_isUnique))
+        return nullptr;
+    if (!decoder.decode(origin->m_universalAccess))
+        return nullptr;
+    if (!decoder.decode(origin->m_domainWasSetInDOM))
+        return nullptr;
+    if (!decoder.decode(origin->m_canLoadLocalResources))
+        return nullptr;
+    if (!decoder.decodeEnum(origin->m_storageBlockingPolicy))
+        return nullptr;
+    if (!decoder.decode(origin->m_enforcesFilePathSeparation))
+        return nullptr;
+    if (!decoder.decode(origin->m_needsStorageAccessFromFileURLsQuirk))
+        return nullptr;
+    if (!decoder.decode(origin->m_isPotentiallyTrustworthy))
+        return nullptr;
+    if (!decoder.decode(origin->m_isLocal))
+        return nullptr;
+
+    return WTFMove(origin);
+}
 
 } // namespace WebCore

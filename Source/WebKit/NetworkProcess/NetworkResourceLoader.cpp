@@ -472,7 +472,7 @@ ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceRespo
             // We reduce filtering when it would otherwise be visible to scripts.
             // FIXME: We should use response tainting once computed in Network Process.
             bool isSameOrigin = m_parameters.sourceOrigin ? m_parameters.sourceOrigin->canRequest(response.url()) : protocolHostAndPortAreEqual(response.url(), m_parameters.request.url());
-            if (isSameOrigin && m_parameters.destination == FetchOptions::Destination::EmptyString)
+            if (isSameOrigin && m_parameters.options.destination == FetchOptions::Destination::EmptyString)
                 type = ResourceResponse::SanitizationType::RemoveCookies;
         }
         response.sanitizeHTTPHeaderFields(type);

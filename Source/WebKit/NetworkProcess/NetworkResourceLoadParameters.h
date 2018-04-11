@@ -56,9 +56,9 @@ public:
     Seconds maximumBufferingTime;
     Vector<String> derivedCachedDataTypesToRetrieve;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
-    WebCore::FetchOptions::Mode mode;
-    WebCore::FetchOptions::Destination destination;
+    WebCore::FetchOptions options;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    WebCore::HTTPHeaderMap originalRequestHeaders;
     bool shouldRestrictHTTPResponseAccess { false };
 
 #if ENABLE(CONTENT_EXTENSIONS)
