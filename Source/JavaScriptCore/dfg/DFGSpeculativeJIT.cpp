@@ -12786,13 +12786,13 @@ void SpeculativeJIT::compileGetDirectPname(Node* node)
 
     // Otherwise it's out of line
     outOfLineAccess.link(&m_jit);
-    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), resultRegs.gpr());
+    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), resultRegs.payloadGPR());
     m_jit.move(indexGPR, scratchGPR);
     m_jit.sub32(MacroAssembler::Address(enumeratorGPR, JSPropertyNameEnumerator::cachedInlineCapacityOffset()), scratchGPR);
     m_jit.neg32(scratchGPR);
     m_jit.signExtend32ToPtr(scratchGPR, scratchGPR);
     int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
-    m_jit.loadValue(MacroAssembler::BaseIndex(resultRegs.gpr(), scratchGPR, MacroAssembler::TimesEight, offsetOfFirstProperty), resultRegs);
+    m_jit.loadValue(MacroAssembler::BaseIndex(resultRegs.payloadGPR(), scratchGPR, MacroAssembler::TimesEight, offsetOfFirstProperty), resultRegs);
 
     done.link(&m_jit);
 
