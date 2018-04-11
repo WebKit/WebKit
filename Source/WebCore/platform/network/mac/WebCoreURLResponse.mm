@@ -327,6 +327,17 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
 }
 #endif
 
+static bool schemeWasUpgradedDueToDynamicHSTS(NSURLRequest *request)
+{
+#if !USE(CFNETWORK_IGNORE_HSTS)
+    UNUSED_PARAM(request);
+    return false;
+#else
+    return [request respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)]
+        && [request _schemeWasUpgradedDueToDynamicHSTS];
+#endif
+}
+
 NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentRequest, NSURLRequest *newRequest, NSURLResponse *redirectResponse)
 {
     if (redirectResponse)

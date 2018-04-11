@@ -1,3 +1,62 @@
+2018-04-10  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r230467. rdar://problem/39317878
+
+    Refactor Ignore HSTS code
+    https://bugs.webkit.org/show_bug.cgi?id=184433
+    <rdar://problem/39298238>
+    
+    Reviewed by Darin Adler.
+    
+    This patch refactors our ignore HSTS code. The convenience functions are moved
+    out of CFNetwork SPI in PAL, and into where they are used. It also switches
+    from performSelector: calls to straight function calls, after checking that
+    there is a responder.
+    
+    Source/WebCore:
+    
+    * platform/network/mac/WebCoreURLResponse.mm:
+    (WebCore::schemeWasUpgradedDueToDynamicHSTS):
+        Add convenience function here since it was moved out of
+        CFNetworkSPI.h.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cf/CFNetworkSPI.h:
+    (schemeWasUpgradedDueToDynamicHSTS): Deleted.
+    (setIgnoreHSTS): Deleted.
+    (ignoreHSTS): Deleted.
+    
+    Source/WebKit:
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (schemeWasUpgradedDueToDynamicHSTS):
+    (setIgnoreHSTS):
+    (ignoreHSTS):
+        Add convenience functions here since they were moved out of
+        CFNetworkSPI.h.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230467 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-09  John Wilander  <wilander@apple.com>
+
+            Refactor Ignore HSTS code
+            https://bugs.webkit.org/show_bug.cgi?id=184433
+            <rdar://problem/39298238>
+
+            Reviewed by Darin Adler.
+
+            This patch refactors our ignore HSTS code. The convenience functions are moved
+            out of CFNetwork SPI in PAL, and into where they are used. It also switches
+            from performSelector: calls to straight function calls, after checking that
+            there is a responder.
+
+            * platform/network/mac/WebCoreURLResponse.mm:
+            (WebCore::schemeWasUpgradedDueToDynamicHSTS):
+                Add convenience function here since it was moved out of
+                CFNetworkSPI.h.
+
 2018-04-05  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228334. rdar://problem/38712636
