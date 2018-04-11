@@ -1,5 +1,25 @@
 2018-04-10  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r230379. rdar://problem/39317885
+
+    Unreviewed, follow-up patch for DFG 32bit
+    https://bugs.webkit.org/show_bug.cgi?id=183970
+    
+    * dfg/DFGSpeculativeJIT32_64.cpp:
+    (JSC::DFG::SpeculativeJIT::cachedGetById):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230379 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+            Unreviewed, follow-up patch for DFG 32bit
+            https://bugs.webkit.org/show_bug.cgi?id=183970
+
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::cachedGetById):
+
+2018-04-10  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r230376. rdar://problem/39317885
 
     [JSC] Introduce op_get_by_id_direct
