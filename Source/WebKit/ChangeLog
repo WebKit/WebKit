@@ -1,3 +1,14 @@
+2018-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Add UserAgentWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184438
+
+        Reviewed by Michael Catanzaro.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformUserAgent const):
+        Use WebCore::standardUserAgentForURL.
+
 2018-04-10  Megan Gardner  <megan_gardner@apple.com>
 
         Remove block selection code

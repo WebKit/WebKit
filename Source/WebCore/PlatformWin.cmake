@@ -105,6 +105,7 @@ list(APPEND WebCore_SOURCES
     platform/win/SharedBufferWin.cpp
     platform/win/StructuredExceptionHandlerSuppressor.cpp
     platform/win/SystemInfo.cpp
+    platform/win/UserAgentWin.cpp
     platform/win/WCDataObject.cpp
     platform/win/WebCoreBundleWin.cpp
     platform/win/WebCoreInstanceHandle.cpp

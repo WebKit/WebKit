@@ -138,7 +138,7 @@ String WebPage::platformUserAgent(const URL& url) const
     if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
         return String();
 
-    return String();
+    return WebCore::standardUserAgentForURL(url);
 }
 
 static const unsigned CtrlKey = 1 << 0;

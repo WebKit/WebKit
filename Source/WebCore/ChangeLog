@@ -1,3 +1,17 @@
+2018-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Add UserAgentWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184438
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests (No behavior change).
+
+        * PlatformWin.cmake:
+        * platform/win/UserAgentWin.cpp: Added.
+        (WebCore::standardUserAgent):
+        (WebCore::standardUserAgentForURL):
+
 2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add a mechanism to zoom to fixed scales when double tapping in extra zoom mode
