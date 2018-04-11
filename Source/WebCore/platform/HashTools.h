@@ -37,9 +37,9 @@ struct Value {
     int id;
 };
 
-const NamedColor* findColor(register const char* str, register unsigned int len);
-const Property* findProperty(register const char* str, register unsigned int len);
-const Value* findValue(register const char* str, register unsigned int len);
+const NamedColor* findColor(const char* str, unsigned len);
+const Property* findProperty(const char* str, unsigned len);
+const Value* findValue(const char* str, unsigned len);
 
 } // namespace WebCore
 
