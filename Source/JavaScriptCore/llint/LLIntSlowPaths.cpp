@@ -442,14 +442,13 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     CODEBLOCK_LOG_EVENT(codeBlock, "osrEntry", ("at bc#", loopOSREntryBytecodeOffset));
 
     ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
-    
-    Vector<BytecodeAndMachineOffset> map;
-    codeBlock->jitCodeMap()->decode(map);
-    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(map, map.size(), loopOSREntryBytecodeOffset, BytecodeAndMachineOffset::getBytecodeIndex);
-    ASSERT(mapping);
-    ASSERT(mapping->m_bytecodeIndex == loopOSREntryBytecodeOffset);
-    
-    void* jumpTarget = codeBlock->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+
+    const JITCodeMap& codeMap = codeBlock->jitCodeMap();
+    CodeLocationLabel codeLocation = codeMap.find(loopOSREntryBytecodeOffset);
+    ASSERT(codeLocation);
+
+    PtrTag locationTag = ptrTag(CodeEntryPtrTag, codeBlock, loopOSREntryBytecodeOffset);
+    void* jumpTarget = codeLocation.retagged(locationTag, CodeEntryPtrTag).executableAddress();
     ASSERT(jumpTarget);
     
     LLINT_RETURN_TWO(jumpTarget, exec->topOfFrame());

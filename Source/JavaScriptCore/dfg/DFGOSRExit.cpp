@@ -389,15 +389,12 @@ void OSRExit::executeOSRExit(Context& context)
         adjustedThreshold = BaselineExecutionCounter::clippedThreshold(codeBlock->globalObject(), adjustedThreshold);
 
         CodeBlock* codeBlockForExit = baselineCodeBlockForOriginAndBaselineCodeBlock(exit.m_codeOrigin, baselineCodeBlock);
-        Vector<BytecodeAndMachineOffset> decodedCodeMap;
-        codeBlockForExit->jitCodeMap()->decode(decodedCodeMap);
+        const JITCodeMap& codeMap = codeBlockForExit->jitCodeMap();
+        CodeLocationLabel codeLocation = codeMap.find(exit.m_codeOrigin.bytecodeIndex);
+        ASSERT(codeLocation);
 
-        BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), exit.m_codeOrigin.bytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);
-
-        ASSERT(mapping);
-        ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
-
-        void* jumpTarget = codeBlockForExit->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+        PtrTag locationTag = ptrTag(CodeEntryPtrTag, codeBlockForExit, exit.m_codeOrigin.bytecodeIndex);
+        void* jumpTarget = codeLocation.retagged(locationTag, CodeEntryPtrTag).executableAddress();
 
         // Compute the value recoveries.
         Operands<ValueRecovery> operands;

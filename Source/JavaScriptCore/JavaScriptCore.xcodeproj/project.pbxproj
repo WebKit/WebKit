@@ -549,7 +549,6 @@
 		0FD3E40E1B618B6600C80E1E /* PropertyCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3E4081B618B6600C80E1E /* PropertyCondition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD79A2D1EBBBDBB00DA88D3 /* Synchronousness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD79A2C1EBBBDB200DA88D3 /* Synchronousness.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD81AD3154FB4F000983E72 /* DFGDominators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD81AD0154FB4EB00983E72 /* DFGDominators.h */; };
-		0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E54141DAEEE00179C94 /* SpeculatedType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E4F141DAEA100179C94 /* SpeculatedType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */; };
 		0FD8A31417D4326C00CA2C40 /* CodeBlockSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A31217D4326C00CA2C40 /* CodeBlockSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1755,6 +1754,7 @@
 		FE3A06B41C10CB9300390FDD /* JITBitXorGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B01C10CB6F00390FDD /* JITBitXorGenerator.h */; };
 		FE3A06BE1C11041200390FDD /* JITLeftShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B71C1103D900390FDD /* JITLeftShiftGenerator.h */; };
 		FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */; };
+		FE476FF4207E85D50093CA2D /* JITCodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = FE476FF3207E85D40093CA2D /* JITCodeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48E6381EB118D2005D7A96 /* ObjectInitializationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
 		FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4D55B71AE716CA0052E459 /* IterationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2709,7 +2709,6 @@
 		0FD81AD0154FB4EB00983E72 /* DFGDominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDominators.h; path = dfg/DFGDominators.h; sourceTree = "<group>"; };
 		0FD82E1E14172C2F00179C94 /* DFGCapabilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCapabilities.cpp; path = dfg/DFGCapabilities.cpp; sourceTree = "<group>"; };
 		0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCapabilities.h; path = dfg/DFGCapabilities.h; sourceTree = "<group>"; };
-		0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactJITCodeMap.h; sourceTree = "<group>"; };
 		0FD82E4F141DAEA100179C94 /* SpeculatedType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeculatedType.h; sourceTree = "<group>"; };
 		0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSREntry.cpp; path = dfg/DFGOSREntry.cpp; sourceTree = "<group>"; };
 		0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSREntry.h; path = dfg/DFGOSREntry.h; sourceTree = "<group>"; };
@@ -4680,6 +4679,7 @@
 		FE3A06B81C1103D900390FDD /* JITRightShiftGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITRightShiftGenerator.cpp; sourceTree = "<group>"; };
 		FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITRightShiftGenerator.h; sourceTree = "<group>"; };
 		FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITSubGenerator.cpp; sourceTree = "<group>"; };
+		FE476FF3207E85D40093CA2D /* JITCodeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCodeMap.h; sourceTree = "<group>"; };
 		FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectInitializationScope.h; sourceTree = "<group>"; };
 		FE48E6371EB118AD005D7A96 /* ObjectInitializationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectInitializationScope.cpp; sourceTree = "<group>"; };
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
@@ -5477,7 +5477,6 @@
 				62D755D31B84FB39001801FA /* CallFrameShuffler64.cpp */,
 				DC17E8161C9C802B008A6AB3 /* CCallHelpers.cpp */,
 				0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */,
-				0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */,
 				0FF054F71AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp */,
 				0FF054F81AC35B4400E5BE57 /* ExecutableAllocationFuzz.h */,
 				A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */,
@@ -5510,6 +5509,7 @@
 				146FE51111A710430087AE66 /* JITCall32_64.cpp */,
 				0F8F94431667635200D61971 /* JITCode.cpp */,
 				86CCEFDD0F413F8900FD7F9E /* JITCode.h */,
+				FE476FF3207E85D40093CA2D /* JITCodeMap.h */,
 				0F0776BD14FF002800102332 /* JITCompilationEffort.h */,
 				0FAF7EFA165BA919000C8455 /* JITDisassembler.cpp */,
 				0FAF7EFB165BA919000C8455 /* JITDisassembler.h */,
@@ -8417,7 +8417,6 @@
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
 				6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */,
-				0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */,
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				0FDCE12A1FAFA85F006F3901 /* CompleteSubspace.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
@@ -8737,6 +8736,7 @@
 				0F25F1B4181635F300522F39 /* FTLSlowPathCallKey.h in Headers */,
 				E322E5A71DA644A8006E7709 /* FTLSnippetParams.h in Headers */,
 				0F235BD717178E1C00690C7F /* FTLStackmapArgumentList.h in Headers */,
+				FE476FF4207E85D50093CA2D /* JITCodeMap.h in Headers */,
 				0FEA0A12170513DB00BB722C /* FTLState.h in Headers */,
 				A7FCC26D17A0B6AA00786D1A /* FTLSwitchCase.h in Headers */,
 				0F235BE217178E1C00690C7F /* FTLThunks.h in Headers */,

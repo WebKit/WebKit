@@ -866,12 +866,15 @@ CompilationResult JIT::link()
             patchBuffer.locationOfNearCall(compilationInfo.hotPathOther));
     }
 
-    CompactJITCodeMap::Encoder jitCodeMapEncoder;
+    JITCodeMap jitCodeMap;
     for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
-        if (m_labels[bytecodeOffset].isSet())
-            jitCodeMapEncoder.append(bytecodeOffset, patchBuffer.offsetOf(m_labels[bytecodeOffset]));
+        if (m_labels[bytecodeOffset].isSet()) {
+            PtrTag tag = ptrTag(CodeEntryPtrTag, m_codeBlock, bytecodeOffset);
+            jitCodeMap.append(bytecodeOffset, patchBuffer.locationOf(m_labels[bytecodeOffset], tag));
+        }
     }
-    m_codeBlock->setJITCodeMap(jitCodeMapEncoder.finish());
+    jitCodeMap.finish();
+    m_codeBlock->setJITCodeMap(WTFMove(jitCodeMap));
 
     MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(m_arityCheck, CodeEntryWithArityCheckPtrTag);
 

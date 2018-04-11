@@ -50,20 +50,6 @@ ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
     return codeOrigin.inlineCallFrame->baselineCodeBlock->ownerExecutable();
 }
 
-Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* codeBlock)
-{
-    ASSERT(codeBlock == codeBlock->baselineVersion());
-    ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
-    ASSERT(codeBlock->jitCodeMap());
-    
-    HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset>>::AddResult result = m_decodedCodeMaps.add(codeBlock, Vector<BytecodeAndMachineOffset>());
-    
-    if (result.isNewEntry)
-        codeBlock->jitCodeMap()->decode(result.iterator->value);
-    
-    return result.iterator->value;
-}
-
 AssemblyHelpers::JumpList AssemblyHelpers::branchIfNotType(
     JSValueRegs regs, GPRReg tempGPR, const InferredType::Descriptor& descriptor, TagRegistersMode mode)
 {

@@ -317,16 +317,14 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
         jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
 
     CodeBlock* codeBlockForExit = jit.baselineCodeBlockFor(exit.m_codeOrigin);
-    Vector<BytecodeAndMachineOffset>& decodedCodeMap = jit.decodedCodeMapFor(codeBlockForExit);
-    
-    BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), exit.m_codeOrigin.bytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);
-    
-    ASSERT(mapping);
-    ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
+    ASSERT(codeBlockForExit == codeBlockForExit->baselineVersion());
+    ASSERT(codeBlockForExit->jitType() == JITCode::BaselineJIT);
+    CodeLocationLabel codeLocation = codeBlockForExit->jitCodeMap().find(exit.m_codeOrigin.bytecodeIndex);
+    ASSERT(codeLocation);
 
+    PtrTag locationTag = ptrTag(CodeEntryPtrTag, codeBlockForExit, exit.m_codeOrigin.bytecodeIndex);
     PtrTag exitTag = ptrTag(DFGOSRExitPtrTag, nextPtrTagID());
-    void* jumpTarget = retagCodePtr(codeBlockForExit->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset), CodeEntryPtrTag, exitTag);
-
+    void* jumpTarget = codeLocation.retagged(locationTag, exitTag).executableAddress();
     jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     if (exit.isExceptionHandler()) {
         // Since we're jumping to op_catch, we need to set callFrameForCatch.

@@ -1538,8 +1538,6 @@ public:
     
     void emitDumbVirtualCall(VM&, CallLinkInfo*);
     
-    Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
-
     void makeSpaceOnStackForCCall();
     void reclaimSpaceOnStackForCCall();
 
@@ -1661,8 +1659,6 @@ protected:
 
     CodeBlock* m_codeBlock;
     CodeBlock* m_baselineCodeBlock;
-
-    HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset>> m_decodedCodeMaps;
 };
 
 } // namespace JSC
