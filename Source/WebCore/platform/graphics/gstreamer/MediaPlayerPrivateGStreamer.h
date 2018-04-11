@@ -146,7 +146,7 @@ private:
     virtual void updateStates();
     virtual void asyncStateChangeDone();
 
-    void createGSTPlayBin();
+    void createGSTPlayBin(const gchar* playbinName);
 
     bool loadNextLocation();
     void mediaLocationChanged(GstMessage*);
@@ -178,7 +178,7 @@ private:
 
     void setPlaybinURL(const URL& urlString);
 
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
     void updateTracks();
 #endif
 
@@ -257,7 +257,7 @@ private:
     URL m_url;
     bool m_preservesPitch;
     bool m_isLegacyPlaybin;
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
     GRefPtr<GstStreamCollection> m_streamCollection;
 #endif
     String m_currentAudioStreamId;

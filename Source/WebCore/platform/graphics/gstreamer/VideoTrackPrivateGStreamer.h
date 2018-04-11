@@ -43,7 +43,7 @@ public:
     {
         return adoptRef(*new VideoTrackPrivateGStreamer(player, index, pad));
     }
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
     static Ref<VideoTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
     {
         return adoptRef(*new VideoTrackPrivateGStreamer(player, index, stream));
@@ -64,7 +64,7 @@ public:
 
 private:
     VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstPad>);
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
     VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstStream>);
 #endif
     AtomicString m_id;

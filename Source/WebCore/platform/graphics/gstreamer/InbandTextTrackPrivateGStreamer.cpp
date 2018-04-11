@@ -58,7 +58,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRe
     notifyTrackOfStreamChanged();
 }
 
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstStream> stream)
     : InbandTextTrackPrivate(WebVTT)
     , TrackPrivateBaseGStreamer(this, index, stream)

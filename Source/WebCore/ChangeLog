@@ -1,3 +1,38 @@
+2018-04-11  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Use of playbin3 when USE_PLAYBIN3 environment variable is set
+        https://bugs.webkit.org/show_bug.cgi?id=184498
+
+        Reviewed by Philippe Normand.
+
+        [GStreamer] Use of playbin3 when USE_PLAYBIN3 environment variable is set
+
+        This is the same behaviour as with playbin itself.
+
+        Make sure to keep using "playbin" for MediaSource.
+
+        No test added as this is basically a small rework of the way we expose a feature.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::enableTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::disconnect):
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+
 2018-04-10  Alex Christensen  <achristensen@webkit.org>
 
         IDN spoofing with Hebrew combining characters

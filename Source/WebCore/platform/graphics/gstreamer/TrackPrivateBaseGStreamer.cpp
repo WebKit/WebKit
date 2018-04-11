@@ -58,7 +58,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
     tagsChanged();
 }
 
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream> stream)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
@@ -82,7 +82,7 @@ void TrackPrivateBaseGStreamer::disconnect()
 {
     m_tags.clear();
 
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
     if (m_stream)
         m_stream.clear();
 #endif
@@ -115,7 +115,7 @@ void TrackPrivateBaseGStreamer::tagsChanged()
         else
             tags = adoptGRef(gst_tag_list_new_empty());
     }
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
     else if (m_stream)
         tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
 #endif

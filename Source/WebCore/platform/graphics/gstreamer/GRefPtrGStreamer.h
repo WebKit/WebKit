@@ -21,32 +21,11 @@
 
 #if USE(GSTREAMER)
 
+#include <gst/gst.h>
 #include <wtf/glib/GRefPtr.h>
 
-typedef struct _GstElement GstElement;
-typedef struct _GstPad GstPad;
-typedef struct _GstPadTemplate GstPadTemplate;
-typedef struct _GstCaps GstCaps;
-typedef struct _GstContext GstContext;
-typedef struct _GstTask GstTask;
-typedef struct _GstBus GstBus;
-typedef struct _GstElementFactory GstElementFactory;
-typedef struct _GstBuffer GstBuffer;
-typedef struct _GstBufferList GstBufferList;
-typedef struct _GstBufferPool GstBufferPool;
-typedef struct _GstSample GstSample;
-typedef struct _GstTagList GstTagList;
-typedef struct _GstEvent GstEvent;
-typedef struct _GstToc GstToc;
-typedef struct _GstMessage GstMessage;
-typedef struct _GstQuery GstQuery;
 typedef struct _WebKitVideoSink WebKitVideoSink;
 typedef struct _WebKitWebSrc WebKitWebSrc;
-
-#if USE(GSTREAMER_PLAYBIN3)
-typedef struct _GstStream GstStream;
-typedef struct _GstStreamCollection GstStreamCollection;
-#endif
 
 #if USE(GSTREAMER_GL)
 typedef struct _GstGLDisplay GstGLDisplay;
@@ -132,7 +111,7 @@ GRefPtr<WebKitWebSrc> ensureGRef(WebKitWebSrc* ptr);
 template<> WebKitWebSrc* refGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 template<> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 
-#if USE(GSTREAMER_PLAYBIN3)
+#if GST_CHECK_VERSION(1, 10, 0)
 template<> GRefPtr<GstStream> adoptGRef(GstStream*);
 template<> GstStream* refGPtr<GstStream>(GstStream*);
 template<> void derefGPtr<GstStream>(GstStream*);
