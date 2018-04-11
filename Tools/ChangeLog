@@ -1,3 +1,14 @@
+2018-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        IDN spoofing with Hebrew combining characters
+        https://bugs.webkit.org/show_bug.cgi?id=184472
+        <rdar://problem/39148687>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2018-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Missing label when focusing a <select> with a title attribute but no associated <label>
