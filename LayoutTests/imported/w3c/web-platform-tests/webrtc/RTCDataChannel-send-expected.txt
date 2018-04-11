@@ -1,7 +1,7 @@
 
 PASS Calling send() when data channel is in connecting state should throw InvalidStateError 
 PASS Data channel should be able to send simple string and receive as string 
-FAIL Data channel should be able to send unicode string and receive as unicode string assert_equals: expected "世界你好" but got "ä¸ç"
+PASS Data channel should be able to send unicode string and receive as unicode string 
 PASS Data channel should ignore binaryType and always receive string message as string 
 PASS Data channel should be able to send Uint8Array message and receive as ArrayBuffer 
 PASS Data channel should be able to send ArrayBuffer message and receive as ArrayBuffer 

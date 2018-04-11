@@ -47,7 +47,8 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client)
 
 bool LibWebRTCDataChannelHandler::sendStringData(const String& text)
 {
-    return m_channel->Send({rtc::CopyOnWriteBuffer(text.utf8().data(), text.length()), false});
+    auto utf8Text = text.utf8();
+    return m_channel->Send({ rtc::CopyOnWriteBuffer(utf8Text.data(), utf8Text.length()), false });
 }
 
 bool LibWebRTCDataChannelHandler::sendRawData(const char* data, size_t length)
@@ -96,12 +97,11 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
 
     std::unique_ptr<webrtc::DataBuffer> protectedBuffer(new webrtc::DataBuffer(buffer));
     callOnMainThread([protectedClient = makeRef(*m_client), buffer = WTFMove(protectedBuffer)] {
-        // FIXME: Ensure this is correct by adding some tests with non-ASCII characters.
-        const char* data = reinterpret_cast<const char*>(buffer->data.data());
+        const char* data = reinterpret_cast<const char*>(buffer->data.data<char>());
         if (buffer->binary)
             protectedClient->didReceiveRawData(data, buffer->size());
         else
-            protectedClient->didReceiveStringData(String(data, buffer->size()));
+            protectedClient->didReceiveStringData(String::fromUTF8(data, buffer->size()));
     });
 }
 

@@ -1,3 +1,16 @@
+2018-04-11  Jianjun Zhu  <jianjun.zhu@intel.com>
+
+        Fix a WebRTC data channel issue for non-ASCII characters.
+
+        At the sender side, buffer size are calulcated after UTF8 encoding. At the
+        receiver side, strings are constructed with UTF8 data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=184481
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/webrtc/RTCDataChannel-send-expected.txt:
+
 2018-04-09  Brendan McLoughlin  <brendan@bocoup.com>
 
         sync remaining web-platform-tests to 94b33b573a069ae5170104ca581a354a35762536
