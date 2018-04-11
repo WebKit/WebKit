@@ -1,3 +1,48 @@
+2018-04-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove block selection code
+        https://bugs.webkit.org/show_bug.cgi?id=184470
+
+        Reviewed by Timothy Hatcher.
+        
+        Remove block selection code that isn't run and is currently not even used.
+        Had to put this back in for a bug in the mid-year release, but we're past that
+        so it's time for this to go away.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::stopAssistingNode):
+        (WebKit::PageClientImpl::didUpdateBlockSelectionWithTouch): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toSelectionHandlePosition): Deleted.
+        (-[WKContentView _didUpdateBlockSelectionWithTouch:withFlags:growThreshold:shrinkThreshold:]): Deleted.
+        (-[WKContentView changeSelectionWithTouchAt:withSelectionTouch:baseIsStart:]): Deleted.
+        (-[WKContentView changeBlockSelectionWithTouchAt:withSelectionTouch:forHandle:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::saveImageToLibrary):
+        (WebKit::WebPageProxy::updateBlockSelectionWithTouch): Deleted.
+        (WebKit::WebPageProxy::didUpdateBlockSelectionWithTouch): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeAtWordBoundaryForPosition):
+        (WebKit::distanceBetweenRectsForPosition): Deleted.
+        (WebKit::rectsEssentiallyTheSame): Deleted.
+        (WebKit::unionDOMRanges): Deleted.
+        (WebKit::computeEdgeCenter): Deleted.
+        (WebKit::WebPage::expandedRangeFromHandle): Deleted.
+        (WebKit::WebPage::contractedRangeFromHandle): Deleted.
+        (WebKit::WebPage::computeExpandAndShrinkThresholdsForHandle): Deleted.
+        (WebKit::WebPage::rangeForBlockAtPoint): Deleted.
+        (WebKit::shouldExpand): Deleted.
+        (WebKit::WebPage::changeBlockSelection): Deleted.
+        (WebKit::WebPage::updateBlockSelectionWithTouch): Deleted.
+
 2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add a mechanism to zoom to fixed scales when double tapping in extra zoom mode

@@ -673,18 +673,6 @@ void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, u
     auto buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), imageSize);
     m_pageClient.saveImageToLibrary(WTFMove(buffer));
 }
-    
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
-void WebPageProxy::updateBlockSelectionWithTouch(const WebCore::IntPoint point, uint32_t touch, uint32_t handlePosition)
-{
-    m_process->send(Messages::WebPage::UpdateBlockSelectionWithTouch(point, touch, handlePosition), m_pageID);
-}
-    
-void WebPageProxy::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t flags, float growThreshold, float shrinkThreshold)
-{
-    m_pageClient.didUpdateBlockSelectionWithTouch(touch, flags, growThreshold, shrinkThreshold);
-}
-#endif
 
 void WebPageProxy::applicationDidEnterBackground()
 {
