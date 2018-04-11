@@ -1,5 +1,15 @@
 2018-04-10  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix after r230468
+
+        Roll out an assertion added in r230468 that should not be present
+        until https://bugs.webkit.org/show_bug.cgi?id=184451 is landed.
+
+        * Shared/mac/HangDetectionDisablerMac.mm:
+        (WebKit::setClientsMayIgnoreEvents):
+
+2018-04-10  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed follow-up to r230468.
 
         Switch some RELEASE_ASSERTs in hot codepaths to normal DEBUG asserts.

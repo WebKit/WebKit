@@ -53,7 +53,8 @@ static void setClientsMayIgnoreEvents(bool clientsMayIgnoreEvents)
     // In this case, there will be no valid WindowServer main connection.
     if (!cgsId)
         return;
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    // FIXME: <https://webkit.org/b/184484> We should assert here if this is being called from
+    // the WebContent process.
 #endif
     if (CGSSetConnectionProperty(cgsId, cgsId, clientsMayIgnoreEventsKey, clientsMayIgnoreEvents ? kCFBooleanTrue : kCFBooleanFalse) != kCGErrorSuccess)
         ASSERT_NOT_REACHED();
