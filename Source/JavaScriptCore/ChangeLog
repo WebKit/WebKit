@@ -1,5 +1,16 @@
 2018-04-11  Mark Lam  <mark.lam@apple.com>
 
+        [Build fix] Replace CompactJITCodeMap with JITCodeMap.
+        https://bugs.webkit.org/show_bug.cgi?id=184512
+        <rdar://problem/35391728>
+
+        Not reviewed.
+
+        * bytecode/CodeBlock.h:
+        * jit/JITCodeMap.h:
+
+2018-04-11  Mark Lam  <mark.lam@apple.com>
+
         Replace CompactJITCodeMap with JITCodeMap.
         https://bugs.webkit.org/show_bug.cgi?id=184512
         <rdar://problem/35391728>

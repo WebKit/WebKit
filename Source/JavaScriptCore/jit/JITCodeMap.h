@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(JIT)
+
 #include "CodeLocation.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -76,3 +78,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(JIT)

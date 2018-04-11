@@ -301,6 +301,7 @@ public:
 
     void linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo*);
 
+#if ENABLE(JIT)
     void setJITCodeMap(JITCodeMap&& jitCodeMap)
     {
         m_jitCodeMap = WTFMove(jitCodeMap);
@@ -309,7 +310,8 @@ public:
     {
         return m_jitCodeMap;
     }
-    
+#endif
+
     typedef JSC::Instruction Instruction;
     typedef PoisonedRefCountedArray<CodeBlockPoison, Instruction>& UnpackedInstructions;
 
@@ -986,8 +988,8 @@ private:
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
     SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
-#endif
     JITCodeMap m_jitCodeMap;
+#endif
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.
