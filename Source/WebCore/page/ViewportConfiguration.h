@@ -74,7 +74,7 @@ public:
     const IntSize& contentsSize() const { return m_contentSize; }
     WEBCORE_EXPORT bool setContentsSize(const IntSize&);
 
-    WEBCORE_EXPORT FloatSize viewSize() const { return m_viewSize; }
+    FloatSize viewSize() const { return m_viewSize; }
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
     WEBCORE_EXPORT bool setMinimumLayoutSize(const FloatSize&, const FloatSize& viewSize);

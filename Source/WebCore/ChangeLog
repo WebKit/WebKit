@@ -1,3 +1,12 @@
+2018-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS build
+
+        I accidentally exported an inline function in r230506.
+
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::viewSize const):
+
 2018-04-10  Nan Wang  <n_wang@apple.com>
 
         AX: Expose strong password fields on iOS
