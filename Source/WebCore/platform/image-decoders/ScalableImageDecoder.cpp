@@ -176,7 +176,7 @@ bool ScalableImageDecoder::frameIsCompleteAtIndex(size_t index) const
     // FIXME(176089): asking whether enough data has been appended for a decode
     // operation to succeed should not require decoding the entire frame.
     // This function should be implementable in a way that allows const.
-    ImageFrame* buffer = const_cast<ScalableImageDecoder*>(this)->frameBufferAtIndex(index);
+    auto* buffer = const_cast<ScalableImageDecoder*>(this)->frameBufferAtIndex(index);
     return buffer && buffer->isComplete();
 }
 
@@ -205,7 +205,7 @@ Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const
     // FIXME(176089): asking for the duration of a sub-image should not require decoding
     // the entire frame. This function should be implementable in a way that
     // allows const.
-    ImageFrame* buffer = const_cast<ScalableImageDecoder*>(this)->frameBufferAtIndex(index);
+    auto* buffer = const_cast<ScalableImageDecoder*>(this)->frameBufferAtIndex(index);
     if (!buffer || buffer->isInvalid())
         return 0_s;
     
@@ -225,7 +225,7 @@ NativeImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, Subsa
     if (size().isEmpty())
         return nullptr;
 
-    ImageFrame* buffer = frameBufferAtIndex(index);
+    auto* buffer = frameBufferAtIndex(index);
     if (!buffer || buffer->isInvalid() || !buffer->hasBackingStore())
         return nullptr;
 

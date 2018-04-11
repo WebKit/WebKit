@@ -56,7 +56,7 @@ void BMPImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         m_reader->setData(&data);
 }
 
-ImageFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
+ScalableImageDecoderFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index)
         return 0;
@@ -64,7 +64,7 @@ ImageFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.grow(1);
 
-    ImageFrame* buffer = &m_frameBufferCache.first();
+    auto* buffer = &m_frameBufferCache.first();
     if (!buffer->isComplete())
         decode(false, isAllDataReceived());
     return buffer;

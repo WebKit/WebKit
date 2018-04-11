@@ -29,8 +29,8 @@
 #pragma once
 
 #include "ImageDecoder.h"
-#include "ImageFrame.h"
 #include "IntRect.h"
+#include "ScalableImageDecoderFrame.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
 #include <wtf/Lock.h>
@@ -41,7 +41,7 @@
 namespace WebCore {
 
 // ScalableImageDecoder is a base for all format-specific decoders
-// (e.g. JPEGImageDecoder). This base manages the ImageFrame cache.
+// (e.g. JPEGImageDecoder). This base manages the ScalableImageDecoderFrame cache.
 
 class ScalableImageDecoder : public ImageDecoder {
     WTF_MAKE_NONCOPYABLE(ScalableImageDecoder); WTF_MAKE_FAST_ALLOCATED;
@@ -134,7 +134,7 @@ public:
 
     // Decodes as much of the requested frame as possible, and returns an
     // ScalableImageDecoder-owned pointer.
-    virtual ImageFrame* frameBufferAtIndex(size_t) = 0;
+    virtual ScalableImageDecoderFrame* frameBufferAtIndex(size_t) = 0;
 
     bool frameIsCompleteAtIndex(size_t) const override;
 
@@ -205,7 +205,7 @@ protected:
     int scaledY(int origY, int searchStart = 0);
 
     RefPtr<SharedBuffer> m_data; // The encoded data.
-    Vector<ImageFrame, 1> m_frameBufferCache;
+    Vector<ScalableImageDecoderFrame, 1> m_frameBufferCache;
     mutable Lock m_mutex;
     bool m_scaled { false };
     Vector<int> m_scaledColumns;

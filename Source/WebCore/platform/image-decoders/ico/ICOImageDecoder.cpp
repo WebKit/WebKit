@@ -90,13 +90,13 @@ size_t ICOImageDecoder::frameCount() const
     return m_frameBufferCache.size();
 }
 
-ImageFrame* ICOImageDecoder::frameBufferAtIndex(size_t index)
+ScalableImageDecoderFrame* ICOImageDecoder::frameBufferAtIndex(size_t index)
 {
     // Ensure |index| is valid.
     if (index >= frameCount())
         return 0;
 
-    ImageFrame* buffer = &m_frameBufferCache[index];
+    auto* buffer = &m_frameBufferCache[index];
     if (!buffer->isComplete())
         decode(index, false, isAllDataReceived());
     return buffer;

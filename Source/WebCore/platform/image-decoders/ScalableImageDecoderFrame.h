@@ -36,22 +36,19 @@
 
 namespace WebCore {
 
-class ImageFrame {
-    friend class ImageSource;
+class ScalableImageDecoderFrame {
 public:
-    enum class Caching { Metadata, MetadataAndImage };
+    ScalableImageDecoderFrame();
+    ScalableImageDecoderFrame(const ScalableImageDecoderFrame& other) { operator=(other); }
 
-    ImageFrame();
-    ImageFrame(const ImageFrame& other) { operator=(other); }
+    ~ScalableImageDecoderFrame();
 
-    ~ImageFrame();
+    ScalableImageDecoderFrame& operator=(const ScalableImageDecoderFrame& other);
 
-    static const ImageFrame& defaultFrame();
+    void clear();
 
-    ImageFrame& operator=(const ImageFrame& other);
-
-    unsigned clearImage();
-    unsigned clear();
+    bool initialize(const ImageBackingStore&);
+    bool initialize(const IntSize&, bool premultiplyAlpha);
 
     void setDecodingStatus(DecodingStatus);
     DecodingStatus decodingStatus() const;
@@ -61,11 +58,10 @@ public:
     bool isComplete() const { return m_decodingStatus == DecodingStatus::Complete; }
 
     IntSize size() const;
-    IntSize sizeRespectingOrientation() const { return !m_orientation.usesWidthAsHeight() ? size() : size().transposedSize(); }
-    unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(uint32_t)).unsafeGet() : 0; }
-    SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
 
-    NativeImagePtr nativeImage() const { return m_nativeImage; }
+    enum class DisposalMethod { Unspecified, DoNotDispose, RestoreToBackground, RestoreToPrevious };
+    void setDisposalMethod(DisposalMethod method) { m_disposalMethod = method; }
+    DisposalMethod disposalMethod() const { return m_disposalMethod; }
 
     void setOrientation(ImageOrientation orientation) { m_orientation = orientation; };
     ImageOrientation orientation() const { return m_orientation; }
@@ -75,21 +71,16 @@ public:
 
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
-
-    bool hasNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
-    bool hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
-    bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 
-    Color singlePixelSolidColor() const;
+    ImageBackingStore* backingStore() const { return m_backingStore ? m_backingStore.get() : nullptr; }
+    bool hasBackingStore() const { return backingStore(); }
 
 private:
     DecodingStatus m_decodingStatus { DecodingStatus::Invalid };
-    IntSize m_size;
 
-    NativeImagePtr m_nativeImage;
-    SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
-    DecodingOptions m_decodingOptions;
+    std::unique_ptr<ImageBackingStore> m_backingStore;
+    DisposalMethod m_disposalMethod { DisposalMethod::Unspecified };
 
     ImageOrientation m_orientation { DefaultImageOrientation };
     Seconds m_duration;

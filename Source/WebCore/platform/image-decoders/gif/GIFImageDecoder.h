@@ -50,7 +50,7 @@ public:
     bool setSize(const IntSize&) final;
     size_t frameCount() const final;
     RepetitionCount repetitionCount() const final;
-    ImageFrame* frameBufferAtIndex(size_t index) final;
+    ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) final;
     // CAUTION: setFailed() deletes |m_reader|. Be careful to avoid
     // accessing deleted memory, especially when calling this from inside
     // GIFImageReader!
@@ -59,7 +59,7 @@ public:
 
     // Callbacks from the GIF reader.
     bool haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels);
-    bool frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::DisposalMethod);
+    bool frameComplete(unsigned frameIndex, unsigned frameDuration, ScalableImageDecoderFrame::DisposalMethod);
     void gifComplete();
 
 private:

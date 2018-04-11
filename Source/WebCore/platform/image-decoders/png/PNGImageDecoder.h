@@ -51,7 +51,7 @@ namespace WebCore {
         RepetitionCount repetitionCount() const override;
 #endif
         bool setSize(const IntSize&) override;
-        ImageFrame* frameBufferAtIndex(size_t index) override;
+        ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // PNGImageReader!

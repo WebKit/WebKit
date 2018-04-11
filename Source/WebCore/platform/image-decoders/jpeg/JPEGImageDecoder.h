@@ -53,7 +53,7 @@ namespace WebCore {
         // ScalableImageDecoder
         String filenameExtension() const override { return ASCIILiteral("jpg"); }
         bool setSize(const IntSize&) override;
-        ImageFrame* frameBufferAtIndex(size_t index) override;
+        ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // JPEGImageReader!
@@ -80,10 +80,10 @@ namespace WebCore {
         void decode(bool onlySize, bool allDataReceived);
 
         template <J_COLOR_SPACE colorSpace>
-        bool outputScanlines(ImageFrame& buffer);
+        bool outputScanlines(ScalableImageDecoderFrame& buffer);
 
         template <J_COLOR_SPACE colorSpace, bool isScaled>
-        bool outputScanlines(ImageFrame& buffer);
+        bool outputScanlines(ScalableImageDecoderFrame& buffer);
 
         std::unique_ptr<JPEGImageReader> m_reader;
     };

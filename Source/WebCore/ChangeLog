@@ -1,3 +1,126 @@
+2018-04-11  Antti Koivisto  <antti@apple.com>
+
+        ImageFrame type used by non-Cocoa image decoder should not be the same as that used by ImageSource
+        https://bugs.webkit.org/show_bug.cgi?id=184418
+
+        Reviewed by Said Abou-Hallawa.
+
+        ScalableImageDecoder uses ImageFrame class which is meant to be an implementation detail of ImageSource.
+        There are bunch of fields and methods in the type that are only used by one or the other client. For hackability
+        there should be an unrelated frame type for ScalableImageDecoder.
+
+        This patch adds ScalableImageDecoderFrame type used in ScalableImageDecoder only. It then cleans up
+        unneeded things from both ImageFrame and ScalableImageDecoderFrame.
+
+        * platform/ImageDecoders.cmake:
+        * platform/graphics/ImageFrame.cpp:
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::clearImage):
+        (WebCore::ImageFrame::size const):
+        (WebCore::ImageFrame::initialize): Deleted.
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::setDisposalMethod): Deleted.
+        (WebCore::ImageFrame::disposalMethod const): Deleted.
+        (WebCore::ImageFrame::backingStore const): Deleted.
+        (WebCore::ImageFrame::hasBackingStore const): Deleted.
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::frameIsCompleteAtIndex const):
+        (WebCore::ScalableImageDecoder::frameDurationAtIndex const):
+        (WebCore::ScalableImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/ScalableImageDecoder.h:
+        * platform/image-decoders/ScalableImageDecoderFrame.cpp: Copied from Source/WebCore/platform/graphics/ImageFrame.cpp.
+        (WebCore::ScalableImageDecoderFrame::ScalableImageDecoderFrame):
+        (WebCore::ScalableImageDecoderFrame::~ScalableImageDecoderFrame):
+        (WebCore::ScalableImageDecoderFrame::operator=):
+        (WebCore::ScalableImageDecoderFrame::setDecodingStatus):
+        (WebCore::ScalableImageDecoderFrame::decodingStatus const):
+        (WebCore::ScalableImageDecoderFrame::clearImage):
+        (WebCore::ScalableImageDecoderFrame::clear):
+        (WebCore::ScalableImageDecoderFrame::initialize):
+        (WebCore::ScalableImageDecoderFrame::size const):
+        (WebCore::ImageFrame::ImageFrame): Deleted.
+        (WebCore::ImageFrame::~ImageFrame): Deleted.
+        (WebCore::ImageFrame::defaultFrame): Deleted.
+        (WebCore::ImageFrame::operator=): Deleted.
+        (WebCore::ImageFrame::setDecodingStatus): Deleted.
+        (WebCore::ImageFrame::decodingStatus const): Deleted.
+        (WebCore::ImageFrame::clearImage): Deleted.
+        (WebCore::ImageFrame::clear): Deleted.
+        (WebCore::ImageFrame::initialize): Deleted.
+        (WebCore::ImageFrame::size const): Deleted.
+        (WebCore::ImageFrame::hasNativeImage const): Deleted.
+        (WebCore::ImageFrame::hasFullSizeNativeImage const): Deleted.
+        (WebCore::ImageFrame::hasDecodedNativeImageCompatibleWithOptions const): Deleted.
+        (WebCore::ImageFrame::singlePixelSolidColor const): Deleted.
+        * platform/image-decoders/ScalableImageDecoderFrame.h: Copied from Source/WebCore/platform/graphics/ImageFrame.h.
+        (WebCore::ScalableImageDecoderFrame::ScalableImageDecoderFrame):
+        (WebCore::ScalableImageDecoderFrame::disposalMethod const):
+        (WebCore::ScalableImageDecoderFrame::hasAlpha const):
+        (WebCore::ScalableImageDecoderFrame::hasBackingStore const):
+        (WebCore::ImageFrame::ImageFrame): Deleted.
+        (WebCore::ImageFrame::isInvalid const): Deleted.
+        (WebCore::ImageFrame::isPartial const): Deleted.
+        (WebCore::ImageFrame::isComplete const): Deleted.
+        (WebCore::ImageFrame::sizeRespectingOrientation const): Deleted.
+        (WebCore::ImageFrame::frameBytes const): Deleted.
+        (WebCore::ImageFrame::subsamplingLevel const): Deleted.
+        (WebCore::ImageFrame::setDisposalMethod): Deleted.
+        (WebCore::ImageFrame::disposalMethod const): Deleted.
+        (WebCore::ImageFrame::nativeImage const): Deleted.
+        (WebCore::ImageFrame::setOrientation): Deleted.
+        (WebCore::ImageFrame::orientation const): Deleted.
+        (WebCore::ImageFrame::setDuration): Deleted.
+        (WebCore::ImageFrame::duration const): Deleted.
+        (WebCore::ImageFrame::setHasAlpha): Deleted.
+        (WebCore::ImageFrame::hasAlpha const): Deleted.
+        (WebCore::ImageFrame::hasNativeImage): Deleted.
+        (WebCore::ImageFrame::hasFullSizeNativeImage): Deleted.
+        (WebCore::ImageFrame::hasMetadata const): Deleted.
+        (WebCore::ImageFrame::backingStore const): Deleted.
+        (WebCore::ImageFrame::hasBackingStore const): Deleted.
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/bmp/BMPImageReader.h:
+        (WebCore::BMPImageReader::setBuffer):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::findFirstRequiredFrameToDecode):
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::frameComplete):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::parse):
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFFrameContext::GIFFrameContext):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        (WebCore::setPixel):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        (WebCore::JPEGImageDecoder::jpegComplete):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::rowAvailable):
+        (WebCore::PNGImageDecoder::readChunks):
+        (WebCore::PNGImageDecoder::clearFrameBufferCache):
+        (WebCore::PNGImageDecoder::initFrameBuffer):
+        (WebCore::PNGImageDecoder::frameComplete):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::frameBufferAtIndex):
+        (WebCore::WEBPImageDecoder::findFirstRequiredFrameToDecode):
+        (WebCore::WEBPImageDecoder::decodeFrame):
+        (WebCore::WEBPImageDecoder::initFrameBuffer):
+        (WebCore::WEBPImageDecoder::applyPostProcessing):
+        (WebCore::WEBPImageDecoder::clearFrameBufferCache):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2018-04-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn Web Animations on by default

@@ -511,7 +511,7 @@ bool JPEGImageDecoder::setSize(const IntSize& size)
     return true;
 }
 
-ImageFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
+ScalableImageDecoderFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index)
         return 0;
@@ -519,7 +519,7 @@ ImageFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.grow(1);
 
-    ImageFrame& frame = m_frameBufferCache[0];
+    auto& frame = m_frameBufferCache[0];
     if (!frame.isComplete())
         decode(false, isAllDataReceived());
     return &frame;
@@ -532,7 +532,7 @@ bool JPEGImageDecoder::setFailed()
 }
 
 template <J_COLOR_SPACE colorSpace>
-void setPixel(ImageFrame& buffer, uint32_t* currentAddress, JSAMPARRAY samples, int column)
+void setPixel(ScalableImageDecoderFrame& buffer, uint32_t* currentAddress, JSAMPARRAY samples, int column)
 {
     JSAMPLE* jsample = *samples + column * (colorSpace == JCS_RGB ? 3 : 4);
 
@@ -557,7 +557,7 @@ void setPixel(ImageFrame& buffer, uint32_t* currentAddress, JSAMPARRAY samples, 
 }
 
 template <J_COLOR_SPACE colorSpace, bool isScaled>
-bool JPEGImageDecoder::outputScanlines(ImageFrame& buffer)
+bool JPEGImageDecoder::outputScanlines(ScalableImageDecoderFrame& buffer)
 {
     JSAMPARRAY samples = m_reader->samples();
     jpeg_decompress_struct* info = m_reader->info();
@@ -585,7 +585,7 @@ bool JPEGImageDecoder::outputScanlines(ImageFrame& buffer)
 }
 
 template <J_COLOR_SPACE colorSpace>
-bool JPEGImageDecoder::outputScanlines(ImageFrame& buffer)
+bool JPEGImageDecoder::outputScanlines(ScalableImageDecoderFrame& buffer)
 {
     return m_scaled ? outputScanlines<colorSpace, true>(buffer) : outputScanlines<colorSpace, false>(buffer);
 }
@@ -596,7 +596,7 @@ bool JPEGImageDecoder::outputScanlines()
         return false;
 
     // Initialize the framebuffer if needed.
-    ImageFrame& buffer = m_frameBufferCache[0];
+    auto& buffer = m_frameBufferCache[0];
     if (buffer.isInvalid()) {
         if (!buffer.initialize(scaledSize(), m_premultiplyAlpha))
             return setFailed();
@@ -642,7 +642,7 @@ void JPEGImageDecoder::jpegComplete()
 
     // Hand back an appropriately sized buffer, even if the image ended up being
     // empty.
-    ImageFrame& buffer = m_frameBufferCache[0];
+    auto& buffer = m_frameBufferCache[0];
     buffer.setHasAlpha(false);
     buffer.setDecodingStatus(DecodingStatus::Complete);
 }

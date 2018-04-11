@@ -51,7 +51,7 @@ public:
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel) const final;
     bool setSize(const IntSize&) final;
     size_t frameCount() const final;
-    ImageFrame* frameBufferAtIndex(size_t) final;
+    ScalableImageDecoderFrame* frameBufferAtIndex(size_t) final;
     // CAUTION: setFailed() deletes all readers and decoders. Be careful to
     // avoid accessing deleted memory, especially when calling this from
     // inside BMPImageReader!
