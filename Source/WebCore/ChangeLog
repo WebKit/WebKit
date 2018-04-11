@@ -1,3 +1,16 @@
+2018-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKit] LibWebRTCProvider::webRTCAvailable is an undefined symbol
+        https://bugs.webkit.org/show_bug.cgi?id=184437
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests (No behavior change).
+
+        * PlatformWin.cmake: Added LibWebRTCProviderWin.cpp.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderWin.cpp: Added.
+        (WebCore::LibWebRTCProvider::webRTCAvailable):
+
 2018-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix.
