@@ -336,7 +336,7 @@ private:
     bool m_isWritableStreamAPIEnabled { false };
 #endif
 
-    bool m_areWebAnimationsEnabled { false };
+    bool m_areWebAnimationsEnabled { true };
     bool m_areCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled { false };
 
 #if ENABLE(WEBGL2)

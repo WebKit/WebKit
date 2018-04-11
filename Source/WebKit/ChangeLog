@@ -1,3 +1,12 @@
+2018-04-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations on by default
+        https://bugs.webkit.org/show_bug.cgi?id=184491
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferences.yaml:
+
 2018-04-10  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r230468
