@@ -1,3 +1,73 @@
+2018-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Remove duplicate 32bit code more
+        https://bugs.webkit.org/show_bug.cgi?id=184236
+
+        Reviewed by Mark Lam.
+
+        Remove duplicate 32bit code more aggressively part 2.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCompareSlowPathGenerator.h: Added.
+        (JSC::DFG::CompareSlowPathGenerator::CompareSlowPathGenerator):
+        Drop boxing part. Use unblessedBooleanResult in DFGSpeculativeJIT side instead.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileOverridesHasInstance):
+        (JSC::DFG::SpeculativeJIT::compileLoadVarargs):
+        (JSC::DFG::SpeculativeJIT::compileIsObject):
+        (JSC::DFG::SpeculativeJIT::compileCheckNotEmpty):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compilePutById):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdDirect):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSize):
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitInitializeButterfly):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        (JSC::DFG::SpeculativeJIT::compileGetDirectPname):
+        (JSC::DFG::SpeculativeJIT::compileExtractCatchLocal):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompare): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::selectScratchGPR): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::cachedPutById): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch): Deleted.
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator): Deleted.
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::generateInternal): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitInitializeButterfly): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::cachedPutById): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch): Deleted.
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator): Deleted.
+        (): Deleted.
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileMiscStrictEq): Deleted.
+        (JSC::DFG::SpeculativeJIT::emitInitializeButterfly): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+        operationHasIndexedPropertyByInt starts returning unblessed boolean with size_t.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::loadValue):
+        (JSC::AssemblyHelpers::selectScratchGPR):
+        (JSC::AssemblyHelpers::constructRegisterSet):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::setAny):
+        Clean up selectScratchGPR code to pass JSValueRegs.
+
 2018-04-10  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Add support for BigInt in SpeculatedType

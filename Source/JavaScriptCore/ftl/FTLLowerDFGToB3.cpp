@@ -10023,9 +10023,8 @@ private:
             m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
 
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(m_out.equal(
-                m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+            ValueFromBlock slowResult = m_out.anchor(
+                m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -10060,9 +10059,8 @@ private:
             m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
             
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(m_out.equal(
-                m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+            ValueFromBlock slowResult = m_out.anchor(
+                m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -10096,9 +10094,8 @@ private:
             m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
 
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(m_out.equal(
-                m_out.constInt64(JSValue::encode(jsBoolean(true))),
-                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+            ValueFromBlock slowResult = m_out.anchor(
+                m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -10110,9 +10107,7 @@ private:
             LValue base = lowCell(m_node->child1());
             LValue index = lowInt32(m_node->child2());
             LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
-            setBoolean(m_out.equal(
-                m_out.constInt64(JSValue::encode(jsBoolean(true))),
-                vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
+            setBoolean(m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
             break;
         }
         }

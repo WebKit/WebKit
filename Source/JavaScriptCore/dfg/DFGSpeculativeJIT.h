@@ -345,11 +345,6 @@ public:
 
     void compileStoreBarrier(Node*);
 
-    static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg, GPRReg preserve4 = InvalidGPRReg)
-    {
-        return AssemblyHelpers::selectScratchGPR(preserve1, preserve2, preserve3, preserve4);
-    }
-
     // Called by the speculative operand types, below, to fill operand to
     // machine registers, implicitly generating speculation checks as needed.
     GPRReg fillSpeculateInt32(Edge, DataFormat& returnFormat);
@@ -725,14 +720,13 @@ public:
     void compileMovHintAndCheck(Node*);
 
     void cachedGetById(CodeOrigin, JSValueRegs base, JSValueRegs result, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
+    void cachedPutById(CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
 
 #if USE(JSVALUE64)
     void cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
     void cachedGetByIdWithThis(CodeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::JumpList slowPathTarget = JITCompiler::JumpList());
 #elif USE(JSVALUE32_64)
     void cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
     void cachedGetByIdWithThis(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg thisTagGPROrNone, GPRReg thisPayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::JumpList slowPathTarget = JITCompiler::JumpList());
 #endif
 
@@ -748,7 +742,6 @@ public:
     
     void nonSpeculativePeepholeBranch(Node*, Node* branchNode, MacroAssembler::RelationalCondition, S_JITOperation_EJJ helperFunction);
     void nonSpeculativeNonPeepholeCompare(Node*, MacroAssembler::RelationalCondition, S_JITOperation_EJJ helperFunction);
-    bool nonSpeculativeCompare(Node*, MacroAssembler::RelationalCondition, S_JITOperation_EJJ helperFunction);
     
     void nonSpeculativePeepholeStrictEq(Node*, Node* branchNode, bool invert = false);
     void nonSpeculativeNonPeepholeStrictEq(Node*, bool invert = false);
@@ -757,6 +750,7 @@ public:
     void compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchAndResultReg, GPRReg scratch2Reg, GPRReg scratch3Reg);
     void compileInstanceOf(Node*);
     void compileInstanceOfCustom(Node*);
+    void compileOverridesHasInstance(Node*);
 
     void compileIsCellWithType(Node*);
     void compileIsTypedArrayView(Node*);
@@ -1442,6 +1436,7 @@ public:
     void compileSetFunctionName(Node*);
     void compileNewRegexp(Node*);
     void compileForwardVarargs(Node*);
+    void compileLoadVarargs(Node*);
     void compileCreateActivation(Node*);
     void compileCreateDirectArguments(Node*);
     void compileGetFromArguments(Node*);
@@ -1464,10 +1459,12 @@ public:
     void compileRegExpMatchFastGlobal(Node*);
     void compileRegExpTest(Node*);
     void compileStringReplace(Node*);
+    void compileIsObject(Node*);
     void compileIsObjectOrNull(Node*);
     void compileIsFunction(Node*);
     void compileTypeOf(Node*);
     void compileCheckCell(Node*);
+    void compileCheckNotEmpty(Node*);
     void compileCheckStructure(Node*);
     void emitStructureCheck(Node*, GPRReg cellGPR, GPRReg tempGPR);
     void compilePutAccessorById(Node*);
@@ -1497,8 +1494,12 @@ public:
     void compileGetEnumerableLength(Node*);
     void compileHasGenericProperty(Node*);
     void compileToIndexString(Node*);
+    void compilePutByIdFlush(Node*);
+    void compilePutById(Node*);
+    void compilePutByIdDirect(Node*);
     void compilePutByIdWithThis(Node*);
     void compileHasStructureProperty(Node*);
+    void compileGetDirectPname(Node*);
     void compileGetPropertyEnumerator(Node*);
     void compileGetEnumeratorPname(Node*);
     void compileGetExecutable(Node*);
@@ -1517,6 +1518,8 @@ public:
     void compileToPrimitive(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
+    void compileHasIndexedProperty(Node*);
+    void compileExtractCatchLocal(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

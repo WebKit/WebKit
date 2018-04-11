@@ -80,7 +80,7 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState*, EncodedJSValu
 EncodedJSValue JIT_OPERATION operationGetPrototypeOf(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState*, JSObject*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
-EncodedJSValue JIT_OPERATION operationHasIndexedPropertyByInt(ExecState*, JSCell*, int32_t, int32_t);
+size_t JIT_OPERATION operationHasIndexedPropertyByInt(ExecState*, JSCell*, int32_t, int32_t);
 JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState*, EncodedJSValue);
 JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(ExecState*, JSCell*);
 JSCell* JIT_OPERATION operationToIndexString(ExecState*, int32_t);

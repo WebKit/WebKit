@@ -1897,16 +1897,16 @@ EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, Encode
     return JSValue::encode(jsBoolean(base->hasPropertyGeneric(exec, asString(propertyName)->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
-EncodedJSValue JIT_OPERATION operationHasIndexedPropertyByInt(ExecState* exec, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)
+size_t JIT_OPERATION operationHasIndexedPropertyByInt(ExecState* exec, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     JSObject* object = baseCell->toObject(exec, exec->lexicalGlobalObject());
     if (UNLIKELY(subscript < 0)) {
         // Go the slowest way possible because negative indices don't use indexed storage.
-        return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, Identifier::from(exec, subscript), static_cast<PropertySlot::InternalMethodType>(internalMethodType))));
+        return object->hasPropertyGeneric(exec, Identifier::from(exec, subscript), static_cast<PropertySlot::InternalMethodType>(internalMethodType));
     }
-    return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, subscript, static_cast<PropertySlot::InternalMethodType>(internalMethodType))));
+    return object->hasPropertyGeneric(exec, subscript, static_cast<PropertySlot::InternalMethodType>(internalMethodType));
 }
 
 JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState* exec, EncodedJSValue encodedBase)

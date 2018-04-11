@@ -207,6 +207,7 @@ public:
     
 private:
     void setAny(Reg reg) { set(reg); }
+    void setAny(JSValueRegs regs) { set(regs); }
     void setAny(const RegisterSet& set) { merge(set); }
     void setMany() { }
     template<typename RegType, typename... Regs>
