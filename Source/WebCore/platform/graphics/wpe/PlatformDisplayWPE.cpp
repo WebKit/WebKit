@@ -37,7 +37,15 @@
 
 namespace WebCore {
 
-PlatformDisplayWPE::PlatformDisplayWPE() = default;
+std::unique_ptr<PlatformDisplayWPE> PlatformDisplayWPE::create()
+{
+    return std::unique_ptr<PlatformDisplayWPE>(new PlatformDisplayWPE());
+}
+
+PlatformDisplayWPE::PlatformDisplayWPE()
+    : PlatformDisplay(NativeDisplayOwned::No)
+{
+}
 
 PlatformDisplayWPE::~PlatformDisplayWPE()
 {

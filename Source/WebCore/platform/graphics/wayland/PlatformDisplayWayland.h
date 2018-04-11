@@ -37,7 +37,8 @@ namespace WebCore {
 class PlatformDisplayWayland : public PlatformDisplay {
 public:
     static std::unique_ptr<PlatformDisplay> create();
-    PlatformDisplayWayland(struct wl_display*, NativeDisplayOwned = NativeDisplayOwned::No);
+    static std::unique_ptr<PlatformDisplay> create(struct wl_display*);
+
     virtual ~PlatformDisplayWayland();
 
     struct wl_display* native() const { return m_display; }
@@ -47,11 +48,12 @@ public:
 private:
     static const struct wl_registry_listener s_registryListener;
 
-    Type type() const override { return PlatformDisplay::Type::Wayland; }
+    Type type() const final { return PlatformDisplay::Type::Wayland; }
 
 protected:
-    PlatformDisplayWayland() = default;
-    void initialize(struct wl_display*);
+    PlatformDisplayWayland(struct wl_display*, NativeDisplayOwned);
+
+    void initialize();
 
     virtual void registryGlobal(const char* interface, uint32_t name);
 

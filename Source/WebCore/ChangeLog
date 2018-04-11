@@ -1,3 +1,75 @@
+2018-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] WaylandCompositorDisplay leaks its wl_display
+        https://bugs.webkit.org/show_bug.cgi?id=184406
+
+        Reviewed by Carlos Garcia Campos.
+
+        Well, this was harder than expected. We really just want to fix a small leak in the WebKit
+        layer, but that requires a change in how WaylandCompositorDisplay calls the
+        PlatformDisplayWayland constructor, to pass NativeDisplayOwned::Yes. That means
+        WaylandCompositorDisplay can no longer use PlatformDisplayWayland's protected default
+        constructor. Problem is that the normal PlatformDisplayWayland constructor calls
+        PlatformDisplayWayland::initialize, which calls PlatformDisplayWayland::registryGlobal,
+        which is a virtual function. The WaylandCompositorDisplay portion of the object is not
+        constructed yet at this point, so WaylandCompositorDisplay::registryGlobal will never be
+        called if we do that. I had to revert the previous version of this fix due to this problem.
+        It had broken accelerated compositing.
+
+        I'm reminded of Effective C++ item #9: Never call virtual functions during construction or
+        destruction ("because such calls will never go to a more derived class than that of the
+        currently executing constructor or destructor"). This code is fragile and likely to break
+        again in the future, so let's refactor it a bit. Instead of calling initialize in the
+        constructor, we'll call it from create functions. We'll have to add a couple create
+        functions, and make the constructor protected to ensure it's not possible to create a
+        PlatformDisplayWayland without initializing it. For good parallelism, do the same for the
+        other PlatformDisplay classes.
+
+        This commit additionally removes PlatformDisplayWayland's protected default constructor,
+        since it's not needed anymore.
+
+        The NativeDisplayOwned arguments to the PlatformDisplay constructors are now mandatory,
+        instead of using NativeDisplayOwned::No as the default value, since that was dangerously
+        close to being the cause of this leak, and the constructors are now accessed from private
+        create functions anyway. Some more caution when using default parameter values is warranted
+        in the future.
+
+        Lastly, since we have to change PlatformDisplay::createPlatformDisplay to use the new create
+        functions, take the opportunity to move things around a bit for clarity. There should be no
+        change in behavior. I was just disappointed that the PlatformDisplayWPE creation was at the
+        bottom of the function, after a comment indicating that normal display creation has failed,
+        which is not the case for WPE.
+
+        This all might have been a bit overkill, since the leak could probably have been fixed by
+        passing nullptr to the PlatformDisplayWayland constructor for the wl_display and not
+        removing WaylandCompositorDisplay's call to PlatformDisplayWayland::initialize. But the
+        correctness of that code would then rely on implementation details of initialize, so this
+        refactor seems better.
+
+        No new tests since there *should* be no behavior change. Then again, I'm touching
+        PlatformDisplay, and history shows we don't have the greatest track record of touching this
+        code without introducing problems.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay):
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::create):
+        (WebCore::PlatformDisplayWayland::create):
+        (WebCore::PlatformDisplayWayland::createHeadless):
+        (WebCore::PlatformDisplayWayland::PlatformDisplayWayland):
+        (WebCore::PlatformDisplayWayland::initialize):
+        * platform/graphics/wayland/PlatformDisplayWayland.h:
+        * platform/graphics/win/PlatformDisplayWin.h:
+        * platform/graphics/wpe/PlatformDisplayWPE.cpp:
+        (WebCore::create):
+        * platform/graphics/wpe/PlatformDisplayWPE.h:
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::create):
+        (WebCore::PlatformDisplayX11::create):
+        (WebCore::PlatformDisplayX11::createHeadless):
+        * platform/graphics/x11/PlatformDisplayX11.h:
+
 2018-04-11  Jianjun Zhu  <jianjun.zhu@intel.com>
 
         Fix a WebRTC data channel issue for non-ASCII characters.

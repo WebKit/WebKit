@@ -1,3 +1,18 @@
+2018-04-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] WaylandCompositorDisplay leaks its wl_display
+        https://bugs.webkit.org/show_bug.cgi?id=184406
+
+        Reviewed by Carlos Garcia Campos.
+
+        Since we allocate our own wl_display here, need to chain up to the parent constructor
+        passing NativeDisplayOwned::Yes, or it won't ever be released. Move the initialize call to
+        the create function to ensure it's called after the constructor completes.
+
+        * WebProcess/gtk/WaylandCompositorDisplay.cpp:
+        (WebKit::WaylandCompositorDisplay::create): Fix a log message (drive-by).
+        (WebKit::WaylandCompositorDisplay::WaylandCompositorDisplay):
+
 2018-04-11  Youenn Fablet  <youenn@apple.com>
 
         Use more r-values in NetworkResourceLoader

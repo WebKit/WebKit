@@ -56,13 +56,22 @@ std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create()
     if (!display)
         return nullptr;
 
-    return std::make_unique<PlatformDisplayWayland>(display, NativeDisplayOwned::Yes);
+    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display, NativeDisplayOwned::Yes));
+    platformDisplay->initialize();
+    return platformDisplay;
+}
+
+std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create(struct wl_display* display)
+{
+    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display, NativeDisplayOwned::No));
+    platformDisplay->initialize();
+    return platformDisplay;
 }
 
 PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display, NativeDisplayOwned displayOwned)
     : PlatformDisplay(displayOwned)
+    , m_display(display)
 {
-    initialize(display);
 }
 
 PlatformDisplayWayland::~PlatformDisplayWayland()
@@ -74,9 +83,8 @@ PlatformDisplayWayland::~PlatformDisplayWayland()
     }
 }
 
-void PlatformDisplayWayland::initialize(wl_display* display)
+void PlatformDisplayWayland::initialize()
 {
-    m_display = display;
     if (!m_display)
         return;
 
