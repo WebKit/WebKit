@@ -1,3 +1,12 @@
+2018-04-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=184456
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Updating expectations and moving baselines

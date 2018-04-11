@@ -532,3 +532,5 @@ webkit.org/b/182932 media/track/track-css-matching-default.html [ Pass Timeout ]
 webkit.org/b/183220 media/track/track-css-matching-timestamps.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/184456 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html [ Pass Failure ]
