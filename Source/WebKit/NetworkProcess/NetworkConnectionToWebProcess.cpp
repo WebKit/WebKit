@@ -228,17 +228,23 @@ void NetworkConnectionToWebProcess::endSuspension()
 #endif
 }
 
-void NetworkConnectionToWebProcess::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters)
+void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters)
 {
-    auto loader = NetworkResourceLoader::create(loadParameters, *this);
-    m_networkResourceLoaders.add(loadParameters.identifier, loader.ptr());
+    auto identifier = loadParameters.identifier;
+    ASSERT(!m_networkResourceLoaders.contains(identifier));
+
+    auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this);
+    m_networkResourceLoaders.add(identifier, loader.ptr());
     loader->start();
 }
 
-void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResourceLoadParameters& loadParameters, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply)
+void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& reply)
 {
-    auto loader = NetworkResourceLoader::create(loadParameters, *this, WTFMove(reply));
-    m_networkResourceLoaders.add(loadParameters.identifier, loader.ptr());
+    auto identifier = loadParameters.identifier;
+    ASSERT(!m_networkResourceLoaders.contains(identifier));
+
+    auto loader = NetworkResourceLoader::create(WTFMove(loadParameters), *this, WTFMove(reply));
+    m_networkResourceLoaders.add(identifier, loader.ptr());
     loader->start();
 }
 

@@ -90,8 +90,8 @@ private:
     void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
-    void scheduleResourceLoad(const NetworkResourceLoadParameters&);
-    void performSynchronousLoad(const NetworkResourceLoadParameters&, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
+    void scheduleResourceLoad(NetworkResourceLoadParameters&&);
+    void performSynchronousLoad(NetworkResourceLoadParameters&&, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
     void loadPing(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders);
     void prefetchDNS(const String&);
     void preconnectTo(uint64_t preconnectionIdentifier, NetworkLoadParameters&&);

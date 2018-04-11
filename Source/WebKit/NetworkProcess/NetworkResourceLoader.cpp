@@ -86,11 +86,11 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
     data.delayedReply = nullptr;
 }
 
-NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& synchronousReply)
-    : m_parameters { parameters }
+NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& synchronousReply)
+    : m_parameters { WTFMove(parameters) }
     , m_connection { connection }
     , m_defersLoading { parameters.defersLoading }
-    , m_isAllowedToAskUserForCredentials { parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
+    , m_isAllowedToAskUserForCredentials { m_parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
     , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
     , m_cache { sessionID().isEphemeral() ? nullptr : NetworkProcess::singleton().cache() }
 {
@@ -167,7 +167,7 @@ void NetworkResourceLoader::start()
         return;
     }
 
-    startNetworkLoad(originalRequest());
+    startNetworkLoad(ResourceRequest { originalRequest() });
 }
 
 void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
@@ -175,7 +175,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     ASSERT(canUseCache(request));
 
     RefPtr<NetworkResourceLoader> loader(this);
-    m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, loader = WTFMove(loader), request](auto entry) {
+    m_cache->retrieve(request, { m_parameters.webPageID, m_parameters.webFrameID }, [this, loader = WTFMove(loader), request = ResourceRequest { request }](auto entry) mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
 #endif
@@ -185,7 +185,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         }
         if (!entry) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource not in cache (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->startNetworkLoad(request);
+            loader->startNetworkLoad(WTFMove(request));
             return;
         }
         if (entry->redirectRequest()) {
@@ -195,7 +195,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         }
         if (loader->m_parameters.needsCertificateInfo && !entry->response().certificateInfo()) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource does not have required certificate (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->startNetworkLoad(request);
+            loader->startNetworkLoad(WTFMove(request));
             return;
         }
         if (entry->needsValidation() || request.cachePolicy() == WebCore::RefreshAnyCacheData) {
@@ -208,7 +208,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     });
 }
 
-void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
+void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request)
 {
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
 
@@ -222,7 +222,6 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
 
     NetworkLoadParameters parameters = m_parameters;
     parameters.defersLoading = m_defersLoading;
-    parameters.request = request;
 
     if (request.url().protocolIsBlob())
         parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(m_connection, originalRequest().url());
@@ -239,6 +238,8 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
         didFailLoading(internalError(request.url()));
         return;
     }
+
+    parameters.request = WTFMove(request);
     m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
 
     if (m_defersLoading) {
@@ -497,7 +498,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         if (canUseCachedRedirect(newRequest))
             retrieveCacheEntry(newRequest);
         else
-            startNetworkLoad(newRequest);
+            startNetworkLoad(WTFMove(newRequest));
 
         return;
     }
@@ -672,7 +673,7 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
 
     m_cacheEntryForValidation = WTFMove(entry);
 
-    startNetworkLoad(revalidationRequest);
+    startNetworkLoad(WTFMove(revalidationRequest));
 }
 
 void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
