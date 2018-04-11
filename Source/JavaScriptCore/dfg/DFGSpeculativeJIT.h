@@ -2018,9 +2018,7 @@ public:
         else
             m_gpr = m_jit->allocate();
     }
-#if USE(JSVALUE32_64)
     GPRTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&, WhichValueWord);
-#endif
 
     GPRTemporary(GPRTemporary& other) = delete;
 

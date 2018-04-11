@@ -453,8 +453,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq(Node* node, bool invert)
 
     m_jit.move(JITCompiler::TrustedImm64(!invert), resultGPR);
 
-    addSlowPathGenerator(std::make_unique<CompareSlowPathGenerator<MacroAssembler::JumpList>>(
-        slowPathCases, this, operationCompareStrictEq, resultGPR, arg1Regs, arg2Regs));
+    addSlowPathGenerator(slowPathCall(slowPathCases, this, operationCompareStrictEq, resultGPR, arg1Regs, arg2Regs));
 
     done.link(&m_jit);
 

@@ -34,7 +34,6 @@
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGCallCreateDirectArgumentsSlowPathGenerator.h"
 #include "DFGCapabilities.h"
-#include "DFGCompareSlowPathGenerator.h"
 #include "DFGMayExit.h"
 #include "DFGOSRExitFuzz.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
@@ -1291,7 +1290,12 @@ GPRTemporary::GPRTemporary(
     else
         m_gpr = m_jit->allocate();
 }
-#endif // USE(JSVALUE32_64)
+#else // USE(JSVALUE32_64)
+GPRTemporary::GPRTemporary(SpeculativeJIT* jit, ReuseTag, JSValueOperand& op1, WhichValueWord)
+    : GPRTemporary(jit, Reuse, op1)
+{
+}
+#endif
 
 JSValueRegsTemporary::JSValueRegsTemporary() { }
 
@@ -4031,11 +4035,7 @@ void SpeculativeJIT::compileIsCellWithType(Node* node)
     switch (node->child1().useKind()) {
     case UntypedUse: {
         JSValueOperand value(this, node->child1());
-#if USE(JSVALUE64)
-        GPRTemporary result(this, Reuse, value);
-#else
         GPRTemporary result(this, Reuse, value, PayloadWord);
-#endif
 
         JSValueRegs valueRegs = value.jsValueRegs();
         GPRReg resultGPR = result.gpr();
@@ -4082,11 +4082,7 @@ void SpeculativeJIT::compileIsCellWithType(Node* node)
 void SpeculativeJIT::compileIsTypedArrayView(Node* node)
 {
     JSValueOperand value(this, node->child1());
-#if USE(JSVALUE64)
-    GPRTemporary result(this, Reuse, value);
-#else
     GPRTemporary result(this, Reuse, value, PayloadWord);
-#endif
 
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg resultGPR = result.gpr();
@@ -4114,11 +4110,7 @@ void SpeculativeJIT::compileToObjectOrCallObjectConstructor(Node* node)
     RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
 
     JSValueOperand value(this, node->child1());
-#if USE(JSVALUE64)
-    GPRTemporary result(this, Reuse, value);
-#else
     GPRTemporary result(this, Reuse, value, PayloadWord);
-#endif
 
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg resultGPR = result.gpr();
@@ -8584,11 +8576,7 @@ void SpeculativeJIT::compileNotifyWrite(Node* node)
 void SpeculativeJIT::compileIsObject(Node* node)
 {
     JSValueOperand value(this, node->child1());
-#if USE(JSVALUE64)
-    GPRTemporary result(this, Reuse, value);
-#else
     GPRTemporary result(this, Reuse, value, TagWord);
-#endif
 
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg resultGPR = result.gpr();
@@ -12877,11 +12865,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node* node, MacroAssembler
         return;
     }
 
-#if USE(JSVALUE64)
-    GPRTemporary result(this, Reuse, arg1);
-#else
     GPRTemporary result(this, Reuse, arg1, TagWord);
-#endif
     GPRReg resultGPR = result.gpr();
 
     arg1.use();
@@ -12894,10 +12878,8 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node* node, MacroAssembler
 
     m_jit.compare32(cond, arg1Regs.payloadGPR(), arg2Regs.payloadGPR(), resultGPR);
 
-    if (!isKnownInteger(node->child1().node()) || !isKnownInteger(node->child2().node())) {
-        addSlowPathGenerator(std::make_unique<CompareSlowPathGenerator<JITCompiler::JumpList>>(
-            slowPath, this, helperFunction, resultGPR, arg1Regs, arg2Regs));
-    }
+    if (!isKnownInteger(node->child1().node()) || !isKnownInteger(node->child2().node()))
+        addSlowPathGenerator(slowPathCall(slowPath, this, helperFunction, resultGPR, arg1Regs, arg2Regs));
 
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
@@ -12939,11 +12921,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
 
         branchTest32(callResultCondition, resultGPR, taken);
     } else {
-#if USE(JSVALUE64)
-        GPRTemporary result(this, Reuse, arg2);
-#else
         GPRTemporary result(this, Reuse, arg2, TagWord);
-#endif
         GPRReg resultGPR = result.gpr();
 
         arg1.use();

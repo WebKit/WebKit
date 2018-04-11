@@ -1,5 +1,33 @@
 2018-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Remove CompareSlowPathGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=184492
+
+        Reviewed by Mark Lam.
+
+        Now CompareSlowPathGenerator is just calling a specified function.
+        This can be altered with slowPathCall. This patch removes CompareSlowPathGenerator.
+
+        We also remove some of unnecessary USE(JSVALUE32_64) / USE(JSVALUE64) ifdefs by
+        introducing a new constructor for GPRTemporary.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCompareSlowPathGenerator.h: Removed.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::SpeculativeJIT::compileIsCellWithType):
+        (JSC::DFG::SpeculativeJIT::compileIsTypedArrayView):
+        (JSC::DFG::SpeculativeJIT::compileToObjectOrCallObjectConstructor):
+        (JSC::DFG::SpeculativeJIT::compileIsObject):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+
+2018-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, build fix for 32bit
         https://bugs.webkit.org/show_bug.cgi?id=184236
 
