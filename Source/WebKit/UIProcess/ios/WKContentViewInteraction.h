@@ -84,11 +84,7 @@ class WebPageProxy;
 @class _UIWebHighlightLongPressGestureRecognizer;
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-@class WKDatePickerViewController;
-@class WKFocusedFormControlViewController;
-@class WKSelectMenuListViewController;
-@class WKTextInputListViewController;
-@class WKTimePickerViewController;
+@class WKFocusedFormControlView;
 #endif
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -251,11 +247,9 @@ struct WKAutoCorrectionData {
 #endif
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-    RetainPtr<WKDatePickerViewController> _datePickerViewController;
-    RetainPtr<WKTextInputListViewController> _textInputListViewController;
-    RetainPtr<WKFocusedFormControlViewController> _focusedFormControlViewController;
-    RetainPtr<WKSelectMenuListViewController> _selectMenuListViewController;
-    RetainPtr<WKTimePickerViewController> _timePickerViewController;
+    RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
+    RetainPtr<UIViewController> _presentedFullScreenInputViewController;
+    RetainPtr<UINavigationController> _inputNavigationViewControllerForFullScreenInputs;
 
     BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;
 #endif

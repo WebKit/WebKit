@@ -42,7 +42,7 @@
 #import "WKActionSheetAssistant.h"
 #import "WKDatePickerViewController.h"
 #import "WKError.h"
-#import "WKFocusedFormControlViewController.h"
+#import "WKFocusedFormControlView.h"
 #import "WKFormControlListViewController.h"
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
@@ -125,7 +125,7 @@
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-@interface WKContentView (ExtraZoomMode) <WKFocusedFormControlViewControllerDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
+@interface WKContentView (ExtraZoomMode) <WKFocusedFormControlViewDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
 @end
 
 #endif
@@ -1941,7 +1941,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _page->setIsScrollingOrZooming(true);
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-    [_focusedFormControlViewController disengageFocusedFormControlNavigation];
+    [_focusedFormControlView disengageFocusedFormControlNavigation];
 #endif
 }
 
@@ -1961,7 +1961,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _page->setIsScrollingOrZooming(false);
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-    [_focusedFormControlViewController engageFocusedFormControlNavigation];
+    [_focusedFormControlView engageFocusedFormControlNavigation];
 #endif
 }
 
@@ -4083,7 +4083,7 @@ static bool isAssistableInputType(InputType type)
         [self becomeFirstResponder];
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-    [self presentFocusedFormControlViewController:NO];
+    [self addFocusedFormControlOverlay];
     if (!_isChangingFocus)
         [self presentViewControllerForCurrentAssistedNode];
 #else
@@ -4110,7 +4110,7 @@ static bool isAssistableInputType(InputType type)
 
 #if ENABLE(EXTRA_ZOOM_MODE)
     if (_isChangingFocus)
-        [_focusedFormControlViewController reloadData:YES];
+        [_focusedFormControlView reloadData:YES];
 #endif
 
     // _inputPeripheral has been initialized in inputView called by reloadInputViews.
@@ -4145,9 +4145,9 @@ static bool isAssistableInputType(InputType type)
     [_webSelectionAssistant resignedFirstResponder];
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-    [self dismissAllInputViewControllers];
+    [self dismissAllInputViewControllers:YES];
     if (!_isChangingFocus)
-        [self dismissFocusedFormControlViewController:[_focusedFormControlViewController isVisible]];
+        [self removeFocusedFormControlOverlay];
 #endif
 
     // The custom fixed position rect behavior is affected by -isAssistingNode, so if that changes we need to recompute rects.
@@ -4176,87 +4176,96 @@ static bool isAssistableInputType(InputType type)
 - (void)reloadContextViewForPresentedListViewController
 {
 #if ENABLE(EXTRA_ZOOM_MODE)
-    [_textInputListViewController reloadContextView];
+    if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
+        [(WKTextInputListViewController *)_presentedFullScreenInputViewController.get() reloadContextView];
 #endif
 }
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-- (void)presentFocusedFormControlViewController:(BOOL)animated
+- (void)addFocusedFormControlOverlay
 {
-    if (_focusedFormControlViewController)
+    if (_focusedFormControlView)
         return;
 
     ++_webView->_activeFocusedStateRetainCount;
 
-    _focusedFormControlViewController = adoptNS([[WKFocusedFormControlViewController alloc] init]);
-    [_focusedFormControlViewController setDelegate:self];
-    [[UIViewController _viewControllerForFullScreenPresentationFromView:self] presentViewController:_focusedFormControlViewController.get() animated:animated completion:nil];
-    [self setInputDelegate:_focusedFormControlViewController.get()];
+    _focusedFormControlView = adoptNS([[WKFocusedFormControlView alloc] initWithFrame:_webView.bounds delegate:self]);
+    [_focusedFormControlView hide:NO];
+    [_webView addSubview:_focusedFormControlView.get()];
+    [self setInputDelegate:_focusedFormControlView.get()];
 }
 
-- (void)dismissFocusedFormControlViewController:(BOOL)animated
+- (void)removeFocusedFormControlOverlay
 {
-    if (!_focusedFormControlViewController)
+    if (!_focusedFormControlView)
         return;
 
     --_webView->_activeFocusedStateRetainCount;
 
-    [_focusedFormControlViewController dismissViewControllerAnimated:animated completion:nil];
-    _focusedFormControlViewController = nil;
+    [_focusedFormControlView removeFromSuperview];
+    _focusedFormControlView = nil;
     [self setInputDelegate:nil];
 }
 
 - (void)presentViewControllerForCurrentAssistedNode
 {
-    [self dismissAllInputViewControllers];
+    [self dismissAllInputViewControllers:NO];
 
     _shouldRestoreFirstResponderStatusAfterLosingFocus = self.isFirstResponder;
+    UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+
+    ASSERT(!_presentedFullScreenInputViewController);
+
+    BOOL prefersModalPresentation = NO;
 
     switch (_assistedNodeInformation.elementType) {
     case InputType::Select:
-        if (!_selectMenuListViewController) {
-            _selectMenuListViewController = adoptNS([[WKSelectMenuListViewController alloc] initWithDelegate:self]);
-            [_focusedFormControlViewController presentViewController:_selectMenuListViewController.get() animated:YES completion:nil];
-        }
+        _presentedFullScreenInputViewController = adoptNS([[WKSelectMenuListViewController alloc] initWithDelegate:self]);
         break;
     case InputType::Time:
-        if (!_timePickerViewController) {
-            _timePickerViewController = adoptNS([[WKTimePickerViewController alloc] initWithDelegate:self]);
-            [_focusedFormControlViewController presentViewController:_timePickerViewController.get() animated:YES completion:nil];
-        }
+        // Time inputs are special, in that the only UI affordances for dismissal are push buttons rather than status bar chevrons.
+        // As such, modal presentation and dismissal is preferred even if a navigation stack exists.
+        prefersModalPresentation = YES;
+        _presentedFullScreenInputViewController = adoptNS([[WKTimePickerViewController alloc] initWithDelegate:self]);
         break;
     case InputType::Date:
-        if (!_datePickerViewController) {
-            _datePickerViewController = adoptNS([[WKDatePickerViewController alloc] initWithDelegate:self]);
-            [_focusedFormControlViewController presentViewController:_datePickerViewController.get() animated:YES completion:nil];
-        }
+        _presentedFullScreenInputViewController = adoptNS([[WKDatePickerViewController alloc] initWithDelegate:self]);
         break;
     case InputType::None:
-        ASSERT_NOT_REACHED();
         break;
     default:
-        if (!_textInputListViewController) {
-            _textInputListViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
-            [_focusedFormControlViewController presentViewController:_textInputListViewController.get() animated:YES completion:nil];
-        }
+        _presentedFullScreenInputViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
         break;
     }
+
+    ASSERT(_presentedFullScreenInputViewController);
+    ASSERT(presentingViewController);
+
+    if (!prefersModalPresentation && [presentingViewController isKindOfClass:[UINavigationController class]])
+        _inputNavigationViewControllerForFullScreenInputs = (UINavigationController *)presentingViewController;
+    else
+        _inputNavigationViewControllerForFullScreenInputs = nil;
+
+    // Present the input view controller on an existing navigation stack, if possible. If there is no navigation stack we can use, fall back to presenting modally.
+    // This is because the HI specification (for certain scenarios) calls for navigation-style view controller presentation, but WKWebView can't make any guarantees
+    // about clients' view controller hierarchies, so we can only try our best to avoid presenting modally. Clients can implicitly opt in to specced behavior by using
+    // UINavigationController to present the web view.
+    if (_inputNavigationViewControllerForFullScreenInputs)
+        [_inputNavigationViewControllerForFullScreenInputs pushViewController:_presentedFullScreenInputViewController.get() animated:YES];
+    else
+        [presentingViewController presentViewController:_presentedFullScreenInputViewController.get() animated:YES completion:nil];
 }
 
-- (void)dismissAllInputViewControllers
+- (void)dismissAllInputViewControllers:(BOOL)animated
 {
-    if (auto controller = WTFMove(_textInputListViewController))
-        [controller dismissViewControllerAnimated:YES completion:nil];
+    auto navigationController = WTFMove(_inputNavigationViewControllerForFullScreenInputs);
+    auto presentedController = WTFMove(_presentedFullScreenInputViewController);
 
-    if (auto controller = WTFMove(_selectMenuListViewController))
-        [controller dismissViewControllerAnimated:YES completion:nil];
-
-    if (auto controller = WTFMove(_timePickerViewController))
-        [controller dismissViewControllerAnimated:YES completion:nil];
-
-    if (auto controller = WTFMove(_datePickerViewController))
-        [controller dismissViewControllerAnimated:YES completion:nil];
+    if ([navigationController viewControllers].lastObject == presentedController.get())
+        [navigationController popViewControllerAnimated:animated];
+    else
+        [presentedController dismissViewControllerAnimated:animated completion:nil];
 
     if (_shouldRestoreFirstResponderStatusAfterLosingFocus) {
         _shouldRestoreFirstResponderStatusAfterLosingFocus = NO;
@@ -4265,18 +4274,18 @@ static bool isAssistableInputType(InputType type)
     }
 }
 
-- (void)focusedFormControlControllerDidSubmit:(WKFocusedFormControlViewController *)controller
+- (void)focusedFormControlViewDidSubmit:(WKFocusedFormControlView *)view
 {
     [self insertText:@"\n"];
     _page->blurAssistedNode();
 }
 
-- (void)focusedFormControlControllerDidCancel:(WKFocusedFormControlViewController *)controller
+- (void)focusedFormControlViewDidCancel:(WKFocusedFormControlView *)view
 {
     _page->blurAssistedNode();
 }
 
-- (void)focusedFormControlControllerDidBeginEditing:(WKFocusedFormControlViewController *)controller
+- (void)focusedFormControlViewDidBeginEditing:(WKFocusedFormControlView *)view
 {
     [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
         if (didUpdate)
@@ -4284,33 +4293,33 @@ static bool isAssistableInputType(InputType type)
     }];
 }
 
-- (CGRect)rectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace
+- (CGRect)rectForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
-    return [self convertRect:_assistedNodeInformation.elementRect toCoordinateSpace:coordinateSpace];
+    return [self convertRect:_assistedNodeInformation.elementRect toView:view];
 }
 
-- (CGRect)nextRectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace
+- (CGRect)nextRectForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
     if (!_assistedNodeInformation.hasNextNode)
         return CGRectNull;
 
-    return [self convertRect:_assistedNodeInformation.nextNodeRect toCoordinateSpace:coordinateSpace];
+    return [self convertRect:_assistedNodeInformation.nextNodeRect toView:view];
 }
 
-- (CGRect)previousRectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace
+- (CGRect)previousRectForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
     if (!_assistedNodeInformation.hasPreviousNode)
         return CGRectNull;
 
-    return [self convertRect:_assistedNodeInformation.previousNodeRect toCoordinateSpace:coordinateSpace];
+    return [self convertRect:_assistedNodeInformation.previousNodeRect toView:view];
 }
 
-- (UIScrollView *)scrollViewForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
+- (UIScrollView *)scrollViewForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
     return self._scroller;
 }
 
-- (NSString *)actionNameForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
+- (NSString *)actionNameForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
     if (_assistedNodeInformation.formAction.isEmpty())
         return nil;
@@ -4327,32 +4336,34 @@ static bool isAssistableInputType(InputType type)
     }
 }
 
-- (void)focusedFormControlControllerDidRequestNextNode:(WKFocusedFormControlViewController *)controller
+- (void)focusedFormControlViewDidRequestNextNode:(WKFocusedFormControlView *)view
 {
     if (_assistedNodeInformation.hasNextNode)
         _page->focusNextAssistedNode(true);
 }
 
-- (void)focusedFormControlControllerDidRequestPreviousNode:(WKFocusedFormControlViewController *)controller
+- (void)focusedFormControlViewDidRequestPreviousNode:(WKFocusedFormControlView *)view
 {
     if (_assistedNodeInformation.hasPreviousNode)
         _page->focusNextAssistedNode(false);
 }
 
-- (BOOL)hasNextNodeForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
+- (BOOL)hasNextNodeForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
     return _assistedNodeInformation.hasNextNode;
 }
 
-- (BOOL)hasPreviousNodeForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
+- (BOOL)hasPreviousNodeForFocusedFormControlView:(WKFocusedFormControlView *)view
 {
     return _assistedNodeInformation.hasPreviousNode;
 }
 
-- (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlViewController *)controller
+- (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlView *)view
 {
-    if (!_isBlurringFocusedNode)
-        [_textInputListViewController reloadTextSuggestions];
+    if (_isBlurringFocusedNode || ![_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
+        return;
+
+    [(WKTextInputListViewController *)_presentedFullScreenInputViewController reloadTextSuggestions];
 }
 
 #pragma mark - WKSelectMenuListViewControllerDelegate
@@ -4417,13 +4428,7 @@ static bool isAssistableInputType(InputType type)
 - (void)_wheelChangedWithEvent:(UIEvent *)event
 {
 #if ENABLE(EXTRA_ZOOM_MODE)
-    if ([_timePickerViewController handleWheelEvent:event])
-        return;
-
-    if ([_datePickerViewController handleWheelEvent:event])
-        return;
-
-    if ([_focusedFormControlViewController handleWheelEvent:event])
+    if ([_focusedFormControlView handleWheelEvent:event])
         return;
 #endif
     [super _wheelChangedWithEvent:event];

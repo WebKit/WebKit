@@ -725,8 +725,6 @@
 		2DFC7DBB1BCCC19500C1548C /* WebViewImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */; };
 		2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */; };
 		2DFF7B6F1DA4CFAF00814614 /* WKBackForwardListItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF7B6E1DA4CFAF00814614 /* WKBackForwardListItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2E16B6B82017AB9C008996D6 /* WKFocusedFormControlViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E16B6B62017AB9C008996D6 /* WKFocusedFormControlViewController.h */; };
-		2E16B6B92017AB9C008996D6 /* WKFocusedFormControlViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E16B6B72017AB9C008996D6 /* WKFocusedFormControlViewController.mm */; };
 		2E16B6CE2017B7AD008996D6 /* WKFocusedFormControlView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E16B6CC2017B7AB008996D6 /* WKFocusedFormControlView.mm */; };
 		2E16B6CF2017B7AD008996D6 /* WKFocusedFormControlView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */; };
 		2E5C770E1FA7D429005932C3 /* APIAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E5C770C1FA7D429005932C3 /* APIAttachment.h */; };
@@ -3100,8 +3098,6 @@
 		2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewImpl.h; sourceTree = "<group>"; };
 		2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewImpl.mm; sourceTree = "<group>"; };
 		2DFF7B6E1DA4CFAF00814614 /* WKBackForwardListItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListItemPrivate.h; sourceTree = "<group>"; };
-		2E16B6B62017AB9C008996D6 /* WKFocusedFormControlViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFocusedFormControlViewController.h; path = ios/forms/WKFocusedFormControlViewController.h; sourceTree = "<group>"; };
-		2E16B6B72017AB9C008996D6 /* WKFocusedFormControlViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFocusedFormControlViewController.mm; path = ios/forms/WKFocusedFormControlViewController.mm; sourceTree = "<group>"; };
 		2E16B6CC2017B7AB008996D6 /* WKFocusedFormControlView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFocusedFormControlView.mm; path = ios/forms/WKFocusedFormControlView.mm; sourceTree = "<group>"; };
 		2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFocusedFormControlView.h; path = ios/forms/WKFocusedFormControlView.h; sourceTree = "<group>"; };
 		2E5C770C1FA7D429005932C3 /* APIAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIAttachment.h; sourceTree = "<group>"; };
@@ -8473,8 +8469,6 @@
 				A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */,
 				2E16B6CD2017B7AC008996D6 /* WKFocusedFormControlView.h */,
 				2E16B6CC2017B7AB008996D6 /* WKFocusedFormControlView.mm */,
-				2E16B6B62017AB9C008996D6 /* WKFocusedFormControlViewController.h */,
-				2E16B6B72017AB9C008996D6 /* WKFocusedFormControlViewController.mm */,
 				F4D5F51B206087A10038BBA8 /* WKFormControlListViewController.h */,
 				F4D5F51C206087A10038BBA8 /* WKFormControlListViewController.mm */,
 				C54256AF18BEC18B00DE4179 /* WKFormInputControl.h */,
@@ -9539,7 +9533,6 @@
 				A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */,
 				37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */,
 				2E16B6CF2017B7AD008996D6 /* WKFocusedFormControlView.h in Headers */,
-				2E16B6B82017AB9C008996D6 /* WKFocusedFormControlViewController.h in Headers */,
 				F4D5F51F206087A10038BBA8 /* WKFormControlListViewController.h in Headers */,
 				C54256B518BEC18C00DE4179 /* WKFormInputControl.h in Headers */,
 				C54256B718BEC18C00DE4179 /* WKFormPeripheral.h in Headers */,
@@ -11266,7 +11259,6 @@
 				BC4075FB124FF0270068F20A /* WKErrorRef.cpp in Sources */,
 				A58B6F0918FCA733008CBA53 /* WKFileUploadPanel.mm in Sources */,
 				2E16B6CE2017B7AD008996D6 /* WKFocusedFormControlView.mm in Sources */,
-				2E16B6B92017AB9C008996D6 /* WKFocusedFormControlViewController.mm in Sources */,
 				F4D5F520206087A10038BBA8 /* WKFormControlListViewController.mm in Sources */,
 				C54256B618BEC18C00DE4179 /* WKFormInputControl.mm in Sources */,
 				C54256B918BEC18C00DE4179 /* WKFormPopover.mm in Sources */,

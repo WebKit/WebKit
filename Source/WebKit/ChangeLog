@@ -1,3 +1,117 @@
+2018-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Support pushing input view controllers onto the navigation stack
+        https://bugs.webkit.org/show_bug.cgi?id=184397
+        <rdar://problem/39265294>
+
+        Reviewed by Timothy Hatcher.
+
+        Currently, all input view controllers in extra zoom mode are presented modally. However, the latest iteration of
+        the HI specification depicts most of these view controllers (with the exception of time pickers) being presented
+        and dismissed via navigation stack. Since WebKit's iOS API surface doesn't force clients to embed WKWebViews
+        within a view controller with a corresponding UINavigationController, we cannot always guarantee that UI
+        presented when focusing form controls in a web view will be pushed onto the navigation stack; as such, the
+        approach taken in this patch will automatically allow WKWebView clients that already embed WKWebViews within a
+        UINavigationController to hook into this behavior, with modal presentation as a fallback.
+
+        At a high level, this patch makes the following tweaks to implement this behavior:
+
+        1. Store the currently presented view controller using a single member variable
+           (_presentedFullScreenInputViewController) instead of having one for each type. This makes bookkeepping around
+           which view controller to present or dismiss much more straightforward.
+
+        2. Replace WKFocusedFormControlViewController with just WKFocusedFormControlView. This addresses problems with
+           pushing an input view controller onto the navigation stack after presenting the focused form control view
+           controller modally. Now, we'll only need to present or push one view controller on the navigation stack.
+
+        3. Remove -handleWheelEvent: forwarding to date and time pickers. Pushing date picker view controllers onto the
+           navigation stack rather than presenting them modally means that we end up in a state where neither the
+           WKContentView nor WKTimePickerViewController are first responder, which renders time pickers unusable.
+           Instead, have the WKTimePickerViewController actually become first responder when presenting.
+
+        4. Lastly, and most importantly: change -presentViewControllerForCurrentAssistedNode and
+           -dismissAllInputViewControllers to try and push onto a navigation stack if possible, and fall back to modal
+           presentation.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Remove the separate member variables for each type of input view controller, and instead have one to keep track
+        of the current (and only) presented input view controller.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _willStartScrollingOrZooming]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _stopAssistingNode]):
+
+        Boilerplate renaming of _focusedFormControlViewController => _focusedFormControlView.
+
+        (-[WKContentView reloadContextViewForPresentedListViewController]):
+
+        Adjust for consolidation of the different input view controller member variables to a single member (see changes
+        in WKContentViewInteraction.h).
+
+        (-[WKContentView addFocusedFormControlOverlay]):
+        (-[WKContentView removeFocusedFormControlOverlay]):
+        (-[WKContentView presentViewControllerForCurrentAssistedNode]):
+        (-[WKContentView dismissAllInputViewControllers:]):
+
+        Add an `animated` argument. In the case where a different view controller was presented after presenting the
+        input view controller, this allows us to dismiss the other view controller with animation, and directly reveal
+        the web view or focus overlay underneath.
+
+        (-[WKContentView focusedFormControlViewDidSubmit:]):
+        (-[WKContentView focusedFormControlViewDidCancel:]):
+        (-[WKContentView focusedFormControlViewDidBeginEditing:]):
+        (-[WKContentView rectForFocusedFormControlView:]):
+        (-[WKContentView nextRectForFocusedFormControlView:]):
+        (-[WKContentView previousRectForFocusedFormControlView:]):
+        (-[WKContentView scrollViewForFocusedFormControlView:]):
+        (-[WKContentView actionNameForFocusedFormControlView:]):
+        (-[WKContentView focusedFormControlViewDidRequestNextNode:]):
+        (-[WKContentView focusedFormControlViewDidRequestPreviousNode:]):
+        (-[WKContentView hasNextNodeForFocusedFormControlView:]):
+        (-[WKContentView hasPreviousNodeForFocusedFormControlView:]):
+        (-[WKContentView focusedFormControllerDidUpdateSuggestions:]):
+
+        Boilerplate renaming of focus overlay delegate methods.
+
+        (-[WKContentView _wheelChangedWithEvent:]):
+
+        Remove event forwarding hacks for date and time inputs, now that they directly become first responder.
+
+        (-[WKContentView presentFocusedFormControlViewController:]): Deleted.
+        (-[WKContentView dismissFocusedFormControlViewController:]): Deleted.
+
+        Renamed to -addFocusedFormControlOverlay and -removeFocusedFormControlOverlay.
+
+        (-[WKContentView dismissAllInputViewControllers]): Deleted.
+        (-[WKContentView focusedFormControlControllerDidSubmit:]): Deleted.
+        (-[WKContentView focusedFormControlControllerDidCancel:]): Deleted.
+        (-[WKContentView focusedFormControlControllerDidBeginEditing:]): Deleted.
+        (-[WKContentView rectForFocusedFormControlController:inCoordinateSpace:]): Deleted.
+        (-[WKContentView nextRectForFocusedFormControlController:inCoordinateSpace:]): Deleted.
+        (-[WKContentView previousRectForFocusedFormControlController:inCoordinateSpace:]): Deleted.
+        (-[WKContentView scrollViewForFocusedFormControlController:]): Deleted.
+        (-[WKContentView actionNameForFocusedFormControlController:]): Deleted.
+        (-[WKContentView focusedFormControlControllerDidRequestNextNode:]): Deleted.
+        (-[WKContentView focusedFormControlControllerDidRequestPreviousNode:]): Deleted.
+        (-[WKContentView hasNextNodeForFocusedFormControlController:]): Deleted.
+        (-[WKContentView hasPreviousNodeForFocusedFormControlController:]): Deleted.
+        * UIProcess/ios/forms/WKFocusedFormControlViewController.h: Removed.
+        * UIProcess/ios/forms/WKFocusedFormControlViewController.mm: Removed.
+
+        Completely remove WKFocusedFormControlViewController; instead, just directly place the focused form overlay in
+        the WKWebView's hierarchy. In the case where we have a navigation stack to push to, we can no longer modally
+        present the focused form overlay as a separate view controller using the UINavigationController, and then
+        immediately push the input view controller on top of the navigation stack, since the navigation stack isn't
+        updated until after the animation of the focused form overlay presentation is complete. Rather than hack around
+        this limitation by dispatch_after-ing after presenting the overlay's view controller, we should just make the
+        overlay a view. This also fixes the case where a client embedding a WKWebView that is smaller than the bounds of
+        the screen will no longer see the entire screen dim when focusing an input, but instead, just the web content.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-04-11  Youenn Fablet  <youenn@apple.com>
 
         Pass FetchOptions and SecurityOrigin as load parameters from WebProcess to NetworkProcess
