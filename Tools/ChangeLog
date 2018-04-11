@@ -1,3 +1,15 @@
+2018-04-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix TestInvocation class for newer versions of clang.
+        https://bugs.webkit.org/show_bug.cgi?id=184508
+        <rdar://problem/39328648>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Declare TestInvocation to be final so it does not require a virtual destructor.
+
+        * WebKitTestRunner/TestInvocation.h:
+
 2018-04-10  Alex Christensen  <achristensen@webkit.org>
 
         IDN spoofing with Hebrew combining characters

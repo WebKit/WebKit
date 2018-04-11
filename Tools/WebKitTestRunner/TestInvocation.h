@@ -36,7 +36,7 @@
 
 namespace WTR {
 
-class TestInvocation : public UIScriptContextDelegate {
+class TestInvocation final : public UIScriptContextDelegate {
     WTF_MAKE_NONCOPYABLE(TestInvocation);
 public:
     explicit TestInvocation(WKURLRef, const TestOptions&);
