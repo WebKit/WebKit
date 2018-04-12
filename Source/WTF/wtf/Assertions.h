@@ -200,10 +200,6 @@ WTF_EXPORT_PRIVATE void WTFGetBacktrace(void** stack, int* size);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace(void);
 WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
 
-typedef void (*WTFCrashHookFunction)(void);
-WTF_EXPORT_PRIVATE void WTFSetCrashHook(WTFCrashHookFunction);
-WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook(void);
-
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
 #if COMPILER(MSVC)

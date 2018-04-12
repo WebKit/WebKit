@@ -1,3 +1,16 @@
+2018-04-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove unused crash hook functionality
+        https://bugs.webkit.org/show_bug.cgi?id=183369
+
+        Reviewed by Alexey Proskuryakov.
+
+        WTFSetCrashHook and WTFInstallReportBacktraceOnCrashHook are not used on any platforms and
+        can be removed.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2018-04-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, rolling out r230523.
