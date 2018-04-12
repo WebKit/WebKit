@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runBigIntEnabled
 
 function assert(a) {

@@ -1,3 +1,4 @@
+//@ skip if not $jitTests
 //@ runDefault("--useBigInt=true", "--useConcurrentJIT=false")
 
 function assert(a) {
