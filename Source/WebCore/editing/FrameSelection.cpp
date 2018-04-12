@@ -2421,6 +2421,7 @@ void FrameSelection::scheduleAppearanceUpdateAfterStyleChange()
 
 void FrameSelection::appearanceUpdateTimerFired()
 {
+    Ref<Frame> protectedFrame(*m_frame);
     updateAppearanceAfterLayoutOrStyleChange();
 }
 
