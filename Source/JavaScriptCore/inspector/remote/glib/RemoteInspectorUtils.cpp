@@ -45,7 +45,7 @@ GRefPtr<GBytes> backendCommands()
 #if PLATFORM(WPE)
     static std::once_flag flag;
     std::call_once(flag, [] {
-        GModule* resourcesModule = g_module_open("libWPEWebInspectorResources.so", G_MODULE_BIND_LAZY);
+        GModule* resourcesModule = g_module_open(PKGLIBDIR G_DIR_SEPARATOR_S "libWPEWebInspectorResources.so", G_MODULE_BIND_LAZY);
         if (!resourcesModule) {
             WTFLogAlways("Error loading libWPEWebInspectorResources.so: %s", g_module_error());
             return;

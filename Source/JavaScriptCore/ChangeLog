@@ -1,3 +1,16 @@
+2018-04-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Move libWPEWebInspectorResources.so to pkglibdir
+        https://bugs.webkit.org/show_bug.cgi?id=184379
+
+        Reviewed by Žan Doberšek.
+
+        Load the module from the new location.
+
+        * PlatformWPE.cmake:
+        * inspector/remote/glib/RemoteInspectorUtils.cpp:
+        (Inspector::backendCommands):
+
 2018-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Remove compileBigIntEquality in DFG 32bit

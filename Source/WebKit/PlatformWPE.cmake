@@ -313,7 +313,7 @@ add_library(WPEWebInspectorResources SHARED ${WPEWebInspectorResources_DERIVED_S
 add_dependencies(WPEWebInspectorResources WebKit)
 target_link_libraries(WPEWebInspectorResources ${WPEWebInspectorResources_LIBRARIES})
 target_include_directories(WPEWebInspectorResources SYSTEM PUBLIC ${WPEWebInspectorResources_SYSTEM_INCLUDE_DIRECTORIES})
-install(TARGETS WPEWebInspectorResources DESTINATION "${LIB_INSTALL_DIR}")
+install(TARGETS WPEWebInspectorResources DESTINATION "${LIB_INSTALL_DIR}/wpe-webkit-${WPE_API_VERSION}")
 
 add_library(WPEInjectedBundle MODULE "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
 ADD_WEBKIT_PREFIX_HEADER(WPEInjectedBundle)
