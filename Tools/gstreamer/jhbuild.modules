@@ -40,7 +40,7 @@
     <branch repo="chromium.googlesource.com" checkoutdir="libvpx" tag="v1.7.0"/>
   </autotools>
 
-  <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc --disable-introspection">
+  <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc --disable-introspection --disable-examples">
     <dependencies>
       <dep package="orc"/>
     </dependencies>
