@@ -9,4 +9,4 @@ URL: https://wpewebkit.org
 Version: @PROJECT_VERSION@
 Requires: glib-2.0 libsoup-2.4
 Libs: -L${libdir} -lWPEWebKit-@WPE_API_VERSION@
-Cflags: -I${includedir}/wpe-@WPE_API_VERSION@ -I${includedir}/wpe-@WPE_API_VERSION@/WPE
+Cflags: -I${includedir}/wpe-webkit-@WPE_API_VERSION@

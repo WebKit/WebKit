@@ -1,3 +1,15 @@
+2018-04-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Improve include hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=184376
+
+        Reviewed by Žan Doberšek.
+
+        Install JSC headers under /usr/include/wpe-webkit-0.1/jsc instead of
+        /usr/include/wpe-0.1/WPE/jsc.
+
+        * PlatformWPE.cmake:
+
 2018-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Handle strings containing null characters
