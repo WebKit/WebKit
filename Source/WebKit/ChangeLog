@@ -1,5 +1,16 @@
 2018-04-12  Beth Dakin  <bdakin@apple.com>
 
+        Fix the MOBILE_WIFI build
+        https://bugs.webkit.org/show_bug.cgi?id=184571
+        -and corresponding-
+        <rdar://problem/39398181>
+
+        Reviewed by Jer Noble.
+
+        * config.h:
+
+2018-04-12  Beth Dakin  <bdakin@apple.com>
+
         Use -iframework to ensure that frameworks from user paths and system paths are 
         ordered appropriately
         https://bugs.webkit.org/show_bug.cgi?id=184557
