@@ -1,3 +1,18 @@
+2018-04-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix --build-directory flag for run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=184545
+        <rdar://problem/39385080>
+
+        Rubber-stamped by Aakash Jain.
+
+        The --build-directory path does not work with iOS-Simulator.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._build_path): Use the port configuration to calculate the root directory.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_build_path): Test build directories for embedded configurations.
+
 2018-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         pemfile.py should not assume POSIX line endings

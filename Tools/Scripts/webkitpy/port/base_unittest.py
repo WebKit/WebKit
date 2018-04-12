@@ -365,11 +365,17 @@ class PortTest(unittest.TestCase):
         self.assertIn('passes/text.html', tests)
 
     def test_build_path(self):
-        port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))
-        if port.get_option('configuration') == 'Debug':
-            self.assertEqual(port._build_path(), '/my-build-directory/Debug')
-        else:
-            self.assertEqual(port._build_path(), '/my-build-directory/Release')
+        port = self.make_port(
+            executive=MockExecutive2(output='/default-build-path/Debug'),
+            options=optparse.Values({'build_directory': '/my-build-directory/'}),
+        )
+        self.assertEqual(port._build_path(), '/my-build-directory/Debug')
+
+        port = self.make_port(
+            executive=MockExecutive2(output='/default-build-path/Debug-embedded-port'),
+            options=optparse.Values({'build_directory': '/my-build-directory/'}),
+        )
+        self.assertEqual(port._build_path(), '/my-build-directory/Debug-embedded-port')
 
     def test_is_w3c_resource_file(self):
         port = self.make_port()
