@@ -85,6 +85,18 @@ Layout.Container = class Container extends Layout.Box {
         return !!this.firstInFlowOrFloatChild();
     }
 
+    isContainingBlockDescendant(layoutBox) {
+        ASSERT(layoutBox);
+        // If we hit the "this" while climbing up on the containing block chain -> box is part of this box's containing block subtree.
+        let containingBlock = layoutBox.containingBlock();
+        while (containingBlock) {
+            if (containingBlock == this)
+                return true;
+            containingBlock = containingBlock.containingBlock();
+        }
+        return false;
+    }
+
     outOfFlowDescendants() {
         if (!this.isPositioned())
             return new Array();

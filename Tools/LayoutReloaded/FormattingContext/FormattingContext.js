@@ -165,6 +165,7 @@ class FormattingContext {
             this._computeOutOfFlowHeight(outOfFlowBox);
             this._computeOutOfFlowPosition(outOfFlowBox);
             this._removeFromLayoutQueue(outOfFlowBox);
+            this.formattingState().clearNeedsLayout(outOfFlowBox);
         }
     }
 

@@ -35,8 +35,7 @@ class BlockFormattingContext extends FormattingContext {
 
         // This is a post-order tree traversal layout.
         // The root container layout is done in the formatting context it lives in, not that one it creates, so let's start with the first child.
-        if (this.formattingRoot().firstInFlowOrFloatChild())
-            this._addToLayoutQueue(this.formattingRoot().firstInFlowOrFloatChild());
+        this._addToLayoutQueue(this._firstInFlowChildWithNeedsLayout(this.formattingRoot()));
         // 1. Go all the way down to the leaf node
         // 2. Compute static position and width as we travers down
         // 3. As we climb back on the tree, compute height and finialize position
@@ -51,9 +50,10 @@ class BlockFormattingContext extends FormattingContext {
                     this.layoutState().layout(layoutBox);
                     break;
                 }
-                if (!layoutBox.isContainer() || !layoutBox.hasInFlowOrFloatChild())
+                let childToLayout = this._firstInFlowChildWithNeedsLayout(layoutBox);
+                if (!childToLayout)
                     break;
-                this._addToLayoutQueue(layoutBox.firstInFlowOrFloatChild());
+                this._addToLayoutQueue(childToLayout);
             }
 
             // Climb back on the ancestors and compute height/final position.
@@ -67,8 +67,10 @@ class BlockFormattingContext extends FormattingContext {
                 this._placeInFlowPositionedChildren(layoutBox);
                 // We are done with laying out this box.
                 this._removeFromLayoutQueue(layoutBox);
-                if (layoutBox.nextInFlowOrFloatSibling()) {
-                    this._addToLayoutQueue(layoutBox.nextInFlowOrFloatSibling());
+                this.formattingState().clearNeedsLayout(layoutBox);
+                let nextSiblingToLayout = this._nextInFlowSiblingWithNeedsLayout(layoutBox);
+                if (nextSiblingToLayout) {
+                    this._addToLayoutQueue(nextSiblingToLayout);
                     break;
                 }
             }
@@ -77,6 +79,7 @@ class BlockFormattingContext extends FormattingContext {
         this._placeInFlowPositionedChildren(this.formattingRoot());
         // And take care of out-of-flow boxes as the final step.
         this._layoutOutOfFlowDescendants();
+        ASSERT(!this.formattingState().layoutNeeded());
    }
 
     computeWidth(layoutBox) {
@@ -174,5 +177,23 @@ class BlockFormattingContext extends FormattingContext {
                 bottom = Math.max(floatingBottom, bottom);
         }
         return bottom;
+    }
+
+    _firstInFlowChildWithNeedsLayout(layoutBox) {
+        if (!layoutBox.isContainer())
+            return null;
+        for (let child = layoutBox.firstInFlowOrFloatChild(); child; child = child.nextInFlowOrFloatSibling()) {
+            if (this.formattingState().needsLayout(child))
+                return child;
+        }
+        return null;
+    }
+
+    _nextInFlowSiblingWithNeedsLayout(layoutBox) {
+        for (let sibling = layoutBox.nextInFlowOrFloatSibling(); sibling; sibling = sibling.nextInFlowOrFloatSibling()) {
+            if (this.formattingState().needsLayout(sibling))
+                return sibling;
+        }
+        return null;
     }
 }

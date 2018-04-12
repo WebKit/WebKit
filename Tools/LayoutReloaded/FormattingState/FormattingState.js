@@ -29,6 +29,8 @@ class FormattingState {
         this.m_formattingRoot = formattingRoot;
         this.m_floatingState = null;
         this.m_displayToLayout = new Map();
+        this.m_needsLayoutBoxList = new Map();
+        this._markSubTreeNeedsLayout(formattingRoot);
     }
 
     formattingRoot() {
@@ -86,4 +88,34 @@ class FormattingState {
         ASSERT(!layoutBox.parent());
         return this.layoutState().initialDisplayBox();
     }
+
+    markNeedsLayout(layoutBox) {
+        this.m_needsLayoutBoxList.set(layoutBox);
+    }
+
+    clearNeedsLayout(layoutBox) {
+        this.m_needsLayoutBoxList.delete(layoutBox);
+    }
+
+    needsLayout(layoutBox) {
+        return this.m_needsLayoutBoxList.has(layoutBox);
+    }
+
+    // This should just be needsLayout()
+    layoutNeeded() {
+        return this.m_needsLayoutBoxList.size;
+    }
+
+    _markSubTreeNeedsLayout(subTreeRoot) {
+        if (!subTreeRoot)
+            return;
+        // Only mark children that actually belong to this formatting context/state.
+        if (this.formattingRoot().isFormattingContextDescendant(subTreeRoot))
+            this.markNeedsLayout(subTreeRoot);
+        if (!subTreeRoot.isContainer() || !subTreeRoot.hasChild())
+            return;
+        for (let child = subTreeRoot.firstChild(); child; child = child.nextSibling())
+            this._markSubTreeNeedsLayout(child);
+    }
+
 }

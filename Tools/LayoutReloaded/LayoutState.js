@@ -64,14 +64,28 @@ class LayoutState {
     }
 
     formattingStateForBox(layoutBox) {
-        // FIXME: We should probably cache this somewhere
-        let formattingState = null;
-        let ancestor = layoutBox.containingBlock();
-        do {
-            formattingState = this.m_formattingStates.get(ancestor);
-            ancestor = ancestor.containingBlock();
-        } while (!formattingState);
-        return formattingState;
+        for (let formattingState of this.formattingStates()) {
+            if (formattingState[0].isFormattingContextDescendant(layoutBox))
+                return formattingState[1];
+        }
+        ASSERT_NOT_REACHED();
+        return null;
+    }
+
+    setNeedsLayout(layoutBox) {
+        let formattingState = this.formattingStateForBox(layoutBox);
+        // Newly created formatting state will obviously mark all the boxes dirty.
+        if (!formattingState)
+            return;
+        formattingState.setNeedsLayout(layoutBox);
+    }
+
+    needsLayout() {
+        for (let formattingState of this.formattingStates()) {
+            if (formattingState[1].layoutNeeded())
+                return true;
+        }
+        return false;
     }
 
     initialDisplayBox() {
