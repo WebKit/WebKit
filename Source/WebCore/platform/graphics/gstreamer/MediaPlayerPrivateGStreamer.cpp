@@ -1330,7 +1330,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             } else if (type & GST_STREAM_TYPE_TEXT)
                 m_currentTextStreamId = streamId;
             else
-                GST_WARNING("Unknown stream type with stream-id %s", streamId);
+                GST_WARNING("Unknown stream type with stream-id %s", streamId.utf8().data());
         }
         break;
     }

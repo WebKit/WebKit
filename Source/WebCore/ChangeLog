@@ -1,3 +1,11 @@
+2018-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed, fix GStreamer builds
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): We were
+        passing a String to a GST_WARNING call.
+
 2018-04-11  Chris Dumez  <cdumez@apple.com>
 
         input.webkitEntries does not work as expected when folder contains accented chars
