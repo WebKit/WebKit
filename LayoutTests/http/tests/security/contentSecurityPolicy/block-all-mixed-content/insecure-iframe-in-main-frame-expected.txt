@@ -1,7 +1,7 @@
-main frame - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/resources/fail.html because 'block-all-mixed-content' appears in the Content Security Policy.

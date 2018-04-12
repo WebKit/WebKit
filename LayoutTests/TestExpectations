@@ -581,7 +581,6 @@ webkit.org/b/169565 imported/w3c/web-platform-tests/cors/304.htm [ Failure ]
 # These tests used to have deterministic load delegate callback order before webkit.org/b/160677
 http/tests/svg/svg-use-external.html [ Pass Failure ]
 http/tests/loading/text-content-type-with-binary-extension.html [ Pass Failure ]
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
 
 # Tests that are flakey due to unhandled promise rejection error messages
 webkit.org/b/171094 streams/brand-checks.html [ Pass Failure ]

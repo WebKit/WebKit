@@ -31,7 +31,9 @@ window.addEventListener("message", function (messageEvent) {
 mixed content block because the main frame in the window has CSP directive block-all-mixed-content.</p>
 <pre id="console"></pre>
 <script>
-    window.open("https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-iframe.html");
+    window.setTimeout(function() {
+        window.open("https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-iframe.html");
+    }, 0);
 </script>
 </body>
 </html>

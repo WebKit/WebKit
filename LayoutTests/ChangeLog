@@ -1,3 +1,21 @@
+2018-04-12  Keith Rollin  <krollin@apple.com>
+
+        Fix flakiness in insecure-iframe-in-main-frame.html
+        https://bugs.webkit.org/show_bug.cgi?id=184432
+
+        Reviewed by Daniel Bates.
+
+        Mark insecure-iframe-in-main-frame.html as no longer flaky. Tweak it
+        so that the frame-load events of the test window do no interleave with
+        the frame-load events of the window opened by the test so that any
+        non-deterministic behavior doesn't affect the order of the expect
+        sequence of messages.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame-expected.txt:
+
 2018-04-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230554.
