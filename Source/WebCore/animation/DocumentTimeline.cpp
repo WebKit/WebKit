@@ -38,7 +38,8 @@
 #include "Page.h"
 #include "RenderElement.h"
 
-static const Seconds animationInterval { 15_ms };
+static const Seconds defaultAnimationInterval { 15_ms };
+static const Seconds throttledAnimationInterval { 30_ms };
 
 namespace WebCore {
 
@@ -67,6 +68,19 @@ DocumentTimeline::~DocumentTimeline()
 void DocumentTimeline::detachFromDocument()
 {
     m_document = nullptr;
+}
+
+void DocumentTimeline::updateThrottlingState()
+{
+    m_needsUpdateAnimationSchedule = false;
+    timingModelDidChange();
+}
+
+Seconds DocumentTimeline::animationInterval() const
+{
+    if (!m_document || !m_document->page())
+        return Seconds::infinity();
+    return m_document->page()->isLowPowerModeEnabled() ? throttledAnimationInterval : defaultAnimationInterval;
 }
 
 std::optional<Seconds> DocumentTimeline::currentTime()
@@ -136,7 +150,7 @@ void DocumentTimeline::updateAnimationSchedule()
 
     for (const auto& animation : animations()) {
         auto animationTimeToNextRequiredTick = animation->timeToNextRequiredTick();
-        if (animationTimeToNextRequiredTick < animationInterval) {
+        if (animationTimeToNextRequiredTick < animationInterval()) {
             scheduleAnimationResolution();
             return;
         }
@@ -159,7 +173,7 @@ void DocumentTimeline::scheduleAnimationResolution()
 #else
     // FIXME: We need to use the same logic as ScriptedAnimationController here,
     // which will be addressed by the refactor tracked by webkit.org/b/179293.
-    m_animationResolutionTimer.startOneShot(animationInterval);
+    m_animationResolutionTimer.startOneShot(animationInterval());
 #endif
 }
 

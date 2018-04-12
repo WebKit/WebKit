@@ -71,6 +71,9 @@ public:
 
     void enqueueAnimationPlaybackEvent(AnimationPlaybackEvent&);
 
+    void updateThrottlingState();
+    WEBCORE_EXPORT Seconds animationInterval() const;
+
 private:
     DocumentTimeline(Document&, PlatformDisplayID);
 

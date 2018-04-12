@@ -1,5 +1,25 @@
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Throttle animations when lowPowerMode is on
+        https://bugs.webkit.org/show_bug.cgi?id=184540
+
+        Reviewed by Jon Lee.
+
+        Ensure animations are sampled at a lower frequency when lowPowerMode is on.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::updateThrottlingState):
+        (WebCore::DocumentTimeline::animationInterval const):
+        (WebCore::DocumentTimeline::updateAnimationSchedule):
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        * animation/DocumentTimeline.h:
+        * page/Page.cpp:
+        (WebCore::Page::handleLowModePowerChange):
+        * testing/Internals.cpp:
+        (WebCore::Internals::animationsInterval const):
+
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Ensure elements overlapping with elements animating also get composited
         https://bugs.webkit.org/show_bug.cgi?id=184539
 

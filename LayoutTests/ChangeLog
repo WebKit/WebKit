@@ -1,5 +1,16 @@
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Throttle animations when lowPowerMode is on
+        https://bugs.webkit.org/show_bug.cgi?id=184540
+
+        Reviewed by Jon Lee.
+
+        Mark one more test as passing when the CSS Animations and CSS Transitions as Web Animations flag is on.
+
+        * fast/animation/css-animation-throttling-lowPowerMode.html:
+
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Ensure elements overlapping with elements animating also get composited
         https://bugs.webkit.org/show_bug.cgi?id=184539
 
