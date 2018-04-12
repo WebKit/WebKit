@@ -4267,42 +4267,6 @@ void SpeculativeJIT::compileArithRandom(Node* node)
     doubleResult(result.fpr(), node);
 }
 
-void SpeculativeJIT::compileBigIntEquality(Node* node)
-{
-    // FIXME: [ESNext][BigInt] Create specialized version of strict equals for BigIntUse
-    // https://bugs.webkit.org/show_bug.cgi?id=182895
-    SpeculateCellOperand left(this, node->child1());
-    SpeculateCellOperand right(this, node->child2());
-    GPRReg leftPayloadGPR = left.gpr();
-    GPRReg rightPayloadGPR = right.gpr();
-
-    GPRTemporary resultPayload(this, Reuse, left);
-    GPRReg resultPayloadGPR = resultPayload.gpr();
-
-    left.use();
-    right.use();
-
-    speculateBigInt(node->child1(), leftPayloadGPR);
-    speculateBigInt(node->child2(), rightPayloadGPR);
-
-    JITCompiler::Jump notEqualCase = m_jit.branchPtr(JITCompiler::NotEqual, leftPayloadGPR, rightPayloadGPR);
-
-    m_jit.move(JITCompiler::TrustedImm32(true), resultPayloadGPR);
-    JITCompiler::Jump done = m_jit.jump();
-
-    notEqualCase.link(&m_jit);
-
-    silentSpillAllRegisters(resultPayloadGPR);
-    callOperation(operationCompareStrictEqCell, resultPayloadGPR, leftPayloadGPR, rightPayloadGPR);
-    silentFillAllRegisters();
-
-    m_jit.andPtr(JITCompiler::TrustedImm32(1), resultPayloadGPR);
-
-    done.link(&m_jit);
-
-    booleanResult(resultPayloadGPR, node, UseChildrenCalledExplicitly);
-}
-
 #endif
 
 } } // namespace JSC::DFG

@@ -12940,6 +12940,40 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
     m_currentNode = branchNode;
 }
 
+void SpeculativeJIT::compileBigIntEquality(Node* node)
+{
+    // FIXME: [ESNext][BigInt] Create specialized version of strict equals for BigIntUse
+    // https://bugs.webkit.org/show_bug.cgi?id=182895
+    SpeculateCellOperand left(this, node->child1());
+    SpeculateCellOperand right(this, node->child2());
+    GPRTemporary result(this, Reuse, left);
+    GPRReg leftGPR = left.gpr();
+    GPRReg rightGPR = right.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    left.use();
+    right.use();
+
+    speculateBigInt(node->child1(), leftGPR);
+    speculateBigInt(node->child2(), rightGPR);
+
+    JITCompiler::Jump notEqualCase = m_jit.branchPtr(JITCompiler::NotEqual, leftGPR, rightGPR);
+
+    m_jit.move(JITCompiler::TrustedImm32(1), resultGPR);
+
+    JITCompiler::Jump done = m_jit.jump();
+
+    notEqualCase.link(&m_jit);
+
+    silentSpillAllRegisters(resultGPR);
+    callOperation(operationCompareStrictEqCell, resultGPR, leftGPR, rightGPR);
+    silentFillAllRegisters();
+
+    done.link(&m_jit);
+
+    unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
+}
+
 } } // namespace JSC::DFG
 
 #endif

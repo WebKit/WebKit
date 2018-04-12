@@ -1,3 +1,19 @@
+2018-04-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Remove compileBigIntEquality in DFG 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=184535
+
+        Reviewed by Saam Barati.
+
+        We can have the unified implementation for compileBigIntEquality.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBigIntEquality):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBigIntEquality): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBigIntEquality): Deleted.
+
 2018-04-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Improve include hierarchy
