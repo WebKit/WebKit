@@ -255,7 +255,7 @@ bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutR
     if (!renderer.element())
         return true;
 
-    KeyframeEffectReadOnly* matchingEffect;
+    KeyframeEffectReadOnly* matchingEffect = nullptr;
     for (const auto& animation : animationsForElement(*renderer.element())) {
         auto* effect = animation->effect();
         if (is<KeyframeEffectReadOnly>(effect)) {
