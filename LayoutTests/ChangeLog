@@ -1,3 +1,37 @@
+2018-04-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Adding or updating more baselines affected by
+        web-platform-test syncs in r230330, r230353 and r230445.
+
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/url: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/request: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/text-level-semantics: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/streams: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/streams/readable-byte-streams: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/streams/readable-byte-streams/general-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/touch-events: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/touch-events/historical-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webaudio: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webaudio/the-audio-api: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt: Added.
+
 2018-04-11  Chris Dumez  <cdumez@apple.com>
 
         input.webkitEntries does not work as expected when folder contains accented chars

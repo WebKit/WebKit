@@ -1,7 +1,8 @@
 
+
 PASS utility code 
-PASS application/octet-stream 
-PASS video/x-new-fictional-format 
+PASS application/octet-stream not supported 
+PASS fictional formats and codecs not supported 
 PASS audio/mp4 (optional) 
 PASS audio/mp4; codecs="mp4a.40.2" (optional) 
 FAIL audio/mp4 with bogus codec assert_equals: audio/mp4; codecs="bogus" expected "" but got "probably"
