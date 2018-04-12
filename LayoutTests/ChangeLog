@@ -1,5 +1,16 @@
 2018-04-12  Keith Rollin  <krollin@apple.com>
 
+        [mac-wk2] LayoutTest http/tests/security/anchor-download-allow-data.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=161745
+        <rdar://problem/39391176>
+
+        Unreviewed test gardening. Re-enable this test now that it is
+        consistently passing.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-04-12  Keith Rollin  <krollin@apple.com>
+
         REGRESSION: [mac-wk2 release] LayoutTest http/tests/security/cross-origin-plugin-allowed.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=161539
         <rdar://problem/39389781>
