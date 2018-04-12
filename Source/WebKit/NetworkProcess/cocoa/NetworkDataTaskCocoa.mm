@@ -193,7 +193,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
-#if USE(APPLE_INTERNAL_SDK)
+#if ENABLE(WIFI_ASSERTIONS)
     applyAdditionalProperties(request, *this, nsRequest);
 #endif
 
