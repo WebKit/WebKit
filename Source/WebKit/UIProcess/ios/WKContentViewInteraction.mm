@@ -2635,22 +2635,6 @@ static inline UIWKSelectionFlags toUIWKSelectionFlags(SelectionFlags flags)
     return static_cast<UIWKSelectionFlags>(uiFlags);
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
-static inline SelectionHandlePosition toSelectionHandlePosition(UIWKHandlePosition position)
-{
-    switch (position) {
-    case UIWKHandleTop:
-        return SelectionHandlePosition::Top;
-    case UIWKHandleRight:
-        return SelectionHandlePosition::Right;
-    case UIWKHandleBottom:
-        return SelectionHandlePosition::Bottom;
-    case UIWKHandleLeft:
-        return SelectionHandlePosition::Left;
-    }
-}
-#endif
-
 static inline WebCore::TextGranularity toWKTextGranularity(UITextGranularity granularity)
 {
     switch (granularity) {
@@ -2709,15 +2693,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         [(UIWKTextInteractionAssistant *)[view interactionAssistant] selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:toUIWKSelectionTouch((SelectionTouch)touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
-- (void)_didUpdateBlockSelectionWithTouch:(SelectionTouch)touch withFlags:(SelectionFlags)flags growThreshold:(CGFloat)growThreshold shrinkThreshold:(CGFloat)shrinkThreshold
-{
-    [_webSelectionAssistant blockSelectionChangedWithTouch:toUIWKSelectionTouch(touch) withFlags:toUIWKSelectionFlags(flags) growThreshold:growThreshold shrinkThreshold:shrinkThreshold];
-    if (touch != SelectionTouch::Started && touch != SelectionTouch::Moved)
-        _usingGestureForSelection = NO;
-}
-#endif
-
 - (BOOL)_isInteractingWithAssistedNode
 {
     return hasAssistedNode(_assistedNodeInformation);
@@ -2764,19 +2739,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             _usingGestureForSelection = NO;
     });
 }
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 120000
-- (void)changeBlockSelectionWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch forHandle:(UIWKHandlePosition)handle
-{
-    // This was only readded to avoid a crash due to incompatibilities with certain version of UIKit.
-    // This should be removed ASAP.
-    // The selection will be properly updated with the next update, selection still functions
-    // without this function doing anything.
-    
-    _usingGestureForSelection = YES;
-    _page->updateBlockSelectionWithTouch(WebCore::IntPoint(point), static_cast<uint32_t>(toSelectionTouch(touch)), static_cast<uint32_t>(toSelectionHandlePosition(handle)));
-}
-#endif
 
 - (void)moveByOffset:(NSInteger)offset
 {
