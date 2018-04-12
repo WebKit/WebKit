@@ -1,3 +1,33 @@
+2018-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Make WebKitWebViewBackend object mandatory for webkit_web_view_new*() constructors
+        https://bugs.webkit.org/show_bug.cgi?id=184513
+
+        Reviewed by Michael Catanzaro.
+
+        webkit_web_view_new*() constructors should always expect a non-null
+        WebKitWebViewBackend object, forcing the user to specify how the
+        wpe_view_backend object is managed for the WebKitWebView that's being
+        created.
+
+        webkitWebViewBackendCreateDefault() and the default
+        _WebKitWebViewBackend() constructor are removed. WPE-specific
+        webkit_web_view_new*() entrypoints are updated to bail if the passed-in
+        WebKitWebViewBackend object is null. Documentation is updated
+        accordingly.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        * UIProcess/API/wpe/WebKitWebViewBackend.cpp:
+        (webkitWebViewBackendCreateDefault): Deleted.
+        * UIProcess/API/wpe/WebKitWebViewBackendPrivate.h:
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp:
+        (webkit_web_view_new):
+        (webkit_web_view_new_with_context):
+        (webkit_web_view_new_with_related_view):
+        (webkit_web_view_new_with_settings):
+        (webkit_web_view_new_with_user_content_manager):
+
 2018-04-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl][WebKit] Implement NetworkDataTaskCurl

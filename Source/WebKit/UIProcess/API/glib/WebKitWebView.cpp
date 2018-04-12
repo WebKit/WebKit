@@ -623,10 +623,6 @@ static void webkitWebViewConstructed(GObject* object)
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
-#if PLATFORM(WPE)
-    if (!priv->backend)
-        priv->backend = webkitWebViewBackendCreateDefault();
-#endif
     if (priv->relatedView) {
         priv->context = webkit_web_view_get_context(priv->relatedView);
         priv->isEphemeral = webkit_web_view_is_ephemeral(priv->relatedView);

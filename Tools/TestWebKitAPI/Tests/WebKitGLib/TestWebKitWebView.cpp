@@ -108,21 +108,12 @@ static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
 #if PLATFORM(WPE)
 static void testWebViewWebBackend(Test* test, gconstpointer)
 {
-    // Use the default backend (we don't have a way to check the backend will be actually freed).
-    GRefPtr<WebKitWebView> webView = adoptGRef(webkit_web_view_new(nullptr));
+    // User provided backend with default deleter (we don't have a way to check the backend will be actually freed).
+    GRefPtr<WebKitWebView> webView = adoptGRef(webkit_web_view_new(webkit_web_view_backend_new(wpe_view_backend_create(), nullptr, nullptr)));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
     auto* viewBackend = webkit_web_view_get_backend(webView.get());
     g_assert(viewBackend);
     auto* wpeBackend = webkit_web_view_backend_get_wpe_backend(viewBackend);
-    g_assert(wpeBackend);
-    webView = nullptr;
-
-    // User provided backend with default deleter (we don't have a way to check the backend will be actually freed).
-    webView = adoptGRef(webkit_web_view_new(webkit_web_view_backend_new(wpe_view_backend_create(), nullptr, nullptr)));
-    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
-    viewBackend = webkit_web_view_get_backend(webView.get());
-    g_assert(viewBackend);
-    wpeBackend = webkit_web_view_backend_get_wpe_backend(viewBackend);
     g_assert(wpeBackend);
     webView = nullptr;
 

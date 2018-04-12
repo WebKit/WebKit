@@ -1,3 +1,24 @@
+2018-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Make WebKitWebViewBackend object mandatory for webkit_web_view_new*() constructors
+        https://bugs.webkit.org/show_bug.cgi?id=184513
+
+        Reviewed by Michael Catanzaro.
+
+        Update the WPE-specific testWebViewWebBackend() test case, removing the
+        test that passes a null WebKitWebViewBackend object to the
+        webkit_web_view_new() call.
+
+        Helper createWebViewBackend() that's called via Test::createWebView()
+        variations is updated to, in case of not using the headless backend,
+        return a WebKitWebViewBackend instance that wraps around a
+        default wpe_view_backend object.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewWebBackend):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebViewBackend):
+
 2018-04-11  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Introduce needsLayout flag

@@ -31,4 +31,3 @@ template <> void derefGPtr(WebKitWebViewBackend* ptr);
 }
 
 void webkitWebViewBackendUnref(WebKitWebViewBackend*);
-GRefPtr<WebKitWebViewBackend> webkitWebViewBackendCreateDefault();
