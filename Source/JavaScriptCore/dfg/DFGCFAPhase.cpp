@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractInterpreterInlines.h"
+#include "DFGClobberSet.h"
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGPhase.h"
@@ -163,8 +164,8 @@ private:
                 dataLog("      head regs: ", nodeValuePairListDump(block->ssa->valuesAtHead), "\n");
         }
         for (unsigned i = 0; i < block->size(); ++i) {
+            Node* node = block->at(i);
             if (m_verbose) {
-                Node* node = block->at(i);
                 dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
                 
                 if (!safeToExecute(m_state, m_graph, node))
@@ -179,6 +180,9 @@ private:
                     dataLogF("         Expect OSR exit.\n");
                 break;
             }
+            
+            if (m_state.didClobberOrFolded() != writesOverlap(m_graph, node, JSCell_structureID))
+                DFG_CRASH(m_graph, node, toCString("AI-clobberize disagreement; AI says ", m_state.clobberState(), " while clobberize says ", writeSet(m_graph, node)).data());
         }
         if (m_verbose) {
             dataLogF("      tail regs: ");

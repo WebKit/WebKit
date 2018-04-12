@@ -953,10 +953,29 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
             
         case Array::ArrayStorage:
+            if (node->arrayMode().isOutOfBounds()) {
+                read(World);
+                write(Heap);
+                return;
+            }
+            read(Butterfly_publicLength);
+            read(Butterfly_vectorLength);
+            read(ArrayStorageProperties);
+            write(ArrayStorageProperties);
+            if (node->arrayMode().mayStoreToHole())
+                write(Butterfly_publicLength);
+            return;
+
         case Array::SlowPutArrayStorage:
-            // Give up on life for now.
-            read(World);
-            write(Heap);
+            if (node->arrayMode().mayStoreToHole()) {
+                read(World);
+                write(Heap);
+                return;
+            }
+            read(Butterfly_publicLength);
+            read(Butterfly_vectorLength);
+            read(ArrayStorageProperties);
+            write(ArrayStorageProperties);
             return;
 
         case Array::Int8Array:
@@ -1300,10 +1319,24 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case NewArrayWithSize:
-    case NewTypedArray:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
+
+    case NewTypedArray:
+        switch (node->child1().useKind()) {
+        case Int32Use:
+            read(HeapObjectCount);
+            write(HeapObjectCount);
+            return;
+        case UntypedUse:
+            read(World);
+            write(Heap);
+            return;
+        default:
+            DFG_CRASH(graph, node, "Bad use kind");
+        }
+        break;
 
     case NewArrayWithSpread: {
         // This also reads from JSFixedArray's data store, but we don't have any way of describing that yet.
@@ -1522,7 +1555,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CompareBelowEq:
         def(PureValue(node));
         return;
-        
+
     case CompareEq:
     case CompareLess:
     case CompareLessEq:
@@ -1534,12 +1567,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
         }
 
-        if (node->op() == CompareEq && node->isBinaryUseKind(ObjectUse)) {
-            def(PureValue(node));
-            return;
-        }
-        if (node->child1().useKind() == UntypedUse || node->child1().useKind() == ObjectUse
-            || node->child2().useKind() == UntypedUse || node->child2().useKind() == ObjectUse) {
+        if (node->isBinaryUseKind(UntypedUse)) {
             read(World);
             write(Heap);
             return;

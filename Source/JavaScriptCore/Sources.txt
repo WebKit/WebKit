@@ -271,6 +271,7 @@ debugger/DebuggerParseData.cpp
 debugger/DebuggerScope.cpp
 
 dfg/DFGAbstractHeap.cpp
+dfg/DFGAbstractInterpreterClobberState.cpp
 dfg/DFGAbstractValue.cpp
 dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp
 dfg/DFGAdaptiveStructureWatchpoint.cpp

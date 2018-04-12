@@ -150,14 +150,16 @@ public:
     
 private:
     void clobberWorld(const CodeOrigin&, unsigned indexInBlock);
+    void didFoldClobberWorld();
     
     template<typename Functor>
     void forAllValues(unsigned indexInBlock, Functor&);
     
     void clobberStructures(unsigned indexInBlock);
+    void didFoldClobberStructures();
+    
     void observeTransition(unsigned indexInBlock, RegisteredStructure from, RegisteredStructure to);
     void observeTransitions(unsigned indexInBlock, const TransitionVector&);
-    void setDidClobber();
     
     enum BooleanResult {
         UnknownBooleanResult,
