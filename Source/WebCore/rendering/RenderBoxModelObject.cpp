@@ -194,6 +194,13 @@ void RenderBoxModelObject::animationPaused(double timeOffset, const String& name
     layer()->backing()->animationPaused(timeOffset, name);
 }
 
+void RenderBoxModelObject::animationSeeked(double timeOffset, const String& name)
+{
+    ASSERT(hasLayer());
+    ASSERT(isComposited());
+    layer()->backing()->animationSeeked(timeOffset, name);
+}
+
 void RenderBoxModelObject::animationFinished(const String& name)
 {
     ASSERT(hasLayer());

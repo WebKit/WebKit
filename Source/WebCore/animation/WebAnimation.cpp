@@ -383,6 +383,9 @@ ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
     // 3. Run the procedure to update an animation's finished state for animation with the did seek flag set to true, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::Yes, SynchronouslyNotify::No);
 
+    if (m_effect)
+        m_effect->animationDidSeek();
+
     return { };
 }
 
@@ -779,6 +782,9 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     // 9. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
 
+    if (m_effect)
+        m_effect->animationPlayStateDidChange(PlayState::Running);
+
     return { };
 }
 
@@ -874,6 +880,9 @@ ExceptionOr<void> WebAnimation::pause()
 
     // 8. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
+
+    if (m_effect)
+        m_effect->animationPlayStateDidChange(PlayState::Paused);
 
     return { };
 }
@@ -1008,16 +1017,16 @@ void WebAnimation::resolve(RenderStyle& targetStyle)
         m_effect->apply(targetStyle);
 }
 
-void WebAnimation::acceleratedRunningStateDidChange()
+void WebAnimation::acceleratedStateDidChange()
 {
     if (is<DocumentTimeline>(m_timeline))
         downcast<DocumentTimeline>(*m_timeline).animationAcceleratedRunningStateDidChange(*this);
 }
 
-void WebAnimation::startOrStopAccelerated()
+void WebAnimation::applyPendingAcceleratedActions()
 {
     if (is<KeyframeEffectReadOnly>(m_effect))
-        downcast<KeyframeEffectReadOnly>(*m_effect).startOrStopAccelerated();
+        downcast<KeyframeEffectReadOnly>(*m_effect).applyPendingAcceleratedActions();
 }
 
 WebAnimation& WebAnimation::readyPromiseResolve()

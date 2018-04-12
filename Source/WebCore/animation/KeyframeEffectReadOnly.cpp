@@ -695,6 +695,7 @@ void KeyframeEffectReadOnly::setBlendingKeyframes(KeyframeList& blendingKeyframe
     m_blendingKeyframes = WTFMove(blendingKeyframes);
 
     computeStackingContextImpact();
+    computeShouldRunAccelerated();
 
     checkForMatchingTransformFunctionLists();
     checkForMatchingFilterFunctionLists();
@@ -924,26 +925,21 @@ void KeyframeEffectReadOnly::apply(RenderStyle& targetStyle)
         return;
 
     auto progress = iterationProgress();
+    if (m_startedAccelerated && (!progress || progress.value() >= 1)) {
+        m_startedAccelerated = false;
+        animation()->acceleratedStateDidChange();
+    }
+
     if (!progress)
         return;
 
-    if (m_startedAccelerated && progress.value() >= 1) {
-        m_startedAccelerated = false;
-        animation()->acceleratedRunningStateDidChange();
-    }
-
-    bool needsToStartAccelerated = false;
-
-    if (!m_started && !m_startedAccelerated) {
-        needsToStartAccelerated = shouldRunAccelerated();
-        m_startedAccelerated = needsToStartAccelerated;
-        if (needsToStartAccelerated)
-            animation()->acceleratedRunningStateDidChange();
+    if (!m_started && !m_startedAccelerated && m_shouldRunAccelerated) {
+        m_startedAccelerated = true;
+        animation()->acceleratedStateDidChange();
     }
     m_started = true;
 
-    if (!needsToStartAccelerated && !m_startedAccelerated)
-        setAnimatedPropertiesInStyle(targetStyle, progress.value());
+    setAnimatedPropertiesInStyle(targetStyle, progress.value());
 
     // https://w3c.github.io/web-animations/#side-effects-section
     // For every property targeted by at least one animation effect that is current or in effect, the user agent
@@ -957,13 +953,15 @@ void KeyframeEffectReadOnly::invalidate()
     invalidateElement(m_target.get());
 }
 
-bool KeyframeEffectReadOnly::shouldRunAccelerated()
+void KeyframeEffectReadOnly::computeShouldRunAccelerated()
 {
+    m_shouldRunAccelerated = hasBlendingKeyframes();
     for (auto cssPropertyId : m_blendingKeyframes.properties()) {
-        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId))
-            return false;
+        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId)) {
+            m_shouldRunAccelerated = false;
+            return;
+        }
     }
-    return hasBlendingKeyframes();
 }
 
 void KeyframeEffectReadOnly::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
@@ -1143,7 +1141,29 @@ TimingFunction* KeyframeEffectReadOnly::timingFunctionForKeyframeAtIndex(size_t 
     return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation().timingFunction();
 }
 
-void KeyframeEffectReadOnly::startOrStopAccelerated()
+void KeyframeEffectReadOnly::animationPlayStateDidChange(WebAnimation::PlayState playState)
+{
+    if (playState == WebAnimation::PlayState::Running)
+        addPendingAcceleratedAction(AcceleratedAction::Play);
+    else if (playState == WebAnimation::PlayState::Paused)
+        addPendingAcceleratedAction(AcceleratedAction::Pause);
+};
+
+void KeyframeEffectReadOnly::animationDidSeek()
+{
+    addPendingAcceleratedAction(AcceleratedAction::Seek);
+}
+
+void KeyframeEffectReadOnly::addPendingAcceleratedAction(AcceleratedAction action)
+{
+    if (!m_shouldRunAccelerated)
+        return;
+
+    m_pendingAcceleratedActions.append(action);
+    animation()->acceleratedStateDidChange();
+}
+
+void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
 {
     auto* renderer = this->renderer();
     if (!renderer || !renderer->isComposited())
@@ -1151,14 +1171,78 @@ void KeyframeEffectReadOnly::startOrStopAccelerated()
 
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
     if (m_startedAccelerated) {
-        auto animation = Animation::create();
-        animation->setDuration(timing()->iterationDuration().seconds());
-        compositedRenderer->startAnimation(0, animation.ptr(), m_blendingKeyframes);
+        auto timeOffset = animation()->currentTime().value().seconds();
+        if (timing()->delay() < 0_s)
+            timeOffset = -timing()->delay().seconds();
+
+        for (const auto& action : m_pendingAcceleratedActions) {
+            switch (action) {
+            case AcceleratedAction::Play:
+                compositedRenderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer().ptr(), m_blendingKeyframes);
+                break;
+            case AcceleratedAction::Pause:
+                compositedRenderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
+                break;
+            case AcceleratedAction::Seek:
+                compositedRenderer->animationSeeked(timeOffset, m_blendingKeyframes.animationName());
+                break;
+            }
+        }
+        m_pendingAcceleratedActions.clear();
     } else {
         compositedRenderer->animationFinished(m_blendingKeyframes.animationName());
         if (!m_target->document().renderTreeBeingDestroyed())
             m_target->invalidateStyleAndLayerComposition();
     }
+}
+
+Ref<const Animation> KeyframeEffectReadOnly::backingAnimationForCompositedRenderer() const
+{
+    auto effectAnimation = animation();
+    if (is<DeclarativeAnimation>(effectAnimation))
+        return downcast<DeclarativeAnimation>(effectAnimation)->backingAnimation();
+
+    // FIXME: The iterationStart and endDelay AnimationEffectTimingReadOnly properties do not have
+    // corresponding Animation properties.
+    auto effectTiming = timing();
+    auto animation = Animation::create();
+    animation->setDuration(effectTiming->iterationDuration().seconds());
+    animation->setDelay(effectTiming->delay().seconds());
+    animation->setIterationCount(effectTiming->iterations());
+    animation->setTimingFunction(effectTiming->timingFunction()->clone());
+
+    switch (effectTiming->fill()) {
+    case FillMode::None:
+    case FillMode::Auto:
+        animation->setFillMode(AnimationFillModeNone);
+        break;
+    case FillMode::Backwards:
+        animation->setFillMode(AnimationFillModeBackwards);
+        break;
+    case FillMode::Forwards:
+        animation->setFillMode(AnimationFillModeForwards);
+        break;
+    case FillMode::Both:
+        animation->setFillMode(AnimationFillModeBoth);
+        break;
+    }
+
+    switch (effectTiming->direction()) {
+    case PlaybackDirection::Normal:
+        animation->setDirection(Animation::AnimationDirectionNormal);
+        break;
+    case PlaybackDirection::Alternate:
+        animation->setDirection(Animation::AnimationDirectionAlternate);
+        break;
+    case PlaybackDirection::Reverse:
+        animation->setDirection(Animation::AnimationDirectionReverse);
+        break;
+    case PlaybackDirection::AlternateReverse:
+        animation->setDirection(Animation::AnimationDirectionAlternateReverse);
+        break;
+    }
+
+    return WTFMove(animation);
 }
 
 RenderElement* KeyframeEffectReadOnly::renderer() const

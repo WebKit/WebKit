@@ -1,3 +1,71 @@
+2018-04-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Enable seeking for hardware animations
+        https://bugs.webkit.org/show_bug.cgi?id=184518
+
+        Reviewed by Dean Jackson.
+
+        Hardware animations had lagged behind software animations in support and this patch bring their respective level
+        of support closer to one another. Importantly, we add the ability to seek an animation added to a GraphicsLayerCA
+        since many tests pause and seek animations to test their state. Animations may also have their playback state changed
+        along with their current time in the same run loop, so we now maintain a list of pending processing actions for
+        hardware animations.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::updateAnimationSchedule): If we have animations queued up for updates to their accelerated
+        state we can schedule animation resolution immediately since we've already established we'll have work to do.
+        (WebCore::DocumentTimeline::updateAnimations): Factor the updates of pending accelerated animations out in a dedicated
+        method.
+        (WebCore::DocumentTimeline::applyPendingAcceleratedAnimations): Go through all pending accelerated animations and update
+        their state.
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::setBlendingKeyframes): Update the m_shouldRunAccelerated flag when setting blending keyframes.
+        (WebCore::KeyframeEffectReadOnly::apply): Ensure we finish accelerated animations if the progress is 1 or null (no longer active).
+        start accelerated animations if the animation is starting and always resolve styles in software as well to ensure that
+        hit testing will work as expected.
+        (WebCore::KeyframeEffectReadOnly::computeShouldRunAccelerated):
+        (WebCore::KeyframeEffectReadOnly::animationPlayStateDidChange): Called by WebAnimation when play() or pause() is called
+        with the appropriate flag.
+        (WebCore::KeyframeEffectReadOnly::animationDidSeek): Called by WebAnimation when the currentTime property is set.
+        (WebCore::KeyframeEffectReadOnly::addPendingAcceleratedAction): Add the provided action to the list of pending accelerated
+        actions and notify the animation that the accelerated state needs changing.
+        (WebCore::KeyframeEffectReadOnly::applyPendingAcceleratedActions): Called by DocumentTimeline, through WebAnimation, to apply
+        all pending accelerated actions.
+        (WebCore::KeyframeEffectReadOnly::backingAnimationForCompositedRenderer const): If we're dealing with a declarative animation,
+        we already have a backing Animation object, so use it directly. Otherwise, create one and ensure it reflects all timing properties
+        for the animation.
+        (WebCore::KeyframeEffectReadOnly::shouldRunAccelerated): Deleted.
+        (WebCore::KeyframeEffectReadOnly::startOrStopAccelerated): Deleted.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setCurrentTime): Call animationDidSeek() on the effect to ensure its accelerated animation gets seeked.
+        (WebCore::WebAnimation::play): Call animationPlayStateDidChange() on the effect to ensure its accelerated animation is started or resumed.
+        (WebCore::WebAnimation::pause): Call animationPlayStateDidChange() on the effect to ensure its accelerated animation gets paused.
+        (WebCore::WebAnimation::acceleratedStateDidChange): 
+        (WebCore::WebAnimation::applyPendingAcceleratedActions):
+        (WebCore::WebAnimation::acceleratedRunningStateDidChange): Deleted.
+        (WebCore::WebAnimation::startOrStopAccelerated): Deleted.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::seekAnimation):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::addProcessingActionForAnimation): Add an AnimationProcessingAction to the list of such actions for a
+        given animation name. In case we already have a Remove action, we ignore the action since the hardware animation will have been
+        removed by the time we try to apply this processing action.
+        (WebCore::GraphicsLayerCA::pauseAnimation): Add a Pause processing action.
+        (WebCore::GraphicsLayerCA::seekAnimation): Add a Seek processing action.
+        (WebCore::GraphicsLayerCA::removeAnimation): Add a Remove processing action.
+        (WebCore::GraphicsLayerCA::updateAnimations): First ensure that all animations pending commit are committed and then update
+        all animations based on the actions added through addProcessingActionForAnimation().
+        (WebCore::GraphicsLayerCA::seekCAAnimationOnLayer): Generate a new animation based on the new seek time provided.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::AnimationProcessingAction::AnimationProcessingAction):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::animationSeeked):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::animationSeeked):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const): Fix an issue where we would run the CSSAnimationController
+        logic even when the legacy animation engine was disabled.
+
 2018-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed, fix GStreamer builds

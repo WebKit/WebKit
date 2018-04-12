@@ -98,12 +98,14 @@ public:
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void apply(RenderStyle&) override;
     void invalidate() override;
-    void startOrStopAccelerated();
+    void animationPlayStateDidChange(WebAnimation::PlayState) final;
+    void animationDidSeek() final;
+    void applyPendingAcceleratedActions();
     bool isRunningAccelerated() const { return m_startedAccelerated; }
 
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
-    bool isAccelerated() const override { return false; }
+    bool isAccelerated() const override { return m_startedAccelerated; }
     bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
     bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
 #if ENABLE(FILTERS_LEVEL_2)
@@ -125,11 +127,14 @@ protected:
     KeyframeEffectReadOnly(ClassType, Ref<AnimationEffectTimingReadOnly>&&, Element*);
 
 private:
+    enum class AcceleratedAction { Play, Pause, Seek };
+    void addPendingAcceleratedAction(AcceleratedAction);
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t);
+    Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computeStackingContextImpact();
     void updateBlendingKeyframes();
-    bool shouldRunAccelerated();
+    void computeShouldRunAccelerated();
     void setBlendingKeyframes(KeyframeList&);
     void checkForMatchingTransformFunctionLists();
     void checkForMatchingFilterFunctionLists();
@@ -137,6 +142,7 @@ private:
     void checkForMatchingBackdropFilterFunctionLists();
 #endif
 
+    bool m_shouldRunAccelerated { false };
     bool m_triggersStackingContext { false };
     bool m_started { false };
     bool m_startedAccelerated { false };
@@ -149,6 +155,8 @@ private:
     RefPtr<Element> m_target;
     KeyframeList m_blendingKeyframes;
     Vector<ParsedKeyframe> m_parsedKeyframes;
+
+    Vector<AcceleratedAction> m_pendingAcceleratedActions;
 };
 
 } // namespace WebCore

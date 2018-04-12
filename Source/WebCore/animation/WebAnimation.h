@@ -100,8 +100,8 @@ public:
     Seconds timeToNextRequiredTick() const;
     void resolve(RenderStyle&);
     void effectTargetDidChange(Element* previousTarget, Element* newTarget);
-    void acceleratedRunningStateDidChange();
-    void startOrStopAccelerated();
+    void acceleratedStateDidChange();
+    void applyPendingAcceleratedActions();
 
     void timingModelDidChange();
     void suspendEffectInvalidation();

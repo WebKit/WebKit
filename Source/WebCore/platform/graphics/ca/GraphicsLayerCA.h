@@ -130,6 +130,7 @@ public:
 
     WEBCORE_EXPORT bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void pauseAnimation(const String& animationName, double timeOffset) override;
+    WEBCORE_EXPORT void seekAnimation(const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void removeAnimation(const String& animationName) override;
 
     WEBCORE_EXPORT void setContentsToImage(Image*) override;
@@ -443,6 +444,7 @@ private:
     void setAnimationOnLayer(PlatformCAAnimation&, AnimatedPropertyID, const String& animationName, int index, int subIndex, Seconds timeOffset);
     bool removeCAAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index, int subINdex);
     void pauseCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, int subIndex, Seconds timeOffset);
+    void seekCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, int subIndex, Seconds timeOffset);
 
     enum MoveOrCopy { Move, Copy };
     static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
@@ -518,6 +520,18 @@ private:
 
     void repaintLayerDirtyRects();
 
+    enum Action { Remove, Pause, Seek };
+    struct AnimationProcessingAction {
+        AnimationProcessingAction(Action action = Remove, Seconds timeOffset = 0_s)
+            : action(action)
+            , timeOffset(timeOffset)
+        {
+        }
+        Action action;
+        Seconds timeOffset; // Only used for pause.
+    };
+    void addProcessingActionForAnimation(const String&, AnimationProcessingAction);
+
     RefPtr<PlatformCALayer> m_layer; // The main layer
     RefPtr<PlatformCALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
     RefPtr<PlatformCALayer> m_contentsClippingLayer; // A layer used to clip inner content
@@ -581,17 +595,7 @@ private:
     // Uncommitted transitions and animations.
     Vector<LayerPropertyAnimation> m_uncomittedAnimations;
     
-    enum Action { Remove, Pause };
-    struct AnimationProcessingAction {
-        AnimationProcessingAction(Action action = Remove, Seconds timeOffset = 0_s)
-            : action(action)
-            , timeOffset(timeOffset)
-        {
-        }
-        Action action;
-        Seconds timeOffset; // only used for pause
-    };
-    typedef HashMap<String, AnimationProcessingAction> AnimationsToProcessMap;
+    typedef HashMap<String, Vector<AnimationProcessingAction>> AnimationsToProcessMap;
     AnimationsToProcessMap m_animationsToProcess;
 
     // Map of animation names to their associated lists of property animations, so we can remove/pause them.

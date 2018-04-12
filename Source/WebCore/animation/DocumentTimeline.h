@@ -59,6 +59,7 @@ public:
 
     std::unique_ptr<RenderStyle> animatedStyleForRenderer(RenderElement& renderer);
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
+    void applyPendingAcceleratedAnimations();
     bool runningAnimationsForElementAreAllAccelerated(Element&);
     void detachFromDocument();
 

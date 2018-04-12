@@ -1,3 +1,28 @@
+2018-04-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Enable seeking for hardware animations
+        https://bugs.webkit.org/show_bug.cgi?id=184518
+
+        Reviewed by Dean Jackson.
+
+        Update current test expectations, some tests have regressed because they weren't probably running their hardware
+        animations. Followup patches will make them opt into CSS Animations and CSS Transitions as Web Animations again.
+
+        * animations/3d/transform-origin-vs-functions.html:
+        * animations/change-completed-animation-transform.html:
+        * animations/missing-values-first-keyframe.html:
+        * animations/missing-values-last-keyframe.html:
+        * animations/play-state-start-paused.html:
+        * compositing/contents-scale/animating.html:
+        * compositing/layer-creation/animation-overlap-with-children.html:
+        * compositing/overflow/overflow-positioning.html:
+        * compositing/visible-rect/animated.html:
+        * css3/filters/filter-animation-from-none-hw.html:
+        * css3/filters/filter-animation-from-none-multi-hw.html:
+        * css3/filters/filter-animation-from-none-multi.html:
+        * css3/filters/filter-animation-from-none.html:
+        * platform/mac-sierra/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+
 2018-04-12  Per Arne Vollan  <pvollan@apple.com>
 
         Skip the test fast/forms/file/entries-api/webkitEntries-nonascii-folder-name.html on Windows.

@@ -127,6 +127,11 @@ void DocumentTimeline::updateAnimationSchedule()
 
     m_needsUpdateAnimationSchedule = false;
 
+    if (!m_acceleratedAnimationsPendingRunningStateChange.isEmpty()) {
+        scheduleAnimationResolution();
+        return;
+    }
+
     Seconds scheduleDelay = Seconds::infinity();
 
     for (const auto& animation : animations()) {
@@ -179,9 +184,7 @@ void DocumentTimeline::updateAnimations()
         m_document->updateStyleIfNeeded();
     }
 
-    for (auto& animation : m_acceleratedAnimationsPendingRunningStateChange)
-        animation->startOrStopAccelerated();
-    m_acceleratedAnimationsPendingRunningStateChange.clear();
+    applyPendingAcceleratedAnimations();
 
     // Time has advanced, the timing model requires invalidation now.
     timingModelDidChange();
@@ -207,6 +210,13 @@ std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderEl
 void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& animation)
 {
     m_acceleratedAnimationsPendingRunningStateChange.add(&animation);
+}
+
+void DocumentTimeline::applyPendingAcceleratedAnimations()
+{
+    for (auto& animation : m_acceleratedAnimationsPendingRunningStateChange)
+        animation->applyPendingAcceleratedActions();
+    m_acceleratedAnimationsPendingRunningStateChange.clear();
 }
 
 bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element)

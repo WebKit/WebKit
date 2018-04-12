@@ -1,3 +1,14 @@
+2018-04-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Enable seeking for hardware animations
+        https://bugs.webkit.org/show_bug.cgi?id=184518
+
+        Reviewed by Dean Jackson.
+
+        Track a small regression in the Web Animations WPT tests.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+
 2018-04-11  Jianjun Zhu  <jianjun.zhu@intel.com>
 
         Fix a WebRTC data channel issue for non-ASCII characters.
