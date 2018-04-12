@@ -408,7 +408,7 @@ void Scavenger::threadRunLoop()
             }
 
 #if BCPU(X86_64)
-            auto partialScavengeInterval = std::chrono::milliseconds(20000);
+            auto partialScavengeInterval = std::chrono::milliseconds(36000);
 #else
             auto partialScavengeInterval = std::chrono::milliseconds(8000);
 #endif

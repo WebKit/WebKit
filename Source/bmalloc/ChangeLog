@@ -1,3 +1,16 @@
+2018-04-12  Saam Barati  <sbarati@apple.com>
+
+        Raise the partial scavenge interval even more on x86-64
+        https://bugs.webkit.org/show_bug.cgi?id=184551
+
+        Rubber-stamped by Filip Pizlo.
+
+        The JetStream regression didn't recover from my previous patch.
+        This is another attempt to get it to recover perf.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+
 2018-04-11  Saam Barati  <sbarati@apple.com>
 
         raise partial scavenge interval on x86-64
