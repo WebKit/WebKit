@@ -127,10 +127,12 @@ Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& el
     return animations;
 }
 
-void AnimationTimeline::cancelAnimationsForElement(Element& element)
+void AnimationTimeline::cancelDeclarativeAnimationsForElement(Element& element)
 {
-    for (const auto& animation : animationsForElement(element))
-        animation->cancel();
+    for (const auto& animation : animationsForElement(element)) {
+        if (is<DeclarativeAnimation>(animation))
+            animation->cancel();
+    }
 }
 
 void AnimationTimeline::updateCSSAnimationsForElement(Element& element, const RenderStyle& newStyle, const RenderStyle* oldStyle)

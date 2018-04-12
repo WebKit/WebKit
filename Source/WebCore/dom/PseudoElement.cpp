@@ -92,7 +92,7 @@ void PseudoElement::clearHostElement()
 
     if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
         if (auto* timeline = document().existingTimeline())
-            timeline->cancelAnimationsForElement(*this);
+            timeline->cancelDeclarativeAnimationsForElement(*this);
     } else if (auto* frame = document().frame())
         frame->animation().cancelAnimations(*this);
 
