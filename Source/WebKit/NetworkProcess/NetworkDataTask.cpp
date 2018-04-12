@@ -40,6 +40,9 @@
 #if USE(SOUP)
 #include "NetworkDataTaskSoup.h"
 #endif
+#if USE(CURL)
+#include "NetworkDataTaskCurl.h"
+#endif
 
 using namespace WebCore;
 
@@ -55,6 +58,9 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
 #endif
 #if USE(SOUP)
     return NetworkDataTaskSoup::create(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
+#endif
+#if USE(CURL)
+    return NetworkDataTaskCurl::create(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.contentSniffingPolicy, parameters.contentEncodingSniffingPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 #endif
 }
 

@@ -119,6 +119,7 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         NetworkProcess/cache/NetworkCacheDataCurl.cpp
         NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
 
+        NetworkProcess/curl/NetworkDataTaskCurl.cpp
         NetworkProcess/curl/NetworkProcessCurl.cpp
         NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
 
