@@ -1,3 +1,46 @@
+2018-04-12  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r230101. rdar://problem/39355291
+
+    Out-of-bounds accesses due to a missing check for MAX_STORAGE_VECTOR_LENGTH in unshiftCountForAnyIndexingType
+    https://bugs.webkit.org/show_bug.cgi?id=183657
+    JSTests:
+    
+    Reviewed by Keith Miller.
+    
+    * stress/large-unshift-splice.js: Added.
+    (make_contig_arr):
+    
+    Source/JavaScriptCore:
+    
+    <rdar://problem/38464399>
+    
+    Reviewed by Keith Miller.
+    
+    There was just a missing check in unshiftCountForIndexingType.
+    I've also replaced 'return false' by 'return true' in the case of an 'out-of-memory' exception, because 'return false' means 'please continue to the slow path',
+    and the slow path has an assert that there is no unhandled exception (line 360 of ArrayPrototype.cpp).
+    Finally, I made the assert in ensureLength a release assert as it would have caught this bug and prevented it from being a security risk.
+    
+    * runtime/ArrayPrototype.cpp:
+    (JSC::unshift):
+    * runtime/JSArray.cpp:
+    (JSC::JSArray::unshiftCountWithAnyIndexingType):
+    * runtime/JSObject.h:
+    (JSC::JSObject::ensureLength):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230101 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-30  Robin Morisset  <rmorisset@apple.com>
+
+            Out-of-bounds accesses due to a missing check for MAX_STORAGE_VECTOR_LENGTH in unshiftCountForAnyIndexingType
+            https://bugs.webkit.org/show_bug.cgi?id=183657
+
+            Reviewed by Keith Miller.
+
+            * stress/large-unshift-splice.js: Added.
+            (make_contig_arr):
+
 2018-02-21  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228860. rdar://problem/37751729
