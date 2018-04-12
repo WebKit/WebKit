@@ -1917,6 +1917,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)clearSelection
 {
+    [self _stopAssistingNode];
     _page->clearSelection();
 }
 
@@ -2719,7 +2720,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (BOOL)_isInteractingWithAssistedNode
 {
-    return _textSelectionAssistant != nil;
+    return hasAssistedNode(_assistedNodeInformation);
 }
 
 - (void)changeSelectionWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)state
