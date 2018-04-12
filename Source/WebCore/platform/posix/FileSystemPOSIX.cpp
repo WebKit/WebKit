@@ -351,7 +351,7 @@ String directoryName(const String& path)
     if (!fsRep.data() || fsRep.data()[0] == '\0')
         return String();
 
-    return dirname(fsRep.mutableData());
+    return String::fromUTF8(dirname(fsRep.mutableData()));
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)

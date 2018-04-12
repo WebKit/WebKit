@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input type="file" onchange="changed(event)">
+<script>
+description("Tests webkitEntries when the path includes a folder with a non-ascii character in its name.");
+jsTestIsAsync = true;
+
+function runTest()
+{
+    testRunner.setOpenPanelFiles(['resources/älo/test.txt']);
+
+    inputElement = document.getElementsByTagName('input')[0];
+    UIHelper.activateAt(inputElement.offsetLeft + inputElement.offsetWidth / 2, inputElement.offsetTop + inputElement.offsetHeight / 2);
+}
+
+function fileAsPromise(fileEntry)
+{
+    return new Promise((resolve, reject) => {
+        fileEntry.file(resolve, reject);
+    });
+}
+
+function readTextFileAsPromise(file)
+{
+    return new Promise((resolve, reject) => {
+        let fileReader = new FileReader();
+        fileReader.onload = function(e) {
+            resolve(fileReader.result);
+        }
+        fileReader.readAsText(file);
+    });
+}
+
+function getFileAsPromise(directoryEntry, path)
+{
+    return new Promise((resolve, reject) => {
+        directoryEntry.getFile(path, {}, resolve, reject);
+    });
+}
+
+function changed(event)
+{
+    entries = event.target.webkitEntries;
+    shouldBe("entries.length", "1");
+
+    entry = entries[0];
+    shouldBeEqualToString("entry.name", "test.txt");
+    shouldBeEqualToString("entry.fullPath", "/test.txt");
+    shouldBeTrue("entry.isFile");
+
+    fileAsPromise(entry).then(file => {
+        return readTextFileAsPromise(file).then(content => {
+           contentResult = content;
+           shouldBeEqualToString("contentResult", "TEST\n");
+           finishJSTest();
+       }, e => {
+           testFailed("Reading file contents failed unexpectedly: " + e);
+           finishJSTest();
+       });
+    }, e => {
+        testFailed("fileEntry.file() call failed unexpectedly: " + e);
+        finishJSTest();
+    });
+}
+
+runTest();
+</script>
+</body>
+</html>
