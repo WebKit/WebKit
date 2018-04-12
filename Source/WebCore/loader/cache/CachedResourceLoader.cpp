@@ -197,7 +197,6 @@ PAL::SessionID CachedResourceLoader::sessionID() const
 
 ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::requestImage(CachedResourceRequest&& request)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Image);
     if (Frame* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
             if (Document* document = frame->document())
@@ -215,7 +214,6 @@ ResourceErrorOr<CachedResourceHandle<CachedImage>> CachedResourceLoader::request
 
 ResourceErrorOr<CachedResourceHandle<CachedFont>> CachedResourceLoader::requestFont(CachedResourceRequest&& request, bool isSVG)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Font);
 #if ENABLE(SVG_FONTS)
     if (isSVG)
         return castCachedResourceTo<CachedFont>(requestResource(CachedResource::SVGFontResource, WTFMove(request)));
@@ -228,14 +226,12 @@ ResourceErrorOr<CachedResourceHandle<CachedFont>> CachedResourceLoader::requestF
 #if ENABLE(VIDEO_TRACK)
 ResourceErrorOr<CachedResourceHandle<CachedTextTrack>> CachedResourceLoader::requestTextTrack(CachedResourceRequest&& request)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Track);
     return castCachedResourceTo<CachedTextTrack>(requestResource(CachedResource::TextTrackResource, WTFMove(request)));
 }
 #endif
 
 ResourceErrorOr<CachedResourceHandle<CachedCSSStyleSheet>> CachedResourceLoader::requestCSSStyleSheet(CachedResourceRequest&& request)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Style);
     return castCachedResourceTo<CachedCSSStyleSheet>(requestResource(CachedResource::CSSStyleSheet, WTFMove(request)));
 }
 
@@ -269,14 +265,12 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
 ResourceErrorOr<CachedResourceHandle<CachedScript>> CachedResourceLoader::requestScript(CachedResourceRequest&& request)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Script);
     return castCachedResourceTo<CachedScript>(requestResource(CachedResource::Script, WTFMove(request)));
 }
 
 #if ENABLE(XSLT)
 ResourceErrorOr<CachedResourceHandle<CachedXSLStyleSheet>> CachedResourceLoader::requestXSLStyleSheet(CachedResourceRequest&& request)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Xslt);
     return castCachedResourceTo<CachedXSLStyleSheet>(requestResource(CachedResource::XSLStyleSheet, WTFMove(request)));
 }
 #endif
@@ -295,19 +289,17 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestMedia(CachedResourceRequest&& request)
 {
-    // FIXME: Set destination to either audio or video.
+    // FIXME: Assert request.options().destination is FetchOptions::Destination::{Audio, Video}.
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::MediaResource, WTFMove(request)));
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestIcon(CachedResourceRequest&& request)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Image);
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::Icon, WTFMove(request)));
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestRawResource(CachedResourceRequest&& request)
 {
-    ASSERT(request.options().destination == FetchOptions::Destination::EmptyString || request.options().serviceWorkersMode == ServiceWorkersMode::None);
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::RawResource, WTFMove(request)));
 }
 
@@ -319,7 +311,6 @@ ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::r
 
 ResourceErrorOr<CachedResourceHandle<CachedRawResource>> CachedResourceLoader::requestMainResource(CachedResourceRequest&& request)
 {
-    request.setDestinationIfNotSet(FetchOptions::Destination::Document);
     return castCachedResourceTo<CachedRawResource>(requestResource(CachedResource::MainResource, WTFMove(request)));
 }
 
@@ -738,8 +729,49 @@ void CachedResourceLoader::updateHTTPRequestHeaders(CachedResource::Type type, C
     request.updateAccordingCacheMode();
 }
 
+static FetchOptions::Destination destinationForType(CachedResource::Type type)
+{
+    switch (type) {
+    case CachedResource::MainResource:
+    case CachedResource::SVGDocumentResource:
+        return FetchOptions::Destination::Document;
+    case CachedResource::ImageResource:
+    case CachedResource::Icon:
+        return FetchOptions::Destination::Image;
+    case CachedResource::CSSStyleSheet:
+        return FetchOptions::Destination::Style;
+    case CachedResource::Script:
+        return FetchOptions::Destination::Script;
+    case CachedResource::FontResource:
+#if ENABLE(SVG_FONTS)
+    case CachedResource::SVGFontResource:
+#endif
+        return FetchOptions::Destination::Font;
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+        return FetchOptions::Destination::Xslt;
+#endif
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::TextTrackResource:
+        return FetchOptions::Destination::Track;
+#endif
+#if ENABLE(APPLICATION_MANIFEST)
+    case CachedResource::ApplicationManifest:
+        return FetchOptions::Destination::Manifest;
+#endif
+    case CachedResource::Beacon:
+    case CachedResource::LinkPrefetch:
+    case CachedResource::RawResource:
+    case CachedResource::MediaResource:
+        // The caller is responsible for setting the appropriate destination.
+        return FetchOptions::Destination::EmptyString;
+    }
+}
+
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
+    request.setDestinationIfNotSet(destinationForType(type));
+
     // Entry point to https://fetch.spec.whatwg.org/#main-fetch.
     std::unique_ptr<ResourceRequest> originalRequest;
     if (CachedResource::shouldUsePingLoad(type))

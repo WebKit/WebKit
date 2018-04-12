@@ -28,6 +28,7 @@
 #include "WorkerScriptLoader.h"
 
 #include "ContentSecurityPolicy.h"
+#include "FetchIdioms.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorker.h"
@@ -49,6 +50,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     auto& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
 
     m_url = url;
+    m_destination = FetchOptions::Destination::Script;
 
     std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
     if (!request)
@@ -65,6 +67,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     options.cache = cachePolicy;
     options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
+    options.destination = m_destination;
 #if ENABLE(SERVICE_WORKER)
     options.serviceWorkersMode = workerGlobalScope.isServiceWorkerGlobalScope() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
     if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())
@@ -77,6 +80,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 {
     m_client = &client;
     m_url = scriptRequest.url();
+    m_destination = fetchOptions.destination;
 
     ASSERT(scriptRequest.httpMethod() == "GET");
 
@@ -128,6 +132,13 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
     if (!isScriptAllowedByNosniff(response)) {
         String message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type: nosniff\" was given and its Content-Type is not a script MIME type.");
         m_error = ResourceError { errorDomainWebKitInternal, 0, url(), message, ResourceError::Type::General };
+        m_failed = true;
+        return;
+    }
+
+    if (shouldBlockResponseDueToMIMEType(response, m_destination)) {
+        String message = makeString("Refused to execute ", response.url().stringCenterEllipsizedToLength(), " as script because ", response.mimeType(), " is not a script MIME type.");
+        m_error = ResourceError { errorDomainWebKitInternal, 0, response.url(), message, ResourceError::Type::General };
         m_failed = true;
         return;
     }

@@ -1,3 +1,70 @@
+2018-04-12  Daniel Bates  <dabates@apple.com>
+
+        Content-Type not enforced for <script> allows for XSS
+        https://bugs.webkit.org/show_bug.cgi?id=184386
+        <rdar://problem/39112268>
+
+        Reviewed by Brady Eidson.
+
+        As per the Fetch standard, <https://fetch.spec.whatwg.org/#should-response-to-request-be-blocked-due-to-mime-type?> (16 March 2018),
+        we should block JavaScript scripts that are served with MIME type text/csv, or a MIME type
+        that begins with "audio/", "image/" or "video/".
+
+        As a side benefit of this change we now set the destination property [1] on preload requests.
+
+        [1] <https://fetch.spec.whatwg.org/#concept-request-destination>
+
+        Tests: http/tests/security/script-with-banned-mimetype.html
+               http/tests/workers/worker-importScripts-banned-mimetype.html
+
+        * Sources.txt: Add file FetchIdioms.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Add files FetchIdioms.{cpp, h}.
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::notifyFinished): Check the MIME type of the response and
+        block the script if applicable.
+        * dom/LoadableScript.h: Add error type MIMEType.
+        * loader/FetchIdioms.cpp: Added.
+        (WebCore::shouldBlockResponseDueToMIMEType): Implements the "Should response to request be blocked
+        due to its MIME type?" algorithm from the Fetch standard.
+        * loader/FetchIdioms.h: Added.
+        * loader/FetchOptions.h:
+        (WebCore::isScriptLikeDestination): Implements the definition of "script like" as per <https://fetch.spec.whatwg.org/#request-destination-script-like>.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage): Removed logic to set the destination property as
+        CachedResourceLoader::requestResource() is now responsible for doing this.
+        (WebCore::CachedResourceLoader::requestFont): Ditto.
+        (WebCore::CachedResourceLoader::requestTextTrack): Ditto.
+        (WebCore::CachedResourceLoader::requestCSSStyleSheet): Ditto.
+        (WebCore::CachedResourceLoader::requestScript): Ditto.
+        (WebCore::CachedResourceLoader::requestXSLStyleSheet): Ditto.
+        (WebCore::CachedResourceLoader::requestMedia): Update comment to express that we should assert
+        that the destination property is either video or audio.
+        (WebCore::CachedResourceLoader::requestIcon): Remove logic to set the destination property as
+        CachedResourceLoader::requestResource() is now responsible for doing this.
+        (WebCore::CachedResourceLoader::requestRawResource): Removed assertion as this function is used to
+        load many kinds of requests that have different destination properties. The caller is responsible
+        for setting the appropriate destintion property.
+        (WebCore::CachedResourceLoader::requestMainResource): Remove logic to set the destination property
+        as CachedResourceLoader::requestResource() is now responsible for doing this.
+        (WebCore::destinationForType): Helper function that maps CachedResource::Type to FetchOptions::Destination.
+        (WebCore::CachedResourceLoader::requestResource): Set the destination property on the request if not
+        already set.
+        * loader/cache/CachedResourceLoader.h: Segregate requestRawResource() from the other request functions
+        and add a comment to explain what it is used for.
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously): Set the destination property to FetchOptions::Destination::Script
+        and store it in an instance variable as we will need to reference it once we receive the HTTP response.
+        Note that this function is only used to support the Web API importScripts().
+        (WebCore::WorkerScriptLoader::loadAsynchronously): Store the passed destination property in an
+        instance as we will need to reference it once we receive the HTTP response.
+        (WebCore::WorkerScriptLoader::didReceiveResponse): Check the MIME type of the response and
+        block the script if applicable.
+        * workers/WorkerScriptLoader.h:
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::fetchScriptWithContext): Set the destination property to FetchOptions::Destination::Serviceworker.
+
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Fix a host of small CSS Animations and CSS Transitions issues

@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: line 2: Executed script with MIME type: 'application/json'.
-CONSOLE MESSAGE: line 2: Executed script with MIME type: 'image/png'.
 CONSOLE MESSAGE: line 2: Executed script with MIME type: 'text/html'.
 CONSOLE MESSAGE: line 2: Executed script with MIME type: 'text/vbs'.
 CONSOLE MESSAGE: line 2: Executed script with MIME type: 'text/vbscript'.

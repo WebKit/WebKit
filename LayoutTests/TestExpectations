@@ -608,6 +608,7 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm [ S
 # Failing assertion with dynamic message
 imported/w3c/web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm [ Failure ]
 
+imported/w3c/web-platform-tests/fetch/api/basic/block-mime-as-script.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.any.html [ DumpJSConsoleLogInStdErr ]

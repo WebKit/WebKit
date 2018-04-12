@@ -1,3 +1,15 @@
+2018-04-12  Daniel Bates  <dabates@apple.com>
+
+        Content-Type not enforced for <script> allows for XSS
+        https://bugs.webkit.org/show_bug.cgi?id=184386
+        <rdar://problem/39112268>
+
+        Reviewed by Brady Eidson.
+
+        Update expected result now that we pass all sub tests.
+
+        * web-platform-tests/fetch/api/basic/block-mime-as-script-expected.txt:
+
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Only cancel declarative animations upon element removal

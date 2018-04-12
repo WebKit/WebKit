@@ -88,6 +88,13 @@ inline bool isNonSubresourceRequest(FetchOptions::Destination destination)
         || destination == FetchOptions::Destination::Worker;
 }
 
+inline bool isScriptLikeDestination(FetchOptions::Destination destination)
+{
+    return destination == FetchOptions::Destination::Script
+        || destination == FetchOptions::Destination::Serviceworker
+        || destination == FetchOptions::Destination::Worker;
+}
+
 }
 
 namespace WTF {

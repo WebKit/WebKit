@@ -40,6 +40,7 @@ public:
     enum class ErrorType {
         CachedScript,
         CrossOriginLoad,
+        MIMEType,
         Nosniff,
         FailedIntegrityCheck,
     };

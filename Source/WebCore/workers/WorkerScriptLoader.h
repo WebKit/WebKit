@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "FetchOptions.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
@@ -91,6 +92,7 @@ private:
     URL m_url;
     URL m_responseURL;
     String m_responseMIMEType;
+    FetchOptions::Destination m_destination;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     unsigned long m_identifier { 0 };
     bool m_failed { false };

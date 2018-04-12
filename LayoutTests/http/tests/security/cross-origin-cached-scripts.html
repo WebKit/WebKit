@@ -29,9 +29,9 @@ window.addEventListener("message", function(event) {
 var iframeURL8000 = "http://localhost:8000/security/resources/cross-origin-cached-resource-iframe.html";
 var iframeURL8080 = "http://localhost:8080/security/resources/cross-origin-cached-resource-iframe.html";
 
-var allow8000Script1 = "http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js";
-var allow8000Script2 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js";
-var allow8000Script3 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=*&name=notify-loaded.js";
+var allow8000Script1 = "http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js&contentType=text/javascript";
+var allow8000Script2 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js&contentType=text/javascript";
+var allow8000Script3 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=*&name=notify-loaded.js&contentType=text/javascript";
 
 var counter = 0;
 function loadNextFrame()

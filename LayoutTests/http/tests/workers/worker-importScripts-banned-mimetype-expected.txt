@@ -1,0 +1,11 @@
+[Worker] Test that an external JavaScript script is blocked if has a banned MIME type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/worker-importScripts-banned-mimetype.php
+PASS [Worker] self.scriptsSuccessfullyLoaded is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
