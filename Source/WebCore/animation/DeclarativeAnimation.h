@@ -34,6 +34,7 @@ namespace WebCore {
 
 class Animation;
 class Element;
+class RenderStyle;
 
 class DeclarativeAnimation : public WebAnimation {
 public:
@@ -51,7 +52,7 @@ public:
 protected:
     DeclarativeAnimation(Element&, const Animation&);
 
-    virtual void initialize(const Element&);
+    virtual void initialize(const Element&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     virtual void syncPropertiesWithBackingAnimation();
 
 private:

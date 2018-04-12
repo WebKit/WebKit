@@ -48,7 +48,7 @@ public:
     bool canBeListed() const final;
 
 protected:
-    void initialize(const Element&) final;
+    void initialize(const Element&, const RenderStyle* oldStyle, const RenderStyle& newStyle) final;
 
 private:
     CSSTransition(Element&, CSSPropertyID, const Animation&);

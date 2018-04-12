@@ -56,7 +56,7 @@ void DeclarativeAnimation::setBackingAnimation(const Animation& backingAnimation
     syncPropertiesWithBackingAnimation();
 }
 
-void DeclarativeAnimation::initialize(const Element& target)
+void DeclarativeAnimation::initialize(const Element& target, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     // We need to suspend invalidation of the animation's keyframe effect during its creation
     // as it would otherwise trigger invalidation of the document's style and this would be
@@ -65,6 +65,7 @@ void DeclarativeAnimation::initialize(const Element& target)
 
     setEffect(KeyframeEffectReadOnly::create(target));
     setTimeline(&target.document().timeline());
+    downcast<KeyframeEffectReadOnly>(effect())->computeDeclarativeAnimationBlendingKeyframes(oldStyle, newStyle);
     syncPropertiesWithBackingAnimation();
     if (backingAnimation().playState() == AnimPlayStatePlaying)
         play();

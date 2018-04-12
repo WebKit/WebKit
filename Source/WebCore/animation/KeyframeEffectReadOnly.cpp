@@ -537,7 +537,9 @@ Vector<Strong<JSObject>> KeyframeEffectReadOnly::getKeyframes(ExecState& state)
                 // 1. Let property name be the result of applying the animation property name to IDL attribute name algorithm to the property name of declaration.
                 auto propertyName = CSSPropertyIDToIDLAttributeName(cssPropertyId);
                 // 2. Let IDL value be the result of serializing the property value of declaration by passing declaration to the algorithm to serialize a CSS value.
-                auto idlValue = computedStyleExtractor.valueForPropertyinStyle(style, cssPropertyId)->cssText();
+                String idlValue = "";
+                if (auto cssValue = computedStyleExtractor.valueForPropertyinStyle(style, cssPropertyId))
+                    idlValue = cssValue->cssText();
                 // 3. Let value be the result of converting IDL value to an ECMAScript String value.
                 auto value = toJS<IDLDOMString>(state, idlValue);
                 // 4. Call the [[DefineOwnProperty]] internal method on output keyframe with property name property name,
@@ -817,21 +819,27 @@ void KeyframeEffectReadOnly::checkForMatchingBackdropFilterFunctionLists()
 }
 #endif
 
+void KeyframeEffectReadOnly::computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle)
+{
+    ASSERT(is<DeclarativeAnimation>(animation()));
+    if (is<CSSAnimation>(animation()))
+        computeCSSAnimationBlendingKeyframes();
+    else if (is<CSSTransition>(animation()))
+        computeCSSTransitionBlendingKeyframes(oldStyle, newStyle);
+}
+
 void KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes()
 {
     ASSERT(is<CSSAnimation>(animation()));
 
-    auto& backingAnimation = downcast<CSSAnimation>(animation())->backingAnimation();
+    auto cssAnimation = downcast<CSSAnimation>(animation());
+    auto& backingAnimation = cssAnimation->backingAnimation();
     if (backingAnimation.name().isEmpty())
         return;
 
-    auto renderStyle = RenderStyle::createPtr();
-    // We need to call update() on the FontCascade or we'll hit an ASSERT when parsing font-related properties.
-    renderStyle->fontCascade().update(nullptr);
-
     KeyframeList keyframeList(backingAnimation.name());
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, renderStyle.get(), keyframeList);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, &cssAnimation->unanimatedStyle(), keyframeList);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList.keyframes()) {
@@ -877,7 +885,7 @@ bool KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes(
     if (!hasBlendingKeyframes())
         return false;
 
-    auto property = downcast<CSSTransition>(animation())->backingAnimation().property();
+    auto property = downcast<CSSTransition>(animation())->property();
 
     // There cannot be new keyframes if the start and to values are the same.
     if (CSSPropertyAnimation::propertiesEqual(property, &oldStyle, &newStyle))
@@ -991,6 +999,8 @@ void KeyframeEffectReadOnly::setAnimatedPropertiesInStyle(RenderStyle& targetSty
     // The effect value of a single property referenced by a keyframe effect as one of its target properties,
     // for a given iteration progress, current iteration and underlying value is calculated as follows.
 
+    bool isCSSAnimation = is<CSSAnimation>(animation());
+
     for (auto cssPropertyId : m_blendingKeyframes.properties()) {
         // 1. If iteration progress is unresolved abort this procedure.
         // 2. Let target property be the longhand property for which the effect value is to be calculated.
@@ -1005,9 +1015,13 @@ void KeyframeEffectReadOnly::setAnimatedPropertiesInStyle(RenderStyle& targetSty
         Vector<std::optional<size_t>> propertySpecificKeyframes;
         for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
             auto& keyframe = m_blendingKeyframes[i];
-            if (!keyframe.containsProperty(cssPropertyId))
-                continue;
             auto offset = keyframe.key();
+            if (!keyframe.containsProperty(cssPropertyId)) {
+                // If we're dealing with a CSS animation, we consider the first and last keyframes to always have the property listed
+                // since the underlying style was provided and should be captured.
+                if (!isCSSAnimation || (offset && offset < 1))
+                    continue;
+            }
             if (!offset)
                 numberOfKeyframesWithZeroOffset++;
             if (offset == 1)

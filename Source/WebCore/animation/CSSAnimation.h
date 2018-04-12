@@ -32,26 +32,27 @@ namespace WebCore {
 
 class Animation;
 class Element;
+class RenderStyle;
 
 class CSSAnimation final : public DeclarativeAnimation {
 public:
-    static Ref<CSSAnimation> create(Element&, const Animation&);
+    static Ref<CSSAnimation> create(Element&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     ~CSSAnimation() = default;
 
     bool isCSSAnimation() const override { return true; }
     const String& animationName() const { return m_animationName; }
+    const RenderStyle& unanimatedStyle() const { return *m_unanimatedStyle; }
 
     std::optional<double> bindingsCurrentTime() const final;
 
 protected:
-    void initialize(const Element&) final;
     void syncPropertiesWithBackingAnimation() final;
 
 private:
-    CSSAnimation(Element&, const Animation&);
+    CSSAnimation(Element&, const Animation&, const RenderStyle&);
 
     String m_animationName;
-
+    std::unique_ptr<RenderStyle> m_unanimatedStyle;
 };
 
 } // namespace WebCore

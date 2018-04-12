@@ -1,3 +1,32 @@
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Fix a host of small CSS Animations and CSS Transitions issues
+        https://bugs.webkit.org/show_bug.cgi?id=184555
+
+        Reviewed by Dean Jackson.
+
+        Mark more tests as passing when the CSS Animations and CSS Transitions as Web Animations flag is on.
+
+        * animations/animation-border-overflow.html:
+        * animations/lineheight-animation.html:
+        * animations/missing-from-to-transforms.html:
+        * animations/missing-values-first-keyframe.html:
+        * animations/missing-values-last-keyframe.html:
+        * animations/transition-and-animation-1.html:
+        * animations/transition-and-animation-2.html:
+        * animations/transition-and-animation-3.html:
+        * animations/width-using-ems.html:
+        * compositing/layer-creation/mismatched-rotated-transform-animation-overlap.html:
+        * compositing/layer-creation/multiple-keyframes-animation-overlap.html:
+        * compositing/layer-creation/scale-rotation-animation-overlap.html:
+        * compositing/layer-creation/translate-scale-animation-overlap.html:
+        * css3/filters/filter-animation-from-none-hw.html:
+        * css3/filters/filter-animation-from-none-multi-hw.html:
+        * css3/filters/filter-animation-from-none-multi.html:
+        * css3/filters/filter-animation-from-none.html:
+        * imported/blink/transitions/unprefixed-transform.html:
+        * transitions/interrupted-all-transition.html:
+
 2018-04-12  Keith Rollin  <krollin@apple.com>
 
         Fix flakiness in insecure-iframe-in-main-frame.html

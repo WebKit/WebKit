@@ -87,6 +87,7 @@ protected:
 private:
     HashMap<Element*, Vector<RefPtr<WebAnimation>>>& relevantMapForAnimation(WebAnimation&);
     void cancelOrRemoveDeclarativeAnimation(RefPtr<DeclarativeAnimation>);
+    RefPtr<WebAnimation> cssAnimationForElementAndProperty(Element&, CSSPropertyID);
 
     ClassType m_classType;
     std::optional<Seconds> m_currentTime;

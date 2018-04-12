@@ -1,5 +1,56 @@
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Fix a host of small CSS Animations and CSS Transitions issues
+        https://bugs.webkit.org/show_bug.cgi?id=184555
+
+        Reviewed by Dean Jackson.
+
+        A series of small and intertwined issues were preventing a number of CSS Animations and CSS Trantions
+        tests to fail when expressed as Web Animations.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSAnimationsForElement): Pass the old and new RenderStyles to CSSAnimation::create()
+        since we're refactoring DeclarativeAnimation to create blending keyframes in initialize(), no longer requiring each subclass
+        to create them.
+        (WebCore::AnimationTimeline::cssAnimationForElementAndProperty): Return the animation, if any, for a property animated by
+        a CSS animation, so that we can determine if a property is already being animated when running a CSS Transition.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElement): Since a property can be specified twice in a "transition" property,
+        once via "all" and once explicitly, ensure we look at all currently running transitions for the currently-processed property to
+        see if we need to cancel this transition. Previously, we used to only see if it had been transitioned in the old style. We also
+        start transitions even if the duration is 0 provided the delay is a positive, non-zero value. Then, if there is a CSS Animation
+        for this property already running, use that animation's original unanimated style as the from value.
+        * animation/AnimationTimeline.h:
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::create): The animation name is now set in the CSSAnimation constructor.
+        (WebCore::CSSAnimation::CSSAnimation): Set the animation name and keep a copy of the unanimated style such that we can
+        get it when a CSS Transition is created and takes precedence over this CSS Animation.
+        (WebCore::CSSAnimation::initialize): Deleted.
+        * animation/CSSAnimation.h:
+        * animation/CSSTransition.cpp:
+        (WebCore::CSSTransition::create):
+        (WebCore::CSSTransition::initialize):
+        * animation/CSSTransition.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::initialize): Call the new computeDeclarativeAnimationBlendingKeyframes() on the KeyframeEffect
+        directly in this method so that subclasses don't need to create it manually, but most important so that keyframes are created
+        before timing properties are set based on the backing animation.
+        * animation/DeclarativeAnimation.h:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::getKeyframes): Ensure we have a CSSValue before trying to serialize it.
+        (WebCore::KeyframeEffectReadOnly::computeDeclarativeAnimationBlendingKeyframes):
+        (WebCore::KeyframeEffectReadOnly::computeCSSAnimationBlendingKeyframes): Use the animation's unanimated style to compute keyframes,
+        instead of a default RenderStyle which would not use the right values for implicit keyframes.
+        (WebCore::KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes const): Look at the property used to create
+        the transition rather than that specified on the backing Animation object since it can be CSSPropertyInvalid in the case of
+        "transition: all".
+        (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle): If we're dealing with a CSS animation, we consider the first and
+        last keyframes to always have the property listed since the underlying style was provided and should be captured.
+        * animation/KeyframeEffectReadOnly.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate): Apply CSS Animations after CSS Trasitions since they take precedence.
+
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Only cancel declarative animations upon element removal
         https://bugs.webkit.org/show_bug.cgi?id=184553
 

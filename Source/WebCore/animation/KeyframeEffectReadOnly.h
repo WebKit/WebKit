@@ -112,8 +112,7 @@ public:
     bool backdropFilterFunctionListsMatch() const override { return m_backdropFilterFunctionListsMatch; }
 #endif
 
-    void computeCSSAnimationBlendingKeyframes();
-    void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     bool stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const;
     bool hasBlendingKeyframes() const { return m_blendingKeyframes.size(); }
     const HashSet<CSSPropertyID>& animatedProperties() const { return m_blendingKeyframes.properties(); }
@@ -139,6 +138,8 @@ private:
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computeStackingContextImpact();
     void updateBlendingKeyframes();
+    void computeCSSAnimationBlendingKeyframes();
+    void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     void computeShouldRunAccelerated();
     void setBlendingKeyframes(KeyframeList&);
     void checkForMatchingTransformFunctionLists();

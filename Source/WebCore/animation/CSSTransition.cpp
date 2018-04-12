@@ -35,8 +35,7 @@ namespace WebCore {
 Ref<CSSTransition> CSSTransition::create(Element& target, CSSPropertyID property, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     auto result = adoptRef(*new CSSTransition(target, property, backingAnimation));
-    result->initialize(target);
-    downcast<KeyframeEffectReadOnly>(result->effect())->computeCSSTransitionBlendingKeyframes(oldStyle, newStyle);
+    result->initialize(target, oldStyle, newStyle);
     return result;
 }
 
@@ -46,9 +45,9 @@ CSSTransition::CSSTransition(Element& element, CSSPropertyID property, const Ani
 {
 }
 
-void CSSTransition::initialize(const Element& target)
+void CSSTransition::initialize(const Element& target, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    DeclarativeAnimation::initialize(target);
+    DeclarativeAnimation::initialize(target, oldStyle, newStyle);
 
     suspendEffectInvalidation();
 

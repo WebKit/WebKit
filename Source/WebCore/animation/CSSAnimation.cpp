@@ -31,24 +31,18 @@
 
 namespace WebCore {
 
-Ref<CSSAnimation> CSSAnimation::create(Element& target, const Animation& backingAnimation)
+Ref<CSSAnimation> CSSAnimation::create(Element& target, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    auto result = adoptRef(*new CSSAnimation(target, backingAnimation));
-    result->m_animationName = backingAnimation.name();
-    result->initialize(target);
+    auto result = adoptRef(*new CSSAnimation(target, backingAnimation, newStyle));
+    result->initialize(target, oldStyle, newStyle);
     return result;
 }
 
-CSSAnimation::CSSAnimation(Element& element, const Animation& backingAnimation)
+CSSAnimation::CSSAnimation(Element& element, const Animation& backingAnimation, const RenderStyle& unanimatedStyle)
     : DeclarativeAnimation(element, backingAnimation)
+    , m_animationName(backingAnimation.name())
+    , m_unanimatedStyle(RenderStyle::clonePtr(unanimatedStyle))
 {
-}
-
-void CSSAnimation::initialize(const Element& target)
-{
-    DeclarativeAnimation::initialize(target);
-
-    downcast<KeyframeEffectReadOnly>(effect())->computeCSSAnimationBlendingKeyframes();
 }
 
 void CSSAnimation::syncPropertiesWithBackingAnimation()
