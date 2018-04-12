@@ -407,7 +407,12 @@ void Scavenger::threadRunLoop()
                 return ScavengeMode::Full;
             }
 
-            if (timeSinceLastScavenge < std::chrono::milliseconds(8000)) {
+#if BCPU(X86_64)
+            auto partialScavengeInterval = std::chrono::milliseconds(20000);
+#else
+            auto partialScavengeInterval = std::chrono::milliseconds(8000);
+#endif
+            if (timeSinceLastScavenge < partialScavengeInterval) {
                 // Rate limit partial scavenges.
                 return ScavengeMode::None;
             }

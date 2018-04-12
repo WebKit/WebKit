@@ -1,3 +1,16 @@
+2018-04-11  Saam Barati  <sbarati@apple.com>
+
+        raise partial scavenge interval on x86-64
+        https://bugs.webkit.org/show_bug.cgi?id=184521
+
+        Rubber-stamped by Filip Pizlo.
+
+        This patch is an attempt to recover the 1-3% JetStream regression
+        my initial partial scavenging patch introduced on some Macs.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+
 2018-04-10  Saam Barati  <sbarati@apple.com>
 
         IsoHeapImpl::scavenge* needs to grab the lock
