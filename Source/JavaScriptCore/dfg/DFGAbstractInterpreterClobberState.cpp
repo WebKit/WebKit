@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGAbstractInterpreterClobberState.h"
 
+#if ENABLE(DFG_JIT)
+
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -51,3 +53,4 @@ void printInternal(PrintStream& out, JSC::DFG::AbstractInterpreterClobberState c
 
 } // namespace WTF
 
+#endif // ENABLE(DFG_JIT)

@@ -1,5 +1,23 @@
 2018-04-11  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r230494. rdar://problem/39337455
+
+    Unreviewed, fix cloop build.
+    
+    * dfg/DFGAbstractInterpreterClobberState.cpp:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230494 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-10  Filip Pizlo  <fpizlo@apple.com>
+
+            Unreviewed, fix cloop build.
+
+            * dfg/DFGAbstractInterpreterClobberState.cpp:
+
+2018-04-11  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r227692. rdar://problem/39337417
 
     We should only append ParserArenaDeletable pointers to ParserArena::m_deletableObjects.
