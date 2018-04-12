@@ -120,7 +120,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
     Call nakedCall = nearCall();
-    assertIsNullOrTaggedWith(function.executableAddress(), NearCallPtrTag);
+    assertIsNullOrTaggedWith(function.executableAddress(), NearCodePtrTag);
     m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr(function)));
     return nakedCall;
 }
@@ -129,7 +129,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr function)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
     Call nakedCall = nearTailCall();
-    assertIsNullOrTaggedWith(function.executableAddress(), NearCallPtrTag);
+    assertIsNullOrTaggedWith(function.executableAddress(), NearCodePtrTag);
     m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr(function)));
     return nakedCall;
 }

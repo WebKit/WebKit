@@ -121,12 +121,12 @@ JITCodeWithCodeRef::~JITCodeWithCodeRef()
 void* JITCodeWithCodeRef::executableAddressAtOffset(size_t offset)
 {
     RELEASE_ASSERT(m_ref);
-    assertIsTaggedWith(m_ref.code().executableAddress(), CodeEntryPtrTag);
+    assertIsTaggedWith(m_ref.code().executableAddress(), CodePtrTag);
     if (!offset)
         return m_ref.code().executableAddress();
 
-    char* executableAddress = untagCodePtr<char*>(m_ref.code().executableAddress(), CodeEntryPtrTag);
-    return tagCodePtr(executableAddress + offset, CodeEntryPtrTag);
+    char* executableAddress = untagCodePtr<char*>(m_ref.code().executableAddress(), CodePtrTag);
+    return tagCodePtr(executableAddress + offset, CodePtrTag);
 }
 
 void* JITCodeWithCodeRef::dataAddressAtOffset(size_t offset)
@@ -223,7 +223,7 @@ JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode arity)
     case ArityCheckNotRequired:
         return m_ref.code();
     case MustCheckArity:
-        return m_ref.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag);
+        return m_ref.code();
     }
     RELEASE_ASSERT_NOT_REACHED();
     return CodePtr();

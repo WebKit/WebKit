@@ -262,8 +262,7 @@ const ArithProfileIntNumber = 0x500000
 
 # Pointer Tags
 const BytecodePtrTag = constexpr BytecodePtrTag
-const CodeEntryPtrTag = constexpr CodeEntryPtrTag
-const CodeEntryWithArityCheckPtrTag = constexpr CodeEntryWithArityCheckPtrTag
+const CodePtrTag = constexpr CodePtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
 const LLIntCallICPtrTag = constexpr LLIntCallICPtrTag
 const NoPtrTag = constexpr NoPtrTag
@@ -1000,7 +999,7 @@ end
 
 # Do the bare minimum required to execute code. Sets up the PC, leave the CodeBlock*
 # in t1. May also trigger prologue entry OSR.
-macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath, targetPtrTag)
+macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     # Set up the call frame and check if we should OSR.
     tagReturnAddress sp
     preserveCallerPCAndCFR()
@@ -1038,7 +1037,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath, tar
         else
             pop cfr
         end
-        jmp r0, targetPtrTag
+        jmp r0, CodePtrTag
     .recover:
         codeBlockGetter(t1, t2)
     .continue:
@@ -1283,34 +1282,34 @@ _llint_entry:
 end
 
 _llint_program_prologue:
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue, CodeEntryPtrTag)
+    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
 
 
 _llint_module_program_prologue:
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue, CodeEntryPtrTag)
+    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
 
 
 _llint_eval_prologue:
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue, CodeEntryPtrTag)
+    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
 
 
 _llint_function_for_call_prologue:
-    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call, CodeEntryPtrTag)
+    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call)
     functionInitialization(0)
     dispatch(0)
     
 
 _llint_function_for_construct_prologue:
-    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct, CodeEntryPtrTag)
+    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct)
     functionInitialization(1)
     dispatch(0)
     
 
 _llint_function_for_call_arity_check:
-    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call, CodeEntryWithArityCheckPtrTag)
+    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
     functionArityCheck(.functionForCallBegin, _slow_path_call_arityCheck)
 .functionForCallBegin:
     functionInitialization(0)
@@ -1318,7 +1317,7 @@ _llint_function_for_call_arity_check:
 
 
 _llint_function_for_construct_arity_check:
-    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct, CodeEntryWithArityCheckPtrTag)
+    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
     functionArityCheck(.functionForConstructBegin, _slow_path_construct_arityCheck)
 .functionForConstructBegin:
     functionInitialization(1)

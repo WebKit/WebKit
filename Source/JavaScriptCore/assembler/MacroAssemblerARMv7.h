@@ -1991,7 +1991,7 @@ public:
     
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())), CodeEntryPtrTag);
+        return FunctionPtr(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())), CodePtrTag);
     }
     
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }

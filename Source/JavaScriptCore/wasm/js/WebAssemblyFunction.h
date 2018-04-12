@@ -69,7 +69,7 @@ public:
         if (arity == ArityCheckNotRequired)
             return m_jsEntrypoint;
         ASSERT(arity == MustCheckArity);
-        return m_jsEntrypoint.retagged(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag);
+        return m_jsEntrypoint;
     }
 
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }

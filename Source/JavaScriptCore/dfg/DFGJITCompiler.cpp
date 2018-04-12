@@ -87,7 +87,7 @@ void JITCompiler::linkOSRExits()
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitThunkGenerator);
     PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm());
-    CodeLocationLabel osrExitThunkLabel = CodeLocationLabel(osrExitThunk.retaggedCode(osrExitThunkTag, NearJumpPtrTag));
+    CodeLocationLabel osrExitThunkLabel = CodeLocationLabel(osrExitThunk.retaggedCode(osrExitThunkTag, NearCodePtrTag));
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         JumpList& failureJumps = info.m_failureJumps;
@@ -293,7 +293,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     }
     
     PtrTag linkTag = ptrTag(LinkCallPtrTag, vm());
-    auto linkCallThunk = FunctionPtr(vm()->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag));
+    auto linkCallThunk = FunctionPtr(vm()->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag));
     for (auto& record : m_jsCalls) {
         CallLinkInfo& info = *record.info;
         linkBuffer.link(record.slowCall, linkCallThunk);
@@ -305,10 +305,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     for (JSDirectCallRecord& record : m_jsDirectCalls) {
         CallLinkInfo& info = *record.info;
-        linkBuffer.link(record.call, linkBuffer.locationOf(record.slowPath, NearCallPtrTag));
+        linkBuffer.link(record.call, linkBuffer.locationOf(record.slowPath, NearCodePtrTag));
         info.setCallLocations(
             CodeLocationLabel(),
-            linkBuffer.locationOf(record.slowPath, NearCallPtrTag),
+            linkBuffer.locationOf(record.slowPath, NearCodePtrTag),
             linkBuffer.locationOfNearCall(record.call));
     }
     
@@ -316,13 +316,13 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         CallLinkInfo& info = *record.info;
         info.setCallLocations(
             linkBuffer.locationOf(record.patchableJump),
-            linkBuffer.locationOf(record.slowPath, NearCallPtrTag),
+            linkBuffer.locationOf(record.slowPath, NearCodePtrTag),
             linkBuffer.locationOfNearCall(record.call));
     }
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);
     PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm());
-    CodeLocationLabel target = CodeLocationLabel(osrExitThunk.retaggedCode(osrExitThunkTag, NearJumpPtrTag));
+    CodeLocationLabel target = CodeLocationLabel(osrExitThunk.retaggedCode(osrExitThunkTag, NearCodePtrTag));
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         if (!Options::useProbeOSRExit()) {
@@ -332,8 +332,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         }
         if (info.m_replacementSource.isSet()) {
             m_jitCode->common.jumpReplacements.append(JumpReplacement(
-                linkBuffer.locationOf(info.m_replacementSource, NearJumpPtrTag),
-                linkBuffer.locationOf(info.m_replacementDestination, NearJumpPtrTag)));
+                linkBuffer.locationOf(info.m_replacementSource, NearCodePtrTag),
+                linkBuffer.locationOf(info.m_replacementDestination, NearCodePtrTag)));
         }
     }
     
@@ -539,11 +539,11 @@ void JITCompiler::compileFunction()
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
-    linkBuffer->link(callArityFixup, FunctionPtr(vm()->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, vm()), NearCallPtrTag)));
+    linkBuffer->link(callArityFixup, FunctionPtr(vm()->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, vm()), NearCodePtrTag)));
 
     disassemble(*linkBuffer);
 
-    MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck, CodeEntryWithArityCheckPtrTag);
+    MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck, CodePtrTag);
 
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
         m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);

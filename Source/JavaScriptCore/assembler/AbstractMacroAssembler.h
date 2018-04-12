@@ -894,7 +894,7 @@ public:
 
     static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)
     {
-        assertIsTaggedWith(destination.executableAddress(), NearCallPtrTag);
+        assertIsTaggedWith(destination.executableAddress(), NearCodePtrTag);
         switch (nearCall.callMode()) {
         case NearCallMode::Tail:
             AssemblerType::relinkJump(nearCall.dataLocation(), destination.dataLocation());

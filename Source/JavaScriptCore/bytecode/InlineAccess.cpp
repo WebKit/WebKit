@@ -290,7 +290,7 @@ void InlineAccess::rewireStubAsJump(StructureStubInfo& stubInfo, CodeLocationLab
     RELEASE_ASSERT(linkBuffer.isValid());
     linkBuffer.link(jump, target);
 
-    FINALIZE_CODE(linkBuffer, NearJumpPtrTag, "InlineAccess: linking constant jump");
+    FINALIZE_CODE(linkBuffer, NearCodePtrTag, "InlineAccess: linking constant jump");
 }
 
 } // namespace JSC

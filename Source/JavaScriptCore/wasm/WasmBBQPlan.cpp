@@ -324,7 +324,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                 }
 
                 embedderToWasmInternalFunction->entrypoint.compilation = std::make_unique<B3::Compilation>(
-                    FINALIZE_CODE(linkBuffer, CodeEntryPtrTag, "Embedder->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
+                    FINALIZE_CODE(linkBuffer, CodePtrTag, "Embedder->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
                     WTFMove(context.embedderEntrypointByproducts));
             }
         }
@@ -340,7 +340,7 @@ void BBQPlan::complete(const AbstractLocker& locker)
                 SignatureIndex signatureIndex = m_moduleInformation->signatureIndexFromFunctionIndexSpace(call.functionIndexSpace);
                 const Signature& signature = SignatureInformation::get(signatureIndex);
                 PtrTag oldTag = ptrTag(WasmCallPtrTag, signature.hash());
-                MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(executableAddress.retagged(oldTag, NearCallPtrTag)));
+                MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(executableAddress.retagged(oldTag, NearCodePtrTag)));
             }
         }
     }

@@ -86,12 +86,12 @@ JITCode::CodePtr JITCode::addressForCall(ArityCheckMode arityCheck)
 void* JITCode::executableAddressAtOffset(size_t offset)
 {
     return m_addressForCall.executableAddress<char*>() + offset;
-    assertIsTaggedWith(m_addressForCall.executableAddress(), CodeEntryPtrTag);
+    assertIsTaggedWith(m_addressForCall.executableAddress(), CodePtrTag);
     if (!offset)
         return m_addressForCall.executableAddress();
 
-    char* executableAddress = untagCodePtr<char*>(m_addressForCall.executableAddress(), CodeEntryPtrTag);
-    return tagCodePtr(executableAddress + offset, CodeEntryPtrTag);
+    char* executableAddress = untagCodePtr<char*>(m_addressForCall.executableAddress(), CodePtrTag);
+    return tagCodePtr(executableAddress + offset, CodePtrTag);
 }
 
 void* JITCode::dataAddressAtOffset(size_t)

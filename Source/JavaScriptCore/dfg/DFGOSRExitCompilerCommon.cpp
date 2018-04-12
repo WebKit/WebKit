@@ -322,7 +322,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     CodeLocationLabel codeLocation = codeBlockForExit->jitCodeMap().find(exit.m_codeOrigin.bytecodeIndex);
     ASSERT(codeLocation);
 
-    PtrTag locationTag = ptrTag(CodeEntryPtrTag, codeBlockForExit, exit.m_codeOrigin.bytecodeIndex);
+    PtrTag locationTag = ptrTag(CodePtrTag, codeBlockForExit, exit.m_codeOrigin.bytecodeIndex);
     PtrTag exitTag = ptrTag(DFGOSRExitPtrTag, nextPtrTagID());
     void* jumpTarget = codeLocation.retagged(locationTag, exitTag).executableAddress();
     jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);

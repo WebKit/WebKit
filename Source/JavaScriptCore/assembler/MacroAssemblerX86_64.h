@@ -1886,7 +1886,7 @@ public:
     
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPATCH_OFFSET_CALL_R11).dataLocation()), CodeEntryPtrTag);
+        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPATCH_OFFSET_CALL_R11).dataLocation()), CodePtrTag);
     }
 
     bool haveScratchRegisterForBlinding() { return m_allowScratchRegister; }

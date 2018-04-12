@@ -61,7 +61,7 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&
     RELEASE_ASSERT(throwWasmException);
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(call, FunctionPtr(throwWasmException, tag));
-    return FINALIZE_CODE(linkBuffer, NearCallPtrTag, "Throw exception from Wasm");
+    return FINALIZE_CODE(linkBuffer, NearCodePtrTag, "Throw exception from Wasm");
 }
 
 MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
@@ -75,7 +75,7 @@ MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLoc
     auto jumpToExceptionHandler = jit.jump();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
     linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
-    return FINALIZE_CODE(linkBuffer, NearJumpPtrTag, "Throw stack overflow from Wasm");
+    return FINALIZE_CODE(linkBuffer, NearCodePtrTag, "Throw stack overflow from Wasm");
 }
 
 MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
@@ -102,7 +102,7 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
     jit.emitFunctionEpilogue();
     jit.ret();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(linkBuffer, NearCallPtrTag, "Trigger OMG tier up");
+    return FINALIZE_CODE(linkBuffer, NearCodePtrTag, "Trigger OMG tier up");
 }
 
 static Thunks* thunks;

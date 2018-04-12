@@ -691,7 +691,7 @@ void repatchIn(
 
 static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef, PtrTag linkTag)
 {
-    MacroAssembler::repatchNearCall(callLinkInfo.callReturnLocation(), CodeLocationLabel(codeRef.retaggedCode(linkTag, NearCallPtrTag)));
+    MacroAssembler::repatchNearCall(callLinkInfo.callReturnLocation(), CodeLocationLabel(codeRef.retaggedCode(linkTag, NearCodePtrTag)));
 }
 
 static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator, PtrTag linkTag)
@@ -743,7 +743,7 @@ void linkFor(
     if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
 
-    MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), CodeLocationLabel(codePtr.retagged(codeTag, NearCallPtrTag)));
+    MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), CodeLocationLabel(codePtr.retagged(codeTag, NearCodePtrTag)));
 
     if (calleeCodeBlock)
         calleeCodeBlock->linkIncomingCall(callerFrame, &callLinkInfo);
@@ -1100,7 +1100,7 @@ void linkPolymorphicCall(
         void* target = isTailCall ? callToCodePtr.codePtr.dataLocation() : callToCodePtr.codePtr.executableAddress();
         patchBuffer.link(callToCodePtr.call, FunctionPtr(MacroAssemblerCodePtr::createFromExecutableAddress(target)));
 #else
-        patchBuffer.link(callToCodePtr.call, FunctionPtr(callToCodePtr.codePtr.retagged(CodeEntryPtrTag, NearCallPtrTag)));
+        patchBuffer.link(callToCodePtr.call, FunctionPtr(callToCodePtr.codePtr.retagged(CodePtrTag, NearCodePtrTag)));
 #endif
     }
     if (isWebAssembly || JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
@@ -1108,11 +1108,11 @@ void linkPolymorphicCall(
     else
         patchBuffer.link(done, callLinkInfo.hotPathOther().labelAtOffset(0));
     PtrTag linkTag = ptrTag(LinkPolymorphicCallPtrTag, &vm);
-    patchBuffer.link(slow, CodeLocationLabel(vm.getCTIStub(linkPolymorphicCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag)));
+    patchBuffer.link(slow, CodeLocationLabel(vm.getCTIStub(linkPolymorphicCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag)));
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(
-            callerCodeBlock, patchBuffer, NearJumpPtrTag,
+            callerCodeBlock, patchBuffer, NearCodePtrTag,
             "Polymorphic call stub for %s, return point %p, targets %s",
                 isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation().labelAtOffset(0).executableAddress(),
                 toCString(listDump(callCases)).data()),

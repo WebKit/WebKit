@@ -3508,7 +3508,7 @@ public:
         }
 
         if (!m_tryReadUnicodeCharacterCalls.isEmpty()) {
-            CodeLocationLabel tryReadUnicodeCharacterHelper = linkBuffer.locationOf(m_tryReadUnicodeCharacterEntry, NearCallPtrTag);
+            CodeLocationLabel tryReadUnicodeCharacterHelper = linkBuffer.locationOf(m_tryReadUnicodeCharacterEntry, NearCodePtrTag);
 
             for (auto call : m_tryReadUnicodeCharacterCalls)
                 linkBuffer.link(call, tryReadUnicodeCharacterHelper);

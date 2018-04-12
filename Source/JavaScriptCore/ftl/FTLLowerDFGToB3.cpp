@@ -7172,7 +7172,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
 
                         callLinkInfo->setCallLocations(
@@ -7368,7 +7368,7 @@ private:
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
                                 CodeLocationNearCall callLocation = linkBuffer.locationOfNearCall(call);
-                                CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath, NearCallPtrTag);
+                                CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath, NearCodePtrTag);
                                 
                                 linkBuffer.link(call, slowPathLocation);
                                 
@@ -7494,7 +7494,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
 
                         callLinkInfo->setCallLocations(
@@ -7795,7 +7795,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
                         
                         callLinkInfo->setCallLocations(
@@ -8080,7 +8080,7 @@ private:
                     [=] (LinkBuffer& linkBuffer) {
                         PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
                         MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag);
+                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall));
                         
                         callLinkInfo->setCallLocations(
@@ -13993,7 +13993,7 @@ private:
                                 linkBuffer.link(
                                     generatorJump, CodeLocationLabel(
                                         vm->getCTIStub(
-                                            lazySlowPathGenerationThunkGenerator).retaggedCode(thunkTag, NearJumpPtrTag)));
+                                            lazySlowPathGenerationThunkGenerator).retaggedCode(thunkTag, NearCodePtrTag)));
                                 
                                 std::unique_ptr<LazySlowPath> lazySlowPath = std::make_unique<LazySlowPath>();
 

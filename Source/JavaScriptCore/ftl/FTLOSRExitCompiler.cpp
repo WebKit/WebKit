@@ -548,7 +548,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     compileStub(exitID, jitCode, exit, &vm, codeBlock, thunkTag);
 
     MacroAssembler::repatchJump(
-        exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.retaggedCode(thunkTag, NearJumpPtrTag)));
+        exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.retaggedCode(thunkTag, NearCodePtrTag)));
     
     return exit.m_code.retaggedCode(thunkTag, bitwise_cast<PtrTag>(exec)).executableAddress();
 }

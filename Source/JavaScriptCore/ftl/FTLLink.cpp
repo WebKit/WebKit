@@ -174,12 +174,12 @@ void link(State& state)
             }
             linkBuffer->link(callArityCheck, FunctionPtr(codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, callTag));
             linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, FunctionPtr(lookupExceptionHandlerFromCallerFrame, lookupTag));
-            linkBuffer->link(callArityFixup, FunctionPtr(vm.getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, &vm), NearCallPtrTag)));
+            linkBuffer->link(callArityFixup, FunctionPtr(vm.getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, &vm), NearCodePtrTag)));
             linkBuffer->link(mainPathJumps, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
         }
         
         PtrTag entryTag = ptrTag(FTLCodePtrTag, codeBlock);
-        state.jitCode->initializeAddressForCall(MacroAssemblerCodePtr(retagCodePtr<void*>(state.generatedFunction, entryTag, CodeEntryPtrTag)));
+        state.jitCode->initializeAddressForCall(MacroAssemblerCodePtr(retagCodePtr<void*>(state.generatedFunction, entryTag, CodePtrTag)));
         break;
     }
         
@@ -200,7 +200,7 @@ void link(State& state)
         }
         linkBuffer->link(mainPathJump, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
 
-        state.jitCode->initializeAddressForCall(linkBuffer->locationOf(start, CodeEntryPtrTag));
+        state.jitCode->initializeAddressForCall(linkBuffer->locationOf(start, CodePtrTag));
         break;
     }
         

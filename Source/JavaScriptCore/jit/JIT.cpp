@@ -738,7 +738,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
         move(returnValueGPR, GPRInfo::argumentGPR0);
-        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, m_vm), NearCallPtrTag));
+        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, m_vm), NearCodePtrTag));
 
 #if !ASSERT_DISABLED
         m_bytecodeOffset = std::numeric_limits<unsigned>::max(); // Reset this, in order to guard its use with ASSERTs.
@@ -869,14 +869,14 @@ CompilationResult JIT::link()
     JITCodeMap jitCodeMap;
     for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
         if (m_labels[bytecodeOffset].isSet()) {
-            PtrTag tag = ptrTag(CodeEntryPtrTag, m_codeBlock, bytecodeOffset);
+            PtrTag tag = ptrTag(CodePtrTag, m_codeBlock, bytecodeOffset);
             jitCodeMap.append(bytecodeOffset, patchBuffer.locationOf(m_labels[bytecodeOffset], tag));
         }
     }
     jitCodeMap.finish();
     m_codeBlock->setJITCodeMap(WTFMove(jitCodeMap));
 
-    MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(m_arityCheck, CodeEntryWithArityCheckPtrTag);
+    MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(m_arityCheck, CodePtrTag);
 
     if (Options::dumpDisassembly()) {
         m_disassembler->dump(patchBuffer);
@@ -892,7 +892,7 @@ CompilationResult JIT::link()
         m_codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
     
     CodeRef result = FINALIZE_CODE(
-        patchBuffer, CodeEntryPtrTag,
+        patchBuffer, CodePtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT)).data());
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(

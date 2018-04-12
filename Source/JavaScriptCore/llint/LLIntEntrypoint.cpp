@@ -73,7 +73,7 @@ static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
     if (VM::canUseJIT()) {
         MacroAssemblerCodeRef codeRef = vm.getCTIStub(evalEntryThunkGenerator);
         codeBlock->setJITCode(
-            adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
+            adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
         return;
     }
 #endif // ENABLE(JIT)
@@ -81,7 +81,7 @@ static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
     UNUSED_PARAM(vm);
     MacroAssemblerCodeRef codeRef = MacroAssemblerCodeRef::createLLIntCodeRef(llint_eval_prologue);
     codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
+        adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
 }
 
 static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
@@ -90,7 +90,7 @@ static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
     if (VM::canUseJIT()) {
         MacroAssemblerCodeRef codeRef = vm.getCTIStub(programEntryThunkGenerator);
         codeBlock->setJITCode(
-            adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
+            adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
         return;
     }
 #endif // ENABLE(JIT)
@@ -98,7 +98,7 @@ static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
     UNUSED_PARAM(vm);
     MacroAssemblerCodeRef codeRef = MacroAssemblerCodeRef::createLLIntCodeRef(llint_program_prologue);
     codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
+        adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
 }
 
 static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
@@ -107,7 +107,7 @@ static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
     if (VM::canUseJIT()) {
         MacroAssemblerCodeRef codeRef = vm.getCTIStub(moduleProgramEntryThunkGenerator);
         codeBlock->setJITCode(
-            adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
+            adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
         return;
     }
 #endif // ENABLE(JIT)
@@ -115,7 +115,7 @@ static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
     UNUSED_PARAM(vm);
     MacroAssemblerCodeRef codeRef = MacroAssemblerCodeRef::createLLIntCodeRef(llint_module_program_prologue);
     codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(codeRef, codeRef.retaggedCode(CodeEntryPtrTag, CodeEntryWithArityCheckPtrTag), JITCode::InterpreterThunk)));
+        adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
 }
 
 void setEntrypoint(VM& vm, CodeBlock* codeBlock)

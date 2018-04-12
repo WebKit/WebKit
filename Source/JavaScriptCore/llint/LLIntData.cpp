@@ -64,20 +64,20 @@ void initialize()
     }
 
     static const PtrTag tagsForOpcode[] = {
-        CodeEntryPtrTag, // llint_program_prologue
-        CodeEntryPtrTag, // llint_eval_prologue
-        CodeEntryPtrTag, // llint_module_program_prologue
-        CodeEntryPtrTag, // llint_function_for_call_prologue
-        CodeEntryPtrTag, // llint_function_for_construct_prologue
-        CodeEntryWithArityCheckPtrTag, // llint_function_for_call_arity_check
-        CodeEntryWithArityCheckPtrTag, // llint_function_for_construct_arity_check
-        CodeEntryPtrTag, // llint_generic_return_point
+        CodePtrTag, // llint_program_prologue
+        CodePtrTag, // llint_eval_prologue
+        CodePtrTag, // llint_module_program_prologue
+        CodePtrTag, // llint_function_for_call_prologue
+        CodePtrTag, // llint_function_for_construct_prologue
+        CodePtrTag, // llint_function_for_call_arity_check
+        CodePtrTag, // llint_function_for_construct_arity_check
+        CodePtrTag, // llint_generic_return_point
         BytecodePtrTag, // llint_throw_from_slow_path_trampoline
         ExceptionHandlerPtrTag, // llint_throw_during_call_trampoline
-        CodeEntryPtrTag, // llint_native_call_trampoline
-        CodeEntryPtrTag, // llint_native_construct_trampoline
-        CodeEntryPtrTag, // llint_internal_function_call_trampoline
-        CodeEntryPtrTag, // llint_internal_function_construct_trampoline
+        CodePtrTag, // llint_native_call_trampoline
+        CodePtrTag, // llint_native_construct_trampoline
+        CodePtrTag, // llint_internal_function_call_trampoline
+        CodePtrTag, // llint_internal_function_construct_trampoline
         ExceptionHandlerPtrTag, // handleUncaughtException
     };
 

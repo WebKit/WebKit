@@ -569,7 +569,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         dataLog(FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases), "\n");
 
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
-        codeBlock, linkBuffer, NearJumpPtrTag,
+        codeBlock, linkBuffer, NearCodePtrTag,
         "%s", toCString("Access stub for ", *codeBlock, " ", stubInfo.codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data());
 
     bool doesCalls = false;

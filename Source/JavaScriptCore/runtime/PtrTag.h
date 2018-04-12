@@ -31,16 +31,14 @@ namespace JSC {
 
 #define FOR_EACH_PTRTAG_ENUM(v) \
     v(NoPtrTag) \
-    v(NearCallPtrTag) \
-    v(NearJumpPtrTag) \
+    v(NearCodePtrTag) \
     v(CFunctionPtrTag) \
     \
     v(ArityFixupPtrTag) \
     v(B3CCallPtrTag) \
     v(BytecodePtrTag) \
     v(BytecodeHelperPtrTag) \
-    v(CodeEntryPtrTag) \
-    v(CodeEntryWithArityCheckPtrTag) \
+    v(CodePtrTag) \
     v(DFGOSREntryPtrTag) \
     v(DFGOSRExitPtrTag) \
     v(DFGOperationPtrTag) \
@@ -87,8 +85,8 @@ enum PtrTag : uintptr_t {
 };
 
 static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0), "");
-static_assert(static_cast<uintptr_t>(NearCallPtrTag) == static_cast<uintptr_t>(1), "");
-static_assert(static_cast<uintptr_t>(NearJumpPtrTag) == static_cast<uintptr_t>(2), "");
+static_assert(static_cast<uintptr_t>(NearCodePtrTag) == static_cast<uintptr_t>(1), "");
+static_assert(static_cast<uintptr_t>(CFunctionPtrTag) == static_cast<uintptr_t>(2), "");
 
 inline const char* ptrTagName(PtrTag tag)
 {

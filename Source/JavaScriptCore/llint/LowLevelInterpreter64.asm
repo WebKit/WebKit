@@ -254,7 +254,7 @@ macro makeJavaScriptCall(entry, temp)
     if C_LOOP
         cloopCallJSFunction entry
     else
-        call entry, CodeEntryWithArityCheckPtrTag
+        call entry, CodePtrTag
     end
     subp 16, sp
 end
@@ -270,10 +270,10 @@ macro makeHostFunctionCall(entry, temp)
     elsif X86_64_WIN
         # We need to allocate 32 bytes on the stack for the shadow space.
         subp 32, sp
-        call temp, CodeEntryPtrTag
+        call temp, CodePtrTag
         addp 32, sp
     else
-        call temp, CodeEntryPtrTag
+        call temp, CodePtrTag
     end
 end
 
@@ -370,7 +370,7 @@ macro checkSwitchToJITForLoop()
             cCall2(_llint_loop_osr)
             btpz r0, .recover
             move r1, sp
-            jmp r0, CodeEntryPtrTag
+            jmp r0, CodePtrTag
         .recover:
             loadi ArgumentCount + TagOffset[cfr], PC
         end)
@@ -2191,12 +2191,12 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call executableOffsetToFunction[t1], CodeEntryPtrTag
+            call executableOffsetToFunction[t1], CodePtrTag
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp executableOffsetToFunction[t1], t2
-            call t2, CodeEntryPtrTag
+            call t2, CodePtrTag
         end
     end
 
@@ -2234,12 +2234,12 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call offsetOfFunction[t1], CodeEntryPtrTag
+            call offsetOfFunction[t1], CodePtrTag
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp offsetOfFunction[t1], t2
-            call t2, CodeEntryPtrTag
+            call t2, CodePtrTag
         end
     end
 

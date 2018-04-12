@@ -825,7 +825,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 PtrTag linkTag = ptrTag(LinkCallPtrTag, &vm);
                 linkBuffer.link(
                     slowPathCall,
-                    CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag)));
+                    CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag)));
             });
         } else {
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);

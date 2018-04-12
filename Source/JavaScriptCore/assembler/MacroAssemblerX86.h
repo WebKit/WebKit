@@ -302,7 +302,7 @@ public:
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
         intptr_t offset = reinterpret_cast<int32_t*>(call.dataLocation())[-1];
-        return FunctionPtr(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(call.dataLocation()) + offset), CodeEntryPtrTag);
+        return FunctionPtr(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(call.dataLocation()) + offset), CodePtrTag);
     }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }

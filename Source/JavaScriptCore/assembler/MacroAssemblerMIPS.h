@@ -3391,7 +3391,7 @@ public:
 
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
-        return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())), CodeEntryPtrTag);
+        return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())), CodePtrTag);
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

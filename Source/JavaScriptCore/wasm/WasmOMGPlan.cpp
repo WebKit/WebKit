@@ -129,7 +129,7 @@ void OMGPlan::work(CompilationEffort)
             SignatureIndex signatureIndex = m_moduleInformation->signatureIndexFromFunctionIndexSpace(call.functionIndexSpace);
             const Signature& signature = SignatureInformation::get(signatureIndex);
             PtrTag oldTag = ptrTag(WasmCallPtrTag, signature.hash());
-            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint.retagged(oldTag, NearCallPtrTag)));
+            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint.retagged(oldTag, NearCodePtrTag)));
         }
         unlinkedCalls = std::exchange(m_codeBlock->m_wasmToWasmCallsites[m_functionIndex], unlinkedCalls);
     }
@@ -152,7 +152,7 @@ void OMGPlan::work(CompilationEffort)
                     SignatureIndex signatureIndex = m_moduleInformation->signatureIndexFromFunctionIndexSpace(call.functionIndexSpace);
                     const Signature& signature = SignatureInformation::get(signatureIndex);
                     PtrTag oldTag = ptrTag(WasmCallPtrTag, signature.hash());
-                    MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint.retagged(oldTag, NearCallPtrTag)));
+                    MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint.retagged(oldTag, NearCodePtrTag)));
                 }
             }
 

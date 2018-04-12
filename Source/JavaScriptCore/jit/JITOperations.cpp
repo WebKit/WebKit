@@ -1018,9 +1018,9 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
             if (!callLinkInfo->seenOnce())
                 callLinkInfo->setSeen();
             else
-                linkFor(execCallee, *callLinkInfo, nullptr, internalFunction, codePtr, CodeEntryPtrTag);
+                linkFor(execCallee, *callLinkInfo, nullptr, internalFunction, codePtr, CodePtrTag);
 
-            void* linkedTarget = retagCodePtr(codePtr.executableAddress(), CodeEntryPtrTag, linkedTargetTag);
+            void* linkedTarget = retagCodePtr(codePtr.executableAddress(), CodePtrTag, linkedTargetTag);
             return encodeResult(linkedTarget, reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
         throwScope.release();
@@ -1033,11 +1033,9 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = nullptr;
-    PtrTag codeTag = NoPtrTag;
-    if (executable->isHostFunction()) {
+    if (executable->isHostFunction())
         codePtr = executable->entrypointFor(kind, MustCheckArity);
-        codeTag = CodeEntryWithArityCheckPtrTag;
-    } else {
+    else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         auto handleThrowException = [&] () {
@@ -1058,21 +1056,18 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
             return handleThrowException();
         codeBlock = *codeBlockSlot;
         ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs()) {
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs())
             arity = MustCheckArity;
-            codeTag = CodeEntryWithArityCheckPtrTag;
-        } else {
+        else
             arity = ArityCheckNotRequired;
-            codeTag = CodeEntryPtrTag;
-        }
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr, codeTag);
+        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr, CodePtrTag);
 
-    return encodeResult(codePtr.retagged(codeTag, linkedTargetTag).executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+    return encodeResult(codePtr.retagged(CodePtrTag, linkedTargetTag).executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 
 void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLinkInfo, JSFunction* callee)
@@ -1105,7 +1100,7 @@ void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLi
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = nullptr;
     if (executable->isHostFunction())
-        codePtr = executable->entrypointFor(kind, MustCheckArity).retagged(CodeEntryWithArityCheckPtrTag, NearCallPtrTag);
+        codePtr = executable->entrypointFor(kind, MustCheckArity).retagged(CodePtrTag, NearCodePtrTag);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1117,9 +1112,9 @@ void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLi
             return;
         unsigned argumentStackSlots = callLinkInfo->maxNumArguments();
         if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
-            codePtr = functionExecutable->entrypointFor(kind, MustCheckArity).retagged(CodeEntryWithArityCheckPtrTag, NearCallPtrTag);
+            codePtr = functionExecutable->entrypointFor(kind, MustCheckArity).retagged(CodePtrTag, NearCodePtrTag);
         else
-            codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired).retagged(CodeEntryPtrTag, NearCallPtrTag);
+            codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired).retagged(CodePtrTag, NearCodePtrTag);
     }
     
     linkDirectFor(exec, *callLinkInfo, codeBlock, codePtr);
@@ -1141,7 +1136,7 @@ inline SlowPathReturnType virtualForWithFunction(
         if (jsDynamicCast<InternalFunction*>(*vm, calleeAsValue)) {
             MacroAssemblerCodePtr codePtr = vm->getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
-            return encodeResult(codePtr.retagged(CodeEntryPtrTag, resultTag).executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+            return encodeResult(codePtr.retagged(CodePtrTag, resultTag).executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
         }
         throwScope.release();
         return handleHostCall(execCallee, calleeAsValue, callLinkInfo, resultTag);
@@ -1171,7 +1166,7 @@ inline SlowPathReturnType virtualForWithFunction(
         }
     }
     return encodeResult(executable->entrypointFor(
-        kind, MustCheckArity).retagged(CodeEntryWithArityCheckPtrTag, resultTag).executableAddress(),
+        kind, MustCheckArity).retagged(CodePtrTag, resultTag).executableAddress(),
         reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 

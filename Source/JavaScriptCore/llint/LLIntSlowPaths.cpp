@@ -447,8 +447,8 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     CodeLocationLabel codeLocation = codeMap.find(loopOSREntryBytecodeOffset);
     ASSERT(codeLocation);
 
-    PtrTag locationTag = ptrTag(CodeEntryPtrTag, codeBlock, loopOSREntryBytecodeOffset);
-    void* jumpTarget = codeLocation.retagged(locationTag, CodeEntryPtrTag).executableAddress();
+    PtrTag locationTag = ptrTag(CodePtrTag, codeBlock, loopOSREntryBytecodeOffset);
+    void* jumpTarget = codeLocation.retagged(locationTag, CodePtrTag).executableAddress();
     ASSERT(jumpTarget);
     
     LLINT_RETURN_TWO(jumpTarget, exec->topOfFrame());
@@ -1450,12 +1450,12 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
                     callLinkInfo->remove();
                 callLinkInfo->callee.set(vm, callerCodeBlock, internalFunction);
                 callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, internalFunction);
-                callLinkInfo->machineCodeTarget = codePtr.retagged(CodeEntryPtrTag, LLIntCallICPtrTag);
+                callLinkInfo->machineCodeTarget = codePtr.retagged(CodePtrTag, LLIntCallICPtrTag);
             }
 
-            assertIsTaggedWith(codePtr.executableAddress(), CodeEntryPtrTag);
+            assertIsTaggedWith(codePtr.executableAddress(), CodePtrTag);
             PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), CodeEntryPtrTag);
+            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), CodePtrTag);
         }
         throwScope.release();
         return handleHostCall(execCallee, pc, calleeAsValue, kind);
@@ -1464,13 +1464,11 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     JSScope* scope = callee->scopeUnchecked();
     ExecutableBase* executable = callee->executable();
 
-    PtrTag callPtrTag = NoPtrTag;
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
-    if (executable->isHostFunction()) {
+    if (executable->isHostFunction())
         codePtr = executable->entrypointFor(kind, MustCheckArity);
-        callPtrTag = CodeEntryWithArityCheckPtrTag;
-    } else {
+    else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
@@ -1484,16 +1482,12 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
         ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters())) {
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
             arity = MustCheckArity;
-            callPtrTag = CodeEntryWithArityCheckPtrTag;
-        } else {
+        else
             arity = ArityCheckNotRequired;
-            callPtrTag = CodeEntryPtrTag;
-        }
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
-    assertIsTaggedWith(codePtr.executableAddress(), callPtrTag);
 
     ASSERT(!!codePtr);
     
@@ -1506,15 +1500,14 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             callLinkInfo->remove();
         callLinkInfo->callee.set(vm, callerCodeBlock, callee);
         callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, callee);
-        callLinkInfo->machineCodeTarget = codePtr.retagged(callPtrTag, LLIntCallICPtrTag);
-        RELEASE_ASSERT(callPtrTag != NoPtrTag);
+        callLinkInfo->machineCodeTarget = codePtr.retagged(CodePtrTag, LLIntCallICPtrTag);
         if (codeBlock)
             codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
 
-    assertIsTaggedWith(codePtr.executableAddress(), callPtrTag);
+    assertIsTaggedWith(codePtr.executableAddress(), CodePtrTag);
     PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-    LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), callPtrTag);
+    LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), CodePtrTag);
 }
 
 inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpecializationKind kind)

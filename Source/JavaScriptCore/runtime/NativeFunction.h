@@ -70,10 +70,10 @@ public:
     explicit TaggedNativeFunction(intptr_t bits) : m_ptr(bitwise_cast<void*>(bits)) { }
 
     TaggedNativeFunction(NativeFunction func)
-        : m_ptr(tagCFunctionPtr<void*>(func.m_ptr, CodeEntryPtrTag))
+        : m_ptr(tagCFunctionPtr<void*>(func.m_ptr, CodePtrTag))
     { }
     TaggedNativeFunction(RawNativeFunction func)
-        : m_ptr(tagCFunctionPtr<void*>(func, CodeEntryPtrTag))
+        : m_ptr(tagCFunctionPtr<void*>(func, CodePtrTag))
     { }
 
     explicit operator bool() const { return !!m_ptr; }
@@ -86,7 +86,7 @@ public:
     explicit operator NativeFunction()
     {
         ASSERT(m_ptr);
-        return untagCFunctionPtr<NativeFunction>(m_ptr, CodeEntryPtrTag);
+        return untagCFunctionPtr<NativeFunction>(m_ptr, CodePtrTag);
     }
 
     void* rawPointer() const { return m_ptr; }

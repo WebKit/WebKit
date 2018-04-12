@@ -52,7 +52,7 @@ void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
             PtrTag thunkTag = ptrTag(FTLOSRExitPtrTag, &vm);
             linkBuffer.link(
                 jump.m_jump,
-                CodeLocationLabel(vm.getCTIStub(osrExitGenerationThunkGenerator).retaggedCode(thunkTag, NearJumpPtrTag)));
+                CodeLocationLabel(vm.getCTIStub(osrExitGenerationThunkGenerator).retaggedCode(thunkTag, NearCodePtrTag)));
             if (compilation)
                 compilation->addOSRExitSite({ linkBuffer.locationOf(myLabel).executableAddress() });
         });

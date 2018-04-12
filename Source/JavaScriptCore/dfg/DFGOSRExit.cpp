@@ -393,8 +393,8 @@ void OSRExit::executeOSRExit(Context& context)
         CodeLocationLabel codeLocation = codeMap.find(exit.m_codeOrigin.bytecodeIndex);
         ASSERT(codeLocation);
 
-        PtrTag locationTag = ptrTag(CodeEntryPtrTag, codeBlockForExit, exit.m_codeOrigin.bytecodeIndex);
-        void* jumpTarget = codeLocation.retagged(locationTag, CodeEntryPtrTag).executableAddress();
+        PtrTag locationTag = ptrTag(CodePtrTag, codeBlockForExit, exit.m_codeOrigin.bytecodeIndex);
+        void* jumpTarget = codeLocation.retagged(locationTag, CodePtrTag).executableAddress();
 
         // Compute the value recoveries.
         Operands<ValueRecovery> operands;
@@ -866,7 +866,7 @@ static void adjustAndJumpToTarget(Context& context, VM& vm, CodeBlock* codeBlock
     }
 
     vm.topCallFrame = context.fp<ExecState*>();
-    context.pc() = untagCodePtr(jumpTarget, CodeEntryPtrTag);
+    context.pc() = untagCodePtr(jumpTarget, CodePtrTag);
 }
 
 static void printOSRExit(Context& context, uint32_t osrExitIndex, const OSRExit& exit)
@@ -1084,7 +1084,7 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
                 toCString(ignoringContext<DumpContext>(operands)).data());
     }
 
-    MacroAssembler::repatchJump(exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.retaggedCode(exitTag, NearJumpPtrTag)));
+    MacroAssembler::repatchJump(exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.retaggedCode(exitTag, NearCodePtrTag)));
 
     vm->osrExitJumpDestination = exit.m_code.code().executableAddress();
 }

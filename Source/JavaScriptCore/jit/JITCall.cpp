@@ -252,7 +252,7 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
 
     PtrTag linkTag = ptrTag(LinkCallPtrTag, m_vm);
     m_callCompilationInfo[callLinkInfoIndex].callReturnLocation =
-        emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCallPtrTag));
+        emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag));
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs) {
         abortWithReason(JITDidReturnFromTailCall);

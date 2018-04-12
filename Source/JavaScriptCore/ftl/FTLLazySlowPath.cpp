@@ -65,12 +65,12 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 
     PtrTag slowPathTag = ptrTag(FTLLazySlowPathPtrTag, bitwise_cast<PtrTag>(this));
     LinkBuffer linkBuffer(jit, codeBlock, JITCompilationMustSucceed);
-    linkBuffer.link(params.doneJumps, m_done.retagged(slowPathTag, NearJumpPtrTag));
+    linkBuffer.link(params.doneJumps, m_done.retagged(slowPathTag, NearCodePtrTag));
     if (m_exceptionTarget)
-        linkBuffer.link(exceptionJumps, m_exceptionTarget.retagged(slowPathTag, NearJumpPtrTag));
+        linkBuffer.link(exceptionJumps, m_exceptionTarget.retagged(slowPathTag, NearCodePtrTag));
     m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, slowPathTag, "Lazy slow path call stub");
 
-    MacroAssembler::repatchJump(m_patchableJump.retagged(slowPathTag, NearJumpPtrTag), CodeLocationLabel(m_stub.retaggedCode(slowPathTag, NearJumpPtrTag)));
+    MacroAssembler::repatchJump(m_patchableJump.retagged(slowPathTag, NearCodePtrTag), CodeLocationLabel(m_stub.retaggedCode(slowPathTag, NearCodePtrTag)));
 }
 
 } } // namespace JSC::FTL
