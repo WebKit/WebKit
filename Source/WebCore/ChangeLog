@@ -1,3 +1,54 @@
+2018-04-12  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r229505. rdar://problem/39355225
+
+    Turn off offset*/scroll* optimization for input elements with shadow content
+    https://bugs.webkit.org/show_bug.cgi?id=182383
+    <rdar://problem/37114190>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    We normally ensure clean tree before calling offsetHeight/Width, scrollHeight/Width.
+    In certain cases (see updateLayoutIfDimensionsOutOfDate() for details), it's okay to return
+    the previously computed values even when some part of the tree is dirty.
+    In case of shadow content, updateLayoutIfDimensionsOutOfDate() might return false (no need to layout)
+    for the root, while true (needs layout) for the shadow content.
+    This could confuse the caller (Element::scrollWidth/Height etc) and lead to incorrect result.
+    
+    Test: fast/forms/scrollheight-with-mutation-crash.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+    
+    LayoutTests:
+    
+    * fast/forms/scrollheight-with-mutation-crash-expected.txt: Added.
+    * fast/forms/scrollheight-with-mutation-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@229505 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-03-09  Zalan Bujtas  <zalan@apple.com>
+
+            Turn off offset*/scroll* optimization for input elements with shadow content
+            https://bugs.webkit.org/show_bug.cgi?id=182383
+            <rdar://problem/37114190>
+
+            Reviewed by Antti Koivisto.
+
+            We normally ensure clean tree before calling offsetHeight/Width, scrollHeight/Width.
+            In certain cases (see updateLayoutIfDimensionsOutOfDate() for details), it's okay to return
+            the previously computed values even when some part of the tree is dirty.
+            In case of shadow content, updateLayoutIfDimensionsOutOfDate() might return false (no need to layout)
+            for the root, while true (needs layout) for the shadow content.
+            This could confuse the caller (Element::scrollWidth/Height etc) and lead to incorrect result.
+
+            Test: fast/forms/scrollheight-with-mutation-crash.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+
 2018-02-28  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229086. rdar://problem/37991818
