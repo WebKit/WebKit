@@ -1,3 +1,46 @@
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure elements overlapping with elements animating also get composited
+        https://bugs.webkit.org/show_bug.cgi?id=184539
+
+        Reviewed by Jon Lee.
+
+        A number of compositing tests failed because we didn't call into the Web Animations engine while various calls
+        on RenderLayer and RenderLayerBacking were made. We bring the functionality over from CSSAnimationController to
+        DocumentTimeline and KeyframeAnimation to KeyframeEffectReadOnly.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationsForElement const): Update this method's signature to be const since it
+        should be callable by other const method.
+        (WebCore::AnimationTimeline::animationsForElement): Deleted.
+        * animation/AnimationTimeline.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::computeExtentOfAnimation const): Adapt this method from CSSAnimationController.
+        (WebCore::DocumentTimeline::isRunningAnimationOnRenderer const): Adapt this method from CSSAnimationController.
+        (WebCore::DocumentTimeline::isRunningAcceleratedAnimationOnRenderer const): Adapt this method from CSSAnimationController.
+        * animation/DocumentTimeline.h:
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::computeExtentOfTransformAnimation const): Bring this method over from KeyframeAnimation.
+        (WebCore::containsRotation): Bring this method over from KeyframeAnimation.
+        (WebCore::KeyframeEffectReadOnly::computeTransformedExtentViaTransformList const): Bring this method over from KeyframeAnimation.
+        (WebCore::KeyframeEffectReadOnly::computeTransformedExtentViaMatrix const): Bring this method over from KeyframeAnimation.
+        * animation/KeyframeEffectReadOnly.h:
+        (WebCore::KeyframeEffectReadOnly::animatedProperties const): DocumentTimeline::computeExtentOfAnimation() needs to get a list
+        of all animated properties to see if a transform is animated, so we now expose such a list.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform const): Update this method to call into DocumentTimeline if the CSS Animations
+        and CSS Transitions as Web Animations flag is on.
+        (WebCore::RenderLayer::calculateClipRects const): Update this method to call into DocumentTimeline if the CSS Animations
+        and CSS Transitions as Web Animations flag is on.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry): Update this method to call into DocumentTimeline if the CSS Animations
+        and CSS Transitions as Web Animations flag is on.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::isRunningTransformAnimation const): Update this method to call into DocumentTimeline
+        if the CSS Animations and CSS Transitions as Web Animations flag is on.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::documentTimeline const):
+
 2018-04-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Enable seeking for hardware animations

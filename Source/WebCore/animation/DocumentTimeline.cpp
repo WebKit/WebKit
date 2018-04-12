@@ -190,6 +190,64 @@ void DocumentTimeline::updateAnimations()
     timingModelDidChange();
 }
 
+bool DocumentTimeline::computeExtentOfAnimation(RenderElement& renderer, LayoutRect& bounds) const
+{
+    if (!renderer.element())
+        return true;
+
+    KeyframeEffectReadOnly* matchingEffect;
+    for (const auto& animation : animationsForElement(*renderer.element())) {
+        auto* effect = animation->effect();
+        if (is<KeyframeEffectReadOnly>(effect)) {
+            auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(effect);
+            if (keyframeEffect->animatedProperties().contains(CSSPropertyTransform))
+                matchingEffect = downcast<KeyframeEffectReadOnly>(effect);
+        }
+    }
+
+    if (matchingEffect)
+        return matchingEffect->computeExtentOfTransformAnimation(bounds);
+
+    return true;
+}
+
+bool DocumentTimeline::isRunningAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
+{
+    if (!renderer.element())
+        return false;
+
+    for (const auto& animation : animationsForElement(*renderer.element())) {
+        auto playState = animation->playState();
+        if (playState != WebAnimation::PlayState::Running && playState != WebAnimation::PlayState::Paused)
+            continue;
+        auto* effect = animation->effect();
+        if (is<KeyframeEffectReadOnly>(effect) && downcast<KeyframeEffectReadOnly>(effect)->animatedProperties().contains(property))
+            return true;
+    }
+
+    return false;
+}
+
+bool DocumentTimeline::isRunningAcceleratedAnimationOnRenderer(RenderElement& renderer, CSSPropertyID property) const
+{
+    if (!renderer.element())
+        return false;
+
+    for (const auto& animation : animationsForElement(*renderer.element())) {
+        auto playState = animation->playState();
+        if (playState != WebAnimation::PlayState::Running && playState != WebAnimation::PlayState::Paused)
+            continue;
+        auto* effect = animation->effect();
+        if (is<KeyframeEffectReadOnly>(effect)) {
+            auto* keyframeEffect = downcast<KeyframeEffectReadOnly>(effect);
+            if (keyframeEffect->isRunningAccelerated() && keyframeEffect->animatedProperties().contains(property))
+                return true;
+        }
+    }
+
+    return false;
+}
+
 std::unique_ptr<RenderStyle> DocumentTimeline::animatedStyleForRenderer(RenderElement& renderer)
 {
     std::unique_ptr<RenderStyle> result;

@@ -37,6 +37,7 @@
 #include "CSSTransition.h"
 #include "Element.h"
 #include "FontCascade.h"
+#include "GeometryUtilities.h"
 #include "JSCompositeOperation.h"
 #include "JSKeyframeEffectReadOnly.h"
 #include "RenderBoxModelObject.h"
@@ -1255,6 +1256,110 @@ const RenderStyle& KeyframeEffectReadOnly::currentStyle() const
     if (auto* renderer = this->renderer())
         return renderer->style();
     return RenderStyle::defaultStyle();
+}
+
+bool KeyframeEffectReadOnly::computeExtentOfTransformAnimation(LayoutRect& bounds) const
+{
+    ASSERT(m_blendingKeyframes.containsProperty(CSSPropertyTransform));
+
+    if (!is<RenderBox>(renderer()))
+        return true; // Non-boxes don't get transformed;
+
+    RenderBox& box = downcast<RenderBox>(*renderer());
+    FloatRect rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
+
+    FloatRect cumulativeBounds = bounds;
+
+    for (const auto& keyframe : m_blendingKeyframes.keyframes()) {
+        // FIXME: maybe for declarative animations we always say it's true for the first and last keyframe.
+        if (!keyframe.containsProperty(CSSPropertyTransform))
+            continue;
+
+        LayoutRect keyframeBounds = bounds;
+
+        bool canCompute;
+        if (transformFunctionListsMatch())
+            canCompute = computeTransformedExtentViaTransformList(rendererBox, *keyframe.style(), keyframeBounds);
+        else
+            canCompute = computeTransformedExtentViaMatrix(rendererBox, *keyframe.style(), keyframeBounds);
+
+        if (!canCompute)
+            return false;
+
+        cumulativeBounds.unite(keyframeBounds);
+    }
+
+    bounds = LayoutRect(cumulativeBounds);
+    return true;
+}
+
+static bool containsRotation(const Vector<RefPtr<TransformOperation>>& operations)
+{
+    for (const auto& operation : operations) {
+        if (operation->type() == TransformOperation::ROTATE)
+            return true;
+    }
+    return false;
+}
+
+bool KeyframeEffectReadOnly::computeTransformedExtentViaTransformList(const FloatRect& rendererBox, const RenderStyle& style, LayoutRect& bounds) const
+{
+    FloatRect floatBounds = bounds;
+    FloatPoint transformOrigin;
+
+    bool applyTransformOrigin = containsRotation(style.transform().operations()) || style.transform().affectedByTransformOrigin();
+    if (applyTransformOrigin) {
+        transformOrigin.setX(rendererBox.x() + floatValueForLength(style.transformOriginX(), rendererBox.width()));
+        transformOrigin.setY(rendererBox.y() + floatValueForLength(style.transformOriginY(), rendererBox.height()));
+        // Ignore transformOriginZ because we'll bail if we encounter any 3D transforms.
+
+        floatBounds.moveBy(-transformOrigin);
+    }
+
+    for (const auto& operation : style.transform().operations()) {
+        if (operation->type() == TransformOperation::ROTATE) {
+            // For now, just treat this as a full rotation. This could take angle into account to reduce inflation.
+            floatBounds = boundsOfRotatingRect(floatBounds);
+        } else {
+            TransformationMatrix transform;
+            operation->apply(transform, rendererBox.size());
+            if (!transform.isAffine())
+                return false;
+
+            if (operation->type() == TransformOperation::MATRIX || operation->type() == TransformOperation::MATRIX_3D) {
+                TransformationMatrix::Decomposed2Type toDecomp;
+                transform.decompose2(toDecomp);
+                // Any rotation prevents us from using a simple start/end rect union.
+                if (toDecomp.angle)
+                    return false;
+            }
+
+            floatBounds = transform.mapRect(floatBounds);
+        }
+    }
+
+    if (applyTransformOrigin)
+        floatBounds.moveBy(transformOrigin);
+
+    bounds = LayoutRect(floatBounds);
+    return true;
+}
+
+bool KeyframeEffectReadOnly::computeTransformedExtentViaMatrix(const FloatRect& rendererBox, const RenderStyle& style, LayoutRect& bounds) const
+{
+    TransformationMatrix transform;
+    style.applyTransform(transform, rendererBox, RenderStyle::IncludeTransformOrigin);
+    if (!transform.isAffine())
+        return false;
+
+    TransformationMatrix::Decomposed2Type fromDecomp;
+    transform.decompose2(fromDecomp);
+    // Any rotation prevents us from using a simple start/end rect union.
+    if (fromDecomp.angle)
+        return false;
+
+    bounds = LayoutRect(transform.mapRect(bounds));
+    return true;
 }
 
 } // namespace WebCore

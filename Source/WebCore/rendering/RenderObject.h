@@ -46,6 +46,7 @@ class CSSAnimationController;
 class Color;
 class Cursor;
 class Document;
+class DocumentTimeline;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -754,6 +755,7 @@ public:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
     CSSAnimationController& animation() const;
+    DocumentTimeline* documentTimeline() const;
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
@@ -1002,6 +1004,11 @@ inline Page& RenderObject::page() const
 inline CSSAnimationController& RenderObject::animation() const
 {
     return frame().animation();
+}
+
+inline DocumentTimeline* RenderObject::documentTimeline() const
+{
+    return document().existingTimeline();
 }
 
 inline bool RenderObject::renderTreeBeingDestroyed() const

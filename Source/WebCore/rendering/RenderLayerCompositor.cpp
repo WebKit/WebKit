@@ -2719,6 +2719,13 @@ bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& 
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        if (auto* element = renderer.element()) {
+            if (auto* timeline = element->document().existingTimeline())
+                return timeline->isRunningAnimationOnRenderer(renderer, CSSPropertyTransform);
+        }
+        return false;
+    }
     return renderer.animation().isRunningAnimationOnRenderer(renderer, CSSPropertyTransform, AnimationBase::Running | AnimationBase::Paused);
 }
 

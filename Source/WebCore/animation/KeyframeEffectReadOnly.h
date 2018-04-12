@@ -116,6 +116,11 @@ public:
     void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
     bool stylesWouldYieldNewCSSTransitionsBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle) const;
     bool hasBlendingKeyframes() const { return m_blendingKeyframes.size(); }
+    const HashSet<CSSPropertyID>& animatedProperties() const { return m_blendingKeyframes.properties(); }
+
+    bool computeExtentOfTransformAnimation(LayoutRect&) const;
+    bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
+    bool computeTransformedExtentViaMatrix(const FloatRect&, const RenderStyle&, LayoutRect&) const;
 
 protected:
     void copyPropertiesFromSource(Ref<KeyframeEffectReadOnly>&&);

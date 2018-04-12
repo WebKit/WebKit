@@ -115,7 +115,7 @@ void AnimationTimeline::animationWasRemovedFromElement(WebAnimation& animation, 
         map.remove(iterator);
 }
 
-Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element)
+Vector<RefPtr<WebAnimation>> AnimationTimeline::animationsForElement(Element& element) const
 {
     Vector<RefPtr<WebAnimation>> animations;
     if (m_elementToCSSAnimationsMap.contains(&element))

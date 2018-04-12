@@ -53,6 +53,7 @@
 #include "Document.h"
 #include "DocumentEventQueue.h"
 #include "DocumentMarkerController.h"
+#include "DocumentTimeline.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "FEColorMatrix.h"
@@ -107,6 +108,7 @@
 #include "RenderTheme.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGNames.h"
 #include "ScaleTransformOperation.h"
 #include "ScriptDisallowedScope.h"
@@ -999,14 +1001,28 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
     
     RenderBox* box = renderBox();
 
-    if (renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform, AnimationBase::Running | AnimationBase::Paused)) {
-        TransformationMatrix currTransform;
-        FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
-        std::unique_ptr<RenderStyle> style = renderer().animation().animatedStyleForRenderer(renderer());
-        style->applyTransform(currTransform, pixelSnappedBorderRect, applyOrigin);
-        makeMatrixRenderable(currTransform, canRender3DTransforms());
-        return currTransform;
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        if (auto* timeline = renderer().documentTimeline()) {
+            if (timeline->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform)) {
+                TransformationMatrix currTransform;
+                FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
+                std::unique_ptr<RenderStyle> style = timeline->animatedStyleForRenderer(renderer());
+                style->applyTransform(currTransform, pixelSnappedBorderRect, applyOrigin);
+                makeMatrixRenderable(currTransform, canRender3DTransforms());
+                return currTransform;
+            }
+        }
+    } else {
+        if (renderer().animation().isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyTransform, AnimationBase::Running | AnimationBase::Paused)) {
+            TransformationMatrix currTransform;
+            FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(box->borderBoxRect(), box->document().deviceScaleFactor());
+            std::unique_ptr<RenderStyle> style = renderer().animation().animatedStyleForRenderer(renderer());
+            style->applyTransform(currTransform, pixelSnappedBorderRect, applyOrigin);
+            makeMatrixRenderable(currTransform, canRender3DTransforms());
+            return currTransform;
+        }
     }
+
 
     // m_transform includes transform-origin, so we need to recompute the transform here.
     if (applyOrigin == RenderStyle::ExcludeTransformOrigin) {
@@ -5775,9 +5791,18 @@ bool RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimati
     bounds = calculateLayerBounds(this, LayoutSize(), boundsFlags);
     
     LayoutRect animatedBounds = bounds;
-    if (renderer().animation().computeExtentOfAnimation(renderer(), animatedBounds)) {
-        bounds = animatedBounds;
-        return true;
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        if (auto* timeline = renderer().documentTimeline()) {
+            if (timeline->computeExtentOfAnimation(renderer(), animatedBounds)) {
+                bounds = animatedBounds;
+                return true;
+            }
+        }
+    } else {
+        if (renderer().animation().computeExtentOfAnimation(renderer(), animatedBounds)) {
+            bounds = animatedBounds;
+            return true;
+        }
     }
     
     return false;

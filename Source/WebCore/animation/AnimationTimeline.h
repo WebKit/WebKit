@@ -58,7 +58,7 @@ public:
     virtual void timingModelDidChange() { };
 
     const ListHashSet<RefPtr<WebAnimation>>& animations() const { return m_animations; }
-    Vector<RefPtr<WebAnimation>> animationsForElement(Element&);
+    Vector<RefPtr<WebAnimation>> animationsForElement(Element&) const;
     void cancelAnimationsForElement(Element&);
     void animationWasAddedToElement(WebAnimation&, Element&);
     void animationWasRemovedFromElement(WebAnimation&, Element&);

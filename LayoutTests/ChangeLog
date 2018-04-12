@@ -1,3 +1,18 @@
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure elements overlapping with elements animating also get composited
+        https://bugs.webkit.org/show_bug.cgi?id=184539
+
+        Reviewed by Jon Lee.
+
+        Opt more tests in the CSS Animations and CSS Transitions as Web Animations runtime flag since they now pass.
+
+        * compositing/backing/backface-visibility-flip.html:
+        * compositing/layer-creation/overlap-animation-clipping.html:
+        * compositing/layer-creation/overlap-animation-container.html:
+        * compositing/layer-creation/overlap-animation.html:
+        * compositing/layer-creation/translate-animation-overlap.html:
+
 2018-04-11  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Enable seeking for hardware animations
