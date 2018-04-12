@@ -30,9 +30,10 @@ namespace JSC {
         return parserArena.allocateFreeable(size);
     }
 
+    template<typename T>
     inline void* ParserArenaDeletable::operator new(size_t size, ParserArena& parserArena)
     {
-        return parserArena.allocateDeletable(size);
+        return parserArena.allocateDeletable<T>(size);
     }
 
     inline ParserArenaRoot::ParserArenaRoot(ParserArena& parserArena)
