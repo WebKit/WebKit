@@ -26,20 +26,16 @@
 #include "config.h"
 #include "Process.h"
 
-#include <wtf/Lock.h>
-#include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 namespace Process {
 
 static std::optional<ProcessIdentifier> globalIdentifier;
-static Lock globalIdentifierLock;
 
 void setIdentifier(ProcessIdentifier processIdentifier)
 {
     ASSERT(isMainThread());
-    Locker<Lock> locker(globalIdentifierLock);
     globalIdentifier = processIdentifier;
 }
 
@@ -47,12 +43,10 @@ ProcessIdentifier identifier()
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        Locker<Lock> locker(globalIdentifierLock);
         if (!globalIdentifier)
             globalIdentifier = generateObjectIdentifier<ProcessIdentifierType>();
     });
 
-    Locker<Lock> locker(globalIdentifierLock);
     return *globalIdentifier;
 }
 

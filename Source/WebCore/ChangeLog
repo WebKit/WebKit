@@ -1,3 +1,20 @@
+2018-04-12  Chris Dumez  <cdumez@apple.com>
+
+        Process::setIdentifier() / Process::identifier() do not need a lock
+        https://bugs.webkit.org/show_bug.cgi?id=184544
+
+        Reviewed by Brady Eidson.
+
+        Process::setIdentifier() / Process::identifier() do not need a lock.
+        Process::setIdentifier() gets called in ChildProcess::initialize(),
+        before we start any background threads. It is then safe to query
+        this process identifier later on from background threads without
+        locks.
+
+        * platform/Process.cpp:
+        (WebCore::Process::setIdentifier):
+        (WebCore::Process::identifier):
+
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
         Unreviewed, fix the Windows build.
