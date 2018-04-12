@@ -1,5 +1,16 @@
 2018-04-12  Keith Rollin  <krollin@apple.com>
 
+        REGRESSION: [mac-wk2 release] LayoutTest http/tests/security/cross-origin-plugin-allowed.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=161539
+        <rdar://problem/39389781>
+
+        Unreviewed test gardening. Re-enabled this test. It passes in local
+        testing and the flakiness dashboard doesn't show any problems with it.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-04-12  Keith Rollin  <krollin@apple.com>
+
         Address possible "CFNetwork SSLHandshake failed (-9847)" test failure.
         https://bugs.webkit.org/show_bug.cgi?id=184487
 
