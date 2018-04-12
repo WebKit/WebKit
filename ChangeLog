@@ -1,3 +1,12 @@
+2018-04-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Switch testing process to using WPEBackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=184357
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Source/cmake/FindWPEBackend-fdo.cmake: Renamed from Source/cmake/FindWPEBackend-mesa.cmake.
+
 2018-04-11  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Use of playbin3 when USE_PLAYBIN3 environment variable is set

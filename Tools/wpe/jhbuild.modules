@@ -19,8 +19,8 @@
       <dep package="xkbcommon"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="woff2"/>
-      <dep package="wpe"/>
-      <dep package="wpe-mesa"/>
+      <dep package="wpebackend"/>
+      <dep package="wpebackend-fdo"/>
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
       <dep package="libepoxy"/>
@@ -172,19 +172,19 @@
             hash="sha1:7127993bfb69e13cdff25fb8b3c8f26ce6be5bfa"/>
   </autotools>
 
-  <cmake id="wpe">
+  <cmake id="wpebackend">
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend.git"
             tag="3013faaebab42e7ef7497b3850a2902978eb3d6f" />
   </cmake>
 
-  <cmake id="wpe-mesa">
+  <cmake id="wpebackend-fdo">
     <dependencies>
-      <dep package="wpe" />
-      <dep package="glib" />
-      <dep package="xkbcommon" />
+      <dep package="wpebackend"/>
+      <dep package="glib"/>
+      <dep package="xkbcommon"/>
     </dependencies>
-    <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend-mesa.git"
-            tag="8e159832dc55164758f68fad02f52e6ad7c70642" />
+    <branch repo="github.com" module="Igalia/WPEBackend-fdo.git"
+            tag="064c60806422ff1bb32cef7fb1de68923aecba82"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">
@@ -213,7 +213,7 @@
   </autotools>
 
   <autotools id="dyz" supports-non-srcdir-builds="no">
-    <branch repo="github.com" module="Igalia/dyz" tag="203a1ebd1481e44aa8105e862c02f317e6653627"/>
+    <branch repo="github.com" module="Igalia/dyz" tag="74a368cc63a0ff9bba675182affa3a3fd13aad80"/>
   </autotools>
 
   <meson id="graphene">

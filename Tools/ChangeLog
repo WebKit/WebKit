@@ -1,3 +1,51 @@
+2018-04-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Switch testing process to using WPEBackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=184357
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Switch WPE testing to using the WPEBackend-fdo implementation that
+        depends on the WL_bind_wayland_display EGL extension, as defined under
+        the freedesktop.org project.
+        https://cgit.freedesktop.org/mesa/mesa/tree/docs/specs/WL_bind_wayland_display.spec
+
+        HeadlessViewBackend is refactored to use the WPEBackend-fdo API, but
+        otherwise is not changed in functionality.
+
+        Unit tests now have to unconditionally use HeadlessViewBackend as a
+        wpe_view_backend provider, since WPEBackend-fdo does not provide a
+        default wpe_view_backend implementation. Unit tests covering that are
+        adjusted to instead use a mock wpe_view_backend interface.
+
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName): Fix the libWPEWebKit.so name to also include
+        the API version that was added in r230449.
+        * Scripts/webkitpy/port/waylanddriver.py:
+        (WaylandDriver._setup_environ_for_test): Export EGL_PLATFORM=wayland.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._driver_class): Use WaylandDriver by default.
+        * TestWebKitAPI/PlatformWebView.h:
+        (): Deleted.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewWebBackend):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebViewBackend):
+        * TestWebKitAPI/wpe/PlatformWebViewWPE.cpp:
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::initialize):
+        * wpe/HeadlessViewBackend/CMakeLists.txt:
+        * wpe/HeadlessViewBackend/HeadlessViewBackend.cpp:
+        (getEGLDisplay):
+        (HeadlessViewBackend::HeadlessViewBackend):
+        (HeadlessViewBackend::~HeadlessViewBackend):
+        (HeadlessViewBackend::backend const):
+        (HeadlessViewBackend::createSnapshot):
+        (HeadlessViewBackend::performUpdate):
+        (HeadlessViewBackend::makeCurrent): Deleted.
+        * wpe/HeadlessViewBackend/HeadlessViewBackend.h:
+        * wpe/jhbuild.modules: Module name cleanup. Dyz version is bumped.
+
 2018-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Switch to use always complex text code path

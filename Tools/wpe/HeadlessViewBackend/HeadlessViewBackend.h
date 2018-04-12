@@ -32,7 +32,15 @@
 #include <cairo.h>
 #include <glib.h>
 #include <unordered_map>
-#include <wpe-mesa/view-backend-exportable-dma-buf.h>
+#include <wpe-fdo/view-backend-exportable.h>
+
+#ifndef EGL_WL_bind_wayland_display
+#define EGL_WL_bind_wayland_display 1
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, struct wl_resource *buffer, EGLint attribute, EGLint *value);
+
+#define EGL_WAYLAND_BUFFER_WL       0x31D5 /* eglCreateImageKHR target */
+#define EGL_WAYLAND_PLANE_WL        0x31D6 /* eglCreateImageKHR target */
+#endif
 
 class HeadlessViewBackend {
 public:
@@ -44,26 +52,25 @@ public:
     cairo_surface_t* createSnapshot();
 
 private:
-    bool makeCurrent();
     void performUpdate();
 
-    static struct wpe_mesa_view_backend_exportable_dma_buf_client s_exportableClient;
+    static struct wpe_view_backend_exportable_fdo_client s_exportableClient;
 
     struct {
         EGLDisplay display;
         EGLConfig config;
-        EGLContext context;
+        EGLContext context { nullptr };
 
         PFNEGLCREATEIMAGEKHRPROC createImage;
         PFNEGLDESTROYIMAGEKHRPROC destroyImage;
+        PFNEGLQUERYWAYLANDBUFFERWL queryBuffer;
         PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
     } m_egl;
 
-    struct wpe_mesa_view_backend_exportable_dma_buf* m_exportable;
+    struct wpe_view_backend_exportable_fdo* m_exportable;
 
-    std::unordered_map<uint32_t, int32_t> m_exportMap;
-    std::pair<uint32_t, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_pendingImage { };
-    std::pair<uint32_t, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_lockedImage { };
+    std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_pendingImage { };
+    std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> m_lockedImage { };
 
     GSource* m_updateSource;
     gint64 m_frameRate { G_USEC_PER_SEC / 60 };

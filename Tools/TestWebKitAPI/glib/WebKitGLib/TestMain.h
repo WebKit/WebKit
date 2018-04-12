@@ -143,11 +143,6 @@ public:
 #if PLATFORM(WPE)
     static WebKitWebViewBackend* createWebViewBackend()
     {
-        const char* useHeadlessViewBackend = g_getenv("WPE_USE_HEADLESS_VIEW_BACKEND");
-        if (!useHeadlessViewBackend || !strcmp(useHeadlessViewBackend, "0")) {
-            auto* backend = wpe_view_backend_create();
-            return webkit_web_view_backend_new(backend, reinterpret_cast<GDestroyNotify>(wpe_view_backend_destroy), backend);
-        }
         auto* headlessBackend = new HeadlessViewBackend;
         return webkit_web_view_backend_new(headlessBackend->backend(), [](gpointer userData) {
             delete static_cast<HeadlessViewBackend*>(userData);

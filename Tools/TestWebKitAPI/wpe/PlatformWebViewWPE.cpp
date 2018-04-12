@@ -61,21 +61,13 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 
 PlatformWebView::~PlatformWebView()
 {
-    if (m_backend)
-        wpe_view_backend_destroy(m_backend);
-
     delete m_window;
 }
 
 void PlatformWebView::initialize(WKPageConfigurationRef configuration)
 {
-    const char* useHeadlessViewBackend = g_getenv("WPE_USE_HEADLESS_VIEW_BACKEND");
-    if (useHeadlessViewBackend && strcmp(useHeadlessViewBackend, "0"))
-        m_window = new HeadlessViewBackend;
-    else
-        m_backend = wpe_view_backend_create();
-
-    m_view = WKViewCreate(m_window ? m_window->backend() : m_backend, configuration);
+    m_window = new HeadlessViewBackend;
+    m_view = WKViewCreate(m_window->backend(), configuration);
 }
 
 WKPageRef PlatformWebView::page() const

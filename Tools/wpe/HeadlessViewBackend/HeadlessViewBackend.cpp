@@ -28,6 +28,7 @@
 #include <cassert>
 #include <fcntl.h>
 #include <unistd.h>
+#include <wpe-fdo/initialize-egl.h>
 
 // Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
 #ifndef EGL_CAST
@@ -37,20 +38,11 @@
 // Keep this in sync with wtf/glib/RunLoopSourcePriority.h.
 static int kRunLoopSourcePriorityDispatcher = -70;
 
-// FIXME: Deploy good practices and clean up GBM resources at process exit.
 static EGLDisplay getEGLDisplay()
 {
     static EGLDisplay s_display = EGL_NO_DISPLAY;
     if (s_display == EGL_NO_DISPLAY) {
-        int fd = open("/dev/dri/renderD128", O_RDWR | O_CLOEXEC | O_NOCTTY | O_NONBLOCK);
-        if (fd < 0)
-            return EGL_NO_DISPLAY;
-
-        struct gbm_device* device = gbm_create_device(fd);
-        if (!device)
-            return EGL_NO_DISPLAY;
-
-        EGLDisplay display = eglGetDisplay(device);
+        EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
         if (display == EGL_NO_DISPLAY)
             return EGL_NO_DISPLAY;
 
@@ -60,6 +52,7 @@ static EGLDisplay getEGLDisplay()
         if (!eglBindAPI(EGL_OPENGL_ES_API))
             return EGL_NO_DISPLAY;
 
+        wpe_fdo_initialize_for_egl_display(display);
         s_display = display;
     }
 
@@ -99,9 +92,10 @@ HeadlessViewBackend::HeadlessViewBackend()
 
     m_egl.createImage = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
     m_egl.destroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
+    m_egl.queryBuffer = reinterpret_cast<PFNEGLQUERYWAYLANDBUFFERWL>(eglGetProcAddress("eglQueryWaylandBufferWL"));
     m_egl.imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
-    m_exportable = wpe_mesa_view_backend_exportable_dma_buf_create(&s_exportableClient, this);
+    m_exportable = wpe_view_backend_exportable_fdo_create(&s_exportableClient, this, 800, 600);
 
     m_updateSource = g_timeout_source_new(m_frameRate / 1000);
     g_source_set_callback(m_updateSource,
@@ -116,29 +110,25 @@ HeadlessViewBackend::HeadlessViewBackend()
 
 HeadlessViewBackend::~HeadlessViewBackend()
 {
-    if (m_updateSource)
+    if (m_updateSource) {
         g_source_destroy(m_updateSource);
+        g_source_unref(m_updateSource);
+    }
 
     if (auto image = std::get<0>(m_pendingImage.second))
         m_egl.destroyImage(m_egl.display, image);
     if (auto image = std::get<0>(m_lockedImage.second))
         m_egl.destroyImage(m_egl.display, image);
 
-    for (auto it : m_exportMap) {
-        int fd = it.second;
-        if (fd >= 0)
-            close(fd);
-    }
-
     if (m_egl.context)
         eglDestroyContext(m_egl.display, m_egl.context);
 
-    wpe_mesa_view_backend_exportable_dma_buf_destroy(m_exportable);
+    wpe_view_backend_exportable_fdo_destroy(m_exportable);
 }
 
 struct wpe_view_backend* HeadlessViewBackend::backend() const
 {
-    return wpe_mesa_view_backend_exportable_dma_buf_get_view_backend(m_exportable);
+    return wpe_view_backend_exportable_fdo_get_view_backend(m_exportable);
 }
 
 cairo_surface_t* HeadlessViewBackend::createSnapshot()
@@ -155,7 +145,8 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     uint8_t* buffer = new uint8_t[4 * width * height];
     bool successfulSnapshot = false;
 
-    makeCurrent();
+    if (!eglMakeCurrent(m_egl.display, EGL_NO_SURFACE, EGL_NO_SURFACE, m_egl.context))
+        return nullptr;
 
     GLuint imageTexture;
     glGenTextures(1, &imageTexture);
@@ -203,57 +194,42 @@ cairo_surface_t* HeadlessViewBackend::createSnapshot()
     return imageSurface;
 }
 
-bool HeadlessViewBackend::makeCurrent()
-{
-    return eglMakeCurrent(m_egl.display, EGL_NO_SURFACE, EGL_NO_SURFACE, m_egl.context);
-}
-
 void HeadlessViewBackend::performUpdate()
 {
     if (!m_pendingImage.first)
         return;
 
-    wpe_mesa_view_backend_exportable_dma_buf_dispatch_frame_complete(m_exportable);
+    wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
     if (m_lockedImage.first) {
-        wpe_mesa_view_backend_exportable_dma_buf_dispatch_release_buffer(m_exportable, m_lockedImage.first);
+        wpe_view_backend_exportable_fdo_dispatch_release_buffer(m_exportable, m_lockedImage.first);
         m_egl.destroyImage(m_egl.display, std::get<0>(m_lockedImage.second));
     }
 
     m_lockedImage = m_pendingImage;
-    m_pendingImage = std::pair<uint32_t, std::tuple<EGLImageKHR, uint32_t, uint32_t>> { };
+    m_pendingImage = std::pair<struct wl_resource*, std::tuple<EGLImageKHR, uint32_t, uint32_t>> { };
 }
 
-struct wpe_mesa_view_backend_exportable_dma_buf_client HeadlessViewBackend::s_exportableClient = {
-    // export_dma_buf
-    [](void* data, struct wpe_mesa_view_backend_exportable_dma_buf_data* imageData)
+struct wpe_view_backend_exportable_fdo_client HeadlessViewBackend::s_exportableClient = {
+    // export_buffer_resource
+    [](void* data, struct wl_resource* bufferResource)
     {
         auto& backend = *static_cast<HeadlessViewBackend*>(data);
+        if (backend.m_pendingImage.first)
+            std::abort();
 
-        auto it = backend.m_exportMap.end();
-        if (imageData->fd >= 0) {
-            assert(backend.m_exportMap.find(imageData->handle) == backend.m_exportMap.end());
+        auto& egl = backend.m_egl;
 
-            it = backend.m_exportMap.insert({ imageData->handle, imageData->fd }).first;
-        } else {
-            assert(backend.m_exportMap.find(imageData->handle) != backend.m_exportMap.end());
-            it = backend.m_exportMap.find(imageData->handle);
-        }
+        EGLint format = 0;
+        if (!egl.queryBuffer(egl.display, bufferResource, EGL_TEXTURE_FORMAT, &format) || format != EGL_TEXTURE_RGBA)
+            return;
 
-        assert(it != backend.m_exportMap.end());
-        int32_t fd = it->second;
+        EGLint width, height;
+        if (!egl.queryBuffer(egl.display, bufferResource, EGL_WIDTH, &width)
+            || !egl.queryBuffer(egl.display, bufferResource, EGL_HEIGHT, &height))
+            return;
 
-        backend.makeCurrent();
-
-        EGLint attributes[] = {
-            EGL_WIDTH, static_cast<EGLint>(imageData->width),
-            EGL_HEIGHT, static_cast<EGLint>(imageData->height),
-            EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLint>(imageData->format),
-            EGL_DMA_BUF_PLANE0_FD_EXT, fd,
-            EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
-            EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLint>(imageData->stride),
-            EGL_NONE,
-        };
-        EGLImageKHR image = backend.m_egl.createImage(backend.m_egl.display, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes);
-        backend.m_pendingImage = { imageData->handle, std::make_tuple(image, imageData->width, imageData->height) };
+        EGLint attributes[] = { EGL_WAYLAND_PLANE_WL, 0, EGL_NONE };
+        EGLImageKHR image = egl.createImage(egl.display, EGL_NO_CONTEXT, EGL_WAYLAND_BUFFER_WL, bufferResource, attributes);
+        backend.m_pendingImage = { bufferResource, std::make_tuple(image, width, height) };
     },
 };
