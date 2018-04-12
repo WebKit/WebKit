@@ -27,6 +27,7 @@
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
 #include "JSRetainPtr.h"
+#include "OpaqueJSString.h"
 #include <gobject/gvaluecollector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -327,9 +328,10 @@ gboolean jsc_value_to_boolean(JSCValue* value)
 /**
  * jsc_value_new_string:
  * @context: a #JSCContext
- * @string: (nullable): a string
+ * @string: (nullable): a null-terminated string
  *
- * Create a new #JSCValue from @string.
+ * Create a new #JSCValue from @string. If you need to create a #JSCValue from a
+ * string containing null characters, use jsc_value_new_string_from_bytes() instead.
  *
  * Returns: (transfer full): a #JSCValue.
  */
@@ -344,6 +346,29 @@ JSCValue* jsc_value_new_string(JSCContext* context, const char* string)
     } else
         jsStringValue = JSValueMakeString(jscContextGetJSContext(context), nullptr);
     return jscContextGetOrCreateValue(context, jsStringValue).leakRef();
+}
+
+/**
+ * jsc_value_new_string_from_bytes:
+ * @context: a #JSCContext
+ * @bytes: (nullable): a #GBytes
+ *
+ * Create a new #JSCValue from @bytes.
+ *
+ * Returns: (transfer full): a #JSCValue.
+ */
+JSCValue* jsc_value_new_string_from_bytes(JSCContext* context, GBytes* bytes)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+
+    if (!bytes)
+        return jsc_value_new_string(context, nullptr);
+
+    gsize dataSize;
+    const auto* data = static_cast<const char*>(g_bytes_get_data(bytes, &dataSize));
+    auto string = String::fromUTF8(data, dataSize);
+    JSRetainPtr<JSStringRef> jsString(Adopt, OpaqueJSString::create(WTFMove(string)).leakRef());
+    return jscContextGetOrCreateValue(context, JSValueMakeString(jscContextGetJSContext(context), jsString.get())).leakRef();
 }
 
 /**
@@ -366,9 +391,10 @@ gboolean jsc_value_is_string(JSCValue* value)
  * jsc_value_to_string:
  * @value: a #JSCValue
  *
- * Convert @value to a string
+ * Convert @value to a string. Use jsc_value_to_string_as_bytes() instead, if you need to
+ * handle strings containing null characters.
  *
- * Returns: (transfer full): a string result of the conversion.
+ * Returns: (transfer full): a null-terminated string result of the conversion.
  */
 char* jsc_value_to_string(JSCValue* value)
 {
@@ -380,10 +406,54 @@ char* jsc_value_to_string(JSCValue* value)
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return nullptr;
 
+    if (!jsString)
+        return nullptr;
+
     size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString.get());
     auto* string = static_cast<char*>(g_malloc(maxSize));
-    JSStringGetUTF8CString(jsString.get(), string, maxSize);
+    if (!JSStringGetUTF8CString(jsString.get(), string, maxSize)) {
+        g_free(string);
+        return nullptr;
+    }
+
     return string;
+}
+
+/**
+ * jsc_value_to_string_as_bytes:
+ * @value: a #JSCValue
+ *
+ * Convert @value to a string and return the results as #GBytes. This is needed
+ * to handle strings with null characters.
+ *
+ * Returns: (transfer full): a #GBytes with the result of the conversion.
+ */
+GBytes* jsc_value_to_string_as_bytes(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), nullptr);
+
+    JSCValuePrivate* priv = value->priv;
+    JSValueRef exception = nullptr;
+    JSRetainPtr<JSStringRef> jsString(Adopt, JSValueToStringCopy(jscContextGetJSContext(priv->context.get()), priv->jsValue, &exception));
+    if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
+        return nullptr;
+
+    if (!jsString)
+        return nullptr;
+
+    size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString.get());
+    if (maxSize == 1)
+        return g_bytes_new_static("", 0);
+
+    auto* string = static_cast<char*>(fastMalloc(maxSize));
+    auto stringSize = JSStringGetUTF8CString(jsString.get(), string, maxSize);
+    if (!stringSize) {
+        fastFree(string);
+        return nullptr;
+    }
+
+    // Ignore the null character added by JSStringGetUTF8CString.
+    return g_bytes_new_with_free_func(string, stringSize - 1, fastFree, string);
 }
 
 /**
@@ -541,7 +611,7 @@ gboolean jsc_value_object_is_instance_of(JSCValue* value, const char* name)
     JSCValuePrivate* priv = value->priv;
     // We use evaluate here and not get_value because classes are not necessarily a property of the global object.
     // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-global-environment-records
-    GRefPtr<JSCValue> constructor = adoptGRef(jsc_context_evaluate(priv->context.get(), name));
+    GRefPtr<JSCValue> constructor = adoptGRef(jsc_context_evaluate(priv->context.get(), name, -1));
     auto* jsContext = jscContextGetJSContext(priv->context.get());
 
     JSValueRef exception = nullptr;

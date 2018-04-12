@@ -1,3 +1,32 @@
+2018-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Handle strings containing null characters
+        https://bugs.webkit.org/show_bug.cgi?id=184450
+
+        Reviewed by Michael Catanzaro.
+
+        We should be able to evaluate scripts containing null characters and to handle strings that contains them
+        too. In JavaScript strings are not null-terminated, they can contain null characters. This patch adds a length
+        parameter to jsc_context_valuate() to pass the script length (or -1 if it's null terminated), and new functions
+        jsc_value_new_string_from_bytes() and jsc_value_to_string_as_bytes() using GBytes to store strings that might
+        contain null characters.
+
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::create): Add a create constructor that takes the String.
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::OpaqueJSString): Add a constructor that takes the String.
+        * API/glib/JSCContext.cpp:
+        (jsc_context_evaluate): Add length parameter.
+        (jsc_context_evaluate_with_source_uri): Ditto.
+        * API/glib/JSCContext.h:
+        * API/glib/JSCValue.cpp:
+        (jsc_value_new_string_from_bytes):
+        (jsc_value_to_string):
+        (jsc_value_to_string_as_bytes):
+        (jsc_value_object_is_instance_of): Pass length to evaluate.
+        * API/glib/JSCValue.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2018-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add CCallHelpers::CellValue to wrap JSCell GPR to convert it to EncodedJSValue

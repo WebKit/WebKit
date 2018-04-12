@@ -57,7 +57,7 @@ private:
         unsigned i = 0;
         while (const char* command = steps[i++]) {
             g_assert(!selectionChanged);
-            result = adoptGRef(jsc_context_evaluate(jsContext.get(), command));
+            result = adoptGRef(jsc_context_evaluate(jsContext.get(), command, -1));
             g_assert(JSC_IS_VALUE(result.get()));
             g_assert(selectionChanged);
             selectionChanged = false;

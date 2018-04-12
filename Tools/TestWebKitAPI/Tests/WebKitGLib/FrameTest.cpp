@@ -100,7 +100,7 @@ private:
         g_assert(jsc_value_is_object(jsP.get()));
         g_assert(jsc_value_get_context(jsP.get()) == jsContext.get());
 
-        value = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('paragraph')"));
+        value = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('paragraph')", -1));
         g_assert(value.get() == jsP.get());
 #if PLATFORM(GTK)
         value = adoptGRef(jsc_value_object_invoke_method(jsDocument.get(), "getElementById", G_TYPE_STRING, "paragraph", G_TYPE_NONE));

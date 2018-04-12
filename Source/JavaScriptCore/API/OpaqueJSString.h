@@ -52,6 +52,7 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
     }
 
     JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> create(const String&);
+    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> create(String&&);
 
     JS_EXPORT_PRIVATE ~OpaqueJSString();
 
@@ -77,6 +78,12 @@ private:
 
     OpaqueJSString(const String& string)
         : m_string(string.isolatedCopy())
+        , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
+    {
+    }
+
+    explicit OpaqueJSString(String&& string)
+        : m_string(WTFMove(string))
         , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
     {
     }

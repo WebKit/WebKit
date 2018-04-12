@@ -37,7 +37,7 @@ private:
         g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
-        GRefPtr<JSCValue> jsInputElement = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('auto-fill')"));
+        GRefPtr<JSCValue> jsInputElement = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('auto-fill')", -1));
         g_assert_true(JSC_IS_VALUE(jsInputElement.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsInputElement.get()));
         g_assert_true(jsc_value_is_object(jsInputElement.get()));

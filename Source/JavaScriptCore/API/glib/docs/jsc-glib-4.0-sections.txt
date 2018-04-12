@@ -73,8 +73,10 @@ jsc_value_new_boolean
 jsc_value_is_boolean
 jsc_value_to_boolean
 jsc_value_new_string
+jsc_value_new_string_from_bytes
 jsc_value_is_string
 jsc_value_to_string
+jsc_value_to_string_as_bytes
 jsc_value_new_array
 jsc_value_new_array_from_garray
 jsc_value_is_array

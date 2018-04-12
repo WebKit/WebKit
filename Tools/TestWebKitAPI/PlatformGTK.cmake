@@ -119,6 +119,7 @@ list(APPEND TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/glib/WorkQueueGLib.cpp
 )
 
+add_definitions(-DWEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}")
 add_executable(TestJSC ${TESTWEBKITAPI_DIR}/Tests/JavaScriptCore/glib/TestJSC.cpp)
 target_link_libraries(TestJSC
     ${GLIB_LIBRARIES}

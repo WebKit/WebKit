@@ -101,11 +101,13 @@ jsc_context_get_current              (void);
 
 JSC_API JSCValue *
 jsc_context_evaluate                 (JSCContext         *context,
-                                      const char         *code);
+                                      const char         *code,
+                                      gssize              length);
 
 JSC_API JSCValue *
 jsc_context_evaluate_with_source_uri (JSCContext         *context,
                                       const char         *code,
+                                      gssize              length,
                                       const char         *uri);
 
 JSC_API void

@@ -42,6 +42,14 @@ RefPtr<OpaqueJSString> OpaqueJSString::create(const String& string)
     return adoptRef(new OpaqueJSString(string));
 }
 
+RefPtr<OpaqueJSString> OpaqueJSString::create(String&& string)
+{
+    if (string.isNull())
+        return nullptr;
+
+    return adoptRef(new OpaqueJSString(WTFMove(string)));
+}
+
 OpaqueJSString::~OpaqueJSString()
 {
     // m_characters is put in a local here to avoid an extra atomic load.

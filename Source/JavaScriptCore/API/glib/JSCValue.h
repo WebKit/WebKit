@@ -108,11 +108,18 @@ JSC_API JSCValue *
 jsc_value_new_string                      (JSCContext           *context,
                                            const char           *string);
 
+JSC_API JSCValue *
+jsc_value_new_string_from_bytes           (JSCContext           *context,
+                                           GBytes               *bytes);
+
 JSC_API gboolean
 jsc_value_is_string                       (JSCValue             *value);
 
 JSC_API char *
 jsc_value_to_string                       (JSCValue             *value);
+
+JSC_API GBytes *
+jsc_value_to_string_as_bytes              (JSCValue             *value);
 
 JSC_API JSCValue *
 jsc_value_new_array                       (JSCContext           *context,

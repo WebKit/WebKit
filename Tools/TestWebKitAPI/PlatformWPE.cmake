@@ -87,6 +87,9 @@ add_test(TestWebKit ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/TestWebKit)
 set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
 
+# TestJSC
+
+add_definitions(-DWEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}")
 add_executable(TestJSC ${TESTWEBKITAPI_DIR}/Tests/JavaScriptCore/glib/TestJSC.cpp)
 target_link_libraries(TestJSC
     ${GLIB_LIBRARIES}
