@@ -62,7 +62,7 @@ class FormattingState {
         return displayBox;
     }
 
-    displayBoxMap() {
+    displayBoxes() {
         return this.m_displayToLayout;
     }
 
@@ -71,22 +71,12 @@ class FormattingState {
         // 1. Normally we only need to access boxes within the same formatting context
         // 2. In some cases we need size information about the root container -which is in the parent formatting context
         // 3. In inline formatting with parent floating state, we need display boxes from the parent formatting context
-        // 3. In rare cases (statically positioned out-of-flow box), we need position information on sibling formatting context
+        // 4. In rare cases (statically positioned out-of-flow box), we need position information on sibling formatting context
         // but in all cases it needs to be a descendant of the root container (or the container itself)
-        // ASSERT(layoutBox == this.formattingRoot() || layoutBox.isDescendantOf(this.formattingRoot()));
         let displayBox = this.m_displayToLayout.get(layoutBox);
         if (displayBox)
             return displayBox;
-
-        let formattingStates = this.layoutState().formattingStates();
-        for (let formattingState of formattingStates) {
-            let displayBox = formattingState[1].displayBoxMap().get(layoutBox);
-            if (displayBox)
-                return displayBox;
-        }
-        // It must be the ICB.
-        ASSERT(!layoutBox.parent());
-        return this.layoutState().initialDisplayBox();
+        return this.layoutState().displayBox(layoutBox);
     }
 
     markNeedsLayout(layoutBox) {
@@ -110,7 +100,7 @@ class FormattingState {
         if (!subTreeRoot)
             return;
         // Only mark children that actually belong to this formatting context/state.
-        if (this.formattingRoot().isFormattingContextDescendant(subTreeRoot))
+        if (FormattingContext.isInFormattingContext(subTreeRoot, this.formattingRoot()))
             this.markNeedsLayout(subTreeRoot);
         if (!subTreeRoot.isContainer() || !subTreeRoot.hasChild())
             return;

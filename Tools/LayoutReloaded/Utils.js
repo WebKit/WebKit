@@ -554,8 +554,9 @@ class Utils {
     }
 
     static _findDisplayBox(layoutState, box) {
-        for (let formattingState of layoutState.formattingStates()) {
-            let displayBox = formattingState[1].displayBoxMap().get(box);
+        for (let formattingEntry of layoutState.formattingStates()) {
+            let formattingState = formattingEntry[1];
+            let displayBox = formattingState.displayBoxes().get(box);
             if (displayBox)
                 return displayBox;
         }

@@ -35,16 +35,6 @@ class LayoutState {
         this.formattingContext(formattingState).layout();
     }
 
-    _createFormattingState(formattingRoot) {
-        ASSERT(formattingRoot.establishesFormattingContext());
-        if (formattingRoot.establishesInlineFormattingContext())
-            return new InlineFormattingState(formattingRoot, this);
-        if (formattingRoot.establishesBlockFormattingContext())
-            return new BlockFormattingState(formattingRoot, this);
-        ASSERT_NOT_REACHED();
-        return null;
-    }
-
     formattingContext(formattingState) {
         if (formattingState instanceof BlockFormattingState)
             return new BlockFormattingContext(formattingState);
@@ -64,9 +54,11 @@ class LayoutState {
     }
 
     formattingStateForBox(layoutBox) {
-        for (let formattingState of this.formattingStates()) {
-            if (formattingState[0].isFormattingContextDescendant(layoutBox))
-                return formattingState[1];
+        for (let formattingEntry of this.formattingStates()) {
+            let formattingRoot = formattingEntry[0];
+            let formattingState = formattingEntry[1];
+            if (FormattingContext.isInFormattingContext(layoutBox, formattingRoot))
+                return formattingState;
         }
         ASSERT_NOT_REACHED();
         return null;
@@ -81,14 +73,38 @@ class LayoutState {
     }
 
     needsLayout() {
-        for (let formattingState of this.formattingStates()) {
-            if (formattingState[1].layoutNeeded())
+        for (let formattingEntry of this.formattingStates()) {
+            let formattingState = formattingEntry[1];
+            if (formattingState.layoutNeeded())
                 return true;
         }
         return false;
     }
 
+    displayBox(layoutBox) {
+        for (let formattingEntry of this.formattingStates()) {
+            let formattingState = formattingEntry[1];
+            let displayBox = formattingState.displayBoxes().get(layoutBox);
+            if (displayBox)
+                return displayBox;
+        }
+        // It must be the ICB.
+        ASSERT(!layoutBox.parent());
+        return this.initialDisplayBox();
+    }
+
     initialDisplayBox() {
         return this.m_initialDisplayBox;
     }
+
+    _createFormattingState(formattingRoot) {
+        ASSERT(formattingRoot.establishesFormattingContext());
+        if (formattingRoot.establishesInlineFormattingContext())
+            return new InlineFormattingState(formattingRoot, this);
+        if (formattingRoot.establishesBlockFormattingContext())
+            return new BlockFormattingState(formattingRoot, this);
+        ASSERT_NOT_REACHED();
+        return null;
+    }
+
 }

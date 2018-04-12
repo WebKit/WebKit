@@ -165,18 +165,6 @@ Layout.Box = class Box {
         return false;
     }
 
-    isFormattingContextDescendant(layoutBox) {
-        ASSERT(this.establishesFormattingContext());
-        // If we hit the "this" while climbing up on the containing block chain and we don't pass a formatting context root -> box is part of this box's formatting context.
-        for (let containingBlock = layoutBox.containingBlock(); containingBlock; containingBlock = containingBlock.containingBlock()) {
-            if (containingBlock == this)
-                return true;
-            if (containingBlock.establishesFormattingContext())
-                return false;
-        }
-        return false;
-    }
-
     isPositioned() {
         return this.isOutOfFlowPositioned() || this.isRelativelyPositioned();
     }

@@ -1,5 +1,33 @@
 2018-04-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Minor cleanup in LayoutSate
+        https://bugs.webkit.org/show_bug.cgi?id=184546
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.isInFormattingContext):
+        * LayoutReloaded/FormattingState/FormattingState.js:
+        (FormattingState.prototype.displayBoxes):
+        (FormattingState.prototype.displayBox):
+        (FormattingState.prototype._markSubTreeNeedsLayout):
+        (FormattingState):
+        (FormattingState.prototype.displayBoxMap): Deleted.
+        * LayoutReloaded/LayoutState.js:
+        (LayoutState.prototype.formattingStateForBox):
+        (LayoutState.prototype.needsLayout):
+        (LayoutState.prototype.displayBox):
+        (LayoutState.prototype._createFormattingState):
+        (LayoutState):
+        * LayoutReloaded/LayoutTree/Box.js:
+        (Layout.Box.prototype.isFormattingContextDescendant): Deleted.
+        * LayoutReloaded/LayoutTree/Container.js:
+        (Layout.Container.prototype.isContainingBlockDescendant): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils._findDisplayBox):
+
+2018-04-12  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Introduce needsLayout to InlineFormattingContext
         https://bugs.webkit.org/show_bug.cgi?id=184538
 
