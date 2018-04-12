@@ -1,3 +1,20 @@
+2018-04-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use always complex text code path
+        https://bugs.webkit.org/show_bug.cgi?id=183285
+
+        Reviewed by Michael Catanzaro.
+
+        Now that we have branched for 2.20, it's a good time to try using complex text path always. We can simply force
+        it for GTK+ port and see how it works for the whole release cycle and if we don't notice any issues or
+        performance regressions we release 2.22 with complex text path forced. A debug env variable is added to switch
+        back to auto without having to recompile. After 2.22 is released we can make a final decision and remove the env
+        variable.
+
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Force complex text code path unless
+        WEBKIT_FORCE_COMPLEX_TEXT is present and set to 0.
+
 2018-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Make WebKitWebViewBackend object mandatory for webkit_web_view_new*() constructors
