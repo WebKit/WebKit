@@ -2259,11 +2259,17 @@ void Document::didBecomeCurrentDocumentInFrame()
     // be out of sync if the DOM suspension state changed while the document was not in the frame (possibly in the
     // page cache, or simply newly created).
     if (m_frame->activeDOMObjectsAndAnimationsSuspended()) {
-        m_frame->animation().suspendAnimationsForDocument(this);
+        if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+            timeline().suspendAnimations();
+        else
+            m_frame->animation().suspendAnimationsForDocument(this);
         suspendScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
     } else {
         resumeScheduledTasks(ActiveDOMObject::PageWillBeSuspended);
-        m_frame->animation().resumeAnimationsForDocument(this);
+        if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+            timeline().resumeAnimations();
+        else
+            m_frame->animation().resumeAnimationsForDocument(this);
     }
 }
 
@@ -4923,7 +4929,11 @@ void Document::resume(ActiveDOMObject::ReasonForSuspension reason)
 
     ASSERT(m_frame);
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
-    m_frame->animation().resumeAnimationsForDocument(this);
+
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+        timeline().resumeAnimations();
+    else
+        m_frame->animation().resumeAnimationsForDocument(this);
 
     resumeScheduledTasks(reason);
 

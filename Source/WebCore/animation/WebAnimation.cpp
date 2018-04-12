@@ -177,6 +177,8 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 
     m_timeline = WTFMove(timeline);
 
+    setSuspended(is<DocumentTimeline>(m_timeline) && downcast<DocumentTimeline>(*m_timeline).animationsAreSuspended());
+
     updatePendingTasks();
 
     // 5. Run the procedure to update an animation’s finished state for animation with the did seek flag set to false,
@@ -1015,6 +1017,21 @@ void WebAnimation::resolve(RenderStyle& targetStyle)
 {
     if (m_effect)
         m_effect->apply(targetStyle);
+}
+
+void WebAnimation::setSuspended(bool isSuspended)
+{
+    if (m_isSuspended == isSuspended)
+        return;
+
+    m_isSuspended = isSuspended;
+
+    if (!is<KeyframeEffectReadOnly>(m_effect))
+        return;
+
+    auto& keyframeEffect = downcast<KeyframeEffectReadOnly>(*m_effect);
+    if (keyframeEffect.isRunningAccelerated() && playState() == PlayState::Running)
+        keyframeEffect.animationPlayStateDidChange(isSuspended ? PlayState::Paused : PlayState::Running);
 }
 
 void WebAnimation::acceleratedStateDidChange()

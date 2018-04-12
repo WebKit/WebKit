@@ -32,6 +32,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentTimeline.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -39,6 +40,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"
 #include "SerializedScriptValue.h"
@@ -96,7 +98,10 @@ void CachedFrameBase::restore()
     if (m_document->svgExtensions())
         m_document->accessSVGExtensions().unpauseAnimations();
 
-    frame.animation().resumeAnimationsForDocument(m_document.get());
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+        m_document->timeline().resumeAnimations();
+    else
+        frame.animation().resumeAnimationsForDocument(m_document.get());
 
     m_document->resume(ActiveDOMObject::PageCache);
 

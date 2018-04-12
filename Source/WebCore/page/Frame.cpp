@@ -40,6 +40,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
+#include "DocumentTimeline.h"
 #include "DocumentType.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -777,7 +778,10 @@ void Frame::clearTimers(FrameView *view, Document *document)
 {
     if (view) {
         view->layoutContext().unscheduleLayout();
-        view->frame().animation().suspendAnimationsForDocument(document);
+        if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+            document->timeline().suspendAnimations();
+        else
+            view->frame().animation().suspendAnimationsForDocument(document);
         view->frame().eventHandler().stopAutoscrollTimer();
     }
 }

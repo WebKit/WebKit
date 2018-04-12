@@ -73,6 +73,10 @@ public:
 
     void updateThrottlingState();
     WEBCORE_EXPORT Seconds animationInterval() const;
+    WEBCORE_EXPORT void suspendAnimations();
+    WEBCORE_EXPORT void resumeAnimations();
+    WEBCORE_EXPORT bool animationsAreSuspended();
+    WEBCORE_EXPORT unsigned numberOfActiveAnimationsForTesting() const;
 
 private:
     DocumentTimeline(Document&, PlatformDisplayID);
@@ -87,6 +91,7 @@ private:
 
     RefPtr<Document> m_document;
     bool m_paused { false };
+    bool m_isSuspended { false };
     std::optional<Seconds> m_cachedCurrentTime;
     GenericTaskQueue<Timer> m_invalidationTaskQueue;
     GenericTaskQueue<Timer> m_eventDispatchTaskQueue;

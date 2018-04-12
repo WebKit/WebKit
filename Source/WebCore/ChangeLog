@@ -1,5 +1,52 @@
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Suspend animations when required
+        https://bugs.webkit.org/show_bug.cgi?id=184541
+
+        Reviewed by Jon Lee.
+
+        Animations managed by CSSAnimationController get suspended under a number of scenarios, we now add the possibility
+        to suspend animations on a DocumentTimeline as well such that Web Animations and CSS Animations and CSS Transitions
+        implemented as Web Animations get suspended under the same conditions as well. We also update the implementation for
+        Internals::numberOfActiveAnimations() such that tests checking that animations get suspended pass.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::suspendAnimations): When asked to be suspended, the DocumentTimeline cancels pending
+        invalidation tasks and updates all of the animations it manages, including those running on the compositor.
+        (WebCore::DocumentTimeline::resumeAnimations): When asked to be resumed, the DocumentTimeline resumes animations
+        it manages and rewinds its invalidation timer.
+        (WebCore::DocumentTimeline::animationsAreSuspended):
+        (WebCore::DocumentTimeline::numberOfActiveAnimationsForTesting const): Called by Internals::numberOfActiveAnimations(),
+        this returns the number of animations managed by this timeline that are not suspended.
+        (WebCore::DocumentTimeline::currentTime):
+        (WebCore::DocumentTimeline::timingModelDidChange): Ensure the invalidation timer is not rewound if the timeline
+        is suspended.
+        * animation/DocumentTimeline.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setTimeline): When moving to a new timeline, ensure we match the new timeline's animation state.
+        (WebCore::WebAnimation::setSuspended): Toggle the accelerated running state of any backing hardware animations when
+        the suspension state of an animation changes.
+        * animation/WebAnimation.h:
+        (WebCore::WebAnimation::isSuspended const):
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::resume):
+        * dom/Document.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers):
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal):
+        (WebCore::Page::hiddenPageCSSAnimationSuspensionStateChanged):
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfActiveAnimations const):
+        (WebCore::Internals::animationsAreSuspended const):
+        (WebCore::Internals::suspendAnimations const):
+        (WebCore::Internals::resumeAnimations const):
+
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Throttle animations when lowPowerMode is on
         https://bugs.webkit.org/show_bug.cgi?id=184540
 

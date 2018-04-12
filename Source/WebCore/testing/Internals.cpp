@@ -915,6 +915,8 @@ ExceptionOr<unsigned> Internals::lastSpatialNavigationCandidateCount() const
 
 unsigned Internals::numberOfActiveAnimations() const
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+        return frame()->document()->timeline().numberOfActiveAnimationsForTesting();
     return frame()->animation().numberOfActiveAnimations(frame()->document());
 }
 
@@ -924,6 +926,8 @@ ExceptionOr<bool> Internals::animationsAreSuspended() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled())
+        return document->timeline().animationsAreSuspended();
     return document->frame()->animation().animationsAreSuspendedForDocument(document);
 }
 
@@ -950,11 +954,19 @@ ExceptionOr<void> Internals::suspendAnimations() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->frame()->animation().suspendAnimationsForDocument(document);
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        document->timeline().suspendAnimations();
+        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+            if (Document* document = frame->document())
+                document->timeline().suspendAnimations();
+        }
+    } else {
+        document->frame()->animation().suspendAnimationsForDocument(document);
 
-    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document())
-            frame->animation().suspendAnimationsForDocument(document);
+        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+            if (Document* document = frame->document())
+                frame->animation().suspendAnimationsForDocument(document);
+        }
     }
 
     return { };
@@ -966,11 +978,19 @@ ExceptionOr<void> Internals::resumeAnimations() const
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->frame()->animation().resumeAnimationsForDocument(document);
+    if (RuntimeEnabledFeatures::sharedFeatures().cssAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled()) {
+        document->timeline().resumeAnimations();
+        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+            if (Document* document = frame->document())
+                document->timeline().resumeAnimations();
+        }
+    } else {
+        document->frame()->animation().resumeAnimationsForDocument(document);
 
-    for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document())
-            frame->animation().resumeAnimationsForDocument(document);
+        for (Frame* frame = document->frame(); frame; frame = frame->tree().traverseNext()) {
+            if (Document* document = frame->document())
+                frame->animation().resumeAnimationsForDocument(document);
+        }
     }
 
     return { };

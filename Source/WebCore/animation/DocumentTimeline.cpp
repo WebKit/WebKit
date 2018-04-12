@@ -83,9 +83,55 @@ Seconds DocumentTimeline::animationInterval() const
     return m_document->page()->isLowPowerModeEnabled() ? throttledAnimationInterval : defaultAnimationInterval;
 }
 
+void DocumentTimeline::suspendAnimations()
+{
+    if (animationsAreSuspended())
+        return;
+
+    m_isSuspended = true;
+
+    m_invalidationTaskQueue.cancelAllTasks();
+    if (m_animationScheduleTimer.isActive())
+        m_animationScheduleTimer.stop();
+
+    for (const auto& animation : animations())
+        animation->setSuspended(true);
+
+    applyPendingAcceleratedAnimations();
+}
+
+void DocumentTimeline::resumeAnimations()
+{
+    if (!animationsAreSuspended())
+        return;
+
+    m_isSuspended = false;
+
+    for (const auto& animation : animations())
+        animation->setSuspended(false);
+
+    m_needsUpdateAnimationSchedule = false;
+    timingModelDidChange();
+}
+
+bool DocumentTimeline::animationsAreSuspended()
+{
+    return m_isSuspended;
+}
+
+unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
+{
+    unsigned count = 0;
+    for (const auto& animation : animations()) {
+        if (!animation->isSuspended())
+            ++count;
+    }
+    return count;
+}
+
 std::optional<Seconds> DocumentTimeline::currentTime()
 {
-    if (m_paused || !m_document || !m_document->domWindow())
+    if (m_paused || m_isSuspended || !m_document || !m_document->domWindow())
         return AnimationTimeline::currentTime();
 
     if (!m_cachedCurrentTime) {
@@ -102,7 +148,7 @@ void DocumentTimeline::pause()
 
 void DocumentTimeline::timingModelDidChange()
 {
-    if (m_needsUpdateAnimationSchedule)
+    if (m_needsUpdateAnimationSchedule || m_isSuspended)
         return;
 
     m_needsUpdateAnimationSchedule = true;

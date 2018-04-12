@@ -1,5 +1,19 @@
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Suspend animations when required
+        https://bugs.webkit.org/show_bug.cgi?id=184541
+
+        Reviewed by Jon Lee.
+
+        Mark more tests as passing when the CSS Animations and CSS Transitions as Web Animations flag is on.
+
+        * animations/animation-controller-drt-api.html:
+        * animations/animation-followed-by-transition.html:
+        * fast/animation/css-animation-resuming-when-visible-with-style-change.html:
+        * fast/animation/css-animation-resuming-when-visible.html:
+
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Throttle animations when lowPowerMode is on
         https://bugs.webkit.org/show_bug.cgi?id=184540
 
