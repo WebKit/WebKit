@@ -844,24 +844,15 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // FIXME: Remove this differences in custom values and custom accessors.
             // https://bugs.webkit.org/show_bug.cgi?id=158014
             GPRReg baseForCustom = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForCustomGetGPR; 
-#if USE(JSVALUE64)
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
                 jit.setupArguments<PropertySlot::GetValueFunc>(
-                    baseForCustom,
-                    CCallHelpers::TrustedImmPtr(ident.impl()));
-            } else
-                jit.setupArguments<PutPropertySlot::PutValueFunc>(baseForCustom, valueRegs.gpr());
-#else
-            if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
-                jit.setupArguments<PropertySlot::GetValueFunc>(
-                    JSValue::JSCellType, baseForCustom,
+                    CCallHelpers::CellValue(baseForCustom),
                     CCallHelpers::TrustedImmPtr(ident.impl()));
             } else {
                 jit.setupArguments<PutPropertySlot::PutValueFunc>(
-                    JSValue::JSCellType, baseForCustom,
+                    CCallHelpers::CellValue(baseForCustom),
                     valueRegs);
             }
-#endif
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
             PtrTag callTag = ptrTag(GetterSetterPtrTag, nextPtrTagID());

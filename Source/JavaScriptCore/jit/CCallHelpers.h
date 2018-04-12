@@ -62,6 +62,20 @@ public:
     {
     }
 
+    // Wrapper to encode JSCell GPR into JSValue.
+    class CellValue {
+    public:
+        explicit CellValue(GPRReg gpr)
+            : m_gpr(gpr)
+        {
+        }
+
+        GPRReg gpr() const { return m_gpr; }
+
+    private:
+        GPRReg m_gpr;
+    };
+
     // The most general helper for setting arguments that fit in a GPR, if you can compute each
     // argument without using any argument registers. You usually want one of the setupArguments*()
     // methods below instead of this. This thing is most useful if you have *a lot* of arguments.
@@ -335,6 +349,12 @@ private:
         marshallArgumentRegister<OperationType>(argSourceRegs, arg.gpr(), args...);
     }
 
+    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned extraPoke, typename... Args>
+    ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, extraPoke> argSourceRegs, CellValue arg, Args... args)
+    {
+        marshallArgumentRegister<OperationType>(argSourceRegs, arg.gpr(), args...);
+    }
+
 #else // USE(JSVALUE64)
 
     // These functions are a hack for X86 since it has no argument gprs...
@@ -357,28 +377,19 @@ private:
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned extraPoke, typename... Args>
     ALWAYS_INLINE std::enable_if_t<std::is_same<CURRENT_ARGUMENT_TYPE, EncodedJSValue>::value>
-    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, extraPoke> argSourceRegs, JSValue::JSCellTag, GPRReg payload, Args... args)
-    {
-        pokeForArgument(payload, numGPRArgs, numFPRArgs, extraPoke);
-        pokeForArgument(TrustedImm32(JSValue::CellTag), numGPRArgs, numFPRArgs, extraPoke + 1);
-        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg().addPoke(), args...);
-    }
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<std::is_same<CURRENT_ARGUMENT_TYPE, EncodedJSValue>::value>
-    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, extraPoke> argSourceRegs, JSValue::JSCellTag, TrustedImmPtr payload, Args... args)
-    {
-        pokeForArgument(payload, numGPRArgs, numFPRArgs, extraPoke);
-        pokeForArgument(TrustedImm32(JSValue::CellTag), numGPRArgs, numFPRArgs, extraPoke + 1);
-        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg().addPoke(), args...);
-    }
-
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned extraPoke, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<std::is_same<CURRENT_ARGUMENT_TYPE, EncodedJSValue>::value>
     setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, extraPoke> argSourceRegs, JSValueRegs arg, Args... args)
     {
         pokeForArgument(arg.payloadGPR(), numGPRArgs, numFPRArgs, extraPoke);
         pokeForArgument(arg.tagGPR(), numGPRArgs, numFPRArgs, extraPoke + 1);
+        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg().addPoke(), args...);
+    }
+
+    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned extraPoke, typename... Args>
+    ALWAYS_INLINE std::enable_if_t<std::is_same<CURRENT_ARGUMENT_TYPE, EncodedJSValue>::value>
+    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, extraPoke> argSourceRegs, CellValue arg, Args... args)
+    {
+        pokeForArgument(arg.gpr(), numGPRArgs, numFPRArgs, extraPoke);
+        pokeForArgument(TrustedImm32(JSValue::CellTag), numGPRArgs, numFPRArgs, extraPoke + 1);
         setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg().addPoke(), args...);
     }
 

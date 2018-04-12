@@ -214,7 +214,7 @@ void SpeculativeJIT::cachedGetById(
         slowPath = slowPathCall(
             slowCases, this, appropriateOptimizingGetByIdFunction(type),
             JSValueRegs(resultTagGPR, resultPayloadGPR), gen.stubInfo(),
-            JSValue::JSCellType, basePayloadGPR,
+            CCallHelpers::CellValue(basePayloadGPR),
             identifierUID(identifierNumber));
     } else {
         slowPath = slowPathCall(
@@ -249,8 +249,8 @@ void SpeculativeJIT::cachedGetByIdWithThis(
         slowPath = slowPathCall(
             slowCases, this, operationGetByIdWithThisOptimize,
             JSValueRegs(resultTagGPR, resultPayloadGPR), gen.stubInfo(),
-            JSValue::JSCellType, basePayloadGPR,
-            JSValue::JSCellType, thisPayloadGPR,
+            CCallHelpers::CellValue(basePayloadGPR),
+            CCallHelpers::CellValue(thisPayloadGPR),
             identifierUID(identifierNumber));
     } else {
         ASSERT(baseTagGPROrNone != InvalidGPRReg);

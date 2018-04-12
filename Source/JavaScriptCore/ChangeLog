@@ -1,3 +1,31 @@
+2018-04-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add CCallHelpers::CellValue to wrap JSCell GPR to convert it to EncodedJSValue
+        https://bugs.webkit.org/show_bug.cgi?id=184500
+
+        Reviewed by Mark Lam.
+
+        Instead of passing JSValue::JSCellTag to callOperation meta-program to convert
+        JSCell GPR to EncodedJSValue in 32bit code, we add CallHelpers::CellValue.
+        It is a wrapper for GPRReg, like TrustedImmPtr for pointer value. When poking
+        CellValue, 32bit code emits JSValue::CellTag automatically. In 64bit, we just
+        poke held GPR. The benefit from this CellValue is that we can use the same code
+        for 32bit and 64bit. This patch removes several ifdefs.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        (JSC::DFG::SpeculativeJIT::compileGetDirectPname):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::CellValue::CellValue):
+        (JSC::CCallHelpers::CellValue::gpr const):
+        (JSC::CCallHelpers::setupArgumentsImpl):
+
 2018-04-11  Mark Lam  <mark.lam@apple.com>
 
         [Build fix] Replace CompactJITCodeMap with JITCodeMap.

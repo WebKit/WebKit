@@ -9031,11 +9031,7 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
         GPRReg baseGPR = base.gpr();
 
         flushRegisters();
-#if USE(JSVALUE64)
-        m_jit.setupArguments<J_JITOperation_EJI>(baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
-#else
-        m_jit.setupArguments<J_JITOperation_EJI>(JSValue::JSCellType, baseGPR, identifierUID(node->callDOMGetterData()->identifierNumber));
-#endif
+        m_jit.setupArguments<J_JITOperation_EJI>(CCallHelpers::CellValue(baseGPR), identifierUID(node->callDOMGetterData()->identifierNumber));
         m_jit.storePtr(GPRInfo::callFrameRegister, &m_jit.vm()->topCallFrame);
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
         m_jit.appendCall(getter);
@@ -12736,7 +12732,7 @@ void SpeculativeJIT::compileGetDirectPname(Node* node)
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    callOperation(operationGetByValCell, resultRegs, baseGPR, JSValue::JSCellType, propertyGPR);
+    callOperation(operationGetByValCell, resultRegs, baseGPR, CCallHelpers::CellValue(propertyGPR));
     m_jit.exceptionCheck();
     jsValueResult(resultRegs, node);
 #else
@@ -12784,11 +12780,7 @@ void SpeculativeJIT::compileGetDirectPname(Node* node)
 
     done.link(&m_jit);
 
-#if USE(JSVALUE64)
-    addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, GetPropertyPtrTag, resultRegs, baseGPR, propertyGPR));
-#else
-    addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, GetPropertyPtrTag, resultRegs, baseGPR, JSValue::JSCellType, propertyGPR));
-#endif
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, GetPropertyPtrTag, resultRegs, baseGPR, CCallHelpers::CellValue(propertyGPR)));
 
     jsValueResult(resultRegs, node);
 #endif
@@ -12825,15 +12817,9 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
         slowCases.append(slowPathTarget);
     slowCases.append(gen.slowPathJump());
 
-#if USE(JSVALUE64)
     auto slowPath = slowPathCall(
         slowCases, this, gen.slowPathFunction(), PutPropertyPtrTag, NoResult, gen.stubInfo(), valueRegs,
-        baseGPR, identifierUID(identifierNumber));
-#else
-    auto slowPath = slowPathCall(
-        slowCases, this, gen.slowPathFunction(), PutPropertyPtrTag, NoResult, gen.stubInfo(), valueRegs,
-        JSValue::JSCellType, baseGPR, identifierUID(identifierNumber));
-#endif
+        CCallHelpers::CellValue(baseGPR), identifierUID(identifierNumber));
 
     m_jit.addPutById(gen, slowPath.get());
     addSlowPathGenerator(WTFMove(slowPath));
