@@ -1,3 +1,18 @@
+2018-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Suppress UI for inputs of type file in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184556
+        <rdar://problem/39062239>
+
+        Reviewed by Andy Estes.
+
+        When running in this mode, we don't have the facilities to present document picker UI. For now, just make this
+        feature fail gracefully.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        (-[WKFileUploadPanel platformSupportsPickerViewController]):
+
 2018-04-12  Megan Gardner  <megan_gardner@apple.com>
 
         Remove block selection code

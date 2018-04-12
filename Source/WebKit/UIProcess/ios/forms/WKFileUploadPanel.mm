@@ -243,6 +243,11 @@ static inline UIImage *cameraIcon()
     _mediaCaptureType = parameters->mediaCaptureType();
 #endif
 
+    if (![self platformSupportsPickerViewController]) {
+        [self _cancel];
+        return;
+    }
+
     if ([self _shouldMediaCaptureOpenMediaDevice]) {
         [self _adjustMediaCaptureType];
 
@@ -700,6 +705,15 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
     // Photos taken with the camera will not have an image URL. Fall back to a JPEG representation.
     [self _uploadItemForJPEGRepresentationOfImage:originalImage successBlock:successBlock failureBlock:failureBlock];
+}
+
+- (BOOL)platformSupportsPickerViewController
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    return NO;
+#else
+    return YES;
+#endif
 }
 
 @end
