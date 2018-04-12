@@ -1,3 +1,21 @@
+2018-04-12  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Add isValid() assertions on PlatformTimeRanges::add() range ends
+        https://bugs.webkit.org/show_bug.cgi?id=180253
+
+        Right now it's checked that start <= end but it's not checked that
+        neither of them is undefined.
+
+        When this happens, the bug can be hard to track down.
+
+        The assertion is not enabled for Mac because there is currently a test
+        that is hitting it.
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/PlatformTimeRanges.cpp:
+        (WebCore::PlatformTimeRanges::add):
+
 2018-04-12  Chris Dumez  <cdumez@apple.com>
 
         Process::setIdentifier() / Process::identifier() do not need a lock

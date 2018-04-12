@@ -134,7 +134,12 @@ MediaTime PlatformTimeRanges::maximumBufferedTime() const
 
 void PlatformTimeRanges::add(const MediaTime& start, const MediaTime& end)
 {
+#if !PLATFORM(MAC) // https://bugs.webkit.org/show_bug.cgi?id=180253
+    ASSERT(start.isValid());
+    ASSERT(end.isValid());
+#endif
     ASSERT(start <= end);
+
     unsigned overlappingArcIndex;
     Range addedRange(start, end);
 
