@@ -943,6 +943,16 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
 }
 
+DOMWindow* Frame::window() const
+{
+    return document() ? document()->domWindow() : nullptr;
+}
+
+AbstractDOMWindow* Frame::virtualWindow() const
+{
+    return window();
+}
+
 String Frame::layerTreeAsText(LayerTreeFlags flags) const
 {
     document()->updateLayout();

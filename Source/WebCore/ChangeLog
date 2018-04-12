@@ -1,3 +1,105 @@
+2018-04-12  Chris Dumez  <cdumez@apple.com>
+
+        Introduce remote variants of Frame / DOMWindow classes
+        https://bugs.webkit.org/show_bug.cgi?id=184467
+        <rdar://problem/39011267>
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce remote variants of Frame / DOMWindow classes, for when these frames / windows
+        are hosted on another WebProcess. Those will be used in a follow-up patch.
+
+        The hierarchy is as follows (class naming will be improved in a follow-up patch to minimise
+        patch size):
+        - AbstractFrame: A frame that can be either local or remote (hosted on another WebProcess)
+            - Frame: A local frame
+            - RemoteFrame: A frame hosted on another WebProcess. A RemoteFrame's window is also remote.
+        - AbstractDOMWindow: A window that be either local or remote (hosted on another WebProcess)
+            - DOMWindow: A local DOMWindow
+            - RemoteDOMWindow: A window hosted on another WebProcess. A RemoteDOMWindow's frame is also
+              remote. A RemoteDOMWindow is always cross-origin.
+
+        This patch introduces global identifiers (unique across all WebProcesses) for both Frames and
+        Windows. This is useful as we need to know which Frame / DOMWindow a particular RemoteFrame /
+        RemoteDOMWindow is pointing to.
+
+        Follow-up patch will add support for converting a local DOMWindow / Frame into a remote ones,
+        when a newly opened window (via window.open) is navigated cross-origin (Bug 184515).
+
+        Other things we'll need to implement in follow-ups:
+        - RemoteDOMWindow will need to know about its opener in order to support the window.opener
+          API. Internally, the opener will be stored as a RemoteFrame so that window.opener always
+          returns the current window in the opener frame (which changes upon navigation).
+        - Nullify a RemoteDOMWindow's frame whenever the window it is pointing to becomes frameless.
+          A frameless window behaves very differently (e.g. very little API is exposed to the Web).
+          This happens when either the newly opened window is either closed or navigated.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::didDecide):
+        * page/AbstractDOMWindow.cpp: Added.
+        (WebCore::AbstractDOMWindow::AbstractDOMWindow):
+        (WebCore::AbstractDOMWindow::~AbstractDOMWindow):
+        * page/AbstractDOMWindow.h: Added.
+        (WebCore::AbstractDOMWindow::identifier const):
+        * page/AbstractFrame.cpp: Added.
+        (WebCore::AbstractFrame::AbstractFrame):
+        (WebCore::AbstractFrame::~AbstractFrame):
+        * page/AbstractFrame.h: Added.
+        (WebCore::AbstractFrame::window const):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        * page/DOMWindow.h:
+        (isType):
+        * page/Frame.cpp:
+        (WebCore::Frame::window const):
+        (WebCore::Frame::virtualWindow const):
+        * page/Frame.h:
+        (isType):
+        * page/GlobalFrameIdentifier.h: Added.
+        (WebCore::GlobalFrameIdentifier::encode const):
+        (WebCore::GlobalFrameIdentifier::decode):
+        * page/GlobalWindowIdentifier.h: Added.
+        (WebCore::operator==):
+        (WebCore::GlobalWindowIdentifier::hash const):
+        (WebCore::GlobalWindowIdentifier::encode const):
+        (WebCore::GlobalWindowIdentifier::decode):
+        (WTF::GlobalWindowIdentifierHash::hash):
+        (WTF::GlobalWindowIdentifierHash::equal):
+        (WTF::HashTraits<WebCore::GlobalWindowIdentifier>::emptyValue):
+        (WTF::HashTraits<WebCore::GlobalWindowIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::GlobalWindowIdentifier>::isDeletedValue):
+
+        * page/RemoteDOMWindow.cpp: Added.
+        (WebCore::RemoteDOMWindow::RemoteDOMWindow):
+        (WebCore::RemoteDOMWindow::~RemoteDOMWindow):
+        (WebCore::RemoteDOMWindow::self const):
+        (WebCore::RemoteDOMWindow::location const):
+        (WebCore::RemoteDOMWindow::close):
+        (WebCore::RemoteDOMWindow::closed const):
+        (WebCore::RemoteDOMWindow::focus):
+        (WebCore::RemoteDOMWindow::blur):
+        (WebCore::RemoteDOMWindow::length const):
+        (WebCore::RemoteDOMWindow::top const):
+        (WebCore::RemoteDOMWindow::opener const):
+        (WebCore::RemoteDOMWindow::parent const):
+        (WebCore::RemoteDOMWindow::postMessage):
+        The DOM API exposed on RemoteDOMWindow is only the subset of the DOMWindow API that is exposed cross origin,
+        since remote DOMWindow are always from a different origin. The short-term plan is to implement these in a
+        follow-up by relying on IPC (synchronous when necessary) to fetch the information from the real window in
+        the WebProcess where it lives. Longer term, we should probably keep RemoteDOMWindow members in sync with the
+        DOMWindow they're pointing to, so we do not have to rely on synchronous IPC.
+
+        * page/RemoteDOMWindow.h: Added.
+        (isType):
+        * page/RemoteFrame.cpp: Added.
+        (WebCore::RemoteFrame::RemoteFrame):
+        (WebCore::RemoteFrame::~RemoteFrame):
+        (WebCore::RemoteFrame::virtualWindow const):
+        * page/RemoteFrame.h: Added.
+        (isType):
+
 2018-04-12  Daniel Bates  <dabates@apple.com>
 
         Content-Type not enforced for <script> allows for XSS

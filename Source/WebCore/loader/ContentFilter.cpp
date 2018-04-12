@@ -231,7 +231,7 @@ void ContentFilter::didDecide(State state)
     RefPtr<Frame> frame { m_documentLoader.frame() };
     String unblockRequestDeniedScript { m_blockingContentFilter->unblockRequestDeniedScript() };
     if (!unblockRequestDeniedScript.isEmpty() && frame) {
-        static_assert(std::is_base_of<ThreadSafeRefCounted<Frame>, Frame>::value, "Frame must be ThreadSafeRefCounted.");
+        static_assert(std::is_base_of<ThreadSafeRefCounted<AbstractFrame>, Frame>::value, "AbstractFrame must be ThreadSafeRefCounted.");
         unblockHandler.wrapWithDecisionHandler([frame = WTFMove(frame), script = unblockRequestDeniedScript.isolatedCopy()](bool unblocked) {
             if (!unblocked)
                 frame->script().executeScript(script);

@@ -26,10 +26,11 @@
 
 #pragma once
 
+#include "AbstractDOMWindow.h"
 #include "Base64Utilities.h"
 #include "ContextDestructionObserver.h"
-#include "EventTarget.h"
 #include "ExceptionOr.h"
+#include "Frame.h"
 #include "FrameDestructionObserver.h"
 #include "ImageBitmap.h"
 #include "ScrollToOptions.h"
@@ -87,9 +88,9 @@ struct WindowFeatures;
 enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
 // FIXME: DOMWindow shouldn't subclass FrameDestructionObserver and instead should get to Frame via its Document.
+// FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class DOMWindow final
-    : public RefCounted<DOMWindow>
-    , public EventTargetWithInlineData
+    : public AbstractDOMWindow
     , public ContextDestructionObserver
     , public FrameDestructionObserver
     , public Base64Utilities
@@ -198,6 +199,8 @@ public:
     DOMWindow* parent() const;
     DOMWindow* top() const;
 
+    Frame* frame() const final { return FrameDestructionObserver::frame(); }
+
     String origin() const;
 
     // DOM Level 2 AbstractView Interface
@@ -276,9 +279,6 @@ public:
 
     void finishedLoading();
 
-    using RefCounted::ref;
-    using RefCounted::deref;
-
     // HTML 5 key/value storage
     ExceptionOr<Storage*> sessionStorage() const;
     ExceptionOr<Storage*> localStorage() const;
@@ -338,17 +338,16 @@ public:
 private:
     explicit DOMWindow(Document&);
 
-    EventTargetInterface eventTargetInterface() const final { return DOMWindowEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+
+    bool isLocalDOMWindow() const final { return true; }
+    bool isRemoteDOMWindow() const final { return false; }
 
     Page* page();
     bool allowedToChangeWindowGeometry() const;
 
     void frameDestroyed() final;
     void willDetachPage() final;
-
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
 
     static RefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);
     bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
@@ -432,5 +431,6 @@ inline String DOMWindow::defaultStatus() const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DOMWindow)
+    static bool isType(const WebCore::AbstractDOMWindow& window) { return window.isLocalDOMWindow(); }
     static bool isType(const WebCore::EventTarget& target) { return target.eventTargetInterface() == WebCore::DOMWindowEventTargetInterfaceType; }
 SPECIALIZE_TYPE_TRAITS_END()

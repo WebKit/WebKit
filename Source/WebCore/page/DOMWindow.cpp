@@ -401,7 +401,8 @@ void DOMWindow::setCanShowModalDialogOverride(bool allow)
 }
 
 DOMWindow::DOMWindow(Document& document)
-    : ContextDestructionObserver(&document)
+    : AbstractDOMWindow(GlobalWindowIdentifier { Process::identifier(), generateObjectIdentifier<WindowIdentifierType>() })
+    , ContextDestructionObserver(&document)
     , FrameDestructionObserver(document.frame())
 {
     ASSERT(frame());

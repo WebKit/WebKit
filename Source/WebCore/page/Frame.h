@@ -27,12 +27,12 @@
 
 #pragma once
 
+#include "AbstractFrame.h"
 #include "AdjustViewSizeOrNot.h"
 #include "FrameTree.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
 #include <wtf/HashSet.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 
 #if PLATFORM(IOS)
@@ -61,6 +61,7 @@ namespace WebCore {
 
 class CSSAnimationController;
 class Color;
+class DOMWindow;
 class Document;
 class Editor;
 class Element;
@@ -117,7 +118,8 @@ enum {
 };
 typedef unsigned LayerTreeFlags;
 
-class Frame final : public ThreadSafeRefCounted<Frame> {
+// FIXME: Rename Frame to LocalFrame and AbstractFrame to Frame.
+class Frame final : public AbstractFrame {
 public:
     WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
@@ -133,6 +135,8 @@ public:
         ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
     WEBCORE_EXPORT ~Frame();
+
+    DOMWindow* window() const;
 
     void addDestructionObserver(FrameDestructionObserver*);
     void removeDestructionObserver(FrameDestructionObserver*);
@@ -291,6 +295,11 @@ private:
 
     void dropChildren();
 
+    bool isLocalFrame() const final { return true; }
+    bool isRemoteFrame() const final { return false; }
+
+    AbstractDOMWindow* virtualWindow() const final;
+
     HashSet<FrameDestructionObserver*> m_destructionObservers;
 
     Frame& m_mainFrame;
@@ -390,3 +399,7 @@ inline Frame& Frame::mainFrame() const
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Frame)
+    static bool isType(const WebCore::AbstractFrame& frame) { return frame.isLocalFrame(); }
+SPECIALIZE_TYPE_TRAITS_END()
