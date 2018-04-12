@@ -98,7 +98,7 @@ BEGIN_PATTERN = re.compile("^{}BEGIN (.+){}$".format(MARKER, MARKER))
 
 
 def _parse_pem_format(content):
-    lines = content.split("\n")
+    lines = re.split('\r\n?|\n', content)
 
     def find_begin(lines):
         """

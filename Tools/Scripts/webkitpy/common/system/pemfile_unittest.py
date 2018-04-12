@@ -42,6 +42,18 @@ class PemFileTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             pem.get("FOO BAR")
 
+    def test_parse_crlf(self):
+        pem = Pem(self.pem_contents.replace('\n', '\r\n'))
+
+        self.assertEqual(pem.private_key, self.private_key)
+        self.assertEqual(pem.certificate, self.certificate)
+
+    def test_parse_cr(self):
+        pem = Pem(self.pem_contents.replace('\n', '\r'))
+
+        self.assertEqual(pem.private_key, self.private_key)
+        self.assertEqual(pem.certificate, self.certificate)
+
     def test_parse_bad_format(self):
         with self.assertRaises(BadFormatError):
             # Partial contents raises format error
