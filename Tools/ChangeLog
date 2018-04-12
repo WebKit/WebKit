@@ -1,3 +1,27 @@
+2018-04-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Introduce needsLayout to InlineFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=184538
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype._adjustBottomWithFIXME):
+        (BlockFormattingContext):
+        (BlockFormattingContext.prototype._firstInFlowChildWithNeedsLayout): Deleted.
+        (BlockFormattingContext.prototype._nextInFlowSiblingWithNeedsLayout): Deleted.
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype._firstInFlowChildWithNeedsLayout):
+        (FormattingContext.prototype._nextInFlowSiblingWithNeedsLayout):
+        (FormattingContext):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype.layout):
+        (InlineFormattingContext.prototype._handleInlineContainer):
+        (InlineFormattingContext.prototype._handleInlineBlockContainer):
+        (InlineFormattingContext.prototype._handleInlineContent):
+        (InlineFormattingContext.prototype._clearAndMoveToNext):
+        (InlineFormattingContext):
+
 2018-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Speed up GStreamer dependency build by removing examples compilation

@@ -178,22 +178,4 @@ class BlockFormattingContext extends FormattingContext {
         }
         return bottom;
     }
-
-    _firstInFlowChildWithNeedsLayout(layoutBox) {
-        if (!layoutBox.isContainer())
-            return null;
-        for (let child = layoutBox.firstInFlowOrFloatChild(); child; child = child.nextInFlowOrFloatSibling()) {
-            if (this.formattingState().needsLayout(child))
-                return child;
-        }
-        return null;
-    }
-
-    _nextInFlowSiblingWithNeedsLayout(layoutBox) {
-        for (let sibling = layoutBox.nextInFlowOrFloatSibling(); sibling; sibling = sibling.nextInFlowOrFloatSibling()) {
-            if (this.formattingState().needsLayout(sibling))
-                return sibling;
-        }
-        return null;
-    }
 }
