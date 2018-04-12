@@ -72,7 +72,7 @@ public:
     uint64_t frameID() const { return m_frameID; };
     uint64_t pageID() const { return m_pageID; };
 
-#if HAVE(MOBILE_WIFI)
+#if ENABLE(WIFI_ASSERTIONS)
     void acquireWiFiAssertion()
     {
         ASSERT(!m_wiFiAssertionHolder);
@@ -104,7 +104,7 @@ private:
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
 #endif
 
-#if HAVE(MOBILE_WIFI)
+#if ENABLE(WIFI_ASSERTIONS)
     std::optional<WiFiAssertionHolder> m_wiFiAssertionHolder;
 #endif
 };
