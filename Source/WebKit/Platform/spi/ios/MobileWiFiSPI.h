@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,66 +25,24 @@
 
 #pragma once
 
-#include <pal/LogMacros.h>
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+#include <MobileWiFi/WiFiManagerClient.h>
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX WebKit2Log
+#else
+
+typedef enum {
+    kWiFiClientTypeNormal,
+    kWiFiClientTypeBackground,
+} WiFiClientType;
+
+typedef void* WiFiManagerClientRef;
+
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+WTF_EXTERN_C_BEGIN
 
-#define WEBKIT2_LOG_CHANNELS(M) \
-    M(CacheStorage) \
-    M(ContextMenu) \
-    M(DragAndDrop) \
-    M(Fullscreen) \
-    M(Gamepad) \
-    M(IconDatabase) \
-    M(IndexedDB) \
-    M(IPC) \
-    M(KeyHandling) \
-    M(Layers) \
-    M(Loading) \
-    M(Network) \
-    M(NetworkCache) \
-    M(NetworkCacheSpeculativePreloading) \
-    M(NetworkCacheStorage) \
-    M(NetworkScheduling) \
-    M(NetworkSession) \
-    M(PerformanceLogging) \
-    M(Plugins) \
-    M(Printing) \
-    M(Process) \
-    M(ProcessSuspension) \
-    M(RemoteLayerTree) \
-    M(Resize) \
-    M(ResourceLoadStatistics) \
-    M(ResourceLoadStatisticsDebug) \
-    M(Selection) \
-    M(ServiceWorker) \
-    M(SessionState) \
-    M(StorageAPI) \
-    M(TextInput) \
-    M(ViewGestures) \
-    M(ViewState) \
-    M(VirtualMemory) \
-    M(VisibleRects) \
-    M(WebRTC) \
-    M(WiFiAssertions) \
+WiFiManagerClientRef WiFiManagerClientCreate(CFAllocatorRef, WiFiClientType);
+void WiFiManagerClientSetType(WiFiManagerClientRef, WiFiClientType);
 
-WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
-
-#undef DECLARE_LOG_CHANNEL
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
+WTF_EXTERN_C_END

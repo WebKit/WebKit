@@ -27,6 +27,7 @@
 
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
+#include "WiFiAssertionHolder.h"
 #include <WebCore/NetworkLoadMetrics.h>
 #include <wtf/RetainPtr.h>
 
@@ -71,6 +72,14 @@ public:
     uint64_t frameID() const { return m_frameID; };
     uint64_t pageID() const { return m_pageID; };
 
+#if HAVE(MOBILE_WIFI)
+    void acquireWiFiAssertion()
+    {
+        ASSERT(!m_wiFiAssertionHolder);
+        m_wiFiAssertionHolder.emplace();
+    }
+#endif
+
 private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly);
 
@@ -93,6 +102,10 @@ private:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
+#endif
+
+#if HAVE(MOBILE_WIFI)
+    std::optional<WiFiAssertionHolder> m_wiFiAssertionHolder;
 #endif
 };
 

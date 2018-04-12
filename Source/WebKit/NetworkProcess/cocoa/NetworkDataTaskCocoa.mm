@@ -44,6 +44,10 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/text/Base64.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/NetworkDataTaskCocoaAdditions.mm>
+#endif
+
 namespace WebKit {
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
@@ -189,6 +193,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
+#if USE(APPLE_INTERNAL_SDK)
+    applyAdditionalProperties(request, *this, nsRequest);
+#endif
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {

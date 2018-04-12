@@ -124,3 +124,11 @@
 #define HAVE_LINK_PREVIEW 0
 #endif
 #endif
+
+#ifndef HAVE_MOBILE_WIFI
+#if PLATFORM(IOS) && !TARGET_OS_SIMULATOR && USE(APPLE_INTERNAL_SDK)
+#define HAVE_MOBILE_WIFI 1
+#else
+#define HAVE_MOBILE_WIFI 0
+#endif
+#endif
