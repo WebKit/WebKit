@@ -1,3 +1,25 @@
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn CSS Animations and CSS Transitions as Web Animations on by default
+        https://bugs.webkit.org/show_bug.cgi?id=184569
+        <rdar://problem/38671301>
+
+        Reviewed by Jon Lee.
+
+        We set the default value for the CSS Animations and CSS Transitions as Web Animations flag to true
+        but override it to be false always in the LayoutTests/legacy-animation-engine directory.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (shouldOverrideAndDisableCSSAnimationsAndCSSTransitionsBackedByWebAnimationsPreference):
+        (runTest):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::isLegacyAnimationEngineTestPath):
+        (WTR::TestOptions::TestOptions):
+        * WebKitTestRunner/TestOptions.h:
+
 2018-04-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Tests WTF_RefPtr.ReleaseInNonMainThread and WTF_RefPtr.ReleaseInNonMainThreadDestroyInMainThread are crashing since they were added

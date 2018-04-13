@@ -29,7 +29,7 @@
 
 struct TestOptions {
     bool enableAttachmentElement { false };
-    bool enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations { false };
+    bool enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations { true };
     bool useAcceleratedDrawing { false };
     bool enableIntersectionObserver { false };
     bool enableMenuItemElement { false };

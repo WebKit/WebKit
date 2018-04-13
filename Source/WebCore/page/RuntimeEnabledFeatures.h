@@ -337,7 +337,7 @@ private:
 #endif
 
     bool m_areWebAnimationsEnabled { true };
-    bool m_areCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled { false };
+    bool m_areCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled { true };
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };

@@ -58,7 +58,7 @@
         {
             if (window.testRunner) {
                 var target = document.getElementById("target");
-                if (!internals.pauseAnimationAtTimeOnElement("anim", 2.0, target)) {
+                if (!pauseAnimationAtTimeOnElement("anim", 2.0, target)) {
                     document.getElementById('result').innerHTML = "FAIL: Failed to pause animation"
                     testRunner.notifyDone();
                     return;

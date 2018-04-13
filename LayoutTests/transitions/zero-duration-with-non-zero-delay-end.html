@@ -20,9 +20,18 @@
     }
    </style>
    <script>
+
+    function numberOfActiveAnimations()
+    {
+        return document.getAnimations().filter(animation => {
+            const playState = animation.playState;
+            return playState == "running" || playState == "paused";
+        }).length;
+    }
+
     function sample0() {
       var expected = 1;
-      var current = internals.numberOfActiveAnimations();
+      var current = numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result0').innerHTML = "Number of active animations before transition is (" + current + ") as expected";
       else
@@ -31,7 +40,7 @@
     
     function sample1() {
       var expected = 0;
-      var current = internals.numberOfActiveAnimations();
+      var current = numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result1').innerHTML = "Number of active animations after transition is (" + current + ") as expected";
       else

@@ -1,3 +1,22 @@
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn CSS Animations and CSS Transitions as Web Animations on by default
+        https://bugs.webkit.org/show_bug.cgi?id=184569
+        <rdar://problem/38671301>
+
+        Reviewed by Jon Lee.
+
+        We now set the CSS Animations and CSS Transitions as Web Animations flag on by default. To ensure that some remaining
+        tests pass with this flag on, we expose a way to get to a PseudoElement via a new internals.pseudoElement() method. This
+        allows tests that used internals.pauseAnimationAtTimeOnPseudoElement() and internals.pauseTransitionAtTimeOnPseudoElement()
+        to now work with the Web Animations API.
+
+        * page/RuntimeEnabledFeatures.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::pseudoElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-04-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][OpenVR] Implement requestPresent()/exitPresent() and getLayers()

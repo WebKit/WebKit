@@ -65,10 +65,16 @@ static float deviceScaleFactorForTest(const std::string& pathOrURL)
     return 1;
 }
 
+static bool isLegacyAnimationEngineTestPath(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "legacy-animation-engine/");
+}
+
 TestOptions::TestOptions(const std::string& pathOrURL)
     : useFlexibleViewport(shouldMakeViewportFlexible(pathOrURL))
     , useFixedLayout(shouldUseFixedLayout(pathOrURL))
     , isSVGTest(isSVGTestPath(pathOrURL))
+    , isLegacyAnimationEngineTest(isLegacyAnimationEngineTestPath(pathOrURL))
     , deviceScaleFactor(deviceScaleFactorForTest(pathOrURL))
 {
 }

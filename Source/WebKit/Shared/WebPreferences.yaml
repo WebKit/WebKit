@@ -101,7 +101,7 @@ CSSAnimationTriggersEnabled:
 
 CSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   webcoreBinding: RuntimeEnabledFeatures
 
 ForceFTPDirectoryListings:

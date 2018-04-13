@@ -1,3 +1,50 @@
+2018-04-12  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn CSS Animations and CSS Transitions as Web Animations on by default
+        https://bugs.webkit.org/show_bug.cgi?id=184569
+        <rdar://problem/38671301>
+
+        Reviewed by Jon Lee.
+
+        * TestExpectations: A small number of tests regressed with the flag on, so we list them and have raised
+        bugs to fix them ASAP.
+        * animations/animation-direction-alternate-reverse-expected.txt:
+        * animations/animation-direction-alternate-reverse.html: This test was incorrect since it assumes that at the
+        end active boundary time we are using the end value whereas we are using the start value. Indeed, since the
+        fill-mode is "none", at the end of the active time, the progress is null per the Web Animations spec.
+        * animations/animation-hit-test-transform.html: Stop using the internals method.
+        * animations/animation-internals-api-expected.txt: Removed.
+        * animations/animation-internals-api-multiple-keyframes-expected.txt: Removed.
+        * animations/animation-internals-api-multiple-keyframes.html: Removed. This test only tests an internals method
+        that is no longer relevant for the new animation engine, but preserved for compatibility with legacy tests.
+        * animations/animation-internals-api.html: Removed. This test only tests an internals method that is no longer
+        relevant for the new animation engine, but preserved for compatibility with legacy tests.
+        * animations/big-rotation-expected.txt:
+        * animations/big-rotation.html: Here again we are correcting a test which made the wrong assumption about the
+        value generated at the end active boundary time.
+        * animations/duplicated-keyframes-name.html: We make the animation fill forwards to check that we are using
+        the correct end value for an animation with multiple 100% keyframe.
+        * animations/fill-forwards-end-state.html: Same as previous test.
+        * animations/fill-mode-forwards-zero-duration-expected.txt:
+        * animations/fill-mode-forwards-zero-duration.html: This test should seek after its delay + duration, so we test
+        at 3s instead of 1s. This is due to a behavior difference between internals.pauseAnimationAtTimeOnElement() and
+        its replacement.
+        * fast/css-generated-content/pseudo-animation.html: Use internals.pseudoElement() and the Web Animations API rather
+        than internals.pauseAnimationAtTimeOnPseudoElement().
+        * fast/css-generated-content/pseudo-transition.html: Use internals.pseudoElement() and the Web Animations API rather
+        than internals.pauseTransitionAtTimeOnPseudoElement().
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations: Remove references to tests that we are removing.
+        * transitions/remove-transition-style.html: Use document.getAnimations() to figure out how many animations are running.
+        * transitions/transition-drt-api-delay-expected.txt: Removed.
+        * transitions/transition-drt-api-delay.html: Removed. This test only tests an internals method that is no longer
+        relevant for the new animation engine, but preserved for compatibility with legacy tests.
+        * transitions/transition-drt-api-expected.txt: Removed.
+        * transitions/transition-drt-api.html: Removed. This test only tests an internals method that is no longer
+        relevant for the new animation engine, but preserved for compatibility with legacy tests.
+        * transitions/transition-hit-test-transform.html: Stop using internals.pauseTransitionAtTimeOnElement().
+        * transitions/zero-duration-with-non-zero-delay-end.html: Use the Web Animations API instead of internals.numberOfActiveAnimations().
+
 2018-04-13  Per Arne Vollan  <pvollan@apple.com>
 
         Mark some legacy-animation-engine tests as failures on Windows.

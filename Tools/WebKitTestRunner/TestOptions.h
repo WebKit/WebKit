@@ -55,7 +55,8 @@ struct TestOptions {
     bool shouldShowTouches { false };
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
-    bool enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations { false };
+    bool enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations { true };
+    bool isLegacyAnimationEngineTest { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
