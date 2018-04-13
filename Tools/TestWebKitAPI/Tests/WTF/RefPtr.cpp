@@ -33,6 +33,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
@@ -577,6 +578,7 @@ TEST(WTF_RefPtr, ReleaseInNonMainThread)
 
 TEST(WTF_RefPtr, ReleaseInNonMainThreadDestroyInMainThread)
 {
+    RunLoop::initializeMainRunLoop();
     done = false;
     Thread::create("", [object = MainThreadSafeRefCountedObject::create()] { });
     TestWebKitAPI::Util::run(&done);

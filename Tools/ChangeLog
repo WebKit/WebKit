@@ -1,3 +1,22 @@
+2018-04-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Tests WTF_RefPtr.ReleaseInNonMainThread and WTF_RefPtr.ReleaseInNonMainThreadDestroyInMainThread are crashing since they were added
+        https://bugs.webkit.org/show_bug.cgi?id=184531
+
+        Reviewed by Michael Catanzaro.
+
+        It's not a bug in WebKit, but in the tests. The problem is that those tests are using RunLoop::main() but main
+        run loop hasn't been initialized. ReleaseInNonMainThread doesn't really need to initialize the main run loop if
+        we change Util::run() to always use RunLop::current() instead of RunLoop::main(). But
+        ReleaseInNonMainThreadDestroyInMainThread ends up scheduling a task to the main thread, and the generic
+        implementation fo that uses RunLoop::main(), so we need to initialize the main loop in this case.
+
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::TEST): Call RunLoop::initializeMainRunLoop().
+        * TestWebKitAPI/glib/UtilitiesGLib.cpp:
+        (TestWebKitAPI::Util::run): Use RunLop::current() to stop the current run loop.
+        (TestWebKitAPI::Util::sleep): Ditto.
+
 2018-04-12  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Add support for incremental layout

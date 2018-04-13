@@ -37,7 +37,7 @@ void run(bool* done)
     g_idle_add([](gpointer userData) -> gboolean {
         bool* done = static_cast<bool*>(userData);
         if (*done)
-            RunLoop::main().stop();
+            RunLoop::current().stop();
 
         return !*done;
     }, done);
@@ -58,7 +58,7 @@ void sleep(double seconds)
         RunLoop::main().stop();
         return G_SOURCE_REMOVE;
     }, nullptr);
-    RunLoop::main().stop();
+    RunLoop::current().stop();
 }
 
 } // namespace Util
