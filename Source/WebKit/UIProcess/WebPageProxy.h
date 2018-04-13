@@ -44,6 +44,7 @@
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "SuspendedPageProxy.h"
 #include "SystemPreviewController.h"
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include "VisibleContentRectUpdateInfo.h"
@@ -1286,6 +1287,9 @@ public:
 
     WebPreferencesStore preferencesStore() const;
 
+    SuspendedPageProxy* maybeCreateSuspendedPage(WebProcessProxy&);
+    void suspendedPageProcessClosed(SuspendedPageProxy&);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1436,7 +1440,7 @@ private:
 
     void reattachToWebProcess();
     void attachToProcessForNavigation(Ref<WebProcessProxy>&&);
-    void reattachToWebProcess(Ref<WebProcessProxy>&&);
+    void reattachToWebProcess(Ref<WebProcessProxy>&&, bool suspendInOldProcess);
 
     RefPtr<API::Navigation> reattachToWebProcessForReload();
     RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem&);
@@ -2129,6 +2133,11 @@ private:
 #endif
 
     std::optional<MonotonicTime> m_pageLoadStart;
+
+    // FIXME: Support more than one suspended page per WebPageProxy,
+    // and have a global collection of them per process pool
+    // (e.g. for that process pool's page cache)
+    RefPtr<SuspendedPageProxy> m_suspendedPage;
 };
 
 } // namespace WebKit

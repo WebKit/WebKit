@@ -306,7 +306,7 @@ void FrameLoader::init()
     // This somewhat odd set of steps gives the frame an initial empty document.
     setPolicyDocumentLoader(m_client.createDocumentLoader(ResourceRequest(URL(ParsedURLString, emptyString())), SubstituteData()).ptr());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
-    m_provisionalDocumentLoader->startLoadingMainResource();
+    m_provisionalDocumentLoader->startLoadingMainResource(ShouldContinue::Yes);
 
     Ref<Frame> protect(m_frame);
     m_frame.document()->cancelParsing();
@@ -3231,7 +3231,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
-    WTF::Function<void(void)> completionHandler = [this] {
+    CompletionHandler<void(void)> completionHandler = [this, shouldContinue] {
         if (!m_provisionalDocumentLoader)
             return;
         
@@ -3251,7 +3251,12 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         }
         
         m_loadingFromCachedPage = false;
-        m_provisionalDocumentLoader->startLoadingMainResource();
+
+        // We handle suspension by navigating forward to about:blank, which leaves us setup to navigate back to resume.
+        if (shouldContinue == ShouldContinue::ForSuspension)
+            m_provisionalDocumentLoader->willContinueMainResourceLoadAfterRedirect({ blankURL() });
+
+        m_provisionalDocumentLoader->startLoadingMainResource(shouldContinue);
     };
     
     if (!formState) {

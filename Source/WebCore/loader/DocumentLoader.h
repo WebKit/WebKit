@@ -84,6 +84,8 @@ class SharedBuffer;
 class SubresourceLoader;
 class SubstituteResource;
 
+enum class ShouldContinue;
+
 using ResourceLoaderMap = HashMap<unsigned long, RefPtr<ResourceLoader>>;
 
 enum class AutoplayPolicy {
@@ -237,7 +239,7 @@ public:
     void setDefersLoading(bool);
     void setMainResourceDataBufferingPolicy(DataBufferingPolicy);
 
-    void startLoadingMainResource();
+    void startLoadingMainResource(ShouldContinue);
     WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&);
     void willContinueMainResourceLoadAfterRedirect(const ResourceRequest&);
 
@@ -351,7 +353,7 @@ private:
     void clearArchiveResources();
 #endif
 
-    void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
+    void willSendRequest(ResourceRequest&&, const ResourceResponse&, ShouldContinue, CompletionHandler<void(ResourceRequest&&)>&&);
     void finishedLoading();
     void mainReceivedError(const ResourceError&);
     WEBCORE_EXPORT void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;

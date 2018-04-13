@@ -642,7 +642,7 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 void WebPageProxy::reattachToWebProcess()
 {
     auto process = makeRef(m_process->processPool().createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get()));
-    reattachToWebProcess(WTFMove(process));
+    reattachToWebProcess(WTFMove(process), false);
 }
 
 void WebPageProxy::attachToProcessForNavigation(Ref<WebProcessProxy>&& process)
@@ -653,17 +653,44 @@ void WebPageProxy::attachToProcessForNavigation(Ref<WebProcessProxy>&& process)
 
     // FIXME: this is to fix the ASSERT(isValid()) inside reattachToWebProcess, some other way to fix this is needed.
     m_isValid = false;
-    reattachToWebProcess(WTFMove(process));
+    reattachToWebProcess(WTFMove(process), true);
 }
 
-void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process)
+SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process)
+{
+    ASSERT(!m_suspendedPage || m_suspendedPage->process() != &process);
+
+    auto* currentItem = m_backForwardList->currentItem();
+    if (!currentItem) {
+        LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " unable to create suspended page for process pid %i - No current back/forward item", pageID(), process.processIdentifier());
+        return nullptr;
+    }
+
+    m_suspendedPage = SuspendedPageProxy::create(*this, process, *currentItem);
+
+    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %" PRIu64, pageID(), m_suspendedPage->loggingString(), process.processIdentifier(), currentItem->itemID());
+
+    return m_suspendedPage.get();
+}
+
+void WebPageProxy::suspendedPageProcessClosed(SuspendedPageProxy& page)
+{
+    ASSERT_UNUSED(page, &page == m_suspendedPage.get());
+    m_suspendedPage = nullptr;
+}
+
+void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, bool suspendInOldProcess)
 {
     ASSERT(!m_isClosed);
     ASSERT(!isValid());
 
     m_isValid = true;
-    m_process->removeWebPage(*this, m_pageID);
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+
+    if (!suspendInOldProcess) {
+        m_process->removeWebPage(*this, m_pageID);
+        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+    } else
+        m_process->suspendWebPageProxy(*this);
 
     m_process = WTFMove(process);
 
@@ -2354,7 +2381,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
             auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, action);
 
             if (proposedProcess.ptr() != &process()) {
-                LOG(Loading, "Switching from process %i to new process for navigation %" PRIu64 " '%s'", processIdentifier(), navigation->navigationID(), navigation->loggingString().utf8().data());
+                LOG(ProcessSwapping, "Switching from process %i to new process for navigation %" PRIu64 " '%s'", processIdentifier(), navigation->navigationID(), navigation->loggingString().utf8().data());
 
                 RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
                     continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
@@ -3571,6 +3598,8 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navi
 
 void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData& userData)
 {
+    LOG(Loading, "WebPageProxy::didFinishLoadForFrame - WebPageProxy %p with navigationID %llu didFinishLoad", this, navigationID);
+
     PageClientProtector protector(m_pageClient);
 
     WebFrameProxy* frame = m_process->webFrame(frameID);

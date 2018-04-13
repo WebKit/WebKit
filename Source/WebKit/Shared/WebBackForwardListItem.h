@@ -41,6 +41,8 @@ class Encoder;
 
 namespace WebKit {
 
+class SuspendedPageProxy;
+
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
     static Ref<WebBackForwardListItem> create(BackForwardListItemState&&, uint64_t pageID);
@@ -63,6 +65,7 @@ public:
     ViewSnapshot* snapshot() const { return m_itemState.snapshot.get(); }
     void setSnapshot(RefPtr<ViewSnapshot>&& snapshot) { m_itemState.snapshot = WTFMove(snapshot); }
 #endif
+    void setSuspendedPage(SuspendedPageProxy&);
 
     static uint64_t highestUsedItemID();
 
@@ -71,6 +74,7 @@ private:
 
     BackForwardListItemState m_itemState;
     uint64_t m_pageID;
+    SuspendedPageProxy* m_suspendedPage { nullptr };
 };
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;

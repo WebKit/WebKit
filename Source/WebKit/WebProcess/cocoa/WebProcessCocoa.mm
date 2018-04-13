@@ -387,7 +387,7 @@ void WebProcess::updateActivePages()
     auto activePageURLs = adoptNS([[NSMutableArray alloc] init]);
 
     for (auto& page : m_pageMap.values()) {
-        if (page->usesEphemeralSession())
+        if (page->usesEphemeralSession() || page->isSuspended())
             continue;
 
         if (NSURL *originAsURL = origin(*page))

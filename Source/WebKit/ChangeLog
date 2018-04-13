@@ -1,3 +1,76 @@
+2018-04-13  Brady Eidson  <beidson@apple.com>
+
+        Introduce SuspendedPageProxy to keep old web processes around after their WebPageProxy has been swapped to a new one.
+        https://bugs.webkit.org/show_bug.cgi?id=184559
+
+        Reviewed by Alex Christensen.
+
+        Before this patch, when a WebPageProxy navigates and is swapped to a new process, the old process almost always goes away.
+
+        This is not desirable for a few reasons:
+        1 - We can't keep the PageCache working for back/forward scenarios
+        2 - We throw away a "foo.com" web process, meaning the next time we need to host a "foo.com" web page we have to launch
+            and initialize a new web process.
+
+        This patch adds a SuspendedPageProxy object to keep around the old web process and to manage communication with it.
+
+        For now, a WebPageProxy keeps exactly one "suspended page" representing the most recently visited page and its process.
+        Additionally, that process is never reused.
+
+        So no benefit is achieved with this patch, but it enables future benefits.
+
+        * Platform/Logging.h:
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::setSuspendedPage):
+        * Shared/WebBackForwardListItem.h:
+
+        New object to represent the state of a WebPageProxy in an old web process that is not currently hosting the view.
+        * UIProcess/SuspendedPageProxy.cpp: Added.
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::webProcessDidClose):
+        (WebKit::SuspendedPageProxy::didFinishLoad):
+        (WebKit::SuspendedPageProxy::didReceiveMessage):
+        (WebKit::SuspendedPageProxy::loggingString const):
+        * UIProcess/SuspendedPageProxy.h: Copied from Source/WebKit/Platform/Logging.h.
+        (WebKit::SuspendedPageProxy::create):
+        (WebKit::SuspendedPageProxy::page const):
+        (WebKit::SuspendedPageProxy::process const):
+        (WebKit::SuspendedPageProxy::item const):
+        (WebKit::SuspendedPageProxy::finishedSuspending const):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::attachToProcessForNavigation):
+        (WebKit::WebPageProxy::maybeCreateSuspendedPage):
+        (WebKit::WebPageProxy::suspendedPageProcessClosed):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::suspendWebPageProxy):
+        (WebKit::WebProcessProxy::suspendedPageWasDestroyed):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::didReceiveMessage): Optionally pass WebPageProxy messages along to SuspendedPageProxy objects.
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::maybeShutDown):
+        (WebKit::WebProcessProxy::canTerminateChildProcess): Don't terminate child processes if they still have suspended pages.
+        * UIProcess/WebProcessProxy.h:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsSuspended):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isSuspended const): For now, used only by WebProcess::updateActivePages. Will have more uses soon.
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateActivePages): Allow the UIProcess to request an update of the web processes user visible name.
+
 2018-04-13  Daniel Bates  <dabates@apple.com>
 
         Inline NetworkLoad::sharedWillSendRedirectedRequest() into NetworkLoad::willPerformHTTPRedirection()

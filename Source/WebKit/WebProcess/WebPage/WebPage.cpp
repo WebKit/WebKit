@@ -5866,6 +5866,11 @@ void WebPage::urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t task
     handler->taskDidComplete(taskIdentifier, error);
 }
 
+void WebPage::setIsSuspended(bool suspended)
+{
+    m_isSuspended = suspended;
+}
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 static uint64_t nextRequestStorageAccessContextId()
 {

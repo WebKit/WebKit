@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,67 +25,48 @@
 
 #pragma once
 
-#include <pal/LogMacros.h>
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include "Connection.h"
+#include "WebBackForwardListItem.h"
+#include <wtf/RefCounted.h>
 
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+namespace WebKit {
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX WebKit2Log
+class WebPageProxy;
+class WebProcessProxy;
+
+class SuspendedPageProxy : public RefCounted<SuspendedPageProxy> {
+public:
+    static Ref<SuspendedPageProxy> create(WebPageProxy& page, WebProcessProxy& process, WebBackForwardListItem& item)
+    {
+        return adoptRef(*new SuspendedPageProxy(page, process, item));
+    }
+
+    virtual ~SuspendedPageProxy();
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
+    WebPageProxy& page() const { return m_page; }
+    WebProcessProxy* process() const { return m_process; }
+    WebBackForwardListItem& item() const { return m_backForwardListItem; }
+
+    bool finishedSuspending() const { return m_finishedSuspending; }
+
+    void webProcessDidClose(WebProcessProxy&);
+
+#if !LOG_DISABLED
+    const char* loggingString() const;
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+private:
+    SuspendedPageProxy(WebPageProxy&, WebProcessProxy&, WebBackForwardListItem&);
 
-#define WEBKIT2_LOG_CHANNELS(M) \
-    M(CacheStorage) \
-    M(ContextMenu) \
-    M(DragAndDrop) \
-    M(Fullscreen) \
-    M(Gamepad) \
-    M(IconDatabase) \
-    M(IndexedDB) \
-    M(IPC) \
-    M(KeyHandling) \
-    M(Layers) \
-    M(Loading) \
-    M(Network) \
-    M(NetworkCache) \
-    M(NetworkCacheSpeculativePreloading) \
-    M(NetworkCacheStorage) \
-    M(NetworkScheduling) \
-    M(NetworkSession) \
-    M(PerformanceLogging) \
-    M(Plugins) \
-    M(Printing) \
-    M(Process) \
-    M(ProcessSuspension) \
-    M(ProcessSwapping) \
-    M(RemoteLayerTree) \
-    M(Resize) \
-    M(ResourceLoadStatistics) \
-    M(ResourceLoadStatisticsDebug) \
-    M(Selection) \
-    M(ServiceWorker) \
-    M(SessionState) \
-    M(StorageAPI) \
-    M(TextInput) \
-    M(ViewGestures) \
-    M(ViewState) \
-    M(VirtualMemory) \
-    M(VisibleRects) \
-    M(WebRTC) \
-    M(WiFiAssertions) \
+    void didFinishLoad();
 
-WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+    WebPageProxy& m_page;
+    WebProcessProxy* m_process;
+    Ref<WebBackForwardListItem> m_backForwardListItem;
 
-#undef DECLARE_LOG_CHANNEL
+    bool m_finishedSuspending { false };
+};
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
+} // namespace WebKit

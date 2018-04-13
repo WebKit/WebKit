@@ -1,3 +1,12 @@
+2018-04-13  Brady Eidson  <beidson@apple.com>
+
+        Introduce SuspendedPageProxy to keep old web processes around after their WebPageProxy has been swapped to a new one.
+        https://bugs.webkit.org/show_bug.cgi?id=184559
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-04-13  Chris Dumez  <cdumez@apple.com>
 
         input.webkitEntries does not work as expected when folder contains accented chars

@@ -103,4 +103,9 @@ uint64_t WebBackForwardListItem::highestUsedItemID()
     return highestItemID;
 }
 
+void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy& page)
+{
+    m_suspendedPage = &page;
+}
+
 } // namespace WebKit

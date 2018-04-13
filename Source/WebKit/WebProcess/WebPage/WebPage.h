@@ -1072,6 +1072,8 @@ public:
 
     UserContentControllerIdentifier userContentControllerIdentifier() const { return m_userContentController->identifier(); }
 
+    bool isSuspended() const { return m_isSuspended; }
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1387,6 +1389,8 @@ private:
     void urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceResponse&);
     void urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, const IPC::DataReference&);
     void urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceError&);
+
+    void setIsSuspended(bool);
 
     RefPtr<WebImage> snapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize& bitmapSize, SnapshotOptions);
     RefPtr<WebImage> snapshotNode(WebCore::Node&, SnapshotOptions, unsigned maximumPixelCount = std::numeric_limits<unsigned>::max());
@@ -1705,6 +1709,7 @@ private:
     std::unique_ptr<WebCredentialsMessenger> m_credentialsMessenger;
 #endif
 
+    bool m_isSuspended { false };
 };
 
 } // namespace WebKit

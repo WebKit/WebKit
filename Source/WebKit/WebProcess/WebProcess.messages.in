@@ -128,6 +128,8 @@ messages -> WebProcess LegacyReceiver {
     CheckProcessLocalPortForActivity(struct WebCore::MessagePortIdentifier port, uint64_t callbackIdentifier)
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 
+    UpdateActivePages()
+
 #if PLATFORM(MAC)
     SetScreenProperties(uint32_t primaryScreenID, HashMap<uint32_t, WebCore::ScreenProperties> screenProperties)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
