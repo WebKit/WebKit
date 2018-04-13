@@ -61,6 +61,7 @@
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "SuperSampler.h"
+#include "TypeProfilerLog.h"
 #include "WeakMapImpl.h"
 #include <wtf/BitVector.h>
 #include <wtf/Box.h>
@@ -12794,6 +12795,76 @@ void SpeculativeJIT::compileExtractCatchLocal(Node* node)
     JSValue* ptr = &reinterpret_cast<JSValue*>(m_jit.jitCode()->common.catchOSREntryBuffer->dataBuffer())[node->catchOSREntryIndex()];
     m_jit.loadValue(ptr, resultRegs);
     jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileProfileType(Node* node)
+{
+    JSValueOperand value(this, node->child1());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+    GPRTemporary scratch3(this);
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+    GPRReg scratch3GPR = scratch3.gpr();
+
+    MacroAssembler::JumpList jumpToEnd;
+
+    jumpToEnd.append(m_jit.branchIfEmpty(valueRegs));
+
+    TypeLocation* cachedTypeLocation = node->typeLocation();
+    // Compile in a predictive type check, if possible, to see if we can skip writing to the log.
+    // These typechecks are inlined to match those of the 64-bit JSValue type checks.
+    if (cachedTypeLocation->m_lastSeenType == TypeUndefined)
+        jumpToEnd.append(m_jit.branchIfUndefined(valueRegs));
+    else if (cachedTypeLocation->m_lastSeenType == TypeNull)
+        jumpToEnd.append(m_jit.branchIfNull(valueRegs));
+    else if (cachedTypeLocation->m_lastSeenType == TypeBoolean)
+        jumpToEnd.append(m_jit.branchIfBoolean(valueRegs, scratch1GPR));
+    else if (cachedTypeLocation->m_lastSeenType == TypeAnyInt)
+        jumpToEnd.append(m_jit.branchIfInt32(valueRegs));
+    else if (cachedTypeLocation->m_lastSeenType == TypeNumber)
+        jumpToEnd.append(m_jit.branchIfNumber(valueRegs, scratch1GPR));
+    else if (cachedTypeLocation->m_lastSeenType == TypeString) {
+        MacroAssembler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
+        jumpToEnd.append(m_jit.branchIfString(valueRegs.payloadGPR()));
+        isNotCell.link(&m_jit);
+    }
+
+    // Load the TypeProfilerLog into Scratch2.
+    TypeProfilerLog* cachedTypeProfilerLog = m_jit.vm()->typeProfilerLog();
+    m_jit.move(TrustedImmPtr(cachedTypeProfilerLog), scratch2GPR);
+
+    // Load the next LogEntry into Scratch1.
+    m_jit.loadPtr(MacroAssembler::Address(scratch2GPR, TypeProfilerLog::currentLogEntryOffset()), scratch1GPR);
+
+    // Store the JSValue onto the log entry.
+    m_jit.storeValue(valueRegs, MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::valueOffset()));
+
+    // Store the structureID of the cell if valueRegs is a cell, otherwise, store 0 on the log entry.
+    MacroAssembler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
+    m_jit.load32(MacroAssembler::Address(valueRegs.payloadGPR(), JSCell::structureIDOffset()), scratch3GPR);
+    m_jit.store32(scratch3GPR, MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::structureIDOffset()));
+    MacroAssembler::Jump skipIsCell = m_jit.jump();
+    isNotCell.link(&m_jit);
+    m_jit.store32(TrustedImm32(0), MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::structureIDOffset()));
+    skipIsCell.link(&m_jit);
+
+    // Store the typeLocation on the log entry.
+    m_jit.move(TrustedImmPtr(cachedTypeLocation), scratch3GPR);
+    m_jit.storePtr(scratch3GPR, MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::locationOffset()));
+
+    // Increment the current log entry.
+    m_jit.addPtr(TrustedImm32(sizeof(TypeProfilerLog::LogEntry)), scratch1GPR);
+    m_jit.storePtr(scratch1GPR, MacroAssembler::Address(scratch2GPR, TypeProfilerLog::currentLogEntryOffset()));
+    MacroAssembler::Jump clearLog = m_jit.branchPtr(MacroAssembler::Equal, scratch1GPR, TrustedImmPtr(cachedTypeProfilerLog->logEndPtr()));
+    addSlowPathGenerator(
+        slowPathCall(clearLog, this, operationProcessTypeProfilerLogDFG, NoResult));
+
+    jumpToEnd.link(&m_jit);
+
+    noResult(node);
 }
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)

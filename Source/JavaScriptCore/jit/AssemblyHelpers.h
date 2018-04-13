@@ -913,6 +913,25 @@ public:
 #endif
     }
 
+    // Note that this function does not respect MasqueradesAsUndefined.
+    Jump branchIfUndefined(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branch64(Equal, regs.gpr(), TrustedImm64(JSValue::encode(jsUndefined())));
+#else
+        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::UndefinedTag));
+#endif
+    }
+
+    Jump branchIfNull(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branch64(Equal, regs.gpr(), TrustedImm64(JSValue::encode(jsNull())));
+#else
+        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::NullTag));
+#endif
+    }
+
     JumpList branchIfNotType(
         JSValueRegs, GPRReg tempGPR, const InferredType::Descriptor&,
         TagRegistersMode = HaveTagRegisters);

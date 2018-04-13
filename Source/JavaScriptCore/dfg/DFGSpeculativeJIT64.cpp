@@ -47,7 +47,6 @@
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
 #include "StringPrototype.h"
-#include "TypeProfilerLog.h"
 #include "Watchdog.h"
 
 namespace JSC { namespace DFG {
@@ -4575,74 +4574,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
     case ProfileType: {
-        JSValueOperand value(this, node->child1());
-        GPRTemporary scratch1(this);
-        GPRTemporary scratch2(this);
-        GPRTemporary scratch3(this);
-
-        GPRReg scratch1GPR = scratch1.gpr();
-        GPRReg scratch2GPR = scratch2.gpr();
-        GPRReg scratch3GPR = scratch3.gpr();
-        GPRReg valueGPR = value.gpr();
-
-        MacroAssembler::JumpList jumpToEnd;
-
-        jumpToEnd.append(m_jit.branchTest64(JITCompiler::Zero, valueGPR));
-
-        TypeLocation* cachedTypeLocation = node->typeLocation();
-        // Compile in a predictive type check, if possible, to see if we can skip writing to the log.
-        // These typechecks are inlined to match those of the 64-bit JSValue type checks.
-        if (cachedTypeLocation->m_lastSeenType == TypeUndefined)
-            jumpToEnd.append(m_jit.branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsUndefined()))));
-        else if (cachedTypeLocation->m_lastSeenType == TypeNull)
-            jumpToEnd.append(m_jit.branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsNull()))));
-        else if (cachedTypeLocation->m_lastSeenType == TypeBoolean) {
-            m_jit.move(valueGPR, scratch2GPR);
-            m_jit.and64(TrustedImm32(~1), scratch2GPR);
-            jumpToEnd.append(m_jit.branch64(MacroAssembler::Equal, scratch2GPR, MacroAssembler::TrustedImm64(ValueFalse)));
-        } else if (cachedTypeLocation->m_lastSeenType == TypeAnyInt)
-            jumpToEnd.append(m_jit.branch64(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister));
-        else if (cachedTypeLocation->m_lastSeenType == TypeNumber)
-            jumpToEnd.append(m_jit.branchTest64(MacroAssembler::NonZero, valueGPR, GPRInfo::tagTypeNumberRegister));
-        else if (cachedTypeLocation->m_lastSeenType == TypeString) {
-            MacroAssembler::Jump isNotCell = m_jit.branchIfNotCell(JSValueRegs(valueGPR));
-            jumpToEnd.append(m_jit.branchIfString(valueGPR));
-            isNotCell.link(&m_jit);
-        }
-
-        // Load the TypeProfilerLog into Scratch2.
-        TypeProfilerLog* cachedTypeProfilerLog = m_jit.vm()->typeProfilerLog();
-        m_jit.move(TrustedImmPtr(cachedTypeProfilerLog), scratch2GPR);
-
-        // Load the next LogEntry into Scratch1.
-        m_jit.loadPtr(MacroAssembler::Address(scratch2GPR, TypeProfilerLog::currentLogEntryOffset()), scratch1GPR);
-
-        // Store the JSValue onto the log entry.
-        m_jit.store64(valueGPR, MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::valueOffset()));
-
-        // Store the structureID of the cell if valueGPR is a cell, otherwise, store 0 on the log entry.
-        MacroAssembler::Jump isNotCell = m_jit.branchIfNotCell(JSValueRegs(valueGPR));
-        m_jit.load32(MacroAssembler::Address(valueGPR, JSCell::structureIDOffset()), scratch3GPR);
-        m_jit.store32(scratch3GPR, MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::structureIDOffset()));
-        MacroAssembler::Jump skipIsCell = m_jit.jump();
-        isNotCell.link(&m_jit);
-        m_jit.store32(TrustedImm32(0), MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::structureIDOffset()));
-        skipIsCell.link(&m_jit);
-
-        // Store the typeLocation on the log entry.
-        m_jit.move(TrustedImmPtr(cachedTypeLocation), scratch3GPR);
-        m_jit.storePtr(scratch3GPR, MacroAssembler::Address(scratch1GPR, TypeProfilerLog::LogEntry::locationOffset()));
-
-        // Increment the current log entry.
-        m_jit.addPtr(TrustedImm32(sizeof(TypeProfilerLog::LogEntry)), scratch1GPR);
-        m_jit.storePtr(scratch1GPR, MacroAssembler::Address(scratch2GPR, TypeProfilerLog::currentLogEntryOffset()));
-        MacroAssembler::Jump clearLog = m_jit.branchPtr(MacroAssembler::Equal, scratch1GPR, TrustedImmPtr(cachedTypeProfilerLog->logEndPtr()));
-        addSlowPathGenerator(
-            slowPathCall(clearLog, this, operationProcessTypeProfilerLogDFG, NoResult));
-
-        jumpToEnd.link(&m_jit);
-
-        noResult(node);
+        compileProfileType(node);
         break;
     }
     case ProfileControlFlow: {

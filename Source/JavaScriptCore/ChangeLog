@@ -1,3 +1,23 @@
+2018-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Remove duplicate 32bit ProfileType implementation
+        https://bugs.webkit.org/show_bug.cgi?id=184536
+
+        Reviewed by Saam Barati.
+
+        This patch removes duplicate 32bit ProfileType implementation by unifying 32/64 implementations.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileProfileType):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfUndefined):
+        (JSC::AssemblyHelpers::branchIfNull):
+
 2018-04-12  Mark Lam  <mark.lam@apple.com>
 
         Consolidate some PtrTags.
