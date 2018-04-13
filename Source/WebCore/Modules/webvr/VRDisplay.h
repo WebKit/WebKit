@@ -29,10 +29,12 @@
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "VREye.h"
+#include "VRLayerInit.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+enum ExceptionCode;
 class RequestAnimationFrameCallback;
 class ScriptedAnimationController;
 class VRDisplayCapabilities;
@@ -41,7 +43,6 @@ class VRFrameData;
 class VRPlatformDisplay;
 class VRPose;
 class VRStageParameters;
-struct VRLayerInit;
 
 class VRDisplay : public RefCounted<VRDisplay>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
@@ -53,7 +54,7 @@ public:
     using RefCounted<VRDisplay>::deref;
 
     bool isConnected() const;
-    bool isPresenting() const;
+    bool isPresenting() const { return !!m_presentingLayer; };
 
     const VRDisplayCapabilities& capabilities() const;
     RefPtr<VRStageParameters> stageParameters() const;
@@ -79,7 +80,7 @@ public:
     void requestPresent(const Vector<VRLayerInit>&, Ref<DeferredPromise>&&);
     void exitPresent(Ref<DeferredPromise>&&);
 
-    const Vector<VRLayerInit>& getLayers() const;
+    Vector<VRLayerInit> getLayers() const;
 
     void submitFrame();
 
@@ -98,6 +99,8 @@ private:
     bool canSuspendForDocumentSuspension() const override;
     void stop() override;
 
+    void stopPresenting();
+
     WeakPtr<VRPlatformDisplay> m_display;
 
     RefPtr<VRDisplayCapabilities> m_capabilities;
@@ -114,6 +117,8 @@ private:
     double m_depthFar { 10000 }; // Default value from the specs.
 
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
+
+    std::optional<VRLayerInit> m_presentingLayer;
 };
 
 } // namespace WebCore

@@ -43,7 +43,7 @@ public:
     bool hasOrientation() const { return m_flags & VRDisplayCapabilityFlagOrientation; }
     bool hasExternalDisplay() const { return m_flags & VRDisplayCapabilityFlagExternalDisplay; }
     bool canPresent() const { return m_flags & VRDisplayCapabilityFlagPresent; }
-    unsigned maxLayer() const { return canPresent() ? 1 : 0; }
+    unsigned maxLayers() const { return canPresent() ? 1 : 0; }
 
 private:
     VRDisplayCapabilities(unsigned capabilityFlags)

@@ -31,5 +31,5 @@
     readonly attribute boolean hasOrientation;
     readonly attribute boolean hasExternalDisplay;
     readonly attribute boolean canPresent;
-    readonly attribute unsigned long maxLayer;
+    readonly attribute unsigned long maxLayers;
 };

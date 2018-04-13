@@ -1,3 +1,34 @@
+2018-04-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][OpenVR] Implement requestPresent()/exitPresent() and getLayers()
+        https://bugs.webkit.org/show_bug.cgi?id=184530
+
+        Reviewed by Žan Doberšek.
+
+        WebVR apps should invoke requestPresent() to start presenting contents of a VRLayerInit
+        (right now a HTML canvas with a WebGL context) on the VRDisplay. This request might fail for
+        a variety of reasons and can be eventually cancelled with exitPresent(). Once we are
+        presenting we could access the presenting layers (right now just one) with getLayers().
+
+        Note that we are not presenting anything to the HMD yet, that will be done later in a follow
+        up patch.
+
+        I took the chance to correct a mistak in the VRDisplayCapabilities object which has a method
+        that should be called maxLayers instead of maxLayer.
+
+        * Modules/webvr/VRDisplay.cpp:
+        (WebCore::VRDisplay::requestPresent):
+        (WebCore::VRDisplay::stopPresenting):
+        (WebCore::VRDisplay::exitPresent):
+        (WebCore::VRDisplay::getLayers const):
+        (WebCore::VRDisplay::isPresenting const): Deleted. Implemented in the header file.
+        * Modules/webvr/VRDisplay.h:
+        (WebCore::VRDisplay::isPresenting const):
+        * Modules/webvr/VRDisplayCapabilities.h:
+        (WebCore::VRDisplayCapabilities::maxLayers const): Renamed from maxLayer().
+        (WebCore::VRDisplayCapabilities::maxLayer const): Deleted.
+        * Modules/webvr/VRDisplayCapabilities.idl:
+
 2018-04-13  Miguel Gomez  <magomez@igalia.com>
 
         REGRESSION(r230627): [GTK][WPE] Possible deadlock when destroying the player in non AC mode
