@@ -766,6 +766,8 @@ static FetchOptions::Destination destinationForType(CachedResource::Type type)
         // The caller is responsible for setting the appropriate destination.
         return FetchOptions::Destination::EmptyString;
     }
+    ASSERT_NOT_REACHED();
+    return FetchOptions::Destination::EmptyString;
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
