@@ -24,37 +24,30 @@
  */
 
 class LayoutState {
-    constructor(initialDisplayBox) {
+    constructor(rootContainer, rootDisplayBox) {
+        ASSERT(rootContainer.establishesFormattingContext());
+        this.m_rootContainer = rootContainer;
+        this.m_rootDisplayBox = rootDisplayBox;
+
         this.m_formattingStates = new Map();
-        this.m_initialDisplayBox = initialDisplayBox;
     }
 
-    layout(formattingRoot) {
-        let formattingState = this._createFormattingState(formattingRoot);
-        this.m_formattingStates.set(formattingRoot, formattingState);
-        this.formattingContext(formattingState).layout();
-    }
-
-    formattingContext(formattingState) {
-        if (formattingState instanceof BlockFormattingState)
-            return new BlockFormattingContext(formattingState);
-        if (formattingState instanceof InlineFormattingState)
-            return new InlineFormattingContext(formattingState);
-        ASSERT_NOT_REACHED();
-        return null;
-    }
-
-    formattingStates() {
-        return this.m_formattingStates;
+    formattingContext(formattingRoot) {
+        return this._formattingContext(this.establishedFormattingState(formattingRoot));
     }
 
     establishedFormattingState(formattingRoot) {
         ASSERT(formattingRoot.establishesFormattingContext());
-        return this.m_formattingStates.get(formattingRoot);
+        let formattingState = this.m_formattingStates.get(formattingRoot);
+        if (formattingState)
+            return formattingState;
+        formattingState = this._createFormattingState(formattingRoot);
+        this.m_formattingStates.set(formattingRoot, formattingState);
+        return formattingState;
     }
 
     formattingStateForBox(layoutBox) {
-        for (let formattingEntry of this.formattingStates()) {
+        for (let formattingEntry of this.m_formattingStates) {
             let formattingRoot = formattingEntry[0];
             let formattingState = formattingEntry[1];
             if (FormattingContext.isInFormattingContext(layoutBox, formattingRoot))
@@ -73,7 +66,7 @@ class LayoutState {
     }
 
     needsLayout() {
-        for (let formattingEntry of this.formattingStates()) {
+        for (let formattingEntry of this.m_formattingStates) {
             let formattingState = formattingEntry[1];
             if (formattingState.layoutNeeded())
                 return true;
@@ -82,19 +75,15 @@ class LayoutState {
     }
 
     displayBox(layoutBox) {
-        for (let formattingEntry of this.formattingStates()) {
+        for (let formattingEntry of this.m_formattingStates) {
             let formattingState = formattingEntry[1];
             let displayBox = formattingState.displayBoxes().get(layoutBox);
             if (displayBox)
                 return displayBox;
         }
-        // It must be the ICB.
-        ASSERT(!layoutBox.parent());
-        return this.initialDisplayBox();
-    }
-
-    initialDisplayBox() {
-        return this.m_initialDisplayBox;
+        // It must be the root container.
+        ASSERT(layoutBox == this.m_rootContainer);
+        return this.m_rootDisplayBox;
     }
 
     _createFormattingState(formattingRoot) {
@@ -107,4 +96,12 @@ class LayoutState {
         return null;
     }
 
+    _formattingContext(formattingState) {
+        if (formattingState instanceof BlockFormattingState)
+            return new BlockFormattingContext(formattingState);
+        if (formattingState instanceof InlineFormattingState)
+            return new InlineFormattingContext(formattingState);
+        ASSERT_NOT_REACHED();
+        return null;
+    }
 }

@@ -47,7 +47,7 @@ class BlockFormattingContext extends FormattingContext {
                 this.computeWidth(layoutBox);
                 this._computeStaticPosition(layoutBox);
                 if (layoutBox.establishesFormattingContext()) {
-                    this.layoutState().layout(layoutBox);
+                    this.layoutState().formattingContext(layoutBox).layout();
                     break;
                 }
                 let childToLayout = this._firstInFlowChildWithNeedsLayout(layoutBox);

@@ -81,7 +81,7 @@ class InlineFormattingContext extends FormattingContext {
         // TODO: auto width/height
         this._adjustLineForInlineContainerStart(inlineBlockContainer);
         displayBox.setWidth(Utils.width(inlineBlockContainer) + Utils.computedHorizontalBorderAndPadding(inlineBlockContainer.node()));
-        this.layoutState().layout(inlineBlockContainer);
+        this.layoutState().formattingContext(inlineBlockContainer).layout();
         displayBox.setHeight(Utils.height(inlineBlockContainer) + Utils.computedVerticalBorderAndPadding(inlineBlockContainer.node()));
         this._adjustLineForInlineContainerEnd(inlineBlockContainer);
         this._line().addInlineContainerBox(displayBox.size());
@@ -122,7 +122,7 @@ class InlineFormattingContext extends FormattingContext {
 
     _handleFloatingBox(floatingBox) {
         this._computeFloatingWidth(floatingBox);
-        this.layoutState().layout(floatingBox);
+        this.layoutState().formattingContext(floatingBox).layout();
         this._computeFloatingHeight(floatingBox);
         let displayBox = this.displayBox(floatingBox);
         // Position this float statically first, the floating context will figure it out the final position.

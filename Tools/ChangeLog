@@ -1,3 +1,36 @@
+2018-04-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Move root container ownership to layout state
+        https://bugs.webkit.org/show_bug.cgi?id=184575
+
+        Reviewed by Antti Koivisto.
+
+        Now the root container is on the associated layout state (ICB only at this point though).
+
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        (BlockFormattingContext.prototype.layout):
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        (FormattingContext.prototype._layoutOutOfFlowDescendants):
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._handleInlineBlockContainer):
+        (InlineFormattingContext.prototype._handleFloatingBox):
+        * LayoutReloaded/Layout.js:
+        (layout):
+        * LayoutReloaded/LayoutState.js:
+        (LayoutState):
+        (LayoutState.prototype.formattingContext):
+        (LayoutState.prototype.establishedFormattingState):
+        (LayoutState.prototype.formattingStateForBox):
+        (LayoutState.prototype.needsLayout):
+        (LayoutState.prototype.displayBox):
+        (LayoutState.prototype._formattingContext):
+        (LayoutState.prototype.layout): Deleted.
+        (LayoutState.prototype.formattingStates): Deleted.
+        (LayoutState.prototype.initialDisplayBox): Deleted.
+        * LayoutReloaded/Utils.js:
+        (Utils._dumpBox):
+        (Utils._findDisplayBox): Deleted.
+
 2018-04-12  Jonathan Bedard  <jbedard@apple.com>
 
         Fix --build-directory flag for run-webkit-tests

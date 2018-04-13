@@ -173,7 +173,7 @@ class FormattingContext {
         for (let outOfFlowBox of outOfFlowDescendants) {
             this._addToLayoutQueue(outOfFlowBox);
             this._computeOutOfFlowWidth(outOfFlowBox);
-            this.layoutState().layout(outOfFlowBox);
+            this.layoutState().formattingContext(outOfFlowBox).layout();
             this._computeOutOfFlowHeight(outOfFlowBox);
             this._computeOutOfFlowPosition(outOfFlowBox);
             this._removeFromLayoutQueue(outOfFlowBox);

@@ -553,17 +553,6 @@ class Utils {
         return this._dumpBox(layoutState, initialContainingBlock, 1) + this._dumpTree(layoutState, initialContainingBlock, 2);
     }
 
-    static _findDisplayBox(layoutState, box) {
-        for (let formattingEntry of layoutState.formattingStates()) {
-            let formattingState = formattingEntry[1];
-            let displayBox = formattingState.displayBoxes().get(box);
-            if (displayBox)
-                return displayBox;
-        }
-        ASSERT(!box.parent());
-        return layoutState.initialDisplayBox();
-    }
-
     static _dumpBox(layoutState, box, level) {
         // Skip anonymous boxes for now -This is the case where WebKit does not generate an anon inline container for text content where the text is a direct child
         // of a block container.
@@ -574,7 +563,7 @@ class Utils {
         }
         if (box.name() == "RenderInline") {
             if (box.isInFlowPositioned()) {
-                let displayBox = Utils._findDisplayBox(layoutState, box);
+                let displayBox = layoutState.displayBox(box);
                 let boxRect = displayBox.rect();
                 return indentation + box.node().tagName + " " + box.name() + "  (" + Utils.precisionRoundWithDecimals(boxRect.left()) + ", " + Utils.precisionRoundWithDecimals(boxRect.top()) + ")\n";
             }
@@ -582,7 +571,7 @@ class Utils {
         }
         if (box.isAnonymous())
             return "";
-        let displayBox = Utils._findDisplayBox(layoutState, box);
+        let displayBox = layoutState.displayBox(box);
         let boxRect = displayBox.rect();
         return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + boxRect.left() + "," + boxRect.top() + ") size " + boxRect.width() + "x" + boxRect.height() + "\n";
     }
