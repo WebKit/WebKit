@@ -32,13 +32,13 @@ function privateInitializeReadableStreamBYOBReader(stream)
 
     if (!@isReadableStream(stream))
         @throwTypeError("ReadableStreamBYOBReader needs a ReadableStream");
-    if (!@isReadableByteStreamController(stream.@readableStreamController))
+    if (!@isReadableByteStreamController(@getByIdDirectPrivate(stream, "readableStreamController")))
         @throwTypeError("ReadableStreamBYOBReader needs a ReadableByteStreamController");
     if (@isReadableStreamLocked(stream))
         @throwTypeError("ReadableStream is locked");
 
     @readableStreamReaderGenericInitialize(this, stream);
-    this.@readIntoRequests = [];
+    @putByIdDirectPrivate(this, "readIntoRequests", []);
 
     return this;
 }
@@ -51,22 +51,22 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
         @throwTypeError("ReadableByteStreamController needs a ReadableStream");
 
     // readableStreamController is initialized with null value.
-    if (stream.@readableStreamController !== null)
+    if (@getByIdDirectPrivate(stream, "readableStreamController") !== null)
         @throwTypeError("ReadableStream already has a controller");
 
-    this.@controlledReadableStream = stream;
-    this.@underlyingByteSource = underlyingByteSource;
-    this.@pullAgain = false;
-    this.@pulling = false;
+    @putByIdDirectPrivate(this, "controlledReadableStream", stream);
+    @putByIdDirectPrivate(this, "underlyingByteSource", underlyingByteSource);
+    @putByIdDirectPrivate(this, "pullAgain", false);
+    @putByIdDirectPrivate(this, "pulling", false);
     @readableByteStreamControllerClearPendingPullIntos(this);
-    this.@queue = @newQueue();
-    this.@started = false;
-    this.@closeRequested = false;
+    @putByIdDirectPrivate(this, "queue", @newQueue());
+    @putByIdDirectPrivate(this, "started", false);
+    @putByIdDirectPrivate(this, "closeRequested", false);
 
     let hwm = @toNumber(highWaterMark);
     if (@isNaN(hwm) || hwm < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
-    this.@strategyHWM = hwm;
+    @putByIdDirectPrivate(this, "strategyHWM", hwm);
 
     let autoAllocateChunkSize = underlyingByteSource.autoAllocateChunkSize;
     if (autoAllocateChunkSize !== @undefined) {
@@ -74,22 +74,22 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
         if (autoAllocateChunkSize <= 0 || autoAllocateChunkSize === @Number.POSITIVE_INFINITY || autoAllocateChunkSize === @Number.NEGATIVE_INFINITY)
             @throwRangeError("autoAllocateChunkSize value is negative or equal to positive or negative infinity");
     }
-    this.@autoAllocateChunkSize = autoAllocateChunkSize;
-    this.@pendingPullIntos = [];
+    @putByIdDirectPrivate(this, "autoAllocateChunkSize", autoAllocateChunkSize);
+    @putByIdDirectPrivate(this, "pendingPullIntos", []);
 
     const controller = this;
     const startResult = @promiseInvokeOrNoopNoCatch(underlyingByteSource, "start", [this]).@then(() => {
-        controller.@started = true;
-        @assert(!controller.@pulling);
-        @assert(!controller.@pullAgain);
+        @putByIdDirectPrivate(controller, "started", true);
+        @assert(!@getByIdDirectPrivate(controller, "pulling"));
+        @assert(!@getByIdDirectPrivate(controller, "pullAgain"));
         @readableByteStreamControllerCallPullIfNeeded(controller);
     }, (error) => {
-        if (stream.@state === @streamReadable)
+        if (@getByIdDirectPrivate(stream, "state") === @streamReadable)
             @readableByteStreamControllerError(controller, error);
     });
 
-    this.@cancel = @readableByteStreamControllerCancel;
-    this.@pull = @readableByteStreamControllerPull;
+    @putByIdDirectPrivate(this, "cancel", @readableByteStreamControllerCancel);
+    @putByIdDirectPrivate(this, "pull", @readableByteStreamControllerPull);
 
     return this;
 }
@@ -98,8 +98,8 @@ function privateInitializeReadableStreamBYOBRequest(controller, view)
 {
     "use strict";
 
-    this.@associatedReadableByteStreamController = controller;
-    this.@view = view;
+    @putByIdDirectPrivate(this, "associatedReadableByteStreamController", controller);
+    @putByIdDirectPrivate(this, "view", view);
 }
 
 function isReadableByteStreamController(controller)
@@ -108,7 +108,7 @@ function isReadableByteStreamController(controller)
 
     // Same test mechanism as in isReadableStreamDefaultController (ReadableStreamInternals.js).
     // See corresponding function for explanations.
-    return @isObject(controller) && !!controller.@underlyingByteSource;
+    return @isObject(controller) && !!@getByIdDirectPrivate(controller, "underlyingByteSource");
 }
 
 function isReadableStreamBYOBRequest(byobRequest)
@@ -117,7 +117,7 @@ function isReadableStreamBYOBRequest(byobRequest)
 
     // Same test mechanism as in isReadableStreamDefaultController (ReadableStreamInternals.js).
     // See corresponding function for explanations.
-    return @isObject(byobRequest) && !!byobRequest.@associatedReadableByteStreamController;
+    return @isObject(byobRequest) && !!@getByIdDirectPrivate(byobRequest, "associatedReadableByteStreamController");
 }
 
 function isReadableStreamBYOBReader(reader)
@@ -127,50 +127,52 @@ function isReadableStreamBYOBReader(reader)
     // Spec tells to return true only if reader has a readIntoRequests internal slot.
     // However, since it is a private slot, it cannot be checked using hasOwnProperty().
     // Since readIntoRequests is initialized with an empty array, the following test is ok.
-    return @isObject(reader) && !!reader.@readIntoRequests;
+    return @isObject(reader) && !!@getByIdDirectPrivate(reader, "readIntoRequests");
 }
 
 function readableByteStreamControllerCancel(controller, reason)
 {
     "use strict";
 
-    if (controller.@pendingPullIntos.length > 0)
-        controller.@pendingPullIntos[0].bytesFilled = 0;
-    controller.@queue = @newQueue();
-    return @promiseInvokeOrNoop(controller.@underlyingByteSource, "cancel", [reason]);
+    var pendingPullIntos = @getByIdDirectPrivate(controller, "pendingPullIntos");
+    if (pendingPullIntos.length > 0)
+        pendingPullIntos[0].bytesFilled = 0;
+    @putByIdDirectPrivate(controller, "queue", @newQueue());
+    return @promiseInvokeOrNoop(@getByIdDirectPrivate(controller, "underlyingByteSource"), "cancel", [reason]);
 }
 
 function readableByteStreamControllerError(controller, e)
 {
     "use strict";
 
-    @assert(controller.@controlledReadableStream.@state === @streamReadable);
+    @assert(@getByIdDirectPrivate(@getByIdDirectPrivate(controller, "controlledReadableStream"), "state") === @streamReadable);
     @readableByteStreamControllerClearPendingPullIntos(controller);
-    controller.@queue = @newQueue();
-    @readableStreamError(controller.@controlledReadableStream, e);
+    @putByIdDirectPrivate(controller, "queue", @newQueue());
+    @readableStreamError(@getByIdDirectPrivate(controller, "controlledReadableStream"), e);
 }
 
 function readableByteStreamControllerClose(controller)
 {
     "use strict";
 
-    @assert(!controller.@closeRequested);
-    @assert(controller.@controlledReadableStream.@state === @streamReadable);
+    @assert(!@getByIdDirectPrivate(controller, "closeRequested"));
+    @assert(@getByIdDirectPrivate(@getByIdDirectPrivate(controller, "controlledReadableStream"), "state") === @streamReadable);
 
-    if (controller.@queue.size > 0) {
-        controller.@closeRequested = true;
+    if (@getByIdDirectPrivate(controller, "queue").size > 0) {
+        @putByIdDirectPrivate(controller, "closeRequested", true);
         return;
     }
 
-    if (controller.@pendingPullIntos.length > 0) {
-        if (controller.@pendingPullIntos[0].bytesFilled > 0) {
+    var pendingPullIntos = @getByIdDirectPrivate(controller, "pendingPullIntos");
+    if (pendingPullIntos.length > 0) {
+        if (pendingPullIntos[0].bytesFilled > 0) {
             const e = new @TypeError("Close requested while there remain pending bytes");
             @readableByteStreamControllerError(controller, e);
             throw e;
         }
     }
 
-    @readableStreamClose(controller.@controlledReadableStream);
+    @readableStreamClose(@getByIdDirectPrivate(controller, "controlledReadableStream"));
 }
 
 function readableByteStreamControllerClearPendingPullIntos(controller)
@@ -178,44 +180,47 @@ function readableByteStreamControllerClearPendingPullIntos(controller)
     "use strict";
 
     @readableByteStreamControllerInvalidateBYOBRequest(controller);
-    controller.@pendingPullIntos = [];
+    @putByIdDirectPrivate(controller, "pendingPullIntos", []);
 }
 
 function readableByteStreamControllerGetDesiredSize(controller)
 {
-   "use strict";
+    "use strict";
 
-   const stream = controller.@controlledReadableStream;
+    const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
+    const state = @getByIdDirectPrivate(stream, "state");
 
-   if (stream.@state === @streamErrored)
-       return null;
-   if (stream.@state === @streamClosed)
-       return 0;
+    if (state === @streamErrored)
+        return null;
+    if (state === @streamClosed)
+        return 0;
 
-   return controller.@strategyHWM - controller.@queue.size;
+    return @getByIdDirectPrivate(controller, "strategyHWM") - @getByIdDirectPrivate(controller, "queue").size;
 }
 
 function readableStreamHasBYOBReader(stream)
 {
     "use strict";
 
-    return stream.@reader !== @undefined && @isReadableStreamBYOBReader(stream.@reader);
+    const reader = @getByIdDirectPrivate(stream, "reader");
+    return reader !== @undefined && @isReadableStreamBYOBReader(reader);
 }
 
 function readableStreamHasDefaultReader(stream)
 {
     "use strict";
 
-    return stream.@reader !== @undefined && @isReadableStreamDefaultReader(stream.@reader);
+    const reader = @getByIdDirectPrivate(stream, "reader");
+    return reader !== @undefined && @isReadableStreamDefaultReader(reader);
 }
 
 function readableByteStreamControllerHandleQueueDrain(controller) {
 
     "use strict";
 
-    @assert(controller.@controlledReadableStream.@state === @streamReadable);
-    if (!controller.@queue.size && controller.@closeRequested)
-        @readableStreamClose(controller.@controlledReadableStream);
+    @assert(@getByIdDirectPrivate(@getByIdDirectPrivate(controller, "controlledReadableStream"), "state") === @streamReadable);
+    if (!@getByIdDirectPrivate(controller, "queue").size && @getByIdDirectPrivate(controller, "closeRequested"))
+        @readableStreamClose(@getByIdDirectPrivate(controller, "controlledReadableStream"));
     else
         @readableByteStreamControllerCallPullIfNeeded(controller);
 }
@@ -224,13 +229,13 @@ function readableByteStreamControllerPull(controller)
 {
     "use strict";
 
-    const stream = controller.@controlledReadableStream;
+    const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
     @assert(@readableStreamHasDefaultReader(stream));
 
-    if (controller.@queue.size > 0) {
-        @assert(stream.@reader.@readRequests.length === 0);
-        const entry = controller.@queue.content.@shift();
-        controller.@queue.size -= entry.byteLength;
+    if (@getByIdDirectPrivate(controller, "queue").size > 0) {
+        @assert(@getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readRequests").length === 0);
+        const entry = @getByIdDirectPrivate(controller, "queue").content.@shift();
+        @getByIdDirectPrivate(controller, "queue").size -= entry.byteLength;
         @readableByteStreamControllerHandleQueueDrain(controller);
         let view;
         try {
@@ -241,23 +246,23 @@ function readableByteStreamControllerPull(controller)
         return @Promise.@resolve({value: view, done: false});
     }
 
-    if (controller.@autoAllocateChunkSize !== @undefined) {
+    if (@getByIdDirectPrivate(controller, "autoAllocateChunkSize") !== @undefined) {
         let buffer;
         try {
-            buffer = new @ArrayBuffer(controller.@autoAllocateChunkSize);
+            buffer = new @ArrayBuffer(@getByIdDirectPrivate(controller, "autoAllocateChunkSize"));
         } catch (error) {
             return @Promise.@reject(error);
         }
         const pullIntoDescriptor = {
             buffer,
             byteOffset: 0,
-            byteLength: controller.@autoAllocateChunkSize,
+            byteLength: @getByIdDirectPrivate(controller, "autoAllocateChunkSize"),
             bytesFilled: 0,
             elementSize: 1,
             ctor: @Uint8Array,
             readerType: 'default'
         };
-        controller.@pendingPullIntos.@push(pullIntoDescriptor);
+        @getByIdDirectPrivate(controller, "pendingPullIntos").@push(pullIntoDescriptor);
     }
 
     const promise = @readableStreamAddReadRequest(stream);
@@ -269,17 +274,17 @@ function readableByteStreamControllerShouldCallPull(controller)
 {
     "use strict";
 
-    const stream = controller.@controlledReadableStream;
+    const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
 
-    if (stream.@state !== @streamReadable)
+    if (@getByIdDirectPrivate(stream, "state") !== @streamReadable)
         return false;
-    if (controller.@closeRequested)
+    if (@getByIdDirectPrivate(controller, "closeRequested"))
         return false;
-    if (!controller.@started)
+    if (!@getByIdDirectPrivate(controller, "started"))
         return false;
-    if (@readableStreamHasDefaultReader(stream) && stream.@reader.@readRequests.length > 0)
+    if (@readableStreamHasDefaultReader(stream) && @getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readRequests").length > 0)
         return true;
-    if (@readableStreamHasBYOBReader(stream) && stream.@reader.@readIntoRequests.length > 0)
+    if (@readableStreamHasBYOBReader(stream) && @getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readIntoRequests").length > 0)
         return true;
     if (@readableByteStreamControllerGetDesiredSize(controller) > 0)
         return true;
@@ -293,21 +298,21 @@ function readableByteStreamControllerCallPullIfNeeded(controller)
     if (!@readableByteStreamControllerShouldCallPull(controller))
         return;
 
-    if (controller.@pulling) {
-        controller.@pullAgain = true;
+    if (@getByIdDirectPrivate(controller, "pulling")) {
+        @putByIdDirectPrivate(controller, "pullAgain", true);
         return;
     }
 
-    @assert(!controller.@pullAgain);
-    controller.@pulling = true;
-    @promiseInvokeOrNoop(controller.@underlyingByteSource, "pull", [controller]).@then(() => {
-        controller.@pulling = false;
-        if (controller.@pullAgain) {
-            controller.@pullAgain = false;
+    @assert(!@getByIdDirectPrivate(controller, "pullAgain"));
+    @putByIdDirectPrivate(controller, "pulling", true);
+    @promiseInvokeOrNoop(@getByIdDirectPrivate(controller, "underlyingByteSource"), "pull", [controller]).@then(() => {
+        @putByIdDirectPrivate(controller, "pulling", false);
+        if (@getByIdDirectPrivate(controller, "pullAgain")) {
+            @putByIdDirectPrivate(controller, "pullAgain", false);
             @readableByteStreamControllerCallPullIfNeeded(controller);
         }
     }, (error) => {
-        if (controller.@controlledReadableStream.@state === @streamReadable)
+        if (@getByIdDirectPrivate(@getByIdDirectPrivate(controller, "controlledReadableStream"), "state") === @streamReadable)
             @readableByteStreamControllerError(controller, error);
     });
 }
@@ -327,19 +332,19 @@ function readableByteStreamControllerEnqueue(controller, chunk)
 {
     "use strict";
 
-    const stream = controller.@controlledReadableStream;
-    @assert(!controller.@closeRequested);
-    @assert(stream.@state === @streamReadable);
+    const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
+    @assert(!@getByIdDirectPrivate(controller, "closeRequested"));
+    @assert(@getByIdDirectPrivate(stream, "state") === @streamReadable);
     const buffer = chunk.buffer;
     const byteOffset = chunk.byteOffset;
     const byteLength = chunk.byteLength;
     const transferredBuffer = @transferBufferToCurrentRealm(buffer);
 
     if (@readableStreamHasDefaultReader(stream)) {
-        if (!stream.@reader.@readRequests.length)
+        if (!@getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readRequests").length)
             @readableByteStreamControllerEnqueueChunk(controller, transferredBuffer, byteOffset, byteLength);
         else {
-            @assert(!controller.@queue.content.length);
+            @assert(!@getByIdDirectPrivate(controller, "queue").content.length);
             let transferredView = new @Uint8Array(transferredBuffer, byteOffset, byteLength);
             @readableStreamFulfillReadRequest(stream, transferredView, false);
         }
@@ -361,21 +366,21 @@ function readableByteStreamControllerEnqueueChunk(controller, buffer, byteOffset
 {
     "use strict";
 
-    controller.@queue.content.@push({
+    @getByIdDirectPrivate(controller, "queue").content.@push({
         buffer: buffer,
         byteOffset: byteOffset,
         byteLength: byteLength
     });
-    controller.@queue.size += byteLength;
+    @getByIdDirectPrivate(controller, "queue").size += byteLength;
 }
 
 function readableByteStreamControllerRespondWithNewView(controller, view)
 {
     "use strict";
 
-    @assert(controller.@pendingPullIntos.length > 0);
+    @assert(@getByIdDirectPrivate(controller, "pendingPullIntos").length > 0);
 
-    let firstDescriptor = controller.@pendingPullIntos[0];
+    let firstDescriptor = @getByIdDirectPrivate(controller, "pendingPullIntos")[0];
 
     if (firstDescriptor.byteOffset + firstDescriptor.bytesFilled !== view.byteOffset)
         @throwRangeError("Invalid value for view.byteOffset");
@@ -396,7 +401,7 @@ function readableByteStreamControllerRespond(controller, bytesWritten)
     if (@isNaN(bytesWritten) || bytesWritten === @Number.POSITIVE_INFINITY || bytesWritten < 0 )
         @throwRangeError("bytesWritten has an incorrect value");
 
-    @assert(controller.@pendingPullIntos.length > 0);
+    @assert(@getByIdDirectPrivate(controller, "pendingPullIntos").length > 0);
 
     @readableByteStreamControllerRespondInternal(controller, bytesWritten);
 }
@@ -405,15 +410,15 @@ function readableByteStreamControllerRespondInternal(controller, bytesWritten)
 {
     "use strict";
 
-    let firstDescriptor = controller.@pendingPullIntos[0];
-    let stream = controller.@controlledReadableStream;
+    let firstDescriptor = @getByIdDirectPrivate(controller, "pendingPullIntos")[0];
+    let stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
 
-    if (stream.@state === @streamClosed) {
+    if (@getByIdDirectPrivate(stream, "state") === @streamClosed) {
         if (bytesWritten !== 0)
             @throwTypeError("bytesWritten is different from 0 even though stream is closed");
         @readableByteStreamControllerRespondInClosedState(controller, firstDescriptor);
     } else {
-        @assert(stream.@state === @streamReadable);
+        @assert(@getByIdDirectPrivate(stream, "state") === @streamReadable);
         @readableByteStreamControllerRespondInReadableState(controller, bytesWritten, firstDescriptor);
     }
 }
@@ -425,7 +430,7 @@ function readableByteStreamControllerRespondInReadableState(controller, bytesWri
     if (pullIntoDescriptor.bytesFilled + bytesWritten > pullIntoDescriptor.byteLength)
         @throwRangeError("bytesWritten value is too great");
 
-    @assert(controller.@pendingPullIntos.length === 0 || controller.@pendingPullIntos[0] === pullIntoDescriptor);
+    @assert(@getByIdDirectPrivate(controller, "pendingPullIntos").length === 0 || @getByIdDirectPrivate(controller, "pendingPullIntos")[0] === pullIntoDescriptor);
     @readableByteStreamControllerInvalidateBYOBRequest(controller);
     pullIntoDescriptor.bytesFilled += bytesWritten;
 
@@ -443,7 +448,7 @@ function readableByteStreamControllerRespondInReadableState(controller, bytesWri
 
     pullIntoDescriptor.buffer = @transferBufferToCurrentRealm(pullIntoDescriptor.buffer);
     pullIntoDescriptor.bytesFilled -= remainderSize;
-    @readableByteStreamControllerCommitDescriptor(controller.@controlledReadableStream, pullIntoDescriptor);
+    @readableByteStreamControllerCommitDescriptor(@getByIdDirectPrivate(controller, "controlledReadableStream"), pullIntoDescriptor);
     @readableByteStreamControllerProcessPullDescriptors(controller);
 }
 
@@ -454,10 +459,10 @@ function readableByteStreamControllerRespondInClosedState(controller, firstDescr
     firstDescriptor.buffer = @transferBufferToCurrentRealm(firstDescriptor.buffer);
     @assert(firstDescriptor.bytesFilled === 0);
 
-    if (@readableStreamHasBYOBReader(controller.@controlledReadableStream)) {
-        while (controller.@controlledReadableStream.@reader.@readIntoRequests.length > 0) {
+    if (@readableStreamHasBYOBReader(@getByIdDirectPrivate(controller, "controlledReadableStream"))) {
+        while (@getByIdDirectPrivate(@getByIdDirectPrivate(@getByIdDirectPrivate(controller, "controlledReadableStream"), "reader"), "readIntoRequests").length > 0) {
             let pullIntoDescriptor = @readableByteStreamControllerShiftPendingDescriptor(controller);
-            @readableByteStreamControllerCommitDescriptor(controller.@controlledReadableStream, pullIntoDescriptor);
+            @readableByteStreamControllerCommitDescriptor(@getByIdDirectPrivate(controller, "controlledReadableStream"), pullIntoDescriptor);
         }
     }
 }
@@ -467,14 +472,14 @@ function readableByteStreamControllerProcessPullDescriptors(controller)
 {
     "use strict";
 
-    @assert(!controller.@closeRequested);
-    while (controller.@pendingPullIntos.length > 0) {
-        if (controller.@queue.size === 0)
+    @assert(!@getByIdDirectPrivate(controller, "closeRequested"));
+    while (@getByIdDirectPrivate(controller, "pendingPullIntos").length > 0) {
+        if (@getByIdDirectPrivate(controller, "queue").size === 0)
             return;
-        let pullIntoDescriptor = controller.@pendingPullIntos[0];
+        let pullIntoDescriptor = @getByIdDirectPrivate(controller, "pendingPullIntos")[0];
         if (@readableByteStreamControllerFillDescriptorFromQueue(controller, pullIntoDescriptor)) {
             @readableByteStreamControllerShiftPendingDescriptor(controller);
-            @readableByteStreamControllerCommitDescriptor(controller.@controlledReadableStream, pullIntoDescriptor);
+            @readableByteStreamControllerCommitDescriptor(@getByIdDirectPrivate(controller, "controlledReadableStream"), pullIntoDescriptor);
         }
     }
 }
@@ -485,8 +490,8 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
     "use strict";
 
     const currentAlignedBytes = pullIntoDescriptor.bytesFilled - (pullIntoDescriptor.bytesFilled % pullIntoDescriptor.elementSize);
-    const maxBytesToCopy = controller.@queue.size < pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled ?
-                controller.@queue.size : pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled;
+    const maxBytesToCopy = @getByIdDirectPrivate(controller, "queue").size < pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled ?
+                @getByIdDirectPrivate(controller, "queue").size : pullIntoDescriptor.byteLength - pullIntoDescriptor.bytesFilled;
     const maxBytesFilled = pullIntoDescriptor.bytesFilled + maxBytesToCopy;
     const maxAlignedBytes = maxBytesFilled - (maxBytesFilled % pullIntoDescriptor.elementSize);
     let totalBytesToCopyRemaining = maxBytesToCopy;
@@ -498,7 +503,7 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
     }
 
     while (totalBytesToCopyRemaining > 0) {
-        let headOfQueue = controller.@queue.content[0];
+        let headOfQueue = @getByIdDirectPrivate(controller, "queue").content[0];
         const bytesToCopy = totalBytesToCopyRemaining < headOfQueue.byteLength ? totalBytesToCopyRemaining : headOfQueue.byteLength;
         // Copy appropriate part of pullIntoDescriptor.buffer to headOfQueue.buffer.
         // Remark: this implementation is not completely aligned on the definition of CopyDataBlockBytes
@@ -509,21 +514,21 @@ function readableByteStreamControllerFillDescriptorFromQueue(controller, pullInt
         new @Uint8Array(pullIntoDescriptor.buffer).set(new @Uint8Array(headOfQueue.buffer, headOfQueue.byteOffset, bytesToCopy), destStart);
 
         if (headOfQueue.byteLength === bytesToCopy)
-            controller.@queue.content.@shift();
+            @getByIdDirectPrivate(controller, "queue").content.@shift();
         else {
             headOfQueue.byteOffset += bytesToCopy;
             headOfQueue.byteLength -= bytesToCopy;
         }
 
-        controller.@queue.size -= bytesToCopy;
-        @assert(controller.@pendingPullIntos.length === 0 || controller.@pendingPullIntos[0] === pullIntoDescriptor);
+        @getByIdDirectPrivate(controller, "queue").size -= bytesToCopy;
+        @assert(@getByIdDirectPrivate(controller, "pendingPullIntos").length === 0 || @getByIdDirectPrivate(controller, "pendingPullIntos")[0] === pullIntoDescriptor);
         @readableByteStreamControllerInvalidateBYOBRequest(controller);
         pullIntoDescriptor.bytesFilled += bytesToCopy;
         totalBytesToCopyRemaining -= bytesToCopy;
     }
 
     if (!ready) {
-        @assert(controller.@queue.size === 0);
+        @assert(@getByIdDirectPrivate(controller, "queue").size === 0);
         @assert(pullIntoDescriptor.bytesFilled > 0);
         @assert(pullIntoDescriptor.bytesFilled < pullIntoDescriptor.elementSize);
     }
@@ -536,7 +541,7 @@ function readableByteStreamControllerShiftPendingDescriptor(controller)
 {
     "use strict";
 
-    let descriptor = controller.@pendingPullIntos.@shift();
+    let descriptor = @getByIdDirectPrivate(controller, "pendingPullIntos").@shift();
     @readableByteStreamControllerInvalidateBYOBRequest(controller);
     return descriptor;
 }
@@ -545,11 +550,12 @@ function readableByteStreamControllerInvalidateBYOBRequest(controller)
 {
     "use strict";
 
-    if (controller.@byobRequest === @undefined)
+    if (@getByIdDirectPrivate(controller, "byobRequest") === @undefined)
         return;
-    controller.@byobRequest.@associatedReadableByteStreamController = @undefined;
-    controller.@byobRequest.@view = @undefined;
-    controller.@byobRequest = @undefined;
+    const byobRequest = @getByIdDirectPrivate(controller, "byobRequest");
+    @putByIdDirectPrivate(byobRequest, "associatedReadableByteStreamController", @undefined);
+    @putByIdDirectPrivate(byobRequest, "view", @undefined);
+    @putByIdDirectPrivate(controller, "byobRequest", @undefined);
 }
 
 // Spec name: readableByteStreamControllerCommitPullIntoDescriptor (shortened for readability).
@@ -557,9 +563,9 @@ function readableByteStreamControllerCommitDescriptor(stream, pullIntoDescriptor
 {
     "use strict";
 
-    @assert(stream.@state !== @streamErrored);
+    @assert(@getByIdDirectPrivate(stream, "state") !== @streamErrored);
     let done = false;
-    if (stream.@state === @streamClosed) {
+    if (@getByIdDirectPrivate(stream, "state") === @streamClosed) {
         @assert(!pullIntoDescriptor.bytesFilled);
         done = true;
     }
@@ -587,28 +593,28 @@ function readableStreamFulfillReadIntoRequest(stream, chunk, done)
 {
     "use strict";
 
-    stream.@reader.@readIntoRequests.@shift().@resolve.@call(@undefined, {value: chunk, done: done});
+    @getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readIntoRequests").@shift().@resolve.@call(@undefined, {value: chunk, done: done});
 }
 
 function readableStreamBYOBReaderRead(reader, view)
 {
     "use strict";
 
-    const stream = reader.@ownerReadableStream;
+    const stream = @getByIdDirectPrivate(reader, "ownerReadableStream");
     @assert(!!stream);
 
-    stream.@disturbed = true;
-    if (stream.@state === @streamErrored)
-        return @Promise.@reject(stream.@storedError);
+    @putByIdDirectPrivate(stream, "disturbed", true);
+    if (@getByIdDirectPrivate(stream, "state") === @streamErrored)
+        return @Promise.@reject(@getByIdDirectPrivate(stream, "storedError"));
 
-    return @readableByteStreamControllerPullInto(stream.@readableStreamController, view);
+    return @readableByteStreamControllerPullInto(@getByIdDirectPrivate(stream, "readableStreamController"), view);
 }
 
 function readableByteStreamControllerPullInto(controller, view)
 {
     "use strict";
 
-    const stream = controller.@controlledReadableStream;
+    const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
     let elementSize = 1;
     // Spec describes that in the case where view is a TypedArray, elementSize
     // should be set to the size of an element (e.g. 2 for UInt16Array). For
@@ -641,24 +647,24 @@ function readableByteStreamControllerPullInto(controller, view)
         readerType: 'byob'
     };
 
-    if (controller.@pendingPullIntos.length) {
+    if (@getByIdDirectPrivate(controller, "pendingPullIntos").length) {
         pullIntoDescriptor.buffer = @transferBufferToCurrentRealm(pullIntoDescriptor.buffer);
-        controller.@pendingPullIntos.@push(pullIntoDescriptor);
+        @getByIdDirectPrivate(controller, "pendingPullIntos").@push(pullIntoDescriptor);
         return @readableStreamAddReadIntoRequest(stream);
     }
 
-    if (stream.@state === @streamClosed) {
+    if (@getByIdDirectPrivate(stream, "state") === @streamClosed) {
         const emptyView = new ctor(pullIntoDescriptor.buffer, pullIntoDescriptor.byteOffset, 0);
         return @Promise.@resolve({ value: emptyView, done: true });
     }
 
-    if (controller.@queue.size > 0) {
+    if (@getByIdDirectPrivate(controller, "queue").size > 0) {
         if (@readableByteStreamControllerFillDescriptorFromQueue(controller, pullIntoDescriptor)) {
             const filledView = @readableByteStreamControllerConvertDescriptor(pullIntoDescriptor);
             @readableByteStreamControllerHandleQueueDrain(controller);
             return @Promise.@resolve({ value: filledView, done: false });
         }
-        if (controller.@closeRequested) {
+        if (@getByIdDirectPrivate(controller, "closeRequested")) {
             const e = new @TypeError("Closing stream has been requested");
             @readableByteStreamControllerError(controller, e);
             return @Promise.@reject(e);
@@ -666,7 +672,7 @@ function readableByteStreamControllerPullInto(controller, view)
     }
 
     pullIntoDescriptor.buffer = @transferBufferToCurrentRealm(pullIntoDescriptor.buffer);
-    controller.@pendingPullIntos.@push(pullIntoDescriptor);
+    @getByIdDirectPrivate(controller, "pendingPullIntos").@push(pullIntoDescriptor);
     const promise = @readableStreamAddReadIntoRequest(stream);
     @readableByteStreamControllerCallPullIfNeeded(controller);
     return promise;
@@ -676,11 +682,11 @@ function readableStreamAddReadIntoRequest(stream)
 {
     "use strict";
 
-    @assert(@isReadableStreamBYOBReader(stream.@reader));
-    @assert(stream.@state === @streamReadable || stream.@state === @streamClosed);
+    @assert(@isReadableStreamBYOBReader(@getByIdDirectPrivate(stream, "reader")));
+    @assert(@getByIdDirectPrivate(stream, "state") === @streamReadable || @getByIdDirectPrivate(stream, "state") === @streamClosed);
 
     const readRequest = @newPromiseCapability(@Promise);
-    stream.@reader.@readIntoRequests.@push(readRequest);
+    @getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readIntoRequests").@push(readRequest);
 
     return readRequest.@promise;
 }

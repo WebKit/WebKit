@@ -41,15 +41,15 @@ function initializeReadableStream(underlyingSource, strategy)
     if (strategy !== @undefined && !@isObject(strategy))
         @throwTypeError("ReadableStream constructor takes an object as second argument, if any");
 
-    this.@state = @streamReadable;
-    this.@reader = @undefined;
-    this.@storedError = @undefined;
-    this.@disturbed = false;
+    @putByIdDirectPrivate(this, "state", @streamReadable);
+    @putByIdDirectPrivate(this, "reader", @undefined);
+    @putByIdDirectPrivate(this, "storedError", @undefined);
+    @putByIdDirectPrivate(this, "disturbed", false);
     // Initialized with null value to enable distinction with undefined case.
-    this.@readableStreamController = null;
+    @putByIdDirectPrivate(this, "readableStreamController", null);
 
     const type = underlyingSource.type;
-    const typeString = @String(type);
+    const typeString = @toString(type);
 
     if (typeString === "bytes") {
         if (!@readableByteStreamAPIEnabled())
@@ -61,11 +61,11 @@ function initializeReadableStream(underlyingSource, strategy)
             @throwRangeError("Strategy for a ReadableByteStreamController cannot have a size");
 
         let readableByteStreamControllerConstructor = @ReadableByteStreamController;
-        this.@readableStreamController = new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark);
+        @putByIdDirectPrivate(this, "readableStreamController", new @ReadableByteStreamController(this, underlyingSource, strategy.highWaterMark));
     } else if (type === @undefined) {
         if (strategy.highWaterMark === @undefined)
             strategy.highWaterMark = 1;
-        this.@readableStreamController = new @ReadableStreamDefaultController(this, underlyingSource, strategy.size, strategy.highWaterMark);
+        @putByIdDirectPrivate(this, "readableStreamController", new @ReadableStreamDefaultController(this, underlyingSource, strategy.size, strategy.highWaterMark));
     } else
         @throwRangeError("Invalid type for underlying source");
 
@@ -113,7 +113,7 @@ function pipeThrough(streams, options)
     const readable = streams.readable;
     const promise = this.pipeTo(writable, options);
     if (@isPromise(promise))
-        promise.@promiseIsHandled = true;
+        @putByIdDirectPrivate(promise, "promiseIsHandled", true);
     return readable;
 }
 

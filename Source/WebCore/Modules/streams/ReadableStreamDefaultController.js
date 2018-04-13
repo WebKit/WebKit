@@ -45,7 +45,7 @@ function error(error)
     if (!@isReadableStreamDefaultController(this))
         throw @makeThisTypeError("ReadableStreamDefaultController", "error");
 
-    if (this.@controlledReadableStream.@state !== @streamReadable)
+    if (@getByIdDirectPrivate(@getByIdDirectPrivate(this, "controlledReadableStream"), "state") !== @streamReadable)
         @throwTypeError("ReadableStream is not readable");
 
     @readableStreamDefaultControllerError(this, error);

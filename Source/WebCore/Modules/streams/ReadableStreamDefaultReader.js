@@ -32,7 +32,7 @@ function cancel(reason)
     if (!@isReadableStreamDefaultReader(this))
         return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "cancel"));
 
-    if (!this.@ownerReadableStream)
+    if (!@getByIdDirectPrivate(this, "ownerReadableStream"))
         return @Promise.@reject(new @TypeError("cancel() called on a reader owned by no readable stream"));
 
     return @readableStreamReaderGenericCancel(this, reason);
@@ -44,7 +44,7 @@ function read()
 
     if (!@isReadableStreamDefaultReader(this))
         return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "read"));
-    if (!this.@ownerReadableStream)
+    if (!@getByIdDirectPrivate(this, "ownerReadableStream"))
         return @Promise.@reject(new @TypeError("read() called on a reader owned by no readable stream"));
 
     return @readableStreamDefaultReaderRead(this);
@@ -57,10 +57,10 @@ function releaseLock()
     if (!@isReadableStreamDefaultReader(this))
         throw @makeThisTypeError("ReadableStreamDefaultReader", "releaseLock");
 
-    if (!this.@ownerReadableStream)
+    if (!@getByIdDirectPrivate(this, "ownerReadableStream"))
         return;
 
-    if (this.@readRequests.length)
+    if (@getByIdDirectPrivate(this, "readRequests").length)
         @throwTypeError("There are still pending read requests, cannot release the lock");
 
     @readableStreamReaderGenericRelease(this);
@@ -74,5 +74,5 @@ function closed()
     if (!@isReadableStreamDefaultReader(this))
         return @Promise.@reject(@makeGetterTypeError("ReadableStreamDefaultReader", "closed"));
 
-    return this.@closedPromiseCapability.@promise;
+    return @getByIdDirectPrivate(this, "closedPromiseCapability").@promise;
 }

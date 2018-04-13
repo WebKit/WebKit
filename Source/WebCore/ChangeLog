@@ -1,3 +1,120 @@
+2018-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebCore] Use @getByIdDirectPrivate / @putByIdDirectPrivate in WebCore JS
+        https://bugs.webkit.org/show_bug.cgi?id=184401
+
+        Rubber stamped by Saam Barati.
+
+        Apply bug 183970 changes to WebCore JS too. This offers solid type checking
+        with @getByIdDirectPrivate().
+
+        * Modules/mediastream/RTCPeerConnection.js:
+        (initializeRTCPeerConnection):
+        (getLocalStreams):
+        (getStreamById):
+        (addStream):
+        * Modules/mediastream/RTCPeerConnectionInternals.js:
+        (isRTCPeerConnection):
+        * Modules/streams/ReadableByteStreamController.js:
+        (enqueue):
+        (error):
+        (close):
+        (getter.byobRequest):
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableStreamBYOBReader):
+        (privateInitializeReadableByteStreamController):
+        (privateInitializeReadableStreamBYOBRequest):
+        (isReadableByteStreamController):
+        (isReadableStreamBYOBRequest):
+        (isReadableStreamBYOBReader):
+        (readableByteStreamControllerCancel):
+        (readableByteStreamControllerError):
+        (readableByteStreamControllerClose):
+        (readableByteStreamControllerClearPendingPullIntos):
+        (readableByteStreamControllerGetDesiredSize):
+        (readableStreamHasBYOBReader):
+        (readableStreamHasDefaultReader):
+        (readableByteStreamControllerHandleQueueDrain):
+        (readableByteStreamControllerPull):
+        (readableByteStreamControllerShouldCallPull):
+        (readableByteStreamControllerCallPullIfNeeded):
+        (readableByteStreamControllerEnqueue):
+        (readableByteStreamControllerEnqueueChunk):
+        (readableByteStreamControllerRespondWithNewView):
+        (readableByteStreamControllerRespond):
+        (readableByteStreamControllerRespondInternal):
+        (readableByteStreamControllerRespondInReadableState):
+        (readableByteStreamControllerRespondInClosedState):
+        (readableByteStreamControllerProcessPullDescriptors):
+        (readableByteStreamControllerFillDescriptorFromQueue):
+        (readableByteStreamControllerShiftPendingDescriptor):
+        (readableByteStreamControllerInvalidateBYOBRequest):
+        (readableByteStreamControllerCommitDescriptor):
+        (readableStreamFulfillReadIntoRequest):
+        (readableByteStreamControllerPullInto):
+        (readableStreamAddReadIntoRequest):
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream):
+        (pipeThrough):
+        * Modules/streams/ReadableStreamBYOBReader.js:
+        (cancel):
+        (read):
+        (releaseLock):
+        (getter.closed):
+        * Modules/streams/ReadableStreamBYOBRequest.js:
+        (respond):
+        (respondWithNewView):
+        (getter.view):
+        * Modules/streams/ReadableStreamDefaultController.js:
+        (error):
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        (cancel):
+        (read):
+        (releaseLock):
+        (getter.closed):
+        * Modules/streams/ReadableStreamInternals.js:
+        (privateInitializeReadableStreamDefaultReader):
+        (readableStreamReaderGenericInitialize):
+        (readableStreamDefaultControllerError):
+        (readableStreamPipeTo):
+        (readableStreamTee):
+        (isReadableStream):
+        (isReadableStreamDefaultReader):
+        (isReadableStreamDefaultController):
+        (readableStreamError):
+        (readableStreamDefaultControllerCallPullIfNeeded):
+        (readableStreamDefaultControllerGetDesiredSize):
+        (readableStreamReaderGenericCancel):
+        (readableStreamCancel):
+        (readableStreamDefaultControllerCancel):
+        (readableStreamDefaultControllerPull):
+        (readableStreamDefaultControllerClose):
+        (readableStreamClose):
+        (readableStreamFulfillReadRequest):
+        (readableStreamDefaultReaderRead):
+        (readableStreamAddReadRequest):
+        (isReadableStreamDisturbed):
+        (readableStreamReaderGenericRelease):
+        (readableStreamDefaultControllerCanCloseOrEnqueue):
+        (privateInitializeReadableStreamDefaultController): Deleted.
+        * Modules/streams/StreamInternals.js:
+        (validateAndNormalizeQueuingStrategy):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        (abort):
+        (close):
+        (write):
+        (getter.closed):
+        (getter.ready):
+        (getter.state):
+        * Modules/streams/WritableStreamInternals.js:
+        (isWritableStream):
+        (syncWritableStreamStateWithQueue):
+        (errorWritableStream):
+        (callOrScheduleWritableStreamAdvanceQueue):
+        * bindings/js/JSDOMBindingInternals.js:
+        (mapLikeForEach):
+
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn CSS Animations and CSS Transitions as Web Animations on by default

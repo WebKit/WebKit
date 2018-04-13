@@ -36,7 +36,7 @@ function enqueueOperation(peerConnection, operation)
 {
     "use strict";
 
-    const operations = peerConnection.@operations;
+    const operations = @getByIdDirectPrivate(peerConnection, "operations");
 
     function runNext() {
         operations.@shift();
@@ -133,5 +133,5 @@ function isRTCPeerConnection(connection)
 {
     "use strict";
 
-    return @isObject(connection) && !!connection.@operations;
+    return @isObject(connection) && !!@getByIdDirectPrivate(connection, "operations");
 }

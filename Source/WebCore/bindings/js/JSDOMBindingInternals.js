@@ -28,7 +28,7 @@
 function mapLikeForEach(callback)
 {
     "use strict";
-    this.@backingMap.forEach((value, key, map) => {
+    @getByIdDirectPrivate(this, "backingMap").forEach((value, key, map) => {
         callback(value, key, this);
     });
 }

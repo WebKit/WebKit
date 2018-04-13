@@ -32,10 +32,10 @@ function respond(bytesWritten)
     if (!@isReadableStreamBYOBRequest(this))
         throw @makeThisTypeError("ReadableStreamBYOBRequest", "respond");
 
-    if (this.@associatedReadableByteStreamController === @undefined)
+    if (@getByIdDirectPrivate(this, "associatedReadableByteStreamController") === @undefined)
         @throwTypeError("ReadableStreamBYOBRequest.associatedReadableByteStreamController is undefined");
 
-    return @readableByteStreamControllerRespond(this.@associatedReadableByteStreamController, bytesWritten);
+    return @readableByteStreamControllerRespond(@getByIdDirectPrivate(this, "associatedReadableByteStreamController"), bytesWritten);
 }
 
 function respondWithNewView(view)
@@ -45,7 +45,7 @@ function respondWithNewView(view)
     if (!@isReadableStreamBYOBRequest(this))
         throw @makeThisTypeError("ReadableStreamBYOBRequest", "respond");
 
-    if (this.@associatedReadableByteStreamController === @undefined)
+    if (@getByIdDirectPrivate(this, "associatedReadableByteStreamController") === @undefined)
         @throwTypeError("ReadableStreamBYOBRequest.associatedReadableByteStreamController is undefined");
 
     if (!@isObject(view))
@@ -54,7 +54,7 @@ function respondWithNewView(view)
     if (!@ArrayBuffer.@isView(view))
         @throwTypeError("Provided view is not an ArrayBufferView");
 
-    return @readableByteStreamControllerRespondWithNewView(this.@associatedReadableByteStreamController, view);
+    return @readableByteStreamControllerRespondWithNewView(@getByIdDirectPrivate(this, "associatedReadableByteStreamController"), view);
 }
 
 @getter
@@ -65,5 +65,5 @@ function view()
     if (!@isReadableStreamBYOBRequest(this))
         throw @makeGetterTypeError("ReadableStreamBYOBRequest", "view");
 
-    return this.@view;
+    return @getByIdDirectPrivate(this, "view");
 }
