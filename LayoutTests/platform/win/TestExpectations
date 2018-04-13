@@ -4045,5 +4045,8 @@ webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate
 webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate-scale-transition-overlap.html [ Failure ]
 webkit.org/b/184482 legacy-animation-engine/compositing/layer-creation/translate-transition-overlap.html [ Failure ]
 webkit.org/b/184482 legacy-animation-engine/compositing/reflections/load-video-in-reflection.html [ Failure ]
+webkit.org/b/184482 legacy-animation-engine/animations/3d/change-transform-in-end-event.html [ Skip ]
+webkit.org/b/184482 legacy-animation-engine/compositing/reflections/animation-inside-reflection.html [ Skip ]
+webkit.org/b/184482 legacy-animation-engine/compositing/reflections/nested-reflection-animated.html [ Skip ]
 
 webkit.org/b/184537 fast/forms/file/entries-api/webkitEntries-nonascii-folder-name.html [ Skip ]
