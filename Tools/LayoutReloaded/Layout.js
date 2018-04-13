@@ -23,12 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function layout(window, viewportSize) {
-    let treeBuilder = new TreeBuilder();
-    let initialContainingBlock = treeBuilder.createTree(window.document, window.renderTreeStructure);
-    let displayBox = new Display.Box();
-    displayBox.setSize(viewportSize);
-    let layoutState = new LayoutState(initialContainingBlock, displayBox);
-    layoutState.formattingContext(initialContainingBlock).layout();
-    return Utils.layoutTreeDump(initialContainingBlock, layoutState);
+function layout(window, viewportSize, layoutState) {
+    let rootContainer = null;
+    if (layoutState)
+        rootContainer = layoutState.rootContainer();
+    else {
+        // This is top level layout (initial containing block, etc).
+        let treeBuilder = new TreeBuilder();
+        rootContainer = treeBuilder.createTree(window.document, window.renderTreeStructure);
+        let displayBox = new Display.Box();
+        displayBox.setSize(viewportSize);
+        layoutState = new LayoutState(rootContainer, displayBox);
+    }
+    layoutState.formattingContext(rootContainer).layout();
+    return layoutState;
 }

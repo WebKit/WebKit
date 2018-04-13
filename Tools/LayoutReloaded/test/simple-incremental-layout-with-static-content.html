@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div style="width: 100px; height: 100px; border: 1px solid green"></div>
+<script>
+testRunner.waitUntilDone();
+setInterval(function() {
+    testRunner.forceLayout();
+}, 10);
+
+setTimeout(function() {
+    testRunner.notifyDone();
+}, 100);
+</script>
+</body>
+</html>

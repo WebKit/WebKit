@@ -549,8 +549,8 @@ class Utils {
     }
 
     // "RenderView at (0,0) size 1317x366\n HTML RenderBlock at (0,0) size 1317x116\n  BODY RenderBody at (8,8) size 1301x100\n   DIV RenderBlock at (0,0) size 100x100\n";
-    static layoutTreeDump(initialContainingBlock, layoutState) {
-        return this._dumpBox(layoutState, initialContainingBlock, 1) + this._dumpTree(layoutState, initialContainingBlock, 2);
+    static layoutTreeDump(layoutState) {
+        return this._dumpBox(layoutState, layoutState.rootContainer(), 1) + this._dumpTree(layoutState, layoutState.rootContainer(), 2);
     }
 
     static _dumpBox(layoutState, box, level) {

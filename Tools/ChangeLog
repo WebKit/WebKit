@@ -1,5 +1,26 @@
 2018-04-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Add support for incremental layout
+        https://bugs.webkit.org/show_bug.cgi?id=184578
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/Layout.js:
+        (layout):
+        * LayoutReloaded/LayoutState.js:
+        (LayoutState.prototype.rootContainer):
+        (LayoutState.prototype.setNeedsLayoutById):
+        * LayoutReloaded/Utils.js:
+        (Utils.layoutTreeDump):
+        * LayoutReloaded/test/TestHarness.js:
+        (verifyLayout):
+        (runLayout):
+        (verifyLayoutTreeDump): Deleted.
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/simple-incremental-layout-with-static-content.html: Added.
+
+2018-04-12  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Move root container ownership to layout state
         https://bugs.webkit.org/show_bug.cgi?id=184575
 

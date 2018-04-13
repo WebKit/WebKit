@@ -36,6 +36,10 @@ class LayoutState {
         return this._formattingContext(this.establishedFormattingState(formattingRoot));
     }
 
+    rootContainer() {
+        return this.m_rootContainer;
+    }
+
     establishedFormattingState(formattingRoot) {
         ASSERT(formattingRoot.establishesFormattingContext());
         let formattingState = this.m_formattingStates.get(formattingRoot);
@@ -55,6 +59,10 @@ class LayoutState {
         }
         ASSERT_NOT_REACHED();
         return null;
+    }
+
+    // This is for testing only.
+    setNeedsLayoutById(layoutBoxId) {
     }
 
     setNeedsLayout(layoutBox) {

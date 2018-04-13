@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function verifyLayoutTreeDump(renderTreeDump, layoutTreeDump)
+function verifyLayout(renderTreeDump)
 {
+    let layoutTreeDump = Utils.layoutTreeDump(layoutState);
     console.log("WebKit:\n" + renderTreeDump + renderTreeDump.length);
     console.log("Reloaded:\n" + layoutTreeDump + layoutTreeDump.length);
     if (renderTreeDump == layoutTreeDump)
@@ -32,9 +33,8 @@ function verifyLayoutTreeDump(renderTreeDump, layoutTreeDump)
     return false;
 }
 
-function runLayout(testWindow) {
+function runLayout(testWindow, layoutState) {
     testWindow.document.body.offsetHeight;
     let viewportSize = new LayoutSize(parseFloat(testWindow.innerWidth), parseFloat(testWindow.innerHeight));
-    let layoutTreeDump = layout(testWindow, viewportSize);
-    return verifyLayoutTreeDump(testWindow.simplifiedRenderTree, layoutTreeDump);
+    return layout(testWindow, viewportSize, layoutState);
 }
