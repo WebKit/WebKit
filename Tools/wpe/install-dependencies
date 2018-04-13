@@ -123,6 +123,7 @@ function installDependenciesWithApt {
         libvorbis-dev \
         libvpx-dev \
         libxcb-xkb-dev \
+        libxkbcommon-dev \
         libxml-libxml-perl \
         libwayland-dev \
         luajit \
@@ -209,6 +210,7 @@ function installDependenciesWithPacman {
         libvorbis \
         libvpx \
         libxcb \
+        libxkbcommon \
         luajit \
         mesa \
         mesa-libgl \
@@ -295,6 +297,7 @@ function installDependenciesWithDnf {
         libvorbis-devel \
         libvpx-devel \
         libxcb-devel \
+        libxkbcommon-devel \
         libXrandr-devel \
         luajit \
         luajit-devel \

@@ -16,7 +16,6 @@
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
       <dep package="harfbuzz"/>
-      <dep package="xkbcommon"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="woff2"/>
       <dep package="wpebackend"/>
@@ -41,8 +40,6 @@
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
       href="https://github.com/"/>
-  <repository type="tarball" name="xkbcommon.org"
-      href="http://xkbcommon.org"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="tarball" name="gnupg.org"
@@ -165,13 +162,6 @@
             hash="sha1:c6f7b99986f93c9df78653c3e6a3b5043f65145e"/>
   </autotools>
 
-  <autotools id="xkbcommon"
-             autogen-sh="configure">
-    <branch module="download/libxkbcommon-0.5.0.tar.xz" version="0.5.0"
-            repo="xkbcommon.org"
-            hash="sha1:7127993bfb69e13cdff25fb8b3c8f26ce6be5bfa"/>
-  </autotools>
-
   <cmake id="wpebackend">
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend.git"
             tag="3013faaebab42e7ef7497b3850a2902978eb3d6f" />
@@ -181,7 +171,6 @@
     <dependencies>
       <dep package="wpebackend"/>
       <dep package="glib"/>
-      <dep package="xkbcommon"/>
     </dependencies>
     <branch repo="github.com" module="Igalia/WPEBackend-fdo.git"
             tag="064c60806422ff1bb32cef7fb1de68923aecba82"/>
