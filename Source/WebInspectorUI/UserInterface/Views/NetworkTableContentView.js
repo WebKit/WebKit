@@ -1404,7 +1404,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _waterfallPopoverContentForResource(resource)
     {
         let contentElement = document.createElement("div");
-        contentElement.className = "waterfall-popover";
+        contentElement.className = "waterfall-popover-content";
 
         if (!resource.hasResponse() || !resource.timingData.startTime || !resource.timingData.responseEnd) {
             contentElement.textContent = WI.UIString("Resource has no timing data");
@@ -1422,7 +1422,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         if (!this._waterfallPopover) {
             this._waterfallPopover = new WI.Popover;
-            this._waterfallPopover.backgroundStyle = WI.Popover.BackgroundStyle.White;
+            this._waterfallPopover.element.classList.add("waterfall-popover");
         }
 
         if (this._waterfallPopover.visible)

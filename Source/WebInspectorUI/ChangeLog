@@ -1,3 +1,42 @@
+2018-04-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Refactoring: move popover styles from JS to CSS
+        https://bugs.webkit.org/show_bug.cgi?id=184558
+
+        Reviewed by Brian Burg.
+
+        Introduce several CSS variables to customize popover appearance in CSS
+        and not JavaScript.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForResource):
+        (WI.NetworkTableContentView.prototype._handleMousedownWaterfall):
+        * UserInterface/Views/Popover.css:
+        (.popover):
+        * UserInterface/Views/Popover.js:
+        (WI.Popover):
+        (WI.Popover.prototype._drawBackground):
+        Replace `var` with `let`.
+
+        (WI.Popover.prototype.get backgroundStyle): Deleted.
+        (WI.Popover.prototype.set backgroundStyle): Deleted.
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (.popover.waterfall-popover):
+        (.waterfall-popover-content .resource-timing-breakdown):
+        (.waterfall-popover .resource-timing-breakdown): Deleted.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForResource):
+        (WI.NetworkTableContentView.prototype._handleMousedownWaterfall):
+        * UserInterface/Views/Popover.css:
+        (.popover):
+        * UserInterface/Views/Popover.js:
+        (WI.Popover):
+        (WI.Popover.prototype._drawBackground):
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (.popover.waterfall-popover):
+        (.waterfall-popover-content .resource-timing-breakdown):
+
 2018-04-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Errors glyph doesn't fully change to blue when active

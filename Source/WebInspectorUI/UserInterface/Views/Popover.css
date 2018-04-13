@@ -28,9 +28,15 @@
     min-width: 20px;
     min-height: 20px;
     box-sizing: border-box;
-    background-image: -webkit-canvas(popover);
     pointer-events: none;
     z-index: var(--z-index-popover);
+
+    --popover-text-color: black;
+    --popover-background-color: var(--panel-background-color);
+    --popover-border-color: hsla(0, 0%, 0%, 0.25);
+    --popover-shadow-color: hsla(0, 0%, 0%, 0.5);
+
+    background-image: -webkit-canvas(popover);
 }
 
 .popover.arrow-up {

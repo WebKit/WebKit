@@ -23,7 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.waterfall-popover .resource-timing-breakdown {
+.popover.waterfall-popover {
+    --popover-background-color: white;
+}
+
+.waterfall-popover-content .resource-timing-breakdown {
     margin: 5px;
 }
 
