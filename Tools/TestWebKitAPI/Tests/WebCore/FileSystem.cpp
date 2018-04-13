@@ -139,4 +139,12 @@ TEST_F(FileSystemTest, GetFileMetadataSymlink)
     EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata.value().length));
 }
 
+TEST_F(FileSystemTest, UnicodeDirectoryName)
+{
+    String path = String::fromUTF8("/test/a\u0308lo/test.txt");
+    String directoryName = FileSystem::directoryName(path);
+    String expectedDirectoryName = String::fromUTF8("/test/a\u0308lo");
+    EXPECT_TRUE(expectedDirectoryName == directoryName);
+}
+
 }

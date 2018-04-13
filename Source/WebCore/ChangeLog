@@ -1,3 +1,22 @@
+2018-04-13  Chris Dumez  <cdumez@apple.com>
+
+        input.webkitEntries does not work as expected when folder contains accented chars
+        https://bugs.webkit.org/show_bug.cgi?id=184517
+        <rdar://problem/39265537>
+
+        Reviewed by Alex Christensen.
+
+        Use String::fromUTF8() to construct a WTF String from the char* returned by
+        dirname() in FileSystem::directoryName(). Previously, we were just calling
+        the String constructor, which would treat the input as latin 1 instead of
+        UTF-8.
+
+        Change is covered by an API test rather than a layout test due to file versioning
+        limitations.
+
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::FileSystem::directoryName):
+
 2018-04-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebCore] Use @getByIdDirectPrivate / @putByIdDirectPrivate in WebCore JS
