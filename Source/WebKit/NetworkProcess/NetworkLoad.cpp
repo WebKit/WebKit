@@ -191,15 +191,6 @@ bool NetworkLoad::shouldCaptureExtraNetworkLoadMetrics() const
     return m_client.get().shouldCaptureExtraNetworkLoadMetrics();
 }
 
-NetworkLoadClient::ShouldContinueDidReceiveResponse NetworkLoad::sharedDidReceiveResponse(ResourceResponse&& response)
-{
-    response.setSource(ResourceResponse::Source::Network);
-    if (m_parameters.needsCertificateInfo)
-        response.includeCertificateInfo();
-
-    return m_client.get().didReceiveResponse(WTFMove(response));
-}
-
 void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
 {
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
@@ -343,7 +334,11 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Response
         m_recorder->recordResponseReceived(response);
 #endif
 
-    if (sharedDidReceiveResponse(WTFMove(response)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::No) {
+    response.setSource(ResourceResponse::Source::Network);
+    if (m_parameters.needsCertificateInfo)
+        response.includeCertificateInfo();
+
+    if (m_client.get().didReceiveResponse(WTFMove(response)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::No) {
         m_responseCompletionHandler = WTFMove(completionHandler);
         return;
     }

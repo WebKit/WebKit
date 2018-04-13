@@ -79,7 +79,6 @@ private:
 #endif
     void initialize(NetworkSession&);
 
-    NetworkLoadClient::ShouldContinueDidReceiveResponse sharedDidReceiveResponse(WebCore::ResourceResponse&&);
     void sharedWillSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceResponse&&);
 
     // NetworkDataTaskClient

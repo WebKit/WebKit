@@ -1,3 +1,24 @@
+2018-04-13  Daniel Bates  <dabates@apple.com>
+
+        Inline NetworkLoad::sharedDidReceiveResponse() into NetworkLoad::notifyDidReceiveResponse()
+        https://bugs.webkit.org/show_bug.cgi?id=184592
+
+        Reviewed by Alex Christensen.
+
+        Following the removal of the pre-Network Session code in r227364, NetworkLoad::sharedDidReceiveResponse()
+        is only referenced from NetworkLoad::notifyDidReceiveResponse(). We should inline its
+        implementation into the NetworkLoad::notifyDidReceiveResponse(), remove a function
+        call, and the cognitive load to follow such a function call when reading the code.
+
+        No functionality changed. So, no new tests.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::notifyDidReceiveResponse): Moved the implementation of NetworkLoad::sharedDidReceiveResponse()
+        into this function.
+        (WebKit::NetworkLoad::sharedDidReceiveResponse): Deleted. Moved its implementation into
+        NetworkLoad::notifyDidReceiveResponse().
+        * NetworkProcess/NetworkLoad.h:
+
 2018-04-13  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r230468): Improper assertion firing under STP
