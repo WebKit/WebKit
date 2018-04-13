@@ -85,7 +85,7 @@
 #endif
 
 #if USE(GSTREAMER)
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #endif
 
 #if PLATFORM(IOS)

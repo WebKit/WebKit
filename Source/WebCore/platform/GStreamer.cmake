@@ -8,7 +8,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     list(APPEND WebCore_SOURCES
         platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/GRefPtrGStreamer.cpp
-        platform/graphics/gstreamer/GStreamerUtilities.cpp
+        platform/graphics/gstreamer/GStreamerCommon.cpp
         platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
         platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp

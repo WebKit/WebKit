@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "MainThreadNotifier.h"
 #include <gst/gst.h>
 #include <wtf/Lock.h>

@@ -29,7 +29,7 @@
 
 #include "InbandTextTrackPrivateGStreamer.h"
 
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include "Logging.h"
 #include <glib-object.h>
 #include <gst/gst.h>

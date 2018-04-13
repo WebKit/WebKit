@@ -23,6 +23,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
+#include "GStreamerCommon.h"
 #include <gst/gst.h>
 #include <wtf/text/WTFString.h>
 

@@ -22,9 +22,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "GRefPtrGStreamer.h"
-#include "GStreamerUtilities.h"
-#include "GUniquePtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "HTTPHeaderNames.h"
 #include "MainThreadNotifier.h"
 #include "MediaPlayer.h"

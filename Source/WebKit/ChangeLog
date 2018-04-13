@@ -1,3 +1,20 @@
+2018-04-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Convert GStreamerUtilities in GStreamerCommon and include the GStreamer smart pointer traits
+        https://bugs.webkit.org/show_bug.cgi?id=184533
+
+        Reviewed by Philippe Normand.
+
+        Renamed GStreamerUtilities* files into GStreamerCommon* and
+        modified files including them accordingly. Include
+        GRefPtrGStreamer.h and GUniquePtrGStreamer.h in GStreamerCommon.h
+        to avoid problems destroying objects when those files are
+        forgotten to be included.
+
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        * WebProcess/soup/WebProcessSoup.cpp:
+
 2018-04-12  Beth Dakin  <bdakin@apple.com>
 
         Fix the MOBILE_WIFI build

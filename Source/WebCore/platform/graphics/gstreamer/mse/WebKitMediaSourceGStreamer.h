@@ -25,7 +25,7 @@
 
 #if ENABLE(VIDEO) && ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "MediaPlayer.h"
 #include "MediaSource.h"
 #include "MediaSourcePrivate.h"

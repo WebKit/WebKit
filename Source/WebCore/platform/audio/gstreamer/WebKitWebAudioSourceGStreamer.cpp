@@ -25,8 +25,7 @@
 
 #include "AudioBus.h"
 #include "AudioIOCallback.h"
-#include "GRefPtrGStreamer.h"
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
 #include <gst/pbutils/missing-plugins.h>

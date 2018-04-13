@@ -1,3 +1,54 @@
+2018-04-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Convert GStreamerUtilities in GStreamerCommon and include the GStreamer smart pointer traits
+        https://bugs.webkit.org/show_bug.cgi?id=184533
+
+        Reviewed by Philippe Normand.
+
+        Renamed GStreamerUtilities* files into GStreamerCommon* and
+        modified files including them accordingly. Include
+        GRefPtrGStreamer.h and GUniquePtrGStreamer.h in GStreamerCommon.h
+        to avoid problems destroying objects when those files are
+        forgotten to be included.
+
+        * Modules/webaudio/AudioContext.cpp:
+        * platform/GStreamer.cmake:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/GStreamerCommon.cpp: Renamed from Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.cpp.
+        * platform/graphics/gstreamer/GStreamerCommon.h: Renamed from Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.h.
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp:
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h:
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/GStreamerMediaDescription.cpp:
+        * platform/graphics/gstreamer/mse/GStreamerMediaDescription.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h:
+
 2018-04-12  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Fix clang build error in CurlContext.cpp

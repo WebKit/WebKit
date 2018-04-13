@@ -25,8 +25,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
-#include "GRefPtrGStreamer.h"
-#include "GUniquePtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include <wtf/Condition.h>
 #include <wtf/RunLoop.h>
 

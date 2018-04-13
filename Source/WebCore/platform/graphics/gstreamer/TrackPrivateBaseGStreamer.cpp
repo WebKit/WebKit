@@ -29,7 +29,7 @@
 
 #include "TrackPrivateBaseGStreamer.h"
 
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include "Logging.h"
 #include "TrackPrivateBase.h"
 #include <glib-object.h>

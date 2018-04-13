@@ -22,7 +22,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 
 #include <cairo.h>
 #include <gst/gst.h>

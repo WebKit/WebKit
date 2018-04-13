@@ -24,7 +24,7 @@
 
 #include "BitmapImage.h"
 #include "FloatRect.h"
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 
 #include <gst/gst.h>
 #include <gst/video/video-frame.h>

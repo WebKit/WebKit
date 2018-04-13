@@ -25,7 +25,7 @@
 #define MediaPlayerPrivateGStreamerBase_h
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"

@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include "GraphicsContext.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"

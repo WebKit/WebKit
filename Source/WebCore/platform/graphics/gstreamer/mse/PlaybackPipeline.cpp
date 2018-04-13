@@ -25,9 +25,8 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
 #include "AudioTrackPrivateGStreamer.h"
+#include "GStreamerCommon.h"
 #include "MediaSampleGStreamer.h"
-#include "GStreamerUtilities.h"
-#include "GUniquePtrGStreamer.h"
 #include "MediaSample.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "VideoTrackPrivateGStreamer.h"

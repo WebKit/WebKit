@@ -22,8 +22,6 @@
 #include "config.h"
 #include "GStreamerEMEUtilities.h"
 
-#include "GRefPtrGStreamer.h"
-
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);

@@ -36,7 +36,7 @@
 #include "WebProcessMessages.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/GStreamerUtilities.h>
+#include <WebCore/GStreamerCommon.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
 #include <cstdlib>

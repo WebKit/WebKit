@@ -19,11 +19,10 @@
 
 
 #include "config.h"
+#include "GStreamerCommon.h"
 
 #if USE(GSTREAMER)
-#include "GStreamerUtilities.h"
 
-#include "GRefPtrGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
 #include <gst/audio/audio-info.h>

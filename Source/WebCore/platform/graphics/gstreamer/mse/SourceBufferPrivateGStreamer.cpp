@@ -38,7 +38,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
 #include "ContentType.h"
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSample.h"
 #include "MediaSourceClientGStreamerMSE.h"

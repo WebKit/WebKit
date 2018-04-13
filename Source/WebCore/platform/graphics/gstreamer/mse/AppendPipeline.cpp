@@ -24,10 +24,9 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
 #include "AudioTrackPrivateGStreamer.h"
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "GStreamerEMEUtilities.h"
 #include "GStreamerMediaDescription.h"
-#include "GStreamerUtilities.h"
 #include "MediaSampleGStreamer.h"
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "MediaDescription.h"

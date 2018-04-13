@@ -30,8 +30,7 @@
 #include "VideoSinkGStreamer.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-#include "GRefPtrGStreamer.h"
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include "IntSize.h"
 #include <glib.h>
 #include <gst/gst.h>

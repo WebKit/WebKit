@@ -30,7 +30,7 @@
 
 #include "AppendPipeline.h"
 #include "AudioTrackPrivateGStreamer.h"
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "MIMETypeRegistry.h"
 #include "MediaDescription.h"

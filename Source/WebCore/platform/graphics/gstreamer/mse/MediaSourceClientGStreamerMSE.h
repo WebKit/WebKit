@@ -22,7 +22,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
 
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
 #include "WebKitMediaSourceGStreamer.h"

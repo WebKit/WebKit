@@ -29,7 +29,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "FileSystem.h"
-#include "GStreamerUtilities.h"
+#include "GStreamerCommon.h"
 #include "HTTPHeaderNames.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"

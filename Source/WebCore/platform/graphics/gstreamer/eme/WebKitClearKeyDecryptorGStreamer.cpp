@@ -24,7 +24,6 @@
 
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 
-#include "GRefPtrGStreamer.h"
 #include "GStreamerEMEUtilities.h"
 #include <gcrypt.h>
 #include <gst/base/gstbytereader.h>

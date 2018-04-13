@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
-#include "GRefPtrGStreamer.h"
+#include "GStreamerCommon.h"
 #include "TrackPrivateBaseGStreamer.h"
 #include "VideoTrackPrivate.h"
 
