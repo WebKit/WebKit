@@ -191,22 +191,6 @@ bool NetworkLoad::shouldCaptureExtraNetworkLoadMetrics() const
     return m_client.get().shouldCaptureExtraNetworkLoadMetrics();
 }
 
-void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, ResourceResponse&& redirectResponse)
-{
-    // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
-    ASSERT(!redirectResponse.isNull());
-    ASSERT(RunLoop::isMain());
-
-#if ENABLE(NETWORK_CAPTURE)
-    if (m_recorder)
-        m_recorder->recordRedirectReceived(request, redirectResponse);
-#endif
-
-    auto oldRequest = WTFMove(m_currentRequest);
-    m_currentRequest = request;
-    m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
-}
-
 bool NetworkLoad::isAllowedToAskUserForCredentials() const
 {
     return m_client.get().isAllowedToAskUserForCredentials();
@@ -249,11 +233,22 @@ void NetworkLoad::setPendingDownload(PendingDownload& pendingDownload)
     m_task->setPendingDownload(pendingDownload);
 }
 
-void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& response, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
+void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
+    ASSERT(!redirectResponse.isNull());
+    ASSERT(RunLoop::isMain());
     ASSERT(!m_redirectCompletionHandler);
+
     m_redirectCompletionHandler = WTFMove(completionHandler);
-    sharedWillSendRedirectedRequest(WTFMove(request), WTFMove(response));
+
+#if ENABLE(NETWORK_CAPTURE)
+    if (m_recorder)
+        m_recorder->recordRedirectReceived(request, redirectResponse);
+#endif
+
+    auto oldRequest = WTFMove(m_currentRequest);
+    m_currentRequest = request;
+    m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
 }
 
 void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
