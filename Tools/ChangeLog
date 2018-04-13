@@ -1,3 +1,9 @@
+2018-04-13  Zalan Bujtas  <zalan@apple.com>
+
+        Rebaseline LayoutReloaded patch file (collectRenderersWithNeedsLayout).
+
+        * LayoutReloaded/misc/LayoutReloadedWebKit.patch:
+
 2018-04-13  Jonathan Bedard  <jbedard@apple.com>
 
         Boot fewer simulators in CI/EWS machines

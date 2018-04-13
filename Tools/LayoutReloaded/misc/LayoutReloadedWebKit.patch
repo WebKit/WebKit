@@ -24,10 +24,10 @@ index f5d0e5d2c3e..3945090acf3 100644
      $(WebCore)/dom/TreeWalker.idl \
      $(WebCore)/dom/UIEvent.idl \
 diff --git a/Source/WebCore/Sources.txt b/Source/WebCore/Sources.txt
-index ff942b36a44..5bc30f914af 100644
+index a461719e2dd..2d48c60758b 100644
 --- a/Source/WebCore/Sources.txt
 +++ b/Source/WebCore/Sources.txt
-@@ -1797,7 +1797,9 @@ rendering/InlineBox.cpp
+@@ -1802,7 +1802,9 @@ rendering/InlineBox.cpp
  rendering/InlineElementBox.cpp
  rendering/InlineFlowBox.cpp
  rendering/InlineIterator.cpp
@@ -38,7 +38,7 @@ index ff942b36a44..5bc30f914af 100644
  rendering/LayoutRepainter.cpp
  rendering/LayoutState.cpp
 diff --git a/Source/WebCore/WebCore.xcodeproj/project.pbxproj b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
-index 2ae0c8a22d5..edcd82aa95a 100644
+index a6a138060f6..91fb8a5cd04 100644
 --- a/Source/WebCore/WebCore.xcodeproj/project.pbxproj
 +++ b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
 @@ -396,6 +396,10 @@
@@ -52,7 +52,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  		11CB2789203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */; };
  		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
  		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-@@ -5699,6 +5703,13 @@
+@@ -5706,6 +5710,13 @@
  		119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFormControls.h; sourceTree = "<group>"; };
  		119340A01FEE024000935F1E /* RenderTreeBuilderBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderBlock.cpp; sourceTree = "<group>"; };
  		119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlock.h; sourceTree = "<group>"; };
@@ -66,7 +66,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  		11C5F1162003E7750001AE60 /* RenderTreeBuilderInline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderInline.cpp; sourceTree = "<group>"; };
  		11C5F1182003E7760001AE60 /* RenderTreeBuilderInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderInline.h; sourceTree = "<group>"; };
  		11C5F11D2003F69E0001AE60 /* RenderTreeBuilderBlockFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlockFlow.h; sourceTree = "<group>"; };
-@@ -22115,6 +22126,7 @@
+@@ -22145,6 +22156,7 @@
  		A83B79100CCB001B000B0825 /* Core */ = {
  			isa = PBXGroup;
  			children = (
@@ -74,7 +74,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  				7C30D97E1F815AC000268356 /* JSAbortController.cpp */,
  				7C30D9801F815AC100268356 /* JSAbortController.h */,
  				7C30D9821F815AC200268356 /* JSAbortSignal.cpp */,
-@@ -25447,6 +25459,10 @@
+@@ -25479,6 +25491,10 @@
  		F523D2F302DE443B018635CA /* rendering */ = {
  			isa = PBXGroup;
  			children = (
@@ -85,7 +85,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  				FFB698C81832F10B00158A31 /* line */,
  				439046C212DA25CE00AF80A2 /* mathml */,
  				FD08A879175D3926002CD360 /* shapes */,
-@@ -25742,6 +25758,8 @@
+@@ -25775,6 +25791,8 @@
  		F523D32402DE4478018635CA /* dom */ = {
  			isa = PBXGroup;
  			children = (
@@ -94,7 +94,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  				CE2616A4187E65C1007955F3 /* ios */,
  				2D5036661BCDDDC400E20BB3 /* mac */,
  				51ECC3E42005831F00483EAE /* messageports */,
-@@ -26736,6 +26754,7 @@
+@@ -26771,6 +26789,7 @@
  				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
  				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
  				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
@@ -102,7 +102,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  				A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */,
  				A12C59EE2035FC9B0012236B /* ApplePayError.h in Headers */,
  				7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */,
-@@ -30329,6 +30348,7 @@
+@@ -30369,6 +30388,7 @@
  				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
  				E17B491616A9B094001C8839 /* TransitionEvent.h in Headers */,
  				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
@@ -110,7 +110,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
  				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
  				14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */,
-@@ -30543,6 +30563,7 @@
+@@ -30583,6 +30603,7 @@
  				97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */,
  				97AABD1F14FA09D5007457AE /* WebSocketChannelClient.h in Headers */,
  				4A38BF5114FE1C0900612512 /* WebSocketDeflateFramer.h in Headers */,
@@ -118,7 +118,7 @@ index 2ae0c8a22d5..edcd82aa95a 100644
  				97AABD2114FA09D5007457AE /* WebSocketDeflater.h in Headers */,
  				97AABD2314FA09D5007457AE /* WebSocketExtensionDispatcher.h in Headers */,
  				4A5A2ADC161E7E00005889DD /* WebSocketExtensionParser.h in Headers */,
-@@ -31027,6 +31048,7 @@
+@@ -31067,6 +31088,7 @@
  				0719427F1D088F21002AA51D /* AVFoundationMIMETypeCache.mm in Sources */,
  				070363E5181A1CDC00C074A5 /* AVMediaCaptureSource.mm in Sources */,
  				CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */,
@@ -424,7 +424,7 @@ index 25177a8cd43..294307dc815 100644
      DOMString? lookupNamespaceURI(DOMString? prefix);
      boolean isDefaultNamespace(DOMString? namespaceURI);
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index 90c3e8e5a78..41e4447ff23 100644
+index 0210b08a182..4d3a54691a9 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
 @@ -29,6 +29,7 @@
@@ -447,15 +447,16 @@ index 90c3e8e5a78..41e4447ff23 100644
  #include "Location.h"
  #include "MediaQueryList.h"
  #include "MediaQueryMatcher.h"
-@@ -78,6 +81,7 @@
+@@ -78,6 +81,8 @@
  #include "PageConsoleClient.h"
  #include "PageTransitionEvent.h"
  #include "Performance.h"
++#include "RenderChildIterator.h"
 +#include "RenderView.h"
  #include "RequestAnimationFrameCallback.h"
  #include "ResourceLoadInfo.h"
  #include "ResourceLoadObserver.h"
-@@ -100,6 +104,7 @@
+@@ -100,6 +105,7 @@
  #include "StyleResolver.h"
  #include "StyleScope.h"
  #include "SuddenTermination.h"
@@ -463,7 +464,7 @@ index 90c3e8e5a78..41e4447ff23 100644
  #include "URL.h"
  #include "UserGestureIndicator.h"
  #include "VisualViewport.h"
-@@ -116,6 +121,7 @@
+@@ -116,6 +122,7 @@
  #include <wtf/NeverDestroyed.h>
  #include <wtf/Ref.h>
  #include <wtf/Variant.h>
@@ -471,7 +472,7 @@ index 90c3e8e5a78..41e4447ff23 100644
  #include <wtf/text/WTFString.h>
  
  #if ENABLE(USER_MESSAGE_HANDLERS)
-@@ -1357,6 +1363,41 @@ int DOMWindow::scrollY() const
+@@ -1358,6 +1365,72 @@ int DOMWindow::scrollY() const
      return view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y());
  }
  
@@ -483,6 +484,37 @@ index 90c3e8e5a78..41e4447ff23 100644
 +String DOMWindow::renderTreeStructure() const
 +{
 +    return m_frame->view()->renderView()->renderTreeStructure();
++}
++
++static bool hasDirtyChild(RenderElement& parent)
++{
++    for (auto& child : childrenOfType<RenderElement>(parent)) {
++        if (child.needsLayout())
++            return true;
++    }
++    return false;
++}
++
++static void collectDirtyRenderers(RenderElement& container, Vector<long>& dirtyRenderers)
++{
++    // Collect the leaf marks only -would be cheating othewise.
++    for (auto& child : childrenOfType<RenderElement>(container)) {
++        if (!child.needsLayout())
++            continue;
++        if (!hasDirtyChild(child))
++            dirtyRenderers.append(child.renderId());
++        else
++            collectDirtyRenderers(child, dirtyRenderers);
++    }
++}
++
++Vector<long> DOMWindow::collectRenderersWithNeedsLayout()
++{
++    Vector<long> dirtyRenderers;
++    auto* renderView = m_frame->view()->renderView();
++    m_frame->document()->updateStyleIfNeeded();
++    collectDirtyRenderers(*renderView, dirtyRenderers);
++    return dirtyRenderers;
 +}
 +
 +Vector<Ref<InlineTextRun>> DOMWindow::collectTextRuns(const String& text, const Node& container, float availableSpace)
@@ -514,10 +546,10 @@ index 90c3e8e5a78..41e4447ff23 100644
  {
      return !m_frame;
 diff --git a/Source/WebCore/page/DOMWindow.h b/Source/WebCore/page/DOMWindow.h
-index 4c66b724e29..4ee2993438c 100644
+index 499a558d2ee..be60b3aaf79 100644
 --- a/Source/WebCore/page/DOMWindow.h
 +++ b/Source/WebCore/page/DOMWindow.h
-@@ -48,7 +48,6 @@ template<typename> class Strong;
+@@ -49,7 +49,6 @@ template<typename> class Strong;
  }
  
  namespace WebCore {
@@ -525,7 +557,7 @@ index 4c66b724e29..4ee2993438c 100644
  class BarProp;
  class CSSRuleList;
  class CSSStyleDeclaration;
-@@ -77,6 +76,7 @@ class ScheduledAction;
+@@ -78,6 +77,7 @@ class ScheduledAction;
  class Screen;
  class Storage;
  class StyleMedia;
@@ -533,12 +565,13 @@ index 4c66b724e29..4ee2993438c 100644
  class VisualViewport;
  class WebKitNamespace;
  class WebKitPoint;
-@@ -191,6 +191,11 @@ public:
+@@ -192,6 +192,12 @@ public:
      String defaultStatus() const;
      void setDefaultStatus(const String&);
  
 +    String simplifiedRenderTree() const;
 +    String renderTreeStructure() const;
++    Vector<long> collectRenderersWithNeedsLayout();
 +    int nextBreakingOpportunity(const String& text, unsigned startPosition);
 +    Vector<Ref<InlineTextRun>> collectTextRuns(const String&, const Node&, float availableSpace);
 +
@@ -546,15 +579,16 @@ index 4c66b724e29..4ee2993438c 100644
  
      DOMWindow* opener() const;
 diff --git a/Source/WebCore/page/DOMWindow.idl b/Source/WebCore/page/DOMWindow.idl
-index 46ebc1561fa..cbcd213b46a 100644
+index 46ebc1561fa..bd35d3f2155 100644
 --- a/Source/WebCore/page/DOMWindow.idl
 +++ b/Source/WebCore/page/DOMWindow.idl
-@@ -82,6 +82,11 @@ typedef USVString CSSOMString;
+@@ -82,6 +82,12 @@ typedef USVString CSSOMString;
      readonly attribute Navigator navigator;
      readonly attribute DOMApplicationCache applicationCache;
  
 +    readonly attribute DOMString simplifiedRenderTree;
 +    readonly attribute DOMString renderTreeStructure;
++    sequence<long> collectRenderersWithNeedsLayout();
 +    long nextBreakingOpportunity(DOMString text, unsigned long startPosition);
 +    sequence<InlineTextRun> collectTextRuns(DOMString text, Node containerNode, optional unrestricted float availableSpace = NaN);
 +
@@ -1430,7 +1464,7 @@ index 06d806c0b61..2b7090d45ba 100644
  
  namespace WebCore {
 diff --git a/Source/WebCore/rendering/RenderImage.cpp b/Source/WebCore/rendering/RenderImage.cpp
-index 02094a327a5..695b0235780 100644
+index 744e8e359a6..6351f06c1dd 100644
 --- a/Source/WebCore/rendering/RenderImage.cpp
 +++ b/Source/WebCore/rendering/RenderImage.cpp
 @@ -45,6 +45,7 @@
@@ -1442,7 +1476,7 @@ index 02094a327a5..695b0235780 100644
  #include "PaintInfo.h"
  #include "RenderFragmentedFlow.h"
 diff --git a/Source/WebCore/rendering/RenderObject.cpp b/Source/WebCore/rendering/RenderObject.cpp
-index 7f3d46b7dd8..8120bd369ac 100644
+index 7f3d46b7dd8..e73709b2267 100644
 --- a/Source/WebCore/rendering/RenderObject.cpp
 +++ b/Source/WebCore/rendering/RenderObject.cpp
 @@ -108,7 +108,7 @@ struct SameSizeAsRenderObject {
@@ -1463,7 +1497,7 @@ index 7f3d46b7dd8..8120bd369ac 100644
      if (RenderView* renderView = node.document().renderView())
          renderView->didCreateRenderer();
  #ifndef NDEBUG
-@@ -1012,6 +1014,13 @@ void RenderObject::showRenderTreeForThis() const
+@@ -1012,6 +1014,16 @@ void RenderObject::showRenderTreeForThis() const
      WTFLogAlways("%s", stream.release().utf8().data());
  }
  
@@ -1472,12 +1506,15 @@ index 7f3d46b7dd8..8120bd369ac 100644
 +    outputRenderObject(stream, markedObject == this, depth);
 +    if (is<RenderBlockFlow>(*this))
 +        downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
++
++    for (auto* child = firstChildSlow(); child; child = child->nextSibling())
++        child->outputRenderSubTreeAndMark(stream, markedObject, depth + 1);
 +}
 +
  void RenderObject::showLineTreeForThis() const
  {
      if (!is<RenderBlockFlow>(*this))
-@@ -1197,14 +1206,80 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth)
+@@ -1197,14 +1209,80 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth)
      stream.nextLine();
  }
  
@@ -1492,7 +1529,7 @@ index 7f3d46b7dd8..8120bd369ac 100644
 +    for (auto* child = firstChildSlow(); child; child = child->nextSibling())
 +        child->renderSubtreeStructure(stream);
 +}
- 
++
 +// 1()RenderView|2(1)RenderBlock|3(2)RenderBody|4(3)RenderBlock|5(3)AnonymousRenderBlock|
 +void RenderObject::outputRenderObjectStructure(WTF::TextStream& stream) const
 +{
@@ -1513,7 +1550,7 @@ index 7f3d46b7dd8..8120bd369ac 100644
 +        stream << name.utf8().data();
 +    stream << "|";
 +}
-+
+ 
 +void RenderObject::simplifiedRenderSubtree(TextStream& stream, int depth) const
 +{
 +    outputSimplifiedRenderObject(stream, depth);
@@ -1564,10 +1601,10 @@ index 7f3d46b7dd8..8120bd369ac 100644
  
  #endif // NDEBUG
 diff --git a/Source/WebCore/rendering/RenderObject.h b/Source/WebCore/rendering/RenderObject.h
-index 3c4f15aa4f1..383bb46b876 100644
+index 5d5d82f66ce..e679c6ee154 100644
 --- a/Source/WebCore/rendering/RenderObject.h
 +++ b/Source/WebCore/rendering/RenderObject.h
-@@ -113,6 +113,9 @@ public:
+@@ -114,6 +114,9 @@ public:
  
      auto& weakPtrFactory() const { return m_weakFactory; }
  
@@ -1577,7 +1614,7 @@ index 3c4f15aa4f1..383bb46b876 100644
      RenderTheme& theme() const;
  
      virtual const char* renderName() const = 0;
-@@ -203,10 +206,16 @@ public:
+@@ -204,10 +207,15 @@ public:
      void showNodeTreeForThis() const;
      void showRenderTreeForThis() const;
      void showLineTreeForThis() const;
@@ -1586,7 +1623,6 @@ index 3c4f15aa4f1..383bb46b876 100644
  
      void outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
      void outputRenderSubTreeAndMark(WTF::TextStream&, const RenderObject* markedObject, int depth) const;
-+    void outputRenderSubTreeAndMarkStructure(WTF::TextStream&) const;
      void outputRegionsInformation(WTF::TextStream&) const;
 +
 +    void outputSimplifiedRenderObject(WTF::TextStream&, int depth) const;
@@ -1594,7 +1630,7 @@ index 3c4f15aa4f1..383bb46b876 100644
  #endif
  
      bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
-@@ -829,6 +838,7 @@ private:
+@@ -831,6 +839,7 @@ private:
  #endif
  
      Node& m_node;
@@ -1603,7 +1639,7 @@ index 3c4f15aa4f1..383bb46b876 100644
      RenderElement* m_parent;
      RenderObject* m_previous;
 diff --git a/Source/WebCore/rendering/RenderText.cpp b/Source/WebCore/rendering/RenderText.cpp
-index e55be1e6ad8..e99790d1c83 100644
+index 8fa51e26ffa..730d97a4620 100644
 --- a/Source/WebCore/rendering/RenderText.cpp
 +++ b/Source/WebCore/rendering/RenderText.cpp
 @@ -228,6 +228,11 @@ Text* RenderText::textNode() const
@@ -1678,7 +1714,7 @@ index 294737daad7..e4c7524227d 100644
      void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
      const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
 diff --git a/Source/WebCore/rendering/SimpleLineLayout.cpp b/Source/WebCore/rendering/SimpleLineLayout.cpp
-index 8777dc099b8..702fcc634f4 100644
+index 301300f6e37..3e206b15642 100644
 --- a/Source/WebCore/rendering/SimpleLineLayout.cpp
 +++ b/Source/WebCore/rendering/SimpleLineLayout.cpp
 @@ -351,7 +351,7 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
