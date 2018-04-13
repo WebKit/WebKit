@@ -1,3 +1,17 @@
+2018-04-13  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r230468): Improper assertion firing under STP
+        <rdar://problem/39411676>
+
+        Unreviewed, rolling out an improper assertion.
+
+        I added an assertion in Bug 184322 that should not have been added. I did not notice that this
+        call stack was always used in builds where NSApp is still active. Builds where we stop relying
+        on AppKit runloops uses a different code path to shut down.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::stopNSAppRunLoop):
+
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn CSS Animations and CSS Transitions as Web Animations on by default
