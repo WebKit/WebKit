@@ -1,3 +1,15 @@
+2018-04-12  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Cookie Database on memory path should be :memory:
+        https://bugs.webkit.org/show_bug.cgi?id=184572
+
+        Reviewed by Alex Christensen.
+
+        CookieJarDB::isOnMemory is comparing the database path with :onmemory: but it should be using :memory:
+        For reference, see: https://www.sqlite.org/inmemorydb.html
+
+        * platform/network/curl/CookieJarDB.h:
+
 2018-04-12  Daniel Bates  <dabates@apple.com>
 
         Attmept to fix the Windows build following <https://trac.webkit.org/changeset/230602/>
