@@ -1,3 +1,10 @@
+2018-04-13  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][GStreamer] Mark a few crashing tests since playbin3 was made available
+
+        Unreviewed gardening
+        * platform/gtk/TestExpectations:
+
 2018-04-12  Keith Rollin  <krollin@apple.com>
 
         [mac-wk2] LayoutTest http/tests/security/anchor-download-allow-data.html is a flaky failure
