@@ -1,3 +1,16 @@
+2018-04-13  Jonathan Bedard  <jbedard@apple.com>
+
+        Boot fewer simulators in CI/EWS machines
+        https://bugs.webkit.org/show_bug.cgi?id=184594
+        <rdar://problem/39188082>
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is a temporary workaround fro <rdar://problem/39393590>.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager): Treat simulators as taking 6 gigs instead of 2.
+
 2018-04-13  Brady Eidson  <beidson@apple.com>
 
         Introduce SuspendedPageProxy to keep old web processes around after their WebPageProxy has been swapped to a new one.

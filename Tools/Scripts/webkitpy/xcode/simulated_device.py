@@ -61,7 +61,8 @@ class SimulatedDeviceManager(object):
     AVAILABLE_DEVICES = []
     INITIALIZED_DEVICES = None
 
-    MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 2 * (1024 ** 3)  # 2GB a simulator.
+    # FIXME: Simulators should only take up 2GB, but because of <rdar://problem/39393590> something in the OS thinks they're taking closer to 6GB
+    MEMORY_ESTIMATE_PER_SIMULATOR_INSTANCE = 6 * (1024 ** 3)  # 6GB a simulator.
     PROCESS_COUNT_ESTIMATE_PER_SIMULATOR_INSTANCE = 125
 
     xcrun = '/usr/bin/xcrun'
