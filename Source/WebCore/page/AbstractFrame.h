@@ -41,6 +41,9 @@ public:
     virtual bool isLocalFrame() const = 0;
     virtual bool isRemoteFrame() const = 0;
 
+    WindowProxyController& windowProxyController() { return m_windowProxyController; }
+    const WindowProxyController& windowProxyController() const { return m_windowProxyController; }
+
     AbstractDOMWindow* window() const { return virtualWindow(); }
 
 protected:
@@ -48,6 +51,8 @@ protected:
 
 private:
     virtual AbstractDOMWindow* virtualWindow() const = 0;
+
+    UniqueRef<WindowProxyController> m_windowProxyController;
 };
 
 } // namespace WebCore

@@ -23,8 +23,8 @@
 
 #include "CommonVM.h"
 #include "JSDOMWindow.h"
-#include "ScriptController.h"
 #include "WebCoreJSClientData.h"
+#include "WindowProxyController.h"
 #include <wtf/MainThread.h>
 
 
@@ -47,8 +47,8 @@ DOMWrapperWorld::~DOMWrapperWorld()
     static_cast<JSVMClientData*>(clientData)->forgetWorld(*this);
 
     // These items are created lazily.
-    while (!m_scriptControllersWithWindowProxies.isEmpty())
-        (*m_scriptControllersWithWindowProxies.begin())->destroyWindowProxy(*this);
+    while (!m_windowProxyControllers.isEmpty())
+        (*m_windowProxyControllers.begin())->destroyWindowProxy(*this);
 }
 
 void DOMWrapperWorld::clearWrappers()
@@ -56,8 +56,8 @@ void DOMWrapperWorld::clearWrappers()
     m_wrappers.clear();
 
     // These items are created lazily.
-    while (!m_scriptControllersWithWindowProxies.isEmpty())
-        (*m_scriptControllersWithWindowProxies.begin())->destroyWindowProxy(*this);
+    while (!m_windowProxyControllers.isEmpty())
+        (*m_windowProxyControllers.begin())->destroyWindowProxy(*this);
 }
 
 DOMWrapperWorld& normalWorld(JSC::VM& vm)

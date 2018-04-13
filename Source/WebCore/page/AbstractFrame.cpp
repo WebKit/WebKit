@@ -26,9 +26,12 @@
 #include "config.h"
 #include "AbstractFrame.h"
 
+#include "WindowProxyController.h"
+
 namespace WebCore {
 
 AbstractFrame::AbstractFrame()
+    : m_windowProxyController(makeUniqueRef<WindowProxyController>(*this))
 {
 }
 

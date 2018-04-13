@@ -267,7 +267,7 @@ JSValue toJS(ExecState* state, DOMWindow& domWindow)
 
 JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
 {
-    return frame.script().windowProxy(world)->window();
+    return frame.script().globalObject(world);
 }
 
 JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)

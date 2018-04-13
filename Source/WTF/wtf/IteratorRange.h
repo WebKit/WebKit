@@ -62,6 +62,7 @@ public:
     }
 
     auto size() const -> decltype(std::declval<Container>().size()) { return m_container.size(); }
+    bool isEmpty() const { return m_container.isEmpty(); }
     Iterator begin() const { return m_begin; }
     Iterator end() const { return m_end; }
 

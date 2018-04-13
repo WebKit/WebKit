@@ -360,15 +360,15 @@ static NSURL *createUniqueWebDataURL();
 
 - (void)_attachScriptDebugger
 {
-    ScriptController& scriptController = _private->coreFrame->script();
+    auto& windowProxyController = _private->coreFrame->windowProxyController();
 
     // Calling ScriptController::globalObject() would create a window proxy, and dispatch corresponding callbacks, which may be premature
     // if the script debugger is attached before a document is created.  These calls use the debuggerWorld(), we will need to pass a world
     // to be able to debug isolated worlds.
-    if (!scriptController.existingWindowProxy(debuggerWorld()))
+    if (!windowProxyController.existingWindowProxy(debuggerWorld()))
         return;
 
-    JSGlobalObject* globalObject = scriptController.globalObject(debuggerWorld());
+    auto* globalObject = windowProxyController.globalObject(debuggerWorld());
     if (!globalObject)
         return;
 

@@ -64,7 +64,7 @@ private:
 JSC::JSValue toJS(JSC::ExecState*, Frame&);
 inline JSC::JSValue toJS(JSC::ExecState* state, Frame* frame) { return frame ? toJS(state, *frame) : JSC::jsNull(); }
 
-JSDOMWindowProxy* toJSDOMWindowProxy(Frame&, DOMWrapperWorld&);
-inline JSDOMWindowProxy* toJSDOMWindowProxy(Frame* frame, DOMWrapperWorld& world) { return frame ? toJSDOMWindowProxy(*frame, world) : nullptr; }
+JSDOMWindowProxy& toJSDOMWindowProxy(Frame&, DOMWrapperWorld&);
+inline JSDOMWindowProxy* toJSDOMWindowProxy(Frame* frame, DOMWrapperWorld& world) { return frame ? &toJSDOMWindowProxy(*frame, world) : nullptr; }
 
 } // namespace WebCore

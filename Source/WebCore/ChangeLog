@@ -1,3 +1,77 @@
+2018-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Split WindowProxy handling out of ScriptController and into a new class owned by AbstractFrame
+        https://bugs.webkit.org/show_bug.cgi?id=184591
+
+        Reviewed by Sam Weinig.
+
+        Split WindowProxy handling out of ScriptController and into a new class owned by AbstractFrame.
+        RemoteFrames do not need a ScriptController but do need to maintain WindowProxies.
+        This is work towards fixing Bug 184515.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::clearWrappers):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::didCreateWindowProxy):
+        (WebCore::DOMWrapperWorld::didDestroyWindowProxy):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowProxy.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindowProxy):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::loadModuleScriptInWorld):
+        (WebCore::ScriptController::linkAndEvaluateModuleScriptInWorld):
+        (WebCore::ScriptController::evaluateModule):
+        (WebCore::ScriptController::clearWindowProxiesNotMatchingDOMWindow):
+        (WebCore::ScriptController::setDOMWindowForWindowProxy):
+        (WebCore::ScriptController::initScriptForWindowProxy):
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+        (WebCore::ScriptController::windowProxyController):
+        (WebCore::ScriptController::enableEval):
+        (WebCore::ScriptController::enableWebAssembly):
+        (WebCore::ScriptController::disableEval):
+        (WebCore::ScriptController::disableWebAssembly):
+        (WebCore::ScriptController::attachDebugger):
+        (WebCore::ScriptController::updateDocument):
+        (WebCore::ScriptController::collectIsolatedContexts):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::globalObject):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::windowScriptObject):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::mainWorldExecState):
+        * bindings/js/WindowProxyController.cpp: Added.
+        (WebCore::WindowProxyController::WindowProxyController):
+        (WebCore::WindowProxyController::destroyWindowProxy):
+        (WebCore::WindowProxyController::createWindowProxy):
+        (WebCore::WindowProxyController::windowProxies):
+        (WebCore::WindowProxyController::createWindowProxyWithInitializedScript):
+        * bindings/js/WindowProxyController.h: Added.
+        (WebCore::WindowProxyController::releaseWindowProxies):
+        (WebCore::WindowProxyController::setWindowProxies):
+        (WebCore::WindowProxyController::windowProxy):
+        (WebCore::WindowProxyController::existingWindowProxy const):
+        (WebCore::WindowProxyController::globalObject):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        * page/AbstractFrame.cpp:
+        (WebCore::AbstractFrame::AbstractFrame):
+        * page/AbstractFrame.h:
+        (WebCore::AbstractFrame::windowProxyController):
+        (WebCore::AbstractFrame::windowProxyController const):
+
 2018-04-13  Brady Eidson  <beidson@apple.com>
 
         Introduce SuspendedPageProxy to keep old web processes around after their WebPageProxy has been swapped to a new one.
