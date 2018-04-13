@@ -2358,8 +2358,11 @@ void Document::prepareForDestruction()
         m_frame->animation().detachFromDocument(this);
 
 #if USE(LIBWEBRTC)
-    if (auto* page = this->page())
-        page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+    // FIXME: This should be moved to Modules/mediastream.
+    if (LibWebRTCProvider::webRTCAvailable()) {
+        if (auto* page = this->page())
+            page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+    }
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -4891,8 +4894,11 @@ void Document::suspend(ActiveDOMObject::ReasonForSuspension reason)
     }
 
 #if USE(LIBWEBRTC)
-    if (auto* page = this->page())
-        page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+    // FIXME: This should be moved to Modules/mediastream.
+    if (LibWebRTCProvider::webRTCAvailable()) {
+        if (auto* page = this->page())
+            page->libWebRTCProvider().unregisterMDNSNames(identifier().toUInt64());
+    }
 #endif
 
 #if ENABLE(SERVICE_WORKER)
