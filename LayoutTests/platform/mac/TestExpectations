@@ -160,6 +160,9 @@ webkit.org/b/184459 legacy-animation-engine/animations/animation-callback-timest
 webkit.org/b/113598 legacy-animation-engine/animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
+webkit.org/b/184608 [ Debug ] animations/added-while-suspended.html [ Skip ]
+webkit.org/b/184608 [ Debug ] transitions/created-while-suspended.html [ Skip ]
+
 # Safari doesn't allow to customize outermost scrollbars.
 webkit.org/b/43960 scrollbars/custom-scrollbar-with-incomplete-style.html
 
