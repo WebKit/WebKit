@@ -1,5 +1,23 @@
 2018-04-12  Saam Barati  <sbarati@apple.com>
 
+        Lessen partial scavenge interval on x86-64
+        https://bugs.webkit.org/show_bug.cgi?id=184577
+
+        Rubber-stamped by Filip Pizlo.
+
+        I initially made the scavenge interval longer because I had thought the
+        shorter interval caused a JetStream regression. I was mistaken though.
+        I was looking at the wrong commit range when analyzing perf data.
+        
+        This patch shortens the interval, but still keeps x86-64 50% longer than
+        other architectures. We know that scavenging frequently on Mac is less
+        important to overall system performance than it is on iOS.
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+
+2018-04-12  Saam Barati  <sbarati@apple.com>
+
         Raise the partial scavenge interval even more on x86-64
         https://bugs.webkit.org/show_bug.cgi?id=184551
 
