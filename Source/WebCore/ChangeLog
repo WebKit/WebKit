@@ -1,5 +1,22 @@
 2018-04-13  Miguel Gomez  <magomez@igalia.com>
 
+        REGRESSION(r230627): [GTK][WPE] Possible deadlock when destroying the player in non AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=184583
+
+        Reviewed by Carlos Garcia Campos.
+
+        In non AC mode, ensure that a deadlock can't happen when destroying MediaPlayerPrivateGStreamerBase.
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cancelRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
+2018-04-13  Miguel Gomez  <magomez@igalia.com>
+
         [GTK] [gstreamer] video won't unpause when built with -DUSE_GSTREAMER_GL=OFF
         https://bugs.webkit.org/show_bug.cgi?id=183362
 
