@@ -235,7 +235,7 @@ protected:
 
     Condition m_drawCondition;
     Lock m_drawMutex;
-    bool m_drawCancelled { false };
+    bool m_destroying { false };
     RunLoop::Timer<MediaPlayerPrivateGStreamerBase> m_drawTimer;
 
 #if USE(TEXTURE_MAPPER_GL)

@@ -1,3 +1,23 @@
+2018-04-13  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] [gstreamer] video won't unpause when built with -DUSE_GSTREAMER_GL=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=183362
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the drawCancelled flag and use a new one to indicate that the player is being destroyed.
+        That new flag is only enabled on destruction and it's not modified by cancelRepaint(), which
+        can be used to handle the pause event without avoiding future renderings. Also cancelRepaint()
+        has only effect when not in AC mode.
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cancelRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2018-04-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Convert GStreamerUtilities in GStreamerCommon and include the GStreamer smart pointer traits
