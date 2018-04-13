@@ -1,5 +1,16 @@
 2018-04-12  Christopher Reid  <chris.reid@sony.com>
 
+        [Curl] Fix clang build error in CurlContext.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184561
+
+        Reviewed by Darin Adler.
+
+        MSVC allows explicit template specialization in classes but gcc/clang do not.
+
+        * platform/network/curl/CurlContext.cpp:
+
+2018-04-12  Christopher Reid  <chris.reid@sony.com>
+
         [Curl] Cookie Database on memory path should be :memory:
         https://bugs.webkit.org/show_bug.cgi?id=184572
 
