@@ -61,16 +61,12 @@ class LayoutState {
         return null;
     }
 
-    // This is for testing only.
-    setNeedsLayoutById(layoutBoxId) {
-    }
-
-    setNeedsLayout(layoutBox) {
+    markNeedsLayout(layoutBox) {
         let formattingState = this.formattingStateForBox(layoutBox);
         // Newly created formatting state will obviously mark all the boxes dirty.
         if (!formattingState)
             return;
-        formattingState.setNeedsLayout(layoutBox);
+        formattingState.markNeedsLayout(layoutBox);
     }
 
     needsLayout() {

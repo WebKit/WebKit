@@ -64,7 +64,7 @@ class TreeBuilder {
         if (box)
             box.setRendererName(name);
 
-        let parentBox = this._findBox(initialBlockContainer, parentId);
+        let parentBox = Utils.layoutBoxById(parentId, initialBlockContainer);
         // WebKit does not construct anonymous inline container for text if the text
         // is a direct child of a block container.
         if (text) {
@@ -88,21 +88,6 @@ class TreeBuilder {
         lastChild.setNextSibling(child);
         child.setPreviousSibling(lastChild);
         parent.setLastChild(child);
-    }
-
-    _findBox(root, boxId) {
-        if (root.id() == boxId)
-            return root;
-        // Super inefficient but this is all temporary anyway.
-        for (let box = root.firstChild(); box; box = box.nextSibling()) {
-            if (box.id() == boxId)
-                return box;
-            if (box.isContainer() && box.hasChild()) {
-                let candidate = this._findBox(box, boxId);
-                if (candidate)
-                    return candidate;
-            }
-        }
     }
 
     _findNode(node, boxId) {

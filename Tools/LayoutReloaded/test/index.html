@@ -121,14 +121,11 @@ let failedTests = new Array();
 
 let isRunningAsyncTest = false;
 let tests;
+let testsPassed = 0;
 let currentTestIndex = 0;
 let subTests = 0;
+let subTestPassed = true;
 let layoutState = null;
-
-function collectRenderersWithNeedsLayout() {
-    // TODO: implement it in WebKit.
-    return null;
-}
 
 function runAndVerifyLayout(window) {
     layoutState = runLayout(window, layoutState);
@@ -142,22 +139,29 @@ class TestRunner {
 
     notifyDone() {
         let testFrame = document.getElementById("testFrame");
-        let passed = runAndVerifyLayout(testFrame.contentWindow);
-        finishAndMoveToNextTest(passed);
+        ASSERT(subTests);
+        finishAndMoveToNextTest(subTestPassed);
     }
 
     forceLayout() {
         let testFrame = document.getElementById("testFrame");
-        let needsLayoutRenderers = collectRenderersWithNeedsLayout(); //testFrame.contentWindow.collectRenderersWithNeedsLayout();
+        let needsLayoutRenderers = testFrame.contentWindow.collectRenderersWithNeedsLayout();
         testFrame.contentWindow.document.body.offsetWidth;
         if (layoutState) {
-            for (let rendererId of needsLayoutRenderers)
-                layoutState.setNeedsLayoutById(rendererId);
+            // Finding box by id won't work unless this is ICB's layout state.
+            ASSERT(!layoutState.rootContainer().parent());
+            for (let rendererId of needsLayoutRenderers) {
+                let layoutBox = Utils.layoutBoxById(rendererId, layoutState.rootContainer());
+                layoutState.markNeedsLayout(layoutBox);
+            }
         }
         let passed = runAndVerifyLayout(testFrame.contentWindow);
         ++subTests;
-        if (!passed && failedTests.indexOf(currentTestIndex) == -1)
-            failedTests.push(currentTestIndex);
+        if (!passed) {
+            subTestPassed = false;
+            if (failedTests.indexOf(currentTestIndex) == -1)
+                failedTests.push(currentTestIndex);
+        }
         printIntermediateResult();
     }
 
@@ -176,8 +180,8 @@ function printFinalResult() {
 }
 
 function printIntermediateResult() {
-    let resultContent = "Testing..." + currentTestIndex + (subTests > 0 ? "(" + subTests + ")" : "") + " out of " + tests.length;
-    resultContent += "<br><br>Passed: " + (currentTestIndex - failedTests.length) + "<br>Failed: " + failedTests.length;
+    let resultContent = "Testing..." + (currentTestIndex + 1) + (subTests > 0 ? "(" + subTests + ")" : "") + " out of " + tests.length;
+    resultContent += "<br><br>Passed: " + testsPassed + "<br>Failed: " + failedTests.length;
     if (failedTests.length > 0) {
         resultContent += "<br><br>Failed cases:"
         failedTests.forEach(function(item) {
@@ -194,7 +198,9 @@ function finishAndMoveToNextTest(passed) {
     layoutState = null;
     subTests = 0;
     isRunningAsyncTest = false;
-    if (!passed)
+    if (passed)
+        ++testsPassed;
+    else if (failedTests.indexOf(currentTestIndex) == -1)
         failedTests.push(currentTestIndex);
     setTimeout(function() {
         if (currentTestIndex < tests.length - 1) {

@@ -80,7 +80,19 @@ class FormattingState {
     }
 
     markNeedsLayout(layoutBox) {
+        // Never mark the formatting root dirty. It belongs to the parent formatting context (or none if ICB).
+        ASSERT(layoutBox != this.formattingRoot());
         this.m_needsLayoutBoxList.set(layoutBox);
+        // FIXME: Let's just mark all the ancestors dirty in this formatting scope.
+        let containingBlock = layoutBox.containingBlock();
+        if (!containingBlock || containingBlock == this.formattingRoot())
+            return;
+        if (!FormattingContext.isInFormattingContext(containingBlock, this.formattingRoot()))
+            return;
+        if (this.needsLayout(containingBlock))
+            return;
+
+        this.markNeedsLayout(containingBlock);
     }
 
     clearNeedsLayout(layoutBox) {
