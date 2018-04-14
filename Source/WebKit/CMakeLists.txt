@@ -311,6 +311,7 @@ set(WebKit_SOURCES
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/ServiceWorkerProcessProxy.cpp
     UIProcess/StatisticsRequest.cpp
+    UIProcess/SuspendedPageProxy.cpp
     UIProcess/SystemPreviewController.cpp
     UIProcess/TextCheckerCompletion.cpp
     UIProcess/UIMessagePortChannelProvider.cpp

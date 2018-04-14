@@ -1,3 +1,14 @@
+2018-04-14  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GTK][WPE] Build is broken after r230640
+        https://bugs.webkit.org/show_bug.cgi?id=184623
+
+        Reviewed by Žan Doberšek.
+
+        UIProcess/SuspendedPageProxy.cpp was not included to CMake build in r230640.
+
+        * CMakeLists.txt: Added UIProcess/SuspendedPageProxy.cpp to WebKit_SOURCES.
+
 2018-04-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r230447.
