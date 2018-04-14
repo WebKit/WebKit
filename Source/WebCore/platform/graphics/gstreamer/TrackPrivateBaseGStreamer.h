@@ -56,6 +56,13 @@ public:
 
     void setIndex(int index) { m_index =  index; }
 
+#if GST_CHECK_VERSION(1, 10, 0)
+    GstStream* stream()
+    {
+        return m_stream.get();
+    }
+#endif
+
 protected:
     TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
 #if GST_CHECK_VERSION(1, 10, 0)
