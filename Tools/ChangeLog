@@ -1,3 +1,15 @@
+2018-04-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] [webkitpy] The driver requirements should be checked before starting the tests
+        https://bugs.webkit.org/show_bug.cgi?id=184595
+
+        Reviewed by Michael Catanzaro.
+
+        Ensure Driver.check_driver() is checked at check_sys_deps() time.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.check_sys_deps):
+
 2018-04-13  Zalan Bujtas  <zalan@apple.com>
 
         Rebaseline LayoutReloaded patch file (collectRenderersWithNeedsLayout).

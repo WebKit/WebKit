@@ -77,6 +77,9 @@ class WPEPort(Port):
         environment['WEBKIT_EXEC_PATH'] = self._build_path('bin')
         return environment
 
+    def check_sys_deps(self, needs_http):
+        return super(WPEPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
+
     def _generate_all_test_configurations(self):
         configurations = []
         for build_type in self.ALL_BUILD_TYPES:
