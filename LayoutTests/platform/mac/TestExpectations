@@ -1756,3 +1756,5 @@ webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contai
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Crash ]
 
 webkit.org/b/184610 media/video-volume-slider-drag.html [ Pass Timeout ]
+
+webkit.org/b/184612 [ Debug ] media/audio-concurrent-supported.html [ Pass Failure ]
