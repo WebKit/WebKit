@@ -1,5 +1,14 @@
 2018-04-13  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark media/video-volume-slider-drag.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=184610
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2018-04-13  Ryan Haddad  <ryanhaddad@apple.com>
+
         Skip animations/added-while-suspended.html and transitions/created-while-suspended.html.
         https://bugs.webkit.org/show_bug.cgi?id=184608
 
