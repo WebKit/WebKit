@@ -17,7 +17,6 @@ webkit.org/b/177536 media/video-object-fit.html [ Pass ]
 
 webkit.org/b/156717 editing/pasteboard/gtk/middle-click-onpaste.html [ Failure ]
 webkit.org/b/156717 editing/pasteboard/paste-global-selection.html [ Failure ]
-webkit.org/b/182432 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
 webkit.org/b/156717 fast/repaint/animation-after-layer-scroll.html [ Failure ]
 webkit.org/b/156717 imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
 webkit.org/b/156717 imported/blink/css3/blending/mix-blend-mode-multiply.html [ ImageOnlyFailure ]
