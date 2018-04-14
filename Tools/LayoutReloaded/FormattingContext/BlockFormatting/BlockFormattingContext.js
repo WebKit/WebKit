@@ -22,6 +22,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+/*
+class BlockFormattingContext : public FormattingContext {
+public:
+    void layout() override;
+
+    void computeWidth(const Layout::Box&) override;
+    void computeHeight(const Layout::Box&) override;
+ 
+    void marginTop(const Layout::Box&) override;
+    void marginBottom(const Layout::Box&) override;
+
+private:
+    void computeStaticPosition(const Layout::Box&);
+    void computeInFlowHeight(const Layout::Box&);
+    void horizontalConstraint(const Layout::Box&);
+    void contentHeight(const Layout::Box&);
+};
+*/
+
 class BlockFormattingContext extends FormattingContext {
     constructor(blockFormattingState) {
         super(blockFormattingState);

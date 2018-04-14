@@ -23,6 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class InlineFormattingState : public FormattingState {
+public:
+    Vector<Line> lines();
+    void appendLine(Line);
+};
+*/
 class InlineFormattingState extends FormattingState {
     constructor(formattingRoot, layoutState) {
         super(layoutState, formattingRoot);

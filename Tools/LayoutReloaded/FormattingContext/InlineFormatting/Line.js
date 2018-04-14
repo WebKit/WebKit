@@ -23,6 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class Line {
+public:
+    bool isEmpty();
+
+    LayoutUnit availableWidth();
+
+    LayoutRect rect();
+    lineBoxes();
+
+    shrink(float width);
+    adjustWithOffset(LayoutUnit offset);
+    moveContentHorizontally(LayoutUnit offset);
+    addInlineContainerBox(LayoutSize);
+    addTextLineBox(unsigned startPosition, unsigned endPosition, LayoutSize size);
+};
+*/
 class Line {
     constructor(topLeft, height, availableWidth) {
         this.m_availableWidth = availableWidth;

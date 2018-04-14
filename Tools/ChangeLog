@@ -1,5 +1,43 @@
 2018-04-13  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Update class documentation
+        https://bugs.webkit.org/show_bug.cgi?id=184625
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/DisplayTree/Box.js:
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockFormattingContext.js:
+        * LayoutReloaded/FormattingContext/BlockFormatting/BlockMarginCollapse.js:
+        * LayoutReloaded/FormattingContext/FloatingContext.js:
+        * LayoutReloaded/FormattingContext/FormattingContext.js:
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js:
+        * LayoutReloaded/FormattingState/BlockFormattingState.js:
+        * LayoutReloaded/FormattingState/FloatingState.js:
+        * LayoutReloaded/FormattingState/FormattingState.js:
+        * LayoutReloaded/FormattingState/InlineFormattingState.js:
+        * LayoutReloaded/LayoutState.js:
+        * LayoutReloaded/LayoutTree/BlockContainer.js:
+        * LayoutReloaded/LayoutTree/Box.js:
+        * LayoutReloaded/LayoutTree/Container.js:
+        * LayoutReloaded/LayoutTree/InlineBox.js:
+        * LayoutReloaded/LayoutTree/InlineContainer.js:
+        * LayoutReloaded/LayoutTree/Text.js:
+        * LayoutReloaded/misc/headers/BlockContainer.h: Removed.
+        * LayoutReloaded/misc/headers/BlockFormattingContext.h: Removed.
+        * LayoutReloaded/misc/headers/BlockMarginCollapse.h: Removed.
+        * LayoutReloaded/misc/headers/Box.h: Removed.
+        * LayoutReloaded/misc/headers/Container.h: Removed.
+        * LayoutReloaded/misc/headers/FloatingContext.h: Removed.
+        * LayoutReloaded/misc/headers/FormattingContext.h: Removed.
+        * LayoutReloaded/misc/headers/InitialBlockContainer.h: Removed.
+        * LayoutReloaded/misc/headers/InlineBox.h: Removed.
+        * LayoutReloaded/misc/headers/LayoutContext.h: Removed.
+        * LayoutReloaded/misc/headers/Line.h: Removed.
+        * LayoutReloaded/misc/headers/Text.h: Removed.
+
+2018-04-13  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Add simple implementation for FormattingState::markNeedsLayout()
         https://bugs.webkit.org/show_bug.cgi?id=184621
 

@@ -23,6 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class FloatingState {
+public:
+    addFloating(Display::Box&, bool isFloatingLeft) {
+    Vector<Display::Box&> leftFloatingStack();
+    Vector<Display::Box&> rightFloatingStack();
+    Display::Box& lastFloating();
+
+    FormattingState& formattingState();
+};
+*/
 class FloatingState {
     constructor(parentFormattingState) {
         this.m_parentFormattingState = parentFormattingState;

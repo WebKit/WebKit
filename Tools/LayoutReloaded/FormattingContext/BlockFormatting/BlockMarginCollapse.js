@@ -22,6 +22,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*
+class BlockMarginCollapse {
+public:
+    LayoutUnit marginTop(const Layout::Box&);
+    LayoutUnit marginBottom(const Layout::Box&);
+
+private:
+    bool isMarginTopCollapsedWithSibling(const Layout::Box&);
+    bool isMarginBottomCollapsedWithSibling(const Layout::Box&);
+    bool isMarginTopCollapsedWithParent(const Layout::Box&);
+    bool isMarginBottomCollapsedWithParent(const Layout::Box&);
+
+    LayoutUnit nonCollapsedMarginTop(const Layout::Box&);
+    LayoutUnit nonCollapsedMarginBottom(const Layout::Box&);
+    LayoutUnit collapsedMarginTopFromFirstChild(const Layout::Box&);
+    LayoutUnit collapsedMarginBottomFromLastChild(const Layout::Box&);
+    LayoutUnit marginValue(currentMarginValue, candidateMarginValue);
+
+    bool hasAdjoiningMarginTopAndBottom(const Layout::Box&);
+};
+*/
 class BlockMarginCollapse {
 
     static marginTop(layoutBox) {

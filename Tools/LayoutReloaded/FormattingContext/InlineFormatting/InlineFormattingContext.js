@@ -23,6 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class InlineFormattingContext {
+public:
+    void layout() override;
+
+private:
+    void handleInlineContainer(const Layout::Container&);
+    void handleInlineBlockContainer(const Layout::Container&);
+    void handleInlineContent(const Layout::Box&);
+    void handleInlineBox(const Layout::InlineBox&);
+    void handleText(const Layout::InlineBox&);
+    void handleFloatingBox(const Layout::Box&);
+};
+*/
 class InlineFormattingContext extends FormattingContext {
     constructor(inlineFormattingState) {
         super(inlineFormattingState);

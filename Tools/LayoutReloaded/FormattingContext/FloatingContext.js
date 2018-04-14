@@ -23,6 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class FloatingContext {
+public:
+    void computePosition(Layout::Box&);
+    LayoutUnit left(LayoutUnit verticalPosition);
+    LayoutUnit right(LayoutUnit verticalPosition);
+    LayoutUnit bottom();
+
+private:
+    LayoutPoint positionForFloating(const Layout::Box&);
+    LayoutPoint positionForClear(const Layout::Box&);
+    LayoutPoint computePositionToAvoidIntrudingFloats(const Layout::Box&);
+};
+*/
 // All geometry here is absolute to the formatting context's root.
 class FloatingContext {
     constructor(floatingState) {

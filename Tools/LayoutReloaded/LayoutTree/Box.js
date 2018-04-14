@@ -23,6 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+namespace Layout {
+class Box {
+public:
+    Layout::Container& parent();
+    Layout::Box* nextSibling();
+    Layout::Box* nextInFlowSibling();
+    Layout::Box* nextInFlowOrFloatSibling();
+    Layout::Box* previousSibling();
+    Layout::Box* previousInFlowSibling();
+
+    void setParent(Layout::Container&);
+    void setNextSibling(Layout::Box&);
+    void setPreviousSibling(Layout::Box&);
+
+    bool isContainer();
+    bool isInlineContainer();
+    bool isInlineBox();
+    bool isBlockLevelBox();
+    bool isBlockContainerBox();
+    bool isInlineBlockBox();
+    bool isInlineLevelBox();
+
+    void setIsAnonymous(bool);
+    bool isAnonymous();
+
+    bool establishesFormattingContext();
+    bool establishesBlockFormattingContext();
+    bool establishesInlineFormattingContext();
+
+    bool isPositioned();
+    bool isRelativelyPositioned();
+    bool isAbsolutelyPositioned();
+    bool isFixedPositioned();
+    bool isInFlow();
+    bool isOutOfFlowPositioned();
+    bool isInFlowPositioned();
+    bool isFloatingPositioned();
+    bool isFloatingOrOutOfFlowPositioned();
+    bool isRootBox();
+    Layout::Container* containingBlock();
+    bool isDescendantOf(Layout::Container&);
+};
+}
+*/
+
 var Layout = { }
 
 Layout.Box = class Box {

@@ -23,6 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+namespace Layout {
+class InlineBox : public Box {
+public:
+    setText(const String&);
+    const String& text();
+};
+}
+*/
 Layout.InlineBox = class InlineBox extends Layout.Box {
     constructor(node, id) {
         super(node, id);

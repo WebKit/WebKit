@@ -23,6 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+namespace Layout {
+class Container : public Box {
+public:
+    setFirstChild(Layout::Box&);
+    setLastChild(Layout::Box&);
+ 
+    Layout::Box* firstChild();
+    Layout::Box* firstInFlowChild();
+    Layout::Box* firstInFlowOrFloatChild();
+    Layout::Box* lastChild();
+    Layout::Box* lastInFlowChild();
+
+    bool hasChild();
+    bool hasInFlowChild();
+    bool hasInFlowOrFloatChild();
+
+    Vector<Layout::Box&> outOfFlowDescendants();
+};
+}
+*/
 Layout.Container = class Container extends Layout.Box {
     constructor(node, id) {
         super(node, id);

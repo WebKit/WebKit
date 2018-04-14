@@ -23,6 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class LayoutState {
+public:
+    Container& rootContainer();
+
+    FormattingContext& formattingContext(const Layout::Container& formattingRoot);
+    FormattingState& establishedFormattingState(const Layout::Container& formattingRoot);
+    FormattingState& formattingStateForBox(const Layout::Box&);
+
+    Display::Box* displayBox(const Layout::Box&);
+
+    void markNeedsLayout(const Layout::Box&);
+    bool needsLayout();
+};
+*/
+
 class LayoutState {
     constructor(rootContainer, rootDisplayBox) {
         ASSERT(rootContainer.establishesFormattingContext());

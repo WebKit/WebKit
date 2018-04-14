@@ -23,6 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+namespace Layout {
+class BlockContainer : public Continer {
+public:
+    bool establishesInlineFormattingContext() final;
+};
+}
+*/
 Layout.BlockContainer = class BlockContainer extends Layout.Container {
     constructor(node, id) {
         super(node, id);

@@ -23,6 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+namespace Layout {
+class InlineContainer : public Container {
+public:
+
+};
+}
+*/
 Layout.InlineContainer = class InlineContainer extends Layout.Container {
     constructor(node, id) {
         super(node, id);

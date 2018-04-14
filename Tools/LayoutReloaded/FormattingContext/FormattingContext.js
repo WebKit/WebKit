@@ -23,6 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class FormattingContext {
+public:
+    Layout::Container& formattingRoot();
+    FormattingState& formattingState();
+    LayoutState& layoutState();
+    FloatingContext& floatingContext();
+
+    virtual void layout();
+
+    virtual void computeWidth(const Layout::Box&);
+    virtual void computeHeight(const Layout::Box&);
+
+    virtual LayoutUnit marginTop(const Layout::Box&);
+    virtual LayoutUnit marginLeft(const Layout::Box&);
+    virtual LayoutUnit marginBottom(const Layout::Box&);
+    virtual LayoutUnit marginRight(const Layout::Box&);
+
+private:
+    void computeFloatingWidth(const Layout::Box&);
+    void computeFloatingHeight(const Layout::Box&);
+
+    void placeInFlowPositionedChildren(const Layout::Box&);
+    void computeInFlowPositionedPosition(const Layout::Box&);
+    void computeInFlowWidth(const Layout::Box&);
+
+    void layoutOutOfFlowDescendants();
+
+    void computeOutOfFlowWidth(const Layout::Box&);
+    void computeOutOfFlowHeight(const Layout::Box&);
+    void computeOutOfFlowPosition(const Layout::Box&);
+
+    LayoutUnit shrinkToFitWidth(Layout::Box&);
+};
+*/
 class FormattingContext {
     constructor(formattingState) {
         this.m_formattingState = formattingState;

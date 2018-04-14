@@ -23,6 +23,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+namespace Display {
+class Box {
+    setRect(LayoutRect);
+    setTopLeft(LayoutPoint);
+    setTop(LayoutUnit);
+    setLeft(LayoutUnit);
+    setSize(LayoutSize);
+    setWidth(LayoutUnit);
+    setHeight(LayoutUnit);
+
+    LayoutRect rect();
+
+    LayoutUnit top();
+    LayoutUnit left();
+    LayoutUnit bottom();
+    LayoutUnit right();
+
+    LayoutPoint topLeft();
+    LayoutPoint bottomRight();
+
+    LayoutSize size();
+    LayoutUnit width();
+    LayoutUnit height();
+
+    setMarginTop(LayoutUnit);
+    setMarginLeft(LayoutUnit);
+    setMarginBottom(LayoutUnit);
+    setMarginRight(LayoutUnit);
+
+    LayoutUnit marginTop();
+    LayoutUnit marginLeft();
+    LayoutUnit marginBottom();
+    LayoutUnit marginRight();
+
+    LayoutRect marginBox();
+    LayoutRect borderBox();
+    LayoutRect paddingBox();
+    LayoutRect contentBox();
+
+    void setParent(Display::Box&);
+    void setNextSibling(Display::Box&);
+    void setPreviousSibling(Display::Box&);
+    void setFirstChild(Display::Box&);
+    void setLastChild(Display::Box&);
+
+    Display::Box* parent();
+    Display::Box* nextSibling();
+    Display::Box* previousSibling();
+    Display::Box* firstChild();
+    Display::Box* lastChild();
+};
+}
+*/
 var Display = { }
 
 Display.Box = class Box {

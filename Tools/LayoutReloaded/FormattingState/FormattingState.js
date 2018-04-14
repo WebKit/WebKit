@@ -23,6 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+class FormattingState {
+public:
+    Layout::Container& formattingRoot();
+    LayoutState& layoutState();
+    FloatingState& floatingState();
+    Display::Box& createDisplayBox(const Layout::Box&);
+
+    Vector<Display::Box&> displayBoxes();
+    Display::Box& displayBox(const Layout::Box&);
+
+    void markNeedsLayout(const Layout::Box&);
+    void clearNeedsLayout(const Layout::Box&);
+    bool needsLayout(const Layout::Box&);
+
+    bool needsLayout();
+};
+*/
 class FormattingState {
     constructor(layoutState, formattingRoot) {
         this.m_layoutState = layoutState;
