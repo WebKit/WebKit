@@ -1,3 +1,17 @@
+2018-04-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r230659.
+        https://bugs.webkit.org/show_bug.cgi?id=184633
+
+        Landed prematurely (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Deactivate the WindowServer connection for the WebContent
+        process."
+        https://bugs.webkit.org/show_bug.cgi?id=184451
+        https://trac.webkit.org/changeset/230659
+
 2018-04-14  Per Arne Vollan  <pvollan@apple.com>
 
         Deactivate the WindowServer connection for the WebContent process.
