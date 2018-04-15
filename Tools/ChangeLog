@@ -1,3 +1,20 @@
+2018-04-15  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add API tests for PDF find-in-page
+        https://bugs.webkit.org/show_bug.cgi?id=184634
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/find.pdf: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (-[TestFindDelegate findString]):
+        (-[TestFindDelegate _webView:didCountMatches:forString:]):
+        (-[TestFindDelegate _webView:didFindMatches:forString:withMatchIndex:]):
+        (-[TestFindDelegate _webView:didFailToFindString:]):
+        (loadWebView):
+        (TEST):
+
 2018-04-13  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Update class documentation
