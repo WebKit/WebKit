@@ -1,3 +1,14 @@
+2018-04-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Install files needed for WebKitWebExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=179915
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformWPE.cmake: Install pkg-config file, injected bundle, and API headers.
+        * UIProcess/API/glib/WebKitWebContext.cpp: Load the injected bundle when installed.
+        * wpe/wpe-web-extension.pc.in: Added.
+
 2018-04-14  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [GTK][WPE] Build is broken after r230640
