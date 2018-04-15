@@ -774,6 +774,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(ExecState* exec)
+{
+    return JSValue::encode(jsString(exec, toString(exec->argument(0))));
+}
+
 EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
 {
     VM& vm = exec->vm();

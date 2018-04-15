@@ -1,3 +1,16 @@
+2018-04-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Function.prototype.caller shouldn't return generator bodies
+        https://bugs.webkit.org/show_bug.cgi?id=184630
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/function-caller-async-arrow-function-body.js: Added.
+        * stress/function-caller-async-function-body.js: Added.
+        * stress/function-caller-async-generator-body.js: Added.
+        * stress/function-caller-generator-body.js: Added.
+        * stress/function-caller-generator-method-body.js: Added.
+
 2018-04-12  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed, skip JIT tests if it isn't enabled

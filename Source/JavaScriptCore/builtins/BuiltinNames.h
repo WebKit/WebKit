@@ -83,6 +83,7 @@ namespace JSC {
     macro(typedArrayGetOriginalConstructor) \
     macro(typedArraySubarrayCreate) \
     macro(BuiltinLog) \
+    macro(BuiltinDescribe) \
     macro(homeObject) \
     macro(templateRegistryKey) \
     macro(enqueueJob) \
