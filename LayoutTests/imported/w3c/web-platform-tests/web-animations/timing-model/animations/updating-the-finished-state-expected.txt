@@ -4,7 +4,7 @@ PASS Updating the finished state when seeking past end
 PASS Updating the finished state when seeking exactly to end 
 PASS Updating the finished state when playing in reverse past zero 
 PASS Updating the finished state when seeking a reversed animation past zero 
-FAIL Updating the finished state when seeking a reversed animation exactly to zero assert_equals: Hold time is set so current time should NOT change expected 0 but got -0
+PASS Updating the finished state when seeking a reversed animation exactly to zero 
 PASS Updating the finished state when playing before end 
 PASS Updating the finished state when seeking before end 
 PASS Updating the finished state when seeking a reversed animation before end 
