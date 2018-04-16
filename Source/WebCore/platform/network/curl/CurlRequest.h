@@ -118,7 +118,8 @@ private:
     void didCancelTransfer() override;
     void finalizeTransfer();
 
-    // For POST and PUT method 
+    // For setup 
+    void appendAcceptLanguageHeader(HTTPHeaderMap&);
     void setupPOST(ResourceRequest&);
     void setupPUT(ResourceRequest&);
     void setupSendData(bool forPutMethod);

@@ -1,3 +1,15 @@
+2018-04-16  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Add the Accept-Language field to curl request headers
+        https://bugs.webkit.org/show_bug.cgi?id=184605
+
+        Reviewed by Alex Christensen.
+
+        Add Accept-Language field to curl request headers
+
+        * platform/network/curl/CurlRequest.cpp:
+        * platform/network/curl/CurlRequest.h:
+
 2018-04-16  Chris Dumez  <cdumez@apple.com>
 
         Move more WindowProxy-related logic from ScriptController to WindowProxyController
