@@ -53,7 +53,7 @@ NetworkCORSPreflightChecker::~NetworkCORSPreflightChecker()
         m_task->cancel();
     }
     if (m_completionCallback)
-        m_completionCallback(Result::Canceled);
+        m_completionCallback(ResourceError { ResourceError::Type::Cancellation });
 }
 
 void NetworkCORSPreflightChecker::startPreflight()
@@ -62,7 +62,7 @@ void NetworkCORSPreflightChecker::startPreflight()
 
     NetworkLoadParameters loadParameters;
     loadParameters.sessionID = m_parameters.sessionID;
-    loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.originalRequest.httpReferrer());
+    loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer);
     loadParameters.shouldFollowRedirects = false;
     if (auto* networkSession = SessionTracker::networkSession(loadParameters.sessionID)) {
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
@@ -71,18 +71,18 @@ void NetworkCORSPreflightChecker::startPreflight()
         ASSERT_NOT_REACHED();
 }
 
-void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler)
+void NetworkCORSPreflightChecker::willPerformHTTPRedirection(WebCore::ResourceResponse&& response, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("willPerformHTTPRedirection");
     completionHandler({ });
-    m_completionCallback(Result::Failure);
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveChallenge");
     completionHandler(AuthenticationChallengeDisposition::Cancel, { });
-    m_completionCallback(Result::Failure);
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
@@ -101,7 +101,7 @@ void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceEr
 {
     if (!error.isNull()) {
         RELEASE_LOG_IF_ALLOWED("didCompleteWithError");
-        m_completionCallback(Result::Failure);
+        m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl });
         return;
     }
 
@@ -110,10 +110,10 @@ void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceEr
     String errorDescription;
     if (!validatePreflightResponse(m_parameters.originalRequest, m_response, m_parameters.storedCredentialsPolicy, m_parameters.sourceOrigin, errorDescription)) {
         RELEASE_LOG_IF_ALLOWED("didComplete, AccessControl error: %s", errorDescription.utf8().data());
-        m_completionCallback(Result::Failure);
+        m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), errorDescription, ResourceError::Type::AccessControl });
         return;
     }
-    m_completionCallback(Result::Success);
+    m_completionCallback(ResourceError { });
 }
 
 void NetworkCORSPreflightChecker::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
@@ -123,13 +123,13 @@ void NetworkCORSPreflightChecker::didSendData(uint64_t totalBytesSent, uint64_t 
 void NetworkCORSPreflightChecker::wasBlocked()
 {
     RELEASE_LOG_IF_ALLOWED("wasBlocked");
-    m_completionCallback(Result::Failure);
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight request was blocked"), ResourceError::Type::AccessControl });
 }
 
 void NetworkCORSPreflightChecker::cannotShowURL()
 {
     RELEASE_LOG_IF_ALLOWED("cannotShowURL");
-    m_completionCallback(Result::Failure);
+    m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), ASCIILiteral("Preflight response was blocked"), ResourceError::Type::AccessControl });
 }
 
 } // Namespace WebKit

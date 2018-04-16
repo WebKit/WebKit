@@ -1,7 +1,11 @@
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 22: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print,
+CONSOLE MESSAGE: line 36: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print, due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print
+CONSOLE MESSAGE: line 51: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=,y-lol,x-PriNT,%20,,,Y-PRINT
+CONSOLE MESSAGE: line 59: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=,y-lol,x-PriNT,%20,,,Y-PRINT due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=,y-lol,x-PriNT,%20,,,Y-PRINT
 Request headers
 

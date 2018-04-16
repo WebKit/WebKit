@@ -1,3 +1,15 @@
+2018-04-16  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker to handle synchronous HTTP loads
+        https://bugs.webkit.org/show_bug.cgi?id=184240
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/cors/request-headers-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-and-redirects-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-setrequestheader-no-cred-expected.txt:
+
 2018-04-16  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Ensure we never return -0 through the API

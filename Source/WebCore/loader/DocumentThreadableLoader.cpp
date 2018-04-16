@@ -44,6 +44,7 @@
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "LoadTiming.h"
+#include "LoaderStrategy.h"
 #include "Performance.h"
 #include "ProgressTracker.h"
 #include "ResourceError.h"
@@ -106,6 +107,10 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     // Setting a referrer header is only supported in the async code path.
     ASSERT(m_async || m_referrer.isEmpty());
 
+    // No need to do preflight if the network stack will do it for us.
+    if (!m_async && platformStrategies()->loaderStrategy()->isDoingLoadingSecurityChecks())
+        m_options.preflightPolicy = PreventPreflight;
+
     // Referrer and Origin headers should be set after the preflight if any.
     ASSERT(!request.hasHTTPReferrer() && !request.hasHTTPOrigin());
 
@@ -116,7 +121,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     ASSERT(!request.httpHeaderFields().contains(HTTPHeaderName::Origin));
 
     // Copy headers if we need to replay the request after a redirection.
-    if (m_async && m_options.mode == FetchOptions::Mode::Cors)
+    if (!m_async || m_options.mode == FetchOptions::Mode::Cors)
         m_originalHeaders = request.httpHeaderFields();
 
 #if ENABLE(SERVICE_WORKER)
@@ -509,7 +514,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         auto& frameLoader = m_document.frame()->loader();
         if (!frameLoader.mixedContentChecker().canRunInsecureContent(m_document.securityOrigin(), requestURL))
             return;
-        identifier = frameLoader.loadResourceSynchronously(request, m_options.storedCredentialsPolicy, m_options.clientCredentialPolicy, error, response, data);
+        identifier = frameLoader.loadResourceSynchronously(request, m_options.clientCredentialPolicy, m_options, *m_originalHeaders, error, response, data);
     }
 
     loadTiming.setResponseEnd(MonotonicTime::now());
@@ -526,31 +531,33 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         return;
     }
 
-    // FIXME: FrameLoader::loadSynchronously() does not tell us whether a redirect happened or not, so we guess by comparing the
-    // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was
-    // requested. Also comparing the request and response URLs as strings will fail if the requestURL still has its credentials.
-    bool didRedirect = requestURL != response.url();
-    if (didRedirect) {
-        if (!isAllowedByContentSecurityPolicy(response.url(), ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
-            reportContentSecurityPolicyError(requestURL);
-            return;
-        }
-        if (!isAllowedRedirect(response.url())) {
-            reportCrossOriginResourceSharingError(requestURL);
-            return;
-        }
-    }
-
-    if (!m_sameOriginRequest) {
-        if (m_options.mode == FetchOptions::Mode::NoCors)
-            response.setTainting(ResourceResponse::Tainting::Opaque);
-        else {
-            ASSERT(m_options.mode == FetchOptions::Mode::Cors);
-            response.setTainting(ResourceResponse::Tainting::Cors);
-            String accessControlErrorDescription;
-            if (!passesAccessControlCheck(response, m_options.storedCredentialsPolicy, securityOrigin(), accessControlErrorDescription)) {
-                logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, response.url(), accessControlErrorDescription, ResourceError::Type::AccessControl));
+    if (!platformStrategies()->loaderStrategy()->isDoingLoadingSecurityChecks()) {
+        // FIXME: FrameLoader::loadSynchronously() does not tell us whether a redirect happened or not, so we guess by comparing the
+        // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was
+        // requested. Also comparing the request and response URLs as strings will fail if the requestURL still has its credentials.
+        bool didRedirect = requestURL != response.url();
+        if (didRedirect) {
+            if (!isAllowedByContentSecurityPolicy(response.url(), ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
+                reportContentSecurityPolicyError(requestURL);
                 return;
+            }
+            if (!isAllowedRedirect(response.url())) {
+                reportCrossOriginResourceSharingError(requestURL);
+                return;
+            }
+        }
+
+        if (!m_sameOriginRequest) {
+            if (m_options.mode == FetchOptions::Mode::NoCors)
+                response.setTainting(ResourceResponse::Tainting::Opaque);
+            else {
+                ASSERT(m_options.mode == FetchOptions::Mode::Cors);
+                response.setTainting(ResourceResponse::Tainting::Cors);
+                String accessControlErrorDescription;
+                if (!passesAccessControlCheck(response, m_options.storedCredentialsPolicy, securityOrigin(), accessControlErrorDescription)) {
+                    logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, response.url(), accessControlErrorDescription, ResourceError::Type::AccessControl));
+                    return;
+                }
             }
         }
     }

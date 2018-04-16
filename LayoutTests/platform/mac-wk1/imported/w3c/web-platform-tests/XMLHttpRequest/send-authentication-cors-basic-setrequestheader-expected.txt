@@ -1,4 +1,5 @@
 Blocked access to external URL http://www1.localhost:8800/XMLHttpRequest/resources/auth2/corsenabled.py
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://www1.localhost:8800/XMLHttpRequest/resources/auth2/corsenabled.py due to access control checks.
 
 FAIL XMLHttpRequest: send() - "Basic" authenticated CORS request using setRequestHeader() (expects to succeed)  A network error occurred.
 

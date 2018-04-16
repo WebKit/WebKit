@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FetchOptions.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
 #include "StoredCredentialsPolicy.h"
@@ -55,7 +56,7 @@ struct FetchOptions;
 class WEBCORE_EXPORT LoaderStrategy {
 public:
     virtual void loadResource(Frame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&) = 0;
-    virtual void loadResourceSynchronously(FrameLoader&, unsigned long identifier, const ResourceRequest&, StoredCredentialsPolicy, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data) = 0;
+    virtual void loadResourceSynchronously(FrameLoader&, unsigned long identifier, const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, Vector<char>& data) = 0;
 
     virtual void remove(ResourceLoader*) = 0;
     virtual void setDefersLoading(ResourceLoader*, bool) = 0;
@@ -77,6 +78,8 @@ public:
 
     virtual bool isOnLine() const = 0;
     virtual void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) = 0;
+
+    virtual bool isDoingLoadingSecurityChecks() const { return false; }
 
 protected:
     virtual ~LoaderStrategy();

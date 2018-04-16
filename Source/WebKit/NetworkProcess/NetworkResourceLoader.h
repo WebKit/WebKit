@@ -45,6 +45,7 @@ namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 class NetworkLoad;
+class NetworkLoadChecker;
 class SandboxExtension;
 
 namespace NetworkCache {
@@ -179,6 +180,7 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
+    RefPtr<NetworkLoadChecker> m_networkLoadChecker;
 };
 
 } // namespace WebKit

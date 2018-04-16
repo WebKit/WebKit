@@ -238,26 +238,28 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         return;
     }
 
+    auto requestForPreflight = request;
+    // We need to set header fields to m_originalRequestHeaders to correctly compute Access-Control-Request-Headers header value.
+    requestForPreflight.setHTTPHeaderFields(m_originalRequestHeaders);
     NetworkCORSPreflightChecker::Parameters parameters = {
-        WTFMove(request),
+        WTFMove(requestForPreflight),
         *m_origin,
+        request.httpReferrer(),
         m_sessionID,
         m_storedCredentialsPolicy
     };
-    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), [this, handler = WTFMove(handler)](auto result) {
-        if (result == NetworkCORSPreflightChecker::Result::Canceled) {
-            handler(makeUnexpected(ResourceError { String { }, 0, m_url, String { }, ResourceError::Type::Cancellation }));
+    m_corsPreflightChecker = std::make_unique<NetworkCORSPreflightChecker>(WTFMove(parameters), [this, request = WTFMove(request), handler = WTFMove(handler)](auto&& error) mutable {
+        if (error.isCancellation())
+            return;
+
+        RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success: %d forRedirect? %d", error.isNull(), isRedirected());
+
+        if (!error.isNull()) {
+            handler(makeUnexpected(WTFMove(error)));
             return;
         }
-
-        RELEASE_LOG_IF_ALLOWED("checkCORSRequestWithPreflight - makeCrossOriginAccessRequestWithPreflight preflight complete, success: %d forRedirect? %d", result == NetworkCORSPreflightChecker::Result::Success, isRedirected());
 
         auto corsPreflightChecker = WTFMove(m_corsPreflightChecker);
-        if (result == NetworkCORSPreflightChecker::Result::Failure) {
-            handler(this->returnError("Load cannot proceed due to preflight failure"));
-            return;
-        }
-        auto request = corsPreflightChecker->originalRequest();
         updateRequestForAccessControl(request, *m_origin, m_storedCredentialsPolicy);
         handler(WTFMove(request));
     });

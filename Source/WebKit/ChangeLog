@@ -1,3 +1,41 @@
+2018-04-16  Youenn Fablet  <youenn@apple.com>
+
+        Use NetworkLoadChecker to handle synchronous HTTP loads
+        https://bugs.webkit.org/show_bug.cgi?id=184240
+
+        Reviewed by Chris Dumez.
+
+        For every NetworkResourceLoader synchronous load, we create a NetworkLoadChecker.
+        NetworkLoadChecker handles all security checks in that case.
+        This allows supporting cross-origin loads for synchronous XHR.
+
+        Updated NetworkCORSPreflightChecker to return the result as a ResourceError.
+        This is used to convey any error message from NetworkProcess to the JS console.
+        Ensure NetworkCORSPreflightChecker computes correctly Access-Control-Request-Headers value
+        by providing the headers set by the application plus Referrer/Origin.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::~NetworkCORSPreflightChecker):
+        (WebKit::NetworkCORSPreflightChecker::willPerformHTTPRedirection):
+        (WebKit::NetworkCORSPreflightChecker::didReceiveChallenge):
+        (WebKit::NetworkCORSPreflightChecker::didCompleteWithError):
+        (WebKit::NetworkCORSPreflightChecker::wasBlocked):
+        (WebKit::NetworkCORSPreflightChecker::cannotShowURL):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::validateCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2018-04-16  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Automation: add SPI to terminate automation session and disconnect the remote end
