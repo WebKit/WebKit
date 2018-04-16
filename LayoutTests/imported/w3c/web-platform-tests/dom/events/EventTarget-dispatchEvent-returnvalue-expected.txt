@@ -1,3 +1,4 @@
 
-PASS Return value of EventTarget.dispatchEvent. 
+PASS Return value of EventTarget.dispatchEvent() affected by preventDefault(). 
+PASS Return value of EventTarget.dispatchEvent() affected by returnValue. 
 

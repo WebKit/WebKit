@@ -1,3 +1,4 @@
 
-PASS Event.defaultPrevented is not reset after dipatchEvent() 
+PASS Default prevention via preventDefault 
+PASS Default prevention via returnValue 
 

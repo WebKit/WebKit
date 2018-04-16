@@ -96,7 +96,7 @@ public:
     void setUntrusted() { m_isTrusted = false; }
 
     bool legacyReturnValue() const { return !m_wasCanceled; }
-    void setLegacyReturnValue(bool returnValue) { m_wasCanceled = !returnValue; }
+    void setLegacyReturnValue(bool);
 
     virtual EventInterface eventInterface() const { return EventInterfaceType; }
 
@@ -153,6 +153,8 @@ protected:
 private:
     AtomicString m_type;
 
+    void setCanceledFlagIfPossible();
+
     bool m_isInitialized { false };
     bool m_canBubble { false };
     bool m_cancelable { false };
@@ -175,6 +177,18 @@ private:
 };
 
 inline void Event::preventDefault()
+{
+    setCanceledFlagIfPossible();
+}
+
+inline void Event::setLegacyReturnValue(bool returnValue)
+{
+    if (!returnValue)
+        setCanceledFlagIfPossible();
+}
+
+// https://dom.spec.whatwg.org/#set-the-canceled-flag
+inline void Event::setCanceledFlagIfPossible()
 {
     if (m_cancelable && !m_isExecutingPassiveEventListener)
         m_wasCanceled = true;

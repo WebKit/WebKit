@@ -42,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-init-while-dispatching.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-initEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-propagation.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-returnValue.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-subclasses-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-timestamp-safe-resolution.html

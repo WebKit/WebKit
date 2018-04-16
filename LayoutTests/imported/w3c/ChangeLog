@@ -1,3 +1,32 @@
+2018-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Change Event's returnValue so it doesn't expose a new primitive
+        https://bugs.webkit.org/show_bug.cgi?id=184415
+
+        Reviewed by Darin Adler.
+
+        Import test coverage from https://github.com/w3c/web-platform-tests/pull/10258.
+
+        * web-platform-tests/dom/events/AddEventListenerOptions-passive-expected.txt:
+        * web-platform-tests/dom/events/AddEventListenerOptions-passive.html:
+        * web-platform-tests/dom/events/Event-constructors.html:
+        * web-platform-tests/dom/events/Event-defaultPrevented-after-dispatch-expected.txt:
+        * web-platform-tests/dom/events/Event-defaultPrevented-after-dispatch.html:
+        * web-platform-tests/dom/events/Event-defaultPrevented-expected.txt:
+        * web-platform-tests/dom/events/Event-defaultPrevented.html:
+        * web-platform-tests/dom/events/Event-dispatch-click.html:
+        * web-platform-tests/dom/events/Event-dispatch-detached-click.html:
+        * web-platform-tests/dom/events/Event-dispatch-other-document.html:
+        * web-platform-tests/dom/events/Event-initEvent.html:
+        * web-platform-tests/dom/events/Event-returnValue-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-returnValue.html: Added.
+        * web-platform-tests/dom/events/EventListener-handleEvent.html:
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-returnvalue-expected.txt:
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-returnvalue.html:
+        * web-platform-tests/dom/events/w3c-import.log:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/interfaces/dom.idl:
+
 2018-04-12  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Turn CSS Animations and CSS Transitions as Web Animations on by default

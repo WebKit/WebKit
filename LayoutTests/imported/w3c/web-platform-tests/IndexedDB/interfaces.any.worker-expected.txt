@@ -20,6 +20,8 @@ PASS Text interface: existence and properties of interface object
 PASS CDATASection interface: existence and properties of interface object 
 PASS ProcessingInstruction interface: existence and properties of interface object 
 PASS Comment interface: existence and properties of interface object 
+PASS AbstractRange interface: existence and properties of interface object 
+PASS StaticRange interface: existence and properties of interface object 
 PASS Range interface: existence and properties of interface object 
 PASS NodeIterator interface: existence and properties of interface object 
 PASS TreeWalker interface: existence and properties of interface object 

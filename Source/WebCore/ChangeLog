@@ -1,3 +1,25 @@
+2018-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Change Event's returnValue so it doesn't expose a new primitive
+        https://bugs.webkit.org/show_bug.cgi?id=184415
+
+        Reviewed by Darin Adler.
+
+        Update Event.returnValue setter to match the latest DOM specification after:
+        - https://github.com/whatwg/dom/pull/626
+
+        In particular, the returnValue setter is now a no-op if the new flag value
+        is true. If the input flag value is false, it only sets the 'canceled' flag
+        if the event is cancelable and the event’s in passive listener flag is unset.
+
+        Test: imported/w3c/web-platform-tests/dom/events/Event-returnValue.html
+
+        * dom/Event.cpp:
+        (WebCore::Event::setLegacyReturnValue):
+        (WebCore::Event::setCanceledFlagIfPossible):
+        (WebCore::Event::preventDefault):
+        * dom/Event.h:
+
 2018-04-14  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Expose a method to retrieve the GstStream from a TrackPrivateBaseGStreamer
