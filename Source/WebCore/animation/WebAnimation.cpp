@@ -1003,11 +1003,6 @@ Seconds WebAnimation::timeToNextRequiredTick() const
     if (localTime < 0_s)
         return -localTime;
 
-    // If our current time is just at the acthive duration threshold we want to invalidate as
-    // soon as possible to restore a non-animated value.
-    if (std::abs(localTime.microseconds() - m_effect->timing()->activeDuration().microseconds()) < timeEpsilon.microseconds())
-        return 0_s;
-
     // In any other case, we're idle or already outside our active duration and have no need
     // to schedule an invalidation.
     return Seconds::infinity();
@@ -1017,6 +1012,8 @@ void WebAnimation::resolve(RenderStyle& targetStyle)
 {
     if (m_effect)
         m_effect->apply(targetStyle);
+
+    updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
 }
 
 void WebAnimation::setSuspended(bool isSuspended)

@@ -1,3 +1,21 @@
+2018-04-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animations do not naturally get a finish event
+        https://bugs.webkit.org/show_bug.cgi?id=184639
+        <rdar://problem/39397649>
+
+        Reviewed by Jon Lee.
+
+        We must call updateFinishedState() when an animation gets sampled as it means its timeline's time has progressed
+        and it may have crossed to a finished state. Calling updateFinishedState() when sampling means that we'll correctly
+        set the animation's hold time to its end value, which means that currentTime() will now always be clamped to return
+        the end time once its has reached it, so we must not schedule animations to resolve immediately anymore since otherwise
+        they will keep being scheduled in a loop.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::timeToNextRequiredTick const):
+        (WebCore::WebAnimation::resolve):
+
 2018-04-15  Chris Dumez  <cdumez@apple.com>
 
         Change Event's returnValue so it doesn't expose a new primitive
