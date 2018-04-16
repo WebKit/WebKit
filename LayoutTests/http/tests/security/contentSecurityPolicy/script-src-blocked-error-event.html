@@ -18,6 +18,12 @@
     </script>
 </head>
     <body>
-    <script onload="scriptLoad();" onerror="scriptError();" src="http://localhost:8000/security/contentSecurityPolicy/resources/script-set-value.js"></script>
+    <script>
+        let script = document.createElement("script");
+        script.src = "http://localhost:8000/security/contentSecurityPolicy/resources/script-set-value.js";
+        script.onerror = scriptError;
+        script.onload = scriptLoad;
+        document.body.appendChild(script);
+    </script>
     </body>
 </html>
