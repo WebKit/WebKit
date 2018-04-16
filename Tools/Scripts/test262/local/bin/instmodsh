@@ -1,0 +1,193 @@
+#!/Users/leo/perl5/perlbrew/perls/perl-5.8.8/bin/perl -w
+
+BEGIN { pop @INC if $INC[-1] eq '.' }
+use strict;
+use IO::File;
+use ExtUtils::Packlist;
+use ExtUtils::Installed;
+
+use vars qw($Inst @Modules);
+
+
+=head1 NAME
+
+instmodsh - A shell to examine installed modules
+
+=head1 SYNOPSIS
+
+    instmodsh
+
+=head1 DESCRIPTION
+
+A little interface to ExtUtils::Installed to examine installed modules,
+validate your packlists and even create a tarball from an installed module.
+
+=head1 SEE ALSO
+
+ExtUtils::Installed
+
+=cut
+
+
+my $Module_Help = <<EOF;
+Available commands are:
+   f [all|prog|doc]   - List installed files of a given type
+   d [all|prog|doc]   - List the directories used by a module
+   v                  - Validate the .packlist - check for missing files
+   t <tarfile>        - Create a tar archive of the module
+   h                  - Display module help
+   q                  - Quit the module
+EOF
+
+my %Module_Commands = (
+                       f => \&list_installed,
+                       d => \&list_directories,
+                       v => \&validate_packlist,
+                       t => \&create_archive,
+                       h => \&module_help,
+                      );
+
+sub do_module($) {
+    my ($module) = @_;
+
+    print($Module_Help);
+    MODULE_CMD: while (1) {
+        print("$module cmd? ");
+
+        my $reply = <STDIN>; chomp($reply);
+        my($cmd) = $reply =~ /^(\w)\b/;
+
+        last if $cmd eq 'q';
+
+        if( $Module_Commands{$cmd} ) {
+            $Module_Commands{$cmd}->($reply, $module);
+        }
+        elsif( $cmd eq 'q' ) {
+            last MODULE_CMD;
+        }
+        else {
+            module_help();
+        }
+    }
+}
+
+
+sub list_installed {
+    my($reply, $module) = @_;
+
+    my $class = (split(' ', $reply))[1];
+    $class = 'all' unless $class;
+
+    my @files;
+    if (eval { @files = $Inst->files($module, $class); }) {
+        print("$class files in $module are:\n   ",
+              join("\n   ", @files), "\n");
+    }
+    else {
+        print($@);
+    }
+};
+
+
+sub list_directories {
+    my($reply, $module) = @_;
+
+    my $class = (split(' ', $reply))[1];
+    $class = 'all' unless $class;
+
+    my @dirs;
+    if (eval { @dirs = $Inst->directories($module, $class); }) {
+        print("$class directories in $module are:\n   ",
+              join("\n   ", @dirs), "\n");
+    }
+    else {
+        print($@);
+    }
+}
+
+
+sub create_archive {
+    my($reply, $module) = @_;
+
+    my $file = (split(' ', $reply))[1];
+
+    if( !(defined $file and length $file) ) {
+        print "No tar file specified\n";
+    }
+    elsif( eval { require Archive::Tar } ) {
+        Archive::Tar->create_archive($file, 0, $Inst->files($module));
+    }
+    else {
+        my($first, @rest) = $Inst->files($module);
+        system('tar', 'cvf', $file, $first);
+        for my $f (@rest) {
+            system('tar', 'rvf', $file, $f);
+        }
+        print "Can't use tar\n" if $?;
+    }
+}
+
+
+sub validate_packlist {
+    my($reply, $module) = @_;
+
+    if (my @missing = $Inst->validate($module)) {
+        print("Files missing from $module are:\n   ",
+              join("\n   ", @missing), "\n");
+    }
+    else {
+        print("$module has no missing files\n");
+    }
+}
+
+sub module_help {
+    print $Module_Help;
+}
+
+
+
+##############################################################################
+
+sub toplevel()
+{
+my $help = <<EOF;
+Available commands are:
+   l            - List all installed modules
+   m <module>   - Select a module
+   q            - Quit the program
+EOF
+print($help);
+while (1)
+   {
+   print("cmd? ");
+   my $reply = <STDIN>; chomp($reply);
+   CASE:
+      {
+      $reply eq 'l' and do
+         {
+         print("Installed modules are:\n   ", join("\n   ", @Modules), "\n");
+         last CASE;
+         };
+      $reply =~ /^m\s+/ and do
+         {
+         do_module((split(' ', $reply))[1]);
+         last CASE;
+         };
+      $reply eq 'q' and do
+         {
+         exit(0);
+         };
+      # Default
+         print($help);
+      }
+   }
+}
+
+
+###############################################################################
+
+$Inst = ExtUtils::Installed->new();
+@Modules = $Inst->modules();
+toplevel();
+
+###############################################################################

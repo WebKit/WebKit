@@ -1,3 +1,32 @@
+2018-04-16  Leo Balter  <leonardo.balter@gmail.com>
+
+        Perl-based Test262 runner
+        https://bugs.webkit.org/show_bug.cgi?id=183343
+
+        Reviewed by Michael Saboff.
+
+        * Scripts/test262-helpers/README.md: Added.
+        * Scripts/test262-helpers/agent.js: Added.
+        (262.getGlobal):
+        (262.setGlobal):
+        (262.destroy):
+        (262.IsHTMLDDA):
+        * Scripts/test262-helpers/cpanfile: Added.
+        * Scripts/test262-helpers/cpanfile.snapshot: Added.
+        * Scripts/test262-helpers/test262-runner.pl: Added.
+        (main):
+        (processFile):
+        (getScenarios):
+        (addScenario):
+        (compileTest):
+        (runTest):
+        (processResult):
+        (getTempFile):
+        (getContents):
+        (parseData):
+        (getHarness):
+        * Scripts/test262-helpers/tests.log: Added.
+
 2018-04-15  Andy Estes  <aestes@apple.com>
 
         [iOS] Add API tests for PDF find-in-page

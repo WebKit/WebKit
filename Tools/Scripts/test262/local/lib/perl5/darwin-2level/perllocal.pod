@@ -1,0 +1,66 @@
+=head2 Mon Mar 26 19:35:28 2018: C<Module> L<ExtUtils::MakeMaker|ExtUtils::MakeMaker>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/leo/dev/webkit/Tools/Scripts/test262-helpers/local/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 7.32>
+
+=item *
+
+C<EXE_FILES: bin/instmodsh>
+
+=back
+
+=head2 Mon Mar 26 19:35:29 2018: C<Module> L<Parallel::ForkManager|Parallel::ForkManager>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/leo/dev/webkit/Tools/Scripts/test262-helpers/local/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.19>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Mar 26 19:35:30 2018: C<Module> L<YAML|YAML>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/leo/dev/webkit/Tools/Scripts/test262-helpers/local/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.24>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+

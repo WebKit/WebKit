@@ -1,0 +1,12 @@
+
+---
+skip:
+  # (uncomment to skip tests based on path)
+  # paths:
+  #   - test/built-ins/Atomics
+  features:
+    - SharedArrayBuffer
+    - BigInt
+  files:
+    - test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-object.js
+    - test/built-ins/Array/prototype/unshift/length-near-integer-limit.js
