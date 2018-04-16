@@ -1,3 +1,13 @@
+2018-04-16  Youenn Fablet  <youenn@apple.com>
+
+        Set H264 VT encoder usage to 1
+        https://bugs.webkit.org/show_bug.cgi?id=184668
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 configureCompressionSession]):
+
 2018-04-10  Youenn Fablet  <youenn@apple.com>
 
         webrtc/datachannel/basic-tcp.html will crash with an invalid crash

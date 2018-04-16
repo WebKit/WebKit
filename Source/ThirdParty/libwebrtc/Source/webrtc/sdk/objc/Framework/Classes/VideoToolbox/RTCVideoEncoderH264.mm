@@ -38,13 +38,13 @@
 #include "sdk/WebKit/EncoderUtilities.h"
 #include "sdk/WebKit/WebKitUtilities.h"
 
-#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
 #import <dlfcn.h>
 #import <objc/runtime.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolBox)
 SOFT_LINK_POINTER_OPTIONAL(VideoToolBox, kVTVideoEncoderSpecification_Usage, NSString *)
 
+#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
 static inline bool isStandardFrameSize(int32_t width, int32_t height)
 {
     // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
@@ -733,6 +733,9 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_RealTime, true);
   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_ProfileLevel, _profile);
   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
+#if ENABLE_VCP_ENCODER
+  SetVTSessionProperty(_compressionSession, (__bridge CFStringRef)getkVTVideoEncoderSpecification_Usage(), 1);
+#endif
   [self setEncoderBitrateBps:_targetBitrateBps];
   // TODO(tkchin): Look at entropy mode and colorspace matrices.
   // TODO(tkchin): Investigate to see if there's any way to make this work.
