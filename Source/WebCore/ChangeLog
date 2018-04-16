@@ -1,3 +1,20 @@
+2018-04-16  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Set TrackPrivateBaseGStreamer metadata information even if no client is avalaible
+        https://bugs.webkit.org/show_bug.cgi?id=184651
+
+        Reviewed by Philippe Normand.
+
+        We can't notify the client if none is connected, but still we need to fill our metadatas from
+        the provided GstTagList, especially in the case of playbin3 where the client is not set yet
+        at construct time but the metadata might already be preset (and won't be updated later on).
+
+        No new tests are added as we already have a few ones that are currently disabled in
+        the mediastream testsuite. This patch is part of the work to enable them.
+
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged):
+
 2018-04-16  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Ensure we never return -0 through the API

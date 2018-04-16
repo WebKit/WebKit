@@ -172,18 +172,17 @@ bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, S
 void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 {
     TrackPrivateBaseClient* client = m_owner->client();
-    if (!client)
-        return;
 
     GRefPtr<GstTagList> tags;
     {
         LockHolder lock(m_tagMutex);
         tags.swap(m_tags);
     }
+
     if (!tags)
         return;
 
-    if (getTag(tags.get(), GST_TAG_TITLE, m_label))
+    if (getTag(tags.get(), GST_TAG_TITLE, m_label) && client)
         client->labelChanged(m_label);
 
     AtomicString language;
@@ -194,7 +193,8 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
         return;
 
     m_language = language;
-    client->languageChanged(m_language);
+    if (client)
+        client->languageChanged(m_language);
 }
 
 } // namespace WebCore
