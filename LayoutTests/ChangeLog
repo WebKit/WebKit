@@ -1,3 +1,21 @@
+2018-04-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed. Update WinCairo TestExpectations in preparation for LayoutTests automation.
+
+        * platform/wincairo/TestExpectations:
+        Updated current failures for directories A-E. Added temporary skips for everything after.
+
+        * platform/wincairo/accessibility:
+        * platform/wincairo/animations/3d:
+        * platform/wincairo/css2.1:
+        * platform/wincairo/css3:
+        * platform/wincairo/editing:
+        * platform/wincairo/fast/css-generated-content:
+        * platform/wincairo/fast/dom:
+        * platform/wincairo/legacy-animation-engine/animations/3d:
+        * platform/wincairo/legacy-animation-engine/compositing:
+        Added expectation files.
+
 2018-04-16  Megan Gardner  <megan_gardner@apple.com>
 
         Switch to UIWKTextInteractionAssistant for non-editable text
