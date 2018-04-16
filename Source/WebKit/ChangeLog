@@ -1,3 +1,23 @@
+2018-04-16  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Automation: add SPI to terminate automation session and disconnect the remote end
+        https://bugs.webkit.org/show_bug.cgi?id=184523
+        <rdar://problem/39368599>
+
+        Reviewed by Simon Fraser.
+
+        When a user breaks the automation glass pane and chooses "Stop Session", there is no way
+        for Safari to actually disconnect the remote connection using automation-related ObjC SPI.
+        This can lead to sessions getting stuck and safaridriver is unable to request a new session.
+
+        Expose the -terminate method as SPI. This disconnects the remote connection and then notifies
+        the session delegate that the remote disconnected. At that point, Safari can uninstall
+        the session from the process pool and tear down other session state.
+
+        * UIProcess/API/Cocoa/_WKAutomationSession.h:
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession terminate]):
+
 2018-04-16  Timothy Hatcher  <timothy@apple.com>
 
         Clean up OTHER_LDFLAGS for WebKit processes

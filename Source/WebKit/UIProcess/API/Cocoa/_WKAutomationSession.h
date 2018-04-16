@@ -47,6 +47,8 @@ WK_CLASS_AVAILABLE(macosx(10.12), ios(10.0))
 
 - (instancetype)initWithConfiguration:(_WKAutomationSessionConfiguration *)configuration NS_DESIGNATED_INITIALIZER;
 
+- (void)terminate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 #if !TARGET_OS_IPHONE
 - (BOOL)wasEventSynthesizedForAutomation:(NSEvent *)event;
 - (void)markEventAsSynthesizedForAutomation:(NSEvent *)event;

@@ -102,6 +102,11 @@
     return _session->isSimulatingUserInteraction();
 }
 
+- (void)terminate
+{
+    _session->terminate();
+}
+
 #if PLATFORM(MAC)
 - (BOOL)wasEventSynthesizedForAutomation:(NSEvent *)event
 {
