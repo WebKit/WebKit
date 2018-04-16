@@ -48,6 +48,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <sysexits.h>
 #import <wtf/HashSet.h>
@@ -523,6 +524,12 @@ void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParamet
 void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
 {
     initializeShim();
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    // We don't need to talk to the dock.
+    if ([NSApplication respondsToSelector:@selector(_preventDockConnections)])
+        [NSApplication _preventDockConnections];
+#endif
 
     initializeCocoaOverrides();
 

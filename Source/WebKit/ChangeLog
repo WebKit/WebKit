@@ -1,3 +1,21 @@
+2018-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Don't establish unneeded Dock connections
+        https://bugs.webkit.org/show_bug.cgi?id=184664
+        <rdar://problem/16863698>
+
+        Reviewed by Simon Fraser.
+
+        There is no reason for the WebContent or Plugin processes to interact with
+        the Dock. We should tell AppKit that we don't want this connection, and to
+        avoid creating such connections.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess): Tell NSApplication to
+        not create a Dock connection.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Ditto.
+
 2018-04-16  Megan Gardner  <megan_gardner@apple.com>
 
         Switch to UIWKTextInteractionAssistant for non-editable text
