@@ -296,6 +296,7 @@ describe('/api/manifest', function () {
         return Promise.all([
             db.insert('repositories', {id: 11, name: 'WebKit', url: 'https://trac.webkit.org/$1'}),
             db.insert('repositories', {id: 9, name: 'macOS'}),
+            db.insert('repositories', {id: 16, name: 'Shared'}),
             db.insert('repositories', {id: 101, name: 'WebKit', owner: 9, url: 'https://trac.webkit.org/$1'}),
             db.insert('build_triggerables', {id: 200, name: 'build.webkit.org'}),
             db.insert('build_triggerables', {id: 201, name: 'ios-build.webkit.org'}),
@@ -321,12 +322,15 @@ describe('/api/manifest', function () {
             db.insert('triggerable_repository_groups', {id: 300, triggerable: 200, name: 'default'}),
             db.insert('triggerable_repository_groups', {id: 301, triggerable: 201, name: 'default'}),
             db.insert('triggerable_repository_groups', {id: 302, triggerable: 202, name: 'system-and-webkit'}),
-            db.insert('triggerable_repository_groups', {id: 312, triggerable: 202, name: 'system-and-roots', accepts_roots: true}),
+            db.insert('triggerable_repository_groups', {id: 303, triggerable: 202, name: 'system-and-roots', accepts_roots: true}),
+            db.insert('triggerable_repository_groups', {id: 304, triggerable: 202, name: 'webkit-and-shared', hidden: true}),
             db.insert('triggerable_repositories', {group: 300, repository: 11}),
             db.insert('triggerable_repositories', {group: 301, repository: 11}),
             db.insert('triggerable_repositories', {group: 302, repository: 11}),
+            db.insert('triggerable_repositories', {group: 304, repository: 11}),
             db.insert('triggerable_repositories', {group: 302, repository: 9}),
-            db.insert('triggerable_repositories', {group: 312, repository: 9}),
+            db.insert('triggerable_repositories', {group: 303, repository: 9}),
+            db.insert('triggerable_repositories', {group: 304, repository: 16}),
             db.insert('triggerable_configurations', {triggerable: 200, test: 1, platform: 46}),
             db.insert('triggerable_configurations', {triggerable: 200, test: 2, platform: 46}),
             db.insert('triggerable_configurations', {triggerable: 201, test: 1, platform: 23}),
@@ -347,6 +351,9 @@ describe('/api/manifest', function () {
 
             const macos = Repository.findById(9);
             assert.equal(macos.name(), 'macOS');
+
+            const shared = Repository.findById(16);
+            assert.equal(shared.name(), 'Shared');
 
             const someTest = Test.findById(1);
             assert.equal(someTest.name(), 'SomeTest');
@@ -386,7 +393,7 @@ describe('/api/manifest', function () {
             assert(macTriggerable.acceptedTests().has(someTest));
 
             const groups = macTriggerable.repositoryGroups();
-            assert.deepEqual(groups.length, 2);
+            assert.deepEqual(groups.length, 3);
             TriggerableRepositoryGroup.sortByName(groups);
 
             const emptyCustomSet = new CustomCommitSet;
@@ -401,21 +408,39 @@ describe('/api/manifest', function () {
             const cusomSetWithWebKit = new CustomCommitSet;
             cusomSetWithWebKit.setRevisionForRepository(webkit, '191622');
 
+            const cusomSetWithWebKitAndShared = new CustomCommitSet;
+            cusomSetWithWebKitAndShared.setRevisionForRepository(webkit, '191622');
+            cusomSetWithWebKitAndShared.setRevisionForRepository(shared, '86456');
+
             assert.equal(groups[0].name(), 'system-and-roots');
+            assert.equal(groups[0].isHidden(), false);
             assert.equal(groups[0].acceptsCustomRoots(), true);
             assert.deepEqual(Repository.sortByName(groups[0].repositories()), [macos]);
             assert.equal(groups[0].accepts(emptyCustomSet), false);
             assert.equal(groups[0].accepts(customSetWithOSX), true);
             assert.equal(groups[0].accepts(cusomSetWithOSXAndWebKit), false);
+            assert.equal(groups[0].accepts(cusomSetWithWebKitAndShared), false);
             assert.equal(groups[0].accepts(cusomSetWithWebKit), false);
 
             assert.equal(groups[1].name(), 'system-and-webkit');
+            assert.equal(groups[1].isHidden(), false);
             assert.equal(groups[1].acceptsCustomRoots(), false);
             assert.deepEqual(Repository.sortByName(groups[1].repositories()), [webkit, macos]);
             assert.equal(groups[1].accepts(emptyCustomSet), false);
             assert.equal(groups[1].accepts(customSetWithOSX), false);
             assert.equal(groups[1].accepts(cusomSetWithOSXAndWebKit), true);
+            assert.equal(groups[1].accepts(cusomSetWithWebKitAndShared), false);
             assert.equal(groups[1].accepts(cusomSetWithWebKit), false);
+
+            assert.equal(groups[2].name(), 'webkit-and-shared');
+            assert.equal(groups[2].isHidden(), true);
+            assert.equal(groups[2].acceptsCustomRoots(), false);
+            assert.deepEqual(Repository.sortByName(groups[2].repositories()), [shared, webkit]);
+            assert.equal(groups[2].accepts(emptyCustomSet), false);
+            assert.equal(groups[2].accepts(customSetWithOSX), false);
+            assert.equal(groups[2].accepts(cusomSetWithOSXAndWebKit), false);
+            assert.equal(groups[2].accepts(cusomSetWithWebKitAndShared), true);
+            assert.equal(groups[2].accepts(cusomSetWithWebKit), false);
         });
     });
 

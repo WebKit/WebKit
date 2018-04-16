@@ -244,6 +244,7 @@ CREATE TABLE triggerable_repository_groups (
     repositorygroup_name varchar(256) NOT NULL,
     repositorygroup_description varchar(256),
     repositorygroup_accepts_roots boolean NOT NULL DEFAULT FALSE,
+    repositorygroup_hidden boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT repository_group_name_must_be_unique_for_triggerable UNIQUE(repositorygroup_triggerable, repositorygroup_name));
 
 CREATE TABLE triggerable_repositories (

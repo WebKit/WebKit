@@ -58,6 +58,7 @@ class TriggerableRepositoryGroup extends LabeledObject {
     {
         super(id, object);
         this._description = object.description;
+        this._isHidden = !!object.hidden;
         this._acceptsCustomRoots = !!object.acceptsCustomRoots;
         this._repositories = Repository.sortByNamePreferringOnesWithURL(object.repositories.map((item) => item.repository));
         this._patchAcceptingSet = new Set(object.repositories.filter((item) => item.acceptsPatch).map((item) => item.repository));
@@ -86,6 +87,7 @@ class TriggerableRepositoryGroup extends LabeledObject {
     }
 
     description() { return this._description || this.name(); }
+    isHidden() { return this._isHidden; }
     acceptsCustomRoots() { return this._acceptsCustomRoots; }
     repositories() { return this._repositories; }
 

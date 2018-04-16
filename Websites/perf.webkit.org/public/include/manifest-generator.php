@@ -229,6 +229,7 @@ class ManifestGenerator {
                     'id' => $group_row['repositorygroup_id'],
                     'name' => $group_row['repositorygroup_name'],
                     'description' => $group_row['repositorygroup_description'],
+                    'hidden' => Database::is_true($group_row['repositorygroup_hidden']),
                     'acceptsCustomRoots' => Database::is_true($group_row['repositorygroup_accepts_roots']),
                     'repositories' => $repository_list));
                 // V2 UI compatibility.

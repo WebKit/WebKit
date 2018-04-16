@@ -23,6 +23,9 @@ if ($db) {
     } else if ($action == 'update-group-description') {
         if (update_field('triggerable_repository_groups', 'repositorygroup', 'description'))
             regenerate_manifest();
+    } else if ($action == 'update-group-hidden') {
+        if (update_field('triggerable_repository_groups', 'repositorygroup', 'hidden'))
+            regenerate_manifest();
     } else if ($action == 'update-group-accept-roots') {
         if (update_field('triggerable_repository_groups', 'repositorygroup', 'accepts_roots',
             Database::to_database_boolean(array_get($_POST, 'accepts'))))
@@ -39,7 +42,7 @@ if ($db) {
             regenerate_manifest();
         } else
             $db->rollback_transaction();
-    }  else if ($action == 'update-accept-patch') {
+    } else if ($action == 'update-accept-patch') {
         $group_id = intval($_POST['group']);
         $repositories_that_accepts_patch = array_get($_POST, 'repositories', array());
 
@@ -83,7 +86,7 @@ if ($db) {
         'disabled' => array('editing_mode' => 'boolean', 'post_insertion' => TRUE),
         'repositories' => array(
             'label' => 'Repository Groups',
-            'subcolumns'=> array('ID', 'Name', 'Description', 'Accepts Roots', 'Repositories', 'Accept patches'),
+            'subcolumns'=> array('ID', 'Name', 'Description', 'Hidden', 'Accepts Roots', 'Repositories', 'Accept patches'),
             'custom' => function ($triggerable_row) use (&$db, &$repository_rows) {
                 return generate_repository_list($db, $triggerable_row['triggerable_id'], $repository_rows);
             }),
@@ -115,6 +118,7 @@ function generate_repository_list($db, $triggerable_id, $repository_rows) {
         $group_id = $group_row['repositorygroup_id'];
         $group_name = $group_row['repositorygroup_name'];
         $group_description = $group_row['repositorygroup_description'];
+        $checked_if_hidden = Database::is_true($group_row['repositorygroup_hidden']) ? 'checked' : '';
         $checked_if_accepts_roots = Database::is_true($group_row['repositorygroup_accepts_roots']) ? 'checked' : '';
 
         $group_name_form = <<< END
@@ -130,6 +134,15 @@ END;
             <input type="hidden" name="action" value="update-group-description">
             <input type="hidden" name="id" value="$group_id">
             <input name="description" value="$group_description">
+            </form>
+END;
+
+        $group_hidden_form = <<< END
+            <form method="POST">
+            <input type="hidden" name="action" value="update-group-hidden">
+            <input type="hidden" name="id" value="$group_id">
+            <input type="checkbox" name="hidden" $checked_if_hidden>
+            <button type="submit">Save</button>
             </form>
 END;
 
@@ -153,7 +166,7 @@ END;
             $repositories_that_accepts_patch[$repository_id] = Database::is_true($row['trigrepo_accepts_patch']);
         }
 
-        array_push($group_forms, array($group_id, $group_name_form, $group_description_form, $group_accepts_roots,
+        array_push($group_forms, array($group_id, $group_name_form, $group_description_form, $group_hidden_form, $group_accepts_roots,
             generate_repository_form('update-repositories', $group_id, generate_repository_checkboxes($db, $repository_rows, $repositories_in_group)),
             generate_repository_form('update-accept-patch', $group_id, generate_repository_checkboxes($db, $repository_rows, $repositories_that_accepts_patch)),
         ));

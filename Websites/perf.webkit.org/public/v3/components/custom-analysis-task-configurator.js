@@ -367,7 +367,8 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         if (!triggerable)
             return;
 
-        const repositoryGroups = TriggerableRepositoryGroup.sortByNamePreferringSmallerRepositories(triggerable.repositoryGroups());
+        const visibleRepositoryGroups = triggerable.repositoryGroups().filter((group) => !group.isHidden());
+        const repositoryGroups = TriggerableRepositoryGroup.sortByNamePreferringSmallerRepositories(visibleRepositoryGroups);
 
         const repositorySet = new Set;
         for (let group of repositoryGroups) {

@@ -1,3 +1,22 @@
+2018-04-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it possible to hide some repository groups
+        https://bugs.webkit.org/show_bug.cgi?id=184632
+
+        Reviewed by Saam Barati.
+
+        Added the ability to hide repository groups in the custom analysis task configurator from the admin page.
+        Hidden repositroy groups will continue to function for existing test groups. This is purely an UI change.
+
+        * init-database.sql: Added repositorygroup_hidden as a new column to triggerable_repository_groups.
+        * public/admin/triggerables.php: Added a form field to hide a repository group.
+        * public/include/manifest-generator.php: Include hidden state in the manifest file.
+        * public/v3/components/custom-analysis-task-configurator.js:
+        (CustomAnalysisTaskConfigurator.prototype._renderRepositoryPanes): Filter out hidden repository groups.
+        * public/v3/models/triggerable.js:
+        (prototype.isHidden): Added.
+        * server-tests/api-manifest-tests.js: Updated an existing test case to test a hidden repository group.
+
 2018-04-06  Dewei Zhu  <dewei_zhu@apple.com>
 
         Added 'CommitSet.diff' which will be shared between multiple independent incoming changes.
