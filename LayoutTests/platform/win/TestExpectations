@@ -4053,3 +4053,5 @@ webkit.org/b/184589 animations/big-rotation.html [ Skip ]
 webkit.org/b/184589 fast/css-generated-content/pseudo-transition.html [ Skip ]
 webkit.org/b/184589 animations/animation-direction-alternate-reverse.html [ Skip ]
 webkit.org/b/184589 fast/css-generated-content/pseudo-animation.html [ Skip ]
+
+webkit.org/b/184649 css3/filters/blur-various-radii.html [ Crash ]
