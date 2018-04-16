@@ -1,3 +1,15 @@
+2018-04-16  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up OTHER_LDFLAGS for WebKit processes
+        https://bugs.webkit.org/show_bug.cgi?id=184657
+
+        Reviewed by Jer Noble.
+
+        * Configurations/PluginProcessShim.xcconfig:
+        * Configurations/PluginService.32.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+
 2018-04-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Install files needed for WebKitWebExtensions
