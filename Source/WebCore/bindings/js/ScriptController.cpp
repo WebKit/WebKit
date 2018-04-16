@@ -23,14 +23,12 @@
 
 #include "BridgeJSC.h"
 #include "CachedScriptFetcher.h"
-#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "GCController.h"
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMBindingSecurity.h"
@@ -66,25 +64,12 @@
 #include <JavaScriptCore/JSScriptFetcher.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
-#include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Threading.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 using namespace JSC;
-
-static void collectGarbageAfterWindowProxyDestruction()
-{
-    // Make sure to GC Extra Soon(tm) during memory pressure conditions
-    // to soften high peaks of memory usage during navigation.
-    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        // NOTE: We do the collection on next runloop to ensure that there's no pointer
-        //       to the window object on the stack.
-        GCController::singleton().garbageCollectOnNextRunLoop();
-    } else
-        GCController::singleton().garbageCollectSoon();
-}
 
 void ScriptController::initializeThreading()
 {
@@ -115,16 +100,6 @@ ScriptController::~ScriptController()
         JSLockHolder lock(commonVM());
         m_cacheableBindingRootObject->invalidate();
         m_cacheableBindingRootObject = nullptr;
-    }
-
-    // It's likely that destroying windowProxies will create a lot of garbage.
-    if (!windowProxyController().windowProxies().isEmpty()) {
-        while (!windowProxyController().windowProxies().isEmpty()) {
-            auto windowProxy = *windowProxyController().windowProxies().begin();
-            windowProxy.get()->window()->setConsoleClient(nullptr);
-            windowProxyController().destroyWindowProxy(windowProxy.get()->world());
-        }
-        collectGarbageAfterWindowProxyDestruction();
     }
 }
 
@@ -265,57 +240,6 @@ void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
     static_cast<JSVMClientData*>(commonVM().clientData)->getAllWorlds(worlds);
 }
 
-void ScriptController::clearWindowProxiesNotMatchingDOMWindow(DOMWindow* newDOMWindow, bool goingIntoPageCache)
-{
-    if (windowProxyController().windowProxies().isEmpty())
-        return;
-
-    JSLockHolder lock(commonVM());
-
-    for (auto& windowProxy : windowProxyController().windowProxiesAsVector()) {
-        if (&windowProxy->wrapped() == newDOMWindow)
-            continue;
-
-        // Clear the debugger and console from the current window before setting the new window.
-        attachDebugger(windowProxy.get(), nullptr);
-        windowProxy->window()->setConsoleClient(nullptr);
-        windowProxy->window()->willRemoveFromWindowProxy();
-    }
-
-    // It's likely that resetting our windows created a lot of garbage, unless
-    // it went in a back/forward cache.
-    if (!goingIntoPageCache)
-        collectGarbageAfterWindowProxyDestruction();
-}
-
-void ScriptController::setDOMWindowForWindowProxy(DOMWindow* newDOMWindow)
-{
-    ASSERT(newDOMWindow);
-
-    if (windowProxyController().windowProxies().isEmpty())
-        return;
-    
-    JSLockHolder lock(commonVM());
-    
-    for (auto& windowProxy : windowProxyController().windowProxiesAsVector()) {
-        if (&windowProxy->wrapped() == newDOMWindow)
-            continue;
-        
-        windowProxy->setWindow(*newDOMWindow);
-        
-        // An m_cacheableBindingRootObject persists between page navigations
-        // so needs to know about the new JSDOMWindow.
-        if (m_cacheableBindingRootObject)
-            m_cacheableBindingRootObject->updateGlobalObject(windowProxy->window());
-
-        if (Page* page = m_frame.page()) {
-            attachDebugger(windowProxy.get(), page->debugger());
-            windowProxy->window()->setProfileGroup(page->group().identifier());
-            windowProxy->window()->setConsoleClient(&page->console());
-        }
-    }
-}
-
 void ScriptController::initScriptForWindowProxy(JSDOMWindowProxy& windowProxy)
 {
     auto& world = windowProxy.world();
@@ -326,7 +250,7 @@ void ScriptController::initScriptForWindowProxy(JSDOMWindowProxy& windowProxy)
         document->contentSecurityPolicy()->didCreateWindowProxy(windowProxy);
 
     if (Page* page = m_frame.page()) {
-        attachDebugger(&windowProxy, page->debugger());
+        windowProxy.attachDebugger(page->debugger());
         windowProxy.window()->setProfileGroup(page->group().identifier());
         windowProxy.window()->setConsoleClient(&page->console());
     }
@@ -455,26 +379,6 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame* frame)
         return true;
 
     return BindingSecurity::shouldAllowAccessToFrame(state, frame);
-}
-
-void ScriptController::attachDebugger(JSC::Debugger* debugger)
-{
-    for (auto& windowProxy : windowProxyController().windowProxies())
-        attachDebugger(windowProxy.get(), debugger);
-}
-
-void ScriptController::attachDebugger(JSDOMWindowProxy* proxy, JSC::Debugger* debugger)
-{
-    if (!proxy)
-        return;
-
-    auto* globalObject = proxy->window();
-    JSLockHolder lock(globalObject->vm());
-
-    if (debugger)
-        debugger->attach(globalObject);
-    else if (auto* currentDebugger = globalObject->debugger())
-        currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
 }
 
 void ScriptController::updateDocument()

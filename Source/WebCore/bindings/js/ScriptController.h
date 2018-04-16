@@ -123,17 +123,11 @@ public:
     static bool canAccessFromCurrentOrigin(Frame*);
     WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
 
-    // Debugger can be 0 to detach any existing Debugger.
-    void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window proxies.
-    void attachDebugger(JSDOMWindowProxy*, JSC::Debugger*);
-
     void setPaused(bool b) { m_paused = b; }
     bool isPaused() const { return m_paused; }
 
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
 
-    void clearWindowProxiesNotMatchingDOMWindow(DOMWindow*, bool goingIntoPageCache);
-    WEBCORE_EXPORT void setDOMWindowForWindowProxy(DOMWindow*);
     void updateDocument();
 
     void namedItemAdded(HTMLDocument*, const AtomicString&) { }
@@ -147,6 +141,7 @@ public:
     RefPtr<JSC::Bindings::Instance>  createScriptInstanceForWidget(Widget*);
     WEBCORE_EXPORT JSC::Bindings::RootObject* bindingRootObject();
     JSC::Bindings::RootObject* cacheableBindingRootObject();
+    JSC::Bindings::RootObject* existingCacheableBindingRootObject() const { return m_cacheableBindingRootObject.get(); }
 
     WEBCORE_EXPORT Ref<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 

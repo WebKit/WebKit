@@ -31,6 +31,10 @@
 #include "JSDOMWindow.h"
 #include <JavaScriptCore/JSProxy.h>
 
+namespace JSC {
+class Debugger;
+}
+
 namespace WebCore {
 
 class Frame;
@@ -51,6 +55,8 @@ public:
     static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
 
     DOMWrapperWorld& world() { return m_world; }
+
+    void attachDebugger(JSC::Debugger*);
 
 private:
     JSDOMWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);

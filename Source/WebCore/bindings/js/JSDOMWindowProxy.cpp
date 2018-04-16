@@ -105,6 +105,17 @@ void JSDOMWindowProxy::setWindow(DOMWindow& domWindow)
     ASSERT(prototype->globalObject() == &window);
 }
 
+void JSDOMWindowProxy::attachDebugger(JSC::Debugger* debugger)
+{
+    auto* globalObject = window();
+    JSLockHolder lock(globalObject->vm());
+
+    if (debugger)
+        debugger->attach(globalObject);
+    else if (auto* currentDebugger = globalObject->debugger())
+        currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
+}
+
 DOMWindow& JSDOMWindowProxy::wrapped() const
 {
     return window()->wrapped();

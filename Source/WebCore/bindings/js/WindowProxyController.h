@@ -24,6 +24,10 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/HashMap.h>
 
+namespace JSC {
+class Debugger;
+}
+
 namespace WebCore {
 
 class AbstractFrame;
@@ -34,6 +38,7 @@ public:
     using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowProxy>>;
 
     explicit WindowProxyController(AbstractFrame&);
+    ~WindowProxyController();
 
     void destroyWindowProxy(DOMWrapperWorld&);
 
@@ -62,6 +67,13 @@ public:
     {
         return windowProxy(world).window();
     }
+
+    void clearWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow*, bool goingIntoPageCache);
+
+    WEBCORE_EXPORT void setDOMWindowForWindowProxy(AbstractDOMWindow*);
+
+    // Debugger can be nullptr to detach any existing Debugger.
+    void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window proxies.
 
 private:
     JSDOMWindowProxy& createWindowProxy(DOMWrapperWorld&);
