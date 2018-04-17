@@ -1,3 +1,18 @@
+2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Retain MessagePortChannel for transfer when disentangling ports
+        https://bugs.webkit.org/show_bug.cgi?id=184502
+        <rdar://problem/39372771>
+
+        Reviewed by Geoffrey Garen.
+
+        Check that the MessageChannel does not get eagerly deallocated when transferring both of its
+        ports. Original test case provided with the bug report by Ashley Gullen <ashley@scirra.com>
+
+        * workers/worker-to-worker-expected.txt: Added.
+        * workers/worker-to-worker.html: Added.
+        * workers/worker-to-worker.js: Added.
+
 2018-04-17  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed rollout of r230632. Regression in memory usage.

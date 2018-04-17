@@ -87,6 +87,7 @@ void MessagePortChannel::entanglePortWithProcess(const MessagePortIdentifier& po
     ASSERT(!m_processes[i] || *m_processes[i] == process);
     m_processes[i] = process;
     m_entangledToProcessProtectors[i] = this;
+    m_pendingMessagePortTransfers[i].remove(this);
 }
 
 void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
@@ -100,6 +101,7 @@ void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
 
     ASSERT(m_processes[i] || m_isClosed[i]);
     m_processes[i] = std::nullopt;
+    m_pendingMessagePortTransfers[i].add(this);
 
     // This set of steps is to guarantee that the lock is unlocked before the
     // last ref to this object is released.
@@ -132,24 +134,6 @@ bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, 
 
     ASSERT(remoteTarget == m_ports[0] || remoteTarget == m_ports[1]);
     size_t i = remoteTarget == m_ports[0] ? 0 : 1;
-
-    for (auto& channelPair : message.transferredPorts) {
-        auto* channel = m_registry.existingChannelContainingPort(channelPair.first);
-        // One of the ports in the channel might have been closed, therefore removing record of the channel.
-        // That's okay; such ports can still be transferred. We just don't have to protect the channel.
-        if (!channel)
-            continue;
-
-        ASSERT(channel->includesPort(channelPair.second));
-
-#ifndef NDEBUG
-        if (auto* otherChannel = m_registry.existingChannelContainingPort(channelPair.second))
-            ASSERT(channel == otherChannel);
-#endif
-        // Having a pending message should keep a port alive with a ref.
-        // The ref will be cleared after the batch of pending messages has been delivered.
-        m_pendingMessagePortTransfers[i].add(channel);
-    }
 
     m_pendingMessages[i].append(WTFMove(message));
     LOG(MessagePorts, "MessagePortChannel %s (%p) now has %zu messages pending on port %s", logString().utf8().data(), this, m_pendingMessages[i].size(), remoteTarget.logString().utf8().data());
@@ -187,10 +171,7 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
     LOG(MessagePorts, "There are %zu messages to take for port %s. Taking them now, messages in flight is now %" PRIu64, result.size(), port.logString().utf8().data(), m_messageBatchesInFlight);
 
     auto size = result.size();
-    HashSet<RefPtr<MessagePortChannel>> transferredPortProtectors;
-    transferredPortProtectors.swap(m_pendingMessagePortTransfers[i]);
-
-    callback(WTFMove(result), [size, this, port, protectedThis = WTFMove(m_pendingMessageProtectors[i]), transferredPortProtectors = WTFMove(transferredPortProtectors)] {
+    callback(WTFMove(result), [size, this, port, protectedThis = WTFMove(m_pendingMessageProtectors[i])] {
         UNUSED_PARAM(port);
 #if LOG_DISABLED
         UNUSED_PARAM(size);

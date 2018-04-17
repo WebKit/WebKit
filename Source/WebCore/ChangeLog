@@ -1,5 +1,24 @@
 2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Retain MessagePortChannel for transfer when disentangling ports
+        https://bugs.webkit.org/show_bug.cgi?id=184502
+        <rdar://problem/39372771>
+
+        Reviewed by Geoffrey Garen.
+
+        MessagePortChannels should be retained while ports are being transferred, but that was only
+        happening when sending a port through another port, but not when sending it through a worker.
+
+        Test: workers/worker-to-worker.html
+
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::entanglePortWithProcess):
+        (WebCore::MessagePortChannel::disentanglePort):
+        (WebCore::MessagePortChannel::postMessageToRemote):
+        (WebCore::MessagePortChannel::takeAllMessagesForPort):
+
+2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
+
         References from CSSStyleDeclaration to CSSValues should be weak
         https://bugs.webkit.org/show_bug.cgi?id=180280
         <rdar://problem/35804869>
