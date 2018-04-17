@@ -1,3 +1,17 @@
+2018-04-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add debug bots for WinCairo.
+        https://bugs.webkit.org/show_bug.cgi?id=184663
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        Add a debug build bot and two debug test bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py:
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+        Add a WinCairo category to build.webkit.org.
+
 2018-04-17  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutReloaded] Set inline-block box position.

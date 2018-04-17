@@ -57,6 +57,10 @@
                     { "name": "wincairo-1", "platform": "wincairo" },
                     { "name": "wincairo-2", "platform": "wincairo" },
 
+                    { "name": "wincairo-wkl-debug-build-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-debug-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-debug-tests-02", "platform": "wincairo" },
+
                     { "name": "gtk-linux-slave-1", "platform": "gtk" },
                     { "name": "gtk-linux-slave-2", "platform": "gtk" },
                     { "name": "gtk-linux-slave-3", "platform": "gtk" },
@@ -292,6 +296,17 @@
                       "slavenames": ["wincairo-1", "wincairo-2"]
                     },
                     {
+                      "name": "WinCairo 64-bit WKL Debug (Build)", "type": "Build", "builddir": "wincairo-wkl-debug",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["wincairo-wkl-debug-tests"],
+                      "slavenames": ["wincairo-wkl-debug-build-01"]
+                    },
+                    {
+                      "name": "WinCairo 64-bit WKL Debug (Tests)", "type": "Test", "builddir": "wincairo-wkl-debug-tests",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["wincairo-wkl-debug-tests-01", "wincairo-wkl-debug-tests-02"]
+                    },
+                    {
                       "name": "JSCOnly Linux AArch64 Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-aarch64-release",
                       "platform": "jsc-only", "configuration": "release", "architectures": ["aarch64"],
                       "slavenames": ["jsconly-linux-igalia-bot-2"]
@@ -328,7 +343,7 @@
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
                                        "GTK Linux 64-bit Release Debian Stable (Build)", "GTK Linux 64-bit Release Ubuntu LTS (Build)",
                                        "JSCOnly Linux AArch64 Release", "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Traditional Release",
-                                       "JSCOnly Linux MIPS32el Release", "WinCairo 64-Bit Release", "WPE Linux 64-bit Release (Build)"]
+                                       "JSCOnly Linux MIPS32el Release", "WinCairo 64-Bit Release", "WinCairo 64-bit WKL Debug (Build)", "WPE Linux 64-bit Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra Release (32-bit Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)", "Apple High Sierra 32-bit JSC (BuildAndTest)"]
@@ -410,6 +425,9 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-wayland-tests",
                       "builderNames": ["GTK Linux 64-bit Release Wayland (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-wkl-debug-tests",
+                      "builderNames": ["WinCairo 64-bit WKL Debug (Tests)"]
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-release-tests",
                       "builderNames": ["WPE Linux 64-bit Release (Tests)"]

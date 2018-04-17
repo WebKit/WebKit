@@ -111,6 +111,8 @@ def loadBuilderConfig(c):
             builder["category"] = 'GTK'
         elif platform.startswith('wpe'):
             builder["category"] = 'WPE'
+        elif platform == 'wincairo':
+            builder["category"] = 'WinCairo'
         else:
             builder["category"] = 'misc'
 
