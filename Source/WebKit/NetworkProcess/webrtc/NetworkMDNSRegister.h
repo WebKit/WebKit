@@ -33,7 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
-#if defined __has_include && __has_include(<dns_sd.h>)
+#if PLATFORM(COCOA) && defined __has_include && __has_include(<dns_sd.h>)
 #define ENABLE_MDNS 1
 #else
 #define ENABLE_MDNS 0
