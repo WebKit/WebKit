@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -515,15 +515,26 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
-    switch (thisObject->m_mode) {
+    TypedArrayMode mode;
+    void* vector;
+    size_t byteSize;
+    
+    {
+        auto locker = holdLock(thisObject->cellLock());
+        mode = thisObject->m_mode;
+        vector = thisObject->m_vector.getMayBeNull();
+        byteSize = thisObject->byteSize();
+    }
+    
+    switch (mode) {
     case FastTypedArray: {
-        if (void* vector = thisObject->m_vector.getMayBeNull())
+        if (vector)
             visitor.markAuxiliary(vector);
         break;
     }
         
     case OversizeTypedArray: {
-        visitor.reportExtraMemoryVisited(thisObject->byteSize());
+        visitor.reportExtraMemoryVisited(byteSize);
         break;
     }
         
@@ -583,10 +594,13 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
         break;
     }
 
-    thisObject->butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-    thisObject->m_vector.setWithoutBarrier(buffer->data());
-    WTF::storeStoreFence();
-    thisObject->m_mode = WastefulTypedArray;
+    {
+        auto locker = holdLock(thisObject->cellLock());
+        thisObject->butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
+        thisObject->m_vector.setWithoutBarrier(buffer->data());
+        WTF::storeStoreFence();
+        thisObject->m_mode = WastefulTypedArray;
+    }
     heap->addReference(thisObject, buffer.get());
     
     return buffer.get();

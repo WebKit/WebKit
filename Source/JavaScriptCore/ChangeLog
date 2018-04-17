@@ -1,3 +1,27 @@
+2018-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        JSGenericTypedArrayView<>::visitChildren has a race condition reading m_mode and m_vector
+        https://bugs.webkit.org/show_bug.cgi?id=184705
+
+        Reviewed by Michael Saboff.
+        
+        My old multisocket Mac Pro is amazing at catching race conditions in the GC. Earlier today
+        while testing an unrelated patch, a concurrent GC thread crashed inside
+        JSGenericTypedArrayView<>::visitChildren() calling markAuxiliary(). I'm pretty sure it's
+        because a typed array became wasteful concurrently to the GC. So, visitChildren() read one
+        mode and another vector.
+        
+        The fix is to lock inside visitChildren and anyone who changes those fields.
+        
+        I'm not even going to try to write a test. I think it's super lucky that my Mac Pro caught
+        this.
+
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::neuter):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+
 2018-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         PutStackSinkingPhase should know that KillStack means ConflictingFlush
