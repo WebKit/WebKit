@@ -1,3 +1,17 @@
+2018-04-17  JF Bastien  <jfbastien@apple.com>
+
+        A put is not an ExistingProperty put when we transition a structure because of an attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=184706
+        <rdar://problem/38871451>
+
+        Reviewed by Saam Barati.
+
+        When putting a property on a structure and the slot is a different
+        type, the slot can't be said to have already been existing.
+
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+
 2018-04-17  Filip Pizlo  <fpizlo@apple.com>
 
         JSGenericTypedArrayView<>::visitChildren has a race condition reading m_mode and m_vector

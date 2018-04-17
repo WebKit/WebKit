@@ -1,3 +1,24 @@
+2018-04-17  JF Bastien  <jfbastien@apple.com>
+
+        A put is not an ExistingProperty put when we transition a structure because of an attributes change
+        https://bugs.webkit.org/show_bug.cgi?id=184706
+        <rdar://problem/38871451>
+
+        Reviewed by Saam Barati.
+
+        * stress/put-by-id-direct-strict-transition.js: Added.
+        (const.foo):
+        (j.const.obj.set hello):
+        * stress/put-by-id-direct-transition.js: Added.
+        (const.foo):
+        (j.const.obj.set hello):
+        * stress/put-getter-setter-by-id-strict-transition.js: Added.
+        (const.foo):
+        (j.const.obj.set hello):
+        * stress/put-getter-setter-by-id-transition.js: Added.
+        (const.foo):
+        (j.const.obj.set hello):
+
 2018-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         PutStackSinkingPhase should know that KillStack means ConflictingFlush
