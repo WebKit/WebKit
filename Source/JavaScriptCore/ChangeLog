@@ -1,3 +1,64 @@
+2018-04-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r230662. rdar://problem/39496355
+
+    Function.prototype.caller shouldn't return generator bodies
+    https://bugs.webkit.org/show_bug.cgi?id=184630
+    
+    Reviewed by Yusuke Suzuki.
+    JSTests:
+    
+    
+    * stress/function-caller-async-arrow-function-body.js: Added.
+    * stress/function-caller-async-function-body.js: Added.
+    * stress/function-caller-async-generator-body.js: Added.
+    * stress/function-caller-generator-body.js: Added.
+    * stress/function-caller-generator-method-body.js: Added.
+    
+    Source/JavaScriptCore:
+    
+            
+    Function.prototype.caller no longer returns generator bodies. Those are meant to be
+    private.
+            
+    Also added some builtin debugging tools so that it's easier to do the investigation that I
+    did.
+    
+    * builtins/BuiltinNames.h:
+    * runtime/JSFunction.cpp:
+    (JSC::JSFunction::callerGetter):
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::init):
+    * runtime/JSGlobalObjectFunctions.cpp:
+    (JSC::globalFuncBuiltinDescribe):
+    * runtime/JSGlobalObjectFunctions.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@230662 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-04-14  Filip Pizlo  <fpizlo@apple.com>
+
+            Function.prototype.caller shouldn't return generator bodies
+            https://bugs.webkit.org/show_bug.cgi?id=184630
+
+            Reviewed by Yusuke Suzuki.
+
+            Function.prototype.caller no longer returns generator bodies. Those are meant to be
+            private.
+
+            Also added some builtin debugging tools so that it's easier to do the investigation that I
+            did.
+
+            * builtins/BuiltinNames.h:
+            * runtime/JSFunction.cpp:
+            (JSC::JSFunction::callerGetter):
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::init):
+            * runtime/JSGlobalObjectFunctions.cpp:
+            (JSC::globalFuncBuiltinDescribe):
+            * runtime/JSGlobalObjectFunctions.h:
+
 2018-04-11  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r230494. rdar://problem/39337455

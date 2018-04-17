@@ -364,9 +364,34 @@ EncodedJSValue JSFunction::callerGetter(ExecState* exec, EncodedJSValue thisValu
     // Firefox returns null for native code callers, so we match that behavior.
     if (function->isHostOrBuiltinFunction())
         return JSValue::encode(jsNull());
-    if (!function->jsExecutable()->isStrictMode())
-        return JSValue::encode(caller);
-    return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve strict caller")));
+    SourceParseMode parseMode = function->jsExecutable()->parseMode();
+    switch (parseMode) {
+    case SourceParseMode::GeneratorBodyMode:
+    case SourceParseMode::AsyncGeneratorBodyMode:
+        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve generator body")));
+    case SourceParseMode::AsyncFunctionBodyMode:
+    case SourceParseMode::AsyncArrowFunctionBodyMode:
+        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve async function body")));
+    case SourceParseMode::NormalFunctionMode:
+    case SourceParseMode::GeneratorWrapperFunctionMode:
+    case SourceParseMode::GetterMode:
+    case SourceParseMode::SetterMode:
+    case SourceParseMode::MethodMode:
+    case SourceParseMode::ArrowFunctionMode:
+    case SourceParseMode::AsyncFunctionMode:
+    case SourceParseMode::AsyncMethodMode:
+    case SourceParseMode::AsyncArrowFunctionMode:
+    case SourceParseMode::ProgramMode:
+    case SourceParseMode::ModuleAnalyzeMode:
+    case SourceParseMode::ModuleEvaluateMode:
+    case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
+    case SourceParseMode::AsyncGeneratorWrapperMethodMode:
+    case SourceParseMode::GeneratorWrapperMethodMode:
+        if (!function->jsExecutable()->isStrictMode())
+            return JSValue::encode(caller);
+        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Function.caller used to retrieve strict caller")));
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
