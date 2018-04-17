@@ -584,6 +584,11 @@ class Utils {
             }
             return indentation + box.node().tagName + " " + box.name() + "\n";
         }
+        if (box.name() == "RenderImage") {
+            let boxRect = layoutState.displayBox(box).rect();
+            return indentation + box.node().tagName + " " + box.name() + " at (" + Utils.precisionRound(boxRect.left()) + "," + Utils.precisionRound(boxRect.top()) + ") size " + Utils.precisionRound(boxRect.width()) + "x" + Utils.precisionRound(boxRect.height()) + "\n";
+
+        }
         if (box.isAnonymous())
             return "";
         let displayBox = layoutState.displayBox(box);

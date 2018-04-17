@@ -31,13 +31,13 @@ public:
     LayoutUnit availableWidth();
 
     LayoutRect rect();
-    lineBoxes();
+    Vector<InlineDisplayBox> lineBoxes();
 
-    shrink(float width);
-    adjustWithOffset(LayoutUnit offset);
-    moveContentHorizontally(LayoutUnit offset);
-    addInlineContainerBox(LayoutSize);
-    addTextLineBox(unsigned startPosition, unsigned endPosition, LayoutSize size);
+    void shrink(float width);
+    void adjustWithOffset(LayoutUnit offset);
+    void moveContentHorizontally(LayoutUnit offset);
+    void addInlineContainerBox(LayoutSize);
+    void addTextLineBox(unsigned startPosition, unsigned endPosition, LayoutSize size);
 };
 */
 class Line {
@@ -63,6 +63,10 @@ class Line {
         return this.m_lineBoxes;
     }
 
+    lastLineBox() {
+        return this.m_lineBoxes[this.m_lineBoxes.length - 1];
+    }
+
     shrink(width) {
         this.m_availableWidth -= width;
     }
@@ -79,7 +83,7 @@ class Line {
         this.m_lineRect.moveHorizontally(offset);
     }
 
-    addInlineContainerBox(size) {
+    addInlineBox(size) {
         let width = size.width();
         ASSERT(width <= this.m_availableWidth);
         this.shrink(width);

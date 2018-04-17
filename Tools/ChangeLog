@@ -1,5 +1,29 @@
 2018-04-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LayoutReloaded] Add support for replaced box.
+        https://bugs.webkit.org/show_bug.cgi?id=184680
+
+        Reviewed by Antti Koivisto.
+
+        Basic support for inline replaced.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._handleInlineBox):
+        (InlineFormattingContext.prototype._handleInlineBlock):
+        (InlineFormattingContext.prototype._handleReplaced):
+        * LayoutReloaded/FormattingContext/InlineFormatting/Line.js:
+        (Line.prototype.lastLineBox):
+        (Line.prototype.addInlineBox):
+        (Line.prototype.addInlineContainerBox): Deleted.
+        * LayoutReloaded/TreeBuilder.js:
+        (TreeBuilder.prototype._createAndAttachBox):
+        * LayoutReloaded/Utils.js:
+        (Utils._dumpBox):
+        * LayoutReloaded/test/index.html:
+        * LayoutReloaded/test/inline-simple-replaced.html: Added.
+
+2018-04-16  Zalan Bujtas  <zalan@apple.com>
+
         [LayoutReloaded] Minor InlineFormattingContext::layout() cleanup.
         https://bugs.webkit.org/show_bug.cgi?id=184679
 

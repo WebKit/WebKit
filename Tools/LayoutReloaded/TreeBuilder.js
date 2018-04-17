@@ -54,11 +54,13 @@ class TreeBuilder {
         let node = this._findNode(initialBlockContainer.node(), id, name);
         if (name == "RenderBlock" || name == "RenderBody")
             box = new Layout.BlockContainer(node, id);
-        else if (name == "RenderInline") {
+        else if (name == "RenderInline")
             box = new Layout.InlineContainer(node, id);
-        } else if (name == "RenderText") {
+        else if (name == "RenderText")
             text = new Text(node, id);
-        } else
+        else if (name == "RenderImage")
+            box = new Layout.InlineBox(node, id);
+        else
             box = new Layout.Box(node, id);
 
         if (box)

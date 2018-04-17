@@ -104,19 +104,21 @@ class InlineFormattingContext extends FormattingContext {
     _handleInlineBox(inlineBox) {
         if (inlineBox.text())
             return this._handleText(inlineBox);
+        else
+            return this._handleReplaced(inlineBox);
     }
 
     _handleInlineBlock(inlineBlockBox) {
         ASSERT(inlineBlockBox.establishesFormattingContext());
         let displayBox = this.displayBox(inlineBlockBox);
 
-        // TODO: auto width/height
+        // TODO: auto width/height and check if content actually at all.
         this._adjustLineForInlineContainerStart(inlineBlockBox);
         displayBox.setWidth(Utils.width(inlineBlockBox) + Utils.computedHorizontalBorderAndPadding(inlineBlockBox.node()));
         this.layoutState().formattingContext(inlineBlockBox).layout();
         displayBox.setHeight(Utils.height(inlineBlockBox) + Utils.computedVerticalBorderAndPadding(inlineBlockBox.node()));
+        this._line().addInlineBox(displayBox.size());
         this._adjustLineForInlineContainerEnd(inlineBlockBox);
-        this._line().addInlineContainerBox(displayBox.size());
     }
 
     _handleText(inlineBox) {
@@ -155,6 +157,18 @@ class InlineFormattingContext extends FormattingContext {
         if (Utils.isFloatingLeft(floatingBox))
             this._line().moveContentHorizontally(floatWidth);
     }
+
+    _handleReplaced(replacedBox) {
+        // TODO: intrinsic size and check if content actually at all.
+        let displayBox = this.displayBox(replacedBox);
+        this._adjustLineForInlineContainerStart(replacedBox);
+        displayBox.setWidth(Utils.width(replacedBox) + Utils.computedHorizontalBorderAndPadding(replacedBox.node()));
+
+        displayBox.setHeight(Utils.height(replacedBox) + Utils.computedVerticalBorderAndPadding(replacedBox.node()));
+        this._line().addInlineBox(displayBox.size());
+        displayBox.setTopLeft(this._line().lastLineBox().lineBoxRect.topLeft());
+        this._adjustLineForInlineContainerEnd(replacedBox);
+   }
 
     _adjustLineForInlineContainerStart(inlineContainer) {
         let offset = this.marginLeft(inlineContainer) + Utils.computedBorderAndPaddingLeft(inlineContainer.node());
