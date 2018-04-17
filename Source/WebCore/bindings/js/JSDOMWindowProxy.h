@@ -37,7 +37,8 @@ class Debugger;
 
 namespace WebCore {
 
-class Frame;
+class AbstractDOMWindow;
+class AbstractFrame;
 
 class JSDOMWindowProxy final : public JSC::JSProxy {
     using Base = JSC::JSProxy;
@@ -47,12 +48,12 @@ public:
 
     DECLARE_INFO;
 
-    JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(target()); }
-    void setWindow(JSC::VM&, JSDOMWindow&);
-    void setWindow(DOMWindow&);
+    JSDOMGlobalObject* window() const { return JSC::jsCast<JSDOMGlobalObject*>(target()); }
+    void setWindow(JSC::VM&, JSDOMGlobalObject&);
+    void setWindow(AbstractDOMWindow&);
 
-    DOMWindow& wrapped() const;
-    static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
+    AbstractDOMWindow& wrapped() const;
+    static WEBCORE_EXPORT AbstractDOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
 
     DOMWrapperWorld& world() { return m_world; }
 
@@ -67,10 +68,10 @@ private:
 
 // JSDOMWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
 // It is, however, strongly owned by Frame via its ScriptController, so we can get one from a frame.
-JSC::JSValue toJS(JSC::ExecState*, Frame&);
-inline JSC::JSValue toJS(JSC::ExecState* state, Frame* frame) { return frame ? toJS(state, *frame) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::ExecState*, AbstractFrame&);
+inline JSC::JSValue toJS(JSC::ExecState* state, AbstractFrame* frame) { return frame ? toJS(state, *frame) : JSC::jsNull(); }
 
-JSDOMWindowProxy& toJSDOMWindowProxy(Frame&, DOMWrapperWorld&);
-inline JSDOMWindowProxy* toJSDOMWindowProxy(Frame* frame, DOMWrapperWorld& world) { return frame ? &toJSDOMWindowProxy(*frame, world) : nullptr; }
+JSDOMWindowProxy& toJSDOMWindowProxy(AbstractFrame&, DOMWrapperWorld&);
+inline JSDOMWindowProxy* toJSDOMWindowProxy(AbstractFrame* frame, DOMWrapperWorld& world) { return frame ? &toJSDOMWindowProxy(*frame, world) : nullptr; }
 
 } // namespace WebCore

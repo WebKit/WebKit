@@ -1,3 +1,67 @@
+2018-04-17  Chris Dumez  <cdumez@apple.com>
+
+        Add bindings code for RemoteDOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=184653
+
+        Reviewed by Ryosuke Niwa.
+
+        Add bindings code for RemoteDOMWindow. A RemoteDOMWindow behaves exactly like a cross-origin
+        DOMWindow, which is backed by a RemoteDOMWindow object instead of a DOMWindow one. Since
+        a RemoteDOMWindow is always cross origin, we do not need cross-origin checks and the bindings
+        code is identical to the DOMWindow code paths from cross-origin handling.
+
+        No new tests, this code will be used and tested via Bug 184515.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::addCrossOriginWindowOwnPropertyNames):
+        * bindings/js/JSDOMWindowCustom.h:
+
+        * bindings/js/JSRemoteDOMWindowBase.cpp: Added.
+        (WebCore::JSRemoteDOMWindowBase::JSRemoteDOMWindowBase):
+        (WebCore::JSRemoteDOMWindowBase::destroy):
+        (WebCore::JSRemoteDOMWindowBase::javaScriptRuntimeFlags):
+        (WebCore::toJS):
+        (WebCore::toJSRemoteDOMWindow):
+        * bindings/js/JSRemoteDOMWindowBase.h: Added.
+        JSRemoteDOMWindow unfortunately currently needs to be a global object because of:
+        1. a JSProxy's target needs to be a JSGlobalObject currently
+        2. The 'structure()->setGlobalObject(vm, &window);' call in
+           JSDOMWindowProxy::setWindow(VM&, JSDOMGlobalObject&) which requires a JSGlobalObject.
+        Ideally, this wouldn't be the case in the future but this would require some code refactoring.
+        Our DOM global objects normally subclass JSDOMGlobalObject so I decided to subclass JSDOMGlobalObject,
+        which brings some things our bindings code expect. However, subclassing JSDOMGlobalObject directly is
+        problematic because it does not hold the m_wrapped implementation pointer. To address this issue, all
+        our our DOM global objects have a JS*Base base class which subclasses JSDOMGlobalObject and stores the
+        m_wrapped implementation pointer. I followed the same pattern here.
+
+        (WebCore::toJS):
+        * bindings/js/JSRemoteDOMWindowCustom.cpp: Added.
+        (WebCore::JSRemoteDOMWindow::getOwnPropertySlot):
+        (WebCore::JSRemoteDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::JSRemoteDOMWindow::put):
+        (WebCore::JSRemoteDOMWindow::putByIndex):
+        (WebCore::JSRemoteDOMWindow::deleteProperty):
+        (WebCore::JSRemoteDOMWindow::deletePropertyByIndex):
+        (WebCore::JSRemoteDOMWindow::getOwnPropertyNames):
+        (WebCore::JSRemoteDOMWindow::defineOwnProperty):
+        (WebCore::JSRemoteDOMWindow::getPrototype):
+        (WebCore::JSRemoteDOMWindow::preventExtensions):
+        (WebCore::JSRemoteDOMWindow::toStringName):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsDOMGlobalObject):
+        (GenerateHeader):
+        (GenerateOverloadDispatcher):
+        (GenerateImplementation):
+        * page/RemoteDOMWindow.idl: Added.
+
 2018-04-17  David Kilzer  <ddkilzer@apple.com>
 
         Implement checked cast for DDResultRef once DDResultGetTypeID() is available

@@ -244,7 +244,7 @@ void ScriptController::initScriptForWindowProxy(JSDOMWindowProxy& windowProxy)
 {
     auto& world = windowProxy.world();
 
-    windowProxy.window()->updateDocument();
+    jsCast<JSDOMWindow*>(windowProxy.window())->updateDocument();
 
     if (Document* document = m_frame.document())
         document->contentSecurityPolicy()->didCreateWindowProxy(windowProxy);
@@ -385,7 +385,7 @@ void ScriptController::updateDocument()
 {
     for (auto& windowProxy : windowProxyController().windowProxiesAsVector()) {
         JSLockHolder lock(windowProxy->world().vm());
-        windowProxy->window()->updateDocument();
+        jsCast<JSDOMWindow*>(windowProxy->window())->updateDocument();
     }
 }
 
@@ -429,7 +429,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*,
 {
     for (auto& windowProxy : windowProxyController().windowProxiesAsVector()) {
         auto* exec = windowProxy->window()->globalExec();
-        auto* origin = &windowProxy->window()->wrapped().document()->securityOrigin();
+        auto* origin = &downcast<DOMWindow>(windowProxy->wrapped()).document()->securityOrigin();
         result.append(std::make_pair(exec, origin));
     }
 }

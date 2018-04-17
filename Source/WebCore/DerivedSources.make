@@ -783,6 +783,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/page/PerformanceObserverEntryList.idl \
     $(WebCore)/page/PerformanceResourceTiming.idl \
     $(WebCore)/page/PerformanceTiming.idl \
+    $(WebCore)/page/RemoteDOMWindow.idl \
     $(WebCore)/page/Screen.idl \
     $(WebCore)/page/ScrollToOptions.idl \
     $(WebCore)/page/UserMessageHandler.idl \

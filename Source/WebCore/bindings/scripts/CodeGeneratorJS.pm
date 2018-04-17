@@ -497,7 +497,7 @@ sub GetCustomIsReachable
 sub IsDOMGlobalObject
 {
     my $interface = shift;
-    return $interface->type->name eq "DOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $interface->type->name eq "TestGlobalObject";
+    return $interface->type->name eq "DOMWindow" || $interface->type->name eq "RemoteDOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $interface->type->name eq "TestGlobalObject";
 }
 
 sub ShouldUseGlobalObjectPrototype
@@ -2508,7 +2508,7 @@ sub GenerateHeader
         }
     }
 
-    push(@headerContent, "class JSDOMWindowProxy;\n\n") if $interfaceName eq "DOMWindow";
+    push(@headerContent, "class JSDOMWindowProxy;\n\n") if $interfaceName eq "DOMWindow" or $interfaceName eq "RemoteDOMWindow";
 
     my $exportMacro = GetExportMacroForJSClass($interface);
 
@@ -2520,7 +2520,7 @@ sub GenerateHeader
     push(@headerContent, "    using Base = $parentClassName;\n");
     push(@headerContent, "    using DOMWrapped = $implType;\n") if $hasParent;
 
-    if ($interfaceName eq "DOMWindow") {
+    if ($interfaceName eq "DOMWindow" || $interfaceName eq "RemoteDOMWindow") {
         push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSDOMWindowProxy* proxy)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm.heap)) ${className}(vm, structure, WTFMove(impl), proxy);\n");
@@ -2829,7 +2829,7 @@ sub GenerateHeader
     push(@headerContent, "protected:\n");
 
     # Constructor
-    if ($interfaceName eq "DOMWindow") {
+    if ($interfaceName eq "DOMWindow" || $interfaceName eq "RemoteDOMWindow") {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, Ref<$implType>&&, JSDOMWindowProxy*);\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, Ref<$implType>&&);\n");
@@ -2839,7 +2839,7 @@ sub GenerateHeader
         push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&, Ref<$implType>&&);\n\n");
     }
 
-    if ($interfaceName eq "DOMWindow") {
+    if ($interfaceName eq "DOMWindow" || $interfaceName eq "RemoteDOMWindow") {
         push(@headerContent, "    void finishCreation(JSC::VM&, JSDOMWindowProxy*);\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
         push(@headerContent, "    void finishCreation(JSC::VM&, JSC::JSProxy*);\n");
@@ -3401,6 +3401,9 @@ sub GenerateOverloadDispatcher
                         if ($subtype->name eq "DOMWindow") {
                             AddToImplIncludes("JSDOMWindowProxy.h");
                             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSDOMWindowProxy>(vm) || asObject(distinguishingArg)->inherits<JSDOMWindow>(vm))");
+                        } elsif ($subtype->name eq "RemoteDOMWindow") {
+                            AddToImplIncludes("JSDOMWindowProxy.h");
+                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSDOMWindowProxy>(vm) || asObject(distinguishingArg)->inherits<JSRemoteDOMWindow>(vm))");
                         } else {
                             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JS" . $subtype->name . ">(vm)");
                         }
@@ -4209,7 +4212,7 @@ sub GenerateImplementation
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
     # Constructor
-    if ($interfaceName eq "DOMWindow") {
+    if ($interfaceName eq "DOMWindow" || $interfaceName eq "RemoteDOMWindow") {
         AddIncludesForImplementationTypeInImpl("JSDOMWindowProxy");
         push(@implContent, "${className}::$className(VM& vm, Structure* structure, Ref<$implType>&& impl, JSDOMWindowProxy* proxy)\n");
         push(@implContent, "    : $parentClassName(vm, structure, WTFMove(impl), proxy)\n");
@@ -4232,7 +4235,7 @@ sub GenerateImplementation
     }
 
     # Finish Creation
-    if ($interfaceName eq "DOMWindow") {
+    if ($interfaceName eq "DOMWindow" || $interfaceName eq "RemoteDOMWindow") {
         push(@implContent, "void ${className}::finishCreation(VM& vm, JSDOMWindowProxy* proxy)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm, proxy);\n\n");

@@ -69,40 +69,50 @@ void JSDOMWindowProxy::destroy(JSCell* cell)
     static_cast<JSDOMWindowProxy*>(cell)->JSDOMWindowProxy::~JSDOMWindowProxy();
 }
 
-void JSDOMWindowProxy::setWindow(VM& vm, JSDOMWindow& window)
+void JSDOMWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
+    ASSERT(window.classInfo() == JSDOMWindow::info() || window.classInfo() == JSRemoteDOMWindow::info());
     setTarget(vm, &window);
     structure()->setGlobalObject(vm, &window);
     GCController::singleton().garbageCollectSoon();
 }
 
-void JSDOMWindowProxy::setWindow(DOMWindow& domWindow)
+void JSDOMWindowProxy::setWindow(AbstractDOMWindow& domWindow)
 {
     // Replacing JSDOMWindow via telling JSDOMWindowProxy to use the same DOMWindow it already uses makes no sense,
     // so we'd better never try to.
-    ASSERT(!window() || &domWindow != &window()->wrapped());
+    ASSERT(!window() || &domWindow != &wrapped());
+
+    bool isRemoteDOMWindow = is<RemoteDOMWindow>(domWindow);
 
     VM& vm = commonVM();
-    auto& prototypeStructure = *JSDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
+    auto& prototypeStructure = isRemoteDOMWindow ? *JSRemoteDOMWindowPrototype::createStructure(vm, nullptr, jsNull()) : *JSDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
 
     // Explicitly protect the prototype so it isn't collected when we allocate the global object.
     // (Once the global object is fully constructed, it will mark its own prototype.)
     // FIXME: Why do we need to protect this when there's a pointer to it on the stack?
     // Perhaps the issue is that structure objects aren't seen when scanning the stack?
-    Strong<JSDOMWindowPrototype> prototype(vm, JSDOMWindowPrototype::create(vm, nullptr, &prototypeStructure));
+    Strong<JSNonFinalObject> prototype(vm, isRemoteDOMWindow ? static_cast<JSNonFinalObject*>(JSRemoteDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)) : static_cast<JSNonFinalObject*>(JSDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)));
 
-    auto& windowStructure = *JSDOMWindow::createStructure(vm, nullptr, prototype.get());
-    auto& window = *JSDOMWindow::create(vm, &windowStructure, domWindow, this);
-    prototype->structure()->setGlobalObject(vm, &window);
+    JSDOMGlobalObject* window = nullptr;
+    if (isRemoteDOMWindow) {
+        auto& windowStructure = *JSRemoteDOMWindow::createStructure(vm, nullptr, prototype.get());
+        window = JSRemoteDOMWindow::create(vm, &windowStructure, downcast<RemoteDOMWindow>(domWindow), this);
+    } else {
+        auto& windowStructure = *JSDOMWindow::createStructure(vm, nullptr, prototype.get());
+        window = JSDOMWindow::create(vm, &windowStructure, downcast<DOMWindow>(domWindow), this);
+    }
 
-    auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, &window, JSEventTarget::prototype(vm, window));
-    auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, window);
+    prototype->structure()->setGlobalObject(vm, window);
+
+    auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, window, JSEventTarget::prototype(vm, *window));
+    auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, *window);
     prototype->structure()->setPrototypeWithoutTransition(vm, &properties);
 
-    setWindow(vm, window);
+    setWindow(vm, *window);
 
-    ASSERT(window.globalObject() == &window);
-    ASSERT(prototype->globalObject() == &window);
+    ASSERT(window->globalObject() == window);
+    ASSERT(prototype->globalObject() == window);
 }
 
 void JSDOMWindowProxy::attachDebugger(JSC::Debugger* debugger)
@@ -116,23 +126,26 @@ void JSDOMWindowProxy::attachDebugger(JSC::Debugger* debugger)
         currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
 }
 
-DOMWindow& JSDOMWindowProxy::wrapped() const
+AbstractDOMWindow& JSDOMWindowProxy::wrapped() const
 {
-    return window()->wrapped();
+    auto* window = this->window();
+    if (auto* jsWindow = jsDynamicCast<JSRemoteDOMWindowBase*>(window->vm(), window))
+        return jsWindow->wrapped();
+    return jsCast<JSDOMWindowBase*>(window)->wrapped();
 }
 
-DOMWindow* JSDOMWindowProxy::toWrapped(VM& vm, JSObject* value)
+AbstractDOMWindow* JSDOMWindowProxy::toWrapped(VM& vm, JSObject* value)
 {
     auto* wrapper = jsDynamicCast<JSDOMWindowProxy*>(vm, value);
-    return wrapper ? &wrapper->window()->wrapped() : nullptr;
+    return wrapper ? &wrapper->wrapped() : nullptr;
 }
 
-JSValue toJS(ExecState* state, Frame& frame)
+JSValue toJS(ExecState* state, AbstractFrame& frame)
 {
     return &frame.windowProxyController().windowProxy(currentWorld(*state));
 }
 
-JSDOMWindowProxy& toJSDOMWindowProxy(Frame& frame, DOMWrapperWorld& world)
+JSDOMWindowProxy& toJSDOMWindowProxy(AbstractFrame& frame, DOMWrapperWorld& world)
 {
     return frame.windowProxyController().windowProxy(world);
 }

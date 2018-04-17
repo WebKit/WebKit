@@ -52,7 +52,7 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame& frame)
     JSLockHolder lock(commonVM());
 
     for (auto windowProxy : frame.windowProxyController().windowProxiesAsVector()) {
-        auto* window = windowProxy->window();
+        auto* window = jsCast<JSDOMWindow*>(windowProxy->window());
         m_windows.add(&windowProxy->world(), Strong<JSDOMWindow>(window->vm(), window));
         window->setConsoleClient(nullptr);
     }
@@ -79,7 +79,7 @@ void ScriptCachedFrameData::restore(Frame& frame)
         else {
             ASSERT(frame.document()->domWindow());
             auto& domWindow = *frame.document()->domWindow();
-            if (&windowProxy->window()->wrapped() == &domWindow)
+            if (&windowProxy->wrapped() == &domWindow)
                 continue;
 
             windowProxy->setWindow(domWindow);

@@ -26,11 +26,13 @@
 #import <WebKitLegacy/DOMAbstractView.h>
 
 namespace WebCore {
+class AbstractDOMWindow;
 class DOMWindow;
 }
 
 WebCore::DOMWindow* core(DOMAbstractView *);
 DOMAbstractView *kit(WebCore::DOMWindow*);
+DOMAbstractView *kit(WebCore::AbstractDOMWindow*);
 
 @interface DOMAbstractView (WebKitLegacyInternal)
 - (void)_disconnectFrame;

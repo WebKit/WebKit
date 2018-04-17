@@ -92,3 +92,11 @@ DOMAbstractView *kit(WebCore::DOMWindow* value)
     addDOMWrapper(wrapper, frame);
     return [wrapper autorelease];
 }
+
+DOMAbstractView *kit(WebCore::AbstractDOMWindow* value)
+{
+    if (!is<WebCore::DOMWindow>(value))
+        return nil;
+
+    return kit(downcast<WebCore::DOMWindow>(value));
+}

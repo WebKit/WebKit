@@ -117,7 +117,8 @@ void WindowProxyController::clearWindowProxiesNotMatchingDOMWindow(AbstractDOMWi
         // Clear the debugger and console from the current window before setting the new window.
         windowProxy->attachDebugger(nullptr);
         windowProxy->window()->setConsoleClient(nullptr);
-        windowProxy->window()->willRemoveFromWindowProxy();
+        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindowBase*>(*windowProxy->vm(), windowProxy->window()))
+            jsDOMWindow->willRemoveFromWindowProxy();
     }
 
     // It's likely that resetting our windows created a lot of garbage, unless

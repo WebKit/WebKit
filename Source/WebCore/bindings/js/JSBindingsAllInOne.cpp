@@ -86,6 +86,8 @@
 #include "JSPluginElementFunctions.cpp"
 #include "JSPopStateEventCustom.cpp"
 #include "JSReadableStreamPrivateConstructors.cpp"
+#include "JSRemoteDOMWindowBase.cpp"
+#include "JSRemoteDOMWindowCustom.cpp"
 #include "JSSVGPathSegCustom.cpp"
 #include "JSStyleSheetCustom.cpp"
 #include "JSTextCustom.cpp"

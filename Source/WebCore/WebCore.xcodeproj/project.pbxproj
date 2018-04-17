@@ -1208,6 +1208,8 @@
 		46B95198207D634700A7D2DD /* GlobalFrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95191207D632D00A7D2DD /* GlobalFrameIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B95199207D634D00A7D2DD /* RemoteDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B9518E207D632A00A7D2DD /* RemoteDOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B9519A207D635400A7D2DD /* RemoteFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95192207D632E00A7D2DD /* RemoteFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46BCBBC22085008F00710638 /* JSRemoteDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46C376622085177D00C73829 /* JSRemoteDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C376612085176D00C73829 /* JSRemoteDOMWindow.h */; };
 		46C696CB1E7205F700597937 /* CPUMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C696C91E7205E400597937 /* CPUMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46C696CA1E7205E400597937 /* CPUMonitor.cpp */; };
 		46C83EFE1A9BBE2900A79A41 /* GeoNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C83EFC1A9BBE2900A79A41 /* GeoNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7454,6 +7456,12 @@
 		46B95192207D632E00A7D2DD /* RemoteFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteFrame.h; sourceTree = "<group>"; };
 		46B95193207D632F00A7D2DD /* AbstractDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDOMWindow.cpp; sourceTree = "<group>"; };
 		46B95194207D633000A7D2DD /* AbstractFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractFrame.cpp; sourceTree = "<group>"; };
+		46BCBBBE2085005B00710638 /* JSRemoteDOMWindowCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindowCustom.cpp; sourceTree = "<group>"; };
+		46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteDOMWindowBase.h; sourceTree = "<group>"; };
+		46BCBBC12085008000710638 /* JSRemoteDOMWindowBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindowBase.cpp; sourceTree = "<group>"; };
+		46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteDOMWindow.idl; sourceTree = "<group>"; };
+		46C3765F2085176C00C73829 /* JSRemoteDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindow.cpp; sourceTree = "<group>"; };
+		46C376612085176D00C73829 /* JSRemoteDOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteDOMWindow.h; sourceTree = "<group>"; };
 		46C696C91E7205E400597937 /* CPUMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUMonitor.h; sourceTree = "<group>"; };
 		46C696CA1E7205E400597937 /* CPUMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUMonitor.cpp; sourceTree = "<group>"; };
 		46C83EFB1A9BBE2900A79A41 /* GeoNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeoNotifier.cpp; sourceTree = "<group>"; };
@@ -19149,6 +19157,7 @@
 				B776D43A1104525D00BEB0EC /* PrintContext.h */,
 				46B9518D207D632A00A7D2DD /* RemoteDOMWindow.cpp */,
 				46B9518E207D632A00A7D2DD /* RemoteDOMWindow.h */,
+				46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */,
 				46B9518C207D632900A7D2DD /* RemoteFrame.cpp */,
 				46B95192207D632E00A7D2DD /* RemoteFrame.h */,
 				A5071E8A1C56FAFA009951BE /* ResourceUsageData.cpp */,
@@ -23681,6 +23690,8 @@
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				4129DF831BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.cpp */,
 				4129DF841BB5B7F700322A16 /* JSReadableStreamPrivateConstructors.h */,
+				46BCBBC12085008000710638 /* JSRemoteDOMWindowBase.cpp */,
+				46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */,
 				931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */,
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerGlobalScopeBase.h */,
@@ -23730,6 +23741,7 @@
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
+				46BCBBBE2085005B00710638 /* JSRemoteDOMWindowCustom.cpp */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -23874,6 +23886,8 @@
 				CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */,
 				0F43C85E189E15A600019AE2 /* JSPerformanceTiming.cpp */,
 				8A9A587711E84C98008ACFD1 /* JSPerformanceTiming.h */,
+				46C3765F2085176C00C73829 /* JSRemoteDOMWindow.cpp */,
+				46C376612085176D00C73829 /* JSRemoteDOMWindow.h */,
 				BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */,
 				BCEC01C10C274DDD009F4EC9 /* JSScreen.h */,
 				83E9B3001DA5A51E00FFE8F6 /* JSScrollToOptions.cpp */,
@@ -28582,6 +28596,8 @@
 				4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */,
 				7F4C96DD1AD4483500365A51 /* JSReadableStreamSink.h in Headers */,
 				7E4C96DD1AD4483500365A51 /* JSReadableStreamSource.h in Headers */,
+				46C376622085177D00C73829 /* JSRemoteDOMWindow.h in Headers */,
+				46BCBBC22085008F00710638 /* JSRemoteDOMWindowBase.h in Headers */,
 				4998AECE13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h in Headers */,
 				57E233711DCD468F00F28D01 /* JSRsaHashedImportParams.h in Headers */,
 				5768E4341DB7524500D0A4F7 /* JSRsaHashedKeyGenParams.h in Headers */,

@@ -37,6 +37,7 @@
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElement.h"
 #include "JSIDBFactory.h"
+#include "JSRemoteDOMWindow.h"
 #include "JSWorker.h"
 #include "Location.h"
 #include "RuntimeEnabledFeatures.h"
@@ -78,7 +79,8 @@ static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, EncodedJSValue thisValu
 }
 #endif
 
-static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObject, Frame* frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
+template <DOMWindowType windowType>
+bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject, AbstractFrame* frame, ExecState* exec, PropertyName propertyName, PropertySlot& slot, const String& errorMessage)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -94,26 +96,27 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
     // Always provide the original function, on a fresh uncached function object.
     if (propertyName == builtinNames.blurPublicName()) {
-        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionBlur, 0>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? nonCachingStaticFunctionGetter<jsRemoteDOMWindowInstanceFunctionBlur, 0> : nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionBlur, 0>);
         return true;
     }
     if (propertyName == builtinNames.closePublicName()) {
-        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0> : nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
         return true;
     }
     if (propertyName == builtinNames.focusPublicName()) {
-        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionFocus, 0>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionFocus, 0> : nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionFocus, 0>);
         return true;
     }
     if (propertyName == builtinNames.postMessagePublicName()) {
-        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum), windowType == DOMWindowType::Remote ? nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 0> : nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
         return true;
     }
 
     // When accessing cross-origin known Window properties, we always use the original property getter,
     // even if the property was removed / redefined. As of early 2016, this matches Firefox and Chrome's
     // behavior.
-    if (auto* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName)) {
+    auto* classInfo = windowType == DOMWindowType::Remote ? JSRemoteDOMWindow::info() : JSDOMWindow::info();
+    if (auto* entry = classInfo->staticPropHashTable->entry(propertyName)) {
         // Only allow access to these specific properties.
         if (propertyName == builtinNames.locationPublicName()
             || propertyName == builtinNames.closedPublicName()
@@ -142,8 +145,9 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     // not match IE, but some sites end up naming frames things that conflict with window
     // properties that are in Moz but not IE. Since we have some of these, we have to do it
     // the Moz way.
-    if (frame) {
-        if (auto* scopedChild = frame->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
+    // FIXME: Add support to named attributes on RemoteFrames.
+    if (frame && is<Frame>(*frame)) {
+        if (auto* scopedChild = downcast<Frame>(*frame).tree().scopedChild(propertyNameToAtomicString(propertyName))) {
             slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, toJS(exec, scopedChild->document()->domWindow()));
             return true;
         }
@@ -153,6 +157,8 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     slot.setUndefined();
     return false;
 }
+template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(JSDOMGlobalObject*, AbstractFrame*, ExecState*, PropertyName, PropertySlot&, const String&);
+template bool jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Remote>(JSDOMGlobalObject*, AbstractFrame*, ExecState*, PropertyName, PropertySlot&, const String&);
 
 // Property access sequence is:
 // (1) indexed properties,
@@ -171,7 +177,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
     // Hand off all cross-domain access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*state, thisObject->wrapped(), errorMessage))
-        return jsDOMWindowGetOwnPropertySlotRestrictedAccess(thisObject, frame, state, propertyName, slot, errorMessage);
+        return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, frame, state, propertyName, slot, errorMessage);
     
     // FIXME: this need more explanation.
     // (Particularly, is it correct that this exists here but not in getOwnPropertySlotByIndex?)
@@ -222,7 +228,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, 
     // Hand off all cross-domain/frameless access to jsDOMWindowGetOwnPropertySlotRestrictedAccess.
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*state, thisObject->wrapped(), errorMessage))
-        return jsDOMWindowGetOwnPropertySlotRestrictedAccess(thisObject, frame, state, Identifier::from(state, index), slot, errorMessage);
+        return jsDOMWindowGetOwnPropertySlotRestrictedAccess<DOMWindowType::Local>(thisObject, frame, state, Identifier::from(state, index), slot, errorMessage);
 
     // (2) Regular own properties.
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
@@ -318,7 +324,7 @@ static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, Proper
 }
 
 // https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
-static void addCrossOriginWindowOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+void addCrossOriginWindowOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
 {
     VM& vm = state.vm();
     addCrossOriginWindowPropertyNames(vm, propertyNames);
@@ -461,8 +467,10 @@ DOMWindow* JSDOMWindow::toWrapped(VM& vm, JSValue value)
     JSObject* object = asObject(value);
     if (object->inherits<JSDOMWindow>(vm))
         return &jsCast<JSDOMWindow*>(object)->wrapped();
-    if (object->inherits<JSDOMWindowProxy>(vm))
-        return &jsCast<JSDOMWindowProxy*>(object)->wrapped();
+    if (object->inherits<JSDOMWindowProxy>(vm)) {
+        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindow*>(vm, jsCast<JSDOMWindowProxy*>(object)->window()))
+            return &jsDOMWindow->wrapped();
+    }
     return nullptr;
 }
 

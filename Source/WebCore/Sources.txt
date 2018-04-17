@@ -433,6 +433,8 @@ bindings/js/JSPluginElementFunctions.cpp
 bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSReadableStreamPrivateConstructors.cpp
 bindings/js/JSReadableStreamSourceCustom.cpp
+bindings/js/JSRemoteDOMWindowBase.cpp
+bindings/js/JSRemoteDOMWindowCustom.cpp
 bindings/js/JSSVGPathSegCustom.cpp
 bindings/js/JSStyleSheetCustom.cpp
 bindings/js/JSServiceWorkerClientCustom.cpp
@@ -2834,6 +2836,7 @@ JSReadableStreamDefaultController.cpp
 JSReadableStreamDefaultReader.cpp
 JSReadableStreamSink.cpp
 JSReadableStreamSource.cpp
+JSRemoteDOMWindow.cpp
 JSRequestAnimationFrameCallback.cpp
 JSRsaHashedImportParams.cpp
 JSRsaHashedKeyGenParams.cpp

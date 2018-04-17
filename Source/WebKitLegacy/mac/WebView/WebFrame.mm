@@ -2093,7 +2093,10 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
     JSC::VM& vm = *globalObjectObj->vm();
     if (!strcmp(globalObjectObj->classInfo(vm)->className, "JSDOMWindowProxy"))
-        anyWorldGlobalObject = static_cast<JSDOMWindowProxy*>(globalObjectObj)->window();
+        anyWorldGlobalObject = JSC::jsDynamicCast<JSDOMWindow*>(vm, static_cast<JSDOMWindowProxy*>(globalObjectObj)->window());
+
+    if (!anyWorldGlobalObject)
+        return @"";
 
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->wrapped().frame();
