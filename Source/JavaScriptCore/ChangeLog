@@ -1,3 +1,37 @@
+2018-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        PutStackSinkingPhase should know that KillStack means ConflictingFlush
+        https://bugs.webkit.org/show_bug.cgi?id=184672
+
+        Reviewed by Michael Saboff.
+
+        We've had a long history of KillStack and PutStackSinkingPhase having problems. We kept changing the meaning of
+        KillStack, and at some point we removed reasoning about KillStack from PutStackSinkingPhase. I tried doing some
+        archeology - but I'm still not sure why that phase ignores KillStack entirely. Maybe it's an oversight or maybe it's
+        intentional - I don't know.
+
+        Whatever the history, it's clear from the attached test case that ignoring KillStack is not correct. The outcome of
+        doing so is that we will sometimes sink a PutStack below a KillStack. That's wrong because then, OSR exit will use
+        the value from the PutStack instead of using the value from the MovHint that is associated with the KillStack. So,
+        KillStack must be seen as a special kind of clobber of the stack slot. OSRAvailabiity uses ConflictingFlush. I think
+        that's correct here, too. If we used DeadFlush and that was merged with another control flow path that had a
+        specific flush format, then we would think that we could sink the flush from that path. That's not right, since that
+        could still lead to sinking a PutStack past the KillStack in the sense that a PutStack will appear after the
+        KillStack along one path through the CFG. Also, the definition of DeadFlush and ConflictingFlush in the comment
+        inside PutStackSinkingPhase seems to suggest that KillStack is a ConflictingFlush, since DeadFlush means that we
+        have done some PutStack and their values are still valid. KillStack is not a PutStack and it means that previous
+        values are not valid. The definition of ConflictingFlush is that "we know, via forward flow, that there isn't any
+        value in the given local that anyone should have been relying on" - which exactly matches KillStack's definition.
+
+        This also means that we cannot eliminate arguments allocations that are live over KillStacks, since if we eliminated
+        them then we would have a GetStack after a KillStack. One easy way to fix this is to say that KillStack writes to
+        its stack slot for the purpose of clobberize.
+
+        * dfg/DFGClobberize.h: KillStack "writes" to its stack slot.
+        * dfg/DFGPutStackSinkingPhase.cpp: Fix the bug.
+        * ftl/FTLLowerDFGToB3.cpp: Add better assertion failure.
+        (JSC::FTL::DFG::LowerDFGToB3::buildExitArguments):
+
 2018-04-17  Filip Pizlo  <fpizlo@apple.com>
 
         JSWebAssemblyCodeBlock should be in an IsoSubspace

@@ -15871,7 +15871,7 @@ private:
                 Node* node = availability.node();
                 if (!node->isPhantomAllocation())
                     return;
-                
+
                 auto result = map.add(node, nullptr);
                 if (result.isNewEntry) {
                     result.iterator->value =
@@ -15899,6 +15899,8 @@ private:
         for (auto heapPair : availabilityMap.m_heap) {
             Node* node = heapPair.key.base();
             ExitTimeObjectMaterialization* materialization = map.get(node);
+            if (!materialization)
+                DFG_CRASH(m_graph, m_node, toCString("Could not find materialization for ", node, " in ", availabilityMap).data());
             ExitValue exitValue = exitValueForAvailability(arguments, map, heapPair.value);
             if (exitValue.hasIndexInStackmapLocations())
                 exitValue.adjustStackmapLocationsIndexByOffset(offsetOfExitArgumentsInStackmapLocations);

@@ -1,3 +1,16 @@
+2018-04-16  Filip Pizlo  <fpizlo@apple.com>
+
+        PutStackSinkingPhase should know that KillStack means ConflictingFlush
+        https://bugs.webkit.org/show_bug.cgi?id=184672
+
+        Reviewed by Michael Saboff.
+
+        * stress/sink-put-stack-over-kill-stack.js: Added.
+        (avocado_1):
+        (apricot_0):
+        (__c_0):
+        (banana_2):
+
 2018-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Rename runWebAssembly to runWebAssemblySuite

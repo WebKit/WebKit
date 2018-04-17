@@ -415,11 +415,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ConstantStoragePointer:
         def(PureValue(node, node->storagePointer()));
         return;
+
+    case KillStack:
+        write(AbstractHeap(Stack, node->unlinkedLocal()));
+        return;
          
     case MovHint:
     case ZombieHint:
     case ExitOK:
-    case KillStack:
     case Upsilon:
     case Phi:
     case PhantomLocal:
