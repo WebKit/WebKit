@@ -1,3 +1,44 @@
+2018-04-17  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r229831): CMD-clicking an iCloud web app link unexpectedly opens that link in a new tab and the current tab
+        https://bugs.webkit.org/show_bug.cgi?id=184678
+        <rdar://problem/39422122>
+
+        Reviewed by Alex Christensen.
+
+        Frament navigations need to happen synchronously for Web-compatibility. Because of this,
+        r225657 added code to make sure that if the client does not make the navigation policy
+        decision synchronously for frament navigations, then we'll stop waiting for the client
+        and proceed with the navigation. However, r229831 make the navigation policy decision
+        IPC decision, meaning that even if the client responds synchronously, it would be
+        asynchronously from WebCore's point of view. As a result, we would always ignore the
+        client's policy decision when doing a fragment navigation.
+
+        This is an issue on iclould.com because the web-app links are fragment URLs. When you
+        CMD+click one of these link, we do the navigation policy check. As a result of this
+        check, Safari responds IGNORE to the policy decision and instead decides to load the
+        link in a new tab (because CMD key is pressed). Due to the bug mentioned above, we
+        would not obey the IGNORE policy decision from Safari and load the link in the current
+        tab, even though Safari would already be loading it in a new tab.
+
+        To address the issue, I reintroduced a synchronous code path for navigation policy
+        decision making, backed by synchronous IPC. This synchronous code path is now used for
+        fragment navigations to restore pre-r229831 behavior. If the client does not answer
+        synchronously, we'll proceed with the navigation anyway, as was happening pre-r229831.
+
+        Test: http/tests/navigation/fragment-navigation-policy-ignore.html
+
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        * loader/FrameLoaderClient.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/PolicyChecker.h:
+
 2018-04-17  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r230713.

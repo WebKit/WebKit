@@ -1,3 +1,16 @@
+2018-04-17  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r229831): CMD-clicking an iCloud web app link unexpectedly opens that link in a new tab and the current tab
+        https://bugs.webkit.org/show_bug.cgi?id=184678
+        <rdar://problem/39422122>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/fragment-navigation-policy-ignore-expected.txt: Added.
+        * http/tests/navigation/fragment-navigation-policy-ignore.html: Added.
+
 2018-04-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Animated GIF imagery with finite looping are falling one loop short

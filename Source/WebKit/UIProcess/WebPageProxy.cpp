@@ -2390,6 +2390,11 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
         }
     }
 
+    if (auto syncNavigationActionPolicyReply = WTFMove(m_syncNavigationActionPolicyReply)) {
+        syncNavigationActionPolicyReply->send(navigation ? navigation->navigationID() : 0, action, downloadID, WTFMove(websitePolicies));
+        return;
+    }
+
     m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame.frameID(), listenerID, action, navigation ? navigation->navigationID() : 0, downloadID, websitePolicies), m_pageID);
 }
 
@@ -3909,6 +3914,18 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
         m_policyClient->decidePolicyForNavigationAction(*this, frame, WTFMove(navigationActionData), originatingFrame, originalRequest, WTFMove(request), WTFMove(listener), m_process->transformHandlesToObjects(userData.object()).get());
 
     m_shouldSuppressAppLinksInNextNavigationPolicyDecision = false;
+}
+
+void WebPageProxy::decidePolicyForNavigationActionSync(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, NavigationActionData&& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, uint64_t listenerID, const UserData& userData, Ref<Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply>&& reply)
+{
+    ASSERT(!m_syncNavigationActionPolicyReply);
+    m_syncNavigationActionPolicyReply = WTFMove(reply);
+
+    decidePolicyForNavigationAction(frameID, frameSecurityOrigin, navigationID, WTFMove(navigationActionData), originatingFrameInfoData, originatingPageID, originalRequest, WTFMove(request), listenerID, userData);
+
+    // If the client did not respond synchronously, proceed with the load.
+    if (auto syncNavigationActionPolicyReply = WTFMove(m_syncNavigationActionPolicyReply))
+        syncNavigationActionPolicyReply->send(navigationID, PolicyAction::Use, { }, { });
 }
 
 void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, NavigationActionData&& navigationActionData, ResourceRequest&& request, const String& frameName, uint64_t listenerID, const UserData& userData)

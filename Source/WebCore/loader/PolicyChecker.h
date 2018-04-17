@@ -56,6 +56,8 @@ enum class ShouldContinue {
     ForSuspension
 };
 
+enum class PolicyDecisionMode { Synchronous, Asynchronous };
+
 using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, ShouldContinue)>;
 using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, FormState*, ShouldContinue)>;
 
@@ -65,7 +67,7 @@ class PolicyChecker {
 public:
     explicit PolicyChecker(Frame&);
 
-    void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, DocumentLoader*, FormState*, NavigationPolicyDecisionFunction&&);
+    void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, DocumentLoader*, FormState*, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous);
     void checkNavigationPolicy(ResourceRequest&&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction&&);
     void checkNewWindowPolicy(NavigationAction&&, const ResourceRequest&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction&&);
 

@@ -1260,10 +1260,6 @@ bool FrameLoader::isStopLoadingAllowed() const
     return m_pageDismissalEventBeingDispatched == PageDismissalType::None;
 }
 
-struct SharedBool : public RefCounted<SharedBool> {
-    bool value { false };
-};
-
 void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, FormState* formState, CompletionHandler<void()>&& completionHandler)
 {
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
@@ -1336,17 +1332,9 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        auto completionHandlerCalled = adoptRef(*new SharedBool);
-        policyChecker().checkNavigationPolicy(ResourceRequest(request), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this, protectedFrame = makeRef(m_frame), completionHandlerCalled = completionHandlerCalled.copyRef()] (const ResourceRequest& request, FormState*, ShouldContinue shouldContinue) {
-            if (!completionHandlerCalled->value) {
-                completionHandlerCalled->value = true;
-                continueFragmentScrollAfterNavigationPolicy(request, shouldContinue == ShouldContinue::Yes);
-            }
-        });
-            if (!completionHandlerCalled->value) {
-            completionHandlerCalled->value = true;
-            continueFragmentScrollAfterNavigationPolicy(WTFMove(request), true);
-        }
+        policyChecker().checkNavigationPolicy(ResourceRequest(request), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this, protectedFrame = makeRef(m_frame)] (const ResourceRequest& request, FormState*, ShouldContinue shouldContinue) {
+            continueFragmentScrollAfterNavigationPolicy(request, shouldContinue == ShouldContinue::Yes);
+        }, PolicyDecisionMode::Synchronous);
         return;
     }
 
@@ -1512,17 +1500,9 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         oldDocumentLoader->setTriggeringAction(action);
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
-        auto completionHandlerCalled = adoptRef(*new SharedBool);
-        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this, protectedFrame = makeRef(m_frame), completionHandlerCalled = completionHandlerCalled.copyRef()] (const ResourceRequest& request, FormState*, ShouldContinue shouldContinue) {
-            if (!completionHandlerCalled->value) {
-                completionHandlerCalled->value = true;
-                continueFragmentScrollAfterNavigationPolicy(request, shouldContinue == ShouldContinue::Yes);
-            }
-        });
-        if (!completionHandlerCalled->value) {
-            completionHandlerCalled->value = true;
-            continueFragmentScrollAfterNavigationPolicy(loader->request(), true);
-        }
+        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), false /* didReceiveRedirectResponse */, oldDocumentLoader.get(), formState, [this, protectedFrame = makeRef(m_frame)] (const ResourceRequest& request, FormState*, ShouldContinue shouldContinue) {
+            continueFragmentScrollAfterNavigationPolicy(request, shouldContinue == ShouldContinue::Yes);
+        }, PolicyDecisionMode::Synchronous);
         return;
     }
 
