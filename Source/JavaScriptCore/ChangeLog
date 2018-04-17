@@ -1,3 +1,20 @@
+2018-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        JSWebAssemblyCodeBlock should be in an IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=184704
+
+        Reviewed by Mark Lam.
+        
+        Previously it was in a CompleteSubspace, which is pretty good, but also quite wasteful.
+        CompleteSubspace means about 4KB of data to track the size-allocator mapping. IsoSubspace
+        shortcircuits this. Also, IsoSubspace uses the iso allocator, so it provides stronger UAF
+        protection.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+
 2018-04-17  Jer Noble  <jer.noble@apple.com>
 
         Only enable useSeparatedWXHeap on ARM64.
