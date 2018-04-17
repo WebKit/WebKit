@@ -245,7 +245,9 @@ RepetitionCount ImageDecoderCG::repetitionCount() const
         CFNumberGetValue(num, kCFNumberIntType, &loopCount);
         
         // A property with value 0 means loop forever.
-        return loopCount ? loopCount : RepetitionCountInfinite;
+        // For loopCount > 0, the specs is not clear about it. But it looks the meaning
+        // is: play once + loop loopCount which is equivalent to play loopCount + 1.
+        return loopCount ? loopCount + 1 : RepetitionCountInfinite;
     }
     
     CFDictionaryRef pngProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyPNGDictionary);

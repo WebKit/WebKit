@@ -1,3 +1,25 @@
+2018-04-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Animated GIF imagery with finite looping are falling one loop short
+        https://bugs.webkit.org/show_bug.cgi?id=183153
+
+        Reviewed by Simon Fraser.
+
+        This layout test tests GIF when it has to loop its entire frames a specific
+        number of times. There are three cases for the loopCount field:
+        -- loopCount is missing: This means the GIF should animate only once. This
+           is covered by animated-red-green-blue-repeat-1.gif.
+        -- loopCount = 0: This means the image has to animate indefinatly. This
+           case is covered by the new GIF animated-red-green-blue-repeat-infinite.gif.
+        -- loopCount > 0: This will loop the GIF entire frames for (loopCount + 1)
+           times. To fix the test with the extra loop, loopCount in
+           animated-red-green-blue-repeat-2.gif was changed to 1 instead of 2.
+
+        * fast/images/animated-image-loop-count-expected.html:
+        * fast/images/animated-image-loop-count.html:
+        * fast/images/resources/animated-red-green-blue-repeat-2.gif:
+        * fast/images/resources/animated-red-green-blue-repeat-infinite.gif:
+
 2018-04-16  Antoine Quint  <graouts@apple.com>
 
         Layout Test animations/needs-layout.html is a flaky Image Failure.

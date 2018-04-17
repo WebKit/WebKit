@@ -1,3 +1,40 @@
+2018-04-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Animated GIF imagery with finite looping are falling one loop short
+        https://bugs.webkit.org/show_bug.cgi?id=183153
+
+        Reviewed by Simon Fraser.
+
+        The Netscape Looping Application Extension is a block which may be added
+        to a GIF file to tell the viewer to loop through the entire GIF frames.
+        This is communicated through two bytes designated for the "loopCount" in
+        this block.
+
+        The entire block may not be found in the GIF, in which case the GIF is 
+        supposed to animate its entire frames only once.
+
+        If the block exists and loopCount = 0, this means the image has to loop
+        through its frames indefinitely.
+
+        If the block exist and loopCount > 0, this should mean the image has to
+        loop through its frames loopCount + 1 times. The extra loop seems to be
+        the consensus among most of the GIF generators and viewers. For example,
+        if the image designer wants the image to loop through its frames n times:
+        -- The GIF generator (e.g. Adobe Photoshop and https://ezgif.com/maker) 
+           will write n - 1 for loopCount. However http://gifmaker.me and 
+           http://gifmaker.org write n for loopCount.
+        -- The browser (e.g. Chrome 65.0.3325 181 and FireFox Quantum 59.0.2) will
+           translate loopCount = n - 1 to: animate GIF once + loop n - 1, which 
+           means loop the GIF n times.
+
+        Because the specs are not really clear about this, we are going to consider
+        the agreed-upon behavior among most of the web browsers the specs here.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::repetitionCount const):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::repetitionCount const):
+
 2018-04-17  Saam Barati  <sbarati@apple.com>
 
         Add system trace points for process launch and for initializeWebProcess

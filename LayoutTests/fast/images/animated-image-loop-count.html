@@ -8,14 +8,14 @@
 </style>    
 <body>
     <div>
-        <p>Frames of a 3-frame animated image with loopCount = 1:</p>
+        <p>Frames of a 3-frame animated image with missing loopCount, (repetitionCount = 1):</p>
         <canvas id="canvas-1"></canvas>
         <canvas id="canvas-2"></canvas>
         <canvas id="canvas-3"></canvas>
         <canvas id="canvas-4"></canvas>
     </div>
     <div>
-        <p>Frames of a 3-frame animated image with loopCount = 2:</p>
+        <p>Frames of a 3-frame animated image with loopCount = 1, (repetitionCount = 2):</p>
         <canvas id="canvas-a"></canvas>
         <canvas id="canvas-b"></canvas>
         <canvas id="canvas-c"></canvas>
@@ -23,6 +23,16 @@
         <canvas id="canvas-e"></canvas>
         <canvas id="canvas-f"></canvas>
         <canvas id="canvas-g"></canvas>
+    </div>
+    <div>
+        <p>Frames of a 3-frame animated image with loopCount = 0, (repetitionCount = infinite):</p>
+        <canvas id="canvas-A"></canvas>
+        <canvas id="canvas-B"></canvas>
+        <canvas id="canvas-C"></canvas>
+        <canvas id="canvas-D"></canvas>
+        <canvas id="canvas-E"></canvas>
+        <canvas id="canvas-F"></canvas>
+        <canvas id="canvas-G"></canvas>
     </div>
     <script>
         function drawFrame(image, canvasId) {
@@ -65,7 +75,8 @@
 
             var images = [
                 { src: "resources/animated-red-green-blue-repeat-1.gif", canvasId: '1', frameCount: 4 },
-                { src: "resources/animated-red-green-blue-repeat-2.gif", canvasId: 'a', frameCount: 7 }
+                { src: "resources/animated-red-green-blue-repeat-2.gif", canvasId: 'a', frameCount: 7 },
+                { src: "resources/animated-red-green-blue-repeat-infinite.gif", canvasId: 'A', frameCount: 7 }
             ];
 
             var promises = [];

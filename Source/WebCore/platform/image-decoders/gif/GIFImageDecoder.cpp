@@ -95,7 +95,7 @@ RepetitionCount GIFImageDecoder::repetitionCount() const
     if (failed() || (m_reader && (!m_reader->imagesCount())))
         m_repetitionCount = RepetitionCountOnce;
     else if (m_reader && m_reader->loopCount() != cLoopCountNotSeen)
-        m_repetitionCount = m_reader->loopCount();
+        m_repetitionCount = m_reader->loopCount() > 0 ? m_reader->loopCount() + 1 : m_reader->loopCount();
     return m_repetitionCount;
 }
 
