@@ -1,3 +1,16 @@
+2018-04-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Set inline-block box position.
+        https://bugs.webkit.org/show_bug.cgi?id=184690
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/FormattingContext/InlineFormatting/InlineFormattingContext.js:
+        (InlineFormattingContext.prototype._handleInlineBlock):
+        * LayoutReloaded/Utils.js:
+        (Utils._dumpBox):
+        * LayoutReloaded/test/inline-block-with-fixed-width-height.html:
+
 2018-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Add API to clear JSCContext uncaught exception

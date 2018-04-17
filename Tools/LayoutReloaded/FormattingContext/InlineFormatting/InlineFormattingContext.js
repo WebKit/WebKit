@@ -118,6 +118,7 @@ class InlineFormattingContext extends FormattingContext {
         this.layoutState().formattingContext(inlineBlockBox).layout();
         displayBox.setHeight(Utils.height(inlineBlockBox) + Utils.computedVerticalBorderAndPadding(inlineBlockBox.node()));
         this._line().addInlineBox(displayBox.size());
+        displayBox.setTopLeft(this._line().lastLineBox().lineBoxRect.topLeft());
         this._adjustLineForInlineContainerEnd(inlineBlockBox);
     }
 

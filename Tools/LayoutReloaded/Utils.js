@@ -584,16 +584,11 @@ class Utils {
             }
             return indentation + box.node().tagName + " " + box.name() + "\n";
         }
-        if (box.name() == "RenderImage") {
-            let boxRect = layoutState.displayBox(box).rect();
-            return indentation + box.node().tagName + " " + box.name() + " at (" + Utils.precisionRound(boxRect.left()) + "," + Utils.precisionRound(boxRect.top()) + ") size " + Utils.precisionRound(boxRect.width()) + "x" + Utils.precisionRound(boxRect.height()) + "\n";
-
-        }
         if (box.isAnonymous())
             return "";
         let displayBox = layoutState.displayBox(box);
         let boxRect = displayBox.rect();
-        return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + boxRect.left() + "," + boxRect.top() + ") size " + boxRect.width() + "x" + boxRect.height() + "\n";
+        return indentation + (box.node().tagName ? (box.node().tagName + " ") : "")  + box.name() + " at (" + Utils.precisionRound(boxRect.left()) + "," + Utils.precisionRound(boxRect.top()) + ") size " + Utils.precisionRound(boxRect.width()) + "x" + Utils.precisionRound(boxRect.height()) + "\n";
     }
 
     static _dumpLines(layoutState, root, level) {
