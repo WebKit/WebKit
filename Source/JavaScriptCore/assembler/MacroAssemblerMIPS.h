@@ -3061,6 +3061,12 @@ public:
             m_assembler.movd(dest, src);
     }
 
+    void moveDouble(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.mfc1(dest, src);
+        m_assembler.mfc1(RegisterID(dest + 1), FPRegisterID(src + 1));
+    }
+
     void moveZeroToDouble(FPRegisterID reg)
     {
         convertInt32ToDouble(MIPSRegisters::zero, reg);

@@ -964,6 +964,11 @@ public:
             m_assembler.vmov(dest, src);
     }
 
+    void moveDouble(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.vmov(dest, RegisterID(dest + 1), src);
+    }
+
     void moveZeroToDouble(FPRegisterID reg)
     {
         static double zeroConstant = 0.;

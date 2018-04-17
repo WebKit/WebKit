@@ -1,3 +1,41 @@
+2018-04-17  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Implement setupArgumentsImpl for ARM and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=183786
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement setupArgumentsImpl for ARM (hardfp and softfp) and MIPS calling convention. Added
+        numCrossSources and extraGPRArgs to ArgCollection to keep track of extra
+        registers used for 64-bit values on 32-bit architectures. numCrossSources
+        keeps track of assignments from FPR to GPR registers as happens e.g. on MIPS.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::moveDouble):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::moveDouble):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupStubCrossArgs):
+        (JSC::CCallHelpers::ArgCollection::ArgCollection):
+        (JSC::CCallHelpers::ArgCollection::pushRegArg):
+        (JSC::CCallHelpers::ArgCollection::pushExtraRegArg):
+        (JSC::CCallHelpers::ArgCollection::addGPRArg):
+        (JSC::CCallHelpers::ArgCollection::addGPRExtraArg):
+        (JSC::CCallHelpers::ArgCollection::addStackArg):
+        (JSC::CCallHelpers::ArgCollection::addPoke):
+        (JSC::CCallHelpers::ArgCollection::argCount):
+        (JSC::CCallHelpers::calculatePokeOffset):
+        (JSC::CCallHelpers::pokeForArgument):
+        (JSC::CCallHelpers::stackAligned):
+        (JSC::CCallHelpers::marshallArgumentRegister):
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        (JSC::CCallHelpers::pokeArgumentsAligned):
+        (JSC::CCallHelpers::std::is_integral<CURRENT_ARGUMENT_TYPE>::value):
+        (JSC::CCallHelpers::std::is_pointer<CURRENT_ARGUMENT_TYPE>::value):
+        (JSC::CCallHelpers::setupArguments):
+        * jit/FPRInfo.h:
+        (JSC::FPRInfo::toArgumentRegister):
+
 2018-04-17  Saam Barati  <sbarati@apple.com>
 
         Add system trace points for process launch and for initializeWebProcess
