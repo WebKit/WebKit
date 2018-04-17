@@ -410,25 +410,26 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         return;
     }
 
+    if (needToInvokeDidReceiveResponse()) {
+        // Processing of didReceiveResponse() has not been completed. (For example, HEAD method)
+        // When completeDidReceiveResponse() is called, didCompleteTransfer() will be called again.
+
+        m_finishedResultCode = result;
+        invokeDidReceiveResponse(m_response, Action::FinishTransfer);
+        return;
+    }
+
     if (result == CURLE_OK) {
-        if (needToInvokeDidReceiveResponse()) {
-            // Processing of didReceiveResponse() has not been completed. (For example, HEAD method)
-            // When completeDidReceiveResponse() is called, didCompleteTransfer() will be called again.
+        if (m_multipartHandle)
+            m_multipartHandle->didComplete();
 
-            m_finishedResultCode = result;
-            invokeDidReceiveResponse(m_response, Action::FinishTransfer);
-        } else {
-            if (m_multipartHandle)
-                m_multipartHandle->didComplete();
+        if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
+            m_networkLoadMetrics = *metrics;
 
-            if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
-                m_networkLoadMetrics = *metrics;
-
-            finalizeTransfer();
-            callClient([](CurlRequest& request, CurlRequestClient& client) {
-                client.curlDidComplete(request);
-            });
-        }
+        finalizeTransfer();
+        callClient([](CurlRequest& request, CurlRequestClient& client) {
+            client.curlDidComplete(request);
+        });
     } else {
         auto type = (result == CURLE_OPERATION_TIMEDOUT && m_request.timeoutInterval() > 0.0) ? ResourceError::Type::Timeout : ResourceError::Type::General;
         auto resourceError = ResourceError::httpError(result, m_request.url(), type);
