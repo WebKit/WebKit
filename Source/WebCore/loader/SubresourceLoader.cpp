@@ -182,7 +182,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
     }
 
     if (newRequest.requester() != ResourceRequestBase::Requester::Main) {
-        TracePoint(SubresourceLoadWillStart);
+        tracePoint(SubresourceLoadWillStart);
         ResourceLoadObserver::shared().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
     }
 
@@ -630,7 +630,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     }
 
     if (m_resource->type() != CachedResource::MainResource)
-        TracePoint(SubresourceLoadDidEnd);
+        tracePoint(SubresourceLoadDidEnd);
 
     m_state = Finishing;
     m_resource->finishLoading(resourceData());
@@ -665,7 +665,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
     m_state = Finishing;
 
     if (m_resource->type() != CachedResource::MainResource)
-        TracePoint(SubresourceLoadDidEnd);
+        tracePoint(SubresourceLoadDidEnd);
 
     if (m_resource->resourceToRevalidate())
         MemoryCache::singleton().revalidationFailed(*m_resource);
@@ -713,7 +713,7 @@ void SubresourceLoader::didCancel(const ResourceError&)
         return;
 
     if (m_resource->type() != CachedResource::MainResource)
-        TracePoint(SubresourceLoadDidEnd);
+        tracePoint(SubresourceLoadDidEnd);
 
     m_resource->cancelLoad();
     notifyDone();

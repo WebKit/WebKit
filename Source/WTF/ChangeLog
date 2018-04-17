@@ -1,3 +1,22 @@
+2018-04-17  Saam Barati  <sbarati@apple.com>
+
+        Add system trace points for process launch and for initializeWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184669
+
+        Reviewed by Simon Fraser.
+
+        This patch adds TracePointCodes to measure process launch time and
+        WebProcess::initializeWebProcess time.
+        
+        It also renames the TracePoint function to tracePoint since WebKit style
+        does not capitalize the first letter in function names.
+
+        * wtf/SystemTracing.h:
+        (WTF::tracePoint):
+        (WTF::TraceScope::TraceScope):
+        (WTF::TraceScope::~TraceScope):
+        (WTF::TracePoint): Deleted.
+
 2018-04-16  Andy Estes  <aestes@apple.com>
 
         [iOS] Enable WKPDFView by default

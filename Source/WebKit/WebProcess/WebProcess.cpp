@@ -118,6 +118,7 @@
 #include <wtf/Language.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/StringHash.h>
 
 #if !OS(WINDOWS)
@@ -279,6 +280,8 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 
 void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {    
+    TraceScope traceScope(InitializeWebProcessStart, InitializeWebProcessEnd);
+
     ASSERT(m_pageMap.isEmpty());
 
     WebCore::setPresentingApplicationPID(parameters.presentingApplicationPID);

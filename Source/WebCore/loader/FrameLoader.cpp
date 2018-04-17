@@ -1031,7 +1031,7 @@ void FrameLoader::provisionalLoadStarted()
     m_client.provisionalLoadStarted();
 
     if (m_frame.isMainFrame()) {
-        TracePoint(MainResourceLoadDidStartProvisional);
+        tracePoint(MainResourceLoadDidStartProvisional);
 
         if (auto* page = m_frame.page())
             page->didStartProvisionalLoad();
@@ -2400,7 +2400,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             Page* page = m_frame.page();
             if (page) {
                 if (m_frame.isMainFrame()) {
-                    TracePoint(MainResourceLoadDidEnd);
+                    tracePoint(MainResourceLoadDidEnd);
                     page->didFinishLoad();
                 }
             }

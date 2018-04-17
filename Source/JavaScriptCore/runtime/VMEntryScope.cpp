@@ -58,7 +58,7 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
         if (SamplingProfiler* samplingProfiler = vm.samplingProfiler())
             samplingProfiler->noticeVMEntry();
 #endif
-        TracePoint(VMEntryScopeStart);
+        tracePoint(VMEntryScopeStart);
     }
 
     vm.clearLastException();
@@ -77,7 +77,7 @@ VMEntryScope::~VMEntryScope()
     if (m_vm.entryScope != this)
         return;
 
-    TracePoint(VMEntryScopeEnd);
+    tracePoint(VMEntryScopeEnd);
     
     if (m_vm.watchdog())
         m_vm.watchdog()->exitedVM();

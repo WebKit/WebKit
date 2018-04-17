@@ -27,6 +27,7 @@
 #include "ProcessLauncher.h"
 
 #include <wtf/StdLibExtras.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -37,11 +38,13 @@ ProcessLauncher::ProcessLauncher(Client* client, const LaunchOptions& launchOpti
     , m_processIdentifier(0)
 {
     m_isLaunching = true;
+    tracePoint(ProcessLaunchStart);
     launchProcess();
 }
 
 void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC::Connection::Identifier identifier)
 {
+    tracePoint(ProcessLaunchEnd);
     m_processIdentifier = processIdentifier;
     m_isLaunching = false;
     
