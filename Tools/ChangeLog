@@ -1,5 +1,17 @@
 2018-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Add API to clear JSCContext uncaught exception
+        https://bugs.webkit.org/show_bug.cgi?id=184685
+
+        Reviewed by Žan Doberšek.
+
+        Add test cases for the new API.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCExceptions):
+
+2018-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Add API to query, delete and enumerate properties
         https://bugs.webkit.org/show_bug.cgi?id=184647
 

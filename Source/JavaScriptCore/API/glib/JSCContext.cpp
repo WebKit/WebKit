@@ -589,6 +589,19 @@ void jsc_context_throw_exception(JSCContext* context, JSCException* exception)
 }
 
 /**
+ * jsc_context_clear_exception:
+ * @context: a #JSCContext
+ *
+ * Clear the uncaught exception in @context if any.
+ */
+void jsc_context_clear_exception(JSCContext* context)
+{
+    g_return_if_fail(JSC_IS_CONTEXT(context));
+
+    context->priv->exception = nullptr;
+}
+
+/**
  * JSCExceptionHandler:
  * @context: a #JSCContext
  * @exception: a #JSCException

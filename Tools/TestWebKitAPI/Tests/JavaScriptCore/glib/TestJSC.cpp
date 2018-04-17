@@ -1622,6 +1622,9 @@ static void testJSCExceptions()
         g_assert_cmpstr(jsc_exception_get_message(exception), ==, "Can't find variable: foo");
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
         g_assert_false(jsc_exception_get_source_uri(exception));
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
     }
 
     {
@@ -1638,6 +1641,9 @@ static void testJSCExceptions()
         g_assert_true(JSC_IS_EXCEPTION(exception));
         checker.watch(exception);
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 2);
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
     }
 
     {
@@ -1654,6 +1660,9 @@ static void testJSCExceptions()
         g_assert_true(JSC_IS_EXCEPTION(exception));
         checker.watch(exception);
         g_assert_cmpstr(jsc_exception_get_source_uri(exception), ==, "file:///foo/script.js");
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
     }
 
     {
@@ -1682,6 +1691,9 @@ static void testJSCExceptions()
         g_assert_cmpstr(jsc_exception_get_message(exception), ==, "API exception");
         g_assert_cmpuint(jsc_exception_get_line_number(exception), ==, 1);
         g_assert_false(jsc_exception_get_source_uri(exception));
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
     }
 
     {
@@ -1745,6 +1757,9 @@ static void testJSCExceptions()
         g_assert_false(test.wasDeleted);
         jsc_context_pop_exception_handler(context.get());
         g_assert_true(test.wasDeleted);
+
+        jsc_context_clear_exception(context.get());
+        g_assert_null(jsc_context_get_exception(context.get()));
     }
 }
 

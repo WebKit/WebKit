@@ -88,6 +88,9 @@ jsc_context_throw_exception          (JSCContext         *context,
                                       JSCException       *exception);
 
 JSC_API void
+jsc_context_clear_exception          (JSCContext         *context);
+
+JSC_API void
 jsc_context_push_exception_handler   (JSCContext         *context,
                                       JSCExceptionHandler handler,
                                       gpointer            user_data,

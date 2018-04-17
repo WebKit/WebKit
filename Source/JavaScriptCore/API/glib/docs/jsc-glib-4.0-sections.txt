@@ -32,6 +32,7 @@ jsc_context_get_virtual_machine
 jsc_context_get_exception
 jsc_context_throw
 jsc_context_throw_exception
+jsc_context_clear_exception
 jsc_context_push_exception_handler
 jsc_context_pop_exception_handler
 jsc_context_get_current
