@@ -163,6 +163,17 @@ JSC_API JSCValue *
 jsc_value_object_get_property_at_index    (JSCValue             *value,
                                            guint                 index);
 
+JSC_API gboolean
+jsc_value_object_has_property             (JSCValue             *value,
+                                           const char           *name);
+
+JSC_API gboolean
+jsc_value_object_delete_property          (JSCValue             *value,
+                                           const char           *name);
+
+JSC_API gchar **
+jsc_value_object_enumerate_properties     (JSCValue             *value);
+
 JSC_API JSCValue *
 jsc_value_object_invoke_method            (JSCValue             *value,
                                            const char           *name,

@@ -673,7 +673,6 @@ JSCValue* jsc_value_object_get_property(JSCValue* value, const char* name)
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-
     JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
     JSValueRef result = JSObjectGetProperty(jsContext, object, propertyName.get(), &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
@@ -726,12 +725,110 @@ JSCValue* jsc_value_object_get_property_at_index(JSCValue* value, unsigned index
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-
     JSValueRef result = JSObjectGetPropertyAtIndex(jsContext, object, index, &exception);
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
     return jscContextGetOrCreateValue(priv->context.get(), result).leakRef();
+}
+
+/**
+ * jsc_value_object_has_property:
+ * @value: a #JSCValue
+ * @name: the property name
+ *
+ * Get whether @value has property with @name.
+ *
+ * Returns: %TRUE if @value has a property with @name, or %FALSE otherwise
+ */
+gboolean jsc_value_object_has_property(JSCValue* value, const char* name)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), FALSE);
+    g_return_val_if_fail(name, FALSE);
+
+    JSCValuePrivate* priv = value->priv;
+    auto* jsContext = jscContextGetJSContext(priv->context.get());
+    JSValueRef exception = nullptr;
+    JSObjectRef object = JSValueToObject(jsContext, priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
+        return FALSE;
+
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+    return JSObjectHasProperty(jsContext, object, propertyName.get());
+}
+
+/**
+ * jsc_value_object_delete_property:
+ * @value: a #JSCValue
+ * @name: the property name
+ *
+ * Try to delete property with @name from @value. This function will return %FALSE if
+ * the property was defined without %JSC_VALUE_PROPERTY_CONFIGURABLE flag.
+ *
+ * Returns: %TRUE if the property was deleted, or %FALSE otherwise.
+ */
+gboolean jsc_value_object_delete_property(JSCValue* value, const char* name)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), FALSE);
+    g_return_val_if_fail(name, FALSE);
+
+    JSCValuePrivate* priv = value->priv;
+    auto* jsContext = jscContextGetJSContext(priv->context.get());
+    JSValueRef exception = nullptr;
+    JSObjectRef object = JSValueToObject(jsContext, priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
+        return FALSE;
+
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+    gboolean result = JSObjectDeleteProperty(jsContext, object, propertyName.get(), &exception);
+    if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
+        return FALSE;
+
+    return result;
+}
+
+/**
+ * jsc_value_object_enumerate_properties:
+ * @value: a #JSCValue
+ *
+ * Get the list of property names of @value. Only properties defined with %JSC_VALUE_PROPERTY_ENUMERABLE
+ * flag will be collected.
+ *
+ * Returns: (array zero-terminated=1) (transfer full) (nullable): a %NULL-terminated array of strings containing the
+ *    property names, or %NULL if @value doesn't have enumerable properties.  Use g_strfreev() to free.
+ */
+char** jsc_value_object_enumerate_properties(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), nullptr);
+
+    JSCValuePrivate* priv = value->priv;
+    auto* jsContext = jscContextGetJSContext(priv->context.get());
+    JSValueRef exception = nullptr;
+    JSObjectRef object = JSValueToObject(jsContext, priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
+        return nullptr;
+
+    auto* propertiesArray = JSObjectCopyPropertyNames(jsContext, object);
+    if (!propertiesArray)
+        return nullptr;
+
+    auto propertiesArraySize = JSPropertyNameArrayGetCount(propertiesArray);
+    if (!propertiesArraySize) {
+        JSPropertyNameArrayRelease(propertiesArray);
+        return nullptr;
+    }
+
+    auto* result = static_cast<char**>(g_new0(char*, propertiesArraySize + 1));
+    for (unsigned i = 0; i < propertiesArraySize; ++i) {
+        auto* jsString = JSPropertyNameArrayGetNameAtIndex(propertiesArray, i);
+        size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString);
+        auto* string = static_cast<char*>(g_malloc(maxSize));
+        JSStringGetUTF8CString(jsString, string, maxSize);
+        result[i] = string;
+    }
+    JSPropertyNameArrayRelease(propertiesArray);
+
+    return result;
 }
 
 static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef function, JSC::JSCCallbackFunction::Type functionType, JSObjectRef thisObject, GType firstParameterType, va_list args)
