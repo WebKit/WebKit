@@ -1,3 +1,18 @@
+2018-04-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in InjectedBundle::postSynchronousMessage
+        https://bugs.webkit.org/show_bug.cgi?id=184683
+
+        Reviewed by Wenson Hsieh.
+
+        Some injected bundles sends sync message when it's not safe to execute scripts.
+
+        Use DoNotProcessIncomingMessagesWhenWaitingForSyncReply option in InjectedBundle::postSynchronousMessage
+        to avoid processing incoming sync IPC messages so that we don't execute arbitrary scripts in those cases.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postSynchronousMessage):
+
 2018-04-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r229831): CMD-clicking an iCloud web app link unexpectedly opens that link in a new tab and the current tab
