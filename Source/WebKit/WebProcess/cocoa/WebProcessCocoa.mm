@@ -170,10 +170,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #endif
     
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    // We don't need to talk to the dock.
-    if ([NSApplication respondsToSelector:@selector(_preventDockConnections)])
-        [NSApplication _preventDockConnections];
-
     // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
     // Currently, it is also needed to allocate and initialize an NSApplication object.
     // FIXME: Remove the following line when rdar://problem/36323569 is fixed.

@@ -525,12 +525,6 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
 {
     initializeShim();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    // We don't need to talk to the dock.
-    if ([NSApplication respondsToSelector:@selector(_preventDockConnections)])
-        [NSApplication _preventDockConnections];
-#endif
-
     initializeCocoaOverrides();
 
     // FIXME: It would be better to proxy SetCursor calls over to the UI process instead of

@@ -1,3 +1,24 @@
+2018-04-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Don't establish unneeded Dock connections (Follow-up)
+        https://bugs.webkit.org/show_bug.cgi?id=184664
+        <rdar://problem/16863698>
+
+        Reviewed by Per Arne Vollan.
+
+        Because the Plugin process is driven by NSApplication's run loop, we aren't
+        setting the 'don't connect to the dock' setting early enough.
+
+        This patch sets the flag in XPCServiceMain for those services that
+        are linked to AppKit.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess): Remove unneeded code.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        (main):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Remove unneeded code.
+
 2018-04-17  Saam Barati  <sbarati@apple.com>
 
         Add system trace points for process launch and for initializeWebProcess
