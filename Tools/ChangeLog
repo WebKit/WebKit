@@ -1,3 +1,18 @@
+2018-04-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutReloaded] Introduce fragmentation state/context.
+        https://bugs.webkit.org/show_bug.cgi?id=184677
+
+        Reviewed by Antti Koivisto.
+
+        State/context for fragmented content (multicol, regions, pagination etc).
+
+        * LayoutReloaded/FormattingContext/FragmentationContext.js: Added.
+        (FragmentationContext):
+        * LayoutReloaded/FormattingState/FragmentationState.js: Added.
+        (FragmentationState):
+        (FragmentationState.prototype.formattingState):
+
 2018-04-16  Andy Estes  <aestes@apple.com>
 
         [iOS] Enable WKPDFView by default
