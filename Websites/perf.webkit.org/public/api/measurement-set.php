@@ -170,7 +170,7 @@ class MeasurementSetFetcher {
     function execute_query($config_id) {
         return $this->db->query('
             SELECT test_runs.*, build_id, build_number, build_builder, build_time,
-            array_agg((commit_id, commit_repository, commit_revision, extract(epoch from commit_time at time zone \'utc\') * 1000)) AS revisions,
+            array_agg((commit_id, commit_repository, commit_revision, commit_order, extract(epoch from commit_time at time zone \'utc\') * 1000)) AS revisions,
             extract(epoch from max(commit_time at time zone \'utc\')) * 1000 AS revision_time
                 FROM builds
                     LEFT OUTER JOIN build_commits ON commit_build = build_id
@@ -208,7 +208,8 @@ class MeasurementSetFetcher {
     }
 
     private static function parse_revisions_array(&$postgres_array) {
-        // e.g. {"(<commit-id>,<repository-id>,<revision>,\"2012-10-16 14:53:00\")","(<commit-id>,<repository-id>,<revision>,)"}
+        // e.g. {"(<commit-id>,<repository-id>,<revision>,<order>,\"2012-10-16 14:53:00\")","(<commit-id>,<repository-id>,<revision>,<order>,)",
+        // "(<commit-id>,<repository-id>,<revision>,,)", "(<commit-id>,<repository-id>,<revision>,,\"2012-10-16 14:53:00\")"}
         $outer_array = json_decode('[' . trim($postgres_array, '{}') . ']');
         $revisions = array();
         foreach ($outer_array as $item) {
@@ -218,8 +219,10 @@ class MeasurementSetFetcher {
             $commit_id = intval(trim($name_and_revision[0], '"'));
             $repository_id = intval(trim($name_and_revision[1], '"'));
             $revision = trim($name_and_revision[2], '"');
-            $time = intval(trim($name_and_revision[3], '"'));
-            array_push($revisions, array($commit_id, $repository_id, $revision, $time));
+            $trimmed_order = trim($name_and_revision[3], '"');
+            $order = strlen($trimmed_order) ? intval($trimmed_order) : NULL;
+            $time = intval(trim($name_and_revision[4], '"'));
+            array_push($revisions, array($commit_id, $repository_id, $revision, $order, $time));
         }
         return $revisions;
     }

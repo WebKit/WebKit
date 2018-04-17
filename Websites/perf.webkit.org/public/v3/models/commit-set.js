@@ -228,18 +228,19 @@ class MeasurementCommitSet extends CommitSet {
     constructor(id, revisionList)
     {
         super(id, null);
-        for (var values of revisionList) {
-            // [<commit-id>, <repository-id>, <revision>, <time>]
-            var commitId = values[0];
-            var repositoryId = values[1];
-            var revision = values[2];
-            var time = values[3];
-            var repository = Repository.findById(repositoryId);
+        for (const values of revisionList) {
+            // [<commit-id>, <repository-id>, <revision>, <order>, <time>]
+            const commitId = values[0];
+            const repositoryId = values[1];
+            const revision = values[2];
+            const order = values[3];
+            const time = values[4];
+            const repository = Repository.findById(repositoryId);
             if (!repository)
                 continue;
 
             // FIXME: Add a flag to remember the fact this commit log is incomplete.
-            const commit = CommitLog.ensureSingleton(commitId, {repository: repository, revision: revision, time: time});
+            const commit = CommitLog.ensureSingleton(commitId, {repository, revision, order, time});
             this._repositoryToCommitMap.set(repository, commit);
             this._repositories.push(repository);
         }

@@ -48,6 +48,7 @@ function osxCommit()
         repository: MockModels.osx,
         revision: '10.11.4 15E65',
         time: null,
+        order: 1504065
     });
 }
 
@@ -57,6 +58,7 @@ function oldOSXCommit()
         repository: MockModels.osx,
         revision: '10.11.3 15D21',
         time: null,
+        order: 1503021
     });
 }
 
@@ -67,6 +69,7 @@ function commitWithoutOwnedCommits()
         revision: '10.11.4 15E66',
         ownsCommits: false,
         time: null,
+        order: 1504065
     });
 }
 
@@ -77,6 +80,7 @@ function ownerCommit()
         revision: '10.11.4 15E65',
         ownsCommits: true,
         time: null,
+        order: 1504065
     });
 }
 
@@ -87,6 +91,7 @@ function otherOwnerCommit()
         revision: '10.11.4 15E66',
         ownsCommits: true,
         time: null,
+        order: 1504066
     });
 }
 
@@ -118,6 +123,15 @@ describe('CommitLog', function () {
 
         it('should not modify OS X version', function () {
             assert.equal(osxCommit().title(), 'OS X at 10.11.4 15E65');
+        });
+    });
+
+    describe('order', () => {
+        it('should return null if no commit order', () => {
+            assert.equal(webkitCommit().order(), null);
+        });
+        it('should return commit order if order exists', () => {
+            assert.equal(osxCommit().order(), 1504065);
         });
     });
 

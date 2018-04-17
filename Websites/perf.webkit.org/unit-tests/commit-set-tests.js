@@ -287,7 +287,7 @@ describe('CommitSet', () => {
     function oneMeasurementCommitSet()
     {
         return MeasurementCommitSet.ensureSingleton(1, [
-            [2017, 11, 'webkit-commit-0', 1456932773000]
+            [2017, 11, 'webkit-commit-0', null, 1456932773000]
         ]);
     }
 

@@ -325,7 +325,7 @@ describe("/api/measurement-set", function () {
                sum: 65,
                squareSum: 855,
                markedOutlier: false,
-               revisions: [[1, repositoryId, '144000', revisionTime]],
+               revisions: [[1, repositoryId, '144000', null, revisionTime]],
                commitTime: revisionTime,
                buildTime: revisionBuildTime,
                buildNumber: '124' });
@@ -393,7 +393,7 @@ describe("/api/measurement-set", function () {
                sum: 15,
                squareSum: 55,
                markedOutlier: false,
-               revisions: [[3, 1, 'macOS 16C68', 0]],
+               revisions: [[3, 1, 'macOS 16C68', 1, 0]],
                commitTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
                buildTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
                buildNumber: '1001' });
@@ -403,7 +403,7 @@ describe("/api/measurement-set", function () {
                 sum: 35,
                 squareSum: 255,
                 markedOutlier: false,
-                revisions: [[2, 1, 'macOS 16A323', 0]],
+                revisions: [[2, 1, 'macOS 16A323', 0, 0]],
                 commitTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
                 buildTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
                 buildNumber: '1002' });

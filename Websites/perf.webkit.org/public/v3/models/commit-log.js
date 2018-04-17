@@ -29,6 +29,8 @@ class CommitLog extends DataModelObject {
             this._rawData.message = rawData.message;
         if (rawData.ownsCommits)
             this._rawData.ownsCommits = rawData.ownsCommits;
+        if (rawData.order)
+            this._rawData.order = rawData.order;
     }
 
     repository() { return this._repository; }
@@ -40,7 +42,7 @@ class CommitLog extends DataModelObject {
     ownsCommits() { return this._rawData['ownsCommits']; }
     ownedCommits() { return this._ownedCommits; }
     ownerCommit() { return this._ownerCommit; }
-
+    order() { return this._rawData['order']; }
     setOwnerCommits(ownerCommit) { this._ownerCommit = ownerCommit; }
 
     label()

@@ -1,3 +1,31 @@
+2018-04-16  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Commit order should always be returned by api.
+        https://bugs.webkit.org/show_bug.cgi?id=184674
+
+        Reviewed by Ryosuke Niwa.
+
+        Commit order sometimes missing in CommitLog object before this change.
+        This makes ordering commits logic become unnecessarily complicate.
+        This change will ensure commit order is always fetched for a CommitLog object.
+        Change measurement-set API to contain commit order information.
+        Change commits API to contain commit order information.
+
+        * public/api/measurement-set.php: Includes commit order information.
+        * public/include/commit-log-fetcher.php:
+        * public/v3/models/commit-log.js: Added a function to return order information.
+        (CommitLog.prototype.updateSingleton): This function should update commit order.
+        (CommitLog.prototype.order): Returns the order of commit.
+        * public/v3/models/commit-set.js:
+        (MeasurementCommitSet): Update MeasurementCommitSet to contain commit order information when creating CommitLog object.
+        * server-tests/api-measurement-set-tests.js: Updated unit tests.
+        * unit-tests/analysis-task-tests.js: Update unit tests to contain commit order information in mock data.
+        (measurementCluster):
+        * unit-tests/commit-log-tests.js: Added unit tests for CommitLog.order.
+        * unit-tests/commit-set-tests.js: Added commit order in MeasurementCommitSet.
+        * unit-tests/measurement-adaptor-tests.js: Updated unit tests to contain commit order information in mock data.
+        * unit-tests/measurement-set-tests.js: Updated unit tests to contain commit order information in mock data.
+
 2018-04-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make it possible to hide some repository groups
