@@ -50,14 +50,9 @@
 #import "VisibleUnits.h"
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
-#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringBuilder.h>
 
 #import "DataDetectorsCoreSoftLink.h"
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-WTF_DECLARE_CF_TYPE_TRAIT(DDResult);
-#endif
 
 namespace WebCore {
 
@@ -83,11 +78,8 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
     RefPtr<Range> mainResultRange;
     CFIndex resultCount = CFArrayGetCount(results.get());
     for (CFIndex i = 0; i < resultCount; i++) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-        DDResultRef result = checked_cf_cast<DDResultRef>(CFArrayGetValueAtIndex(results.get(), i));
-#else
+        // FIXME: <rdar://problem/36241894> Implement checked cast for DDResultRef once DDResultGetTypeID() is available
         DDResultRef result = static_cast<DDResultRef>(const_cast<CF_BRIDGED_TYPE(id) void*>(CFArrayGetValueAtIndex(results.get(), i)));
-#endif
         CFRange resultRangeInContext = DDResultGetRange(result);
         if (hitLocation >= resultRangeInContext.location && (hitLocation - resultRangeInContext.location) < resultRangeInContext.length) {
             mainResult = result;
