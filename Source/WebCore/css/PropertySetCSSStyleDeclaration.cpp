@@ -308,7 +308,7 @@ ExceptionOr<bool> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropert
     return changed;
 }
 
-DeprecatedCSSOMValue* PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM(CSSValue* internalValue)
+RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM(CSSValue* internalValue)
 {
     if (!internalValue)
         return nullptr;
@@ -316,12 +316,15 @@ DeprecatedCSSOMValue* PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM(CSS
     // The map is here to maintain the object identity of the CSSValues over multiple invocations.
     // FIXME: It is likely that the identity is not important for web compatibility and this code should be removed.
     if (!m_cssomValueWrappers)
-        m_cssomValueWrappers = std::make_unique<HashMap<CSSValue*, RefPtr<DeprecatedCSSOMValue>>>();
+        m_cssomValueWrappers = std::make_unique<HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>>>();
     
-    RefPtr<DeprecatedCSSOMValue>& clonedValue = m_cssomValueWrappers->add(internalValue, RefPtr<DeprecatedCSSOMValue>()).iterator->value;
-    if (!clonedValue)
-        clonedValue = internalValue->createDeprecatedCSSOMWrapper(*this);
-    return clonedValue.get();
+    auto& clonedValue = m_cssomValueWrappers->add(internalValue, WeakPtr<DeprecatedCSSOMValue>()).iterator->value;
+    if (clonedValue)
+        return clonedValue.get();
+
+    RefPtr<DeprecatedCSSOMValue> wrapper = internalValue->createDeprecatedCSSOMWrapper(*this);
+    clonedValue = makeWeakPtr(wrapper.get());
+    return wrapper;
 }
 
 StyleSheetContents* PropertySetCSSStyleDeclaration::contextStyleSheet() const

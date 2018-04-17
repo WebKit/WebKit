@@ -1,3 +1,19 @@
+2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+        References from CSSStyleDeclaration to CSSValues should be weak
+        https://bugs.webkit.org/show_bug.cgi?id=180280
+        <rdar://problem/35804869>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests - used the existing test to verify the leak
+
+        * css/DeprecatedCSSOMValue.h:
+        (WebCore::DeprecatedCSSOMValue::weakPtrFactory):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM):
+        * css/PropertySetCSSStyleDeclaration.h:
+
 2018-04-17  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed rollout of r230632. Regression in memory usage.

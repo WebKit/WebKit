@@ -31,6 +31,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -64,6 +65,8 @@ public:
 
     CSSStyleDeclaration& owner() const { return m_owner; }
 
+    WeakPtrFactory<DeprecatedCSSOMValue>& weakPtrFactory() { return m_weakPtrFactory; }
+
 protected:
     static const size_t ClassTypeBits = 2;
     enum DeprecatedClassType {
@@ -92,6 +95,7 @@ protected:
     unsigned m_classType : ClassTypeBits; // ClassType
     
     Ref<CSSStyleDeclaration> m_owner;
+    WeakPtrFactory<DeprecatedCSSOMValue> m_weakPtrFactory;
 };
 
 class DeprecatedCSSOMComplexValue : public DeprecatedCSSOMValue {
