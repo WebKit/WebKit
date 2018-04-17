@@ -1,3 +1,18 @@
+2018-04-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Export authentication information to be used by the client.
+        https://bugs.webkit.org/show_bug.cgi?id=184709
+
+        Just added getters for username and password member variables.
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there's no new behavior.
+
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::user const):
+        (WebCore::CurlRequest::password const):
+
 2018-04-17  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r229831): CMD-clicking an iCloud web app link unexpectedly opens that link in a new tab and the current tab

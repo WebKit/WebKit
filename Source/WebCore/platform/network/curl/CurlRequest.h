@@ -77,6 +77,8 @@ public:
     bool isCancelled() const { return m_cancelled; }
     bool isCompletedOrCancelled() const { return isCompleted() || isCancelled(); }
 
+    const String& user() const { return m_user; }
+    const String& password() const { return m_password; }
 
     // Processing for DidReceiveResponse
     WEBCORE_EXPORT void completeDidReceiveResponse();
