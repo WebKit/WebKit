@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +34,7 @@
 #include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,7 +48,8 @@ class Node;
 using MutationObserverOptions = unsigned char;
 using MutationRecordDeliveryOptions = unsigned char;
 
-class MutationObserver : public RefCounted<MutationObserver> {
+class MutationObserver final : public RefCounted<MutationObserver> {
+    WTF_MAKE_ISO_ALLOCATED(MutationObserver);
     friend class MutationObserverMicrotask;
 public:
     enum MutationType {
