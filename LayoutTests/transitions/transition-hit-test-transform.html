@@ -49,7 +49,7 @@
         {
             if (window.testRunner) {
                 var target = document.getElementById('target');
-                if (!pauseTransitionAtTimeOnElement("-webkit-transform", 2.0, target))
+                if (!internals.pauseTransitionAtTimeOnElement("-webkit-transform", 2.0, target))
                     throw("Transition is not running");
         
                 checkResults();

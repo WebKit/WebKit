@@ -1,3 +1,20 @@
+2018-04-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed rollout of r230632. Regression in memory usage.
+
+        That bug tracked in https://bugs.webkit.org/show_bug.cgi?id=184569.
+
+        Tests: animations/animation-internals-api-multiple-keyframes.html
+               animations/animation-internals-api.html
+               transitions/transition-drt-api-delay.html
+               transitions/transition-drt-api.html
+
+        * page/RuntimeEnabledFeatures.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::pseudoElement): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         Do not unregister MessagePorts on deallocation if it has been disentangled

@@ -1,3 +1,35 @@
+2018-04-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed rollout of r230632. Regression in memory usage.
+
+        That bug tracked in https://bugs.webkit.org/show_bug.cgi?id=184569.
+
+        * TestExpectations:
+        * animations/animation-direction-alternate-reverse-expected.txt:
+        * animations/animation-direction-alternate-reverse.html:
+        * animations/animation-hit-test-transform.html:
+        * animations/animation-internals-api-expected.txt: Copied from LayoutTests/animations/animation-internals-api-expected.txt.
+        * animations/animation-internals-api-multiple-keyframes-expected.txt: Copied from LayoutTests/animations/animation-internals-api-multiple-keyframes-expected.txt.
+        * animations/animation-internals-api-multiple-keyframes.html: Copied from LayoutTests/animations/animation-internals-api-multiple-keyframes.html.
+        * animations/animation-internals-api.html: Copied from LayoutTests/animations/animation-internals-api.html.
+        * animations/big-rotation-expected.txt:
+        * animations/big-rotation.html:
+        * animations/duplicated-keyframes-name.html:
+        * animations/fill-forwards-end-state.html:
+        * animations/fill-mode-forwards-zero-duration-expected.txt:
+        * animations/fill-mode-forwards-zero-duration.html:
+        * fast/css-generated-content/pseudo-animation.html:
+        * fast/css-generated-content/pseudo-transition.html:
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations:
+        * transitions/remove-transition-style.html:
+        * transitions/transition-drt-api-delay-expected.txt: Copied from LayoutTests/transitions/transition-drt-api-delay-expected.txt.
+        * transitions/transition-drt-api-delay.html: Copied from LayoutTests/transitions/transition-drt-api-delay.html.
+        * transitions/transition-drt-api-expected.txt: Copied from LayoutTests/transitions/transition-drt-api-expected.txt.
+        * transitions/transition-drt-api.html: Copied from LayoutTests/transitions/transition-drt-api.html.
+        * transitions/transition-hit-test-transform.html:
+        * transitions/zero-duration-with-non-zero-delay-end.html:
+
 2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         Do not unregister MessagePorts on deallocation if it has been disentangled

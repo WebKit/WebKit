@@ -1751,11 +1751,6 @@ static bool shouldDumpAsText(const char* pathOrURL)
     return strstr(pathOrURL, "dumpAsText/");
 }
 
-static bool shouldOverrideAndDisableCSSAnimationsAndCSSTransitionsBackedByWebAnimationsPreference(const char* pathOrURL)
-{
-    return strstr(pathOrURL, "legacy-animation-engine/");
-}
-
 static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 {
     return true;
@@ -1924,9 +1919,6 @@ static void runTest(const string& inputLine)
     WebKit::setCrashReportApplicationSpecificInformation((CFStringRef)informationString);
 
     TestOptions options { [url isFileURL] ? [url fileSystemRepresentation] : pathOrURL, command.absolutePath };
-
-    if (shouldOverrideAndDisableCSSAnimationsAndCSSTransitionsBackedByWebAnimationsPreference(pathOrURL.c_str()))
-        options.enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations = false;
 
     if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {
         if (mainFrame)

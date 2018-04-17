@@ -148,9 +148,6 @@ enum EventThrottlingBehavior {
     [MayThrowException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, unrestricted double pauseTime, Element element);
     [MayThrowException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, unrestricted double pauseTime, Element element, DOMString pseudoId);
 
-    // For animations testing, we need a way to get at pseudo elements.
-    [MayThrowException] Element? pseudoElement(Element element, DOMString pseudoId);
-
     DOMString visiblePlaceholder(Element element);
     void selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
     [MayThrowException] sequence<DOMString> formControlStateOfPreviousHistoryItem();

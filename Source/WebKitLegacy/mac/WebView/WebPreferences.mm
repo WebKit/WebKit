@@ -625,7 +625,7 @@ public:
         [NSNumber numberWithBool:YES], WebKitDataTransferItemsEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitCustomPasteboardDataEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitModernMediaControlsEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitCSSAnimationsAndCSSTransitionsBackedByWebAnimationsEnabledPreferenceKey,
 
 #if ENABLE(WEBGL2)
         [NSNumber numberWithBool:NO], WebKitWebGL2EnabledPreferenceKey,

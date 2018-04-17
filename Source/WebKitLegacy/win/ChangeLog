@@ -1,3 +1,12 @@
+2018-04-17  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed rollout of r230632. Regression in memory usage.
+
+        That bug tracked in https://bugs.webkit.org/show_bug.cgi?id=184569.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2018-04-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix the Windows build after r230721

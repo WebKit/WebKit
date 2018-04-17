@@ -3289,6 +3289,3 @@ webkit.org/b/173928 storage/websql/database-lock-after-reload.html [ Pass Failur
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.html [ Slow ]
-
-webkit.org/b/184580 animations/stop-animation-on-suspend.html [ Failure ]
-

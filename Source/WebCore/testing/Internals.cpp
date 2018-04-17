@@ -1040,14 +1040,6 @@ ExceptionOr<bool> Internals::pauseTransitionAtTimeOnPseudoElement(const String& 
     return frame()->animation().pauseTransitionAtTime(*pseudoElement, property, pauseTime);
 }
 
-ExceptionOr<RefPtr<Element>> Internals::pseudoElement(Element& element, const String& pseudoId)
-{
-    if (pseudoId != "before" && pseudoId != "after")
-        return Exception { InvalidAccessError };
-
-    return pseudoId == "before" ? element.beforePseudoElement() : element.afterPseudoElement();
-}
-
 ExceptionOr<String> Internals::elementRenderTreeAsText(Element& element)
 {
     element.document().updateStyleIfNeeded();
