@@ -92,7 +92,7 @@ void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instanc
     m_instance.set(vm, this, instance);
 }
 
-void WebAssemblyModuleRecord::link(ExecState* exec, JSValue)
+void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObject, Wasm::CreationMode creationMode)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -104,6 +104,133 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue)
     Wasm::CodeBlock* codeBlock = m_instance->instance().codeBlock();
     JSWebAssemblyModule* module = m_instance->module();
     const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
+
+    auto exception = [&] (JSObject* error) {
+        throwException(exec, scope, error);
+    };
+
+    auto importFailMessage = [&] (const Wasm::Import& import, const char* before, const char* after) {
+        return makeString(before, " ", String::fromUTF8(import.module), ":", String::fromUTF8(import.field), " ", after);
+    };
+
+    for (const auto& import : moduleInformation.imports) {
+        // Validation and linking other than Wasm::ExternalKind::Function is already done in JSWebAssemblyInstance.
+        // Eventually we will move all the linking code in JSWebAssemblyInstance here and remove this switch statement.
+        switch (import.kind) {
+        case Wasm::ExternalKind::Function:
+            break;
+        case Wasm::ExternalKind::Table:
+        case Wasm::ExternalKind::Memory:
+        case Wasm::ExternalKind::Global:
+            continue;
+        }
+
+        Identifier moduleName = Identifier::fromString(&vm, String::fromUTF8(import.module));
+        Identifier fieldName = Identifier::fromString(&vm, String::fromUTF8(import.field));
+        JSValue value;
+        if (creationMode == Wasm::CreationMode::FromJS) {
+            // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
+            JSValue importModuleValue = importObject->get(exec, moduleName);
+            RETURN_IF_EXCEPTION(scope, void());
+            // 2. If Type(o) is not Object, throw a TypeError.
+            if (!importModuleValue.isObject())
+                return exception(createTypeError(exec, importFailMessage(import, "import", "must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue)));
+
+            // 3. Let v be the value of performing Get(o, i.item_name)
+            JSObject* object = jsCast<JSObject*>(importModuleValue);
+            value = object->get(exec, fieldName);
+            RETURN_IF_EXCEPTION(scope, void());
+        } else {
+            AbstractModuleRecord* importedModule = hostResolveImportedModule(exec, moduleName);
+            RETURN_IF_EXCEPTION(scope, void());
+            Resolution resolution = importedModule->resolveExport(exec, fieldName);
+            RETURN_IF_EXCEPTION(scope, void());
+            switch (resolution.type) {
+            case Resolution::Type::NotFound:
+                throwSyntaxError(exec, scope, makeString("Importing binding name '", String(fieldName.impl()), "' is not found."));
+                return;
+
+            case Resolution::Type::Ambiguous:
+                throwSyntaxError(exec, scope, makeString("Importing binding name '", String(fieldName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
+                return;
+
+            case Resolution::Type::Error:
+                throwSyntaxError(exec, scope, makeString("Importing binding name 'default' cannot be resolved by star export entries."));
+                return;
+
+            case Resolution::Type::Resolved:
+                break;
+            }
+
+            AbstractModuleRecord* importedRecord = resolution.moduleRecord;
+            JSModuleEnvironment* importedEnvironment = importedRecord->moduleEnvironmentMayBeNull();
+            // It means that target module is not linked yet. In wasm loading, we allow this since we do not solve cyclic resolution as if JS's bindings.
+            // At that time, error occurs since |value| is an empty, and later |value| becomes an undefined.
+            // https://github.com/WebAssembly/esm-integration/tree/master/proposals/esm-integration#js---wasm-cycle-where-js-is-higher-in-the-module-graph
+            if (importedEnvironment) {
+                SymbolTable* symbolTable = importedEnvironment->symbolTable();
+                ConcurrentJSLocker locker(symbolTable->m_lock);
+                auto iter = symbolTable->find(locker, resolution.localName.impl());
+                ASSERT(iter != symbolTable->end(locker));
+                SymbolTableEntry& entry = iter->value;
+                ASSERT(!entry.isNull());
+                ASSERT(importedEnvironment->isValidScopeOffset(entry.scopeOffset()));
+
+                // Snapshotting a value.
+                value = importedEnvironment->variableAt(entry.scopeOffset()).get();
+            }
+        }
+        if (!value)
+            value = jsUndefined();
+
+        switch (import.kind) {
+        case Wasm::ExternalKind::Function: {
+            // 4. If i is a function import:
+            // i. If IsCallable(v) is false, throw a WebAssembly.LinkError.
+            if (!value.isFunction())
+                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "import function", "must be callable")));
+
+            Wasm::Instance* calleeInstance = nullptr;
+            WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = nullptr;
+            JSObject* function = jsCast<JSObject*>(value);
+
+            // ii. If v is an Exported Function Exotic Object:
+            WebAssemblyFunction* wasmFunction;
+            WebAssemblyWrapperFunction* wasmWrapperFunction;
+            if (isWebAssemblyHostFunction(vm, function, wasmFunction, wasmWrapperFunction)) {
+                // a. If the signature of v does not match the signature of i, throw a WebAssembly.LinkError.
+                Wasm::SignatureIndex importedSignatureIndex;
+                if (wasmFunction) {
+                    importedSignatureIndex = wasmFunction->signatureIndex();
+                    calleeInstance = &wasmFunction->instance()->instance();
+                    entrypointLoadLocation = wasmFunction->entrypointLoadLocation();
+                } else {
+                    importedSignatureIndex = wasmWrapperFunction->signatureIndex();
+                    // b. Let closure be v.[[Closure]].
+                    function = wasmWrapperFunction->function();
+                }
+                Wasm::SignatureIndex expectedSignatureIndex = moduleInformation.importFunctionSignatureIndices[import.kindIndex];
+                if (importedSignatureIndex != expectedSignatureIndex)
+                    return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported function", "signature doesn't match the provided WebAssembly function's signature")));
+            }
+            // iii. Otherwise:
+            // a. Let closure be a new host function of the given signature which calls v by coercing WebAssembly arguments to JavaScript arguments via ToJSValue and returns the result, if any, by coercing via ToWebAssemblyValue.
+            // Note: done as part of Plan compilation.
+            // iv. Append v to funcs.
+            // Note: adding the JSCell to the instance list fulfills closure requirements b. above (the WebAssembly.Instance wil be kept alive) and v. below (the JSFunction).
+
+            auto* info = m_instance->instance().importFunctionInfo(import.kindIndex);
+            info->targetInstance = calleeInstance;
+            info->wasmEntrypointLoadLocation = entrypointLoadLocation;
+            m_instance->instance().importFunction<JSWebAssemblyInstance::PoisonedBarrier<JSObject>>(import.kindIndex)->set(vm, m_instance.get(), function);
+            break;
+        }
+        case Wasm::ExternalKind::Table:
+        case Wasm::ExternalKind::Memory:
+        case Wasm::ExternalKind::Global:
+            break;
+        }
+    }
 
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
     unsigned functionImportCount = codeBlock->functionImportCount();

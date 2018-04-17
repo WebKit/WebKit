@@ -1,3 +1,14 @@
+2018-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebAssembly][Modules] Implement function import from wasm modules
+        https://bugs.webkit.org/show_bug.cgi?id=184689
+
+        Reviewed by JF Bastien.
+
+        Add runWebAssemblyDirect, which runs wasm file directly.
+
+        * Scripts/run-jsc-stress-tests:
+
 2018-04-17  Saam Barati  <sbarati@apple.com>
 
         Add system trace points for process launch and for initializeWebProcess

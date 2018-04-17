@@ -178,3 +178,6 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/utf8-import-module.wast.js
   cmd: runWebAssemblySpecTest :normal
+
+- path: wasm/modules/run-from-wasm.wasm
+  cmd: runWebAssemblyDirect

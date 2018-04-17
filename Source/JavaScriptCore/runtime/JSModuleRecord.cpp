@@ -141,7 +141,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
         const ImportEntry& importEntry = pair.value;
         AbstractModuleRecord* importedModule = hostResolveImportedModule(exec, importEntry.moduleRequest);
         RETURN_IF_EXCEPTION(scope, void());
-        if (importEntry.isNamespace(vm)) {
+        if (importEntry.type == AbstractModuleRecord::ImportEntryType::Namespace) {
             JSModuleNamespaceObject* namespaceObject = importedModule->getModuleNamespace(exec);
             RETURN_IF_EXCEPTION(scope, void());
             bool putResult = false;

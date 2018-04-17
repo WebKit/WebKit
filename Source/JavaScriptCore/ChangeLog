@@ -1,3 +1,71 @@
+2018-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebAssembly][Modules] Implement function import from wasm modules
+        https://bugs.webkit.org/show_bug.cgi?id=184689
+
+        Reviewed by JF Bastien.
+
+        This patch implements function import from wasm modules. We move function importing part
+        from JSWebAssemblyInstance's creation function to WebAssemblyModuleRecord::link. This
+        is because linking these functions requires that all the dependent modules are created.
+        While we want to move all the linking functionality from JSWebAssemblyInstance to
+        WebAssemblyModuleRecord::link, we do not that in this patch.  In this patch, we move only
+        function importing part because efficient compilation of WebAssembly needs to know
+        the type of WebAssemblyMemory (signaling or bound checking). This needs to know imported
+        or attached WebAssembly memory object. So we cannot defer this linking to
+        WebAssemblyModuleRecord::link now.
+
+        The largest difference from JS module linking is that WebAssembly module linking links
+        function from the module by snapshotting. When you have a cyclic module graph like this,
+
+        -> JS1 (export "fun") -> Wasm1 (import "fun from JS1) -+
+            ^                                                  |
+            +--------------------------------------------------+
+
+        we fail to link this since "fun" is not instantiated when Wasm1 is first linked. This behavior
+        is described in [1], and tested in this patch.
+
+        [1]: https://github.com/WebAssembly/esm-integration/tree/master/proposals/esm-integration#js---wasm-cycle-where-js-is-higher-in-the-module-graph
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (functionDollarAgentStart):
+        (checkException):
+        (runWithOptions):
+        Small fixes for wasm module loading.
+
+        * parser/NodesAnalyzeModule.cpp:
+        (JSC::ImportDeclarationNode::analyzeModule):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::resolveImport):
+        (JSC::AbstractModuleRecord::link):
+        * runtime/AbstractModuleRecord.h:
+        (JSC::AbstractModuleRecord::moduleEnvironmentMayBeNull):
+        (JSC::AbstractModuleRecord::ImportEntry::isNamespace const): Deleted.
+        Now, wasm modules can have import which is named "*". So this function does not work.
+        Since wasm modules never have namespace importing, we check this in JS's module analyzer.
+
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * wasm/WasmCreationMode.h: Added.
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::resolve):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::WebAssemblyPrototype::instantiate):
+        (JSC::webAssemblyInstantiateFunc):
+
 2018-04-17  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Implement setupArgumentsImpl for ARM and MIPS

@@ -160,7 +160,7 @@ auto AbstractModuleRecord::resolveImport(ExecState* exec, const Identifier& loca
         return Resolution::notFound();
 
     const ImportEntry& importEntry = *optionalImportEntry;
-    if (importEntry.isNamespace(exec->vm()))
+    if (importEntry.type == AbstractModuleRecord::ImportEntryType::Namespace)
         return Resolution::notFound();
 
     AbstractModuleRecord* importedModule = hostResolveImportedModule(exec, importEntry.moduleRequest);
@@ -776,7 +776,7 @@ void AbstractModuleRecord::link(ExecState* exec, JSValue scriptFetcher)
         return jsModuleRecord->link(exec, scriptFetcher);
 #if ENABLE(WEBASSEMBLY)
     if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this))
-        return wasmModuleRecord->link(exec, scriptFetcher);
+        return wasmModuleRecord->link(exec, scriptFetcher, nullptr, Wasm::CreationMode::FromModuleLoader);
 #endif
     RELEASE_ASSERT_NOT_REACHED();
 }

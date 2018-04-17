@@ -33,6 +33,7 @@
 #include "JSWebAssemblyCodeBlock.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyTable.h"
+#include "WasmCreationMode.h"
 #include "WasmInstance.h"
 #include <wtf/Ref.h>
 
@@ -52,13 +53,12 @@ public:
 
     static Identifier createPrivateModuleKey();
 
-    static JSWebAssemblyInstance* create(VM&, ExecState*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Structure*, Ref<Wasm::Module>&&);
+    static JSWebAssemblyInstance* create(VM&, ExecState*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Structure*, Ref<Wasm::Module>&&, Wasm::CreationMode);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
 
-    enum class ModuleRunMode { Run, None };
-    void finalizeCreation(VM&, ExecState*, Ref<Wasm::CodeBlock>&&, ModuleRunMode);
+    void finalizeCreation(VM&, ExecState*, Ref<Wasm::CodeBlock>&&, JSObject* importObject, Wasm::CreationMode);
     
     Wasm::Instance& instance() { return m_instance.get(); }
     JSModuleNamespaceObject* moduleNamespaceObject() { return m_moduleNamespaceObject.get(); }

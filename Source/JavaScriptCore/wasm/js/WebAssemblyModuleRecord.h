@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AbstractModuleRecord.h"
+#include "WasmCreationMode.h"
 #include "WasmModuleInformation.h"
 
 namespace JSC {
@@ -49,7 +50,7 @@ public:
     static WebAssemblyModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
 
     void prepareLink(VM&, JSWebAssemblyInstance*);
-    void link(ExecState*, JSValue scriptFetcher);
+    void link(ExecState*, JSValue scriptFetcher, JSObject* importObject, Wasm::CreationMode);
     JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
 
 private:

@@ -196,7 +196,7 @@ class Workers;
 
 template<typename Func>
 int runJSC(CommandLine, bool isWorker, const Func&);
-static void checkException(GlobalObject*, bool isLastFile, bool hasException, JSValue, CommandLine&, bool& success);
+static void checkException(ExecState*, GlobalObject*, bool isLastFile, bool hasException, JSValue, CommandLine&, bool& success);
 
 class Message : public ThreadSafeRefCounted<Message> {
 public:
@@ -1632,7 +1632,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
                     result = evaluate(globalObject->globalExec(), makeSource(sourceCode, SourceOrigin(ASCIILiteral("worker"))), JSValue(), evaluationException);
                     if (evaluationException)
                         result = evaluationException->value();
-                    checkException(globalObject, true, evaluationException, result, commandLine, success);
+                    checkException(globalObject->globalExec(), globalObject, true, evaluationException, result, commandLine, success);
                     if (!success)
                         exit(1);
                     return success;
@@ -2259,7 +2259,7 @@ static bool checkUncaughtException(VM& vm, GlobalObject* globalObject, JSValue e
     return false;
 }
 
-static void checkException(GlobalObject* globalObject, bool isLastFile, bool hasException, JSValue value, CommandLine& options, bool& success)
+static void checkException(ExecState* exec, GlobalObject* globalObject, bool isLastFile, bool hasException, JSValue value, CommandLine& options, bool& success)
 {
     VM& vm = globalObject->vm();
 
@@ -2271,7 +2271,7 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
     if (!options.m_uncaughtExceptionName || !isLastFile) {
         success = success && !hasException;
         if (options.m_dump && !hasException)
-            printf("End: %s\n", value.toWTFString(globalObject->globalExec()).utf8().data());
+            printf("End: %s\n", value.toWTFString(exec).utf8().data());
         if (hasException)
             dumpException(globalObject, value);
     } else
@@ -2324,12 +2324,12 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
             scope.clearException();
 
             JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, isLastFile](ExecState* exec) {
-                checkException(globalObject, isLastFile, false, exec->argument(0), options, success);
+                checkException(exec, globalObject, isLastFile, false, exec->argument(0), options, success);
                 return JSValue::encode(jsUndefined());
             });
 
             JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, isLastFile](ExecState* exec) {
-                checkException(globalObject, isLastFile, true, exec->argument(0), options, success);
+                checkException(exec, globalObject, isLastFile, true, exec->argument(0), options, success);
                 return JSValue::encode(jsUndefined());
             });
 
@@ -2342,7 +2342,7 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
             scope.assertNoException();
             if (evaluationException)
                 returnValue = evaluationException->value();
-            checkException(globalObject, isLastFile, evaluationException, returnValue, options, success);
+            checkException(globalObject->globalExec(), globalObject, isLastFile, evaluationException, returnValue, options, success);
         }
 
         scriptBuffer.clear();

@@ -91,7 +91,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(*thisObject->instance().importFunction<PoisonedBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
 }
 
-void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock, ModuleRunMode moduleRunMode)
+void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock, JSObject* importObject, Wasm::CreationMode creationMode)
 {
     m_instance->finalizeCreation(this, wasmCodeBlock.copyRef());
 
@@ -129,8 +129,8 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
     auto* moduleRecord = jsCast<WebAssemblyModuleRecord*>(m_moduleNamespaceObject->moduleRecord());
     moduleRecord->prepareLink(vm, this);
 
-    if (moduleRunMode == ModuleRunMode::Run) {
-        moduleRecord->link(exec, jsNull());
+    if (creationMode == Wasm::CreationMode::FromJS) {
+        moduleRecord->link(exec, jsNull(), importObject, creationMode);
         RETURN_IF_EXCEPTION(scope, void());
 
         JSValue startResult = moduleRecord->evaluate(exec);
@@ -144,7 +144,7 @@ Identifier JSWebAssemblyInstance::createPrivateModuleKey()
     return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
 }
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module)
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module, Wasm::CreationMode creationMode)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* globalObject = exec->lexicalGlobalObject();
@@ -163,10 +163,6 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
         return makeString(before, " ", String::fromUTF8(import.module), ":", String::fromUTF8(import.field), " ", after);
     };
 
-    // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
-    if (moduleInformation.imports.size() && !importObject)
-        return exception(createTypeError(exec, ASCIILiteral("can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports")));
-
     WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(exec, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
@@ -184,69 +180,59 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
 
     // Let funcs, memories and tables be initially-empty lists of callable JavaScript objects, WebAssembly.Memory objects and WebAssembly.Table objects, respectively.
     // Let imports be an initially-empty list of external values.
-    unsigned numImportFunctions = 0;
     unsigned numImportGlobals = 0;
 
     bool hasMemoryImport = false;
     bool hasTableImport = false;
+
+    if (creationMode == Wasm::CreationMode::FromJS) {
+        // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
+        if (moduleInformation.imports.size() && !importObject)
+            return exception(createTypeError(exec, ASCIILiteral("can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports")));
+    }
+
     // For each import i in module.imports:
     for (auto& import : moduleInformation.imports) {
-        // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
-        JSValue importModuleValue = importObject->get(exec, Identifier::fromString(&vm, String::fromUTF8(import.module)));
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
-        // 2. If Type(o) is not Object, throw a TypeError.
-        if (!importModuleValue.isObject())
-            return exception(createTypeError(exec, importFailMessage(import, "import", "must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue)));
+        Identifier moduleName = Identifier::fromString(&vm, String::fromUTF8(import.module));
+        Identifier fieldName = Identifier::fromString(&vm, String::fromUTF8(import.field));
+        moduleRecord->appendRequestedModule(moduleName);
+        moduleRecord->addImportEntry(WebAssemblyModuleRecord::ImportEntry {
+            WebAssemblyModuleRecord::ImportEntryType::Single,
+            moduleName,
+            fieldName,
+            Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyImportName")),
+        });
 
-        // 3. Let v be the value of performing Get(o, i.item_name)
-        JSObject* object = jsCast<JSObject*>(importModuleValue);
-        JSValue value = object->get(exec, Identifier::fromString(&vm, String::fromUTF8(import.field)));
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
+        // Skip Wasm::ExternalKind::Function validation here. It will be done in WebAssemblyModuleRecord::link.
+        // Eventually we will move all the linking code here to WebAssemblyModuleRecord::link.
+        switch (import.kind) {
+        case Wasm::ExternalKind::Function:
+            continue;
+        case Wasm::ExternalKind::Table:
+        case Wasm::ExternalKind::Memory:
+        case Wasm::ExternalKind::Global:
+            break;
+        }
+
+        JSValue value;
+        if (creationMode == Wasm::CreationMode::FromJS) {
+            // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
+            JSValue importModuleValue = importObject->get(exec, moduleName);
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
+            // 2. If Type(o) is not Object, throw a TypeError.
+            if (!importModuleValue.isObject())
+                return exception(createTypeError(exec, importFailMessage(import, "import", "must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue)));
+
+            // 3. Let v be the value of performing Get(o, i.item_name)
+            JSObject* object = jsCast<JSObject*>(importModuleValue);
+            value = object->get(exec, fieldName);
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
+        }
+        if (!value)
+            value = jsUndefined();
 
         switch (import.kind) {
         case Wasm::ExternalKind::Function: {
-            // 4. If i is a function import:
-            // i. If IsCallable(v) is false, throw a WebAssembly.LinkError.
-            if (!value.isFunction())
-                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "import function", "must be callable")));
-
-            Wasm::Instance* calleeInstance = nullptr;
-            WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = nullptr;
-            JSObject* function = jsCast<JSObject*>(value);
-
-            // ii. If v is an Exported Function Exotic Object:
-            WebAssemblyFunction* wasmFunction;
-            WebAssemblyWrapperFunction* wasmWrapperFunction;
-            if (isWebAssemblyHostFunction(vm, function, wasmFunction, wasmWrapperFunction)) {
-                // a. If the signature of v does not match the signature of i, throw a WebAssembly.LinkError.
-                Wasm::SignatureIndex importedSignatureIndex;
-                if (wasmFunction) {
-                    importedSignatureIndex = wasmFunction->signatureIndex();
-                    calleeInstance = &wasmFunction->instance()->instance();
-                    entrypointLoadLocation = wasmFunction->entrypointLoadLocation();
-                }
-                else {
-                    importedSignatureIndex = wasmWrapperFunction->signatureIndex();
-                    // b. Let closure be v.[[Closure]].
-                    function = wasmWrapperFunction->function();
-                }
-                Wasm::SignatureIndex expectedSignatureIndex = moduleInformation.importFunctionSignatureIndices[import.kindIndex];
-                if (importedSignatureIndex != expectedSignatureIndex)
-                    return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported function", "signature doesn't match the provided WebAssembly function's signature")));
-            }
-            // iii. Otherwise:
-            // a. Let closure be a new host function of the given signature which calls v by coercing WebAssembly arguments to JavaScript arguments via ToJSValue and returns the result, if any, by coercing via ToWebAssemblyValue.
-            // Note: done as part of Plan compilation.
-            // iv. Append v to funcs.
-            // Note: adding the JSCell to the instance list fulfills closure requirements b. above (the WebAssembly.Instance wil be kept alive) and v. below (the JSFunction).
-
-            ASSERT(numImportFunctions == import.kindIndex);
-            auto* info = jsInstance->instance().importFunctionInfo(numImportFunctions);
-            info->targetInstance = calleeInstance;
-            info->wasmEntrypointLoadLocation = entrypointLoadLocation;
-            jsInstance->instance().importFunction<PoisonedBarrier<JSObject>>(numImportFunctions)->set(vm, jsInstance, function);
-            ++numImportFunctions;
-            // v. Append closure to imports.
             break;
         }
         case Wasm::ExternalKind::Table: {
@@ -337,6 +323,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
         }
         }
     }
+    ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());
 
     {
         if (!!moduleInformation.memory && moduleInformation.memory.isImport()) {

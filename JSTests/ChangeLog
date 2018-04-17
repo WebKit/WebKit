@@ -1,3 +1,47 @@
+2018-04-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebAssembly][Modules] Implement function import from wasm modules
+        https://bugs.webkit.org/show_bug.cgi?id=184689
+
+        Reviewed by JF Bastien.
+
+        * wasm.yaml:
+        * wasm/modules/js-wasm-cycle.js: Added.
+        * wasm/modules/js-wasm-cycle/entry.js: Added.
+        (from.string_appeared_here.export.return42):
+        * wasm/modules/js-wasm-cycle/sum.wasm: Added.
+        * wasm/modules/js-wasm-cycle/sum.wat: Added.
+        * wasm/modules/run-from-wasm.wasm: Added.
+        * wasm/modules/run-from-wasm.wat: Added.
+        * wasm/modules/run-from-wasm/check.js: Added.
+        (export.check):
+        * wasm/modules/wasm-imports-js-exports.js: Added.
+        * wasm/modules/wasm-imports-js-exports/imports.wasm: Added.
+        * wasm/modules/wasm-imports-js-exports/imports.wat: Added.
+        * wasm/modules/wasm-imports-js-exports/sum.js: Added.
+        (export.sum):
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports.js: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/imports.wasm: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/imports.wat: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/re-export.js: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/sum.wasm: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/sum.wat: Added.
+        * wasm/modules/wasm-imports-wasm-exports.js: Added.
+        * wasm/modules/wasm-imports-wasm-exports/imports.wasm: Added.
+        * wasm/modules/wasm-imports-wasm-exports/imports.wat: Added.
+        * wasm/modules/wasm-imports-wasm-exports/sum.wasm: Added.
+        * wasm/modules/wasm-imports-wasm-exports/sum.wat: Added.
+        * wasm/modules/wasm-js-cycle.js: Added.
+        * wasm/modules/wasm-js-cycle/entry.wasm: Added.
+        * wasm/modules/wasm-js-cycle/entry.wat: Added.
+        * wasm/modules/wasm-js-cycle/sum.js: Added.
+        (from.string_appeared_here.export.sum):
+        * wasm/modules/wasm-wasm-cycle.js: Added.
+        * wasm/modules/wasm-wasm-cycle/entry.wasm: Added.
+        * wasm/modules/wasm-wasm-cycle/entry.wat: Added.
+        * wasm/modules/wasm-wasm-cycle/sum.wasm: Added.
+        * wasm/modules/wasm-wasm-cycle/sum.wat: Added.
+
 2018-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebAssembly][Modules] Prototype wasm import
