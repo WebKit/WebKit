@@ -1001,9 +1001,6 @@ end
 def runWebAssembly
     return if !$jitTests
     return if !$isFTLPlatform
-    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
-    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
-    prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     run("default-wasm", "-m", *FTL_OPTIONS)
     if $mode != "quick"
         run("wasm-no-cjit-yes-tls-context", "-m", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
@@ -1014,9 +1011,12 @@ def runWebAssembly
     end
 end
 
-def runWebAssemblyDirect
+def runWebAssemblySuite
     return if !$jitTests
     return if !$isFTLPlatform
+    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
+    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+    prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     run("default-wasm", "-m", *FTL_OPTIONS)
     if $mode != "quick"
         run("wasm-no-cjit-yes-tls-context", "-m", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
