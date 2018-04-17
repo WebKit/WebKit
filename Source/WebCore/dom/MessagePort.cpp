@@ -66,7 +66,10 @@ void MessagePort::deref() const
         if (m_refCount)
             return;
 
-        allMessagePorts().remove(m_identifier);
+        auto iterator = allMessagePorts().find(m_identifier);
+        if (iterator != allMessagePorts().end() && iterator->value == this)
+            allMessagePorts().remove(iterator);
+
         delete this;
     }
 }

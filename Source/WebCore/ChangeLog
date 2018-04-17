@@ -1,3 +1,16 @@
+2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Do not unregister MessagePorts on deallocation if it has been disentangled
+        https://bugs.webkit.org/show_bug.cgi?id=184285
+        <rdar://problem/39256714>
+
+        Reviewed by Darin Adler.
+
+        Test: workers/message-port-gc.html
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::deref const):
+
 2018-04-17  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix timing of reporting error to the client

@@ -1,0 +1,25 @@
+Verify that collecting a transferred port should not interfere with posting messages
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+pong
+
