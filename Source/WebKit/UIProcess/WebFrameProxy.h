@@ -90,6 +90,7 @@ public:
     bool containsPluginDocument() const { return m_containsPluginDocument; }
 
     const String& title() const { return m_title; }
+    Vector<WebCore::URL>&& takeProvisionalLoadRedirectChain() { return WTFMove(m_provisionalLoadRedirectChain); }
 
     WebCertificateInfo* certificateInfo() const { return m_certificateInfo.get(); }
 
@@ -142,6 +143,7 @@ private:
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;
+    Vector<WebCore::URL> m_provisionalLoadRedirectChain;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif

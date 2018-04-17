@@ -1,3 +1,66 @@
+2018-04-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/39305046
+
+    2018-04-17  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r222468 & r227758): Motion JPEG streams only show the first frame and frequently crash
+            <rdar://problem/39305046>
+
+            Reviewed by Chris Dumez.
+
+            Roll out r222468 as this patch introduced a null-dereference of the provisionalDocumentLoader.
+            The SPI added in r222468 is not used by any client yet so this is safe to roll out.
+
+            Also roll out r227758, which attempted to fix the crash introduced in r222468 but
+            ended up ignoring every following frame of Motion JPEG streams. This is because there
+            is no provisional document loader anymore for follow-up of Motion JPEG streams and the
+            r227758 was returning early and asking WebCore to ignore the response when the provisional
+            document loader was null. A proper fix would have been to set the navigationID to 0 when
+            the provisional document loader is null instead of returning early. However, it does not
+            matter in this patch since r222468 is being reverted too.
+
+            A proper fix will be landed on trunk via https://bugs.webkit.org/show_bug.cgi?id=184268.
+
+            * UIProcess/API/APINavigation.cpp:
+            (API::Navigation::Navigation):
+            (API::Navigation::appendRedirectionURL): Deleted.
+            * UIProcess/API/APINavigation.h:
+            (API::Navigation::takeRedirectChain): Deleted.
+            (API::Navigation::setWasUserInitiated): Deleted.
+            (API::Navigation::wasUserInitiated const): Deleted.
+            * UIProcess/API/C/WKDownload.cpp:
+            (WKDownloadCopyRedirectChain):
+            (WKDownloadGetWasUserInitiated): Deleted.
+            * UIProcess/API/C/WKDownload.h:
+            * UIProcess/API/Cocoa/_WKDownload.h:
+            * UIProcess/API/Cocoa/_WKDownload.mm:
+            (-[_WKDownload wasUserInitiated]): Deleted.
+            * UIProcess/Downloads/DownloadProxy.h:
+            (WebKit::DownloadProxy::setWasUserInitiated): Deleted.
+            (WebKit::DownloadProxy::wasUserInitiated const): Deleted.
+            (): Deleted.
+            * UIProcess/WebFrameProxy.cpp:
+            (WebKit::WebFrameProxy::didStartProvisionalLoad):
+            (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+            (WebKit::WebFrameProxy::didFailProvisionalLoad):
+            (WebKit::WebFrameProxy::didFinishLoad):
+            (WebKit::WebFrameProxy::didFailLoad):
+            * UIProcess/WebFrameProxy.h:
+            (WebKit::WebFrameProxy::takeProvisionalLoadRedirectChain):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::receivedPolicyDecision):
+            (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+            (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+            (WebKit::WebPageProxy::decidePolicyForResponse):
+            (WebKit::WebPageProxy::decidePolicyForResponseSync):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+            * WebProcess/WebPage/WebFrame.cpp:
+            (WebKit::WebFrame::documentLoaderDetached):
+
 2018-04-11  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r229872. rdar://problem/39349363

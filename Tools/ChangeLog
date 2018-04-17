@@ -1,3 +1,28 @@
+2018-04-17  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/39305046
+
+    2018-04-17  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r222468 & r227758): Motion JPEG streams only show the first frame and frequently crash
+            <rdar://problem/39305046>
+
+            Reviewed by Chris Dumez.
+
+            Drop API test added in r222468.
+
+            * TestWebKitAPI/Tests/WebKit/mac/ContextMenuDownload.mm:
+            (TestWebKitAPI::decideDestinationWithSuggestedFilename):
+            * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+            (-[DownloadDelegate _downloadDidStart:]):
+            (-[DownloadDelegate _downloadDidFinish:]):
+            (runTest):
+            (TEST):
+            (-[BlobDownloadDelegate _downloadDidStart:]):
+            (-[BlobDownloadDelegate _downloadDidFinish:]):
+            (-[RedirectedDownloadDelegate _downloadDidStart:]):
+            (-[RedirectedDownloadDelegate _downloadDidFinish:]):
+
 2018-03-21  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r229297. rdar://problem/38682578

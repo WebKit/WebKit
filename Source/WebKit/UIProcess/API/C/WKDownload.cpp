@@ -74,8 +74,3 @@ WKArrayRef WKDownloadCopyRedirectChain(WKDownloadRef download)
         urls.uncheckedAppend(API::URL::create(redirectURL.string()));
     return toAPI(&API::Array::create(WTFMove(urls)).leakRef());
 }
-
-bool WKDownloadGetWasUserInitiated(WKDownloadRef download)
-{
-    return toImpl(download)->wasUserInitiated();
-}

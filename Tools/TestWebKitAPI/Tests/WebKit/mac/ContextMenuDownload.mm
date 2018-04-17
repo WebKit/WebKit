@@ -71,7 +71,6 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
     didDecideDownloadDestination = true;
 
     EXPECT_EQ(expectedOriginatingPage, WKDownloadGetOriginatingPage(download));
-    EXPECT_TRUE(WKDownloadGetWasUserInitiated(download)); // Download was started via context menu so it is user initiated.
 
     return Util::toWK("/tmp/WebKitAPITest/ContextMenuDownload").leakRef();
 }
