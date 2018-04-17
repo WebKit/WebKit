@@ -52,12 +52,18 @@
 #include "GLContext.h"
 #include "TextureMapperGL.h"
 
-#if USE(EGL) && USE(LIBEPOXY)
+#if USE(EGL)
+#if USE(LIBEPOXY)
 #include "EpoxyEGL.h"
+#else
+#include <EGL/egl.h>
+#endif
 #endif
 #include <cairo-gl.h>
 
-#if USE(OPENGL_ES)
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #else
 #include "OpenGLShims.h"

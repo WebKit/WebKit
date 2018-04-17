@@ -1,3 +1,26 @@
+2018-04-16  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Inconsistent EGL defines in ImageBufferCairo
+        https://bugs.webkit.org/show_bug.cgi?id=184661
+
+        Reviewed by Žan Doberšek.
+
+        On revision r219391 libepoxy is added. The headers in
+        ImageBufferCairo.cpp become inconsistent when 2D canvas is enabled
+        (-DENABLE_ACCELERATED_2D_CANVAS=ON) due to a redefinition error during
+        the Webkit build:
+
+            ...
+            /usr/include/GLES2/gl2.h:503:82: error: 'voi
+            epoxy_glAttachShader(GLuint, GLuint)' redeclared as different kind
+            of symbol
+            GL_APICALL void         GL_APIENTRY glAttachShader (GLuint
+            program, GLuint shader);
+
+        No new tests.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+
 2018-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         MutationObserver should be in an IsoHeap
