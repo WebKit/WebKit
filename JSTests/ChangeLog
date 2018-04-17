@@ -1,3 +1,43 @@
+2018-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebAssembly][Modules] Prototype wasm import
+        https://bugs.webkit.org/show_bug.cgi?id=184600
+
+        Reviewed by JF Bastien.
+
+        Add wasm and wat files since module loader want to load wasm files from FS.
+        Currently, importing the other modules from wasm is not supported.
+
+        * wasm.yaml:
+        * wasm/modules/constant.wasm: Added.
+        * wasm/modules/constant.wat: Added.
+        * wasm/modules/js-wasm-function-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-function.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-global-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-global.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-memory-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-memory.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-start.js: Added.
+        (then):
+        * wasm/modules/js-wasm-table-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-table.js: Added.
+        (assert.throws):
+        * wasm/modules/memory.wasm: Added.
+        * wasm/modules/memory.wat: Added.
+        * wasm/modules/start.wasm: Added.
+        * wasm/modules/start.wat: Added.
+        * wasm/modules/sum.wasm: Added.
+        * wasm/modules/sum.wat: Added.
+        * wasm/modules/table.wasm: Added.
+        * wasm/modules/table.wat: Added.
+
 2018-04-14  Filip Pizlo  <fpizlo@apple.com>
 
         Function.prototype.caller shouldn't return generator bodies

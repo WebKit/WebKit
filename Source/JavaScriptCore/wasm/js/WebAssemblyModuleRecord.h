@@ -48,7 +48,8 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     static WebAssemblyModuleRecord* create(ExecState*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
 
-    void link(ExecState*, JSWebAssemblyModule*, JSWebAssemblyInstance*);
+    void prepareLink(VM&, JSWebAssemblyInstance*);
+    void link(ExecState*, JSValue scriptFetcher);
     JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
 
 private:

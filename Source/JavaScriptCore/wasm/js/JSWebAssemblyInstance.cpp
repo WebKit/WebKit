@@ -91,7 +91,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(*thisObject->instance().importFunction<PoisonedBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
 }
 
-void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock)
+void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock, ModuleRunMode moduleRunMode)
 {
     m_instance->finalizeCreation(this, wasmCodeBlock.copyRef());
 
@@ -127,15 +127,24 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
     }
 
     auto* moduleRecord = jsCast<WebAssemblyModuleRecord*>(m_moduleNamespaceObject->moduleRecord());
-    moduleRecord->link(exec, m_module.get(), this);
-    RETURN_IF_EXCEPTION(scope, void());
+    moduleRecord->prepareLink(vm, this);
 
-    JSValue startResult = moduleRecord->evaluate(exec);
-    UNUSED_PARAM(startResult);
-    RETURN_IF_EXCEPTION(scope, void());
+    if (moduleRunMode == ModuleRunMode::Run) {
+        moduleRecord->link(exec, jsNull());
+        RETURN_IF_EXCEPTION(scope, void());
+
+        JSValue startResult = moduleRecord->evaluate(exec);
+        UNUSED_PARAM(startResult);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
 }
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module)
+Identifier JSWebAssemblyInstance::createPrivateModuleKey()
+{
+    return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
+}
+
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* globalObject = exec->lexicalGlobalObject();
@@ -158,7 +167,6 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
     if (moduleInformation.imports.size() && !importObject)
         return exception(createTypeError(exec, ASCIILiteral("can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports")));
 
-    Identifier moduleKey = Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
     WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(exec, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 

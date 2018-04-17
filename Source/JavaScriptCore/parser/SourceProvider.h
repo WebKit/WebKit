@@ -120,9 +120,9 @@ namespace JSC {
 #if ENABLE(WEBASSEMBLY)
     class WebAssemblySourceProvider : public SourceProvider {
     public:
-        static Ref<WebAssemblySourceProvider> create(const Vector<uint8_t>& data, const SourceOrigin& sourceOrigin, const String& url)
+        static Ref<WebAssemblySourceProvider> create(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, const String& url)
         {
-            return adoptRef(*new WebAssemblySourceProvider(data, sourceOrigin, url));
+            return adoptRef(*new WebAssemblySourceProvider(WTFMove(data), sourceOrigin, url));
         }
 
         unsigned hash() const override
@@ -141,10 +141,10 @@ namespace JSC {
         }
 
     private:
-        WebAssemblySourceProvider(const Vector<uint8_t>& data, const SourceOrigin& sourceOrigin, const String& url)
+        WebAssemblySourceProvider(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, const String& url)
             : SourceProvider(sourceOrigin, url, TextPosition(), SourceProviderSourceType::WebAssembly)
             , m_source("[WebAssembly source]")
-            , m_data(data)
+            , m_data(WTFMove(data))
         {
         }
 

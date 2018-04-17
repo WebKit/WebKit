@@ -1,3 +1,77 @@
+2018-04-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebAssembly][Modules] Prototype wasm import
+        https://bugs.webkit.org/show_bug.cgi?id=184600
+
+        Reviewed by JF Bastien.
+
+        This patch is an initial attempt to implement Wasm loading in module pipeline.
+        Currently,
+
+        1. We only support Wasm loading in the JSC shell. Once loading mechanism is specified
+           in whatwg HTML, we should integrate this into WebCore.
+
+        2. We only support exporting values from Wasm. Wasm module cannot import anything from
+           the other modules now.
+
+        When loading a file, JSC shell checks wasm magic. If the wasm magic is found, JSC shell
+        loads the file with WebAssemblySourceProvider. It is wrapped into JSSourceCode and
+        module loader pipeline just handles it as the same to JS. When parsing a module, we
+        checks the type of JSSourceCode. If the source code is Wasm source code, we create a
+        WebAssemblyModuleRecord instead of JSModuleRecord. Our module pipeline handles
+        AbstractModuleRecord and Wasm module is instantiated, linked, and evaluated.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (globalPrivate.newRegistryEntry):
+        (requestInstantiate):
+        (link):
+        * jsc.cpp:
+        (convertShebangToJSComment):
+        (fillBufferWithContentsOfFile):
+        (fetchModuleFromLocalFileSystem):
+        (GlobalObject::moduleLoaderFetch):
+        * parser/SourceProvider.h:
+        (JSC::WebAssemblySourceProvider::create):
+        (JSC::WebAssemblySourceProvider::WebAssemblySourceProvider):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::hostResolveImportedModule):
+        (JSC::AbstractModuleRecord::link):
+        (JSC::AbstractModuleRecord::evaluate):
+        (JSC::identifierToJSValue): Deleted.
+        * runtime/AbstractModuleRecord.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::evaluate):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSModuleRecord.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        (JSC::moduleLoaderPrototypeRequestedModules):
+        (JSC::moduleLoaderPrototypeModuleDeclarationInstantiation):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::getWasmBufferFromValue):
+        (JSC::createSourceBufferFromValue):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::createPrivateModuleKey):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::prepareLink):
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::resolve):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::WebAssemblyPrototype::instantiate):
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::webAssemblyValidateFunc):
+        * wasm/js/WebAssemblyPrototype.h:
+
 2018-04-14  Filip Pizlo  <fpizlo@apple.com>
 
         Function.prototype.caller shouldn't return generator bodies

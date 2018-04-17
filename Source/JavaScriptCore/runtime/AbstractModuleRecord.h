@@ -119,6 +119,9 @@ public:
         return m_moduleEnvironment.get();
     }
 
+    void link(ExecState*, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
+
 protected:
     AbstractModuleRecord(VM&, Structure*, const Identifier&);
     void finishCreation(ExecState*, VM&);

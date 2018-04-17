@@ -186,7 +186,8 @@ static unsigned asyncTestExpectedPasses { 0 };
 
 }
 
-static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer);
+template<typename Vector>
+static bool fillBufferWithContentsOfFile(const String& fileName, Vector& buffer);
 static RefPtr<Uint8Array> fillBufferWithContentsOfFile(const String& fileName);
 
 class CommandLine;
@@ -844,7 +845,8 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, ExecS
     return Identifier::fromString(&vm, resolvePath(directoryName.value(), ModuleName(key.impl())));
 }
 
-static void convertShebangToJSComment(Vector<char>& buffer)
+template<typename Vector>
+static void convertShebangToJSComment(Vector& buffer)
 {
     if (buffer.size() >= 2) {
         if (buffer[0] == '#' && buffer[1] == '!')
@@ -882,7 +884,8 @@ static RefPtr<Uint8Array> fillBufferWithContentsOfFile(const String& fileName)
     return result;
 }
 
-static bool fillBufferWithContentsOfFile(FILE* file, Vector<char>& buffer)
+template<typename Vector>
+static bool fillBufferWithContentsOfFile(FILE* file, Vector& buffer)
 {
     // We might have injected "use strict"; at the top.
     size_t initialSize = buffer.size();
@@ -920,7 +923,8 @@ static bool fetchScriptFromLocalFileSystem(const String& fileName, Vector<char>&
     return true;
 }
 
-static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector<char>& buffer)
+template<typename Vector>
+static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector& buffer)
 {
     // We assume that fileName is always an absolute path.
 #if OS(WINDOWS)
@@ -971,14 +975,25 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     }
 
     // Here, now we consider moduleKey as the fileName.
-    Vector<char> utf8;
-    if (!fetchModuleFromLocalFileSystem(moduleKey, utf8)) {
+    Vector<uint8_t> buffer;
+    if (!fetchModuleFromLocalFileSystem(moduleKey, buffer)) {
         auto result = deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
         scope.releaseAssertNoException();
         return result;
     }
 
-    auto result = deferred->resolve(exec, JSSourceCode::create(vm, makeSource(stringFromUTF(utf8), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module)));
+#if ENABLE(WEBASSEMBLY)
+    // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
+    if (buffer.size() >= 4) {
+        if (buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') {
+            auto result = deferred->resolve(exec, JSSourceCode::create(vm, SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleKey }, moduleKey))));
+            scope.releaseAssertNoException();
+            return result;
+        }
+    }
+#endif
+
+    auto result = deferred->resolve(exec, JSSourceCode::create(vm, makeSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module)));
     scope.releaseAssertNoException();
     return result;
 }

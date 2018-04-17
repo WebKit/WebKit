@@ -45,6 +45,7 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "ParserError.h"
+#include "WebAssemblyPrototype.h"
 
 namespace JSC {
 
@@ -76,7 +77,7 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
     requestInstantiate             JSBuiltin                                           DontEnum|Function 3
     requestSatisfy                 JSBuiltin                                           DontEnum|Function 3
     link                           JSBuiltin                                           DontEnum|Function 2
-    moduleDeclarationInstantiation moduleLoaderPrototypeModuleDeclarationInstantiation DontEnum|Function 3
+    moduleDeclarationInstantiation moduleLoaderPrototypeModuleDeclarationInstantiation DontEnum|Function 2
     moduleEvaluation               JSBuiltin                                           DontEnum|Function 2
     evaluate                       moduleLoaderPrototypeEvaluate                       DontEnum|Function 3
     provideFetch                   JSBuiltin                                           DontEnum|Function 2
@@ -103,15 +104,29 @@ ModuleLoaderPrototype::ModuleLoaderPrototype(VM& vm, Structure* structure)
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
 {
     VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, exec->lexicalGlobalObject());
+    scope.releaseAssertNoException();
+
+    auto reject = [&] {
+        JSValue exception = scope.exception();
+        scope.clearException();
+        return JSValue::encode(deferred->reject(exec, exception));
+    };
 
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (UNLIKELY(scope.exception()))
+        return reject();
 
-    auto* jsSourceCode = jsDynamicCast<JSSourceCode*>(vm, exec->argument(1));
-    if (!jsSourceCode)
-        return throwVMTypeError(exec, scope);
+    JSValue source = exec->argument(1);
+    auto* jsSourceCode = jsCast<JSSourceCode*>(source);
     SourceCode sourceCode = jsSourceCode->sourceCode();
+
+#if ENABLE(WEBASSEMBLY)
+    if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
+        return JSValue::encode(WebAssemblyPrototype::instantiate(exec, deferred, moduleKey, jsSourceCode));
+#endif
 
     CodeProfiling profile(sourceCode);
 
@@ -119,25 +134,22 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
         &vm, sourceCode, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
-
-    if (error.isValid()) {
-        throwVMError(exec, scope, error.toErrorObject(exec->lexicalGlobalObject(), sourceCode));
-        return JSValue::encode(jsUndefined());
-    }
+    if (error.isValid())
+        return JSValue::encode(deferred->reject(exec, error.toErrorObject(exec->lexicalGlobalObject(), sourceCode)));
     ASSERT(moduleProgramNode);
 
     ModuleAnalyzer moduleAnalyzer(exec, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    JSModuleRecord* moduleRecord = moduleAnalyzer.analyze(*moduleProgramNode);
+    if (UNLIKELY(scope.exception()))
+        return reject();
 
-    return JSValue::encode(moduleRecord);
+    return JSValue::encode(deferred->resolve(exec, moduleAnalyzer.analyze(*moduleProgramNode)));
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeRequestedModules(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(vm, exec->argument(0));
+    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(vm, exec->argument(0));
     if (!moduleRecord) {
         scope.release();
         return JSValue::encode(constructEmptyArray(exec, nullptr));
@@ -157,14 +169,14 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstantiation
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(vm, exec->argument(0));
+    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(vm, exec->argument(0));
     if (!moduleRecord)
         return JSValue::encode(jsUndefined());
 
     if (Options::dumpModuleLoadingState())
         dataLog("Loader [link] ", moduleRecord->moduleKey(), "\n");
 
-    moduleRecord->link(exec, exec->argument(1), exec->argument(2));
+    moduleRecord->link(exec, exec->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(jsUndefined());
