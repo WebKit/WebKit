@@ -176,6 +176,8 @@ void DocumentTimeline::performInvalidationTask()
             downcast<DeclarativeAnimation>(*animation).invalidateDOMEvents();
     }
 
+    applyPendingAcceleratedAnimations();
+
     updateAnimationSchedule();
     m_cachedCurrentTime = std::nullopt;
 }
@@ -243,8 +245,6 @@ void DocumentTimeline::updateAnimations()
             elementToCSSTransitionsMapItem.key->invalidateStyleAndLayerComposition();
         m_document->updateStyleIfNeeded();
     }
-
-    applyPendingAcceleratedAnimations();
 
     // Time has advanced, the timing model requires invalidation now.
     timingModelDidChange();
@@ -332,8 +332,16 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
 {
-    for (auto& animation : m_acceleratedAnimationsPendingRunningStateChange)
+    bool hasForcedLayout = false;
+    for (auto& animation : m_acceleratedAnimationsPendingRunningStateChange) {
+        if (!hasForcedLayout) {
+            auto* effect = animation->effect();
+            if (is<KeyframeEffectReadOnly>(effect))
+                hasForcedLayout |= downcast<KeyframeEffectReadOnly>(effect)->forceLayoutIfNeeded();
+        }
         animation->applyPendingAcceleratedActions();
+    }
+
     m_acceleratedAnimationsPendingRunningStateChange.clear();
 }
 

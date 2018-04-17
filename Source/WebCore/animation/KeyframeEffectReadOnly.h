@@ -120,6 +120,7 @@ public:
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
     bool computeTransformedExtentViaMatrix(const FloatRect&, const RenderStyle&, LayoutRect&) const;
+    bool forceLayoutIfNeeded();
 
 protected:
     void copyPropertiesFromSource(Ref<KeyframeEffectReadOnly>&&);
@@ -136,6 +137,7 @@ private:
     void setAnimatedPropertiesInStyle(RenderStyle&, double);
     TimingFunction* timingFunctionForKeyframeAtIndex(size_t);
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
+    void computedNeedsForcedLayout();
     void computeStackingContextImpact();
     void updateBlendingKeyframes();
     void computeCSSAnimationBlendingKeyframes();
@@ -149,6 +151,7 @@ private:
 #endif
 
     bool m_shouldRunAccelerated { false };
+    bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
     bool m_started { false };
     bool m_startedAccelerated { false };

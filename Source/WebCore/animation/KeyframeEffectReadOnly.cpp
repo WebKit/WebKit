@@ -46,6 +46,7 @@
 #include "StylePendingResources.h"
 #include "StyleResolver.h"
 #include "TimingFunction.h"
+#include "TranslateTransformOperation.h"
 #include "WillChangeData.h"
 #include <wtf/UUID.h>
 
@@ -693,10 +694,28 @@ void KeyframeEffectReadOnly::updateBlendingKeyframes()
     setBlendingKeyframes(keyframeList);
 }
 
+bool KeyframeEffectReadOnly::forceLayoutIfNeeded()
+{
+    if (!m_needsForcedLayout || !m_target)
+        return false;
+
+    auto* renderer = m_target->renderer();
+    if (!renderer || !renderer->parent())
+        return false;
+
+    auto* frameView = m_target->document().view();
+    if (!frameView)
+        return false;
+
+    frameView->forceLayout();
+    return true;
+}
+
 void KeyframeEffectReadOnly::setBlendingKeyframes(KeyframeList& blendingKeyframes)
 {
     m_blendingKeyframes = WTFMove(blendingKeyframes);
 
+    computedNeedsForcedLayout();
     computeStackingContextImpact();
     computeShouldRunAccelerated();
 
@@ -894,6 +913,34 @@ bool KeyframeEffectReadOnly::stylesWouldYieldNewCSSTransitionsBlendingKeyframes(
     // Otherwise, we would create new blending keyframes provided the current end keyframe holds a different
     // value than the new end style for this property.
     return !CSSPropertyAnimation::propertiesEqual(property, m_blendingKeyframes[1].style(), &newStyle);
+}
+
+void KeyframeEffectReadOnly::computedNeedsForcedLayout()
+{
+    m_needsForcedLayout = false;
+    if (is<CSSTransition>(animation()) || !m_blendingKeyframes.containsProperty(CSSPropertyTransform))
+        return;
+
+    size_t numberOfKeyframes = m_blendingKeyframes.size();
+    for (size_t i = 0; i < numberOfKeyframes; i++) {
+        auto* keyframeStyle = m_blendingKeyframes[i].style();
+        if (!keyframeStyle) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        if (keyframeStyle->hasTransform()) {
+            auto& transformOperations = keyframeStyle->transform();
+            for (auto operation : transformOperations.operations()) {
+                if (operation->isTranslateTransformOperationType()) {
+                    auto translation = downcast<TranslateTransformOperation>(operation.get());
+                    if (translation->x().isPercent() || translation->y().isPercent()) {
+                        m_needsForcedLayout = true;
+                        return;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void KeyframeEffectReadOnly::computeStackingContextImpact()
@@ -1180,6 +1227,11 @@ void KeyframeEffectReadOnly::addPendingAcceleratedAction(AcceleratedAction actio
 
 void KeyframeEffectReadOnly::applyPendingAcceleratedActions()
 {
+    // Once an accelerated animation has been committed, we no longer want to force a layout.
+    // This should have been performed by a call to forceLayoutIfNeeded() prior to applying
+    // pending accelerated actions.
+    m_needsForcedLayout = false;
+
     auto* renderer = this->renderer();
     if (!renderer || !renderer->isComposited())
         return;

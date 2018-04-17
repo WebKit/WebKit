@@ -1,3 +1,33 @@
+2018-04-16  Antoine Quint  <graouts@apple.com>
+
+        Layout Test animations/needs-layout.html is a flaky Image Failure.
+        https://bugs.webkit.org/show_bug.cgi?id=172397
+
+        Reviewed by Dean Jackson.
+
+        Animations that animate a transform and uses a relative value for either the x or y components
+        require a layout before starting, which CSSAnimationController would perform in the call to
+        CSSAnimationControllerPrivate::animationTimerFired() made immediately after a CSS animation was
+        created.
+
+        We now perform a similar task where upon setting new blending keyframes we compute a flag indicating
+        if the keyframe effect is animating a transform with relative x or y components. Then, when we perform
+        the first invalidation task, which runs in the next run loop after a change to the timing model has
+        been made, such as a call to play() on a CSSAnimation made in the TreeResolver::createAnimatedElementUpdate()
+        where the CSSAnimation was created, we call forceLayout() on this element's FrameView. We also ensure
+        we commit animations on the compositor immediately after that too, instead of waiting until the next
+        DisplayRefreshMonitor callback.
+
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::performInvalidationTask):
+        (WebCore::DocumentTimeline::updateAnimations):
+        * animation/KeyframeEffectReadOnly.cpp:
+        (WebCore::KeyframeEffectReadOnly::forceLayoutIfNeeded):
+        (WebCore::KeyframeEffectReadOnly::setBlendingKeyframes):
+        (WebCore::KeyframeEffectReadOnly::computedNeedsForcedLayout):
+        (WebCore::KeyframeEffectReadOnly::applyPendingAcceleratedActions):
+        * animation/KeyframeEffectReadOnly.h:
+
 2018-04-16  Pablo Saavedra  <psaavedra@igalia.com>
 
         Inconsistent EGL defines in ImageBufferCairo
