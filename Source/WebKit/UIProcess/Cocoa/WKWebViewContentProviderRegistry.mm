@@ -31,6 +31,7 @@
 #if PLATFORM(IOS)
 
 #import "WKLegacyPDFView.h"
+#import "WKPDFView.h"
 #import "WKSystemPreviewView.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -56,7 +57,10 @@ using namespace WebKit;
     if (!(self = [super init]))
         return nil;
 
-#if ENABLE(WKLEGACYPDFVIEW)
+#if ENABLE(WKPDFVIEW)
+    for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes())
+        [self registerProvider:[WKPDFView class] forMIMEType:mimeType];
+#elif ENABLE(WKLEGACYPDFVIEW)
     for (auto& mimeType : WebCore::MIMETypeRegistry::getPDFMIMETypes())
         [self registerProvider:[WKLegacyPDFView class] forMIMEType:mimeType];
 #endif
