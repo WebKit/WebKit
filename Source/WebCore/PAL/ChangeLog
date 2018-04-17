@@ -1,3 +1,13 @@
+2018-04-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] AirPlay device name is sometimes wrong
+        https://bugs.webkit.org/show_bug.cgi?id=184543
+        <rdar://problem/39105498>
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/mac/AVFoundationSPI.h: Declare more AVOutputContext SPI.
+
 2018-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Don't establish unneeded Dock connections

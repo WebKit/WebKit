@@ -222,6 +222,7 @@ typedef AVMediaSelectionOption AVMediaSelectionOptionType;
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItemLegibleOutput)
 SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionGroup)
 SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
+SOFT_LINK_CLASS(AVFoundation, AVOutputContext)
 
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicLegible, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeSubtitle, NSString *)
@@ -2787,10 +2788,25 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
 static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
 {
 #if HAVE(CELESTIAL)
-    NSString *displayName = nil;
-
     if (!AVFoundationLibrary())
         return nil;
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+    if ([getAVOutputContextClass() respondsToSelector:@selector(sharedAudioPresentationOutputContext)]) {
+        AVOutputContext *outputContext = [getAVOutputContextClass() sharedAudioPresentationOutputContext];
+
+        if (![outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)]
+            || ![outputContext supportsMultipleOutputDevices]
+            || ![outputContext respondsToSelector:@selector(outputDevices)])
+            return [outputContext deviceName];
+
+        auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
+        for (AVOutputDevice *outputDevice in [outputContext outputDevices])
+            [outputDeviceNames addObject:[[outputDevice name] copy]];
+
+        return [outputDeviceNames componentsJoinedByString:@" + "];
+    }
+#endif
 
     if (player.externalPlaybackType != AVPlayerExternalPlaybackTypeAirPlay)
         return nil;
@@ -2799,6 +2815,7 @@ static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
     if (!pickableRoutes.count)
         return nil;
 
+    NSString *displayName = nil;
     for (NSDictionary *pickableRoute in pickableRoutes) {
         if (![pickableRoute[AVController_RouteDescriptionKey_RouteCurrentlyPicked] boolValue])
             continue;

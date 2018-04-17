@@ -1,3 +1,17 @@
+2018-04-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] AirPlay device name is sometimes wrong
+        https://bugs.webkit.org/show_bug.cgi?id=184543
+        <rdar://problem/39105498>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this can only be tested with a specific hardware setup.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::exernalDeviceDisplayNameForPlayer): Get the device name from the AVOutputContext
+        when possible.
+
 2018-04-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Build fix after r230529 (WaylandCompositorDisplay leaks its wl_display)
