@@ -1,3 +1,15 @@
+2018-04-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] GObject introspection annotation fixes: BackForwardList, NetworkProxySettings
+        https://bugs.webkit.org/show_bug.cgi?id=184658
+
+        Reviewed by Carlos Garcia Campos.
+
+        Thanks to Dylan Simon for recommending these annotation fixes.
+
+        * UIProcess/API/glib/WebKitBackForwardList.cpp:
+        * UIProcess/API/glib/WebKitNetworkProxySettings.cpp:
+
 2018-04-17  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Don't establish unneeded Dock connections (Follow-up)

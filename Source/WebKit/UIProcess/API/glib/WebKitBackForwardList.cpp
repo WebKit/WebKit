@@ -156,7 +156,7 @@ void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBac
  *
  * Returns the current item in @back_forward_list.
  *
- * Returns: (transfer none): a #WebKitBackForwardListItem
+ * Returns: (nullable) (transfer none): a #WebKitBackForwardListItem
  *    or %NULL if @back_forward_list is empty.
  */
 WebKitBackForwardListItem* webkit_back_forward_list_get_current_item(WebKitBackForwardList* backForwardList)
@@ -172,7 +172,7 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_current_item(WebKitBackF
  *
  * Returns the item that precedes the current item.
  *
- * Returns: (transfer none): the #WebKitBackForwardListItem
+ * Returns: (nullable) (transfer none): the #WebKitBackForwardListItem
  *    preceding the current item or %NULL.
  */
 WebKitBackForwardListItem* webkit_back_forward_list_get_back_item(WebKitBackForwardList* backForwardList)
@@ -188,7 +188,7 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_back_item(WebKitBackForw
  *
  * Returns the item that follows the current item.
  *
- * Returns: (transfer none): the #WebKitBackForwardListItem
+ * Returns: (nullable) (transfer none): the #WebKitBackForwardListItem
  *    following the current item or %NULL.
  */
 WebKitBackForwardListItem* webkit_back_forward_list_get_forward_item(WebKitBackForwardList* backForwardList)
@@ -205,8 +205,8 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_forward_item(WebKitBackF
  *
  * Returns the item at a given index relative to the current item.
  *
- * Returns: (transfer none): the #WebKitBackForwardListItem
- *    located at the specified index relative to the current item.
+ * Returns: (nullable) (transfer none): the #WebKitBackForwardListItem
+ *    located at the specified index relative to the current item or %NULL.
  */
 WebKitBackForwardListItem* webkit_back_forward_list_get_nth_item(WebKitBackForwardList* backForwardList, gint index)
 {
