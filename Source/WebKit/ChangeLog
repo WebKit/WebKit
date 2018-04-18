@@ -1,5 +1,11 @@
 2018-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.1 release.
+
+        * gtk/NEWS: Add release notes for 2.21.1.
+
+2018-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Remove symbols from webkitglib-symbols.map.
 
         Remove symbols not present in WebKit.

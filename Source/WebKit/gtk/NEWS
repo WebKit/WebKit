@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 2.21.1
+=================
+
+What's new in WebKitGTK+ 2.21.1?
+
+  - Add initial JavaScriptCore GLib API.
+  - Use JavaScriptCore GLib API in WebKit layer and deprecate most of the DOM bindings API as well as
+    methods using the JavaScriptCore C API.
+  - Switch to use complex text code path unconditionally.
+  - Properly close the connection to the Wayland nested compositor in the WebProcess.
+  - Implement support for Graphics ARIA roles.
+  - Add playbin3 support to GStreamer media backend.
+  - Fix a deadlock when destroying the media player in non accelerated compositing mode.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.19.6
 =================
 
