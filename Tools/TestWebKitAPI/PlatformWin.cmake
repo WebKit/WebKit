@@ -162,6 +162,38 @@ if (ENABLE_WEBKIT_LEGACY)
     add_dependencies(TestWebKitLegacy TestWebKitLegacyLib)
 endif ()
 
+if (ENABLE_WEBKIT)
+    set(bundle_harness_SOURCES
+        ${TESTWEBKITAPI_DIR}/win/UtilitiesWin.cpp
+        ${TESTWEBKITAPI_DIR}/win/InjectedBundleControllerWin.cpp
+        ${TESTWEBKITAPI_DIR}/win/PlatformUtilitiesWin.cpp
+    )
+
+    set(webkit_api_harness_SOURCES
+        ${TESTWEBKITAPI_DIR}/win/PlatformUtilitiesWin.cpp
+        ${TESTWEBKITAPI_DIR}/win/PlatformWebViewWin.cpp
+        ${TESTWEBKITAPI_DIR}/win/UtilitiesWin.cpp
+    )
+
+    add_library(TestWebKitLib SHARED
+        ${TESTWEBKITAPI_DIR}/win/main.cpp
+        ${test_webkit_api_SOURCES}
+    )
+
+    target_link_libraries(TestWebKitLib ${test_webkit_api_LIBRARIES})
+
+    add_executable(TestWebKit
+        ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    )
+    target_link_libraries(TestWebKit shlwapi)
+
+    add_test(TestWebKit ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/TestWebKit)
+    set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
+    set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
+
+    add_dependencies(TestWebKit TestWebKitAPIBase)
+endif ()
+
 set(test_main_SOURCES
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
