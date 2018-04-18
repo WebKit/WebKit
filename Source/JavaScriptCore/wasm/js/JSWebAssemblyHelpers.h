@@ -29,7 +29,6 @@
 
 #include "JSArrayBuffer.h"
 #include "JSCJSValue.h"
-#include "JSSourceCode.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
 
@@ -50,16 +49,10 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(ExecState* exec, JSValue value)
     return static_cast<uint32_t>(doubleValue);
 }
 
-ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(ExecState* exec, JSValue value)
+ALWAYS_INLINE std::pair<uint8_t*, size_t> getWasmBufferFromValue(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    if (auto* source = jsDynamicCast<JSSourceCode*>(vm, value)) {
-        auto* provider = static_cast<WebAssemblySourceProvider*>(source->sourceCode().provider());
-        return { provider->data().data(), provider->data().size() };
-    }
-
     // If the given bytes argument is not a BufferSource, a TypeError exception is thrown.
     JSArrayBuffer* arrayBuffer = value.getObject() ? jsDynamicCast<JSArrayBuffer*>(vm, value.getObject()) : nullptr;
     JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicCast<JSArrayBufferView*>(vm, value.getObject()) : nullptr;
@@ -83,7 +76,7 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(ExecState
 ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, ExecState* exec, JSValue value)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    const uint8_t* data;
+    uint8_t* data;
     size_t byteSize;
     std::tie(data, byteSize) = getWasmBufferFromValue(exec, value);
     RETURN_IF_EXCEPTION(throwScope, Vector<uint8_t>());

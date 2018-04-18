@@ -1,3 +1,26 @@
+2018-04-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r230697, r230720, and r230724.
+        https://bugs.webkit.org/show_bug.cgi?id=184717
+
+        These caused multiple failures on the Test262 testers.
+        (Requested by mlewis13 on #webkit).
+
+        Reverted changesets:
+
+        "[WebAssembly][Modules] Prototype wasm import"
+        https://bugs.webkit.org/show_bug.cgi?id=184600
+        https://trac.webkit.org/changeset/230697
+
+        "[WebAssembly][Modules] Implement function import from wasm
+        modules"
+        https://bugs.webkit.org/show_bug.cgi?id=184689
+        https://trac.webkit.org/changeset/230720
+
+        "[JSC] Rename runWebAssembly to runWebAssemblySuite"
+        https://bugs.webkit.org/show_bug.cgi?id=184703
+        https://trac.webkit.org/changeset/230724
+
 2018-04-17  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed rollout of r230632. Regression in memory usage.

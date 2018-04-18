@@ -33,7 +33,6 @@
 #include "JSWebAssemblyCodeBlock.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyTable.h"
-#include "WasmCreationMode.h"
 #include "WasmInstance.h"
 #include <wtf/Ref.h>
 
@@ -51,14 +50,12 @@ class JSWebAssemblyInstance final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static Identifier createPrivateModuleKey();
-
-    static JSWebAssemblyInstance* create(VM&, ExecState*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Structure*, Ref<Wasm::Module>&&, Wasm::CreationMode);
+    static JSWebAssemblyInstance* create(VM&, ExecState*, JSWebAssemblyModule*, JSObject* importObject, Structure*, Ref<Wasm::Module>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
 
-    void finalizeCreation(VM&, ExecState*, Ref<Wasm::CodeBlock>&&, JSObject* importObject, Wasm::CreationMode);
+    void finalizeCreation(VM&, ExecState*, Ref<Wasm::CodeBlock>&&);
     
     Wasm::Instance& instance() { return m_instance.get(); }
     JSModuleNamespaceObject* moduleNamespaceObject() { return m_moduleNamespaceObject.get(); }
@@ -79,8 +76,6 @@ public:
         instance().setTable(makeRef(*table()->table()));
     }
 
-    JSWebAssemblyModule* module() const { return m_module.get(); }
-
     static size_t offsetOfPoisonedInstance() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_instance); }
     static size_t offsetOfPoisonedCallee() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_callee); }
 
@@ -94,6 +89,8 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
+    JSWebAssemblyModule* module() const { return m_module.get(); }
+
     PoisonedRef<JSWebAssemblyInstancePoison, Wasm::Instance> m_instance;
 
     PoisonedBarrier<JSWebAssemblyModule> m_module;
