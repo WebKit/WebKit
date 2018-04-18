@@ -113,14 +113,16 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         return makeString(before, " ", String::fromUTF8(import.module), ":", String::fromUTF8(import.field), " ", after);
     };
 
+    bool hasTableImport = false;
+
     for (const auto& import : moduleInformation.imports) {
         // Validation and linking other than Wasm::ExternalKind::Function is already done in JSWebAssemblyInstance.
         // Eventually we will move all the linking code in JSWebAssemblyInstance here and remove this switch statement.
         switch (import.kind) {
         case Wasm::ExternalKind::Function:
         case Wasm::ExternalKind::Global:
-            break;
         case Wasm::ExternalKind::Table:
+            break;
         case Wasm::ExternalKind::Memory:
             continue;
         }
@@ -253,9 +255,59 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             break;
         }
 
-        case Wasm::ExternalKind::Table:
+        case Wasm::ExternalKind::Table: {
+            RELEASE_ASSERT(!hasTableImport); // This should be guaranteed by a validation failure.
+            // 7. Otherwise (i is a table import):
+            hasTableImport = true;
+            JSWebAssemblyTable* table = jsDynamicCast<JSWebAssemblyTable*>(vm, value);
+            // i. If v is not a WebAssembly.Table object, throw a WebAssembly.LinkError.
+            if (!table)
+                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "Table import", "is not an instance of WebAssembly.Table")));
+
+            uint32_t expectedInitial = moduleInformation.tableInformation.initial();
+            uint32_t actualInitial = table->length();
+            if (actualInitial < expectedInitial)
+                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "Table import", "provided an 'initial' that is too small")));
+
+            if (std::optional<uint32_t> expectedMaximum = moduleInformation.tableInformation.maximum()) {
+                std::optional<uint32_t> actualMaximum = table->maximum();
+                if (!actualMaximum)
+                    return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "Table import", "does not have a 'maximum' but the module requires that it does")));
+                if (*actualMaximum > *expectedMaximum)
+                    return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "Imported Table", "'maximum' is larger than the module's expected 'maximum'")));
+            }
+
+            // ii. Append v to tables.
+            // iii. Append v.[[Table]] to imports.
+            m_instance->setTable(vm, table);
+            RETURN_IF_EXCEPTION(scope, void());
+            break;
+        }
+
         case Wasm::ExternalKind::Memory:
             break;
+        }
+    }
+
+    {
+        if (!!moduleInformation.tableInformation && moduleInformation.tableInformation.isImport()) {
+            // We should either have a Table import or we should have thrown an exception.
+            RELEASE_ASSERT(hasTableImport);
+        }
+
+        if (!!moduleInformation.tableInformation && !hasTableImport) {
+            RELEASE_ASSERT(!moduleInformation.tableInformation.isImport());
+            // We create a Table when it's a Table definition.
+            RefPtr<Wasm::Table> wasmTable = Wasm::Table::create(moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum());
+            if (!wasmTable)
+                return exception(createJSWebAssemblyLinkError(exec, vm, "couldn't create Table"));
+            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, globalObject->WebAssemblyTableStructure(), wasmTable.releaseNonNull());
+            // We should always be able to allocate a JSWebAssemblyTable we've defined.
+            // If it's defined to be too large, we should have thrown a validation error.
+            scope.assertNoException();
+            ASSERT(table);
+            m_instance->setTable(vm, table);
+            RETURN_IF_EXCEPTION(scope, void());
         }
     }
 

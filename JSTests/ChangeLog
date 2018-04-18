@@ -1,5 +1,24 @@
 2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WebAssembly][Modules] Import tables in wasm modules
+        https://bugs.webkit.org/show_bug.cgi?id=184738
+
+        Reviewed by JF Bastien.
+
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports.js:
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/imports.wasm:
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/imports.wat:
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/re-export.js:
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/sum.wasm:
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/sum.wat:
+        * wasm/modules/wasm-imports-wasm-exports.js:
+        * wasm/modules/wasm-imports-wasm-exports/imports.wasm:
+        * wasm/modules/wasm-imports-wasm-exports/imports.wat:
+        * wasm/modules/wasm-imports-wasm-exports/sum.wasm:
+        * wasm/modules/wasm-imports-wasm-exports/sum.wat:
+
+2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WebAssembly][Modules] Import globals from wasm modules
         https://bugs.webkit.org/show_bug.cgi?id=184736
 
