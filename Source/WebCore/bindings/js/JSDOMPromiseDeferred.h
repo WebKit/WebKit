@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class JSDOMWindow;
+
 class DeferredPromise : public DOMGuarded<JSC::JSPromiseDeferred> {
 public:
     enum class Mode {

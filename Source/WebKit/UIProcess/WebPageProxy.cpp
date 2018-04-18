@@ -127,6 +127,8 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/GlobalFrameIdentifier.h>
+#include <WebCore/GlobalWindowIdentifier.h>
 #include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/LengthBox.h>
@@ -2413,6 +2415,11 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 {
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString().utf8().data());
 
+    Ref<WebProcessProxy> previousProcess = m_process.copyRef();
+    std::optional<uint64_t> navigatedFrameIdentifierInPreviousProcess;
+    if (m_mainFrame)
+        navigatedFrameIdentifierInPreviousProcess = m_mainFrame->frameID();
+
     ASSERT(m_process.ptr() != process.ptr());
     attachToProcessForNavigation(WTFMove(process));
 
@@ -2443,6 +2450,15 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
             didReceiveServerRedirectForProvisionalLoadForFrame(m_mainFrame->frameID(), navigation->navigationID(), WTFMove(request), { });
         };
     }
+
+    if (!navigation.isCrossOriginWindowOpenNavigation() || !navigatedFrameIdentifierInPreviousProcess)
+        return;
+
+    m_mainFrameWindowCreationHandler = [this, previousProcess = WTFMove(previousProcess), navigatedFrameIdentifierInPreviousProcess = *navigatedFrameIdentifierInPreviousProcess](const GlobalWindowIdentifier& windowIdentifier) {
+        ASSERT(m_mainFrame);
+        GlobalFrameIdentifier navigatedFrameIdentifierInNewProcess { pageID(), m_mainFrame->frameID() };
+        previousProcess->send(Messages::WebPage::FrameBecameRemote(navigatedFrameIdentifierInPreviousProcess, navigatedFrameIdentifierInNewProcess, windowIdentifier), pageID());
+    };
 }
 
 void WebPageProxy::setUserAgent(String&& userAgent)
@@ -3269,6 +3285,14 @@ void WebPageProxy::didCreateSubframe(uint64_t frameID)
 
     // Add the frame to the process wide map.
     m_process->frameCreated(frameID, subFrame.get());
+}
+
+void WebPageProxy::didCreateWindow(uint64_t frameID, GlobalWindowIdentifier&& windowIdentifier)
+{
+    if (m_mainFrame && m_mainFrame->frameID() == frameID) {
+        if (auto mainFrameWindowCreationHandler = WTFMove(m_mainFrameWindowCreationHandler))
+            mainFrameWindowCreationHandler(windowIdentifier);
+    }
 }
 
 double WebPageProxy::estimatedProgress() const

@@ -1,3 +1,39 @@
+2018-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Add support for converting a local window to a remote window
+        https://bugs.webkit.org/show_bug.cgi?id=184515
+        <rdar://problem/39011318>
+
+        Reviewed by Ryosuke Niwa.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController processSwapOnWindowOpenWithOpenerEnabled]):
+        (-[SettingsController toggleProcessSwapOnWindowOpenWithOpener:]):
+        Add menu entry in minibrowser to turn on process swap on cross-origin window.open().
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        Turn on process swap on cross-origin window.open() for corresponding test and update
+        test to expect that a new WebProcess is created.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForResponse):
+        Add null checks for injectedBundle.testRunner(). When we swap process on navigation,
+        the InjectedBundlePage::decidePolicyForResponse() gets called in the new process.
+        In this new process, we have constructed a InjectedBundlePage for the page but we
+        have not initialized the InjectedBundle members such as testRunner.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        Add a way for layout tests to turn on process swap on navigation via a test header.
+
 2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, reland r230697, r230720, and r230724.

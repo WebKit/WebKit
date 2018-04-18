@@ -43,7 +43,7 @@ class AbstractFrame;
 class JSDOMWindowProxy final : public JSC::JSProxy {
     using Base = JSC::JSProxy;
 public:
-    static JSDOMWindowProxy& create(JSC::VM&, DOMWindow&, DOMWrapperWorld&);
+    static JSDOMWindowProxy& create(JSC::VM&, AbstractDOMWindow&, DOMWrapperWorld&);
     static void destroy(JSCell*);
 
     DECLARE_INFO;
@@ -61,7 +61,7 @@ public:
 
 private:
     JSDOMWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
-    void finishCreation(JSC::VM&, DOMWindow&);
+    void finishCreation(JSC::VM&, AbstractDOMWindow&);
 
     Ref<DOMWrapperWorld> m_world;
 };

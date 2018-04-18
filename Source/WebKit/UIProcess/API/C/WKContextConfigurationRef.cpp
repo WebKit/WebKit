@@ -167,3 +167,13 @@ void WKContextConfigurationSetProcessSwapsOnNavigation(WKContextConfigurationRef
 {
     toImpl(configuration)->setProcessSwapsOnNavigation(swaps);
 }
+
+bool WKContextConfigurationProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration)
+{
+    return toImpl(configuration)->processSwapsOnWindowOpenWithOpener();
+}
+
+void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration, bool swaps)
+{
+    toImpl(configuration)->setProcessSwapsOnWindowOpenWithOpener(swaps);
+}

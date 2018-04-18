@@ -276,7 +276,9 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     // It's not actually correct to call shouldAllowAccessToFrame in this way because
     // JSDOMWindowBase* isn't the right object to represent the currently executing
     // JavaScript. Instead, we should use ExecState, like we do elsewhere.
-    JSDOMWindowBase* target = jsCast<JSDOMWindowBase*>(root->globalObject());
+    auto* target = JSC::jsDynamicCast<JSDOMWindowBase*>(root->globalObject()->vm(), root->globalObject());
+    if (!target)
+        return false;
     return BindingSecurity::shouldAllowAccessToDOMWindow(_private->originRootObject->globalObject()->globalExec(), target->wrapped());
 }
 

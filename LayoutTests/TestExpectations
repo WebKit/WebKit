@@ -109,6 +109,7 @@ http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
 http/tests/loading/resourceLoadStatistics/ [ Skip ]
 http/tests/resourceLoadStatistics/ [ Skip ]
 http/tests/storageAccess/ [ Skip ]
+http/tests/navigation/process-swap-window-open.html [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]

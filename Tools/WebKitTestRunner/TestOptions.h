@@ -56,6 +56,7 @@ struct TestOptions {
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
     bool enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations { false };
+    bool enableProcessSwapOnNavigation { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;
@@ -86,7 +87,8 @@ struct TestOptions {
             || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
             || applicationManifest != options.applicationManifest
             || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
-            || enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations != options.enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations)
+            || enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations != options.enableCSSAnimationsAndCSSTransitionsBackedByWebAnimations
+            || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation)
             return false;
 
         return true;

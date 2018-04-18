@@ -38,6 +38,7 @@
 #include "JSRTCSessionDescription.h"
 #include "JSReadableStream.h"
 #include "JSReadableStreamPrivateConstructors.h"
+#include "JSRemoteDOMWindow.h"
 #include "JSWorkerGlobalScope.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StructuredClone.h"
@@ -197,11 +198,13 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
 {
     if (inherits<JSDOMWindowBase>(vm()))
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
+    if (inherits<JSRemoteDOMWindowBase>(vm()))
+        return nullptr;
     if (inherits<JSWorkerGlobalScopeBase>(vm()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
     dataLog("Unexpected global object: ", JSValue(this), "\n");
     RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

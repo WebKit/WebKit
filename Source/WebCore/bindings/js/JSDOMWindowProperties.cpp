@@ -89,7 +89,15 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, ExecState* stat
     if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
         return false;
 
-    auto& window = jsCast<JSDOMWindowBase*>(thisObject->globalObject())->wrapped();
+    auto& vm = state->vm();
+
+    // FIXME: We should probably add support for JSRemoteDOMWindowBase too.
+    auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(vm, thisObject->globalObject());
+    if (!jsWindow)
+        return false;
+
+    auto& window = jsWindow->wrapped();
+
     if (auto* frame = window.frame())
         return jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(thisObject, *frame, state, propertyName, slot);
 

@@ -60,6 +60,7 @@
 @property (nonatomic, readonly) BOOL usesGameControllerFramework;
 @property (nonatomic, readonly) BOOL networkCacheSpeculativeRevalidationDisabled;
 @property (nonatomic, readonly) BOOL processSwapOnNavigationEnabled;
+@property (nonatomic, readonly) BOOL processSwapOnWindowOpenWithOpenerEnabled;
 
 @property (nonatomic, readonly) NSString *defaultURL;
 

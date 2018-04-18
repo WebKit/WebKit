@@ -237,6 +237,16 @@
     return _processPoolConfiguration->processSwapsOnNavigation();
 }
 
+- (void)setProcessSwapsOnWindowOpenWithOpener:(BOOL)swaps
+{
+    _processPoolConfiguration->setProcessSwapsOnWindowOpenWithOpener(swaps);
+}
+
+- (BOOL)processSwapsOnWindowOpenWithOpener
+{
+    return _processPoolConfiguration->processSwapsOnWindowOpenWithOpener();
+}
+
 #if PLATFORM(IOS)
 - (NSString *)CTDataConnectionServiceType
 {

@@ -79,10 +79,7 @@ JSDOMWindowProxy& WindowProxyController::createWindowProxy(DOMWrapperWorld& worl
 
     VM& vm = world.vm();
 
-    // FIXME: We do not support constructing a JSDOMWindowProxy for a RemoteDOMWindow yet.
-    RELEASE_ASSERT(is<DOMWindow>(m_frame.window()));
-
-    Strong<JSDOMWindowProxy> windowProxy(vm, &JSDOMWindowProxy::create(vm, *downcast<DOMWindow>(m_frame.window()), world));
+    Strong<JSDOMWindowProxy> windowProxy(vm, &JSDOMWindowProxy::create(vm, *m_frame.window(), world));
     Strong<JSDOMWindowProxy> windowProxy2(windowProxy);
     m_windowProxies.add(&world, windowProxy);
     world.didCreateWindowProxy(this);
@@ -140,10 +137,7 @@ void WindowProxyController::setDOMWindowForWindowProxy(AbstractDOMWindow* newDOM
         if (&windowProxy->wrapped() == newDOMWindow)
             continue;
 
-        // FIXME: We do not support setting a RemoteDOMWindow yet.
-        ASSERT(is<DOMWindow>(newDOMWindow));
-
-        windowProxy->setWindow(*downcast<DOMWindow>(newDOMWindow));
+        windowProxy->setWindow(*newDOMWindow);
 
         ScriptController* scriptController = nullptr;
         Page* page = nullptr;

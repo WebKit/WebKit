@@ -1876,6 +1876,15 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackIdentifier, Shar
     }
 }
 
+void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
+{
+    auto* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->send(Messages::WebPageProxy::DidCreateWindow(m_frame->frameID(), window.identifier()));
+}
+
 #if ENABLE(APPLICATION_MANIFEST)
 void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackIdentifier, const std::optional<WebCore::ApplicationManifest>& manifest)
 {

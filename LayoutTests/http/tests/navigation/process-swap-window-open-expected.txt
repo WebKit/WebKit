@@ -1,0 +1,44 @@
+Basic testing for the window returning window.open() becoming remote when navigating cross-origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS w.location.href is "about:blank"
+PASS w.name threw exception SecurityError: The operation is insecure..
+FAIL w.location.href should throw a SecurityError. Threw a TypeError.
+PASS w.document threw exception SecurityError: The operation is insecure..
+PASS w.history threw exception SecurityError: The operation is insecure..
+PASS w.locationbar threw exception SecurityError: The operation is insecure..
+PASS w.status threw exception SecurityError: The operation is insecure..
+PASS w.frameElement threw exception SecurityError: The operation is insecure..
+PASS w.navigator threw exception SecurityError: The operation is insecure..
+PASS w.alert threw exception SecurityError: The operation is insecure..
+PASS w.localStorage threw exception SecurityError: The operation is insecure..
+PASS w.sessionStorage threw exception SecurityError: The operation is insecure..
+PASS w.event threw exception SecurityError: The operation is insecure..
+PASS w.window is w
+PASS w.self is w
+PASS w.top is w
+PASS w.parent is w
+PASS w.frames is w
+PASS w.closed is false
+PASS w.length is 0
+FAIL w.opener should be [object Window]. Was null.
+PASS w.close is an instance of Function
+PASS w.focus is an instance of Function
+PASS w.blur is an instance of Function
+PASS w.postMessage is an instance of Function
+PASS w.location did not throw exception.
+FAIL w.location should not be null.
+PASS areArraysEqual(actual_properties, expected_property_names) is true
+PASS Object.getPrototype(w) threw exception TypeError: Object.getPrototype is not a function. (In 'Object.getPrototype(w)', 'Object.getPrototype' is undefined).
+PASS Object.setPrototype(w, {}) threw exception TypeError: Object.setPrototype is not a function. (In 'Object.setPrototype(w, {})', 'Object.setPrototype' is undefined).
+PASS Object.preventExtensions(w) threw exception TypeError: Cannot prevent extensions on this object.
+PASS Object.defineProperty(w, 'foo', {value: 1}) threw exception SecurityError: The operation is insecure..
+PASS delete w.closed threw exception SecurityError: The operation is insecure..
+PASS w.foo = 1 threw exception SecurityError: The operation is insecure..
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

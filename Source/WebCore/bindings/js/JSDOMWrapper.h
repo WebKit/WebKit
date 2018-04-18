@@ -27,7 +27,6 @@
 
 namespace WebCore {
 
-class JSDOMWindow;
 class ScriptExecutionContext;
 
 // JSC allows us to extend JSType. If the highest bit is set, we can add any Object types and they are
@@ -63,14 +62,8 @@ public:
     JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject()); }
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
 
-    JSDOMWindow& domWindow() const;
-
 protected:
-    JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
-        : Base(globalObject.vm(), structure)
-    {
-        ASSERT(scriptExecutionContext());
-    }
+    WEBCORE_EXPORT JSDOMObject(JSC::Structure*, JSC::JSGlobalObject&);
 };
 
 WEBCORE_EXPORT JSC::CompleteSubspace* outputConstraintSubspaceFor(JSC::VM&);

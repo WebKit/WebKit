@@ -29,8 +29,8 @@
 #include "config.h"
 #include "JSDOMWindowProxy.h"
 
+#include "AbstractFrame.h"
 #include "CommonVM.h"
-#include "Frame.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
@@ -49,14 +49,14 @@ inline JSDOMWindowProxy::JSDOMWindowProxy(VM& vm, Structure& structure, DOMWrapp
 {
 }
 
-void JSDOMWindowProxy::finishCreation(VM& vm, DOMWindow& window)
+void JSDOMWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     setWindow(window);
 }
 
-JSDOMWindowProxy& JSDOMWindowProxy::create(JSC::VM& vm, DOMWindow& window, DOMWrapperWorld& world)
+JSDOMWindowProxy& JSDOMWindowProxy::create(JSC::VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
 {
     auto& structure = *JSC::Structure::create(vm, 0, jsNull(), JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
     auto& proxy = *new (NotNull, JSC::allocateCell<JSDOMWindowProxy>(vm.heap)) JSDOMWindowProxy(vm, structure, world);

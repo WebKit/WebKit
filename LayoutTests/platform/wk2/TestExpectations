@@ -707,6 +707,9 @@ http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects.html [ Skip ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html [ Skip ]
 
+# Process swapping is only implemented on WebKit2.
+http/tests/navigation/process-swap-window-open.html [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

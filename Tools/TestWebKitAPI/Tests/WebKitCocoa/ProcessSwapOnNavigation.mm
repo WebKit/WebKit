@@ -409,6 +409,7 @@ TEST(ProcessSwap, CrossOriginWindowOpenWithOpener)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().processSwapsOnWindowOpenWithOpener = YES;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -443,8 +444,7 @@ TEST(ProcessSwap, CrossOriginWindowOpenWithOpener)
     auto pid2 = [createdWebView _webProcessIdentifier];
     EXPECT_TRUE(!!pid2);
 
-    // FIXME: This should eventually be false once we support process swapping when there is an opener.
-    EXPECT_EQ(pid1, pid2);
+    EXPECT_NE(pid1, pid2);
 }
 
 TEST(ProcessSwap, SameOriginWindowOpenNoOpener)

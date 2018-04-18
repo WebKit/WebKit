@@ -182,6 +182,8 @@
 #include <WebCore/PrintContext.h>
 #include <WebCore/PromisedBlobInfo.h>
 #include <WebCore/Range.h>
+#include <WebCore/RemoteDOMWindow.h>
+#include <WebCore/RemoteFrame.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
@@ -5869,6 +5871,32 @@ void WebPage::urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t task
 void WebPage::setIsSuspended(bool suspended)
 {
     m_isSuspended = suspended;
+}
+
+void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remoteFrameIdentifier, GlobalWindowIdentifier&& remoteWindowIdentifier)
+{
+    RefPtr<WebFrame> frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    if (frame->page() != this)
+        return;
+
+    auto remoteFrame = RemoteFrame::create(WTFMove(remoteFrameIdentifier));
+    auto remoteWindow = RemoteDOMWindow::create(remoteFrame.copyRef(), WTFMove(remoteWindowIdentifier));
+    UNUSED_PARAM(remoteWindow);
+
+    auto windowProxies = frame->coreFrame()->windowProxyController().releaseWindowProxies();
+    remoteFrame->windowProxyController().setWindowProxies(WTFMove(windowProxies));
+    remoteFrame->windowProxyController().setDOMWindowForWindowProxy(remoteWindow.ptr());
+
+    auto* coreFrame = frame->coreFrame();
+    coreFrame->setView(nullptr);
+    coreFrame->willDetachPage();
+    coreFrame->detachFromPage();
+
+    if (frame->isMainFrame())
+        close();
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)

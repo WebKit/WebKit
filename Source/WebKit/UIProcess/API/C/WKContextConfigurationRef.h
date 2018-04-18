@@ -71,6 +71,9 @@ WK_EXPORT void WKContextConfigurationSetShouldCaptureAudioInUIProcess(WKContextC
 WK_EXPORT bool WKContextConfigurationProcessSwapsOnNavigation(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetProcessSwapsOnNavigation(WKContextConfigurationRef configuration, bool swaps);
 
+WK_EXPORT bool WKContextConfigurationProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration, bool swaps);
+
 #ifdef __cplusplus
 }
 #endif

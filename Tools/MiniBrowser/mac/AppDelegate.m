@@ -100,6 +100,8 @@ static WKWebViewConfiguration *defaultConfiguration()
             processConfiguration.maximumProcessCount = 1;
         if ([SettingsController shared].processSwapOnNavigationEnabled)
             processConfiguration.processSwapsOnNavigation = true;
+        if ([SettingsController shared].processSwapOnWindowOpenWithOpenerEnabled)
+            processConfiguration.processSwapsOnWindowOpenWithOpener = true;
         
         configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:processConfiguration] autorelease];
 

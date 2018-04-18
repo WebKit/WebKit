@@ -156,6 +156,8 @@ enum class TextIndicatorPresentationTransition : uint8_t;
 
 struct CompositionUnderline;
 struct DictationAlternative;
+struct GlobalFrameIdentifier;
+struct GlobalWindowIdentifier;
 struct Highlight;
 struct KeypressCommand;
 struct PromisedBlobInfo;
@@ -1382,6 +1384,8 @@ private:
 #if USE(QUICK_LOOK)
     void didReceivePasswordForQuickLookDocument(const String&);
 #endif
+
+    void frameBecameRemote(uint64_t frameID, WebCore::GlobalFrameIdentifier&& remoteFrameIdentifier, WebCore::GlobalWindowIdentifier&& remoteWindowIdentifier);
 
     void registerURLSchemeHandler(uint64_t identifier, const String& scheme);
 

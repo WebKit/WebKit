@@ -1,3 +1,50 @@
+2018-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Add support for converting a local window to a remote window
+        https://bugs.webkit.org/show_bug.cgi?id=184515
+        <rdar://problem/39011318>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add initial support for process-swapping when navigating cross-origin as a result
+        of a window.open(). The window object returned by window.open() is initially same
+        origin and is for about:blank. The navigation cross-origin then happens and the
+        JS wrappers for the window then point to a cross-origin window which is remote (i.e.
+        hosted in another WebProcess).
+
+        The RemoteDOMWindow exposed to JS looks like a regular cross-origin Window with a few
+        exceptions due to our incomplete implementation (e.g. w.location returns null) and 
+        most of its API is currently not functional. The RemoteDOMWindow API will be implemented
+        in a follow-up by relying on IPC.
+
+        Test: http/tests/navigation/process-swap-window-open.html
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext const):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        * bindings/js/JSDOMWindowProperties.cpp:
+        (WebCore::JSDOMWindowProperties::getOwnPropertySlot):
+        * bindings/js/JSDOMWindowProxy.cpp:
+        (WebCore::JSDOMWindowProxy::finishCreation):
+        (WebCore::JSDOMWindowProxy::create):
+        * bindings/js/JSDOMWindowProxy.h:
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::JSDOMObject::JSDOMObject):
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/WindowProxyController.cpp:
+        (WebCore::WindowProxyController::createWindowProxy):
+        (WebCore::WindowProxyController::setDOMWindowForWindowProxy):
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject _isSafeScript]):
+        Teach more of our bindings code about RemoteDOMWindows.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createDOMWindow):
+        * loader/FrameLoaderClient.h:
+        Add FrameLoaderClient function to notify the client when a DOMWindow is constructed in
+        the frame. This is needed for WebKit2 to link the old window to its new representation
+        in the new WebProcess.
+
 2018-04-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [CMake] Add and enable the ENABLE_CSS_ANIMATIONS_LEVEL_2 feature define

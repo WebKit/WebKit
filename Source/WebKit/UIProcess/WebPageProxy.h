@@ -177,6 +177,7 @@ struct ApplicationManifest;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
 struct FileChooserSettings;
+struct GlobalWindowIdentifier;
 struct MediaStreamRequest;
 struct SecurityOriginData;
 struct TextAlternativeWithRange;
@@ -1338,6 +1339,7 @@ private:
 
     void didCreateMainFrame(uint64_t frameID);
     void didCreateSubframe(uint64_t frameID);
+    void didCreateWindow(uint64_t frameID, WebCore::GlobalWindowIdentifier&&);
 
     void didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::URL&&, WebCore::URL&& unreachableURL, const UserData&);
     void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::ResourceRequest&&, const UserData&);
@@ -1780,6 +1782,7 @@ private:
 
     RefPtr<WebFrameProxy> m_mainFrame;
     Function<void()> m_mainFrameCreationHandler;
+    Function<void(const WebCore::GlobalWindowIdentifier&)> m_mainFrameWindowCreationHandler;
 
     RefPtr<WebFrameProxy> m_focusedFrame;
     RefPtr<WebFrameProxy> m_frameSetLargestFrame;

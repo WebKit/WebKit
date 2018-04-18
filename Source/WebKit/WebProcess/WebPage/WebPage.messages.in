@@ -484,6 +484,8 @@ messages -> WebPage LegacyReceiver {
     DidReceivePasswordForQuickLookDocument(String password)
 #endif
 
+    FrameBecameRemote(uint64_t frameID, struct WebCore::GlobalFrameIdentifier remoteFrameIdentifier, struct WebCore::GlobalWindowIdentifier remoteWindowIdentifier)
+
     RegisterURLSchemeHandler(uint64_t identifier, String scheme)
 
     URLSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest request)

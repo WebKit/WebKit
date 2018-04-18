@@ -1,0 +1,71 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableProcessSwapOnNavigation=true ] -->
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Basic testing for the window returning window.open() becoming remote when navigating cross-origin.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows(true);
+
+function wasWindowNavigatedCrossOrigin()
+{
+    try {
+        w.name;
+        return false;
+    } catch (e) {
+        return true;
+    }
+}
+
+function runTest() {
+    forbiddenProperties = ["name", "location.href", "document", "history", "locationbar", "status", "frameElement", "navigator", "alert", "localStorage", "sessionStorage", "event"];
+    for (forbiddenProperty of forbiddenProperties)
+        shouldThrowErrorName("w." + forbiddenProperty, "SecurityError");
+
+    shouldBe("w.window", "w");
+    shouldBe("w.self", "w");
+    shouldBe("w.top", "w");
+    shouldBe("w.parent", "w");
+    shouldBe("w.frames", "w");
+    shouldBeFalse("w.closed");
+    shouldBe("w.length", "0");
+    shouldBe("w.opener", "window");
+    shouldBeType("w.close", "Function");
+    shouldBeType("w.focus", "Function");
+    shouldBeType("w.blur", "Function");
+    shouldBeType("w.postMessage", "Function");
+
+    shouldNotThrow("w.location");
+    shouldNotBe("w.location", "null");
+
+    expected_property_names = ["blur", "close", "closed", "focus", "frames", "length", "location", "opener", "parent", "postMessage", "self", "top", "window"];
+    actual_properties = Object.getOwnPropertyNames(w);
+    shouldBeTrue("areArraysEqual(actual_properties, expected_property_names)");
+
+    shouldThrowErrorName("Object.getPrototype(w)", "TypeError");
+    shouldThrowErrorName("Object.setPrototype(w, {})", "TypeError");
+    shouldThrowErrorName("Object.preventExtensions(w)", "TypeError");
+    shouldThrowErrorName("Object.defineProperty(w, 'foo', {value: 1})", "SecurityError");
+    shouldThrowErrorName("delete w.closed", "SecurityError");
+
+    shouldThrowErrorName("w.foo = 1", "SecurityError");
+
+    finishJSTest();
+}
+
+onload = function() {
+    w = window.open("http://localhost:8000/navigation/resources/success.html");
+    shouldBeEqualToString("w.location.href", "about:blank");
+
+    handle = setInterval(function() {
+        if (wasWindowNavigatedCrossOrigin()) {
+            clearInterval(handle);
+            runTest();
+        }
+    }, 5);
+}
+</script>
+</body>
+</html>

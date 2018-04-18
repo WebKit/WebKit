@@ -141,7 +141,7 @@ public:
     void addDestructionObserver(FrameDestructionObserver*);
     void removeDestructionObserver(FrameDestructionObserver*);
 
-    void willDetachPage();
+    WEBCORE_EXPORT void willDetachPage();
     void detachFromPage();
     void disconnectOwnerElement();
 

@@ -1,3 +1,77 @@
+2018-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Add support for converting a local window to a remote window
+        https://bugs.webkit.org/show_bug.cgi?id=184515
+        <rdar://problem/39011318>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add initial support for process-swapping when navigating cross-origin as a result
+        of a window.open(). The window object returned by window.open() is initially same
+        origin and is for about:blank. The navigation cross-origin then happens and the
+        JS wrappers for the window then point to a cross-origin window which is remote (i.e.
+        hosted in another WebProcess).
+
+        The RemoteDOMWindow exposed to JS looks like a regular cross-origin Window with a few
+        exceptions due to our incomplete implementation (e.g. w.location returns null) and
+        most of its API is currently not functional. The RemoteDOMWindow API will be implemented
+        in a follow-up by relying on IPC.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationProcessSwapsOnWindowOpenWithOpener):
+        (WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setProcessSwapsOnWindowOpenWithOpener:]):
+        (-[_WKProcessPoolConfiguration processSwapsOnWindowOpenWithOpener]):
+        Add ProcessPool configuration flag to turn on processSwap on window.open(), even
+        if there is an opener.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        If the navigation was triggered via window.open(), then set up on handler for when
+        a DOMWindow is constructed for the main frame in the new process.
+
+        (WebKit::WebPageProxy::didCreateWindow):
+        When a Window is constructed for the main frame in a new process on process swap,
+        notify the old process that its representation of the window should become remote
+        and provide it with the Frame / Window identifiers it needs.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        Do process swapping on cross-origin window.open() if the corresponding setting is
+        enabled.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didCreateWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::frameBecameRemote):
+        This is called when process swapping has happened due to a window.open() navigation
+        cross-origin, when a Frame / Window has been constructed in the new process. We do
+        the following:
+        - Construct a RemoteFrame / RemoteWindow using the provided global identifiers to
+          represent the Frame / Window in the new process.
+        - We transfer the WindowProxies from the old Frame's WindowProxyController to the
+          new RemoteFrame's WindowProxyController.
+        - We update the window proxied by those WindowProxies to be the new RemoteWindow.
+        - We detach the old Frame as it is now remote and represented by the new RemoteFrame
+          object we constructed.
+        - If the old frame was the main frame (always the case currently), we close the page
+          as it is no longer needed. The new RemoteFrame is currently owned by the RemoteWindow
+          which is kept alive by its JS wrappers.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.1 release.

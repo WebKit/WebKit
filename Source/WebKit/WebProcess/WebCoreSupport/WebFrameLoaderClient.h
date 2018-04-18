@@ -269,6 +269,8 @@ private:
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
     void finishedLoadingIcon(uint64_t callbackIdentifier, WebCore::SharedBuffer*) final;
 
+    void didCreateWindow(WebCore::DOMWindow&) final;
+
 #if ENABLE(APPLICATION_MANIFEST)
     void finishedLoadingApplicationManifest(uint64_t, const std::optional<WebCore::ApplicationManifest>&) final;
 #endif

@@ -1985,14 +1985,17 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     if (!page.process().hasCommittedAnyProvisionalLoads())
         return page.process();
 
-    // FIXME: We should support process swap when a window has an opener.
-    if (navigation.opener())
-        return page.process();
-
     if (navigation.isCrossOriginWindowOpenNavigation()) {
+        if (navigation.opener() && !m_configuration->processSwapsOnWindowOpenWithOpener())
+            return page.process();
+
         action = PolicyAction::Ignore;
         return createNewWebProcess(page.websiteDataStore());
     }
+
+    // FIXME: We should support process swap when a window has an opener.
+    if (navigation.opener())
+        return page.process();
 
     auto targetURL = navigation.currentRequest().url();
     auto url = URL { ParsedURLString, page.pageLoadState().url() };
