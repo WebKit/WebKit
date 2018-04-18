@@ -56,8 +56,8 @@ TEST(WTF, Hasher_integer)
     EXPECT_EQ(zero32BitHash, computeHash(0));
 
     EXPECT_EQ(zero64BitHash, computeHash(0ULL));
-    EXPECT_EQ(zero64BitHash, computeHash(0L));
-    EXPECT_EQ(zero64BitHash, computeHash(0UL));
+    EXPECT_EQ(sizeof(long) == sizeof(int32_t) ? zero32BitHash : zero64BitHash, computeHash(0L));
+    EXPECT_EQ(sizeof(unsigned long) == sizeof(uint32_t) ? zero32BitHash : zero64BitHash, computeHash(0UL));
     EXPECT_EQ(zero64BitHash, computeHash(0LL));
 
     EXPECT_EQ(one32BitHash, computeHash(1U));
@@ -70,8 +70,8 @@ TEST(WTF, Hasher_integer)
     EXPECT_EQ(one32BitHash, computeHash(1));
 
     EXPECT_EQ(one64BitHash, computeHash(1ULL));
-    EXPECT_EQ(one64BitHash, computeHash(1L));
-    EXPECT_EQ(one64BitHash, computeHash(1UL));
+    EXPECT_EQ(sizeof(long) == sizeof(int32_t) ? one32BitHash : one64BitHash, computeHash(1L));
+    EXPECT_EQ(sizeof(unsigned long) == sizeof(uint32_t) ? one32BitHash : one64BitHash, computeHash(1UL));
     EXPECT_EQ(one64BitHash, computeHash(1LL));
 
     EXPECT_EQ(1772381661U, computeHash(0x7FU));
@@ -107,16 +107,16 @@ TEST(WTF, Hasher_integer)
 
     EXPECT_EQ(1264532604U, computeHash(0x8000000000000000ULL));
     EXPECT_EQ(1264532604U, computeHash(std::numeric_limits<int64_t>::min()));
-    EXPECT_EQ(1264532604U, computeHash(std::numeric_limits<long>::min()));
+    EXPECT_EQ(sizeof(long) == sizeof(int32_t) ? 2425683428U : 1264532604U, computeHash(std::numeric_limits<long>::min()));
 
     EXPECT_EQ(2961049834U, computeHash(0x7FFFFFFFFFFFFFFFULL));
     EXPECT_EQ(2961049834U, computeHash(std::numeric_limits<int64_t>::max()));
-    EXPECT_EQ(2961049834U, computeHash(std::numeric_limits<long>::max()));
+    EXPECT_EQ(sizeof(long) == sizeof(int32_t) ? 3430670328U : 2961049834U, computeHash(std::numeric_limits<long>::max()));
 
     EXPECT_EQ(1106332091U, computeHash(0xFFFFFFFFFFFFFFFFULL));
     EXPECT_EQ(1106332091U, computeHash(std::numeric_limits<uint64_t>::max()));
-    EXPECT_EQ(1106332091U, computeHash(std::numeric_limits<unsigned long>::max()));
-    EXPECT_EQ(1106332091U, computeHash(-1L));
+    EXPECT_EQ(sizeof(long) == sizeof(int32_t) ? 1955511435U : 1106332091U, computeHash(std::numeric_limits<unsigned long>::max()));
+    EXPECT_EQ(sizeof(long) == sizeof(int32_t) ? 1955511435U : 1106332091U, computeHash(-1L));
     EXPECT_EQ(1106332091U, computeHash(-1LL));
 }
 
