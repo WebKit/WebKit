@@ -1,3 +1,81 @@
+2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, reland r230697, r230720, and r230724.
+        https://bugs.webkit.org/show_bug.cgi?id=184600
+
+        * wasm.yaml:
+        * wasm/modules/constant.wasm: Added.
+        * wasm/modules/constant.wat: Added.
+        * wasm/modules/default-import-star-error.js: Added.
+        (then):
+        * wasm/modules/default-import-star-error/entry.wasm: Added.
+        * wasm/modules/default-import-star-error/entry.wat: Added.
+        * wasm/modules/default-import-star-error/t0.js: Added.
+        * wasm/modules/default-import-star-error/t1.js: Added.
+        * wasm/modules/default-import-star-error/t2.js: Added.
+        (export.default.Cocoa):
+        * wasm/modules/js-wasm-cycle.js: Added.
+        * wasm/modules/js-wasm-cycle/entry.js: Added.
+        (from.string_appeared_here.export.return42):
+        * wasm/modules/js-wasm-cycle/sum.wasm: Added.
+        * wasm/modules/js-wasm-cycle/sum.wat: Added.
+        * wasm/modules/js-wasm-function-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-function.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-global-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-global.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-memory-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-memory.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-start.js: Added.
+        (then):
+        * wasm/modules/js-wasm-table-namespace.js: Added.
+        (assert.throws):
+        * wasm/modules/js-wasm-table.js: Added.
+        (assert.throws):
+        * wasm/modules/memory.wasm: Added.
+        * wasm/modules/memory.wat: Added.
+        * wasm/modules/run-from-wasm.wasm: Added.
+        * wasm/modules/run-from-wasm.wat: Added.
+        * wasm/modules/run-from-wasm/check.js: Added.
+        (export.check):
+        * wasm/modules/start.wasm: Added.
+        * wasm/modules/start.wat: Added.
+        * wasm/modules/sum.wasm: Added.
+        * wasm/modules/sum.wat: Added.
+        * wasm/modules/table.wasm: Added.
+        * wasm/modules/table.wat: Added.
+        * wasm/modules/wasm-imports-js-exports.js: Added.
+        * wasm/modules/wasm-imports-js-exports/imports.wasm: Added.
+        * wasm/modules/wasm-imports-js-exports/imports.wat: Added.
+        * wasm/modules/wasm-imports-js-exports/sum.js: Added.
+        (export.sum):
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports.js: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/imports.wasm: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/imports.wat: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/re-export.js: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/sum.wasm: Added.
+        * wasm/modules/wasm-imports-js-re-exports-wasm-exports/sum.wat: Added.
+        * wasm/modules/wasm-imports-wasm-exports.js: Added.
+        * wasm/modules/wasm-imports-wasm-exports/imports.wasm: Added.
+        * wasm/modules/wasm-imports-wasm-exports/imports.wat: Added.
+        * wasm/modules/wasm-imports-wasm-exports/sum.wasm: Added.
+        * wasm/modules/wasm-imports-wasm-exports/sum.wat: Added.
+        * wasm/modules/wasm-js-cycle.js: Added.
+        * wasm/modules/wasm-js-cycle/entry.wasm: Added.
+        * wasm/modules/wasm-js-cycle/entry.wat: Added.
+        * wasm/modules/wasm-js-cycle/sum.js: Added.
+        (from.string_appeared_here.export.sum):
+        * wasm/modules/wasm-wasm-cycle.js: Added.
+        * wasm/modules/wasm-wasm-cycle/entry.wasm: Added.
+        * wasm/modules/wasm-wasm-cycle/entry.wat: Added.
+        * wasm/modules/wasm-wasm-cycle/sum.wasm: Added.
+        * wasm/modules/wasm-wasm-cycle/sum.wat: Added.
+
 2018-04-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230697, r230720, and r230724.

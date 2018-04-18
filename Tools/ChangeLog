@@ -1,3 +1,10 @@
+2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, reland r230697, r230720, and r230724.
+        https://bugs.webkit.org/show_bug.cgi?id=184600
+
+        * Scripts/run-jsc-stress-tests:
+
 2018-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Make it possible to handle JSCClass external properties not added to the prototype

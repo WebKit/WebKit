@@ -32,7 +32,9 @@
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSModuleRecord.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
+#include "WebAssemblyModuleRecord.h"
 
 namespace JSC {
 namespace AbstractModuleRecordInternal {
@@ -137,19 +139,11 @@ auto AbstractModuleRecord::Resolution::ambiguous() -> Resolution
     return Resolution { Type::Ambiguous, nullptr, Identifier() };
 }
 
-static JSValue identifierToJSValue(ExecState* exec, const Identifier& identifier)
-{
-    VM& vm = exec->vm();
-    if (identifier.isSymbol())
-        return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(&vm, identifier.impl());
-}
-
 AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(ExecState* exec, const Identifier& moduleName)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue moduleNameValue = identifierToJSValue(exec, moduleName);
+    JSValue moduleNameValue = identifierToJSValue(vm, moduleName);
     JSValue entry = m_dependenciesMap->JSMap::get(exec, moduleNameValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
     scope.release();
@@ -166,7 +160,7 @@ auto AbstractModuleRecord::resolveImport(ExecState* exec, const Identifier& loca
         return Resolution::notFound();
 
     const ImportEntry& importEntry = *optionalImportEntry;
-    if (importEntry.isNamespace(exec->vm()))
+    if (importEntry.type == AbstractModuleRecord::ImportEntryType::Namespace)
         return Resolution::notFound();
 
     AbstractModuleRecord* importedModule = hostResolveImportedModule(exec, importEntry.moduleRequest);
@@ -773,6 +767,31 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(ExecState* exe
     RETURN_IF_EXCEPTION(scope, nullptr);
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
     return moduleNamespaceObject;
+}
+
+void AbstractModuleRecord::link(ExecState* exec, JSValue scriptFetcher)
+{
+    VM& vm = exec->vm();
+    if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
+        return jsModuleRecord->link(exec, scriptFetcher);
+#if ENABLE(WEBASSEMBLY)
+    if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this))
+        return wasmModuleRecord->link(exec, scriptFetcher, nullptr, Wasm::CreationMode::FromModuleLoader);
+#endif
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(vm, this))
+        return jsModuleRecord->evaluate(exec);
+#if ENABLE(WEBASSEMBLY)
+    if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(vm, this))
+        return wasmModuleRecord->evaluate(exec);
+#endif
+    RELEASE_ASSERT_NOT_REACHED();
+    return jsUndefined();
 }
 
 static String printableName(const RefPtr<UniquedStringImpl>& uid)

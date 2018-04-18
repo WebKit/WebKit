@@ -22,21 +22,23 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - path: wasm/self-test/
-  cmd: runWebAssembly unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/js-api/
-  cmd: runWebAssembly unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/noJIT/
   cmd: runNoJIT unless parseRunCommands
 - path: wasm/function-tests
-  cmd: runWebAssembly unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/fuzz
-  cmd: runWebAssembly unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/stress
-  cmd: runWebAssembly unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/lowExecutableMemory
   cmd: runWebAssemblyLowExecutableMemory unless parseRunCommands
 - path: wasm/regress/
-  cmd: runWebAssembly unless parseRunCommands
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/modules/
+  cmd: runWebAssemblySuite unless parseRunCommands
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -176,3 +178,6 @@
   cmd: runWebAssemblySpecTest :normal
 - path: wasm/spec-tests/utf8-import-module.wast.js
   cmd: runWebAssemblySpecTest :normal
+
+- path: wasm/modules/run-from-wasm.wasm
+  cmd: runWebAssembly

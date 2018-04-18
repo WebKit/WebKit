@@ -1,3 +1,73 @@
+2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, reland r230697, r230720, and r230724.
+        https://bugs.webkit.org/show_bug.cgi?id=184600
+
+        With CatchScope check.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ModuleLoaderPrototype.js:
+        (globalPrivate.newRegistryEntry):
+        (requestInstantiate):
+        (link):
+        * jsc.cpp:
+        (convertShebangToJSComment):
+        (fillBufferWithContentsOfFile):
+        (fetchModuleFromLocalFileSystem):
+        (GlobalObject::moduleLoaderFetch):
+        (functionDollarAgentStart):
+        (checkException):
+        (runWithOptions):
+        * parser/NodesAnalyzeModule.cpp:
+        (JSC::ImportDeclarationNode::analyzeModule):
+        * parser/SourceProvider.h:
+        (JSC::WebAssemblySourceProvider::create):
+        (JSC::WebAssemblySourceProvider::WebAssemblySourceProvider):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::hostResolveImportedModule):
+        (JSC::AbstractModuleRecord::resolveImport):
+        (JSC::AbstractModuleRecord::link):
+        (JSC::AbstractModuleRecord::evaluate):
+        (JSC::identifierToJSValue): Deleted.
+        * runtime/AbstractModuleRecord.h:
+        (JSC::AbstractModuleRecord::moduleEnvironmentMayBeNull):
+        (JSC::AbstractModuleRecord::ImportEntry::isNamespace const): Deleted.
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::evaluate):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSModuleRecord.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        (JSC::moduleLoaderPrototypeRequestedModules):
+        (JSC::moduleLoaderPrototypeModuleDeclarationInstantiation):
+        * wasm/WasmCreationMode.h: Copied from Source/JavaScriptCore/wasm/js/WebAssemblyPrototype.h.
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::getWasmBufferFromValue):
+        (JSC::createSourceBufferFromValue):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::createPrivateModuleKey):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::prepareLink):
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::resolve):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::WebAssemblyPrototype::instantiate):
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::webAssemblyValidateFunc):
+        * wasm/js/WebAssemblyPrototype.h:
+
 2018-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Make it possible to handle JSCClass external properties not added to the prototype

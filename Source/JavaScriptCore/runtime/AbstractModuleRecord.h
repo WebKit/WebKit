@@ -61,15 +61,12 @@ public:
         Identifier localName;
     };
 
+    enum class ImportEntryType { Single, Namespace };
     struct ImportEntry {
+        ImportEntryType type;
         Identifier moduleRequest;
         Identifier importName;
         Identifier localName;
-
-        bool isNamespace(VM& vm) const
-        {
-            return importName == vm.propertyNames->timesIdentifier;
-        }
     };
 
     typedef WTF::ListHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> OrderedIdentifierSet;
@@ -118,6 +115,14 @@ public:
         ASSERT(m_moduleEnvironment);
         return m_moduleEnvironment.get();
     }
+
+    JSModuleEnvironment* moduleEnvironmentMayBeNull()
+    {
+        return m_moduleEnvironment.get();
+    }
+
+    void link(ExecState*, JSValue scriptFetcher);
+    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
 
 protected:
     AbstractModuleRecord(VM&, Structure*, const Identifier&);

@@ -32,6 +32,7 @@
 #include "Exception.h"
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSModuleNamespaceObject.h"
 #include "JSPromiseDeferred.h"
 #include "JSToWasm.h"
 #include "JSWebAssemblyHelpers.h"
@@ -120,16 +121,21 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     }
 }
 
-enum class Resolve { WithInstance, WithModuleAndInstance };
-static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyInstance* instance, JSWebAssemblyModule* module, Ref<Wasm::CodeBlock>&& codeBlock, Resolve resolveKind)
+enum class Resolve { WithInstance, WithModuleRecord, WithModuleAndInstance };
+static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyInstance* instance, JSWebAssemblyModule* module, JSObject* importObject, Ref<Wasm::CodeBlock>&& codeBlock, Resolve resolveKind, Wasm::CreationMode creationMode)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    instance->finalizeCreation(vm, exec, WTFMove(codeBlock));
+    instance->finalizeCreation(vm, exec, WTFMove(codeBlock), importObject, creationMode);
     RETURN_IF_EXCEPTION(scope, reject(exec, scope, promise));
 
     if (resolveKind == Resolve::WithInstance)
         promise->resolve(exec, instance);
-    else {
+    else if (resolveKind == Resolve::WithModuleRecord) {
+        auto* moduleRecord = instance->moduleNamespaceObject()->moduleRecord();
+        if (Options::dumpModuleRecord())
+            moduleRecord->dump();
+        promise->resolve(exec, moduleRecord);
+    } else {
         JSObject* result = constructEmptyObject(exec);
         result->putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("module")), module);
         result->putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("instance")), instance);
@@ -138,51 +144,65 @@ static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAs
     CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());
 }
 
-static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyModule* module, JSObject* importObject, Resolve resolveKind)
+static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyModule* module, JSObject* importObject, const Identifier& moduleKey, Resolve resolveKind, Wasm::CreationMode creationMode)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
     // In order to avoid potentially recompiling a module. We first gather all the import/memory information prior to compiling code.
-    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, module, importObject, exec->lexicalGlobalObject()->WebAssemblyInstanceStructure(), Ref<Wasm::Module>(module->module()));
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, moduleKey, module, importObject, exec->lexicalGlobalObject()->WebAssemblyInstanceStructure(), Ref<Wasm::Module>(module->module()), creationMode);
     RETURN_IF_EXCEPTION(scope, reject(exec, scope, promise));
 
     Vector<Strong<JSCell>> dependencies;
     // The instance keeps the module alive.
     dependencies.append(Strong<JSCell>(vm, instance));
+    dependencies.append(Strong<JSCell>(vm, importObject));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
     // Note: This completion task may or may not get called immediately.
-    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CodeBlock::CallbackType>([promise, instance, module, resolveKind, &vm] (Ref<Wasm::CodeBlock>&& refCodeBlock) mutable {
+    module->module().compileAsync(&vm.wasmContext, instance->memoryMode(), createSharedTask<Wasm::CodeBlock::CallbackType>([promise, instance, module, importObject, resolveKind, creationMode, &vm] (Ref<Wasm::CodeBlock>&& refCodeBlock) mutable {
         RefPtr<Wasm::CodeBlock> codeBlock = WTFMove(refCodeBlock);
-        vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, resolveKind, &vm, codeBlock = WTFMove(codeBlock)] () mutable {
+        vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, instance, module, importObject, resolveKind, creationMode, &vm, codeBlock = WTFMove(codeBlock)] () mutable {
             ExecState* exec = instance->globalObject()->globalExec();
-            resolve(vm, exec, promise, instance, module, codeBlock.releaseNonNull(), resolveKind);
+            resolve(vm, exec, promise, instance, module, importObject, codeBlock.releaseNonNull(), resolveKind, creationMode);
         });
     }), &Wasm::createJSToWasmWrapper, &Wasm::wasmToJSException);
 }
 
-static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSValue buffer, JSObject* importObject)
+static void compileAndInstantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, const Identifier& moduleKey, JSValue buffer, JSObject* importObject, Resolve resolveKind, Wasm::CreationMode creationMode)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto* globalObject = exec->lexicalGlobalObject();
 
+    JSCell* moduleKeyCell = identifierToJSValue(vm, moduleKey).asCell();
     Vector<Strong<JSCell>> dependencies;
     dependencies.append(Strong<JSCell>(vm, importObject));
+    dependencies.append(Strong<JSCell>(vm, moduleKeyCell));
     vm.promiseDeferredTimer->addPendingPromise(promise, WTFMove(dependencies));
 
     Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, buffer);
     RETURN_IF_EXCEPTION(scope, reject(exec, scope, promise));
 
-    Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, importObject, globalObject, &vm] (Wasm::Module::ValidationResult&& result) mutable {
-        vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, globalObject, result = WTFMove(result), &vm] () mutable {
+    Wasm::Module::validateAsync(&vm.wasmContext, WTFMove(source), createSharedTask<Wasm::Module::CallbackType>([promise, importObject, moduleKeyCell, globalObject, resolveKind, creationMode, &vm] (Wasm::Module::ValidationResult&& result) mutable {
+        vm.promiseDeferredTimer->scheduleWorkSoon(promise, [promise, importObject, moduleKeyCell, globalObject, result = WTFMove(result), resolveKind, creationMode, &vm] () mutable {
             auto scope = DECLARE_CATCH_SCOPE(vm);
             ExecState* exec = globalObject->globalExec();
             JSWebAssemblyModule* module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(result));
             if (UNLIKELY(scope.exception()))
                 return reject(exec, scope, promise);
 
-            instantiate(vm, exec, promise, module, importObject, Resolve::WithModuleAndInstance);
+            const Identifier moduleKey = JSValue(moduleKeyCell).toPropertyKey(exec);
+            if (UNLIKELY(scope.exception()))
+                return reject(exec, scope, promise);
+
+            instantiate(vm, exec, promise, module, importObject, moduleKey, resolveKind, creationMode);
         });
     }));
+}
+
+JSValue WebAssemblyPrototype::instantiate(ExecState* exec, JSPromiseDeferred* promise, const Identifier& moduleKey, JSValue argument)
+{
+    VM& vm = exec->vm();
+    compileAndInstantiate(vm, exec, promise, moduleKey, argument, nullptr, Resolve::WithModuleRecord, Wasm::CreationMode::FromModuleLoader);
+    return promise->promise();
 }
 
 static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState* exec)
@@ -206,9 +226,9 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState* exec)
         } else {
             JSValue firstArgument = exec->argument(0);
             if (auto* module = jsDynamicCast<JSWebAssemblyModule*>(vm, firstArgument))
-                instantiate(vm, exec, promise, module, importObject, Resolve::WithInstance);
+                instantiate(vm, exec, promise, module, importObject, JSWebAssemblyInstance::createPrivateModuleKey(), Resolve::WithInstance, Wasm::CreationMode::FromJS);
             else
-                compileAndInstantiate(vm, exec, promise, firstArgument, importObject);
+                compileAndInstantiate(vm, exec, promise, JSWebAssemblyInstance::createPrivateModuleKey(), firstArgument, importObject, Resolve::WithModuleAndInstance, Wasm::CreationMode::FromJS);
         }
 
         return JSValue::encode(promise->promise());
@@ -220,7 +240,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    uint8_t* base;
+    const uint8_t* base;
     size_t byteSize;
     std::tie(base, byteSize) = getWasmBufferFromValue(exec, exec->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

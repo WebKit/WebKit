@@ -275,10 +275,9 @@ JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRec
     if (globalObject->globalObjectMethodTable()->moduleLoaderEvaluate)
         return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, exec, this, key, moduleRecordValue, scriptFetcher);
 
-    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->vm(), moduleRecordValue);
-    if (!moduleRecord)
-        return jsUndefined();
-    return moduleRecord->evaluate(exec);
+    if (auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(exec->vm(), moduleRecordValue))
+        return moduleRecord->evaluate(exec);
+    return jsUndefined();
 }
 
 JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(ExecState* exec, JSValue moduleRecordValue)

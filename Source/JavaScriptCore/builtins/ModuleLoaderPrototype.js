@@ -95,7 +95,6 @@ function newRegistryEntry(key)
         instantiate: @undefined,
         satisfy: @undefined,
         dependencies: [], // To keep the module order, we store the module keys in the array.
-        dependenciesMap: @undefined,
         module: @undefined, // JSModuleRecord
         linkError: @undefined,
         linkSucceeded: true,
@@ -197,22 +196,22 @@ function requestInstantiate(entry, parameters, fetcher)
         entry.instantiate = instantiatePromise;
 
         var key = entry.key;
-        var moduleRecord = this.parseModule(key, source);
-        var dependenciesMap = moduleRecord.dependenciesMap;
-        var requestedModules = this.requestedModules(moduleRecord);
-        var dependencies = @newArrayWithSize(requestedModules.length);
-        for (var i = 0, length = requestedModules.length; i < length; ++i) {
-            var depName = requestedModules[i];
-            var depKey = this.resolveSync(depName, key, fetcher);
-            var depEntry = this.ensureRegistered(depKey);
-            @putByValDirect(dependencies, i, depEntry);
-            dependenciesMap.@set(depName, depEntry);
-        }
-        entry.dependencies = dependencies;
-        entry.dependenciesMap = dependenciesMap;
-        entry.module = moduleRecord;
-        @setStateToMax(entry, @ModuleSatisfy);
-        return entry;
+        return this.parseModule(key, source).then((moduleRecord) => {
+            var dependenciesMap = moduleRecord.dependenciesMap;
+            var requestedModules = this.requestedModules(moduleRecord);
+            var dependencies = @newArrayWithSize(requestedModules.length);
+            for (var i = 0, length = requestedModules.length; i < length; ++i) {
+                var depName = requestedModules[i];
+                var depKey = this.resolveSync(depName, key, fetcher);
+                var depEntry = this.ensureRegistered(depKey);
+                @putByValDirect(dependencies, i, depEntry);
+                dependenciesMap.@set(depName, depEntry);
+            }
+            entry.dependencies = dependencies;
+            entry.module = moduleRecord;
+            @setStateToMax(entry, @ModuleSatisfy);
+            return entry;
+        });
     });
     return instantiatePromise;
 }
@@ -288,7 +287,7 @@ function link(entry, fetcher)
         for (var i = 0, length = dependencies.length; i < length; ++i)
             this.link(dependencies[i], fetcher);
 
-        this.moduleDeclarationInstantiation(entry.module, entry.key, fetcher);
+        this.moduleDeclarationInstantiation(entry.module, fetcher);
     } catch (error) {
         entry.linkSucceeded = false;
         entry.linkError = error;
