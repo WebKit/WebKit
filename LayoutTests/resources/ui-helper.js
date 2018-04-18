@@ -100,6 +100,16 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static waitForKeyboardToHide()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.didHideKeyboardCallback = () => uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
     static getUICaretRect()
     {
         if (!this.isWebKit2() || !this.isIOS())

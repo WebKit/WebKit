@@ -1,3 +1,64 @@
+2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Programmatically changing focus when an element already has focus is a confusing experience
+        https://bugs.webkit.org/show_bug.cgi?id=184635
+        <rdar://problem/39440642>
+
+        Reviewed by Tim Horton.
+
+        Currently on iOS, we allow element focus to present UI if the keyboard is already shown. In extra zoom mode,
+        this would lead to a confusing experience when the focus form control overlay is disabled, since fullscreen
+        input view controllers are swapped out from underneath the user. Currently, this also puts the UI process into a
+        bad state where the focused form control overlay is active, but still hidden. This patch makes some tweaks to
+        input view controller handling in the UI process to address these issues, and also adds WebKitTestRunner support
+        for simulating interactions with select menus in extra zoom mode. See comments below for more detail.
+
+        Test: fast/events/extrazoom/change-focus-during-change-event.html
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        Add new SPI delegate hooks to notify the UI delegate when view controllers are presented or dismissed in extra
+        zoom mode. See -presentViewControllerForCurrentAssistedNode and -dismissAllInputViewControllers.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::takeBackgroundActivityTokenForFullscreenInput):
+        (WebKit::WebProcessProxy::releaseBackgroundActivityTokenForFullscreenInput):
+
+        See the comment below -dismissAllInputViewControllers.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        In extra zoom mode, when changing focus from one assisted node to another, only allow the second node to be
+        assisted if the focused form control overlay is being shown. Otherwise, (i.e. when a fullscreen input view
+        controller is being presented), don't allow focus to start an input session.
+
+        Additionally, make a minor tweak to allow the previous node to blur, even if we are not showing the keyboard for
+        the new focused element. Without this adjustment, in the case where the page has programmatically focused
+        another element while a fullscreen input view controller is presented, we'll show the old view controller for
+        the new focused element.
+
+        (-[WKContentView presentViewControllerForCurrentAssistedNode]):
+        (-[WKContentView dismissAllInputViewControllers:]):
+
+        Currently, when a fullscreen input view controller is presented, the web process gets backgrounded. This
+        prevents event handlers from executing, which leads to strange behaviors in many cases (for instance: if we
+        have a multiple select, and the "change" event handler blurs the select, the user may check or uncheck multiple
+        items, but only the first change will actually take effect).
+
+        To fix this, we maintain a background activity token while presenting an input view controller.
+
+        (-[WKContentView focusedFormControlViewDidBeginEditing:]):
+
+        Start hiding the focused form overlay when re-presenting an input view controller. This allows us to bail from
+        showing fullscreen input UI for another focused element if focus programmatically changes while the current
+        fullscreen input view controller is presented, due to the -isHidden check in -_startAssistingNode:.
+
+        (-[WKContentView selectFormAccessoryPickerRow:]):
+
+        Simulate tapping a given row in select menu UI in extra zoom mode.
+
 2018-04-17  Conrad Shultz  <conrad_shultz@apple.com>
 
         WebKit::DisplayLink maintains a strong reference to WebPageProxy, creating a reference cycle

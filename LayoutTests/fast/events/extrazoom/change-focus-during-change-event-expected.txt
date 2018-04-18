@@ -1,0 +1,9 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Choosing second option in top select...
+Option two should be selected: true
+Choosing second option in bottom select...
+Option four should be selected: true
+

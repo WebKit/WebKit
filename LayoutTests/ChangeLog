@@ -1,5 +1,27 @@
 2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [Extra zoom mode] Programmatically changing focus when an element already has focus is a confusing experience
+        https://bugs.webkit.org/show_bug.cgi?id=184635
+        <rdar://problem/39440642>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to exercise the following sequence of events in extra zoom mode:
+
+        1. Focus select element #1.
+        2. Choose an unselected option.
+        3. Programmatically focus select element #2 in the "change" event handler.
+        4. Choose an unselected option.
+        5. Programmatically blur select element #2 in the "change" event handler.
+
+        * fast/events/extrazoom/change-focus-during-change-event-expected.txt: Added.
+        * fast/events/extrazoom/change-focus-during-change-event.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForKeyboardToHide.return.new.Promise):
+        (window.UIHelper.waitForKeyboardToHide):
+
+2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Extra zoom mode] Double tap to zoom should account for text legibility in extra zoom mode
         https://bugs.webkit.org/show_bug.cgi?id=184631
         <rdar://problem/39303706>

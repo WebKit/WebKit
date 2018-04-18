@@ -1,3 +1,24 @@
+2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Programmatically changing focus when an element already has focus is a confusing experience
+        https://bugs.webkit.org/show_bug.cgi?id=184635
+        <rdar://problem/39440642>
+
+        Reviewed by Tim Horton.
+
+        Add plumbing to support invoking `didHideKeyboardCallback` and `didShowKeyboardCallback` when (respectively)
+        dismissing or presenting fullscreen input view controllers in extra zoom mode.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]):
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView _invokeShowKeyboardCallbackIfNecessary]):
+        (-[TestRunnerWKWebView _invokeHideKeyboardCallbackIfNecessary]):
+        (-[TestRunnerWKWebView _keyboardDidShow:]):
+        (-[TestRunnerWKWebView _keyboardDidHide:]):
+        (-[TestRunnerWKWebView _webView:didPresentFocusedElementViewController:]):
+        (-[TestRunnerWKWebView _webView:didDismissFocusedElementViewController:]):
+
 2018-04-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Webkit should spoof as Safari on a Mac for Outlook.com

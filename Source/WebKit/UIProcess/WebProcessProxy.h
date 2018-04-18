@@ -212,6 +212,11 @@ public:
     void suspendWebPageProxy(WebPageProxy&);
     void suspendedPageWasDestroyed(SuspendedPageProxy&);
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+    void takeBackgroundActivityTokenForFullscreenInput();
+    void releaseBackgroundActivityTokenForFullscreenInput();
+#endif
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore&);
@@ -340,6 +345,10 @@ private:
     HashMap<uint64_t, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>> m_localPortActivityCompletionHandlers;
 
     bool m_hasCommittedAnyProvisionalLoads { false };
+
+#if ENABLE(EXTRA_ZOOM_MODE)
+    ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;
+#endif
 };
 
 } // namespace WebKit

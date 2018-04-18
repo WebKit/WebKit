@@ -1407,4 +1407,26 @@ void WebProcessProxy::didCheckProcessLocalPortForActivity(uint64_t callbackIdent
     callback(isLocallyReachable ? MessagePortChannelProvider::HasActivity::Yes : MessagePortChannelProvider::HasActivity::No);
 }
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+
+void WebProcessProxy::takeBackgroundActivityTokenForFullscreenInput()
+{
+    if (m_backgroundActivityTokenForFullscreenFormControls)
+        return;
+
+    m_backgroundActivityTokenForFullscreenFormControls = m_throttler.backgroundActivityToken();
+    RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because it is presenting fullscreen UI for form controls.");
+}
+
+void WebProcessProxy::releaseBackgroundActivityTokenForFullscreenInput()
+{
+    if (!m_backgroundActivityTokenForFullscreenFormControls)
+        return;
+
+    m_backgroundActivityTokenForFullscreenFormControls = nullptr;
+    RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because it has dismissed fullscreen UI for form controls.");
+}
+
+#endif
+
 } // namespace WebKit

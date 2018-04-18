@@ -4011,17 +4011,25 @@ static bool isAssistableInputType(InputType type)
     if ([inputDelegate respondsToSelector:@selector(_webView:focusShouldStartInputSession:)])
         shouldShowKeyboard = [inputDelegate _webView:_webView focusShouldStartInputSession:focusedElementInfo.get()];
     else {
-        // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
-        shouldShowKeyboard = userIsInteracting || _isChangingFocus || changingActivityState;
-#if ENABLE(DATA_INTERACTION)
-        shouldShowKeyboard |= _dragDropInteractionState.isPerformingDrop();
+        // The default behavior is to allow node assistance if the user is interacting.
+        // We also allow node assistance if the keyboard already is showing, unless we're in extra zoom mode.
+        shouldShowKeyboard = userIsInteracting
+#if ENABLE(EXTRA_ZOOM_MODE)
+            || (_isChangingFocus && ![_focusedFormControlView isHidden])
+#else
+            || _isChangingFocus
 #endif
+#if ENABLE(DRAG_SUPPORT)
+            || _dragDropInteractionState.isPerformingDrop()
+#endif
+            || changingActivityState;
     }
-    if (!shouldShowKeyboard)
-        return;
 
     if (blurPreviousNode)
         [self _stopAssistingNode];
+
+    if (!shouldShowKeyboard)
+        return;
 
     if (!isAssistableInputType(information.elementType))
         return;
@@ -4216,6 +4224,16 @@ static bool isAssistableInputType(InputType type)
         [_inputNavigationViewControllerForFullScreenInputs pushViewController:_presentedFullScreenInputViewController.get() animated:YES];
     else
         [presentingViewController presentViewController:_presentedFullScreenInputViewController.get() animated:YES completion:nil];
+
+    // Presenting a fullscreen input view controller fully obscures the web view. Without taking this token, the web content process will get backgrounded.
+    _page->process().takeBackgroundActivityTokenForFullscreenInput();
+
+    [presentingViewController.transitionCoordinator animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller = _presentedFullScreenInputViewController] (id <UIViewControllerTransitionCoordinatorContext>) {
+        auto strongWebView = weakWebView.get();
+        id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
+        if ([uiDelegate respondsToSelector:@selector(_webView:didPresentFocusedElementViewController:)])
+            [uiDelegate _webView:strongWebView.get() didPresentFocusedElementViewController:controller.get()];
+    }];
 }
 
 - (void)dismissAllInputViewControllers:(BOOL)animated
@@ -4223,16 +4241,28 @@ static bool isAssistableInputType(InputType type)
     auto navigationController = WTFMove(_inputNavigationViewControllerForFullScreenInputs);
     auto presentedController = WTFMove(_presentedFullScreenInputViewController);
 
+    if (!presentedController)
+        return;
+
     if ([navigationController viewControllers].lastObject == presentedController.get())
         [navigationController popViewControllerAnimated:animated];
     else
         [presentedController dismissViewControllerAnimated:animated completion:nil];
+
+    [[presentedController transitionCoordinator] animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller = presentedController] (id <UIViewControllerTransitionCoordinatorContext>) {
+        auto strongWebView = weakWebView.get();
+        id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
+        if ([uiDelegate respondsToSelector:@selector(_webView:didDismissFocusedElementViewController:)])
+            [uiDelegate _webView:strongWebView.get() didDismissFocusedElementViewController:controller.get()];
+    }];
 
     if (_shouldRestoreFirstResponderStatusAfterLosingFocus) {
         _shouldRestoreFirstResponderStatusAfterLosingFocus = NO;
         if (!self.isFirstResponder)
             [self becomeFirstResponder];
     }
+
+    _page->process().releaseBackgroundActivityTokenForFullscreenInput();
 }
 
 - (void)focusedFormControlViewDidSubmit:(WKFocusedFormControlView *)view
@@ -4249,8 +4279,12 @@ static bool isAssistableInputType(InputType type)
 - (void)focusedFormControlViewDidBeginEditing:(WKFocusedFormControlView *)view
 {
     [self updateCurrentAssistedNodeInformation:[weakSelf = WeakObjCPtr<WKContentView>(self)] (bool didUpdate) {
-        if (didUpdate)
-            [weakSelf presentViewControllerForCurrentAssistedNode];
+        if (!didUpdate)
+            return;
+
+        auto strongSelf = weakSelf.get();
+        [strongSelf presentViewControllerForCurrentAssistedNode];
+        [strongSelf->_focusedFormControlView hide:YES];
     }];
 }
 
@@ -5401,8 +5435,13 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex
 {
+#if ENABLE(EXTRA_ZOOM_MODE)
+    if ([_presentedFullScreenInputViewController isKindOfClass:[WKSelectMenuListViewController class]])
+        [(WKSelectMenuListViewController *)_presentedFullScreenInputViewController.get() selectItemAtIndex:rowIndex];
+#else
     if ([_inputPeripheral isKindOfClass:[WKFormSelectControl self]])
         [(WKFormSelectControl *)_inputPeripheral selectRow:rowIndex inComponent:0 extendingSelection:NO];
+#endif
 }
 
 - (NSString *)selectFormPopoverTitle
