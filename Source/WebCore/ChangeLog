@@ -1,3 +1,23 @@
+2018-04-18  Nan Wang  <n_wang@apple.com>
+
+        AX: [macOS] WebKit hangs when triggering an alert from an AOM increment event
+        https://bugs.webkit.org/show_bug.cgi?id=184742
+
+        Reviewed by Chris Fleizach.
+
+        Made increment and decrement actions on the macOS to be async. So that VoiceOver
+        won't hang indefinitely if performing the actions causes an alert or other modal
+        behaviors.
+
+        Test: accessibility/mac/async-increment-decrement-action.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityPerformIncrementAction]):
+        (-[WebAccessibilityObjectWrapper _accessibilityPerformIncrementAction]):
+        (-[WebAccessibilityObjectWrapper accessibilityPerformDecrementAction]):
+        (-[WebAccessibilityObjectWrapper _accessibilityPerformDecrementAction]):
+        (-[WebAccessibilityObjectWrapper accessibilityPerformAction:]):
+
 2018-04-18  Youenn Fablet  <youenn@apple.com>
 
         MediaResourceLoader should set its fetch destination

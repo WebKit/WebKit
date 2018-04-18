@@ -1407,11 +1407,25 @@ bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarker
 void AccessibilityUIElement::increment()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    [m_element accessibilityPerformAction:NSAccessibilityIncrementAction];
+    [m_element accessibilityPerformAction:@"AXSyncIncrementAction"];
     END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::decrement()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilityPerformAction:@"AXSyncDecrementAction"];
+    END_AX_OBJC_EXCEPTIONS
+}
+
+void AccessibilityUIElement::asyncIncrement()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilityPerformAction:NSAccessibilityIncrementAction];
+    END_AX_OBJC_EXCEPTIONS
+}
+
+void AccessibilityUIElement::asyncDecrement()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilityPerformAction:NSAccessibilityDecrementAction];

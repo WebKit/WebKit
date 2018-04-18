@@ -3482,6 +3482,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityPerformIncrementAction
 {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _accessibilityPerformIncrementAction];
+    });
+}
+
+- (void)_accessibilityPerformIncrementAction
+{
     if (![self updateObjectBackingStore])
         return;
     
@@ -3492,6 +3499,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 }
 
 - (void)accessibilityPerformDecrementAction
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _accessibilityPerformDecrementAction];
+    });
+}
+
+- (void)_accessibilityPerformDecrementAction
 {
     if (![self updateObjectBackingStore])
         return;
@@ -3572,6 +3586,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // Used in layout tests, so that we don't have to wait for the async press action.
     else if ([action isEqualToString:@"AXSyncPressAction"])
         [self _accessibilityPerformPressAction];
+    
+    else if ([action isEqualToString:@"AXSyncIncrementAction"])
+        [self _accessibilityPerformIncrementAction];
+    
+    else if ([action isEqualToString:@"AXSyncDecrementAction"])
+        [self _accessibilityPerformDecrementAction];
     
     else if ([action isEqualToString:NSAccessibilityShowMenuAction])
         [self accessibilityPerformShowMenuAction];

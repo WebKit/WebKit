@@ -1,3 +1,23 @@
+2018-04-18  Nan Wang  <n_wang@apple.com>
+
+        AX: [macOS] WebKit hangs when triggering an alert from an AOM increment event
+        https://bugs.webkit.org/show_bug.cgi?id=184742
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::increment):
+        (AccessibilityUIElement::decrement):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (WTR::AccessibilityUIElement::asyncIncrement):
+        (WTR::AccessibilityUIElement::asyncDecrement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::increment):
+        (WTR::AccessibilityUIElement::decrement):
+        (WTR::AccessibilityUIElement::asyncIncrement):
+        (WTR::AccessibilityUIElement::asyncDecrement):
+
 2018-04-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Fix archive step for WinCairo build bot.

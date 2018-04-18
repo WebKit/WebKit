@@ -100,8 +100,12 @@ public:
     bool dismiss();
 #if PLATFORM(MAC)
     void syncPress();
+    void asyncIncrement();
+    void asyncDecrement();
 #else
     void syncPress() { press(); }
+    void asyncIncrement() { }
+    void asyncDecrement() { };
 #endif
 
     // Attributes - platform-independent implementations

@@ -115,6 +115,8 @@ interface AccessibilityUIElement {
     // Actions.
     void increment();
     void decrement();
+    void asyncIncrement();
+    void asyncDecrement();
     void press();
     void syncPress();
     void showMenu();
