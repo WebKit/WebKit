@@ -49,7 +49,6 @@ private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     
     CVDisplayLinkRef m_displayLink { nullptr };
-    Ref<WebPageProxy> m_webPageProxy;
     HashSet<unsigned> m_observers;
 };
 

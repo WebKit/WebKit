@@ -36,7 +36,6 @@
 namespace WebKit {
     
 DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID, WebPageProxy& webPageProxy)
-    : m_webPageProxy(webPageProxy)
 {
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);

@@ -1,3 +1,17 @@
+2018-04-17  Conrad Shultz  <conrad_shultz@apple.com>
+
+        WebKit::DisplayLink maintains a strong reference to WebPageProxy, creating a reference cycle
+        https://bugs.webkit.org/show_bug.cgi?id=184718
+
+        Reviewed by Tim Horton.
+
+        It turns out that the m_webPageProxy back-reference in DisplayLink, which was creating a
+        reference cycle, wasn't ever read, so we can just remove it.
+
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        * UIProcess/mac/DisplayLink.h:
+
 2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Double tap to zoom should account for text legibility in extra zoom mode
