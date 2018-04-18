@@ -46,6 +46,8 @@ public:
 
     WeakPtr<HTMLPictureElement> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
+    WEBCORE_EXPORT bool isSystemPreviewImage() const;
+
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
 

@@ -27,6 +27,7 @@
 #include "HTMLPictureElement.h"
 
 #include "ElementChildIterator.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLImageElement.h"
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
@@ -73,6 +74,14 @@ bool HTMLPictureElement::viewportChangeAffectedPicture() const
             return true;
     }
     return false;
+}
+
+bool HTMLPictureElement::isSystemPreviewImage() const
+{
+    const auto* parent = parentElement();
+    if (!is<HTMLAnchorElement>(parent))
+        return false;
+    return downcast<HTMLAnchorElement>(parent)->isSystemPreviewLink();
 }
 
 }

@@ -100,6 +100,8 @@ public:
     HTMLPictureElement* pictureElement() const;
     void setPictureElement(HTMLPictureElement*);
 
+    WEBCORE_EXPORT bool isSystemPreviewImage() const;
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
 

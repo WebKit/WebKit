@@ -56,10 +56,12 @@ class FetchResponse;
 class File;
 class Frame;
 class GCObservation;
+class HTMLAnchorElement;
 class HTMLImageElement;
 class HTMLInputElement;
 class HTMLLinkElement;
 class HTMLMediaElement;
+class HTMLPictureElement;
 class HTMLSelectElement;
 class ImageData;
 class InspectorStubFrontend;
@@ -654,6 +656,10 @@ public:
 #if ENABLE(WEB_AUTHN)
     MockCredentialsMessenger& mockCredentialsMessenger() const;
 #endif
+
+    String systemPreviewRelType();
+    bool isSystemPreviewLink(Element&) const;
+    bool isSystemPreviewImage(Element&) const;
 
 private:
     explicit Internals(Document&);

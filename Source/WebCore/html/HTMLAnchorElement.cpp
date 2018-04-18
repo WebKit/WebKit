@@ -36,6 +36,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLPictureElement.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "PingLoader.h"
@@ -51,6 +52,10 @@
 #include "URLUtils.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SystemPreviewDetection.cpp>
+#endif
 
 namespace WebCore {
 
@@ -304,12 +309,13 @@ bool HTMLAnchorElement::hasRel(Relation relation) const
     return m_linkRelations.contains(relation);
 }
 
-DOMTokenList& HTMLAnchorElement::relList()
+DOMTokenList& HTMLAnchorElement::relList() const
 {
-    if (!m_relList) 
-        m_relList = std::make_unique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document&, StringView token) {
+    if (!m_relList) {
+        m_relList = std::make_unique<DOMTokenList>(const_cast<HTMLAnchorElement&>(*this), HTMLNames::relAttr, [](Document&, StringView token) {
             return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
         });
+    }
     return *m_relList;
 }
 
@@ -360,6 +366,30 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
     SpaceSplitString pingURLs(attributeWithoutSynchronization(pingAttr), false);
     for (unsigned i = 0; i < pingURLs.size(); i++)
         PingLoader::sendPing(*document().frame(), document().completeURL(pingURLs[i]), destinationURL);
+}
+
+bool HTMLAnchorElement::isSystemPreviewLink() const
+{
+#if USE(APPLE_INTERNAL_SDK)
+    auto systemPreviewRelValue = getSystemPreviewRelValue();
+#else
+    auto systemPreviewRelValue = String { ASCIILiteral("system-preview") };
+#endif
+
+    // The relList is created on demand, which means that calling relList()
+    // is only available in a non-const method.
+    if (!relList().contains(systemPreviewRelValue))
+        return false;
+
+    if (auto* child = firstElementChild()) {
+        if (is<HTMLImageElement>(child) || is<HTMLPictureElement>(child)) {
+            auto numChildren = childElementCount();
+            // FIXME: Should only be 1.
+            return numChildren == 1 || numChildren == 2;
+        }
+    }
+
+    return false;
 }
 
 void HTMLAnchorElement::handleClick(Event& event)

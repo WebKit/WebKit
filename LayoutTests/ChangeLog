@@ -1,3 +1,14 @@
+2018-04-18  Dean Jackson  <dino@apple.com>
+
+        Detect system preview links
+        https://bugs.webkit.org/show_bug.cgi?id=184753
+        <rdar://problem/39500514>
+
+        Reviewed by Antoine Quint.
+
+        * system-preview/detection-expected.txt: Added.
+        * system-preview/detection.html: Added.
+
 2018-04-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip animations/missing-from-to.html on mac-wk1 debug.

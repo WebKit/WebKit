@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "FrameView.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLParserIdioms.h"
@@ -675,5 +676,13 @@ bool HTMLImageElement::willRespondToMouseClickEvents()
     return HTMLElement::willRespondToMouseClickEvents();
 }
 #endif
+
+bool HTMLImageElement::isSystemPreviewImage() const
+{
+    const auto* parent = parentElement();
+    if (!is<HTMLAnchorElement>(parent))
+        return false;
+    return downcast<HTMLAnchorElement>(parent)->isSystemPreviewLink();
+}
 
 }

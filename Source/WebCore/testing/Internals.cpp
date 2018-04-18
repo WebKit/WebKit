@@ -72,12 +72,14 @@
 #include "FrameView.h"
 #include "GCObservation.h"
 #include "GridPosition.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
+#include "HTMLPictureElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLPreloadScanner.h"
 #include "HTMLSelectElement.h"
@@ -260,6 +262,10 @@
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticatorManager.h"
 #include "MockCredentialsMessenger.h"
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/SystemPreviewDetection.cpp>
 #endif
 
 using JSC::CallData;
@@ -4463,5 +4469,28 @@ MockCredentialsMessenger& Internals::mockCredentialsMessenger() const
     return *m_mockCredentialsMessenger;
 }
 #endif
+
+String Internals::systemPreviewRelType()
+{
+#if USE(APPLE_INTERNAL_SDK)
+    return getSystemPreviewRelValue();
+#else
+    return ASCIILiteral("system-preview");
+#endif
+}
+
+bool Internals::isSystemPreviewLink(Element& element) const
+{
+    return is<HTMLAnchorElement>(element) && downcast<HTMLAnchorElement>(element).isSystemPreviewLink();
+}
+
+bool Internals::isSystemPreviewImage(Element& element) const
+{
+    if (is<HTMLImageElement>(element))
+        return downcast<HTMLImageElement>(element).isSystemPreviewImage();
+    if (is<HTMLPictureElement>(element))
+        return downcast<HTMLPictureElement>(element).isSystemPreviewImage();
+    return false;
+}
 
 } // namespace WebCore

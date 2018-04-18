@@ -66,7 +66,9 @@ public:
     SharedStringHash visitedLinkHash() const;
     void invalidateCachedVisitedLinkHash() { m_cachedVisitedLinkHash = 0; }
 
-    WEBCORE_EXPORT DOMTokenList& relList();
+    WEBCORE_EXPORT DOMTokenList& relList() const;
+
+    WEBCORE_EXPORT bool isSystemPreviewLink() const;
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);
@@ -107,7 +109,7 @@ private:
     OptionSet<Relation> m_linkRelations;
     mutable SharedStringHash m_cachedVisitedLinkHash;
 
-    std::unique_ptr<DOMTokenList> m_relList;
+    mutable std::unique_ptr<DOMTokenList> m_relList;
 };
 
 inline SharedStringHash HTMLAnchorElement::visitedLinkHash() const

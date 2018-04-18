@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function getSystemPreviewData(id)
+{
+    const container = document.getElementById(id);
+    const link = container.querySelector("a");
+    let children = [];
+    if (link)
+        children = link.children;
+    const result = container.querySelectorAll("p")[1];
+    return [link, children, result];
+}
+
+function addResult(resultElement, txt)
+{
+    resultElement.textContent += txt;
+}
+
+const TESTS = ["valid-1", "valid-2", "valid-3", "invalid-1", "invalid-2", "invalid-3", "invalid-4", "invalid-5"];
+
+window.addEventListener("load", () => {
+    if (!window.internals)
+        return;
+
+    const relValue = internals.systemPreviewRelType();
+    TESTS.forEach(id => {
+        const [link, children, result] = getSystemPreviewData(id);
+        if (link) {
+            addResult(result, "Link element present.");
+
+            if (id != "invalid-1")
+                link.rel += " " + relValue;
+
+            if (internals.isSystemPreviewLink(link))
+                addResult(result, " Identified as system preview.");
+            else
+                addResult(result, " Not identified as system preview.");
+
+        } else
+            addResult(result, "No link.");
+
+        if (children && children.length > 0) {
+            for (let i = 0; i < children.length; i++) {
+                if (internals.isSystemPreviewImage(children[i]))
+                    addResult(result, ` Child ${i} is an image inside a system preview.`);
+                else
+                    addResult(result, ` Child ${i} is not an image inside a system preview.`);
+            }
+        }
+
+        // Specific test for the case that is just an image.
+        if (id == "invalid-5") {
+            const child = document.getElementById(id).children[0];
+            if (internals.isSystemPreviewImage(child))
+                addResult(result, ` Child is an image inside a system preview.`);
+            else
+                addResult(result, ` Child is not an image inside a system preview.`);
+        }
+    });
+}, false);
+</script>
+<p>This test only works in WKTR or DRT.</p>
+<div id="valid-1">
+<p>Valid system preview</p>
+<a href="/" rel="">
+    <img>
+</a>
+<p>Result: </p>
+</div>
+
+<div id="valid-2">
+<p>Valid system preview (multiple rel values)</p>
+<a href="/" rel="foo">
+    <img>
+</a>
+<p>Result: </p>
+</div>
+
+<div id="valid-3">
+<p>Valid system preview (picture child)</p>
+<a href="/" rel="">
+    <picture></picture>
+</a>
+<p>Result: </p>
+</div>
+
+<div id="invalid-1">
+<p>Invalid system preview (wrong rel value)</p>
+<a href="/" rel="">
+    <img>
+</a>
+<p>Result: </p>
+</div>
+
+<div id="invalid-2">
+<p>Invalid system preview (wrong children)</p>
+<a href="/" rel="">
+    <span>hello</span>
+</a>
+<p>Result: </p>
+</div>
+
+<div id="invalid-3">
+<p>Invalid system preview (too many children)</p>
+<a href="/" rel="">
+    <span>hello</span>
+    <img>
+</a>
+<p>Result: </p>
+</div>
+
+<div id="invalid-4">
+<p>Invalid system preview (no children)</p>
+<a href="/" rel="">
+</a>
+<p>Result: </p>
+</div>
+
+<div id="invalid-5">
+<p>Invalid system preview (just an image)</p>
+<img>
+<p>Result: </p>
+</div>

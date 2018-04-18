@@ -1,3 +1,42 @@
+2018-04-18  Dean Jackson  <dino@apple.com>
+
+        Detect system preview links
+        https://bugs.webkit.org/show_bug.cgi?id=184753
+        <rdar://problem/39500514>
+
+        Reviewed by Antoine Quint.
+
+        Detect a special type of link anchor, which we're calling System Previews.
+        Ultimately this will allow WebKit to present such links in a special
+        way.
+
+        A System Preview link is an <a> element, with a rel attribute that
+        includes "system-preview". It has a single element child, which is
+        either an <img> or a <picture>.
+
+        Test: system-preview/detection.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::relList): Add braces.
+        (WebCore::HTMLAnchorElement::isSystemPreviewLink const): New
+        function.
+        * html/HTMLAnchorElement.h:
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isSystemPreviewImage const): Ask the
+        parent if it is a system preview link.
+        * html/HTMLImageElement.h:
+        * html/HTMLPictureElement.cpp:
+        (WebCore::HTMLPictureElement::isSystemPreviewImage const): Ditto.
+        * html/HTMLPictureElement.h:
+
+        * testing/Internals.cpp: Testing helpers.
+        (WebCore::Internals::systemPreviewRelType):
+        (WebCore::Internals::isSystemPreviewLink const):
+        (WebCore::Internals::isSystemPreviewImage const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-04-18  Antti Koivisto  <antti@apple.com>
 
         :active pseudo class doesn't deactivate when using pressure sensitive trackpad
