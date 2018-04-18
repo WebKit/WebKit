@@ -193,7 +193,7 @@ def minifyDirectory(platform, directory):
 
 
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
-    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe')
+    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe', 'wincairo')
 
     if platform == 'ios':
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-ios')
@@ -212,11 +212,11 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         if minify:
             minifyDirectory(platform, _configurationBuildDirectory)
         return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True, minify=minify)
-    elif platform == 'win':
-        # FIXME: We shouldn't hardcode the assumption of a 32-bit build. See <https://bugs.webkit.org/show_bug.cgi?id=149715>.
-        binDirectory = os.path.join(_configurationBuildDirectory, 'bin32')
+    elif platform in ('win', 'wincairo'):
+        binType = 'bin64' if os.path.exists(os.path.join(_configurationBuildDirectory, 'bin64')) else 'bin32'
+        binDirectory = os.path.join(_configurationBuildDirectory, binType)
         thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
-        thinBinDirectory = os.path.join(thinDirectory, "bin32")
+        thinBinDirectory = os.path.join(thinDirectory, binType)
 
         removeDirectoryIfExists(thinDirectory)
         copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
@@ -259,7 +259,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe')
+    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe', 'wincairo')
 
     archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
 
@@ -268,7 +268,7 @@ def extractBuiltProduct(configuration, platform):
 
     if platform in ('mac', 'ios'):
         return unzipArchive(_topLevelBuildDirectory, configuration)
-    elif platform == 'win' or platform == 'gtk' or platform == 'wpe':
+    elif platform in ('win', 'gtk', 'wpe', 'wincairo'):
         print 'Extracting', _configurationBuildDirectory
         return unzipArchive(_configurationBuildDirectory, configuration)
 
