@@ -128,4 +128,31 @@ TEST(WKWebView, LoadAlternateHTMLStringNoFileSystemPath)
     [webView loadHTMLString:@"<html>hi</html>" baseURL:[NSURL URLWithString:@"file:///.file/id="]];
 }
 
+TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorReload)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto controller = adoptNS([[LoadAlternateHTMLStringFromProvisionalLoadErrorController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+
+    NSURL *invalidURL = [NSURL URLWithString:@"https://www.example.com%3C%3E/"];
+    [webView loadRequest:[NSURLRequest requestWithURL:invalidURL]];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    [webView reload];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    [webView reloadFromOrigin];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    [webView _reloadExpiredOnly];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    WKBackForwardList *list = [webView backForwardList];
+    EXPECT_EQ((NSUInteger)0, list.backList.count);
+}
+
 #endif
