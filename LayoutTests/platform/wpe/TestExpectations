@@ -47,17 +47,6 @@ webkit.org/b/153709 http/tests/cache/disk-cache/disk-cache-disable.html [ Failur
 webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
 webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
 
-# Require ENABLE_CSS_ANIMATIONS_LEVEL_2
-Bug(WPE) animations/trigger-computed-style.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/trigger-computed-style.html [ Failure ]
-Bug(WPE) animations/trigger-container-scroll-boundaries.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/trigger-container-scroll-boundaries.html [ Failure ]
-Bug(WPE) animations/trigger-container-scroll-empty.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Failure ]
-Bug(WPE) animations/trigger-container-scroll-simple.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/trigger-container-scroll-simple.html [ Failure ]
-Bug(WPE) animations/trigger-parsing.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/trigger-parsing.html [ Failure ]
 # Font variations
 Bug(WPE) animations/font-variations/font-stretch.html [ Timeout ]
 Bug(WPE) legacy-animation-engine/animations/font-variations/font-stretch.html [ Timeout ]
@@ -244,8 +233,13 @@ webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 
 webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
+webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 
 Bug(WPE) imported/w3c/web-platform-tests/css/css-color [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/css/css-multicol [ Skip ]
@@ -313,7 +307,6 @@ webkit.org/b/177322 imported/w3c/web-platform-tests/html/semantics/document-meta
 webkit.org/b/180932 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements [ Pass Crash ]
 webkit.org/b/180933 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/activeCues.html [ Failure ]
 webkit.org/b/180933 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Failure ]
-webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Timeout ]
 webkit.org/b/180352 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg.html [ Failure ]
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html [ Failure ]
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html [ Failure ]
@@ -325,7 +318,6 @@ webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-inp
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Failure ]
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode.html [ Failure ]
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html [ Failure ]
-webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Timeout ]
 webkit.org/b/180648 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 webkit.org/b/180648 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
@@ -466,7 +458,7 @@ Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure Pass ]
 
 Bug(WPE) fast/parser/entities-in-attributes.xhtml [ Failure ]
 Bug(WPE) fast/parser/entities-in-xhtml.xhtml [ Failure ]
-Bug(WPE) fast/parser/external-entities-in-xslt.xml [ Failure ]
+Bug(WPE) fast/parser/external-entities-in-xslt.xml [ Pass Failure ]
 Bug(WPE) fast/parser/nested-fragment-parser-crash.html [ Failure ]
 Bug(WPE) fast/parser/xml-colon-entity.html [ Failure ]
 Bug(WPE) fast/parser/xml-declaration-missing-ending-mark.html [ Failure ]

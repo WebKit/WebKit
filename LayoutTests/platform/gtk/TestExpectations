@@ -287,7 +287,6 @@ webkit.org/b/169916 css3/blending/blend-mode-body-element.html [ ImageOnlyFailur
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-child.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-double.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html [ ImageOnlyFailure ]
-webkit.org/b/169916 css3/blending/blend-mode-clip-accelerated-transformed-blending.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-clip-rect-accelerated-blending.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-html-element-screen.html [ ImageOnlyFailure ]
 webkit.org/b/169916 css3/blending/blend-mode-isolated-group-1.html [ Missing Failure ]
@@ -1150,13 +1149,9 @@ imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/background-fetch/interfaces.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-service-worker.https.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-service-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Failure ]
 
 # Loading MP4 as an image is not supported by GTK
@@ -2272,7 +2267,6 @@ webkit.org/b/183181 inspector/heap/getPreview.html [ Pass Timeout ]
 webkit.org/b/183186 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html [ Pass Timeout ]
 
 webkit.org/b/184080 animations/animation-iteration-event-destroy-renderer.html [ Timeout ]
-webkit.org/b/184080 legacy-animation-engine/animations/animation-iteration-event-destroy-renderer.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2611,7 +2605,7 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 webkit.org/b/61630 fast/events/dropzone-005.html [ Failure ]
 
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failure ]
 
 webkit.org/b/68512 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 
@@ -2824,7 +2818,7 @@ webkit.org/b/132919 platform/gtk/plugins/invalidate-rect-with-null-npp-argument.
 
 webkit.org/b/132921 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
 
-webkit.org/b/132923 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
+webkit.org/b/132923 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
 
 webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
 
@@ -3347,15 +3341,10 @@ webkit.org/b/183613 imported/w3c/web-platform-tests/media-source/interfaces.html
 webkit.org/b/183902 fast/dom/frame-loading-via-document-write.html [ Failure ]
 
 webkit.org/b/184080 animations/animation-direction-normal.html [ Failure ]
-webkit.org/b/184080 legacy-animation-engine/animations/animation-direction-normal.html [ Failure ]
 webkit.org/b/184080 animations/animation-direction-reverse.html [ Failure ]
-webkit.org/b/184080 legacy-animation-engine/animations/animation-direction-reverse.html [ Failure ]
 webkit.org/b/184080 animations/change-keyframes.html [ Failure ]
-webkit.org/b/184080 legacy-animation-engine/animations/change-keyframes.html [ Failure ]
 webkit.org/b/184080 animations/play-state-in-shorthand.html [ Failure ]
-webkit.org/b/184080 legacy-animation-engine/animations/play-state-in-shorthand.html [ Failure ]
 webkit.org/b/184080 animations/transform-non-accelerated.html [ Failure ]
-webkit.org/b/184080 legacy-animation-engine/animations/transform-non-accelerated.html [ Failure ]
 
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html [ Failure ]
 webkit.org/b/184086 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html [ Failure ]
@@ -3387,6 +3376,11 @@ imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
 
@@ -3429,6 +3423,8 @@ webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass ]
+
+webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
 webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 

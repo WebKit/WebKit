@@ -5,7 +5,6 @@ CONSOLE MESSAGE: line 331: callback not yet supported
 CONSOLE MESSAGE: line 331: callback not yet supported
 CONSOLE MESSAGE: line 331: callback not yet supported
 CONSOLE MESSAGE: line 331: callback not yet supported
-CONSOLE MESSAGE: WebSocket network error: Error resolving âfooâ: Name or service not known
 HTML IDL tests
 
 
