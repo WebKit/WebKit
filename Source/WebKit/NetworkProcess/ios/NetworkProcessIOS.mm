@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !ENABLE(MINIMAL_SIMULATOR)
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"

@@ -10235,12 +10235,16 @@
 				"$(SRCROOT)/Configurations/Databases-iOS.entitlements",
 				"$(SRCROOT)/Configurations/Network-iOS.entitlements",
 				"$(SRCROOT)/Configurations/WebContent-iOS.entitlements",
+				"$(SRCROOT)/Configurations/Network-iOS-minimalsimulator.entitlements",
+				"$(SRCROOT)/Configurations/WebContent-iOS-minimalsimulator.entitlements",
 			);
 			name = "Derive Entitlements for Manual Sandboxing";
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Databases-iOS-no-sandbox.entitlements",
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Network-iOS-no-sandbox.entitlements",
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebContent-iOS-no-sandbox.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Network-iOS-minimalsimulator-no-sandbox.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebContent-iOS-minimalsimulator-no-sandbox.entitlements",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -10276,7 +10280,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${WK_PLATFORM_NAME}\" == \"macosx\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval SANDBOX_PROFILE=\\${SCRIPT_INPUT_FILE_${i}}\n        ditto \"${SANDBOX_PROFILE}\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${SANDBOX_PROFILE##*/}\"\n    done\nfi";
+			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${WK_PLATFORM_NAME}\" == \"macosx\" || \"${WK_PLATFORM_NAME}\" == \"iphoneminimalsimulator\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval SANDBOX_PROFILE=\\${SCRIPT_INPUT_FILE_${i}}\n        ditto \"${SANDBOX_PROFILE}\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${SANDBOX_PROFILE##*/}\"\n    done\nfi\n";
 		};
 		5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;

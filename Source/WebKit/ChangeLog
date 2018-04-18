@@ -1,3 +1,34 @@
+2018-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Fix entitlements and sandboxing for iphoneminimalsimulator
+        https://bugs.webkit.org/show_bug.cgi?id=184692
+
+        Reviewed by Tim Horton.
+
+        Use the correct implementations for ChildProcess and NetworkProcess
+        when building for iphoneminimalsimulator. Stub out imlementations
+        which rely on methods not available in the iphoneminimalsimulator SDK.
+
+        * Configurations/Network-OSX.entitlements: Added.
+        * Configurations/NetworkService.xcconfig:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::sourceApplicationAuditData const):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcessName):
+        (WebKit::overrideSystemProxies):
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::setApplicationIsDaemon):
+        (WebKit::enableSandboxStyleFileQuarantine):
+        (WebKit::ChildProcess::initializeSandbox):
+        (WebKit::ChildProcess::platformStopRunLoop):
+        * Shared/mac/CodeSigning.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+
 2018-04-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230743.

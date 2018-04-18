@@ -343,7 +343,7 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& p
 #else
     NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
 #endif
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !ENABLE(MINIMAL_SIMULATOR)
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.WebContent" ofType:@"sb"]);
 #else
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);

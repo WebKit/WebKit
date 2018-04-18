@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CodeSigning.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || ENABLE(MINIMAL_SIMULATOR)
 
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>

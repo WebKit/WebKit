@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !ENABLE(MINIMAL_SIMULATOR)
 
 #import "ChildProcess.h"
 
@@ -70,8 +70,10 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
     }
 
+#if !ENABLE(MINIMAL_SIMULATOR)
     String sandboxImportPath = "/usr/local/share/sandbox/imports";
     sandboxParameters.addPathParameter("IMPORT_DIR", FileSystem::fileSystemRepresentation(sandboxImportPath).data());
+#endif
 
     switch (sandboxParameters.mode()) {
     case SandboxInitializationParameters::UseDefaultSandboxProfilePath:

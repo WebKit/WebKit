@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || ENABLE(MINIMAL_SIMULATOR)
 
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
@@ -58,8 +58,10 @@ void NetworkProcess::initializeProcess(const ChildProcessInitializationParameter
 
 void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
+#if !ENABLE(MINIMAL_SIMULATOR)
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
+#endif
 }
 
 static void overrideSystemProxies(const String& httpProxy, const String& httpsProxy)
@@ -82,11 +84,13 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
     if (!httpsProxy.isNull()) {
         URL httpsProxyURL(URL(), httpsProxy);
         if (httpsProxyURL.isValid()) {
+#if !ENABLE(MINIMAL_SIMULATOR)
             [proxySettings setObject:nsStringFromWebCoreString(httpsProxyURL.host()) forKey:(NSString *)kCFNetworkProxiesHTTPSProxy];
             if (httpsProxyURL.port()) {
                 NSNumber *port = [NSNumber numberWithInt:httpsProxyURL.port().value()];
                 [proxySettings setObject:port forKey:(NSString *)kCFNetworkProxiesHTTPSPort];
             }
+#endif
         } else
             NSLog(@"Malformed HTTPS Proxy URL '%s'.  Expected 'https://<hostname>[:<port>]'\n", httpsProxy.utf8().data());
     }

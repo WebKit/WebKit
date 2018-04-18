@@ -154,7 +154,7 @@ void NetworkProcess::platformSetURLCacheSize(unsigned urlCacheMemoryCapacity, ui
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !ENABLE(MINIMAL_SIMULATOR)
     audit_token_t auditToken;
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection() || !parentProcessConnection()->getAuditToken(auditToken))

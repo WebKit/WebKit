@@ -25,12 +25,13 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || ENABLE(MINIMAL_SIMULATOR)
 #import "ChildProcess.h"
 
 #import "CodeSigning.h"
 #import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
+#import "XPCServiceEntryPoint.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
@@ -65,8 +66,10 @@ static void initializeTimerCoalescingPolicy()
 
 void ChildProcess::setApplicationIsDaemon()
 {
+#if !ENABLE(MINIMAL_SIMULATOR)
     OSStatus error = SetApplicationIsDaemon(true);
     ASSERT_UNUSED(error, error == noErr);
+#endif
 
     launchServicesCheckIn();
 }
@@ -85,6 +88,7 @@ void ChildProcess::platformInitialize()
 
 static OSStatus enableSandboxStyleFileQuarantine()
 {
+#if !ENABLE(MINIMAL_SIMULATOR)
     int error;
     qtn_proc_t quarantineProperties = qtn_proc_alloc();
     auto quarantinePropertiesDeleter = makeScopeExit([quarantineProperties]() {
@@ -100,6 +104,9 @@ static OSStatus enableSandboxStyleFileQuarantine()
     // QTN_FLAG_SANDBOX is silently ignored if security.mac.qtn.sandbox_enforce sysctl is 0.
     // In that case, quarantine falls back to advisory QTN_FLAG_DOWNLOAD.
     return qtn_proc_apply_to_self(quarantineProperties);
+#else
+    return false;
+#endif
 }
 
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
@@ -170,7 +177,10 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         if (!sandboxProfilePath.isEmpty()) {
             CString profilePath = FileSystem::fileSystemRepresentation(sandboxProfilePath);
             char* errorBuf;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             if (sandbox_init_with_parameters(profilePath.data(), SANDBOX_NAMED_EXTERNAL, sandboxParameters.namedParameterArray(), &errorBuf)) {
+#pragma clang diagnostic pop
                 WTFLogAlways("%s: Couldn't initialize sandbox profile [%s], error '%s'\n", getprogname(), profilePath.data(), errorBuf);
                 for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
                     WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));
@@ -182,7 +192,10 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
     case SandboxInitializationParameters::UseSandboxProfile: {
         char* errorBuf;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (sandbox_init_with_parameters(sandboxParameters.sandboxProfile().utf8().data(), 0, sandboxParameters.namedParameterArray(), &errorBuf)) {
+#pragma clang diagnostic pop
             WTFLogAlways("%s: Couldn't initialize sandbox profile, error '%s'\n", getprogname(), errorBuf);
             for (size_t i = 0, count = sandboxParameters.count(); i != count; ++i)
                 WTFLogAlways("%s=%s\n", sandboxParameters.name(i), sandboxParameters.value(i));
@@ -212,13 +225,20 @@ void ChildProcess::stopNSAppRunLoop()
 }
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if !ENABLE(MINIMAL_SIMULATOR) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 void ChildProcess::stopNSRunLoop()
 {
     ASSERT([NSRunLoop mainRunLoop]);
     [[NSRunLoop mainRunLoop] performBlock:^{
         exit(0);
     }];
+}
+#endif
+
+#if ENABLE(MINIMAL_SIMULATOR)
+void ChildProcess::platformStopRunLoop()
+{
+    XPCServiceExit(WTFMove(m_priorityBoostMessage));
 }
 #endif
 
