@@ -1,3 +1,10 @@
+2018-04-18  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed, fix build with GCC
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+
 2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, reland r230697, r230720, and r230724.
