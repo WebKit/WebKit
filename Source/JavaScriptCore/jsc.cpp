@@ -294,6 +294,7 @@ static EncodedJSValue JSC_HOST_CALL functionFalse(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionUndefined1(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionUndefined2(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIsInt32(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionIsPureNaN(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEffectful42(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIdentity(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionMakeMasquerader(ExecState*);
@@ -520,6 +521,7 @@ protected:
         putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "isFinalTier"), 0, functionFalse, IsFinalTierIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
         putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "predictInt32"), 0, functionUndefined2, SetInt32HeapPredictionIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
         putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "isInt32"), 0, functionIsInt32, CheckInt32Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "isPureNaN"), 0, functionIsPureNaN, CheckInt32Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
         putDirectNativeFunction(vm, this, Identifier::fromString(&vm, "fiatInt52"), 0, functionIdentity, FiatInt52Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
@@ -1874,6 +1876,21 @@ EncodedJSValue JSC_HOST_CALL functionIsInt32(ExecState* exec)
 {
     for (size_t i = 0; i < exec->argumentCount(); ++i) {
         if (!exec->argument(i).isInt32())
+            return JSValue::encode(jsBoolean(false));
+    }
+    return JSValue::encode(jsBoolean(true));
+}
+
+EncodedJSValue JSC_HOST_CALL functionIsPureNaN(ExecState* exec)
+{
+    for (size_t i = 0; i < exec->argumentCount(); ++i) {
+        JSValue value = exec->argument(i);
+        if (!value.isNumber())
+            return JSValue::encode(jsBoolean(false));
+        double number = value.asNumber();
+        if (!std::isnan(number))
+            return JSValue::encode(jsBoolean(false));
+        if (isImpureNaN(number))
             return JSValue::encode(jsBoolean(false));
     }
     return JSValue::encode(jsBoolean(true));

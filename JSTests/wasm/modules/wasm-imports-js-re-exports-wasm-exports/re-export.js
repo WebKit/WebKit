@@ -1,1 +1,1 @@
-export { sum } from "./sum.wasm"
+export { sum, answer } from "./sum.wasm"

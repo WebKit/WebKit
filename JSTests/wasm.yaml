@@ -38,7 +38,7 @@
 - path: wasm/regress/
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/modules/
-  cmd: runWebAssemblySuite unless parseRunCommands
+  cmd: runWebAssembly unless parseRunCommands
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal

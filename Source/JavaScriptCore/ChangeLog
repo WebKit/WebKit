@@ -1,3 +1,21 @@
+2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebAssembly][Modules] Import globals from wasm modules
+        https://bugs.webkit.org/show_bug.cgi?id=184736
+
+        Reviewed by JF Bastien.
+
+        This patch implements a feature importing globals to/from wasm modules.
+        Since we are not supporting mutable globals now, we can just copy the
+        global data when importing. Currently we do not support importing/exporting
+        i64 globals. This will be supported once (1) mutable global bindings are
+        specified and (2) BigInt based i64 importing/exporting is specified.
+
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2018-04-18  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed, fix build on ARM

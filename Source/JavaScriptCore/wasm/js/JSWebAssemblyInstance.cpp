@@ -180,8 +180,6 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
 
     // Let funcs, memories and tables be initially-empty lists of callable JavaScript objects, WebAssembly.Memory objects and WebAssembly.Table objects, respectively.
     // Let imports be an initially-empty list of external values.
-    unsigned numImportGlobals = 0;
-
     bool hasMemoryImport = false;
     bool hasTableImport = false;
 
@@ -207,10 +205,10 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
         // Eventually we will move all the linking code here to WebAssemblyModuleRecord::link.
         switch (import.kind) {
         case Wasm::ExternalKind::Function:
+        case Wasm::ExternalKind::Global:
             continue;
         case Wasm::ExternalKind::Table:
         case Wasm::ExternalKind::Memory:
-        case Wasm::ExternalKind::Global:
             break;
         }
 
@@ -232,9 +230,10 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
             value = jsUndefined();
 
         switch (import.kind) {
-        case Wasm::ExternalKind::Function: {
+        case Wasm::ExternalKind::Function:
+        case Wasm::ExternalKind::Global:
             break;
-        }
+
         case Wasm::ExternalKind::Table: {
             RELEASE_ASSERT(!hasTableImport); // This should be guaranteed by a validation failure.
             // 7. Otherwise (i is a table import):
@@ -294,33 +293,6 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
             RETURN_IF_EXCEPTION(throwScope, nullptr);
             break;
         }
-        case Wasm::ExternalKind::Global: {
-            // 5. If i is a global import:
-            // i. If i is not an immutable global, throw a TypeError.
-            ASSERT(moduleInformation.globals[import.kindIndex].mutability == Wasm::Global::Immutable);
-            // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
-            if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
-                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "cannot be an i64")));
-            if (!value.isNumber())
-                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "must be a number")));
-            // iii. Append ToWebAssemblyValue(v) to imports.
-            ASSERT(numImportGlobals == import.kindIndex);
-            switch (moduleInformation.globals[import.kindIndex].type) {
-            case Wasm::I32:
-                jsInstance->instance().setGlobal(numImportGlobals++, value.toInt32(exec));
-                break;
-            case Wasm::F32:
-                jsInstance->instance().setGlobal(numImportGlobals++, bitwise_cast<uint32_t>(value.toFloat(exec)));
-                break;
-            case Wasm::F64:
-                jsInstance->instance().setGlobal(numImportGlobals++, bitwise_cast<uint64_t>(value.asNumber()));
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-            throwScope.assertNoException();
-            break;
-        }
         }
     }
     ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());
@@ -335,7 +307,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
             // We create a memory when it's a memory definition.
             RELEASE_ASSERT(!moduleInformation.memory.isImport());
 
-            auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure());
+            auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, globalObject->WebAssemblyMemoryStructure());
             RETURN_IF_EXCEPTION(throwScope, nullptr);
 
             RefPtr<Wasm::Memory> memory = Wasm::Memory::create(moduleInformation.memory.initial(), moduleInformation.memory.maximum(),
@@ -363,7 +335,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
             RefPtr<Wasm::Table> wasmTable = Wasm::Table::create(moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum());
             if (!wasmTable)
                 return exception(createJSWebAssemblyLinkError(exec, vm, "couldn't create Table"));
-            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyTableStructure(), wasmTable.releaseNonNull());
+            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, globalObject->WebAssemblyTableStructure(), wasmTable.releaseNonNull());
             // We should always be able to allocate a JSWebAssemblyTable we've defined.
             // If it's defined to be too large, we should have thrown a validation error.
             throwScope.assertNoException();
@@ -375,26 +347,12 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
     
     if (!jsInstance->memory()) {
         // Make sure we have a dummy memory, so that wasm -> wasm thunks avoid checking for a nullptr Memory when trying to set pinned registers.
-        auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure());
+        auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, globalObject->WebAssemblyMemoryStructure());
         jsMemory->adopt(Wasm::Memory::create().releaseNonNull());
         jsInstance->setMemory(vm, jsMemory);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
     
-    // Globals
-    {
-        ASSERT(numImportGlobals == moduleInformation.firstInternalGlobal);
-        for (size_t globalIndex = numImportGlobals; globalIndex < moduleInformation.globals.size(); ++globalIndex) {
-            const auto& global = moduleInformation.globals[globalIndex];
-            ASSERT(global.initializationType != Wasm::Global::IsImport);
-            if (global.initializationType == Wasm::Global::FromGlobalImport) {
-                ASSERT(global.initialBitsOrImportNumber < numImportGlobals);
-                jsInstance->instance().setGlobal(globalIndex, jsInstance->instance().loadI64Global(global.initialBitsOrImportNumber));
-            } else
-                jsInstance->instance().setGlobal(globalIndex, global.initialBitsOrImportNumber);
-        }
-    }
-
     return jsInstance;
 }
 

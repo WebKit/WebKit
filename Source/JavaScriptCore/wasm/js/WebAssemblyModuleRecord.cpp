@@ -118,10 +118,10 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         // Eventually we will move all the linking code in JSWebAssemblyInstance here and remove this switch statement.
         switch (import.kind) {
         case Wasm::ExternalKind::Function:
+        case Wasm::ExternalKind::Global:
             break;
         case Wasm::ExternalKind::Table:
         case Wasm::ExternalKind::Memory:
-        case Wasm::ExternalKind::Global:
             continue;
         }
 
@@ -225,10 +225,50 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             m_instance->instance().importFunction<JSWebAssemblyInstance::PoisonedBarrier<JSObject>>(import.kindIndex)->set(vm, m_instance.get(), function);
             break;
         }
+
+        case Wasm::ExternalKind::Global: {
+            // 5. If i is a global import:
+            // i. If i is not an immutable global, throw a TypeError.
+            ASSERT(moduleInformation.globals[import.kindIndex].mutability == Wasm::Global::Immutable);
+            // ii. If the global_type of i is i64 or Type(v) is not Number, throw a WebAssembly.LinkError.
+            if (moduleInformation.globals[import.kindIndex].type == Wasm::I64)
+                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "cannot be an i64")));
+            if (!value.isNumber())
+                return exception(createJSWebAssemblyLinkError(exec, vm, importFailMessage(import, "imported global", "must be a number")));
+            // iii. Append ToWebAssemblyValue(v) to imports.
+            switch (moduleInformation.globals[import.kindIndex].type) {
+            case Wasm::I32:
+                m_instance->instance().setGlobal(import.kindIndex, value.toInt32(exec));
+                break;
+            case Wasm::F32:
+                m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint32_t>(value.toFloat(exec)));
+                break;
+            case Wasm::F64:
+                m_instance->instance().setGlobal(import.kindIndex, bitwise_cast<uint64_t>(value.asNumber()));
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            scope.assertNoException();
+            break;
+        }
+
         case Wasm::ExternalKind::Table:
         case Wasm::ExternalKind::Memory:
-        case Wasm::ExternalKind::Global:
             break;
+        }
+    }
+
+    // Globals
+    {
+        for (size_t globalIndex = moduleInformation.firstInternalGlobal; globalIndex < moduleInformation.globals.size(); ++globalIndex) {
+            const auto& global = moduleInformation.globals[globalIndex];
+            ASSERT(global.initializationType != Wasm::Global::IsImport);
+            if (global.initializationType == Wasm::Global::FromGlobalImport) {
+                ASSERT(global.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                m_instance->instance().setGlobal(globalIndex, m_instance->instance().loadI64Global(global.initialBitsOrImportNumber));
+            } else
+                m_instance->instance().setGlobal(globalIndex, global.initialBitsOrImportNumber);
         }
     }
 
