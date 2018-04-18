@@ -275,9 +275,9 @@ namespace JSC {
         }
 
 #if OS(WINDOWS) && CPU(X86_64)
-        Call appendCallWithSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function, PtrTag tag)
+        Call appendCallWithSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
         {
-            Call functionCall = callWithSlowPathReturnType(tag);
+            Call functionCall = callWithSlowPathReturnType(OperationPtrTag);
             m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.retagged<OperationPtrTag>()));
             return functionCall;
         }
@@ -733,6 +733,14 @@ namespace JSC {
         }
 
 #if OS(WINDOWS) && CPU(X86_64)
+        template<typename OperationType, typename... Args>
+        std::enable_if_t<std::is_same<typename FunctionTraits<OperationType>::ResultType, SlowPathReturnType>::value, MacroAssembler::Call>
+        callOperation(OperationType operation, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            return appendCallWithExceptionCheckAndSlowPathReturnType(operation);
+        }
+
         template<typename Type>
         static constexpr bool is64BitType() { return sizeof(Type) <= 8; }
 

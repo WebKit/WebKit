@@ -1,3 +1,12 @@
+2018-04-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r230748) [WinCairo] 'JSC::JIT::appendCallWithSlowPathReturnType': function does not take 1 arguments
+        https://bugs.webkit.org/show_bug.cgi?id=184725
+
+        Reviewed by Mark Lam.
+
+        * jit/JIT.h:
+
 2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebAssembly][Modules] Import tables in wasm modules
