@@ -109,11 +109,8 @@ void CoordinatedImageBacking::update()
     Nicosia::PaintingContext::paint(buffer,
         [this](GraphicsContext& context)
         {
-            IntRect rect(IntPoint::zero(), IntSize(m_image->size()));
-            context.save();
-            context.clip(rect);
-            context.drawImage(m_image, rect, rect);
-            context.restore();
+            IntRect rect { { }, IntSize { m_image->size() } };
+            context.drawImage(m_image, rect, rect, ImagePaintingOptions(CompositeCopy));
         });
 
     m_client.updateImageBacking(m_id, WTFMove(buffer));

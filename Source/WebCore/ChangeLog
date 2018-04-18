@@ -1,3 +1,23 @@
+2018-04-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] CoordinatedImageBacking can simplify image drawing
+        https://bugs.webkit.org/show_bug.cgi?id=183986
+
+        Reviewed by Michael Catanzaro.
+
+        In CoordinatedImageBacking::update(), when drawing the image into a
+        freshly-created image backing, we can avoid save-and-restoring the
+        painting context. We also don't have to clip it, since the clipping area
+        is the same as the image (and buffer) bounds. Since the buffer is
+        initialized to transparent color, we can use the CompositeCopy operator
+        to just copy image data into the destination since there's nothing to
+        paint the source over.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp:
+        (WebCore::CoordinatedImageBacking::update):
+
 2018-04-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Webkit should spoof as Safari on a Mac for Outlook.com
