@@ -140,14 +140,14 @@ AbstractDOMWindow* JSDOMWindowProxy::toWrapped(VM& vm, JSObject* value)
     return wrapper ? &wrapper->wrapped() : nullptr;
 }
 
-JSValue toJS(ExecState* state, AbstractFrame& frame)
+JSValue toJS(ExecState* state, WindowProxyController& windowProxyController)
 {
-    return &frame.windowProxyController().windowProxy(currentWorld(*state));
+    return &windowProxyController.windowProxy(currentWorld(*state));
 }
 
-JSDOMWindowProxy& toJSDOMWindowProxy(AbstractFrame& frame, DOMWrapperWorld& world)
+JSDOMWindowProxy& toJSDOMWindowProxy(WindowProxyController& windowProxyController, DOMWrapperWorld& world)
 {
-    return frame.windowProxyController().windowProxy(world);
+    return windowProxyController.windowProxy(world);
 }
 
 } // namespace WebCore

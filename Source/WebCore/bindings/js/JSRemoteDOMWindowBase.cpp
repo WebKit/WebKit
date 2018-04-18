@@ -66,16 +66,6 @@ RuntimeFlags JSRemoteDOMWindowBase::javaScriptRuntimeFlags(const JSGlobalObject*
     return RuntimeFlags { };
 }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject*, RemoteDOMWindow& domWindow)
-{
-    return toJS(state, domWindow);
-}
-
-JSValue toJS(ExecState* state, RemoteDOMWindow& domWindow)
-{
-    return toJS(state, domWindow.frame());
-}
-
 JSRemoteDOMWindow* toJSRemoteDOMWindow(JSC::VM& vm, JSValue value)
 {
     if (!value.isObject())

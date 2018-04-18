@@ -1,3 +1,15 @@
+2018-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Set RemoteDOMWindow's initial opener
+        https://bugs.webkit.org/show_bug.cgi?id=184716
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline existing test now that remoteWindow.opener now returns
+        its initial opener.
+
+        * http/tests/navigation/process-swap-window-open-expected.txt:
+
 2018-04-18  Dean Jackson  <dino@apple.com>
 
         Detect system preview links

@@ -5886,6 +5886,8 @@ void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remote
     auto remoteWindow = RemoteDOMWindow::create(remoteFrame.copyRef(), WTFMove(remoteWindowIdentifier));
     UNUSED_PARAM(remoteWindow);
 
+    remoteFrame->setOpener(frame->coreFrame()->loader().opener());
+
     auto windowProxies = frame->coreFrame()->windowProxyController().releaseWindowProxies();
     remoteFrame->windowProxyController().setWindowProxies(WTFMove(windowProxies));
     remoteFrame->windowProxyController().setDOMWindowForWindowProxy(remoteWindow.ptr());

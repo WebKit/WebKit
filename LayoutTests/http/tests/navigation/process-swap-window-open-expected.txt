@@ -23,7 +23,7 @@ PASS w.parent is w
 PASS w.frames is w
 PASS w.closed is false
 PASS w.length is 0
-FAIL w.opener should be [object Window]. Was null.
+PASS w.opener is window
 PASS w.close is an instance of Function
 PASS w.focus is an instance of Function
 PASS w.blur is an instance of Function

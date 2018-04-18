@@ -51,6 +51,7 @@ namespace WebCore {
 class IDBKey;
 class IDBKeyData;
 class IDBValue;
+class JSDOMWindowProxy;
 class DOMPromise;
 class ScheduledAction;
 
@@ -273,6 +274,7 @@ struct IDLScheduledAction : IDLType<std::unique_ptr<ScheduledAction>> { };
 template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
 template<typename T> struct IDLEventListener : IDLWrapper<T> { };
 template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
+struct IDLWindowProxy : IDLWrapper<JSDOMWindowProxy> { };
 
 struct IDLIDBKey : IDLWrapper<IDBKey> { };
 struct IDLIDBKeyData : IDLWrapper<IDBKeyData> { };

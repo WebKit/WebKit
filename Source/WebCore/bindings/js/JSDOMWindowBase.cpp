@@ -248,21 +248,12 @@ JSDOMWindowProxy* JSDOMWindowBase::proxy() const
     return m_proxy;
 }
 
-// JSDOMGlobalObject* is ignored, accessing a window in any context will
-// use that DOMWindow's prototype chain.
-JSValue toJS(ExecState* state, JSDOMGlobalObject*, DOMWindow& domWindow)
-{
-    return toJS(state, domWindow);
-}
-
-JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, Frame& frame)
-{
-    return toJS(state, frame);
-}
-
 JSValue toJS(ExecState* state, DOMWindow& domWindow)
 {
-    return toJS(state, domWindow.frame());
+    auto* frame = domWindow.frame();
+    if (!frame)
+        return jsNull();
+    return toJS(state, frame->windowProxyController());
 }
 
 JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)

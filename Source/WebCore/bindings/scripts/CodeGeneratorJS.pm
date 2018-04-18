@@ -421,6 +421,12 @@ sub AddToIncludesForIDLType
         return;
     }
 
+    if ($type->name eq "WindowProxy") {
+        AddToIncludes("JSDOMWindowProxy.h", $includesRef, $conditional);
+        AddToIncludes("JSDOMConvertWindowProxy.h", $includesRef, $conditional);
+        return;
+    }
+
     if ($codeGenerator->IsStringType($type)) {
         AddToIncludes("JSDOMConvertStrings.h", $includesRef, $conditional);
         return;
@@ -6384,6 +6390,7 @@ sub GetBaseIDLType
         "JSON" => "IDLJSON",
         "ScheduledAction" => "IDLScheduledAction",
         "SerializedScriptValue" => "IDLSerializedScriptValue<SerializedScriptValue>",
+        "WindowProxy" => "IDLWindowProxy",
         "XPathNSResolver" => "IDLXPathNSResolver<XPathNSResolver>",
     );
 

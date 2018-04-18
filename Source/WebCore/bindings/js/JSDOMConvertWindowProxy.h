@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,21 @@
 
 #pragma once
 
-#include "AbstractFrame.h"
-#include "GlobalFrameIdentifier.h"
-#include <wtf/Ref.h>
-#include <wtf/TypeCasts.h>
+#include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
+#include "JSDOMWindowProxy.h"
 
 namespace WebCore {
 
-class RemoteDOMWindow;
+template<> struct JSConverter<IDLWindowProxy> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
 
-class RemoteFrame final : public AbstractFrame {
-public:
-    static Ref<RemoteFrame> create(GlobalFrameIdentifier&& frameIdentifier)
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, U&& value)
     {
-        return adoptRef(* new RemoteFrame(WTFMove(frameIdentifier)));
+        return toJS(&state, std::forward<U>(value));
     }
-    ~RemoteFrame();
-
-    const GlobalFrameIdentifier& identifier() const { return m_identifier; }
-
-    void setWindow(RemoteDOMWindow* window) { m_window = window; }
-    RemoteDOMWindow* window() const { return m_window; }
-
-    void setOpener(AbstractFrame* opener) { m_opener = opener; }
-    AbstractFrame* opener() const { return m_opener.get(); }
-
-private:
-    WEBCORE_EXPORT explicit RemoteFrame(GlobalFrameIdentifier&&);
-
-    bool isRemoteFrame() const final { return true; }
-    bool isLocalFrame() const final { return false; }
-
-    AbstractDOMWindow* virtualWindow() const final;
-
-    GlobalFrameIdentifier m_identifier;
-    RemoteDOMWindow* m_window { nullptr };
-
-    RefPtr<AbstractFrame> m_opener;
 };
 
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RemoteFrame)
-    static bool isType(const WebCore::AbstractFrame& frame) { return frame.isRemoteFrame(); }
-SPECIALIZE_TYPE_TRAITS_END()
+}

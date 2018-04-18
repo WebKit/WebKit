@@ -1,3 +1,46 @@
+2018-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Set RemoteDOMWindow's initial opener
+        https://bugs.webkit.org/show_bug.cgi?id=184716
+
+        Reviewed by Sam Weinig.
+
+        Add support for WindowProxy type in the IDL. The implementation should
+        return a WindowProxyController and toJS() will take care of converting
+        this into a JSValue via JSDOMWindowProxy.
+
+        No new tests, rebaselined existing test.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/IDLTypes.h:
+        * bindings/js/JSDOMConvertWindowProxy.h: Added.
+        (WebCore::JSConverter<IDLWindowProxy>::convert):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowProxy.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindowProxy):
+        * bindings/js/JSDOMWindowProxy.h:
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindowProxy):
+        * bindings/js/JSRemoteDOMWindowBase.cpp:
+        * bindings/js/JSRemoteDOMWindowBase.h:
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBuiltinType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GetBaseIDLType):
+        * page/RemoteDOMWindow.cpp:
+        (WebCore::RemoteDOMWindow::self const):
+        (WebCore::RemoteDOMWindow::top const):
+        (WebCore::RemoteDOMWindow::opener const):
+        (WebCore::RemoteDOMWindow::parent const):
+        * page/RemoteDOMWindow.h:
+        * page/RemoteDOMWindow.idl:
+        * page/RemoteFrame.h:
+
 2018-04-18  Dean Jackson  <dino@apple.com>
 
         Detect system preview links

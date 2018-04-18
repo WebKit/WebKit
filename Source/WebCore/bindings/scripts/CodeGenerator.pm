@@ -891,6 +891,7 @@ sub IsBuiltinType
     return 1 if $type->name eq "XPathNSResolver";
     return 1 if $type->name eq "any";
     return 1 if $type->name eq "object";
+    return 1 if $type->name eq "WindowProxy";
 
     return 0;
 }

@@ -100,13 +100,11 @@ private:
     JSDOMWindowProxy* m_proxy;
 };
 
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, DOMWindow&);
 // The following return a JSDOMWindowProxy or jsNull()
 // JSDOMGlobalObject* is ignored, accessing a window in any context will use that DOMWindow's prototype chain.
-WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, DOMWindow&);
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, DOMWindow& window) { return toJS(state, window); }
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, DOMWindow* window) { return window ? toJS(state, globalObject, *window) : JSC::jsNull(); }
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, Frame&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, Frame* frame) { return frame ? toJS(state, globalObject, *frame) : JSC::jsNull(); }
-JSC::JSValue toJS(JSC::ExecState*, DOMWindow&);
 inline JSC::JSValue toJS(JSC::ExecState* state, DOMWindow* window) { return window ? toJS(state, *window) : JSC::jsNull(); }
 
 // The following return a JSDOMWindow or nullptr.
