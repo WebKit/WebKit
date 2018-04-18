@@ -129,7 +129,7 @@ def createZipFromList(listToZip, configuration, excludePattern=None):
 
 
 def createZipManually(directoryToZip, archiveFile):
-    archiveZip = zipfile.ZipFile(archiveFile, "w")
+    archiveZip = zipfile.ZipFile(archiveFile, "w", zipfile.ZIP_DEFLATED)
 
     for path, dirNames, fileNames in os.walk(directoryToZip):
         relativePath = os.path.relpath(path, directoryToZip)
