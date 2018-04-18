@@ -1,3 +1,13 @@
+2018-04-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Webkit should spoof as Safari on a Mac for Outlook.com
+        https://bugs.webkit.org/show_bug.cgi?id=184573
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-04-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][TestWebKitAPI] Implement PlatformWebView for TestWebKit

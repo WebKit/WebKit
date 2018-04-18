@@ -1,3 +1,15 @@
+2018-04-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Webkit should spoof as Safari on a Mac for Outlook.com
+        https://bugs.webkit.org/show_bug.cgi?id=184573
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add quirk for outlook.live.com.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresMacintoshPlatform):
+
 2018-04-17  Mark Lam  <mark.lam@apple.com>
 
         Templatize CodePtr/Refs/FunctionPtrs with PtrTags.
