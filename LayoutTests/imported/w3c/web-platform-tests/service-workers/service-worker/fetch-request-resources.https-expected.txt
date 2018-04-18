@@ -56,4 +56,10 @@ PASS Audio load (url:https://localhost:9443/service-workers/service-worker/resou
 PASS Audio load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test54 cross_origin:) 
 PASS Audio load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test55 cross_origin:anonymous) 
 PASS Audio load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test56 cross_origin:use-credentials) 
+PASS Video load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test57 cross_origin:) 
+PASS Video load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test58 cross_origin:anonymous) 
+PASS Video load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test59 cross_origin:use-credentials) 
+PASS Video load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test60 cross_origin:) 
+PASS Video load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test61 cross_origin:anonymous) 
+PASS Video load (url:https://127.0.0.1:9443/service-workers/service-worker/resources/dummy?test62 cross_origin:use-credentials) 
 

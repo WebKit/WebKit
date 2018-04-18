@@ -76,7 +76,9 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
 #endif
 
     ContentSecurityPolicyImposition contentSecurityPolicyImposition = m_mediaElement && m_mediaElement->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-    CachedResourceRequest cacheRequest(WTFMove(request), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, contentSecurityPolicyImposition, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
+    ResourceLoaderOptions loaderOptions { SendCallbacks, DoNotSniffContent, bufferingPolicy, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include,  DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, contentSecurityPolicyImposition, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy };
+    loaderOptions.destination = m_mediaElement && !m_mediaElement->isVideo() ? FetchOptions::Destination::Audio : FetchOptions::Destination::Video;
+    CachedResourceRequest cacheRequest { WTFMove(request), WTFMove(loaderOptions) };
     cacheRequest.setAsPotentiallyCrossOrigin(m_crossOriginMode, *m_document);
     if (m_mediaElement)
         cacheRequest.setInitiator(*m_mediaElement.get());

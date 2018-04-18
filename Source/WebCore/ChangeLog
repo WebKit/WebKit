@@ -1,3 +1,15 @@
+2018-04-18  Youenn Fablet  <youenn@apple.com>
+
+        MediaResourceLoader should set its fetch destination
+        https://bugs.webkit.org/show_bug.cgi?id=184746
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource):
+
 2018-04-18  Jer Noble  <jer.noble@apple.com>
 
         Fix runtime errors in simulator while playing media
