@@ -341,7 +341,9 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         if (!error.isNull()) {
             m_synchronousLoadData->error = WTFMove(error);
             sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
-            cleanup();
+            RunLoop::main().dispatch([protectedThis = makeRef(*this)]() {
+                protectedThis->cleanup();
+            });
             return ShouldContinueDidReceiveResponse::No;
         }
     }
