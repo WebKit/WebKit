@@ -51,7 +51,6 @@ extern "C" {
     M(KeyHandling) \
     M(Layers) \
     M(Loading) \
-    M(MouseHandling) \
     M(Network) \
     M(NetworkCache) \
     M(NetworkCacheSpeculativePreloading) \
