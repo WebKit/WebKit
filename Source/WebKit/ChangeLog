@@ -1,3 +1,13 @@
+2018-04-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKit] Implement InjectedBundleWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184525
+
+        Reviewed by Konstantin Tokarev.
+
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WebKit::InjectedBundle::initialize):
+
 2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Programmatically changing focus when an element already has focus is a confusing experience
