@@ -1,5 +1,20 @@
 2018-04-18  Jer Noble  <jer.noble@apple.com>
 
+        Fix runtime errors in simulator while playing media
+        https://bugs.webkit.org/show_bug.cgi?id=184751
+
+        Reviewed by Eric Carlson.
+
+        AVURLAssetHTTPCookiesKey may not be present, and AVPlayer may not respond to certain methods.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep):
+
+2018-04-18  Jer Noble  <jer.noble@apple.com>
+
         Ignore ASSERT when setting AVAudioSessionCategory returns an error on simulator.
         https://bugs.webkit.org/show_bug.cgi?id=184698
 
