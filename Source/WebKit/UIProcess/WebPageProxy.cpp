@@ -291,21 +291,32 @@ ExceededDatabaseQuotaRecords::Record* ExceededDatabaseQuotaRecords::next()
 }
 
 #if !LOG_DISABLED
+static const char* webMouseEventTypeString(WebEvent::Type type)
+{
+    switch (type) {
+    case WebEvent::MouseDown:
+        return "MouseDown";
+    case WebEvent::MouseUp:
+        return "MouseUp";
+    case WebEvent::MouseMove:
+        return "MouseMove";
+    default:
+        ASSERT_NOT_REACHED();
+        return "<unknown>";
+    }
+}
+
 static const char* webKeyboardEventTypeString(WebEvent::Type type)
 {
     switch (type) {
     case WebEvent::KeyDown:
         return "KeyDown";
-    
     case WebEvent::KeyUp:
         return "KeyUp";
-    
     case WebEvent::RawKeyDown:
         return "RawKeyDown";
-    
     case WebEvent::Char:
         return "Char";
-    
     default:
         ASSERT_NOT_REACHED();
         return "<unknown>";
@@ -1898,28 +1909,28 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     if (!isValid())
         return;
 
+    m_mouseEventQueue.append(event);
+    if (m_mouseEventQueue.size() == 1) // Otherwise, called from DidReceiveEvent message handler.
+        processNextQueuedMouseEvent();
+}
+    
+void WebPageProxy::processNextQueuedMouseEvent()
+{
+    if (!isValid())
+        return;
+
+    ASSERT(!m_mouseEventQueue.isEmpty());
+
+    const NativeWebMouseEvent& event = m_mouseEventQueue.first();
+    
     if (m_pageClient.windowIsFrontWindowUnderMouse(event))
         setToolTip(String());
 
     // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
     if (event.type() != WebEvent::MouseMove)
         m_process->responsivenessTimer().start();
-    else {
-        if (m_processingMouseMoveEvent) {
-            m_nextMouseMoveEvent = std::make_unique<NativeWebMouseEvent>(event);
-            return;
-        }
 
-        m_processingMouseMoveEvent = true;
-    }
-
-    // <https://bugs.webkit.org/show_bug.cgi?id=57904> We need to keep track of the mouse down event in the case where we
-    // display a popup menu for select elements. When the user changes the selected item,
-    // we fake a mouse up event by using this stored down event. This event gets cleared
-    // when the mouse up message is received from WebProcess.
-    if (event.type() == WebEvent::MouseDown)
-        m_currentlyProcessedMouseDownEvent = std::make_unique<NativeWebMouseEvent>(event);
-
+    LOG(MouseHandling, " UI process: sent mouseEvent from handleMouseEvent");
     m_process->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
@@ -4804,9 +4815,26 @@ void WebPageProxy::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index
     m_process->send(Messages::WebPage::SetTextForActivePopupMenu(index), m_pageID);
 }
 
+bool WebPageProxy::isProcessingMouseEvents() const
+{
+    return !m_mouseEventQueue.isEmpty();
+}
+
 NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 {
-    return m_currentlyProcessedMouseDownEvent.get();
+    // <https://bugs.webkit.org/show_bug.cgi?id=57904> We need to keep track of the mouse down event in the case where we
+    // display a popup menu for select elements. When the user changes the selected item, we fake a mouseup event by
+    // using this stored mousedown event and changing the event type. This trickery happens when WebProcess handles
+    // a mousedown event that runs the default handler for HTMLSelectElement, so the triggering mousedown must be the first event.
+
+    if (m_mouseEventQueue.isEmpty())
+        return nullptr;
+    
+    auto& event = m_mouseEventQueue.first();
+    if (event.type() != WebEvent::Type::MouseDown)
+        return nullptr;
+
+    return &event;
 }
 
 void WebPageProxy::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
@@ -5215,15 +5243,24 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::NoType:
         break;
     case WebEvent::MouseMove:
-        m_processingMouseMoveEvent = false;
-        if (m_nextMouseMoveEvent)
-            handleMouseEvent(*std::exchange(m_nextMouseMoveEvent, nullptr));
-        break;
     case WebEvent::MouseDown:
+    case WebEvent::MouseUp: {
+        LOG(MouseHandling, "WebPageProxy::didReceiveEvent: %s (queue empty %d)", webMouseEventTypeString(type), m_mouseEventQueue.isEmpty());
+
+        // Retire the last sent event now that WebProcess is done handling it.
+        MESSAGE_CHECK(!m_mouseEventQueue.isEmpty());
+        NativeWebMouseEvent event = m_mouseEventQueue.takeFirst();
+        MESSAGE_CHECK(type == event.type());
+
+        if (!m_mouseEventQueue.isEmpty()) {
+            LOG(MouseHandling, " UI process: handling a queued mouse event from didReceiveEvent");
+            processNextQueuedMouseEvent();
+        } else if (auto* automationSession = process().processPool().automationSession())
+            automationSession->mouseEventsFlushedForPage(*this);
+
         break;
-    case WebEvent::MouseUp:
-        m_currentlyProcessedMouseDownEvent = nullptr;
-        break;
+    }
+
     case WebEvent::MouseForceChanged:
     case WebEvent::MouseForceDown:
     case WebEvent::MouseForceUp:
@@ -5256,7 +5293,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         MESSAGE_CHECK(type == event.type());
 
-        if (!m_keyEventQueue.isEmpty()) {
+        bool canProcessMoreKeyEvents = !m_keyEventQueue.isEmpty();
+        if (canProcessMoreKeyEvents) {
             LOG(KeyHandling, " UI process: sent keyEvent from didReceiveEvent");
             m_process->send(Messages::WebPage::KeyEvent(m_keyEventQueue.first()), m_pageID);
         }
@@ -5270,7 +5308,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
             m_uiClient->didNotHandleKeyEvent(this, event);
 
         // Notify the session after -[NSApp sendEvent:] has a crack at turning the event into an action.
-        if (m_keyEventQueue.isEmpty()) {
+        if (!canProcessMoreKeyEvents) {
             if (auto* automationSession = process().processPool().automationSession())
                 automationSession->keyboardEventsFlushedForPage(*this);
         }
@@ -5874,15 +5912,10 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_pendingLearnOrIgnoreWordMessageCount = 0;
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
+    m_mouseEventQueue.clear();
     m_keyEventQueue.clear();
     m_wheelEventQueue.clear();
     m_currentlyProcessedWheelEvents.clear();
-
-    m_nextMouseMoveEvent = nullptr;
-    m_currentlyProcessedMouseDownEvent = nullptr;
-
-    m_processingMouseMoveEvent = false;
-
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_touchEventQueue.clear();
 #endif

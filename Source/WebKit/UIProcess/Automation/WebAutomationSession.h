@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,21 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebProcessPool;
 
+struct AutomationCommandError {
+public:
+    AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage type)
+        : type(type) { }
+
+    AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage type, const String& message)
+        : type(type)
+        , message(message) { }
+    
+    String toProtocolString() const;
+
+    Inspector::Protocol::Automation::ErrorMessage type;
+    std::optional<String> message;
+};
+
 class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>, public IPC::MessageReceiver
 #if ENABLE(REMOTE_INSPECTOR)
     , public Inspector::RemoteAutomationTarget
@@ -98,6 +113,7 @@ public:
     void documentLoadedForFrame(const WebFrameProxy&);
     void inspectorFrontendLoaded(const WebPageProxy&);
     void keyboardEventsFlushedForPage(const WebPageProxy&);
+    void mouseEventsFlushedForPage(const WebPageProxy&);
     void willClosePage(const WebPageProxy&);
     void handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&);
     void willShowJavaScriptDialog(WebPageProxy&);
@@ -235,7 +251,8 @@ private:
     HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingInspectorCallbacksPerPage;
-    HashMap<uint64_t, RefPtr<Inspector::BackendDispatcher::CallbackBase>> m_pendingKeyboardEventsFlushedCallbacksPerPage;
+    HashMap<uint64_t, Function<void(std::optional<AutomationCommandError>)>> m_pendingKeyboardEventsFlushedCallbacksPerPage;
+    HashMap<uint64_t, Function<void(std::optional<AutomationCommandError>)>> m_pendingMouseEventsFlushedCallbacksPerPage;
 
     uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>> m_evaluateJavaScriptFunctionCallbacks;
