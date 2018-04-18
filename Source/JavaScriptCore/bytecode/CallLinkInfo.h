@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -165,9 +165,9 @@ public:
     }
 
     void setCallLocations(
-        CodeLocationLabel callReturnLocationOrPatchableJump,
-        CodeLocationLabel hotPathBeginOrSlowPathStart,
-        CodeLocationNearCall hotPathOther)
+        CodeLocationLabel<JSEntryPtrTag> callReturnLocationOrPatchableJump,
+        CodeLocationLabel<JSEntryPtrTag> hotPathBeginOrSlowPathStart,
+        CodeLocationNearCall<JSEntryPtrTag> hotPathOther)
     {
         m_callReturnLocationOrPatchableJump = callReturnLocationOrPatchableJump;
         m_hotPathBeginOrSlowPathStart = hotPathBeginOrSlowPathStart;
@@ -181,12 +181,12 @@ public:
         m_allowStubs = false;
     }
 
-    CodeLocationNearCall callReturnLocation();
-    CodeLocationJump patchableJump();
-    CodeLocationDataLabelPtr hotPathBegin();
-    CodeLocationLabel slowPathStart();
+    CodeLocationNearCall<JSEntryPtrTag> callReturnLocation();
+    CodeLocationJump<JSEntryPtrTag> patchableJump();
+    CodeLocationDataLabelPtr<JSEntryPtrTag> hotPathBegin();
+    CodeLocationLabel<JSEntryPtrTag> slowPathStart();
 
-    CodeLocationNearCall hotPathOther()
+    CodeLocationNearCall<JSEntryPtrTag> hotPathOther()
     {
         return m_hotPathOther;
     }
@@ -327,9 +327,11 @@ public:
     }
 
 private:
-    CodeLocationLabel m_callReturnLocationOrPatchableJump;
-    CodeLocationLabel m_hotPathBeginOrSlowPathStart;
-    CodeLocationNearCall m_hotPathOther;
+    // FIXME: These should be tagged with JSInternalPtrTag instead of JSEntryTag.
+    // https://bugs.webkit.org/show_bug.cgi?id=184712
+    CodeLocationLabel<JSEntryPtrTag> m_callReturnLocationOrPatchableJump;
+    CodeLocationLabel<JSEntryPtrTag> m_hotPathBeginOrSlowPathStart;
+    CodeLocationNearCall<JSEntryPtrTag> m_hotPathOther;
     WriteBarrier<JSCell> m_calleeOrCodeBlock;
     WriteBarrier<JSCell> m_lastSeenCalleeOrExecutable;
     RefPtr<PolymorphicCallStubRoutine> m_stub;

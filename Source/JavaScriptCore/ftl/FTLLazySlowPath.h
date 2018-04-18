@@ -69,27 +69,29 @@ public:
     ~LazySlowPath();
 
     void initialize(
-        CodeLocationJump patchableJump, CodeLocationLabel done,
-        CodeLocationLabel exceptionTarget, const RegisterSet& usedRegisters,
+        CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSEntryPtrTag> done,
+        CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget, const RegisterSet& usedRegisters,
         CallSiteIndex, RefPtr<Generator>
         );
 
-    CodeLocationJump patchableJump() const { return m_patchableJump; }
-    CodeLocationLabel done() const { return m_done; }
+    CodeLocationJump<JSInternalPtrTag> patchableJump() const { return m_patchableJump; }
+    CodeLocationLabel<JSEntryPtrTag> done() const { return m_done; }
     const RegisterSet& usedRegisters() const { return m_usedRegisters; }
     CallSiteIndex callSiteIndex() const { return m_callSiteIndex; }
 
     void generate(CodeBlock*);
 
-    MacroAssemblerCodeRef stub() const { return m_stub; }
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> stub() const { return m_stub; }
 
 private:
-    CodeLocationJump m_patchableJump;
-    CodeLocationLabel m_done;
-    CodeLocationLabel m_exceptionTarget;
+    CodeLocationJump<JSInternalPtrTag> m_patchableJump;
+    // FIXME: This should be tagged with JSInternalPtrTag instead of JSEntryTag.
+    // https://bugs.webkit.org/show_bug.cgi?id=184712
+    CodeLocationLabel<JSEntryPtrTag> m_done;
+    CodeLocationLabel<ExceptionHandlerPtrTag> m_exceptionTarget;
     RegisterSet m_usedRegisters;
     CallSiteIndex m_callSiteIndex;
-    MacroAssemblerCodeRef m_stub;
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_stub;
     RefPtr<Generator> m_generator;
 };
 

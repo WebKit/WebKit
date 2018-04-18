@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,25 +97,25 @@ void CallLinkInfo::unlink(VM& vm)
     RELEASE_ASSERT(!isOnList());
 }
 
-CodeLocationNearCall CallLinkInfo::callReturnLocation()
+CodeLocationNearCall<JSEntryPtrTag> CallLinkInfo::callReturnLocation()
 {
     RELEASE_ASSERT(!isDirect());
-    return CodeLocationNearCall(m_callReturnLocationOrPatchableJump, Regular);
+    return CodeLocationNearCall<JSEntryPtrTag>(m_callReturnLocationOrPatchableJump, Regular);
 }
 
-CodeLocationJump CallLinkInfo::patchableJump()
+CodeLocationJump<JSEntryPtrTag> CallLinkInfo::patchableJump()
 {
     RELEASE_ASSERT(callType() == DirectTailCall);
-    return CodeLocationJump(m_callReturnLocationOrPatchableJump);
+    return CodeLocationJump<JSEntryPtrTag>(m_callReturnLocationOrPatchableJump);
 }
 
-CodeLocationDataLabelPtr CallLinkInfo::hotPathBegin()
+CodeLocationDataLabelPtr<JSEntryPtrTag> CallLinkInfo::hotPathBegin()
 {
     RELEASE_ASSERT(!isDirect());
-    return CodeLocationDataLabelPtr(m_hotPathBeginOrSlowPathStart);
+    return CodeLocationDataLabelPtr<JSEntryPtrTag>(m_hotPathBeginOrSlowPathStart);
 }
 
-CodeLocationLabel CallLinkInfo::slowPathStart()
+CodeLocationLabel<JSEntryPtrTag> CallLinkInfo::slowPathStart()
 {
     RELEASE_ASSERT(isDirect());
     return m_hotPathBeginOrSlowPathStart;

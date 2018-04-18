@@ -58,7 +58,7 @@ void* callToThrow(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(*vm);
     dataLog("Throwing exception ", JSValue(scope.exception()), " (callToThrow).\n");
 #endif
-    return LLInt::getCodePtr(llint_throw_during_call_trampoline);
+    return LLInt::getExecutableAddress(llint_throw_during_call_trampoline);
 }
 
 } } // namespace JSC::LLInt

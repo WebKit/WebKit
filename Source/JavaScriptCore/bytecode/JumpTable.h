@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ namespace JSC {
     struct OffsetLocation {
         int32_t branchOffset;
 #if ENABLE(JIT)
-        CodeLocationLabel ctiOffset;
+        CodeLocationLabel<JSSwitchPtrTag> ctiOffset;
 #endif
     };
 
@@ -47,7 +47,7 @@ namespace JSC {
         typedef HashMap<RefPtr<StringImpl>, OffsetLocation> StringOffsetTable;
         StringOffsetTable offsetTable;
 #if ENABLE(JIT)
-        CodeLocationLabel ctiDefault; // FIXME: it should not be necessary to store this.
+        CodeLocationLabel<JSSwitchPtrTag> ctiDefault; // FIXME: it should not be necessary to store this.
 #endif
 
         inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset)
@@ -60,7 +60,7 @@ namespace JSC {
         }
 
 #if ENABLE(JIT)
-        inline CodeLocationLabel ctiForValue(StringImpl* value)
+        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(StringImpl* value)
         {
             StringOffsetTable::const_iterator end = offsetTable.end();
             StringOffsetTable::const_iterator loc = offsetTable.find(value);
@@ -81,8 +81,8 @@ namespace JSC {
         Vector<int32_t> branchOffsets;
         int32_t min;
 #if ENABLE(JIT)
-        Vector<CodeLocationLabel> ctiOffsets;
-        CodeLocationLabel ctiDefault;
+        Vector<CodeLocationLabel<JSSwitchPtrTag>> ctiOffsets;
+        CodeLocationLabel<JSSwitchPtrTag> ctiDefault;
 #endif
 
         int32_t offsetForValue(int32_t value, int32_t defaultOffset);
@@ -99,7 +99,7 @@ namespace JSC {
             ctiOffsets.grow(branchOffsets.size());
         }
         
-        inline CodeLocationLabel ctiForValue(int32_t value)
+        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(int32_t value)
         {
             if (value >= min && static_cast<uint32_t>(value - min) < ctiOffsets.size())
                 return ctiOffsets[value - min];

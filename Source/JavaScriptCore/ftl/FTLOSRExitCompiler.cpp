@@ -176,7 +176,7 @@ static void compileRecovery(
 }
 
 static void compileStub(
-    unsigned exitID, JITCode* jitCode, OSRExit& exit, VM* vm, CodeBlock* codeBlock, PtrTag exitSiteTag)
+    unsigned exitID, JITCode* jitCode, OSRExit& exit, VM* vm, CodeBlock* codeBlock)
 {
     // This code requires framePointerRegister is the same as callFrameRegister
     static_assert(MacroAssembler::framePointerRegister == GPRInfo::callFrameRegister, "MacroAssembler::framePointerRegister and GPRInfo::callFrameRegister must be the same");
@@ -338,9 +338,8 @@ static void compileStub(
             jit.setupArguments<decltype(operationMaterializeObjectInOSR)>(
                 CCallHelpers::TrustedImmPtr(materialization),
                 CCallHelpers::TrustedImmPtr(materializationArguments));
-            PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-            jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(operationMaterializeObjectInOSR, tag)), GPRInfo::nonArgGPR0);
-            jit.call(GPRInfo::nonArgGPR0, tag);
+            jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationMaterializeObjectInOSR)), GPRInfo::nonArgGPR0);
+            jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
             jit.storePtr(GPRInfo::returnValueGPR, materializationToPointer.get(materialization));
 
             // Let everyone know that we're done.
@@ -367,9 +366,8 @@ static void compileStub(
             CCallHelpers::TrustedImmPtr(materialization),
             CCallHelpers::TrustedImmPtr(materializationToPointer.get(materialization)),
             CCallHelpers::TrustedImmPtr(materializationArguments));
-        PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-        jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(operationPopulateObjectInOSR, tag)), GPRInfo::nonArgGPR0);
-        jit.call(GPRInfo::nonArgGPR0, tag);
+        jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationPopulateObjectInOSR)), GPRInfo::nonArgGPR0);
+        jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     }
 
     // Save all state from wherever the exit data tells us it was, into the appropriate place in
@@ -496,7 +494,7 @@ static void compileStub(
     LinkBuffer patchBuffer(jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
-        patchBuffer, exitSiteTag,
+        patchBuffer, OSRExitPtrTag,
         "FTL OSR exit #%u (%s, %s) from %s, with operands = %s",
             exitID, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
@@ -544,13 +542,12 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
 
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
 
-    PtrTag thunkTag = ptrTag(FTLOSRExitPtrTag, &exit);
-    compileStub(exitID, jitCode, exit, &vm, codeBlock, thunkTag);
+    compileStub(exitID, jitCode, exit, &vm, codeBlock);
 
     MacroAssembler::repatchJump(
-        exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.retaggedCode(thunkTag, NearCodePtrTag)));
+        exit.codeLocationForRepatch(codeBlock), CodeLocationLabel<OSRExitPtrTag>(exit.m_code.code()));
     
-    return exit.m_code.retaggedCode(thunkTag, bitwise_cast<PtrTag>(exec)).executableAddress();
+    return exit.m_code.code().executableAddress();
 }
 
 } } // namespace JSC::FTL

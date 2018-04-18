@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ public:
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         std::unique_ptr<CallLinkStatus> = nullptr,
         JSFunction* = nullptr,
-        PropertySlot::GetValueFunc = nullptr,
+        FunctionPtr<OperationPtrTag> customAccessorGetter = nullptr,
         std::optional<DOMAttributeAnnotation> = std::nullopt);
 
     ~GetByIdVariant();
@@ -66,7 +66,7 @@ public:
     CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
-    PropertySlot::GetValueFunc customAccessorGetter() const { return m_customAccessorGetter; }
+    FunctionPtr<OperationPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
     std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
@@ -86,7 +86,7 @@ private:
     PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
     JSFunction* m_intrinsicFunction;
-    PropertySlot::GetValueFunc m_customAccessorGetter;
+    FunctionPtr<OperationPtrTag> m_customAccessorGetter;
     std::optional<DOMAttributeAnnotation> m_domAttribute;
 };
 

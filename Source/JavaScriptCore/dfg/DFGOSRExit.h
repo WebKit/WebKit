@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,9 +145,9 @@ struct OSRExit : public OSRExitBase {
     static void JIT_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
     static void executeOSRExit(Probe::Context&);
 
+    // FIXME: <rdar://problem/39498244>.
     unsigned m_patchableCodeOffset { 0 };
-    
-    MacroAssemblerCodeRef m_code;
+    MacroAssemblerCodeRef<OSRExitPtrTag> m_code;
 
     RefPtr<OSRExitState> exitState;
     
@@ -158,7 +158,7 @@ struct OSRExit : public OSRExitBase {
 
     void setPatchableCodeOffset(MacroAssembler::PatchableJump);
     MacroAssembler::Jump getPatchableCodeOffsetAsJump() const;
-    CodeLocationJump codeLocationForRepatch(CodeBlock*) const;
+    CodeLocationJump<JSInternalPtrTag> codeLocationForRepatch(CodeBlock*) const;
     void correctJump(LinkBuffer&);
 
     unsigned m_streamIndex;

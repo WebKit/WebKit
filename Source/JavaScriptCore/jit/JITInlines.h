@@ -116,21 +116,19 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     cont8Bit.link(this);
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
+ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr<NoPtrTag> target)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
     Call nakedCall = nearCall();
-    assertIsNullOrTaggedWith(function.executableAddress(), NearCodePtrTag);
-    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr(function)));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
     return nakedCall;
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr function)
+ALWAYS_INLINE JIT::Call JIT::emitNakedTailCall(CodePtr<NoPtrTag> target)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
     Call nakedCall = nearTailCall();
-    assertIsNullOrTaggedWith(function.executableAddress(), NearCodePtrTag);
-    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr(function)));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, FunctionPtr<OperationPtrTag>(target.retagged<OperationPtrTag>())));
     return nakedCall;
 }
 
@@ -151,35 +149,35 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const FunctionPtr function, PtrTag tag)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const FunctionPtr<CFunctionPtrTag> function)
 {
     updateTopCallFrame();
-    MacroAssembler::Call call = appendCall(function, tag);
+    MacroAssembler::Call call = appendCall(function);
     exceptionCheck();
     return call;
 }
 
 #if OS(WINDOWS) && CPU(X86_64)
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr function, PtrTag  tag)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
 {
     updateTopCallFrame();
-    MacroAssembler::Call call = appendCallWithSlowPathReturnType(function, tag);
+    MacroAssembler::Call call = appendCallWithSlowPathReturnType(function);
     exceptionCheck();
     return call;
 }
 #endif
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr function, PtrTag tag)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag> function)
 {
     updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
-    MacroAssembler::Call call = appendCall(function, tag);
+    MacroAssembler::Call call = appendCall(function);
     exceptionCheckWithCallFrameRollback();
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr function, PtrTag tag, int dst)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr<CFunctionPtrTag> function, int dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck(function, tag);
+    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
 #if USE(JSVALUE64)
     emitPutVirtualRegister(dst, returnValueGPR);
 #else
@@ -188,9 +186,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     return call;
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr function, PtrTag tag, int dst)
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr<CFunctionPtrTag> function, int dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck(function, tag);
+    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
     emitValueProfilingSite();
 #if USE(JSVALUE64)
     emitPutVirtualRegister(dst, returnValueGPR);

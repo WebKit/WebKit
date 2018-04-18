@@ -82,7 +82,7 @@ void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
         catchRoutine = catchPCForInterpreter->u.pointer;
 #endif
     } else
-        catchRoutine = LLInt::getCodePtr(handleUncaughtException);
+        catchRoutine = LLInt::getExecutableAddress(handleUncaughtException);
     
     ASSERT(bitwise_cast<uintptr_t>(callFrame) < bitwise_cast<uintptr_t>(vm->topEntryFrame));
 

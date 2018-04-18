@@ -499,20 +499,20 @@ private:
                 patchpoint->setGenerator(
                     [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                         AllowMacroScratchRegisterUsage allowScratch(jit);
-                        
-                        MacroAssemblerCodePtr* jumpTable = static_cast<MacroAssemblerCodePtr*>(
-                            params.proc().addDataSection(sizeof(MacroAssemblerCodePtr) * tableSize));
-                        
+
+                        using JumpTableCodePtr = MacroAssemblerCodePtr<JSSwitchPtrTag>;
+                        JumpTableCodePtr* jumpTable = static_cast<JumpTableCodePtr*>(
+                            params.proc().addDataSection(sizeof(JumpTableCodePtr) * tableSize));
+
                         GPRReg index = params[0].gpr();
                         GPRReg scratch = params.gpScratch(0);
                         GPRReg poisonScratch = params.gpScratch(1);
-                        PtrTag switchTag = ptrTag(SwitchTablePtrTag, nextPtrTagID());
 
                         jit.move(CCallHelpers::TrustedImm64(JITCodePoison::key()), poisonScratch);
                         jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
                         jit.load64(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()), scratch);
                         jit.xor64(poisonScratch, scratch);
-                        jit.jump(scratch, switchTag);
+                        jit.jump(scratch, JSSwitchPtrTag);
 
                         // These labels are guaranteed to be populated before either late paths or
                         // link tasks run.
@@ -521,14 +521,14 @@ private:
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
                                 if (hasUnhandledIndex) {
-                                    MacroAssemblerCodePtr fallThrough = linkBuffer.locationOf(*labels.last(), switchTag);
+                                    JumpTableCodePtr fallThrough = linkBuffer.locationOf<JSSwitchPtrTag>(*labels.last());
                                     for (unsigned i = tableSize; i--;)
                                         jumpTable[i] = fallThrough;
                                 }
                                 
                                 unsigned labelIndex = 0;
                                 for (unsigned tableIndex : handledIndices)
-                                    jumpTable[tableIndex] = linkBuffer.locationOf(*labels[labelIndex++], switchTag);
+                                    jumpTable[tableIndex] = linkBuffer.locationOf<JSSwitchPtrTag>(*labels[labelIndex++]);
                             });
                     });
                 return;

@@ -604,7 +604,7 @@ class YarrGenerator : private MacroAssembler {
 
     void loadFromFrameAndJump(unsigned frameLocation)
     {
-        jump(Address(stackPointerRegister, frameLocation * sizeof(void*)), ptrTag(YarrBacktrackPtrTag, &m_codeBlock));
+        jump(Address(stackPointerRegister, frameLocation * sizeof(void*)), YarrBacktrackPtrTag);
     }
 
     unsigned alignCallFrameSizeInBytes(unsigned callFrameSize)
@@ -927,11 +927,11 @@ class YarrGenerator : private MacroAssembler {
         }
 
         // Called at the end of code generation to link all return addresses.
-        void linkDataLabels(LinkBuffer& linkBuffer, YarrCodeBlock& codeBlock)
+        void linkDataLabels(LinkBuffer& linkBuffer)
         {
             ASSERT(isEmpty());
             for (unsigned i = 0; i < m_backtrackRecords.size(); ++i)
-                linkBuffer.patch(m_backtrackRecords[i].m_dataLabel, linkBuffer.locationOf(m_backtrackRecords[i].m_backtrackLocation, ptrTag(YarrBacktrackPtrTag, &codeBlock)));
+                linkBuffer.patch(m_backtrackRecords[i].m_dataLabel, linkBuffer.locationOf<YarrBacktrackPtrTag>(m_backtrackRecords[i].m_backtrackLocation));
         }
 
     private:
@@ -3508,24 +3508,24 @@ public:
         }
 
         if (!m_tryReadUnicodeCharacterCalls.isEmpty()) {
-            CodeLocationLabel tryReadUnicodeCharacterHelper = linkBuffer.locationOf(m_tryReadUnicodeCharacterEntry, NearCodePtrTag);
+            CodeLocationLabel<NoPtrTag> tryReadUnicodeCharacterHelper = linkBuffer.locationOf<NoPtrTag>(m_tryReadUnicodeCharacterEntry);
 
             for (auto call : m_tryReadUnicodeCharacterCalls)
                 linkBuffer.link(call, tryReadUnicodeCharacterHelper);
         }
 
-        m_backtrackingState.linkDataLabels(linkBuffer, codeBlock);
+        m_backtrackingState.linkDataLabels(linkBuffer);
 
         if (compileMode == MatchOnly) {
             if (m_charSize == Char8)
-                codeBlock.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ptrTag(YarrMatchOnly8BitPtrTag, &codeBlock), "Match-only 8-bit regular expression"));
+                codeBlock.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"));
             else
-                codeBlock.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ptrTag(YarrMatchOnly16BitPtrTag, &codeBlock), "Match-only 16-bit regular expression"));
+                codeBlock.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"));
         } else {
             if (m_charSize == Char8)
-                codeBlock.set8BitCode(FINALIZE_CODE(linkBuffer, ptrTag(Yarr8BitPtrTag, &codeBlock), "8-bit regular expression"));
+                codeBlock.set8BitCode(FINALIZE_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"));
             else
-                codeBlock.set16BitCode(FINALIZE_CODE(linkBuffer, ptrTag(Yarr16BitPtrTag, &codeBlock), "16-bit regular expression"));
+                codeBlock.set16BitCode(FINALIZE_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"));
         }
         if (m_failureReason)
             codeBlock.setFallBackWithFailureReason(*m_failureReason);

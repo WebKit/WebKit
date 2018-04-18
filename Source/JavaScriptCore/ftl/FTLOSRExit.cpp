@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,7 +108,7 @@ OSRExit::OSRExit(
 {
 }
 
-CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
+CodeLocationJump<JSInternalPtrTag> OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
 {
     UNUSED_PARAM(ftlCodeBlock);
     return m_patchableJump;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,17 +48,17 @@ class Compilation {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef, std::unique_ptr<OpaqueByproducts>);
+    JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef<B3CompilationPtrTag>, std::unique_ptr<OpaqueByproducts>);
     JS_EXPORT_PRIVATE Compilation(Compilation&&);
     JS_EXPORT_PRIVATE ~Compilation();
 
-    MacroAssemblerCodePtr code() const { return m_codeRef.code(); }
-    MacroAssemblerCodeRef codeRef() const { return m_codeRef; }
+    MacroAssemblerCodePtr<B3CompilationPtrTag> code() const { return m_codeRef.code(); }
+    MacroAssemblerCodeRef<B3CompilationPtrTag> codeRef() const { return m_codeRef; }
     
     CString disassembly() const { return m_codeRef.disassembly(); }
 
 private:
-    MacroAssemblerCodeRef m_codeRef;
+    MacroAssemblerCodeRef<B3CompilationPtrTag> m_codeRef;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
 };
 

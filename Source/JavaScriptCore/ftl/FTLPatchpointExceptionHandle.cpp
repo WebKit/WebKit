@@ -91,7 +91,7 @@ void PatchpointExceptionHandle::scheduleExitCreationForUnwind(
                     HandlerInfo newHandler = handler;
                     newHandler.start = callSiteIndex.bits();
                     newHandler.end = callSiteIndex.bits() + 1;
-                    newHandler.nativeCode = linkBuffer.locationOf(handle->label, ExceptionHandlerPtrTag);
+                    newHandler.nativeCode = linkBuffer.locationOf<ExceptionHandlerPtrTag>(handle->label);
                     codeBlock->appendExceptionHandler(newHandler);
                 });
         });

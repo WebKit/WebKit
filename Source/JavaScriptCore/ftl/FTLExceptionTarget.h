@@ -43,7 +43,7 @@ public:
     ~ExceptionTarget();
 
     // It's OK to call this during linking, but not any sooner.
-    CodeLocationLabel label(LinkBuffer&, PtrTag handlerTag);
+    CodeLocationLabel<ExceptionHandlerPtrTag> label(LinkBuffer&);
 
     // Or, you can get a JumpList at any time. Anything you add to this JumpList will be linked to
     // the target's label.

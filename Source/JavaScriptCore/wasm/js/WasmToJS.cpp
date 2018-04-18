@@ -54,7 +54,7 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg poiso
     jit.xor64(poison, result);
 }
 
-static Expected<MacroAssemblerCodeRef, BindingFailure> handleBadI64Use(VM* vm, JIT& jit, const Signature& signature, unsigned importIndex)
+static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBadI64Use(VM* vm, JIT& jit, const Signature& signature, unsigned importIndex)
 {
     unsigned argCount = signature.argumentCount();
 
@@ -93,8 +93,7 @@ static Expected<MacroAssemblerCodeRef, BindingFailure> handleBadI64Use(VM* vm, J
         // Let's be paranoid on the exception path and zero out the poison instead of leaving it in an argument GPR.
         jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR3);
 
-        PtrTag callTag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
-        auto call = jit.call(callTag);
+        auto call = jit.call(OperationPtrTag);
         jit.jumpToExceptionHandler(*vm);
 
         void (*throwBadI64)(ExecState*, JSWebAssemblyInstance*) = [] (ExecState* exec, JSWebAssemblyInstance* instance) -> void {
@@ -116,15 +115,14 @@ static Expected<MacroAssemblerCodeRef, BindingFailure> handleBadI64Use(VM* vm, J
         if (UNLIKELY(linkBuffer.didFailToAllocate()))
             return makeUnexpected(BindingFailure::OutOfMemory);
 
-        linkBuffer.link(call, FunctionPtr(throwBadI64, callTag));
-        PtrTag tag = ptrTag(WasmCallPtrTag, signature.hash());
-        return FINALIZE_CODE(linkBuffer, tag, "WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex);
+        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(throwBadI64));
+        return FINALIZE_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex);
     }
     
-    return MacroAssemblerCodeRef();
+    return MacroAssemblerCodeRef<WasmEntryPtrTag>();
 }
 
-Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
+Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
     // It'd be super easy to do so: https://bugs.webkit.org/show_bug.cgi?id=169401
@@ -302,12 +300,9 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         // Let's be paranoid before the call and zero out the poison instead of leaving it in an argument GPR.
         jit.move(CCallHelpers::TrustedImm32(0), GPRInfo::argumentGPR3);
 
-        PtrTag callTag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
-        PtrTag doUnwindingTag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
-
         static_assert(GPRInfo::numberOfArgumentRegisters >= 4, "We rely on this with the call below.");
         jit.setupArguments<decltype(callFunc)>(GPRInfo::argumentGPR1, CCallHelpers::TrustedImm32(signatureIndex), CCallHelpers::TrustedImmPtr(buffer));
-        auto call = jit.call(callTag);
+        auto call = jit.call(OperationPtrTag);
         auto noException = jit.emitExceptionCheck(*vm, AssemblyHelpers::InvertedExceptionCheck);
 
         // Exception here.
@@ -319,7 +314,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
             genericUnwind(vm, exec);
             ASSERT(!!vm->callFrameForCatch);
         };
-        auto exceptionCall = jit.call(doUnwindingTag);
+        auto exceptionCall = jit.call(OperationPtrTag);
         jit.jumpToExceptionHandler(*vm);
 
         noException.link(&jit);
@@ -344,11 +339,10 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         if (UNLIKELY(linkBuffer.didFailToAllocate()))
             return makeUnexpected(BindingFailure::OutOfMemory);
 
-        linkBuffer.link(call, FunctionPtr(callFunc, callTag));
-        linkBuffer.link(exceptionCall, FunctionPtr(doUnwinding, doUnwindingTag));
+        linkBuffer.link(call, FunctionPtr<OperationPtrTag>(callFunc));
+        linkBuffer.link(exceptionCall, FunctionPtr<OperationPtrTag>(doUnwinding));
 
-        PtrTag tag = ptrTag(WasmCallPtrTag, signature.hash());
-        return FINALIZE_CODE(linkBuffer, tag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
+        return FINALIZE_CODE(linkBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
     }
 
     // Note: We don't need to perform a stack check here since WasmB3IRGenerator
@@ -550,14 +544,13 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR);
         done.append(jit.jump());
 
-        PtrTag tag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
         slowPath.link(&jit);
         jit.setupArguments<decltype(convertToI32)>(GPRInfo::returnValueGPR);
-        auto call = jit.call(tag);
+        auto call = jit.call(OperationPtrTag);
         exceptionChecks.append(jit.emitJumpIfException(*vm));
 
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(call, FunctionPtr(convertToI32, tag));
+            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(convertToI32));
         });
 
         done.link(&jit);
@@ -586,14 +579,13 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         jit.convertDoubleToFloat(FPRInfo::returnValueFPR, FPRInfo::returnValueFPR);
         done.append(jit.jump());
 
-        PtrTag tag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
         notANumber.link(&jit);
         jit.setupArguments<decltype(convertToF32)>(GPRInfo::returnValueGPR);
-        auto call = jit.call(tag);
+        auto call = jit.call(OperationPtrTag);
         exceptionChecks.append(jit.emitJumpIfException(*vm));
 
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(call, FunctionPtr(convertToF32, tag));
+            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(convertToF32));
         });
 
         done.link(&jit);
@@ -621,14 +613,13 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         jit.move64ToDouble(GPRInfo::returnValueGPR, FPRInfo::returnValueFPR);
         done.append(jit.jump());
 
-        PtrTag tag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
         notANumber.link(&jit);
         jit.setupArguments<decltype(convertToF64)>(GPRInfo::returnValueGPR);
-        auto call = jit.call(tag);
+        auto call = jit.call(OperationPtrTag);
         exceptionChecks.append(jit.emitJumpIfException(*vm));
 
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(call, FunctionPtr(convertToF64, tag));
+            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(convertToF64));
         });
 
         done.link(&jit);
@@ -640,11 +631,10 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     jit.ret();
 
     if (!exceptionChecks.empty()) {
-        PtrTag tag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
         exceptionChecks.link(&jit);
         jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
         jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        auto call = jit.call(tag);
+        auto call = jit.call(OperationPtrTag);
         jit.jumpToExceptionHandler(*vm);
 
         void (*doUnwinding)(ExecState*) = [] (ExecState* exec) -> void {
@@ -655,7 +645,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         };
 
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(call, FunctionPtr(doUnwinding, tag));
+            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(doUnwinding));
         });
     }
 
@@ -663,15 +653,13 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
-    patchBuffer.link(slowCall, FunctionPtr(vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag)));
-    CodeLocationLabel callReturnLocation(patchBuffer.locationOfNearCall(slowCall));
-    CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
-    CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);
+    patchBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(vm->getCTIStub(linkCallThunkGenerator).code()));
+    CodeLocationLabel<JSEntryPtrTag> callReturnLocation(patchBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall));
+    CodeLocationLabel<JSEntryPtrTag> hotPathBegin(patchBuffer.locationOf<JSEntryPtrTag>(targetToCheck));
+    CodeLocationNearCall<JSEntryPtrTag> hotPathOther = patchBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall);
     callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
 
-    PtrTag tag = ptrTag(WasmCallPtrTag, signature.hash());
-    return FINALIZE_CODE(patchBuffer, tag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
+    return FINALIZE_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());
 }
 
 void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* wasmInstance)

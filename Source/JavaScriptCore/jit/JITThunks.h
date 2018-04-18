@@ -51,15 +51,15 @@ public:
     JITThunks();
     virtual ~JITThunks();
 
-    MacroAssemblerCodePtr ctiNativeCall(VM*);
-    MacroAssemblerCodePtr ctiNativeConstruct(VM*);
-    MacroAssemblerCodePtr ctiNativeTailCall(VM*);
-    MacroAssemblerCodePtr ctiNativeTailCallWithoutSavedTags(VM*);
-    MacroAssemblerCodePtr ctiInternalFunctionCall(VM*);
-    MacroAssemblerCodePtr ctiInternalFunctionConstruct(VM*);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeCall(VM*);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeConstruct(VM*);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCall(VM*);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM*);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM*);
+    MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM*);
 
-    MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
-    MacroAssemblerCodeRef existingCTIStub(ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM*, ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> existingCTIStub(ThunkGenerator);
 
     NativeExecutable* hostFunctionStub(VM*, TaggedNativeFunction, TaggedNativeFunction constructor, const String& name);
     NativeExecutable* hostFunctionStub(VM*, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
@@ -70,7 +70,7 @@ public:
 private:
     void finalize(Handle<Unknown>, void* context) override;
     
-    typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
+    typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> CTIStubMap;
     CTIStubMap m_ctiStubMap;
 
     typedef std::tuple<TaggedNativeFunction, TaggedNativeFunction, String> HostFunctionKey;

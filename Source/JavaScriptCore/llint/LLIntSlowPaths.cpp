@@ -444,11 +444,10 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     ASSERT(codeBlock->jitType() == JITCode::BaselineJIT);
 
     const JITCodeMap& codeMap = codeBlock->jitCodeMap();
-    CodeLocationLabel codeLocation = codeMap.find(loopOSREntryBytecodeOffset);
+    CodeLocationLabel<JSEntryPtrTag> codeLocation = codeMap.find(loopOSREntryBytecodeOffset);
     ASSERT(codeLocation);
 
-    PtrTag locationTag = ptrTag(CodePtrTag, codeBlock, loopOSREntryBytecodeOffset);
-    void* jumpTarget = codeLocation.retagged(locationTag, CodePtrTag).executableAddress();
+    void* jumpTarget = codeLocation.executableAddress();
     ASSERT(jumpTarget);
     
     LLINT_RETURN_TWO(jumpTarget, exec->topOfFrame());
@@ -1438,7 +1437,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
         if (auto* internalFunction = jsDynamicCast<InternalFunction*>(vm, calleeAsValue)) {
-            MacroAssemblerCodePtr codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
+            MacroAssemblerCodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
 
             if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {
@@ -1450,12 +1449,12 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
                     callLinkInfo->remove();
                 callLinkInfo->callee.set(vm, callerCodeBlock, internalFunction);
                 callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, internalFunction);
-                callLinkInfo->machineCodeTarget = codePtr.retagged(CodePtrTag, LLIntCallICPtrTag);
+                callLinkInfo->machineCodeTarget = codePtr;
             }
 
-            assertIsTaggedWith(codePtr.executableAddress(), CodePtrTag);
+            assertIsTaggedWith(codePtr.executableAddress(), JSEntryPtrTag);
             PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), CodePtrTag);
+            LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), JSEntryPtrTag);
         }
         throwScope.release();
         return handleHostCall(execCallee, pc, calleeAsValue, kind);
@@ -1464,7 +1463,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     JSScope* scope = callee->scopeUnchecked();
     ExecutableBase* executable = callee->executable();
 
-    MacroAssemblerCodePtr codePtr;
+    MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction())
         codePtr = executable->entrypointFor(kind, MustCheckArity);
@@ -1500,14 +1499,14 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             callLinkInfo->remove();
         callLinkInfo->callee.set(vm, callerCodeBlock, callee);
         callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, callee);
-        callLinkInfo->machineCodeTarget = codePtr.retagged(CodePtrTag, LLIntCallICPtrTag);
+        callLinkInfo->machineCodeTarget = codePtr;
         if (codeBlock)
             codeBlock->linkIncomingCall(exec, callLinkInfo);
     }
 
-    assertIsTaggedWith(codePtr.executableAddress(), CodePtrTag);
+    assertIsTaggedWith(codePtr.executableAddress(), JSEntryPtrTag);
     PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
-    LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), CodePtrTag);
+    LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), JSEntryPtrTag);
 }
 
 inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpecializationKind kind)
@@ -1637,7 +1636,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
-    execCallee->setReturnPC(LLInt::getCodePtr(llint_generic_return_point));
+    execCallee->setReturnPC(LLInt::getExecutableAddress(llint_generic_return_point));
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc);
     

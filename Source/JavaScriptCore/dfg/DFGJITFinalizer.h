@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 class JITFinalizer : public Finalizer {
 public:
-    JITFinalizer(Plan&, Ref<JITCode>&&, std::unique_ptr<LinkBuffer>, MacroAssemblerCodePtr withArityCheck = MacroAssemblerCodePtr(MacroAssemblerCodePtr::EmptyValue));
+    JITFinalizer(Plan&, Ref<JITCode>&&, std::unique_ptr<LinkBuffer>, MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>(MacroAssemblerCodePtr<JSEntryPtrTag>::EmptyValue));
     virtual ~JITFinalizer();
     
     size_t codeSize() override;
@@ -47,7 +47,7 @@ private:
     
     Ref<JITCode> m_jitCode;
     std::unique_ptr<LinkBuffer> m_linkBuffer;
-    MacroAssemblerCodePtr m_withArityCheck;
+    MacroAssemblerCodePtr<JSEntryPtrTag> m_withArityCheck;
 };
 
 } } // namespace JSC::DFG

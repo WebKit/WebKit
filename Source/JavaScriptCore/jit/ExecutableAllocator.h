@@ -91,8 +91,7 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
             // Use execute-only write thunk for writes inside the JIT region. This is a variant of
             // memcpy that takes an offset into the JIT region as its destination (first) parameter.
             off_t offset = (off_t)((uintptr_t)dst - startOfFixedExecutableMemoryPool);
-            PtrTag tag = ptrTag(JITWriteThunkPtrTag, &jitWriteSeparateHeapsFunction);
-            retagCodePtr(jitWriteSeparateHeapsFunction, tag, CFunctionPtrTag)(offset, src, n);
+            retagCodePtr<JITThunkPtrTag, CFunctionPtrTag>(jitWriteSeparateHeapsFunction)(offset, src, n);
             return dst;
         }
     }

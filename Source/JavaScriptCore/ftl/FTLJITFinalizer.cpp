@@ -73,14 +73,14 @@ bool JITFinalizer::finalizeCommon()
 {
     bool dumpDisassembly = shouldDumpDisassembly() || Options::asyncDisassembly();
     
-    MacroAssemblerCodeRef b3CodeRef =
-        FINALIZE_CODE_IF(dumpDisassembly, *b3CodeLinkBuffer, CodePtrTag,
+    MacroAssemblerCodeRef<JSEntryPtrTag> b3CodeRef =
+        FINALIZE_CODE_IF(dumpDisassembly, *b3CodeLinkBuffer, JSEntryPtrTag,
             "FTL B3 code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data());
 
-    MacroAssemblerCodeRef arityCheckCodeRef = entrypointLinkBuffer
-        ? FINALIZE_CODE_IF(dumpDisassembly, *entrypointLinkBuffer, CodePtrTag,
+    MacroAssemblerCodeRef<JSEntryPtrTag> arityCheckCodeRef = entrypointLinkBuffer
+        ? FINALIZE_CODE_IF(dumpDisassembly, *entrypointLinkBuffer, JSEntryPtrTag,
             "FTL entrypoint thunk for %s with B3 generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), function)
-        : MacroAssemblerCodeRef::createSelfManagedCodeRef(b3CodeRef.code());
+        : MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(b3CodeRef.code());
 
     jitCode->initializeB3Code(b3CodeRef);
     jitCode->initializeArityCheckEntrypoint(arityCheckCodeRef);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -119,12 +119,12 @@ struct OSRExit : public DFG::OSRExitBase {
     OSRExit(OSRExitDescriptor*, ExitKind, CodeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted);
 
     OSRExitDescriptor* m_descriptor;
-    MacroAssemblerCodeRef m_code;
+    MacroAssemblerCodeRef<OSRExitPtrTag> m_code;
     // This tells us where to place a jump.
-    CodeLocationJump m_patchableJump;
+    CodeLocationJump<JSInternalPtrTag> m_patchableJump;
     Vector<B3::ValueRep> m_valueReps;
 
-    CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
+    CodeLocationJump<JSInternalPtrTag> codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);

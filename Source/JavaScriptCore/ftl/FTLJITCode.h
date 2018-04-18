@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,17 +44,17 @@ public:
     JITCode();
     ~JITCode();
 
-    CodePtr addressForCall(ArityCheckMode) override;
+    CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
     void* executableAddressAtOffset(size_t offset) override;
     void* dataAddressAtOffset(size_t offset) override;
     unsigned offsetOf(void* pointerIntoCode) override;
     size_t size() override;
     bool contains(void*) override;
 
-    void initializeB3Code(CodeRef);
+    void initializeB3Code(CodeRef<JSEntryPtrTag>);
     void initializeB3Byproducts(std::unique_ptr<B3::OpaqueByproducts>);
-    void initializeAddressForCall(CodePtr);
-    void initializeArityCheckEntrypoint(CodeRef);
+    void initializeAddressForCall(CodePtr<JSEntryPtrTag>);
+    void initializeArityCheckEntrypoint(CodeRef<JSEntryPtrTag>);
     
     void validateReferences(const TrackedReferences&) override;
 
@@ -62,7 +62,7 @@ public:
 
     std::optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
 
-    CodeRef b3Code() const { return m_b3Code; }
+    CodeRef<JSEntryPtrTag> b3Code() const { return m_b3Code; }
     
     JITCode* ftl() override;
     DFG::CommonData* dfgCommon() override;
@@ -74,10 +74,10 @@ public:
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:
-    CodePtr m_addressForCall;
-    CodeRef m_b3Code;
+    CodePtr<JSEntryPtrTag> m_addressForCall;
+    CodeRef<JSEntryPtrTag> m_b3Code;
     std::unique_ptr<B3::OpaqueByproducts> m_b3Byproducts;
-    CodeRef m_arityCheckEntrypoint;
+    CodeRef<JSEntryPtrTag> m_arityCheckEntrypoint;
 };
 
 } } // namespace JSC::FTL

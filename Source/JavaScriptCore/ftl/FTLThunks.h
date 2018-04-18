@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,36 +38,36 @@ class VM;
 
 namespace FTL {
 
-MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM*);
-MacroAssemblerCodeRef lazySlowPathGenerationThunkGenerator(VM*);
-MacroAssemblerCodeRef slowPathCallThunkGenerator(const SlowPathCallKey&);
+MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM*);
+MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(const SlowPathCallKey&);
 
 template<typename KeyTypeArgument>
 struct ThunkMap {
     typedef KeyTypeArgument KeyType;
-    typedef HashMap<KeyType, MacroAssemblerCodeRef> ToThunkMap;
-    typedef HashMap<MacroAssemblerCodePtr, KeyType> FromThunkMap;
+    typedef HashMap<KeyType, MacroAssemblerCodeRef<JITThunkPtrTag>> ToThunkMap;
+    typedef HashMap<MacroAssemblerCodePtr<JITThunkPtrTag>, KeyType> FromThunkMap;
     
     ToThunkMap m_toThunk;
     FromThunkMap m_fromThunk;
 };
 
 template<typename MapType, typename GeneratorType>
-MacroAssemblerCodeRef generateIfNecessary(
+MacroAssemblerCodeRef<JITThunkPtrTag> generateIfNecessary(
     MapType& map, const typename MapType::KeyType& key, GeneratorType generator)
 {
     typename MapType::ToThunkMap::iterator iter = map.m_toThunk.find(key);
     if (iter != map.m_toThunk.end())
         return iter->value;
-    
-    MacroAssemblerCodeRef result = generator(key);
+
+    MacroAssemblerCodeRef<JITThunkPtrTag> result = generator(key);
     map.m_toThunk.add(key, result);
     map.m_fromThunk.add(result.code(), key);
     return result;
 }
 
 template<typename MapType>
-typename MapType::KeyType keyForThunk(MapType& map, MacroAssemblerCodePtr ptr)
+typename MapType::KeyType keyForThunk(MapType& map, MacroAssemblerCodePtr<JITThunkPtrTag> ptr)
 {
     typename MapType::FromThunkMap::iterator iter = map.m_fromThunk.find(ptr);
     RELEASE_ASSERT(iter != map.m_fromThunk.end());
@@ -79,13 +79,13 @@ class Thunks {
     WTF_MAKE_NONCOPYABLE(Thunks);
 public:
     Thunks() = default;
-    MacroAssemblerCodeRef getSlowPathCallThunk(const SlowPathCallKey& key)
+    MacroAssemblerCodeRef<JITThunkPtrTag> getSlowPathCallThunk(const SlowPathCallKey& key)
     {
         return generateIfNecessary(
             m_slowPathCallThunks, key, slowPathCallThunkGenerator);
     }
-    
-    SlowPathCallKey keyForSlowPathCallThunk(MacroAssemblerCodePtr ptr)
+
+    SlowPathCallKey keyForSlowPathCallThunk(MacroAssemblerCodePtr<JITThunkPtrTag> ptr)
     {
         return keyForThunk(m_slowPathCallThunks, ptr);
     }

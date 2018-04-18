@@ -62,9 +62,11 @@ public:
     {
     }
 
-    CodeLocationLabel doneLocation() { return m_inlineStart.labelAtOffset(m_inlineSize); }
-    CodeLocationLabel slowPathStartLocation() { return m_inlineStart.labelAtOffset(m_deltaFromStartToSlowPathStart); }
-    CodeLocationCall slowPathCallLocation() { return m_inlineStart.callAtOffset(m_deltaFromStartToSlowPathCallLocation); }
+    // FIXME: These should be tagged with JSInternalPtrTag instead of JSEntryTag.
+    // https://bugs.webkit.org/show_bug.cgi?id=184712
+    CodeLocationLabel<JSEntryPtrTag> doneLocation() { return m_inlineStart.labelAtOffset(m_inlineSize); }
+    CodeLocationLabel<JSEntryPtrTag> slowPathStartLocation() { return m_inlineStart.labelAtOffset(m_deltaFromStartToSlowPathStart); }
+    CodeLocationCall<JSEntryPtrTag> slowPathCallLocation() { return m_inlineStart.callAtOffset(m_deltaFromStartToSlowPathCallLocation); }
     
     bool generateInline(CCallHelpers& jit, MathICGenerationState& state, bool shouldEmitProfiling = true)
     {
@@ -129,7 +131,7 @@ public:
         return false;
     }
 
-    void generateOutOfLine(CodeBlock* codeBlock, FunctionPtr callReplacement)
+    void generateOutOfLine(CodeBlock* codeBlock, FunctionPtr<CFunctionPtrTag> callReplacement)
     {
         auto linkJumpToOutOfLineSnippet = [&] () {
             CCallHelpers jit(codeBlock);
@@ -139,13 +141,16 @@ public:
             RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(m_inlineSize));
             LinkBuffer linkBuffer(jit, m_inlineStart.dataLocation(), jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
             RELEASE_ASSERT(linkBuffer.isValid());
-            linkBuffer.link(jump, CodeLocationLabel(m_code.code()));
-            FINALIZE_CODE(linkBuffer, NearCodePtrTag, "JITMathIC: linking constant jump to out of line stub");
+            linkBuffer.link(jump, CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
+            FINALIZE_CODE(linkBuffer, NoPtrTag, "JITMathIC: linking constant jump to out of line stub");
         };
 
         auto replaceCall = [&] () {
-            PtrTag callTag = ptrTag(MathICPtrTag, m_instruction);
-            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation(), callReplacement, callTag);
+#if COMPILER(MSVC)
+            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation().retagged<JSInternalPtrTag>(), callReplacement);
+#else
+            ftlThunkAwareRepatchCall(codeBlock, slowPathCallLocation().template retagged<JSInternalPtrTag>(), callReplacement);
+#endif
         };
 
         bool shouldEmitProfiling = !JITCode::isOptimizingJIT(codeBlock->jitType());
@@ -168,7 +173,7 @@ public:
                     linkBuffer.link(jumpToDone, doneLocation());
 
                     m_code = FINALIZE_CODE_FOR(
-                        codeBlock, linkBuffer, NearCodePtrTag, "JITMathIC: generating out of line fast IC snippet");
+                        codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line fast IC snippet");
 
                     if (!generationState.shouldSlowPathRepatch) {
                         // We won't need to regenerate, so we can wire the slow path call
@@ -210,7 +215,7 @@ public:
             linkBuffer.link(slowPathJumpList, slowPathStartLocation());
 
             m_code = FINALIZE_CODE_FOR(
-                codeBlock, linkBuffer, NearCodePtrTag, "JITMathIC: generating out of line IC snippet");
+                codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line IC snippet");
         }
 
         linkJumpToOutOfLineSnippet();
@@ -218,17 +223,17 @@ public:
 
     void finalizeInlineCode(const MathICGenerationState& state, LinkBuffer& linkBuffer)
     {
-        CodeLocationLabel start = linkBuffer.locationOf(state.fastPathStart, NearCodePtrTag);
+        CodeLocationLabel<JSEntryPtrTag> start = linkBuffer.locationOf<JSEntryPtrTag>(state.fastPathStart);
         m_inlineStart = start;
 
         m_inlineSize = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf(state.fastPathEnd, NoPtrTag));
+            start, linkBuffer.locationOf<NoPtrTag>(state.fastPathEnd));
         ASSERT(m_inlineSize > 0);
 
         m_deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf(state.slowPathCall));
+            start, linkBuffer.locationOf<NoPtrTag>(state.slowPathCall));
         m_deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf(state.slowPathStart));
+            start, linkBuffer.locationOf<NoPtrTag>(state.slowPathStart));
     }
 
     ArithProfile* arithProfile() const { return m_arithProfile; }
@@ -247,8 +252,10 @@ public:
 
     ArithProfile* m_arithProfile;
     Instruction* m_instruction;
-    MacroAssemblerCodeRef m_code;
-    CodeLocationLabel m_inlineStart;
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_code;
+    // FIXME: These should be tagged with JSInternalPtrTag instead of JSEntryTag.
+    // https://bugs.webkit.org/show_bug.cgi?id=184712
+    CodeLocationLabel<JSEntryPtrTag> m_inlineStart;
     int32_t m_inlineSize;
     int32_t m_deltaFromStartToSlowPathCallLocation;
     int32_t m_deltaFromStartToSlowPathStart;

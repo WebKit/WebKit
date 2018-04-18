@@ -36,11 +36,11 @@ ExceptionTarget::~ExceptionTarget()
 {
 }
 
-CodeLocationLabel ExceptionTarget::label(LinkBuffer& linkBuffer, PtrTag handlerTag)
+CodeLocationLabel<ExceptionHandlerPtrTag> ExceptionTarget::label(LinkBuffer& linkBuffer)
 {
     if (m_isDefaultHandler)
-        return linkBuffer.locationOf(*m_defaultHandler, handlerTag);
-    return linkBuffer.locationOf(m_handle->label, handlerTag);
+        return linkBuffer.locationOf<ExceptionHandlerPtrTag>(*m_defaultHandler);
+    return linkBuffer.locationOf<ExceptionHandlerPtrTag>(m_handle->label);
 }
 
 Box<CCallHelpers::JumpList> ExceptionTarget::jumps(CCallHelpers& jit)
@@ -50,13 +50,13 @@ Box<CCallHelpers::JumpList> ExceptionTarget::jumps(CCallHelpers& jit)
         Box<CCallHelpers::Label> defaultHandler = m_defaultHandler;
         jit.addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(*result, linkBuffer.locationOf(*defaultHandler, ExceptionHandlerPtrTag));
+                linkBuffer.link(*result, linkBuffer.locationOf<ExceptionHandlerPtrTag>(*defaultHandler));
             });
     } else {
         RefPtr<OSRExitHandle> handle = m_handle;
         jit.addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(*result, linkBuffer.locationOf(handle->label, DFGOSRExitPtrTag));
+                linkBuffer.link(*result, linkBuffer.locationOf<OSRExitPtrTag>(handle->label));
             });
     }
     return result;

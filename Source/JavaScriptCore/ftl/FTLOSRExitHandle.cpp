@@ -47,14 +47,13 @@ void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
     VM& vm = state.vm();
     jit.addLinkTask(
         [self, jump, myLabel, compilation, &vm] (LinkBuffer& linkBuffer) {
-            self->exit.m_patchableJump = CodeLocationJump(linkBuffer.locationOf(jump));
+            self->exit.m_patchableJump = CodeLocationJump<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(jump));
 
-            PtrTag thunkTag = ptrTag(FTLOSRExitPtrTag, &vm);
             linkBuffer.link(
                 jump.m_jump,
-                CodeLocationLabel(vm.getCTIStub(osrExitGenerationThunkGenerator).retaggedCode(thunkTag, NearCodePtrTag)));
+                CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(osrExitGenerationThunkGenerator).code()));
             if (compilation)
-                compilation->addOSRExitSite({ linkBuffer.locationOf(myLabel).executableAddress() });
+                compilation->addOSRExitSite({ linkBuffer.locationOf<JSInternalPtrTag>(myLabel) });
         });
 }
 

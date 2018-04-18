@@ -86,13 +86,13 @@ public:
 
     bool has8BitCode() { return m_ref8.size(); }
     bool has16BitCode() { return m_ref16.size(); }
-    void set8BitCode(MacroAssemblerCodeRef ref) { m_ref8 = ref; }
-    void set16BitCode(MacroAssemblerCodeRef ref) { m_ref16 = ref; }
+    void set8BitCode(MacroAssemblerCodeRef<Yarr8BitPtrTag> ref) { m_ref8 = ref; }
+    void set16BitCode(MacroAssemblerCodeRef<Yarr16BitPtrTag> ref) { m_ref16 = ref; }
 
     bool has8BitCodeMatchOnly() { return m_matchOnly8.size(); }
     bool has16BitCodeMatchOnly() { return m_matchOnly16.size(); }
-    void set8BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly8 = matchOnly; }
-    void set16BitCodeMatchOnly(MacroAssemblerCodeRef matchOnly) { m_matchOnly16 = matchOnly; }
+    void set8BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag> matchOnly) { m_matchOnly8 = matchOnly; }
+    void set16BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> matchOnly) { m_matchOnly16 = matchOnly; }
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     bool usesPatternContextBuffer() { return m_usesPatternContextBuffer; }
@@ -101,25 +101,25 @@ public:
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has8BitCode());
-        return MatchResult(untagCFunctionPtr<YarrJITCode8>(m_ref8.code().executableAddress(), ptrTag(Yarr8BitPtrTag, this))(input, start, length, output, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCode8, Yarr8BitPtrTag>(m_ref8.code().executableAddress())(input, start, length, output, freeParenContext, parenContextSize));
     }
 
     MatchResult execute(const UChar* input, unsigned start, unsigned length, int* output, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has16BitCode());
-        return MatchResult(untagCFunctionPtr<YarrJITCode16>(m_ref16.code().executableAddress(), ptrTag(Yarr16BitPtrTag, this))(input, start, length, output, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCode16, Yarr16BitPtrTag>(m_ref16.code().executableAddress())(input, start, length, output, freeParenContext, parenContextSize));
     }
 
     MatchResult execute(const LChar* input, unsigned start, unsigned length, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has8BitCodeMatchOnly());
-        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8>(m_matchOnly8.code().executableAddress(), ptrTag(YarrMatchOnly8BitPtrTag, this))(input, start, length, 0, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly8, YarrMatchOnly8BitPtrTag>(m_matchOnly8.code().executableAddress())(input, start, length, 0, freeParenContext, parenContextSize));
     }
 
     MatchResult execute(const UChar* input, unsigned start, unsigned length, void* freeParenContext, unsigned parenContextSize)
     {
         ASSERT(has16BitCodeMatchOnly());
-        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16>(m_matchOnly16.code().executableAddress(), ptrTag(YarrMatchOnly16BitPtrTag, this))(input, start, length, 0, freeParenContext, parenContextSize));
+        return MatchResult(untagCFunctionPtr<YarrJITCodeMatchOnly16, YarrMatchOnly16BitPtrTag>(m_matchOnly16.code().executableAddress())(input, start, length, 0, freeParenContext, parenContextSize));
     }
 #else
     MatchResult execute(const LChar* input, unsigned start, unsigned length, int* output)
@@ -188,18 +188,18 @@ public:
 
     void clear()
     {
-        m_ref8 = MacroAssemblerCodeRef();
-        m_ref16 = MacroAssemblerCodeRef();
-        m_matchOnly8 = MacroAssemblerCodeRef();
-        m_matchOnly16 = MacroAssemblerCodeRef();
+        m_ref8 = MacroAssemblerCodeRef<Yarr8BitPtrTag>();
+        m_ref16 = MacroAssemblerCodeRef<Yarr16BitPtrTag>();
+        m_matchOnly8 = MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag>();
+        m_matchOnly16 = MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag>();
         m_failureReason = std::nullopt;
     }
 
 private:
-    MacroAssemblerCodeRef m_ref8;
-    MacroAssemblerCodeRef m_ref16;
-    MacroAssemblerCodeRef m_matchOnly8;
-    MacroAssemblerCodeRef m_matchOnly16;
+    MacroAssemblerCodeRef<Yarr8BitPtrTag> m_ref8;
+    MacroAssemblerCodeRef<Yarr16BitPtrTag> m_ref16;
+    MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag> m_matchOnly8;
+    MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> m_matchOnly16;
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     bool m_usesPatternContextBuffer;
 #endif

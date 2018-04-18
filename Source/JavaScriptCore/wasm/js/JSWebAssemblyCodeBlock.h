@@ -68,7 +68,7 @@ public:
 
     Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }
     
-    MacroAssemblerCodePtr wasmToEmbedderStub(size_t importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code(); }
+    MacroAssemblerCodePtr<WasmEntryPtrTag> wasmToEmbedderStub(size_t importFunctionNum) { return m_wasmToJSExitStubs[importFunctionNum].code(); }
 
     void finishCreation(VM&);
 
@@ -98,7 +98,7 @@ private:
     };
 
     PoisonedRef<JSWebAssemblyCodeBlockPoison, Wasm::CodeBlock> m_codeBlock;
-    Vector<MacroAssemblerCodeRef> m_wasmToJSExitStubs;
+    Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
     PoisonedUniquePtr<JSWebAssemblyCodeBlockPoison, UnconditionalFinalizer> m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;
     String m_errorMessage;

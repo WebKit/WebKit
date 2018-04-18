@@ -61,11 +61,10 @@ public:
 
         jit.setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);
 
-        PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-        CCallHelpers::Call operationCall = jit.call(tag);
+        CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
         auto function = m_function;
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(operationCall, FunctionPtr(function, tag));
+            linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(function));
         });
 
         jit.setupResults(m_result);

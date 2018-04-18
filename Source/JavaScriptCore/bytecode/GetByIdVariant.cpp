@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ GetByIdVariant::GetByIdVariant(
     const ObjectPropertyConditionSet& conditionSet,
     std::unique_ptr<CallLinkStatus> callLinkStatus,
     JSFunction* intrinsicFunction,
-    PropertySlot::GetValueFunc customAccessorGetter,
+    FunctionPtr<OperationPtrTag> customAccessorGetter,
     std::optional<DOMAttributeAnnotation> domAttribute)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
@@ -155,7 +155,7 @@ void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
     if (m_intrinsicFunction)
         out.print(", intrinsic = ", *m_intrinsicFunction);
     if (m_customAccessorGetter)
-        out.print(", customaccessorgetter = ", RawPointer(bitwise_cast<const void*>(m_customAccessorGetter)));
+        out.print(", customaccessorgetter = ", RawPointer(m_customAccessorGetter.executableAddress()));
     if (m_domAttribute) {
         out.print(", domclass = ", RawPointer(m_domAttribute->classInfo));
         if (m_domAttribute->domJIT)

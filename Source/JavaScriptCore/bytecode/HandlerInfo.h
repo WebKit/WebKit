@@ -109,14 +109,13 @@ struct HandlerInfo : public HandlerInfoBase {
     }
 
 #if ENABLE(JIT)
-    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodeLocationLabel label)
+    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodeLocationLabel<ExceptionHandlerPtrTag> label)
     {
         initialize(unlinkedInfo);
         nativeCode = label;
-        assertIsTaggedWith(nativeCode.executableAddress(), ExceptionHandlerPtrTag);
     }
 
-    CodeLocationLabel nativeCode;
+    CodeLocationLabel<ExceptionHandlerPtrTag> nativeCode;
 #endif
 };
 

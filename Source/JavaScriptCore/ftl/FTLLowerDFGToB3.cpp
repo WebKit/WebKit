@@ -286,19 +286,17 @@ public:
 
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
                     jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::argumentGPR1);
-                    PtrTag throwTag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-                    CCallHelpers::Call throwCall = jit.call(throwTag);
+                    CCallHelpers::Call throwCall = jit.call(OperationPtrTag);
 
                     jit.move(CCallHelpers::TrustedImmPtr(vm), GPRInfo::argumentGPR0);
                     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-                    PtrTag lookupTag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-                    CCallHelpers::Call lookupExceptionHandlerCall = jit.call(lookupTag);
+                    CCallHelpers::Call lookupExceptionHandlerCall = jit.call(OperationPtrTag);
                     jit.jumpToExceptionHandler(*vm);
 
                     jit.addLinkTask(
                         [=] (LinkBuffer& linkBuffer) {
-                            linkBuffer.link(throwCall, FunctionPtr(operationThrowStackOverflowError, throwTag));
-                            linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr(lookupExceptionHandlerFromCallerFrame, lookupTag));
+                            linkBuffer.link(throwCall, FunctionPtr<OperationPtrTag>(operationThrowStackOverflowError));
+                            linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame));
                     });
                 });
             });
@@ -365,7 +363,7 @@ public:
                 CCallHelpers::Jump jump = jit.jump();
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link(jump, linkBuffer.locationOf(*exceptionHandler, ExceptionHandlerPtrTag));
+                        linkBuffer.link(jump, linkBuffer.locationOf<ExceptionHandlerPtrTag>(*exceptionHandler));
                     });
             });
         m_out.unreachable();
@@ -7170,15 +7168,13 @@ private:
 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
-                        MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
+                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
+                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
 
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),
-                            CodeLocationLabel(linkBuffer.locationOf(targetToCheck)),
-                            linkBuffer.locationOfNearCall(fastCall));
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
                     });
             });
 
@@ -7318,9 +7314,9 @@ private:
                     
                     jit.addLinkTask(
                         [=] (LinkBuffer& linkBuffer) {
-                            CodeLocationLabel patchableJumpLocation = linkBuffer.locationOf(patchableJump);
-                            CodeLocationNearCall callLocation = linkBuffer.locationOfNearCall(call);
-                            CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath, SlowPathPtrTag);
+                            CodeLocationLabel<JSEntryPtrTag> patchableJumpLocation = linkBuffer.locationOf<JSEntryPtrTag>(patchableJump);
+                            CodeLocationNearCall<JSEntryPtrTag> callLocation = linkBuffer.locationOfNearCall<JSEntryPtrTag>(call);
+                            CodeLocationLabel<JSEntryPtrTag> slowPathLocation = linkBuffer.locationOf<JSEntryPtrTag>(slowPath);
                             
                             callLinkInfo->setCallLocations(
                                 patchableJumpLocation,
@@ -7367,13 +7363,13 @@ private:
                         
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
-                                CodeLocationNearCall callLocation = linkBuffer.locationOfNearCall(call);
-                                CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath, NearCodePtrTag);
+                                CodeLocationNearCall<JSEntryPtrTag> callLocation = linkBuffer.locationOfNearCall<JSEntryPtrTag>(call);
+                                CodeLocationLabel<JSEntryPtrTag> slowPathLocation = linkBuffer.locationOf<JSEntryPtrTag>(slowPath);
                                 
                                 linkBuffer.link(call, slowPathLocation);
                                 
                                 callLinkInfo->setCallLocations(
-                                    CodeLocationLabel(),
+                                    CodeLocationLabel<JSEntryPtrTag>(),
                                     slowPathLocation,
                                     callLocation);
                             });
@@ -7492,15 +7488,13 @@ private:
 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
-                        MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
+                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
+                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
 
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),
-                            CodeLocationLabel(linkBuffer.locationOf(targetToCheck)),
-                            linkBuffer.locationOfNearCall(fastCall));
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
                     });
             });
     }
@@ -7637,9 +7631,8 @@ private:
                 };
 
                 auto callWithExceptionCheck = [&] (void* callee) {
-                    PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-                    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(callee, tag)), GPRInfo::nonPreservedNonArgumentGPR0);
-                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, tag);
+                    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(callee)), GPRInfo::nonPreservedNonArgumentGPR0);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
@@ -7793,15 +7786,13 @@ private:
                 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
-                        MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
+                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
+                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
                         
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),
-                            CodeLocationLabel(linkBuffer.locationOf(targetToCheck)),
-                            linkBuffer.locationOfNearCall(fastCall));
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
                     });
             });
 
@@ -7978,9 +7969,8 @@ private:
                 RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
 
                 auto callWithExceptionCheck = [&] (void* callee) {
-                    PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-                    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(callee, tag)), GPRInfo::nonPreservedNonArgumentGPR0);
-                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, tag);
+                    jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(callee)), GPRInfo::nonPreservedNonArgumentGPR0);
+                    jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
                     exceptions->append(jit.emitExceptionCheck(*vm, AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 };
 
@@ -8078,15 +8068,13 @@ private:
                 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
-                        PtrTag linkTag = ptrTag(LinkCallPtrTag, vm);
-                        MacroAssemblerCodePtr linkCall =
-                            vm->getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag);
-                        linkBuffer.link(slowCall, FunctionPtr(linkCall));
+                        MacroAssemblerCodePtr<JITThunkPtrTag> linkCall = vm->getCTIStub(linkCallThunkGenerator).code();
+                        linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
                         
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel(linkBuffer.locationOfNearCall(slowCall)),
-                            CodeLocationLabel(linkBuffer.locationOf(targetToCheck)),
-                            linkBuffer.locationOfNearCall(fastCall));
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
+                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
                     });
             });
 
@@ -8168,9 +8156,8 @@ private:
                 requiredBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), requiredBytes);
                 jit.subPtr(CCallHelpers::TrustedImm32(requiredBytes), CCallHelpers::stackPointerRegister);
                 jit.setupArguments<decltype(operationCallEval)>(GPRInfo::regT1);
-                PtrTag tag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-                jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr(operationCallEval, tag)), GPRInfo::nonPreservedNonArgumentGPR0);
-                jit.call(GPRInfo::nonPreservedNonArgumentGPR0, tag);
+                jit.move(CCallHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationCallEval)), GPRInfo::nonPreservedNonArgumentGPR0);
+                jit.call(GPRInfo::nonPreservedNonArgumentGPR0, OperationPtrTag);
                 exceptions->append(jit.emitExceptionCheck(state->vm(), AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                 
                 CCallHelpers::Jump done = jit.branchTest64(CCallHelpers::NonZero, GPRInfo::returnValueGPR);
@@ -8852,8 +8839,8 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         JumpReplacement jumpReplacement(
-                            linkBuffer.locationOf(label),
-                            linkBuffer.locationOf(handle->label));
+                            linkBuffer.locationOf<JSInternalPtrTag>(label),
+                            linkBuffer.locationOf<OSRExitPtrTag>(handle->label));
                         jitCode->common.jumpReplacements.append(jumpReplacement);
                     });
             });
@@ -9697,18 +9684,18 @@ private:
 
                                 jit.addLinkTask(
                                     [=] (LinkBuffer& linkBuffer) {
-                                        CodeLocationLabel start = linkBuffer.locationOf(jump);
+                                        CodeLocationLabel<JITStubRoutinePtrTag> start = linkBuffer.locationOf<JITStubRoutinePtrTag>(jump);
                                         stubInfo->patch.start = start;
                                         ptrdiff_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
-                                            start, linkBuffer.locationOf(done));
+                                            start, linkBuffer.locationOf<JSEntryPtrTag>(done));
                                         RELEASE_ASSERT(inlineSize >= 0);
                                         stubInfo->patch.inlineSize = inlineSize;
 
                                         stubInfo->patch.deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
-                                            start, linkBuffer.locationOf(slowPathCall));
+                                            start, linkBuffer.locationOf<JSEntryPtrTag>(slowPathCall));
 
                                         stubInfo->patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-                                            start, linkBuffer.locationOf(slowPathBegin));
+                                            start, linkBuffer.locationOf<JSEntryPtrTag>(slowPathBegin));
 
                                     });
                             });
@@ -11918,7 +11905,7 @@ private:
                 CCallHelpers::JumpList failureCases = domJIT->generator()->run(jit, domJITParams);
 
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    linkBuffer.link(failureCases, linkBuffer.locationOf(handle->label));
+                    linkBuffer.link(failureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
                 });
             });
         patchpoint->effects = Effects::forCheck();
@@ -11957,6 +11944,7 @@ private:
 
         unsigned argumentCountIncludingThis = signature->argumentCount + 1;
         LValue result;
+        assertIsTaggedWith(reinterpret_cast<void*>(signature->unsafeFunction), CFunctionPtrTag);
         switch (argumentCountIncludingThis) {
         case 1:
             result = vmCall(Int64, m_out.operation(reinterpret_cast<J_JITOperation_EP>(signature->unsafeFunction)), m_callFrame, operands[0]);
@@ -11983,7 +11971,7 @@ private:
             // Since the getter does not have code setting topCallFrame, As is the same to IC, we should set topCallFrame in caller side.
             m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
             setJSValue(
-                vmCall(Int64, m_out.operation(m_node->callDOMGetterData()->customAccessorGetter),
+                vmCall(Int64, m_out.operation(m_node->callDOMGetterData()->customAccessorGetter.retaggedExecutableAddress<CFunctionPtrTag>()),
                     m_callFrame, lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber])));
             return;
         }
@@ -13989,26 +13977,21 @@ private:
 
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
-                                PtrTag thunkTag = ptrTag(FTLLazySlowPathPtrTag, vm);
-                                linkBuffer.link(
-                                    generatorJump, CodeLocationLabel(
-                                        vm->getCTIStub(
-                                            lazySlowPathGenerationThunkGenerator).retaggedCode(thunkTag, NearCodePtrTag)));
+                                linkBuffer.link(generatorJump,
+                                    CodeLocationLabel<JITThunkPtrTag>(vm->getCTIStub(lazySlowPathGenerationThunkGenerator).code()));
                                 
                                 std::unique_ptr<LazySlowPath> lazySlowPath = std::make_unique<LazySlowPath>();
 
-                                PtrTag slowPathTag = ptrTag(FTLLazySlowPathPtrTag, bitwise_cast<PtrTag>(lazySlowPath.get()));
-                                CodeLocationJump linkedPatchableJump = CodeLocationJump(
-                                    linkBuffer.locationOf(patchableJump, slowPathTag));
+                                auto linkedPatchableJump = CodeLocationJump<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(patchableJump));
 
-                                CodeLocationLabel linkedDone = linkBuffer.locationOf(done, slowPathTag);
+                                CodeLocationLabel<JSEntryPtrTag> linkedDone = linkBuffer.locationOf<JSEntryPtrTag>(done);
 
                                 CallSiteIndex callSiteIndex =
                                     jitCode->common.addUniqueCallSiteIndex(origin);
                                     
                                 lazySlowPath->initialize(
                                         linkedPatchableJump, linkedDone,
-                                        exceptionTarget->label(linkBuffer, slowPathTag), usedRegisters,
+                                        exceptionTarget->label(linkBuffer), usedRegisters,
                                         callSiteIndex, generator);
                                     
                                 jitCode->lazySlowPaths[index] = WTFMove(lazySlowPath);

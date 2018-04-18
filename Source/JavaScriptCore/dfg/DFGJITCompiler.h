@@ -66,14 +66,14 @@ struct OSRExit;
 // Every CallLinkRecord contains a reference to the call instruction & the function
 // that it needs to be linked to.
 struct CallLinkRecord {
-    CallLinkRecord(MacroAssembler::Call call, FunctionPtr function)
+    CallLinkRecord(MacroAssembler::Call call, FunctionPtr<OperationPtrTag> function)
         : m_call(call)
         , m_function(function)
     {
     }
 
     MacroAssembler::Call m_call;
-    FunctionPtr m_function;
+    FunctionPtr<OperationPtrTag> m_function;
 };
 
 struct InRecord {
@@ -156,10 +156,10 @@ public:
     }
 
     // Add a call out from JIT code, without an exception check.
-    Call appendCall(const FunctionPtr function, PtrTag tag = CFunctionPtrTag)
+    Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
     {
-        Call functionCall = call(tag);
-        m_calls.append(CallLinkRecord(functionCall, FunctionPtr(function, tag)));
+        Call functionCall = call(OperationPtrTag);
+        m_calls.append(CallLinkRecord(functionCall, function.retagged<OperationPtrTag>()));
         return functionCall;
     }
     
@@ -310,6 +310,8 @@ private:
             , targetToCheck(targetToCheck)
             , info(info)
         {
+            ASSERT(fastCall.isFlagSet(Call::Near));
+            ASSERT(slowCall.isFlagSet(Call::Near));
         }
         
         Call fastCall;
@@ -324,6 +326,7 @@ private:
             , slowPath(slowPath)
             , info(info)
         {
+            ASSERT(call.isFlagSet(Call::Near));
         }
         
         Call call;
@@ -338,6 +341,7 @@ private:
             , slowPath(slowPath)
             , info(info)
         {
+            ASSERT(call.isFlagSet(Call::Near) && call.isFlagSet(Call::Tail));
         }
         
         PatchableJump patchableJump;

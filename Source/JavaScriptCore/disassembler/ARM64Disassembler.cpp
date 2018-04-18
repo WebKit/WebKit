@@ -33,11 +33,11 @@
 
 namespace JSC {
 
-bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
+bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
     A64DOpcode arm64Opcode;
 
-    uint32_t* currentPC = removeCodePtrTag<uint32_t*>(codePtr.executableAddress());
+    uint32_t* currentPC = codePtr.untaggedExecutableAddress<uint32_t*>();
     size_t byteCount = size;
 
     while (byteCount) {

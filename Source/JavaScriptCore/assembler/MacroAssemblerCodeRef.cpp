@@ -28,61 +28,40 @@
 
 #include "Disassembler.h"
 #include "JSCInlines.h"
-#include "LLIntData.h"
+#include "PtrTag.h"
 #include <mutex>
 
 namespace JSC {
 
-MacroAssemblerCodePtr MacroAssemblerCodePtr::createLLIntCodePtr(OpcodeID opcodeID)
+void MacroAssemblerCodePtrBase::dumpWithName(void* executableAddress, void* dataLocation, const char* name, PrintStream& out)
 {
-    ASSERT(opcodeID >= NUMBER_OF_BYTECODE_IDS);
-    return createFromExecutableAddress(LLInt::getCodePtr(opcodeID));
-}
-
-void MacroAssemblerCodePtr::dumpWithName(const char* name, PrintStream& out) const
-{
-    if (!m_value) {
+    if (!executableAddress) {
         out.print(name, "(null)");
         return;
     }
-    if (executableAddress() == dataLocation()) {
-        out.print(name, "(", RawPointer(executableAddress()), ")");
+    if (executableAddress == dataLocation) {
+        out.print(name, "(", RawPointer(executableAddress), ")");
         return;
     }
-    out.print(name, "(executable = ", RawPointer(executableAddress()), ", dataLocation = ", RawPointer(dataLocation()), ")");
+    out.print(name, "(executable = ", RawPointer(executableAddress), ", dataLocation = ", RawPointer(dataLocation), ")");
 }
 
-void MacroAssemblerCodePtr::dump(PrintStream& out) const
+bool MacroAssemblerCodeRefBase::tryToDisassemble(MacroAssemblerCodePtr<DisassemblyPtrTag> codePtr, size_t size, const char* prefix, PrintStream& out)
 {
-    dumpWithName("CodePtr", out);
+    return JSC::tryToDisassemble(codePtr, size, prefix, out);
 }
 
-MacroAssemblerCodeRef MacroAssemblerCodeRef::createLLIntCodeRef(OpcodeID opcodeID)
+bool MacroAssemblerCodeRefBase::tryToDisassemble(MacroAssemblerCodePtr<DisassemblyPtrTag> codePtr, size_t size, const char* prefix)
 {
-    return createSelfManagedCodeRef(MacroAssemblerCodePtr::createLLIntCodePtr(opcodeID));
+    return tryToDisassemble(codePtr, size, prefix, WTF::dataFile());
 }
 
-bool MacroAssemblerCodeRef::tryToDisassemble(PrintStream& out, const char* prefix) const
-{
-    return JSC::tryToDisassemble(m_codePtr, size(), prefix, out);
-}
-
-bool MacroAssemblerCodeRef::tryToDisassemble(const char* prefix) const
-{
-    return tryToDisassemble(WTF::dataFile(), prefix);
-}
-
-CString MacroAssemblerCodeRef::disassembly() const
+CString MacroAssemblerCodeRefBase::disassembly(MacroAssemblerCodePtr<DisassemblyPtrTag> codePtr, size_t size)
 {
     StringPrintStream out;
-    if (!tryToDisassemble(out, ""))
+    if (!tryToDisassemble(codePtr, size, "", out))
         return CString();
     return out.toCString();
-}
-
-void MacroAssemblerCodeRef::dump(PrintStream& out) const
-{
-    m_codePtr.dumpWithName("CodeRef", out);
 }
 
 } // namespace JSC

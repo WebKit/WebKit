@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,12 @@
 #if ENABLE(FTL_JIT)
 
 #include "CallFrame.h"
+#include "MacroAssemblerCodeRef.h"
 
 namespace JSC { namespace FTL {
 
-typedef EncodedJSValue (*GeneratedFunction)(ExecState*);
+// Points to a function of prototype: EncodedJSValue (*)(ExecState*).
+using GeneratedFunction = CodeLocationLabel<JSEntryPtrTag>;
 
 } } // namespace JSC::FTL
 

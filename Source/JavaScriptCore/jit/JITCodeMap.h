@@ -38,28 +38,28 @@ private:
     struct Entry {
         Entry() { }
 
-        Entry(unsigned bytecodeIndex, CodeLocationLabel codeLocation)
+        Entry(unsigned bytecodeIndex, CodeLocationLabel<JSEntryPtrTag> codeLocation)
             : m_bytecodeIndex(bytecodeIndex)
             , m_codeLocation(codeLocation)
         { }
 
         inline unsigned bytecodeIndex() const { return m_bytecodeIndex; }
-        inline CodeLocationLabel codeLocation() { return m_codeLocation; }
+        inline CodeLocationLabel<JSEntryPtrTag> codeLocation() { return m_codeLocation; }
 
     private:
         unsigned m_bytecodeIndex;
-        CodeLocationLabel m_codeLocation;
+        CodeLocationLabel<JSEntryPtrTag> m_codeLocation;
     };
 
 public:
-    void append(unsigned bytecodeIndex, CodeLocationLabel codeLocation)
+    void append(unsigned bytecodeIndex, CodeLocationLabel<JSEntryPtrTag> codeLocation)
     {
         m_entries.append({ bytecodeIndex, codeLocation });
     }
 
     void finish() { m_entries.shrinkToFit(); }
 
-    CodeLocationLabel find(unsigned bytecodeIndex) const
+    CodeLocationLabel<JSEntryPtrTag> find(unsigned bytecodeIndex) const
     {
         auto* entry =
             binarySearch<Entry, unsigned>(m_entries,
@@ -67,7 +67,7 @@ public:
                     return entry->bytecodeIndex();
                 });
         if (!entry)
-            return CodeLocationLabel();
+            return CodeLocationLabel<JSEntryPtrTag>();
         return entry->codeLocation();
     }
 

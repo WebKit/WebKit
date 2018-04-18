@@ -44,6 +44,7 @@ namespace JSC {
 
 EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void* code, VM* vm, ProtoCallFrame* frame)
 {
+    code = retagCodePtr<WasmEntryPtrTag, JSEntryPtrTag>(code);
     return vmEntryToJavaScript(code, vm, frame);
 }
     
@@ -51,50 +52,52 @@ EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void* code, VM* vm, ProtoCallFram
 
 namespace LLInt {
 
-static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, OpcodeID opcodeID, const char *thunkKind)
+static MacroAssemblerCodeRef<JITThunkPtrTag> generateThunkWithJumpTo(VM* vm, OpcodeID opcodeID, const char *thunkKind)
 {
     JSInterfaceJIT jit(vm);
 
     // FIXME: there's probably a better way to do it on X86, but I'm not sure I care.
-    LLIntCode target = LLInt::getCodeFunctionPtr(opcodeID);
-    jit.move(JSInterfaceJIT::TrustedImmPtr(bitwise_cast<void*>(target)), JSInterfaceJIT::regT0);
-    jit.jump(JSInterfaceJIT::regT0, CodePtrTag);
+    LLIntCode target = LLInt::getCodeFunctionPtr<JSEntryPtrTag>(opcodeID);
+    assertIsTaggedWith(target, JSEntryPtrTag);
+
+    jit.move(JSInterfaceJIT::TrustedImmPtr(target), JSInterfaceJIT::regT0);
+    jit.jump(JSInterfaceJIT::regT0, JSEntryPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, CodePtrTag, "LLInt %s prologue thunk", thunkKind);
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "LLInt %s prologue thunk", thunkKind);
 }
 
-MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> functionForCallEntryThunkGenerator(VM* vm)
 {
     return generateThunkWithJumpTo(vm, llint_function_for_call_prologue, "function for call");
 }
 
-MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> functionForConstructEntryThunkGenerator(VM* vm)
 {
     return generateThunkWithJumpTo(vm, llint_function_for_construct_prologue, "function for construct");
 }
 
-MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> functionForCallArityCheckThunkGenerator(VM* vm)
 {
     return generateThunkWithJumpTo(vm, llint_function_for_call_arity_check, "function for call with arity check");
 }
 
-MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> functionForConstructArityCheckThunkGenerator(VM* vm)
 {
     return generateThunkWithJumpTo(vm, llint_function_for_construct_arity_check, "function for construct with arity check");
 }
 
-MacroAssemblerCodeRef evalEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> evalEntryThunkGenerator(VM* vm)
 {
     return generateThunkWithJumpTo(vm, llint_eval_prologue, "eval");
 }
 
-MacroAssemblerCodeRef programEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> programEntryThunkGenerator(VM* vm)
 {
     return generateThunkWithJumpTo(vm, llint_program_prologue, "program");
 }
 
-MacroAssemblerCodeRef moduleProgramEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> moduleProgramEntryThunkGenerator(VM* vm)
 {
     return generateThunkWithJumpTo(vm, llint_module_program_prologue, "module_program");
 }

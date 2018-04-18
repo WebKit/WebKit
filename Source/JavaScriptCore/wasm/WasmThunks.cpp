@@ -40,7 +40,7 @@
 
 namespace JSC { namespace Wasm {
 
-MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&)
+MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const AbstractLocker&)
 {
     CCallHelpers jit;
 
@@ -52,19 +52,18 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(const AbstractLocker&
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(GPRInfo::argumentGPR0);
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 
-    PtrTag tag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
-    CCallHelpers::Call call = jit.call(tag);
+    CCallHelpers::Call call = jit.call(OperationPtrTag);
     jit.jump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
     jit.breakpoint(); // We should not reach this.
 
     ThrowWasmException throwWasmException = Thunks::singleton().throwWasmException();
     RELEASE_ASSERT(throwWasmException);
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    linkBuffer.link(call, FunctionPtr(throwWasmException, tag));
-    return FINALIZE_CODE(linkBuffer, NearCodePtrTag, "Throw exception from Wasm");
+    linkBuffer.link(call, FunctionPtr<OperationPtrTag>(throwWasmException));
+    return FINALIZE_CODE(linkBuffer, JITThunkPtrTag, "Throw exception from Wasm");
 }
 
-MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
+MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
 {
     CCallHelpers jit;
 
@@ -74,11 +73,11 @@ MacroAssemblerCodeRef throwStackOverflowFromWasmThunkGenerator(const AbstractLoc
     jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(ExceptionType::StackOverflow)), GPRInfo::argumentGPR1);
     auto jumpToExceptionHandler = jit.jump();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
-    return FINALIZE_CODE(linkBuffer, NearCodePtrTag, "Throw stack overflow from Wasm");
+    linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(locker, throwExceptionFromWasmThunkGenerator).code()));
+    return FINALIZE_CODE(linkBuffer, JITThunkPtrTag, "Throw stack overflow from Wasm");
 }
 
-MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
+MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGTierUpThunkGenerator(const AbstractLocker&)
 {
     // We expect that the user has already put the function index into GPRInfo::argumentGPR1
     CCallHelpers jit;
@@ -93,16 +92,15 @@ MacroAssemblerCodeRef triggerOMGTierUpThunkGenerator(const AbstractLocker&)
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
     typedef void (*Run)(Instance*, uint32_t);
     Run run = OMGPlan::runForIndex;
-    PtrTag tag = ptrTag(WasmHelperPtrTag, nextPtrTagID());
-    jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr(run, tag)), GPRInfo::argumentGPR2);
-    jit.call(GPRInfo::argumentGPR2, tag);
+    jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(run)), GPRInfo::argumentGPR2);
+    jit.call(GPRInfo::argumentGPR2, OperationPtrTag);
 
     ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
 
     jit.emitFunctionEpilogue();
     jit.ret();
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(linkBuffer, NearCodePtrTag, "Trigger OMG tier up");
+    return FINALIZE_CODE(linkBuffer, JITThunkPtrTag, "Trigger OMG tier up");
 }
 
 static Thunks* thunks;
@@ -130,28 +128,28 @@ ThrowWasmException Thunks::throwWasmException()
     return m_throwWasmException;
 }
 
-MacroAssemblerCodeRef Thunks::stub(ThunkGenerator generator)
+MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(ThunkGenerator generator)
 {
     auto locker = holdLock(m_lock);
     return stub(locker, generator);
 }
 
-MacroAssemblerCodeRef Thunks::stub(const AbstractLocker& locker, ThunkGenerator generator)
+MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(const AbstractLocker& locker, ThunkGenerator generator)
 {
     ASSERT(!!generator);
     {
-        auto addResult = m_stubs.add(generator, MacroAssemblerCodeRef());
+        auto addResult = m_stubs.add(generator, MacroAssemblerCodeRef<JITThunkPtrTag>());
         if (!addResult.isNewEntry)
             return addResult.iterator->value;
     }
 
-    MacroAssemblerCodeRef code = generator(locker);
+    MacroAssemblerCodeRef<JITThunkPtrTag> code = generator(locker);
     // We specifically don't use the iterator here to allow generator to recursively change m_stubs.
     m_stubs.set(generator, code);
     return code;
 }
 
-MacroAssemblerCodeRef Thunks::existingStub(ThunkGenerator generator)
+MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::existingStub(ThunkGenerator generator)
 {
     auto locker = holdLock(m_lock);
 
@@ -159,7 +157,7 @@ MacroAssemblerCodeRef Thunks::existingStub(ThunkGenerator generator)
     if (iter != m_stubs.end())
         return iter->value;
 
-    return MacroAssemblerCodeRef();
+    return MacroAssemblerCodeRef<JITThunkPtrTag>();
 }
 
 } } // namespace JSC::Wasm

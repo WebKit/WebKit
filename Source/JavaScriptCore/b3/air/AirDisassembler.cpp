@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,10 +74,10 @@ void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, co
     auto dumpAsmRange = [&] (CCallHelpers::Label startLabel, CCallHelpers::Label endLabel) {
         RELEASE_ASSERT(startLabel.isSet());
         RELEASE_ASSERT(endLabel.isSet());
-        CodeLocationLabel start = linkBuffer.locationOf(startLabel);
-        CodeLocationLabel end = linkBuffer.locationOf(endLabel);
-        RELEASE_ASSERT(bitwise_cast<uintptr_t>(end.executableAddress()) >= bitwise_cast<uintptr_t>(start.executableAddress()));
-        disassemble(start, bitwise_cast<uintptr_t>(end.executableAddress()) - bitwise_cast<uintptr_t>(start.executableAddress()), asmPrefix, out);
+        CodeLocationLabel<DisassemblyPtrTag> start = linkBuffer.locationOf<DisassemblyPtrTag>(startLabel);
+        CodeLocationLabel<DisassemblyPtrTag> end = linkBuffer.locationOf<DisassemblyPtrTag>(endLabel);
+        RELEASE_ASSERT(end.dataLocation<uintptr_t>() >= start.dataLocation<uintptr_t>());
+        disassemble(start, end.dataLocation<uintptr_t>() - start.dataLocation<uintptr_t>(), asmPrefix, out);
     };
 
     for (BasicBlock* block : m_blocks) {

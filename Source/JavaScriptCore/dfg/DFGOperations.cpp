@@ -3044,7 +3044,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
                 dataLog("OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(entryBlock), "\n");
             if (void* address = FTL::prepareOSREntry(exec, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
                 CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at bc#", originBytecodeIndex));
-                return retagCodePtr<char*>(address, CodePtrTag, bitwise_cast<PtrTag>(exec));
+                return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(exec));
             }
         }
     }
@@ -3166,7 +3166,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, unsigne
         exec, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
     if (!address)
         return nullptr;
-    return retagCodePtr<char*>(address, CodePtrTag, bitwise_cast<PtrTag>(exec));
+    return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(exec));
 }
 
 void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec, unsigned bytecodeIndex)

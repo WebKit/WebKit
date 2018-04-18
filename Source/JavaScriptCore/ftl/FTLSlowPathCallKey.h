@@ -27,7 +27,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "PtrTag.h"
+#include "MacroAssemblerCodeRef.h"
 #include "RegisterSet.h"
 
 namespace JSC { namespace FTL {
@@ -45,29 +45,27 @@ namespace JSC { namespace FTL {
 class SlowPathCallKey {
 public:
     SlowPathCallKey()
-        : m_callTarget(0)
-        , m_offset(0)
+        : m_offset(0)
     {
     }
     
     SlowPathCallKey(
-        const RegisterSet& set, void* callTarget, const RegisterSet& argumentRegisters,
+        const RegisterSet& set, FunctionPtr<CFunctionPtrTag> callTarget, const RegisterSet& argumentRegisters,
         ptrdiff_t offset)
         : m_usedRegisters(set)
-        , m_callTarget(callTarget)
+        , m_callTarget(callTarget.retagged<OperationPtrTag>())
         , m_argumentRegisters(argumentRegisters)
         , m_offset(offset)
     {
     }
     
     const RegisterSet& usedRegisters() const { return m_usedRegisters; }
-    void* callTarget() const { return m_callTarget; }
+    FunctionPtr<OperationPtrTag> callTarget() const { return m_callTarget; }
     const RegisterSet& argumentRegisters() const { return m_argumentRegisters; }
     ptrdiff_t offset() const { return m_offset; }
     
-    SlowPathCallKey withCallTarget(void* callTarget)
+    SlowPathCallKey withCallTarget(FunctionPtr<CFunctionPtrTag> callTarget)
     {
-        assertIsTaggedWith(callTarget, CFunctionPtrTag);
         return SlowPathCallKey(usedRegisters(), callTarget, argumentRegisters(), offset());
     }
     
@@ -78,14 +76,12 @@ public:
     
     SlowPathCallKey(EmptyValueTag)
         : m_usedRegisters(RegisterSet::EmptyValue)
-        , m_callTarget(0)
         , m_offset(0)
     {
     }
     
     SlowPathCallKey(DeletedValueTag)
         : m_usedRegisters(RegisterSet::DeletedValue)
-        , m_callTarget(0)
         , m_offset(0)
     {
     }
@@ -101,19 +97,12 @@ public:
     }
     unsigned hash() const
     {
-        return m_usedRegisters.hash() + PtrHash<void*>::hash(m_callTarget) + m_offset;
-    }
-
-    PtrTag callPtrTag() const
-    {
-        // We should only include factors which are invariant for the same slow path site.
-        // m_callTarget can vary and should be excluded.
-        return ptrTag(FTLSlowPathPtrTag, m_usedRegisters.hash(), m_offset);
+        return m_usedRegisters.hash() + PtrHash<void*>::hash(m_callTarget.executableAddress()) + m_offset;
     }
 
 private:
     RegisterSet m_usedRegisters;
-    void* m_callTarget;
+    FunctionPtr<OperationPtrTag> m_callTarget;
     RegisterSet m_argumentRegisters;
     ptrdiff_t m_offset;
 };

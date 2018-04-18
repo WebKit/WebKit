@@ -273,7 +273,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     if (Options::verboseOSR())
         dataLogF("    OSR using target PC %p.\n", targetPC);
     RELEASE_ASSERT(targetPC);
-    *bitwise_cast<void**>(scratch + 1) = retagCodePtr(targetPC, CodePtrTag, bitwise_cast<PtrTag>(exec));
+    *bitwise_cast<void**>(scratch + 1) = retagCodePtr(targetPC, JSEntryPtrTag, bitwise_cast<PtrTag>(exec));
 
     Register* pivot = scratch + 2 + CallFrame::headerSizeInRegisters;
     
@@ -337,7 +337,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     return scratch;
 }
 
-void* prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
+MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 { 
     ASSERT(codeBlock->jitType() == JITCode::DFGJIT || codeBlock->jitType() == JITCode::FTLJIT);
 

@@ -3932,8 +3932,6 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
 
     bool shouldEmitProfiling = false;
     bool generatedInline = mathIC->generateInline(m_jit, *addICGenerationState, shouldEmitProfiling);
-    PtrTag mathICTag = ptrTag(MathICPtrTag, mathIC->instruction());
-
     if (generatedInline) {
         ASSERT(!addICGenerationState->slowPathJumps.empty());
 
@@ -3962,9 +3960,9 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
             }
 
             if (addICGenerationState->shouldSlowPathRepatch)
-                addICGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJJMic>(repatchingFunction), mathICTag, resultRegs, innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
+                addICGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJJMic>(repatchingFunction), resultRegs, innerLeftRegs, innerRightRegs, TrustedImmPtr(mathIC));
             else
-                addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, mathICTag, resultRegs, innerLeftRegs, innerRightRegs);
+                addICGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, innerLeftRegs, innerRightRegs);
 
             silentFill(savePlans);
             m_jit.exceptionCheck();
@@ -3993,7 +3991,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITBinaryMathIC<Generator>* mathI
         }
 
         flushRegisters();
-        callOperation(nonRepatchingFunction, mathICTag, resultRegs, leftRegs, rightRegs);
+        callOperation(nonRepatchingFunction, resultRegs, leftRegs, rightRegs);
         m_jit.exceptionCheck();
     }
 
@@ -4638,8 +4636,6 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
 
     bool shouldEmitProfiling = false;
     bool generatedInline = mathIC->generateInline(m_jit, *icGenerationState, shouldEmitProfiling);
-    PtrTag mathICTag = ptrTag(MathICPtrTag, mathIC->instruction());
-
     if (generatedInline) {
         ASSERT(!icGenerationState->slowPathJumps.empty());
 
@@ -4658,9 +4654,9 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
             silentSpill(savePlans);
 
             if (icGenerationState->shouldSlowPathRepatch)
-                icGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJMic>(repatchingFunction), mathICTag, resultRegs, childRegs, TrustedImmPtr(mathIC));
+                icGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJMic>(repatchingFunction), resultRegs, childRegs, TrustedImmPtr(mathIC));
             else
-                icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, mathICTag, resultRegs, childRegs);
+                icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, childRegs);
 
             silentFill(savePlans);
             m_jit.exceptionCheck();
@@ -4681,7 +4677,7 @@ void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC
         });
     } else {
         flushRegisters();
-        callOperation(nonRepatchingFunction, mathICTag, resultRegs, childRegs);
+        callOperation(nonRepatchingFunction, resultRegs, childRegs);
         m_jit.exceptionCheck();
     }
 
@@ -9000,6 +8996,7 @@ void SpeculativeJIT::compileCallDOM(Node* node)
     JSValueRegs resultRegs = result.regs();
 
     flushRegisters();
+    assertIsTaggedWith(reinterpret_cast<void*>(signature->unsafeFunction), CFunctionPtrTag);
     unsigned argumentCountIncludingThis = signature->argumentCount + 1;
     switch (argumentCountIncludingThis) {
     case 1:
@@ -9024,7 +9021,7 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
 {
     DOMJIT::CallDOMGetterSnippet* snippet = node->callDOMGetterData()->snippet;
     if (!snippet) {
-        auto* getter = node->callDOMGetterData()->customAccessorGetter;
+        FunctionPtr<OperationPtrTag> getter = node->callDOMGetterData()->customAccessorGetter;
         SpeculateCellOperand base(this, node->child1());
         JSValueRegsTemporary result(this);
 
@@ -9035,7 +9032,7 @@ void SpeculativeJIT::compileCallDOMGetter(Node* node)
         m_jit.setupArguments<J_JITOperation_EJI>(CCallHelpers::CellValue(baseGPR), identifierUID(node->callDOMGetterData()->identifierNumber));
         m_jit.storePtr(GPRInfo::callFrameRegister, &m_jit.vm()->topCallFrame);
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        m_jit.appendCall(getter);
+        m_jit.appendCall(getter.retagged<CFunctionPtrTag>());
         m_jit.setupResults(resultRegs);
 
         m_jit.exceptionCheck();
@@ -10222,8 +10219,7 @@ void SpeculativeJIT::emitSwitchIntJump(
 #if USE(JSVALUE64)
     m_jit.xor64(poisonScratch, scratch);
 #endif
-    PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
-    m_jit.jump(scratch, tag);
+    m_jit.jump(scratch, JSSwitchPtrTag);
     data->didUseJumpTable = true;
 }
 
@@ -10249,8 +10245,6 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 
         value.use();
 
-        SimpleJumpTable& table = m_jit.codeBlock()->switchJumpTable(data->switchTableIndex);
-        PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
         auto notInt32 = m_jit.branchIfNotInt32(valueRegs);
         emitSwitchIntJump(data, valueRegs.payloadGPR(), scratch, scratch2);
         notInt32.link(&m_jit);
@@ -10259,7 +10253,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
         callOperation(operationFindSwitchImmTargetForDouble, scratch, valueRegs, data->switchTableIndex);
         silentFillAllRegisters();
 
-        m_jit.jump(scratch, tag);
+        m_jit.jump(scratch, JSSwitchPtrTag);
         noResult(node, UseChildrenCalledExplicitly);
         break;
     }
@@ -10516,16 +10510,13 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
         }
         totalLength += string->length();
     }
-    
-    auto* codeBlock = m_jit.codeBlock();
+
     if (!canDoBinarySwitch || totalLength > Options::maximumBinaryStringSwitchTotalLength()) {
-        StringJumpTable& table = codeBlock->stringSwitchJumpTable(data->switchTableIndex);
-        PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
         flushRegisters();
         callOperation(
             operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
         m_jit.exceptionCheck();
-        m_jit.jump(string, tag);
+        m_jit.jump(string, JSSwitchPtrTag);
         return;
     }
     
@@ -10558,15 +10549,12 @@ void SpeculativeJIT::emitSwitchStringOnString(SwitchData* data, GPRReg string)
     emitBinarySwitchStringRecurse(
         data, cases, 0, 0, cases.size(), string, lengthGPR, tempGPR, 0, false);
     
-    StringJumpTable& table = codeBlock->stringSwitchJumpTable(data->switchTableIndex);
-    PtrTag tag = ptrTag(SwitchTablePtrTag, &table);
-
     slowCases.link(&m_jit);
     silentSpillAllRegisters(string);
     callOperation(operationSwitchString, string, static_cast<size_t>(data->switchTableIndex), string);
     silentFillAllRegisters();
     m_jit.exceptionCheck();
-    m_jit.jump(string, tag);
+    m_jit.jump(string, JSSwitchPtrTag);
 }
 
 void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
@@ -12713,7 +12701,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
     }
     }
 
-    addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedPropertyByInt, HasPropertyPtrTag, resultGPR, baseGPR, indexGPR, static_cast<int32_t>(node->internalMethodType())));
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationHasIndexedPropertyByInt, resultGPR, baseGPR, indexGPR, static_cast<int32_t>(node->internalMethodType())));
 
     unblessedBooleanResult(resultGPR, node);
 }
@@ -12781,7 +12769,7 @@ void SpeculativeJIT::compileGetDirectPname(Node* node)
 
     done.link(&m_jit);
 
-    addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, GetPropertyPtrTag, resultRegs, baseGPR, CCallHelpers::CellValue(propertyGPR)));
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, resultRegs, baseGPR, CCallHelpers::CellValue(propertyGPR)));
 
     jsValueResult(resultRegs, node);
 #endif
@@ -12889,7 +12877,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     slowCases.append(gen.slowPathJump());
 
     auto slowPath = slowPathCall(
-        slowCases, this, gen.slowPathFunction(), PutPropertyPtrTag, NoResult, gen.stubInfo(), valueRegs,
+        slowCases, this, gen.slowPathFunction(), NoResult, gen.stubInfo(), valueRegs,
         CCallHelpers::CellValue(baseGPR), identifierUID(identifierNumber));
 
     m_jit.addPutById(gen, slowPath.get());

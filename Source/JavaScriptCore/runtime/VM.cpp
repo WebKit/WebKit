@@ -681,23 +681,23 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
     UNUSED_PARAM(intrinsic);
 #endif // ENABLE(JIT)
     return NativeExecutable::create(*this,
-        adoptRef(*new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
-        adoptRef(*new NativeJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
+        adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
+        adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
         NoIntrinsic, signature, name);
 }
 
-MacroAssemblerCodePtr VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
+MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
 {
 #if ENABLE(JIT)
     if (canUseJIT()) {
         if (kind == CodeForCall)
-            return jitStubs->ctiInternalFunctionCall(this);
-        return jitStubs->ctiInternalFunctionConstruct(this);
+            return jitStubs->ctiInternalFunctionCall(this).retagged<JSEntryPtrTag>();
+        return jitStubs->ctiInternalFunctionConstruct(this).retagged<JSEntryPtrTag>();
     }
 #endif
     if (kind == CodeForCall)
-        return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_call_trampoline);
-    return MacroAssemblerCodePtr::createLLIntCodePtr(llint_internal_function_construct_trampoline);
+        return LLInt::getCodePtr<JSEntryPtrTag>(llint_internal_function_call_trampoline);
+    return LLInt::getCodePtr<JSEntryPtrTag>(llint_internal_function_construct_trampoline);
 }
 
 VM::ClientData::~ClientData()

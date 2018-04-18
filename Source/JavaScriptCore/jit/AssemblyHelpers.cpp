@@ -337,9 +337,8 @@ void AssemblyHelpers::callExceptionFuzz(VM& vm)
 #else
     move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #endif
-    PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-    move(TrustedImmPtr(tagCFunctionPtr(operationExceptionFuzz, tag)), GPRInfo::nonPreservedNonReturnGPR);
-    call(GPRInfo::nonPreservedNonReturnGPR, tag);
+    move(TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationExceptionFuzz)), GPRInfo::nonPreservedNonReturnGPR);
+    call(GPRInfo::nonPreservedNonReturnGPR, OperationPtrTag);
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
@@ -713,10 +712,9 @@ void AssemblyHelpers::emitDumbVirtualCall(VM& vm, CallLinkInfo* info)
     Call call = nearCall();
     addLinkTask(
         [=, &vm] (LinkBuffer& linkBuffer) {
-            PtrTag linkTag = ptrTag(LinkVirtualCallPtrTag, &vm);
-            MacroAssemblerCodeRef virtualThunk = virtualThunkFor(&vm, *info);
+            MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(&vm, *info);
             info->setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
-            linkBuffer.link(call, CodeLocationLabel(virtualThunk.retaggedCode(linkTag, NearCodePtrTag)));
+            linkBuffer.link(call, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
         });
 }
 
@@ -933,9 +931,8 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
 #else
 #error "JIT not supported on this platform."
 #endif
-    PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-    move(TrustedImmPtr(tagCFunctionPtr(function, tag)), scratch);
-    call(scratch, tag);
+    move(TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(function)), scratch);
+    call(scratch, OperationPtrTag);
 
     move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
     storePtr(TrustedImmPtr(nullptr), GPRInfo::regT0);

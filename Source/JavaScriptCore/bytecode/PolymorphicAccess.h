@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,7 +68,7 @@ public:
         RELEASE_ASSERT(kind != GeneratedFinalCode);
     }
     
-    AccessGenerationResult(Kind kind, MacroAssemblerCodePtr code)
+    AccessGenerationResult(Kind kind, MacroAssemblerCodePtr<JITStubRoutinePtrTag> code)
         : m_kind(kind)
         , m_code(code)
     {
@@ -93,7 +93,7 @@ public:
     
     Kind kind() const { return m_kind; }
     
-    const MacroAssemblerCodePtr& code() const { return m_code; }
+    const MacroAssemblerCodePtr<JITStubRoutinePtrTag>& code() const { return m_code; }
     
     bool madeNoChanges() const { return m_kind == MadeNoChanges; }
     bool gaveUp() const { return m_kind == GaveUp; }
@@ -123,7 +123,7 @@ public:
     
 private:
     Kind m_kind;
-    MacroAssemblerCodePtr m_code;
+    MacroAssemblerCodePtr<JITStubRoutinePtrTag> m_code;
     Vector<std::pair<InlineWatchpointSet&, StringFireDetail>> m_watchpointsToFire;
 };
 

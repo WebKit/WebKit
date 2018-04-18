@@ -64,7 +64,7 @@ public:
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
 
-    MacroAssemblerCodePtr jsEntrypoint(ArityCheckMode arity)
+    MacroAssemblerCodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
     {
         if (arity == ArityCheckNotRequired)
             return m_jsEntrypoint;
@@ -80,7 +80,7 @@ private:
     // It's safe to just hold the raw WasmToWasmImportableFunction/jsEntrypoint because we have a reference
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.
-    MacroAssemblerCodePtr m_jsEntrypoint;
+    MacroAssemblerCodePtr<WasmEntryPtrTag> m_jsEntrypoint;
     WasmToWasmImportableFunction m_importableFunction;
 };
 

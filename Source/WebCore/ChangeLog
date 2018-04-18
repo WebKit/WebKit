@@ -1,3 +1,40 @@
+2018-04-17  Mark Lam  <mark.lam@apple.com>
+
+        Templatize CodePtr/Refs/FunctionPtrs with PtrTags.
+        https://bugs.webkit.org/show_bug.cgi?id=184702
+        <rdar://problem/35391681>
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        No new tests. This is covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * cssjit/CSSPtrTag.h: Added.
+        * cssjit/CompiledSelector.h:
+        * cssjit/FunctionCall.h:
+        (WebCore::FunctionCall::FunctionCall):
+        (WebCore::FunctionCall::setFunctionAddress):
+        (WebCore::FunctionCall::prepareAndCall):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::compileSelector):
+        (WebCore::SelectorCompiler::SelectorFragment::appendUnoptimizedPseudoClassWithContext):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeFunctionCallValueMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementFunctionCallTest):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateContextFunctionCallTest):
+        * cssjit/SelectorCompiler.h:
+        (WebCore::SelectorCompiler::ruleCollectorSimpleSelectorCheckerFunction):
+        (WebCore::SelectorCompiler::querySelectorSimpleSelectorCheckerFunction):
+        (WebCore::SelectorCompiler::ruleCollectorSelectorCheckerFunctionWithCheckingContext):
+        (WebCore::SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeCompiledSingleMultiSelectorData const):
+        (WebCore::SelectorDataList::execute const):
+        * dom/SelectorQuery.h:
+
 2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         Retain MessagePortChannel for transfer when disentangling ports

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,23 +26,24 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include "MacroAssemblerCodeRef.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace Profiler {
 
 class OSRExitSite {
 public:
-    explicit OSRExitSite(const Vector<const void*>& codeAddresses)
+    explicit OSRExitSite(const Vector<MacroAssemblerCodePtr<JSInternalPtrTag>>& codeAddresses)
         : m_codeAddresses(codeAddresses)
     {
     }
     
-    const Vector<const void*>& codeAddress() const { return m_codeAddresses; }
+    const Vector<MacroAssemblerCodePtr<JSInternalPtrTag>>& codeAddress() const { return m_codeAddresses; }
     
     JSValue toJS(ExecState*) const;
 
 private:
-    Vector<const void*> m_codeAddresses;
+    Vector<MacroAssemblerCodePtr<JSInternalPtrTag>> m_codeAddresses;
 };
 
 } } // namespace JSC::Profiler

@@ -67,11 +67,11 @@ Seconds totalFTLCompileTime;
 Seconds totalFTLDFGCompileTime;
 Seconds totalFTLB3CompileTime;
 
-void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction)
+void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr<CFunctionPtrTag> newCalleeFunction)
 {
     MacroAssembler::repatchCall(
-        CodeLocationCall(MacroAssemblerCodePtr(returnAddress)),
-        newCalleeFunction);
+        CodeLocationCall<NoPtrTag>(MacroAssemblerCodePtr<NoPtrTag>(returnAddress)),
+        newCalleeFunction.retagged<OperationPtrTag>());
 }
 
 JIT::JIT(VM* vm, CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
@@ -738,7 +738,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, returnValueGPR).linkTo(beginLabel, this);
         move(returnValueGPR, GPRInfo::argumentGPR0);
-        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, m_vm), NearCodePtrTag));
+        emitNakedCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
 
 #if !ASSERT_DISABLED
         m_bytecodeOffset = std::numeric_limits<unsigned>::max(); // Reset this, in order to guard its use with ASSERTs.
@@ -788,27 +788,25 @@ CompilationResult JIT::link()
             ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
 
             auto* simpleJumpTable = record.jumpTable.simpleJumpTable;
-            PtrTag tag = ptrTag(SwitchTablePtrTag, simpleJumpTable);
-            simpleJumpTable->ctiDefault = patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], tag);
+            simpleJumpTable->ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
 
             for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
                 unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
                 simpleJumpTable->ctiOffsets[j] = offset
-                    ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], tag)
+                    ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
                     : simpleJumpTable->ctiDefault;
             }
         } else {
             ASSERT(record.type == SwitchRecord::String);
 
             auto* stringJumpTable = record.jumpTable.stringJumpTable;
-            PtrTag tag = ptrTag(SwitchTablePtrTag, stringJumpTable);
             stringJumpTable->ctiDefault =
-                patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset], tag);
+                patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
 
             for (auto& location : stringJumpTable->offsetTable.values()) {
                 unsigned offset = location.branchOffset;
                 location.ctiOffset = offset
-                    ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset], tag)
+                    ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
                     : stringJumpTable->ctiDefault;
             }
         }
@@ -816,7 +814,8 @@ CompilationResult JIT::link()
 
     for (size_t i = 0; i < m_codeBlock->numberOfExceptionHandlers(); ++i) {
         HandlerInfo& handler = m_codeBlock->exceptionHandler(i);
-        handler.nativeCode = patchBuffer.locationOf(m_labels[handler.target], ExceptionHandlerPtrTag);
+        // FIXME: <rdar://problem/39433318>.
+        handler.nativeCode = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_labels[handler.target]);
     }
 
     for (auto& record : m_calls) {
@@ -832,18 +831,18 @@ CompilationResult JIT::link()
         m_putByIds[i].finalize(patchBuffer);
 
     if (m_byValCompilationInfo.size()) {
-        CodeLocationLabel exceptionHandler = patchBuffer.locationOf(m_exceptionHandler, ExceptionHandlerPtrTag);
+        CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler = patchBuffer.locationOf<ExceptionHandlerPtrTag>(m_exceptionHandler);
 
         for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
             PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
-            CodeLocationJump notIndexJump = CodeLocationJump();
+            auto notIndexJump = CodeLocationJump<JSEntryPtrTag>();
             if (Jump(patchableNotIndexJump).isSet())
-                notIndexJump = CodeLocationJump(patchBuffer.locationOf(patchableNotIndexJump));
-            CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(byValCompilationInfo.badTypeJump));
-            CodeLocationLabel doneTarget = patchBuffer.locationOf(byValCompilationInfo.doneTarget);
-            CodeLocationLabel nextHotPathTarget = patchBuffer.locationOf(byValCompilationInfo.nextHotPathTarget);
-            CodeLocationLabel slowPathTarget = patchBuffer.locationOf(byValCompilationInfo.slowPathTarget);
-            CodeLocationCall returnAddress = patchBuffer.locationOf(byValCompilationInfo.returnAddress);
+                notIndexJump = CodeLocationJump<JSEntryPtrTag>(patchBuffer.locationOf<JSEntryPtrTag>(patchableNotIndexJump));
+            auto badTypeJump = CodeLocationJump<JSEntryPtrTag>(patchBuffer.locationOf<JSEntryPtrTag>(byValCompilationInfo.badTypeJump));
+            CodeLocationLabel<NoPtrTag> doneTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.doneTarget);
+            CodeLocationLabel<NoPtrTag> nextHotPathTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.nextHotPathTarget);
+            CodeLocationLabel<NoPtrTag> slowPathTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.slowPathTarget);
+            CodeLocationCall<NoPtrTag> returnAddress = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.returnAddress);
 
             *byValCompilationInfo.byValInfo = ByValInfo(
                 byValCompilationInfo.bytecodeIndex,
@@ -861,22 +860,20 @@ CompilationResult JIT::link()
     for (auto& compilationInfo : m_callCompilationInfo) {
         CallLinkInfo& info = *compilationInfo.callLinkInfo;
         info.setCallLocations(
-            CodeLocationLabel(patchBuffer.locationOfNearCall(compilationInfo.callReturnLocation)),
-            CodeLocationLabel(patchBuffer.locationOf(compilationInfo.hotPathBegin)),
-            patchBuffer.locationOfNearCall(compilationInfo.hotPathOther));
+            CodeLocationLabel<JSEntryPtrTag>(patchBuffer.locationOfNearCall<JSEntryPtrTag>(compilationInfo.callReturnLocation)),
+            CodeLocationLabel<JSEntryPtrTag>(patchBuffer.locationOf<JSEntryPtrTag>(compilationInfo.hotPathBegin)),
+            patchBuffer.locationOfNearCall<JSEntryPtrTag>(compilationInfo.hotPathOther));
     }
 
     JITCodeMap jitCodeMap;
     for (unsigned bytecodeOffset = 0; bytecodeOffset < m_labels.size(); ++bytecodeOffset) {
-        if (m_labels[bytecodeOffset].isSet()) {
-            PtrTag tag = ptrTag(CodePtrTag, m_codeBlock, bytecodeOffset);
-            jitCodeMap.append(bytecodeOffset, patchBuffer.locationOf(m_labels[bytecodeOffset], tag));
-        }
+        if (m_labels[bytecodeOffset].isSet())
+            jitCodeMap.append(bytecodeOffset, patchBuffer.locationOf<JSEntryPtrTag>(m_labels[bytecodeOffset]));
     }
     jitCodeMap.finish();
     m_codeBlock->setJITCodeMap(WTFMove(jitCodeMap));
 
-    MacroAssemblerCodePtr withArityCheck = patchBuffer.locationOf(m_arityCheck, CodePtrTag);
+    MacroAssemblerCodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
 
     if (Options::dumpDisassembly()) {
         m_disassembler->dump(patchBuffer);
@@ -891,8 +888,8 @@ CompilationResult JIT::link()
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
         m_codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer));
     
-    CodeRef result = FINALIZE_CODE(
-        patchBuffer, CodePtrTag,
+    CodeRef<JSEntryPtrTag> result = FINALIZE_CODE(
+        patchBuffer, JSEntryPtrTag,
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT)).data());
     
     m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
@@ -933,8 +930,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-        m_calls.append(CallRecord(call(tag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandlerFromCallerFrame, tag)));
+        m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame)));
         jumpToExceptionHandler(*vm());
     }
 
@@ -953,8 +949,7 @@ void JIT::privateCompileExceptionHandlers()
         poke(GPRInfo::argumentGPR0);
         poke(GPRInfo::argumentGPR1, 1);
 #endif
-        PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-        m_calls.append(CallRecord(call(tag), std::numeric_limits<unsigned>::max(), FunctionPtr(lookupExceptionHandler, tag)));
+        m_calls.append(CallRecord(call(OperationPtrTag), std::numeric_limits<unsigned>::max(), FunctionPtr<OperationPtrTag>(lookupExceptionHandler)));
         jumpToExceptionHandler(*vm());
     }
 }

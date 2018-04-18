@@ -33,15 +33,15 @@ namespace JSC {
 
 enum NearCallMode { Regular, Tail };
 
-class CodeLocationInstruction;
-class CodeLocationLabel;
-class CodeLocationJump;
-class CodeLocationCall;
-class CodeLocationNearCall;
-class CodeLocationDataLabelCompact;
-class CodeLocationDataLabel32;
-class CodeLocationDataLabelPtr;
-class CodeLocationConvertibleLoad;
+template<PtrTag> class CodeLocationInstruction;
+template<PtrTag> class CodeLocationLabel;
+template<PtrTag> class CodeLocationJump;
+template<PtrTag> class CodeLocationCall;
+template<PtrTag> class CodeLocationNearCall;
+template<PtrTag> class CodeLocationDataLabelCompact;
+template<PtrTag> class CodeLocationDataLabel32;
+template<PtrTag> class CodeLocationDataLabelPtr;
+template<PtrTag> class CodeLocationConvertibleLoad;
 
 // The CodeLocation* types are all pretty much do-nothing wrappers around
 // CodePtr (or MacroAssemblerCodePtr, to give it its full name).  These
@@ -54,169 +54,212 @@ class CodeLocationConvertibleLoad;
 // offsets apart.  To reduce memory overhead we will only retain a pointer to
 // one of the instructions, and we will use the *AtOffset methods provided by
 // CodeLocationCommon to find the other points in the code to modify.
-class CodeLocationCommon : public MacroAssemblerCodePtr {
+template<PtrTag tag>
+class CodeLocationCommon : public MacroAssemblerCodePtr<tag> {
+    using Base = MacroAssemblerCodePtr<tag>;
 public:
-    CodeLocationInstruction instructionAtOffset(int offset);
-    CodeLocationLabel labelAtOffset(int offset);
-    CodeLocationJump jumpAtOffset(int offset);
-    CodeLocationCall callAtOffset(int offset);
-    CodeLocationNearCall nearCallAtOffset(int offset, NearCallMode);
-    CodeLocationDataLabelPtr dataLabelPtrAtOffset(int offset);
-    CodeLocationDataLabel32 dataLabel32AtOffset(int offset);
-    CodeLocationDataLabelCompact dataLabelCompactAtOffset(int offset);
-    CodeLocationConvertibleLoad convertibleLoadAtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationInstruction<resultTag> instructionAtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationLabel<resultTag> labelAtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationJump<resultTag> jumpAtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationCall<resultTag> callAtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationNearCall<resultTag> nearCallAtOffset(int offset, NearCallMode);
+    template<PtrTag resultTag = tag> CodeLocationDataLabelPtr<resultTag> dataLabelPtrAtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationDataLabel32<resultTag> dataLabel32AtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationDataLabelCompact<resultTag> dataLabelCompactAtOffset(int offset);
+    template<PtrTag resultTag = tag> CodeLocationConvertibleLoad<resultTag> convertibleLoadAtOffset(int offset);
+
+    template<typename T = void*>
+    T dataLocation() const { return Base::template dataLocation<T>(); }
 
 protected:
     CodeLocationCommon()
     {
     }
 
-    CodeLocationCommon(MacroAssemblerCodePtr location)
-        : MacroAssemblerCodePtr(location)
+    CodeLocationCommon(MacroAssemblerCodePtr<tag> location)
+        : MacroAssemblerCodePtr<tag>(location)
     {
     }
 };
 
-class CodeLocationInstruction : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationInstruction : public CodeLocationCommon<tag> {
 public:
-    CodeLocationInstruction() {}
-    explicit CodeLocationInstruction(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) {}
+    CodeLocationInstruction() { }
+    explicit CodeLocationInstruction(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationInstruction(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
 };
 
-class CodeLocationLabel : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationLabel : public CodeLocationCommon<tag> {
 public:
-    CodeLocationLabel() {}
-    explicit CodeLocationLabel(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) {}
+    CodeLocationLabel() { }
+    explicit CodeLocationLabel(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationLabel(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
 
-    CodeLocationLabel retagged(PtrTag oldTag, PtrTag newTag) { return CodeLocationLabel(MacroAssemblerCodePtr::retagged(oldTag, newTag)); }
+    template<PtrTag newTag>
+    CodeLocationLabel<newTag> retagged() { return CodeLocationLabel<newTag>(CodeLocationCommon<tag>::template retagged<newTag>()); }
+
+    template<typename T = void*>
+    T untaggedExecutableAddress() const { return CodeLocationCommon<tag>::template untaggedExecutableAddress<T>(); }
+
+    template<typename T = void*>
+    T dataLocation() const { return CodeLocationCommon<tag>::template dataLocation<T>(); }
 };
 
-class CodeLocationJump : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationJump : public CodeLocationCommon<tag> {
 public:
-    CodeLocationJump() {}
-    explicit CodeLocationJump(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) {}
+    CodeLocationJump() { }
+    explicit CodeLocationJump(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationJump(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
 
-    CodeLocationJump retagged(PtrTag oldTag, PtrTag newTag) { return CodeLocationJump(MacroAssemblerCodePtr::retagged(oldTag, newTag)); }
+    template<PtrTag newTag>
+    CodeLocationJump<newTag> retagged() { return CodeLocationJump<newTag>(MacroAssemblerCodePtr<tag>::template retagged<newTag>()); }
 };
 
-class CodeLocationCall : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationCall : public CodeLocationCommon<tag> {
 public:
-    CodeLocationCall() {}
-    explicit CodeLocationCall(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) {}
+    CodeLocationCall() { }
+    explicit CodeLocationCall(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationCall(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
+
+    template<PtrTag newTag>
+    CodeLocationCall<newTag> retagged() { return CodeLocationCall<newTag>(CodeLocationCommon<tag>::template retagged<newTag>()); }
 };
 
-class CodeLocationNearCall : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationNearCall : public CodeLocationCommon<tag> {
 public:
-    CodeLocationNearCall() {}
-    explicit CodeLocationNearCall(MacroAssemblerCodePtr location, NearCallMode callMode)
-        : CodeLocationCommon(location), m_callMode(callMode) { }
+    CodeLocationNearCall() { }
+    explicit CodeLocationNearCall(MacroAssemblerCodePtr<tag> location, NearCallMode callMode)
+        : CodeLocationCommon<tag>(location), m_callMode(callMode) { }
     explicit CodeLocationNearCall(void* location, NearCallMode callMode)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)), m_callMode(callMode) { }
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)), m_callMode(callMode) { }
     NearCallMode callMode() { return m_callMode; }
 private:
     NearCallMode m_callMode = NearCallMode::Regular;
 };
 
-class CodeLocationDataLabel32 : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationDataLabel32 : public CodeLocationCommon<tag> {
 public:
-    CodeLocationDataLabel32() {}
-    explicit CodeLocationDataLabel32(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) {}
+    CodeLocationDataLabel32() { }
+    explicit CodeLocationDataLabel32(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationDataLabel32(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
 };
 
-class CodeLocationDataLabelCompact : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationDataLabelCompact : public CodeLocationCommon<tag> {
 public:
     CodeLocationDataLabelCompact() { }
-    explicit CodeLocationDataLabelCompact(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) { }
+    explicit CodeLocationDataLabelCompact(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationDataLabelCompact(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) { }
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
 };
 
-class CodeLocationDataLabelPtr : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationDataLabelPtr : public CodeLocationCommon<tag> {
 public:
-    CodeLocationDataLabelPtr() {}
-    explicit CodeLocationDataLabelPtr(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) {}
+    CodeLocationDataLabelPtr() { }
+    explicit CodeLocationDataLabelPtr(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationDataLabelPtr(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
 };
 
-class CodeLocationConvertibleLoad : public CodeLocationCommon {
+template<PtrTag tag>
+class CodeLocationConvertibleLoad : public CodeLocationCommon<tag> {
 public:
     CodeLocationConvertibleLoad() { }
-    explicit CodeLocationConvertibleLoad(MacroAssemblerCodePtr location)
-        : CodeLocationCommon(location) { }
+    explicit CodeLocationConvertibleLoad(MacroAssemblerCodePtr<tag> location)
+        : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationConvertibleLoad(void* location)
-        : CodeLocationCommon(MacroAssemblerCodePtr(location)) { }
+        : CodeLocationCommon<tag>(MacroAssemblerCodePtr<tag>(location)) { }
 };
 
-inline CodeLocationInstruction CodeLocationCommon::instructionAtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationInstruction<resultTag> CodeLocationCommon<tag>::instructionAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationInstruction(dataLocation<char*>() + offset);
+    return CodeLocationInstruction<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
-inline CodeLocationLabel CodeLocationCommon::labelAtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationLabel<resultTag> CodeLocationCommon<tag>::labelAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationLabel(dataLocation<char*>() + offset);
+    return CodeLocationLabel<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
-inline CodeLocationJump CodeLocationCommon::jumpAtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationJump<resultTag> CodeLocationCommon<tag>::jumpAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationJump(dataLocation<char*>() + offset);
+    return CodeLocationJump<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
-inline CodeLocationCall CodeLocationCommon::callAtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationCall<resultTag> CodeLocationCommon<tag>::callAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationCall(dataLocation<char*>() + offset);
+    return CodeLocationCall<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
-inline CodeLocationNearCall CodeLocationCommon::nearCallAtOffset(int offset, NearCallMode callMode)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationNearCall<resultTag> CodeLocationCommon<tag>::nearCallAtOffset(int offset, NearCallMode callMode)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationNearCall(dataLocation<char*>() + offset, callMode);
+    return CodeLocationNearCall<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset), callMode);
 }
 
-inline CodeLocationDataLabelPtr CodeLocationCommon::dataLabelPtrAtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationDataLabelPtr<resultTag> CodeLocationCommon<tag>::dataLabelPtrAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationDataLabelPtr(dataLocation<char*>() + offset);
+    return CodeLocationDataLabelPtr<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
-inline CodeLocationDataLabel32 CodeLocationCommon::dataLabel32AtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationDataLabel32<resultTag> CodeLocationCommon<tag>::dataLabel32AtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationDataLabel32(dataLocation<char*>() + offset);
+    return CodeLocationDataLabel32<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
-inline CodeLocationDataLabelCompact CodeLocationCommon::dataLabelCompactAtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationDataLabelCompact<resultTag> CodeLocationCommon<tag>::dataLabelCompactAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationDataLabelCompact(dataLocation<char*>() + offset);
+    return CodeLocationDataLabelCompact<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
-inline CodeLocationConvertibleLoad CodeLocationCommon::convertibleLoadAtOffset(int offset)
+template<PtrTag tag>
+template<PtrTag resultTag>
+inline CodeLocationConvertibleLoad<resultTag> CodeLocationCommon<tag>::convertibleLoadAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationConvertibleLoad(dataLocation<char*>() + offset);
+    return CodeLocationConvertibleLoad<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
 
 } // namespace JSC

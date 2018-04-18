@@ -50,7 +50,7 @@ public:
         return adoptRef(*callee);
     }
 
-    MacroAssemblerCodePtr entrypoint() const { return m_entrypoint.compilation->code(); }
+    MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint() const { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
 
     RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
     IndexOrName indexOrName() const { return m_indexOrName; }

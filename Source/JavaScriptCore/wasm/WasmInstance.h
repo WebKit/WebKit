@@ -117,7 +117,7 @@ public:
         // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The embedder-specific logic occurs through import function.
         Instance* targetInstance { nullptr };
         WasmToWasmImportableFunction::LoadLocation wasmEntrypointLoadLocation { nullptr };
-        MacroAssemblerCodePtr wasmToEmbedderStub;
+        MacroAssemblerCodePtr<WasmEntryPtrTag> wasmToEmbedderStub;
         void* importFunction { nullptr }; // In a JS embedding, this is a PoisonedBarrier<JSObject>.
     };
     unsigned numImportFunctions() const { return m_numImportFunctions; }

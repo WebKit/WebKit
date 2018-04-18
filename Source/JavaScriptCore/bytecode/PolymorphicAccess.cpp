@@ -199,11 +199,10 @@ void AccessGenerationState::emitExplicitExceptionHandler()
             });
     } else {
         jit->setupArguments<decltype(lookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&m_vm), GPRInfo::callFrameRegister);
-        PtrTag tag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-        CCallHelpers::Call lookupExceptionHandlerCall = jit->call(tag);
+        CCallHelpers::Call lookupExceptionHandlerCall = jit->call(OperationPtrTag);
         jit->addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr(lookupExceptionHandler, tag));
+                linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr<OperationPtrTag>(lookupExceptionHandler));
             });
         jit->jumpToExceptionHandler(m_vm);
     }
@@ -539,7 +538,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
                 linkBuffer.link(jumpToOSRExitExceptionHandler, oldHandler.nativeCode);
 
                 HandlerInfo handlerToRegister = oldHandler;
-                handlerToRegister.nativeCode = linkBuffer.locationOf(makeshiftCatchHandler, ExceptionHandlerPtrTag);
+                handlerToRegister.nativeCode = linkBuffer.locationOf<ExceptionHandlerPtrTag>(makeshiftCatchHandler);
                 handlerToRegister.start = newExceptionHandlingCallSite.bits();
                 handlerToRegister.end = newExceptionHandlingCallSite.bits() + 1;
                 codeBlock->appendExceptionHandler(handlerToRegister);
@@ -559,8 +558,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         return AccessGenerationResult::GaveUp;
     }
 
-    CodeLocationLabel successLabel = stubInfo.doneLocation();
-        
+    CodeLocationLabel<JSEntryPtrTag> successLabel = stubInfo.doneLocation();
+
     linkBuffer.link(state.success, successLabel);
 
     linkBuffer.link(failure, stubInfo.slowPathStartLocation());
@@ -568,8 +567,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     if (PolymorphicAccessInternal::verbose)
         dataLog(FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases), "\n");
 
-    MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
-        codeBlock, linkBuffer, NearCodePtrTag,
+    MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(
+        codeBlock, linkBuffer, JITStubRoutinePtrTag,
         "%s", toCString("Access stub for ", *codeBlock, " ", stubInfo.codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data());
 
     bool doesCalls = false;

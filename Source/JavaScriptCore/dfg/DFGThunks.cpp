@@ -40,16 +40,15 @@
 
 namespace JSC { namespace DFG {
 
-MacroAssemblerCodeRef osrExitThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunkGenerator(VM* vm)
 {
     MacroAssembler jit;
     jit.probe(OSRExit::executeOSRExit, vm);
-    PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, osrExitThunkTag, "DFG OSR exit thunk");
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "DFG OSR exit thunk");
 }
 
-MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM* vm)
 {
     MacroAssembler jit;
 
@@ -83,8 +82,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #endif
 
-    PtrTag callTag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
-    MacroAssembler::Call functionCall = jit.call(callTag);
+    MacroAssembler::Call functionCall = jit.call(OperationPtrTag);
 
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
     jit.storePtr(MacroAssembler::TrustedImmPtr(nullptr), MacroAssembler::Address(GPRInfo::regT0));
@@ -101,17 +99,16 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 #endif
     }
 
-    jit.jump(MacroAssembler::AbsoluteAddress(&vm->osrExitJumpDestination), ptrTag(DFGOSRExitPtrTag, vm));
+    jit.jump(MacroAssembler::AbsoluteAddress(&vm->osrExitJumpDestination), OSRExitPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
     
-    patchBuffer.link(functionCall, FunctionPtr(OSRExit::compileOSRExit, callTag));
+    patchBuffer.link(functionCall, FunctionPtr<OperationPtrTag>(OSRExit::compileOSRExit));
 
-    PtrTag osrExitThunkTag = ptrTag(DFGOSRExitPtrTag, vm);
-    return FINALIZE_CODE(patchBuffer, osrExitThunkTag, "DFG OSR exit generation thunk");
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "DFG OSR exit generation thunk");
 }
 
-MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM* vm)
 {
     AssemblyHelpers jit(nullptr);
 
@@ -149,9 +146,8 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
 
     jit.jump(GPRInfo::regT1, GPRInfo::callFrameRegister);
 
-    PtrTag osrEntryThunkTag = ptrTag(DFGOSREntryPtrTag, vm);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, osrEntryThunkTag, "DFG OSR entry thunk");
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "DFG OSR entry thunk");
 }
 
 } } // namespace JSC::DFG

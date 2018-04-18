@@ -256,7 +256,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
             case ComplexGetStatus::Inlineable: {
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
                 JSFunction* intrinsicFunction = nullptr;
-                PropertySlot::GetValueFunc customAccessorGetter = nullptr;
+                FunctionPtr<OperationPtrTag> customAccessorGetter;
                 std::optional<DOMAttributeAnnotation> domAttribute;
 
                 switch (access.type()) {
@@ -278,7 +278,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     break;
                 }
                 case AccessCase::CustomAccessorGetter: {
-                    customAccessorGetter = bitwise_cast<PropertySlot::GetValueFunc>(access.as<GetterSetterAccessCase>().customAccessor());
+                    customAccessorGetter = access.as<GetterSetterAccessCase>().customAccessor();
                     domAttribute = access.as<GetterSetterAccessCase>().domAttribute();
                     if (!domAttribute)
                         return GetByIdStatus(slowPathState, true);

@@ -2011,8 +2011,8 @@ macro doCall(slowPath, prepareCall)
     storei t2, ArgumentCount + PayloadOffset[t3]
     storei CellTag, Callee + TagOffset[t3]
     move t3, sp
-    prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4, LLIntCallICPtrTag)
-    callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1], LLIntCallICPtrTag)
+    prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4, JSEntryPtrTag)
+    callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1], JSEntryPtrTag)
 
 .opCallSlow:
     slowPathForCall(slowPath, prepareCall)

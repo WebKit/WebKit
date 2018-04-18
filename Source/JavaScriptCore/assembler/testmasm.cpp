@@ -144,18 +144,18 @@ bool isSpecialGPR(MacroAssembler::RegisterID id)
 }
 #endif // ENABLE(MASM_PROBE)
 
-MacroAssemblerCodeRef compile(Generator&& generate)
+MacroAssemblerCodeRef<JSEntryPtrTag> compile(Generator&& generate)
 {
     CCallHelpers jit;
     generate(jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    return FINALIZE_CODE(linkBuffer, JITCodePtrTag, "testmasm compilation");
+    return FINALIZE_CODE(linkBuffer, JSEntryPtrTag, "testmasm compilation");
 }
 
 template<typename T, typename... Arguments>
-T invoke(MacroAssemblerCodeRef code, Arguments... arguments)
+T invoke(MacroAssemblerCodeRef<JSEntryPtrTag> code, Arguments... arguments)
 {
-    void* executableAddress = untagCFunctionPtr(code.code().executableAddress(), JITCodePtrTag);
+    void* executableAddress = untagCFunctionPtr<JSEntryPtrTag>(code.code().executableAddress());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
     return function(arguments...);
 }
@@ -593,7 +593,7 @@ void testProbeModifiesProgramCounter()
     unsigned probeCallCount = 0;
     bool continuationWasReached = false;
 
-    MacroAssemblerCodeRef continuation = compile([&] (CCallHelpers& jit) {
+    MacroAssemblerCodeRef<JSEntryPtrTag> continuation = compile([&] (CCallHelpers& jit) {
         // Validate that we reached the continuation.
         jit.probe([&] (Probe::Context&) {
             probeCallCount++;
@@ -610,7 +610,7 @@ void testProbeModifiesProgramCounter()
         // Write expected values into the registers.
         jit.probe([&] (Probe::Context& context) {
             probeCallCount++;
-            context.cpu.pc() = untagCodePtr(continuation.code().executableAddress(), JITCodePtrTag);
+            context.cpu.pc() = untagCodePtr(continuation.code().executableAddress(), JSEntryPtrTag);
         });
 
         jit.breakpoint(); // We should never get here.

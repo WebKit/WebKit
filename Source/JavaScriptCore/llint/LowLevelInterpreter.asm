@@ -262,9 +262,8 @@ const ArithProfileIntNumber = 0x500000
 
 # Pointer Tags
 const BytecodePtrTag = constexpr BytecodePtrTag
-const CodePtrTag = constexpr CodePtrTag
+const JSEntryPtrTag = constexpr JSEntryPtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
-const LLIntCallICPtrTag = constexpr LLIntCallICPtrTag
 const NoPtrTag = constexpr NoPtrTag
 const SlowPathPtrTag = constexpr SlowPathPtrTag
 
@@ -1037,7 +1036,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         else
             pop cfr
         end
-        jmp r0, CodePtrTag
+        jmp r0, JSEntryPtrTag
     .recover:
         codeBlockGetter(t1, t2)
     .continue:

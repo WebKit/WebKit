@@ -581,8 +581,7 @@ extern "C" void* JIT_OPERATION compileFTLLazySlowPath(ExecState* exec, unsigned 
     LazySlowPath& lazySlowPath = *jitCode->lazySlowPaths[index];
     lazySlowPath.generate(codeBlock);
 
-    PtrTag slowPathTag = ptrTag(FTLLazySlowPathPtrTag, bitwise_cast<PtrTag>(&lazySlowPath));
-    return lazySlowPath.stub().retaggedCode(slowPathTag, bitwise_cast<PtrTag>(exec)).executableAddress();
+    return lazySlowPath.stub().code().executableAddress();
 }
 
 } } // namespace JSC::FTL

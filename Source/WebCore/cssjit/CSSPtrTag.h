@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,15 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(CSS_SELECTOR_JIT)
 
-#include "B3Compilation.h"
-#include "WasmFormat.h"
-#include <wtf/Expected.h>
+#include <JavaScriptCore/PtrTag.h>
 
-namespace JSC {
+namespace WebCore {
 
-class CallLinkInfo;
+static constexpr JSC::PtrTag CSSSelectorPtrTag = static_cast<JSC::PtrTag>(0xc551);
+static constexpr JSC::PtrTag CSSOperationPtrTag = static_cast<JSC::PtrTag>(0xc552);
 
-namespace Wasm {
+} // namespace WebCore
 
-enum class BindingFailure {
-    OutOfMemory,
-};
-
-Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsigned importIndex);
-
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(CSS_SELECTOR_JIT)

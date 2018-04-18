@@ -53,34 +53,30 @@ typedef unsigned (*QuerySelectorSimpleSelectorChecker)(const Element*);
 typedef unsigned (*RuleCollectorSelectorCheckerWithCheckingContext)(const Element*, SelectorChecker::CheckingContext*, unsigned*);
 typedef unsigned (*QuerySelectorSelectorCheckerWithCheckingContext)(const Element*, const SelectorChecker::CheckingContext*);
 
-SelectorCompilationStatus compileSelector(const CSSSelector*, SelectorContext, JSC::MacroAssemblerCodeRef& outputCodeRef);
+SelectorCompilationStatus compileSelector(const CSSSelector*, SelectorContext, JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag>& outputCodeRef);
 
-inline RuleCollectorSimpleSelectorChecker ruleCollectorSimpleSelectorCheckerFunction(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline RuleCollectorSimpleSelectorChecker ruleCollectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
-    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::RuleCollector);
-    return JSC::untagCFunctionPtr<RuleCollectorSimpleSelectorChecker>(executableAddress, tag);
+    return JSC::untagCFunctionPtr<RuleCollectorSimpleSelectorChecker, CSSSelectorPtrTag>(executableAddress);
 }
 
-inline QuerySelectorSimpleSelectorChecker querySelectorSimpleSelectorCheckerFunction(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline QuerySelectorSimpleSelectorChecker querySelectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
-    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::QuerySelector);
-    return JSC::untagCFunctionPtr<QuerySelectorSimpleSelectorChecker>(executableAddress, tag);
+    return JSC::untagCFunctionPtr<QuerySelectorSimpleSelectorChecker, CSSSelectorPtrTag>(executableAddress);
 }
 
-inline RuleCollectorSelectorCheckerWithCheckingContext ruleCollectorSelectorCheckerFunctionWithCheckingContext(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline RuleCollectorSelectorCheckerWithCheckingContext ruleCollectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::RuleCollector);
-    return JSC::untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext>(executableAddress, tag);
+    return JSC::untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext, CSSSelectorPtrTag>(executableAddress);
 }
 
-inline QuerySelectorSelectorCheckerWithCheckingContext querySelectorSelectorCheckerFunctionWithCheckingContext(const JSC::MacroAssemblerCodeRef& codeRef, void* executableAddress, SelectorCompilationStatus compilationStatus)
+inline QuerySelectorSelectorCheckerWithCheckingContext querySelectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-    JSC::PtrTag tag = JSC::ptrTag(&codeRef, SelectorContext::QuerySelector);
-    return JSC::untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext>(executableAddress, tag);
+    return JSC::untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext, CSSSelectorPtrTag>(executableAddress);
 }
 
 } // namespace SelectorCompiler

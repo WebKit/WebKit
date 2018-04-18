@@ -109,9 +109,8 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     jit.move(GPRInfo::regT0, GPRInfo::argumentGPR0);
     jit.move(AssemblyHelpers::TrustedImmPtr(&exit), GPRInfo::argumentGPR1);
 #endif
-    PtrTag tag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
-    jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunctionPtr(triggerReoptimizationNow, tag)), GPRInfo::nonArgGPR0);
-    jit.call(GPRInfo::nonArgGPR0, tag);
+    jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(triggerReoptimizationNow)), GPRInfo::nonArgGPR0);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     AssemblyHelpers::Jump doneAdjusting = jit.jump();
     
     tooFewFails.link(&jit);
@@ -188,7 +187,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
                     baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
                 RELEASE_ASSERT(callLinkInfo);
 
-                jumpTarget = callLinkInfo->callReturnLocation().executableAddress();
+                jumpTarget = callLinkInfo->callReturnLocation().untaggedExecutableAddress();
                 break;
             }
 
@@ -198,7 +197,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
                     baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
                 RELEASE_ASSERT(stubInfo);
 
-                jumpTarget = stubInfo->doneLocation().executableAddress();
+                jumpTarget = stubInfo->doneLocation().untaggedExecutableAddress();
                 break;
             }
 
@@ -276,9 +275,8 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 #endif
 
     jit.setupArguments<decltype(operationOSRWriteBarrier)>(owner);
-    PtrTag tag = ptrTag(DFGOperationPtrTag, nextPtrTagID());
-    jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr(operationOSRWriteBarrier, tag)), scratch);
-    jit.call(scratch, tag);
+    jit.move(MacroAssembler::TrustedImmPtr(tagCFunctionPtr<OperationPtrTag>(operationOSRWriteBarrier)), scratch);
+    jit.call(scratch, OperationPtrTag);
 
 #if CPU(X86)
     jit.addPtr(MacroAssembler::TrustedImm32(sizeof(void*) * 4), MacroAssembler::stackPointerRegister);
@@ -319,12 +317,10 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     CodeBlock* codeBlockForExit = jit.baselineCodeBlockFor(exit.m_codeOrigin);
     ASSERT(codeBlockForExit == codeBlockForExit->baselineVersion());
     ASSERT(codeBlockForExit->jitType() == JITCode::BaselineJIT);
-    CodeLocationLabel codeLocation = codeBlockForExit->jitCodeMap().find(exit.m_codeOrigin.bytecodeIndex);
+    CodeLocationLabel<JSEntryPtrTag> codeLocation = codeBlockForExit->jitCodeMap().find(exit.m_codeOrigin.bytecodeIndex);
     ASSERT(codeLocation);
 
-    PtrTag locationTag = ptrTag(CodePtrTag, codeBlockForExit, exit.m_codeOrigin.bytecodeIndex);
-    PtrTag exitTag = ptrTag(DFGOSRExitPtrTag, nextPtrTagID());
-    void* jumpTarget = codeLocation.retagged(locationTag, exitTag).executableAddress();
+    void* jumpTarget = codeLocation.retagged<OSRExitPtrTag>().executableAddress();
     jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     if (exit.isExceptionHandler()) {
         // Since we're jumping to op_catch, we need to set callFrameForCatch.
@@ -332,7 +328,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     }
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
-    jit.jump(GPRInfo::regT2, exitTag);
+    jit.jump(GPRInfo::regT2, OSRExitPtrTag);
 }
 
 } } // namespace JSC::DFG

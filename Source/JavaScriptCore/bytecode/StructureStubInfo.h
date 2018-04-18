@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -169,7 +169,7 @@ public:
     StructureSet bufferedStructures;
     
     struct {
-        CodeLocationLabel start; // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'in' caches.
+        CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'in' caches.
         RegisterSet usedRegisters;
         uint32_t inlineSize;
         int32_t deltaFromStartToSlowPathCallLocation;
@@ -185,13 +185,13 @@ public:
 #endif
     } patch;
 
-    CodeLocationCall slowPathCallLocation() { return patch.start.callAtOffset(patch.deltaFromStartToSlowPathCallLocation); }
-    CodeLocationLabel doneLocation() { return patch.start.labelAtOffset(patch.inlineSize); }
-    CodeLocationLabel slowPathStartLocation() { return patch.start.labelAtOffset(patch.deltaFromStartToSlowPathStart); }
-    CodeLocationJump patchableJumpForIn()
+    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.start.callAtOffset<JSInternalPtrTag>(patch.deltaFromStartToSlowPathCallLocation); }
+    CodeLocationLabel<JSEntryPtrTag> doneLocation() { return patch.start.labelAtOffset<JSEntryPtrTag>(patch.inlineSize); }
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation() { return patch.start.labelAtOffset(patch.deltaFromStartToSlowPathStart); }
+    CodeLocationJump<JSInternalPtrTag> patchableJumpForIn()
     { 
         ASSERT(accessType == AccessType::In);
-        return patch.start.jumpAtOffset(0);
+        return patch.start.jumpAtOffset<JSInternalPtrTag>(0);
     }
 
     JSValueRegs valueRegs() const

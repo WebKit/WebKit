@@ -818,14 +818,13 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             jit.addLinkTask([=, &vm] (LinkBuffer& linkBuffer) {
                 this->as<GetterSetterAccessCase>().callLinkInfo()->setCallLocations(
-                    CodeLocationLabel(linkBuffer.locationOfNearCall(slowPathCall)),
-                    CodeLocationLabel(linkBuffer.locationOf(addressOfLinkFunctionCheck)),
-                    linkBuffer.locationOfNearCall(fastPathCall));
+                    CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowPathCall)),
+                    CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(addressOfLinkFunctionCheck)),
+                    linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastPathCall));
 
-                PtrTag linkTag = ptrTag(LinkCallPtrTag, &vm);
                 linkBuffer.link(
                     slowPathCall,
-                    CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).retaggedCode(linkTag, NearCodePtrTag)));
+                    CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(linkCallThunkGenerator).code()));
             });
         } else {
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);
@@ -855,10 +854,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             }
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
-            PtrTag callTag = ptrTag(GetterSetterPtrTag, nextPtrTagID());
-            operationCall = jit.call(callTag);
+            operationCall = jit.call(OperationPtrTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(operationCall, FunctionPtr(this->as<GetterSetterAccessCase>().m_customAccessor.opaque, callTag));
+                linkBuffer.link(operationCall, this->as<GetterSetterAccessCase>().m_customAccessor);
             });
 
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)
@@ -1000,12 +998,11 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 if (!reallocating) {
                     jit.setupArguments<decltype(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity)>(baseGPR);
                     
-                    PtrTag callTag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-                    CCallHelpers::Call operationCall = jit.call(callTag);
+                    CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                         linkBuffer.link(
                             operationCall,
-                            FunctionPtr(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, callTag));
+                            FunctionPtr<OperationPtrTag>(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity));
                     });
                 } else {
                     // Handle the case where we are reallocating (i.e. the old structure/butterfly
@@ -1013,12 +1010,11 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     jit.setupArguments<decltype(operationReallocateButterflyToGrowPropertyStorage)>(
                         baseGPR, CCallHelpers::TrustedImm32(newSize / sizeof(JSValue)));
                     
-                    PtrTag callTag = ptrTag(JITOperationPtrTag, nextPtrTagID());
-                    CCallHelpers::Call operationCall = jit.call(callTag);
+                    CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
                     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                         linkBuffer.link(
                             operationCall,
-                            FunctionPtr(operationReallocateButterflyToGrowPropertyStorage, callTag));
+                            FunctionPtr<OperationPtrTag>(operationReallocateButterflyToGrowPropertyStorage));
                     });
                 }
                 

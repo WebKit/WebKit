@@ -451,11 +451,11 @@ ALWAYS_INLINE void SelectorDataList::executeCompiledSingleMultiSelectorData(cons
             bool matched = false;
             void* compiledSelectorChecker = selector.compiledSelectorCodeRef.code().executableAddress();
             if (selector.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
-                auto selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(selector.compiledSelectorCodeRef, compiledSelectorChecker, selector.compilationStatus);
+                auto selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(compiledSelectorChecker, selector.compilationStatus);
                 matched = selectorChecker(&element);
             } else {
                 ASSERT(selector.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-                auto selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(selector.compiledSelectorCodeRef, compiledSelectorChecker, selector.compilationStatus);
+                auto selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, selector.compilationStatus);
                 matched = selectorChecker(&element, &checkingContext);
             }
             if (matched) {
@@ -543,11 +543,11 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, typename S
         const SelectorData& selectorData = m_selectors.first();
         void* compiledSelectorChecker = selectorData.compiledSelectorCodeRef.code().executableAddress();
         if (selectorData.compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker) {
-            SelectorCompiler::QuerySelectorSimpleSelectorChecker selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(selectorData.compiledSelectorCodeRef, compiledSelectorChecker, selectorData.compilationStatus);
+            SelectorCompiler::QuerySelectorSimpleSelectorChecker selectorChecker = SelectorCompiler::querySelectorSimpleSelectorCheckerFunction(compiledSelectorChecker, selectorData.compilationStatus);
             executeCompiledSimpleSelectorChecker<SelectorQueryTrait>(*searchRootNode, selectorChecker, output, selectorData);
         } else {
             ASSERT(selectorData.compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-            SelectorCompiler::QuerySelectorSelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(selectorData.compiledSelectorCodeRef, compiledSelectorChecker, selectorData.compilationStatus);
+            SelectorCompiler::QuerySelectorSelectorCheckerWithCheckingContext selectorChecker = SelectorCompiler::querySelectorSelectorCheckerFunctionWithCheckingContext(compiledSelectorChecker, selectorData.compilationStatus);
             executeCompiledSelectorCheckerWithCheckingContext<SelectorQueryTrait>(rootNode, *searchRootNode, selectorChecker, output, selectorData);
         }
         break;

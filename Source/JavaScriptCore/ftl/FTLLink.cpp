@@ -140,15 +140,13 @@ void link(State& state)
             jit.emitFunctionPrologue();
             jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
-            PtrTag callTag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-            CCallHelpers::Call callArityCheck = jit.call(callTag);
+            CCallHelpers::Call callArityCheck = jit.call(OperationPtrTag);
 
             auto noException = jit.branch32(CCallHelpers::GreaterThanOrEqual, GPRInfo::returnValueGPR, CCallHelpers::TrustedImm32(0));
             jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
             jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
             jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
-            PtrTag lookupTag = ptrTag(FTLOperationPtrTag, nextPtrTagID());
-            CCallHelpers::Call callLookupExceptionHandlerFromCallerFrame = jit.call(lookupTag);
+            CCallHelpers::Call callLookupExceptionHandlerFromCallerFrame = jit.call(OperationPtrTag);
             jit.jumpToExceptionHandler(vm);
             noException.link(&jit);
 
@@ -172,14 +170,13 @@ void link(State& state)
                 state.allocationFailed = true;
                 return;
             }
-            linkBuffer->link(callArityCheck, FunctionPtr(codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, callTag));
-            linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, FunctionPtr(lookupExceptionHandlerFromCallerFrame, lookupTag));
-            linkBuffer->link(callArityFixup, FunctionPtr(vm.getCTIStub(arityFixupGenerator).retaggedCode(ptrTag(ArityFixupPtrTag, &vm), NearCodePtrTag)));
-            linkBuffer->link(mainPathJumps, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
+            linkBuffer->link(callArityCheck, FunctionPtr<OperationPtrTag>(codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck));
+            linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, FunctionPtr<OperationPtrTag>(lookupExceptionHandlerFromCallerFrame));
+            linkBuffer->link(callArityFixup, FunctionPtr<JITThunkPtrTag>(vm.getCTIStub(arityFixupGenerator).code()));
+            linkBuffer->link(mainPathJumps, state.generatedFunction);
         }
-        
-        PtrTag entryTag = ptrTag(FTLCodePtrTag, codeBlock);
-        state.jitCode->initializeAddressForCall(MacroAssemblerCodePtr(retagCodePtr<void*>(state.generatedFunction, entryTag, CodePtrTag)));
+
+        state.jitCode->initializeAddressForCall(state.generatedFunction);
         break;
     }
         
@@ -198,9 +195,9 @@ void link(State& state)
             state.allocationFailed = true;
             return;
         }
-        linkBuffer->link(mainPathJump, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
+        linkBuffer->link(mainPathJump, state.generatedFunction);
 
-        state.jitCode->initializeAddressForCall(linkBuffer->locationOf(start, CodePtrTag));
+        state.jitCode->initializeAddressForCall(linkBuffer->locationOf<JSEntryPtrTag>(start));
         break;
     }
         

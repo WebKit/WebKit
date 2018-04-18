@@ -1,3 +1,720 @@
+2018-04-17  Mark Lam  <mark.lam@apple.com>
+
+        Templatize CodePtr/Refs/FunctionPtrs with PtrTags.
+        https://bugs.webkit.org/show_bug.cgi?id=184702
+        <rdar://problem/35391681>
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        1. Templatized MacroAssemblerCodePtr/Ref, FunctionPtr, and CodeLocation variants
+           to take a PtrTag template argument.
+        2. Replaced some uses of raw pointers with the equivalent CodePtr / FunctionPtr.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::differenceBetweenCodePtr):
+        (JSC::AbstractMacroAssembler::linkJump):
+        (JSC::AbstractMacroAssembler::linkPointer):
+        (JSC::AbstractMacroAssembler::getLinkerAddress):
+        (JSC::AbstractMacroAssembler::repatchJump):
+        (JSC::AbstractMacroAssembler::repatchJumpToNop):
+        (JSC::AbstractMacroAssembler::repatchNearCall):
+        (JSC::AbstractMacroAssembler::repatchCompact):
+        (JSC::AbstractMacroAssembler::repatchInt32):
+        (JSC::AbstractMacroAssembler::repatchPointer):
+        (JSC::AbstractMacroAssembler::readPointer):
+        (JSC::AbstractMacroAssembler::replaceWithLoad):
+        (JSC::AbstractMacroAssembler::replaceWithAddressComputation):
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationCommon:: const):
+        (JSC::CodeLocationCommon::CodeLocationCommon):
+        (JSC::CodeLocationInstruction::CodeLocationInstruction):
+        (JSC::CodeLocationLabel::CodeLocationLabel):
+        (JSC::CodeLocationLabel::retagged):
+        (JSC::CodeLocationLabel:: const):
+        (JSC::CodeLocationJump::CodeLocationJump):
+        (JSC::CodeLocationJump::retagged):
+        (JSC::CodeLocationCall::CodeLocationCall):
+        (JSC::CodeLocationCall::retagged):
+        (JSC::CodeLocationNearCall::CodeLocationNearCall):
+        (JSC::CodeLocationDataLabel32::CodeLocationDataLabel32):
+        (JSC::CodeLocationDataLabelCompact::CodeLocationDataLabelCompact):
+        (JSC::CodeLocationDataLabelPtr::CodeLocationDataLabelPtr):
+        (JSC::CodeLocationConvertibleLoad::CodeLocationConvertibleLoad):
+        (JSC::CodeLocationCommon<tag>::instructionAtOffset):
+        (JSC::CodeLocationCommon<tag>::labelAtOffset):
+        (JSC::CodeLocationCommon<tag>::jumpAtOffset):
+        (JSC::CodeLocationCommon<tag>::callAtOffset):
+        (JSC::CodeLocationCommon<tag>::nearCallAtOffset):
+        (JSC::CodeLocationCommon<tag>::dataLabelPtrAtOffset):
+        (JSC::CodeLocationCommon<tag>::dataLabel32AtOffset):
+        (JSC::CodeLocationCommon<tag>::dataLabelCompactAtOffset):
+        (JSC::CodeLocationCommon<tag>::convertibleLoadAtOffset):
+        (JSC::CodeLocationCommon::instructionAtOffset): Deleted.
+        (JSC::CodeLocationCommon::labelAtOffset): Deleted.
+        (JSC::CodeLocationCommon::jumpAtOffset): Deleted.
+        (JSC::CodeLocationCommon::callAtOffset): Deleted.
+        (JSC::CodeLocationCommon::nearCallAtOffset): Deleted.
+        (JSC::CodeLocationCommon::dataLabelPtrAtOffset): Deleted.
+        (JSC::CodeLocationCommon::dataLabel32AtOffset): Deleted.
+        (JSC::CodeLocationCommon::dataLabelCompactAtOffset): Deleted.
+        (JSC::CodeLocationCommon::convertibleLoadAtOffset): Deleted.
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassemblyImpl):
+        (JSC::LinkBuffer::finalizeCodeWithDisassemblyImpl):
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassembly): Deleted.
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly): Deleted.
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::link):
+        (JSC::LinkBuffer::patch):
+        (JSC::LinkBuffer::entrypoint):
+        (JSC::LinkBuffer::locationOf):
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassembly):
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        (JSC::LinkBuffer::trampolineAt):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::readCallTarget):
+        (JSC::MacroAssemblerARM::replaceWithJump):
+        (JSC::MacroAssemblerARM::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerARM::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerARM::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerARM::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerARM::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerARM::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerARM::repatchCall):
+        (JSC::MacroAssemblerARM::linkCall):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::readCallTarget):
+        (JSC::MacroAssemblerARM64::replaceWithVMHalt):
+        (JSC::MacroAssemblerARM64::replaceWithJump):
+        (JSC::MacroAssemblerARM64::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerARM64::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerARM64::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerARM64::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerARM64::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerARM64::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerARM64::repatchCall):
+        (JSC::MacroAssemblerARM64::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::replaceWithJump):
+        (JSC::MacroAssemblerARMv7::readCallTarget):
+        (JSC::MacroAssemblerARMv7::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerARMv7::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerARMv7::repatchCall):
+        (JSC::MacroAssemblerARMv7::linkCall):
+        * assembler/MacroAssemblerCodeRef.cpp:
+        (JSC::MacroAssemblerCodePtrBase::dumpWithName):
+        (JSC::MacroAssemblerCodeRefBase::tryToDisassemble):
+        (JSC::MacroAssemblerCodeRefBase::disassembly):
+        (JSC::MacroAssemblerCodePtr::createLLIntCodePtr): Deleted.
+        (JSC::MacroAssemblerCodePtr::dumpWithName const): Deleted.
+        (JSC::MacroAssemblerCodePtr::dump const): Deleted.
+        (JSC::MacroAssemblerCodeRef::createLLIntCodeRef): Deleted.
+        (JSC::MacroAssemblerCodeRef::tryToDisassemble const): Deleted.
+        (JSC::MacroAssemblerCodeRef::disassembly const): Deleted.
+        (JSC::MacroAssemblerCodeRef::dump const): Deleted.
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+        (JSC::FunctionPtr::retagged const):
+        (JSC::FunctionPtr::retaggedExecutableAddress const):
+        (JSC::FunctionPtr::operator== const):
+        (JSC::FunctionPtr::operator!= const):
+        (JSC::ReturnAddressPtr::ReturnAddressPtr):
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+        (JSC::MacroAssemblerCodePtr::retagged const):
+        (JSC::MacroAssemblerCodePtr:: const):
+        (JSC::MacroAssemblerCodePtr::dumpWithName const):
+        (JSC::MacroAssemblerCodePtr::dump const):
+        (JSC::MacroAssemblerCodePtrHash::hash):
+        (JSC::MacroAssemblerCodePtrHash::equal):
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        (JSC::MacroAssemblerCodeRef::createSelfManagedCodeRef):
+        (JSC::MacroAssemblerCodeRef::code const):
+        (JSC::MacroAssemblerCodeRef::retaggedCode const):
+        (JSC::MacroAssemblerCodeRef::retagged const):
+        (JSC::MacroAssemblerCodeRef::tryToDisassemble const):
+        (JSC::MacroAssemblerCodeRef::disassembly const):
+        (JSC::MacroAssemblerCodeRef::dump const):
+        (JSC::FunctionPtr<tag>::FunctionPtr):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::readCallTarget):
+        (JSC::MacroAssemblerMIPS::replaceWithJump):
+        (JSC::MacroAssemblerMIPS::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerMIPS::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerMIPS::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerMIPS::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerMIPS::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerMIPS::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerMIPS::repatchCall):
+        (JSC::MacroAssemblerMIPS::linkCall):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::readCallTarget):
+        (JSC::MacroAssemblerX86::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerX86::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerX86::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerX86::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerX86::repatchCall):
+        (JSC::MacroAssemblerX86::linkCall):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::repatchCompact):
+        (JSC::MacroAssemblerX86Common::replaceWithVMHalt):
+        (JSC::MacroAssemblerX86Common::replaceWithJump):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::readCallTarget):
+        (JSC::MacroAssemblerX86_64::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerX86_64::startOfBranch32WithPatchOnRegister):
+        (JSC::MacroAssemblerX86_64::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerX86_64::startOfPatchableBranch32WithPatchOnAddress):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToPatchableBranch32WithPatch):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::repatchCall):
+        (JSC::MacroAssemblerX86_64::linkCall):
+        * assembler/testmasm.cpp:
+        (JSC::compile):
+        (JSC::invoke):
+        (JSC::testProbeModifiesProgramCounter):
+        * b3/B3Compilation.cpp:
+        (JSC::B3::Compilation::Compilation):
+        * b3/B3Compilation.h:
+        (JSC::B3::Compilation::code const):
+        (JSC::B3::Compilation::codeRef const):
+        * b3/B3Compile.cpp:
+        (JSC::B3::compile):
+        * b3/B3LowerMacros.cpp:
+        * b3/air/AirDisassembler.cpp:
+        (JSC::B3::Air::Disassembler::dump):
+        * b3/air/testair.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::invoke):
+        (JSC::B3::testInterpreter):
+        (JSC::B3::testEntrySwitchSimple):
+        (JSC::B3::testEntrySwitchNoEntrySwitch):
+        (JSC::B3::testEntrySwitchWithCommonPaths):
+        (JSC::B3::testEntrySwitchWithCommonPathsAndNonTrivialEntrypoint):
+        (JSC::B3::testEntrySwitchLoop):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AccessCaseSnippetParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::callReturnLocation):
+        (JSC::CallLinkInfo::patchableJump):
+        (JSC::CallLinkInfo::hotPathBegin):
+        (JSC::CallLinkInfo::slowPathStart):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setCallLocations):
+        (JSC::CallLinkInfo::hotPathOther):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::dumpInContext const):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::customAccessorGetter const):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::create):
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::dumpImpl const):
+        * bytecode/GetterSetterAccessCase.h:
+        (JSC::GetterSetterAccessCase::customAccessor const):
+        (): Deleted.
+        * bytecode/HandlerInfo.h:
+        (JSC::HandlerInfo::initialize):
+        * bytecode/InlineAccess.cpp:
+        (JSC::linkCodeInline):
+        (JSC::InlineAccess::rewireStubAsJump):
+        * bytecode/InlineAccess.h:
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::ctiForValue):
+        (JSC::SimpleJumpTable::ctiForValue):
+        * bytecode/LLIntCallLinkInfo.h:
+        (JSC::LLIntCallLinkInfo::unlink):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationResult::AccessGenerationResult):
+        (JSC::AccessGenerationResult::code const):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::slowPathCallLocation):
+        (JSC::StructureStubInfo::doneLocation):
+        (JSC::StructureStubInfo::slowPathStartLocation):
+        (JSC::StructureStubInfo::patchableJumpForIn):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::appendCatchEntrypoint):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpDisassembly):
+        * dfg/DFGDriver.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::noticeCatchEntrypoint):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::CallLinkRecord::CallLinkRecord):
+        (JSC::DFG::JITCompiler::appendCall):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectCallRecord::JSDirectCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectTailCallRecord::JSDirectTailCallRecord):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::JITFinalizer):
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGJumpReplacement.h:
+        (JSC::DFG::JumpReplacement::JumpReplacement):
+        * dfg/DFGNode.h:
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGOSREntry.h:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        (JSC::DFG::OSRExit::codeLocationForRepatch const):
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::CallResultAndArgumentsSlowPathGenerator::CallResultAndArgumentsSlowPathGenerator):
+        (JSC::DFG::CallResultAndArgumentsSlowPathGenerator::unpackAndGenerate):
+        (JSC::DFG::slowPathCall):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        (JSC::DFG::SpeculativeJIT::compileGetDirectPname):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCall):
+        (JSC::DFG::SpeculativeJIT::appendCallWithCallFrameRollbackOnException):
+        (JSC::DFG::SpeculativeJIT::appendCallWithCallFrameRollbackOnExceptionSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitThunkGenerator):
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrEntryThunkGenerator):
+        * dfg/DFGThunks.h:
+        * disassembler/ARM64Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * disassembler/ARMv7Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * disassembler/Disassembler.cpp:
+        (JSC::disassemble):
+        (JSC::disassembleAsynchronously):
+        * disassembler/Disassembler.h:
+        (JSC::tryToDisassemble):
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassembleWithUDis86):
+        * disassembler/UDis86Disassembler.h:
+        (JSC::tryToDisassembleWithUDis86):
+        * disassembler/X86Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLExceptionTarget.cpp:
+        (JSC::FTL::ExceptionTarget::label):
+        (JSC::FTL::ExceptionTarget::jumps):
+        * ftl/FTLExceptionTarget.h:
+        * ftl/FTLGeneratedFunction.h:
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::initializeB3Code):
+        (JSC::FTL::JITCode::initializeAddressForCall):
+        (JSC::FTL::JITCode::initializeArityCheckEntrypoint):
+        (JSC::FTL::JITCode::addressForCall):
+        (JSC::FTL::JITCode::executableAddressAtOffset):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::b3Code const):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeCommon):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::initialize):
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLazySlowPath.h:
+        (JSC::FTL::LazySlowPath::patchableJump const):
+        (JSC::FTL::LazySlowPath::done const):
+        (JSC::FTL::LazySlowPath::stub const):
+        * ftl/FTLLazySlowPathCall.h:
+        (JSC::FTL::createLazyCallGenerator):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        (JSC::FTL::DFG::LowerDFGToB3::lazySlowPath):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::codeLocationForRepatch const):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLOSRExitHandle.cpp:
+        (JSC::FTL::OSRExitHandle::emitExitThunk):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::compileFTLLazySlowPath):
+        * ftl/FTLPatchpointExceptionHandle.cpp:
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreationForUnwind):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::keyWithTarget const):
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * ftl/FTLSlowPathCallKey.cpp:
+        (JSC::FTL::SlowPathCallKey::dump const):
+        * ftl/FTLSlowPathCallKey.h:
+        (JSC::FTL::SlowPathCallKey::SlowPathCallKey):
+        (JSC::FTL::SlowPathCallKey::callTarget const):
+        (JSC::FTL::SlowPathCallKey::withCallTarget):
+        (JSC::FTL::SlowPathCallKey::hash const):
+        (JSC::FTL::SlowPathCallKey::callPtrTag const): Deleted.
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::lazySlowPathGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * ftl/FTLThunks.h:
+        (JSC::FTL::generateIfNecessary):
+        (JSC::FTL::keyForThunk):
+        (JSC::FTL::Thunks::getSlowPathCallThunk):
+        (JSC::FTL::Thunks::keyForSlowPathCallThunk):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::getOpcodeID):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        (JSC::AssemblyHelpers::emitDumbVirtualCall):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::ensureShadowChickenPacket):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+        (JSC::FixedVMPoolExecutableAllocator::jitWriteThunkGenerator):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::GCAwareJITStubRoutine):
+        (JSC::MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::createJITStubRoutine):
+        * jit/GCAwareJITStubRoutine.h:
+        (JSC::createJITStubRoutine):
+        * jit/JIT.cpp:
+        (JSC::ctiPatchCallByReturnAddress):
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::CallRecord::CallRecord):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCode.cpp:
+        (JSC::JITCodeWithCodeRef::JITCodeWithCodeRef):
+        (JSC::JITCodeWithCodeRef::executableAddressAtOffset):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::DirectJITCode::initializeCodeRef):
+        (JSC::DirectJITCode::addressForCall):
+        (JSC::NativeJITCode::NativeJITCode):
+        (JSC::NativeJITCode::initializeCodeRef):
+        (JSC::NativeJITCode::addressForCall):
+        * jit/JITCode.h:
+        * jit/JITCodeMap.h:
+        (JSC::JITCodeMap::Entry::Entry):
+        (JSC::JITCodeMap::Entry::codeLocation):
+        (JSC::JITCodeMap::append):
+        (JSC::JITCodeMap::find const):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpDisassembly):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::finalize):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedCall):
+        (JSC::JIT::emitNakedTailCall):
+        (JSC::JIT::appendCallWithExceptionCheck):
+        (JSC::JIT::appendCallWithExceptionCheckAndSlowPathReturnType):
+        (JSC::JIT::appendCallWithCallFrameRollbackOnException):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResult):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompileGetByValWithCachedId):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::JITStubRoutine):
+        (JSC::JITStubRoutine::createSelfManagedRoutine):
+        (JSC::JITStubRoutine::code const):
+        (JSC::JITStubRoutine::asCodePtr):
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        (JSC::JITThunks::ctiNativeTailCall):
+        (JSC::JITThunks::ctiNativeTailCallWithoutSavedTags):
+        (JSC::JITThunks::ctiInternalFunctionCall):
+        (JSC::JITThunks::ctiInternalFunctionConstruct):
+        (JSC::JITThunks::ctiStub):
+        (JSC::JITThunks::existingCTIStub):
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITThunks.h:
+        * jit/PCToCodeOriginMap.cpp:
+        (JSC::PCToCodeOriginMap::PCToCodeOriginMap):
+        * jit/PCToCodeOriginMap.h:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::PolymorphicCallStubRoutine):
+        * jit/PolymorphicCallStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::readPutICCallTarget):
+        (JSC::ftlThunkAwareRepatchCall):
+        (JSC::appropriateOptimizingGetByIdFunction):
+        (JSC::appropriateGetByIdFunction):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryCacheIn):
+        (JSC::repatchIn):
+        (JSC::linkSlowFor):
+        (JSC::linkFor):
+        (JSC::linkDirectFor):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        * jit/Repatch.h:
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        (JSC::SpecializedThunkJIT::callDoubleToDouble):
+        (JSC::SpecializedThunkJIT::callDoubleToDoublePreservingReturn):
+        * jit/ThunkGenerator.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::nativeCallGenerator):
+        (JSC::nativeTailCallGenerator):
+        (JSC::nativeTailCallWithoutSavedTagsGenerator):
+        (JSC::nativeConstructGenerator):
+        (JSC::internalFunctionCallGenerator):
+        (JSC::internalFunctionConstructGenerator):
+        (JSC::arityFixupGenerator):
+        (JSC::unreachableGenerator):
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::clz32ThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::truncThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        (JSC::imulThunkGenerator):
+        (JSC::randomThunkGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * jit/ThunkGenerators.h:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getExecutableAddress):
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getCodeRef):
+        (JSC::LLInt::getCodeFunctionPtr):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * llint/LLIntThunks.cpp:
+        (JSC::vmEntryToWasm):
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::functionForCallEntryThunkGenerator):
+        (JSC::LLInt::functionForConstructEntryThunkGenerator):
+        (JSC::LLInt::functionForCallArityCheckThunkGenerator):
+        (JSC::LLInt::functionForConstructArityCheckThunkGenerator):
+        (JSC::LLInt::evalEntryThunkGenerator):
+        (JSC::LLInt::programEntryThunkGenerator):
+        (JSC::LLInt::moduleProgramEntryThunkGenerator):
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::addOSRExitSite):
+        * profiler/ProfilerCompilation.h:
+        * profiler/ProfilerOSRExitSite.cpp:
+        (JSC::Profiler::OSRExitSite::toJS const):
+        * profiler/ProfilerOSRExitSite.h:
+        (JSC::Profiler::OSRExitSite::OSRExitSite):
+        (JSC::Profiler::OSRExitSite::codeAddress const):
+        (JSC::Profiler::OSRExitSite:: const): Deleted.
+        * runtime/ExecutableBase.cpp:
+        (JSC::ExecutableBase::clearCode):
+        * runtime/ExecutableBase.h:
+        (JSC::ExecutableBase::entrypointFor):
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/NativeFunction.h:
+        (JSC::TaggedNativeFunction::TaggedNativeFunction):
+        (JSC::TaggedNativeFunction::operator NativeFunction):
+        * runtime/PtrTag.h:
+        (JSC::tagCodePtr):
+        (JSC::untagCodePtr):
+        (JSC::retagCodePtr):
+        (JSC::tagCFunctionPtr):
+        (JSC::untagCFunctionPtr):
+        (JSC::nextPtrTagID): Deleted.
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::setCustomValue):
+        (JSC::PutPropertySlot::setCustomAccessor):
+        (JSC::PutPropertySlot::customSetter const):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/VM.cpp:
+        (JSC::VM::getHostFunction):
+        (JSC::VM::getCTIInternalFunctionTrampolineFor):
+        * runtime/VM.h:
+        (JSC::VM::getCTIStub):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::emitExceptionCheck):
+        (JSC::Wasm::B3IRGenerator::emitTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBBQPlan.h:
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmBinding.h:
+        * wasm/WasmCallee.h:
+        (JSC::Wasm::Callee::entrypoint const):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::setupFrameInPrologue const):
+        * wasm/WasmCodeBlock.h:
+        (JSC::Wasm::CodeBlock::entrypointLoadLocationFromFunctionIndexSpace):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        * wasm/WasmFormat.h:
+        * wasm/WasmInstance.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmThunks.cpp:
+        (JSC::Wasm::throwExceptionFromWasmThunkGenerator):
+        (JSC::Wasm::throwStackOverflowFromWasmThunkGenerator):
+        (JSC::Wasm::triggerOMGTierUpThunkGenerator):
+        (JSC::Wasm::Thunks::stub):
+        (JSC::Wasm::Thunks::existingStub):
+        * wasm/WasmThunks.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WasmToJS.h:
+        * wasm/js/WebAssemblyFunction.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::loadFromFrameAndJump):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::linkDataLabels):
+        (JSC::Yarr::YarrGenerator::compile):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::set8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::execute):
+        (JSC::Yarr::YarrCodeBlock::clear):
+
 2018-04-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230697, r230720, and r230724.

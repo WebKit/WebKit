@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -204,20 +204,20 @@ PCToCodeOriginMap::PCToCodeOriginMap(PCToCodeOriginMapBuilder&& builder, LinkBuf
             codeOriginCompressor.write<uintptr_t>(bitwise_cast<uintptr_t>(codeOrigin.inlineCallFrame));
     };
 
-    m_pcRangeStart = linkBuffer.locationOf(builder.m_codeRanges.first().start).dataLocation<uintptr_t>();
-    m_pcRangeEnd = linkBuffer.locationOf(builder.m_codeRanges.last().end).dataLocation<uintptr_t>();
+    m_pcRangeStart = linkBuffer.locationOf<NoPtrTag>(builder.m_codeRanges.first().start).dataLocation<uintptr_t>();
+    m_pcRangeEnd = linkBuffer.locationOf<NoPtrTag>(builder.m_codeRanges.last().end).dataLocation<uintptr_t>();
     m_pcRangeEnd -= 1;
 
     for (unsigned i = 0; i < builder.m_codeRanges.size(); i++) {
         PCToCodeOriginMapBuilder::CodeRange& codeRange = builder.m_codeRanges[i];
-        void* start = linkBuffer.locationOf(codeRange.start).dataLocation();
-        void* end = linkBuffer.locationOf(codeRange.end).dataLocation();
+        void* start = linkBuffer.locationOf<NoPtrTag>(codeRange.start).dataLocation();
+        void* end = linkBuffer.locationOf<NoPtrTag>(codeRange.end).dataLocation();
         ASSERT(m_pcRangeStart <= bitwise_cast<uintptr_t>(start));
         ASSERT(m_pcRangeEnd >= bitwise_cast<uintptr_t>(end) - 1);
         if (start == end)
             ASSERT(i == builder.m_codeRanges.size() - 1);
         if (i > 0)
-            ASSERT(linkBuffer.locationOf(builder.m_codeRanges[i - 1].end).dataLocation() == start);
+            ASSERT(linkBuffer.locationOf<NoPtrTag>(builder.m_codeRanges[i - 1].end).dataLocation() == start);
 
         buildPCTable(start);
         buildCodeOriginTable(codeRange.codeOrigin);

@@ -113,25 +113,22 @@ SlowPathCallContext::~SlowPathCallContext()
     m_jit.addPtr(CCallHelpers::TrustedImm32(m_stackBytesNeeded), CCallHelpers::stackPointerRegister);
 }
 
-SlowPathCallKey SlowPathCallContext::keyWithTarget(void* callTarget) const
+SlowPathCallKey SlowPathCallContext::keyWithTarget(FunctionPtr<CFunctionPtrTag> callTarget) const
 {
     return SlowPathCallKey(m_thunkSaveSet, callTarget, m_argumentRegisters, m_offset);
 }
 
-SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr callTarget)
+SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr<CFunctionPtrTag> callTarget)
 {
-    void* executableAddress = callTarget.executableAddress();
-    assertIsCFunctionPtr(executableAddress);
-    SlowPathCallKey key = keyWithTarget(executableAddress);
-    PtrTag callTag = key.callPtrTag();
-    SlowPathCall result = SlowPathCall(m_jit.call(callTag), key);
+    SlowPathCallKey key = keyWithTarget(callTarget);
+    SlowPathCall result = SlowPathCall(m_jit.call(OperationPtrTag), key);
 
     m_jit.addLinkTask(
         [result, &vm] (LinkBuffer& linkBuffer) {
-            MacroAssemblerCodeRef thunk =
+            MacroAssemblerCodeRef<JITThunkPtrTag> thunk =
                 vm.ftlThunks->getSlowPathCallThunk(result.key());
 
-            linkBuffer.link(result.call(), CodeLocationLabel(thunk.code()));
+            linkBuffer.link(result.call(), CodeLocationLabel<OperationPtrTag>(thunk.retaggedCode<OperationPtrTag>()));
         });
     
     return result;

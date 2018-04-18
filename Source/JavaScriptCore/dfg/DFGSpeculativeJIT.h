@@ -931,30 +931,10 @@ public:
     std::enable_if_t<
         FunctionTraits<OperationType>::hasResult,
     JITCompiler::Call>
-    callOperation(OperationType operation, PtrTag tag, ResultRegType result, Args... args)
-    {
-        m_jit.setupArguments<OperationType>(args...);
-        return appendCallSetResult(operation, tag, result);
-    }
-
-    template<typename OperationType, typename ResultRegType, typename... Args>
-    std::enable_if_t<
-        FunctionTraits<OperationType>::hasResult,
-    JITCompiler::Call>
     callOperation(OperationType operation, ResultRegType result, Args... args)
     {
-        return callOperation(operation, CFunctionPtrTag, result, args...);
-    }
-
-    template<typename OperationType, typename Arg, typename... Args>
-    std::enable_if_t<
-        !FunctionTraits<OperationType>::hasResult
-        && !std::is_same<Arg, NoResultTag>::value,
-    JITCompiler::Call>
-    callOperation(OperationType operation, PtrTag tag, Arg arg, Args... args)
-    {
-        m_jit.setupArguments<OperationType>(arg, args...);
-        return appendCall(operation, tag);
+        m_jit.setupArguments<OperationType>(args...);
+        return appendCallSetResult(operation, result);
     }
 
     template<typename OperationType, typename Arg, typename... Args>
@@ -964,17 +944,8 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation, Arg arg, Args... args)
     {
-        return callOperation(operation, CFunctionPtrTag, arg, args...);
-    }
-
-    template<typename OperationType, typename... Args>
-    std::enable_if_t<
-        !FunctionTraits<OperationType>::hasResult,
-    JITCompiler::Call>
-    callOperation(OperationType operation, PtrTag tag, NoResultTag, Args... args)
-    {
-        m_jit.setupArguments<OperationType>(args...);
-        return appendCall(operation, tag);
+        m_jit.setupArguments<OperationType>(arg, args...);
+        return appendCall(operation);
     }
 
     template<typename OperationType, typename... Args>
@@ -983,17 +954,8 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation, NoResultTag, Args... args)
     {
-        return callOperation(operation, CFunctionPtrTag, NoResult, args...);
-    }
-
-    template<typename OperationType>
-    std::enable_if_t<
-        !FunctionTraits<OperationType>::hasResult,
-    JITCompiler::Call>
-    callOperation(OperationType operation, PtrTag tag)
-    {
-        m_jit.setupArguments<OperationType>();
-        return appendCall(operation, tag);
+        m_jit.setupArguments<OperationType>(args...);
+        return appendCall(operation);
     }
 
     template<typename OperationType>
@@ -1002,7 +964,8 @@ public:
     JITCompiler::Call>
     callOperation(OperationType operation)
     {
-        return callOperation(operation, CFunctionPtrTag);
+        m_jit.setupArguments<OperationType>();
+        return appendCall(operation);
     }
 
 #undef FIRST_ARGUMENT_TYPE
@@ -1039,62 +1002,56 @@ public:
 #endif
 
     // These methods add call instructions, optionally setting results, and optionally rolling back the call frame on an exception.
-    JITCompiler::Call appendCall(const FunctionPtr function, PtrTag tag = CFunctionPtrTag)
+    JITCompiler::Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
     {
         prepareForExternalCall();
         m_jit.emitStoreCodeOrigin(m_currentNode->origin.semantic);
-        return m_jit.appendCall(function, tag);
+        return m_jit.appendCall(function);
     }
-    JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr function)
+
+    JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag> function)
     {
         JITCompiler::Call call = appendCall(function);
         m_jit.exceptionCheckWithCallFrameRollback();
         return call;
     }
-    JITCompiler::Call appendCallWithCallFrameRollbackOnExceptionSetResult(const FunctionPtr function, GPRReg result)
+
+    JITCompiler::Call appendCallWithCallFrameRollbackOnExceptionSetResult(const FunctionPtr<CFunctionPtrTag> function, GPRReg result)
     {
         JITCompiler::Call call = appendCallWithCallFrameRollbackOnException(function);
         if ((result != InvalidGPRReg) && (result != GPRInfo::returnValueGPR))
             m_jit.move(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, GPRReg result)
+
+    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, GPRReg result)
     {
-        JITCompiler::Call call = appendCall(function, tag);
+        JITCompiler::Call call = appendCall(function);
         if (result != InvalidGPRReg)
             m_jit.move(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result)
+
+    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, GPRReg result1, GPRReg result2)
     {
-        return appendCallSetResult(function, CFunctionPtrTag, result);
-    }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, GPRReg result1, GPRReg result2)
-    {
-        JITCompiler::Call call = appendCall(function, tag);
+        JITCompiler::Call call = appendCall(function);
         m_jit.setupResults(result1, result2);
         return call;
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, GPRReg result1, GPRReg result2)
-    {
-        return appendCallSetResult(function, CFunctionPtrTag, result1, result2);
-    }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, JSValueRegs resultRegs)
+
+    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, JSValueRegs resultRegs)
     {
 #if USE(JSVALUE64)
-        return appendCallSetResult(function, tag, resultRegs.gpr());
+        return appendCallSetResult(function, resultRegs.gpr());
 #else
-        return appendCallSetResult(function, tag, resultRegs.payloadGPR(), resultRegs.tagGPR());
+        return appendCallSetResult(function, resultRegs.payloadGPR(), resultRegs.tagGPR());
 #endif
     }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, JSValueRegs resultRegs)
-    {
-        return appendCallSetResult(function, CFunctionPtrTag, resultRegs);
-    }
+
 #if CPU(X86)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
     {
-        JITCompiler::Call call = appendCall(function, tag);
+        JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg) {
             m_jit.assembler().fstpl(0, JITCompiler::stackPointerRegister);
             m_jit.loadDouble(JITCompiler::stackPointerRegister, result);
@@ -1102,26 +1059,22 @@ public:
         return call;
     }
 #elif CPU(ARM) && !CPU(ARM_HARDFP)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
     {
-        JITCompiler::Call call = appendCall(function, tag);
+        JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg)
             m_jit.assembler().vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
         return call;
     }
 #else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, PtrTag tag, FPRReg result)
+    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
     {
-        JITCompiler::Call call = appendCall(function, tag);
+        JITCompiler::Call call = appendCall(function);
         if (result != InvalidFPRReg)
             m_jit.moveDouble(FPRInfo::returnValueFPR, result);
         return call;
     }
 #endif
-    JITCompiler::Call appendCallSetResult(const FunctionPtr function, FPRReg result)
-    {
-        return appendCallSetResult(function, CFunctionPtrTag, result);
-    }
 
     void branchDouble(JITCompiler::DoubleCondition cond, FPRReg left, FPRReg right, BasicBlock* destination)
     {

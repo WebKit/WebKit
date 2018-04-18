@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,11 @@
 
 namespace JSC {
 
-bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
+bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
     ARMv7DOpcode armOpcode;
 
-    uint16_t* currentPC = reinterpret_cast<uint16_t*>(reinterpret_cast<uintptr_t>(codePtr.executableAddress())&~1);
+    uint16_t* currentPC = reinterpret_cast<uint16_t*>(reinterpret_cast<uintptr_t>(codePtr.untaggedExecutableAddress())&~1);
     uint16_t* endPC = currentPC + (size / sizeof(uint16_t));
 
     while (currentPC < endPC) {

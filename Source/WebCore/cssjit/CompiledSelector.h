@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
+#include "CSSPtrTag.h"
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
 
 namespace WebCore {
@@ -57,7 +58,7 @@ private:
 struct CompiledSelector {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     SelectorCompilationStatus status;
-    JSC::MacroAssemblerCodeRef codeRef;
+    JSC::MacroAssemblerCodeRef<CSSSelectorPtrTag> codeRef;
 #if defined(CSS_SELECTOR_JIT_PROFILING) && CSS_SELECTOR_JIT_PROFILING
     unsigned useCount { 0 };
 #endif

@@ -79,8 +79,8 @@ public:
     typedef AbstractMacroAssembler<AssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
 
-    typedef MacroAssemblerCodePtr CodePtr;
-    typedef MacroAssemblerCodeRef CodeRef;
+    template<PtrTag tag> using CodePtr = MacroAssemblerCodePtr<tag>;
+    template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
     class Jump;
 
@@ -394,7 +394,7 @@ public:
         friend class AbstractMacroAssembler<AssemblerType>;
         friend struct DFG::OSRExit;
         friend class Jump;
-        friend class MacroAssemblerCodeRef;
+        template<PtrTag> friend class MacroAssemblerCodeRef;
         friend class LinkBuffer;
         friend class Watchpoint;
 
@@ -843,9 +843,10 @@ public:
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
     }
 
-    static ptrdiff_t differenceBetweenCodePtr(const MacroAssemblerCodePtr& a, const MacroAssemblerCodePtr& b)
+    template<PtrTag aTag, PtrTag bTag>
+    static ptrdiff_t differenceBetweenCodePtr(const MacroAssemblerCodePtr<aTag>& a, const MacroAssemblerCodePtr<bTag>& b)
     {
-        return b.executableAddress<ptrdiff_t>() - a.executableAddress<ptrdiff_t>();
+        return b.template dataLocation<ptrdiff_t>() - a.template dataLocation<ptrdiff_t>();
     }
 
     unsigned debugOffset() { return m_assembler.debugOffset(); }
@@ -857,7 +858,8 @@ public:
 
     AssemblerType m_assembler;
     
-    static void linkJump(void* code, Jump jump, CodeLocationLabel target)
+    template<PtrTag tag>
+    static void linkJump(void* code, Jump jump, CodeLocationLabel<tag> target)
     {
         AssemblerType::linkJump(code, jump.m_label, target.dataLocation());
     }
@@ -867,12 +869,14 @@ public:
         AssemblerType::linkPointer(code, label, value);
     }
 
-    static void linkPointer(void* code, AssemblerLabel label, MacroAssemblerCodePtr value)
+    template<PtrTag tag>
+    static void linkPointer(void* code, AssemblerLabel label, MacroAssemblerCodePtr<tag> value)
     {
         AssemblerType::linkPointer(code, label, value.executableAddress());
     }
 
-    static void* getLinkerAddress(void* code, AssemblerLabel label, PtrTag tag = NoPtrTag)
+    template<PtrTag tag>
+    static void* getLinkerAddress(void* code, AssemblerLabel label)
     {
         return tagCodePtr(AssemblerType::getRelocatedAddress(code, label), tag);
     }
@@ -882,56 +886,64 @@ public:
         return AssemblerType::getCallReturnOffset(call.m_label);
     }
 
-    static void repatchJump(CodeLocationJump jump, CodeLocationLabel destination)
+    template<PtrTag jumpTag, PtrTag destTag>
+    static void repatchJump(CodeLocationJump<jumpTag> jump, CodeLocationLabel<destTag> destination)
     {
         AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
     }
     
-    static void repatchJumpToNop(CodeLocationJump jump)
+    template<PtrTag jumpTag>
+    static void repatchJumpToNop(CodeLocationJump<jumpTag> jump)
     {
         AssemblerType::relinkJumpToNop(jump.dataLocation());
     }
 
-    static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)
+    template<PtrTag callTag, PtrTag destTag>
+    static void repatchNearCall(CodeLocationNearCall<callTag> nearCall, CodeLocationLabel<destTag> destination)
     {
-        assertIsTaggedWith(destination.executableAddress(), NearCodePtrTag);
         switch (nearCall.callMode()) {
         case NearCallMode::Tail:
             AssemblerType::relinkJump(nearCall.dataLocation(), destination.dataLocation());
             return;
         case NearCallMode::Regular:
-            AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
+            AssemblerType::relinkCall(nearCall.dataLocation(), destination.untaggedExecutableAddress());
             return;
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    static void repatchCompact(CodeLocationDataLabelCompact dataLabelCompact, int32_t value)
+    template<PtrTag tag>
+    static void repatchCompact(CodeLocationDataLabelCompact<tag> dataLabelCompact, int32_t value)
     {
-        AssemblerType::repatchCompact(dataLabelCompact.dataLocation(), value);
+        AssemblerType::repatchCompact(dataLabelCompact.template dataLocation(), value);
     }
-    
-    static void repatchInt32(CodeLocationDataLabel32 dataLabel32, int32_t value)
+
+    template<PtrTag tag>
+    static void repatchInt32(CodeLocationDataLabel32<tag> dataLabel32, int32_t value)
     {
         AssemblerType::repatchInt32(dataLabel32.dataLocation(), value);
     }
 
-    static void repatchPointer(CodeLocationDataLabelPtr dataLabelPtr, void* value)
+    template<PtrTag tag>
+    static void repatchPointer(CodeLocationDataLabelPtr<tag> dataLabelPtr, void* value)
     {
         AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
     }
-    
-    static void* readPointer(CodeLocationDataLabelPtr dataLabelPtr)
+
+    template<PtrTag tag>
+    static void* readPointer(CodeLocationDataLabelPtr<tag> dataLabelPtr)
     {
         return AssemblerType::readPointer(dataLabelPtr.dataLocation());
     }
     
-    static void replaceWithLoad(CodeLocationConvertibleLoad label)
+    template<PtrTag tag>
+    static void replaceWithLoad(CodeLocationConvertibleLoad<tag> label)
     {
         AssemblerType::replaceWithLoad(label.dataLocation());
     }
-    
-    static void replaceWithAddressComputation(CodeLocationConvertibleLoad label)
+
+    template<PtrTag tag>
+    static void replaceWithAddressComputation(CodeLocationConvertibleLoad<tag> label)
     {
         AssemblerType::replaceWithAddressComputation(label.dataLocation());
     }

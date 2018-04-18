@@ -62,9 +62,8 @@ public:
         m_jit->move(JIT::callFrameRegister, JIT::argumentGPR0);
         m_jit->move(JIT::TrustedImmPtr(m_pc), JIT::argumentGPR1);
 #endif
-        PtrTag tag = ptrTag(SlowPathPtrTag, nextPtrTagID());
-        JIT::Call call = m_jit->call(tag);
-        m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, FunctionPtr(m_slowPathFunction, tag)));
+        JIT::Call call = m_jit->call(OperationPtrTag);
+        m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, FunctionPtr<OperationPtrTag>(m_slowPathFunction)));
 
 #if CPU(X86) && USE(JSVALUE32_64)
         m_jit->addPtr(MacroAssembler::TrustedImm32(16), MacroAssembler::stackPointerRegister);

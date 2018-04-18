@@ -44,20 +44,20 @@ bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
     return Options::dumpDisassembly();
 }
 
-LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly(PtrTag tag)
+LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()
 {
     performFinalization();
     
     ASSERT(m_didAllocate);
     if (m_executableMemory)
-        return CodeRef(*m_executableMemory, tag);
+        return CodeRef<LinkBufferPtrTag>(*m_executableMemory);
     
-    return CodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(tagCodePtr(m_code, tag)));
+    return CodeRef<LinkBufferPtrTag>::createSelfManagedCodeRef(MacroAssemblerCodePtr<LinkBufferPtrTag>(tagCodePtr<LinkBufferPtrTag>(m_code)));
 }
 
-LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(PtrTag tag, const char* format, ...)
+LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(const char* format, ...)
 {
-    CodeRef result = finalizeCodeWithoutDisassembly(tag);
+    CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl();
 
     if (m_alreadyDisassembled)
         return result;
@@ -70,18 +70,19 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(PtrTag tag, const ch
     va_end(argList);
     out.printf(":\n");
 
-    uint8_t* executableAddress = removeCodePtrTag<uint8_t*>(result.code().executableAddress());
+    uint8_t* executableAddress = result.code().untaggedExecutableAddress<uint8_t*>();
     out.printf("    Code at [%p, %p):\n", executableAddress, executableAddress + result.size());
     
     CString header = out.toCString();
     
     if (Options::asyncDisassembly()) {
-        disassembleAsynchronously(header, result, m_size, "    ");
+        CodeRef<DisassemblyPtrTag> codeRefForDisassembly = result.retagged<DisassemblyPtrTag>();
+        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, "    ");
         return result;
     }
     
     dataLog(header);
-    disassemble(result.code(), m_size, "    ", WTF::dataFile());
+    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, "    ", WTF::dataFile());
     
     return result;
 }

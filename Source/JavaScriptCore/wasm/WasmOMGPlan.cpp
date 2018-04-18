@@ -97,14 +97,13 @@ void OMGPlan::work(CompilationEffort)
         return;
     }
 
-    PtrTag callTag = ptrTag(WasmCallPtrTag, signature.hash());
     omgEntrypoint.compilation = std::make_unique<B3::Compilation>(
-        FINALIZE_CODE(linkBuffer, callTag, "WebAssembly OMG function[%i] %s", m_functionIndex, signature.toString().ascii().data()),
+        FINALIZE_CODE(linkBuffer, B3CompilationPtrTag, "WebAssembly OMG function[%i] %s", m_functionIndex, signature.toString().ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(parseAndCompileResult.value()->entrypoint.calleeSaveRegisters);
 
-    MacroAssemblerCodePtr entrypoint;
+    MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
     {
         ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(mode()));
         Ref<Callee> callee = Callee::create(WTFMove(omgEntrypoint), functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
@@ -120,16 +119,13 @@ void OMGPlan::work(CompilationEffort)
         m_codeBlock->m_optimizedCallees[m_functionIndex] = WTFMove(callee);
 
         for (auto& call : unlinkedCalls) {
-            MacroAssemblerCodePtr entrypoint;
+            MacroAssemblerCodePtr<WasmEntryPtrTag> entrypoint;
             if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
                 entrypoint = m_codeBlock->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
             else
-                entrypoint = m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint();
+                entrypoint = m_codeBlock->wasmEntrypointCalleeFromFunctionIndexSpace(call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
 
-            SignatureIndex signatureIndex = m_moduleInformation->signatureIndexFromFunctionIndexSpace(call.functionIndexSpace);
-            const Signature& signature = SignatureInformation::get(signatureIndex);
-            PtrTag oldTag = ptrTag(WasmCallPtrTag, signature.hash());
-            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint.retagged(oldTag, NearCodePtrTag)));
+            MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
         unlinkedCalls = std::exchange(m_codeBlock->m_wasmToWasmCallsites[m_functionIndex], unlinkedCalls);
     }
@@ -149,10 +145,7 @@ void OMGPlan::work(CompilationEffort)
                 dataLogLnIf(WasmOMGPlanInternal::verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
                 if (call.functionIndexSpace == functionIndexSpace) {
                     dataLogLnIf(WasmOMGPlanInternal::verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint.executableAddress()));
-                    SignatureIndex signatureIndex = m_moduleInformation->signatureIndexFromFunctionIndexSpace(call.functionIndexSpace);
-                    const Signature& signature = SignatureInformation::get(signatureIndex);
-                    PtrTag oldTag = ptrTag(WasmCallPtrTag, signature.hash());
-                    MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint.retagged(oldTag, NearCodePtrTag)));
+                    MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
                 }
             }
 

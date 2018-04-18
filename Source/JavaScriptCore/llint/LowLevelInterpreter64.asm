@@ -254,7 +254,7 @@ macro makeJavaScriptCall(entry, temp)
     if C_LOOP
         cloopCallJSFunction entry
     else
-        call entry, CodePtrTag
+        call entry, JSEntryPtrTag
     end
     subp 16, sp
 end
@@ -270,10 +270,10 @@ macro makeHostFunctionCall(entry, temp)
     elsif X86_64_WIN
         # We need to allocate 32 bytes on the stack for the shadow space.
         subp 32, sp
-        call temp, CodePtrTag
+        call temp, JSEntryPtrTag
         addp 32, sp
     else
-        call temp, CodePtrTag
+        call temp, JSEntryPtrTag
     end
 end
 
@@ -370,7 +370,7 @@ macro checkSwitchToJITForLoop()
             cCall2(_llint_loop_osr)
             btpz r0, .recover
             move r1, sp
-            jmp r0, CodePtrTag
+            jmp r0, JSEntryPtrTag
         .recover:
             loadi ArgumentCount + TagOffset[cfr], PC
         end)
@@ -2056,11 +2056,11 @@ macro doCall(slowPath, prepareCall)
     if POISON
         loadp _g_JITCodePoison, t2
         xorp LLIntCallLinkInfo::machineCodeTarget[t1], t2
-        prepareCall(t2, t1, t3, t4, LLIntCallICPtrTag)
-        callTargetFunction(t2, LLIntCallICPtrTag)
+        prepareCall(t2, t1, t3, t4, JSEntryPtrTag)
+        callTargetFunction(t2, JSEntryPtrTag)
     else
-        prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4, LLIntCallICPtrTag)
-        callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1], LLIntCallICPtrTag)
+        prepareCall(LLIntCallLinkInfo::machineCodeTarget[t1], t2, t3, t4, JSEntryPtrTag)
+        callTargetFunction(LLIntCallLinkInfo::machineCodeTarget[t1], JSEntryPtrTag)
     end
 
 .opCallSlow:
@@ -2191,12 +2191,12 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call executableOffsetToFunction[t1], CodePtrTag
+            call executableOffsetToFunction[t1], JSEntryPtrTag
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp executableOffsetToFunction[t1], t2
-            call t2, CodePtrTag
+            call t2, JSEntryPtrTag
         end
     end
 
@@ -2234,12 +2234,12 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     else
         if X86_64_WIN
             subp 32, sp
-            call offsetOfFunction[t1], CodePtrTag
+            call offsetOfFunction[t1], JSEntryPtrTag
             addp 32, sp
         else
             loadp _g_NativeCodePoison, t2
             xorp offsetOfFunction[t1], t2
-            call t2, CodePtrTag
+            call t2, JSEntryPtrTag
         end
     end
 

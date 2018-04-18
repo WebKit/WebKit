@@ -105,7 +105,7 @@ JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)
 {
 }
 
-JITCodeWithCodeRef::JITCodeWithCodeRef(CodeRef ref, JITType jitType)
+JITCodeWithCodeRef::JITCodeWithCodeRef(CodeRef<JSEntryPtrTag> ref, JITType jitType)
     : JITCode(jitType)
     , m_ref(ref)
 {
@@ -121,12 +121,12 @@ JITCodeWithCodeRef::~JITCodeWithCodeRef()
 void* JITCodeWithCodeRef::executableAddressAtOffset(size_t offset)
 {
     RELEASE_ASSERT(m_ref);
-    assertIsTaggedWith(m_ref.code().executableAddress(), CodePtrTag);
+    assertIsTaggedWith(m_ref.code().executableAddress(), JSEntryPtrTag);
     if (!offset)
         return m_ref.code().executableAddress();
 
-    char* executableAddress = untagCodePtr<char*>(m_ref.code().executableAddress(), CodePtrTag);
-    return tagCodePtr(executableAddress + offset, CodePtrTag);
+    char* executableAddress = untagCodePtr<char*, JSEntryPtrTag>(m_ref.code().executableAddress());
+    return tagCodePtr<JSEntryPtrTag>(executableAddress + offset);
 }
 
 void* JITCodeWithCodeRef::dataAddressAtOffset(size_t offset)
@@ -161,7 +161,7 @@ DirectJITCode::DirectJITCode(JITType jitType)
 {
 }
 
-DirectJITCode::DirectJITCode(JITCode::CodeRef ref, JITCode::CodePtr withArityCheck, JITType jitType)
+DirectJITCode::DirectJITCode(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck, JITType jitType)
     : JITCodeWithCodeRef(ref, jitType)
     , m_withArityCheck(withArityCheck)
 {
@@ -173,7 +173,7 @@ DirectJITCode::~DirectJITCode()
 {
 }
 
-void DirectJITCode::initializeCodeRef(JITCode::CodeRef ref, JITCode::CodePtr withArityCheck)
+void DirectJITCode::initializeCodeRef(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck)
 {
     RELEASE_ASSERT(!m_ref);
     m_ref = ref;
@@ -182,7 +182,7 @@ void DirectJITCode::initializeCodeRef(JITCode::CodeRef ref, JITCode::CodePtr wit
     ASSERT(m_withArityCheck);
 }
 
-JITCode::CodePtr DirectJITCode::addressForCall(ArityCheckMode arity)
+JITCode::CodePtr<JSEntryPtrTag> DirectJITCode::addressForCall(ArityCheckMode arity)
 {
     switch (arity) {
     case ArityCheckNotRequired:
@@ -193,7 +193,7 @@ JITCode::CodePtr DirectJITCode::addressForCall(ArityCheckMode arity)
         return m_withArityCheck;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return CodePtr();
+    return CodePtr<JSEntryPtrTag>();
 }
 
 NativeJITCode::NativeJITCode(JITType jitType)
@@ -201,7 +201,7 @@ NativeJITCode::NativeJITCode(JITType jitType)
 {
 }
 
-NativeJITCode::NativeJITCode(CodeRef ref, JITType jitType)
+NativeJITCode::NativeJITCode(CodeRef<JSEntryPtrTag> ref, JITType jitType)
     : JITCodeWithCodeRef(ref, jitType)
 {
 }
@@ -210,13 +210,13 @@ NativeJITCode::~NativeJITCode()
 {
 }
 
-void NativeJITCode::initializeCodeRef(CodeRef ref)
+void NativeJITCode::initializeCodeRef(CodeRef<JSEntryPtrTag> ref)
 {
     ASSERT(!m_ref);
     m_ref = ref;
 }
 
-JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode arity)
+JITCode::CodePtr<JSEntryPtrTag> NativeJITCode::addressForCall(ArityCheckMode arity)
 {
     RELEASE_ASSERT(m_ref);
     switch (arity) {
@@ -226,7 +226,7 @@ JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode arity)
         return m_ref.code();
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return CodePtr();
+    return CodePtr<JSEntryPtrTag>();
 }
 
 #if ENABLE(JIT)

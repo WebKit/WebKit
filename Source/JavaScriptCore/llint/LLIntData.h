@@ -26,8 +26,8 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include "MacroAssemblerCodeRef.h"
 #include "Opcode.h"
-#include "PtrTag.h"
 
 namespace JSC {
 
@@ -55,7 +55,8 @@ private:
     friend Instruction* exceptionInstructions();
     friend Opcode* opcodeMap();
     friend Opcode getOpcode(OpcodeID);
-    friend void* getCodePtr(OpcodeID);
+    template<PtrTag tag> friend MacroAssemblerCodePtr<tag> getCodePtr(OpcodeID);
+    template<PtrTag tag> friend MacroAssemblerCodeRef<tag> getCodeRef(OpcodeID);
 };
 
 void initialize();
@@ -79,16 +80,40 @@ inline Opcode getOpcode(OpcodeID id)
 #endif
 }
 
-ALWAYS_INLINE void* getCodePtr(OpcodeID id)
+ALWAYS_INLINE void* getExecutableAddress(OpcodeID opcodeID)
 {
-    return reinterpret_cast<void*>(getOpcode(id));
+    ASSERT(opcodeID >= NUMBER_OF_BYTECODE_IDS);
+    return reinterpret_cast<void*>(getOpcode(opcodeID));
+}
+
+template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodePtr<tag> getCodePtr(OpcodeID opcodeID)
+{
+    return MacroAssemblerCodePtr<tag>::createFromExecutableAddress(getOpcode(opcodeID));
+}
+
+template<PtrTag tag>
+ALWAYS_INLINE MacroAssemblerCodeRef<tag> getCodeRef(OpcodeID opcodeID)
+{
+    return MacroAssemblerCodeRef<tag>::createSelfManagedCodeRef(getCodePtr<tag>(opcodeID));
 }
 
 #if ENABLE(JIT)
-
-ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID codeId)
+template<PtrTag tag>
+ALWAYS_INLINE LLIntCode getCodeFunctionPtr(OpcodeID opcodeID)
 {
-    return reinterpret_cast<LLIntCode>(getCodePtr(codeId));
+    ASSERT(opcodeID >= NUMBER_OF_BYTECODE_IDS);
+#if COMPILER(MSVC)
+    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).executableAddress());
+#else
+    return reinterpret_cast<LLIntCode>(getCodePtr<tag>(opcodeID).template executableAddress());
+#endif
+}
+
+#else
+ALWAYS_INLINE void* getCodePtr(OpcodeID id)
+{
+    return reinterpret_cast<void*>(getOpcode(id));
 }
 #endif
 

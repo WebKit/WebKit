@@ -38,8 +38,8 @@ LazySlowPath::~LazySlowPath()
 }
 
 void LazySlowPath::initialize(
-    CodeLocationJump patchableJump, CodeLocationLabel done,
-    CodeLocationLabel exceptionTarget,
+    CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSEntryPtrTag> done,
+    CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget,
     const RegisterSet& usedRegisters, CallSiteIndex callSiteIndex, RefPtr<Generator> generator
     )
 {
@@ -63,14 +63,13 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 
     m_generator->run(jit, params);
 
-    PtrTag slowPathTag = ptrTag(FTLLazySlowPathPtrTag, bitwise_cast<PtrTag>(this));
     LinkBuffer linkBuffer(jit, codeBlock, JITCompilationMustSucceed);
-    linkBuffer.link(params.doneJumps, m_done.retagged(slowPathTag, NearCodePtrTag));
+    linkBuffer.link(params.doneJumps, m_done);
     if (m_exceptionTarget)
-        linkBuffer.link(exceptionJumps, m_exceptionTarget.retagged(slowPathTag, NearCodePtrTag));
-    m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, slowPathTag, "Lazy slow path call stub");
+        linkBuffer.link(exceptionJumps, m_exceptionTarget);
+    m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, "Lazy slow path call stub");
 
-    MacroAssembler::repatchJump(m_patchableJump.retagged(slowPathTag, NearCodePtrTag), CodeLocationLabel(m_stub.retaggedCode(slowPathTag, NearCodePtrTag)));
+    MacroAssembler::repatchJump(m_patchableJump, CodeLocationLabel<JITStubRoutinePtrTag>(m_stub.code()));
 }
 
 } } // namespace JSC::FTL

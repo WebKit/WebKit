@@ -96,7 +96,7 @@ public:
         return *m_callees[calleeIndex].get();
     }
 
-    MacroAssemblerCodePtr* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
+    MacroAssemblerCodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
@@ -123,10 +123,10 @@ private:
     Vector<RefPtr<Callee>> m_callees;
     Vector<RefPtr<Callee>> m_optimizedCallees;
     HashMap<uint32_t, RefPtr<Callee>, typename DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderCallees;
-    Vector<MacroAssemblerCodePtr> m_wasmIndirectCallEntryPoints;
+    Vector<MacroAssemblerCodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     Vector<TierUpCount> m_tierUpCounts;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_wasmToWasmCallsites;
-    Vector<MacroAssemblerCodeRef> m_wasmToWasmExitStubs;
+    Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<BBQPlan> m_plan;
     std::atomic<bool> m_compilationFinished { false };
     String m_errorMessage;

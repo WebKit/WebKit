@@ -164,25 +164,23 @@ namespace JSC {
             ret();
         }
         
-        MacroAssemblerCodeRef finalize(MacroAssemblerCodePtr fallback, const char* thunkKind)
+        MacroAssemblerCodeRef<JITThunkPtrTag> finalize(MacroAssemblerCodePtr<JITThunkPtrTag> fallback, const char* thunkKind)
         {
             LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID);
-            patchBuffer.link(m_failures, CodeLocationLabel(fallback));
+            patchBuffer.link(m_failures, CodeLocationLabel<JITThunkPtrTag>(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
-            return FINALIZE_CODE(patchBuffer, CodePtrTag, "Specialized thunk for %s", thunkKind);
+            return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Specialized thunk for %s", thunkKind);
         }
 
         // Assumes that the target function uses fpRegister0 as the first argument
         // and return value. Like any sensible architecture would.
-        void callDoubleToDouble(FunctionPtr function)
+        void callDoubleToDouble(FunctionPtr<CFunctionPtrTag> function)
         {
-            assertIsCFunctionPtr(function.executableAddress());
-            PtrTag tag = ptrTag(SpecializedThunkPtrTag, nextPtrTagID());
-            m_calls.append(std::make_pair(call(tag), FunctionPtr(function, tag)));
+            m_calls.append(std::make_pair(call(JITThunkPtrTag), function.retagged<JITThunkPtrTag>()));
         }
         
-        void callDoubleToDoublePreservingReturn(FunctionPtr function)
+        void callDoubleToDoublePreservingReturn(FunctionPtr<CFunctionPtrTag> function)
         {
             if (!isX86())
                 preserveReturnAddressAfterCall(regT3);
@@ -209,7 +207,7 @@ namespace JSC {
         }
         
         MacroAssembler::JumpList m_failures;
-        Vector<std::pair<Call, FunctionPtr>> m_calls;
+        Vector<std::pair<Call, FunctionPtr<JITThunkPtrTag>>> m_calls;
     };
 
 }
