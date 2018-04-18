@@ -25,7 +25,7 @@
 #include "JSCValue.h"
 #include <wtf/glib/GRefPtr.h>
 
-GRefPtr<JSCClass> jscClassCreate(JSCContext*, const char*, JSCClass*, GDestroyNotify);
+GRefPtr<JSCClass> jscClassCreate(JSCContext*, const char*, JSCClass*, JSCClassVTable*, GDestroyNotify);
 JSClassRef jscClassGetJSClass(JSCClass*);
 JSC::JSObject* jscClassGetOrCreateJSWrapper(JSCClass*, gpointer);
 void jscClassInvalidate(JSCClass*);

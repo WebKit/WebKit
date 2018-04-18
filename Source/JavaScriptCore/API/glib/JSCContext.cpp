@@ -240,6 +240,11 @@ gpointer jscContextWrappedObject(JSCContext* context, JSObjectRef jsObject)
     return wrapperMap(context).wrappedObject(context->priv->jsContext.get(), jsObject);
 }
 
+JSCClass* jscContextGetRegisteredClass(JSCContext* context, JSClassRef jsClass)
+{
+    return wrapperMap(context).registeredClass(jsClass);
+}
+
 CallbackData jscContextPushCallback(JSCContext* context, JSValueRef calleeValue, JSValueRef thisValue, size_t argumentCount, const JSValueRef* arguments)
 {
     Thread& thread = Thread::current();
@@ -762,23 +767,26 @@ JSCValue* jsc_context_get_value(JSCContext* context, const char* name)
  * jsc_context_register_class:
  * @context: a #JSCContext
  * @name: the class name
- * @parent_class: (nullable): a #JSCClass
+ * @parent_class: (nullable): a #JSCClass or %NULL
+ * @vtable: (nullable): an optional #JSCClassVTable or %NULL
  * @destroy_notify: (nullable): a destroy notifier for class instances
  *
  * Register a custom class in @context using the given @name. If the new class inherits from
  * another #JSCClass, the parent should be passed as @parent_class, otherwise %NULL should be
- * used. When an instance of the #JSCClass is cleared in the context, @destroy_notify is
- * called with the instance as parameter.
+ * used. The optional @vtable parameter allows to provide a custom implementation for handling
+ * the class, for example, to handle external properties not added to the prototype.
+ * When an instance of the #JSCClass is cleared in the context, @destroy_notify is called with
+ * the instance as parameter.
  *
  * Returns: (transfer none): a #JSCClass
  */
-JSCClass* jsc_context_register_class(JSCContext* context, const char* name, JSCClass* parentClass, GDestroyNotify destroyFunction)
+JSCClass* jsc_context_register_class(JSCContext* context, const char* name, JSCClass* parentClass, JSCClassVTable* vtable, GDestroyNotify destroyFunction)
 {
     g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
     g_return_val_if_fail(name, nullptr);
     g_return_val_if_fail(!parentClass || JSC_IS_CLASS(parentClass), nullptr);
 
-    auto jscClass = jscClassCreate(context, name, parentClass, destroyFunction);
+    auto jscClass = jscClassCreate(context, name, parentClass, vtable, destroyFunction);
     wrapperMap(context).registerClass(jscClass.get());
     return jscClass.get();
 }

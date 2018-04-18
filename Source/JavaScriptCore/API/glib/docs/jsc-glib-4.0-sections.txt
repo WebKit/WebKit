@@ -162,6 +162,12 @@ jsc_exception_get_type
 <FILE>JSCClass</FILE>
 <TITLE>JSCClass</TITLE>
 JSCClass
+JSCClassGetPropertyFunction
+JSCClassSetPropertyFunction
+JSCClassHasPropertyFunction
+JSCClassDeletePropertyFunction
+JSCClassEnumeratePropertiesFunction
+JSCClassVTable
 jsc_class_get_name
 jsc_class_get_parent
 jsc_class_add_constructor

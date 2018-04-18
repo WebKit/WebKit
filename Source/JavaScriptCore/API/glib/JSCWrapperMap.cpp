@@ -68,6 +68,11 @@ void WrapperMap::registerClass(JSCClass* jscClass)
     m_classMap.set(jsClass, jscClass);
 }
 
+JSCClass* WrapperMap::registeredClass(JSClassRef jsClass) const
+{
+    return m_classMap.get(jsClass);
+}
+
 JSObject* WrapperMap::createJSWrappper(JSGlobalContextRef jsContext, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
 {
     ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);

@@ -20,11 +20,16 @@
 #include "config.h"
 #include "JSCClass.h"
 
+#include "APICast.h"
+#include "JSAPIWrapperObject.h"
 #include "JSCCallbackFunction.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextPrivate.h"
+#include "JSCExceptionPrivate.h"
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
+#include "JSCallbackObject.h"
+#include "JSRetainPtr.h"
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -53,6 +58,7 @@ typedef struct _JSCClassPrivate {
     JSCContext* context;
     CString name;
     JSClassRef jsClass;
+    JSCClassVTable* vtable;
     GDestroyNotify destroyFunction;
     JSCClass* parentClass;
     JSC::Weak<JSC::JSObject> prototype;
@@ -70,6 +76,182 @@ struct _JSCClassClass {
 };
 
 WEBKIT_DEFINE_TYPE(JSCClass, jsc_class, G_TYPE_OBJECT)
+
+class VTableExceptionHandler {
+public:
+    VTableExceptionHandler(JSCContext* context, JSValueRef* exception)
+        : m_context(context)
+        , m_exception(exception)
+        , m_savedException(exception ? jsc_context_get_exception(m_context) : nullptr)
+    {
+    }
+
+    ~VTableExceptionHandler()
+    {
+        if (!m_exception)
+            return;
+
+        auto* exception = jsc_context_get_exception(m_context);
+        if (m_savedException.get() == exception)
+            return;
+
+        *m_exception = jscExceptionGetJSValue(exception);
+        if (m_savedException)
+            jsc_context_throw_exception(m_context, m_savedException.get());
+        else
+            jsc_context_clear_exception(m_context);
+    }
+
+private:
+    JSCContext* m_context { nullptr };
+    JSValueRef* m_exception { nullptr };
+    GRefPtr<JSCException> m_savedException;
+};
+
+static JSValueRef getProperty(JSContextRef callerContext, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSC::JSLockHolder locker(toJS(callerContext));
+    auto* jsObject = toJS(object);
+    auto context = jscContextGetOrCreate(toGlobalRef(jsObject->globalObject()->globalExec()));
+    auto* jsContext = jscContextGetJSContext(context.get());
+    if (!jsObject->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>(toJS(jsContext)->vm()))
+        return nullptr;
+
+    gpointer instance = jscContextWrappedObject(context.get(), object);
+    if (!instance)
+        return nullptr;
+
+    VTableExceptionHandler exceptionHandler(context.get(), exception);
+
+    JSClassRef jsClass = JSC::jsCast<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>*>(jsObject)->classRef();
+    for (auto* jscClass = jscContextGetRegisteredClass(context.get(), jsClass); jscClass; jscClass = jscClass->priv->parentClass) {
+        if (!jscClass->priv->vtable)
+            continue;
+
+        if (auto* getPropertyFunction = jscClass->priv->vtable->get_property) {
+            if (GRefPtr<JSCValue> value = adoptGRef(getPropertyFunction(jscClass, context.get(), instance, propertyName->string().utf8().data())))
+                return jscValueGetJSValue(value.get());
+        }
+    }
+    return nullptr;
+}
+
+static bool setProperty(JSContextRef callerContext, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    JSC::JSLockHolder locker(toJS(callerContext));
+    auto* jsObject = toJS(object);
+    auto context = jscContextGetOrCreate(toGlobalRef(jsObject->globalObject()->globalExec()));
+    auto* jsContext = jscContextGetJSContext(context.get());
+    if (!jsObject->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>(toJS(jsContext)->vm()))
+        return false;
+
+    gpointer instance = jscContextWrappedObject(context.get(), object);
+    if (!instance)
+        return false;
+
+    VTableExceptionHandler exceptionHandler(context.get(), exception);
+
+    GRefPtr<JSCValue> propertyValue;
+    JSClassRef jsClass = JSC::jsCast<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>*>(jsObject)->classRef();
+    for (auto* jscClass = jscContextGetRegisteredClass(context.get(), jsClass); jscClass; jscClass = jscClass->priv->parentClass) {
+        if (!jscClass->priv->vtable)
+            continue;
+
+        if (auto* setPropertyFunction = jscClass->priv->vtable->set_property) {
+            if (!propertyValue)
+                propertyValue = jscContextGetOrCreateValue(context.get(), value);
+            if (setPropertyFunction(jscClass, context.get(), instance, propertyName->string().utf8().data(), propertyValue.get()))
+                return true;
+        }
+    }
+    return false;
+}
+
+static bool hasProperty(JSContextRef callerContext, JSObjectRef object, JSStringRef propertyName)
+{
+    JSC::JSLockHolder locker(toJS(callerContext));
+    auto* jsObject = toJS(object);
+    auto context = jscContextGetOrCreate(toGlobalRef(jsObject->globalObject()->globalExec()));
+    auto* jsContext = jscContextGetJSContext(context.get());
+    if (!jsObject->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>(toJS(jsContext)->vm()))
+        return false;
+
+    gpointer instance = jscContextWrappedObject(context.get(), object);
+    if (!instance)
+        return false;
+
+    JSClassRef jsClass = JSC::jsCast<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>*>(jsObject)->classRef();
+    for (auto* jscClass = jscContextGetRegisteredClass(context.get(), jsClass); jscClass; jscClass = jscClass->priv->parentClass) {
+        if (!jscClass->priv->vtable)
+            continue;
+
+        if (auto* hasPropertyFunction = jscClass->priv->vtable->has_property) {
+            if (hasPropertyFunction(jscClass, context.get(), instance, propertyName->string().utf8().data()))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+static bool deleteProperty(JSContextRef callerContext, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSC::JSLockHolder locker(toJS(callerContext));
+    auto* jsObject = toJS(object);
+    auto context = jscContextGetOrCreate(toGlobalRef(jsObject->globalObject()->globalExec()));
+    auto* jsContext = jscContextGetJSContext(context.get());
+    if (!jsObject->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>(toJS(jsContext)->vm()))
+        return false;
+
+    gpointer instance = jscContextWrappedObject(context.get(), object);
+    if (!instance)
+        return false;
+
+    VTableExceptionHandler exceptionHandler(context.get(), exception);
+
+    JSClassRef jsClass = JSC::jsCast<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>*>(jsObject)->classRef();
+    for (auto* jscClass = jscContextGetRegisteredClass(context.get(), jsClass); jscClass; jscClass = jscClass->priv->parentClass) {
+        if (!jscClass->priv->vtable)
+            continue;
+
+        if (auto* deletePropertyFunction = jscClass->priv->vtable->delete_property) {
+            if (deletePropertyFunction(jscClass, context.get(), instance, propertyName->string().utf8().data()))
+                return true;
+        }
+    }
+    return false;
+}
+
+static void getPropertyNames(JSContextRef callerContext, JSObjectRef object, JSPropertyNameAccumulatorRef propertyNames)
+{
+    JSC::JSLockHolder locker(toJS(callerContext));
+    auto* jsObject = toJS(object);
+    auto context = jscContextGetOrCreate(toGlobalRef(jsObject->globalObject()->globalExec()));
+    auto* jsContext = jscContextGetJSContext(context.get());
+    if (!jsObject->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>(toJS(jsContext)->vm()))
+        return;
+
+    gpointer instance = jscContextWrappedObject(context.get(), object);
+    if (!instance)
+        return;
+
+    JSClassRef jsClass = JSC::jsCast<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>*>(jsObject)->classRef();
+    for (auto* jscClass = jscContextGetRegisteredClass(context.get(), jsClass); jscClass; jscClass = jscClass->priv->parentClass) {
+        if (!jscClass->priv->vtable)
+            continue;
+
+        if (auto* enumeratePropertiesFunction = jscClass->priv->vtable->enumerate_properties) {
+            GUniquePtr<char*> properties(enumeratePropertiesFunction(jscClass, context.get(), instance));
+            if (properties) {
+                unsigned i = 0;
+                while (const auto* name = properties.get()[i++]) {
+                    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString(name));
+                    JSPropertyNameAccumulatorAddName(propertyNames, propertyName.get());
+                }
+            }
+        }
+    }
+}
 
 static void jscClassGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {
@@ -121,30 +303,9 @@ static void jscClassDispose(GObject* object)
     G_OBJECT_CLASS(jsc_class_parent_class)->dispose(object);
 }
 
-static void jscClassConstructed(GObject* object)
-{
-    G_OBJECT_CLASS(jsc_class_parent_class)->constructed(object);
-
-    JSCClassPrivate* priv = JSC_CLASS(object)->priv;
-    JSClassDefinition definition = kJSClassDefinitionEmpty;
-    definition.className = priv->name.data();
-    priv->jsClass = JSClassCreate(&definition);
-
-    GUniquePtr<char> prototypeName(g_strdup_printf("%sPrototype", priv->name.data()));
-    JSClassDefinition prototypeDefinition = kJSClassDefinitionEmpty;
-    prototypeDefinition.className = prototypeName.get();
-    JSClassRef prototypeClass = JSClassCreate(&prototypeDefinition);
-    priv->prototype = jscContextGetOrCreateJSWrapper(priv->context, prototypeClass);
-    JSClassRelease(prototypeClass);
-
-    if (priv->parentClass)
-        JSObjectSetPrototype(jscContextGetJSContext(priv->context), toRef(priv->prototype.get()), toRef(priv->parentClass->priv->prototype.get()));
-}
-
 static void jsc_class_class_init(JSCClassClass* klass)
 {
     GObjectClass* objClass = G_OBJECT_CLASS(klass);
-    objClass->constructed = jscClassConstructed;
     objClass->dispose = jscClassDispose;
     objClass->get_property = jscClassGetProperty;
     objClass->set_property = jscClassSetProperty;
@@ -192,10 +353,125 @@ static void jsc_class_class_init(JSCClassClass* klass)
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }
 
-GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass* parentClass, GDestroyNotify destroyFunction)
+/**
+ * JSCClassGetPropertyFunction:
+ * @jsc_class: a #JSCClass
+ * @context: a #JSCContext
+ * @instance: the @jsc_class instance
+ * @name: the property name
+ *
+ * The type of get_property in #JSCClassVTable. This is only required when you need to handle
+ * external properties not added to the prototype.
+ *
+ * Returns: (transfer full) (nullable): a #JSCValue or %NULL to forward the request to
+ *    the parent class or prototype chain
+ */
+
+/**
+ * JSCClassSetPropertyFunction:
+ * @jsc_class: a #JSCClass
+ * @context: a #JSCContext
+ * @instance: the @jsc_class instance
+ * @name: the property name
+ * @value: the #JSCValue to set
+ *
+ * The type of set_property in #JSCClassVTable. This is only required when you need to handle
+ * external properties not added to the prototype.
+ *
+ * Returns: %TRUE if handled or %FALSE to forward the request to the parent class or prototype chain.
+ */
+
+/**
+ * JSCClassHasPropertyFunction:
+ * @jsc_class: a #JSCClass
+ * @context: a #JSCContext
+ * @instance: the @jsc_class instance
+ * @name: the property name
+ *
+ * The type of has_property in #JSCClassVTable. This is only required when you need to handle
+ * external properties not added to the prototype.
+ *
+ * Returns: %TRUE if @instance has a property with @name or %FALSE to forward the request
+ *    to the parent class or prototype chain.
+ */
+
+/**
+ * JSCClassDeletePropertyFunction:
+ * @jsc_class: a #JSCClass
+ * @context: a #JSCContext
+ * @instance: the @jsc_class instance
+ * @name: the property name
+ *
+ * The type of delete_property in #JSCClassVTable. This is only required when you need to handle
+ * external properties not added to the prototype.
+ *
+ * Returns: %TRUE if handled or %FALSE to to forward the request to the parent class or prototype chain.
+ */
+
+/**
+ * JSCClassEnumeratePropertiesFunction:
+ * @jsc_class: a #JSCClass
+ * @context: a #JSCContext
+ * @instance: the @jsc_class instance
+ *
+ * The type of enumerate_properties in #JSCClassVTable. This is only required when you need to handle
+ * external properties not added to the prototype.
+ *
+ * Returns: (array zero-terminated=1) (transfer full) (nullable): a %NULL-terminated array of strings
+ *    containing the property names, or %NULL if @instance doesn't have enumerable properties.
+ */
+
+/**
+ * JSCClassVTable:
+ * @get_property: a #JSCClassGetPropertyFunction for getting a property.
+ * @set_property: a #JSCClassSetPropertyFunction for setting a property.
+ * @has_property: a #JSCClassHasPropertyFunction for querying a property.
+ * @delete_property: a #JSCClassDeletePropertyFunction for deleting a property.
+ * @enumerate_properties: a #JSCClassEnumeratePropertiesFunction for enumerating properties.
+ *
+ * Virtual table for a JSCClass. This can be optionally used when registering a #JSCClass in a #JSCContext
+ * to provide a custom implementation for the class. All virtual functions are optional and can be set to
+ * %NULL to fallback to the default implementation.
+ */
+
+GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass* parentClass, JSCClassVTable* vtable, GDestroyNotify destroyFunction)
 {
     GRefPtr<JSCClass> jscClass = adoptGRef(JSC_CLASS(g_object_new(JSC_TYPE_CLASS, "context", context, "name", name, "parent", parentClass, nullptr)));
-    jscClass->priv->destroyFunction = destroyFunction;
+
+    JSCClassPrivate* priv = jscClass->priv;
+    priv->vtable = vtable;
+    priv->destroyFunction = destroyFunction;
+
+    JSClassDefinition definition = kJSClassDefinitionEmpty;
+    definition.className = priv->name.data();
+
+#define SET_IMPL_IF_NEEDED(definitionFunc, vtableFunc) \
+    for (auto* klass = jscClass.get(); klass; klass = klass->priv->parentClass) { \
+        if (klass->priv->vtable && klass->priv->vtable->vtableFunc) { \
+            definition.definitionFunc = definitionFunc; \
+            break; \
+        } \
+    }
+
+    SET_IMPL_IF_NEEDED(getProperty, get_property);
+    SET_IMPL_IF_NEEDED(setProperty, set_property);
+    SET_IMPL_IF_NEEDED(hasProperty, has_property);
+    SET_IMPL_IF_NEEDED(deleteProperty, delete_property);
+    SET_IMPL_IF_NEEDED(getPropertyNames, enumerate_properties);
+
+#undef SET_IMPL_IF_NEEDED
+
+    priv->jsClass = JSClassCreate(&definition);
+
+    GUniquePtr<char> prototypeName(g_strdup_printf("%sPrototype", priv->name.data()));
+    JSClassDefinition prototypeDefinition = kJSClassDefinitionEmpty;
+    prototypeDefinition.className = prototypeName.get();
+    JSClassRef prototypeClass = JSClassCreate(&prototypeDefinition);
+    priv->prototype = jscContextGetOrCreateJSWrapper(priv->context, prototypeClass);
+    JSClassRelease(prototypeClass);
+
+    if (priv->parentClass)
+        JSObjectSetPrototype(jscContextGetJSContext(priv->context), toRef(priv->prototype.get()), toRef(priv->parentClass->priv->prototype.get()));
     return jscClass;
 }
 

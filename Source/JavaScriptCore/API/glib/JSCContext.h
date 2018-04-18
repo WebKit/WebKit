@@ -126,6 +126,7 @@ JSC_API JSCClass *
 jsc_context_register_class           (JSCContext         *context,
                                       const char         *name,
                                       JSCClass           *parent_class,
+                                      JSCClassVTable     *vtable,
                                       GDestroyNotify      destroy_notify);
 
 G_END_DECLS

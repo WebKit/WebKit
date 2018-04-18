@@ -1,3 +1,38 @@
+2018-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Make it possible to handle JSCClass external properties not added to the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=184687
+
+        Reviewed by Michael Catanzaro.
+
+        Add JSCClassVTable that can be optionally passed to jsc_context_register_class() to provide implmentations for
+        JSClassDefinition. This is required to implement dynamic properties that can't be added with
+        jsc_class_add_property() for example to implement something like imports object in seed/gjs.
+
+        * API/glib/JSCClass.cpp:
+        (VTableExceptionHandler::VTableExceptionHandler): Helper class to handle the exceptions in vtable functions that
+        can throw exceptions.
+        (VTableExceptionHandler::~VTableExceptionHandler):
+        (getProperty): Iterate the class chain to call get_property function.
+        (setProperty): Iterate the class chain to call set_property function.
+        (hasProperty): Iterate the class chain to call has_property function.
+        (deleteProperty): Iterate the class chain to call delete_property function.
+        (getPropertyNames): Iterate the class chain to call enumerate_properties function.
+        (jsc_class_class_init): Remove constructed implementation, since we need to initialize the JSClassDefinition in
+        jscClassCreate now.
+        (jscClassCreate): Receive an optional JSCClassVTable that is used to initialize the JSClassDefinition.
+        * API/glib/JSCClass.h:
+        * API/glib/JSCClassPrivate.h:
+        * API/glib/JSCContext.cpp:
+        (jscContextGetRegisteredClass): Helper to get the JSCClass for a given JSClassRef.
+        (jsc_context_register_class): Add JSCClassVTable parameter.
+        * API/glib/JSCContext.h:
+        * API/glib/JSCContextPrivate.h:
+        * API/glib/JSCWrapperMap.cpp:
+        (JSC::WrapperMap::registeredClass const): Get the JSCClass for a given JSClassRef.
+        * API/glib/JSCWrapperMap.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt: Add new symbols.
+
 2018-04-17  Mark Lam  <mark.lam@apple.com>
 
         Templatize CodePtr/Refs/FunctionPtrs with PtrTags.

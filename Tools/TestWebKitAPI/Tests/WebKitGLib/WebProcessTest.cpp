@@ -91,7 +91,7 @@ static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage*
 
     GRefPtr<JSCContext> context = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
     WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
-    auto* jsClass = jsc_context_register_class(context.get(), "WebProcessTestRunner", nullptr, reinterpret_cast<GDestroyNotify>(webProcessTestRunnerFinalize));
+    auto* jsClass = jsc_context_register_class(context.get(), "WebProcessTestRunner", nullptr, nullptr, reinterpret_cast<GDestroyNotify>(webProcessTestRunnerFinalize));
     WebProcessTest::assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsClass));
     jsc_class_add_method(jsClass, "runTest", G_CALLBACK(runTest), NULL, NULL, G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
     GRefPtr<JSCValue> testRunner = adoptGRef(jsc_value_new_object(context.get(), g_object_ref(webPage), jsClass));

@@ -39,6 +39,42 @@ typedef struct _JSCClassClass JSCClassClass;
 
 typedef struct _JSCContext JSCContext;
 
+typedef JSCValue *(*JSCClassGetPropertyFunction)        (JSCClass   *jsc_class,
+                                                         JSCContext *context,
+                                                         gpointer    instance,
+                                                         const char *name);
+typedef gboolean (*JSCClassSetPropertyFunction)         (JSCClass   *jsc_class,
+                                                         JSCContext *context,
+                                                         gpointer    instance,
+                                                         const char *name,
+                                                         JSCValue   *value);
+typedef gboolean (*JSCClassHasPropertyFunction)         (JSCClass   *jsc_class,
+                                                         JSCContext *context,
+                                                         gpointer    instance,
+                                                         const char *name);
+typedef gboolean (*JSCClassDeletePropertyFunction)      (JSCClass   *jsc_class,
+                                                         JSCContext *context,
+                                                         gpointer    instance,
+                                                         const char *name);
+typedef gchar  **(*JSCClassEnumeratePropertiesFunction) (JSCClass   *jsc_class,
+                                                         JSCContext *context,
+                                                         gpointer    instance);
+
+
+typedef struct {
+    JSCClassGetPropertyFunction get_property;
+    JSCClassSetPropertyFunction set_property;
+    JSCClassHasPropertyFunction has_property;
+    JSCClassDeletePropertyFunction delete_property;
+    JSCClassEnumeratePropertiesFunction enumerate_properties;
+
+    /*< private >*/
+    void (*_jsc_reserved0) (void);
+    void (*_jsc_reserved1) (void);
+    void (*_jsc_reserved2) (void);
+    void (*_jsc_reserved3) (void);
+} JSCClassVTable;
+
 JSC_API GType
 jsc_class_get_type        (void);
 
