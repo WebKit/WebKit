@@ -1,3 +1,22 @@
+2018-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid crash if ITP Debug mode is on, but ResourceLoadStatistics are not being used
+        https://bugs.webkit.org/show_bug.cgi?id=184739
+        <rdar://problem/39287964>
+
+        Reviewed by David Kilzer.
+
+        If a user has the ResourceLoadStatistics logic turned off, but has the ITP Debug experimental
+        flag turned on, you can cause a crash.
+
+        This is because the WebsiteDataStore for the process doesn't bother creating a ResourceLoadStatisticsStore
+        if the statistics machinery is not running. The ITP debug flag was being blindly set without checking
+        if the statistics store exists or not, which can cause a crash.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode): Check if the statistics store exists
+        before calling functions on it.
+
 2018-04-18  Paul Knight  <pknight@apple.com>
 
         Add -[_WKInputDelegateDelegate willStartInputSession:] for clients that want to configure input session before assisting form node

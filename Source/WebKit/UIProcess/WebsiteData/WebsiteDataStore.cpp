@@ -1435,7 +1435,8 @@ bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
 void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
 {
     m_resourceLoadStatisticsDebugMode = enabled;
-    m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(enabled);
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(enabled);
 }
 
 void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback)
