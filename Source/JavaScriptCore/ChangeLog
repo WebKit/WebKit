@@ -1,5 +1,12 @@
 2018-04-18  Tomas Popela  <tpopela@redhat.com>
 
+        Unreviewed, fix build on ARM
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::readCallTarget):
+
+2018-04-18  Tomas Popela  <tpopela@redhat.com>
+
         Unreviewed, fix build with GCC
 
         * assembler/LinkBuffer.h:

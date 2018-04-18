@@ -1506,7 +1506,7 @@ public:
     }
 
     template<PtrTag resultTag, PtrTag locationTag>
-    static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<tag> call)
+    static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
     {
         return FunctionPtr<resultTag>(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
     }
