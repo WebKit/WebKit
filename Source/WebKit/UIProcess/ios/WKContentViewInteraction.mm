@@ -937,8 +937,6 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         SetForScope<BOOL> becomingFirstResponder { _becomingFirstResponder, YES };
         didBecomeFirstResponder = [super becomeFirstResponder];
     }
-    if (didBecomeFirstResponder && !self.suppressAssistantSelectionView)
-        [_textSelectionAssistant activateSelection];
 
     return didBecomeFirstResponder;
 }

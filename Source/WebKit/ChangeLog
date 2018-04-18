@@ -1,3 +1,19 @@
+2018-04-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't activate selection on become first responder
+        https://bugs.webkit.org/show_bug.cgi?id=184719
+
+        Reviewed by Tim Horton.
+        
+        If we activate the selection immediately on becoming first responder, we cause the selection view to delete itself
+        since it is not guaranteed to have selection rects immediately due to async/two process architecture. The selection
+        is activated already when the selection rects change, so there is no reason to activate it now. This has likely worked
+        in the past because this selection assistant was only for editable text, which would immediately set a caret, which 
+        is a selection. Now that this is for non-editable text as well, activating the selection is problematic.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView becomeFirstResponderForWebView]):
+
 2018-04-11  Brian Burg  <bburg@apple.com>
 
         Web Automation: simulated mouse interactions should not be done until associated DOM events have been dispatched
