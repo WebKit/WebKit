@@ -1,3 +1,16 @@
+2018-04-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Ensure correct screen sizes
+        https://bugs.webkit.org/show_bug.cgi?id=184757
+        
+        Reviewed by Wenson Hsieh.
+        
+        Make sure that the screen sizes are actually correct.
+
+        Not currently testable, will add tests when it is.
+
+        * platform/ios/PlatformScreenIOS.mm:
+
 2018-04-18  Nan Wang  <n_wang@apple.com>
 
         AX: [macOS] WebKit hangs when triggering an alert from an AOM increment event

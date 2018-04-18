@@ -146,10 +146,14 @@ FloatSize availableScreenSize()
     return FloatSize([get_UIKit_UIScreenClass() mainScreen].bounds.size);
 }
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
+#import <WebKitAdditions/PlatformScreenIOS.mm>
+#else
 FloatSize overrideScreenSize()
 {
     return screenSize();
 }
+#endif
 
 float screenScaleFactor(UIScreen *screen)
 {
