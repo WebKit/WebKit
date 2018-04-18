@@ -141,7 +141,7 @@ void AudioSession::setCategory(CategoryType newCategory)
 
     NSError *error = nil;
     [[AVAudioSession sharedInstance] setCategory:categoryString mode:categoryMode options:options error:&error];
-#if !PLATFORM(IOS_SIMULATOR)
+#if !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR)
     ASSERT(!error);
 #endif
 }

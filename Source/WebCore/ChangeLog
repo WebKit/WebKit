@@ -1,3 +1,13 @@
+2018-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Ignore ASSERT when setting AVAudioSessionCategory returns an error on simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=184698
+
+        Reviewed by Eric Carlson.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        * platform/audio/mac/AudioSessionMac.cpp:
+
 2018-04-18  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION: Using the reload button while offline pushes identical pages onto the back/forward list
