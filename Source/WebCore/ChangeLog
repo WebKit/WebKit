@@ -1,3 +1,21 @@
+2018-04-18  Antti Koivisto  <antti@apple.com>
+
+        :active pseudo class doesn't deactivate when using pressure sensitive trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=181680
+
+        Reviewed by Beth Dakin.
+
+        Trackpad sends a mouse force event with force of zero after mouse up event. This causes the element under cursor
+        activate again.
+
+        Even a fake event test doesn't appear to be currently possible as TestRunner crashes if you try to send mouseForceChanged.
+        All the tests using it are skipped.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseForceEvent):
+
+        Don't add HitTestRequest::Active if the force of the force event is zero.
+
 2018-04-18  Megan Gardner  <megan_gardner@apple.com>
 
         Ensure correct screen sizes
