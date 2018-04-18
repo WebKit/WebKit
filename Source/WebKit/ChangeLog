@@ -1,5 +1,13 @@
 2018-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Remove symbols from webkitglib-symbols.map.
+
+        Remove symbols not present in WebKit.
+
+        * webkitglib-symbols.map:
+
+2018-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Add missing symbols to webkitglib-symbols.map.
 
         Add symbols global in JSC and present in WebKit.

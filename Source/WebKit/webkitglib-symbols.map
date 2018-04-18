@@ -6,21 +6,14 @@ global:
   PluginProcessMainUnix;
   StorageProcessMainUnix;
   extern "C++" {
-    "bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_memory";
-    "bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_mutex";
     "bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_data";
     "bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_object";
-    "bmalloc::PerProcess<bmalloc::Scavenger>::s_memory";
-    "bmalloc::PerProcess<bmalloc::Scavenger>::s_mutex";
     "bmalloc::PerProcess<bmalloc::Scavenger>::s_data";
     "bmalloc::PerProcess<bmalloc::Scavenger>::s_object";
     "bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_didInitialize";
     "bmalloc::PerThreadStorage<bmalloc::PerHeapKind<bmalloc::Cache> >::s_key";
     "bmalloc::vmPageSize()::cached";
-    "guard variable for bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_mutex";
     "guard variable for bmalloc::PerProcess<bmalloc::IsoTLSDeallocatorEntry<bmalloc::IsoConfig<40u> > >::s_object";
-    "guard variable for bmalloc::PerProcess<bmalloc::PerHeapKind<bmalloc::Heap> >::s_mutex";
-    "guard variable for bmalloc::PerProcess<bmalloc::Scavenger>::s_mutex";
     "guard variable for bmalloc::PerProcess<bmalloc::Scavenger>::s_object";
     "WebKit::WebKitExtensionManager::singleton()";
     "WebKit::WebKitExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
