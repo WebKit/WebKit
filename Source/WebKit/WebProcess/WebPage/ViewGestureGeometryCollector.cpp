@@ -26,17 +26,21 @@
 #include "config.h"
 #include "ViewGestureGeometryCollector.h"
 
+#include "Logging.h"
 #include "ViewGestureGeometryCollectorMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/FontCascade.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLImageElement.h>
+#include <WebCore/HTMLTextFormControlElement.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/ImageDocument.h>
 #include <WebCore/RenderView.h>
+#include <WebCore/TextIterator.h>
 
 #if PLATFORM(IOS)
 #include "SmartMagnificationControllerMessages.h"
@@ -128,9 +132,21 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
 
 #if PLATFORM(IOS)
 
+struct FontSizeAndCount {
+    unsigned fontSize;
+    unsigned count;
+};
+
 std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLegibilityScales(double& viewportMinimumScale, double& viewportMaximumScale)
 {
-    static const double defaultMaximumTextLegibilityScale = 1;
+    static const unsigned fontSizeBinningInterval = 2;
+    static const double maximumNumberOfTextRunsToConsider = 200;
+
+    static const double targetLegibilityFontSize = 12;
+    static const double firstTextLegibilityScaleRatio = 0.5;
+    static const double secondTextLegibilityScaleRatio = 0.1;
+    static const double minimumDifferenceBetweenTextLegibilityScales = 0.2;
+    static const double fallbackTextLegibilityScale = 1;
 
     computeMinimumAndMaximumViewportScales(viewportMinimumScale, viewportMaximumScale);
     if (m_cachedTextLegibilityScales)
@@ -142,10 +158,64 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    // FIXME: Determine appropriate text legibility scales by examining text runs in the document. For now, hard code the second text legibility scale to be 1,
-    // and set the first text legibility scale to be the halfway point between the initial scale and 1.
-    double firstTextLegibilityScale = clampTo<double>((m_webPage.viewportConfiguration().initialScale() + defaultMaximumTextLegibilityScale) / 2, viewportMinimumScale, viewportMaximumScale);
-    double secondTextLegibilityScale = clampTo<double>(defaultMaximumTextLegibilityScale, viewportMinimumScale, viewportMaximumScale);
+    auto documentRange = Range::create(*document, {{ document->documentElement(), Position::PositionIsBeforeAnchor }}, {{ document->documentElement(), Position::PositionIsAfterAnchor }});
+    HashSet<Node*> allTextNodes;
+    HashMap<unsigned, unsigned> fontSizeToCountMap;
+    unsigned numberOfIterations = 0;
+    unsigned totalSampledTextLength = 0;
+
+    for (TextIterator documentTextIterator { documentRange.ptr(), TextIteratorEntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
+        if (++numberOfIterations >= maximumNumberOfTextRunsToConsider)
+            break;
+
+        if (!is<Text>(documentTextIterator.node()))
+            continue;
+
+        auto& textNode = downcast<Text>(*documentTextIterator.node());
+        auto textLength = textNode.length();
+        if (!textLength || !textNode.renderer() || allTextNodes.contains(&textNode))
+            continue;
+
+        allTextNodes.add(&textNode);
+
+        unsigned fontSizeBin = fontSizeBinningInterval * round(textNode.renderer()->style().fontCascade().size() / fontSizeBinningInterval);
+        auto entry = fontSizeToCountMap.find(fontSizeBin);
+        fontSizeToCountMap.set(fontSizeBin, textLength + (entry == fontSizeToCountMap.end() ? 0 : entry->value));
+        totalSampledTextLength += textLength;
+    }
+
+    Vector<FontSizeAndCount> sortedFontSizesAndCounts;
+    sortedFontSizesAndCounts.reserveCapacity(fontSizeToCountMap.size());
+    for (auto& entry : fontSizeToCountMap)
+        sortedFontSizesAndCounts.append({ entry.key, entry.value });
+
+    std::sort(sortedFontSizesAndCounts.begin(), sortedFontSizesAndCounts.end(), [] (auto& first, auto& second) {
+        return first.fontSize < second.fontSize;
+    });
+
+    double firstTextLegibilityScale = 0;
+    double secondTextLegibilityScale = 0;
+    double currentSampledTextLength = 0;
+    for (auto& fontSizeAndCount : sortedFontSizesAndCounts) {
+        currentSampledTextLength += fontSizeAndCount.count;
+        double ratioOfTextUnderCurrentFontSize = currentSampledTextLength / totalSampledTextLength;
+        LOG(ViewGestures, "About %.2f%% of text is smaller than font size %tu", ratioOfTextUnderCurrentFontSize * 100, fontSizeAndCount.fontSize);
+        if (!firstTextLegibilityScale && ratioOfTextUnderCurrentFontSize >= firstTextLegibilityScaleRatio)
+            firstTextLegibilityScale = targetLegibilityFontSize / fontSizeAndCount.fontSize;
+        if (!secondTextLegibilityScale && ratioOfTextUnderCurrentFontSize >= secondTextLegibilityScaleRatio)
+            secondTextLegibilityScale = targetLegibilityFontSize / fontSizeAndCount.fontSize;
+    }
+
+    if (sortedFontSizesAndCounts.isEmpty()) {
+        firstTextLegibilityScale = fallbackTextLegibilityScale;
+        secondTextLegibilityScale = fallbackTextLegibilityScale;
+    } else if (secondTextLegibilityScale - firstTextLegibilityScale < minimumDifferenceBetweenTextLegibilityScales)
+        firstTextLegibilityScale = secondTextLegibilityScale;
+
+    secondTextLegibilityScale = clampTo<double>(secondTextLegibilityScale, viewportMinimumScale, viewportMaximumScale);
+    firstTextLegibilityScale = clampTo<double>(firstTextLegibilityScale, viewportMinimumScale, viewportMaximumScale);
+
+    LOG(ViewGestures, "The computed text legibility scales are: (%.2f, %.2f)", firstTextLegibilityScale, secondTextLegibilityScale);
 
     m_cachedTextLegibilityScales = std::optional<std::pair<double, double>> {{ firstTextLegibilityScale, secondTextLegibilityScale }};
     return m_cachedTextLegibilityScales;

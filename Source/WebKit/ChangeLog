@@ -1,3 +1,28 @@
+2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Double tap to zoom should account for text legibility in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184631
+        <rdar://problem/39303706>
+
+        Reviewed by Tim Horton.
+
+        Implement the text legibility heuristic alluded to in r230506 by iterating through text runs in the document (up
+        to a maximum of 200) and building a histogram of font sizes that appear in the document, where each tally
+        represents a character.
+
+        The first and second text legibility zoom scales are then computed based on the zoom scales needed to
+        make 50% and 90% of the text legible, respectively. Here, a zoom scale that makes text legible is such that the
+        text would have an apparent font size of a hard-coded constant (currently, 12) after zooming. This means the
+        first and second text legibility scales may end up being close to one another, or even the same (in the case
+        where there is only a single font size in the entire document). In this case, we just snap the first scale to
+        the second, so that double tapping will only toggle between two zoom scales. In another case where the document
+        has no text (e.g. an image document), we just fall back to a zoom scale of 1.
+
+        Test: fast/events/extrazoom/double-tap-to-zoom-on-full-width-text.html
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::computeTextLegibilityScales):
+
 2018-04-17  Megan Gardner  <megan_gardner@apple.com>
 
         Don't activate selection on become first responder

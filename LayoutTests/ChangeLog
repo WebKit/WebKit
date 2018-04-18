@@ -1,3 +1,23 @@
+2018-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Double tap to zoom should account for text legibility in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184631
+        <rdar://problem/39303706>
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to check that double tap to zoom works in extra zoom mode, even when text spans the entire
+        width of the document.
+
+        * TestExpectations:
+        * fast/events/extrazoom/double-tap-to-zoom-on-full-width-text-expected.txt: Added.
+        * fast/events/extrazoom/double-tap-to-zoom-on-full-width-text.html: Added.
+        * resources/basic-gestures.js:
+
+        Add a helper method to double tap at a given location, and wait for zooming to finish.
+
+        (return.new.Promise):
+
 2018-04-17  Tadeu Zagallo  <tzagallo@apple.com>
 
         Retain MessagePortChannel for transfer when disentangling ports

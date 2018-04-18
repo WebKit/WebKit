@@ -10,6 +10,18 @@ function didShowKeyboard()
     });
 }
 
+function doubleTapToZoomAtPoint(x, y)
+{
+    return new Promise(resolve => {
+        testRunner.runUIScript(`
+            (function() {
+                uiController.didEndZoomingCallback = () => uiController.uiScriptComplete();
+                uiController.singleTapAtPoint(${x}, ${y}, () => { });
+                uiController.singleTapAtPoint(${x}, ${y}, () => { });
+            })();`, resolve);
+    });
+}
+
 function longPressAtPoint(x, y)
 {
     return new Promise(resolve => {
