@@ -472,7 +472,7 @@ public:
 private:
     template<PtrTag otherTag>
     MacroAssemblerCodeRef(const MacroAssemblerCodeRef<otherTag>& otherCodeRef)
-        : m_codePtr(otherCodeRef.code().template retaggedExecutableAddress<tag>())
+        : m_codePtr(MacroAssemblerCodePtr<tag>::createFromExecutableAddress(otherCodeRef.code().template retaggedExecutableAddress<tag>()))
         , m_executableMemory(otherCodeRef.m_executableMemory)
     { }
 

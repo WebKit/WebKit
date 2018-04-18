@@ -564,7 +564,7 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     emitLoad(base, regT2, regT1);
     emitLoad(property, regT3, regT0);
     emitLoad(value, regT5, regT4);
-    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, NoPtrTag, JSValueRegs(regT2, regT1), JSValueRegs(regT3, regT0), JSValueRegs(regT5, regT4), byValInfo);
+    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, JSValueRegs(regT2, regT1), JSValueRegs(regT3, regT0), JSValueRegs(regT5, regT4), byValInfo);
 #endif
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;

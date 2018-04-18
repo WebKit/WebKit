@@ -1,3 +1,21 @@
+2018-04-18  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Fix build error and crash after PtrTag change
+        https://bugs.webkit.org/show_bug.cgi?id=184732
+
+        Reviewed by Mark Lam.
+
+        Do not pass NoPtrTag in callOperation and fix misspelled JSEntryPtrTag. Use
+        MacroAssemblerCodePtr::createFromExecutableAddress to avoid tagging a pointer
+        twice with ARM-Thumb2.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+
 2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebAssembly][Modules] Import globals from wasm modules
