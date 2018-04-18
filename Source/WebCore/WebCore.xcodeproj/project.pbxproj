@@ -957,7 +957,6 @@
 		31A795C71888BCB200382F90 /* ANGLEInstancedArrays.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */; };
 		31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */; };
 		31AB5000122878A2001A7DB0 /* GraphicsContext3DIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */; };
-		31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31BC742B1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp */; };
 		31BC742E1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31BC742C1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h */; };
 		31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */; };
 		31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1F0E4CEB6E007D6FE5 /* WebKitTransitionEvent.h */; };
@@ -31108,7 +31107,6 @@
 				A14090FB1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm in Sources */,
 				07AFF4231EFB144900B545B3 /* CoreAudioCaptureSourceIOS.mm in Sources */,
 				46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */,
-				31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
 				BE23480C18A9870B00E4B6E8 /* DataCue.cpp in Sources */,
 				515BE18F1D54F5FB00DD7C68 /* EmptyGamepadProvider.cpp in Sources */,
