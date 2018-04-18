@@ -1,3 +1,26 @@
+2018-04-18  Paul Knight  <pknight@apple.com>
+
+        Add -[_WKInputDelegateDelegate willStartInputSession:] for clients that want to configure input session before assisting form node
+        https://bugs.webkit.org/show_bug.cgi?id=184662
+
+        Reviewed by Beth Dakin.
+
+        Clients may wish to configure a WKInputSession before we start assisting
+        a node. Add a -[_WKInputDelegateDelegate _webView:willStartInputSession:]
+        callback.
+
+        For example, clients that wish to present a custom input view will want
+        to configure the WKFormInputSession's customInputView before the
+        keyboard is presented. Otherwise the standard keyboard will begin to
+        animate and then the custom input view will swap in later.
+
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+            Call -_webView:willStartInputSession: before assisting the node.
+            Only create the form session if the delegate implements either
+            the willStart or didStartInputSession callbacks.
+
 2018-04-18  Chris Dumez  <cdumez@apple.com>
 
         Add support for converting a local window to a remote window
