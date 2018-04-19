@@ -1300,6 +1300,8 @@ webkit.org/b/183215 imported/w3c/web-platform-tests/encoding/legacy-mb-korean/eu
 
 webkit.org/b/183401 fast/animation/request-animation-frame-during-modal.html [ Crash Pass ]
 
+webkit.org/b/184781 [ Release ] plugins/unavailable-plugin-indicator-obscurity.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3354,6 +3356,20 @@ webkit.org/b/184501 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/fai
 webkit.org/b/184503 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Failure ]
 webkit.org/b/184503 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Failure ]
 webkit.org/b/184504 imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota.html [ Failure ]
+
+webkit.org/b/184775 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Failure ]
+
+webkit.org/b/184776 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html [ Failure ]
+webkit.org/b/184776 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Failure ]
+
+webkit.org/b/184777 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
+
+webkit.org/b/184778 inspector/canvas/setShaderProgramHighlighted.html [ Failure ]
+
+webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
+webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
+
+webkit.org/b/184780 fast/repaint/fixed-scale.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
