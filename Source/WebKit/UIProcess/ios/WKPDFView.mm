@@ -28,11 +28,13 @@
 
 #if ENABLE(WKPDFVIEW)
 
+#import "FindClient.h"
 #import "WKWebViewInternal.h"
 #import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <PDFKit/PDFHostViewController.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
@@ -40,12 +42,18 @@
 @end
 
 @implementation WKPDFView {
-    CGSize _overlaidAccessoryViewsInset;
     RetainPtr<NSData> _data;
-    RetainPtr<NSString> _suggestedFilename;
-    RetainPtr<PDFHostViewController> _hostViewController;
+    BlockPtr<void()> _findCompletion;
+    RetainPtr<NSString> _findString;
+    NSUInteger _findStringCount;
+    NSUInteger _findStringMaxCount;
     RetainPtr<UIView> _fixedOverlayView;
+    std::optional<NSUInteger> _focusedSearchResultIndex;
+    NSInteger _focusedSearchResultPendingOffset;
+    RetainPtr<PDFHostViewController> _hostViewController;
+    CGSize _overlaidAccessoryViewsInset;
     RetainPtr<UIView> _pageNumberIndicator;
+    RetainPtr<NSString> _suggestedFilename;
     WebKit::WeakObjCPtr<WKWebView> _webView;
 }
 
@@ -178,19 +186,121 @@
         [self _scrollToURLFragment:[_webView URL].fragment];
 }
 
+static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
+{
+    NSStringCompareOptions compareOptions = 0;
+    if (findOptions & _WKFindOptionsBackwards)
+        compareOptions |= NSBackwardsSearch;
+    if (findOptions & _WKFindOptionsCaseInsensitive)
+        compareOptions |= NSCaseInsensitiveSearch;
+    return compareOptions;
+}
+
+- (void)_resetFind
+{
+    if (_findCompletion)
+        [_hostViewController cancelFindString];
+
+    _findCompletion = nil;
+    _findString = nil;
+    _findStringCount = 0;
+    _findStringMaxCount = 0;
+    _focusedSearchResultIndex = std::nullopt;
+    _focusedSearchResultPendingOffset = 0;
+}
+
+- (void)_findString:(NSString *)string withOptions:(_WKFindOptions)options maxCount:(NSUInteger)maxCount completion:(void(^)())completion
+{
+    [self _resetFind];
+
+    _findCompletion = completion;
+    _findString = adoptNS([string copy]);
+    _findStringMaxCount = maxCount;
+    [_hostViewController findString:_findString.get() withOptions:stringCompareOptions(options)];
+}
+
 - (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
-    // FIXME: Implement find-in-page.
+    [self _findString:string withOptions:options maxCount:maxCount completion:^{
+        ASSERT([_findString isEqualToString:string]);
+        if (auto page = [_webView _page])
+            page->findClient().didCountStringMatches(page, _findString.get(), _findStringCount);
+    }];
+}
+
+- (BOOL)_computeFocusedSearchResultIndexWithOptions:(_WKFindOptions)options didWrapAround:(BOOL *)didWrapAround
+{
+    BOOL isBackwards = options & _WKFindOptionsBackwards;
+    NSInteger singleOffset = isBackwards ? -1 : 1;
+
+    if (_findCompletion) {
+        ASSERT(!_focusedSearchResultIndex);
+        _focusedSearchResultPendingOffset += singleOffset;
+        return NO;
+    }
+
+    if (!_findStringCount)
+        return NO;
+
+    NSInteger newIndex;
+    if (_focusedSearchResultIndex) {
+        ASSERT(!_focusedSearchResultPendingOffset);
+        newIndex = *_focusedSearchResultIndex + singleOffset;
+    } else {
+        newIndex = isBackwards ? _findStringCount - 1 : 0;
+        newIndex += std::exchange(_focusedSearchResultPendingOffset, 0);
+    }
+
+    if (newIndex < 0 || static_cast<NSUInteger>(newIndex) >= _findStringCount) {
+        if (!(options & _WKFindOptionsWrapAround))
+            return NO;
+
+        NSUInteger wrappedIndex = std::abs(newIndex) % _findStringCount;
+        if (newIndex < 0)
+            wrappedIndex = _findStringCount - wrappedIndex;
+        newIndex = wrappedIndex;
+        *didWrapAround = YES;
+    }
+
+    _focusedSearchResultIndex = newIndex;
+    ASSERT(*_focusedSearchResultIndex < _findStringCount);
+    return YES;
+}
+
+- (void)_focusOnSearchResultWithOptions:(_WKFindOptions)options
+{
+    auto page = [_webView _page];
+    if (!page)
+        return;
+
+    BOOL didWrapAround = NO;
+    if (![self _computeFocusedSearchResultIndexWithOptions:options didWrapAround:&didWrapAround]) {
+        if (!_findCompletion)
+            page->findClient().didFailToFindString(page, _findString.get());
+        return;
+    }
+
+    auto focusedIndex = *_focusedSearchResultIndex;
+    [_hostViewController focusOnSearchResultAtIndex:focusedIndex];
+    page->findClient().didFindString(page, _findString.get(), { }, _findStringCount, focusedIndex, didWrapAround);
 }
 
 - (void)web_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
-    // FIXME: Implement find-in-page.
+    if ([_findString isEqualToString:string]) {
+        [self _focusOnSearchResultWithOptions:options];
+        return;
+    }
+
+    [self _findString:string withOptions:options maxCount:maxCount completion:^{
+        ASSERT([_findString isEqualToString:string]);
+        [self _focusOnSearchResultWithOptions:options];
+    }];
 }
 
 - (void)web_hideFindUI
 {
-    // FIXME: Implement find-in-page.
+    [self _resetFind];
 }
 
 - (UIView *)web_contentView
@@ -238,6 +348,18 @@
 - (void)pdfHostViewController:(PDFHostViewController *)controller updatePageCount:(NSInteger)pageCount
 {
     [self _scrollToURLFragment:[_webView URL].fragment];
+}
+
+- (void)pdfHostViewController:(PDFHostViewController *)controller findStringUpdate:(NSUInteger)numFound done:(BOOL)done
+{
+    // FIXME: We should stop searching once numFound exceeds _findStringMaxCount, but PDFKit doesn't
+    // allow us to stop the search without also clearing the search highlights. See <rdar://problem/39546973>.
+    if (!done)
+        return;
+
+    _findStringCount = numFound;
+    if (auto findCompletion = std::exchange(_findCompletion, nil))
+        findCompletion();
 }
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller goToURL:(NSURL *)url

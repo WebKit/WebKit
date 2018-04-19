@@ -1,3 +1,67 @@
+2018-04-19  Andy Estes  <aestes@apple.com>
+
+        [iOS] Implement find-in-page in the new WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=184654
+        <rdar://problem/39331654>
+
+        Reviewed by Tim Horton.
+
+        This is theoretically covered by existing WKPDFView API tests, but that's currently blocked
+        by <rdar://problem/39475542>.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (stringCompareOptions):
+
+        Mapped _WKFindOptions to NSStringCompareOptions.
+
+        (-[WKPDFView _resetFind]):
+
+        Cancelled an in-progress search and reset the search state.
+
+        (-[WKPDFView _findString:withOptions:maxCount:completion:]):
+
+        Stored the completion block, find string, and max count, then called
+        -[PDFHostViewController findString:withOptions:].
+
+        (-[WKPDFView web_countStringMatches:options:maxCount:]):
+
+        Called -_findString:withOptions:maxCount:completion: with a completion block that calls
+        FindClient::didCountStringMatches() with _findStringCount.
+
+        (-[WKPDFView _computeFocusedSearchResultIndexWithOptions:didWrapAround:]):
+
+        Computed the focused search result index, taking _findStringCount and wrap-around into
+        account. There are two interesting cases to mention here:
+
+        1. We can't change focus while a search is in progress, because we can't properly handle
+        wrap-around without a _findStringCount. If a search is in progress, store the requested
+        focus change in _focusedSearchResultPendingOffset, which will be applied once the search
+        finishes.
+
+        2. If wrap-around is about to happen but the find options do not allow it, we need to call
+        FindClient::didFailToFindString(). Handle this by returning NO, which will tell
+        -_focusOnSearchResultWithOptions: to call didFailToFindString() if a search is not in
+        progress.
+
+        (-[WKPDFView _focusOnSearchResultWithOptions:]):
+
+        If -_computeFocusedSearchResultIndexWithOptions:didWrapAround: failed while a search is in
+        progress, just return early. Otherwise, call FindClient::didFailToFindString(). If
+        computing the index did not fail, call -[PDFHostViewController focusOnSearchResultAtIndex:]
+        to change focus and then call FindClient::didFindString() to inform the client.
+
+        (-[WKPDFView web_findString:options:maxCount:]):
+
+        If the find string is equal to _findString, change focus. Otherwise, start a new search.
+
+        (-[WKPDFView web_hideFindUI]):
+
+        Called -_resetFind.
+
+        (-[WKPDFView pdfHostViewController:findStringUpdate:done:]):
+
+        Stored the count in _findStringCount and called _findCompletion once the search is done.
+
 2018-04-17  Filip Pizlo  <fpizlo@apple.com>
 
         The InternalFunction hierarchy should be in IsoSubspaces
