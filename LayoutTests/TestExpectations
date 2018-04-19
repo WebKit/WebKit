@@ -1829,6 +1829,7 @@ webkit.org/b/116621 fast/replaced/preferred-widths.html [ Pass Failure ]
 webkit.org/b/182833 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html [ Skip ]
 webkit.org/b/182833 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html [ Pass Failure ]
 webkit.org/b/182833 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html [ Pass Failure ]
+webkit.org/b/182833 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html [ Pass Failure ]
 
 webkit.org/b/184198 imported/w3c/web-platform-tests/html/browsers/offline/appcache/workers/appcache-worker.html [ Pass Failure ]
 
