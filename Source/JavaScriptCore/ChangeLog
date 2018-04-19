@@ -1,3 +1,16 @@
+2018-04-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r227340): ArrayBuffers were not being serialized when sent via MessagePorts
+        https://bugs.webkit.org/show_bug.cgi?id=184254
+        <rdar://problem/39140200>
+
+        Reviewed by Daniel Bates.
+
+        Expose an extra constructor of ArrayBufferContents in order to be able to decode SerializedScriptValues.
+
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+
 2018-04-19  Mark Lam  <mark.lam@apple.com>
 
         Apply pointer profiling to Signal pointers.

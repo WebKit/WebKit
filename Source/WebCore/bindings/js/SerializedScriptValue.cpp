@@ -3169,6 +3169,12 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer)
 {
 }
 
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray)
+    : m_data(WTFMove(buffer))
+    , m_arrayBufferContentsArray(WTFMove(arrayBufferContentsArray))
+{
+}
+
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray, std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray, Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>>&& imageBuffers
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> wasmModulesArray

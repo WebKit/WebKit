@@ -59,6 +59,7 @@ class ArrayBufferContents {
     WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
 public:
     JS_EXPORT_PRIVATE ArrayBufferContents();
+    JS_EXPORT_PRIVATE ArrayBufferContents(void* data, unsigned sizeInBytes, ArrayBufferDestructorFunction&&);
     
     JS_EXPORT_PRIVATE ArrayBufferContents(ArrayBufferContents&&);
     JS_EXPORT_PRIVATE ArrayBufferContents& operator=(ArrayBufferContents&&);
@@ -73,10 +74,8 @@ public:
     unsigned sizeInBytes() const { return m_sizeInBytes; }
     
     bool isShared() const { return m_shared; }
-
-private:
-    ArrayBufferContents(void* data, unsigned sizeInBytes, ArrayBufferDestructorFunction&&);
     
+private:
     void destroy();
     void reset();
 

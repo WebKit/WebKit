@@ -1,3 +1,22 @@
+2018-04-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r227340): ArrayBuffers were not being serialized when sent via MessagePorts
+        https://bugs.webkit.org/show_bug.cgi?id=184254
+        <rdar://problem/39140200>
+
+        Reviewed by Daniel Bates.
+
+        Add a new encoding method to SerializedScriptValue that includes ArrayBuffers.
+
+        Test: workers/message-port.html
+
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::encode const):
+        (WebCore::SerializedScriptValue::decode):
+        * dom/messageports/MessageWithMessagePorts.h:
+        (WebCore::MessageWithMessagePorts::encode const):
+        (WebCore::MessageWithMessagePorts::decode):
+
 2018-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Enable Objective-C weak references

@@ -48,7 +48,7 @@ template<class Encoder>
 void MessageWithMessagePorts::encode(Encoder& encoder) const
 {
     ASSERT(message);
-    encoder << message->toWireBytes() << transferredPorts;
+    encoder << *message << transferredPorts;
 }
 
 template<class Decoder>
@@ -56,14 +56,13 @@ std::optional<MessageWithMessagePorts> MessageWithMessagePorts::decode(Decoder& 
 {
     MessageWithMessagePorts result;
 
-    Vector<uint8_t> wireBytes;
-    if (!decoder.decode(wireBytes))
+    result.message = SerializedScriptValue::decode(decoder);
+    if (!result.message)
         return std::nullopt;
 
     if (!decoder.decode(result.transferredPorts))
         return std::nullopt;
 
-    result.message = SerializedScriptValue::createFromWireBytes(WTFMove(wireBytes));
     return result;
 }
 
