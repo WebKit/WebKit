@@ -1,5 +1,16 @@
 2018-04-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Skip legacy-animation-engine/media/track/opera directory on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=184420
+
+        Unreviewed test gardening.
+
+        The media/track/opera directory is already skipped on iOS, so skip this duplicated directory.
+
+        * platform/ios/TestExpectations:
+
+2018-04-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-transfer.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=182833
 

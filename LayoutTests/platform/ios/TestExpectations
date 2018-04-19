@@ -2716,6 +2716,7 @@ media/video-volume-slider-drag.html
 media/video-webkit-playsinline.html
 media/volume-bar-empty-when-muted.html
 
+webkit.org/b/103926 legacy-animation-engine/media/track/opera
 webkit.org/b/103926 media/track/opera
 
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
