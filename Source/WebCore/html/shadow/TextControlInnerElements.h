@@ -75,7 +75,7 @@ private:
 class TextControlPlaceholderElement final : public HTMLDivElement {
     WTF_MAKE_ISO_ALLOCATED(TextControlPlaceholderElement);
 public:
-    static Ref<TextControlPlaceholderElement> create(Document& document) { return adoptRef(*new TextControlPlaceholderElement(document)); }
+    static Ref<TextControlPlaceholderElement> create(Document&);
 
 private:
     TextControlPlaceholderElement(Document&);

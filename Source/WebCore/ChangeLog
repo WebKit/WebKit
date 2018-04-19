@@ -1,3 +1,21 @@
+2018-04-18  Daniel Bates  <dabates@apple.com>
+
+        Cleanup TextControlInnerElements
+        https://bugs.webkit.org/show_bug.cgi?id=184475
+
+        Reviewed by Antti Koivisto.
+
+        Clean up TextControlInnerElement::resolveCustomStyle(), move the implementation of
+        TextControlPlaceholderElement::create() from the header to the cpp file, replace
+        fancy comments to demarcate classes with MARK: so that they show up in Xcode's
+        function menu.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        (WebCore::TextControlPlaceholderElement::TextControlPlaceholderElement):
+        (WebCore::TextControlPlaceholderElement::create):
+        * html/shadow/TextControlInnerElements.h:
+
 2018-04-18  Chris Dumez  <cdumez@apple.com>
 
         Rename WindowProxyController to WindowProxy

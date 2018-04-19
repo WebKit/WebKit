@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,22 +85,18 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
 
 std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
 {
-    auto innerContainerStyle = RenderStyle::createPtr();
-    innerContainerStyle->inheritFrom(*shadowHostStyle);
-
-    innerContainerStyle->setFlexGrow(1);
-    // min-width: 0; is needed for correct shrinking.
-    innerContainerStyle->setMinWidth(Length(0, Fixed));
-    innerContainerStyle->setDisplay(BLOCK);
-    innerContainerStyle->setDirection(LTR);
-
-    // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.
-    innerContainerStyle->setUserModify(READ_ONLY);
-
-    return ElementStyle(WTFMove(innerContainerStyle));
+    auto newStyle = RenderStyle::createPtr();
+    newStyle->inheritFrom(*shadowHostStyle);
+    newStyle->setFlexGrow(1);
+    newStyle->setMinWidth(Length { 0, Fixed }); // Needed for correct shrinking.
+    newStyle->setDisplay(BLOCK);
+    newStyle->setDirection(LTR);
+    // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
+    newStyle->setUserModify(READ_ONLY);
+    return ElementStyle { WTFMove(newStyle) };
 }
 
-// ---------------------------
+// MARK: TextControlInnerTextElement
 
 inline TextControlInnerTextElement::TextControlInnerTextElement(Document& document)
     : HTMLDivElement(divTag, document)
@@ -148,13 +144,18 @@ std::optional<ElementStyle> TextControlInnerTextElement::resolveCustomStyle(cons
     return ElementStyle(std::make_unique<RenderStyle>(WTFMove(style)));
 }
 
-// ----------------------------
+// MARK: TextControlPlaceholderElement
 
-TextControlPlaceholderElement::TextControlPlaceholderElement(Document& document)
+inline TextControlPlaceholderElement::TextControlPlaceholderElement(Document& document)
     : HTMLDivElement(divTag, document)
 {
     setPseudo(AtomicString("placeholder", AtomicString::ConstructFromLiteral));
     setHasCustomStyleResolveCallbacks();
+}
+
+Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Document& document)
+{
+    return adoptRef(*new TextControlPlaceholderElement(document));
 }
 
 std::optional<ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
@@ -171,7 +172,7 @@ std::optional<ElementStyle> TextControlPlaceholderElement::resolveCustomStyle(co
     return WTFMove(style);
 }
 
-// ----------------------------
+// MARK: SearchFieldResultsButtonElement
 
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document& document)
     : HTMLDivElement(divTag, document)
@@ -213,7 +214,7 @@ bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 }
 #endif
 
-// ----------------------------
+// MARK: SearchFieldCancelButtonElement
 
 inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& document)
     : HTMLDivElement(divTag, document)
