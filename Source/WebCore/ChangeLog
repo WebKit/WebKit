@@ -1,3 +1,13 @@
+2018-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Fix build when WK_ALTERNATE_FRAMEWORKS_DIR is set to non-empty value
+        https://bugs.webkit.org/show_bug.cgi?id=184693
+        <rdar://problem/39491884>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebCore.xcconfig:
+
 2018-04-19  Eric Stobbart  <ericstobbart@gmail.com>
 
         Change MediaSource WebCore to return NewObject for SourceBuffers

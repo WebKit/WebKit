@@ -149,7 +149,7 @@ JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Release = $(JAVASCRIPTCORE_PRIVATE_HEADERS_en
 JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Debug = $(JAVASCRIPTCORE_PRIVATE_HEADERS_engineering);
 JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production[sdk=iphone*] = $(SDKROOT)/$(SYSTEM_LIBRARY_DIR)/Frameworks/JavaScriptCore.framework/PrivateHeaders;
 JAVASCRIPTCORE_PRIVATE_HEADERS_DIR_Production[sdk=macosx*] = $(SDKROOT)$(PRODUCTION_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders;
-JAVASCRIPTCORE_PRIVATE_HEADERS_engineering = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/JavaScriptCore.framework/PrivateHeaders;
+JAVASCRIPTCORE_PRIVATE_HEADERS_engineering = $(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders;
 
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *.tiff *Cursor.png npapi.h npfunctions.h npruntime.h npruntime_internal.h;
 
