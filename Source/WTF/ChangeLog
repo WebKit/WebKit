@@ -1,3 +1,15 @@
+2018-04-19  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, rolling out r230677.
+
+        Introduced Netflix problems.
+
+        Reverted changeset:
+
+        "Deactivate the WindowServer connection for the WebContent process."
+        https://bugs.webkit.org/show_bug.cgi?id=184451
+        https://trac.webkit.org/changeset/230677
+
 2018-04-19  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: respect the accessibility setting for dispatching the accessible events
