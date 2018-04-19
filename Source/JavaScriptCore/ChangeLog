@@ -1,3 +1,46 @@
+2018-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        The InternalFunction hierarchy should be in IsoSubspaces
+        https://bugs.webkit.org/show_bug.cgi?id=184721
+
+        Reviewed by Saam Barati.
+        
+        This moves InternalFunction into a IsoSubspace. It also moves all subclasses into IsoSubspaces,
+        but subclasses that are the same size as InternalFunction share its subspace. I did this
+        because the subclasses appear to just override methods, which are called dynamically via the
+        structure or class of the object. So, I don't see a type confusion risk if UAF is used to
+        allocate one kind of InternalFunction over another.
+
+        * API/JSBase.h:
+        * API/JSCallbackFunction.h:
+        * API/ObjCCallbackFunction.h:
+        (JSC::ObjCCallbackFunction::subspaceFor):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/IsoSubspacePerVM.cpp: Added.
+        (JSC::IsoSubspacePerVM::AutoremovingIsoSubspace::AutoremovingIsoSubspace):
+        (JSC::IsoSubspacePerVM::AutoremovingIsoSubspace::~AutoremovingIsoSubspace):
+        (JSC::IsoSubspacePerVM::IsoSubspacePerVM):
+        (JSC::IsoSubspacePerVM::~IsoSubspacePerVM):
+        (JSC::IsoSubspacePerVM::forVM):
+        * heap/IsoSubspacePerVM.h: Added.
+        (JSC::IsoSubspacePerVM::SubspaceParameters::SubspaceParameters):
+        * runtime/Error.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::subspaceFor):
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/JSArrayBufferConstructor.h:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/ProxyRevoke.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, Fix jsc shell

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2018 Igalia S.L.
- * Copyright (C) 2006, 2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,10 @@
 
 #include "APICallbackFunction.h"
 #include "APICast.h"
+#include "IsoSubspacePerVM.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextPrivate.h"
+#include "JSDestructibleObjectHeapCellType.h"
 #include "JSCExceptionPrivate.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
@@ -204,6 +206,12 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
 void JSCCallbackFunction::destroy(JSCell* cell)
 {
     static_cast<JSCCallbackFunction*>(cell)->JSCCallbackFunction::~JSCCallbackFunction();
+}
+
+IsoSubspace* JSCCallbackFunction::subspaceForImpl(VM& vm)
+{
+    NeverDestroyed<IsoSubspacePerVM> perVM([] (VM& vm) -> IsoSubspacePerVM::SubspaceParameters { return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType.get(), JSCCallbackFunction); });
+    return &perVM.get().forVM(vm);
 }
 
 } // namespace JSC

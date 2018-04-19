@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,8 @@
 #include "JSNPObject.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/FunctionPrototype.h>
+#include <JavaScriptCore/IsoSubspacePerVM.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/JSHTMLElement.h>
@@ -57,6 +59,12 @@ void JSNPMethod::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm, name);
     ASSERT(inherits(vm, info()));
+}
+
+IsoSubspace* JSNPMethod::subspaceForImpl(VM& vm)
+{
+    static NeverDestroyed<IsoSubspacePerVM> perVM([] (VM& vm) { return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType.get(), JSNPMethod); });
+    return &perVM.get().forVM(vm);
 }
 
 static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)

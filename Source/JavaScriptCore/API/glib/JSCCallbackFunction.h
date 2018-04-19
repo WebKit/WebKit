@@ -40,6 +40,12 @@ class JSCCallbackFunction : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return subspaceForImpl(vm);
+    }
+
     enum class Type {
         Function,
         Method,
@@ -61,6 +67,8 @@ public:
     JSObjectRef construct(JSContextRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
 private:
+    static IsoSubspace* subspaceForImpl(VM&);
+    
     JSCCallbackFunction(VM&, Structure*, Type, JSCClass*, GRefPtr<GClosure>&&, GType, Vector<GType>&&);
 
     JSObjectCallAsFunctionCallback functionCallback() { return m_functionCallback; }

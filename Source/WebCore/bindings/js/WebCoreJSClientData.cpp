@@ -35,6 +35,7 @@
 #include <JavaScriptCore/MarkingConstraint.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 #include <JavaScriptCore/VM.h>
+#include "runtime_method.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -43,6 +44,7 @@ using namespace JSC;
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)
     , m_builtinNames(&vm)
+    , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), RuntimeMethod)
     , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap, vm.destructibleObjectHeapCellType.get(), vm.fastMallocAllocator.get())
     , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, vm.segmentedVariableObjectHeapCellType.get(), vm.fastMallocAllocator.get())
 {

@@ -37,6 +37,12 @@ class JSCallbackFunction final : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.callbackFunctionSpace;
+    }
+
     static JSCallbackFunction* create(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, const String& name);
 
     DECLARE_INFO;

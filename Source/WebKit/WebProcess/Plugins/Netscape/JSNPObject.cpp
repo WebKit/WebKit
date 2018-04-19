@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 #include <JavaScriptCore/AuxiliaryBarrierInlines.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/IsoSubspacePerVM.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectPrototype.h>
@@ -525,6 +527,12 @@ EncodedJSValue JSNPObject::methodGetter(ExecState* exec, EncodedJSValue thisValu
 JSObject* JSNPObject::throwInvalidAccessError(ExecState* exec, ThrowScope& scope)
 {
     return throwException(exec, scope, createReferenceError(exec, "Trying to access object from destroyed plug-in."));
+}
+
+IsoSubspace* JSNPObject::subspaceForImpl(VM& vm)
+{
+    static NeverDestroyed<IsoSubspacePerVM> perVM([] (VM& vm) { return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType.get(), JSNPObject); });
+    return &perVM.get().forVM(vm);
 }
 
 } // namespace WebKit

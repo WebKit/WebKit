@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "IsoSubspacePerVM.h"
 
-#include "ArrayBuffer.h"
-#include "InternalFunction.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class JSArrayBufferPrototype;
-class GetterSetter;
-
-class JSArrayBufferConstructor final : public InternalFunction {
+class IsoSubspacePerVM::AutoremovingIsoSubspace : public IsoSubspace {
 public:
-    typedef InternalFunction Base;
-
-    template<typename CellType>
-    static IsoSubspace* subspaceFor(VM& vm)
+    AutoremovingIsoSubspace(IsoSubspacePerVM& perVM, CString name, Heap& heap, HeapCellType* heapCellType, size_t size)
+        : IsoSubspace(name, heap, heapCellType, size)
+        , m_perVM(perVM)
     {
-        return &vm.arrayBufferConstructorSpace;
+    }
+    
+    ~AutoremovingIsoSubspace()
+    {
+        auto locker = holdLock(m_perVM.m_lock);
+        m_perVM.m_subspacePerVM.remove(space().heap()->vm());
     }
 
-protected:
-    JSArrayBufferConstructor(VM&, Structure*, ArrayBufferSharingMode);
-    void finishCreation(VM&, JSArrayBufferPrototype*, GetterSetter* speciesSymbol);
-
-public:
-    static JSArrayBufferConstructor* create(VM&, Structure*, JSArrayBufferPrototype*, GetterSetter* speciesSymbol, ArrayBufferSharingMode);
-    
-    DECLARE_INFO;
-    
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-    
-    ArrayBufferSharingMode sharingMode() const { return m_sharingMode; }
-
 private:
-    ArrayBufferSharingMode m_sharingMode;
+    IsoSubspacePerVM& m_perVM;
 };
 
+IsoSubspacePerVM::IsoSubspacePerVM(Function<SubspaceParameters(VM&)> subspaceParameters)
+    : m_subspaceParameters(WTFMove(subspaceParameters))
+{
+}
+
+IsoSubspacePerVM::~IsoSubspacePerVM()
+{
+    UNREACHABLE_FOR_PLATFORM();
+}
+
+IsoSubspace& IsoSubspacePerVM::forVM(VM& vm)
+{
+    auto locker = holdLock(m_lock);
+    auto result = m_subspacePerVM.add(&vm, nullptr);
+    if (result.isNewEntry) {
+        SubspaceParameters params = m_subspaceParameters(vm);
+        result.iterator->value = new AutoremovingIsoSubspace(*this, params.name, vm.heap, params.heapCellType, params.size);
+    }
+    return *result.iterator->value;
+}
+
 } // namespace JSC
+

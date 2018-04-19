@@ -38,6 +38,13 @@ public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance | TypeOfShouldCallGetCallData;
 
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        static_assert(sizeof(CellType) == sizeof(InternalFunction), "InternalFunction subclasses that add fields need to override subspaceFor<>()");
+        return &vm.internalFunctionSpace;
+    }
+
     DECLARE_EXPORT_INFO;
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);

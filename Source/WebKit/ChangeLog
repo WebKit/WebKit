@@ -1,3 +1,23 @@
+2018-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        The InternalFunction hierarchy should be in IsoSubspaces
+        https://bugs.webkit.org/show_bug.cgi?id=184721
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::JSNPMethod::subspaceForImpl):
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        (WebKit::JSNPMethod::create): Deleted.
+        (WebKit::JSNPMethod::npIdentifier const): Deleted.
+        (WebKit::JSNPMethod::createStructure): Deleted.
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::subspaceForImpl):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        (WebKit::JSNPObject::create): Deleted.
+        (WebKit::JSNPObject::npObject const): Deleted.
+        (WebKit::JSNPObject::createStructure): Deleted.
+
 2018-04-19  Brady Eidson  <beidson@apple.com>
 
         Add globally-unique HistoryItem identifiers (and have WebKit2 adopt them).

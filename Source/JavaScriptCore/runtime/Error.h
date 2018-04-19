@@ -115,6 +115,12 @@ private:
 
 public:
     typedef InternalFunction Base;
+    
+    template<typename CellType>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.strictModeTypeErrorFunctionSpace;
+    }
 
     static StrictModeTypeErrorFunction* create(VM& vm, Structure* structure, const String& message)
     {

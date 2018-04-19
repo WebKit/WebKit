@@ -502,6 +502,7 @@ heap/IncrementalSweeper.cpp
 heap/IsoAlignedMemoryAllocator.cpp
 heap/IsoCellSet.cpp
 heap/IsoSubspace.cpp
+heap/IsoSubspacePerVM.cpp
 heap/JITStubRoutineSet.cpp
 heap/LargeAllocation.cpp
 heap/LocalAllocator.cpp

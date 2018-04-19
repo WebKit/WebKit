@@ -531,6 +531,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/IncrementalSweeper.h
     heap/IsoCellSet.h
     heap/IsoSubspace.h
+    heap/IsoSubspacePerVM.h
     heap/LargeAllocation.h
     heap/ListableHandler.h
     heap/LocalAllocator.h
