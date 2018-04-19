@@ -383,9 +383,9 @@ bool ScriptController::canAccessFromCurrentOrigin(Frame* frame)
 
 void ScriptController::updateDocument()
 {
-    for (auto& windowProxy : windowProxy().jsWindowProxiesAsVector()) {
-        JSLockHolder lock(windowProxy->world().vm());
-        jsCast<JSDOMWindow*>(windowProxy->window())->updateDocument();
+    for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
+        JSLockHolder lock(jsWindowProxy->world().vm());
+        jsCast<JSDOMWindow*>(jsWindowProxy->window())->updateDocument();
     }
 }
 
@@ -427,9 +427,9 @@ Ref<Bindings::RootObject> ScriptController::createRootObject(void* nativeHandle)
 
 void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*>>& result)
 {
-    for (auto& windowProxy : windowProxy().jsWindowProxiesAsVector()) {
-        auto* exec = windowProxy->window()->globalExec();
-        auto* origin = &downcast<DOMWindow>(windowProxy->wrapped()).document()->securityOrigin();
+    for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
+        auto* exec = jsWindowProxy->window()->globalExec();
+        auto* origin = &downcast<DOMWindow>(jsWindowProxy->wrapped()).document()->securityOrigin();
         result.append(std::make_pair(exec, origin));
     }
 }
