@@ -96,7 +96,6 @@ struct WebPageCreationParameters {
 
     Vector<BackForwardListItemState> itemStates;
     PAL::SessionID sessionID;
-    uint64_t highestUsedBackForwardItemID;
 
     UserContentControllerIdentifier userContentControllerID;
     uint64_t visitedLinkTableID;

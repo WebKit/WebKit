@@ -28,9 +28,9 @@
 
 #include <WebCore/URL.h>
 
-namespace WebKit {
+using namespace WebCore;
 
-static uint64_t highestItemID = 0;
+namespace WebKit {
 
 Ref<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState&& backForwardListItemState, uint64_t pageID)
 {
@@ -41,12 +41,25 @@ WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState&& backFo
     : m_itemState(WTFMove(backForwardListItemState))
     , m_pageID(pageID)
 {
-    if (m_itemState.identifier > highestItemID)
-        highestItemID = m_itemState.identifier;
+    auto result = allItems().add(m_itemState.identifier, this);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
+    ASSERT(allItems().get(m_itemState.identifier) == this);
+    allItems().remove(m_itemState.identifier);
+}
+
+HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>& WebBackForwardListItem::allItems()
+{
+    static NeverDestroyed<HashMap<BackForwardItemIdentifier, WebBackForwardListItem*>> items;
+    return items;
+}
+
+WebBackForwardListItem* WebBackForwardListItem::itemForID(const BackForwardItemIdentifier& identifier)
+{
+    return allItems().get(identifier);
 }
 
 static const FrameState* childItemWithDocumentSequenceNumber(const FrameState& frameState, int64_t number)
@@ -96,11 +109,6 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
         return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
 
     return documentTreesAreEqual(mainFrameState, otherMainFrameState);
-}
-
-uint64_t WebBackForwardListItem::highestUsedItemID()
-{
-    return highestItemID;
 }
 
 void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy& page)

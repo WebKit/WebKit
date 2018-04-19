@@ -34,10 +34,11 @@ class HistoryItem;
 
 namespace WebKit {
 
+struct BackForwardListItemState;
 struct PageState;
 
-PageState toPageState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(const PageState&);
+BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem&);
+Ref<WebCore::HistoryItem> toHistoryItem(const BackForwardListItemState&);
 
 } // namespace WebKit
 

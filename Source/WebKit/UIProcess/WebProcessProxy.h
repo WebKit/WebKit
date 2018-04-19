@@ -92,7 +92,6 @@ typedef BackgroundWebProcessCounter::Token BackgroundWebProcessToken;
 
 class WebProcessProxy : public ChildProcessProxy, public ResponsivenessTimer::Client, private ProcessThrottlerClient {
 public:
-    typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
@@ -124,7 +123,6 @@ public:
     void didDestroyVisitedLinkStore(VisitedLinkStore&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
-    WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
 
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
@@ -141,9 +139,6 @@ public:
     void testIncomingSyncIPCMessageWhileWaitingForSyncReply(bool& handled);
 
     void updateTextCheckerState();
-
-    void registerNewWebBackForwardListItem(WebBackForwardListItem&);
-    void removeBackForwardItem(uint64_t);
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
     void assumeReadAccessToBaseURL(const String&);
@@ -233,7 +228,7 @@ private:
     void maybeShutDown();
 
     // IPC message handlers.
-    void addOrUpdateBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState&);
+    void updateBackForwardItem(const BackForwardListItemState&);
     void didDestroyFrame(uint64_t);
     void didDestroyUserGestureToken(uint64_t);
 
@@ -310,7 +305,6 @@ private:
     WebPageProxyMap m_pageMap;
     HashMap<uint64_t, SuspendedPageProxy*> m_suspendedPageMap;
     WebFrameProxyMap m_frameMap;
-    WebBackForwardListItemMap m_backForwardListItemMap;
     UserInitiatedActionMap m_userInitiatedActionMap;
 
     HashSet<VisitedLinkStore*> m_visitedLinkStores;

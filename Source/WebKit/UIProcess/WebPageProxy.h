@@ -174,6 +174,7 @@ enum class NotificationDirection;
 enum class ShouldSample;
 
 struct ApplicationManifest;
+struct BackForwardItemIdentifier;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
 struct FileChooserSettings;
@@ -446,7 +447,7 @@ public:
     RefPtr<API::Navigation> goToBackForwardItem(WebBackForwardListItem&);
     void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removed);
-    void willGoToBackForwardListItem(uint64_t itemID, bool inPageCache, const UserData&);
+    void willGoToBackForwardListItem(const WebCore::BackForwardItemIdentifier&, bool inPageCache, const UserData&);
 
     bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem&);
 
@@ -880,7 +881,7 @@ public:
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy&, uint64_t listenerID, API::Navigation* navigationID, std::optional<WebsitePoliciesData>&&);
 
-    void backForwardRemovedItem(uint64_t itemID);
+    void backForwardRemovedItem(const WebCore::BackForwardItemIdentifier&);
 
 #if ENABLE(DRAG_SUPPORT)    
     // Drag and drop support.
@@ -1473,9 +1474,9 @@ private:
     void setNeedsPlainTextQuirk(bool);
 
     // Back/Forward list management
-    void backForwardAddItem(uint64_t itemID);
-    void backForwardGoToItem(uint64_t itemID, SandboxExtension::Handle&);
-    void backForwardItemAtIndex(int32_t index, uint64_t& itemID);
+    void backForwardAddItem(BackForwardListItemState&&);
+    void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, SandboxExtension::Handle&);
+    void backForwardItemAtIndex(int32_t index, std::optional<WebCore::BackForwardItemIdentifier>&);
     void backForwardBackListCount(int32_t& count);
     void backForwardForwardListCount(int32_t& count);
     void backForwardClear();

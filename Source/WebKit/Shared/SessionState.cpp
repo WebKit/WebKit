@@ -27,6 +27,7 @@
 #include "SessionState.h"
 
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/BackForwardItemIdentifier.h>
 
 using namespace WebCore;
 
@@ -232,8 +233,10 @@ std::optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::De
 {
     BackForwardListItemState result;
 
-    if (!decoder.decode(result.identifier))
+    auto identifier = BackForwardItemIdentifier::decode(decoder);
+    if (!identifier)
         return std::nullopt;
+    result.identifier = *identifier;
 
     if (!decoder.decode(result.pageState))
         return std::nullopt;

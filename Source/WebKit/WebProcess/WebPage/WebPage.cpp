@@ -523,8 +523,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     setTopContentInset(parameters.topContentInset);
 
     m_userAgent = parameters.userAgent;
-
-    WebBackForwardListProxy::setHighestItemIDFromUIProcess(parameters.highestUsedBackForwardItemID);
     
     if (!parameters.itemStates.isEmpty())
         restoreSessionInternal(parameters.itemStates, WasRestoredByAPIRequest::No);
@@ -1390,7 +1388,7 @@ void WebPage::reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExten
     }
 }
 
-void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID, FrameLoadType backForwardType, NavigationPolicyCheck navigationPolicyCheck)
+void WebPage::goToBackForwardItem(uint64_t navigationID, const BackForwardItemIdentifier& backForwardItemID, FrameLoadType backForwardType, NavigationPolicyCheck navigationPolicyCheck)
 {
     SendStopResponsivenessTimer stopper;
 
@@ -2495,7 +2493,7 @@ void WebPage::executeEditCommand(const String& commandName, const String& argume
 void WebPage::restoreSessionInternal(const Vector<BackForwardListItemState>& itemStates, WasRestoredByAPIRequest restoredByAPIRequest)
 {
     for (const auto& itemState : itemStates) {
-        auto historyItem = toHistoryItem(itemState.pageState);
+        auto historyItem = toHistoryItem(itemState);
         historyItem->setWasRestoredFromSession(restoredByAPIRequest == WasRestoredByAPIRequest::Yes);
         static_cast<WebBackForwardListProxy*>(corePage()->backForward().client())->addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_pageID);
     }
@@ -4089,7 +4087,7 @@ void WebPage::setCustomTextEncodingName(const String& encoding)
     m_page->mainFrame().loader().reloadWithOverrideEncoding(encoding);
 }
 
-void WebPage::didRemoveBackForwardItem(uint64_t itemID)
+void WebPage::didRemoveBackForwardItem(const BackForwardItemIdentifier& itemID)
 {
     WebBackForwardListProxy::removeItem(itemID);
 }

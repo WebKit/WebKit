@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-static long long generateSequenceNumber()
+int64_t HistoryItem::generateSequenceNumber()
 {
     // Initialize to the current time to reduce the likelihood of generating
     // identifiers that overlap with those from past/future browser sessions.
@@ -55,31 +55,27 @@ static void defaultNotifyHistoryItemChanged(HistoryItem*)
 WEBCORE_EXPORT void (*notifyHistoryItemChanged)(HistoryItem*) = defaultNotifyHistoryItemChanged;
 
 HistoryItem::HistoryItem()
-    : m_itemSequenceNumber(generateSequenceNumber())
-    , m_documentSequenceNumber(generateSequenceNumber())
-    , m_pruningReason(PruningReason::None)
+    : HistoryItem({ }, { })
 {
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title)
-    : m_urlString(urlString)
-    , m_originalURLString(urlString)
-    , m_title(title)
-    , m_itemSequenceNumber(generateSequenceNumber())
-    , m_documentSequenceNumber(generateSequenceNumber())
-    , m_pruningReason(PruningReason::None)
+    : HistoryItem(urlString, title, { })
 {
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle)
+    : HistoryItem(urlString, title, alternateTitle, { Process::identifier(), generateObjectIdentifier<BackForwardItemIdentifier::ItemIdentifierType>() })
+{
+}
+
+HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle, BackForwardItemIdentifier BackForwardItemIdentifier)
     : m_urlString(urlString)
     , m_originalURLString(urlString)
     , m_title(title)
     , m_displayTitle(alternateTitle)
-    , m_pageScaleFactor(0)
-    , m_itemSequenceNumber(generateSequenceNumber())
-    , m_documentSequenceNumber(generateSequenceNumber())
     , m_pruningReason(PruningReason::None)
+    , m_identifier(BackForwardItemIdentifier)
 {
 }
 

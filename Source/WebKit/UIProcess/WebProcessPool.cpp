@@ -80,6 +80,7 @@
 #include <WebCore/LogInitialization.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/Process.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/URLParser.h>
 #include <pal/SessionID.h>
@@ -248,6 +249,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     std::call_once(onceFlag, [] {
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
+        Process::setIdentifier(generateObjectIdentifier<WebCore::ProcessIdentifierType>());
     });
 
     if (m_configuration->shouldHaveLegacyDataStore())

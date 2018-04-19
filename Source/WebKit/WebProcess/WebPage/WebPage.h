@@ -154,6 +154,7 @@ enum SyntheticClickType : int8_t;
 enum class NavigationPolicyCheck;
 enum class TextIndicatorPresentationTransition : uint8_t;
 
+struct BackForwardItemIdentifier;
 struct CompositionUnderline;
 struct DictationAlternative;
 struct GlobalFrameIdentifier;
@@ -1156,7 +1157,7 @@ private:
     void loadAlternateHTMLString(const LoadParameters&);
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void reload(uint64_t navigationID, uint32_t reloadOptions, SandboxExtension::Handle&&);
-    void goToBackForwardItem(uint64_t navigationID, uint64_t, WebCore::FrameLoadType, WebCore::NavigationPolicyCheck);
+    void goToBackForwardItem(uint64_t navigationID, const WebCore::BackForwardItemIdentifier&, WebCore::FrameLoadType, WebCore::NavigationPolicyCheck);
     void tryRestoreScrollPosition();
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CallbackID);
     void updateIsInWindow(bool isInitialState = false);
@@ -1189,7 +1190,7 @@ private:
     enum class WasRestoredByAPIRequest { No, Yes };
     void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest);
     void restoreSession(const Vector<BackForwardListItemState>&);
-    void didRemoveBackForwardItem(uint64_t);
+    void didRemoveBackForwardItem(const WebCore::BackForwardItemIdentifier&);
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setAllowsRemoteInspection(bool);

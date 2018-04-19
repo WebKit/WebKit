@@ -219,13 +219,13 @@ messages -> WebPageProxy {
 #endif
 
     # BackForward messages
-    BackForwardAddItem(uint64_t itemID)
-    BackForwardGoToItem(uint64_t itemID) -> (WebKit::SandboxExtension::Handle sandboxExtensionHandle)
-    BackForwardItemAtIndex(int32_t itemIndex) -> (uint64_t itemID)
+    BackForwardAddItem(struct WebKit::BackForwardListItemState itemState)
+    BackForwardGoToItem(struct WebCore::BackForwardItemIdentifier itemID) -> (WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    BackForwardItemAtIndex(int32_t itemIndex) -> (std::optional<WebCore::BackForwardItemIdentifier> itemID)
     BackForwardBackListCount() -> (int32_t count)
     BackForwardForwardListCount() -> (int32_t count)
     BackForwardClear()
-    WillGoToBackForwardListItem(uint64_t itemID, bool inPageCache, WebKit::UserData userData)
+    WillGoToBackForwardListItem(struct WebCore::BackForwardItemIdentifier itemID, bool inPageCache, WebKit::UserData userData)
 
     # Undo/Redo messages
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)

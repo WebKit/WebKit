@@ -1466,6 +1466,7 @@
 		519DBC721DC10F5200329BF5 /* IDBGetAllResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 519DBC711DC10D3300329BF5 /* IDBGetAllResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A052331058774F00CC9E95 /* CredentialStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A052311058774F00CC9E95 /* CredentialStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A052551058874000CC9E95 /* ProtectionSpaceHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51A1B87D2087C4C000979A75 /* BackForwardItemIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A1B87B2087C4B800979A75 /* BackForwardItemIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A4BB0A1954D61600FA5C2E /* Gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4BB071954D61600FA5C2E /* Gamepad.cpp */; };
 		51A4BB101954D62700FA5C2E /* NavigatorGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4BB0D1954D62700FA5C2E /* NavigatorGamepad.cpp */; };
 		51A748E32005D0E80075BA68 /* MessageWithMessagePorts.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A748E02005D0E00075BA68 /* MessageWithMessagePorts.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7954,6 +7955,7 @@
 		51A052311058774F00CC9E95 /* CredentialStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CredentialStorage.h; sourceTree = "<group>"; };
 		51A052321058774F00CC9E95 /* CredentialStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialStorage.cpp; sourceTree = "<group>"; };
 		51A052551058874000CC9E95 /* ProtectionSpaceHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpaceHash.h; sourceTree = "<group>"; };
+		51A1B87B2087C4B800979A75 /* BackForwardItemIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardItemIdentifier.h; sourceTree = "<group>"; };
 		51A4BB071954D61600FA5C2E /* Gamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gamepad.cpp; sourceTree = "<group>"; };
 		51A4BB081954D61600FA5C2E /* Gamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gamepad.h; sourceTree = "<group>"; };
 		51A4BB091954D61600FA5C2E /* Gamepad.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Gamepad.idl; sourceTree = "<group>"; };
@@ -17586,6 +17588,7 @@
 				51741D0B0B07259A00ED442C /* BackForwardClient.h */,
 				BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */,
 				BCA8C81C11E3D36900812FB7 /* BackForwardController.h */,
+				51A1B87B2087C4B800979A75 /* BackForwardItemIdentifier.h */,
 				51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */,
 				51C0AA380F2AA10A001648C2 /* CachedFrame.h */,
 				51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */,
@@ -26922,6 +26925,7 @@
 				91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */,
 				51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */,
 				BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */,
+				51A1B87D2087C4C000979A75 /* BackForwardItemIdentifier.h in Headers */,
 				BC124EE80C2641CD009E2349 /* BarProp.h in Headers */,
 				460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */,
 				379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */,

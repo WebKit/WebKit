@@ -427,14 +427,6 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID)
     m_processPool->pageEndUsingWebsiteDataStore(webPage);
 
     updateBackgroundResponsivenessTimer();
-    
-    Vector<uint64_t> itemIDsToRemove;
-    for (auto& idAndItem : m_backForwardListItemMap) {
-        if (idAndItem.value->pageID() == pageID)
-            itemIDsToRemove.append(idAndItem.key);
-    }
-    for (auto itemID : itemIDsToRemove)
-        m_backForwardListItemMap.remove(itemID);
 
     maybeShutDown();
 }
@@ -461,25 +453,6 @@ void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentCont
 {
     ASSERT(m_webUserContentControllerProxies.contains(&proxy));
     m_webUserContentControllerProxies.remove(&proxy);
-}
-
-WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const
-{
-    return m_backForwardListItemMap.get(itemID);
-}
-
-void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem& item)
-{
-    // This item was just created by the UIProcess and is being added to the map for the first time
-    // so we should not already have an item for this ID.
-    ASSERT(!m_backForwardListItemMap.contains(item.itemID()));
-
-    m_backForwardListItemMap.set(item.itemID(), &item);
-}
-
-void WebProcessProxy::removeBackForwardItem(uint64_t itemID)
-{
-    m_backForwardListItemMap.remove(itemID);
 }
 
 void WebProcessProxy::assumeReadAccessToBaseURL(const String& urlString)
@@ -547,11 +520,11 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url)
     // Items in back/forward list have been already checked.
     // One case where we don't have sandbox extensions for file URLs in b/f list is if the list has been reinstated after a crash or a browser restart.
     String path = url.fileSystemPath();
-    for (WebBackForwardListItemMap::iterator iter = m_backForwardListItemMap.begin(), end = m_backForwardListItemMap.end(); iter != end; ++iter) {
-        URL itemURL(URL(), iter->value->url());
+    for (auto& item : WebBackForwardListItem::allItems().values()) {
+        URL itemURL(URL(), item->url());
         if (itemURL.isLocalFile() && itemURL.fileSystemPath() == path)
             return true;
-        URL itemOriginalURL(URL(), iter->value->originalURL());
+        URL itemOriginalURL(URL(), item->originalURL());
         if (itemOriginalURL.isLocalFile() && itemOriginalURL.fileSystemPath() == path)
             return true;
     }
@@ -568,22 +541,10 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 }
 #endif
 
-void WebProcessProxy::addOrUpdateBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState& pageState)
+void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& itemState)
 {
-    MESSAGE_CHECK_URL(pageState.mainFrameState.originalURLString);
-    MESSAGE_CHECK_URL(pageState.mainFrameState.urlString);
-
-    auto& backForwardListItem = m_backForwardListItemMap.add(itemID, nullptr).iterator->value;
-    if (!backForwardListItem) {
-        BackForwardListItemState backForwardListItemState;
-        backForwardListItemState.identifier = itemID;
-        backForwardListItemState.pageState = pageState;
-        backForwardListItem = WebBackForwardListItem::create(WTFMove(backForwardListItemState), pageID);
-        return;
-    }
-
-    // Update existing item.
-    backForwardListItem->setPageState(pageState);
+    if (auto* item = WebBackForwardListItem::itemForID(itemState.identifier))
+        item->setPageState(itemState.pageState);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

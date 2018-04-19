@@ -1,3 +1,110 @@
+2018-04-19  Brady Eidson  <beidson@apple.com>
+
+        Add globally-unique HistoryItem identifiers (and have WebKit2 adopt them).
+        <rdar://problem/39533949> and https://bugs.webkit.org/show_bug.cgi?id=184750
+
+        Reviewed by Ryosuke Niwa.
+
+        With process swapping, the assumption that "back/forward items belong to a process" is invalid.
+
+        All HistoryItem/WebBackForwardListItems now need to be uniquely identified across all processes,
+        no matter which process they originated from, so there will never be a collision in the UIProcess.
+
+        This allows us to:
+        - Have the UIProcess to keep a single process-wide map of all WebBackForwardListItems
+        - Get rid of the per-WebProcess WebBackForwardListItem map
+        - Simplify a lot of WebBackForwardList(Proxy) code that no longer needs to keep that per-process
+          map in sync
+        - Get rid of a lot of other ancillary code
+
+        * Shared/SessionState.cpp:
+        (WebKit::BackForwardListItemState::decode):
+        * Shared/SessionState.h:
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::~WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::itemForID):
+        (WebKit::WebBackForwardListItem::highestUsedItemID): Deleted.
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::itemID const):
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::itemForID):
+        (WebKit::WebBackForwardList::pageClosed):
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::restoreFromState):
+        (WebKit::generateWebBackForwardItemID): Deleted.
+        * UIProcess/WebBackForwardList.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeCreateSuspendedPage):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        (WebKit::WebPageProxy::backForwardAddItem):
+        (WebKit::WebPageProxy::backForwardGoToItem):
+        (WebKit::WebPageProxy::backForwardItemAtIndex):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::backForwardRemovedItem):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+ 
+        * UIProcess/WebProcessPool.cpp: Explicitly set the UIProcess Process::Identifier so it starts
+          at "1" and then the first child process starts at "2", etc etc.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::checkURLReceivedFromWebProcess):
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+        (WebKit::WebProcessProxy::webBackForwardItem const): Deleted.
+        (WebKit::WebProcessProxy::registerNewWebBackForwardListItem): Deleted.
+        (WebKit::WebProcessProxy::removeBackForwardItem): Deleted.
+        (WebKit::WebProcessProxy::addOrUpdateBackForwardItem): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toBackForwardListItemState):
+        (WebKit::applyFrameState):
+        (WebKit::toHistoryItem):
+        (WebKit::toPageState): Deleted.
+        * WebProcess/WebCoreSupport/SessionStateConversion.h:
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem const):
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+        (WebKit::WK2NotifyHistoryItemChanged):
+        (WebKit::WebBackForwardListProxy::itemForID):
+        (WebKit::WebBackForwardListProxy::removeItem):
+        (WebKit::WebBackForwardListProxy::addItem): Previously this was a two-step process of adding an item
+          to the process and then associating it with the page. Now it's just directly adding it to the page,
+          so we don't need to call updateBackForwardItem first.
+        (WebKit::WebBackForwardListProxy::goToItem):
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::close):
+        (WebKit::historyItemToIDMap): Deleted.
+        (WebKit::generateHistoryItemID): Deleted.
+        (WebKit::WebBackForwardListProxy::setHighestItemIDFromUIProcess): Deleted.
+        (WebKit::updateBackForwardItem): Deleted.
+        (WebKit::WebBackForwardListProxy::idForItem): Deleted.
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        (WebKit::WebPage::goToBackForwardItem):
+        (WebKit::WebPage::restoreSessionInternal):
+        (WebKit::WebPage::didRemoveBackForwardItem):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-04-19  Youenn Fablet  <youenn@apple.com>
 
         NetworkProcess should use CSP/content blockers for sync XHR

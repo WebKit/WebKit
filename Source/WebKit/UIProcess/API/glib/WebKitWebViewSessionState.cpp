@@ -21,6 +21,7 @@
 #include "WebKitWebViewSessionState.h"
 
 #include "WebKitWebViewSessionStatePrivate.h"
+#include <WebCore/BackForwardItemIdentifier.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -344,7 +345,7 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
     unsigned shouldOpenExternalURLsPolicy;
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V1, &identifier, &title, &frameStateVariant, &shouldOpenExternalURLsPolicy)) {
         BackForwardListItemState state;
-        state.identifier = identifier;
+        state.identifier = { WebCore::Process::identifier(), generateObjectIdentifier<WebCore::BackForwardItemIdentifier::ItemIdentifierType>() };
         state.pageState.title = String::fromUTF8(title);
         decodeFrameState(frameStateVariant, state.pageState.mainFrameState);
         state.pageState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);

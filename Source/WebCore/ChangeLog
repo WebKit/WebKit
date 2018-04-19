@@ -1,3 +1,39 @@
+2018-04-19  Brady Eidson  <beidson@apple.com>
+
+        Add globally-unique HistoryItem identifiers (and have WebKit2 adopt them).
+        <rdar://problem/39533949> and https://bugs.webkit.org/show_bug.cgi?id=184750
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests (Refactor, no behavior change).
+
+        In WebCore, we:
+        - Add a process-unique "BackForwardItemIdentifier"
+        - Make all HistoryItems have such an identifier as a member
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * history/BackForwardItemIdentifier.h: Added.
+        (WebCore::BackForwardItemIdentifier::logString const):
+        (WebCore::operator==):
+        (WebCore::BackForwardItemIdentifier::encode const):
+        (WebCore::BackForwardItemIdentifier::decode):
+        (WebCore::BackForwardItemIdentifier::hash const):
+        (WTF::BackForwardItemIdentifierHash::hash):
+        (WTF::BackForwardItemIdentifierHash::equal):
+        (WTF::HashTraits<WebCore::BackForwardItemIdentifier>::emptyValue):
+        (WTF::HashTraits<WebCore::BackForwardItemIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::BackForwardItemIdentifier>::isDeletedValue):
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::generateSequenceNumber):
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::generateSequenceNumber): Deleted.
+
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::create):
+        (WebCore::HistoryItem::identifier const):
+
 2018-04-19  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: respect the accessibility setting for dispatching the accessible events

@@ -47,84 +47,32 @@ namespace WebKit {
 // FIXME <rdar://problem/8819268>: This leaks all HistoryItems that go into these maps.
 // We need to clear up the life time of these objects.
 
-typedef HashMap<uint64_t, RefPtr<HistoryItem>> IDToHistoryItemMap; // "ID" here is the item ID.
-    
-struct ItemAndPageID {
-    uint64_t itemID;
-    uint64_t pageID;
-};
-typedef HashMap<RefPtr<HistoryItem>, ItemAndPageID> HistoryItemToIDMap;
-
+typedef HashMap<BackForwardItemIdentifier, RefPtr<HistoryItem>> IDToHistoryItemMap; // "ID" here is the item ID.
 static IDToHistoryItemMap& idToHistoryItemMap()
 {
     static NeverDestroyed<IDToHistoryItemMap> map;
     return map;
 }
 
-static HistoryItemToIDMap& historyItemToIDMap()
+void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifier& itemID, Ref<HistoryItem>&& item, uint64_t pageID)
 {
-    static NeverDestroyed<HistoryItemToIDMap> map;
-    return map;
-}
-
-static uint64_t uniqueHistoryItemID = 1;
-
-static uint64_t generateHistoryItemID()
-{
-    // These IDs exist in the WebProcess for items created by the WebProcess.
-    // The IDs generated here need to never collide with the IDs created in WebBackForwardList in the UIProcess.
-    // We accomplish this by starting from 3, and only ever using odd ids.
-    uniqueHistoryItemID += 2;
-    return uniqueHistoryItemID;
-}
-
-void WebBackForwardListProxy::setHighestItemIDFromUIProcess(uint64_t itemID)
-{
-    if (itemID <= uniqueHistoryItemID)
-        return;
-    
-     if (itemID % 2)
-         uniqueHistoryItemID = itemID;
-     else
-         uniqueHistoryItemID = itemID + 1;
-}
-
-static void updateBackForwardItem(uint64_t itemID, uint64_t pageID, HistoryItem* item)
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::AddOrUpdateBackForwardItem(itemID, pageID, toPageState(*item)), 0);
-}
-
-void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, Ref<HistoryItem>&& item, uint64_t pageID)
-{
-    // This item/itemID pair should not already exist in our maps.
-    ASSERT(!historyItemToIDMap().contains(item.ptr()));
+    // This item/itemID pair should not already exist in our map.
     ASSERT(!idToHistoryItemMap().contains(itemID));
 
-    historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { itemID, pageID });
     idToHistoryItemMap().set(itemID, item.ptr());
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)
 {
-    ItemAndPageID ids = historyItemToIDMap().get(item);
-    if (!ids.itemID)
-        return;
-
-    updateBackForwardItem(ids.itemID, ids.pageID, item);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::UpdateBackForwardItem(toBackForwardListItemState(*item)), 0);
 }
 
-HistoryItem* WebBackForwardListProxy::itemForID(uint64_t itemID)
+HistoryItem* WebBackForwardListProxy::itemForID(const BackForwardItemIdentifier& itemID)
 {
     return idToHistoryItemMap().get(itemID);
 }
 
-uint64_t WebBackForwardListProxy::idForItem(HistoryItem* item)
-{
-    ASSERT(item);
-    return historyItemToIDMap().get(item).itemID;
-}
-
-void WebBackForwardListProxy::removeItem(uint64_t itemID)
+void WebBackForwardListProxy::removeItem(const BackForwardItemIdentifier& itemID)
 {
     RefPtr<HistoryItem> item = idToHistoryItemMap().take(itemID);
     if (!item)
@@ -132,7 +80,6 @@ void WebBackForwardListProxy::removeItem(uint64_t itemID)
         
     PageCache::singleton().remove(*item);
     WebCore::Page::clearPreviousItemFromAllPages(item.get());
-    historyItemToIDMap().remove(item);
 }
 
 WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
@@ -143,20 +90,13 @@ WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
 
 void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
 {
-    ASSERT(!historyItemToIDMap().contains(item.ptr()));
-
     if (!m_page)
         return;
 
-    uint64_t itemID = generateHistoryItemID();
+    auto result = idToHistoryItemMap().add(item->identifier(), item.ptr());
+    ASSERT_UNUSED(result, result.isNewEntry);
 
-    ASSERT(!idToHistoryItemMap().contains(itemID));
-
-    historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { itemID, m_page->pageID() });
-    idToHistoryItemMap().set(itemID, item.ptr());
-
-    updateBackForwardItem(itemID, m_page->pageID(), item.ptr());
-    m_page->send(Messages::WebPageProxy::BackForwardAddItem(itemID));
+    m_page->send(Messages::WebPageProxy::BackForwardAddItem(toBackForwardListItemState(item.get())));
 }
 
 void WebBackForwardListProxy::goToItem(HistoryItem* item)
@@ -165,7 +105,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem* item)
         return;
 
     SandboxExtension::Handle sandboxExtensionHandle;
-    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(historyItemToIDMap().get(item).itemID), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
+    m_page->sendSync(Messages::WebPageProxy::BackForwardGoToItem(item->identifier()), Messages::WebPageProxy::BackForwardGoToItem::Reply(sandboxExtensionHandle));
     m_page->sandboxExtensionTracker().beginLoad(m_page->mainWebFrame(), WTFMove(sandboxExtensionHandle));
 }
 
@@ -174,14 +114,14 @@ HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
     if (!m_page)
         return nullptr;
 
-    uint64_t itemID = 0;
+    std::optional<BackForwardItemIdentifier> itemID;
     if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
         return nullptr;
 
     if (!itemID)
         return nullptr;
 
-    return idToHistoryItemMap().get(itemID);
+    return idToHistoryItemMap().get(*itemID);
 }
 
 int WebBackForwardListProxy::backListCount()
@@ -210,6 +150,7 @@ int WebBackForwardListProxy::forwardListCount()
 
 void WebBackForwardListProxy::close()
 {
+    ASSERT(m_page);
     m_page = nullptr;
 }
 

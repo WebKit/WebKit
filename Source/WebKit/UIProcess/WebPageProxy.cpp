@@ -670,7 +670,7 @@ SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& proc
 
     m_suspendedPage = SuspendedPageProxy::create(*this, process, *currentItem);
 
-    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %" PRIu64, pageID(), m_suspendedPage->loggingString(), process.processIdentifier(), currentItem->itemID());
+    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), m_suspendedPage->loggingString(), process.processIdentifier(), currentItem->itemID().logString());
 
     return m_suspendedPage.get();
 }
@@ -772,10 +772,6 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
 void WebPageProxy::initializeWebPage()
 {
     ASSERT(isValid());
-
-    const BackForwardListItemVector& items = m_backForwardList->entries();
-    for (size_t i = 0; i < items.size(); ++i)
-        m_process->registerNewWebBackForwardListItem(items[i].get());
 
     m_drawingArea = m_pageClient.createDrawingAreaProxy();
     ASSERT(m_drawingArea);
@@ -1271,11 +1267,11 @@ void WebPageProxy::didChangeBackForwardList(WebBackForwardListItem* added, Vecto
     m_pageLoadState.setCanGoForward(transaction, m_backForwardList->forwardItem());
 }
 
-void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, bool inPageCache, const UserData& userData)
+void WebPageProxy::willGoToBackForwardListItem(const BackForwardItemIdentifier& itemID, bool inPageCache, const UserData& userData)
 {
     PageClientProtector protector(m_pageClient);
 
-    if (auto* item = m_process->webBackForwardItem(itemID)) {
+    if (auto* item = m_backForwardList->itemForID(itemID)) {
         if (m_navigationClient && m_navigationClient->willGoToBackForwardListItem(*this, *item, inPageCache, m_process->transformHandlesToObjects(userData.object()).get()))
             return;
         m_loaderClient->willGoToBackForwardListItem(*this, *item, m_process->transformHandlesToObjects(userData.object()).get());
@@ -2557,10 +2553,6 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
 
     if (hasBackForwardList) {
         m_backForwardList->restoreFromState(WTFMove(sessionState.backForwardListState));
-
-        for (const auto& entry : m_backForwardList->entries())
-            process().registerNewWebBackForwardListItem(entry.get());
-
         process().send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()), m_pageID);
 
         auto transaction = m_pageLoadState.transaction();
@@ -4685,14 +4677,14 @@ void WebPageProxy::setNeedsPlainTextQuirk(bool needsPlainTextQuirk)
 
 // BackForwardList
 
-void WebPageProxy::backForwardAddItem(uint64_t itemID)
+void WebPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)
 {
-    m_backForwardList->addItem(m_process->webBackForwardItem(itemID));
+    m_backForwardList->addItem(WebBackForwardListItem::create(WTFMove(itemState), pageID()));
 }
 
-void WebPageProxy::backForwardGoToItem(uint64_t itemID, SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    WebBackForwardListItem* item = m_process->webBackForwardItem(itemID);
+    WebBackForwardListItem* item = m_backForwardList->itemForID(itemID);
     if (!item)
         return;
 
@@ -4702,10 +4694,13 @@ void WebPageProxy::backForwardGoToItem(uint64_t itemID, SandboxExtension::Handle
     m_backForwardList->goToItem(*item);
 }
 
-void WebPageProxy::backForwardItemAtIndex(int32_t index, uint64_t& itemID)
+void WebPageProxy::backForwardItemAtIndex(int32_t index, std::optional<BackForwardItemIdentifier>& itemID)
 {
     WebBackForwardListItem* item = m_backForwardList->itemAtIndex(index);
-    itemID = item ? item->itemID() : 0;
+    if (item)
+        itemID = item->itemID();
+    else
+        itemID = std::nullopt;
 }
 
 void WebPageProxy::backForwardBackListCount(int32_t& count)
@@ -5955,7 +5950,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.userAgent = userAgent();
     parameters.itemStates = m_backForwardList->itemStates();
     parameters.sessionID = sessionID();
-    parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highestUsedItemID();
     parameters.userContentControllerID = m_userContentController->identifier();
     parameters.visitedLinkTableID = m_visitedLinkStore->identifier();
     parameters.websiteDataStoreID = m_websiteDataStore->identifier();
@@ -6362,9 +6356,8 @@ void WebPageProxy::didFinishLoadingDataForCustomContentProvider(const String& su
     m_pageClient.didFinishLoadingDataForCustomContentProvider(suggestedFilename, dataReference);
 }
 
-void WebPageProxy::backForwardRemovedItem(uint64_t itemID)
+void WebPageProxy::backForwardRemovedItem(const BackForwardItemIdentifier& itemID)
 {
-    m_process->removeBackForwardItem(itemID);
     m_process->send(Messages::WebPage::DidRemoveBackForwardItem(itemID), m_pageID);
 }
 

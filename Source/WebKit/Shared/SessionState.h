@@ -29,6 +29,7 @@
 #include "ViewSnapshotStore.h"
 #endif
 
+#include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
@@ -127,7 +128,7 @@ struct BackForwardListItemState {
     void encode(IPC::Encoder&) const;
     static std::optional<BackForwardListItemState> decode(IPC::Decoder&);
 
-    uint64_t identifier;
+    WebCore::BackForwardItemIdentifier identifier;
 
     PageState pageState;
 #if PLATFORM(COCOA)

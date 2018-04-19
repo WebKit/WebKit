@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebProcessProxy LegacyReceiver {
-    AddOrUpdateBackForwardItem(uint64_t itemID, uint64_t pageID, struct WebKit::PageState pageState)
+    UpdateBackForwardItem(struct WebKit::BackForwardListItemState backForwardListItemState)
     DidDestroyFrame(uint64_t frameID) 
 
     DidDestroyUserGestureToken(uint64_t userGestureTokenID) 

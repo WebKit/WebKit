@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/ProcessID.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -41,6 +42,12 @@ do { \
 } while (0)
 
 namespace WTF {
+
+template<typename StringType>
+const char* debugString(StringType string)
+{
+    return debugString(string, "");
+}
 
 template<typename... StringTypes>
 const char* debugString(StringTypes... strings)

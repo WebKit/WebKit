@@ -29,6 +29,10 @@
 #include <WebCore/BackForwardClient.h>
 #include <wtf/HashSet.h>
 
+namespace WebCore {
+struct BackForwardItemIdentifier;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -37,12 +41,10 @@ class WebBackForwardListProxy : public WebCore::BackForwardClient {
 public: 
     static Ref<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(*new WebBackForwardListProxy(page)); }
 
-    static WebCore::HistoryItem* itemForID(uint64_t);
-    static uint64_t idForItem(WebCore::HistoryItem*);
-    static void removeItem(uint64_t itemID);
+    static WebCore::HistoryItem* itemForID(const WebCore::BackForwardItemIdentifier&);
+    static void removeItem(const WebCore::BackForwardItemIdentifier&);
 
-    void addItemFromUIProcess(uint64_t itemID, Ref<WebCore::HistoryItem>&&, uint64_t pageID);
-    static void setHighestItemIDFromUIProcess(uint64_t itemID);
+    void addItemFromUIProcess(const WebCore::BackForwardItemIdentifier&, Ref<WebCore::HistoryItem>&&, uint64_t pageID);
     
     void clear();
 

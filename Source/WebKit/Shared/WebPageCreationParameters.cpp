@@ -53,7 +53,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << userAgent;
     encoder << itemStates;
     encoder << sessionID;
-    encoder << highestUsedBackForwardItemID;
     encoder << userContentControllerID.toUInt64();
     encoder << visitedLinkTableID;
     encoder << websiteDataStoreID;
@@ -176,8 +175,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     parameters.itemStates = WTFMove(*itemStates);
 
     if (!decoder.decode(parameters.sessionID))
-        return std::nullopt;
-    if (!decoder.decode(parameters.highestUsedBackForwardItemID))
         return std::nullopt;
 
     std::optional<uint64_t> userContentControllerIdentifier;

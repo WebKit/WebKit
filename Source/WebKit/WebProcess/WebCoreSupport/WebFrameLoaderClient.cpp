@@ -1136,13 +1136,6 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return false;
-    
-    uint64_t itemID = WebBackForwardListProxy::idForItem(item);
-    if (!itemID) {
-        // We should never be considering navigating to an item that is not actually in the back/forward list.
-        ASSERT_NOT_REACHED();
-        return false;
-    }
 
     RefPtr<InjectedBundleBackForwardListItem> bundleItem = InjectedBundleBackForwardListItem::create(item);
     RefPtr<API::Object> userData;
@@ -1152,7 +1145,7 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem* item) const
     if (!shouldGoToBackForwardListItem)
         return false;
 
-    webPage->send(Messages::WebPageProxy::WillGoToBackForwardListItem(itemID, bundleItem->isInPageCache(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::WillGoToBackForwardListItem(item->identifier(), bundleItem->isInPageCache(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     return true;
 }
 

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "BackForwardItemIdentifier.h"
 #include "FloatRect.h"
 #include "FrameLoaderTypes.h"
 #include "IntPoint.h"
@@ -62,19 +63,31 @@ class HistoryItem : public RefCounted<HistoryItem> {
     friend class PageCache;
 
 public: 
-    static Ref<HistoryItem> create() { return adoptRef(*new HistoryItem); }
+    static Ref<HistoryItem> create()
+    {
+        return adoptRef(*new HistoryItem);
+    }
+
     static Ref<HistoryItem> create(const String& urlString, const String& title)
     {
         return adoptRef(*new HistoryItem(urlString, title));
     }
+
     static Ref<HistoryItem> create(const String& urlString, const String& title, const String& alternateTitle)
     {
         return adoptRef(*new HistoryItem(urlString, title, alternateTitle));
+    }
+
+    static Ref<HistoryItem> create(const String& urlString, const String& title, const String& alternateTitle, BackForwardItemIdentifier identifier)
+    {
+        return adoptRef(*new HistoryItem(urlString, title, alternateTitle, identifier));
     }
     
     WEBCORE_EXPORT ~HistoryItem();
 
     WEBCORE_EXPORT Ref<HistoryItem> copy() const;
+
+    const BackForwardItemIdentifier& identifier() const { return m_identifier; }
 
     // Resets the HistoryItem to its initial state, as returned by create().
     void reset();
@@ -206,8 +219,11 @@ private:
     WEBCORE_EXPORT HistoryItem();
     WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title);
     WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title, const String& alternateTitle);
+    WEBCORE_EXPORT HistoryItem(const String& urlString, const String& title, const String& alternateTitle, BackForwardItemIdentifier);
 
     HistoryItem(const HistoryItem&);
+
+    static int64_t generateSequenceNumber();
 
     bool hasSameDocumentTree(HistoryItem& otherItem) const;
 
@@ -235,12 +251,12 @@ private:
     // clones of one another.  Traversing history from one such HistoryItem to
     // another is a no-op.  HistoryItem clones are created for parent and
     // sibling frames when only a subframe navigates.
-    int64_t m_itemSequenceNumber;
+    int64_t m_itemSequenceNumber { generateSequenceNumber() };
 
     // If two HistoryItems have the same document sequence number, then they
     // refer to the same instance of a document.  Traversing history from one
     // such HistoryItem to another preserves the document.
-    int64_t m_documentSequenceNumber;
+    int64_t m_documentSequenceNumber { generateSequenceNumber() };
 
     // Support for HTML5 History
     RefPtr<SerializedScriptValue> m_stateObject;
@@ -268,6 +284,8 @@ private:
     RetainPtr<id> m_viewState;
     std::unique_ptr<HashMap<String, RetainPtr<id>>> m_transientProperties;
 #endif
+
+    BackForwardItemIdentifier m_identifier;
 };
 
 } // namespace WebCore

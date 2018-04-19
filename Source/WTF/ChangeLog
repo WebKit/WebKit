@@ -1,3 +1,13 @@
+2018-04-19  Brady Eidson  <beidson@apple.com>
+
+        Add globally-unique HistoryItem identifiers (and have WebKit2 adopt them).
+        <rdar://problem/39533949> and https://bugs.webkit.org/show_bug.cgi?id=184750
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/DebugUtilities.h:
+        (WTF::debugString):
+
 2018-04-19  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, rolling out r230677.
