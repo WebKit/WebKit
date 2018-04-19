@@ -1,3 +1,15 @@
+2018-04-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Fix flakiness in worker-to-worker test
+        https://bugs.webkit.org/show_bug.cgi?id=184769
+        <rdar://problem/39552333>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * workers/worker-to-worker-expected.txt:
+        * workers/worker-to-worker.html:
+        * workers/worker-to-worker.js:
+
 2018-04-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline tests for iOS simulator.

@@ -8,9 +8,9 @@ description("Worker to worker communication via MessagePorts");
 if (window.testRunner)
   window.testRunner.waitUntilDone();
 
-const worker = (name, port, wait) => new Promise(resolve => {
+const worker = (port) => new Promise(resolve => {
   const w = new Worker("worker-to-worker.js");
-  w.postMessage({ name, wait, port }, [port]);
+  w.postMessage({ port }, [port]);
   w.onmessage = (e) => {
     debug(e.data);
     resolve();
@@ -19,9 +19,8 @@ const worker = (name, port, wait) => new Promise(resolve => {
 
 const mc = new MessageChannel();
 Promise.all([
-  // force one worker to wait to make order deterministic
-  worker("Worker 1", mc.port1, 1),
-  worker("Worker 2", mc.port2),
+  worker(mc.port1),
+  worker(mc.port2),
 ]).then(() => {
   if (window.testRunner)
     window.testRunner.notifyDone();
