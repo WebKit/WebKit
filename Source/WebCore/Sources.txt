@@ -470,7 +470,7 @@ bindings/js/StructuredClone.cpp
 bindings/js/SerializedScriptValue.cpp
 bindings/js/WebCoreJSClientData.cpp
 bindings/js/WebCoreTypedArrayController.cpp
-bindings/js/WindowProxyController.cpp
+bindings/js/WindowProxy.cpp
 bindings/js/WorkerScriptController.cpp
 
 bridge/IdentifierRep.cpp

@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class WindowProxyController;
+class WindowProxy;
 
 typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
 
@@ -41,8 +41,8 @@ public:
     // Free as much memory held onto by this world as possible.
     WEBCORE_EXPORT void clearWrappers();
 
-    void didCreateWindowProxy(WindowProxyController* controller) { m_windowProxyControllers.add(controller); }
-    void didDestroyWindowProxy(WindowProxyController* controller) { m_windowProxyControllers.remove(controller); }
+    void didCreateWindowProxy(WindowProxy* controller) { m_jsWindowProxies.add(controller); }
+    void didDestroyWindowProxy(WindowProxy* controller) { m_jsWindowProxies.remove(controller); }
 
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
@@ -61,7 +61,7 @@ protected:
 
 private:
     JSC::VM& m_vm;
-    HashSet<WindowProxyController*> m_windowProxyControllers;
+    HashSet<WindowProxy*> m_jsWindowProxies;
     DOMObjectWrapperMap m_wrappers;
 
     bool m_isNormal;

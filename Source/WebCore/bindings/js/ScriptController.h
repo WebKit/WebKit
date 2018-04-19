@@ -23,7 +23,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "JSDOMWindowProxy.h"
-#include "WindowProxyController.h"
+#include "WindowProxy.h"
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
@@ -83,7 +83,7 @@ public:
 
     JSDOMWindow* globalObject(DOMWrapperWorld& world)
     {
-        return JSC::jsCast<JSDOMWindow*>(windowProxyController().windowProxy(world).window());
+        return JSC::jsCast<JSDOMWindow*>(windowProxy().jsWindowProxy(world).window());
     }
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
@@ -165,7 +165,7 @@ private:
 
     void disconnectPlatformScriptObjects();
 
-    WEBCORE_EXPORT WindowProxyController& windowProxyController();
+    WEBCORE_EXPORT WindowProxy& windowProxy();
 
     Frame& m_frame;
     const String* m_sourceURL;

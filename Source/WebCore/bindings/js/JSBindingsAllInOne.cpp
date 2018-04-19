@@ -111,5 +111,5 @@
 #include "ScriptState.cpp"
 #include "SerializedScriptValue.cpp"
 #include "WebCoreTypedArrayController.cpp"
-#include "WindowProxyController.cpp"
+#include "WindowProxy.cpp"
 #include "WorkerScriptController.cpp"

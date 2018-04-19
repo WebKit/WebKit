@@ -1,3 +1,18 @@
+2018-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Rename WindowProxyController to WindowProxy
+        https://bugs.webkit.org/show_bug.cgi?id=184756
+
+        Reviewed by Sam Weinig.
+
+        Rename WindowProxyController to WindowProxy for clarity. When the IDL uses WindowProxy, the implementation
+        needed use WindowProxyController type, which was a bit confusing.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]):
+
 2018-04-17  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed rollout of r230632. Regression in memory usage.

@@ -45,11 +45,11 @@ RemoteDOMWindow::~RemoteDOMWindow()
         m_frame->setWindow(nullptr);
 }
 
-WindowProxyController* RemoteDOMWindow::self() const
+WindowProxy* RemoteDOMWindow::self() const
 {
     if (!m_frame)
         return nullptr;
-    return &m_frame->windowProxyController();
+    return &m_frame->windowProxy();
 }
 
 Location* RemoteDOMWindow::location() const
@@ -85,16 +85,16 @@ unsigned RemoteDOMWindow::length() const
     return 0;
 }
 
-WindowProxyController* RemoteDOMWindow::top() const
+WindowProxy* RemoteDOMWindow::top() const
 {
     if (!m_frame)
         return nullptr;
 
     // FIXME: Implemented this.
-    return &m_frame->windowProxyController();
+    return &m_frame->windowProxy();
 }
 
-WindowProxyController* RemoteDOMWindow::opener() const
+WindowProxy* RemoteDOMWindow::opener() const
 {
     if (!m_frame)
         return nullptr;
@@ -103,16 +103,16 @@ WindowProxyController* RemoteDOMWindow::opener() const
     if (!openerFrame)
         return nullptr;
 
-    return &openerFrame->windowProxyController();
+    return &openerFrame->windowProxy();
 }
 
-WindowProxyController* RemoteDOMWindow::parent() const
+WindowProxy* RemoteDOMWindow::parent() const
 {
     if (!m_frame)
         return nullptr;
 
     // FIXME: Implemented this.
-    return &m_frame->windowProxyController();
+    return &m_frame->windowProxy();
 }
 
 ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&)

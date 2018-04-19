@@ -1257,7 +1257,7 @@ void Page::setDebugger(JSC::Debugger* debugger)
     m_debugger = debugger;
 
     for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
-        frame->windowProxyController().attachDebugger(m_debugger);
+        frame->windowProxy().attachDebugger(m_debugger);
 }
 
 StorageNamespace* Page::sessionStorage(bool optionalCreate)

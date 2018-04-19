@@ -1448,7 +1448,7 @@ NPObject* PluginView::windowScriptNPObject()
         return nullptr;
     }
 
-    return m_npRuntimeObjectMap.getOrCreateNPObject(pluginWorld().vm(), frame()->windowProxyController().windowProxy(pluginWorld()).window());
+    return m_npRuntimeObjectMap.getOrCreateNPObject(pluginWorld().vm(), frame()->windowProxy().jsWindowProxy(pluginWorld()).window());
 }
 
 NPObject* PluginView::pluginElementNPObject()

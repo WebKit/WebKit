@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "WindowProxyController.h"
+#include "WindowProxy.h"
 
 #include "CommonVM.h"
 #include "Frame.h"
@@ -47,67 +47,67 @@ static void collectGarbageAfterWindowProxyDestruction()
         GCController::singleton().garbageCollectSoon();
 }
 
-WindowProxyController::WindowProxyController(AbstractFrame& frame)
+WindowProxy::WindowProxy(AbstractFrame& frame)
     : m_frame(frame)
 {
 }
 
-WindowProxyController::~WindowProxyController()
+WindowProxy::~WindowProxy()
 {
     // It's likely that destroying windowProxies will create a lot of garbage.
-    if (!m_windowProxies.isEmpty()) {
-        while (!m_windowProxies.isEmpty()) {
-            auto it = m_windowProxies.begin();
+    if (!m_jsWindowProxies.isEmpty()) {
+        while (!m_jsWindowProxies.isEmpty()) {
+            auto it = m_jsWindowProxies.begin();
             it->value->window()->setConsoleClient(nullptr);
-            destroyWindowProxy(*it->key);
+            destroyJSWindowProxy(*it->key);
         }
         collectGarbageAfterWindowProxyDestruction();
     }
 }
 
-void WindowProxyController::destroyWindowProxy(DOMWrapperWorld& world)
+void WindowProxy::destroyJSWindowProxy(DOMWrapperWorld& world)
 {
-    ASSERT(m_windowProxies.contains(&world));
-    m_windowProxies.remove(&world);
+    ASSERT(m_jsWindowProxies.contains(&world));
+    m_jsWindowProxies.remove(&world);
     world.didDestroyWindowProxy(this);
 }
 
-JSDOMWindowProxy& WindowProxyController::createWindowProxy(DOMWrapperWorld& world)
+JSDOMWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
 {
-    ASSERT(!m_windowProxies.contains(&world));
+    ASSERT(!m_jsWindowProxies.contains(&world));
     ASSERT(m_frame.window());
 
     VM& vm = world.vm();
 
-    Strong<JSDOMWindowProxy> windowProxy(vm, &JSDOMWindowProxy::create(vm, *m_frame.window(), world));
-    Strong<JSDOMWindowProxy> windowProxy2(windowProxy);
-    m_windowProxies.add(&world, windowProxy);
+    Strong<JSDOMWindowProxy> jsWindowProxy(vm, &JSDOMWindowProxy::create(vm, *m_frame.window(), world));
+    Strong<JSDOMWindowProxy> jsWindowProxy2(jsWindowProxy);
+    m_jsWindowProxies.add(&world, jsWindowProxy);
     world.didCreateWindowProxy(this);
-    return *windowProxy.get();
+    return *jsWindowProxy.get();
 }
 
-Vector<JSC::Strong<JSDOMWindowProxy>> WindowProxyController::windowProxiesAsVector() const
+Vector<JSC::Strong<JSDOMWindowProxy>> WindowProxy::jsWindowProxiesAsVector() const
 {
-    return copyToVector(m_windowProxies.values());
+    return copyToVector(m_jsWindowProxies.values());
 }
 
-JSDOMWindowProxy& WindowProxyController::createWindowProxyWithInitializedScript(DOMWrapperWorld& world)
+JSDOMWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperWorld& world)
 {
     JSLockHolder lock(world.vm());
-    auto& windowProxy = createWindowProxy(world);
+    auto& windowProxy = createJSWindowProxy(world);
     if (is<Frame>(m_frame))
         downcast<Frame>(m_frame).script().initScriptForWindowProxy(windowProxy);
     return windowProxy;
 }
 
-void WindowProxyController::clearWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* newDOMWindow, bool goingIntoPageCache)
+void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* newDOMWindow, bool goingIntoPageCache)
 {
-    if (m_windowProxies.isEmpty())
+    if (m_jsWindowProxies.isEmpty())
         return;
 
     JSLockHolder lock(commonVM());
 
-    for (auto& windowProxy : windowProxiesAsVector()) {
+    for (auto& windowProxy : jsWindowProxiesAsVector()) {
         if (&windowProxy->wrapped() == newDOMWindow)
             continue;
 
@@ -124,16 +124,16 @@ void WindowProxyController::clearWindowProxiesNotMatchingDOMWindow(AbstractDOMWi
         collectGarbageAfterWindowProxyDestruction();
 }
 
-void WindowProxyController::setDOMWindowForWindowProxy(AbstractDOMWindow* newDOMWindow)
+void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
 {
     ASSERT(newDOMWindow);
 
-    if (m_windowProxies.isEmpty())
+    if (m_jsWindowProxies.isEmpty())
         return;
 
     JSLockHolder lock(commonVM());
 
-    for (auto& windowProxy : windowProxiesAsVector()) {
+    for (auto& windowProxy : jsWindowProxiesAsVector()) {
         if (&windowProxy->wrapped() == newDOMWindow)
             continue;
 
@@ -159,9 +159,9 @@ void WindowProxyController::setDOMWindowForWindowProxy(AbstractDOMWindow* newDOM
     }
 }
 
-void WindowProxyController::attachDebugger(JSC::Debugger* debugger)
+void WindowProxy::attachDebugger(JSC::Debugger* debugger)
 {
-    for (auto& windowProxy : m_windowProxies.values())
+    for (auto& windowProxy : m_jsWindowProxies.values())
         windowProxy->attachDebugger(debugger);
 }
 

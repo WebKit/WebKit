@@ -253,7 +253,7 @@ JSValue toJS(ExecState* state, DOMWindow& domWindow)
     auto* frame = domWindow.frame();
     if (!frame)
         return jsNull();
-    return toJS(state, frame->windowProxyController());
+    return toJS(state, frame->windowProxy());
 }
 
 JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)

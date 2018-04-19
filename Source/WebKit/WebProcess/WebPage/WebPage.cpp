@@ -5888,9 +5888,9 @@ void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remote
 
     remoteFrame->setOpener(frame->coreFrame()->loader().opener());
 
-    auto windowProxies = frame->coreFrame()->windowProxyController().releaseWindowProxies();
-    remoteFrame->windowProxyController().setWindowProxies(WTFMove(windowProxies));
-    remoteFrame->windowProxyController().setDOMWindowForWindowProxy(remoteWindow.ptr());
+    auto jsWindowProxies = frame->coreFrame()->windowProxy().releaseJSWindowProxies();
+    remoteFrame->windowProxy().setJSWindowProxies(WTFMove(jsWindowProxies));
+    remoteFrame->windowProxy().setDOMWindow(remoteWindow.ptr());
 
     auto* coreFrame = frame->coreFrame();
     coreFrame->setView(nullptr);

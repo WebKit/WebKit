@@ -55,16 +55,16 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const final { return nullptr; }
 
     // DOM API exposed cross-origin.
-    WindowProxyController* self() const;
+    WindowProxy* self() const;
     Location* location() const;
     void close(Document&);
     bool closed() const;
     void focus(DOMWindow& incumbentWindow);
     void blur();
     unsigned length() const;
-    WindowProxyController* top() const;
-    WindowProxyController* opener() const;
-    WindowProxyController* parent() const;
+    WindowProxy* top() const;
+    WindowProxy* opener() const;
+    WindowProxy* parent() const;
     ExceptionOr<void> postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
 
 private:
