@@ -866,12 +866,9 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
         position = (id == CSSValueFrom) ? 0 : 1;
     } else {
         ASSERT(id == CSSValueColorStop);
-        const CSSParserToken& arg = args.consumeIncludingWhitespace();
-        if (arg.type() == PercentageToken)
-            position = arg.numericValue() / 100.0;
-        else if (arg.type() == NumberToken)
-            position = arg.numericValue();
-        else
+        if (auto percentValue = consumePercent(args, ValueRangeAll))
+            position = percentValue->doubleValue() / 100.0;
+        else if (!consumeNumberRaw(args, position))
             return false;
 
         if (!consumeCommaIncludingWhitespace(args))
@@ -1229,11 +1226,10 @@ static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, CSSParserCon
         return nullptr;
 
     RefPtr<CSSPrimitiveValue> percentage;
-    const CSSParserToken& percentageArg = args.consumeIncludingWhitespace();
-    if (percentageArg.type() == PercentageToken)
-        percentage = CSSValuePool::singleton().createValue(clampTo<double>(percentageArg.numericValue() / 100, 0, 1), CSSPrimitiveValue::UnitType::CSS_NUMBER);
-    else if (percentageArg.type() == NumberToken)
-        percentage = CSSValuePool::singleton().createValue(clampTo<double>(percentageArg.numericValue(), 0, 1), CSSPrimitiveValue::UnitType::CSS_NUMBER);
+    if (auto percentValue = consumePercent(args, ValueRangeAll))
+        percentage = CSSValuePool::singleton().createValue(clampTo<double>(percentValue->doubleValue() / 100.0, 0, 1), CSSPrimitiveValue::UnitType::CSS_NUMBER);
+    else if (auto numberValue = consumeNumber(args, ValueRangeAll))
+        percentage = CSSValuePool::singleton().createValue(clampTo<double>(numberValue->doubleValue(), 0, 1), CSSPrimitiveValue::UnitType::CSS_NUMBER);
 
     if (!percentage)
         return nullptr;

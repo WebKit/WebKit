@@ -1,3 +1,20 @@
+2018-04-19  Chris Nardi  <cnardi@chromium.org>
+
+        Support calc() in webkit-gradient and cross-fade
+        https://bugs.webkit.org/show_bug.cgi?id=182225
+
+        Reviewed by Simon Fraser.
+
+        calc() was previously unsupported in webkit-gradient and webkit-cross-fade, but both should take calc() values.
+        Update the code to support calc() values.
+
+        Tests: LayoutTests/css3/calc/cross-fade-calc.html
+               LayoutTests/css3/calc/webkit-gradient-calc.html
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientColorStop):
+        (WebCore::CSSPropertyParserHelpers::consumeCrossFade):
+
 2018-04-17  Filip Pizlo  <fpizlo@apple.com>
 
         The InternalFunction hierarchy should be in IsoSubspaces
