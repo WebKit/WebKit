@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,7 @@ static void profilingTimer(int, siginfo_t*, void* uap)
 {
     PlatformRegisters& platformRegisters = WTF::registersFromUContext(static_cast<ucontext_t*>(uap));
     CodeProfiling::sample(
-        MachineContext::instructionPointer(platformRegisters),
+        MachineContext::instructionPointer(platformRegisters).untaggedExecutableAddress(),
         reinterpret_cast<void**>(MachineContext::framePointer(platformRegisters)));
 }
 #endif

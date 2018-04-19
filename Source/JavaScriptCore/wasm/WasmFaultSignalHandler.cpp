@@ -56,7 +56,7 @@ static bool fastHandlerInstalled { false };
 
 static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& context)
 {
-    void* faultingInstruction = MachineContext::instructionPointer(context);
+    void* faultingInstruction = MachineContext::instructionPointer(context).untaggedExecutableAddress();
     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
 
     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "JIT memory start: ", RawPointer(reinterpret_cast<void*>(startOfFixedExecutableMemoryPool)), " end: ", RawPointer(reinterpret_cast<void*>(endOfFixedExecutableMemoryPool)));
@@ -86,7 +86,7 @@ static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& con
                         break;
                     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
                     MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(ExceptionType::OutOfBoundsMemoryAccess);
-                    MachineContext::instructionPointer(context) = exceptionStub.code().executableAddress();
+                    MachineContext::setInstructionPointer(context, exceptionStub.code().retagged<CFunctionPtrTag>());
                     return SignalAction::Handled;
                 }
             }

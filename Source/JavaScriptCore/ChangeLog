@@ -1,3 +1,45 @@
+2018-04-19  Mark Lam  <mark.lam@apple.com>
+
+        Apply pointer profiling to Signal pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=184790
+        <rdar://problem/39301369>
+
+        Reviewed by Michael Saboff.
+
+        1. Change stackPointer, framePointer, and instructionPointer accessors to
+           be a pair of getter/setter functions.
+        2. Add support for USE(PLATFORM_REGISTERS_WITH_PROFILE) to allow use of a
+           a pointer profiling variants of these accessors.
+        3. Also add a linkRegister accessor only for ARM64 on OS(DARWIN).
+
+        * JavaScriptCorePrefix.h:
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointerImpl):
+        (JSC::MachineContext::stackPointer):
+        (JSC::MachineContext::setStackPointer):
+        (JSC::MachineContext::framePointerImpl):
+        (JSC::MachineContext::framePointer):
+        (JSC::MachineContext::setFramePointer):
+        (JSC::MachineContext::instructionPointerImpl):
+        (JSC::MachineContext::instructionPointer):
+        (JSC::MachineContext::setInstructionPointer):
+        (JSC::MachineContext::linkRegisterImpl):
+        (JSC::MachineContext::linkRegister):
+        (JSC::MachineContext::setLinkRegister):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        * tools/CodeProfiling.cpp:
+        (JSC::profilingTimer):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SignalContext::dump):
+        (JSC::installCrashHandler):
+        (JSC::SigillCrashAnalyzer::analyze):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+
 2018-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Enable Objective-C weak references

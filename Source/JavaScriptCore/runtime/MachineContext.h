@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,33 +28,47 @@
 
 #include "GPRInfo.h"
 #include "LLIntPCRanges.h"
+#include "MacroAssemblerCodeRef.h"
 #include <wtf/PlatformRegisters.h>
+#include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 namespace MachineContext {
 
-void* stackPointer(const PlatformRegisters&);
+template<typename T = void*> T stackPointer(const PlatformRegisters&);
 
 #if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
-void*& stackPointer(PlatformRegisters&);
-void*& framePointer(PlatformRegisters&);
-void* framePointer(const PlatformRegisters&);
-void*& instructionPointer(PlatformRegisters&);
-void* instructionPointer(const PlatformRegisters&);
+template<typename T = void*> void setStackPointer(PlatformRegisters&, T);
+template<typename T = void*> T framePointer(const PlatformRegisters&);
+template<typename T = void*> void setFramePointer(PlatformRegisters&, T);
+inline MacroAssemblerCodePtr<CFunctionPtrTag> linkRegister(const PlatformRegisters&);
+inline void setLinkRegister(PlatformRegisters&, MacroAssemblerCodePtr<CFunctionPtrTag>);
+inline MacroAssemblerCodePtr<CFunctionPtrTag> instructionPointer(const PlatformRegisters&);
+inline void setInstructionPointer(PlatformRegisters&, MacroAssemblerCodePtr<CFunctionPtrTag>);
+
 template<size_t N> void*& argumentPointer(PlatformRegisters&);
 template<size_t N> void* argumentPointer(const PlatformRegisters&);
 #if ENABLE(JIT)
 void*& llintInstructionPointer(PlatformRegisters&);
 void* llintInstructionPointer(const PlatformRegisters&);
 #endif // ENABLE(JIT)
+
 #if HAVE(MACHINE_CONTEXT)
-void*& stackPointer(mcontext_t&);
-void* stackPointer(const mcontext_t&);
-void*& framePointer(mcontext_t&);
-void* framePointer(const mcontext_t&);
-void*& instructionPointer(mcontext_t&);
-void* instructionPointer(const mcontext_t&);
+
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+static inline void*& stackPointerImpl(mcontext_t&);
+static inline void*& framePointerImpl(mcontext_t&);
+static inline void*& instructionPointerImpl(mcontext_t&);
+#endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+
+template<typename T = void*> T stackPointer(const mcontext_t&);
+template<typename T = void*> void setStackPointer(mcontext_t&, T);
+template<typename T = void*> T framePointer(const mcontext_t&);
+template<typename T = void*> void setFramePointer(mcontext_t&, T);
+inline MacroAssemblerCodePtr<CFunctionPtrTag> instructionPointer(const mcontext_t&);
+inline void setInstructionPointer(mcontext_t&, MacroAssemblerCodePtr<CFunctionPtrTag>);
+
 template<size_t N> void*& argumentPointer(mcontext_t&);
 template<size_t N> void* argumentPointer(const mcontext_t&);
 #if ENABLE(JIT)
@@ -64,7 +79,9 @@ void* llintInstructionPointer(const mcontext_t&);
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 #if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
-inline void*& stackPointer(PlatformRegisters& regs)
+
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+static inline void*& stackPointerImpl(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
 #if __DARWIN_UNIX03
@@ -110,26 +127,50 @@ inline void*& stackPointer(PlatformRegisters& regs)
 #endif
 
 #elif HAVE(MACHINE_CONTEXT)
-    return stackPointer(regs.machineContext);
+    return stackPointerImpl(regs.machineContext);
+#endif
+}
+#endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+
+template<typename T>
+inline T stackPointer(const PlatformRegisters& regs)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    void* value = WTF_READ_PLATFORM_REGISTERS_SP_WITH_PROFILE(regs);
+    assertIsNotTagged(value);
+    return bitwise_cast<T>(value);
+#else
+    return bitwise_cast<T>(stackPointerImpl(const_cast<PlatformRegisters&>(regs)));
 #endif
 }
 
-inline void* stackPointer(const PlatformRegisters& regs)
+template<typename T>
+inline void setStackPointer(PlatformRegisters& regs, T value)
 {
-    return stackPointer(const_cast<PlatformRegisters&>(regs));
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    assertIsNotTagged(bitwise_cast<void*>(value));
+    WTF_WRITE_PLATFORM_REGISTERS_SP_WITH_PROFILE(regs, bitwise_cast<void*>(value));
+#else
+    stackPointerImpl(regs) = bitwise_cast<void*>(value);
+#endif
 }
+
 #else // not OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
+
+template<typename T>
 inline void* stackPointer(const PlatformRegisters& regs)
 {
-    return regs.stackPointer;
+    return bitwise_cast<T>(regs.stackPointer);
 }
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 #if HAVE(MACHINE_CONTEXT)
-inline void*& stackPointer(mcontext_t& machineContext)
+
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+static inline void*& stackPointerImpl(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
-    return stackPointer(machineContext->__ss);
+    return stackPointerImpl(machineContext->__ss);
 #elif OS(FREEBSD)
 
 #if CPU(X86)
@@ -163,16 +204,37 @@ inline void*& stackPointer(mcontext_t& machineContext)
 #endif
 #endif
 }
+#endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
-inline void* stackPointer(const mcontext_t& machineContext)
+template<typename T>
+inline T stackPointer(const mcontext_t& machineContext)
 {
-    return stackPointer(const_cast<mcontext_t&>(machineContext));
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    void* value = WTF_READ_MACHINE_CONTEXT_SP_WITH_PROFILE(machineContext);
+    assertIsNotTagged(value);
+    return bitwise_cast<T>(value);
+#else
+    return bitwise_cast<T>(stackPointerImpl(const_cast<mcontext_t&>(machineContext)));
+#endif
+}
+
+template<typename T>
+inline void setStackPointer(mcontext_t& machineContext, T value)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    assertIsNotTagged(bitwise_cast<void*>(value));
+    WTF_WRITE_MACHINE_CONTEXT_SP_WITH_PROFILE(machineContext, bitwise_cast<void*>(value));
+#else
+    stackPointerImpl(machineContext) = bitwise_cast<void*>(value);
+#endif
 }
 #endif // HAVE(MACHINE_CONTEXT)
 
 
 #if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
-inline void*& framePointer(PlatformRegisters& regs)
+
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+static inline void*& framePointerImpl(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
 
@@ -219,22 +281,43 @@ inline void*& framePointer(PlatformRegisters& regs)
 #endif
 
 #elif HAVE(MACHINE_CONTEXT)
-    return framePointer(regs.machineContext);
+    return framePointerImpl(regs.machineContext);
+#endif
+}
+#endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+
+template<typename T>
+inline T framePointer(const PlatformRegisters& regs)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    void* value = WTF_READ_PLATFORM_REGISTERS_FP_WITH_PROFILE(regs);
+    assertIsNotTagged(value);
+    return bitwise_cast<T>(value);
+#else
+    return bitwise_cast<T>(framePointerImpl(const_cast<PlatformRegisters&>(regs)));
 #endif
 }
 
-inline void* framePointer(const PlatformRegisters& regs)
+template<typename T>
+inline void setFramePointer(PlatformRegisters& regs, T value)
 {
-    return framePointer(const_cast<PlatformRegisters&>(regs));
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    assertIsNotTagged(bitwise_cast<void*>(value));
+    WTF_WRITE_PLATFORM_REGISTERS_FP_WITH_PROFILE(regs, bitwise_cast<void*>(value));
+#else
+    framePointerImpl(regs) = bitwise_cast<void*>(value);
+#endif
 }
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 
 #if HAVE(MACHINE_CONTEXT)
-inline void*& framePointer(mcontext_t& machineContext)
+
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+static inline void*& framePointerImpl(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
-    return framePointer(machineContext->__ss);
+    return framePointerImpl(machineContext->__ss);
 #elif OS(FREEBSD)
 
 #if CPU(X86)
@@ -272,16 +355,37 @@ inline void*& framePointer(mcontext_t& machineContext)
 #error Need a way to get the frame pointer for another thread on this platform
 #endif
 }
+#endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
-inline void* framePointer(const mcontext_t& machineContext)
+template<typename T>
+inline T framePointer(const mcontext_t& machineContext)
 {
-    return framePointer(const_cast<mcontext_t&>(machineContext));
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    void* value = WTF_READ_MACHINE_CONTEXT_FP_WITH_PROFILE(machineContext);
+    assertIsNotTagged(value);
+    return bitwise_cast<T>(value);
+#else
+    return bitwise_cast<T>(framePointerImpl(const_cast<mcontext_t&>(machineContext)));
+#endif
+}
+
+template<typename T>
+inline void setFramePointer(mcontext_t& machineContext, T value)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    assertIsNotTagged(bitwise_cast<void*>(value));
+    WTF_WRITE_MACHINE_CONTEXT_FP_WITH_PROFILE(machineContext, bitwise_cast<void*>(value));
+#else
+    framePointerImpl(machineContext) = bitwise_cast<void*>(value);
+#endif
 }
 #endif // HAVE(MACHINE_CONTEXT)
 
 
 #if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
-inline void*& instructionPointer(PlatformRegisters& regs)
+
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+static inline void*& instructionPointerImpl(PlatformRegisters& regs)
 {
 #if OS(DARWIN)
 #if __DARWIN_UNIX03
@@ -322,22 +426,39 @@ inline void*& instructionPointer(PlatformRegisters& regs)
 #endif
 
 #elif HAVE(MACHINE_CONTEXT)
-    return instructionPointer(regs.machineContext);
+    return instructionPointerImpl(regs.machineContext);
 #endif
 }
+#endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
-inline void* instructionPointer(const PlatformRegisters& regs)
+inline MacroAssemblerCodePtr<CFunctionPtrTag> instructionPointer(const PlatformRegisters& regs)
 {
-    return instructionPointer(const_cast<PlatformRegisters&>(regs));
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    void* value = WTF_READ_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs);
+#else
+    void* value = instructionPointerImpl(const_cast<PlatformRegisters&>(regs));
+#endif
+    return MacroAssemblerCodePtr<CFunctionPtrTag>(value);
+}
+
+inline void setInstructionPointer(PlatformRegisters& regs, MacroAssemblerCodePtr<CFunctionPtrTag> value)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, value.executableAddress());
+#else
+    instructionPointerImpl(regs) = value.executableAddress();
+#endif
 }
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 
 #if HAVE(MACHINE_CONTEXT)
-inline void*& instructionPointer(mcontext_t& machineContext)
+
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+static inline void*& instructionPointerImpl(mcontext_t& machineContext)
 {
 #if OS(DARWIN)
-    return instructionPointer(machineContext->__ss);
+    return instructionPointerImpl(machineContext->__ss);
 #elif OS(FREEBSD)
 
 #if CPU(X86)
@@ -375,15 +496,60 @@ inline void*& instructionPointer(mcontext_t& machineContext)
 #error Need a way to get the instruction pointer for another thread on this platform
 #endif
 }
+#endif // !USE(PLATFORM_REGISTERS_WITH_PROFILE)
 
-inline void* instructionPointer(const mcontext_t& machineContext)
+inline MacroAssemblerCodePtr<CFunctionPtrTag> instructionPointer(const mcontext_t& machineContext)
 {
-    return instructionPointer(const_cast<mcontext_t&>(machineContext));
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    void* value = WTF_READ_MACHINE_CONTEXT_PC_WITH_PROFILE(machineContext);
+#else
+    void* value = instructionPointerImpl(const_cast<mcontext_t&>(machineContext));
+#endif
+    return MacroAssemblerCodePtr<CFunctionPtrTag>(value);
+}
+
+inline void setInstructionPointer(mcontext_t& machineContext, MacroAssemblerCodePtr<CFunctionPtrTag> value)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    WTF_WRITE_MACHINE_CONTEXT_PC_WITH_PROFILE(machineContext, value.executableAddress());
+#else
+    instructionPointerImpl(machineContext) = value.executableAddress();
+#endif
 }
 #endif // HAVE(MACHINE_CONTEXT)
 
 
 #if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
+
+#if OS(DARWIN) && __DARWIN_UNIX03 && CPU(ARM64)
+#if !USE(PLATFORM_REGISTERS_WITH_PROFILE)
+inline void*& linkRegisterImpl(PlatformRegisters& regs)
+{
+    return reinterpret_cast<void*&>(regs.__lr);
+}
+#endif // USE(PLATFORM_REGISTERS_WITH_PROFILE)
+
+
+inline MacroAssemblerCodePtr<CFunctionPtrTag> linkRegister(const PlatformRegisters& regs)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    void* value = WTF_READ_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs);
+#else
+    void* value = linkRegisterImpl(const_cast<PlatformRegisters&>(regs));
+#endif
+    return MacroAssemblerCodePtr<CFunctionPtrTag>(value);
+}
+
+inline void setLinkRegister(PlatformRegisters& regs, MacroAssemblerCodePtr<CFunctionPtrTag> value)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, value.executableAddress());
+#else
+    linkRegisterImpl(regs) = value.executableAddress();
+#endif
+}
+#endif // OS(DARWIN) && __DARWIN_UNIX03 && CPU(ARM64)
+
 #if HAVE(MACHINE_CONTEXT)
 template<> void*& argumentPointer<1>(mcontext_t&);
 #endif

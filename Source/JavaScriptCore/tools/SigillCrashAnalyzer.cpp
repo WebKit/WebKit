@@ -127,14 +127,18 @@ struct SignalContext {
         }
         ASSERT(i < 29);
         log("x%d: %016llx fp: %016llx lr: %016llx",
-            i, registers.__x[i], registers.__fp, registers.__lr);
+            i, registers.__x[i],
+            MachineContext::framePointer<uint64_t>(registers),
+            MachineContext::linkRegister(registers).untaggedExecutableAddress<uint64_t>());
         log("sp: %016llx pc: %016llx cpsr: %08x",
-            registers.__sp, registers.__pc, registers.__cpsr);
+            MachineContext::stackPointer<uint64_t>(registers),
+            MachineContext::instructionPointer(registers).untaggedExecutableAddress<uint64_t>(),
+            registers.__cpsr);
 #endif
     }
 
     PlatformRegisters& registers;
-    void* machinePC;
+    MacroAssemblerCodePtr<CFunctionPtrTag> machinePC;
     void* stackPointer;
     void* framePointer;
 };
@@ -145,8 +149,8 @@ static void installCrashHandler()
     installSignalHandler(Signal::Ill, [] (Signal, SigInfo&, PlatformRegisters& registers) {
         SignalContext context(registers);
 
-        assertIsNotTagged(context.machinePC);
-        if (!isJITPC(context.machinePC))
+        void* machinePC = context.machinePC.untaggedExecutableAddress();
+        if (!isJITPC(machinePC))
             return SignalAction::NotHandled;
 
         SigillCrashAnalyzer& analyzer = SigillCrashAnalyzer::instance();
@@ -165,7 +169,7 @@ struct SignalContext {
 
     void dump() { }
 
-    void* machinePC;
+    MacroAssemblerCodePtr<CFunctionPtrTag> machinePC;
     void* stackPointer;
     void* framePointer;
 };
@@ -217,7 +221,7 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
         }
         auto& locker = expectedLocker.value();
 
-        void* pc = context.machinePC;
+        void* pc = context.machinePC.untaggedExecutableAddress();
         auto isInJITMemory = inspector.isValidExecutableMemory(locker, pc);
         if (!isInJITMemory) {
             log("ERROR: Timed out: not able to determine if pc %p is in valid JIT executable memory", pc);

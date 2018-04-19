@@ -356,7 +356,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
                 m_jscExecutionThread->getRegisters(registers);
                 machineFrame = MachineContext::framePointer(registers);
                 callFrame = static_cast<ExecState*>(machineFrame);
-                machinePC = MachineContext::instructionPointer(registers);
+                machinePC = MachineContext::instructionPointer(registers).untaggedExecutableAddress();
                 llintPC = removeCodePtrTag(MachineContext::llintInstructionPointer(registers));
                 assertIsNotTagged(machinePC);
             }
