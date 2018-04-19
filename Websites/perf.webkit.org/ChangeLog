@@ -1,3 +1,81 @@
+2018-04-19  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add a bisect button to automatically schedule bisecting A/B tasks.
+        https://bugs.webkit.org/show_bug.cgi?id=183888
+
+        Reviewed by Ryosuke Niwa.
+
+        Extended AnalysisTask's ability to figure out bisecting A/B tasks based on existing data points and test groups.
+        Updated analysis page UI to show bisect button which will only appear when the middle commit set of the range in
+        test group can be found.
+
+        Finding middle commit set algorithm is described as follows:
+        1. Find all commits from multiple repositories among the ranges specified by two commit sets in test group. In
+        the meanwhile, merge all commits that have commit time into a single list. For commits only have commit order,
+        put those commits into separate lists.
+        2. Filter all the available commit sets in current analysis task by keeping the ones have exact repositories
+        as the two commit sets in specified test group, and every commit of a commit set is in side the commit range.
+        After filtering the commit sets, sort the remaining ones and only keep one commit set if multiple commit sets
+        are equal to each other.
+        3. Among commits processed by step 2, find the commit sets that have the commit which is closest to the middle of
+        all commits that have commit time created from step 1.
+        4. Among commits processed by step 3, find the commit sets that have the commit which is closest to the middle of
+        commits that only have commit order and categorized by repository. We have to iterate through repository as commit
+        order is not granted to be comparable between different repositories.
+        5. If more than one commit sets are found, choose the middle commit set.
+
+        * public/v3/commit-set-range-bisector.js: Added.
+        (CommitSetRangeBisector.async.commitSetClosestToMiddleOfAllCommits): Instead of naively returning the middle of
+        existing commit set array, this function selects a bisect bisection points that is closest to actually middle of
+        the revision range based on all revisions reported to performance dashboard.
+        (CommitSetRangeBisector._findCommitSetsWithinRange): Helper function to find commit sets those are in specified range.
+        (CommitSetRangeBisector._orderCommitSetsByTimeAndOrderThenDeduplicate): Helper function to sort and deduplicate commit sets.
+        (CommitSetRangeBisector._closestCommitSetsToBisectingCommitByTime): Helper function to find the commit sets those
+        are closest to the middle of among all the commits in the range that have commit time.
+        (CommitSetRangeBisector._findCommitSetsClosestToMiddleOfCommitsWithOrder): Helper function which goes through all
+        repositories the commit of which has commit order, and find the commit sets those are closest to the middle of
+        commits for each repository.
+        (CommitSetRangeBisector._buildCommitToCommitSetMap): Helper function to builder mapping from a commit to commit
+        sets those contain this commit.
+        (CommitSetRangeBisector._findCommitClosestToMiddleIndex): Helper function to find closest commit to the middle of index.
+        (CommitSetRangeBisector):
+        * public/v3/index.html: Imports 'public/v3/commit-set-range-bisector.js'.
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.prototype.async.commitSetsFromTestGroupsAndMeasurementSet): Aggregates all existing commit sets in
+        test groups of current analysis tasks.
+        * public/v3/models/commit-log.js:
+        (CommitLog.prototype.hasCommitTime): A helper function determine whether a commit has a commit time. For commit
+        that does not have time, server will return commit time as zero. As it is unrealistic for a commit has commit time
+        0, it would be safe to assume a valid commit time is greater than 0.
+        (CommitLog.prototype.hasCommitOrder): Returns whether a commit has a commit oder.
+        (CommitLog.hasOrdering): Determine whether we can order two commits by commit time or commit order.
+        (CommitLog.orderTwoCommits): Order two commits incrementally.
+        * public/v3/models/commit-set.js:
+        (CommitSet.prototype.hasSameRepositories): A helper function to determine whether a commit set has same repositories
+        as current repository.
+        (CommitSet.containsRootOrPatchOrOwnedCommit): A helper function to determine whether current commit set has root,
+        patch or owned commit.
+        (CommitSet.commitForRepository): This function defined twice identically, remove one of them.
+        * public/v3/models/test-group.js: Make '_computeRequestedCommitSets' a static function as it does not use any
+        instance variables.
+        * public/v3/pages/analysis-task-page.js: Added bisect button.
+        (AnalysisTaskTestGroupPane):
+        (AnalysisTaskTestGroupPane.prototype.didConstructShadowTree):
+        (AnalysisTaskTestGroupPane.prototype.setTestGroups): Update 'setTestGroups' to update _bisectingCommitSetByTestGroup
+        when the test groups changes.
+        (AnalysisTaskTestGroupPane.prototype._renderCurrentTestGroup): Added code to conditionally show bisect button.
+        Bisect button will only show when there is a middle commit set for that test group.
+        (AnalysisTaskTestGroupPane.htmlTemplate):
+        (AnalysisTaskTestGroupPane.cssTemplate):
+        (AnalysisTaskPage.prototype.didConstructShadowTree):
+        (AnalysisTaskPage.prototype._retryCurrentTestGroup):
+        (AnalysisTaskPage.prototype.async._bisectCurrentTestGroup): A callback when bisect button is clicked.
+        * tools/js/v3-models.js:
+        * unit-tests/commit-log-tests.js: Added unit tests for 'CommitLog.hasCommitTime', 'CommitLog.hasCommitOrder',
+        'CommitLog.orderTwoCommits', 'CommitLog.hasOrdering'.
+        * unit-tests/commit-set-range-bisector-tests.js: Unit tests for 'CommitSetRangeBisector.commitSetClosestToMiddleOfAllCommits'.
+        * unit-tests/commit-set-tests.js: Added unit tests for 'CommitSet.hasSameRepositories' and 'CommitSet.containsRootOrPatchOrOwnedCommit'.
+
 2018-04-16  Dewei Zhu  <dewei_zhu@apple.com>
 
         Commit order should always be returned by api.

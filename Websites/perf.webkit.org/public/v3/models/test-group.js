@@ -14,7 +14,7 @@ class TestGroup extends LabeledObject {
             return buildRequests.sort((a, b) => a.order() - b.order());
         });
         this._repositories = null;
-        this._computeRequestedCommitSetsLazily = new LazilyEvaluatedFunction(this._computeRequestedCommitSets.bind(this));
+        this._computeRequestedCommitSetsLazily = new LazilyEvaluatedFunction(TestGroup._computeRequestedCommitSets);
         this._requestedCommitSets = null;
         this._commitSetToLabel = new Map;
         console.assert(!object.platform || object.platform instanceof Platform);
@@ -80,7 +80,7 @@ class TestGroup extends LabeledObject {
         return this._computeRequestedCommitSetsLazily.evaluate(...this._orderedBuildRequests());
     }
 
-    _computeRequestedCommitSets(...orderedBuildRequests)
+    static _computeRequestedCommitSets(...orderedBuildRequests)
     {
         const requestedCommitSets = [];
         const commitSetLabelMap = new Map;

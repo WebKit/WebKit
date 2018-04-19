@@ -167,6 +167,32 @@ class AnalysisTask extends LabeledObject {
         return category;
     }
 
+    async commitSetsFromTestGroupsAndMeasurementSet()
+    {
+
+        const platform = this.platform();
+        const metric = this.metric();
+        if (!platform || !metric)
+            return [];
+
+        const lastModified = platform.lastModified(metric);
+        const measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);
+        const fetchingMeasurementSetPromise = measurementSet.fetchBetween(this.startTime(), this.endTime());
+
+        const allTestGroupsInTask = await TestGroup.fetchForTask(this.id());
+        const allCommitSetsInTask = new Set;
+        for (const group of allTestGroupsInTask)
+            group.requestedCommitSets().forEach((commitSet) => allCommitSetsInTask.add(commitSet));
+
+        await fetchingMeasurementSetPromise;
+
+        const series = measurementSet.fetchedTimeSeries('current', false, false);
+        const startPoint = series.findById(this.startMeasurementId());
+        const endPoint = series.findById(this.endMeasurementId());
+
+        return Array.from(series.viewBetweenPoints(startPoint, endPoint)).map((point) => point.commitSet());
+    }
+
     static categories()
     {
         return [

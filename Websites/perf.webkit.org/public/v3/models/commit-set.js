@@ -71,7 +71,6 @@ class CommitSet extends DataModelObject {
     ownerCommitForRepository(repository) { return this._repositoryToCommitOwnerMap.get(repository); }
     topLevelRepositories() { return Repository.sortByNamePreferringOnesWithURL(this._repositories.filter((repository) => !this.ownerRevisionForRepository(repository))); }
     ownedRepositoriesForOwnerRepository(repository) { return this._ownerRepositoryToOwnedRepositoriesMap.get(repository); }
-    commitForRepository(repository) { return this._repositoryToCommitMap.get(repository); }
 
     revisionForRepository(repository)
     {
@@ -120,6 +119,12 @@ class CommitSet extends DataModelObject {
         return CommitSet.areCustomRootsEqual(this._customRoots, other._customRoots);
     }
 
+    hasSameRepositories(commitSet)
+    {
+        return commitSet.repositories().length === this._repositoryToCommitMap.size
+            && commitSet.repositories().every((repository) => this._repositoryToCommitMap.has(repository));
+    }
+
     static areCustomRootsEqual(customRoots1, customRoots2)
     {
         if (customRoots1.length != customRoots2.length)
@@ -141,6 +146,22 @@ class CommitSet extends DataModelObject {
         for (let set of commitSets) {
             const anotherCommit = set.commitForRepository(repository);
             if (!firstCommit != !anotherCommit || (firstCommit && firstCommit.revision() != anotherCommit.revision()))
+                return true;
+        }
+        return false;
+    }
+
+    containsRootOrPatchOrOwnedCommit()
+    {
+        if (this.allRootFiles().length)
+            return true;
+
+        for (const repository of this.repositories()) {
+            if (this.ownerCommitForRepository(repository))
+                return true;
+            if (this.ownedRepositoriesForOwnerRepository(repository))
+                return true;
+            if (this.patchForRepository(repository))
                 return true;
         }
         return false;
