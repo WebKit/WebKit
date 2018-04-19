@@ -1,3 +1,46 @@
+2018-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add a mechanism to extend the height of the layout viewport in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184782
+        <rdar://problem/38346712>
+
+        Reviewed by Tim Horton.
+
+        In extra zoom mode, at initial scale, fixed position elements may take up a large portion of the viewport. This
+        leaves little room for non-fixed-position elements; to improve this experience, we introduce a mechanism to
+        extend the height of the layout viewport. By default, the layout viewport size is determined by the FrameView's
+        baseLayoutViewportSize, and passed into FrameView::computeUpdatedLayoutViewportRect in the client layer; in
+        extra zoom mode, if the layout viewport is shorter than the document width, we try to double the height of the
+        layout viewport and clamp to the document height if necessary.
+
+        * Shared/WebPreferences.yaml:
+
+        Add a new preference to determine the factor by which we should expand the height of the layout viewport. By
+        default, this is 0 (no increase in layout viewport height); in extra zoom mode, this is 1, which means we'll
+        increase the layout viewport's height by 1x the default height.
+
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView activeMinimumLayoutSizes:]):
+
+        Fixes a bug when computing the active minimum layout size. If a minimum allowed layout width is specified, we
+        clamp the active layout width (normally the view size) so that it is no less than the minimum allowed layout
+        width. However, the height is currently unaffected, which causes FrameView::baseLayoutViewportSize to return a
+        bogus size, where the width is scaled to 320px but the height isn't. Instead, we should scale the layout height
+        to match the new width here.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect const):
+
+        Expand the base viewport layout size if necessary, given the expansion factor in WebPreferences.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+
+        Expand the base viewport layout size if necessary, given the expansion factor in Settings.
+
 2018-04-19  Brian Burg  <bburg@apple.com>
 
         Web Automation: simulated mouse interactions should not be done until associated DOM events have been dispatched

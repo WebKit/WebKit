@@ -638,6 +638,10 @@ VisualViewportEnabled:
   type: bool
   defaultValue: true
 
+LayoutViewportHeightExpansionFactor:
+  type: double
+  defaultValue: DEFAULT_VISUAL_VIEWPORT_HEIGHT_EXPANSION_FACTOR
+
 NeedsStorageAccessFromFileURLsQuirk:
   type: bool
   defaultValue: true

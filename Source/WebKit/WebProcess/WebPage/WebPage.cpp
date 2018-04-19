@@ -3192,6 +3192,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     }
 #endif
 
+    settings.setLayoutViewportHeightExpansionFactor(store.getDoubleValueForKey(WebPreferencesKey::layoutViewportHeightExpansionFactorKey()));
+
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
 }

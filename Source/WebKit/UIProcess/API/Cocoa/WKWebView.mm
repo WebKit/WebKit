@@ -2596,7 +2596,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     sizes.viewSize = WebCore::FloatSize { bounds.size };
 #endif
 
-    sizes.minimumLayoutSize = { std::max<float>(sizes.viewSize.width(), self._minimumAllowedLayoutWidth), sizes.viewSize.height() };
+    auto layoutWidth = std::max<float>(sizes.viewSize.width(), self._minimumAllowedLayoutWidth);
+    sizes.minimumLayoutSize = { layoutWidth, sizes.viewSize.height() * (layoutWidth / sizes.viewSize.width()) };
     return sizes;
 }
 

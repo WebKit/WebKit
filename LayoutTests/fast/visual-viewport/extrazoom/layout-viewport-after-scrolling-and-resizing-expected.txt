@@ -1,0 +1,62 @@
+
+Before scrolling.
+PASS topRectBeforeScrolling.top is 0
+PASS topRectBeforeScrolling.left is 0
+PASS topRectBeforeScrolling.width is innerWidth
+PASS topRectBeforeScrolling.height is 50
+PASS bottomRectBeforeScrolling.top is >= innerHeight
+PASS bottomRectBeforeScrolling.left is 0
+PASS bottomRectBeforeScrolling.width is innerWidth
+PASS bottomRectBeforeScrolling.height is 50
+PASS layoutViewportBeforeScrolling.top is 0
+PASS layoutViewportBeforeScrolling.left is 0
+PASS layoutViewportBeforeScrolling.width is innerWidth
+PASS layoutViewportBeforeScrolling.height is >= innerHeight
+
+After scrolling 2500px down.
+PASS 0 is >= topRectAfterScrolling.bottom
+PASS topRectAfterScrolling.left is 0
+PASS topRectAfterScrolling.width is innerWidth
+PASS topRectAfterScrolling.height is 50
+PASS bottomRectAfterScrolling.bottom is innerHeight
+PASS bottomRectAfterScrolling.left is 0
+PASS bottomRectAfterScrolling.width is innerWidth
+PASS bottomRectAfterScrolling.height is 50
+PASS layoutViewportAfterScrolling.bottom is 2500 + innerHeight
+PASS layoutViewportAfterScrolling.left is 0
+PASS layoutViewportAfterScrolling.width is innerWidth
+PASS layoutViewportAfterScrolling.height is >= innerHeight
+
+After shortening document height to 100px.
+PASS topRectAfterShorteningBody.top is 0
+PASS topRectAfterShorteningBody.left is 0
+PASS topRectAfterShorteningBody.width is innerWidth
+PASS topRectAfterShorteningBody.height is 50
+PASS bottomRectAfterShorteningBody.bottom is innerHeight
+PASS bottomRectAfterShorteningBody.left is 0
+PASS bottomRectAfterShorteningBody.width is innerWidth
+PASS bottomRectAfterShorteningBody.height is 50
+PASS layoutViewportAfterShorteningBody.top is 0
+PASS layoutViewportAfterShorteningBody.left is 0
+PASS layoutViewportAfterShorteningBody.width is innerWidth
+PASS layoutViewportAfterShorteningBody.height is innerHeight
+
+After extending document height to 1.5x innerHeight.
+PASS topRectAfterExtendingBody.top is 0
+PASS topRectAfterExtendingBody.left is 0
+PASS topRectAfterExtendingBody.width is innerWidth
+PASS topRectAfterExtendingBody.height is 50
+PASS bottomRectAfterExtendingBody.top is >= innerHeight
+PASS bottomRectAfterExtendingBody.left is 0
+PASS bottomRectAfterExtendingBody.width is innerWidth
+PASS bottomRectAfterExtendingBody.height is 50
+PASS layoutViewportAfterExtendingBody.top is 0
+PASS layoutViewportAfterExtendingBody.left is 0
+PASS layoutViewportAfterExtendingBody.width is innerWidth
+PASS layoutViewportAfterExtendingBody.height is >= innerHeight
+PASS layoutViewportAfterExtendingBody.height < layoutViewportBeforeScrolling.height is true
+PASS finalDocumentHeight is layoutViewportAfterExtendingBody.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

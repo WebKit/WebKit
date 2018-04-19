@@ -1529,6 +1529,19 @@ void FrameView::removeViewportConstrainedObject(RenderElement* object)
     }
 }
 
+LayoutSize FrameView::expandedLayoutViewportSize(const LayoutSize& baseLayoutViewportSize, const LayoutSize& documentSize, double heightExpansionFactor)
+{
+    if (!heightExpansionFactor)
+        return baseLayoutViewportSize;
+
+    auto documentHeight = documentSize.height();
+    auto layoutViewportHeight = baseLayoutViewportSize.height();
+    if (layoutViewportHeight > documentHeight)
+        return baseLayoutViewportSize;
+
+    return { baseLayoutViewportSize.width(), std::min<LayoutUnit>(documentHeight, (1 + heightExpansionFactor) * layoutViewportHeight) };
+}
+
 LayoutRect FrameView::computeUpdatedLayoutViewportRect(const LayoutRect& layoutViewport, const LayoutRect& documentRect, const LayoutSize& unobscuredContentSize, const LayoutRect& unobscuredContentRect, const LayoutSize& baseLayoutViewportSize, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, LayoutViewportConstraint constraint)
 {
     LayoutRect layoutViewportRect = layoutViewport;

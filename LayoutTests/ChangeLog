@@ -1,3 +1,25 @@
+2018-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add a mechanism to extend the height of the layout viewport in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184782
+        <rdar://problem/38346712>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to exercise the following scenarios:
+        •   The layout viewport should be fully extended when the document is much taller than the viewport.
+        •   Programmatically shrinking the document height to less than the viewport height causes the layout viewport
+            to shrink to the viewport height.
+        •   Programmatically extending the document height to a little more than the viewport height causes the layout
+            viewport to also expand, but this time, only to the new document height.
+
+        * TestExpectations:
+
+        Skip tests in fast/visual-viewport/extrazoom by default.
+
+        * fast/visual-viewport/extrazoom/layout-viewport-after-scrolling-and-resizing-expected.txt: Added.
+        * fast/visual-viewport/extrazoom/layout-viewport-after-scrolling-and-resizing.html: Added.
+
 2018-04-19  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r229133): decidePolicyForNavigationAction not called for loading an HTML string

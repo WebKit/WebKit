@@ -1,0 +1,139 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width">
+<head>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            width: 100%;
+        }
+
+        body {
+            height: 5000px;
+        }
+
+        .fixed {
+            width: 100%;
+            height: 50px;
+            background-color: green;
+            position: fixed;
+            left: 0;
+        }
+
+        #top {
+            top: 0;
+            background-color: green;
+        }
+
+        #bottom {
+            bottom: 0;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        async function runTest() {
+            jsTestIsAsync = true;
+
+            // FIXME: This works around innerWidth and innerHeight being incorrect (i.e. unadjusted for shrink-to-fit
+            // behavior) in the load event listener of the body. See: https://bugs.webkit.org/show_bug.cgi?id=184788.
+            await UIHelper.ensurePresentationUpdate();
+
+            topRectBeforeScrolling = document.getElementById("top").getBoundingClientRect();
+            bottomRectBeforeScrolling = document.getElementById("bottom").getBoundingClientRect();
+            layoutViewportBeforeScrolling = internals.layoutViewportRect();
+
+            const verticalScrollAmount = 2500;
+            scrollBy(0, verticalScrollAmount);
+
+            topRectAfterScrolling = document.getElementById("top").getBoundingClientRect();
+            bottomRectAfterScrolling = document.getElementById("bottom").getBoundingClientRect();
+            layoutViewportAfterScrolling = internals.layoutViewportRect();
+
+            document.body.style.height = "100px";
+            await UIHelper.ensurePresentationUpdate();
+
+            topRectAfterShorteningBody = document.getElementById("top").getBoundingClientRect();
+            bottomRectAfterShorteningBody = document.getElementById("bottom").getBoundingClientRect();
+            layoutViewportAfterShorteningBody = internals.layoutViewportRect();
+
+            finalDocumentHeight = Math.round(innerHeight * 1.5);
+            document.body.style.height = `${finalDocumentHeight}px`;
+            await UIHelper.ensurePresentationUpdate();
+
+            topRectAfterExtendingBody = document.getElementById("top").getBoundingClientRect();
+            bottomRectAfterExtendingBody = document.getElementById("bottom").getBoundingClientRect();
+            layoutViewportAfterExtendingBody = internals.layoutViewportRect();
+
+            debug("\nBefore scrolling.")
+            shouldBe("topRectBeforeScrolling.top", "0");
+            shouldBe("topRectBeforeScrolling.left", "0");
+            shouldBe("topRectBeforeScrolling.width", "innerWidth");
+            shouldBe("topRectBeforeScrolling.height", "50");
+            shouldBeGreaterThanOrEqual("bottomRectBeforeScrolling.top", "innerHeight");
+            shouldBe("bottomRectBeforeScrolling.left", "0");
+            shouldBe("bottomRectBeforeScrolling.width", "innerWidth");
+            shouldBe("bottomRectBeforeScrolling.height", "50");
+            shouldBe("layoutViewportBeforeScrolling.top", "0");
+            shouldBe("layoutViewportBeforeScrolling.left", "0");
+            shouldBe("layoutViewportBeforeScrolling.width", "innerWidth");
+            shouldBeGreaterThanOrEqual("layoutViewportBeforeScrolling.height", "innerHeight");
+
+            debug(`\nAfter scrolling ${verticalScrollAmount}px down.`);
+            shouldBeGreaterThanOrEqual("0", "topRectAfterScrolling.bottom");
+            shouldBe("topRectAfterScrolling.left", "0");
+            shouldBe("topRectAfterScrolling.width", "innerWidth");
+            shouldBe("topRectAfterScrolling.height", "50");
+            shouldBe("bottomRectAfterScrolling.bottom", "innerHeight");
+            shouldBe("bottomRectAfterScrolling.left", "0");
+            shouldBe("bottomRectAfterScrolling.width", "innerWidth");
+            shouldBe("bottomRectAfterScrolling.height", "50");
+            shouldBe("layoutViewportAfterScrolling.bottom", `${verticalScrollAmount} + innerHeight`);
+            shouldBe("layoutViewportAfterScrolling.left", "0");
+            shouldBe("layoutViewportAfterScrolling.width", "innerWidth");
+            shouldBeGreaterThanOrEqual("layoutViewportAfterScrolling.height", "innerHeight");
+
+            debug("\nAfter shortening document height to 100px.");
+            shouldBe("topRectAfterShorteningBody.top", "0");
+            shouldBe("topRectAfterShorteningBody.left", "0");
+            shouldBe("topRectAfterShorteningBody.width", "innerWidth");
+            shouldBe("topRectAfterShorteningBody.height", "50");
+            shouldBe("bottomRectAfterShorteningBody.bottom", "innerHeight");
+            shouldBe("bottomRectAfterShorteningBody.left", "0");
+            shouldBe("bottomRectAfterShorteningBody.width", "innerWidth");
+            shouldBe("bottomRectAfterShorteningBody.height", "50");
+            shouldBe("layoutViewportAfterShorteningBody.top", "0");
+            shouldBe("layoutViewportAfterShorteningBody.left", "0");
+            shouldBe("layoutViewportAfterShorteningBody.width", "innerWidth");
+            shouldBe("layoutViewportAfterShorteningBody.height", "innerHeight");
+
+            debug("\nAfter extending document height to 1.5x innerHeight.")
+            shouldBe("topRectAfterExtendingBody.top", "0");
+            shouldBe("topRectAfterExtendingBody.left", "0");
+            shouldBe("topRectAfterExtendingBody.width", "innerWidth");
+            shouldBe("topRectAfterExtendingBody.height", "50");
+            shouldBeGreaterThanOrEqual("bottomRectAfterExtendingBody.top", "innerHeight");
+            shouldBe("bottomRectAfterExtendingBody.left", "0");
+            shouldBe("bottomRectAfterExtendingBody.width", "innerWidth");
+            shouldBe("bottomRectAfterExtendingBody.height", "50");
+            shouldBe("layoutViewportAfterExtendingBody.top", "0");
+            shouldBe("layoutViewportAfterExtendingBody.left", "0");
+            shouldBe("layoutViewportAfterExtendingBody.width", "innerWidth");
+            shouldBeGreaterThanOrEqual("layoutViewportAfterExtendingBody.height", "innerHeight");
+
+            // The layout viewport should not be expanded past document bounds. Before scrolling, the document height
+            // was much taller than the window height, but afterwards, the document height is short enough that we
+            // should clamp the extended layout viewport to its bounds.
+            shouldBeTrue("layoutViewportAfterExtendingBody.height < layoutViewportBeforeScrolling.height");
+            shouldBe("finalDocumentHeight", "layoutViewportAfterExtendingBody.height");
+
+            finishJSTest();
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div class="fixed" id="top"></div>
+    <div class="fixed" id="bottom"></div>
+</body>
+</html>
