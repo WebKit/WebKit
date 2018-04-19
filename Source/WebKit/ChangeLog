@@ -1,3 +1,76 @@
+2018-04-19  Brian Burg  <bburg@apple.com>
+
+        Web Automation: simulated mouse interactions should not be done until associated DOM events have been dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=184462
+        <rdar://problem/39323336>
+
+        Reviewed by Carlos Garcia Campos and Tim Horton.
+
+        Covered by existing layout tests and actions endpoints in WebDriver test suite.
+
+        In preparation for implementing the W3C WebDriver command "Perform Actions", we need a way to
+        know when a simulated mouse event has been fully processed by WebProcess and it is okay to continue
+        to dispatch more simulated events.
+
+        This patch makes mouse events go through a queue as they are delivered to WebPageProxy. The approach
+        is very similar to how key events are handled. In the key event case, lots of WebEvents can come out
+        of typing one keystroke, so these need to be queued up and retired one by one when the WebProcess has
+        finished handling each event. In some mouse event cases---particularly fake mouse moves---there can
+        also be more than one mouse event waiting to be handled by WebProcess.
+
+        In the past, these queued mouse events were tracked with several member variables as different
+        use cases emerged. These are all replaced with ordinary deque operations, such as peeking or
+        checking the queue length.
+
+        * Platform/Logging.h: Add logging channel for mouse events.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::AutomationCommandError::toProtocolString): Add type-safe helper class for command errors.
+        In future patches we can hide knowledge of how this is sent over the protocol by relying more on
+        the convenience constructors and .toProtocolString() method.
+
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog):
+        This section needs adjustments. Since performMouseInteraction now depends on key events being processed
+        prior to returning from the command, we need to abort any key event callbacks that are pending if an
+        alert pops up as a result of sending a mousedown event. Any mouse events that are still queued will
+        be handled when the alert is dismissed and the nested run loop exits.
+
+        (WebKit::WebAutomationSession::mouseEventsFlushedForPage):
+        (WebKit::WebAutomationSession::keyboardEventsFlushedForPage):
+        Modernize this a bit. Don't spread knowledge about how commands are sent back out into event handling code.
+        Our wrapper callbacks in performXXXInteraction handle the protocol-specific details of the response.
+
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        Add code similar to performKeyboardInteractions so that the command doesn't finish until the mouse
+        event has been fully handled. Unlike keyboards, sometimes mouse interactions don't turn into WebEvents
+        so we also need to handle the case where there is nothing to be waited on because hit testing did
+        not return a target to deliver the event to.
+
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        Modernize a little bit to use generic callbacks rather than protocol-generated callbacks in the
+        event waiting/handling code. Now it matches the types used for the mouse event case.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        (WebKit::AutomationCommandError::AutomationCommandError):
+        Add a helper struct to hold an enumerated error name and an optional free-form error message.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::webMouseEventTypeString):
+        (WebKit::webKeyboardEventTypeString):
+        (WebKit::WebPageProxy::handleMouseEvent):
+        (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+        Split the old method into handleMouseEvent (called by other code) and processNextQueuedMouseEvent.
+        The latter sends the next mouse event to WebProcess, and can be triggered in didReceiveEvent
+        if there are more mouse events to be sent to WebProcess.
+
+        (WebKit::WebPageProxy::isProcessingMouseEvents const): Added.
+        (WebKit::WebPageProxy::currentlyProcessedMouseDownEvent): Reimplemented on top of the deque.
+        (WebKit::WebPageProxy::didReceiveEvent):
+        Unify the code paths for different mouse event types to all use the deque. They also will
+        notify the automation session if there are no more mouse events to send (i.e., interaction is over).
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited): Add handling for new map.
+
 2018-04-19  Andy Estes  <aestes@apple.com>
 
         [iOS] Implement find-in-page in the new WKPDFView

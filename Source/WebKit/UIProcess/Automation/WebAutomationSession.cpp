@@ -53,6 +53,15 @@ using namespace Inspector;
 
 namespace WebKit {
 
+String AutomationCommandError::toProtocolString()
+{
+    String protocolErrorName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(type);
+    if (!message.has_value())
+        return protocolErrorName;
+
+    return makeString(protocolErrorName, errorNameAndDetailsSeparator, message.value());
+}
+    
 // §8. Sessions
 // https://www.w3.org/TR/webdriver/#dfn-session-page-load-timeout
 static const Seconds defaultPageLoadTimeout = 300_s;
@@ -583,6 +592,20 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
                 callback->sendFailure(unexpectedAlertOpenError);
             }
         }
+        
+        if (!m_pendingMouseEventsFlushedCallbacksPerPage.isEmpty()) {
+            for (auto key : copyToVector(m_pendingMouseEventsFlushedCallbacksPerPage.keys())) {
+                auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(key);
+                callback(std::nullopt);
+            }
+        }
+
+        if (!m_pendingKeyboardEventsFlushedCallbacksPerPage.isEmpty()) {
+            for (auto key : copyToVector(m_pendingKeyboardEventsFlushedCallbacksPerPage.keys())) {
+                auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(key);
+                callback(std::nullopt);
+            }
+        }
     });
 }
     
@@ -698,13 +721,23 @@ void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
         callback->sendSuccess(JSON::Object::create());
 }
 
+void WebAutomationSession::mouseEventsFlushedForPage(const WebPageProxy& page)
+{
+    if (auto callback = m_pendingMouseEventsFlushedCallbacksPerPage.take(page.pageID())) {
+        if (m_pendingMouseEventsFlushedCallbacksPerPage.isEmpty())
+            m_simulatingUserInteraction = false;
+
+        callback(std::nullopt);
+    }
+}
+
 void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page)
 {
     if (auto callback = m_pendingKeyboardEventsFlushedCallbacksPerPage.take(page.pageID())) {
-        callback->sendSuccess(JSON::Object::create());
-
         if (m_pendingKeyboardEventsFlushedCallbacksPerPage.isEmpty())
             m_simulatingUserInteraction = false;
+
+        callback(std::nullopt);
     }
 }
 
@@ -1398,12 +1431,34 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
         if (!parsedButton)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'button' is invalid.");
 
-        platformSimulateMouseInteraction(page, viewPosition, parsedInteraction.value(), parsedButton.value(), keyModifiers);
+        auto mouseEventsFlushedCallback = [protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), page = page.copyRef(), x, y](std::optional<AutomationCommandError> error) {
+            if (error)
+                callback->sendFailure(error.value().toProtocolString());
+            else {
+                callback->sendSuccess(Inspector::Protocol::Automation::Point::create()
+                    .setX(x)
+                    .setY(y - page->topContentInset())
+                    .release());
+            }
+        };
 
-        callback->sendSuccess(Inspector::Protocol::Automation::Point::create()
-            .setX(x)
-            .setY(y - page->topContentInset())
-            .release());
+        auto& callbackInMap = m_pendingMouseEventsFlushedCallbacksPerPage.add(page->pageID(), nullptr).iterator->value;
+        if (callbackInMap)
+            callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
+        callbackInMap = WTFMove(mouseEventsFlushedCallback);
+
+        // This is cleared when all mouse events are flushed.
+        m_simulatingUserInteraction = true;
+
+        platformSimulateMouseInteraction(page, viewPosition, parsedInteraction.value(), parsedButton.value(), keyModifiers);
+        
+        // If the event location was previously clipped and does not hit test anything in the window, then it will not be processed.
+        // For compatibility with pre-W3C driver implementations, don't make this a hard error; just do nothing silently.
+        // In W3C-only code paths, we can reject any pointer actions whose coordinates are outside the viewport rect.
+        if (callbackInMap && !page->isProcessingMouseEvents()) {
+            auto callbackToCancel = m_pendingMouseEventsFlushedCallbacksPerPage.take(page->pageID());
+            callbackToCancel(std::nullopt);
+        }
     });
 #endif // USE(APPKIT) || PLATFORM(GTK)
 }
@@ -1473,10 +1528,17 @@ void WebAutomationSession::performKeyboardInteractions(const String& handle, con
     if (!actionsToPerform.size())
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "No actions to perform.");
 
+    auto keyboardEventsFlushedCallback = [protectedThis = makeRef(*this), callback = WTFMove(callback), page = makeRef(*page)](std::optional<AutomationCommandError> error) {
+        if (error)
+            callback->sendFailure(error.value().toProtocolString());
+        else
+            callback->sendSuccess();
+    };
+
     auto& callbackInMap = m_pendingKeyboardEventsFlushedCallbacksPerPage.add(page->pageID(), nullptr).iterator->value;
     if (callbackInMap)
-        callbackInMap->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
-    callbackInMap = WTFMove(callback);
+        callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
+    callbackInMap = WTFMove(keyboardEventsFlushedCallback);
 
     // This is cleared when all keyboard events are flushed.
     m_simulatingUserInteraction = true;
