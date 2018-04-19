@@ -275,6 +275,27 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.derivedCachedDataTypesToRetrieve = resourceLoader.options().derivedCachedDataTypesToRetrieve;
     loadParameters.options = resourceLoader.options();
 
+    if (loadParameters.options.mode != FetchOptions::Mode::Navigate) {
+        // FIXME: All loaders should provide their origin if navigation mode is cors/no-cors/same-origin.
+        // As a temporary approach, we use the document origin if available or the HTTP Origin header otherwise.
+        if (resourceLoader.isSubresourceLoader())
+            loadParameters.sourceOrigin = static_cast<SubresourceLoader&>(resourceLoader).origin();
+
+        auto* document = resourceLoader.frame() ? resourceLoader.frame()->document() : nullptr;
+        if (!loadParameters.sourceOrigin && document)
+            loadParameters.sourceOrigin = &document->securityOrigin();
+        if (!loadParameters.sourceOrigin) {
+            auto origin = request.httpOrigin();
+            if (!origin.isNull())
+                loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
+        }
+        ASSERT(loadParameters.sourceOrigin);
+        if (!loadParameters.sourceOrigin) {
+            scheduleInternallyFailedLoad(resourceLoader);
+            return;
+        }
+    }
+
     // FIXME: We should also sanitize redirect response for navigations.
     loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess() && resourceLoader.options().mode != FetchOptions::Mode::Navigate;
 
@@ -586,6 +607,20 @@ void WebLoaderStrategy::setOnLineState(bool isOnLine)
 void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCaptureExtraNetworkLoadMetricsEnabled(enabled), 0);
+}
+
+ResourceResponse WebLoaderStrategy::responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)
+{
+    ResourceResponse response;
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationResponse { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationResponse::Reply { response }, 0);
+    return response;
+}
+
+NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier)
+{
+    NetworkLoadMetrics networkMetrics;
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics::Reply { networkMetrics }, 0);
+    return networkMetrics;
 }
 
 } // namespace WebKit

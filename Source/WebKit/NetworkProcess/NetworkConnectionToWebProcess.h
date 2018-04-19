@@ -75,6 +75,41 @@ public:
     void cleanupForSuspension(Function<void()>&&);
     void endSuspension();
 
+    // FIXME: We should store all redirected request/responses.
+    struct NetworkLoadInformation {
+        WebCore::ResourceResponse response;
+        WebCore::NetworkLoadMetrics metrics;
+    };
+
+    void takeNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, WebCore::ResourceResponse& response)
+    {
+        response = m_networkLoadInformationByID.get(identifier).response;
+    }
+
+    void takeNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, WebCore::NetworkLoadMetrics& metrics)
+    {
+        metrics = m_networkLoadInformationByID.take(identifier).metrics;
+    }
+
+    void addNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, const WebCore::ResourceResponse& response)
+    {
+        ASSERT(!m_networkLoadInformationByID.contains(identifier));
+        m_networkLoadInformationByID.add(identifier, NetworkLoadInformation { response, { } });
+    }
+
+    void addNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, const WebCore::NetworkLoadMetrics& metrics)
+    {
+        ASSERT(m_networkLoadInformationByID.contains(identifier));
+        m_networkLoadInformationByID.ensure(identifier, [] {
+            return NetworkLoadInformation { };
+        }).iterator->value.metrics = metrics;
+    }
+
+    void removeNetworkLoadInformation(ResourceLoadIdentifier identifier)
+    {
+        m_networkLoadInformationByID.remove(identifier);
+    }
+
 private:
     NetworkConnectionToWebProcess(IPC::Connection::Identifier);
 
@@ -149,6 +184,9 @@ private:
     HashMap<uint64_t, RefPtr<NetworkSocketStream>> m_networkSocketStreams;
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
+
+    HashMap<ResourceLoadIdentifier, NetworkLoadInformation> m_networkLoadInformationByID;
+
 
 #if USE(LIBWEBRTC)
     RefPtr<NetworkRTCProvider> m_rtcProvider;

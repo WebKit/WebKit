@@ -1,3 +1,26 @@
+2018-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Web Inspector backend should get headers & cookies from network process separately from resource requests
+        https://bugs.webkit.org/show_bug.cgi?id=184396
+        <rdar://problem/38877384>
+
+        Reviewed by Brian Burg.
+
+        Add two new loader strategies to get response and network metrics directly from
+        NetworkProcess based on resource loader identifier.
+        Use these methods in InspectorNetworkAgent when response/metrics might be filtered.
+
+        Covered by existing tests, in particular http/tests/inspector/network/fetch-network-data.html which would fail
+        without this since we are now setting the sourceOrigin for NetworkResourceLoader, which is used to sanitize response headers.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveResponse):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        * loader/LoaderStrategy.cpp:
+        (WebCore::LoaderStrategy::responseFromResourceLoaIdentifier):
+        (WebCore::LoaderStrategy::networkMetricsFromResourceLoaIdentifier):
+        * loader/LoaderStrategy.h:
+
 2018-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add a mechanism to extend the height of the layout viewport in extra zoom mode

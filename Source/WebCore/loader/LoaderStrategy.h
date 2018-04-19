@@ -42,6 +42,7 @@ class FrameLoader;
 class HTTPHeaderMap;
 class NetscapePlugInStreamLoader;
 class NetscapePlugInStreamLoaderClient;
+class NetworkLoadMetrics;
 class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
@@ -80,6 +81,9 @@ public:
     virtual void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) = 0;
 
     virtual bool isDoingLoadingSecurityChecks() const { return false; }
+
+    virtual ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
+    virtual NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
 
 protected:
     virtual ~LoaderStrategy();

@@ -26,11 +26,23 @@
 #include "config.h"
 #include "LoaderStrategy.h"
 
+#include "NetworkLoadMetrics.h"
 #include "PlatformStrategies.h"
+#include "ResourceResponse.h"
 
 namespace WebCore {
 
 LoaderStrategy::~LoaderStrategy() = default;
+
+ResourceResponse LoaderStrategy::responseFromResourceLoadIdentifier(uint64_t /* resourceLoadIdentifier */)
+{
+    return { };
+}
+
+NetworkLoadMetrics LoaderStrategy::networkMetricsFromResourceLoadIdentifier(uint64_t /* resourceLoadIdentifier */)
+{
+    return { };
+}
 
 } // namespace WebCore
 

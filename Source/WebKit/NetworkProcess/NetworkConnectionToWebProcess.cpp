@@ -484,6 +484,8 @@ void NetworkConnectionToWebProcess::storeDerivedDataToCache(const WebKit::Networ
 void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 {
     m_captureExtraNetworkLoadMetricsEnabled = enabled;
+    if (!m_captureExtraNetworkLoadMetricsEnabled)
+        m_networkLoadInformationByID.clear();
 }
 
 void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()

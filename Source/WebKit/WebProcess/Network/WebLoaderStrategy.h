@@ -92,6 +92,9 @@ private:
     void startLocalLoad(WebCore::ResourceLoader&);
     bool tryLoadingUsingURLSchemeHandler(WebCore::ResourceLoader&);
 
+    WebCore::ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
+    WebCore::NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
+
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
     

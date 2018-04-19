@@ -357,6 +357,9 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     m_response = WTFMove(receivedResponse);
 
+    if (shouldCaptureExtraNetworkLoadMetrics())
+        m_connection->addNetworkLoadInformationResponse(identifier(), m_response);
+
     // For multipart/x-mixed-replace didReceiveResponseAsync gets called multiple times and buffering would require special handling.
     if (!isSynchronous() && m_response.isMultipart())
         m_bufferedData = nullptr;
@@ -432,6 +435,9 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 {
     RELEASE_LOG_IF_ALLOWED("didFinishLoading: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", length = %zd)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, m_numBytesReceived);
 
+    if (shouldCaptureExtraNetworkLoadMetrics())
+        m_connection->addNetworkLoadInformationMetrics(identifier(), networkLoadMetrics);
+
     if (m_cacheEntryForValidation) {
         // 304 Not Modified
         ASSERT(m_response.httpStatusCode() == 304);
@@ -463,6 +469,9 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 {
     RELEASE_LOG_IF_ALLOWED("didFailLoading: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isTimeout = %d, isCancellation = %d, errCode = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, error.isTimeout(), error.isCancellation(), error.errorCode());
+
+    if (shouldCaptureExtraNetworkLoadMetrics())
+        m_connection->removeNetworkLoadInformation(identifier());
 
     ASSERT(!error.isNull());
 

@@ -1,3 +1,43 @@
+2018-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Web Inspector backend should get headers & cookies from network process separately from resource requests
+        https://bugs.webkit.org/show_bug.cgi?id=184396
+        <rdar://problem/38877384>
+
+        Reviewed by Brian Burg.
+
+        Add support for storing response and network metrics for every resource load.
+        This is made conditional on inspector being activated.
+        NetworkConnectionToWebProcess keeps a response and network metrics for every load.
+        This is cleared when inspector is going away or when a web process requests
+        the data.
+
+        WebLoaderStrategy gets this data through synchronous IPC.
+        Synchronous IPC is a temporary implementation until Inspector code gets refactored.
+
+        Updated WebLoaderStrategy to pass the sourceOrigin for every NetworkResourceLoader.
+        This activates additional sanitization based on cross origin status.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkLoadInformationResponse):
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkLoadInformationMetrics):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationResponse):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationMetrics):
+        (WebKit::NetworkConnectionToWebProcess::removeNetworkLoadInformation):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::responseFromResourceLoadIdentifier):
+        (WebKit::WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+
 2018-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Add a mechanism to extend the height of the layout viewport in extra zoom mode
