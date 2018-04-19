@@ -54,7 +54,7 @@ enum ReadyState {
 
     attribute unrestricted double duration;
 
-    [MayThrowException] SourceBuffer addSourceBuffer(DOMString type);
+    [NewObject, MayThrowException] SourceBuffer addSourceBuffer(DOMString type);
     [MayThrowException] void removeSourceBuffer(SourceBuffer buffer);
 
     readonly attribute ReadyState readyState;
