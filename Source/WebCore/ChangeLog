@@ -1,3 +1,14 @@
+2018-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Enable Objective-C weak references
+        <https://webkit.org/b/184789>
+        <rdar://problem/39571716>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+
 2018-04-19  Antti Koivisto  <antti@apple.com>
 
         Don't use RenderTreeBuilder::current() in RenderTreeUpdater

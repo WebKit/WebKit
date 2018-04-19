@@ -1,3 +1,14 @@
+2018-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Enable Objective-C weak references
+        <https://webkit.org/b/184789>
+        <rdar://problem/39571716>
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+
 2018-04-17  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] AirPlay device name is sometimes wrong

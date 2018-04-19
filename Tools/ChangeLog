@@ -1,3 +1,29 @@
+2018-04-19  David Kilzer  <ddkilzer@apple.com>
+
+        Enable Objective-C weak references
+        <https://webkit.org/b/184789>
+        <rdar://problem/39571716>
+
+        Reviewed by Dan Bernstein.
+
+        * ContentExtensionTester/Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+        * MiniBrowser/Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+        * WebEditingTester/Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_ARC): Re-order.
+        * WebKitLauncher/Configurations/Base.xcconfig: Add newline at
+        end of file.
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        (CLANG_ENABLE_OBJC_WEAK): Enable.
+
 2018-04-19  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r229133): decidePolicyForNavigationAction not called for loading an HTML string
