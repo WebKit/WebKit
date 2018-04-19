@@ -97,6 +97,9 @@ webkit.org/b/178272 [ Sierra ] http/tests/security/video-cross-origin-caching.ht
 # rdar://problem/34716163 Breaks subsequent tests using response.xml
 [ HighSierra+ ] http/tests/xmlhttprequest/range-test.html [ Skip ]
 
+# WK1 does not support sync XHR redirections as does WK2
+http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-sync-xhr-in-main-frame.html [ Skip ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 

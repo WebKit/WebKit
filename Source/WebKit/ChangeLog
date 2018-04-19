@@ -1,3 +1,13 @@
+2018-04-19  Youenn Fablet  <youenn@apple.com>
+
+        NetworkProcess should use CSP/content blockers for sync XHR
+        https://bugs.webkit.org/show_bug.cgi?id=184760
+
+        Reviewed by Chris Dumez.
+
+        Setting CSP/ContentBlockers parameters for sync XHR loads.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+
 2018-04-19  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: respect the accessibility setting for dispatching the accessible events

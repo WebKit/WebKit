@@ -2211,6 +2211,9 @@ webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-parent-sam
 webkit.org/b/140703 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 webkit.org/b/140703 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
 
+# WK1 does not support sync XHR redirections as does WK2
+http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-sync-xhr-in-main-frame.html [ Skip ]
+
 # CSP Stuff
 http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
