@@ -1354,3 +1354,5 @@ fast/flexbox/flexbox-fail-to-select-same-line.html [ ImageOnlyFailure Pass ]
 fast/text/international/hebrew-selection.html [ ImageOnlyFailure Pass ]
 imported/blink/editing/style/justify-left-crash.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/css/user-select-none.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]

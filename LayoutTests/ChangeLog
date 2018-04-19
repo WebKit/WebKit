@@ -1,3 +1,11 @@
+2018-04-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for iOS simulator.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt: Removed.
+        * platform/ios/TestExpectations:
+
 2018-04-19  Nan Wang  <n_wang@apple.com>
 
         AX: AOM: respect the accessibility setting for dispatching the accessible events
