@@ -1733,6 +1733,8 @@ private:
     std::unique_ptr<DeviceOrientationController> m_deviceOrientationController;
 #endif
 
+    GenericTaskQueue<Timer> m_logMessageTaskQueue;
+
     Timer m_pendingTasksTimer;
     Vector<Task> m_pendingTasks;
 

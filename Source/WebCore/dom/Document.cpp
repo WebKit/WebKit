@@ -573,6 +573,9 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Document::~Document()
 {
+    if (m_logger)
+        m_logger->removeObserver(*this);
+
     ASSERT(allDocumentsMap().contains(m_identifier));
     allDocumentsMap().remove(m_identifier);
     // We need to remove from the contexts map very early in the destructor so that calling postTask() on this Document from another thread is safe.
@@ -646,9 +649,6 @@ Document::~Document()
 
     for (unsigned count : m_nodeListAndCollectionCounts)
         ASSERT_UNUSED(count, !count);
-
-    if (m_logger)
-        m_logger->removeObserver(*this);
 }
 
 void Document::removedLastRef()
@@ -7778,11 +7778,16 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
 
     ASSERT(sessionID().isAlwaysOnLoggingAllowed());
 
-    auto messageSource = messageSourceForWTFLogChannel(channel);
-    auto messageLevel = messageLevelFromWTFLogLevel(level);
-    auto message = std::make_unique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(frame()));
+    m_logMessageTaskQueue.enqueueTask([this, channel, level, logMessages = WTFMove(logMessages)]() mutable {
+        if (!page())
+            return;
 
-    addConsoleMessage(WTFMove(message));
+        auto messageSource = messageSourceForWTFLogChannel(channel);
+        auto messageLevel = messageLevelFromWTFLogLevel(level);
+        auto message = std::make_unique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(frame()));
+
+        addConsoleMessage(WTFMove(message));
+    });
 }
 
 #if ENABLE(SERVICE_WORKER)
