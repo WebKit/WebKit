@@ -150,14 +150,6 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
-#if __has_include(<AccessibilitySupport.h>)
-#include <AccessibilitySupport.h>
-#else
-extern "C" {
-CFStringRef kAXSAllowForceWebScalingEnabledNotification;
-}
-#endif
-
 #define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(_page && _page->isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
 
 @interface UIScrollView (UIScrollViewInternal)
@@ -213,6 +205,17 @@ static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 @end
 #endif // HAVE(TOUCH_BAR)
 #endif // PLATFORM(MAC)
+
+#if ENABLE(ACCESSIBILITY_EVENTS)
+#if __has_include(<AccessibilitySupport.h>)
+#include <AccessibilitySupport.h>
+#else
+extern "C" {
+CFStringRef kAXSWebAccessibilityEventsEnabledNotification;
+Boolean _AXSWebAccessibilityEventsEnabled();
+}
+#endif
+#endif
 
 static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
 {
@@ -693,6 +696,11 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
     _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
+#endif
+
+#if ENABLE(ACCESSIBILITY_EVENTS)
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), accessibilityEventsEnabledChangedCallback, kAXSWebAccessibilityEventsEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
+    [self _updateAccessibilityEventsEnabled];
 #endif
 
     _page->setBackgroundExtendsBeyondPage(true);
@@ -3052,6 +3060,20 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 }
 
 #endif // PLATFORM(IOS)
+
+#if ENABLE(ACCESSIBILITY_EVENTS)
+static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    ASSERT(observer);
+    WKWebView* webview = static_cast<WKWebView*>(observer);
+    [webview _updateAccessibilityEventsEnabled];
+}
+
+- (void)_updateAccessibilityEventsEnabled
+{
+    _page->updateAccessibilityEventsEnabled(_AXSWebAccessibilityEventsEnabled());
+}
+#endif
 
 #pragma mark OS X-specific methods
 

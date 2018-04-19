@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="button">Click</button>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that dispatching accessibility events is controled by iOS settings.");
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        var node = document.getElementById("button");
+        var axNode = accessibilityController.accessibleElementById("button");
+        var receivedAXEvent;
+        node.onaccessibleclick = function() {
+            receivedAXEvent = true;
+        };
+
+        // By default, accessibility events setting is enabled.
+        receivedAXEvent = false;
+        axNode.syncPress();
+        shouldBeTrue("receivedAXEvent");
+
+        // Disable the setting.
+        window.internals.settings.setAccessibilityEventsEnabled(false);
+        setTimeout(function() {
+            receivedAXEvent = false;
+            axNode.syncPress();
+            shouldBeFalse("receivedAXEvent");
+
+            // Re-enable the setting.
+            window.internals.settings.setAccessibilityEventsEnabled(true);
+            setTimeout(function() {
+                receivedAXEvent = false;
+                axNode.syncPress();
+                shouldBeTrue("receivedAXEvent");
+                finishJSTest();
+            }, 30);
+
+        }, 30);
+    }
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

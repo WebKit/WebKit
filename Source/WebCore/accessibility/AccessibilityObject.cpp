@@ -2157,7 +2157,11 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
 
 bool AccessibilityObject::shouldDispatchAccessibilityEvent() const
 {
-    return RuntimeEnabledFeatures::sharedFeatures().accessibilityObjectModelEnabled();
+    bool shouldDispatch = RuntimeEnabledFeatures::sharedFeatures().accessibilityObjectModelEnabled();
+#if ENABLE(ACCESSIBILITY_EVENTS)
+    return shouldDispatch &= this->page()->settings().accessibilityEventsEnabled();
+#endif
+    return shouldDispatch;
 }
 
 bool AccessibilityObject::dispatchAccessibilityEvent(Event& event) const

@@ -429,6 +429,9 @@ public:
     void windowScreenDidChange(uint32_t);
 
     void accessibilitySettingsDidChange();
+#if ENABLE(ACCESSIBILITY_EVENTS)
+    void updateAccessibilityEventsEnabled(bool);
+#endif
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     void scalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates);

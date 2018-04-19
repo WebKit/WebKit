@@ -730,3 +730,7 @@ resourceLoadStatisticsDebugMode:
 clientCoordinatesRelativeToLayoutViewport:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
+
+accessibilityEventsEnabled:
+  initial: true
+  conditional: ACCESSIBILITY_EVENTS

@@ -1,3 +1,24 @@
+2018-04-19  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: respect the accessibility setting for dispatching the accessible events
+        https://bugs.webkit.org/show_bug.cgi?id=184619
+
+        Reviewed by Ryosuke Niwa.
+
+        Added accessibilityEventsEnabled as a setting on the page.
+
+        Test: accessibility/ios-simulator/accessibility-events-setting.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::shouldDispatchAccessibilityEvent const):
+        * page/Settings.yaml:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setAccessibilityEventsEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2018-04-18  Jer Noble  <jer.noble@apple.com>
 
         Fix build when WK_ALTERNATE_FRAMEWORKS_DIR is set to non-empty value

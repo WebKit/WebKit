@@ -1,3 +1,15 @@
+2018-04-19  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: respect the accessibility setting for dispatching the accessible events
+        https://bugs.webkit.org/show_bug.cgi?id=184619
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/ios-simulator/accessibility-events-setting-expected.txt: Added.
+        * accessibility/ios-simulator/accessibility-events-setting.html: Added.
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2018-04-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Fix flakiness in worker-to-worker test

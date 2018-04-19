@@ -1128,6 +1128,8 @@ webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass F
 # Forcing always allow user scalable is not supported on certain OS version.
 webkit.org/b/155056 fast/viewport/ios/force-always-user-scalable.html [ Skip ]
 
+# Setting accessibility events enabled is not supported on certain OS version.
+webkit.org/b/184619 accessibility/ios-simulator/accessibility-events-setting.html [ Skip ]
 
 webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Pass Failure ]
 webkit.org/b/155495 legacy-animation-engine/compositing/visible-rect/animated-from-none.html [ Pass Failure ]

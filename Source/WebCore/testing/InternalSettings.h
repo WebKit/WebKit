@@ -100,6 +100,7 @@ public:
     ExceptionOr<void> setShouldMockBoldSystemFontForAccessibility(bool);
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
+    ExceptionOr<void> setAccessibilityEventsEnabled(bool);
 
     using FrameFlatteningValue = FrameFlattening;
     ExceptionOr<void> setFrameFlattening(FrameFlatteningValue);
@@ -189,7 +190,9 @@ private:
         bool m_inlineMediaPlaybackRequiresPlaysInlineAttribute;
         bool m_deferredCSSParserEnabled;
         bool m_inputEventsEnabled;
-
+#if ENABLE(ACCESSIBILITY_EVENTS)
+        bool m_accessibilityEventsEnabled;
+#endif
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         PDFImageCachingPolicy m_pdfImageCachingPolicy;

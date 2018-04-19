@@ -104,6 +104,7 @@ fast/zooming/uiscript-zooming.html [ Failure ]
 
 # Not supported on WK1
 accessibility/ios-simulator/speak-selection-content.html [ Skip ]
+accessibility/ios-simulator/accessibility-events-setting.html [ Skip ]
 
 # FIXME: Tests that fail due to lack of textInputController <rdar://problem/5106287>
 editing/inserting/insert-composition-whitespace.html [ Failure ]

@@ -1,3 +1,27 @@
+2018-04-19  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM: respect the accessibility setting for dispatching the accessible events
+        https://bugs.webkit.org/show_bug.cgi?id=184619
+
+        Reviewed by Ryosuke Niwa.
+
+        Linked libAccessibility on iOS and macOS to use the platform accessibility settings
+        for allowing dispatching the accessibility events.
+
+        * Configurations/WebKit.xcconfig:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (accessibilityEventsEnabledChangedCallback):
+        (-[WKWebView _updateAccessibilityEventsEnabled]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateAccessibilityEventsEnabled):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateAccessibilityEventsEnabled):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-04-18  Chris Dumez  <cdumez@apple.com>
 
         Rename WindowProxyController to WindowProxy

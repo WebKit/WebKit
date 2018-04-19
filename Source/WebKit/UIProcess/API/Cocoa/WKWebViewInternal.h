@@ -149,6 +149,10 @@ struct PrintInfo;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 #endif
 
+#if ENABLE(ACCESSIBILITY_EVENTS)
+- (void)_updateAccessibilityEventsEnabled;
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_didRemoveAttachment:(NSString *)identifier;
 - (void)_didInsertAttachment:(NSString *)identifier withSource:(NSString *)source;
