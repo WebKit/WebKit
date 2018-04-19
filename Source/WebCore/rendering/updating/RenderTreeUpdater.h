@@ -87,10 +87,10 @@ private:
     void popParentsToDepth(unsigned depth);
 
     enum class TeardownType { Full, RendererUpdate, RendererUpdateCancelingAnimations };
-    static void tearDownRenderers(Element&, TeardownType);
-    static void tearDownTextRenderer(Text&);
-    static void tearDownLeftoverShadowHostChildren(Element&);
-    static void tearDownLeftoverPaginationRenderersIfNeeded(Element&);
+    static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
+    static void tearDownTextRenderer(Text&, RenderTreeBuilder&);
+    static void tearDownLeftoverShadowHostChildren(Element&, RenderTreeBuilder&);
+    static void tearDownLeftoverPaginationRenderersIfNeeded(Element&, RenderTreeBuilder&);
 
     RenderView& renderView();
 

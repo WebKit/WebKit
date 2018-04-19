@@ -318,7 +318,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 
         // display:none cancels animations.
         auto teardownType = update.style->display() == NONE ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
-        tearDownRenderers(element, teardownType);
+        tearDownRenderers(element, teardownType, m_builder);
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
     }
@@ -484,7 +484,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
     if (existingRenderer && textUpdate && textUpdate->inheritedDisplayContentsStyle) {
         if (existingRenderer->inlineWrapperForDisplayContents() || *textUpdate->inheritedDisplayContentsStyle) {
             // FIXME: We could update without teardown.
-            tearDownTextRenderer(text);
+            tearDownTextRenderer(text, m_builder);
             existingRenderer = nullptr;
         }
     }
@@ -495,7 +495,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
                 existingRenderer->setTextWithOffset(text.data(), textUpdate->offset, textUpdate->length);
             return;
         }
-        tearDownTextRenderer(text);
+        tearDownTextRenderer(text, m_builder);
         renderingParent().didCreateOrDestroyChildRenderer = true;
         return;
     }
@@ -520,7 +520,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root)
     if (!view)
         return;
     RenderTreeBuilder builder(*view);
-    tearDownRenderers(root, TeardownType::Full);
+    tearDownRenderers(root, TeardownType::Full, builder);
 }
 
 void RenderTreeUpdater::tearDownRenderer(Text& text)
@@ -529,10 +529,10 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     if (!view)
         return;
     RenderTreeBuilder builder(*view);
-    tearDownTextRenderer(text);
+    tearDownTextRenderer(text, builder);
 }
 
-void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
+void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
 {
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
@@ -563,17 +563,17 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             if (teardownType == TeardownType::Full)
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
 
-            GeneratedContent::removeBeforePseudoElement(element);
-            GeneratedContent::removeAfterPseudoElement(element);
+            GeneratedContent::removeBeforePseudoElement(element, builder);
+            GeneratedContent::removeAfterPseudoElement(element, builder);
 
             if (auto* renderer = element.renderer()) {
-                RenderTreeBuilder::current()->destroyAndCleanUpAnonymousWrappers(*renderer);
+                builder.destroyAndCleanUpAnonymousWrappers(*renderer);
                 element.setRenderer(nullptr);
             }
 
             // Make sure we don't leave any renderers behind in nodes outside the composed tree.
             if (element.shadowRoot())
-                tearDownLeftoverShadowHostChildren(element);
+                tearDownLeftoverShadowHostChildren(element, builder);
 
             if (element.hasCustomStyleResolveCallbacks())
                 element.didDetachRenderers();
@@ -587,7 +587,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         pop(it.depth());
 
         if (is<Text>(*it)) {
-            tearDownTextRenderer(downcast<Text>(*it));
+            tearDownTextRenderer(downcast<Text>(*it), builder);
             continue;
         }
 
@@ -596,41 +596,41 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 
     pop(0);
 
-    tearDownLeftoverPaginationRenderersIfNeeded(root);
+    tearDownLeftoverPaginationRenderersIfNeeded(root, builder);
 }
 
-void RenderTreeUpdater::tearDownTextRenderer(Text& text)
+void RenderTreeUpdater::tearDownTextRenderer(Text& text, RenderTreeBuilder& builder)
 {
     auto* renderer = text.renderer();
     if (!renderer)
         return;
-    RenderTreeBuilder::current()->destroyAndCleanUpAnonymousWrappers(*renderer);
+    builder.destroyAndCleanUpAnonymousWrappers(*renderer);
     text.setRenderer(nullptr);
 }
 
-void RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded(Element& root)
+void RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded(Element& root, RenderTreeBuilder& builder)
 {
     if (&root != root.document().documentElement())
         return;
     for (auto* child = root.document().renderView()->firstChild(); child;) {
         auto* nextSibling = child->nextSibling();
         if (is<RenderMultiColumnFlow>(*child) || is<RenderMultiColumnSet>(*child))
-            RenderTreeBuilder::current()->destroyAndCleanUpAnonymousWrappers(*child);
+            builder.destroyAndCleanUpAnonymousWrappers(*child);
         child = nextSibling;
     }
 }
 
-void RenderTreeUpdater::tearDownLeftoverShadowHostChildren(Element& host)
+void RenderTreeUpdater::tearDownLeftoverShadowHostChildren(Element& host, RenderTreeBuilder& builder)
 {
     for (auto* hostChild = host.firstChild(); hostChild; hostChild = hostChild->nextSibling()) {
         if (!hostChild->renderer())
             continue;
         if (is<Text>(*hostChild)) {
-            tearDownTextRenderer(downcast<Text>(*hostChild));
+            tearDownTextRenderer(downcast<Text>(*hostChild), builder);
             continue;
         }
         if (is<Element>(*hostChild))
-            tearDownRenderers(downcast<Element>(*hostChild), TeardownType::Full);
+            tearDownRenderers(downcast<Element>(*hostChild), TeardownType::Full, builder);
     }
 }
 

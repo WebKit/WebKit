@@ -99,9 +99,9 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (!needsPseudoElement(update)) {
         if (pseudoElement) {
             if (pseudoId == BEFORE)
-                removeBeforePseudoElement(current);
+                removeBeforePseudoElement(current, m_updater.m_builder);
             else
-                removeAfterPseudoElement(current);
+                removeAfterPseudoElement(current, m_updater.m_builder);
         }
         return;
     }
@@ -165,21 +165,21 @@ bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const std::optional
     return true;
 }
 
-void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element)
+void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element, RenderTreeBuilder& builder)
 {
     auto* pseudoElement = element.beforePseudoElement();
     if (!pseudoElement)
         return;
-    tearDownRenderers(*pseudoElement, TeardownType::Full);
+    tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
     element.clearBeforePseudoElement();
 }
 
-void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& element)
+void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& element, RenderTreeBuilder& builder)
 {
     auto* pseudoElement = element.afterPseudoElement();
     if (!pseudoElement)
         return;
-    tearDownRenderers(*pseudoElement, TeardownType::Full);
+    tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
     element.clearAfterPseudoElement();
 }
 
