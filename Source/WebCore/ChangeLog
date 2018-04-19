@@ -1,3 +1,28 @@
+2018-04-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Caret rendered at incorrect location inside empty table cell
+        https://bugs.webkit.org/show_bug.cgi?id=85385
+
+        Reviewed by Zalan Bujtas.
+
+        This is based on a previous patch by Shezan Baig <shezbaig.wk@gmail.com>.
+
+        This fixes the position of the caret in empty cells,
+        that was painted lower than expected
+        (and then modified when you start to edit the cell).
+
+        Ensures that editable table cells have at least one line when
+        they are laid out. This ensures that the cell's intrinsic before/after
+        padding is calculated correctly, which results in the caret location
+        being calculated correctly.
+
+        Test: editing/caret/caret-in-empty-cell.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::hasLineIfEmpty): Override method to consider
+        that it has an an empty line if the table cell is editable.
+        * rendering/RenderTableCell.h:
+
 2018-04-18  Daniel Bates  <dabates@apple.com>
 
         Cleanup TextControlInnerElements

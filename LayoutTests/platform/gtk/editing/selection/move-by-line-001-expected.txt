@@ -10,18 +10,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x192 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x164
-          RenderTable {TABLE} at (0,0) size 64x164 [border: (1px outset #808080)]
-            RenderTableSection {TBODY} at (1,1) size 62x162
+      RenderBlock {DIV} at (0,0) size 784x197 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x169
+          RenderTable {TABLE} at (0,0) size 64x169 [border: (1px outset #808080)]
+            RenderTableSection {TBODY} at (1,1) size 62x167
               RenderTableRow {TR} at (0,2) size 62x53
                 RenderTableCell {TD} at (2,2) size 58x53 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                   RenderText {#text} at (13,13) size 32x26
                     text run at (13,13) width 32: "foo"
-              RenderTableRow {TR} at (0,57) size 62x48
-                RenderTableCell {TD} at (2,68) size 58x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderTableRow {TR} at (0,107) size 62x53
-                RenderTableCell {TD} at (2,107) size 58x53 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderTableRow {TR} at (0,57) size 62x53
+                RenderTableCell {TD} at (2,57) size 58x53 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderTableRow {TR} at (0,112) size 62x53
+                RenderTableCell {TD} at (2,112) size 58x53 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
                   RenderText {#text} at (13,13) size 31x26
                     text run at (13,13) width 31: "bar"
 caret: position 2 of child 1 {TABLE} of child 1 {DIV} of child 1 {DIV} of body

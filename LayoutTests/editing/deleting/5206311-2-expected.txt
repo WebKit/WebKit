@@ -27,7 +27,6 @@ The second cell, which used to contain '5', is replaced with the 'world!' text, 
 |         "<#selection-caret>world!"
 |         <br>
 |       <td>
-|         <br>
 | "
 "
 
@@ -59,16 +58,13 @@ In the second table, the first row (cells 1-3) is removed and cells 4-5 in the s
 |         <#selection-caret>
 |         <br>
 |       <td>
-|         <br>
 | <table>
 |   border="1"
 |   <tbody>
 |     <tr>
 |       <td>
-|         <br>
 |       <td>
 |         class="end"
-|         <br>
 |       <td>
 |         "6"
 |     "

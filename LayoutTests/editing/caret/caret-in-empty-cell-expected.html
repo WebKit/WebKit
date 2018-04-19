@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+  table {
+    font-size: 2em;
+  }
+  td {
+    padding: 5px;
+  }
+  #emptycell {
+    width: 50%;
+  }
+</style>
+
+<p>Test passes if the caret in the empty cell is inside the cell itself (that means it's vertically aligned with the reference text).</p>
+
+<table border="1" contenteditable>
+  <td>Reference text</td>
+  <td id="emptycell">&nbsp;</td>
+</table>
+
+<script>
+  var selection = window.getSelection();
+  var emptycell = document.getElementById("emptycell");
+  selection.collapse(emptycell, 0);
+</script>

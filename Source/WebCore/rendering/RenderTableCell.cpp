@@ -1380,4 +1380,12 @@ RenderPtr<RenderTableCell> RenderTableCell::createAnonymousWithParentRenderer(co
     return RenderTableCell::createTableCellWithStyle(parent.document(), parent.style());
 }
 
+bool RenderTableCell::hasLineIfEmpty() const
+{
+    if (element() && element()->hasEditableStyle())
+        return true;
+
+    return RenderBlock::hasLineIfEmpty();
+}
+
 } // namespace WebCore
