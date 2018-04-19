@@ -54,7 +54,6 @@
 #import <wtf/ProcessPrivilege.h>
 
 #if PLATFORM(IOS)
-#import "ArgumentCodersCF.h"
 #import "WebMemoryPressureHandlerIOS.h"
 #else
 #import <QuartzCore/CARemoteLayerServer.h>
@@ -146,7 +145,6 @@ void WebProcessPool::platformInitialize()
     registerNotificationObservers();
 
 #if PLATFORM(IOS)
-    IPC::setAllowsDecodingSecKeyRef(true);
     installMemoryPressureHandler();
 #endif
 

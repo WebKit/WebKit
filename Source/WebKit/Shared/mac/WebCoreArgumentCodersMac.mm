@@ -334,7 +334,26 @@ static void encodeNSError(Encoder& encoder, NSError *nsError)
             return true;
         }());
 
-        CFDictionarySetValue(filteredUserInfo.get(), @"NSErrorClientCertificateChainKey", clientIdentityAndCertificates);
+        // Turn SecIdentity members into SecCertificate to strip out private key information.
+        id clientCertificates = [NSMutableArray arrayWithCapacity:clientIdentityAndCertificates.count];
+        for (id object in clientIdentityAndCertificates) {
+            if (CFGetTypeID(object) != SecIdentityGetTypeID()) {
+                [clientCertificates addObject:object];
+                continue;
+            }
+            SecCertificateRef certificate = nil;
+            OSStatus status = SecIdentityCopyCertificate((SecIdentityRef)object, &certificate);
+            RetainPtr<SecCertificateRef> retainCertificate = adoptCF(certificate);
+            // The SecIdentity member is the key information of this attribute. Without it, we should nil
+            // the attribute.
+            if (status != errSecSuccess) {
+                LOG_ERROR("Failed to encode nsError.userInfo[NSErrorClientCertificateChainKey]: %d", status);
+                clientCertificates = nil;
+                break;
+            }
+            [clientCertificates addObject:(id)certificate];
+        }
+        CFDictionarySetValue(filteredUserInfo.get(), @"NSErrorClientCertificateChainKey", clientCertificates);
     }
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
