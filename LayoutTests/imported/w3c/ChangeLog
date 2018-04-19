@@ -1,5 +1,14 @@
 2018-04-18  Youenn Fablet  <youenn@apple.com>
 
+        Allow cross-origin redirections for synchronous XHR
+        https://bugs.webkit.org/show_bug.cgi?id=184723
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/XMLHttpRequest/access-control-and-redirects-expected.txt:
+
+2018-04-18  Youenn Fablet  <youenn@apple.com>
+
         MediaResourceLoader should set its fetch destination
         https://bugs.webkit.org/show_bug.cgi?id=184746
 

@@ -1,5 +1,5 @@
 
-FAIL Local sync redirect to remote origin  A network error occurred.
+PASS Local sync redirect to remote origin 
 PASS Local async redirect to remote origin 
 PASS Remote sync redirect to local origin 
 PASS Remote async redirect to local origin 

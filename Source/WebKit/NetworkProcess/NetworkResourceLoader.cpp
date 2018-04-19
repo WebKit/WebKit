@@ -177,7 +177,7 @@ void NetworkResourceLoader::start()
                 return;
             }
 
-            this->startNetworkLoad(WTFMove(result.value()));
+            this->startNetworkLoad(WTFMove(result.value()), FirstLoad::Yes);
         });
         return;
     }
@@ -188,7 +188,7 @@ void NetworkResourceLoader::start()
         return;
     }
 
-    startNetworkLoad(ResourceRequest { originalRequest() });
+    startNetworkLoad(ResourceRequest { originalRequest() }, FirstLoad::Yes);
 }
 
 void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
@@ -206,7 +206,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         }
         if (!entry) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource not in cache (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->startNetworkLoad(WTFMove(request));
+            loader->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
             return;
         }
         if (entry->redirectRequest()) {
@@ -216,7 +216,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
         }
         if (loader->m_parameters.needsCertificateInfo && !entry->response().certificateInfo()) {
             RELEASE_LOG_IF_ALLOWED("retrieveCacheEntry: Resource does not have required certificate (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
-            loader->startNetworkLoad(WTFMove(request));
+            loader->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
             return;
         }
         if (entry->needsValidation() || request.cachePolicy() == WebCore::RefreshAnyCacheData) {
@@ -229,17 +229,19 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     });
 }
 
-void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request)
+void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoad load)
 {
-    RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
+    if (load == FirstLoad::Yes) {
+        RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous());
 
-    consumeSandboxExtensions();
+        consumeSandboxExtensions();
 
-    if (isSynchronous() || m_parameters.maximumBufferingTime > 0_s)
-        m_bufferedData = SharedBuffer::create();
+        if (isSynchronous() || m_parameters.maximumBufferingTime > 0_s)
+            m_bufferedData = SharedBuffer::create();
 
-    if (canUseCache(request))
-        m_bufferedDataForCache = SharedBuffer::create();
+        if (canUseCache(request))
+            m_bufferedDataForCache = SharedBuffer::create();
+    }
 
     NetworkLoadParameters parameters = m_parameters;
     parameters.defersLoading = m_defersLoading;
@@ -488,11 +490,10 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
                 return;
             }
 
-            // FIXME: We need to handle SameOrigin credentials properly, for now we bail out.
             if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
-                m_synchronousLoadData->error = SynchronousLoaderClient::platformBadResponseError();
-                m_networkLoad->clearCurrentRequest();
-                this->continueWillSendRequest(ResourceRequest { }, false);
+                // We need to restart the load to update the session according the new credential policy.
+                m_networkLoad->cancel();
+                this->startNetworkLoad(WTFMove(result.value()), FirstLoad::No);
                 return;
             }
 
@@ -541,7 +542,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         if (canUseCachedRedirect(newRequest))
             retrieveCacheEntry(newRequest);
         else
-            startNetworkLoad(WTFMove(newRequest));
+            startNetworkLoad(WTFMove(newRequest), FirstLoad::Yes);
 
         return;
     }
@@ -726,7 +727,7 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
 
     m_cacheEntryForValidation = WTFMove(entry);
 
-    startNetworkLoad(WTFMove(revalidationRequest));
+    startNetworkLoad(WTFMove(revalidationRequest), FirstLoad::Yes);
 }
 
 void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)

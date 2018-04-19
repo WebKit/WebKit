@@ -130,7 +130,8 @@ private:
     void dispatchWillSendRequestForCacheEntry(std::unique_ptr<NetworkCache::Entry>);
     void continueProcessingCachedEntryAfterDidReceiveResponse(std::unique_ptr<NetworkCache::Entry>);
 
-    void startNetworkLoad(WebCore::ResourceRequest&&);
+    enum class FirstLoad { No, Yes };
+    void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);
     void continueDidReceiveResponse();
 
     void cleanup();

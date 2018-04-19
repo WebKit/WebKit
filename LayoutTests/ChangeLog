@@ -1,3 +1,24 @@
+2018-04-18  Youenn Fablet  <youenn@apple.com>
+
+        Allow SameOrigin credentials handling for synchronous XHR
+        https://bugs.webkit.org/show_bug.cgi?id=184723
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt.
+        * platform/mac-wk1/http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt.
+        * platform/mac-wk1/http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt.
+        * platform/win/http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt.
+        * platform/win/http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt.
+        * platform/win/http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt.
+
 2018-04-18  Chris Dumez  <cdumez@apple.com>
 
         Set RemoteDOMWindow's initial opener

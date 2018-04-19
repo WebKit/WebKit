@@ -8,8 +8,8 @@ Tests that redirects between origins are never allowed, even when access control
 Per the spec, these test cases should be allowed, but cross-origin redirects are currently unsupported in WebCore.
 
 Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
-Expecting success: false
-PASS: NetworkError:  A network error occurred.
+Expecting success: true
+FAIL: NetworkError:  A network error occurred.
 Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
 Expecting success: true
 PASS: PASS: Cross-domain access allowed.
