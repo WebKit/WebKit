@@ -1,3 +1,15 @@
+2018-04-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline tests for iOS simulator.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/editing/deleting/delete-emoji-9-expected.txt:
+        * platform/ios/http/tests/blink/sendbeacon/beacon-same-origin-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/beacon/headers/header-content-type-expected.txt: Added.
+        * platform/ios/quicklook/excel-expected.txt:
+        * platform/ios/quicklook/excel-legacy-expected.txt:
+        * platform/ios/quicklook/excel-macro-enabled-expected.txt:
+
 2018-04-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip legacy-animation-engine/media/track/opera directory on iOS.
