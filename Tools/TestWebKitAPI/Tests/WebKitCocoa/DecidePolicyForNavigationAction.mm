@@ -285,6 +285,22 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
     action = nullptr;
 }
 
+TEST(WebKit, DecidePolicyForNavigationActionForLoadHTMLString)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+
+    auto controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+    [webView setUIDelegate:controller.get()];
+
+    decidedPolicy = false;
+    [webView loadHTMLString:@"TEST" baseURL:[NSURL URLWithString:@"about:blank"]];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+}
+
 TEST(WebKit, DecidePolicyForNavigationActionForTargetedWindowOpen)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
