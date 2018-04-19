@@ -1620,7 +1620,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
             commandLine.m_interactive = false;
             runJSC(
                 commandLine, true,
-                [&] (VM&, GlobalObject* globalObject) {
+                [&] (VM&, GlobalObject* globalObject, bool& success) {
                     // Notify the thread that started us that we have registered a worker.
                     {
                         auto locker = holdLock(didStartLock);
@@ -1629,7 +1629,6 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
                     }
                     
                     NakedPtr<Exception> evaluationException;
-                    bool success = true;
                     JSValue result;
                     result = evaluate(globalObject->globalExec(), makeSource(sourceCode, SourceOrigin(ASCIILiteral("worker"))), JSValue(), evaluationException);
                     if (evaluationException)
@@ -1637,7 +1636,6 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(ExecState* exec)
                     checkException(globalObject->globalExec(), globalObject, true, evaluationException, result, commandLine, success);
                     if (!success)
                         exit(1);
-                    return success;
                 });
         })->detach();
     
@@ -2295,7 +2293,7 @@ static void checkException(ExecState* exec, GlobalObject* globalObject, bool isL
         success = success && checkUncaughtException(vm, globalObject, (hasException) ? value : JSValue(), options);
 }
 
-static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
+static void runWithOptions(GlobalObject* globalObject, CommandLine& options, bool& success)
 {
     Vector<Script>& scripts = options.m_scripts;
     String fileName;
@@ -2306,7 +2304,6 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    bool success = true;
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::start();
@@ -2324,8 +2321,10 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
                 promise = loadAndEvaluateModule(globalObject->globalExec(), fileName, jsUndefined(), jsUndefined());
                 scope.releaseAssertNoException();
             } else {
-                if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer))
-                    return false; // fail early so we can catch missing files
+                if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer)) {
+                    success = false; // fail early so we can catch missing files
+                    return;
+                }
             }
         } else {
             size_t commandLineLength = strlen(scripts[i].argument);
@@ -2340,13 +2339,13 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
                 promise = loadAndEvaluateModule(globalObject->globalExec(), makeSource(stringFromUTF(scriptBuffer), SourceOrigin { absolutePath(fileName) }, fileName, TextPosition(), SourceProviderSourceType::Module), jsUndefined());
             scope.clearException();
 
-            JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, isLastFile](ExecState* exec) {
-                checkException(exec, globalObject, isLastFile, false, exec->argument(0), options, success);
+            JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&success, &options, isLastFile](ExecState* exec) {
+                checkException(exec, jsCast<GlobalObject*>(exec->lexicalGlobalObject()), isLastFile, false, exec->argument(0), options, success);
                 return JSValue::encode(jsUndefined());
             });
 
-            JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, isLastFile](ExecState* exec) {
-                checkException(exec, globalObject, isLastFile, true, exec->argument(0), options, success);
+            JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&success, &options, isLastFile](ExecState* exec) {
+                checkException(exec, jsCast<GlobalObject*>(exec->lexicalGlobalObject()), isLastFile, true, exec->argument(0), options, success);
                 return JSValue::encode(jsUndefined());
             });
 
@@ -2369,7 +2368,6 @@ static bool runWithOptions(GlobalObject* globalObject, CommandLine& options)
 #if ENABLE(REGEXP_TRACING)
     vm.dumpRegExpTrace();
 #endif
-    return success;
 }
 
 #define RUNNING_FROM_XCODE 0
@@ -2651,22 +2649,25 @@ int runJSC(CommandLine options, bool isWorker, const Func& func)
     
     VM& vm = VM::create(LargeHeap).leakRef();
     int result;
-    bool success;
+    bool success = true;
+    GlobalObject* globalObject = nullptr;
     {
         JSLockHolder locker(vm);
 
         if (options.m_profile && !vm.m_perBytecodeProfiler)
             vm.m_perBytecodeProfiler = std::make_unique<Profiler::Database>(vm);
 
-        GlobalObject* globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
+        globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
         globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);
-        success = func(vm, globalObject);
-        if (options.m_interactive && success)
-            runInteractive(globalObject);
-
+        func(vm, globalObject, success);
         vm.drainMicrotasks();
     }
     vm.promiseDeferredTimer->runRunLoop();
+    {
+        JSLockHolder locker(vm);
+        if (options.m_interactive && success)
+            runInteractive(globalObject);
+    }
 
     result = success && (asyncTestExpectedPasses == asyncTestPasses) ? 0 : 3;
 
@@ -2754,11 +2755,10 @@ int jscmain(int argc, char** argv)
 #endif
     Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
 
-    int result;
-    result = runJSC(
+    int result = runJSC(
         options, false,
-        [&] (VM&, GlobalObject* globalObject) {
-            return runWithOptions(globalObject, options);
+        [&] (VM&, GlobalObject* globalObject, bool& success) {
+            runWithOptions(globalObject, options, success);
         });
 
     printSuperSamplerState();

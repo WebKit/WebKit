@@ -1,3 +1,18 @@
+2018-04-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, Fix jsc shell
+        https://bugs.webkit.org/show_bug.cgi?id=184600
+
+        WebAssembly module loading does not finish with drainMicrotasks().
+        So JSNativeStdFunction's capturing variables become invalid.
+        This patch fixes this issue.
+
+        * jsc.cpp:
+        (functionDollarAgentStart):
+        (runWithOptions):
+        (runJSC):
+        (jscmain):
+
 2018-04-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r230748) [WinCairo] 'JSC::JIT::appendCallWithSlowPathReturnType': function does not take 1 arguments
