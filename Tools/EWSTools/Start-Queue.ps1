@@ -52,6 +52,19 @@ function Clean-Git
     git checkout origin/master -b master;
 }
 
+# Over time, git for Windows can fill up a user's temporary directory with files.
+function Clean-TempDirectory
+{
+    Write-Host ('Cleaning user temp directory ({0}).' -f $env:temp);
+    $countBefore = (Get-ChildItem -Recurse $env:temp | Measure-Object).Count;
+
+    Get-ChildItem $env:temp | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue;
+    $countAfter = (Get-ChildItem -Recurse $env:temp | Measure-Object).Count;
+
+    Write-Host ('{0} items successfully removed.' -f ($countBefore - $countAfter));
+    Write-Host ('{0} items could not be removed.' -f $countAfter);
+}
+
 # TODO: Switch to test-webkitpy when it works without cygwin
 function Clean-PythonC
 {
@@ -81,6 +94,7 @@ function Clean-WebKitBuild
 while ($true) {
     Clean-WebKitBuild;
     Clean-PythonC;
+    Clean-TempDirectory;
     Clean-Git;
 
     perl ./Tools/Scripts/update-webkit;
