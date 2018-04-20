@@ -1,3 +1,29 @@
+2018-04-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Fixes for failing tests associated with switching Text Selection Assistants
+        https://bugs.webkit.org/show_bug.cgi?id=184806
+        <rdar://problem/39367905>
+
+        Reviewed by Beth Dakin and Wenson Hsieh.
+        
+        The major fix is the disabling the double tap noneditable text selection gesture.
+        The other fixes are small tweaks that shouldn't even be run into with the fix to 
+        the double tap gesture, but they are incorrect, so I am taking the opportunity to 
+        fix them now, in case we run into them again.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        We should not be allowing a double tap text gestures in non-editable web content.
+        We didn't have one with the old assistant. Fortunately, this is easily disabled.
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        We should not allow the lookup action if we do not actually have a selection.
+        It is meaningless without one.
+        (-[WKContentView selectedTextRange]):
+        We should not return a selection to UIKit if all we have is caret selection
+        in non-editable content. We have this for selections on Mac, but UIKit does
+        not know how to properly handle this, and will have incorrect behavior if we 
+        return a valid selection.
+
 2018-04-20  Timothy Hatcher  <timothy@apple.com>
 
         WebEvent fails to convert synthetic WebMouseEvent for automation

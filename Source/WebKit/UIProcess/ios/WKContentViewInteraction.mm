@@ -1656,6 +1656,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     // If we're currently editing an assisted node, only allow the selection to move within that assisted node.
     if (self.isAssistingNode)
         return _positionInformation.nodeAtPositionIsAssistedNode;
+    
+    // Don't allow double tap text gestures in noneditable content.
+    if (gesture == UIWKGestureDoubleTap)
+        return NO;
 
     // If we're selecting something, don't activate highlight.
     if (gesture == UIWKGestureLoupe && [self hasSelectablePositionAtPoint:point])
@@ -2246,7 +2250,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return NO;
 #endif
 
-        return YES;
+        return hasWebSelection || _page->editorState().selectionIsRange;
     }
 
     if (action == @selector(_share:)) {
@@ -3145,6 +3149,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     if (_page->editorState().selectionIsNone || _page->editorState().isMissingPostLayoutData)
         return nil;
+    // UIKit does not expect caret selections in noneditable content.
+    if (!_page->editorState().isContentEditable && !_page->editorState().selectionIsRange)
+        return nil;
+    
     auto& postLayoutEditorStateData = _page->editorState().postLayoutData();
     FloatRect startRect = postLayoutEditorStateData.caretRectAtStart;
     FloatRect endRect = postLayoutEditorStateData.caretRectAtEnd;
