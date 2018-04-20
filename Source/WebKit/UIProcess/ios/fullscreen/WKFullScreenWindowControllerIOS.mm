@@ -471,6 +471,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         
         [_webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
         [_webView setFrame:[_window bounds]];
+        [_webView _overrideLayoutParametersWithMinimumLayoutSize:[_window bounds].size maximumUnobscuredSizeOverride:[_window bounds].size];
         [_window insertSubview:_webView atIndex:0];
         [_webView setNeedsLayout];
         [_webView layoutIfNeeded];
