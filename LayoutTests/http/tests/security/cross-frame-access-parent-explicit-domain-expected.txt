@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 194: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://127.0.0.1:8000". The frame requesting access set "document.domain" to "127.0.0.1", but the frame being accessed did not. Both must set "document.domain" to the same value to allow access.
+CONSOLE MESSAGE: line 194: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 
 PASS: Cross frame access from frame explicitly setting document.domain was denied.
 

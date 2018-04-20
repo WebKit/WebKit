@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 4: The XSS Auditor blocked access to 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/full-block-script-tag-cross-domain.html&enable-full-block=1&q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E' because the source code of a script was found within the request. The server sent an 'X-XSS-Protection' header requesting this behavior.
 CONSOLE MESSAGE: line 27: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: line 19: TypeError: null is not an object (evaluating 'document.getElementById("frame").contentDocument.referrer')
-CONSOLE MESSAGE: line 11: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 11: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 ALERT: URL mismatch: unavailable vs. http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/full-block-script-tag-cross-domain.html&enable-full-block=1&q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E
 There should be no content in the iframe below:
 

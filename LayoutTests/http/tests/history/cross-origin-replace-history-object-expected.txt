@@ -1,5 +1,5 @@
 ALERT: Parent window's history object before attempt to clear: [object History]
 ALERT: Attempting to clear parent window's history object:
-CONSOLE MESSAGE: line 21: SecurityError: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 21: SecurityError: Blocked a frame with origin "http://localhost:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 ALERT: Parent window's history object after attempt to clear: [object History]
 

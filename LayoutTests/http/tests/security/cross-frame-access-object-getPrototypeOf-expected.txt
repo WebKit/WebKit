@@ -4,7 +4,7 @@ PASS: Object.getPrototypeOf(targetWindow) should be 'null' and is.
 PASS: Object.getPrototypeOf(targetWindow.location) should be 'null' and is.
 PASS: protoGetter.call(targetWindow) should be 'null' and is.
 PASS: protoGetter.call(targetWindow.location) should be 'null' and is.
-PASS targetWindow.history threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS targetWindow.history threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS: successfullyParsed should be 'true' and is.
 
 TEST COMPLETE

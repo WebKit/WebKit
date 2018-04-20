@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: SecurityError: Blocked a frame with origin "null" from accessing a frame with origin "null". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1: SecurityError: Blocked a frame with origin "null" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 This tests that a data: URL loaded in an iframe inside another data: URL loaded iframe doesn't have access to its parent, the first data: URL loaded iframe.
 
 

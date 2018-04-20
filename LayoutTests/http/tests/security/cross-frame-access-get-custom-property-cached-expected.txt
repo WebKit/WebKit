@@ -1,9 +1,9 @@
 This test checks that caching of property accesses doesn't allow for illegal cross-frame access of a custom property. It also checks for an assertion failure that once occurred in this situation.
 
 
-PASS getCustomProperty(targetWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS getCustomProperty(targetWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS getCustomProperty(targetWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS getCustomProperty(targetWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS getCustomProperty(targetWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS getCustomProperty(targetWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS: successfullyParsed should be 'true' and is.
 
 TEST COMPLETE

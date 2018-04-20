@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: line 62: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
-
+CONSOLE MESSAGE: line 62: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 This tests that the main frame doesn't have access to a data: URL loaded in an iframe inside another data: URL loaded iframe.
 
 Test  

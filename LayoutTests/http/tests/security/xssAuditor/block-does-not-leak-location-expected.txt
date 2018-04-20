@@ -4,8 +4,8 @@ CONSOLE MESSAGE: line 233: Blocked a frame with origin "http://127.0.0.1:8000" f
 CONSOLE MESSAGE: line 237: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 PASS xssed.contentDocument is null
 PASS xssed.contentDocument is crossorigin.contentDocument
-PASS xssed.contentWindow.location.href threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS crossorigin.contentWindow.location.href threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS xssed.contentWindow.location.href threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS crossorigin.contentWindow.location.href threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS successfullyParsed is true
 
 TEST COMPLETE

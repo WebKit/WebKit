@@ -86,6 +86,7 @@ struct ImageBitmapOptions;
 struct WindowFeatures;
 
 enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
+enum class IncludeTargetOrigin { No, Yes };
 
 // FIXME: DOMWindow shouldn't subclass FrameDestructionObserver and instead should get to Frame via its Document.
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
@@ -226,7 +227,8 @@ public:
     PageConsoleClient* console() const;
 
     void printErrorMessage(const String&);
-    String crossDomainAccessErrorMessage(const DOMWindow& activeWindow);
+
+    String crossDomainAccessErrorMessage(const DOMWindow& activeWindow, IncludeTargetOrigin);
 
     ExceptionOr<void> postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
     void postMessageTimerFired(PostMessageTimer&);

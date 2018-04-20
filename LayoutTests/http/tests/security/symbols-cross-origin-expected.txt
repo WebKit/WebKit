@@ -7,17 +7,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS (new Object).toString.call(crossOriginWindow) is "[object Object]"
 PASS crossOriginWindow instanceof Window is false
 PASS Array.prototype.concat.call(crossOriginWindow, ['A']) is [crossOriginWindow, 'A']
-PASS crossOriginWindow.toString() threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS '' + crossOriginWindow threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS crossOriginWindow.concat(['A']) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS crossOriginWindow.toString() threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS '' + crossOriginWindow threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS crossOriginWindow.concat(['A']) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 
 * Location
 PASS (new Object).toString.call(crossOriginWindow.location) is "[object Object]"
 PASS crossOriginWindow.location instanceof Location is false
 PASS Array.prototype.concat.call(crossOriginWindow.location, ['A']) is [crossOriginWindow.location, 'A']
-PASS crossOriginWindow.location.toString() threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS '' + crossOriginWindow.location threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS crossOriginWindow.location.concat(['A']) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS crossOriginWindow.location.toString() threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS '' + crossOriginWindow.location threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS crossOriginWindow.location.concat(['A']) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS successfullyParsed is true
 
 TEST COMPLETE

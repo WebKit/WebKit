@@ -1,13 +1,13 @@
 
-SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
-SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 
 ----- test getting values cross-frame using Object.prototype -----
 
-PASS Object.prototype.__lookupGetter__.call(targetFrame, 'myGetter'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS Object.prototype.__lookupSetter__.call(targetFrame, 'mySetter'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS Object.prototype.propertyIsEnumerable.call(targetFrame, 'myProp'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
-PASS Object.prototype.hasOwnProperty.call(targetFrame, 'myProp'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match..
+PASS Object.prototype.__lookupGetter__.call(targetFrame, 'myGetter'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS Object.prototype.__lookupSetter__.call(targetFrame, 'mySetter'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS Object.prototype.propertyIsEnumerable.call(targetFrame, 'myProp'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS Object.prototype.hasOwnProperty.call(targetFrame, 'myProp'); threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 
 
 --------
