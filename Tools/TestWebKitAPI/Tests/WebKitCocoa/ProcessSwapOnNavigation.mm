@@ -73,7 +73,8 @@ static HashSet<pid_t> seenPIDs;
         [receivedMessages addObject:@""];
 
     receivedMessage = true;
-    seenPIDs.add([message.webView _webProcessIdentifier]);
+    if ([message.webView _webProcessIdentifier])
+        seenPIDs.add([message.webView _webProcessIdentifier]);
 }
 @end
 
@@ -866,5 +867,157 @@ TEST(ProcessSwap, PageCache1)
     EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"Was persisted" ]);
     EXPECT_EQ(2u, seenPIDs.size());
 }
+
+static const char* visibilityBytes = R"PSONRESOURCE(
+<script>
+window.addEventListener('pageshow', function(event) {
+    var msg = window.location.href + " - pageshow ";
+    msg += event.persisted ? "persisted" : "NOT persisted";
+    window.webkit.messageHandlers.pson.postMessage(msg);
+});
+
+window.addEventListener('pagehide', function(event) {
+    var msg = window.location.href + " - pagehide ";
+    msg += event.persisted ? "persisted" : "NOT persisted";
+    window.webkit.messageHandlers.pson.postMessage(msg);
+});
+</script>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, PageShowHide)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson1://host/main.html" toData:visibilityBytes];
+    [handler addMappingFromURLString:@"pson2://host/main.html" toData:visibilityBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+
+    auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView goBack];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView goForward];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(7u, [receivedMessages count]);
+    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"pson1://host/main.html - pageshow NOT persisted" ]);
+    EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"pson1://host/main.html - pagehide persisted" ]);
+    EXPECT_TRUE([receivedMessages.get()[2] isEqualToString:@"pson2://host/main.html - pageshow NOT persisted" ]);
+    EXPECT_TRUE([receivedMessages.get()[3] isEqualToString:@"pson2://host/main.html - pagehide persisted" ]);
+    EXPECT_TRUE([receivedMessages.get()[4] isEqualToString:@"pson1://host/main.html - pageshow persisted" ]);
+    EXPECT_TRUE([receivedMessages.get()[5] isEqualToString:@"pson1://host/main.html - pagehide persisted" ]);
+    EXPECT_TRUE([receivedMessages.get()[6] isEqualToString:@"pson2://host/main.html - pageshow persisted" ]);
+}
+
+// Disabling the page cache explicitly is (for some reason) not available on iOS.
+#if !TARGET_OS_IPHONE
+static const char* loadUnloadBytes = R"PSONRESOURCE(
+<script>
+window.addEventListener('unload', function(event) {
+    var msg = window.location.href + " - unload";
+    window.webkit.messageHandlers.pson.postMessage(msg);
+});
+
+window.addEventListener('load', function(event) {
+    var msg = window.location.href + " - load";
+    window.webkit.messageHandlers.pson.postMessage(msg);
+});
+</script>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, LoadUnload)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson1://host/main.html" toData:loadUnloadBytes];
+    [handler addMappingFromURLString:@"pson2://host/main.html" toData:loadUnloadBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+
+    auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+    [[webViewConfiguration preferences] _setUsesPageCache:NO];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView goBack];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView goForward];
+    TestWebKitAPI::Util::run(&receivedMessage);
+    receivedMessage = false;
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(7u, [receivedMessages count]);
+    EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"pson1://host/main.html - load" ]);
+    EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"pson1://host/main.html - unload" ]);
+    EXPECT_TRUE([receivedMessages.get()[2] isEqualToString:@"pson2://host/main.html - load" ]);
+    EXPECT_TRUE([receivedMessages.get()[3] isEqualToString:@"pson2://host/main.html - unload" ]);
+    EXPECT_TRUE([receivedMessages.get()[4] isEqualToString:@"pson1://host/main.html - load" ]);
+    EXPECT_TRUE([receivedMessages.get()[5] isEqualToString:@"pson1://host/main.html - unload" ]);
+    EXPECT_TRUE([receivedMessages.get()[6] isEqualToString:@"pson2://host/main.html - load" ]);
+}
+#endif // !TARGET_OS_IPHONE
 
 #endif // WK_API_ENABLED
