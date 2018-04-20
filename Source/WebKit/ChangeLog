@@ -1,3 +1,25 @@
+2018-04-20  Timothy Hatcher  <timothy@apple.com>
+
+        WebEvent fails to convert synthetic WebMouseEvent for automation
+
+        https://bugs.webkit.org/show_bug.cgi?id=184824
+        rdar://problem/35377120
+
+        Reviewed by Brian Burg.
+
+        Add WebEvent conversions that existed in PlatformEventFactoryIOS for legacy WebKit,
+        but never got added in WebIOSEventFactory and NativeWebMouseEvent for modern WebKit.
+        This affected WebDriver, and some events not being deliverd to the page.
+
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::nativeEvent const):
+        * Shared/ios/NativeWebMouseEventIOS.mm: Added.
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebMouseEvent):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-04-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wformat warning

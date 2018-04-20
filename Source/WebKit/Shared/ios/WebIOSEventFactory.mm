@@ -88,4 +88,23 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *
     return WebKit::WebKeyboardEvent(type, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, WallTime::fromRawSeconds(timestamp));
 }
 
+WebKit::WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
+{
+    // This currently only supports synthetic mouse moved events with no button pressed.
+    ASSERT_ARG(event, event.type == WebEventMouseMoved);
+
+    auto type = WebKit::WebEvent::MouseMove;
+    auto button = WebKit::WebMouseEvent::NoButton;
+    unsigned short buttons = 0;
+    auto position = WebCore::IntPoint(event.locationInWindow);
+    float deltaX = 0;
+    float deltaY = 0;
+    float deltaZ = 0;
+    int clickCount = 0;
+    auto modifiers = static_cast<WebKit::WebEvent::Modifiers>(0);
+    double timestamp = event.timestamp;
+
+    return WebKit::WebMouseEvent(type, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount, modifiers, WallTime::fromRawSeconds(timestamp));
+}
+
 #endif // PLATFORM(IOS)

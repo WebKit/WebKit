@@ -38,6 +38,11 @@ OBJC_CLASS NSView;
 typedef union _GdkEvent GdkEvent;
 #endif
 
+#if PLATFORM(IOS)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS WebEvent;
+#endif
+
 #if PLATFORM(WPE)
 struct wpe_input_pointer_event;
 #endif
@@ -56,6 +61,8 @@ public:
 #elif PLATFORM(GTK)
     NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int);
+#elif PLATFORM(IOS)
+    NativeWebMouseEvent(::WebEvent *);
 #elif PLATFORM(WPE)
     NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor);
 #elif PLATFORM(WIN)
@@ -66,6 +73,8 @@ public:
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)
     const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(IOS)
+    ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
     const MSG* nativeEvent() const { return &m_nativeEvent; }
 #else
@@ -77,6 +86,8 @@ private:
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
+#elif PLATFORM(IOS)
+    RetainPtr<::WebEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     MSG m_nativeEvent;
 #endif

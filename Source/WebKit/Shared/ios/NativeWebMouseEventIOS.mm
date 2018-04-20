@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIOSEventFactory_h
-#define WebIOSEventFactory_h
+#import "config.h"
+#import "NativeWebMouseEvent.h"
 
 #if PLATFORM(IOS)
 
-#import "WebEvent.h"
-#import <WebCore/WebEvent.h>
+#import "WebIOSEventFactory.h"
 
-class WebIOSEventFactory {
-public:
-    static WebKit::WebKeyboardEvent createWebKeyboardEvent(::WebEvent *);
-    static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
-};
+namespace WebKit {
+
+NativeWebMouseEvent::NativeWebMouseEvent(::WebEvent *event)
+    : WebMouseEvent(WebIOSEventFactory::createWebMouseEvent(event))
+    , m_nativeEvent(event)
+{
+}
+
+} // namespace WebKit
 
 #endif // PLATFORM(IOS)
-
-#endif // WebIOSEventFactory_h
