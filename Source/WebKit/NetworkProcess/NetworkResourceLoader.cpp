@@ -343,13 +343,12 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", httpStatusCode = %d, length = %" PRId64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, receivedResponse.httpStatusCode(), receivedResponse.expectedContentLength());
 
-    if (isSynchronous()) {
+    if (m_networkLoadChecker) {
         auto error = m_networkLoadChecker->validateResponse(receivedResponse);
         if (!error.isNull()) {
-            m_synchronousLoadData->error = WTFMove(error);
-            sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
-            RunLoop::main().dispatch([protectedThis = makeRef(*this)]() {
-                protectedThis->cleanup();
+            RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
+                if (protectedThis->m_networkLoad)
+                    protectedThis->didFailLoading(error);
             });
             return ShouldContinueDidReceiveResponse::No;
         }
@@ -495,12 +494,12 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 {
     ++m_redirectCount;
 
-    if (isSynchronous()) {
-        m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(redirectRequest), [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy()](auto&& result) {
+    if (m_networkLoadChecker) {
+        m_networkLoadChecker->checkRedirection(redirectResponse, WTFMove(redirectRequest), [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(), request = WTFMove(request), redirectResponse](auto&& result) mutable {
             if (!result.has_value()) {
-                m_synchronousLoadData->error = SynchronousLoaderClient::platformBadResponseError();
-                m_networkLoad->clearCurrentRequest();
-                this->continueWillSendRequest(ResourceRequest { }, false);
+                if (result.error().isCancellation())
+                    return;
+                this->didFailLoading(result.error());
                 return;
             }
 
@@ -511,12 +510,24 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
                 return;
             }
 
-            // We do not support prompting for credentials for synchronous loads. If we ever change this policy then
-            // we need to take care to prompt if and only if request and redirectRequest are not mixed content.
-            this->continueWillSendRequest(WTFMove(result.value()), false);
+            if (this->isSynchronous()) {
+                // We do not support prompting for credentials for synchronous loads. If we ever change this policy then
+                // we need to take care to prompt if and only if request and redirectRequest are not mixed content.
+                this->continueWillSendRequest(WTFMove(result.value()), false);
+                return;
+            }
+
+            this->continueWillSendRedirectedRequest(WTFMove(request), WTFMove(result.value()), WTFMove(redirectResponse));
         });
         return;
     }
+    continueWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse));
+}
+
+void NetworkResourceLoader::continueWillSendRedirectedRequest(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
+{
+    ASSERT(!isSynchronous());
+
     if (canUseCachedRedirect(request))
         m_cache->storeRedirect(request, redirectResponse, redirectRequest);
 
@@ -637,24 +648,22 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
 
 void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
-    if (isSynchronous()) {
-        auto response = entry->response();
-        auto error = m_networkLoadChecker->validateResponse(response);
-        if (!error.isNull()) {
-            m_synchronousLoadData->error = WTFMove(error);
-            m_synchronousLoadData->response = { };
-            sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr);
-            cleanup();
-            return;
-        }
+    auto response = entry->response();
+    auto error = m_networkLoadChecker ? m_networkLoadChecker->validateResponse(response) : ResourceError { };
 
-        m_synchronousLoadData->response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);
+    if (!error.isNull()) {
+        didFailLoading(error);
+        return;
+    }
+
+    response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);
+    if (isSynchronous()) {
+        m_synchronousLoadData->response = WTFMove(response);
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
         cleanup();
         return;
     }
 
-    auto response = sanitizeResponseIfPossible(ResourceResponse { entry->response() }, ResourceResponse::SanitizationType::CrossOriginSafe);
     bool needsContinueDidReceiveResponseMessage = isMainResource();
     send(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
 

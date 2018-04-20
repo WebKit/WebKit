@@ -149,6 +149,8 @@ private:
     void logCookieInformation() const;
 #endif
 
+    void continueWillSendRedirectedRequest(WebCore::ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
+
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
     const NetworkResourceLoadParameters m_parameters;

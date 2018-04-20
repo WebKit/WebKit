@@ -1,3 +1,28 @@
+2018-04-20  Youenn Fablet  <youenn@apple.com>
+
+        Refactor NetworkResourceLoader to check for m_networkLoadChecker presence before using it
+        https://bugs.webkit.org/show_bug.cgi?id=184755
+
+        Reviewed by Chris Dumez.
+
+        Make NetworkResourceLoader always use m_networkLoadChecker if there is one.
+        This is only used now for synchronous loads but will be used in the future for asynchronous loads as well.
+
+        Since we call didFail asynchronously to make sync/async handling more consistent,
+        We need to keep track of whether we will do clean-up twice.
+        A boolean is added for that purpose in NetworkResourceLoader.
+
+        There is a small change of behavior in the way we return an error.
+        Instead of returning a platformBadResponseError, we are now returning the error as computed by NetworkLoadChecker.
+        This allows getting some more error logging in the JS console.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2018-04-20  Timothy Hatcher  <timothy@apple.com>
 
         Include missing files in WKContentViewInteraction.{mm,h}
