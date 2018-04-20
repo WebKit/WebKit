@@ -65,37 +65,49 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
 
 #pragma mark Commands for Platform: 'iOS'
 
-void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspector::Protocol::Automation::KeyboardInteractionType interaction, Inspector::Protocol::Automation::VirtualKey key)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::optional<VirtualKey> virtualKey, std::optional<CharKey> charKey)
 {
+    ASSERT(virtualKey.has_value() || charKey.has_value());
+
     // The modifiers changed by the virtual key when it is pressed or released.
     WebEventFlags changedModifiers = 0;
-
-    // Figure out the effects of sticky modifiers.
-    switch (key) {
-    case Inspector::Protocol::Automation::VirtualKey::Shift:
-        changedModifiers |= WebEventFlagMaskShift;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Control:
-        changedModifiers |= WebEventFlagMaskControl;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Alternate:
-        changedModifiers |= WebEventFlagMaskAlternate;
-        break;
-    case Inspector::Protocol::Automation::VirtualKey::Meta:
-        // The 'meta' key does not exist on Apple keyboards and is usually
-        // mapped to the Command key when using third-party keyboards.
-    case Inspector::Protocol::Automation::VirtualKey::Command:
-        changedModifiers |= WebEventFlagMaskCommand;
-        break;
-    default:
-        break;
-    }
 
     // UIKit does not send key codes for virtual keys even for a hardware keyboard.
     // Instead, it sends single unichars and WebCore maps these to "windows" key codes.
     // Synthesize a single unichar such that the correct key code is inferred.
-    std::optional<unichar> charCode = charCodeForVirtualKey(key);
-    std::optional<unichar> charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(key);
+    std::optional<unichar> charCode;
+    std::optional<unichar> charCodeIgnoringModifiers;
+
+    // Figure out the effects of sticky modifiers.
+    if (virtualKey.has_value()) {
+        charCode = charCodeForVirtualKey(virtualKey.value());
+        charCodeIgnoringModifiers = charCodeIgnoringModifiersForVirtualKey(virtualKey.value());
+
+        switch (virtualKey.value()) {
+        case VirtualKey::Shift:
+            changedModifiers |= WebEventFlagMaskShift;
+            break;
+        case VirtualKey::Control:
+            changedModifiers |= WebEventFlagMaskControl;
+            break;
+        case VirtualKey::Alternate:
+            changedModifiers |= WebEventFlagMaskAlternate;
+            break;
+        case VirtualKey::Meta:
+            // The 'meta' key does not exist on Apple keyboards and is usually
+            // mapped to the Command key when using third-party keyboards.
+        case VirtualKey::Command:
+            changedModifiers |= WebEventFlagMaskCommand;
+            break;
+        default:
+            break;
+        }
+    }
+
+    if (charKey.has_value()) {
+        charCode = (unichar)charKey.value();
+        charCodeIgnoringModifiers = (unichar)charKey.value();
+    }
 
     // FIXME: consider using UIKit SPI to normalize 'characters', i.e., changing * to Shift-8,
     // and passing that in to charactersIgnoringModifiers. This is probably not worth the trouble
@@ -115,19 +127,19 @@ void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspect
     auto eventsToBeSent = adoptNS([[NSMutableArray alloc] init]);
 
     switch (interaction) {
-    case Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress: {
+    case KeyboardInteraction::KeyPress: {
         m_currentModifiers |= changedModifiers;
 
         [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
         break;
     }
-    case Inspector::Protocol::Automation::KeyboardInteractionType::KeyRelease: {
+    case KeyboardInteraction::KeyRelease: {
         m_currentModifiers &= ~changedModifiers;
 
         [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
         break;
     }
-    case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey: {
+    case KeyboardInteraction::InsertByKey: {
         // Modifiers only change with KeyPress or KeyRelease, this code path is for single characters.
         [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];
         [eventsToBeSent addObject:[[[::WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:characters charactersIgnoringModifiers:unmodifiedCharacters modifiers:m_currentModifiers isRepeating:NO withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:isTabKey] autorelease]];

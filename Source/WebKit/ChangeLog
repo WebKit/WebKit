@@ -1,3 +1,129 @@
+2018-04-19  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add support for mouse/keyboard interaction sequences
+        https://bugs.webkit.org/show_bug.cgi?id=184603
+        <rdar://problem/39421839>
+
+        Reviewed by Timothy Hatcher.
+
+        Add new protocol methods and WebKit support for implementing the W3C Actions API.
+        This is a generic command for sending low-level mouse, key, and touch events to
+        test page behavior when performing drag-and-drop, gestures, or specific keydown/keyups.
+
+        To implement this functionality, this patch adds SimulatedInputDispatcher, a class
+        for dispatching input events asynchronously. Similar to the WebDriver specification,
+        this is designed as a keyframing API. Callers set up several "input sources" such
+        as keyboard or mouse, and then specify the states of that input source over time. The
+        dispatcher calculates diffs between the previous and current keyframes and generates
+        the appropriate events that would happen if a user caused the state transition.
+
+        For example, if a mouse input source's state changes, the dispatcher sends synthetic mousemove,
+        mousedown, or mouseup events depending on the pre- and post-state. This is uninteresting
+        and overcomplicated for simple key and mouse presses, but it's really designed with an
+        eye towards supporting mousemove interpolation and touch event interpolation in later patches.
+
+        The strategy for dispatching events depends on the input source type; right now, these
+        map directly to the existing platformSimulate{Mouse, Keyboard}Interaction methods. In
+        the future, the dispatch strategy may be elaborated for interpolated mousemove events.
+
+        This patch depends on support added in bug 184462.
+
+        No tests yet. When this command is hooked up to a driver, the code will be exercised by
+        W3C actions test suite, which is fairly complex at this point relative to end-user code.
+
+        * UIProcess/Automation/Automation.json: Add new types and commands.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.h: Added.
+        (WebKit::SimulatedInputSourceState::emptyState):
+        (WebKit::SimulatedInputSource::create):
+        (WebKit::SimulatedInputSource::SimulatedInputSource):
+        (WebKit::SimulatedInputDispatcher::Client::~Client):
+        Add structs for input source, source state, and keyframe.
+        The dispatcher's client interface is implemented by WebAutomationSession.
+
+        (WebKit::SimulatedInputDispatcher::create):
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp: Added.
+        (WebKit::SimulatedInputKeyFrame::SimulatedInputKeyFrame):
+        (WebKit::SimulatedInputKeyFrame::maximumDuration const):
+        (WebKit::SimulatedInputKeyFrame::keyFrameFromStateOfInputSources):
+        (WebKit::SimulatedInputKeyFrame::keyFrameToResetInputSources):
+        (WebKit::SimulatedInputDispatcher::SimulatedInputDispatcher):
+        (WebKit::SimulatedInputDispatcher::~SimulatedInputDispatcher):
+        (WebKit::SimulatedInputDispatcher::isActive const):
+        (WebKit::SimulatedInputDispatcher::keyFrameTransitionDurationTimerFired):
+        (WebKit::SimulatedInputDispatcher::isKeyFrameTransitionComplete const):
+        (WebKit::SimulatedInputDispatcher::transitionToNextKeyFrame):
+        (WebKit::SimulatedInputDispatcher::transitionToNextInputSourceState):
+        (WebKit::SimulatedInputDispatcher::transitionBetweenKeyFrames):
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        (WebKit::SimulatedInputDispatcher::run):
+        (WebKit::SimulatedInputDispatcher::cancel):
+        (WebKit::SimulatedInputDispatcher::finishDispatching):
+        The dispatcher handles one interaction at a time. The interaction is described
+        by an array of keyframes, and each keyframe has an array of states. The dispatcher
+        transitions between keyframes by sequentially and asynchronously emitting events
+        that cause each input source state to transition as desired. Keyframe transitions
+        are additionally gated by a "maximum duration" timer. Each step that the dispatcher
+        executes is asynchronous, so the dispatcher keeps most state in members and uses
+        error argument lambdas as completion handlers for various async things.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        (WebKit::WebAutomationSession::inputDispatcherForPage):
+        (WebKit::WebAutomationSession::inputSourceForType const):
+        Add canonical input sources that are used to keep track of state across
+        interaction sequences.
+
+        (WebKit::WebAutomationSession::isSimulatingUserInteraction const):
+        (WebKit::WebAutomationSession::mouseEventsFlushedForPage):
+        (WebKit::WebAutomationSession::keyboardEventsFlushedForPage):
+        Remove m_simulatingUserInteraction since it can be computed based on other members.
+
+        (WebKit::WebAutomationSession::willClosePage):
+        If the page is being torn down, stop the dispatcher if needed and cancel any
+        callbacks waiting for mouse/key events to be retired.
+
+        (WebKit::WebAutomationSession::simulateMouseInteraction):
+        (WebKit::WebAutomationSession::simulateKeyboardInteraction):
+        Add easy-to-use async methods for simulating mouse and key events. These are
+        hooked up to SimulatedInputDispatcher using async completion handlers.
+
+        (WebKit::protocolMouseButtonToWebMouseEventButton):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        Adjust some naming.
+
+        (WebKit::simulatedInputSourceTypeFromProtocolSourceType):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        (WebKit::WebAutomationSession::cancelInteractionSequence):
+        Add command handlers for the new action commands in Automation protocol.
+
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::mouseButtonToGdkButton):
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke): Deleted.
+        * UIProcess/Automation/ios/WebAutomationSessionIOS.mm:
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke): Deleted.
+        Rename the keyboard platform method to match the naming of the mouse platform method.
+        Take advantage of the 'using' alias to make the tedious switches easier to read.
+
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        (WebKit::virtualKeyHasStickyModifier):
+        (WebKit::keyCodeForVirtualKey):
+        (WebKit::eventModifierFlagsForVirtualKey):
+        (WebKit::WebAutomationSession::platformSimulateKeyboardInteraction):
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        (WebKit::keyHasStickyModifier): Deleted.
+        (WebKit::WebAutomationSession::platformSimulateKeyStroke): Deleted.
+        Allow the keyboard simulation method to take a virtual key and unichar to better
+        match how this is used by the Perform Actions command and its machinery.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-04-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Remove access to keychain from the WebContent process

@@ -48,15 +48,15 @@ static unsigned modifiersToEventState(WebEvent::Modifiers modifiers)
     return state;
 }
 
-static unsigned mouseButtonToGdkButton(Inspector::Protocol::Automation::MouseButton button)
+static unsigned mouseButtonToGdkButton(WebMouseEvent::Button button)
 {
     switch (button) {
-    case Inspector::Protocol::Automation::MouseButton::None:
-    case Inspector::Protocol::Automation::MouseButton::Left:
+    case WebMouseEvent::NoButton:
+    case WebMouseEvent::LeftButton:
         return GDK_BUTTON_PRIMARY;
-    case Inspector::Protocol::Automation::MouseButton::Middle:
+    case WebMouseEvent::MiddleButton:
         return GDK_BUTTON_MIDDLE;
-    case Inspector::Protocol::Automation::MouseButton::Right:
+    case WebMouseEvent::RightButton:
         return GDK_BUTTON_SECONDARY;
     }
     return GDK_BUTTON_PRIMARY;
@@ -101,30 +101,30 @@ static void doMotionEvent(GtkWidget* widget, const WebCore::IntPoint& location, 
     gtk_main_do_event(event.get());
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, const WebCore::IntPoint& viewPosition, Inspector::Protocol::Automation::MouseInteraction interaction, Inspector::Protocol::Automation::MouseButton button, WebEvent::Modifiers keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, WebEvent::Modifiers keyModifiers)
 {
     unsigned gdkButton = mouseButtonToGdkButton(button);
     unsigned state = modifiersToEventState(keyModifiers);
 
     switch (interaction) {
-    case Inspector::Protocol::Automation::MouseInteraction::Move:
-        doMotionEvent(page.viewWidget(), viewPosition, state);
+    case MouseInteraction::Move:
+        doMotionEvent(page.viewWidget(), locationInView, state);
         break;
-    case Inspector::Protocol::Automation::MouseInteraction::Down:
-        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), viewPosition, gdkButton, state);
+    case MouseInteraction::Down:
+        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
         break;
-    case Inspector::Protocol::Automation::MouseInteraction::Up:
-        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), viewPosition, gdkButton, state);
+    case MouseInteraction::Up:
+        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
         break;
-    case Inspector::Protocol::Automation::MouseInteraction::SingleClick:
-        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), viewPosition, gdkButton, state);
-        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), viewPosition, gdkButton, state);
+    case MouseInteraction::SingleClick:
+        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
+        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
         break;
-    case Inspector::Protocol::Automation::MouseInteraction::DoubleClick:
-        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), viewPosition, gdkButton, state);
-        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), viewPosition, gdkButton, state);
-        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), viewPosition, gdkButton, state);
-        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), viewPosition, gdkButton, state);
+    case MouseInteraction::DoubleClick:
+        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
+        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
+        doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
+        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
         break;
     }
 }
@@ -280,20 +280,27 @@ static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key,
     return 0;
 }
 
-void WebAutomationSession::platformSimulateKeyStroke(WebPageProxy& page, Inspector::Protocol::Automation::KeyboardInteractionType interaction, Inspector::Protocol::Automation::VirtualKey key)
+void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::optional<VirtualKey> virtualKey, std::optional<CharKey> charKey)
 {
+    ASSERT(virtualKey.has_value() || charKey.has_value());
+
     GdkModifierType updateState;
-    auto keyCode = keyCodeForVirtualKey(key, updateState);
+    int keyCode;
+    if (virtualKey.has_value())
+        keyCode = keyCodeForVirtualKey(virtualKey.value(), updateState);
+    else
+        keyCode = gdk_unicode_to_keyval(g_utf8_get_char(&charKey.value()));
+
     switch (interaction) {
-    case Inspector::Protocol::Automation::KeyboardInteractionType::KeyPress:
+    case KeyboardInteraction::KeyPress:
         m_currentModifiers |= updateState;
         doKeyStrokeEvent(GDK_KEY_PRESS, page.viewWidget(), keyCode, m_currentModifiers);
         break;
-    case Inspector::Protocol::Automation::KeyboardInteractionType::KeyRelease:
+    case KeyboardInteraction::KeyRelease:
         m_currentModifiers &= ~updateState;
         doKeyStrokeEvent(GDK_KEY_RELEASE, page.viewWidget(), keyCode, m_currentModifiers);
         break;
-    case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey:
+    case KeyboardInteraction::InsertByKey:
         doKeyStrokeEvent(GDK_KEY_PRESS, page.viewWidget(), keyCode, m_currentModifiers, true);
         break;
     }

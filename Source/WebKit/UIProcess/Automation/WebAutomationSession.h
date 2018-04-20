@@ -30,6 +30,7 @@
 #include "AutomationFrontendDispatchers.h"
 #include "Connection.h"
 #include "ShareableBitmap.h"
+#include "SimulatedInputDispatcher.h"
 #include "WebEvent.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -76,7 +77,7 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebProcessPool;
 
-struct AutomationCommandError {
+class AutomationCommandError {
 public:
     Inspector::Protocol::Automation::ErrorMessage type;
     std::optional<String> message { std::nullopt };
@@ -91,11 +92,14 @@ public:
     String toProtocolString();
 };
 
+using AutomationCompletionHandler = WTF::CompletionHandler<void(std::optional<AutomationCommandError>)>;
+
 class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>, public IPC::MessageReceiver
 #if ENABLE(REMOTE_INSPECTOR)
     , public Inspector::RemoteAutomationTarget
 #endif
     , public Inspector::AutomationBackendDispatcherHandler
+    , public SimulatedInputDispatcher::Client
 {
 public:
     WebAutomationSession();
@@ -131,6 +135,10 @@ public:
 #endif
     void terminate();
 
+    // SimulatedInputDispatcher::Client API
+    void simulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint& locationInView, AutomationCompletionHandler&&) final;
+    void simulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, std::optional<VirtualKey>, std::optional<CharKey>, AutomationCompletionHandler&&) final;
+
     // Inspector::AutomationBackendDispatcherHandler API
     // NOTE: the set of declarations included in this interface depend on the "platform" property in Automation.json
     // and the --platform argument passed to the protocol bindings generator.
@@ -151,6 +159,8 @@ public:
     void evaluateJavaScriptFunction(const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const JSON::Array& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
     void performMouseInteraction(const String& handle, const JSON::Object& requestedPosition, const String& mouseButton, const String& mouseInteraction, const JSON::Array& keyModifiers, Ref<PerformMouseInteractionCallback>&&) final;
     void performKeyboardInteractions(const String& handle, const JSON::Array& interactions, Ref<PerformKeyboardInteractionsCallback>&&) override;
+    void performInteractionSequence(const String& handle, const JSON::Array& sources, const JSON::Array& steps, Ref<PerformInteractionSequenceCallback>&&) override;
+    void cancelInteractionSequence(const String& handle, Ref<CancelInteractionSequenceCallback>&&) override;
     void takeScreenshot(const String& handle, const String* optionalFrameHandle, const String* optionalNodeHandle, const bool* optionalScrollIntoViewIfNeeded, const bool* optionalClipToViewport, Ref<TakeScreenshotCallback>&&) override;
     void resolveChildFrameHandle(const String& browsingContextHandle, const String* optionalFrameHandle, const int* optionalOrdinal, const String* optionalName, const String* optionalNodeHandle, Ref<ResolveChildFrameHandleCallback>&&) override;
     void resolveParentFrameHandle(const String& browsingContextHandle, const String& frameHandle, Ref<ResolveParentFrameHandleCallback>&&) override;
@@ -175,7 +185,10 @@ public:
 #endif
 
     // Event Simulation Support.
-    bool isSimulatingUserInteraction() const { return m_simulatingUserInteraction; }
+    bool isSimulatingUserInteraction() const;
+    SimulatedInputDispatcher& inputDispatcherForPage(WebPageProxy&);
+    SimulatedInputSource* inputSourceForType(SimulatedInputSource::Type) const;
+
 #if PLATFORM(MAC)
     bool wasEventSynthesizedForAutomation(NSEvent *);
     void markEventAsSynthesizedForAutomation(NSEvent *);
@@ -215,9 +228,9 @@ private:
     void didDeleteCookie(uint64_t callbackID, const String& errorType);
 
     // Platform-dependent implementations.
-    void platformSimulateMouseInteraction(WebPageProxy&, const WebCore::IntPoint& viewPosition, Inspector::Protocol::Automation::MouseInteraction, Inspector::Protocol::Automation::MouseButton, WebEvent::Modifiers);
-    // Simulates a single virtual key being pressed, such as Control, F-keys, Numpad keys, etc. as allowed by the protocol.
-    void platformSimulateKeyStroke(WebPageProxy&, Inspector::Protocol::Automation::KeyboardInteractionType, Inspector::Protocol::Automation::VirtualKey);
+    void platformSimulateMouseInteraction(WebPageProxy&, MouseInteraction, WebMouseEvent::Button, const WebCore::IntPoint& locationInView, WebEvent::Modifiers keyModifiers);
+    // Simulates a single virtual or char key being pressed/released, such as 'a', Control, F-keys, Numpad keys, etc. as allowed by the protocol.
+    void platformSimulateKeyboardInteraction(WebPageProxy&, KeyboardInteraction, std::optional<VirtualKey>, std::optional<CharKey>);
     // Simulates key presses to produce the codepoints in a string. One or more code points are delivered atomically at grapheme cluster boundaries.
     void platformSimulateKeySequence(WebPageProxy&, const String&);
     // Get base64 encoded PNG data from a bitmap.
@@ -289,12 +302,14 @@ private:
 
     bool m_permissionForGetUserMedia { true };
 
-    // True if a synthesized key event is still being processed.
-    bool m_simulatingUserInteraction { false };
-
     // Keep track of currently active modifiers across multiple keystrokes.
     // Most platforms do not track current modifiers from synthesized events.
     unsigned m_currentModifiers { 0 };
+
+    // SimulatedInputDispatcher APIs take a set of input sources. We also intern these
+    // so that previous input source state is used as initial state for later commands.
+    HashSet<Ref<SimulatedInputSource>> m_inputSources;
+    HashMap<uint64_t, Ref<SimulatedInputDispatcher>> m_inputDispatchersByPage;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

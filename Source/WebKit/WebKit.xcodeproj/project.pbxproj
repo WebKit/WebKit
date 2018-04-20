@@ -1529,6 +1529,8 @@
 		9946EF861E7B027000541E79 /* WebAutomationSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */; };
 		994BADF31F7D781100B571E7 /* WKInspectorViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */; };
 		994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */; };
+		995226D6207D184600F78420 /* SimulatedInputDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 995226D4207D184500F78420 /* SimulatedInputDispatcher.h */; };
+		995226D7207D184600F78420 /* SimulatedInputDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 995226D5207D184600F78420 /* SimulatedInputDispatcher.cpp */; };
 		9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */; };
 		9955A6ED1C7980CA00EB6A93 /* WebAutomationSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */; };
 		9955A6EF1C79810800EB6A93 /* Automation.json in Headers */ = {isa = PBXBuildFile; fileRef = 9955A6E91C7980BB00EB6A93 /* Automation.json */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4019,6 +4021,8 @@
 		9946EF851E7B026600541E79 /* WebAutomationSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAutomationSessionIOS.mm; sourceTree = "<group>"; };
 		994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorViewController.h; sourceTree = "<group>"; };
 		994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorViewController.mm; sourceTree = "<group>"; };
+		995226D4207D184500F78420 /* SimulatedInputDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedInputDispatcher.h; sourceTree = "<group>"; };
+		995226D5207D184600F78420 /* SimulatedInputDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulatedInputDispatcher.cpp; sourceTree = "<group>"; };
 		9955A6E91C7980BB00EB6A93 /* Automation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Automation.json; sourceTree = "<group>"; };
 		9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAutomationSession.cpp; sourceTree = "<group>"; };
 		9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutomationSession.h; sourceTree = "<group>"; };
@@ -6970,6 +6974,8 @@
 				9946EF821E7B023D00541E79 /* ios */,
 				99C3AE221DAD8E1400AF5C16 /* mac */,
 				9955A6E91C7980BB00EB6A93 /* Automation.json */,
+				995226D5207D184600F78420 /* SimulatedInputDispatcher.cpp */,
+				995226D4207D184500F78420 /* SimulatedInputDispatcher.h */,
 				9955A6EA1C7980BB00EB6A93 /* WebAutomationSession.cpp */,
 				9955A6EB1C7980BB00EB6A93 /* WebAutomationSession.h */,
 				1C0A19591C9006EA00FE0EBB /* WebAutomationSession.messages.in */,
@@ -9174,6 +9180,7 @@
 				8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */,
 				8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */,
 				83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */,
+				995226D6207D184600F78420 /* SimulatedInputDispatcher.h in Headers */,
 				2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */,
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
@@ -10880,6 +10887,7 @@
 				8313F7EB1F7DAE0800B944EB /* SharedStringHashStore.cpp in Sources */,
 				8313F7ED1F7DAE0800B944EB /* SharedStringHashTable.cpp in Sources */,
 				83F9644D1FA0F76E00C47750 /* SharedStringHashTableReadOnly.cpp in Sources */,
+				995226D7207D184600F78420 /* SimulatedInputDispatcher.cpp in Sources */,
 				2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
