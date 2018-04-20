@@ -105,6 +105,10 @@
 #import <WebCore/WebItemProviderPasteboard.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.mm>
+#endif
+
 @interface UIEvent(UIEventInternal)
 @property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
 @end
@@ -614,6 +618,10 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [_touchEventGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
 
+#if USE(APPLE_INTERNAL_SDK)
+    [self _internalSetupInteraction];
+#endif
+
     _singleTapGestureRecognizer = adoptNS([[WKSyntheticClickTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapCommited:)]);
     [_singleTapGestureRecognizer setDelegate:self];
     [_singleTapGestureRecognizer setGestureRecognizedTarget:self action:@selector(_singleTapRecognized:)];
@@ -704,6 +712,10 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
 
+#if USE(APPLE_INTERNAL_SDK)
+    [self _internalCleanupInteraction];
+#endif
+
     [_singleTapGestureRecognizer setDelegate:nil];
     [_singleTapGestureRecognizer setGestureRecognizedTarget:nil action:nil];
     [_singleTapGestureRecognizer setResetTarget:nil action:nil];
@@ -764,6 +776,10 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+
+#if USE(APPLE_INTERNAL_SDK)
+    [self _internalRemoveDefaultGestureRecognizers];
+#endif
 }
 
 - (void)_addDefaultGestureRecognizers
@@ -775,6 +791,10 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+
+#if USE(APPLE_INTERNAL_SDK)
+    [self _internalAddDefaultGestureRecognizers];
+#endif
 }
 
 - (UIView*)unscaledView
@@ -5433,6 +5453,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
+#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
 #endif
 
 @end

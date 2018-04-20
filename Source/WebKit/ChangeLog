@@ -1,3 +1,21 @@
+2018-04-20  Timothy Hatcher  <timothy@apple.com>
+
+        Include missing files in WKContentViewInteraction.{mm,h}
+
+        https://bugs.webkit.org/show_bug.cgi?id=184832
+        rdar://problem/35377120
+
+        Reviewed by Wenson Hsieh.
+
+        Some WebDriver files were missing and should be included.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         WebPage sometimes incorrectly rules out PDF as a mime type that can be showed

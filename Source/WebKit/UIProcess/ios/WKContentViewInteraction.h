@@ -83,6 +83,10 @@ class WebPageProxy;
 @class _UIHighlightView;
 @class _UIWebHighlightLongPressGestureRecognizer;
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.h>
+#endif
+
 #if ENABLE(EXTRA_ZOOM_MODE)
 @class WKFocusedFormControlView;
 #endif
@@ -146,6 +150,10 @@ struct WKAutoCorrectionData {
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
 
     BOOL _canSendTouchEventsAsynchronously;
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.h>
+#endif
 
     RetainPtr<WKSyntheticClickTapGestureRecognizer> _singleTapGestureRecognizer;
     RetainPtr<_UIWebHighlightLongPressGestureRecognizer> _highlightLongPressGestureRecognizer;
