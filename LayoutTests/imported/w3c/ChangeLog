@@ -1,3 +1,224 @@
+2018-04-20  Chris Nardi  <cnardi@chromium.org>
+
+        Update HSL/HSLA parsing to match CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=180528
+        <rdar://problem/35926675>
+
+        Reviewed by Simon Fraser.
+
+        CSS Color 4 had many changes to the HSL/HSLA functions, including allowing angles to be
+        specified as the hue, adding a comma optional syntax, making the two functions synonyms
+        so each function can take an alpha value, and allowing percent alpha values. This change
+        updates our behavior to match that, and updates the HSL to RGB algorithm.
+
+        This change also updates the import of WPT css-color to test the changes.
+
+        * canvas/2d.fillStyle.parse.invalid.hsl-5-expected.txt:
+        * web-platform-tests/css/css-color/OWNERS: Added.
+        * web-platform-tests/css/css-color/border-bottom-color-expected.xht: Added.
+        * web-platform-tests/css/css-color/border-bottom-color.xht: Added.
+        * web-platform-tests/css/css-color/border-left-color-expected.xht: Added.
+        * web-platform-tests/css/css-color/border-left-color.xht: Added.
+        * web-platform-tests/css/css-color/border-right-color-expected.xht: Added.
+        * web-platform-tests/css/css-color/border-right-color.xht: Added.
+        * web-platform-tests/css/css-color/border-top-color-expected.xht: Added.
+        * web-platform-tests/css/css-color/border-top-color.xht: Added.
+        * web-platform-tests/css/css-color/color-001-expected.html: Added.
+        * web-platform-tests/css/css-color/color-001.html: Added.
+        * web-platform-tests/css/css-color/color-002-expected.html: Added.
+        * web-platform-tests/css/css-color/color-002.html: Added.
+        * web-platform-tests/css/css-color/color-003-expected.html: Added.
+        * web-platform-tests/css/css-color/color-003.html: Added.
+        * web-platform-tests/css/css-color/currentcolor-001-expected.html: Added.
+        * web-platform-tests/css/css-color/currentcolor-001.html: Added.
+        * web-platform-tests/css/css-color/currentcolor-002-expected.html: Added.
+        * web-platform-tests/css/css-color/currentcolor-002.html: Added.
+        * web-platform-tests/css/css-color/hex-001-expected.html: Added.
+        * web-platform-tests/css/css-color/hex-001.html: Added.
+        * web-platform-tests/css/css-color/hex-002-expected.html: Added.
+        * web-platform-tests/css/css-color/hex-002.html: Added.
+        * web-platform-tests/css/css-color/hex-003-expected.html: Added.
+        * web-platform-tests/css/css-color/hex-003.html: Added.
+        * web-platform-tests/css/css-color/hex-004-expected.html: Added.
+        * web-platform-tests/css/css-color/hex-004.html: Added.
+        * web-platform-tests/css/css-color/hsl-001-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-001.html: Added.
+        * web-platform-tests/css/css-color/hsl-002-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-002.html: Added.
+        * web-platform-tests/css/css-color/hsl-003-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-003.html: Added.
+        * web-platform-tests/css/css-color/hsl-004-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-004.html: Added.
+        * web-platform-tests/css/css-color/hsl-005-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-005.html: Added.
+        * web-platform-tests/css/css-color/hsl-006-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-006.html: Added.
+        * web-platform-tests/css/css-color/hsl-007-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-007.html: Added.
+        * web-platform-tests/css/css-color/hsl-008-expected.html: Added.
+        * web-platform-tests/css/css-color/hsl-008.html: Added.
+        * web-platform-tests/css/css-color/hsla-001-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-001.html: Added.
+        * web-platform-tests/css/css-color/hsla-002-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-002.html: Added.
+        * web-platform-tests/css/css-color/hsla-003-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-003.html: Added.
+        * web-platform-tests/css/css-color/hsla-004-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-004.html: Added.
+        * web-platform-tests/css/css-color/hsla-005-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-005.html: Added.
+        * web-platform-tests/css/css-color/hsla-006-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-006.html: Added.
+        * web-platform-tests/css/css-color/hsla-007-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-007.html: Added.
+        * web-platform-tests/css/css-color/hsla-008-expected.html: Added.
+        * web-platform-tests/css/css-color/hsla-008.html: Added.
+        * web-platform-tests/css/css-color/htaccess: Added.
+        * web-platform-tests/css/css-color/lab-001-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-001.html: Added.
+        * web-platform-tests/css/css-color/lab-002-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-002.html: Added.
+        * web-platform-tests/css/css-color/lab-003-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-003.html: Added.
+        * web-platform-tests/css/css-color/lab-004-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-004.html: Added.
+        * web-platform-tests/css/css-color/lab-005-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-005.html: Added.
+        * web-platform-tests/css/css-color/lab-006-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-006.html: Added.
+        * web-platform-tests/css/css-color/lab-007-expected.html: Added.
+        * web-platform-tests/css/css-color/lab-007.html: Added.
+        * web-platform-tests/css/css-color/lch-001-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-001.html: Added.
+        * web-platform-tests/css/css-color/lch-002-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-002.html: Added.
+        * web-platform-tests/css/css-color/lch-003-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-003.html: Added.
+        * web-platform-tests/css/css-color/lch-004-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-004.html: Added.
+        * web-platform-tests/css/css-color/lch-005-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-005.html: Added.
+        * web-platform-tests/css/css-color/lch-006-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-006.html: Added.
+        * web-platform-tests/css/css-color/lch-007-expected.html: Added.
+        * web-platform-tests/css/css-color/lch-007.html: Added.
+        * web-platform-tests/css/css-color/named-001-expected.html: Added.
+        * web-platform-tests/css/css-color/named-001.html: Added.
+        * web-platform-tests/css/css-color/rgb-001-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-001.html: Added.
+        * web-platform-tests/css/css-color/rgb-002-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-002.html: Added.
+        * web-platform-tests/css/css-color/rgb-003-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-003.html: Added.
+        * web-platform-tests/css/css-color/rgb-004-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-004.html: Added.
+        * web-platform-tests/css/css-color/rgb-005-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-005.html: Added.
+        * web-platform-tests/css/css-color/rgb-006-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-006.html: Added.
+        * web-platform-tests/css/css-color/rgb-007-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-007.html: Added.
+        * web-platform-tests/css/css-color/rgb-008-expected.html: Added.
+        * web-platform-tests/css/css-color/rgb-008.html: Added.
+        * web-platform-tests/css/css-color/rgba-001-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-001.html: Added.
+        * web-platform-tests/css/css-color/rgba-002-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-002.html: Added.
+        * web-platform-tests/css/css-color/rgba-003-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-003.html: Added.
+        * web-platform-tests/css/css-color/rgba-004-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-004.html: Added.
+        * web-platform-tests/css/css-color/rgba-005-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-005.html: Added.
+        * web-platform-tests/css/css-color/rgba-006-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-006.html: Added.
+        * web-platform-tests/css/css-color/rgba-007-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-007.html: Added.
+        * web-platform-tests/css/css-color/rgba-008-expected.html: Added.
+        * web-platform-tests/css/css-color/rgba-008.html: Added.
+        * web-platform-tests/css/css-color/t31-color-currentColor-b.xht:
+        * web-platform-tests/css/css-color/t31-color-text-a-expected.xht: Added.
+        * web-platform-tests/css/css-color/t31-color-text-a.xht: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-0.0-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-0.0-a.xht: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-1.0-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-basic-1.0-a.xht: Added.
+        * web-platform-tests/css/css-color/t32-opacity-clamping-0.0-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-clamping-0.0-b.xht: Added.
+        * web-platform-tests/css/css-color/t32-opacity-clamping-1.0-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-clamping-1.0-b.xht: Added.
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-b.xht: Added.
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-multiple-boxes-1-c.xht:
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-multiple-boxes-2-c.xht:
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-with-alpha-c-expected.html: Added.
+        * web-platform-tests/css/css-color/t32-opacity-offscreen-with-alpha-c.xht: Added.
+        * web-platform-tests/css/css-color/t41-html4-keywords-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t41-html4-keywords-a.xht: Added.
+        * web-platform-tests/css/css-color/t421-rgb-clip-outside-gamut-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t421-rgb-clip-outside-gamut-b.xht: Added.
+        * web-platform-tests/css/css-color/t421-rgb-func-int-a.xht:
+        * web-platform-tests/css/css-color/t421-rgb-func-no-mixed-f.xht:
+        * web-platform-tests/css/css-color/t421-rgb-func-pct-a.xht:
+        * web-platform-tests/css/css-color/t421-rgb-func-whitespace-b.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex-parsing-f.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex3-a.xht:
+        * web-platform-tests/css/css-color/t421-rgb-hex6-a.xht:
+        * web-platform-tests/css/css-color/t421-rgb-values-meaning-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t421-rgb-values-meaning-b.xht: Added.
+        * web-platform-tests/css/css-color/t422-rgba-a0.0-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t422-rgba-a0.0-a.xht: Added.
+        * web-platform-tests/css/css-color/t422-rgba-a1.0-a.xht:
+        * web-platform-tests/css/css-color/t422-rgba-clamping-a0.0-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-clamping-a1.0-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-clip-outside-device-gamut-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-int-a.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-no-mixed-f.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-pct-a.xht:
+        * web-platform-tests/css/css-color/t422-rgba-func-whitespace-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht:
+        * web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht:
+        * web-platform-tests/css/css-color/t422-rgba-values-meaning-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t422-rgba-values-meaning-b.xht: Added.
+        * web-platform-tests/css/css-color/t423-transparent-1-a.xht:
+        * web-platform-tests/css/css-color/t423-transparent-2-a.xht:
+        * web-platform-tests/css/css-color/t424-hsl-basic-a.xht:
+        * web-platform-tests/css/css-color/t424-hsl-clip-outside-gamut-b.xht:
+        * web-platform-tests/css/css-color/t424-hsl-h-rotating-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t424-hsl-h-rotating-b.xht: Added.
+        * web-platform-tests/css/css-color/t424-hsl-parsing-f.xht:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-1.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-10.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-11.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-12.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-13.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-14.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-15.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-2.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-3.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-4.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-5.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-6.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-7.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-8.html:
+        * web-platform-tests/css/css-color/t424-hsl-values-b-9.html:
+        * web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht:
+        * web-platform-tests/css/css-color/t425-hsla-h-rotating-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t425-hsla-h-rotating-b.xht: Added.
+        * web-platform-tests/css/css-color/t425-hsla-onscreen-b-expected.html: Added.
+        * web-platform-tests/css/css-color/t425-hsla-onscreen-b.xht: Added.
+        * web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht:
+        * web-platform-tests/css/css-color/t425-hsla-parsing-f.xht:
+        * web-platform-tests/css/css-color/t425-hsla-values-b.xht:
+        * web-platform-tests/css/css-color/t43-svg-keywords-a-expected.html: Added.
+        * web-platform-tests/css/css-color/t43-svg-keywords-a.xht: Added.
+        * web-platform-tests/css/css-color/t44-currentcolor-background-b.xht:
+        * web-platform-tests/css/css-color/t44-currentcolor-border-b-expected.html:
+        * web-platform-tests/css/css-color/t44-currentcolor-border-b.xht:
+        * web-platform-tests/css/css-color/t44-currentcolor-inherited-c-expected.xht: Added.
+        * web-platform-tests/css/css-color/t44-currentcolor-inherited-c.xht: Added.
+        * web-platform-tests/css/css-color/w3c-import.log: Added.
+
 2018-04-20  Javier Fernandez  <jfernandez@igalia.com>
 
         Update Alignment shorthands to the spec now that they are not ambiguous

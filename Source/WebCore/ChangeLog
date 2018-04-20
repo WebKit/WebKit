@@ -1,3 +1,26 @@
+2018-04-20  Chris Nardi  <cnardi@chromium.org>
+
+        Update HSL/HSLA parsing to match CSS Color 4
+        https://bugs.webkit.org/show_bug.cgi?id=180528
+        <rdar://problem/35926675>
+
+        CSS Color 4 specifies a comma optional syntax for HSL/HSLA, as well as allowing angle values for the
+        hue and percent alpha values. Update our parsing to match this.
+
+        Reviewed by Simon Fraser.
+
+        This change also updates the import of WPT css-color to test the changes.
+
+        Tests: LayoutTests/imported/w3c/web-platform-tests/css/css-color/hsl{a}-{001-008}.html
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeColor):
+        * platform/graphics/Color.cpp:
+        (WebCore::calcHue):
+        (WebCore::makeRGBAFromHSLA):
+
 2018-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Injected bundle form client should be notified when editing text fields

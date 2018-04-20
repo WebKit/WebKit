@@ -100,23 +100,23 @@ RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha)
 static double calcHue(double temp1, double temp2, double hueVal)
 {
     if (hueVal < 0.0)
-        hueVal++;
-    else if (hueVal > 1.0)
-        hueVal--;
-    if (hueVal * 6.0 < 1.0)
-        return temp1 + (temp2 - temp1) * hueVal * 6.0;
-    if (hueVal * 2.0 < 1.0)
+        hueVal += 6.0;
+    else if (hueVal >= 6.0)
+        hueVal -= 6.0;
+    if (hueVal < 1.0)
+        return temp1 + (temp2 - temp1) * hueVal;
+    if (hueVal < 3.0)
         return temp2;
-    if (hueVal * 3.0 < 2.0)
-        return temp1 + (temp2 - temp1) * (2.0 / 3.0 - hueVal) * 6.0;
+    if (hueVal < 4.0)
+        return temp1 + (temp2 - temp1) * (4.0 - hueVal);
     return temp1;
 }
 
-// Explanation of this algorithm can be found in the CSS3 Color Module
-// specification at http://www.w3.org/TR/css3-color/#hsl-color with further
-// explanation available at http://en.wikipedia.org/wiki/HSL_color_space 
+// Explanation of this algorithm can be found in the CSS Color 4 Module
+// specification at https://drafts.csswg.org/css-color-4/#hsl-to-rgb with
+// further explanation available at http://en.wikipedia.org/wiki/HSL_color_space
 
-// all values are in the range of 0 to 1.0
+// Hue is in the range of 0 to 6.0, the remainder are in the range 0 to 1.0
 RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double alpha)
 {
     const double scaleFactor = nextafter(256.0, 0.0);
@@ -126,12 +126,12 @@ RGBA32 makeRGBAFromHSLA(double hue, double saturation, double lightness, double 
         return makeRGBA(greyValue, greyValue, greyValue, static_cast<int>(alpha * scaleFactor));
     }
 
-    double temp2 = lightness < 0.5 ? lightness * (1.0 + saturation) : lightness + saturation - lightness * saturation;
+    double temp2 = lightness <= 0.5 ? lightness * (1.0 + saturation) : lightness + saturation - lightness * saturation;
     double temp1 = 2.0 * lightness - temp2;
     
-    return makeRGBA(static_cast<int>(calcHue(temp1, temp2, hue + 1.0 / 3.0) * scaleFactor), 
+    return makeRGBA(static_cast<int>(calcHue(temp1, temp2, hue + 2.0) * scaleFactor), 
                     static_cast<int>(calcHue(temp1, temp2, hue) * scaleFactor),
-                    static_cast<int>(calcHue(temp1, temp2, hue - 1.0 / 3.0) * scaleFactor),
+                    static_cast<int>(calcHue(temp1, temp2, hue - 2.0) * scaleFactor),
                     static_cast<int>(alpha * scaleFactor));
 }
 

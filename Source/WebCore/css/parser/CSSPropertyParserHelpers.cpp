@@ -529,17 +529,29 @@ static Color parseRGBParameters(CSSParserTokenRange& range, bool parseAlpha)
     return result;
 }
 
-static Color parseHSLParameters(CSSParserTokenRange& range, bool parseAlpha)
+static Color parseHSLParameters(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     ASSERT(range.peek().functionId() == CSSValueHsl || range.peek().functionId() == CSSValueHsla);
     CSSParserTokenRange args = consumeFunction(range);
-    RefPtr<CSSPrimitiveValue> hslValue = consumeNumber(args, ValueRangeAll);
-    if (!hslValue)
-        return Color();
+    auto hslValue = consumeAngle(args, cssParserMode, UnitlessQuirk::Forbid);
+    double angleInDegrees;
+    if (!hslValue) {
+        hslValue = consumeNumber(args, ValueRangeAll);
+        if (!hslValue)
+            return Color();
+        angleInDegrees = hslValue->doubleValue();
+    } else
+        angleInDegrees = hslValue->computeDegrees();
     double colorArray[3];
-    colorArray[0] = (((hslValue->intValue() % 360) + 360) % 360) / 360.0;
+    // The hue needs to be in the range [0.0, 6.0) for calcHue()
+    colorArray[0] = fmod(fmod(angleInDegrees, 360.0) + 360.0, 360.0) / 60.0;
+    bool requiresCommas = false;
     for (int i = 1; i < 3; i++) {
-        if (!consumeCommaIncludingWhitespace(args))
+        if (consumeCommaIncludingWhitespace(args)) {
+            if (i != 1 && !requiresCommas)
+                return Color();
+            requiresCommas = true;
+        } else if (requiresCommas || args.atEnd() || (&args.peek() - 1)->type() != WhitespaceToken)
             return Color();
         hslValue = consumePercent(args, ValueRangeAll);
         if (!hslValue)
@@ -547,12 +559,19 @@ static Color parseHSLParameters(CSSParserTokenRange& range, bool parseAlpha)
         double doubleValue = hslValue->doubleValue();
         colorArray[i] = clampTo<double>(doubleValue, 0.0, 100.0) / 100.0; // Needs to be value between 0 and 1.0.
     }
+
     double alpha = 1.0;
-    if (parseAlpha) {
-        if (!consumeCommaIncludingWhitespace(args))
-            return Color();
-        if (!consumeNumberRaw(args, alpha))
-            return Color();
+    bool commaConsumed = consumeCommaIncludingWhitespace(args);
+    bool slashConsumed = consumeSlashIncludingWhitespace(args);
+    if ((commaConsumed && !requiresCommas) || (slashConsumed && requiresCommas))
+        return Color();
+    if (commaConsumed || slashConsumed) {
+        if (!consumeNumberRaw(args, alpha)) {
+            auto alphaPercent = consumePercent(args, ValueRangeAll);
+            if (!alphaPercent)
+                return Color();
+            alpha = alphaPercent->doubleValue() / 100.0f;
+        }
         alpha = clampTo<double>(alpha, 0.0, 1.0);
     }
 
@@ -641,7 +660,7 @@ static Color parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
     return Color(result);
 }
 
-static Color parseColorFunction(CSSParserTokenRange& range)
+static Color parseColorFunction(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     CSSParserTokenRange colorRange = range;
     CSSValueID functionId = range.peek().functionId();
@@ -653,7 +672,7 @@ static Color parseColorFunction(CSSParserTokenRange& range)
         break;
     case CSSValueHsl:
     case CSSValueHsla:
-        color = parseHSLParameters(colorRange, functionId == CSSValueHsla);
+        color = parseHSLParameters(colorRange, cssParserMode);
         break;
     case CSSValueColor:
         color = parseColorFunctionParameters(colorRange);
@@ -675,7 +694,7 @@ RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, CSSParserMode
     }
     Color color = parseHexColor(range, acceptQuirkyColors);
     if (!color.isValid())
-        color = parseColorFunction(range);
+        color = parseColorFunction(range, cssParserMode);
     if (!color.isValid())
         return nullptr;
     return CSSValuePool::singleton().createValue(color);

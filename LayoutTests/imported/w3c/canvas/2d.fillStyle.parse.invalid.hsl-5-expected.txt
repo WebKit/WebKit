@@ -3,4 +3,4 @@ Spec references: 2d.colours.parse
 Actual output:
 Expected output:
 
-Passed
+Failed assertion: got pixel [255,255,255,255] at (50,25), expected [0,255,0,255]
