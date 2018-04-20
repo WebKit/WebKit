@@ -1,5 +1,12 @@
 2018-04-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed build fix after r230840.
+
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::attachDebugger):
+
+2018-04-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix the Windows build after r230831.
 
         * bindings/js/JSWindowProxy.cpp:

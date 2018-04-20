@@ -119,7 +119,7 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
     ASSERT(prototype->globalObject() == window);
 }
 
-void JSWindowProxy::attachDebugger(Debugger* debugger)
+void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
 {
     auto* globalObject = window();
     JSLockHolder lock(globalObject->vm());
@@ -127,7 +127,7 @@ void JSWindowProxy::attachDebugger(Debugger* debugger)
     if (debugger)
         debugger->attach(globalObject);
     else if (auto* currentDebugger = globalObject->debugger())
-        currentDebugger->detach(globalObject, Debugger::TerminatingDebuggingSession);
+        currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
 }
 
 AbstractDOMWindow& JSWindowProxy::wrapped() const
