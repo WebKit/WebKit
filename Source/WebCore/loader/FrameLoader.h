@@ -363,7 +363,7 @@ private:
 
     void urlSelected(FrameLoadRequest&&, Event*);
 
-    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, FormState*, AllowNavigationToInvalidURL, CompletionHandler<void()>&&); // Calls continueLoadAfterNavigationPolicy
+    void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, FormState*, AllowNavigationToInvalidURL, NavigationPolicyCheck, CompletionHandler<void()>&&); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*); // Calls loadWithDocumentLoader
 
     void loadWithNavigationAction(const ResourceRequest&, const NavigationAction&, LockHistory, FrameLoadType, FormState*, AllowNavigationToInvalidURL, CompletionHandler<void()>&&); // Calls loadWithDocumentLoader

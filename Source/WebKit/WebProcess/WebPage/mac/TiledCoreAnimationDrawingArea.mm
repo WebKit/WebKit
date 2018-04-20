@@ -94,14 +94,20 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     updateLayerHostingContext();
     setColorSpace(parameters.colorSpace);
 
-    LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = m_layerHostingContext->contextID();
-    m_webPage.send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
+    attachDrawingArea();
 }
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
     m_layerFlushScheduler.invalidate();
+}
+
+
+void TiledCoreAnimationDrawingArea::attachDrawingArea()
+{
+    LayerTreeContext layerTreeContext;
+    layerTreeContext.contextID = m_layerHostingContext->contextID();
+    m_webPage.send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
 }
 
 void TiledCoreAnimationDrawingArea::setNeedsDisplay()

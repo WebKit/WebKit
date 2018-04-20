@@ -44,7 +44,7 @@ public:
 
     void addObserver(WebProcessLifetimeObserver&);
 
-    void connectionWillOpen(IPC::Connection&);
+    void webPageEnteringWebProcess();
     void webPageLeavingWebProcess();
 
     void pageWasInvalidated();

@@ -148,6 +148,7 @@ messages -> WebPage LegacyReceiver {
     StopLoadingFrame(uint64_t frameID)
     
     RestoreSession(Vector<WebKit::BackForwardListItemState> itemStates)
+    UpdateBackForwardListForReattach(Vector<WebKit::BackForwardListItemState> itemStates)
 
     DidRemoveBackForwardItem(struct WebCore::BackForwardItemIdentifier backForwardItemID)
 

@@ -49,14 +49,14 @@ public:
         return adoptRef(*new Navigation(state));
     }
 
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebKit::WebBackForwardListItem& item, WebCore::FrameLoadType backForwardFrameLoadType)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType backForwardFrameLoadType)
     {
-        return adoptRef(*new Navigation(state, item, backForwardFrameLoadType));
+        return adoptRef(*new Navigation(state, targetItem, fromItem, backForwardFrameLoadType));
     }
 
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& request)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& request, WebKit::WebBackForwardListItem* fromItem)
     {
-        return adoptRef(*new Navigation(state, WTFMove(request)));
+        return adoptRef(*new Navigation(state, WTFMove(request), fromItem));
     }
 
     virtual ~Navigation();
@@ -71,7 +71,8 @@ public:
     void setCurrentRequestIsRedirect(bool isRedirect) { m_isRedirect = isRedirect; }
     bool currentRequestIsRedirect() const { return m_isRedirect; }
 
-    WebKit::WebBackForwardListItem* backForwardListItem() { return m_backForwardListItem.get(); }
+    WebKit::WebBackForwardListItem* targetItem() const { return m_targetItem.get(); }
+    WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
     std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
 
     void appendRedirectionURL(const WebCore::URL&);
@@ -90,13 +91,13 @@ public:
     const std::optional<std::pair<uint64_t, uint64_t>>& opener() const { return m_opener; }
 
 #if !LOG_DISABLED
-    WTF::String loggingString() const;
+    const char* loggingString() const;
 #endif
 
 private:
     explicit Navigation(WebKit::WebNavigationState&);
-    Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&);
-    Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem&, WebCore::FrameLoadType);
+    Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
+    Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType);
 
     uint64_t m_navigationID;
     WebCore::ResourceRequest m_originalRequest;
@@ -107,7 +108,8 @@ private:
     bool m_shouldForceDownload { false };
     bool m_isRedirect { false };
 
-    RefPtr<WebKit::WebBackForwardListItem> m_backForwardListItem;
+    RefPtr<WebKit::WebBackForwardListItem> m_targetItem;
+    RefPtr<WebKit::WebBackForwardListItem> m_fromItem;
     std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
     bool m_isCrossOriginWindowOpenNavigation { false };
     std::optional<std::pair<uint64_t, uint64_t>> m_opener;

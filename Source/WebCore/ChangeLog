@@ -1,3 +1,22 @@
+2018-04-19  Brady Eidson  <beidson@apple.com>
+
+        Make back forward cache work with process swapping.
+        <rdar://problem/38676604> and https://bugs.webkit.org/show_bug.cgi?id=184793
+
+        Reviewed by Chris Dumez.
+
+        Covered by API tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoader.h:
+
 2018-04-19  Chris Dumez  <cdumez@apple.com>
 
         Rename JSDOMWindowProxy to JSWindowProxy

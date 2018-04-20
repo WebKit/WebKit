@@ -27,6 +27,7 @@
 #include "WebBackForwardListItem.h"
 
 #include <WebCore/URL.h>
+#include <wtf/DebugUtilities.h>
 
 using namespace WebCore;
 
@@ -111,9 +112,17 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
     return documentTreesAreEqual(mainFrameState, otherMainFrameState);
 }
 
-void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy& page)
+void WebBackForwardListItem::setSuspendedPage(SuspendedPageProxy* page)
 {
-    m_suspendedPage = &page;
+    ASSERT(!m_suspendedPage || page == nullptr);
+    m_suspendedPage = page;
 }
+
+#if !LOG_DISABLED
+const char* WebBackForwardListItem::loggingString()
+{
+    return debugString("Back/forward item ID ", itemID().logString(), ", original URL ", originalURL(), ", current URL ", url(), m_suspendedPage ? "(has a suspended page)" : "");
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebKit

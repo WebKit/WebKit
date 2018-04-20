@@ -42,18 +42,18 @@ WebNavigationState::~WebNavigationState()
 {
 }
 
-Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(ResourceRequest&& request)
+Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(ResourceRequest&& request, WebBackForwardListItem* currentItem)
 {
-    auto navigation = API::Navigation::create(*this, WTFMove(request));
+    auto navigation = API::Navigation::create(*this, WTFMove(request), currentItem);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebBackForwardListItem& item, FrameLoadType frameLoadType)
+Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, FrameLoadType frameLoadType)
 {
-    auto navigation = API::Navigation::create(*this, item, frameLoadType);
+    auto navigation = API::Navigation::create(*this, targetItem, currentItem, frameLoadType);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 

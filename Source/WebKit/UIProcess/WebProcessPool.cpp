@@ -44,6 +44,7 @@
 #include "LegacyCustomProtocolManagerMessages.h"
 #endif
 #include "LogInitialization.h"
+#include "Logging.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
@@ -1999,6 +2000,14 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
     if (navigation.opener())
         return page.process();
 
+    if (auto* backForwardListItem = navigation.targetItem()) {
+        if (auto* suspendedPage = backForwardListItem->suspendedPage()) {
+            ASSERT(suspendedPage->process());
+            action = PolicyAction::Suspend;
+            return *suspendedPage->process();
+        }
+    }
+
     auto targetURL = navigation.currentRequest().url();
     auto url = URL { ParsedURLString, page.pageLoadState().url() };
     if (!url.isValid() || url.isEmpty() || url.isBlankURL() || protocolHostAndPortAreEqual(url, targetURL))
@@ -2006,6 +2015,32 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
 
     action = PolicyAction::Suspend;
     return createNewWebProcess(page.websiteDataStore());
+}
+
+void WebProcessPool::registerSuspendedPageProxy(SuspendedPageProxy& page)
+{
+    auto& vector = m_suspendedPages.ensure(page.origin(), [] {
+        return Vector<SuspendedPageProxy*> { };
+    }).iterator->value;
+
+    vector.append(&page);
+
+#if !LOG_DISABLED
+    if (vector.size() > 5)
+        LOG(ProcessSwapping, "Security origin %s now has %zu suspended pages (this seems unexpected)", page.origin().debugString().utf8().data(), vector.size());
+#endif
+}
+
+void WebProcessPool::unregisterSuspendedPageProxy(SuspendedPageProxy& page)
+{
+    auto iterator = m_suspendedPages.find(page.origin());
+    ASSERT(iterator != m_suspendedPages.end());
+
+    auto result = iterator->value.removeFirst(&page);
+    ASSERT_UNUSED(result, result);
+
+    if (iterator->value.isEmpty())
+        m_suspendedPages.remove(iterator);
 }
 
 } // namespace WebKit

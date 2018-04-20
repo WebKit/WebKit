@@ -396,9 +396,9 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID)
     updateBackgroundResponsivenessTimer();
 }
 
-void WebProcessProxy::suspendWebPageProxy(WebPageProxy& webPage)
+void WebProcessProxy::suspendWebPageProxy(WebPageProxy& webPage, API::Navigation& navigation)
 {
-    if (auto* suspendedPage = webPage.maybeCreateSuspendedPage(*this)) {
+    if (auto* suspendedPage = webPage.maybeCreateSuspendedPage(*this, navigation)) {
         LOG(ProcessSwapping, "WebProcessProxy pid %i added suspended page %s", processIdentifier(), suspendedPage->loggingString());
         m_suspendedPageMap.set(webPage.pageID(), suspendedPage);
     }
@@ -543,8 +543,14 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 
 void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& itemState)
 {
-    if (auto* item = WebBackForwardListItem::itemForID(itemState.identifier))
-        item->setPageState(itemState.pageState);
+    if (auto* item = WebBackForwardListItem::itemForID(itemState.identifier)) {
+        // This update could be coming from a web process that is not the active process for
+        // the back/forward items page.
+        // e.g. The old web process is navigating to about:blank for suspension.
+        // We ignore these updates.
+        if (m_pageMap.contains(item->pageID()))
+            item->setPageState(itemState.pageState);
+    }
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -760,10 +766,9 @@ bool WebProcessProxy::canCreateFrame(uint64_t frameID) const
     return WebFrameProxyMap::isValidKey(frameID) && !m_frameMap.contains(frameID);
 }
 
-void WebProcessProxy::frameCreated(uint64_t frameID, WebFrameProxy* frameProxy)
+void WebProcessProxy::frameCreated(uint64_t frameID, WebFrameProxy& frameProxy)
 {
-    ASSERT(canCreateFrame(frameID));
-    m_frameMap.set(frameID, frameProxy);
+    m_frameMap.set(frameID, &frameProxy);
 }
 
 void WebProcessProxy::didDestroyFrame(uint64_t frameID)

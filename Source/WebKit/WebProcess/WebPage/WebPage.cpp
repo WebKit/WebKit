@@ -525,7 +525,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     m_userAgent = parameters.userAgent;
     
     if (!parameters.itemStates.isEmpty())
-        restoreSessionInternal(parameters.itemStates, WasRestoredByAPIRequest::No);
+        restoreSessionInternal(parameters.itemStates, WasRestoredByAPIRequest::No, WebBackForwardListProxy::OverwriteExistingItem::No);
 
     if (parameters.sessionID.isValid())
         setSessionID(parameters.sessionID);
@@ -641,6 +641,9 @@ void WebPage::enableEnumeratingAllNetworkInterfaces()
 
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
+    ASSERT(m_drawingArea);
+    m_drawingArea->attachDrawingArea();
+
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, false, Vector<CallbackID>());
     if (m_layerHostingMode != parameters.layerHostingMode)
@@ -1399,7 +1402,7 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, const BackForwardItemId
     if (!item)
         return;
 
-    LOG(Loading, "In WebProcess, WebPage %" PRIu64 " is navigating to back/forward URL %s", m_pageID, item->url().string().utf8().data());
+    LOG(Loading, "In WebProcess pid %i, WebPage %" PRIu64 " is navigating to back/forward URL %s", getpid(), m_pageID, item->url().string().utf8().data());
 
     ASSERT(!m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
@@ -2490,18 +2493,23 @@ void WebPage::executeEditCommand(const String& commandName, const String& argume
     executeEditingCommand(commandName, argument);
 }
 
-void WebPage::restoreSessionInternal(const Vector<BackForwardListItemState>& itemStates, WasRestoredByAPIRequest restoredByAPIRequest)
+void WebPage::restoreSessionInternal(const Vector<BackForwardListItemState>& itemStates, WasRestoredByAPIRequest restoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem overwrite)
 {
     for (const auto& itemState : itemStates) {
         auto historyItem = toHistoryItem(itemState);
         historyItem->setWasRestoredFromSession(restoredByAPIRequest == WasRestoredByAPIRequest::Yes);
-        static_cast<WebBackForwardListProxy*>(corePage()->backForward().client())->addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_pageID);
+        static_cast<WebBackForwardListProxy*>(corePage()->backForward().client())->addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_pageID, overwrite);
     }
 }
 
 void WebPage::restoreSession(const Vector<BackForwardListItemState>& itemStates)
 {
-    restoreSessionInternal(itemStates, WasRestoredByAPIRequest::Yes);
+    restoreSessionInternal(itemStates, WasRestoredByAPIRequest::Yes, WebBackForwardListProxy::OverwriteExistingItem::No);
+}
+
+void WebPage::updateBackForwardListForReattach(const Vector<WebKit::BackForwardListItemState>& itemStates)
+{
+    restoreSessionInternal(itemStates, WasRestoredByAPIRequest::No, WebBackForwardListProxy::OverwriteExistingItem::Yes);
 }
 
 #if ENABLE(TOUCH_EVENTS)

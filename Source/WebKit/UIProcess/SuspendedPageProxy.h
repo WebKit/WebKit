@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "WebBackForwardListItem.h"
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
@@ -48,6 +49,7 @@ public:
     WebPageProxy& page() const { return m_page; }
     WebProcessProxy* process() const { return m_process; }
     WebBackForwardListItem& item() const { return m_backForwardListItem; }
+    const WebCore::SecurityOriginData& origin() const { return m_origin; }
 
     bool finishedSuspending() const { return m_finishedSuspending; }
 
@@ -65,6 +67,7 @@ private:
     WebPageProxy& m_page;
     WebProcessProxy* m_process;
     Ref<WebBackForwardListItem> m_backForwardListItem;
+    WebCore::SecurityOriginData m_origin;
 
     bool m_finishedSuspending { false };
 };

@@ -48,8 +48,8 @@ public:
     explicit WebNavigationState();
     ~WebNavigationState();
 
-    Ref<API::Navigation> createBackForwardNavigation(WebBackForwardListItem&, WebCore::FrameLoadType);
-    Ref<API::Navigation> createLoadRequestNavigation(WebCore::ResourceRequest&&);
+    Ref<API::Navigation> createBackForwardNavigation(WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, WebCore::FrameLoadType);
+    Ref<API::Navigation> createLoadRequestNavigation(WebCore::ResourceRequest&&, WebBackForwardListItem* currentItem);
     Ref<API::Navigation> createReloadNavigation();
     Ref<API::Navigation> createLoadDataNavigation();
 

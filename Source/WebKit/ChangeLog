@@ -1,3 +1,123 @@
+2018-04-19  Brady Eidson  <beidson@apple.com>
+
+        Make back forward cache work with process swapping.
+        <rdar://problem/38676604> and https://bugs.webkit.org/show_bug.cgi?id=184793
+
+        Reviewed by Chris Dumez.
+
+        We previously saved old processes in "SuspendedPageProxy" objects.
+        Now we reuse them when going back or forward.
+
+        * Platform/Logging.h:
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::setSuspendedPage):
+        (WebKit::WebBackForwardListItem::loggingString):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::suspendedPage const):
+
+        Teach Navigation objects their source WebBackForwardListItems:
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::Navigation):
+        (API::Navigation::loggingString const):
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::create):
+        (API::Navigation::targetItem const):
+        (API::Navigation::fromItem const):
+        (API::Navigation::backForwardListItem): Deleted.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::messageNamesToIgnoreWhileSuspended):
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::webProcessDidClose):
+        (WebKit::SuspendedPageProxy::didReceiveMessage):
+        (WebKit::SuspendedPageProxy::loggingString const):
+        * UIProcess/SuspendedPageProxy.h:
+        (WebKit::SuspendedPageProxy::origin const):
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::WebBackForwardList):
+        (WebKit::WebBackForwardList::~WebBackForwardList):
+        (WebKit::WebBackForwardList::pageClosed):
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::removeAllItems):
+        (WebKit::WebBackForwardList::clear):
+        (WebKit::WebBackForwardList::restoreFromState):
+        (WebKit::WebBackForwardList::filteredItemStates const):
+        (WebKit::WebBackForwardList::itemStates const):
+        (WebKit::WebBackForwardList::loggingString):
+        * UIProcess/WebBackForwardList.h:
+
+        * UIProcess/WebNavigationState.cpp:
+        (WebKit::WebNavigationState::createLoadRequestNavigation):
+        (WebKit::WebNavigationState::createBackForwardNavigation):
+        * UIProcess/WebNavigationState.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::maybeCreateSuspendedPage):
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::connectionWillOpen):
+        (WebKit::WebPageProxy::attachToProcessForNavigation): Deleted.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessLifetimeTracker.cpp:
+        (WebKit::WebProcessLifetimeTracker::webPageEnteringWebProcess):
+        (WebKit::WebProcessLifetimeTracker::connectionWillOpen): Deleted.
+        * UIProcess/WebProcessLifetimeTracker.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::registerSuspendedPageProxy):
+        (WebKit::WebProcessPool::unregisterSuspendedPageProxy):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::suspendWebPageProxy):
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+        (WebKit::WebProcessProxy::frameCreated):
+        * UIProcess/WebProcessProxy.h:
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::attachDrawingArea):
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+        (WebKit::WebBackForwardListProxy::addItem):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_credentialsMessenger):
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::goToBackForwardItem):
+        (WebKit::WebPage::restoreSessionInternal):
+        (WebKit::WebPage::restoreSession):
+        (WebKit::WebPage::updateBackForwardListForReattach):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::attachDrawingArea): Force a reattachment of the drawing
+          area from a resumed WebProcess to the UIProcess (to make the page cache work)
+
 2018-04-19  Brian Burg  <bburg@apple.com>
 
         Web Automation: add support for mouse/keyboard interaction sequences

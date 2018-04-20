@@ -661,25 +661,14 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
 void WebPageProxy::reattachToWebProcess()
 {
     auto process = makeRef(m_process->processPool().createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get()));
-    reattachToWebProcess(WTFMove(process), false);
+    reattachToWebProcess(WTFMove(process), nullptr, ReattachForBackForward::No);
 }
 
-void WebPageProxy::attachToProcessForNavigation(Ref<WebProcessProxy>&& process)
-{
-    // FIXME: If this WebPageProxy is the only one hosted in its WebProcess, does this make it go away?
-    // We need to be prepared to reuse it later.
-    processDidTerminate(ProcessTerminationReason::NavigationSwap);
-
-    // FIXME: this is to fix the ASSERT(isValid()) inside reattachToWebProcess, some other way to fix this is needed.
-    m_isValid = false;
-    reattachToWebProcess(WTFMove(process), true);
-}
-
-SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process)
+SuspendedPageProxy* WebPageProxy::maybeCreateSuspendedPage(WebProcessProxy& process, API::Navigation& navigation)
 {
     ASSERT(!m_suspendedPage || m_suspendedPage->process() != &process);
 
-    auto* currentItem = m_backForwardList->currentItem();
+    auto* currentItem = navigation.fromItem();
     if (!currentItem) {
         LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " unable to create suspended page for process pid %i - No current back/forward item", pageID(), process.processIdentifier());
         return nullptr;
@@ -698,20 +687,36 @@ void WebPageProxy::suspendedPageProcessClosed(SuspendedPageProxy& page)
     m_suspendedPage = nullptr;
 }
 
-void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, bool suspendInOldProcess)
+void WebPageProxy::reattachToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation* navigation, ReattachForBackForward reattachForBackForward)
 {
     ASSERT(!m_isClosed);
     ASSERT(!isValid());
 
     m_isValid = true;
 
-    if (!suspendInOldProcess) {
+    // If the process we're attaching to is kept alive solely by our current suspended page,
+    // we need to maintain that by temporarily keeping the suspended page alive.
+    RefPtr<SuspendedPageProxy> currentSuspendedPage;
+    if (!navigation) {
         m_process->removeWebPage(*this, m_pageID);
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-    } else
-        m_process->suspendWebPageProxy(*this);
+    } else {
+        currentSuspendedPage = m_suspendedPage;
+        m_process->suspendWebPageProxy(*this, *navigation);
+    }
 
     m_process = WTFMove(process);
+    if (m_process->state() == WebProcessProxy::State::Running)
+        m_webProcessLifetimeTracker.webPageEnteringWebProcess();
+
+    if (reattachForBackForward == ReattachForBackForward::Yes) {
+        ASSERT(!m_mainFrame);
+        ASSERT(m_mainFrameID);
+        m_mainFrame = WebFrameProxy::create(this, *m_mainFrameID);
+        m_process->frameCreated(*m_mainFrameID, *m_mainFrame);
+    }
+
+    LOG(ProcessSwapping, "(ProcessSwapping) Reattaching WebPageProxy %p to WebProcessProxy %p with pid %i\n", this, m_process.ptr(), m_process->processIdentifier());
 
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
     if (m_process->state() == ChildProcessProxy::State::Running)
@@ -778,7 +783,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
     if (&item != m_backForwardList->currentItem())
         m_backForwardList->goToItem(item);
 
-    auto navigation = m_navigationState->createBackForwardNavigation(item, FrameLoadType::IndexedBackForward);
+    auto navigation = m_navigationState->createBackForwardNavigation(item, m_backForwardList->currentItem(), FrameLoadType::IndexedBackForward);
 
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item.itemID(), FrameLoadType::IndexedBackForward, NavigationPolicyCheck::Require), m_pageID);
     m_process->responsivenessTimer().start();
@@ -930,7 +935,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
     if (m_isClosed)
         return nullptr;
 
-    auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
+    auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
     loadRequestWithNavigation(navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, NavigationPolicyCheck::Require);
     return WTFMove(navigation);
 }
@@ -983,7 +988,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
             return nullptr;
     }
 
-    auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(fileURL));
+    auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(fileURL), m_backForwardList->currentItem());
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -1244,7 +1249,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
 
 RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem& item, FrameLoadType frameLoadType)
 {
-    LOG(Loading, "WebPageProxy %p goToBackForwardItem to back item URL %s", this, item.url().utf8().data());
+    LOG(Loading, "WebPageProxy %p goToBackForwardItem to item URL %s", this, item.url().utf8().data());
 
     if (!isValid())
         return reattachToWebProcessWithItem(item);
@@ -1255,7 +1260,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
 
     RefPtr<API::Navigation> navigation;
     if (!m_backForwardList->currentItem()->itemIsInSameDocument(item))
-        navigation = m_navigationState->createBackForwardNavigation(item, frameLoadType);
+        navigation = m_navigationState->createBackForwardNavigation(item, m_backForwardList->currentItem(), frameLoadType);
 
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item.itemID(), frameLoadType, NavigationPolicyCheck::Require), m_pageID);
     m_process->responsivenessTimer().start();
@@ -2397,7 +2402,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
             auto proposedProcess = process().processPool().processForNavigation(*this, *navigation, action);
 
             if (proposedProcess.ptr() != &process()) {
-                LOG(ProcessSwapping, "Switching from process %i to new process for navigation %" PRIu64 " '%s'", processIdentifier(), navigation->navigationID(), navigation->loggingString().utf8().data());
+                LOG(ProcessSwapping, "Switching from process %i to new process for navigation %" PRIu64 " '%s'", processIdentifier(), navigation->navigationID(), navigation->loggingString());
 
                 RunLoop::main().dispatch([this, protectedThis = makeRef(*this), navigation = makeRef(*navigation), proposedProcess = WTFMove(proposedProcess)]() mutable {
                     continueNavigationInNewProcess(navigation.get(), WTFMove(proposedProcess));
@@ -2416,7 +2421,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
 
 void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, Ref<WebProcessProxy>&& process)
 {
-    LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString().utf8().data());
+    LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
 
     Ref<WebProcessProxy> previousProcess = m_process.copyRef();
     std::optional<uint64_t> navigatedFrameIdentifierInPreviousProcess;
@@ -2424,16 +2429,29 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
         navigatedFrameIdentifierInPreviousProcess = m_mainFrame->frameID();
 
     ASSERT(m_process.ptr() != process.ptr());
-    attachToProcessForNavigation(WTFMove(process));
 
-    if (auto* item = navigation.backForwardListItem()) {
-        if (item != m_backForwardList->currentItem())
-            m_backForwardList->goToItem(*item);
+    processDidTerminate(ProcessTerminationReason::NavigationSwap);
 
-        ASSERT(navigation.backForwardFrameLoadType());
-        ASSERT(isBackForwardLoadType(*navigation.backForwardFrameLoadType()));
+    // FIXME: this is to fix the ASSERT(isValid()) inside reattachToWebProcess, some other way to fix this is needed.
+    m_isValid = false;
+    reattachToWebProcess(WTFMove(process), &navigation, navigation.targetItem() ? ReattachForBackForward::Yes : ReattachForBackForward::No);
 
+    if (auto* item = navigation.targetItem()) {
+        LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
+
+        auto transaction = m_pageLoadState.transaction();
+        m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
+
+        auto itemStates = m_backForwardList-> filteredItemStates([this, targetItem = item](WebBackForwardListItem& item) {
+            if (auto* page = item.suspendedPage()) {
+                if (page->process() == m_process.ptr())
+                    return false;
+            }
+            return &item != targetItem;
+        });
+        m_process->send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)), m_pageID);
         m_process->send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item->itemID(), *navigation.backForwardFrameLoadType(), NavigationPolicyCheck::Bypass), m_pageID);
+        m_process->responsivenessTimer().start();
 
         return;
     }
@@ -3273,9 +3291,10 @@ void WebPageProxy::didCreateMainFrame(uint64_t frameID)
     MESSAGE_CHECK(m_process->canCreateFrame(frameID));
 
     m_mainFrame = WebFrameProxy::create(this, frameID);
+    m_mainFrameID = frameID;
 
     // Add the frame to the process wide map.
-    m_process->frameCreated(frameID, m_mainFrame.get());
+    m_process->frameCreated(frameID, *m_mainFrame);
 
     if (m_mainFrameCreationHandler) {
         m_mainFrameCreationHandler();
@@ -3293,7 +3312,7 @@ void WebPageProxy::didCreateSubframe(uint64_t frameID)
     RefPtr<WebFrameProxy> subFrame = WebFrameProxy::create(this, frameID);
 
     // Add the frame to the process wide map.
-    m_process->frameCreated(frameID, subFrame.get());
+    m_process->frameCreated(frameID, *subFrame);
 }
 
 void WebPageProxy::didCreateWindow(uint64_t frameID, GlobalWindowIdentifier&& windowIdentifier)
@@ -3382,7 +3401,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t na
             return;
     }
 
-    LOG(Loading, "WebPageProxy::didStartProvisionalLoadForFrame to frameID %" PRIu64 ", navigationID %" PRIu64 ", url %s", frameID, navigationID, url.string().utf8().data());
+    LOG(Loading, "WebPageProxy %" PRIu64 " in process pid %i didStartProvisionalLoadForFrame to frameID %" PRIu64 ", navigationID %" PRIu64 ", url %s", m_pageID, m_process->processIdentifier(), frameID, navigationID, url.string().utf8().data());
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -3487,6 +3506,8 @@ void WebPageProxy::didChangeProvisionalURLForFrame(uint64_t frameID, uint64_t, W
 
 void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, const UserData& userData)
 {
+    LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " in web process pid %i didFailProvisionalLoadForFrame to provisionalURL %s", m_pageID, m_process->processIdentifier(), provisionalURL.utf8().data());
+
     PageClientProtector protector(m_pageClient);
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
@@ -3541,6 +3562,9 @@ void WebPageProxy::clearLoadDependentCallbacks()
 
 void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t opaqueFrameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, std::optional<HasInsecureContent> hasInsecureContent, const UserData& userData)
 {
+    LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " didCommitLoadForFrame in navigation %" PRIu64, m_pageID, m_navigationID);
+    LOG(BackForward, "(Back/Forward) After load commit, back/forward list is now:%s", m_backForwardList->loggingString());
+
     PageClientProtector protector(m_pageClient);
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
@@ -3918,7 +3942,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(originalRequest.url());
     
-    Ref<API::Navigation> navigation = navigationID ? makeRef(m_navigationState->navigation(navigationID)) : m_navigationState->createLoadRequestNavigation(ResourceRequest(request));
+    Ref<API::Navigation> navigation = navigationID ? makeRef(m_navigationState->navigation(navigationID)) : m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
 
     uint64_t newNavigationID = navigation->navigationID();
     navigation->setWasUserInitiated(!!navigationActionData.userGestureTokenIdentifier);
@@ -4250,9 +4274,9 @@ void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultD
 
 void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
 {
-    ASSERT(&connection == m_process->connection());
+    ASSERT_UNUSED(connection, &connection == m_process->connection());
 
-    m_webProcessLifetimeTracker.connectionWillOpen(connection);
+    m_webProcessLifetimeTracker.webPageEnteringWebProcess();
 }
 
 void WebPageProxy::webProcessWillShutDown()

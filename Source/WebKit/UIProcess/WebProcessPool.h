@@ -447,6 +447,8 @@ public:
 #endif
 
     Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, WebCore::PolicyAction&);
+    void registerSuspendedPageProxy(SuspendedPageProxy&);
+    void unregisterSuspendedPageProxy(SuspendedPageProxy&);
 
 private:
     void platformInitialize();
@@ -682,6 +684,8 @@ private:
     HashMap<WebCore::SecurityOriginData, ProcessThrottler::BackgroundActivityToken> m_backgroundTokensForServiceWorkerProcesses;
 #endif
 #endif
+
+    HashMap<WebCore::SecurityOriginData, Vector<SuspendedPageProxy*>> m_suspendedPages;
 };
 
 template<typename T>

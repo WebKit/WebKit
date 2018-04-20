@@ -1416,7 +1416,7 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const
     if (m_documentLoader)
         loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
 
-    loadWithDocumentLoader(loader.ptr(), type, formState, allowNavigationToInvalidURL, WTFMove(completionHandler));
+    loadWithDocumentLoader(loader.ptr(), type, formState, allowNavigationToInvalidURL, NavigationPolicyCheck::Require, WTFMove(completionHandler));
 }
 
 void FrameLoader::load(DocumentLoader* newDocumentLoader)
@@ -1455,10 +1455,10 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
         type = FrameLoadType::Reload;
     }
 
-    loadWithDocumentLoader(newDocumentLoader, type, 0, AllowNavigationToInvalidURL::Yes, [] { });
+    loadWithDocumentLoader(newDocumentLoader, type, 0, AllowNavigationToInvalidURL::Yes, NavigationPolicyCheck::Require, [] { });
 }
 
-void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, FormState* formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, CompletionHandler<void()>&& completionHandler)
+void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, FormState* formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NavigationPolicyCheck, CompletionHandler<void()>&& completionHandler)
 {
     // Retain because dispatchBeforeLoadEvent may release the last reference to it.
     Ref<Frame> protect(m_frame);
@@ -1643,7 +1643,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
 
     loader->setOverrideEncoding(encoding);
 
-    loadWithDocumentLoader(loader.ptr(), FrameLoadType::Reload, 0, AllowNavigationToInvalidURL::Yes, [] { });
+    loadWithDocumentLoader(loader.ptr(), FrameLoadType::Reload, 0, AllowNavigationToInvalidURL::Yes, NavigationPolicyCheck::Require, [] { });
 }
 
 void FrameLoader::reload(OptionSet<ReloadOption> options)
@@ -1688,7 +1688,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
         return FrameLoadType::Reload;
     };
     
-    loadWithDocumentLoader(loader.ptr(), frameLoadTypeForReloadOptions(options), 0, AllowNavigationToInvalidURL::Yes, [] { });
+    loadWithDocumentLoader(loader.ptr(), frameLoadTypeForReloadOptions(options), 0, AllowNavigationToInvalidURL::Yes, NavigationPolicyCheck::Require, [] { });
 }
 
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
@@ -1857,9 +1857,9 @@ void FrameLoader::commitProvisionalLoad()
     if (m_loadingFromCachedPage && history().provisionalItem())
         cachedPage = PageCache::singleton().take(*history().provisionalItem(), m_frame.page());
 
-    LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame.tree().uniqueName().string().utf8().data(),
+    LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s' with cached page %p", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
-        pdl ? pdl->url().stringCenterEllipsizedToLength().utf8().data() : "<no provisional DocumentLoader>");
+        pdl ? pdl->url().stringCenterEllipsizedToLength().utf8().data() : "<no provisional DocumentLoader>", cachedPage.get());
 
     willTransitionToCommitted();
 
@@ -3459,12 +3459,14 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 
     auto initiatedByMainFrame = InitiatedByMainFrame::Unknown;
 
+    SetForScope<bool> currentLoadShouldCheckNavigationPolicyGuard(m_currentLoadShouldCheckNavigationPolicy, navigationPolicyCheck != NavigationPolicyCheck::Bypass);
+
     if (CachedPage* cachedPage = PageCache::singleton().get(item, m_frame.page())) {
         auto documentLoader = cachedPage->documentLoader();
         m_client.updateCachedDocumentLoader(*documentLoader);
         documentLoader->setTriggeringAction({ *m_frame.document(), documentLoader->request(), initiatedByMainFrame, loadType, false });
         documentLoader->setLastCheckedRequest(ResourceRequest());
-        loadWithDocumentLoader(documentLoader, loadType, 0, AllowNavigationToInvalidURL::Yes, [] { });
+        loadWithDocumentLoader(documentLoader, loadType, 0, AllowNavigationToInvalidURL::Yes, navigationPolicyCheck, [] { });
         return;
     }
 
@@ -3549,8 +3551,6 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         requestForOriginalURL.setURL(itemOriginalURL);
         action = { *m_frame.document(), requestForOriginalURL, initiatedByMainFrame, loadType, isFormSubmission, event, shouldOpenExternalURLsPolicy };
     }
-
-    SetForScope<bool> currentLoadShouldCheckNavigationPolicyGuard(m_currentLoadShouldCheckNavigationPolicy, navigationPolicyCheck != NavigationPolicyCheck::Bypass);
 
     loadWithNavigationAction(request, action, LockHistory::No, loadType, 0, AllowNavigationToInvalidURL::Yes, [] { });
 }

@@ -45,6 +45,7 @@
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
 #include "UserData.h"
+#include "WebBackForwardListProxy.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentController.h"
 #include <WebCore/ActivityState.h>
@@ -1188,9 +1189,10 @@ private:
     void loadURLInFrame(WebCore::URL&&, uint64_t frameID);
 
     enum class WasRestoredByAPIRequest { No, Yes };
-    void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest);
+    void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);
     void restoreSession(const Vector<BackForwardListItemState>&);
     void didRemoveBackForwardItem(const WebCore::BackForwardItemIdentifier&);
+    void updateBackForwardListForReattach(const Vector<WebKit::BackForwardListItemState>&);
 
 #if ENABLE(REMOTE_INSPECTOR)
     void setAllowsRemoteInspection(bool);

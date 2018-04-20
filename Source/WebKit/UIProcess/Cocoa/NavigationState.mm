@@ -476,6 +476,7 @@ static void tryAppLink(Ref<API::NavigationAction>&& navigationAction, const Stri
 
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
 {
+    ASSERT(webPageProxy.mainFrame());
     String mainFrameURLString = webPageProxy.mainFrame()->url();
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
 

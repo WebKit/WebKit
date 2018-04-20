@@ -51,6 +51,7 @@
 #include <wtf/RefPtr.h>
 
 namespace API {
+class Navigation;
 class PageConfiguration;
 }
 
@@ -130,7 +131,7 @@ public:
 
     WebFrameProxy* webFrame(uint64_t) const;
     bool canCreateFrame(uint64_t frameID) const;
-    void frameCreated(uint64_t, WebFrameProxy*);
+    void frameCreated(uint64_t, WebFrameProxy&);
     void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
     size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
 
@@ -204,7 +205,7 @@ public:
     void didCommitProvisionalLoad() { m_hasCommittedAnyProvisionalLoads = true; }
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
 
-    void suspendWebPageProxy(WebPageProxy&);
+    void suspendWebPageProxy(WebPageProxy&, API::Navigation&);
     void suspendedPageWasDestroyed(SuspendedPageProxy&);
 
 #if ENABLE(EXTRA_ZOOM_MODE)

@@ -44,8 +44,12 @@ public:
     static WebCore::HistoryItem* itemForID(const WebCore::BackForwardItemIdentifier&);
     static void removeItem(const WebCore::BackForwardItemIdentifier&);
 
-    void addItemFromUIProcess(const WebCore::BackForwardItemIdentifier&, Ref<WebCore::HistoryItem>&&, uint64_t pageID);
-    
+    enum class OverwriteExistingItem {
+        Yes,
+        No
+    };
+    void addItemFromUIProcess(const WebCore::BackForwardItemIdentifier&, Ref<WebCore::HistoryItem>&&, uint64_t pageID, OverwriteExistingItem);
+
     void clear();
 
 private:

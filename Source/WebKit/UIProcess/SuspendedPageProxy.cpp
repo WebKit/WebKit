@@ -31,8 +31,12 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/URL.h>
 #include <wtf/DebugUtilities.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -55,6 +59,7 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
         messageNames.get().add("DidFirstVisuallyNonEmptyLayoutForFrame");
         messageNames.get().add("DidNavigateWithNavigationData");
         messageNames.get().add("DidReachLayoutMilestone");
+        messageNames.get().add("DidRestoreScrollPosition");
         messageNames.get().add("DidSaveToPageCache");
         messageNames.get().add("DidStartProgress");
         messageNames.get().add("DidStartProvisionalLoadForFrame");
@@ -62,6 +67,7 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
         messageNames.get().add("PageExtendedBackgroundColorDidChange");
         messageNames.get().add("SetRenderTreeSize");
         messageNames.get().add("SetStatusText");
+        messageNames.get().add("SetNetworkRequestsInProgress");
     });
 
     return messageNames;
@@ -72,23 +78,32 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, WebProcessProxy& proc
     : m_page(page)
     , m_process(&process)
     , m_backForwardListItem(item)
+    , m_origin(SecurityOriginData::fromURL({ ParsedURLString, item.url() }))
 {
-    m_backForwardListItem->setSuspendedPage(*this);
+    m_backForwardListItem->setSuspendedPage(this);
+    m_process->processPool().registerSuspendedPageProxy(*this);
     m_process->send(Messages::WebPage::SetIsSuspended(true), m_page.pageID());
 }
 
 SuspendedPageProxy::~SuspendedPageProxy()
 {
-    if (m_process)
+    if (m_process) {
         m_process->suspendedPageWasDestroyed(*this);
+        m_process->processPool().unregisterSuspendedPageProxy(*this);
+    }
+
+    m_backForwardListItem->setSuspendedPage(nullptr);
 }
 
 void SuspendedPageProxy::webProcessDidClose(WebProcessProxy& process)
 {
     ASSERT_UNUSED(process, &process == m_process);
+
+    m_process->processPool().unregisterSuspendedPageProxy(*this);
     m_process = nullptr;
 
     m_page.suspendedPageProcessClosed(*this);
+    m_backForwardListItem->setSuspendedPage(nullptr);
 }
 
 void SuspendedPageProxy::didFinishLoad()
@@ -110,7 +125,7 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
         return;
     }
 #if !LOG_DISABLED
-    if (messageNamesToIgnoreWhileSuspended().contains(decoder.messageName()))
+    if (!messageNamesToIgnoreWhileSuspended().contains(decoder.messageName()))
         LOG(ProcessSwapping, "SuspendedPageProxy received unexpected WebPageProxy message '%s'", decoder.messageName().toString().data());
 #endif
 }
@@ -118,7 +133,7 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
 #if !LOG_DISABLED
 const char* SuspendedPageProxy::loggingString() const
 {
-    return debugString("(", String::format("%p", this), "page ID ", String::number(m_page.pageID()), ", m_finishedSuspending ", String::number(m_finishedSuspending), ")");
+    return debugString("(", String::format("%p", this), " page ID ", String::number(m_page.pageID()), ", m_finishedSuspending ", String::number(m_finishedSuspending), ")");
 }
 #endif
 

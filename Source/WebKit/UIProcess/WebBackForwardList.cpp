@@ -27,10 +27,13 @@
 #include "WebBackForwardList.h"
 
 #include "APIArray.h"
+#include "Logging.h"
 #include "SessionState.h"
 #include "WebPageProxy.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <wtf/DebugUtilities.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
@@ -44,10 +47,13 @@ WebBackForwardList::WebBackForwardList(WebPageProxy& page)
     , m_currentIndex(0)
     , m_capacity(DefaultCapacity)
 {
+    LOG(BackForward, "(Back/Forward) Created WebBackForwardList %p", this);
 }
 
 WebBackForwardList::~WebBackForwardList()
 {
+    LOG(BackForward, "(Back/Forward) Destroying WebBackForwardList %p", this);
+
     // A WebBackForwardList should never be destroyed unless it's associated page has been closed or is invalid.
     ASSERT((!m_page && !m_hasCurrentIndex) || !m_page->isValid());
 }
@@ -67,6 +73,8 @@ WebBackForwardListItem* WebBackForwardList::itemForID(const BackForwardItemIdent
 
 void WebBackForwardList::pageClosed()
 {
+    LOG(BackForward, "(Back/Forward) WebBackForwardList %p had its page closed with current size %zu", this, m_entries.size());
+
     // We should have always started out with an m_page and we should never close the page twice.
     ASSERT(m_page);
 
@@ -156,6 +164,7 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
             m_entries.insert(m_currentIndex, WTFMove(newItem));
     }
 
+    LOG(BackForward, "(Back/Forward) WebBackForwardList %p added an item. Current size %zu, current index %zu, threw away %zu items", this, m_entries.size(), m_currentIndex, removedItems.size());
     m_page->didChangeBackForwardList(newItemPtr, WTFMove(removedItems));
 }
 
@@ -175,8 +184,10 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     }
 
     // If the target item wasn't even in the list, there's nothing else to do.
-    if (targetIndex == notFound)
+    if (targetIndex == notFound) {
+        LOG(BackForward, "(Back/Forward) WebBackForwardList %p could not go to item %s (%s) because it was not found", this, item.itemID().logString(), item.url().utf8().data());
         return;
+    }
 
     if (targetIndex < m_currentIndex) {
         unsigned delta = m_entries.size() - targetIndex - 1;
@@ -209,6 +220,9 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
     }
 
     m_currentIndex = targetIndex;
+
+    LOG(BackForward, "(Back/Forward) WebBackForwardList %p going to item %s, is now at index %zu", this, item.itemID().logString(), targetIndex);
+
     m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
@@ -322,6 +336,8 @@ void WebBackForwardList::removeAllItems()
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
+    LOG(BackForward, "(Back/Forward) WebBackForwardList %p removeAllItems (has %zu of them)", this, m_entries.size());
+
     Vector<Ref<WebBackForwardListItem>> removedItems;
 
     for (auto& entry : m_entries) {
@@ -337,6 +353,8 @@ void WebBackForwardList::removeAllItems()
 void WebBackForwardList::clear()
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
+
+    LOG(BackForward, "(Back/Forward) WebBackForwardList %p clear (has %zu of them)", this, m_entries.size());
 
     size_t size = m_entries.size();
     if (!m_page || size <= 1)
@@ -425,17 +443,28 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     m_hasCurrentIndex = !!backForwardListState.currentIndex;
     m_currentIndex = backForwardListState.currentIndex.value_or(0);
     m_entries = WTFMove(items);
+
+    LOG(BackForward, "(Back/Forward) WebBackForwardList %p restored from state (has %zu entries)", this, m_entries.size());
 }
 
-Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
+Vector<BackForwardListItemState> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
 {
     Vector<BackForwardListItemState> itemStates;
     itemStates.reserveInitialCapacity(m_entries.size());
 
-    for (const auto& entry : m_entries)
-        itemStates.uncheckedAppend(entry->itemState());
+    for (const auto& entry : m_entries) {
+        if (functor(entry))
+            itemStates.uncheckedAppend(entry->itemState());
+    }
 
     return itemStates;
+}
+
+Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
+{
+    return filteredItemStates([](WebBackForwardListItem&) {
+        return true;
+    });
 }
 
 void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListItem)
@@ -446,5 +475,26 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
     backForwardListItem.setSnapshot(nullptr);
 #endif
 }
+
+
+#if !LOG_DISABLED
+const char* WebBackForwardList::loggingString()
+{
+    StringBuilder builder;
+    builder.append(String::format("WebBackForwardList %p - %zu entries, has current index %s (%zu)", this, m_entries.size(), m_hasCurrentIndex ? "YES" : "NO", m_hasCurrentIndex ? m_currentIndex : 0));
+
+    for (size_t i = 0; i < m_entries.size(); ++i) {
+        builder.append("\n");
+        if (m_hasCurrentIndex && m_currentIndex == i)
+            builder.append(" * ");
+        else
+            builder.append(" - ");
+
+        builder.append(m_entries[i]->loggingString());
+    }
+
+    return debugString("\n", builder.toString());
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebKit

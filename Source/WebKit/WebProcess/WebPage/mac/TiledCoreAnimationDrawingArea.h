@@ -103,6 +103,8 @@ private:
     void addTransactionCallbackID(CallbackID) override;
     void setShouldScaleViewToFitDocument(bool) override;
 
+    void attachDrawingArea() override;
+
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint origin);

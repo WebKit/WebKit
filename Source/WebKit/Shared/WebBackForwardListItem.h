@@ -68,7 +68,12 @@ public:
     ViewSnapshot* snapshot() const { return m_itemState.snapshot.get(); }
     void setSnapshot(RefPtr<ViewSnapshot>&& snapshot) { m_itemState.snapshot = WTFMove(snapshot); }
 #endif
-    void setSuspendedPage(SuspendedPageProxy&);
+    void setSuspendedPage(SuspendedPageProxy*);
+    SuspendedPageProxy* suspendedPage() const { return m_suspendedPage; }
+
+#if !LOG_DISABLED
+    const char* loggingString();
+#endif
 
 private:
     explicit WebBackForwardListItem(BackForwardListItemState&&, uint64_t pageID);

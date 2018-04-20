@@ -74,6 +74,11 @@ public:
     void restoreFromState(BackForwardListState);
 
     Vector<BackForwardListItemState> itemStates() const;
+    Vector<BackForwardListItemState> filteredItemStates(Function<bool(WebBackForwardListItem&)>&&) const;
+
+#if !LOG_DISABLED
+    const char* loggingString();
+#endif
 
 private:
     explicit WebBackForwardList(WebPageProxy&);

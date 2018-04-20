@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebBackForwardListProxy.h"
 
+#include "Logging.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "WebCoreArgumentCoders.h"
@@ -54,11 +55,10 @@ static IDToHistoryItemMap& idToHistoryItemMap()
     return map;
 }
 
-void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifier& itemID, Ref<HistoryItem>&& item, uint64_t pageID)
+void WebBackForwardListProxy::addItemFromUIProcess(const BackForwardItemIdentifier& itemID, Ref<HistoryItem>&& item, uint64_t pageID, OverwriteExistingItem overwriteExistingItem)
 {
     // This item/itemID pair should not already exist in our map.
-    ASSERT(!idToHistoryItemMap().contains(itemID));
-
+    ASSERT_UNUSED(overwriteExistingItem, overwriteExistingItem == OverwriteExistingItem::Yes || !idToHistoryItemMap().contains(itemID));
     idToHistoryItemMap().set(itemID, item.ptr());
 }
 
@@ -96,6 +96,7 @@ void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
     auto result = idToHistoryItemMap().add(item->identifier(), item.ptr());
     ASSERT_UNUSED(result, result.isNewEntry);
 
+    LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getpid(), item.ptr(), item->identifier().logString(), item->urlString().utf8().data());
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(toBackForwardListItemState(item.get())));
 }
 

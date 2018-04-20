@@ -151,6 +151,8 @@ public:
     void displayWasRefreshed();
 #endif
 
+    virtual void attachDrawingArea() { };
+
 protected:
     DrawingArea(DrawingAreaType, WebPage&);
 
