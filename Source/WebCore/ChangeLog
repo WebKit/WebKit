@@ -1,5 +1,16 @@
 2018-04-20  Eric Carlson  <eric.carlson@apple.com>
 
+        Pausing should clear m_waitingToEnterFullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=184831
+        <rdar://problem/39602852>
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pause): Clear m_waitingToEnterFullscreen
+
+2018-04-20  Eric Carlson  <eric.carlson@apple.com>
+
         [Extra zoom mode] Disable CA transactions while setting up for fullscreen
         https://bugs.webkit.org/show_bug.cgi?id=184817
         <rdar://problem/39596075>

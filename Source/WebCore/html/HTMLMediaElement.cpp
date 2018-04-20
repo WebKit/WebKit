@@ -3522,6 +3522,9 @@ void HTMLMediaElement::pause()
 
     m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
 
+    if (m_waitingToEnterFullscreen)
+        m_waitingToEnterFullscreen = false;
+
     if (!m_mediaSession->playbackPermitted(*this))
         return;
 
