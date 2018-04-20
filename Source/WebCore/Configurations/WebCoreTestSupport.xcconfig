@@ -34,7 +34,9 @@ PRIVATE_HEADERS_FOLDER_PATH_Production_YES = $(WK_ALTERNATE_FRAMEWORKS_DIR)/usr/
 INSTALL_PATH = $(INSTALL_PATH_WebCoreTestSupport_$(CONFIGURATION));
 // Using [sdk=macosx*] to override the setting in WebCore.xcconfig.
 INSTALL_PATH[sdk=macosx*] = $(INSTALL_PATH_WebCoreTestSupport_$(CONFIGURATION));
-INSTALL_PATH_WebCoreTestSupport_Production = /usr/local/lib;
+INSTALL_PATH_WebCoreTestSupport_Production = $(INSTALL_PATH_WebCoreTestSupport_Production_$(WK_USE_ALTERNATE_FRAMEWORKS_DIR));
+INSTALL_PATH_WebCoreTestSupport_Production_NO = /usr/local/lib;
+INSTALL_PATH_WebCoreTestSupport_Production_YES = $(WK_ALTERNATE_FRAMEWORKS_DIR)/usr/local/lib;
 
 SKIP_INSTALL = $(SKIP_INSTALL_$(FORCE_TOOL_INSTALL));
 SKIP_INSTALL_ = YES;
