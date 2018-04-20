@@ -59,7 +59,7 @@ TEST(WebKit, BackgroundColorSystemColor)
     // Load content so the layer is created.
     [webView synchronouslyLoadHTMLString:@""];
 
-    EXPECT_EQ([NSColor controlBackgroundColor].CGColor, [webView layer].backgroundColor);
+    EXPECT_TRUE(CGColorEqualToColor([NSColor controlBackgroundColor].CGColor, [webView layer].backgroundColor));
 }
 
 TEST(WebKit, BackgroundColorNil)
