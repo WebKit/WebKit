@@ -15,26 +15,24 @@
     description("This tests that increment and decrement actions are async.");
 
     if (window.accessibilityController) {
-        jsTestIsAsync = true;
 
         var obj = accessibilityController.accessibleElementById("range1");
         
         shouldBe("obj.intValue", "25");
 
-        obj.asyncIncrement();
+        // sync version
+        obj.increment();
+        shouldBe("obj.intValue", "50");
+        obj.decrement();
         shouldBe("obj.intValue", "25");
 
-        setTimeout(function() {
-            shouldBe("obj.intValue", "50");
-
-            obj.asyncDecrement();
-            shouldBe("obj.intValue", "50");
-
-            setTimeout(function() {
-                shouldBe("obj.intValue", "25");
-                finishJSTest();
-            }, 5);
-        }, 5);
+        // async version
+        // The increment/decrement actions are now async so that they won't 
+        // block the test run loop by changing the value.
+        obj.asyncIncrement();
+        shouldBe("obj.intValue", "25");
+        obj.asyncDecrement();
+        shouldBe("obj.intValue", "25");
     }
 
 </script>
