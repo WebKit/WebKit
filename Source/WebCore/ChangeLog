@@ -1,3 +1,25 @@
+2018-04-20  Youenn Fablet  <youenn@apple.com>
+
+        Make PluginData cache its web visible plugins
+        https://bugs.webkit.org/show_bug.cgi?id=184421
+
+        Reviewed by Chris Dumez.
+
+        Buffer visible plugins until the page URL changes.
+        For that purpose, we now cache the visible plugins and the URL it was computed from in PluginData.
+
+        Update plugin info provider API to pass the URL used to check for plugin visibility.
+
+        No observable change of behavior.
+
+        * loader/EmptyClients.cpp:
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::webVisiblePlugins const):
+        (WebCore::PluginData::publiclyVisiblePlugins const):
+        (WebCore::PluginData::supportsMimeType const):
+        * plugins/PluginData.h:
+        * plugins/PluginInfoProvider.h:
+
 2018-04-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r230840.

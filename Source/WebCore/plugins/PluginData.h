@@ -102,7 +102,7 @@ public:
     static Ref<PluginData> create(Page& page) { return adoptRef(*new PluginData(page)); }
 
     const Vector<PluginInfo>& plugins() const { return m_plugins; }
-    Vector<PluginInfo> webVisiblePlugins() const;
+    const Vector<PluginInfo>& webVisiblePlugins() const;
     Vector<PluginInfo> publiclyVisiblePlugins() const;
     WEBCORE_EXPORT void getWebVisibleMimesAndPluginIndices(Vector<MimeClassInfo>&, Vector<size_t>&) const;
 
@@ -127,6 +127,12 @@ protected:
     Page& m_page;
     Vector<PluginInfo> m_plugins;
     std::optional<Vector<SupportedPluginName>> m_supportedPluginNames;
+
+    struct CachedVisiblePlugins {
+        URL pageURL;
+        std::optional<Vector<PluginInfo>> pluginList;
+    };
+    mutable CachedVisiblePlugins m_cachedVisiblePlugins;
 };
 
 inline bool isSupportedPlugin(const Vector<SupportedPluginName>& pluginNames, const URL& pageURL, const String& pluginName)

@@ -35,6 +35,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/Page.h>
+#include <WebCore/SchemeRegistry.h>
 #include <WebCore/SubframeLoader.h>
 #include <wtf/text/StringHash.h>
 
@@ -96,7 +97,7 @@ void WebPluginInfoProvider::refreshPlugins()
 #endif
 }
 
-void WebPluginInfoProvider::getPluginInfo(Page& page, Vector<PluginInfo>& plugins, std::optional<Vector<SupportedPluginName>>& supportedPluginNames)
+Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<Vector<SupportedPluginName>>& supportedPluginNames)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache(page);
@@ -104,37 +105,26 @@ void WebPluginInfoProvider::getPluginInfo(Page& page, Vector<PluginInfo>& plugin
     if (m_cachedSupportedPluginNames)
         supportedPluginNames = *m_cachedSupportedPluginNames;
 
-    if (page.mainFrame().loader().subframeLoader().allowPlugins()) {
-        plugins = m_cachedPlugins;
-        return;
-    }
-
-    plugins = m_cachedApplicationPlugins;
+    return page.mainFrame().loader().subframeLoader().allowPlugins() ? m_cachedPlugins : m_cachedApplicationPlugins;
 #else
     UNUSED_PARAM(page);
-    UNUSED_PARAM(plugins);
+    UNUSED_PARAM(supportedPluginNames);
+    return { };
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
-void WebPluginInfoProvider::getWebVisiblePluginInfo(WebCore::Page& page, Vector<WebCore::PluginInfo>& plugins)
+Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& page, const WebCore::URL& url)
 {
-    ASSERT_ARG(plugins, plugins.isEmpty());
-
     std::optional<Vector<WebCore::SupportedPluginName>> supportedPluginNames;
-    getPluginInfo(page, plugins, supportedPluginNames);
+    auto plugins = pluginInfo(page, supportedPluginNames);
 
-    auto* document = page.mainFrame().document();
-
-    if (document && supportedPluginNames) {
-        plugins.removeAllMatching([&] (auto& plugin) {
-            return !isSupportedPlugin(*supportedPluginNames, document->url(), plugin.name);
-        });
-    }
+    plugins.removeAllMatching([&] (auto& plugin) {
+        return supportedPluginNames && !isSupportedPlugin(*supportedPluginNames, url, plugin.name);
+    });
 
 #if PLATFORM(MAC)
-    auto* origin = document ? &document->securityOrigin(): nullptr;
-    if (origin && origin->isLocal())
-        return;
+    if (SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
+        return plugins;
 
     for (int32_t i = plugins.size() - 1; i >= 0; --i) {
         auto& info = plugins.at(i);
@@ -147,6 +137,7 @@ void WebPluginInfoProvider::getWebVisiblePluginInfo(WebCore::Page& page, Vector<
             plugins.remove(i);
     }
 #endif
+    return plugins;
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

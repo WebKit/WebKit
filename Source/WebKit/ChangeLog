@@ -1,3 +1,21 @@
+2018-04-20  Youenn Fablet  <youenn@apple.com>
+
+        Make PluginData cache its web visible plugins
+        https://bugs.webkit.org/show_bug.cgi?id=184421
+
+        Reviewed by Chris Dumez.
+
+        Rename methods.
+        Pass an URL instead of relying on Page URL as the page URL
+        might not always be the URL we want to check against plugins.
+        In particular when navigation is on-going, we want to check the
+        plugins against the being navigated URL.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::pluginInfo):
+        (WebKit::WebPluginInfoProvider::webVisiblePluginInfo):
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+
 2018-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r230830.
