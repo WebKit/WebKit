@@ -81,11 +81,6 @@
 /* BCOMPILER_SUPPORTS() - check for a compiler feature */
 #define BCOMPILER_SUPPORTS(FEATURE) (defined BCOMPILER_SUPPORTS_##FEATURE && BCOMPILER_SUPPORTS_##FEATURE)
 
-/* BCOMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES) - compiler supports non-static data member initializers for aggregates */
-#if defined(__cpp_aggregate_nsdmi) && __cpp_aggregate_nsdmi >= 201304
-#define BCOMPILER_SUPPORTS_NSDMI_FOR_AGGREGATES 1
-#endif
-
 /* ==== Platform adaptation macros: these describe properties of the target environment. ==== */
 
 /* BCPU() - the target CPU architecture */

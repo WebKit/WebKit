@@ -440,12 +440,6 @@ public:
     };
 
     struct InsertionType {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-        InsertionType(bool connectedToDocument, bool treeScopeChanged)
-            : connectedToDocument(connectedToDocument)
-            , treeScopeChanged(treeScopeChanged)
-        { }
-#endif
         bool connectedToDocument { false };
         bool treeScopeChanged { false };
     };
@@ -455,12 +449,6 @@ public:
     virtual void didFinishInsertingNode() { }
 
     struct RemovalType {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-        RemovalType(bool disconnectedFromDocument, bool treeScopeChanged)
-            : disconnectedFromDocument(disconnectedFromDocument)
-            , treeScopeChanged(treeScopeChanged)
-        { }
-#endif
         bool disconnectedFromDocument { false };
         bool treeScopeChanged { false };
     };

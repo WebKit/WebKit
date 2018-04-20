@@ -1,3 +1,16 @@
+2018-04-20  Daniel Bates  <dabates@apple.com>
+
+        Remove code for compilers that did not support NSDMI for aggregates
+        https://bugs.webkit.org/show_bug.cgi?id=184599
+
+        Reviewed by Per Arne Vollan.
+
+        Remove workaround for earlier Visual Studio versions that did not support non-static data
+        member initializers (NSDMI) for aggregates. We have since updated all the build.webkit.org
+        and EWS bots to a newer version that supports this feature.
+
+        * wtf/Compiler.h:
+
 2018-04-19  David Kilzer  <ddkilzer@apple.com>
 
         Enable Objective-C weak references

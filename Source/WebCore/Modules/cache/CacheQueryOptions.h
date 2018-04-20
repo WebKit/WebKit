@@ -30,16 +30,6 @@
 namespace WebCore {
 
 struct CacheQueryOptions {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    CacheQueryOptions() = default;
-    CacheQueryOptions(bool ignoreSearch, bool ignoreMethod, bool ignoreVary, String&& cacheName)
-        : ignoreSearch { ignoreSearch }
-        , ignoreMethod { ignoreMethod }
-        , ignoreVary { ignoreVary }
-        , cacheName { WTFMove(cacheName) }
-    {
-    }
-#endif
     CacheQueryOptions isolatedCopy() const { return { ignoreSearch, ignoreMethod, ignoreVary, cacheName.isolatedCopy() }; }
 
     bool ignoreSearch { false };

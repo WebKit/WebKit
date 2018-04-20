@@ -337,17 +337,6 @@ struct FontSelectionRequest {
     {
         return WTF::tie(weight, width, slope);
     }
-
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    FontSelectionRequest() = default;
-
-    constexpr FontSelectionRequest(Value weight, Value width, Value slope)
-        : weight(weight)
-        , width(width)
-        , slope(slope)
-    {
-    }
-#endif
 };
 
 constexpr bool operator==(const FontSelectionRequest& a, const FontSelectionRequest& b)
@@ -385,17 +374,6 @@ struct FontSelectionCapabilities {
     Range weight { normalWeightValue() };
     Range width { normalStretchValue() };
     Range slope { normalItalicValue() };
-
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    FontSelectionCapabilities() = default;
-
-    constexpr FontSelectionCapabilities(Range weight, Range width, Range slope)
-        : weight(weight)
-        , width(width)
-        , slope(slope)
-    {
-    }
-#endif
 };
 
 constexpr bool operator==(const FontSelectionCapabilities& a, const FontSelectionCapabilities& b)

@@ -30,20 +30,6 @@
 namespace JSC { namespace DOMJIT {
 
 struct Effect {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    constexpr Effect() = default;
-    constexpr Effect(HeapRange reads, HeapRange writes)
-        : reads { reads }
-        , writes { writes }
-    {
-    }
-    constexpr Effect(HeapRange reads, HeapRange writes, HeapRange def)
-        : reads { reads }
-        , writes { writes }
-        , def { def }
-    {
-    }
-#endif
 
     constexpr static Effect forWrite(HeapRange writeRange)
     {

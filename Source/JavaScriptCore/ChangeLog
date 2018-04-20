@@ -1,3 +1,21 @@
+2018-04-20  Daniel Bates  <dabates@apple.com>
+
+        Remove code for compilers that did not support NSDMI for aggregates
+        https://bugs.webkit.org/show_bug.cgi?id=184599
+
+        Reviewed by Per Arne Vollan.
+
+        Remove workaround for earlier Visual Studio versions that did not support non-static data
+        member initializers (NSDMI) for aggregates. We have since updated all the build.webkit.org
+        and EWS bots to a newer version that supports this feature.
+
+        * domjit/DOMJITEffect.h:
+        (JSC::DOMJIT::Effect::Effect): Deleted.
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::Entry::Entry): Deleted.
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::WasmToWasmImportableFunction::WasmToWasmImportableFunction): Deleted.
+
 2018-04-20  Mark Lam  <mark.lam@apple.com>
 
         Build fix for internal builds after r230826.

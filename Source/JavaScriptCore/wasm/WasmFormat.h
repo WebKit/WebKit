@@ -275,15 +275,6 @@ struct InternalFunction {
 // meant as fast lookup tables for these opcodes and do not own code.
 struct WasmToWasmImportableFunction {
     using LoadLocation = MacroAssemblerCodePtr<WasmEntryPtrTag>*;
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    WasmToWasmImportableFunction() = default;
-    WasmToWasmImportableFunction(SignatureIndex signatureIndex, LoadLocation entrypointLoadLocation)
-        : signatureIndex { signatureIndex }
-        , entrypointLoadLocation { entrypointLoadLocation }
-    {
-    }
-#endif
-
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, entrypointLoadLocation); }
 
     // FIXME: Pack signature index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.

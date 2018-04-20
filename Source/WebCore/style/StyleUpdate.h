@@ -43,15 +43,6 @@ class Text;
 namespace Style {
 
 struct ElementUpdate {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    ElementUpdate() = default;
-    ElementUpdate(std::unique_ptr<RenderStyle> style, Change change, bool recompositeLayer)
-        : style { WTFMove(style) }
-        , change { change }
-        , recompositeLayer { recompositeLayer }
-    {
-    }
-#endif
     std::unique_ptr<RenderStyle> style;
     Change change { NoChange };
     bool recompositeLayer { false };
@@ -60,16 +51,6 @@ struct ElementUpdate {
 enum class DescendantsToResolve { None, ChildrenWithExplicitInherit, Children, All };
 
 struct ElementUpdates {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    ElementUpdates() = default;
-    ElementUpdates(ElementUpdate update, DescendantsToResolve descendantsToResolve, std::optional<ElementUpdate> beforePseudoElementUpdate, std::optional<ElementUpdate> afterPseudoElementUpdate)
-        : update { WTFMove(update) }
-        , descendantsToResolve(descendantsToResolve)
-        , beforePseudoElementUpdate { WTFMove(beforePseudoElementUpdate) }
-        , afterPseudoElementUpdate { WTFMove(afterPseudoElementUpdate) }
-    {
-    }
-#endif
     ElementUpdate update;
     DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
     std::optional<ElementUpdate> beforePseudoElementUpdate;
@@ -77,16 +58,6 @@ struct ElementUpdates {
 };
 
 struct TextUpdate {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    TextUpdate() = default;
-    TextUpdate(unsigned offset, unsigned length, std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle)
-        : offset { offset }
-        , length { length }
-        , inheritedDisplayContentsStyle { WTFMove(inheritedDisplayContentsStyle) }
-    {
-    }
-#endif
-
     unsigned offset { 0 };
     unsigned length { std::numeric_limits<unsigned>::max() };
     std::optional<std::unique_ptr<RenderStyle>> inheritedDisplayContentsStyle;

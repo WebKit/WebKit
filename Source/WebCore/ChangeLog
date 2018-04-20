@@ -1,3 +1,40 @@
+2018-04-20  Daniel Bates  <dabates@apple.com>
+
+        Remove code for compilers that did not support NSDMI for aggregates
+        https://bugs.webkit.org/show_bug.cgi?id=184599
+
+        Reviewed by Per Arne Vollan.
+
+        Remove workaround for earlier Visual Studio versions that did not support non-static data
+        member initializers (NSDMI) for aggregates. We have since updated all the build.webkit.org
+        and EWS bots to a newer version that supports this feature.
+
+        * Modules/cache/CacheQueryOptions.h:
+        (WebCore::CacheQueryOptions::CacheQueryOptions): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::InsertionType::InsertionType): Deleted.
+        (WebCore::Node::RemovalType::RemovalType): Deleted.
+        * html/canvas/CanvasStyle.h:
+        (WebCore::CanvasStyle::CMYKAColor::CMYKAColor): Deleted.
+        * page/EventHandler.h:
+        (WebCore::EventHandler::DragTargetResponse::DragTargetResponse): Deleted.
+        * page/animation/CSSAnimationController.h:
+        (WebCore::AnimationUpdate::AnimationUpdate): Deleted.
+        * platform/graphics/FontSelectionAlgorithm.h:
+        (WebCore::FontSelectionRequest::tied const):
+        (WebCore::FontSelectionRequest::FontSelectionRequest): Deleted.
+        (WebCore::FontSelectionCapabilities::FontSelectionCapabilities): Deleted.
+        * platform/mediastream/IceCandidate.h:
+        (WebCore::IceCandidate::IceCandidate): Deleted.
+        * platform/text/StringWithDirection.h:
+        (WebCore::StringWithDirection::StringWithDirection): Deleted.
+        * rendering/MarkedText.h:
+        (WebCore::MarkedText::MarkedText): Deleted.
+        * style/StyleUpdate.h:
+        (WebCore::Style::ElementUpdate::ElementUpdate): Deleted.
+        (WebCore::Style::ElementUpdates::ElementUpdates): Deleted.
+        (WebCore::Style::TextUpdate::TextUpdate): Deleted.
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         WebPage sometimes incorrectly rules out PDF as a mime type that can be showed

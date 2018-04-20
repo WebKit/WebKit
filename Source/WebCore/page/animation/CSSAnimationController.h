@@ -43,13 +43,6 @@ class LayoutRect;
 class RenderElement;
 
 struct AnimationUpdate {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    AnimationUpdate() = default;
-    AnimationUpdate(std::unique_ptr<RenderStyle> style, bool stateChanged)
-        : style(WTFMove(style))
-        , stateChanged(stateChanged)
-    { }
-#endif
     std::unique_ptr<RenderStyle> style;
     bool stateChanged { false };
 };

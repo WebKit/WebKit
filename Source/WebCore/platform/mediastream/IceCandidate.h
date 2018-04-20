@@ -37,23 +37,6 @@
 namespace WebCore {
 
 struct IceCandidate {
-#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
-    IceCandidate() = default;
-    IceCandidate(String&& type, String&& foundation, unsigned componentId, String&& transport, unsigned long priority, String&& address, unsigned port, String&& tcpType, String&& relatedAddress, unsigned relatedPort)
-        : type { WTFMove(type) }
-        , foundation { WTFMove(foundation) }
-        , componentId { componentId }
-        , transport { WTFMove(transport) }
-        , priority { priority }
-        , address { WTFMove(address) }
-        , port { port }
-        , tcpType { WTFMove(tcpType) }
-        , relatedAddress { WTFMove(relatedAddress) }
-        , relatedPort { relatedPort }
-    {
-    }
-#endif
-
     String type;
     String foundation;
     unsigned componentId { 0 };
