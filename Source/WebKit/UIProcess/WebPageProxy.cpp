@@ -3671,7 +3671,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navi
 
 void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData& userData)
 {
-    LOG(Loading, "WebPageProxy::didFinishLoadForFrame - WebPageProxy %p with navigationID %llu didFinishLoad", this, navigationID);
+    LOG(Loading, "WebPageProxy::didFinishLoadForFrame - WebPageProxy %p with navigationID %" PRIu64 " didFinishLoad", this, navigationID);
 
     PageClientProtector protector(m_pageClient);
 

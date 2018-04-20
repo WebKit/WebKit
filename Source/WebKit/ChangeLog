@@ -1,3 +1,10 @@
+2018-04-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wformat warning
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         Make PluginData cache its web visible plugins
