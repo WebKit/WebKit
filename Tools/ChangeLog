@@ -1,3 +1,52 @@
+2018-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Injected bundle form client should be notified when editing text fields
+        https://bugs.webkit.org/show_bug.cgi?id=184822
+        <rdar://problem/38807319>
+
+        Reviewed by Tim Horton.
+
+        Add WebKitTestRunner support for listening to form editing SPI hooks in the injected bundle. The new layout test
+        installs callbacks that listen for "begin editing", "end editing", and "text changed" calls to injected bundle
+        SPI. See other ChangeLogs for more detail.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::enterText):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+
+        Add UIScriptController support for simulating text entry in the currently focused element.
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::enterText):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+
+        Add TestRunner bindings for registering injected bundle form client callbacks.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::handleTextDidChangeInTextField):
+        (WTR::handleTextFieldDidBeginEditing):
+        (WTR::handleTextFieldDidEndEditing):
+        (WTR::InjectedBundle::didCreatePage):
+
+        Set the injected bundle form editor client.
+
+        (WTR::InjectedBundle::setUpInjectedBundleClients):
+        (WTR::InjectedBundle::textDidChangeInTextField):
+        (WTR::InjectedBundle::textFieldDidBeginEditing):
+        (WTR::InjectedBundle::textFieldDidEndEditing):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::installTextDidChangeInTextFieldCallback):
+        (WTR::TestRunner::textDidChangeInTextFieldCallback):
+        (WTR::TestRunner::installTextFieldDidBeginEditingCallback):
+        (WTR::TestRunner::textFieldDidBeginEditingCallback):
+        (WTR::TestRunner::installTextFieldDidEndEditingCallback):
+        (WTR::TestRunner::textFieldDidEndEditingCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::enterText):
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         WebPage sometimes incorrectly rules out PDF as a mime type that can be showed

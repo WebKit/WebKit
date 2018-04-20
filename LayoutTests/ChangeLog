@@ -1,3 +1,27 @@
+2018-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Injected bundle form client should be notified when editing text fields
+        https://bugs.webkit.org/show_bug.cgi?id=184822
+        <rdar://problem/38807319>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test that focuses an input field, simulates text entry, and verifies that the injected bundle
+        form client's textDidChangeInTextField, textFieldDidBeginEditing and textFieldDidEndEditing functions are called.
+
+        * TestExpectations:
+
+        Skip tests in fast/forms/extrazoom by default.
+
+        * fast/forms/extrazoom/edit-text-field-calls-injected-bundle-expected.txt: Added.
+        * fast/forms/extrazoom/edit-text-field-calls-injected-bundle.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.enterText):
+
+        Introduce a new UIHelper method to simulate text entry in the currently focused element.
+
+        (window.UIHelper):
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         Refactor NetworkResourceLoader to check for m_networkLoadChecker presence before using it

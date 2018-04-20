@@ -58,6 +58,7 @@ interface UIScriptController {
     void stylusUpAtPoint(long x, long y, object callback);
     void stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, object callback);
 
+    void enterText(DOMString text);
     void typeCharacterUsingHardwareKeyboard(DOMString character, object callback);
     void keyDownUsingHardwareKeyboard(DOMString character, object callback);
     void keyUpUsingHardwareKeyboard(DOMString character, object callback);

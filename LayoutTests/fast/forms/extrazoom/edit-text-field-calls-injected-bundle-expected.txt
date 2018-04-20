@@ -1,0 +1,7 @@
+TextFieldDidBeginEditing ('')
+TextDidChangeInTextField ('Hello world')
+TextFieldDidEndEditing ('Hello world')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

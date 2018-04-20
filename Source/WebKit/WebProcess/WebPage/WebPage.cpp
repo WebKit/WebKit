@@ -206,6 +206,7 @@
 #include <WebCore/UserInputBridge.h>
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
+#include <WebCore/UserTypingGestureIndicator.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
 #include <WebCore/WebGLStateTracker.h>
@@ -4615,15 +4616,11 @@ bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& 
 
 void WebPage::setTextAsync(const String& text)
 {
-    if (is<HTMLInputElement>(m_assistedNode.get())) {
-        downcast<HTMLInputElement>(*m_assistedNode).setValueForUser(text);
-        return;
-    }
-
     auto frame = makeRef(m_page->focusController().focusedOrMainFrame());
     if (!frame->selection().selection().isContentEditable())
         return;
 
+    UserTypingGestureIndicator indicator(frame.get());
     frame->selection().selectAll();
     frame->editor().insertText(text, nullptr, TextEventInputKeyboard);
 }

@@ -186,4 +186,11 @@ window.UIHelper = class UIHelper {
             })()`, resolve);
         });
     }
+
+    static enterText(text)
+    {
+        const escapedText = text.replace(/`/g, "\\`");
+        const enterTextScript = `(() => uiController.enterText(\`${escapedText}\`))()`;
+        return new Promise(resolve => testRunner.runUIScript(enterTextScript, resolve));
+    }
 }

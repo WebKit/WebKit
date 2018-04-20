@@ -42,6 +42,21 @@
 
 namespace WTR {
 
+static void handleTextDidChangeInTextField(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleFrameRef, const void* context)
+{
+    static_cast<InjectedBundle*>(const_cast<void*>(context))->textDidChangeInTextField();
+}
+
+static void handleTextFieldDidBeginEditing(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleFrameRef, const void* context)
+{
+    static_cast<InjectedBundle*>(const_cast<void*>(context))->textFieldDidBeginEditing();
+}
+
+static void handleTextFieldDidEndEditing(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleFrameRef, const void* context)
+{
+    static_cast<InjectedBundle*>(const_cast<void*>(context))->textFieldDidEndEditing();
+}
+
 InjectedBundle& InjectedBundle::singleton()
 {
     static InjectedBundle& shared = *new InjectedBundle;
@@ -106,6 +121,8 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
 {
     m_pages.append(std::make_unique<InjectedBundlePage>(page));
+
+    setUpInjectedBundleClients(page);
 }
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)
@@ -118,6 +135,24 @@ void InjectedBundle::willDestroyPage(WKBundlePageRef page)
 void InjectedBundle::didInitializePageGroup(WKBundlePageGroupRef pageGroup)
 {
     m_pageGroup = pageGroup;
+}
+
+void InjectedBundle::setUpInjectedBundleClients(WKBundlePageRef page)
+{
+    WKBundlePageFormClientV2 formClient = {
+        { 2, this },
+        handleTextFieldDidBeginEditing,
+        handleTextFieldDidEndEditing,
+        handleTextDidChangeInTextField,
+        0, // textDidChangeInTextArea
+        0, // shouldPerformActionInTextField
+        0, // willSubmitForm
+        0, // willSendSubmitEvent
+        0, // didFocusTextField
+        0, // shouldNotifyOnFormChanges
+        0, // didAssociateFormControls
+    };
+    WKBundlePageSetFormClient(page, &formClient.base);
 }
 
 InjectedBundlePage* InjectedBundle::page() const
@@ -875,6 +910,21 @@ void InjectedBundle::setAllowsAnySSLCertificate(bool allowsAnySSLCertificate)
 void InjectedBundle::statisticsNotifyObserver()
 {
     WKBundleResourceLoadStatisticsNotifyObserver(m_bundle);
+}
+
+void InjectedBundle::textDidChangeInTextField()
+{
+    m_testRunner->textDidChangeInTextFieldCallback();
+}
+
+void InjectedBundle::textFieldDidBeginEditing()
+{
+    m_testRunner->textFieldDidBeginEditingCallback();
+}
+
+void InjectedBundle::textFieldDidEndEditing()
+{
+    m_testRunner->textFieldDidEndEditingCallback();
 }
 
 } // namespace WTR

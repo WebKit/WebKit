@@ -401,7 +401,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (nonatomic, readonly) NSNumber *_stableStateOverride WK_API_AVAILABLE(ios(10.3));
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID WK_API_AVAILABLE(ios(11.0));
-- (void)_simulateLongPressActionAtLocation:(CGPoint)location;
+- (void)_simulateLongPressActionAtLocation:(CGPoint)location WK_API_AVAILABLE(ios(11.0));
+- (void)_simulateTextEntered:(NSString *)text WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) CGRect _dragCaretRect WK_API_AVAILABLE(ios(11.0));
 

@@ -1,3 +1,17 @@
+2018-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Injected bundle form client should be notified when editing text fields
+        https://bugs.webkit.org/show_bug.cgi?id=184822
+        <rdar://problem/38807319>
+
+        Reviewed by Tim Horton.
+
+        Export the constructor and destructor of UserTypingGestureIndicator for use in WebKit (see WebPage.cpp).
+
+        Test: fast/forms/extrazoom/edit-text-field-calls-injected-bundle.html
+
+        * dom/UserTypingGestureIndicator.h:
+
 2018-04-18  Jer Noble  <jer.noble@apple.com>
 
         Don't put build products into WK_ALTERNATE_WEBKIT_SDK_PATH for engineering builds

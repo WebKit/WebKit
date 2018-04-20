@@ -136,6 +136,10 @@ public:
 
     void statisticsNotifyObserver();
 
+    void textDidChangeInTextField();
+    void textFieldDidBeginEditing();
+    void textFieldDidEndEditing();
+
 private:
     InjectedBundle();
     ~InjectedBundle();
@@ -151,6 +155,8 @@ private:
     void didInitializePageGroup(WKBundlePageGroupRef);
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
     void didReceiveMessageToPage(WKBundlePageRef, WKStringRef messageName, WKTypeRef messageBody);
+
+    void setUpInjectedBundleClients(WKBundlePageRef);
 
     void platformInitialize(WKTypeRef initializationUserData);
     void resetLocalSettings();

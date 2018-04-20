@@ -331,6 +331,13 @@ void UIScriptController::longPressAtPoint(long x, long y, JSValueRef callback)
     }];
 }
 
+void UIScriptController::enterText(JSStringRef text)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    auto textAsCFString = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, text));
+    [webView _simulateTextEntered:(NSString *)textAsCFString.get()];
+}
+
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

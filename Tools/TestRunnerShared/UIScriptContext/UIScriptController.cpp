@@ -270,6 +270,10 @@ void UIScriptController::sendEventStream(JSStringRef eventsJSON, JSValueRef call
 {
 }
 
+void UIScriptController::enterText(JSStringRef)
+{
+}
+
 void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef, JSValueRef)
 {
 }

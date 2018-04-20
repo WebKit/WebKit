@@ -413,6 +413,14 @@ public:
     void statisticsCallClearThroughWebsiteDataRemovalCallback();
     void statisticsResetToConsistentState();
 
+    // Injected bundle form client.
+    void installTextDidChangeInTextFieldCallback(JSValueRef callback);
+    void textDidChangeInTextFieldCallback();
+    void installTextFieldDidBeginEditingCallback(JSValueRef callback);
+    void textFieldDidBeginEditingCallback();
+    void installTextFieldDidEndEditingCallback(JSValueRef callback);
+    void textFieldDidEndEditingCallback();
+
     // Storage Access API
     void setStorageAccessAPIEnabled(bool);
     void getAllStorageAccessEntries(JSValueRef callback);

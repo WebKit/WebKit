@@ -309,6 +309,11 @@ interface TestRunner {
     void statisticsClearThroughWebsiteDataRemoval(object callback);
     void statisticsResetToConsistentState();
 
+    // Injected bundle form client.
+    void installTextDidChangeInTextFieldCallback(object callback);
+    void installTextFieldDidBeginEditingCallback(object callback);
+    void installTextFieldDidEndEditingCallback(object callback);
+
     // Storage Access API
     void setStorageAccessAPIEnabled(boolean enabled);
     void getAllStorageAccessEntries(object callback);

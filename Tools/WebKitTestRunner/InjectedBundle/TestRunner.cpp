@@ -676,6 +676,9 @@ enum {
     AllStorageAccessEntriesCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
+    TextDidChangeInTextFieldCallbackID,
+    TextFieldDidBeginEditingCallbackID,
+    TextFieldDidEndEditingCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -1821,6 +1824,36 @@ void TestRunner::statisticsResetToConsistentState()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsResetToConsistentState"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
+
+void TestRunner::installTextDidChangeInTextFieldCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(TextDidChangeInTextFieldCallbackID, callback);
+}
+
+void TestRunner::textDidChangeInTextFieldCallback()
+{
+    callTestRunnerCallback(TextDidChangeInTextFieldCallbackID);
+}
+
+void TestRunner::installTextFieldDidBeginEditingCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(TextFieldDidBeginEditingCallbackID, callback);
+}
+
+void TestRunner::textFieldDidBeginEditingCallback()
+{
+    callTestRunnerCallback(TextFieldDidBeginEditingCallbackID);
+}
+
+void TestRunner::installTextFieldDidEndEditingCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(TextFieldDidEndEditingCallbackID, callback);
+}
+
+void TestRunner::textFieldDidEndEditingCallback()
+{
+    callTestRunnerCallback(TextFieldDidEndEditingCallbackID);
 }
 
 void TestRunner::setStorageAccessAPIEnabled(bool enabled)

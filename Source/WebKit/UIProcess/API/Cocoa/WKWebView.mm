@@ -6361,6 +6361,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView _simulateLongPressActionAtLocation:location];
 }
 
+- (void)_simulateTextEntered:(NSString *)text
+{
+    [_contentView _simulateTextEntered:text];
+}
+
 #endif // PLATFORM(IOS)
 
 - (BOOL)_beginBackSwipeForTesting

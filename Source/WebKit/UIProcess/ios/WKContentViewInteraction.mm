@@ -5460,6 +5460,16 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 @implementation WKContentView (WKTesting)
 
+- (void)_simulateTextEntered:(NSString *)text
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    if ([_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
+        [(WKTextInputListViewController *)_presentedFullScreenInputViewController.get() enterText:text];
+#else
+    [self insertText:text];
+#endif
+}
+
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location
 {
     RetainPtr<WKContentView> protectedSelf = self;
