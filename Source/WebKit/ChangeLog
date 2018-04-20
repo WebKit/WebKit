@@ -1,3 +1,12 @@
+2018-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Don't put build products into WK_ALTERNATE_WEBKIT_SDK_PATH for engineering builds
+        https://bugs.webkit.org/show_bug.cgi?id=184762
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/BaseTarget.xcconfig:
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         Refactor NetworkResourceLoader to check for m_networkLoadChecker presence before using it

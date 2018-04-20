@@ -48,7 +48,7 @@ OTHER_CPLUSPLUSFLAGS = $(inherited) $(ADDITIONAL_CFLAGS);
 WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions $(SDKROOT)/usr/local/include/WebKitAdditions;
 LIBWEBRTC_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc $(SDKROOT)/usr/local/include/webrtc $(BUILT_PRODUCTS_DIR)/usr/local/include/webrtc/sdk/objc/Framework/Headers $(SDKROOT)/usr/local/include/webrtc/sdk/objc/Framework/Headers;
 
-HEADER_SEARCH_PATHS = PAL ForwardingHeaders /usr/include/libxslt /usr/include/libxml2 "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore" "$(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/usr/local/include" $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS) $(SRCROOT);
+HEADER_SEARCH_PATHS = PAL ForwardingHeaders /usr/include/libxslt /usr/include/libxml2 "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore" "$(BUILT_PRODUCTS_DIR)/usr/local/include" $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(LIBWEBRTC_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS) $(SRCROOT);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 INSTALL_PATH[sdk=macosx*] = $(WEBCORE_FRAMEWORKS_DIR);
