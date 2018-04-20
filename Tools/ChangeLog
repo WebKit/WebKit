@@ -1,3 +1,23 @@
+2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Local cross references are broken in API documentation
+        https://bugs.webkit.org/show_bug.cgi?id=184771
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that gtkdoc-fixxref expects the links to be in the form html/modulename (like the installed
+        ones), but we generate the documentation as modulename/html. So, links to WebKitDOM or JSC are generated as
+        ../html/Foo. The rebase command considers html to be the module name in this case, creating broken links in all
+        the cases.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._copy_doc_files_to_output_dir): We don't have any html dir in the source tree so, we are not copying
+        anything here.
+        (GTKDoc._run_gtkdoc_mkhtml): Create the html dir here using html/modulename instead now.
+        (GTKDoc._run_gtkdoc_fixxref): Pass the new directory as module dir to gtkdoc-fixxref and fix several links for
+        which gtkdoc-fixxref always uses absolute paths.
+        * gtk/manifest.txt.in: Update the documentation html paths and include the JSC GLib API in the tarball too.
+
 2018-04-19  Brady Eidson  <beidson@apple.com>
 
         Make back forward cache work with process swapping.

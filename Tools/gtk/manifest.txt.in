@@ -95,5 +95,6 @@ directory Tools/TestWebKitAPI
 file CMakeLists.txt
 file Tools/CMakeLists.txt
 
-directory ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html
-directory ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html/webkit2gtk-${WEBKITGTK_API_VERSION} Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html/webkitdomgtk-${WEBKITGTK_API_VERSION} Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/jsc-glib-${WEBKITGTK_API_VERSION}/html/jsc-glib-${WEBKITGTK_API_VERSION} Documentation/jsc-glib-${WEBKITGTK_API_VERSION}/html

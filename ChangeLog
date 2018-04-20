@@ -1,3 +1,14 @@
+2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Local cross references are broken in API documentation
+        https://bugs.webkit.org/show_bug.cgi?id=184771
+
+        Reviewed by Michael Catanzaro.
+
+        Update the documentation html paths and install the JSC GLib API too.
+
+        * Source/PlatformGTK.cmake:
+
 2018-04-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.21.1 release.
