@@ -69,8 +69,9 @@ private:
 
 // JSWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
 // It is, however, strongly owned by AbstractFrame via its WindowProxy, so we can get one from a WindowProxy.
-JSC::JSValue toJS(JSC::ExecState*, WindowProxy&);
+WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, WindowProxy&);
 inline JSC::JSValue toJS(JSC::ExecState* state, WindowProxy* windowProxy) { return windowProxy ? toJS(state, *windowProxy) : JSC::jsNull(); }
+inline JSC::JSValue toJS(JSC::ExecState* state, const RefPtr<WindowProxy>& windowProxy) { return toJS(state, windowProxy.get()); }
 
 JSWindowProxy& toJSWindowProxy(WindowProxy&, DOMWrapperWorld&);
 inline JSWindowProxy* toJSWindowProxy(WindowProxy* windowProxy, DOMWrapperWorld& world) { return windowProxy ? &toJSWindowProxy(*windowProxy, world) : nullptr; }

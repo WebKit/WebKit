@@ -107,7 +107,7 @@ typedef (
     // that the caller document matches those semantics. It is possible we should replace it with
     // the existing 'incumbent document' concept.
     [CEReactions, CallWith=ResponsibleDocument, ImplementedAs=openForBindings, MayThrowException] Document open(optional DOMString type = "text/html", optional DOMString replace = "");
-    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings, MayThrowException] DOMWindow open(USVString url, DOMString name, DOMString features);
+    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings, MayThrowException] WindowProxy open(USVString url, DOMString name, DOMString features);
     [CEReactions, ImplementedAs=closeForBindings, MayThrowException] void close();
     [CEReactions, CallWith=ResponsibleDocument, MayThrowException] void write(DOMString... text);
     [CEReactions, CallWith=ResponsibleDocument, MayThrowException] void writeln(DOMString... text);

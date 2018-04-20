@@ -158,7 +158,7 @@ public:
     void print();
     void stop();
 
-    WEBCORE_EXPORT RefPtr<DOMWindow> open(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString, const AtomicString& frameName, const String& windowFeaturesString);
+    WEBCORE_EXPORT RefPtr<WindowProxy> open(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString, const AtomicString& frameName, const String& windowFeaturesString);
 
     void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction);
 
@@ -193,12 +193,12 @@ public:
     String defaultStatus() const;
     void setDefaultStatus(const String&);
 
-    DOMWindow* self() const;
+    WindowProxy* self() const;
 
-    DOMWindow* opener() const;
+    WindowProxy* opener() const;
     void disownOpener();
-    DOMWindow* parent() const;
-    DOMWindow* top() const;
+    WindowProxy* parent() const;
+    WindowProxy* top() const;
 
     Frame* frame() const final { return FrameDestructionObserver::frame(); }
 

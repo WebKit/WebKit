@@ -165,4 +165,19 @@ void WindowProxy::attachDebugger(JSC::Debugger* debugger)
         windowProxy->attachDebugger(debugger);
 }
 
+AbstractDOMWindow* WindowProxy::window() const
+{
+    return m_frame.window();
+}
+
+void WindowProxy::ref()
+{
+    m_frame.ref();
+}
+
+void WindowProxy::deref()
+{
+    m_frame.deref();
+}
+
 } // namespace WebCore

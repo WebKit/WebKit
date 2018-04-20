@@ -1,5 +1,37 @@
 2018-04-20  Chris Dumez  <cdumez@apple.com>
 
+        Use WindowProxy in DOMWindow.idl
+        https://bugs.webkit.org/show_bug.cgi?id=184820
+
+        Reviewed by Sam Weinig.
+
+        Use WindowProxy in DOMWindow.idl to match the specification more closely.
+
+        * bindings/js/JSWindowProxy.h:
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::window const):
+        * bindings/js/WindowProxy.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValueDOMConvertNeedsState):
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Document.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus):
+        (WebCore::DOMWindow::self const):
+        (WebCore::DOMWindow::opener const):
+        (WebCore::DOMWindow::parent const):
+        (WebCore::DOMWindow::top const):
+        (WebCore::DOMWindow::open):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::openDummyInspectorFrontend):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2018-04-20  Chris Dumez  <cdumez@apple.com>
+
         Update cross-origin SecurityError messages to not include the target origin
         https://bugs.webkit.org/show_bug.cgi?id=184803
         <rdar://problem/39547724>

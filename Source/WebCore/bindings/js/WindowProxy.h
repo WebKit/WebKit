@@ -75,6 +75,11 @@ public:
     // Debugger can be nullptr to detach any existing Debugger.
     void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window proxies.
 
+    WEBCORE_EXPORT AbstractDOMWindow* window() const;
+
+    WEBCORE_EXPORT void ref();
+    WEBCORE_EXPORT void deref();
+
 private:
     JSWindowProxy& createJSWindowProxy(DOMWrapperWorld&);
     WEBCORE_EXPORT JSWindowProxy& createJSWindowProxyWithInitializedScript(DOMWrapperWorld&);

@@ -49,8 +49,8 @@ typedef USVString CSSOMString;
     PrimaryGlobal,
 ] interface DOMWindow : EventTarget {
     // The current browsing context.
-    [DoNotCheckSecurity, Unforgeable, ImplementedAs=self] readonly attribute DOMWindow window;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow self;
+    [DoNotCheckSecurity, Unforgeable, ImplementedAs=self] readonly attribute WindowProxy window;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy self;
     [Unforgeable] readonly attribute Document document;
     attribute DOMString name;
     [DoNotCheckSecurity, PutForwards=href, Unforgeable] readonly attribute Location? location; // FIXME: Should not be nullable.
@@ -70,13 +70,13 @@ typedef USVString CSSOMString;
     [DoNotCheckSecurity, ForwardDeclareInHeader] void blur();
 
     // Other browsing contexts.
-    [Replaceable, DoNotCheckSecurityOnGetter, ImplementedAs=self] readonly attribute DOMWindow frames;
+    [Replaceable, DoNotCheckSecurityOnGetter, ImplementedAs=self] readonly attribute WindowProxy frames;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
-    [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute DOMWindow? top;
-    [DoNotCheckSecurityOnGetter, CustomSetter] attribute DOMWindow? opener;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow? parent;
+    [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute WindowProxy? top;
+    [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
-    [CallWith=ActiveWindow&FirstWindow] DOMWindow? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
+    [CallWith=ActiveWindow&FirstWindow] WindowProxy? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
 
     // The user agent.
     readonly attribute Navigator navigator;

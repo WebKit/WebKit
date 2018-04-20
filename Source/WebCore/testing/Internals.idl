@@ -315,7 +315,7 @@ enum EventThrottlingBehavior {
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
     unsigned long referencingNodeCount(Document document);
-    DOMWindow? openDummyInspectorFrontend(DOMString url);
+    WindowProxy? openDummyInspectorFrontend(DOMString url);
     void closeDummyInspectorFrontend();
     [MayThrowException] void setInspectorIsUnderTest(boolean isUnderTest);
 
