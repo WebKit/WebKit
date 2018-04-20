@@ -7,6 +7,10 @@ PASS pointAtLengthOfPath('M0,20 L400,20 L640,20') is '(640, 20)'
 PASS pointAtLengthOfPath('M0,20 L400,20 L640,20 z') is '(580, 20)'
 PASS pointAtLengthOfPath('M0,20 L400,20 z M 320,20 L640,20') is '(100, 20)'
 PASS pointAtLengthOfPath('M0,20 L20,40') is '(20, 40)'
+PASS pathElement.getPointAtLength(Math.NaN) threw exception TypeError: The provided value is non-finite.
+PASS pathElement.getPointAtLength() threw exception TypeError: Not enough arguments.
+PASS pathElement.getPointAtLength(Math.Infinity) threw exception TypeError: The provided value is non-finite.
+PASS pathElement.getPointAtLength('abc') threw exception TypeError: The provided value is non-finite.
 PASS successfullyParsed is true
 
 TEST COMPLETE

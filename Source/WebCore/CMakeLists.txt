@@ -940,6 +940,7 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGFontFaceUriElement.idl
     svg/SVGForeignObjectElement.idl
     svg/SVGGElement.idl
+    svg/SVGGeometryElement.idl
     svg/SVGGlyphElement.idl
     svg/SVGGlyphRefElement.idl
     svg/SVGGradientElement.idl

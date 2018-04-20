@@ -2147,6 +2147,7 @@ svg/SVGFontFaceSrcElement.cpp
 svg/SVGFontFaceUriElement.cpp
 svg/SVGForeignObjectElement.cpp
 svg/SVGGElement.cpp
+svg/SVGGeometryElement.cpp
 svg/SVGGlyphElement.cpp
 svg/SVGGlyphRefElement.cpp
 svg/SVGGradientElement.cpp
@@ -2921,6 +2922,7 @@ JSSVGFontFaceSrcElement.cpp
 JSSVGFontFaceUriElement.cpp
 JSSVGForeignObjectElement.cpp
 JSSVGGElement.cpp
+JSSVGGeometryElement.cpp
 JSSVGGlyphElement.cpp
 JSSVGGlyphRefElement.cpp
 JSSVGGradientElement.cpp

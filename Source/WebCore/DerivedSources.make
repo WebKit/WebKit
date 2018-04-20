@@ -868,6 +868,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/svg/SVGFontFaceUriElement.idl \
     $(WebCore)/svg/SVGForeignObjectElement.idl \
     $(WebCore)/svg/SVGGElement.idl \
+    $(WebCore)/svg/SVGGeometryElement.idl \
     $(WebCore)/svg/SVGGlyphElement.idl \
     $(WebCore)/svg/SVGGlyphRefElement.idl \
     $(WebCore)/svg/SVGGradientElement.idl \

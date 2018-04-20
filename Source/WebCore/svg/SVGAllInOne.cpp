@@ -102,6 +102,7 @@
 #include "SVGFontFaceUriElement.cpp"
 #include "SVGForeignObjectElement.cpp"
 #include "SVGGElement.cpp"
+#include "SVGGeometryElement.cpp"
 #include "SVGGlyphElement.cpp"
 #include "SVGGlyphRefElement.cpp"
 #include "SVGGradientElement.cpp"

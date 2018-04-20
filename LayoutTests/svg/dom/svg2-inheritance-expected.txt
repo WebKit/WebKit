@@ -44,7 +44,7 @@ PASS SVGFontFaceSrcElement inherits SVGElement
 PASS SVGFontFaceUriElement inherits SVGElement
 PASS SVGForeignObjectElement inherits SVGGraphicsElement
 PASS SVGGElement inherits SVGGraphicsElement
-FAIL SVGGeometryElement is not defined
+PASS SVGGeometryElement inherits SVGGraphicsElement
 PASS SVGGlyphElement inherits SVGElement
 PASS SVGGlyphRefElement inherits SVGElement
 PASS SVGGradientElement inherits SVGElement
@@ -68,7 +68,7 @@ PASS SVGMetadataElement inherits SVGElement
 PASS SVGMissingGlyphElement inherits SVGElement
 PASS SVGNumber inherits Object
 PASS SVGNumberList inherits Object
-FAIL SVGPathElement should inherit SVGGeometryElement but got SVGGraphicsElement instead
+PASS SVGPathElement inherits SVGGeometryElement
 PASS SVGPathSeg inherits Object
 PASS SVGPathSegArcAbs inherits SVGPathSeg
 PASS SVGPathSegArcRel inherits SVGPathSeg

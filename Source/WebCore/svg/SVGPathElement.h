@@ -24,7 +24,7 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGExternalResourcesRequired.h"
-#include "SVGGraphicsElement.h"
+#include "SVGGeometryElement.h"
 #include "SVGNames.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathSegListValues.h"
@@ -53,13 +53,13 @@ class SVGPathSegCurvetoQuadraticSmoothRel;
 class SVGPathSegList;
 class SVGPoint;
 
-class SVGPathElement final : public SVGGraphicsElement, public SVGExternalResourcesRequired {
+class SVGPathElement final : public SVGGeometryElement, public SVGExternalResourcesRequired {
     WTF_MAKE_ISO_ALLOCATED(SVGPathElement);
 public:
     static Ref<SVGPathElement> create(const QualifiedName&, Document&);
     
-    float getTotalLength() const;
-    Ref<SVGPoint> getPointAtLength(float distance) const;
+    float getTotalLength() const final;
+    Ref<SVGPoint> getPointAtLength(float distance) const final;
     unsigned getPathSegAtLength(float distance) const;
 
     Ref<SVGPathSegClosePath> createSVGPathSegClosePath(SVGPathSegRole = PathSegUndefinedRole);

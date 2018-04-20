@@ -4815,6 +4815,8 @@
 		FABE72F71059C1EB00D999DD /* MathMLPresentationElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F01059C1EB00D999DD /* MathMLPresentationElement.h */; };
 		FABE72F91059C1EB00D999DD /* MathMLMathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F21059C1EB00D999DD /* MathMLMathElement.h */; };
 		FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FC1059C21100D999DD /* MathMLNames.cpp */; };
+		FB273E822086E6C700A54E87 /* SVGGeometryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FB273E7F2086E6A300A54E87 /* SVGGeometryElement.h */; };
+		FB273E852086E74D00A54E87 /* JSSVGGeometryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FB273E842086E73E00A54E87 /* JSSVGGeometryElement.h */; };
 		FB2C15C3165D649D0039C9F8 /* CachedSVGDocumentReference.h in Headers */ = {isa = PBXBuildFile; fileRef = FB2C15C2165D64900039C9F8 /* CachedSVGDocumentReference.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FB484F4D171F821E00040755 /* TransformFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FB484F4B171F821E00040755 /* TransformFunctions.h */; };
@@ -14515,6 +14517,11 @@
 		FABE72F31059C1EB00D999DD /* mathtags.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathtags.in; sourceTree = "<group>"; };
 		FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElementFactory.cpp; sourceTree = "<group>"; };
 		FABE72FC1059C21100D999DD /* MathMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLNames.cpp; sourceTree = "<group>"; };
+		FB273E7E2086E6A300A54E87 /* SVGGeometryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGGeometryElement.cpp; sourceTree = "<group>"; };
+		FB273E7F2086E6A300A54E87 /* SVGGeometryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGeometryElement.h; sourceTree = "<group>"; };
+		FB273E802086E6A300A54E87 /* SVGGeometryElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGGeometryElement.idl; sourceTree = "<group>"; };
+		FB273E832086E73E00A54E87 /* JSSVGGeometryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGGeometryElement.cpp; sourceTree = SOURCE_ROOT; };
+		FB273E842086E73E00A54E87 /* JSSVGGeometryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGGeometryElement.h; sourceTree = SOURCE_ROOT; };
 		FB2C15C2165D64900039C9F8 /* CachedSVGDocumentReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocumentReference.h; sourceTree = "<group>"; };
 		FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGroupingRule.h; sourceTree = "<group>"; };
 		FB484F4A171F821E00040755 /* TransformFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFunctions.cpp; sourceTree = "<group>"; };
@@ -21924,6 +21931,8 @@
 				B2FA3CB10AB75A6E000E5AC4 /* JSSVGForeignObjectElement.h */,
 				B2FA3CB20AB75A6E000E5AC4 /* JSSVGGElement.cpp */,
 				B2FA3CB30AB75A6E000E5AC4 /* JSSVGGElement.h */,
+				FB273E832086E73E00A54E87 /* JSSVGGeometryElement.cpp */,
+				FB273E842086E73E00A54E87 /* JSSVGGeometryElement.h */,
 				B27B28210CEF0C0700D39D54 /* JSSVGGlyphElement.cpp */,
 				B27B28220CEF0C0700D39D54 /* JSSVGGlyphElement.h */,
 				24D9129713CA96DE00D21915 /* JSSVGGlyphRefElement.cpp */,
@@ -22876,6 +22885,9 @@
 				B22278900D00BF200071B782 /* SVGGElement.cpp */,
 				B22278910D00BF200071B782 /* SVGGElement.h */,
 				B22278920D00BF200071B782 /* SVGGElement.idl */,
+				FB273E7E2086E6A300A54E87 /* SVGGeometryElement.cpp */,
+				FB273E7F2086E6A300A54E87 /* SVGGeometryElement.h */,
+				FB273E802086E6A300A54E87 /* SVGGeometryElement.idl */,
 				B2A1F2A40CEF0ABF00442F6A /* SVGGlyphElement.cpp */,
 				B2A1F2A50CEF0ABF00442F6A /* SVGGlyphElement.h */,
 				B2A1F2A60CEF0ABF00442F6A /* SVGGlyphElement.idl */,
@@ -28739,6 +28751,7 @@
 				A83B78FC0CCAFF15000B0825 /* JSSVGFontFaceUriElement.h in Headers */,
 				B2FA3D990AB75A6F000E5AC4 /* JSSVGForeignObjectElement.h in Headers */,
 				B2FA3D9B0AB75A6F000E5AC4 /* JSSVGGElement.h in Headers */,
+				FB273E852086E74D00A54E87 /* JSSVGGeometryElement.h in Headers */,
 				B27B28280CEF0C0700D39D54 /* JSSVGGlyphElement.h in Headers */,
 				24D9129A13CA971400D21915 /* JSSVGGlyphRefElement.h in Headers */,
 				B2FA3D9D0AB75A6F000E5AC4 /* JSSVGGradientElement.h in Headers */,
@@ -30140,6 +30153,7 @@
 				B2227A210D00BF220071B782 /* SVGFontFaceUriElement.h in Headers */,
 				B2227A240D00BF220071B782 /* SVGForeignObjectElement.h in Headers */,
 				B2227A270D00BF220071B782 /* SVGGElement.h in Headers */,
+				FB273E822086E6C700A54E87 /* SVGGeometryElement.h in Headers */,
 				B2A1F2AE0CEF0ABF00442F6A /* SVGGlyphElement.h in Headers */,
 				24D912BE13CA9A9700D21915 /* SVGGlyphRefElement.h in Headers */,
 				B2227A2A0D00BF220071B782 /* SVGGradientElement.h in Headers */,

@@ -1,3 +1,45 @@
+2018-04-19  Dirk Schulze  <krit@webbkit.org>
+
+        Introduce SVGGeometryElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=184768
+
+        Reviewed by Antti Koivisto.
+
+        Start implementing SVGGeometryElement interface from SVG2.
+        https://svgwg.org/svg2-draft/types.html#InterfaceSVGGeometryElement
+
+        Start with SVGPathElement only for now. Also, just inferface gets implemented
+        by this patch. No new functionality like isPointInFill yet.
+        Fix getPointAtLength and make it more restrictive. This follows the spec and
+        all other implementations.
+
+        Added additional test scenarios to existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetGnuVTableOffsetForType):
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGGeometryElement.cpp: Added.
+        (WebCore::SVGGeometryElement::SVGGeometryElement):
+        (WebCore::SVGGeometryElement::isSupportedAttribute):
+        (WebCore::SVGGeometryElement::parseAttribute):
+        (WebCore::SVGGeometryElement::svgAttributeChanged):
+        (WebCore::SVGGeometryElement::createElementRenderer):
+        * svg/SVGGeometryElement.h: Added.
+        * svg/SVGGeometryElement.idl: Added.
+        * svg/SVGGradientElement.cpp:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::parseAttribute):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::insertedIntoAncestor):
+        (WebCore::SVGPathElement::removedFromAncestor):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathElement.idl:
+
 2018-04-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION(r227340): ArrayBuffers were not being serialized when sent via MessagePorts

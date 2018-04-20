@@ -1,3 +1,17 @@
+2018-04-19  Dirk Schulze  <krit@webkit.org>
+
+        Introduce SVGGeometryElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=184768
+
+        Reviewed by Antti Koivisto.
+
+        Start implementing SVGGeometryElement interface from SVG2.
+
+        * svg/dom/SVGPolygonElement-baseVal-list-removal-crash.html: pointAtLength requires value now.
+        * svg/dom/path-pointAtLength-expected.txt:
+        * svg/dom/path-pointAtLength.html: Added throw tests for pointAtLength.
+        * svg/dom/svg2-inheritance-expected.txt: Inheritance fixed for SVGPathElement only for now.
+
 2018-04-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION(r227340): ArrayBuffers were not being serialized when sent via MessagePorts
