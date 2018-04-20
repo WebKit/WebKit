@@ -1,3 +1,23 @@
+2018-04-20  Daniel Bates  <dabates@apple.com>
+
+        Remove Strong Password decoration when text field type changes
+        https://bugs.webkit.org/show_bug.cgi?id=184795
+        <rdar://problem/38325108>
+
+        Reviewed by Antti Koivisto.
+
+        Add a unit test to ensure the injected bundle API and WebKit UI delegate SPI is invoked
+        when the field has the Strong Password button and its type changes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DidResignInputElementStrongPasswordAppearance.mm: Added.
+        (didResignInputElementStrongPasswordAppearance):
+        (-[DidResignInputElementStrongPasswordAppearance webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[DidResignInputElementStrongPasswordAppearanceDelegate _webView:didResignInputElementStrongPasswordAppearanceWithUserInfo:]):
+        (-[DidResignInputElementStrongPasswordAppearanceDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2018-04-20  Brady Eidson  <beidson@apple.com>
 
         Add a test to verify load/unload/pageshow/pagehide all work with process swapping.

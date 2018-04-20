@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -548,6 +548,42 @@ TEST(WebKit, ClickAutoFillButton)
     NSPoint buttonLocation = NSMakePoint(130, 575);
     [webView mouseDownAtPoint:buttonLocation simulatePressure:NO];
     [webView mouseUpAtPoint:buttonLocation];
+    TestWebKitAPI::Util::run(&done);
+}
+
+static bool readytoResign;
+
+@interface DidResignInputElementStrongPasswordAppearanceDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation DidResignInputElementStrongPasswordAppearanceDelegate
+
+- (void)_webView:(WKWebView *)webView didResignInputElementStrongPasswordAppearanceWithUserInfo:(id <NSSecureCoding>)userInfo
+{
+    ASSERT_TRUE([(id<NSObject>)userInfo isKindOfClass:[NSString class]]);
+    ASSERT_STREQ([(NSString*)userInfo UTF8String], "user data string");
+    done = true;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+    ASSERT_STREQ(message.UTF8String, "ready to resign!");
+    readytoResign = true;
+}
+
+@end
+
+TEST(WebKit, DidResignInputElementStrongPasswordAppearance)
+{
+    done = false;
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"DidResignInputElementStrongPasswordAppearance"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    auto delegate = adoptNS([[DidResignInputElementStrongPasswordAppearanceDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    TestWebKitAPI::Util::run(&readytoResign);
+    [webView evaluateJavaScript:@"document.querySelector('input').type = 'text'" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
 }
 
