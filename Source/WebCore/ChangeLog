@@ -1,3 +1,21 @@
+2018-04-20  Youenn Fablet  <youenn@apple.com>
+
+        WebPage sometimes incorrectly rules out PDF as a mime type that can be showed
+        https://bugs.webkit.org/show_bug.cgi?id=184369
+
+        Reviewed by Chris Dumez.
+
+        WebPage does need to check for plugins at reception of the response.
+        In that case, the page URL is the URL from which we are navigating out.
+        Add plugin API to check for plugin availability with an extra URL parameter to cover that case.
+
+        Covered by API test.
+
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::supportsWebVisibleMimeTypeForURL const):
+        (WebCore::PluginData::supportsWebVisibleMimeType const):
+        * plugins/PluginData.h:
+
 2018-04-20  Daniel Bates  <dabates@apple.com>
 
         Remove Strong Password decoration when text field type changes

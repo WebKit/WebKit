@@ -5091,20 +5091,33 @@ void WebPage::setSelectTrailingWhitespaceEnabled(bool enabled)
     }
 }
 
-bool WebPage::canShowMIMEType(const String& MIMEType) const
+bool WebPage::canShowResponse(const WebCore::ResourceResponse& response) const
 {
-    if (MIMETypeRegistry::canShowMIMEType(MIMEType))
+    return canShowMIMEType(response.mimeType(), [&](auto& mimeType, auto allowedPlugins) {
+        return m_page->pluginData().supportsWebVisibleMimeTypeForURL(mimeType, allowedPlugins, response.url());
+    });
+}
+
+bool WebPage::canShowMIMEType(const String& mimeType) const
+{
+    return canShowMIMEType(mimeType, [&](auto& mimeType, auto allowedPlugins) {
+        return m_page->pluginData().supportsWebVisibleMimeType(mimeType, allowedPlugins);
+    });
+}
+
+bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const String&, PluginData::AllowedPluginTypes)>& pluginsSupport) const
+{
+    if (MIMETypeRegistry::canShowMIMEType(mimeType))
         return true;
 
-    if (!MIMEType.isNull() && m_mimeTypesWithCustomContentProviders.contains(MIMEType))
+    if (!mimeType.isNull() && m_mimeTypesWithCustomContentProviders.contains(mimeType))
         return true;
 
-    const PluginData& pluginData = m_page->pluginData();
-    if (pluginData.supportsWebVisibleMimeType(MIMEType, PluginData::AllPlugins) && corePage()->mainFrame().loader().subframeLoader().allowPlugins())
+    if (corePage()->mainFrame().loader().subframeLoader().allowPlugins() && pluginsSupport(mimeType, PluginData::AllPlugins))
         return true;
 
     // We can use application plugins even if plugins aren't enabled.
-    if (pluginData.supportsWebVisibleMimeType(MIMEType, PluginData::OnlyApplicationPlugins))
+    if (pluginsSupport(mimeType, PluginData::OnlyApplicationPlugins))
         return true;
 
     return false;

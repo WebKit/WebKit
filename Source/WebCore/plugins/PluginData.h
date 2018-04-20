@@ -115,6 +115,7 @@ public:
     String pluginFileForWebVisibleMimeType(const String& mimeType) const;
 
     WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
+    WEBCORE_EXPORT bool supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes, const URL&) const;
 
 private:
     explicit PluginData(Page&);
@@ -122,6 +123,7 @@ private:
     bool getPluginInfoForWebVisibleMimeType(const String& mimeType, PluginInfo&) const;
     void getMimesAndPluginIndices(Vector<MimeClassInfo>&, Vector<size_t>&) const;
     void getMimesAndPluginIndiciesForPlugins(const Vector<PluginInfo>&, Vector<MimeClassInfo>&, Vector<size_t>&) const;
+    bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes, const Vector<PluginInfo>&) const;
 
 protected:
     Page& m_page;

@@ -120,12 +120,23 @@ void PluginData::getMimesAndPluginIndiciesForPlugins(const Vector<PluginInfo>& p
     }
 }
 
+bool PluginData::supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes allowedPluginTypes, const URL& url) const
+{
+    if (!protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, url))
+        m_cachedVisiblePlugins = { url, m_page.pluginInfoProvider().webVisiblePluginInfo(m_page, url) };
+    return supportsWebVisibleMimeType(mimeType, allowedPluginTypes, *m_cachedVisiblePlugins.pluginList);
+}
+
 bool PluginData::supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes allowedPluginTypes) const
+{
+    return supportsWebVisibleMimeType(mimeType, allowedPluginTypes, webVisiblePlugins());
+}
+
+bool PluginData::supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes allowedPluginTypes, const Vector<PluginInfo>& plugins) const
 {
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
-    const Vector<PluginInfo>& plugins = webVisiblePlugins();
-    getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    getMimesAndPluginIndiciesForPlugins(plugins, mimes, mimePluginIndices);
 
     for (unsigned i = 0; i < mimes.size(); ++i) {
         if (mimes[i].type == mimeType && (allowedPluginTypes == AllPlugins || plugins[mimePluginIndices[i]].isApplicationPlugin))

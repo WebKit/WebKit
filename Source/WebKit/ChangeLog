@@ -1,3 +1,19 @@
+2018-04-20  Youenn Fablet  <youenn@apple.com>
+
+        WebPage sometimes incorrectly rules out PDF as a mime type that can be showed
+        https://bugs.webkit.org/show_bug.cgi?id=184369
+
+        Reviewed by Chris Dumez.
+
+        Use API to check for plugin availability for response at navigation time.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canShowResponse const):
+        (WebKit::WebPage::canShowMIMEType const):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-04-20  Daniel Bates  <dabates@apple.com>
 
         Remove Strong Password decoration when text field type changes

@@ -57,6 +57,7 @@
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/PluginData.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
@@ -954,6 +955,7 @@ public:
     std::optional<WebCore::IntSize> viewportSizeForCSSViewportUnits() const { return m_viewportSizeForCSSViewportUnits; }
 
     bool canShowMIMEType(const String& MIMEType) const;
+    bool canShowResponse(const WebCore::ResourceResponse&) const;
 
     void addTextCheckingRequest(uint64_t requestID, Ref<WebCore::TextCheckingRequest>&&);
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
@@ -1411,6 +1413,8 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     RefPtr<WebCore::HTMLAttachmentElement> attachmentElementWithIdentifier(const String& identifier) const;
 #endif
+
+    bool canShowMIMEType(const String&, const Function<bool(const String&, WebCore::PluginData::AllowedPluginTypes)>& supportsPlugin) const;
 
     uint64_t m_pageID;
 

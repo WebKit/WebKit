@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import "Utilities.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
@@ -120,6 +121,26 @@ TEST(WebKit, WKNavigationResponseUnknownMIMEType)
     navigationDelegate.get().expectation = NO;
 
     NSURL *testURL = [NSURL URLWithString:@"test:///json-response"];
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(WebKit, WKNavigationResponsePDFType)
+{
+    isDone = false;
+    auto schemeHandler = adoptNS([[WKNavigationResponseTestSchemeHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    auto navigationDelegate = adoptNS([[WKNavigationResponseTestNavigationDelegate alloc] init]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [[[webView configuration] processPool] _addSupportedPlugin: @"" named: @"WebKit built-in PDF" withMimeTypes: [NSSet setWithArray: @[ @"application/pdf" ]] withExtensions: [NSSet setWithArray: @[ ]]];
+
+    schemeHandler.get().mimeType = @"application/pdf";
+    navigationDelegate.get().expectation = YES;
+
+    NSURL *testURL = [NSURL URLWithString:@"test:///pdf-response"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
     TestWebKitAPI::Util::run(&isDone);
 }
