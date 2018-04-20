@@ -431,6 +431,7 @@ set(WebKit_SOURCES
     UIProcess/Authentication/WebCredential.cpp
     UIProcess/Authentication/WebProtectionSpace.cpp
 
+    UIProcess/Automation/SimulatedInputDispatcher.cpp
     UIProcess/Automation/WebAutomationSession.cpp
 
     UIProcess/Downloads/DownloadProxy.cpp
