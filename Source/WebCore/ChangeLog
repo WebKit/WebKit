@@ -1,3 +1,17 @@
+2018-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Extra zoom mode] Disable CA transactions while setting up for fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=184817
+        <rdar://problem/39596075>
+
+        Reviewed by Jer Noble.
+
+        This was tested manually as it is not possible to write an automated test for this.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::doSetup): Move the call to disable CA transactions outside
+        of the EXTRA_ZOOM_MODE check, the [CATransaction commit] was already unguarded.
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         Make PluginData cache its web visible plugins

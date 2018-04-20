@@ -1620,9 +1620,10 @@ void VideoFullscreenInterfaceAVKit::doSetup()
     }
     m_setupNeedsInlineRect = false;
 
-#if !ENABLE(EXTRA_ZOOM_MODE)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
+
+#if !ENABLE(EXTRA_ZOOM_MODE)
     if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window) {
         if (!m_window)
             m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
