@@ -558,7 +558,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         return AccessGenerationResult::GaveUp;
     }
 
-    CodeLocationLabel<JSEntryPtrTag> successLabel = stubInfo.doneLocation();
+    CodeLocationLabel<JSInternalPtrTag> successLabel = stubInfo.doneLocation();
 
     linkBuffer.link(state.success, successLabel);
 

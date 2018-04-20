@@ -1,3 +1,65 @@
+2018-04-20  Mark Lam  <mark.lam@apple.com>
+
+        Some JSEntryPtrTags should actually be JSInternalPtrTags.
+        https://bugs.webkit.org/show_bug.cgi?id=184712
+        <rdar://problem/39507381>
+
+        Reviewed by Michael Saboff.
+
+        1. Convert some uses of JSEntryPtrTag into JSInternalPtrTags.
+        2. Tag all LLInt bytecodes consistently with BytecodePtrTag now and retag them
+           only when needed.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::ByValInfo):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::callReturnLocation):
+        (JSC::CallLinkInfo::patchableJump):
+        (JSC::CallLinkInfo::hotPathBegin):
+        (JSC::CallLinkInfo::slowPathStart):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setCallLocations):
+        (JSC::CallLinkInfo::hotPathOther):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::doneLocation):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * ftl/FTLLazySlowPath.cpp:
+        (JSC::FTL::LazySlowPath::initialize):
+        * ftl/FTLLazySlowPath.h:
+        (JSC::FTL::LazySlowPath::done const):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIn):
+        (JSC::FTL::DFG::LowerDFGToB3::lazySlowPath):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::initialize):
+        * llint/LLIntData.h:
+        (JSC::LLInt::getCodePtr):
+        (JSC::LLInt::getExecutableAddress): Deleted.
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2018-04-18  Jer Noble  <jer.noble@apple.com>
 
         Don't put build products into WK_ALTERNATE_WEBKIT_SDK_PATH for engineering builds

@@ -1636,7 +1636,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(CallFrameSlot::callee) = calleeAsValue;
-    execCallee->setReturnPC(LLInt::getExecutableAddress(llint_generic_return_point));
+    execCallee->setReturnPC(LLInt::getCodePtr<JSEntryPtrTag>(llint_generic_return_point).executableAddress());
     execCallee->setCodeBlock(0);
     exec->setCurrentVPC(pc);
     

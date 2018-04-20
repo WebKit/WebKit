@@ -7172,9 +7172,9 @@ private:
                         linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
 
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
                     });
             });
 
@@ -7314,10 +7314,10 @@ private:
                     
                     jit.addLinkTask(
                         [=] (LinkBuffer& linkBuffer) {
-                            CodeLocationLabel<JSEntryPtrTag> patchableJumpLocation = linkBuffer.locationOf<JSEntryPtrTag>(patchableJump);
-                            CodeLocationNearCall<JSEntryPtrTag> callLocation = linkBuffer.locationOfNearCall<JSEntryPtrTag>(call);
-                            CodeLocationLabel<JSEntryPtrTag> slowPathLocation = linkBuffer.locationOf<JSEntryPtrTag>(slowPath);
-                            
+                            CodeLocationLabel<JSInternalPtrTag> patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(patchableJump);
+                            CodeLocationNearCall<JSInternalPtrTag> callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
+                            CodeLocationLabel<JSInternalPtrTag> slowPathLocation = linkBuffer.locationOf<JSInternalPtrTag>(slowPath);
+
                             callLinkInfo->setCallLocations(
                                 patchableJumpLocation,
                                 slowPathLocation,
@@ -7363,13 +7363,13 @@ private:
                         
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
-                                CodeLocationNearCall<JSEntryPtrTag> callLocation = linkBuffer.locationOfNearCall<JSEntryPtrTag>(call);
-                                CodeLocationLabel<JSEntryPtrTag> slowPathLocation = linkBuffer.locationOf<JSEntryPtrTag>(slowPath);
-                                
+                                CodeLocationNearCall<JSInternalPtrTag> callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
+                                CodeLocationLabel<JSInternalPtrTag> slowPathLocation = linkBuffer.locationOf<JSInternalPtrTag>(slowPath);
+
                                 linkBuffer.link(call, slowPathLocation);
-                                
+
                                 callLinkInfo->setCallLocations(
-                                    CodeLocationLabel<JSEntryPtrTag>(),
+                                    CodeLocationLabel<JSInternalPtrTag>(),
                                     slowPathLocation,
                                     callLocation);
                             });
@@ -7492,9 +7492,9 @@ private:
                         linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
 
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
                     });
             });
     }
@@ -7790,9 +7790,9 @@ private:
                         linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
                         
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
                     });
             });
 
@@ -8072,9 +8072,9 @@ private:
                         linkBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(linkCall));
                         
                         callLinkInfo->setCallLocations(
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall)),
-                            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(targetToCheck)),
-                            linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall));
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall)),
+                            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(targetToCheck)),
+                            linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall));
                     });
             });
 
@@ -9687,15 +9687,15 @@ private:
                                         CodeLocationLabel<JITStubRoutinePtrTag> start = linkBuffer.locationOf<JITStubRoutinePtrTag>(jump);
                                         stubInfo->patch.start = start;
                                         ptrdiff_t inlineSize = MacroAssembler::differenceBetweenCodePtr(
-                                            start, linkBuffer.locationOf<JSEntryPtrTag>(done));
+                                            start, linkBuffer.locationOf<NoPtrTag>(done));
                                         RELEASE_ASSERT(inlineSize >= 0);
                                         stubInfo->patch.inlineSize = inlineSize;
 
                                         stubInfo->patch.deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
-                                            start, linkBuffer.locationOf<JSEntryPtrTag>(slowPathCall));
+                                            start, linkBuffer.locationOf<NoPtrTag>(slowPathCall));
 
                                         stubInfo->patch.deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-                                            start, linkBuffer.locationOf<JSEntryPtrTag>(slowPathBegin));
+                                            start, linkBuffer.locationOf<NoPtrTag>(slowPathBegin));
 
                                     });
                             });
@@ -13984,7 +13984,7 @@ private:
 
                                 auto linkedPatchableJump = CodeLocationJump<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(patchableJump));
 
-                                CodeLocationLabel<JSEntryPtrTag> linkedDone = linkBuffer.locationOf<JSEntryPtrTag>(done);
+                                CodeLocationLabel<JSInternalPtrTag> linkedDone = linkBuffer.locationOf<JSInternalPtrTag>(done);
 
                                 CallSiteIndex callSiteIndex =
                                     jitCode->common.addUniqueCallSiteIndex(origin);

@@ -62,11 +62,9 @@ public:
     {
     }
 
-    // FIXME: These should be tagged with JSInternalPtrTag instead of JSEntryTag.
-    // https://bugs.webkit.org/show_bug.cgi?id=184712
-    CodeLocationLabel<JSEntryPtrTag> doneLocation() { return m_inlineStart.labelAtOffset(m_inlineSize); }
-    CodeLocationLabel<JSEntryPtrTag> slowPathStartLocation() { return m_inlineStart.labelAtOffset(m_deltaFromStartToSlowPathStart); }
-    CodeLocationCall<JSEntryPtrTag> slowPathCallLocation() { return m_inlineStart.callAtOffset(m_deltaFromStartToSlowPathCallLocation); }
+    CodeLocationLabel<JSInternalPtrTag> doneLocation() { return m_inlineStart.labelAtOffset(m_inlineSize); }
+    CodeLocationLabel<JSInternalPtrTag> slowPathStartLocation() { return m_inlineStart.labelAtOffset(m_deltaFromStartToSlowPathStart); }
+    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return m_inlineStart.callAtOffset(m_deltaFromStartToSlowPathCallLocation); }
     
     bool generateInline(CCallHelpers& jit, MathICGenerationState& state, bool shouldEmitProfiling = true)
     {
@@ -223,7 +221,7 @@ public:
 
     void finalizeInlineCode(const MathICGenerationState& state, LinkBuffer& linkBuffer)
     {
-        CodeLocationLabel<JSEntryPtrTag> start = linkBuffer.locationOf<JSEntryPtrTag>(state.fastPathStart);
+        CodeLocationLabel<JSInternalPtrTag> start = linkBuffer.locationOf<JSInternalPtrTag>(state.fastPathStart);
         m_inlineStart = start;
 
         m_inlineSize = MacroAssembler::differenceBetweenCodePtr(
@@ -253,9 +251,7 @@ public:
     ArithProfile* m_arithProfile;
     Instruction* m_instruction;
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_code;
-    // FIXME: These should be tagged with JSInternalPtrTag instead of JSEntryTag.
-    // https://bugs.webkit.org/show_bug.cgi?id=184712
-    CodeLocationLabel<JSEntryPtrTag> m_inlineStart;
+    CodeLocationLabel<JSInternalPtrTag> m_inlineStart;
     int32_t m_inlineSize;
     int32_t m_deltaFromStartToSlowPathCallLocation;
     int32_t m_deltaFromStartToSlowPathStart;

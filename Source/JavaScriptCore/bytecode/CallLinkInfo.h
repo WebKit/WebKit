@@ -165,9 +165,9 @@ public:
     }
 
     void setCallLocations(
-        CodeLocationLabel<JSEntryPtrTag> callReturnLocationOrPatchableJump,
-        CodeLocationLabel<JSEntryPtrTag> hotPathBeginOrSlowPathStart,
-        CodeLocationNearCall<JSEntryPtrTag> hotPathOther)
+        CodeLocationLabel<JSInternalPtrTag> callReturnLocationOrPatchableJump,
+        CodeLocationLabel<JSInternalPtrTag> hotPathBeginOrSlowPathStart,
+        CodeLocationNearCall<JSInternalPtrTag> hotPathOther)
     {
         m_callReturnLocationOrPatchableJump = callReturnLocationOrPatchableJump;
         m_hotPathBeginOrSlowPathStart = hotPathBeginOrSlowPathStart;
@@ -181,12 +181,12 @@ public:
         m_allowStubs = false;
     }
 
-    CodeLocationNearCall<JSEntryPtrTag> callReturnLocation();
-    CodeLocationJump<JSEntryPtrTag> patchableJump();
-    CodeLocationDataLabelPtr<JSEntryPtrTag> hotPathBegin();
-    CodeLocationLabel<JSEntryPtrTag> slowPathStart();
+    CodeLocationNearCall<JSInternalPtrTag> callReturnLocation();
+    CodeLocationJump<JSInternalPtrTag> patchableJump();
+    CodeLocationDataLabelPtr<JSInternalPtrTag> hotPathBegin();
+    CodeLocationLabel<JSInternalPtrTag> slowPathStart();
 
-    CodeLocationNearCall<JSEntryPtrTag> hotPathOther()
+    CodeLocationNearCall<JSInternalPtrTag> hotPathOther()
     {
         return m_hotPathOther;
     }
@@ -327,11 +327,9 @@ public:
     }
 
 private:
-    // FIXME: These should be tagged with JSInternalPtrTag instead of JSEntryTag.
-    // https://bugs.webkit.org/show_bug.cgi?id=184712
-    CodeLocationLabel<JSEntryPtrTag> m_callReturnLocationOrPatchableJump;
-    CodeLocationLabel<JSEntryPtrTag> m_hotPathBeginOrSlowPathStart;
-    CodeLocationNearCall<JSEntryPtrTag> m_hotPathOther;
+    CodeLocationLabel<JSInternalPtrTag> m_callReturnLocationOrPatchableJump;
+    CodeLocationLabel<JSInternalPtrTag> m_hotPathBeginOrSlowPathStart;
+    CodeLocationNearCall<JSInternalPtrTag> m_hotPathOther;
     WriteBarrier<JSCell> m_calleeOrCodeBlock;
     WriteBarrier<JSCell> m_lastSeenCalleeOrExecutable;
     RefPtr<PolymorphicCallStubRoutine> m_stub;

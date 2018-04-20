@@ -186,7 +186,7 @@ public:
     } patch;
 
     CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return patch.start.callAtOffset<JSInternalPtrTag>(patch.deltaFromStartToSlowPathCallLocation); }
-    CodeLocationLabel<JSEntryPtrTag> doneLocation() { return patch.start.labelAtOffset<JSEntryPtrTag>(patch.inlineSize); }
+    CodeLocationLabel<JSInternalPtrTag> doneLocation() { return patch.start.labelAtOffset<JSInternalPtrTag>(patch.inlineSize); }
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation() { return patch.start.labelAtOffset(patch.deltaFromStartToSlowPathStart); }
     CodeLocationJump<JSInternalPtrTag> patchableJumpForIn()
     { 

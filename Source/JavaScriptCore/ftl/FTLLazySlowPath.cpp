@@ -38,7 +38,7 @@ LazySlowPath::~LazySlowPath()
 }
 
 void LazySlowPath::initialize(
-    CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSEntryPtrTag> done,
+    CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSInternalPtrTag> done,
     CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget,
     const RegisterSet& usedRegisters, CallSiteIndex callSiteIndex, RefPtr<Generator> generator
     )

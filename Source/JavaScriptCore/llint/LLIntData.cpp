@@ -58,41 +58,12 @@ void initialize()
 #else // ENABLE(JIT)
     llint_entry(&Data::s_opcodeMap);
 
-    for (int i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i)
+    for (int i = 0; i < numOpcodeIDs; ++i)
         Data::s_opcodeMap[i] = tagCodePtr(Data::s_opcodeMap[i], BytecodePtrTag);
 
-    static const PtrTag tagsForOpcode[] = {
-        // FIXME: These should be tagged with JSInternalPtrTag instead of JSEntryTag.
-        // https://bugs.webkit.org/show_bug.cgi?id=184712
-        JSEntryPtrTag, // llint_program_prologue
-        JSEntryPtrTag, // llint_eval_prologue
-        JSEntryPtrTag, // llint_module_program_prologue
-        JSEntryPtrTag, // llint_function_for_call_prologue
-        JSEntryPtrTag, // llint_function_for_construct_prologue
-        JSEntryPtrTag, // llint_function_for_call_arity_check
-        JSEntryPtrTag, // llint_function_for_construct_arity_check
-        JSEntryPtrTag, // llint_generic_return_point
-        BytecodePtrTag, // llint_throw_from_slow_path_trampoline
-        ExceptionHandlerPtrTag, // llint_throw_during_call_trampoline
-        JSEntryPtrTag, // llint_native_call_trampoline
-        JSEntryPtrTag, // llint_native_construct_trampoline
-        JSEntryPtrTag, // llint_internal_function_call_trampoline
-        JSEntryPtrTag, // llint_internal_function_construct_trampoline
-        ExceptionHandlerPtrTag, // handleUncaughtException
-    };
-
-    static_assert(sizeof(tagsForOpcode) / sizeof(tagsForOpcode[0]) == NUMBER_OF_BYTECODE_HELPER_IDS, "");
-    static_assert(static_cast<uintptr_t>(llint_program_prologue) == NUMBER_OF_BYTECODE_IDS, "");
-
-    for (int i = 0; i < NUMBER_OF_BYTECODE_HELPER_IDS; ++i) {
-        int opcodeID = i + NUMBER_OF_BYTECODE_IDS;
-        Data::s_opcodeMap[opcodeID] = tagCodePtr(Data::s_opcodeMap[opcodeID], tagsForOpcode[i]);
-    }
-
-    void* handler = LLInt::getExecutableAddress(llint_throw_from_slow_path_trampoline);
+    void* handler = Data::s_opcodeMap[llint_throw_from_slow_path_trampoline];
     for (int i = 0; i < maxOpcodeLength + 1; ++i)
         Data::s_exceptionInstructions[i].u.pointer = handler;
-
 #endif // ENABLE(JIT)
 }
 

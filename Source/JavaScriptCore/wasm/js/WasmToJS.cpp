@@ -654,9 +654,9 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
         return makeUnexpected(BindingFailure::OutOfMemory);
 
     patchBuffer.link(slowCall, FunctionPtr<JITThunkPtrTag>(vm->getCTIStub(linkCallThunkGenerator).code()));
-    CodeLocationLabel<JSEntryPtrTag> callReturnLocation(patchBuffer.locationOfNearCall<JSEntryPtrTag>(slowCall));
-    CodeLocationLabel<JSEntryPtrTag> hotPathBegin(patchBuffer.locationOf<JSEntryPtrTag>(targetToCheck));
-    CodeLocationNearCall<JSEntryPtrTag> hotPathOther = patchBuffer.locationOfNearCall<JSEntryPtrTag>(fastCall);
+    CodeLocationLabel<JSInternalPtrTag> callReturnLocation(patchBuffer.locationOfNearCall<JSInternalPtrTag>(slowCall));
+    CodeLocationLabel<JSInternalPtrTag> hotPathBegin(patchBuffer.locationOf<JSInternalPtrTag>(targetToCheck));
+    CodeLocationNearCall<JSInternalPtrTag> hotPathOther = patchBuffer.locationOfNearCall<JSInternalPtrTag>(fastCall);
     callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
 
     return FINALIZE_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data());

@@ -835,10 +835,10 @@ CompilationResult JIT::link()
 
         for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
             PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
-            auto notIndexJump = CodeLocationJump<JSEntryPtrTag>();
+            auto notIndexJump = CodeLocationJump<JSInternalPtrTag>();
             if (Jump(patchableNotIndexJump).isSet())
-                notIndexJump = CodeLocationJump<JSEntryPtrTag>(patchBuffer.locationOf<JSEntryPtrTag>(patchableNotIndexJump));
-            auto badTypeJump = CodeLocationJump<JSEntryPtrTag>(patchBuffer.locationOf<JSEntryPtrTag>(byValCompilationInfo.badTypeJump));
+                notIndexJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(patchableNotIndexJump));
+            auto badTypeJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.badTypeJump));
             CodeLocationLabel<NoPtrTag> doneTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.doneTarget);
             CodeLocationLabel<NoPtrTag> nextHotPathTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.nextHotPathTarget);
             CodeLocationLabel<NoPtrTag> slowPathTarget = patchBuffer.locationOf<NoPtrTag>(byValCompilationInfo.slowPathTarget);
@@ -860,9 +860,9 @@ CompilationResult JIT::link()
     for (auto& compilationInfo : m_callCompilationInfo) {
         CallLinkInfo& info = *compilationInfo.callLinkInfo;
         info.setCallLocations(
-            CodeLocationLabel<JSEntryPtrTag>(patchBuffer.locationOfNearCall<JSEntryPtrTag>(compilationInfo.callReturnLocation)),
-            CodeLocationLabel<JSEntryPtrTag>(patchBuffer.locationOf<JSEntryPtrTag>(compilationInfo.hotPathBegin)),
-            patchBuffer.locationOfNearCall<JSEntryPtrTag>(compilationInfo.hotPathOther));
+            CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOfNearCall<JSInternalPtrTag>(compilationInfo.callReturnLocation)),
+            CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(compilationInfo.hotPathBegin)),
+            patchBuffer.locationOfNearCall<JSInternalPtrTag>(compilationInfo.hotPathOther));
     }
 
     JITCodeMap jitCodeMap;

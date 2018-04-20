@@ -69,13 +69,13 @@ public:
     ~LazySlowPath();
 
     void initialize(
-        CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSEntryPtrTag> done,
+        CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSInternalPtrTag> done,
         CodeLocationLabel<ExceptionHandlerPtrTag> exceptionTarget, const RegisterSet& usedRegisters,
         CallSiteIndex, RefPtr<Generator>
         );
 
     CodeLocationJump<JSInternalPtrTag> patchableJump() const { return m_patchableJump; }
-    CodeLocationLabel<JSEntryPtrTag> done() const { return m_done; }
+    CodeLocationLabel<JSInternalPtrTag> done() const { return m_done; }
     const RegisterSet& usedRegisters() const { return m_usedRegisters; }
     CallSiteIndex callSiteIndex() const { return m_callSiteIndex; }
 
@@ -85,9 +85,7 @@ public:
 
 private:
     CodeLocationJump<JSInternalPtrTag> m_patchableJump;
-    // FIXME: This should be tagged with JSInternalPtrTag instead of JSEntryTag.
-    // https://bugs.webkit.org/show_bug.cgi?id=184712
-    CodeLocationLabel<JSEntryPtrTag> m_done;
+    CodeLocationLabel<JSInternalPtrTag> m_done;
     CodeLocationLabel<ExceptionHandlerPtrTag> m_exceptionTarget;
     RegisterSet m_usedRegisters;
     CallSiteIndex m_callSiteIndex;

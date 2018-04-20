@@ -818,9 +818,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             jit.addLinkTask([=, &vm] (LinkBuffer& linkBuffer) {
                 this->as<GetterSetterAccessCase>().callLinkInfo()->setCallLocations(
-                    CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(slowPathCall)),
-                    CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(addressOfLinkFunctionCheck)),
-                    linkBuffer.locationOfNearCall<JSEntryPtrTag>(fastPathCall));
+                    CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(slowPathCall)),
+                    CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(addressOfLinkFunctionCheck)),
+                    linkBuffer.locationOfNearCall<JSInternalPtrTag>(fastPathCall));
 
                 linkBuffer.link(
                     slowPathCall,

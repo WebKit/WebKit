@@ -226,7 +226,7 @@ inline JITArrayMode jitArrayModeForStructure(Structure* structure)
 struct ByValInfo {
     ByValInfo() { }
 
-    ByValInfo(unsigned bytecodeIndex, CodeLocationJump<JSEntryPtrTag> notIndexJump, CodeLocationJump<JSEntryPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, int16_t badTypeJumpToDone, int16_t badTypeJumpToNextHotPath, int16_t returnAddressToSlowPath)
+    ByValInfo(unsigned bytecodeIndex, CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, int16_t badTypeJumpToDone, int16_t badTypeJumpToNextHotPath, int16_t returnAddressToSlowPath)
         : bytecodeIndex(bytecodeIndex)
         , notIndexJump(notIndexJump)
         , badTypeJump(badTypeJump)
@@ -244,8 +244,8 @@ struct ByValInfo {
     }
 
     unsigned bytecodeIndex;
-    CodeLocationJump<JSEntryPtrTag> notIndexJump;
-    CodeLocationJump<JSEntryPtrTag> badTypeJump;
+    CodeLocationJump<JSInternalPtrTag> notIndexJump;
+    CodeLocationJump<JSInternalPtrTag> badTypeJump;
     CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler;
     JITArrayMode arrayMode; // The array mode that was baked into the inline JIT code.
     ArrayProfile* arrayProfile;

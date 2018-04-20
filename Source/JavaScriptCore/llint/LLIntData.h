@@ -80,16 +80,12 @@ inline Opcode getOpcode(OpcodeID id)
 #endif
 }
 
-ALWAYS_INLINE void* getExecutableAddress(OpcodeID opcodeID)
-{
-    ASSERT(opcodeID >= NUMBER_OF_BYTECODE_IDS);
-    return reinterpret_cast<void*>(getOpcode(opcodeID));
-}
-
 template<PtrTag tag>
 ALWAYS_INLINE MacroAssemblerCodePtr<tag> getCodePtr(OpcodeID opcodeID)
 {
-    return MacroAssemblerCodePtr<tag>::createFromExecutableAddress(getOpcode(opcodeID));
+    void* address = getOpcode(opcodeID);
+    address = retagCodePtr<BytecodePtrTag, tag>(address);
+    return MacroAssemblerCodePtr<tag>::createFromExecutableAddress(address);
 }
 
 template<PtrTag tag>

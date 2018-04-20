@@ -292,26 +292,26 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         CallLinkInfo& info = *record.info;
         linkBuffer.link(record.slowCall, linkCallThunk);
         info.setCallLocations(
-            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOfNearCall<JSEntryPtrTag>(record.slowCall)),
-            CodeLocationLabel<JSEntryPtrTag>(linkBuffer.locationOf<JSEntryPtrTag>(record.targetToCheck)),
-            linkBuffer.locationOfNearCall<JSEntryPtrTag>(record.fastCall));
+            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.slowCall)),
+            CodeLocationLabel<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(record.targetToCheck)),
+            linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.fastCall));
     }
     
     for (JSDirectCallRecord& record : m_jsDirectCalls) {
         CallLinkInfo& info = *record.info;
         linkBuffer.link(record.call, linkBuffer.locationOf<NoPtrTag>(record.slowPath));
         info.setCallLocations(
-            CodeLocationLabel<JSEntryPtrTag>(),
-            linkBuffer.locationOf<JSEntryPtrTag>(record.slowPath),
-            linkBuffer.locationOfNearCall<JSEntryPtrTag>(record.call));
+            CodeLocationLabel<JSInternalPtrTag>(),
+            linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
+            linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.call));
     }
     
     for (JSDirectTailCallRecord& record : m_jsDirectTailCalls) {
         CallLinkInfo& info = *record.info;
         info.setCallLocations(
-            linkBuffer.locationOf<JSEntryPtrTag>(record.patchableJump),
-            linkBuffer.locationOf<JSEntryPtrTag>(record.slowPath),
-            linkBuffer.locationOfNearCall<JSEntryPtrTag>(record.call));
+            linkBuffer.locationOf<JSInternalPtrTag>(record.patchableJump),
+            linkBuffer.locationOf<JSInternalPtrTag>(record.slowPath),
+            linkBuffer.locationOfNearCall<JSInternalPtrTag>(record.call));
     }
     
     MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);

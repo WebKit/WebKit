@@ -97,25 +97,25 @@ void CallLinkInfo::unlink(VM& vm)
     RELEASE_ASSERT(!isOnList());
 }
 
-CodeLocationNearCall<JSEntryPtrTag> CallLinkInfo::callReturnLocation()
+CodeLocationNearCall<JSInternalPtrTag> CallLinkInfo::callReturnLocation()
 {
     RELEASE_ASSERT(!isDirect());
-    return CodeLocationNearCall<JSEntryPtrTag>(m_callReturnLocationOrPatchableJump, Regular);
+    return CodeLocationNearCall<JSInternalPtrTag>(m_callReturnLocationOrPatchableJump, Regular);
 }
 
-CodeLocationJump<JSEntryPtrTag> CallLinkInfo::patchableJump()
+CodeLocationJump<JSInternalPtrTag> CallLinkInfo::patchableJump()
 {
     RELEASE_ASSERT(callType() == DirectTailCall);
-    return CodeLocationJump<JSEntryPtrTag>(m_callReturnLocationOrPatchableJump);
+    return CodeLocationJump<JSInternalPtrTag>(m_callReturnLocationOrPatchableJump);
 }
 
-CodeLocationDataLabelPtr<JSEntryPtrTag> CallLinkInfo::hotPathBegin()
+CodeLocationDataLabelPtr<JSInternalPtrTag> CallLinkInfo::hotPathBegin()
 {
     RELEASE_ASSERT(!isDirect());
-    return CodeLocationDataLabelPtr<JSEntryPtrTag>(m_hotPathBeginOrSlowPathStart);
+    return CodeLocationDataLabelPtr<JSInternalPtrTag>(m_hotPathBeginOrSlowPathStart);
 }
 
-CodeLocationLabel<JSEntryPtrTag> CallLinkInfo::slowPathStart()
+CodeLocationLabel<JSInternalPtrTag> CallLinkInfo::slowPathStart()
 {
     RELEASE_ASSERT(isDirect());
     return m_hotPathBeginOrSlowPathStart;
