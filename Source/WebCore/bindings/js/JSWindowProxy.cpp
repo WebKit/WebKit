@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+using namespace JSC;
+
 const ClassInfo JSWindowProxy::s_info = { "JSWindowProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWindowProxy) };
 
 inline JSWindowProxy::JSWindowProxy(VM& vm, Structure& structure, DOMWrapperWorld& world)
@@ -58,10 +60,10 @@ void JSWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
     setWindow(window);
 }
 
-JSWindowProxy& JSWindowProxy::create(JSC::VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
+JSWindowProxy& JSWindowProxy::create(VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
 {
-    auto& structure = *JSC::Structure::create(vm, 0, jsNull(), JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
-    auto& proxy = *new (NotNull, JSC::allocateCell<JSWindowProxy>(vm.heap)) JSWindowProxy(vm, structure, world);
+    auto& structure = *Structure::create(vm, 0, jsNull(), TypeInfo(PureForwardingProxyType, StructureFlags), info());
+    auto& proxy = *new (NotNull, allocateCell<JSWindowProxy>(vm.heap)) JSWindowProxy(vm, structure, world);
     proxy.finishCreation(vm, window);
     return proxy;
 }
@@ -117,7 +119,7 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
     ASSERT(prototype->globalObject() == window);
 }
 
-void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
+void JSWindowProxy::attachDebugger(Debugger* debugger)
 {
     auto* globalObject = window();
     JSLockHolder lock(globalObject->vm());
@@ -125,7 +127,7 @@ void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
     if (debugger)
         debugger->attach(globalObject);
     else if (auto* currentDebugger = globalObject->debugger())
-        currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
+        currentDebugger->detach(globalObject, Debugger::TerminatingDebuggingSession);
 }
 
 AbstractDOMWindow& JSWindowProxy::wrapped() const
