@@ -18,4 +18,7 @@ PASS Checking justify-items: unsafe end
 PASS Checking justify-items: safe end 
 PASS Checking justify-items: unsafe flex-start 
 PASS Checking justify-items: safe center 
+PASS Checking justify-items: legacy left 
+PASS Checking justify-items: legacy center 
+PASS Checking justify-items: legacy right 
 

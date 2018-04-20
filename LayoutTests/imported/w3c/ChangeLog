@@ -1,3 +1,54 @@
+2018-04-20  Javier Fernandez  <jfernandez@igalia.com>
+
+        Update Alignment shorthands to the spec now that they are not ambiguous
+        https://bugs.webkit.org/show_bug.cgi?id=184812
+
+        Reviewed by Antti Koivisto.
+
+        Imported new Web Platform Tests from the css-align test suite.
+        Additionally, updated the ones we already have to verify the new shorthand syntax is correct.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-align/OWNERS: Added.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-001.html:
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-002.html:
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-004-expected.txt:
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-004.html:
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-001.html:
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-003.html:
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-001.html:
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-002.html:
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-004-expected.txt:
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-004.html:
+        * web-platform-tests/css/css-align/default-alignment/shorthand-serialization-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/shorthand-serialization-001.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/w3c-import.log:
+        * web-platform-tests/css/css-align/gaps/column-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/column-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/gap-normal-computed-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/gap-normal-computed-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-normal-used-001-expected.xht: Added.
+        * web-platform-tests/css/css-align/gaps/gap-normal-used-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-normal-used-002-expected.xht: Added.
+        * web-platform-tests/css/css-align/gaps/gap-normal-used-002.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/grid-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/row-gap-parsing-001-expected.txt:
+        * web-platform-tests/css/css-align/gaps/row-gap-parsing-001.html:
+        * web-platform-tests/css/css-align/gaps/w3c-import.log:
+        * web-platform-tests/css/css-align/resources/alignment-parsing-utils.js:
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-001.html:
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-002.html:
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-004-expected.txt:
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-004.html:
+        * web-platform-tests/css/css-align/w3c-import.log: Added.
+
 2018-04-18  Youenn Fablet  <youenn@apple.com>
 
         Allow cross-origin redirections for synchronous XHR

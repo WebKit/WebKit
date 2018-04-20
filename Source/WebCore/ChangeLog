@@ -1,3 +1,34 @@
+2018-04-20  Javier Fernandez  <jfernandez@igalia.com>
+
+        Update Alignment shorthands to the spec now that they are not ambiguous
+        https://bugs.webkit.org/show_bug.cgi?id=184812
+
+        Reviewed by Antti Koivisto.
+
+        Now that the issue [1] about the syntax ambiguity has been resolved we
+        don't need to use the custom syntax anymore. The Alignment shorthands
+        use now the simple syntax, defined based on the longhands' syntax.
+
+        Since we allow all the values valid for each longhand, we'll update
+        in this CL the corresponding web platform tests. Additionally, this CL
+        updates also the shorthand serialization tests [2], which didn't
+        consider the new value 'legacy' for justify-items (and place-items) due
+        to the bug [3] Firefox still has pending to be fixed.
+
+        [1] https://github.com/w3c/csswg-drafts/issues/1001
+        [2] css/css-align/default-alignment/shorthand-serialization-001.html
+        [3] https://bugzilla.mozilla.org/show_bug.cgi?id=1363875
+
+        Tests: imported/w3c/web-platform-tests/css/css-align/default-alignment/shorthand-serialization-001.html
+               imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-computed-001.html
+               imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-used-001.html
+               imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-used-002.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumePlaceContentShorthand): Using the justify-content and align-content parsing logic to parse the shorthand.
+        (WebCore::CSSPropertyParser::consumePlaceItemsShorthand): Using the justify-items and align-items parsing logic to parse the shorthand.
+        (WebCore::CSSPropertyParser::consumePlaceSelfShorthand): Using the justify-self and align-self parsing logic to parse the shorthand.
+
 2018-04-20  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r230117.

@@ -5514,23 +5514,6 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     return true;
 }
 
-static RefPtr<CSSValue> consumeSimplifiedContentPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
-{
-    ASSERT(isPositionKeyword);
-    CSSValueID id = range.peek().id();
-    if (identMatches<CSSValueNormal>(id) || isPositionKeyword(id))
-        return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
-    if (isBaselineKeyword(id)) {
-        RefPtr<CSSValue> baseline = consumeBaselineKeyword(range);
-        if (!baseline)
-            return nullptr;
-        return CSSContentDistributionValue::create(CSSValueInvalid, getBaselineKeyword(baseline.releaseNonNull()), CSSValueInvalid);
-    }
-    if (isContentDistributionKeyword(id))
-        return CSSContentDistributionValue::create(range.consumeIncludingWhitespace().id(), CSSValueInvalid, CSSValueInvalid);
-    return nullptr;
-}
-
 bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
 {
     ASSERT(shorthandForProperty(CSSPropertyPlaceContent).length() == 2);
@@ -5538,8 +5521,9 @@ bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
     if (m_range.atEnd())
         return false;
 
+    CSSParserTokenRange rangeCopy = m_range;
     bool isBaseline = isBaselineKeyword(m_range.peek().id());
-    RefPtr<CSSValue> alignContentValue = consumeSimplifiedContentPosition(m_range, isContentPositionKeyword);
+    RefPtr<CSSValue> alignContentValue = consumeContentDistributionOverflowPosition(m_range, isContentPositionKeyword);
     if (!alignContentValue)
         return false;
 
@@ -5549,7 +5533,9 @@ bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
     if (isBaselineKeyword(m_range.peek().id()))
         return false;
 
-    RefPtr<CSSValue> justifyContentValue = m_range.atEnd() ? alignContentValue : consumeSimplifiedContentPosition(m_range, isContentPositionOrLeftOrRightKeyword);
+    if (m_range.atEnd())
+        m_range = rangeCopy;
+    RefPtr<CSSValue> justifyContentValue = consumeContentDistributionOverflowPosition(m_range, isContentPositionOrLeftOrRightKeyword);
     if (!justifyContentValue)
         return false;
     if (!m_range.atEnd())
@@ -5560,35 +5546,18 @@ bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
     return true;
 }
 
-static RefPtr<CSSValue> consumeSimplifiedDefaultPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
-{
-    ASSERT(isPositionKeyword);
-    CSSValueID id = range.peek().id();
-    if (isNormalOrStretch(id) || isPositionKeyword(id))
-        return consumeIdent(range);
-
-    if (isBaselineKeyword(id))
-        return consumeBaselineKeyword(range);
-
-    return nullptr;
-}
-
-static RefPtr<CSSValue> consumeSimplifiedSelfPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
-{
-    ASSERT(isPositionKeyword);
-    if (isAuto(range.peek().id()))
-        return consumeIdent(range);
-    return consumeSimplifiedDefaultPosition(range, isPositionKeyword);
-}
-
 bool CSSPropertyParser::consumePlaceItemsShorthand(bool important)
 {
     ASSERT(shorthandForProperty(CSSPropertyPlaceItems).length() == 2);
 
-    RefPtr<CSSValue> alignItemsValue = consumeSimplifiedDefaultPosition(m_range, isSelfPositionKeyword);
+    CSSParserTokenRange rangeCopy = m_range;
+    RefPtr<CSSValue> alignItemsValue = consumeAlignItems(m_range);
     if (!alignItemsValue)
         return false;
-    RefPtr<CSSValue> justifyItemsValue = m_range.atEnd() ? alignItemsValue : consumeSimplifiedDefaultPosition(m_range, isSelfPositionOrLeftOrRightKeyword);
+
+    if (m_range.atEnd())
+        m_range = rangeCopy;
+    RefPtr<CSSValue> justifyItemsValue = consumeJustifyItems(m_range);
     if (!justifyItemsValue)
         return false;
 
@@ -5604,10 +5573,14 @@ bool CSSPropertyParser::consumePlaceSelfShorthand(bool important)
 {
     ASSERT(shorthandForProperty(CSSPropertyPlaceSelf).length() == 2);
 
-    RefPtr<CSSValue> alignSelfValue = consumeSimplifiedSelfPosition(m_range, isSelfPositionKeyword);
+    CSSParserTokenRange rangeCopy = m_range;
+    RefPtr<CSSValue> alignSelfValue = consumeSelfPositionOverflowPosition(m_range, isSelfPositionKeyword);
     if (!alignSelfValue)
         return false;
-    RefPtr<CSSValue> justifySelfValue = m_range.atEnd() ? alignSelfValue : consumeSimplifiedSelfPosition(m_range, isSelfPositionOrLeftOrRightKeyword);
+
+    if (m_range.atEnd())
+        m_range = rangeCopy;
+    RefPtr<CSSValue> justifySelfValue = consumeSelfPositionOverflowPosition(m_range, isSelfPositionOrLeftOrRightKeyword);
     if (!justifySelfValue)
         return false;
 

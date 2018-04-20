@@ -9,4 +9,9 @@ PASS Checking place-content: stretch
 PASS Checking place-content: space-around 
 PASS Checking place-content: space-between 
 PASS Checking place-content: space-evenly 
+PASS Checking place-content: safe flex-end 
+PASS Checking place-content: unsafe end 
+PASS Checking place-content: safe end 
+PASS Checking place-content: unsafe flex-start 
+PASS Checking place-content: safe center 
 

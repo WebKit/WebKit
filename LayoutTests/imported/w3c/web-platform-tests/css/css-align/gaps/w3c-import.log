@@ -22,6 +22,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-animation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-animation-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-animation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-computed-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-used-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-used-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-used-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-normal-used-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/gap-parsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/gaps/grid-gap-parsing-001.html

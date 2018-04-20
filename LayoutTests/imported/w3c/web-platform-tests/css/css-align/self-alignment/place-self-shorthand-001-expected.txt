@@ -12,4 +12,9 @@ PASS Checking place-self: flex-end
 PASS Checking place-self: baseline 
 PASS Checking place-self: first baseline 
 PASS Checking place-self: last baseline 
+PASS Checking place-self: safe flex-end 
+PASS Checking place-self: unsafe end 
+PASS Checking place-self: safe end 
+PASS Checking place-self: unsafe flex-start 
+PASS Checking place-self: safe center 
 
