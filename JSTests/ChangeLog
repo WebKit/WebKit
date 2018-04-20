@@ -1,3 +1,18 @@
+2018-04-20  JF Bastien  <jfbastien@apple.com>
+
+        Handle more JSON stringify OOM
+        https://bugs.webkit.org/show_bug.cgi?id=184846
+        <rdar://problem/39390672>
+
+        Reviewed by Mark Lam.
+
+        * stress/json-stringified-overflow-2.js: Added. Same as the one
+        below, but with a bigger input which will trigger a different code
+        path.
+        (catch):
+        * stress/json-stringified-overflow.js: Modify the test to only
+        catch OOM on stringification. not on string creation.
+
 2018-04-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebAssembly][Modules] Import tables in wasm modules

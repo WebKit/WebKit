@@ -1,3 +1,16 @@
+2018-04-20  JF Bastien  <jfbastien@apple.com>
+
+        Handle more JSON stringify OOM
+        https://bugs.webkit.org/show_bug.cgi?id=184846
+        <rdar://problem/39390672>
+
+        Reviewed by Mark Lam.
+
+        JSON stringification can OOM easily. Here's another case.
+
+        * wtf/text/StringBuilderJSON.cpp:
+        (WTF::StringBuilder::appendQuotedJSONString):
+
 2018-04-18  Jer Noble  <jer.noble@apple.com>
 
         Don't put build products into WK_ALTERNATE_WEBKIT_SDK_PATH for engineering builds
