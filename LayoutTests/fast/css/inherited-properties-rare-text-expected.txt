@@ -1,4 +1,4 @@
-test1 font-feature-settings: "dlig" 1
+test1 font-feature-settings: "dlig"
 test2 font-feature-settings: normal
 test1 -webkit-font-smoothing: antialiased
 test2 -webkit-font-smoothing: auto

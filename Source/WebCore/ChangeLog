@@ -1,3 +1,22 @@
+2018-04-20  Chris Nardi  <cnardi@chromium.org>
+
+        Omit default value when serializing font-feature-settings
+        https://bugs.webkit.org/show_bug.cgi?id=182382
+
+        Reviewed by Myles C. Maxfield.
+
+        According to the shortest-serialization principle [1], values should be omitted if their omission
+        wouldn't change the value of reparsing. As "1"/"on" is the default value for font-feature-settings,
+        omit this when serializing, matching the behavior of Firefox and Chrome.
+
+        [1]: https://github.com/w3c/csswg-drafts/issues/1564
+
+        Updated css3/font-feature-settings-parsing.html, fast/css/inherited-properties-rare-text.html,
+        and fast/text/font-face-javascript.html.
+
+        * css/CSSFontFeatureValue.cpp:
+        (WebCore::CSSFontFeatureValue::customCSSText const):
+
 2018-04-19  Alexey Proskuryakov  <ap@apple.com>
 
         More WK_ALTERNATE_FRAMEWORKS_DIR adoption in WebCore

@@ -5,16 +5,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 - Tests valid inputs.
 PASS canonicalize(parseResultOf("valid_normal")) is "normal"
-PASS canonicalize(parseResultOf("valid_value_1")) is "\"dlig\" 1"
+PASS canonicalize(parseResultOf("valid_value_1")) is "\"dlig\""
 PASS canonicalize(parseResultOf("valid_value_2")) is "\"swsh\" 2"
-PASS canonicalize(parseResultOf("valid_value_on")) is "\"smcp\" 1"
+PASS canonicalize(parseResultOf("valid_value_on")) is "\"smcp\""
 PASS canonicalize(parseResultOf("valid_value_off")) is "\"liga\" 0"
-PASS canonicalize(parseResultOf("valid_value_omit")) is "\"c2sc\" 1"
-PASS canonicalize(parseResultOf("valid_valuelist")) is "\"hist\" 1, \"tnum\" 1"
-PASS canonicalize(parseResultOf("valid_singlequote")) is "\"pkrn\" 1"
-PASS canonicalize(parseResultOf("valid_unusual_tag")) is "\"!@#$\" 1"
-PASS canonicalize(parseResultOf("valid_tag_space")) is "\"a bc\" 1"
-PASS canonicalize(parseResultOf("valid_composite")) is "\"dlig\" 1, \"lig \" 0, \"smcp\" 1"
+PASS canonicalize(parseResultOf("valid_value_omit")) is "\"c2sc\""
+PASS canonicalize(parseResultOf("valid_valuelist")) is "\"hist\", \"tnum\""
+PASS canonicalize(parseResultOf("valid_singlequote")) is "\"pkrn\""
+PASS canonicalize(parseResultOf("valid_unusual_tag")) is "\"!@#$\""
+PASS canonicalize(parseResultOf("valid_tag_space")) is "\"a bc\""
+PASS canonicalize(parseResultOf("valid_composite")) is "\"dlig\", \"lig \" 0, \"smcp\""
 - Tests invalid inputs.  Results should be "normal".
 PASS parseResultOf("invalid_ident") is "normal"
 PASS parseResultOf("invalid_cases") is "normal"
@@ -34,10 +34,10 @@ PASS parseResultOf("invalid_beginning_comma") is "normal"
 PASS parseResultOf("invalid_on") is "normal"
 PASS parseResultOf("invalid_0") is "normal"
 - Tests inherit.
-PASS canonicalize(parseResultOf("outer")) is "\"dlig\" 1"
-PASS canonicalize(parseResultOf("inner")) is "\"dlig\" 1"
+PASS canonicalize(parseResultOf("outer")) is "\"dlig\""
+PASS canonicalize(parseResultOf("inner")) is "\"dlig\""
 - Tests @font-face.
-PASS canonicalize(fontFaceRuleValid) is "\"liga\" 1"
+PASS canonicalize(fontFaceRuleValid) is "\"liga\""
 PASS fontFaceRuleInvalid is ""
 PASS successfullyParsed is true
 

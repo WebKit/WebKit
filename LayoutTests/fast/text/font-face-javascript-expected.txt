@@ -22,20 +22,20 @@ PASS new FontFace('family_name', 'url(\'asdf\')', {'unicodeRange': 'U+0-7F'}).un
 PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'variant_name'}).variant threw exception SyntaxError: The string did not match the expected pattern..
 PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'small-caps'}).variant is "small-caps"
 PASS new FontFace('family_name', 'url(\'asdf\')', {'variant': 'small-caps common-ligatures'}).variant is "common-ligatures small-caps"
-PASS new FontFace('family_name', 'url(\'asdf\')', {'featureSettings': '\'titl\''}).featureSettings is "\"titl\" 1"
+PASS new FontFace('family_name', 'url(\'asdf\')', {'featureSettings': '\'titl\''}).featureSettings is "\"titl\""
 PASS everything.style is "italic"
 PASS everything.weight is "bold"
 PASS everything.stretch is "extra-expanded"
 PASS everything.unicodeRange is "U+26-26"
 PASS everything.variant is "small-caps"
-PASS everything.featureSettings is "\"titl\" 1"
+PASS everything.featureSettings is "\"titl\""
 PASS everything.family is "other_family_name"
 PASS everything.style is "normal"
 PASS everything.weight is "300"
 PASS everything.stretch is "condensed"
 PASS everything.unicodeRange is "U+0-7f"
 PASS everything.variant is "stacked-fractions"
-PASS everything.featureSettings is "\"smcp\" 1"
+PASS everything.featureSettings is "\"smcp\""
 PASS new FontFace('family_name', 'url(\'asdf\')', {}) did not throw exception.
 PASS new FontFace('family_name', newArrayBuffer, {}) did not throw exception.
 PASS new FontFace('family_name', new DataView(newArrayBuffer), {}) did not throw exception.

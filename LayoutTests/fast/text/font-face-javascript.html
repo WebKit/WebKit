@@ -30,7 +30,7 @@ shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeR
 shouldThrow("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'variant_name'}).variant");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'small-caps'}).variant", "small-caps");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'variant': 'small-caps common-ligatures'}).variant", "common-ligatures small-caps");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'featureSettings': '\\'titl\\''}).featureSettings", "\"titl\" 1");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'featureSettings': '\\'titl\\''}).featureSettings", "\"titl\"");
 
 var everything = new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic', 'weight': 'bold', 'stretch': 'extra-expanded', 'unicodeRange': 'U+26', 'variant': 'small-caps', 'featureSettings': '\'titl\''});
 shouldBeEqualToString("everything.style", "italic");
@@ -38,7 +38,7 @@ shouldBeEqualToString("everything.weight", "bold");
 shouldBeEqualToString("everything.stretch", "extra-expanded");
 shouldBeEqualToString("everything.unicodeRange", "U+26-26");
 shouldBeEqualToString("everything.variant", "small-caps");
-shouldBeEqualToString("everything.featureSettings", "\"titl\" 1");
+shouldBeEqualToString("everything.featureSettings", "\"titl\"");
 
 everything.family = "other_family_name";
 shouldBeEqualToString("everything.family", "other_family_name");
@@ -53,7 +53,7 @@ shouldBeEqualToString("everything.unicodeRange", "U+0-7f");
 everything.variant = "stacked-fractions";
 shouldBeEqualToString("everything.variant", "stacked-fractions");
 everything.featureSettings = "'smcp'";
-shouldBeEqualToString("everything.featureSettings", "\"smcp\" 1");
+shouldBeEqualToString("everything.featureSettings", "\"smcp\"");
 
 shouldNotThrow("new FontFace('family_name', 'url(\\'asdf\\')', {})");
 var newArrayBuffer = new ArrayBuffer(100);
