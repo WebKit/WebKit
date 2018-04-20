@@ -78,7 +78,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &defaultLanguage
 };
 
-JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSDOMWindowProxy* proxy)
+JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>&& window, JSWindowProxy* proxy)
     : JSDOMGlobalObject(vm, structure, proxy->world(), &s_globalObjectMethodTable)
     , m_windowCloseWatchpoints((window && window->frame()) ? IsWatched : IsInvalidated)
     , m_wrapped(WTFMove(window))
@@ -86,7 +86,7 @@ JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, RefPtr<DOMWindow>
 {
 }
 
-void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowProxy* proxy)
+void JSDOMWindowBase::finishCreation(VM& vm, JSWindowProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
     ASSERT(inherits(vm, info()));
@@ -243,7 +243,7 @@ void JSDOMWindowBase::willRemoveFromWindowProxy()
     setCurrentEvent(0);
 }
 
-JSDOMWindowProxy* JSDOMWindowBase::proxy() const
+JSWindowProxy* JSDOMWindowBase::proxy() const
 {
     return m_proxy;
 }
@@ -271,8 +271,8 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
         const ClassInfo* classInfo = object->classInfo(vm);
         if (classInfo == JSDOMWindow::info())
             return jsCast<JSDOMWindow*>(object);
-        if (classInfo == JSDOMWindowProxy::info())
-            return jsDynamicCast<JSDOMWindow*>(vm, jsCast<JSDOMWindowProxy*>(object)->window());
+        if (classInfo == JSWindowProxy::info())
+            return jsDynamicCast<JSDOMWindow*>(vm, jsCast<JSWindowProxy*>(object)->window());
         value = object->getPrototypeDirect(vm);
     }
     return nullptr;

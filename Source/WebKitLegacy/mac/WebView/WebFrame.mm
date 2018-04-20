@@ -2092,8 +2092,8 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
     JSC::VM& vm = *globalObjectObj->vm();
-    if (!strcmp(globalObjectObj->classInfo(vm)->className, "JSDOMWindowProxy"))
-        anyWorldGlobalObject = JSC::jsDynamicCast<JSDOMWindow*>(vm, static_cast<JSDOMWindowProxy*>(globalObjectObj)->window());
+    if (!strcmp(globalObjectObj->classInfo(vm)->className, "JSWindowProxy"))
+        anyWorldGlobalObject = JSC::jsDynamicCast<JSDOMWindow*>(vm, static_cast<JSWindowProxy*>(globalObjectObj)->window());
 
     if (!anyWorldGlobalObject)
         return @"";

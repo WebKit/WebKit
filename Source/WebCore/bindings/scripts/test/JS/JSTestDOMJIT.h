@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "JSDOMWrapper.h"
 #include "JSNode.h"
 #include "TestDOMJIT.h"
 #include <JavaScriptCore/DOMJITGetterSetter.h>

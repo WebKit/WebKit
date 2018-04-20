@@ -72,26 +72,26 @@ void WindowProxy::destroyJSWindowProxy(DOMWrapperWorld& world)
     world.didDestroyWindowProxy(this);
 }
 
-JSDOMWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
+JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
 {
     ASSERT(!m_jsWindowProxies.contains(&world));
     ASSERT(m_frame.window());
 
     VM& vm = world.vm();
 
-    Strong<JSDOMWindowProxy> jsWindowProxy(vm, &JSDOMWindowProxy::create(vm, *m_frame.window(), world));
-    Strong<JSDOMWindowProxy> jsWindowProxy2(jsWindowProxy);
+    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *m_frame.window(), world));
+    Strong<JSWindowProxy> jsWindowProxy2(jsWindowProxy);
     m_jsWindowProxies.add(&world, jsWindowProxy);
     world.didCreateWindowProxy(this);
     return *jsWindowProxy.get();
 }
 
-Vector<JSC::Strong<JSDOMWindowProxy>> WindowProxy::jsWindowProxiesAsVector() const
+Vector<JSC::Strong<JSWindowProxy>> WindowProxy::jsWindowProxiesAsVector() const
 {
     return copyToVector(m_jsWindowProxies.values());
 }
 
-JSDOMWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperWorld& world)
+JSWindowProxy& WindowProxy::createJSWindowProxyWithInitializedScript(DOMWrapperWorld& world)
 {
     JSLockHolder lock(world.vm());
     auto& windowProxy = createJSWindowProxy(world);

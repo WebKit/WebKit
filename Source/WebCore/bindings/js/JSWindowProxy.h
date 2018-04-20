@@ -41,10 +41,10 @@ class AbstractDOMWindow;
 class AbstractFrame;
 class WindowProxy;
 
-class JSDOMWindowProxy final : public JSC::JSProxy {
+class JSWindowProxy final : public JSC::JSProxy {
     using Base = JSC::JSProxy;
 public:
-    static JSDOMWindowProxy& create(JSC::VM&, AbstractDOMWindow&, DOMWrapperWorld&);
+    static JSWindowProxy& create(JSC::VM&, AbstractDOMWindow&, DOMWrapperWorld&);
     static void destroy(JSCell*);
 
     DECLARE_INFO;
@@ -61,19 +61,19 @@ public:
     void attachDebugger(JSC::Debugger*);
 
 private:
-    JSDOMWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
+    JSWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
     void finishCreation(JSC::VM&, AbstractDOMWindow&);
 
     Ref<DOMWrapperWorld> m_world;
 };
 
-// JSDOMWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
+// JSWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
 // It is, however, strongly owned by AbstractFrame via its WindowProxy, so we can get one from a WindowProxy.
 JSC::JSValue toJS(JSC::ExecState*, WindowProxy&);
 inline JSC::JSValue toJS(JSC::ExecState* state, WindowProxy* windowProxy) { return windowProxy ? toJS(state, *windowProxy) : JSC::jsNull(); }
 
-JSDOMWindowProxy& toJSDOMWindowProxy(WindowProxy&, DOMWrapperWorld&);
-inline JSDOMWindowProxy* toJSDOMWindowProxy(WindowProxy* windowProxy, DOMWrapperWorld& world) { return windowProxy ? &toJSDOMWindowProxy(*windowProxy, world) : nullptr; }
+JSWindowProxy& toJSWindowProxy(WindowProxy&, DOMWrapperWorld&);
+inline JSWindowProxy* toJSWindowProxy(WindowProxy* windowProxy, DOMWrapperWorld& world) { return windowProxy ? &toJSWindowProxy(*windowProxy, world) : nullptr; }
 
 
 } // namespace WebCore

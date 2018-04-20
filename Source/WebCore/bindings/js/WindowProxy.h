@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "JSDOMWindowProxy.h"
+#include "JSWindowProxy.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/HashMap.h>
 
@@ -35,7 +35,7 @@ class AbstractFrame;
 class WindowProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowProxy>>;
+    using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>>;
 
     explicit WindowProxy(AbstractFrame&);
     ~WindowProxy();
@@ -43,12 +43,12 @@ public:
     void destroyJSWindowProxy(DOMWrapperWorld&);
 
     ProxyMap::ValuesConstIteratorRange jsWindowProxies() const { return m_jsWindowProxies.values(); }
-    Vector<JSC::Strong<JSDOMWindowProxy>> jsWindowProxiesAsVector() const;
+    Vector<JSC::Strong<JSWindowProxy>> jsWindowProxiesAsVector() const;
 
     ProxyMap releaseJSWindowProxies() { return std::exchange(m_jsWindowProxies, ProxyMap()); }
     void setJSWindowProxies(ProxyMap&& windowProxies) { m_jsWindowProxies = WTFMove(windowProxies); }
 
-    JSDOMWindowProxy& jsWindowProxy(DOMWrapperWorld& world)
+    JSWindowProxy& jsWindowProxy(DOMWrapperWorld& world)
     {
         auto it = m_jsWindowProxies.find(&world);
         if (it != m_jsWindowProxies.end())
@@ -57,7 +57,7 @@ public:
         return createJSWindowProxyWithInitializedScript(world);
     }
 
-    JSDOMWindowProxy* existingJSWindowProxy(DOMWrapperWorld& world) const
+    JSWindowProxy* existingJSWindowProxy(DOMWrapperWorld& world) const
     {
         auto it = m_jsWindowProxies.find(&world);
         return (it != m_jsWindowProxies.end()) ? it->value.get() : nullptr;
@@ -76,8 +76,8 @@ public:
     void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window proxies.
 
 private:
-    JSDOMWindowProxy& createJSWindowProxy(DOMWrapperWorld&);
-    WEBCORE_EXPORT JSDOMWindowProxy& createJSWindowProxyWithInitializedScript(DOMWrapperWorld&);
+    JSWindowProxy& createJSWindowProxy(DOMWrapperWorld&);
+    WEBCORE_EXPORT JSWindowProxy& createJSWindowProxyWithInitializedScript(DOMWrapperWorld&);
 
     AbstractFrame& m_frame;
     ProxyMap m_jsWindowProxies;

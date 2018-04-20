@@ -22,7 +22,7 @@
 #pragma once
 
 #include "FrameLoaderTypes.h"
-#include "JSDOMWindowProxy.h"
+#include "JSWindowProxy.h"
 #include "WindowProxy.h"
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/Strong.h>
@@ -158,7 +158,7 @@ public:
     WEBCORE_EXPORT NPObject* windowScriptNPObject();
 #endif
 
-    void initScriptForWindowProxy(JSDOMWindowProxy&);
+    void initScriptForWindowProxy(JSWindowProxy&);
 
 private:
     void setupModuleScriptHandlers(LoadableModuleScript&, JSC::JSInternalPromise&, DOMWrapperWorld&);

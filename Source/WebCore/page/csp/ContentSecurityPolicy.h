@@ -51,7 +51,7 @@ class ContentSecurityPolicyDirectiveList;
 class ContentSecurityPolicySource;
 class DOMStringList;
 class Frame;
-class JSDOMWindowProxy;
+class JSWindowProxy;
 class ResourceRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -71,7 +71,7 @@ public:
     void copyStateFrom(const ContentSecurityPolicy*);
     void copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy&);
 
-    void didCreateWindowProxy(JSDOMWindowProxy&) const;
+    void didCreateWindowProxy(JSWindowProxy&) const;
 
     enum class PolicyFrom {
         API,

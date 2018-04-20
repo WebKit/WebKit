@@ -3743,7 +3743,7 @@
 		BCBB8ABA13F1AFB000734DF0 /* PODIntervalTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBB8AB613F1AFB000734DF0 /* PODIntervalTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCBB8ABB13F1AFB000734DF0 /* PODRedBlackTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBB8AB713F1AFB000734DF0 /* PODRedBlackTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCBD21AB0E417AD400A070F2 /* URLHash.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD21AA0E417AD400A070F2 /* URLHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCBFB53D0DCD29CF0019B3E5 /* JSWindowProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBFB53B0DCD29CF0019B3E5 /* JSWindowProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC0E8761BFE70E9008F7F50 /* HTMLPictureElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */; };
 		BCC5BE010C0E93110011C2DB /* JSCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */; };
 		BCCBAD410C18C14200CE890F /* JSHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCBAD3F0C18C14200CE890F /* JSHTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12740,8 +12740,8 @@
 		BCBB8AB613F1AFB000734DF0 /* PODIntervalTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODIntervalTree.h; sourceTree = "<group>"; };
 		BCBB8AB713F1AFB000734DF0 /* PODRedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODRedBlackTree.h; sourceTree = "<group>"; };
 		BCBD21AA0E417AD400A070F2 /* URLHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHash.h; sourceTree = "<group>"; };
-		BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowProxy.cpp; sourceTree = "<group>"; };
-		BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowProxy.h; sourceTree = "<group>"; };
+		BCBFB53A0DCD29CF0019B3E5 /* JSWindowProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWindowProxy.cpp; sourceTree = "<group>"; };
+		BCBFB53B0DCD29CF0019B3E5 /* JSWindowProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWindowProxy.h; sourceTree = "<group>"; };
 		BCC0E8731BFE70E9008F7F50 /* HTMLPictureElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPictureElement.cpp; sourceTree = "<group>"; };
 		BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPictureElement.h; sourceTree = "<group>"; };
 		BCC5BDFE0C0E93110011C2DB /* JSCSSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleSheet.cpp; sourceTree = "<group>"; };
@@ -23697,8 +23697,6 @@
 				BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */,
 				460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */,
 				460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */,
-				BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowProxy.cpp */,
-				BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowProxy.h */,
 				4170A2E91D8C0CC000318452 /* JSDOMWrapper.cpp */,
 				65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */,
 				7C45C9CB1E3E8E4900AAB558 /* JSDOMWrapperCache.cpp */,
@@ -23713,6 +23711,8 @@
 				46BCBBC12085008000710638 /* JSRemoteDOMWindowBase.cpp */,
 				46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */,
 				931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */,
+				BCBFB53A0DCD29CF0019B3E5 /* JSWindowProxy.cpp */,
+				BCBFB53B0DCD29CF0019B3E5 /* JSWindowProxy.h */,
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerGlobalScopeBase.h */,
 				709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */,
@@ -28322,7 +28322,6 @@
 				BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */,
 				652FBBBC0DE27CB60001D386 /* JSDOMWindowCustom.h in Headers */,
 				460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */,
-				BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowProxy.h in Headers */,
 				65E0E9441133C89F00B4CB10 /* JSDOMWrapper.h in Headers */,
 				7C45C9D31E3FCBD700AAB558 /* JSDOMWrapperCache.h in Headers */,
 				93A8061E1E03B585008A1F26 /* JSDoubleRange.h in Headers */,
@@ -28924,6 +28923,7 @@
 				31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */,
 				5DA5E0FD102B953800088CF9 /* JSWebSocket.h in Headers */,
 				65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */,
+				BCBFB53D0DCD29CF0019B3E5 /* JSWindowProxy.h in Headers */,
 				E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */,
 				E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */,
 				E1C36D350EB0A094007410BC /* JSWorkerGlobalScopeBase.h in Headers */,

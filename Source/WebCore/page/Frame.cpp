@@ -67,7 +67,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
-#include "JSDOMWindowProxy.h"
+#include "JSWindowProxy.h"
 #include "Logging.h"
 #include "MathMLNames.h"
 #include "MediaFeatureNames.h"

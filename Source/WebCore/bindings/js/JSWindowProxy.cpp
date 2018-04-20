@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "JSDOMWindowProxy.h"
+#include "JSWindowProxy.h"
 
 #include "AbstractFrame.h"
 #include "CommonVM.h"
@@ -35,41 +35,43 @@
 #include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSEventTarget.h"
+#include "JSRemoteDOMWindow.h"
 #include "ScriptController.h"
+#include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
 
-const ClassInfo JSDOMWindowProxy::s_info = { "JSDOMWindowProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProxy) };
+const ClassInfo JSWindowProxy::s_info = { "JSWindowProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWindowProxy) };
 
-inline JSDOMWindowProxy::JSDOMWindowProxy(VM& vm, Structure& structure, DOMWrapperWorld& world)
+inline JSWindowProxy::JSWindowProxy(VM& vm, Structure& structure, DOMWrapperWorld& world)
     : Base(vm, &structure)
     , m_world(world)
 {
 }
 
-void JSDOMWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
+void JSWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     setWindow(window);
 }
 
-JSDOMWindowProxy& JSDOMWindowProxy::create(JSC::VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
+JSWindowProxy& JSWindowProxy::create(JSC::VM& vm, AbstractDOMWindow& window, DOMWrapperWorld& world)
 {
     auto& structure = *JSC::Structure::create(vm, 0, jsNull(), JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
-    auto& proxy = *new (NotNull, JSC::allocateCell<JSDOMWindowProxy>(vm.heap)) JSDOMWindowProxy(vm, structure, world);
+    auto& proxy = *new (NotNull, JSC::allocateCell<JSWindowProxy>(vm.heap)) JSWindowProxy(vm, structure, world);
     proxy.finishCreation(vm, window);
     return proxy;
 }
 
-void JSDOMWindowProxy::destroy(JSCell* cell)
+void JSWindowProxy::destroy(JSCell* cell)
 {
-    static_cast<JSDOMWindowProxy*>(cell)->JSDOMWindowProxy::~JSDOMWindowProxy();
+    static_cast<JSWindowProxy*>(cell)->JSWindowProxy::~JSWindowProxy();
 }
 
-void JSDOMWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
+void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
     ASSERT(window.classInfo() == JSDOMWindow::info() || window.classInfo() == JSRemoteDOMWindow::info());
     setTarget(vm, &window);
@@ -77,9 +79,9 @@ void JSDOMWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
     GCController::singleton().garbageCollectSoon();
 }
 
-void JSDOMWindowProxy::setWindow(AbstractDOMWindow& domWindow)
+void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
 {
-    // Replacing JSDOMWindow via telling JSDOMWindowProxy to use the same DOMWindow it already uses makes no sense,
+    // Replacing JSDOMWindow via telling JSWindowProxy to use the same DOMWindow it already uses makes no sense,
     // so we'd better never try to.
     ASSERT(!window() || &domWindow != &wrapped());
 
@@ -115,7 +117,7 @@ void JSDOMWindowProxy::setWindow(AbstractDOMWindow& domWindow)
     ASSERT(prototype->globalObject() == window);
 }
 
-void JSDOMWindowProxy::attachDebugger(JSC::Debugger* debugger)
+void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
 {
     auto* globalObject = window();
     JSLockHolder lock(globalObject->vm());
@@ -126,7 +128,7 @@ void JSDOMWindowProxy::attachDebugger(JSC::Debugger* debugger)
         currentDebugger->detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
 }
 
-AbstractDOMWindow& JSDOMWindowProxy::wrapped() const
+AbstractDOMWindow& JSWindowProxy::wrapped() const
 {
     auto* window = this->window();
     if (auto* jsWindow = jsDynamicCast<JSRemoteDOMWindowBase*>(window->vm(), window))
@@ -134,9 +136,9 @@ AbstractDOMWindow& JSDOMWindowProxy::wrapped() const
     return jsCast<JSDOMWindowBase*>(window)->wrapped();
 }
 
-AbstractDOMWindow* JSDOMWindowProxy::toWrapped(VM& vm, JSObject* value)
+AbstractDOMWindow* JSWindowProxy::toWrapped(VM& vm, JSObject* value)
 {
-    auto* wrapper = jsDynamicCast<JSDOMWindowProxy*>(vm, value);
+    auto* wrapper = jsDynamicCast<JSWindowProxy*>(vm, value);
     return wrapper ? &wrapper->wrapped() : nullptr;
 }
 
@@ -145,7 +147,7 @@ JSValue toJS(ExecState* state, WindowProxy& windowProxy)
     return &windowProxy.jsWindowProxy(currentWorld(*state));
 }
 
-JSDOMWindowProxy& toJSDOMWindowProxy(WindowProxy& windowProxy, DOMWrapperWorld& world)
+JSWindowProxy& toJSWindowProxy(WindowProxy& windowProxy, DOMWrapperWorld& world)
 {
     return windowProxy.jsWindowProxy(world);
 }

@@ -57,7 +57,6 @@
 #include "JSDOMStringList.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowBase.h"
-#include "JSDOMWindowProxy.h"
 #include "JSDOMWrapperCache.h"
 #include "JSDocument.h"
 #include "JSElement.h"
@@ -74,6 +73,7 @@
 #include "JSTestStandaloneDictionary.h"
 #include "JSTestStandaloneEnumeration.h"
 #include "JSTestSubObj.h"
+#include "JSWindowProxy.h"
 #include "JSXPathNSResolver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
@@ -7029,7 +7029,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodOver
             return jsTestObjPrototypeFunctionOverloadedMethod6Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
             return jsTestObjPrototypeFunctionOverloadedMethod8Body(state, castedThis, throwScope);
-        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSDOMWindowProxy>(vm) || asObject(distinguishingArg)->inherits<JSDOMWindow>(vm)))
+        if (distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>(vm) || asObject(distinguishingArg)->inherits<JSDOMWindow>(vm)))
             return jsTestObjPrototypeFunctionOverloadedMethod9Body(state, castedThis, throwScope);
         if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
             return jsTestObjPrototypeFunctionOverloadedMethod13Body(state, castedThis, throwScope);

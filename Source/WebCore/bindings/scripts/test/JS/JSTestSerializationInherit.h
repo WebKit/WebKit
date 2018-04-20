@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "JSDOMWrapper.h"
 #include "JSTestSerialization.h"
 #include "TestSerializationInherit.h"
 

@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-class JSDOMWindowProxy;
+class JSWindowProxy;
 class JSRemoteDOMWindow;
 
 class WEBCORE_EXPORT JSRemoteDOMWindowBase : public JSDOMGlobalObject {
 protected:
-    JSRemoteDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<RemoteDOMWindow>&&, JSDOMWindowProxy*);
+    JSRemoteDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<RemoteDOMWindow>&&, JSWindowProxy*);
 
     static void destroy(JSCell*);
 

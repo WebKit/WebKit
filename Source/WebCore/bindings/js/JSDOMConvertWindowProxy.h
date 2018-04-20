@@ -27,7 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
-#include "JSDOMWindowProxy.h"
+#include "JSWindowProxy.h"
 
 namespace WebCore {
 

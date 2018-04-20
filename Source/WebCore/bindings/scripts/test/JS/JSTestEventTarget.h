@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "JSDOMWrapper.h"
 #include "JSEventTarget.h"
 #include "TestEventTarget.h"
 

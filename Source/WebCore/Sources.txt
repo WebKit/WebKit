@@ -391,7 +391,6 @@ bindings/js/JSDOMPromiseDeferred.cpp
 bindings/js/JSDOMWindowBase.cpp
 bindings/js/JSDOMWindowCustom.cpp
 bindings/js/JSDOMWindowProperties.cpp
-bindings/js/JSDOMWindowProxy.cpp
 bindings/js/JSDOMWrapper.cpp
 bindings/js/JSDOMWrapperCache.cpp
 bindings/js/JSDocumentCustom.cpp
@@ -452,6 +451,7 @@ bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWebGLRenderingContextCustom.cpp
 bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp
 bindings/js/JSWebGPURenderingContextCustom.cpp
+bindings/js/JSWindowProxy.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
 bindings/js/JSWorkerNavigatorCustom.cpp

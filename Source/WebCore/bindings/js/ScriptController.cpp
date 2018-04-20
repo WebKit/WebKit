@@ -240,7 +240,7 @@ void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
     static_cast<JSVMClientData*>(commonVM().clientData)->getAllWorlds(worlds);
 }
 
-void ScriptController::initScriptForWindowProxy(JSDOMWindowProxy& windowProxy)
+void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
 {
     auto& world = windowProxy.world();
 

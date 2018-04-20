@@ -51,7 +51,6 @@
 #import <WebCore/JSCSSRuleList.h>
 #import <WebCore/JSCSSStyleDeclaration.h>
 #import <WebCore/JSDOMImplementation.h>
-#import <WebCore/JSDOMWindowProxy.h>
 #import <WebCore/JSDeprecatedCSSOMCounter.h>
 #import <WebCore/JSDeprecatedCSSOMRGBColor.h>
 #import <WebCore/JSDeprecatedCSSOMRect.h>
@@ -68,6 +67,7 @@
 #import <WebCore/JSStyleSheet.h>
 #import <WebCore/JSStyleSheetList.h>
 #import <WebCore/JSTreeWalker.h>
+#import <WebCore/JSWindowProxy.h>
 #import <WebCore/JSXPathExpression.h>
 #import <WebCore/JSXPathResult.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -85,7 +85,6 @@ static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)
     WRAP(DeprecatedCSSOMValue)
     WRAP(DeprecatedCSSOMCounter)
     WRAP(DOMImplementation)
-    WRAP(DOMWindowProxy)
     WRAP(Event)
     WRAP(HTMLOptionsCollection)
     WRAP(MediaList)
@@ -99,6 +98,7 @@ static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)
     WRAP(StyleSheet)
     WRAP(StyleSheetList)
     WRAP(TreeWalker)
+    WRAP(WindowProxy)
     WRAP(XPathExpression)
     WRAP(XPathResult)
 

@@ -30,7 +30,6 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
-#include "JSDOMWindowProxy.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSHTMLAudioElement.h"
@@ -38,6 +37,7 @@
 #include "JSHTMLOptionElement.h"
 #include "JSIDBFactory.h"
 #include "JSRemoteDOMWindow.h"
+#include "JSWindowProxy.h"
 #include "JSWorker.h"
 #include "Location.h"
 #include "RuntimeEnabledFeatures.h"
@@ -467,8 +467,8 @@ DOMWindow* JSDOMWindow::toWrapped(VM& vm, JSValue value)
     JSObject* object = asObject(value);
     if (object->inherits<JSDOMWindow>(vm))
         return &jsCast<JSDOMWindow*>(object)->wrapped();
-    if (object->inherits<JSDOMWindowProxy>(vm)) {
-        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindow*>(vm, jsCast<JSDOMWindowProxy*>(object)->window()))
+    if (object->inherits<JSWindowProxy>(vm)) {
+        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindow*>(vm, jsCast<JSWindowProxy*>(object)->window()))
             return &jsDOMWindow->wrapped();
     }
     return nullptr;

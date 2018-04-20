@@ -41,8 +41,8 @@
 #include "Frame.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
-#include "JSDOMWindowProxy.h"
 #include "JSMainThreadExecState.h"
+#include "JSWindowProxy.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
 #include "ResourceRequest.h"
@@ -145,7 +145,7 @@ bool ContentSecurityPolicy::allowRunningOrDisplayingInsecureContent(const URL& u
     return allow;
 }
 
-void ContentSecurityPolicy::didCreateWindowProxy(JSDOMWindowProxy& windowProxy) const
+void ContentSecurityPolicy::didCreateWindowProxy(JSWindowProxy& windowProxy) const
 {
     auto* window = windowProxy.window();
     ASSERT(window);

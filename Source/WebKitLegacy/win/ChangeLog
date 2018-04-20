@@ -1,3 +1,15 @@
+2018-04-19  Chris Dumez  <cdumez@apple.com>
+
+        Rename JSDOMWindowProxy to JSWindowProxy
+        https://bugs.webkit.org/show_bug.cgi?id=184797
+
+        Reviewed by Sam Weinig.
+
+        Rename JSDOMWindowProxy to JSWindowProxy for consistency with WindowProxy.
+
+        * WebFrame.cpp:
+        (WebFrame::stringByEvaluatingJavaScriptInScriptWorld):
+
 2018-04-17  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed rollout of r230632. Regression in memory usage.

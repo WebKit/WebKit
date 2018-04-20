@@ -21,6 +21,7 @@
 #pragma once
 
 #include "JSDOMConvertDictionary.h"
+#include "JSDOMWrapper.h"
 #include "JSEvent.h"
 #include "TestPromiseRejectionEvent.h"
 

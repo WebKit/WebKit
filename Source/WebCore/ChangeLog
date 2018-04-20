@@ -1,3 +1,67 @@
+2018-04-19  Chris Dumez  <cdumez@apple.com>
+
+        Rename JSDOMWindowProxy to JSWindowProxy
+        https://bugs.webkit.org/show_bug.cgi?id=184797
+
+        Reviewed by Sam Weinig.
+
+        Rename JSDOMWindowProxy to JSWindowProxy for consistency with WindowProxy.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/IDLTypes.h:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMConvertWindowProxy.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::finishCreation):
+        (WebCore::JSDOMWindowBase::proxy const):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::toWrapped):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::JSEventTarget::toWrapped):
+        * bindings/js/JSRemoteDOMWindowBase.cpp:
+        (WebCore::JSRemoteDOMWindowBase::JSRemoteDOMWindowBase):
+        (WebCore::toJSRemoteDOMWindow):
+        * bindings/js/JSRemoteDOMWindowBase.h:
+        * bindings/js/JSWindowProxy.cpp: Renamed from Source/WebCore/bindings/js/JSDOMWindowProxy.cpp.
+        (WebCore::JSWindowProxy::JSWindowProxy):
+        (WebCore::JSWindowProxy::finishCreation):
+        (WebCore::JSWindowProxy::create):
+        (WebCore::JSWindowProxy::destroy):
+        (WebCore::JSWindowProxy::setWindow):
+        (WebCore::JSWindowProxy::attachDebugger):
+        (WebCore::JSWindowProxy::wrapped const):
+        (WebCore::JSWindowProxy::toWrapped):
+        (WebCore::toJS):
+        (WebCore::toJSWindowProxy):
+        * bindings/js/JSWindowProxy.h: Renamed from Source/WebCore/bindings/js/JSDOMWindowProxy.h.
+        (WebCore::toJS):
+        (WebCore::toJSWindowProxy):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScriptForWindowProxy):
+        * bindings/js/ScriptController.h:
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::createJSWindowProxy):
+        (WebCore::WindowProxy::jsWindowProxiesAsVector const):
+        (WebCore::WindowProxy::createJSWindowProxyWithInitializedScript):
+        * bindings/js/WindowProxy.h:
+        (WebCore::WindowProxy::jsWindowProxy):
+        (WebCore::WindowProxy::existingJSWindowProxy const):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GenerateHeader):
+        (GenerateOverloadDispatcher):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethodOverloadDispatcher):
+        * page/Frame.cpp:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didCreateWindowProxy const):
+        * page/csp/ContentSecurityPolicy.h:
+
 2018-04-19  Dirk Schulze  <krit@webbkit.org>
 
         Introduce SVGGeometryElement interface

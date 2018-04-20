@@ -44,13 +44,13 @@ class DOMWrapperWorld;
 class Frame;
 class JSDOMWindow;
 class JSDOMWindowBasePrivate;
-class JSDOMWindowProxy;
+class JSWindowProxy;
 
 class WEBCORE_EXPORT JSDOMWindowBase : public JSDOMGlobalObject {
     typedef JSDOMGlobalObject Base;
 protected:
-    JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSDOMWindowProxy*);
-    void finishCreation(JSC::VM&, JSDOMWindowProxy*);
+    JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSWindowProxy*);
+    void finishCreation(JSC::VM&, JSWindowProxy*);
 
     static void destroy(JSCell*);
 
@@ -60,7 +60,7 @@ public:
     DOMWindow& wrapped() const { return *m_wrapped; }
     ScriptExecutionContext* scriptExecutionContext() const;
 
-    // Called just before removing this window from the JSDOMWindowProxy.
+    // Called just before removing this window from the JSWindowProxy.
     void willRemoveFromWindowProxy();
 
     DECLARE_INFO;
@@ -80,7 +80,7 @@ public:
 
     void printErrorMessage(const String&) const;
 
-    JSDOMWindowProxy* proxy() const;
+    JSWindowProxy* proxy() const;
 
     static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
 
@@ -97,11 +97,11 @@ private:
     static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
 
     RefPtr<DOMWindow> m_wrapped;
-    JSDOMWindowProxy* m_proxy;
+    JSWindowProxy* m_proxy;
 };
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, DOMWindow&);
-// The following return a JSDOMWindowProxy or jsNull()
+// The following return a JSWindowProxy or jsNull()
 // JSDOMGlobalObject* is ignored, accessing a window in any context will use that DOMWindow's prototype chain.
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject*, DOMWindow& window) { return toJS(state, window); }
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, DOMWindow* window) { return window ? toJS(state, globalObject, *window) : JSC::jsNull(); }
