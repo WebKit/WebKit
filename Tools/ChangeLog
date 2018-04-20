@@ -1,5 +1,13 @@
 2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Mark TestJSC as slow in debug.
+
+        Only /jsc/vm is slow, but GLib API test runner only checks the test binary for GLib tests.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Local cross references are broken in API documentation
         https://bugs.webkit.org/show_bug.cgi?id=184771
 
