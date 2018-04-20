@@ -1,3 +1,16 @@
+2018-04-20  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for internal builds after r230826.
+        https://bugs.webkit.org/show_bug.cgi?id=184790
+        <rdar://problem/39301369>
+
+        Not reviewed.
+
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SignalContext::dump):
+
 2018-04-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION(r227340): ArrayBuffers were not being serialized when sent via MessagePorts

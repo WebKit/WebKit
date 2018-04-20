@@ -344,7 +344,7 @@ static void overrideDefaults()
     Options::smallHeapRAMFraction() = 0.8;
     Options::mediumHeapRAMFraction() = 0.9;
 
-#if !PLATFORM(WATCHOS)
+#if !PLATFORM(WATCHOS) && defined(__LP64__)
     Options::useSigillCrashAnalyzer() = true;
 #endif
 #endif

@@ -116,7 +116,7 @@ struct SignalContext {
         FOR_EACH_REGISTER(DUMP_REGISTER)
 #undef FOR_EACH_REGISTER
 
-#elif CPU(ARM64)
+#elif CPU(ARM64) && defined(__LP64__)
         int i;
         for (i = 0; i < 28; i += 4) {
             log("x%d: %016llx x%d: %016llx x%d: %016llx x%d: %016llx",
