@@ -55,6 +55,7 @@
 
 namespace WebCore {
 
+static HashSet<String, ASCIICaseInsensitiveHash>* supportedImageResourceMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedImageMIMETypes;
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedImageMIMETypesForEncoding;
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedJavaScriptMIMETypes;
@@ -65,19 +66,24 @@ static HashSet<String, ASCIICaseInsensitiveHash>* unsupportedTextMIMETypes;
 
 static void initializeSupportedImageMIMETypes()
 {
+    supportedImageResourceMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
     supportedImageMIMETypes = new HashSet<String, ASCIICaseInsensitiveHash>;
 
 #if USE(CG)
     // This represents the subset of allowed image UTIs for which CoreServices has a corresponding MIME type. Keep this in sync with allowedImageUTIs().
     static const char* const allowedImageMIMETypes[] = { "image/tiff", "image/gif", "image/jpeg", "image/vnd.microsoft.icon", "image/jp2", "image/png", "image/bmp" };
-    for (auto& mimeType : allowedImageMIMETypes)
+    for (auto& mimeType : allowedImageMIMETypes) {
         supportedImageMIMETypes->add(ASCIILiteral { mimeType });
+        supportedImageResourceMIMETypes->add(ASCIILiteral { mimeType });
+    }
 
 #ifndef NDEBUG
     for (auto& uti : allowedImageUTIs()) {
         auto mimeType = MIMETypeForImageSourceType(uti);
-        if (!mimeType.isEmpty())
+        if (!mimeType.isEmpty()) {
             ASSERT(supportedImageMIMETypes->contains(mimeType));
+            ASSERT(supportedImageResourceMIMETypes->contains(mimeType));
+        }
     }
 
 #if PLATFORM(COCOA)
@@ -88,9 +94,11 @@ static void initializeSupportedImageMIMETypes()
 
     // Favicons don't have a MIME type in the registry either.
     supportedImageMIMETypes->add("image/x-icon");
+    supportedImageResourceMIMETypes->add("image/x-icon");
 
     //  We only get one MIME type per UTI, hence our need to add these manually
     supportedImageMIMETypes->add("image/pjpeg");
+    supportedImageResourceMIMETypes->add("image/pjpeg");
 
 #if PLATFORM(IOS)
     // Add malformed image mimetype for compatibility with Mail and to handle malformed mimetypes from the net
@@ -114,8 +122,10 @@ static void initializeSupportedImageMIMETypes()
         "image/x-bmp", "image/x-win-bitmap", "image/x-windows-bmp", "image/ms-bmp", "image/x-ms-bmp",
         "application/bmp", "application/x-bmp", "application/x-win-bitmap",
     };
-    for (auto& type : malformedMIMETypes)
+    for (auto& type : malformedMIMETypes) {
         supportedImageMIMETypes->add(type);
+        supportedImageResourceMIMETypes->add(type);
+    }
 #endif
 
 #else
@@ -130,11 +140,14 @@ static void initializeSupportedImageMIMETypes()
         "image/x-icon",    // ico
         "image/x-xbitmap"  // xbm
     };
-    for (auto& type : types)
+    for (auto& type : types) {
         supportedImageMIMETypes->add(type);
+        supportedImageResourceMIMETypes->add(type);
+    }
 
 #if USE(WEBP)
     supportedImageMIMETypes->add("image/webp");
+    supportedImageResourceMIMETypes->add("image/webp");
 #endif
 
 #endif // USE(CG)
@@ -450,7 +463,11 @@ bool MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(const String& mimeType
 
 bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
 {
-    return isSupportedImageMIMEType(mimeType) || isPDFOrPostScriptMIMEType(mimeType);
+    if (mimeType.isEmpty())
+        return false;
+    if (!supportedImageResourceMIMETypes)
+        initializeSupportedImageMIMETypes();
+    return supportedImageResourceMIMETypes->contains(getNormalizedMIMEType(mimeType));
 }
 
 bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeType)
@@ -639,6 +656,13 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedI
     if (!supportedImageMIMETypes)
         initializeSupportedImageMIMETypes();
     return *supportedImageMIMETypes;
+}
+
+const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedImageResourceMIMETypes()
+{
+    if (!supportedImageResourceMIMETypes)
+        initializeSupportedImageMIMETypes();
+    return *supportedImageResourceMIMETypes;
 }
 
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::getSupportedNonImageMIMETypes()
