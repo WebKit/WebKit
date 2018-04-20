@@ -607,22 +607,21 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     CFRelease(pixelFormat);
     pixelFormat = nullptr;
   }
-  CFMutableDictionaryRef encoder_specs = nullptr;
+  CFDictionaryRef encoderSpecs = nullptr;
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
+  auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
   // Currently hw accl is supported above 360p on mac, below 360p
   // the compression session will be created with hw accl disabled.
-  encoder_specs = CFDictionaryCreateMutable(
-      nullptr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-  CFDictionarySetValue(encoder_specs,
-                       kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder,
-                       webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse);
+  CFTypeRef sessionKeys[] = {kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, kVTCompressionPropertyKey_RealTime };
+  CFTypeRef sessionValues[] = {  useHardwareEncoder, useHardwareEncoder, kCFBooleanTrue };
+  encoderSpecs = CFDictionaryCreate(kCFAllocatorDefault, sessionKeys, sessionValues, 3, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 #endif
   OSStatus status =
       CompressionSessionCreate(nullptr,  // use default allocator
                                  _width,
                                  _height,
                                  kCodecTypeH264,
-                                 encoder_specs,  // use hardware accelerated encoder if available
+                                 encoderSpecs,  // use hardware accelerated encoder if available
                                  sourceAttributes,
                                  nullptr,  // use default compressed data allocator
                                  compressionOutputCallback,
@@ -632,9 +631,9 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     CFRelease(sourceAttributes);
     sourceAttributes = nullptr;
   }
-  if (encoder_specs) {
-    CFRelease(encoder_specs);
-    encoder_specs = nullptr;
+  if (encoderSpecs) {
+    CFRelease(encoderSpecs);
+    encoderSpecs = nullptr;
   }
   if (status != noErr) {
     RTC_LOG(LS_ERROR) << "Failed to create compression session: " << status;
@@ -714,9 +713,9 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
       CFRelease(sourceAttributes);
       sourceAttributes = nullptr;
     }
-    if (encoder_specs) {
-      CFRelease(encoder_specs);
-      encoder_specs = nullptr;
+    if (encoderSpecs) {
+      CFRelease(encoderSpecs);
+      encoderSpecs = nullptr;
     }
     if (status != noErr) {
       return WEBRTC_VIDEO_CODEC_ERROR;
