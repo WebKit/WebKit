@@ -395,9 +395,9 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         || _fullScreenState == InFullScreen;
 }
 
-- (WebCoreFullScreenPlaceholderView *)webViewPlaceholder
+- (UIView *)webViewPlaceholder
 {
-    return nil;
+    return _webViewPlaceholder.get();
 }
 
 #pragma mark -

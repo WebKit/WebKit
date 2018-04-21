@@ -170,7 +170,6 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 -(BOOL)hasFullScreenWindowController;
 -(WKFullScreenWindowController *)fullScreenWindowController;
 -(void)closeFullScreenWindowController;
--(WebCoreFullScreenPlaceholderView *)fullScreenPlaceholderView;
 @end
 #endif // ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
 

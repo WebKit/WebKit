@@ -1,3 +1,23 @@
+2018-04-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Element fullscreen, expose WKWebView _fullScreenPlaceholderView as iOS SPI
+        https://bugs.webkit.org/show_bug.cgi?id=184826
+        rdar://problem/39600825
+
+        Reviewed by Tim Horton.
+
+        Add _fullScreenPlaceholderView for iOS similar to the one for Mac.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _fullScreenPlaceholderView]):
+        (-[WKWebView closeFullScreenWindowController]):
+        (-[WKWebView fullScreenPlaceholderView]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.h:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController webViewPlaceholder]):
+
 2018-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Injected bundle form client should be notified when editing text fields

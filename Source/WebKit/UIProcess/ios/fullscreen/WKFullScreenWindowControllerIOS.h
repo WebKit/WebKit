@@ -27,11 +27,10 @@
 
 #import <UIKit/UIViewControllerTransitioning.h>
 
-@class WebCoreFullScreenPlaceholderView;
 @class WKWebView;
 
 @interface WKFullScreenWindowController : NSObject <UIViewControllerTransitioningDelegate>
-@property (readonly, retain, nonatomic) WebCoreFullScreenPlaceholderView *webViewPlaceholder;
+@property (readonly, retain, nonatomic) UIView *webViewPlaceholder;
 @property (readonly, assign, nonatomic) BOOL isFullScreen;
 
 - (id)initWithWebView:(WKWebView *)webView;
