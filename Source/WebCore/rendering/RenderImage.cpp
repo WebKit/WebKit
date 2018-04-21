@@ -49,6 +49,7 @@
 #include "PaintInfo.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderImageResourceStyleImage.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGImage.h"
 #include <wtf/IsoMallocInlines.h>
@@ -591,6 +592,10 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingMode, orientationDescription, interpolation));
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         imageResource().cachedImage()->addPendingImageDrawingClient(*this);
+
+    if (imageElement && imageElement->isSystemPreviewImage())
+        theme().paintSystemPreviewBadge(*img, paintInfo, rect);
+
     return drawResult;
 }
 

@@ -1357,6 +1357,25 @@ String RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCas
     return StringTruncator::centerTruncate(string, width, font);
 }
 
+void RenderTheme::paintSystemPreviewBadge(Image& image, const PaintInfo& paintInfo, const FloatRect& rect)
+{
+    // The default implementation paints a small marker
+    // in the upper right corner, as long as the image is big enough.
+
+    UNUSED_PARAM(image);
+    auto& context = paintInfo.context();
+
+    GraphicsContextStateSaver stateSaver { context };
+
+    if (rect.width() < 32 || rect.height() < 32)
+        return;
+
+    auto markerRect = FloatRect {rect.x() + rect.width() - 24, rect.y() + 8, 16, 16 };
+    auto roundedMarkerRect = FloatRoundedRect { markerRect, FloatRoundedRect::Radii { 8 } };
+    auto color = Color { 255, 0, 0 };
+    context.fillRoundedRect(roundedMarkerRect, color);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 
 Color RenderTheme::platformTapHighlightColor() const

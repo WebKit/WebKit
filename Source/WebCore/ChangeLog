@@ -1,3 +1,30 @@
+2018-04-20  Dean Jackson  <dino@apple.com>
+
+        Render a badge on system preview images
+        https://bugs.webkit.org/show_bug.cgi?id=184854
+        <rdar://problem/39615154>
+
+        Reviewed by Tim Horton.
+
+        At paint time, if a RenderImage is an image element
+        which is identified as a system preview, then draw
+        a little badge in the top right corner.
+
+        It is expected that platforms will override the
+        default rendering with something that identifies
+        how a system preview will operate. e.g. QuickLook
+        on Apple systems.
+
+        Test: system-preview/badge.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect): If we are
+        a system preview, call RenderTheme to draw a badge.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSystemPreviewBadge): A default
+        implementation that draws a red circle.
+        * rendering/RenderTheme.h:
+
 2018-04-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove some dead code in IdentifiersFactory

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>
+    a {
+        -webkit-clip-path: path("M 82 14 L 86 14 L 86 18 L 82 18 z");
+    }
+    img {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<script>
+window.addEventListener("load", () => {
+    if (!window.internals)
+        return;
+
+    const link = document.querySelector("a");
+    link.rel = internals.systemPreviewRelType();
+}, false);
+</script>
+<p>This test only works in WKTR or DRT.</p>
+<a href="/">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAABlBMVEUAAP8AAAB7Yr8+AAAAEElEQVR4nGJgBQAAAP//AwAABwAGzHKrJgAAAABJRU5ErkJggg==">
+</a>
