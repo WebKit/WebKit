@@ -192,7 +192,9 @@ TEST(WebKit, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
     [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(200, 50) maximumUnobscuredSizeOverride:CGSizeMake(200, 50)];
 
     [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
-    [webView _test_waitForDidFinishNavigation];
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidFinishNavigation];
 
     auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [window addSubview:webView.get()];

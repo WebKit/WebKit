@@ -1,3 +1,12 @@
+2018-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update 2 more API tests after r230876.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-04-20  Tim Horton  <timothy_horton@apple.com>
 
         Adjust geolocation feature flag

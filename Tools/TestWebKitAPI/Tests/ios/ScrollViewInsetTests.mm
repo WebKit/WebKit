@@ -174,6 +174,12 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrashWithAsyncPolicyD
     [webView loadHTMLString:veryTallDocumentMarkup baseURL:testResourceURL];
     Util::run(&delegate->_navigationComplete);
 
+    __block bool presentationUpdateHappened = false;
+    [webView _doAfterNextPresentationUpdate:^{
+        presentationUpdateHappened = true;
+    }];
+    TestWebKitAPI::Util::run(&presentationUpdateHappened);
+
     CGPoint initialContentOffset = [webView scrollView].contentOffset;
     __block CGPoint contentOffsetAfterCrash = CGPointZero;
     __block bool done = false;
