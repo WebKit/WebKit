@@ -592,4 +592,6 @@ enum EventThrottlingBehavior {
     DOMString systemPreviewRelType();
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
+
+    boolean usingAppleInternalSDK();
 };

@@ -661,6 +661,8 @@ public:
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 
+    bool usingAppleInternalSDK() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

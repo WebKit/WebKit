@@ -4495,4 +4495,13 @@ bool Internals::isSystemPreviewImage(Element& element) const
     return false;
 }
 
+bool Internals::usingAppleInternalSDK() const
+{
+#if USE(APPLE_INTERNAL_SDK)
+    return true;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebCore
