@@ -120,15 +120,15 @@ body[dir=rtl] .timeline-ruler > .header > .divider > .label {
     bottom: 0;
     pointer-events: all;
 
-    --timeline-ruler-marker-border-start: 1px solid hsla(0, 0%, 50%, 0.5);
+    border: 0 solid hsla(0, 0%, 50%, 0.5);
 }
 
 body[dir=ltr] .timeline-ruler > .markers > .marker {
-    border-left: var(--timeline-ruler-marker-border-start);
+    border-left-width: 1px;
 }
 
 body[dir=rtl] .timeline-ruler > .markers > .marker {
-    border-right: var(--timeline-ruler-marker-border-start);
+    border-right-width: 1px;
 }
 
 /* Larger tooltip area */
@@ -155,12 +155,8 @@ body[dir=rtl] .timeline-ruler > .markers > .marker::before {
     right: var(--timeline-ruler-marker-before-offset-start);
 }
 
-body[dir=ltr] .timeline-ruler > .markers > .marker.current-time {
-    border-left-color: red;
-}
-
-body[dir=rtl] .timeline-ruler > .markers > .marker.current-time {
-    border-right-color: red;
+.timeline-ruler > .markers > .marker.current-time {
+    border-color: red;
 }
 
 .timeline-ruler > .markers > .marker.current-time::before {
@@ -176,18 +172,15 @@ body[dir=rtl] .timeline-ruler > .markers > .marker.current-time {
 }
 
 .timeline-ruler > .markers > .marker.load-event {
-    border-left-color: hsl(0, 100%, 50%);
-    opacity: 0.25;
+    border-color: hsla(0, 100%, 50%, 0.25);
 }
 
 .timeline-ruler > .markers > .marker.dom-content-event {
-    border-left-color: hsl(240, 100%, 50%);
-    opacity: 0.25;
+    border-color: hsla(240, 100%, 50%, 0.25);
 }
 
 .timeline-ruler > .markers > .marker.timestamp {
-    border-left-color: hsl(119, 100%, 21%);
-    opacity: 0.25;
+    border-color: hsla(119, 100%, 21%, 0.25);
 }
 
 .timeline-ruler > .selection-drag {
