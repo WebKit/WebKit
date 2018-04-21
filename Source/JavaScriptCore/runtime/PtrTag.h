@@ -29,10 +29,11 @@
 
 namespace JSC {
 
-#define FOR_EACH_PTRTAG_ENUM(v) \
+#define FOR_EACH_BASE_PTRTAG_ENUM(v) \
     v(NoPtrTag) \
     v(CFunctionPtrTag) \
-    \
+
+#define FOR_EACH_ADDITIONAL_PTRTAG_ENUM(v) \
     v(B3CCallPtrTag) \
     v(B3CompilationPtrTag) \
     v(BytecodePtrTag) \
@@ -54,9 +55,20 @@ namespace JSC {
     v(YarrMatchOnly16BitPtrTag) \
     v(YarrBacktrackPtrTag) \
 
+#define FOR_EACH_PTRTAG_ENUM(v) \
+    FOR_EACH_BASE_PTRTAG_ENUM(v) \
+    FOR_EACH_ADDITIONAL_PTRTAG_ENUM(v) \
+
 enum PtrTag : uintptr_t {
+    NoPtrTag,
+    CFunctionPtrTag,
+
+#ifndef PTRTAG_ENUM_HASH
 #define DECLARE_PTRTAG_ENUM(tag)  tag,
-    FOR_EACH_PTRTAG_ENUM(DECLARE_PTRTAG_ENUM)
+#else
+#define DECLARE_PTRTAG_ENUM(tag)  tag = PTRTAG_ENUM_HASH(tag),
+#endif
+    FOR_EACH_ADDITIONAL_PTRTAG_ENUM(DECLARE_PTRTAG_ENUM)
 #undef DECLARE_PTRTAG_ENUM
 };
 
