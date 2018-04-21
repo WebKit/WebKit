@@ -1,3 +1,54 @@
+2018-04-20  Daniel Bates  <dabates@apple.com>
+
+        Hide Strong Password label when text field is too narrow
+        https://bugs.webkit.org/show_bug.cgi?id=184785
+        <rdar://problem/38183939>
+
+        Reviewed by Zalan Bujtas.
+
+        We accomplish this illusion by allowing the text field's decorations to wrap, specifying flex
+        shrink factors, a flex basis and hiding overflow. Hiding overflow is accomplished by a
+        combination of setting "overflow: hidden", "text-overflow: clip", and patching RenderTextControlSingleLine::layout()
+        to ensure that the height of the container element is equal to the intrinsic height of the
+        inner elements. Because the container is a flex box and we want to vertically center its
+        contents we also need to fix up the y-position of the container element as it may have flexed
+        as a result of forcing its height to match the intrinsic height of the inner elements.
+
+        * css/html.css:
+        (input::-webkit-strong-password-auto-fill-button): Specify a flex-shrink factor and prevent
+        wrapping of the "Strong Password" text when flexed.
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerContainer::TextControlInnerContainer): Register for a custom style
+        resolution callback so that we can style the container if it is a Strong Password or Strong
+        Confirmation Password text field. Ideally we could accomplish this effect with a user agent-
+        specific pseudo class together with a selector definition in the user agent style sheet,
+        html.css. Unfortunately the style resolver does not seem to apply pseudo classes to
+        shadow DOM pseudo elements (why?). Therefore we use a custom style resolution callback to
+        achieve the same effect.
+        (WebCore::isStrongPasswordTextField): Returns whether the specified DOM element is a Strong
+        Password text field.
+        (WebCore::TextControlInnerContainer::resolveCustomStyle): Conditionally apply CSS properties
+        "flex-wrap: wrap" and overflow: hidden" if the shadow host of this container is a Strong
+        Password text field.
+        (WebCore::TextControlInnerElement::resolveCustomStyle): Conditionally style the inner text
+        if the shadow host of this container is a Strong Password text field. We need to apply these
+        styles here as opposed to in html.css for the same reason we need to apply the styles to
+        the container in a custom style resolution callback. See the comments for TextControlInnerContainer()
+        above for more details
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::resetOverriddenHeight): Added. Incorporates the logic from setNeedsLayoutOnAncestors().
+        (WebCore::RenderTextControlSingleLine::layout): Override the height of the container element to
+        match the height of the inner elements when this text field is a Strong Password field. We cache
+        the container's logical top before adjusting its height so that we can restore it after performing
+        a second layout of this renderer. This is needed because we vertically center the elements in this
+        renderer and adjusting the height of the container may cause it to flex and re-position along its
+        cross axis when the container's height is taller than the inner element's height (e.g. the "Strong
+        Password" label wraps to the next line). This re-positioning causes a noticeable jitter when
+        transitioning from a field that has a visible "Strong Password" label to one that does not. Caching
+        and restoring the logical top of the container element avoids this jitter.
+        (WebCore::setNeedsLayoutOnAncestors): Deleted. Moved its implementation into resetOverriddenHeight().
+
 2018-04-20  Dean Jackson  <dino@apple.com>
 
         Render a badge on system preview images

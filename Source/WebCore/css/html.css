@@ -543,7 +543,7 @@ input::-webkit-inner-spin-button {
 }
 
 input::-webkit-strong-password-auto-fill-button {
-    flex: none !important;
+    flex-shrink: 1 !important;
     font-family: -apple-system !important;
     -webkit-text-security: none !important;
     -webkit-user-select: none !important;
@@ -551,6 +551,7 @@ input::-webkit-strong-password-auto-fill-button {
     text-align: right !important;
     color: black !important;
     padding-left: 6px !important;
+    white-space: nowrap !important;
 }
 
 input::-webkit-credentials-auto-fill-button {

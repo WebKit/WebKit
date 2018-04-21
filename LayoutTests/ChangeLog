@@ -1,3 +1,18 @@
+2018-04-20  Daniel Bates  <dabates@apple.com>
+
+        Hide Strong Password label when text field is too narrow
+        https://bugs.webkit.org/show_bug.cgi?id=184785
+        <rdar://problem/38183939>
+
+        Reviewed by Zalan Bujtas.
+
+        Update existing tests to include narrow text fields.
+
+        * fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html:
+        * fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html:
+        * platform/mac/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt:
+        * platform/mac/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+
 2018-04-20  Dean Jackson  <dino@apple.com>
 
         Render a badge on system preview images

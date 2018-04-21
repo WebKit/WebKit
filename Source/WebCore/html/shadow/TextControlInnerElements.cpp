@@ -27,6 +27,8 @@
 #include "config.h"
 #include "TextControlInnerElements.h"
 
+#include "CSSPrimitiveValue.h"
+#include "CSSToLengthConversionData.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -60,6 +62,7 @@ using namespace HTMLNames;
 TextControlInnerContainer::TextControlInnerContainer(Document& document)
     : HTMLDivElement(divTag, document)
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& document)
@@ -70,6 +73,22 @@ Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& docum
 RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderTextControlInnerContainer>(*this, WTFMove(style));
+}
+
+static inline bool isStrongPasswordTextField(const Element* element)
+{
+    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element)->hasAutoFillStrongPasswordButton();
+}
+
+std::optional<ElementStyle> TextControlInnerContainer::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
+{
+    auto elementStyle = resolveStyle(&parentStyle);
+    if (isStrongPasswordTextField(shadowHost())) {
+        elementStyle.renderStyle->setFlexWrap(FlexWrap);
+        elementStyle.renderStyle->setOverflowX(OHIDDEN);
+        elementStyle.renderStyle->setOverflowY(OHIDDEN);
+    }
+    return WTFMove(elementStyle);
 }
 
 TextControlInnerElement::TextControlInnerElement(Document& document)
@@ -93,6 +112,21 @@ std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const Re
     newStyle->setDirection(LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
     newStyle->setUserModify(READ_ONLY);
+
+    if (isStrongPasswordTextField(shadowHost())) {
+        newStyle->setFlexShrink(0);
+        newStyle->setTextOverflow(TextOverflowClip);
+        newStyle->setOverflowX(OHIDDEN);
+        newStyle->setOverflowY(OHIDDEN);
+
+        // Set "flex-basis: 1em". Note that CSSPrimitiveValue::computeLengthInt() only needs the element's
+        // style to calculate em lengths. Since the element might not be in a document, just pass nullptr
+        // for the root element style and the render view.
+        RefPtr<CSSPrimitiveValue> emSize = CSSPrimitiveValue::create(1, CSSPrimitiveValue::CSS_EMS);
+        int pixels = emSize->computeLength<int>(CSSToLengthConversionData { newStyle.get(), nullptr, nullptr, 1.0, false });
+        newStyle->setFlexBasis(Length { pixels, Fixed });
+    }
+
     return ElementStyle { WTFMove(newStyle) };
 }
 
