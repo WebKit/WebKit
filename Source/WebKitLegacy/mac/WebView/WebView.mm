@@ -1541,6 +1541,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 #if !PLATFORM(IOS)
     [self _registerDraggedTypes];
+    [self _updateDefaultAppearance];
 #endif
 
     [self _setIsVisible:[self _isViewVisible]];
@@ -5298,9 +5299,11 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 - (void)effectiveAppearanceDidChange
 {
-    if (!_private->page)
+    // This can be called during [super initWithCoder:] and [super initWithFrame:].
+    // That is before _private is ready to be used, so check. <rdar://problem/39611236>
+    if (!_private || !_private->page)
         return;
-    
+
     [self _updateDefaultAppearance];
 }
 

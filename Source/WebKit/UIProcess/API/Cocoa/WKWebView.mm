@@ -696,6 +696,7 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
     _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
+    _impl->setDefaultAppearance([self _defaultAppearance]);
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
@@ -6260,6 +6261,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)effectiveAppearanceDidChange
 {
+    // This can be called during [super initWithCoder:] and [super initWithFrame:].
+    // That is before _impl is ready to be used, so check. <rdar://problem/39611236>
+    if (!_impl)
+        return;
+
     _impl->setDefaultAppearance([self _defaultAppearance]);
 }
 
