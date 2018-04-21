@@ -1,3 +1,22 @@
+2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Do TLS error checking on GTlsConnection::accept-certificate
+        https://bugs.webkit.org/show_bug.cgi?id=184480
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/network/soup/ResourceError.h: Change tlsError to recieve a failing URL instead of a SoupRequest,
+        since the request was only used to get the failing URL.
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::ResourceError::tlsError): Use the given failing URL.
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession): Use ssl-strict when creating the SoupSession to handle the
+        certificates ourselves by connecting to GTlsConnection::accept-certificate.
+        (WebCore::SoupNetworkSession::checkTLSErrors): Updated to receive a URL, certificate and errors instead of
+        receiving a SoupRequest and SoupMessage and extract the url, certirficate and errors from them. Also return the
+        optional error directly instead of using a completion handler since the function is always synchronous.
+        * platform/network/soup/SoupNetworkSession.h:
+
 2018-04-20  Tim Horton  <timothy_horton@apple.com>
 
         Adjust geolocation feature flag

@@ -1,3 +1,22 @@
+2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Do TLS error checking on GTlsConnection::accept-certificate
+        https://bugs.webkit.org/show_bug.cgi?id=184480
+
+        Reviewed by Michael Catanzaro.
+
+        Connect to GTlsConnection::accept-certificate signal instead of SoupMessage::notify::tls-errors to perform the
+        TLS errors check.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest): Do not connect to SoupMessage::notify::tls-errors.
+        (WebKit::NetworkDataTaskSoup::tlsConnectionAcceptCertificateCallback): Call tlsConnectionAcceptCertificate() is
+        the task is still ongoing.
+        (WebKit::NetworkDataTaskSoup::tlsConnectionAcceptCertificate): Check TLS errors here.
+        (WebKit::NetworkDataTaskSoup::networkEventCallback): Pass the stream to networkEvent.
+        (WebKit::NetworkDataTaskSoup::networkEvent): Connect to GTlsConnection::accept-certificate.
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+
 2018-04-20  Timothy Hatcher  <timothy@apple.com>
 
         NULL dereference crash sometimes under [super initWithCoder:] in WebView
