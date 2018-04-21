@@ -338,6 +338,108 @@ static void testSubresourceLoadFailedWithTLSErrors(TLSSubresourceTest* test, gco
     assertIfSSLRequestProcessed = false;
 }
 
+#if SOUP_CHECK_VERSION(2, 50, 0)
+class WebSocketTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(WebSocketTest);
+
+    enum EventFlags {
+        None = 0,
+        DidServerCompleteHandshake = 1 << 0,
+        DidOpen = 1 << 1,
+        DidClose = 1 << 2
+    };
+
+    WebSocketTest()
+    {
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "event");
+        g_signal_connect(m_userContentManager.get(), "script-message-received::event", G_CALLBACK(webSocketTestResultCallback), this);
+    }
+
+    virtual ~WebSocketTest()
+    {
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "event");
+        g_signal_handlers_disconnect_by_data(m_userContentManager.get(), this);
+    }
+
+    static constexpr const char* webSocketTestJSFormat =
+        "var socket = new WebSocket('%s');"
+        "socket.addEventListener('open', onOpen);"
+        "socket.addEventListener('close', onClose);"
+        "function onOpen() {"
+        "    window.webkit.messageHandlers.event.postMessage('open');"
+        "    socket.removeEventListener('close', onClose);"
+        "}"
+        "function onClose() {"
+        "    window.webkit.messageHandlers.event.postMessage('close');"
+        "    socket.removeEventListener('open', onOpen);"
+        "}";
+
+    static void serverWebSocketCallback(SoupServer*, SoupWebsocketConnection*, const char*, SoupClientContext*, gpointer userData)
+    {
+        static_cast<WebSocketTest*>(userData)->m_events |= WebSocketTest::EventFlags::DidServerCompleteHandshake;
+    }
+
+    static void webSocketTestResultCallback(WebKitUserContentManager*, WebKitJavascriptResult* javascriptResult, WebSocketTest* test)
+    {
+        GUniquePtr<char> event(WebViewTest::javascriptResultToCString(javascriptResult));
+        if (!g_strcmp0(event.get(), "open"))
+            test->m_events |= WebSocketTest::EventFlags::DidOpen;
+        else if (!g_strcmp0(event.get(), "close"))
+            test->m_events |= WebSocketTest::EventFlags::DidClose;
+        else
+            g_assert_not_reached();
+        test->quitMainLoop();
+    }
+
+    unsigned connectToServerAndWaitForEvents(WebKitTestServer* server)
+    {
+        m_events = 0;
+
+        server->addWebSocketHandler(serverWebSocketCallback, this);
+        GUniquePtr<char> createWebSocketJS(g_strdup_printf(webSocketTestJSFormat, server->getWebSocketURIForPath("/foo").data()));
+        webkit_web_view_run_javascript(m_webView, createWebSocketJS.get(), nullptr, nullptr, nullptr);
+        g_main_loop_run(m_mainLoop);
+        server->removeWebSocketHandler();
+
+        return m_events;
+    }
+
+    unsigned m_events { 0 };
+};
+
+static void testWebSocketTLSErrors(WebSocketTest* test, gconstpointer)
+{
+    WebKitWebContext* context = webkit_web_view_get_context(test->m_webView);
+    WebKitTLSErrorsPolicy originalPolicy = webkit_web_context_get_tls_errors_policy(context);
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_FAIL);
+
+    // First, check that insecure ws:// web sockets work fine.
+    unsigned events = test->connectToServerAndWaitForEvents(kHttpServer);
+    g_assert_true(events);
+    g_assert_true(events & WebSocketTest::EventFlags::DidServerCompleteHandshake);
+    g_assert_true(events & WebSocketTest::EventFlags::DidOpen);
+    g_assert_false(events & WebSocketTest::EventFlags::DidClose);
+
+    // Try again using wss:// this time. It should be blocked because the
+    // server certificate is self-signed.
+    events = test->connectToServerAndWaitForEvents(kHttpsServer);
+    g_assert_true(events);
+    g_assert_false(events & WebSocketTest::EventFlags::DidServerCompleteHandshake);
+    g_assert_false(events & WebSocketTest::EventFlags::DidOpen);
+    g_assert_true(events & WebSocketTest::EventFlags::DidClose);
+
+    // Now try wss:// again, this time ignoring TLS errors.
+    webkit_web_context_set_tls_errors_policy(context, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+    events = test->connectToServerAndWaitForEvents(kHttpsServer);
+    g_assert_true(events & WebSocketTest::EventFlags::DidServerCompleteHandshake);
+    g_assert_true(events & WebSocketTest::EventFlags::DidOpen);
+    g_assert_false(events & WebSocketTest::EventFlags::DidClose);
+
+    webkit_web_context_set_tls_errors_policy(context, originalPolicy);
+}
+#endif
+
 static void httpsServerCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -424,6 +526,9 @@ void beforeAll()
     SSLTest::add("WebKitWebView", "tls-http-auth", testTLSErrorsHTTPAuth);
     TLSSubresourceTest::add("WebKitWebView", "tls-subresource", testSubresourceLoadFailedWithTLSErrors);
     TLSErrorsTest::add("WebKitWebView", "load-failed-with-tls-errors", testLoadFailedWithTLSErrors);
+#if SOUP_CHECK_VERSION(2, 50, 0)
+    WebSocketTest::add("WebKitWebView", "web-socket-tls-errors", testWebSocketTLSErrors);
+#endif
 }
 
 void afterAll()
