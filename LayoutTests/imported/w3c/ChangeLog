@@ -3,6 +3,13 @@
         Unreviewed, rebaseline more tests after r230864.
 
         * web-platform-tests/domparsing/innerhtml-05-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/getactionurl-expected.txt:
+
+2018-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline more tests after r230864.
+
+        * web-platform-tests/domparsing/innerhtml-05-expected.txt:
         * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
         * web-platform-tests/html/semantics/forms/form-submission-0/getactionurl-expected.txt:
 
