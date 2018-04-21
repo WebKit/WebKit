@@ -1,3 +1,12 @@
+2018-04-20  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust geolocation feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=184856
+
+        Reviewed by Wenson Hsieh.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-04-20  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove some dead code in IdentifiersFactory
