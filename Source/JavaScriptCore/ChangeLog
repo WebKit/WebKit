@@ -1,3 +1,20 @@
+2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] All API tests fail in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=184813
+
+        Reviewed by Mark Lam.
+
+        This is because of a conflict of ExceptionHandler class used in tests and ExceptionHandler struct defined in
+        JSCContext.cpp. This patch renames the ExceptionHandler struct as JSCContextExceptionHandler.
+
+        * API/glib/JSCContext.cpp:
+        (JSCContextExceptionHandler::JSCContextExceptionHandler):
+        (JSCContextExceptionHandler::~JSCContextExceptionHandler):
+        (jscContextConstructed):
+        (ExceptionHandler::ExceptionHandler): Deleted.
+        (ExceptionHandler::~ExceptionHandler): Deleted.
+
 2018-04-20  Tim Horton  <timothy_horton@apple.com>
 
         Adjust geolocation feature flag

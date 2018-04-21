@@ -52,29 +52,29 @@ enum {
     PROP_VIRTUAL_MACHINE,
 };
 
-struct ExceptionHandler {
-    ExceptionHandler(JSCExceptionHandler handler, void* userData = nullptr, GDestroyNotify destroyNotifyFunction = nullptr)
+struct JSCContextExceptionHandler {
+    JSCContextExceptionHandler(JSCExceptionHandler handler, void* userData = nullptr, GDestroyNotify destroyNotifyFunction = nullptr)
         : handler(handler)
         , userData(userData)
         , destroyNotifyFunction(destroyNotifyFunction)
     {
     }
 
-    ~ExceptionHandler()
+    ~JSCContextExceptionHandler()
     {
         if (destroyNotifyFunction)
             destroyNotifyFunction(userData);
     }
 
-    ExceptionHandler(ExceptionHandler&& other)
+    JSCContextExceptionHandler(JSCContextExceptionHandler&& other)
     {
         std::swap(handler, other.handler);
         std::swap(userData, other.userData);
         std::swap(destroyNotifyFunction, other.destroyNotifyFunction);
     }
 
-    ExceptionHandler(const ExceptionHandler&) = delete;
-    ExceptionHandler& operator=(const ExceptionHandler&) = delete;
+    JSCContextExceptionHandler(const JSCContextExceptionHandler&) = delete;
+    JSCContextExceptionHandler& operator=(const JSCContextExceptionHandler&) = delete;
 
     JSCExceptionHandler handler { nullptr };
     void* userData { nullptr };
@@ -85,7 +85,7 @@ struct _JSCContextPrivate {
     GRefPtr<JSCVirtualMachine> vm;
     JSRetainPtr<JSGlobalContextRef> jsContext;
     GRefPtr<JSCException> exception;
-    Vector<ExceptionHandler> exceptionHandlers;
+    Vector<JSCContextExceptionHandler> exceptionHandlers;
 };
 
 WEBKIT_DEFINE_TYPE(JSCContext, jsc_context, G_TYPE_OBJECT)
@@ -150,7 +150,7 @@ static void jscContextConstructed(GObject* object)
     if (!context->priv->vm)
         jscContextSetVirtualMachine(context, adoptGRef(jsc_virtual_machine_new()));
 
-    context->priv->exceptionHandlers.append(ExceptionHandler([](JSCContext* context, JSCException* exception, gpointer) {
+    context->priv->exceptionHandlers.append(JSCContextExceptionHandler([](JSCContext* context, JSCException* exception, gpointer) {
         jsc_context_throw_exception(context, exception);
     }));
 }
