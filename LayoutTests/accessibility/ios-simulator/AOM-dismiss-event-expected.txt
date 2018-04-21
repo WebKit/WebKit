@@ -5,7 +5,8 @@ This tests the accessibledismiss event on iOS.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-received accessibledismiss: [object Event]
+received DOM Level 1 accessibledismiss event
+received accessibledismiss event
 PASS dispatched is true
 PASS dispatched is false
 PASS successfullyParsed is true

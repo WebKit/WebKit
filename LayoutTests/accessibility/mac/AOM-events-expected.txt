@@ -9,6 +9,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 onaccessibleclick support
+PASS receivedDOMLevel1Event is true
 PASS receivedAXEvent is true
 PASS receivedFallbackEvent is true
 

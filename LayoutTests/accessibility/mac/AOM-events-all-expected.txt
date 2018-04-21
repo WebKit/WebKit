@@ -8,19 +8,27 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test accessibleincrement and accessibledecrement
+received DOM Level 1 accessibleincrement event
+received DOM Level 1 accessibledecrement event
 received accessibleincrement event
 received accessibledecrement event
+
+Test onaccessiblefocus attribute
+received DOM Level 1 accessiblefocus event
 
 Test accessiblefocus
 received accessiblefocus event
 
 Test accessiblescrollintoview
+received DOM Level 1 accessiblescrollintoview event
 received accessiblescrollintoview event
 
 Test accessiblecontextmenu
+received DOM Level 1 accessiblecontextmenu event
 received accessiblecontextmenu event
 
 Test accessibleselect
+received DOM Level 1 accessibleselect event
 received accessibleselect event
 PASS successfullyParsed is true
 

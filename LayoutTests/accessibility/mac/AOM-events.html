@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<button id="button1">Click</button>
+<button id="button1" onaccessibleclick="accessibleclickCallback(true)">Click</button>
 <button id="button2">Click</button>
 <p id="p1">
 <button id="button3">Click</button>
@@ -26,6 +26,7 @@
     if (window.accessibilityController) {
         var node;
         var axNode;
+        var receivedDOMLevel1Event;
         var receivedAXEvent;
         var receivedFallbackEvent;
 
@@ -35,15 +36,35 @@
         testEventCapturingAndBubbling();
     }
 
+    function accessibleclickCallback(domLevel1) {
+        if (domLevel1)
+            receivedDOMLevel1Event = true;
+        else
+            receivedAXEvent = true;
+    }
+
+    function testAccessibleClickDOMLevel1() {
+        debug("\nonaccessibleclick attribute support");
+        axNode = accessibilityController.accessibleElementById("button0");
+        receivedAXEvent = false;
+        axNode.syncPress();
+        shouldBeTrue("receivedAXEvent");
+    }
+
     function testAccessibleClick() {
         debug("\nonaccessibleclick support");
         node = document.getElementById("button1");
         axNode = accessibilityController.accessibleElementById("button1");
 
+        // DOM Level 1 event
+        receiveDOMLevel1Event = false;
+        axNode.syncPress();
+        shouldBeTrue("receivedDOMLevel1Event");
+        // DOM Level 2 event
         receivedAXEvent = false;
         receivedFallbackEvent = false;
         node.onaccessibleclick = function() {
-            receivedAXEvent = true;
+            accessibleclickCallback();
         };
         node.onclick = function() {
             receivedFallbackEvent = true;

@@ -4,7 +4,7 @@
 <script src="../../resources/js-test-pre.js"></script>
 <div id="content">
 
-<div id="event" role="group" tabindex=0>
+<div id="event" role="group" tabindex=0 onaccessibledismiss="eventCallback(true)">
 test1
 </div>
 
@@ -21,15 +21,22 @@ test2
 
     description("This tests the accessibledismiss event on iOS.");
 
+    function eventCallback(domLevel1) {
+        debug("received " + (domLevel1 ? "DOM Level 1 " : "") + "accessibledismiss event");
+        if (domLevel1)
+            document.getElementById("event").removeAttribute("onaccessibledismiss");
+    }
+
     if (window.accessibilityController) {
-        jsTestIsAsync = true;
 
         var node = document.getElementById("event");
         var axNode = accessibilityController.accessibleElementById("event");
+        // DOM Level 1 event
+        axNode.dismiss();
+        // DOM Level 2 event
         node.onaccessibledismiss = function(event) {
-            debug("received accessibledismiss: " + event);
-            finishJSTest(); 
-         };
+            eventCallback();
+        };
 
         var dispatched = axNode.dismiss();
         shouldBeTrue("dispatched");

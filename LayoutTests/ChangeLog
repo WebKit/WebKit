@@ -1,3 +1,19 @@
+2018-04-20  Nan Wang  <n_wang@apple.com>
+
+        AX: AOM does not work with DOM Level 1 events
+        https://bugs.webkit.org/show_bug.cgi?id=184847
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/AOM-dismiss-event-expected.txt:
+        * accessibility/ios-simulator/AOM-dismiss-event.html:
+        * accessibility/mac/AOM-event-accessiblesetvalue-expected.txt:
+        * accessibility/mac/AOM-event-accessiblesetvalue.html:
+        * accessibility/mac/AOM-events-all-expected.txt:
+        * accessibility/mac/AOM-events-all.html:
+        * accessibility/mac/AOM-events-expected.txt:
+        * accessibility/mac/AOM-events.html:
+
 2018-04-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline more tests after r230864.

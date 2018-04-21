@@ -4,17 +4,17 @@
 <script src="../../resources/js-test-pre.js"></script>
 <div id="content">
 
-<input type="range" min="0" max="100" value="25" step="25" id="slider"/>
-<input type="text" id="input">
-<button id="button">button</button>
+<input type="range" min="0" max="100" value="25" step="25" id="slider" onaccessibleincrement="incrementEventCallback(true)" onaccessibledecrement="decrementEventCallback(true)"/>
+<input type="text" id="input" onaccessiblefocus="focusEventCallback(true)">
+<button id="button" onaccessiblescrollintoview="scrollIntoViewEventCallback(true)">button</button>
 
-<div id="combo" tabindex=0 role="combobox" aria-expanded="false" aria-label="Test">
+<div id="combo" tabindex=0 role="combobox" aria-expanded="false" aria-label="Test" onaccessiblecontextmenu="contextMenuEventCallback(true)">
 <div role="listbox">
 <div role="option">option 1</div>
 </div></div>
 
 <select id="group" multiple="multiple">
-    <option id="option">Option 1</option>
+    <option id="option" onaccessibleselect="selectEventCallback(true)">Option 1</option>
     <option>Option 2</option>
 </select>
 
@@ -34,31 +34,81 @@
         var axNode;
         
         testIncrementDecrement();
-       
+
+        function incrementEventCallback(domLevel1) {
+            debug("received " + (domLevel1 ? "DOM Level 1 " : "") + "accessibleincrement event");
+            if (domLevel1)
+                node.removeAttribute("onaccessibleincrement");
+        }
+
+        function decrementEventCallback(domLevel1) {
+            debug("received " + (domLevel1 ? "DOM Level 1 " : "") + "accessibledecrement event");
+            if (domLevel1)
+                node.removeAttribute("onaccessibledecrement");
+        }
+
+        function focusEventCallback(domLevel1) {
+            debug("received " + (domLevel1 ? "DOM Level 1 " : "") + "accessiblefocus event");
+            if (domLevel1) {
+                node.removeAttribute("onaccessiblefocus");
+                testFocus();
+            }
+        }
+
+        function scrollIntoViewEventCallback(domLevel1) {
+            debug("received " + (domLevel1 ? "DOM Level 1 " : "") + "accessiblescrollintoview event");
+            if (domLevel1)
+                node.removeAttribute("onaccessiblescrollintoview");
+        }
+
+        function contextMenuEventCallback(domLevel1) {
+            debug("received " + (domLevel1 ? "DOM Level 1 " : "") + "accessiblecontextmenu event");
+            if (domLevel1)
+                node.removeAttribute("onaccessiblecontextmenu");
+        }
+
+        function selectEventCallback(domLevel1) {
+            debug("received " + (domLevel1 ? "DOM Level 1 " : "") + "accessibleselect event");
+            if (domLevel1)
+                node.removeAttribute("onaccessibleselect");
+        }
+
         function testIncrementDecrement() {
             debug("\nTest accessibleincrement and accessibledecrement");
             node = document.getElementById("slider");
             axNode = accessibilityController.accessibleElementById("slider");
-
+            // DOM Level 1 events
+            axNode.increment();
+            axNode.decrement();
+            // DOM Level 2 events
             node.onaccessibleincrement = function() {
-                debug("received accessibleincrement event");
+                incrementEventCallback();
             };
             node.onaccessibledecrement = function() {
-                debug("received accessibledecrement event");
+                decrementEventCallback();
             };
             axNode.increment();
             axNode.decrement();
 
-            testFocus();
+            testFocusDOMLevel1();
+        }
+
+        function testFocusDOMLevel1() {
+            // takeFocus() is async so that this deserves a seperate test
+            debug("\nTest onaccessiblefocus attribute");
+            node = document.getElementById("input");
+            axNode = accessibilityController.accessibleElementById("input");
+            axNode.takeFocus();
         }
 
         function testFocus() {
             debug("\nTest accessiblefocus");
+            // DOM Level 2 event
             node = document.getElementById("input");
             axNode = accessibilityController.accessibleElementById("input");
 
             node.onaccessiblefocus = function() {
-                debug("received accessiblefocus event");
+                focusEventCallback();
                 testScrollIntoView();
             };
             axNode.takeFocus();
@@ -68,9 +118,11 @@
             debug("\nTest accessiblescrollintoview");
             node = document.getElementById("button");
             axNode = accessibilityController.accessibleElementById("button");
-
+            // DOM Level 1 event
+            axNode.scrollToMakeVisible();
+            // DOM Level 2 event
             node.onaccessiblescrollintoview = function() {
-                debug("received accessiblescrollintoview event");
+                scrollIntoViewEventCallback();
                 testShowContextMenu();
             };
             axNode.scrollToMakeVisible();
@@ -80,9 +132,11 @@
             debug("\nTest accessiblecontextmenu");
             node = document.getElementById("combo");
             axNode = accessibilityController.accessibleElementById("combo");
-
+            // DOM Level 1 event
+            axNode.showMenu();
+            // DOM Level 2 event
             node.onaccessiblecontextmenu = function() {
-                debug("received accessiblecontextmenu event");
+                contextMenuEventCallback();
                 testSelect();
             };
             axNode.showMenu();
@@ -92,8 +146,11 @@
             debug("\nTest accessibleselect");
             node = document.getElementById("option");
             axNode = accessibilityController.accessibleElementById("group");
+            // DOM Level 1 event
+            axNode.setSelectedChildAtIndex(0);
+            // DOM Level 2 event
             node.onaccessibleselect = function() {
-                debug("received accessibleselect event");
+                selectEventCallback();
                 finishJSTest();
             }
             axNode.setSelectedChildAtIndex(0);

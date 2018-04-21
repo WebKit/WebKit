@@ -8,7 +8,7 @@
 <div contenteditable="true" id="contenteditable">current</div>
 <div id="combobox" role="combobox" aria-expanded="false" aria-label="Test"></div>
 <input id="slider" type="range">
-<div id="scroller" aria-valuenow="55" role="scrollbar">scrollbar</div>
+<div id="scroller" aria-valuenow="55" role="scrollbar" onaccessiblesetvalue="domLevel1Callback(event)">scrollbar</div>
 
 </div>
 
@@ -74,8 +74,20 @@
            axNode = accessibilityController.accessibleElementById("slider");
            node.onaccessiblesetvalue = function(event) {
               debug("slider accessible set value to: " + event.value);
-              testScrollbar();
+              testDOMLevel1Event();
            };
+           axNode.setValue("70");
+       }
+
+       function domLevel1Callback(event) {
+           debug("scroller accessible set value to: " + event.value);
+           document.getElementById("scroller").removeAttribute("onaccessiblesetvalue");
+           testScrollbar();
+       }
+
+       function testDOMLevel1Event() {
+           debug("\nTest DOM Level 1 event."); 
+           axNode = accessibilityController.accessibleElementById("scroller");
            axNode.setValue("70");
        }
        

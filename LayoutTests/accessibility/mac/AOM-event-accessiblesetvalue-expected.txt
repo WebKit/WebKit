@@ -17,6 +17,9 @@ contenteditable accessible set value to: contenteditable new value
 Test Slider.
 slider accessible set value to: 70
 
+Test DOM Level 1 event.
+scroller accessible set value to: 70
+
 Test Scrollbar.
 scroller accessible set value to: 60
 

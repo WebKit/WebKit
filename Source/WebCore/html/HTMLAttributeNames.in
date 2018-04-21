@@ -190,6 +190,15 @@ novalidate
 nowrap
 object
 onabort
+onaccessiblecontextmenu
+onaccessibleclick
+onaccessibledecrement
+onaccessibledismiss
+onaccessiblefocus
+onaccessibleincrement
+onaccessiblescrollintoview
+onaccessiblesetvalue
+onaccessibleselect
 onanimationstart
 onanimationiteration
 onanimationend
