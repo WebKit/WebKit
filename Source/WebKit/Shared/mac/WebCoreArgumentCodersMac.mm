@@ -386,14 +386,7 @@ static void encodeNSError(Encoder& encoder, NSError *nsError)
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {
-    bool errorIsNull = resourceError.isNull();
-    encoder << errorIsNull;
-
-    if (errorIsNull)
-        return;
-
-    NSError *nsError = resourceError.nsError();
-    encodeNSError(encoder, nsError);
+    encodeNSError(encoder, resourceError.nsError());
 }
 
 static bool decodeNSError(Decoder& decoder, RetainPtr<NSError>& nsError)
@@ -430,15 +423,6 @@ static bool decodeNSError(Decoder& decoder, RetainPtr<NSError>& nsError)
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, ResourceError& resourceError)
 {
-    bool errorIsNull;
-    if (!decoder.decode(errorIsNull))
-        return false;
-    
-    if (errorIsNull) {
-        resourceError = ResourceError();
-        return true;
-    }
-    
     RetainPtr<NSError> nsError;
     if (!decodeNSError(decoder, nsError))
         return false;

@@ -254,6 +254,7 @@ http/tests/inspector/paymentrequest [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 
 http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus-sync.htm [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-sync-default-feature-policy.sub.html [ Skip ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-async.htm [ Pass Failure ]

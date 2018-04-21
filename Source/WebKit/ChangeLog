@@ -1,3 +1,35 @@
+2018-04-21  Youenn Fablet  <youenn@apple.com>
+
+        Activate NetworkLoadChecker for media loads
+        https://bugs.webkit.org/show_bug.cgi?id=184841
+
+        Reviewed by Eric Carlson.
+
+        Instantiate a NetworkLoadChecker for NetworkResourceLoader for audio/video loads.
+
+        Move CORS checks for response after handling of 304 checks.
+        For 304 checks, we need to do the CORS checks on the validated cached response, not the 304 received response.
+
+        Updated ResourceError argument coder to explicitly pass the error type
+        as some errors created by NetworkLoadChecker would otherwise be received as General errors by WebProcess.
+        Updated platform data encoding of ResourceError accordingly.
+
+        All changes are covered by regular media loading layout tests.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::shouldUseNetworkLoadChecker):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceError>::encode):
+        (IPC::ArgumentCoder<ResourceError>::decode):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+        We need to set the type after decoding the NSError as ResourceError tries to guess the type from NSError data.
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceError>::decodePlatformData):
+
 2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Do TLS error checking on GTlsConnection::accept-certificate

@@ -87,6 +87,25 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
     data.delayedReply = nullptr;
 }
 
+static inline bool shouldUseNetworkLoadChecker(bool isSynchronous, const NetworkResourceLoadParameters& parameters)
+{
+    if (isSynchronous)
+        return true;
+
+    if (!parameters.shouldRestrictHTTPResponseAccess)
+        return false;
+
+    // FIXME: Add support for other destinations.
+    switch (parameters.options.destination) {
+    case FetchOptions::Destination::Audio:
+    case FetchOptions::Destination::Video:
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
 NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&& synchronousReply)
     : m_parameters { WTFMove(parameters) }
     , m_connection { connection }
@@ -107,15 +126,16 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
         }
     }
 
-    if (synchronousReply) {
+    if (shouldUseNetworkLoadChecker(!!synchronousReply, m_parameters)) {
         m_networkLoadChecker = NetworkLoadChecker::create(FetchOptions { m_parameters.options }, m_parameters.sessionID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef());
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
 #if ENABLE(CONTENT_EXTENSIONS)
         m_networkLoadChecker->setContentExtensionController(URL { m_parameters.mainDocumentURL }, m_parameters.userContentControllerIdentifier);
 #endif
-        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTFMove(synchronousReply));
     }
+    if (synchronousReply)
+        m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTFMove(synchronousReply));
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
@@ -343,17 +363,6 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", httpStatusCode = %d, length = %" PRId64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, receivedResponse.httpStatusCode(), receivedResponse.expectedContentLength());
 
-    if (m_networkLoadChecker) {
-        auto error = m_networkLoadChecker->validateResponse(receivedResponse);
-        if (!error.isNull()) {
-            RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
-                if (protectedThis->m_networkLoad)
-                    protectedThis->didFailLoading(error);
-            });
-            return ShouldContinueDidReceiveResponse::No;
-        }
-    }
-
     m_response = WTFMove(receivedResponse);
 
     if (shouldCaptureExtraNetworkLoadMetrics())
@@ -380,7 +389,17 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     bool shouldWaitContinueDidReceiveResponse = isMainResource();
     if (shouldSendDidReceiveResponse) {
-        // FIXME: Sanitize response.
+        if (m_networkLoadChecker) {
+            auto error = m_networkLoadChecker->validateResponse(m_response);
+            if (!error.isNull()) {
+                RunLoop::main().dispatch([protectedThis = makeRef(*this), error = WTFMove(error)] {
+                    if (protectedThis->m_networkLoad)
+                        protectedThis->didFailLoading(error);
+                });
+                return ShouldContinueDidReceiveResponse::No;
+            }
+        }
+
         auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
         if (isSynchronous())
             m_synchronousLoadData->response = WTFMove(response);
