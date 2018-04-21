@@ -1,3 +1,21 @@
+2018-04-20  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: remove some dead code in IdentifiersFactory
+        https://bugs.webkit.org/show_bug.cgi?id=184839
+
+        Reviewed by Timothy Hatcher.
+
+        This was never used on non-Chrome ports, so the identifier always has a
+        prefix of '0.'. We may change this in the future, but for now remove this.
+        Using a PID for this purpose is problematic anyway.
+
+        * inspector/IdentifiersFactory.cpp:
+        (Inspector::addPrefixToIdentifier):
+        (Inspector::IdentifiersFactory::createIdentifier):
+        (Inspector::IdentifiersFactory::requestId):
+        (Inspector::IdentifiersFactory::addProcessIdPrefixTo): Deleted.
+        * inspector/IdentifiersFactory.h:
+
 2018-04-20  Mark Lam  <mark.lam@apple.com>
 
         Add the ability to use a hash for setting PtrTag enum values.

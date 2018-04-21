@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,36 +27,27 @@
 #include "config.h"
 #include "IdentifiersFactory.h"
 
-#include <wtf/text/StringBuilder.h>
-
 namespace Inspector {
 
 namespace {
 static long s_lastUsedIdentifier = 0;
 }
 
-long IdentifiersFactory::s_processId = 0;
+static String addPrefixToIdentifier(const String& identifier)
+{
+    return makeString("0.", identifier);
+}
 
 String IdentifiersFactory::createIdentifier()
 {
-    return addProcessIdPrefixTo(String::number(++s_lastUsedIdentifier));
+    return addPrefixToIdentifier(String::number(++s_lastUsedIdentifier));
 }
 
 String IdentifiersFactory::requestId(unsigned long identifier)
 {
     if (identifier)
-        return addProcessIdPrefixTo(String::number(identifier));
+        return addPrefixToIdentifier(String::number(identifier));
     return String();
 }
 
-String IdentifiersFactory::addProcessIdPrefixTo(const String& id)
-{
-    StringBuilder builder;
-    builder.appendNumber(s_processId);
-    builder.append('.');
-    builder.append(id);
-    return builder.toString();
-}
-
 } // namespace Inspector
-

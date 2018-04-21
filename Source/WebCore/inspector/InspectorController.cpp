@@ -356,11 +356,6 @@ void InspectorController::show()
         connectFrontend(frontendChannel);
 }
 
-void InspectorController::setProcessId(long processId)
-{
-    IdentifiersFactory::setProcessId(processId);
-}
-
 void InspectorController::setIsUnderTest(bool value)
 {
     if (value == m_isUnderTest)
