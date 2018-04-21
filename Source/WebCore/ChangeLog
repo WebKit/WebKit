@@ -1,3 +1,20 @@
+2018-04-21  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Obtain compact mode icons through WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=184862
+        <rdar://problem/39621645>
+
+        Reviewed by Jon Lee.
+
+        * Modules/modern-media-controls/controls/button.js:
+        (Button.prototype._updateImageMetrics): Handle PDF assets where the image source's intrinsic size needs
+        to be adjusted for the device pixel density.
+        (Button):
+        * Modules/modern-media-controls/controls/icon-service.js: Expect three additional icons provided through
+        WebKitAdditions, including two in the PDF format, so we add support for this format.
+        * WebCore.xcodeproj/project.pbxproj: Copy additional assets from the WebKitAdditions build directory should
+        any be present.
+
 2018-04-21  Dean Jackson  <dino@apple.com>
 
         Expose whether you've build with the Apple Internal SDK

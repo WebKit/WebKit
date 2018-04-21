@@ -199,7 +199,7 @@ class Button extends LayoutItem
         let width = this._imageSource.width * this._scaleFactor;
         let height = this._imageSource.height * this._scaleFactor;
 
-        if (this._iconName.type === "png") {
+        if (this._iconName.type === "png" || this._iconName.type === "pdf") {
             width /= window.devicePixelRatio;
             height /= window.devicePixelRatio;
         }
