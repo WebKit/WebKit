@@ -39,6 +39,7 @@ controls/placard.js
 controls/airplay-placard.js
 controls/invalid-placard.js
 controls/pip-placard.js
+controls/compact-activity-indicator.js
 controls/compact-media-controls.js
 media/media-controller-support.js
 media/airplay-support.js
@@ -63,4 +64,5 @@ media/volume-down-support.js
 media/volume-support.js
 media/volume-up-support.js
 media/media-document-controller.js
+media/compact-media-controls-support.js
 media/media-controller.js

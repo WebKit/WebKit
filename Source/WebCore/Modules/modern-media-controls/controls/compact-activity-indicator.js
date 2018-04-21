@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class PlacardSupport extends MediaControllerSupport
+class CompactActivityIndicator extends Button
 {
 
-    constructor(mediaController)
+    constructor(layoutDelegate)
     {
-        super(mediaController);
-        this._updatePlacard();
+        super({
+            cssClassName: "compact-activity-indicator",
+            iconName: Icons.SpinnerCompact,
+            layoutDelegate
+        });
     }
 
-    // Protected
+    // Public
 
-    get mediaEvents()
+    show()
     {
-        return ["loadstart", "error", "webkitpresentationmodechanged", "webkitcurrentplaybacktargetiswirelesschanged"];
+        const classList = this.element.classList;
+        classList.add("spins");
+        classList.remove("fades-out");
     }
 
-    handleEvent(event)
+    hide()
     {
-        this._updatePlacard();
+        const classList = this.element.classList;
+        if (!classList.contains("spins") || classList.contains("fades-out"))
+            return;
+
+        classList.add("fades-out");
+        this.image.element.addEventListener("animationend", event => {
+            if (event.animationName !== "compact-activity-indicator-fades-out")
+                return;
+            classList.remove("spins");
+            classList.remove("fades-out");
+        }, { once: true });
     }
-
-    disable()
-    {
-        // We should not allow disabling Placard support when playing inline as it would prevent the
-        // PiP placard from being shown if the controls are disabled.
-        if (this.mediaController.isFullscreen)
-            super.disable();
-    }
-
-    // Private
-
-    _updatePlacard()
-    {
-        const controls = this.mediaController.controls;
-        const media = this.mediaController.media;
-
-        let placard = null;
-        if (media.webkitPresentationMode === "picture-in-picture")
-            placard = controls.pipPlacard;
-        else if (media.webkitCurrentPlaybackTargetIsWireless)
-            placard = controls.airplayPlacard;
-        else if (media instanceof HTMLVideoElement && media.error !== null && media.played.length === 0)
-            placard = controls.invalidPlacard;
-
-        controls.placard = placard;
-    }
-
+    
 }

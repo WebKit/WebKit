@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+button.compact-activity-indicator > picture {
+    --width: 27px;
+
+    /* There are 23 frames in the sprite. */
+    --number-of-frames: 23;
+
+    width: var(--width) !important;
+    height: 29.5px !important;
+    
+    -webkit-mask-size: calc(var(--number-of-frames) * 100%) 100%;
+
+    /* We apply two animations in sequence, first the intro which goes for 8 frames (0 - 7) and whichs
+       runs once, then the loop which starts after the intro (using a delay) and runs infinitely. */
+    --spins: compact-activity-indicator-intro frames(8) calc(8s / 15), compact-activity-indicator-loop frames(15) 1s calc(8s / 15) infinite;
+
+    /* When we fade out. */
+    --fades-out: compact-activity-indicator-fades-out 500ms;
+}
+
+button.compact-activity-indicator.spins > picture {
+    animation: var(--spins);
+}
+
+button.compact-activity-indicator.spins.fades-out > picture {
+    animation: var(--spins), var(--fades-out);
+}
+
+/* This is the intro animation that runs once only and goes through the first 8 frames of the sprite. */
+@keyframes compact-activity-indicator-intro {
+    from { -webkit-mask-position-x: 0 }
+    to   { -webkit-mask-position-x: calc(-7 * var(--width)) }
+}
+
+/* This is the main animation that runs infinitely once the intro has completed and goes through the frames 9 through 23 of the sprite. */
+@keyframes compact-activity-indicator-loop {
+    from { -webkit-mask-position-x: calc(-8 * var(--width)) }
+    to   { -webkit-mask-position-x: calc(-22 * var(--width)) }
+}
+
+@keyframes compact-activity-indicator-fades-out {
+    from { opacity: 1 }
+    to   { opacity: 0 }
+}

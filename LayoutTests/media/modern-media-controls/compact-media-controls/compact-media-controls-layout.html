@@ -8,31 +8,18 @@ description("Testing the <code>CompactMediaControls</code> layout.");
 
 const mediaControls = new CompactMediaControls;
 
-debug("With controls at their default size only the play/pause button is showing with a center style.");
-shouldBe("mediaControls.children", "[mediaControls.playPauseButton]");
-shouldBe("mediaControls.playPauseButton.style", "Button.Styles.Center");
+debug("With controls at their default state (paused) only the play button is showing.");
+shouldBe("mediaControls.children", "[mediaControls.playButton]");
 debug("");
 
-debug("With controls just under the minimum size to show prominent controls only the play/pause button is showing with a small-center style.");
-mediaControls.width = MaximumSizeToShowSmallProminentControl - 1;
-mediaControls.height = MaximumSizeToShowSmallProminentControl - 1;
-shouldBe("mediaControls.children", "[mediaControls.playPauseButton]");
-shouldBe("mediaControls.playPauseButton.style", "Button.Styles.SmallCenter");
+mediaControls.state = CompactMediaControls.States.Pending;
+debug("With controls at pending state, only the activity indicator is showing.");
+shouldBe("mediaControls.children", "[mediaControls.activityIndicator]");
 debug("");
 
-debug("With controls just under the minimum size to show any controls there are no children.");
-mediaControls.width = MinimumSizeToShowAnyControl - 1;
-mediaControls.height = MinimumSizeToShowAnyControl - 1;
-shouldBe("mediaControls.children.length", "0");
-debug("");
-
-debug("With controls above the minimum size and the error placard set only the invalid placard is shown.");
-mediaControls.width = MaximumSizeToShowSmallProminentControl;
-mediaControls.height = MaximumSizeToShowSmallProminentControl;
-mediaControls.placard = mediaControls.invalidPlacard;
-shouldBe("mediaControls.children", "[mediaControls.invalidPlacard]");
-shouldBe("mediaControls.invalidPlacard.width", "mediaControls.width");
-shouldBe("mediaControls.invalidPlacard.height", "mediaControls.height");
+mediaControls.state = CompactMediaControls.States.Invalid;
+debug("With controls at invalid state, only the invalid icon is showing.");
+shouldBe("mediaControls.children", "[mediaControls.invalidButton]");
 debug("");
 
 </script>

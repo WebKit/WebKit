@@ -1,3 +1,16 @@
+2018-04-21  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Show a loading indicator after pressing the play button in compact mode
+        https://bugs.webkit.org/show_bug.cgi?id=184863
+        <rdar://problem/38939468>
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/compact-media-controls/compact-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/compact-media-controls/compact-media-controls-constructor.html:
+        * media/modern-media-controls/compact-media-controls/compact-media-controls-layout-expected.txt:
+        * media/modern-media-controls/compact-media-controls/compact-media-controls-layout.html:
+
 2018-04-21  Youenn Fablet  <youenn@apple.com>
 
         Activate NetworkLoadChecker for media loads

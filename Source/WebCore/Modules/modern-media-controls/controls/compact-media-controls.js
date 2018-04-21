@@ -28,17 +28,27 @@ class CompactMediaControls extends LayoutNode
 
     constructor({ width = 320, height = 240 } = {})
     {
-        super(`<div class="media-controls"></div>`);
+        super(`<div class="compact media-controls"></div>`);
 
+        this._state = CompactMediaControls.States.Paused;
         this._scaleFactor = 1;
         this._shouldCenterControlsVertically = false;
 
         this.layoutTraits = LayoutTraits.Compact;
 
-        this.playPauseButton = new PlayPauseButton(this);
-        this.invalidPlacard = new InvalidPlacard(this);
+        this.playButton = new Button({
+            cssClassName: "play",
+            iconName: Icons.PlayCompact,
+            layoutDelegate: this
+        });
 
-        this._placard = null;
+        this.invalidButton = new Button({
+            cssClassName: "invalid",
+            iconName: Icons.InvalidCompact,
+            layoutDelegate: this
+        });
+
+        this.activityIndicator = new CompactActivityIndicator(this);
 
         this.width = width;
         this.height = height;
@@ -74,17 +84,17 @@ class CompactMediaControls extends LayoutNode
         this.markDirtyProperty("scaleFactor");
     }
 
-    get placard()
+    get state()
     {
-        return this._placard;
+        return this._state;
     }
 
-    set placard(placard)
+    set state(state)
     {
-        if (this._placard === placard)
+        if (this._state === state)
             return;
 
-        this._placard = placard;
+        this._state = state;
         this.layout();
     }
 
@@ -94,28 +104,18 @@ class CompactMediaControls extends LayoutNode
     {
         super.layout();
 
-        const children = [];
-
-        // The controls might be too small to allow showing anything at all.
-        if (this.width < MinimumSizeToShowAnyControl || this.height < MinimumSizeToShowAnyControl) {
-            this.children = children;
-            return;
+        switch (this._state) {
+        case CompactMediaControls.States.Paused:
+            this.children = [this.playButton];
+            break;
+        case CompactMediaControls.States.Pending:
+            this.children = [this.activityIndicator];
+            this.activityIndicator.show();
+            break;
+        case CompactMediaControls.States.Invalid:
+            this.children = [this.invalidButton];
+            break;
         }
-
-        // If we are showing the invalid placard, show the placard only.
-        if (this._placard === this.invalidPlacard) {
-            this._placard.width = this.width;
-            this._placard.height = this.height;
-            this.children = [this._placard];
-            return;
-        }
-
-        if (this.playPauseButton.visible) {
-            this.playPauseButton.style = this.width <= MaximumSizeToShowSmallProminentControl || this.height <= MaximumSizeToShowSmallProminentControl ? Button.Styles.SmallCenter : Button.Styles.Center;
-            children.push(this.playPauseButton);
-        }
-
-        this.children = children;
     }
 
     commitProperty(propertyName)
@@ -143,3 +143,9 @@ class CompactMediaControls extends LayoutNode
     }
 
 }
+
+CompactMediaControls.States = {
+    Paused: "paused",
+    Pending: "pending",
+    Invalid: "invalid"
+};

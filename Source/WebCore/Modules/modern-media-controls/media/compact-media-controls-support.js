@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class PlacardSupport extends MediaControllerSupport
+class CompactMediaControlsSupport extends MediaControllerSupport
 {
-
-    constructor(mediaController)
-    {
-        super(mediaController);
-        this._updatePlacard();
-    }
 
     // Protected
 
     get mediaEvents()
     {
-        return ["loadstart", "error", "webkitpresentationmodechanged", "webkitcurrentplaybacktargetiswirelesschanged"];
+        return ["pause", "error"];
     }
 
     handleEvent(event)
     {
-        this._updatePlacard();
+        switch (event.type) {
+        case "pause":
+            this.mediaController.controls.state = CompactMediaControls.States.Paused;
+            break;
+        case "error":
+            this.mediaController.controls.state = CompactMediaControls.States.Invalid;
+            break;
+        }
+    }
+
+    enable()
+    {
+        super.enable();
+        
+        for (let button of this._buttons())
+            button.uiDelegate = this;
     }
 
     disable()
     {
-        // We should not allow disabling Placard support when playing inline as it would prevent the
-        // PiP placard from being shown if the controls are disabled.
-        if (this.mediaController.isFullscreen)
-            super.disable();
+        super.disable();
+        
+        for (let button of this._buttons())
+            button.uiDelegate = null;
+    }
+
+    buttonWasPressed(button)
+    {
+        if (button === this.mediaController.controls.playButton) {
+            this.mediaController.media.play();
+            this.mediaController.controls.state = CompactMediaControls.States.Pending;
+        } else if (button === this.mediaController.controls.activityIndicator) {
+            this.mediaController.media.pause();
+            this.mediaController.controls.state = CompactMediaControls.States.Paused;
+        }
     }
 
     // Private
 
-    _updatePlacard()
+    _buttons()
     {
-        const controls = this.mediaController.controls;
-        const media = this.mediaController.media;
-
-        let placard = null;
-        if (media.webkitPresentationMode === "picture-in-picture")
-            placard = controls.pipPlacard;
-        else if (media.webkitCurrentPlaybackTargetIsWireless)
-            placard = controls.airplayPlacard;
-        else if (media instanceof HTMLVideoElement && media.error !== null && media.played.length === 0)
-            placard = controls.invalidPlacard;
-
-        controls.placard = placard;
+        return [this.mediaController.controls.playButton, this.mediaController.controls.activityIndicator];
     }
 
 }

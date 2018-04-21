@@ -8,9 +8,9 @@ description("Testing the <code>CompactMediaControls</code> constructor.");
 const mediaControls = new CompactMediaControls;
 
 shouldBeEqualToString("mediaControls.element.localName", "div");
-shouldBeEqualToString("mediaControls.element.className", "media-controls");
+shouldBeEqualToString("mediaControls.element.className", "compact media-controls");
 shouldBe("mediaControls.layoutTraits", "LayoutTraits.Compact");
-shouldBeNull("mediaControls.placard");
+shouldBe("mediaControls.state", "CompactMediaControls.States.Paused");
 debug("");
 
 </script>

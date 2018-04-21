@@ -1,5 +1,73 @@
 2018-04-21  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Show a loading indicator after pressing the play button in compact mode
+        https://bugs.webkit.org/show_bug.cgi?id=184863
+        <rdar://problem/38939468>
+
+        Reviewed by Dean Jackson.
+
+        We now display a loading indicator after pressing the play button when in compact mode. We also update the
+        behavior to use assets provided through WebKitAdditions (see webkit.org/b/184862) for the play button and
+        the invalid icon. Additionally, we always show a 20% opaque black overlay in the background while any piece
+        of user interface is up.
+
+        * Modules/modern-media-controls/controls/compact-activity-indicator.css: Added.
+        (button.compact-activity-indicator > picture): The loading indicator asset is a sprite made of 23 frames, so
+        we specify the mask size (since all buttons are rendered via a mask) to be 23 * 100% the rendered size. The
+        display of the loading indicator is performed with a first intro animation which runs once through the first
+        8 frames and then a continuously looping animation going through the remaining frames. We use a frames()
+        timing function to achieve the frame-by-frame effect while using only from/to keyframe animations. When we
+        fade out, we use a simply opacity fade, which is combined with the spinning animation. We use CSS variables
+        to encode both animations so they can be used combined or one at a time without redefining the whole animation
+        property.
+        (button.compact-activity-indicator.spins > picture): Use the "spins" animation variable when spinning.
+        (button.compact-activity-indicator.spins.fades-out > picture): Combine the "spins" and "fades-out" animation
+        variables when fading out.
+        (@keyframes compact-activity-indicator-intro): Animation going through the first 8 frames of the loading indicator.
+        (@keyframes compact-activity-indicator-loop): Animation going through the remaining frames of the loading indicator.
+        (@keyframes compact-activity-indicator-fades-out): Animation fading opacity from 1 to 0.
+        * Modules/modern-media-controls/controls/compact-activity-indicator.js: Added.
+        (CompactActivityIndicator):
+        (CompactActivityIndicator.prototype.show): Add the "spins" CSS class to show the control spinning with the intro animation.
+        (CompactActivityIndicator.prototype.hide): Add the "fades-out" CSS class to hide the control, removing both this class and
+        the "spins" class when the fade-out animation completes.
+        * Modules/modern-media-controls/controls/compact-media-controls.css: Added.
+        (.media-controls.compact:before): Add a 20% black overlay over the video frame to provide contrast for controls.
+        (.media-controls.compact button): Ensure buttons are sized to use the entire video frame so that their hit region
+        comprises the whole video frame.
+        (.media-controls.compact button > picture): Override default blending styles for a simple solid white mask.
+        (.media-controls.compact button:active > picture): Turn off the scale down effect when pressing a button.
+        * Modules/modern-media-controls/controls/compact-media-controls.js: Expose a "state" property for the compact media controls,
+        which can be exlusively one of three: "paused", "pending" and "invalid".
+        (CompactMediaControls.):
+        (CompactMediaControls.prototype.get state):
+        (CompactMediaControls.prototype.set state):
+        (CompactMediaControls.prototype.layout): In the "paused" state, show the play button. In the "pending" state show
+        the loading indicator. In the "invalid" state show the invalid button.
+        (CompactMediaControls.prototype.get placard): Deleted.
+        (CompactMediaControls.prototype.set placard): Deleted.
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/compact-media-controls-support.js: Added.
+        (CompactMediaControlsSupport.prototype.get mediaEvents):
+        (CompactMediaControlsSupport.prototype.handleEvent): Make the controls enter the "paused" state when receiving a "pause"
+        event. Make the controls enter the "invalid" state when receiving an "error" event. 
+        (CompactMediaControlsSupport.prototype.enable):
+        (CompactMediaControlsSupport.prototype.disable):
+        (CompactMediaControlsSupport.prototype.buttonWasPressed): Play the media when pressing the play button and make the controls
+        enter the "pending" state. When pressing the loading indicator, pause the media and make the controls enter the "paused" state.
+        (CompactMediaControlsSupport.prototype._buttons):
+        (CompactMediaControlsSupport):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._supportingObjectClasses): Only use CompactMediaControlsSupport as a media controller supporting object
+        in the compact mode.
+        * Modules/modern-media-controls/media/placard-support.js:
+        (PlacardSupport.prototype.get mediaEvents): This media controller support object no longer needs to deal with compact mode.
+        * Modules/modern-media-controls/media/playback-support.js:
+        (PlaybackSupport.prototype.syncControl): This media controller support object no longer needs to deal with compact mode.
+        (PlaybackSupport):
+
+2018-04-21  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Obtain compact mode icons through WebKitAdditions
         https://bugs.webkit.org/show_bug.cgi?id=184862
         <rdar://problem/39621645>
