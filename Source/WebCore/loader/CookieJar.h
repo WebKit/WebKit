@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@ namespace WebCore {
 class Document;
 class URL;
 struct Cookie;
+struct CookieRequestHeaderFieldProxy;
 
 // Functions in this file take a Document pointer to determine which cookie storage to use. We should merge that into call sites, and use PlatformCookieJar directly.
 
@@ -42,6 +43,7 @@ WEBCORE_EXPORT void setCookies(Document&, const URL&, const String& cookieString
 
 WEBCORE_EXPORT bool cookiesEnabled(const Document&);
 WEBCORE_EXPORT String cookieRequestHeaderFieldValue(Document&, const URL&);
+WEBCORE_EXPORT CookieRequestHeaderFieldProxy cookieRequestHeaderFieldProxy(const Document&, const URL&);
 WEBCORE_EXPORT bool getRawCookies(const Document&, const URL&, Vector<Cookie>&);
 WEBCORE_EXPORT void deleteCookie(const Document&, const URL&, const String& cookieName);
 

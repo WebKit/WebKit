@@ -1,3 +1,30 @@
+2018-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit cookie header access to Network process
+        https://bugs.webkit.org/show_bug.cgi?id=184764
+        <rdar://problem/36785285>
+
+        Reviewed by Youenn Fablet.
+
+        Revise the handling of cookie request headers so that we don't interact with them in the
+        WebContent process. They are only needed for interaction with the server and the network
+        process, so we should limit their scope to just the Network process.
+
+        Instead, we should handle a token that represents the cookie headers in the WebContent
+        process, which can be converted to the relevant cookie data in the network process when
+        needed.
+
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::sendHandshake):
+        * NetworkProcess/NetworkSocketStream.h:
+        * NetworkProcess/NetworkSocketStream.messages.in:
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::networkProcessCrashed):
+        (WebKit::WebSocketStream::platformSendHandshake):
+        (WebKit::WebSocketStream::didSendHandshake):
+        * WebProcess/Network/WebSocketStream.h:
+        * WebProcess/Network/WebSocketStream.messages.in:
+
 2018-04-20  Jeremy Jones  <jeremyj@apple.com>
 
         Disable backward and forward navigation swipes while in fullscreen.

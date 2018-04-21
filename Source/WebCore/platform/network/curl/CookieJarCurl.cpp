@@ -22,6 +22,7 @@
 
 #if USE(CURL)
 #include "Cookie.h"
+#include "CookieRequestHeaderFieldProxy.h"
 #include "NetworkStorageSession.h"
 #include "URL.h"
 
@@ -42,6 +43,11 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
 std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
     return session.cookieStorage().cookieRequestHeaderFieldValue(session, firstParty, url, frameID, pageID, includeSecureCookies);
+}
+
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const CookieRequestHeaderFieldProxy& headerFieldProxy)
+{
+    return session.cookieStorage().cookieRequestHeaderFieldValue(session, headerFieldProxy.m_firstParty, headerFieldProxy.m_url, headerFieldProxy.m_frameID, headerFieldProxy.m_pageID, headerFieldProxy.m_includeSecureCookies);
 }
 
 bool cookiesEnabled(const NetworkStorageSession& session)

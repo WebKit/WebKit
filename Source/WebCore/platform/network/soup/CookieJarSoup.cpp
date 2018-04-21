@@ -23,6 +23,7 @@
 #if USE(SOUP)
 
 #include "Cookie.h"
+#include "CookieRequestHeaderFieldProxy.h"
 #include "CookiesStrategy.h"
 #include "GUniquePtrSoup.h"
 #include "NetworkStorageSession.h"
@@ -131,6 +132,11 @@ std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSessio
     UNUSED_PARAM(pageID);
     // Secure cookies will still only be included if url's protocol is https.
     return cookiesForSession(session, url, true, includeSecureCookies);
+}
+
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const CookieRequestHeaderFieldProxy& headerFieldProxy)
+{
+    return cookieRequestHeaderFieldValue(session, headerFieldProxy.m_firstParty, headerFieldProxy.m_url, headerFieldProxy.m_frameID, headerFieldProxy.m_pageID, headerFieldProxy.m_includeSecureCookies);
 }
 
 bool cookiesEnabled(const NetworkStorageSession& session)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,8 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     
     // SocketStreamHandle
-    void platformSend(const char*, size_t, Function<void(bool)>&&) final;
+    void platformSend(const uint8_t*, size_t, Function<void(bool)>&&) final;
+    void platformSendHandshake(const uint8_t*, size_t, const std::optional<WebCore::CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&);
     void platformClose() final;
     size_t bufferedAmount() final;
 
@@ -64,7 +65,8 @@ public:
     void didUpdateBufferedAmount(uint64_t);
     void didFailSocketStream(WebCore::SocketStreamError&&);
 
-    void didSendData(uint64_t, bool);
+    void didSendData(uint64_t, bool success);
+    void didSendHandshake(uint64_t, bool success, bool didAccessSecureCookies);
     
 private:
     // MessageSender
@@ -77,6 +79,7 @@ private:
     size_t m_bufferedAmount { 0 };
     WebCore::SocketStreamHandleClient& m_client;
     HashMap<uint64_t, Function<void(bool)>> m_sendDataCallbacks;
+    HashMap<uint64_t, Function<void(bool, bool)>> m_sendHandshakeCallbacks;
 };
 
 } // namespace WebKit

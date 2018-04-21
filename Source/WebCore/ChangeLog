@@ -1,3 +1,54 @@
+2018-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit cookie header access to Network process
+        https://bugs.webkit.org/show_bug.cgi?id=184764
+        <rdar://problem/36785285>
+
+        Reviewed by Youenn Fablet.
+
+        Revise the handling of cookie request headers so that we don't interact with them in the
+        WebContent process. They are only needed for interaction with the server and the network
+        process, so we should limit their scope to just the Network process.
+
+        Instead, we should handle a token that represents the cookie headers in the WebContent
+        process, which can be converted to the relevant cookie data in the network process when
+        needed.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpenSocketStream):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::clientHandshakeMessage const):
+        (WebCore::WebSocketHandshake::clientHandshakeRequest const):
+        (WebCore::WebSocketHandshake::clientHandshakeCookieRequestHeaderFieldProxy const):
+        (WebCore::WebSocketHandshake::clientHandshakeMessage): Deleted.
+        (WebCore::WebSocketHandshake::clientHandshakeRequest): Deleted.
+        * Modules/websockets/WebSocketHandshake.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CookieJar.cpp:
+        (WebCore::cookieRequestHeaderFieldProxy):
+        * loader/CookieJar.h:
+        * platform/network/CookieRequestHeaderFieldProxy.h: Added.
+        (WebCore::CookieRequestHeaderFieldProxy::CookieRequestHeaderFieldProxy):
+        (WebCore::CookieRequestHeaderFieldProxy::isolatedCopy const):
+        (WebCore::CookieRequestHeaderFieldProxy::encode const):
+        (WebCore::CookieRequestHeaderFieldProxy::decode):
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandle::sendHandshake):
+        * platform/network/SocketStreamHandle.h:
+        * platform/network/SocketStreamHandleImpl.cpp:
+        (WebCore::SocketStreamHandleImpl::platformSendHandshake):
+        * platform/network/cf/SocketStreamHandleImpl.h:
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        * platform/network/soup/SocketStreamHandleImpl.h:
+
 2018-04-20  Daniel Bates  <dabates@apple.com>
 
         Hide Strong Password label when text field is too narrow

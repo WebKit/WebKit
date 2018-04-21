@@ -29,4 +29,5 @@ messages -> WebSocketStream {
     DidFailSocketStream(WebCore::SocketStreamError error)
 
     DidSendData(uint64_t identifier, bool success)
+    DidSendHandshake(uint64_t identifier, bool success, bool didAccessSecureCookies)
 }

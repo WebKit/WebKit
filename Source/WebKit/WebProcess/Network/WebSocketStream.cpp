@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "NetworkSocketStreamMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/SocketStreamError.h>
 #include <WebCore/SocketStreamHandleClient.h>
 #include <pal/SessionID.h>
@@ -57,6 +58,8 @@ void WebSocketStream::networkProcessCrashed()
     for (auto& stream : globalWebSocketStreamMap().values()) {
         for (auto& callback : stream->m_sendDataCallbacks.values())
             callback(false);
+        for (auto& callback : stream->m_sendHandshakeCallbacks.values())
+            callback(false, false);
         stream->m_client.didFailSocketStream(*stream, SocketStreamError(0, { }, "Network process crashed."));
     }
 
@@ -94,13 +97,22 @@ uint64_t WebSocketStream::messageSenderDestinationID()
     return identifier();
 }
 
-void WebSocketStream::platformSend(const char* data, size_t length, Function<void(bool)>&& completionHandler)
+void WebSocketStream::platformSend(const uint8_t* data, size_t length, Function<void(bool)>&& completionHandler)
 {
     static uint64_t nextDataIdentifier = 1;
     uint64_t dataIdentifier = nextDataIdentifier++;
-    send(Messages::NetworkSocketStream::SendData(IPC::DataReference(reinterpret_cast<const uint8_t *>(data), length), dataIdentifier));
+    send(Messages::NetworkSocketStream::SendData(IPC::DataReference(data, length), dataIdentifier));
     ASSERT(!m_sendDataCallbacks.contains(dataIdentifier));
-    m_sendDataCallbacks.set(dataIdentifier, WTFMove(completionHandler));
+    m_sendDataCallbacks.add(dataIdentifier, WTFMove(completionHandler));
+}
+
+void WebSocketStream::platformSendHandshake(const uint8_t* data, size_t length, const std::optional<CookieRequestHeaderFieldProxy>& headerFieldProxy, Function<void(bool, bool)>&& completionHandler)
+{
+    static uint64_t nextDataIdentifier = 1;
+    uint64_t dataIdentifier = nextDataIdentifier++;
+    send(Messages::NetworkSocketStream::SendHandshake(IPC::DataReference(data, length), headerFieldProxy, dataIdentifier));
+    ASSERT(!m_sendHandshakeCallbacks.contains(dataIdentifier));
+    m_sendHandshakeCallbacks.add(dataIdentifier, WTFMove(completionHandler));
 }
 
 void WebSocketStream::didSendData(uint64_t identifier, bool success)
@@ -108,7 +120,13 @@ void WebSocketStream::didSendData(uint64_t identifier, bool success)
     ASSERT(m_sendDataCallbacks.contains(identifier));
     m_sendDataCallbacks.take(identifier)(success);
 }
-    
+
+void WebSocketStream::didSendHandshake(uint64_t identifier, bool success, bool didAccessSecureCookies)
+{
+    ASSERT(m_sendHandshakeCallbacks.contains(identifier));
+    m_sendHandshakeCallbacks.take(identifier)(success, didAccessSecureCookies);
+}
+
 void WebSocketStream::platformClose()
 {
     send(Messages::NetworkSocketStream::Close());

@@ -23,6 +23,7 @@
 namespace WebCore {
 
 struct Cookie;
+struct CookieRequestHeaderFieldProxy;
 class NetworkStorageSession;
 class URL;
 
@@ -33,6 +34,7 @@ public:
     virtual void setCookiesFromHTTPResponse(const NetworkStorageSession&, const URL&, const String&) const = 0;
     virtual bool cookiesEnabled(const NetworkStorageSession&) const = 0;
     virtual std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const = 0;
+    virtual std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const CookieRequestHeaderFieldProxy&) const = 0;
     virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&) const = 0;
     virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String&) const = 0;
     virtual void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) const = 0;

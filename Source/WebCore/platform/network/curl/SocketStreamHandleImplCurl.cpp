@@ -66,7 +66,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     ASSERT(!m_workerThread);
 }
 
-std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const char* data, size_t length)
+std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
 
@@ -74,7 +74,7 @@ std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const char* d
 
     startThread();
 
-    auto copy = createCopy(data, length);
+    auto copy = createCopy(reinterpret_cast<const char*>(data), length);
 
     std::lock_guard<Lock> lock(m_mutexSend);
     m_sendData.append(SocketData { WTFMove(copy), length });

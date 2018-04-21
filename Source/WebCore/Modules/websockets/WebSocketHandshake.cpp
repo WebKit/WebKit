@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,6 +39,7 @@
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
@@ -177,7 +179,7 @@ String WebSocketHandshake::clientLocation() const
     return builder.toString();
 }
 
-CString WebSocketHandshake::clientHandshakeMessage()
+CString WebSocketHandshake::clientHandshakeMessage() const
 {
     // Keep the following consistent with clientHandshakeRequest().
     StringBuilder builder;
@@ -194,12 +196,8 @@ CString WebSocketHandshake::clientHandshakeMessage()
     if (!m_clientProtocol.isEmpty())
         fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
 
-    URL url = httpURLForAuthenticationAndCookies();
-    if (m_allowCookies && m_document) {
-        String cookie = cookieRequestHeaderFieldValue(*m_document, url);
-        if (!cookie.isEmpty())
-            fields.append("Cookie: " + cookie);
-    }
+    // Note: Cookies are not retrieved in the WebContent process. Instead, a proxy object is
+    // added in the handshake, and is exchanged for actual cookies in the Network process.
 
     // Add no-cache headers to avoid compatibility issue.
     // There are some proxies that rewrite "Connection: upgrade"
@@ -231,7 +229,7 @@ CString WebSocketHandshake::clientHandshakeMessage()
     return builder.toString().utf8();
 }
 
-ResourceRequest WebSocketHandshake::clientHandshakeRequest()
+ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
 {
     // Keep the following consistent with clientHandshakeMessage().
     ResourceRequest request(m_url);
@@ -245,6 +243,7 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest()
 
     URL url = httpURLForAuthenticationAndCookies();
     if (m_allowCookies && m_document) {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(InspectorInstrumentation::hasFrontends());
         String cookie = cookieRequestHeaderFieldValue(*m_document, url);
         if (!cookie.isEmpty())
             request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
@@ -263,6 +262,13 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest()
     request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_document->userAgent(m_document->url()));
 
     return request;
+}
+
+std::optional<CookieRequestHeaderFieldProxy> WebSocketHandshake::clientHandshakeCookieRequestHeaderFieldProxy() const
+{
+    if (!m_document || !m_allowCookies)
+        return std::nullopt;
+    return cookieRequestHeaderFieldProxy(*m_document, httpURLForAuthenticationAndCookies());
 }
 
 void WebSocketHandshake::reset()

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PlatformCookieJar.h"
 
+#import "CookieRequestHeaderFieldProxy.h"
 #import "CookiesStrategy.h"
 #import "NetworkStorageSession.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -249,6 +250,11 @@ std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, cons
 std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
     return cookiesForSession(session, firstParty, url, frameID, pageID, IncludeHTTPOnly, includeSecureCookies);
+}
+
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const CookieRequestHeaderFieldProxy& headerFieldProxy)
+{
+    return cookiesForSession(session, headerFieldProxy.m_firstParty, headerFieldProxy.m_url, headerFieldProxy.m_frameID, headerFieldProxy.m_pageID, IncludeHTTPOnly, headerFieldProxy.m_includeSecureCookies);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& cookieStr)
