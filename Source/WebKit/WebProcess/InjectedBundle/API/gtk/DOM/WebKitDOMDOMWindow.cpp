@@ -29,6 +29,7 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/UserMessageHandlersNamespace.h>
 #include <WebCore/WebKitNamespace.h>
+#include <WebCore/WindowProxy.h>
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
 #include "WebKitDOMDOMSelectionPrivate.h"
 #include "WebKitDOMDOMWindowPrivate.h"
@@ -953,7 +954,8 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_self(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->self());
+    auto* selfWindowProxy = item->self();
+    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(selfWindowProxy->window());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -962,7 +964,8 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_window(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->self());
+    auto* selfWindowProxy = item->self();
+    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(selfWindowProxy->window());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -971,7 +974,8 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_frames(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->self());
+    auto* selfWindowProxy = item->self();
+    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(selfWindowProxy->window());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -980,7 +984,8 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_opener(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->opener());
+    auto* openerWindowProxy = item->opener();
+    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(openerWindowProxy->window());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -989,7 +994,8 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_parent(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->parent());
+    auto* parentWindowProxy = item->parent();
+    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(parentWindowProxy->window());
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -998,7 +1004,8 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_top(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    RefPtr<WebCore::DOMWindow> gobjectResult = WTF::getPtr(item->top());
+    auto* topWindowProxy = item->top();
+    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(topWindowProxy->window());
     return WebKit::kit(gobjectResult.get());
 }
 
