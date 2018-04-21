@@ -11,7 +11,7 @@ We're checking we can't read an arbitrary file when we set each file:// URI to h
 Checking that same-origin iframes work.
 Doing an XHR to an existing file.
 Exception: A network error occurred.
-Exception: Blocked a frame with origin "null" from accessing a frame with origin "file://". Protocols, domains, and ports must match.
+Exception: Blocked a frame with origin "null" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 
 
 --------

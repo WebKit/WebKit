@@ -1,3 +1,10 @@
+2018-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline more tests after r230864.
+
+        * fast/frames/sandboxed-iframe-history-denied-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-no-file-access-expected.txt:
+
 2018-04-20  Daniel Bates  <dabates@apple.com>
 
         Hide Strong Password label when text field is too narrow

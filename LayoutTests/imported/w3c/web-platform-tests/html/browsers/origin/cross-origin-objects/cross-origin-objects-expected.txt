@@ -8,7 +8,7 @@ PASS [[SetPrototypeOf]] should return false
 PASS [[IsExtensible]] should return true for cross-origin objects 
 PASS [[PreventExtensions]] should throw for cross-origin objects 
 PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported |own| 
-FAIL [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+FAIL [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 PASS [[GetOwnProperty]] - Subframe named 'then' should shadow the default 'then' value 
 PASS [[Delete]] Should throw on cross-origin objects 
 PASS [[DefineOwnProperty]] Should throw for cross-origin objects 
@@ -24,5 +24,5 @@ PASS Same-origin observers get different functions for cross-origin objects
 PASS Same-origin observers get different accessors for cross-origin Window 
 PASS Same-origin observers get different accessors for cross-origin Location 
 PASS {}.toString.call() does the right thing on cross-origin objects 
-FAIL Resolving a promise with a cross-origin window without a 'then' subframe should work. Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
+FAIL Resolving a promise with a cross-origin window without a 'then' subframe should work. Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
   
