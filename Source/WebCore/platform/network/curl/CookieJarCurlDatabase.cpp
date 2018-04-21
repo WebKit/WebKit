@@ -28,6 +28,7 @@
 #if USE(CURL)
 #include "Cookie.h"
 #include "CookieJarDB.h"
+#include "CookieRequestHeaderFieldProxy.h"
 #include "NetworkStorageSession.h"
 #include "NotImplemented.h"
 #include "URL.h"
