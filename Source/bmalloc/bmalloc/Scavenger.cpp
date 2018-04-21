@@ -354,7 +354,11 @@ void Scavenger::threadEntryPoint(Scavenger* scavenger)
 void Scavenger::threadRunLoop()
 {
     setSelfQOSClass();
-    setThreadName("bmalloc scavenger");
+#if BOS(DARWIN)
+    setThreadName("JavaScriptCore bmalloc scavenger");
+#else
+    setThreadName("BMScavenger");
+#endif
     
     // This loop ratchets downward from most active to least active state. While
     // we ratchet downward, any other thread may reset our state.
