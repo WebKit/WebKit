@@ -2839,16 +2839,6 @@ void WebPage::continueWillSubmitForm(uint64_t frameID, uint64_t listenerID)
     frame->continueWillSubmitForm(listenerID);
 }
 
-void WebPage::didStartNavigationPolicyCheck()
-{
-    m_drawingArea->setLayerTreeStateIsFrozen(true);
-}
-
-void WebPage::didCompleteNavigationPolicyCheck()
-{
-    m_drawingArea->setLayerTreeStateIsFrozen(false);
-}
-
 void WebPage::didStartPageTransition()
 {
     m_drawingArea->setLayerTreeStateIsFrozen(true);

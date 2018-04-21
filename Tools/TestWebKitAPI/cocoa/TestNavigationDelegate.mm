@@ -84,6 +84,14 @@
     [navigationDelegate waitForDidFinishNavigation];
 
     self.navigationDelegate = nil;
+
+#if PLATFORM(IOS)
+    __block bool presentationUpdateHappened = false;
+    [self _doAfterNextPresentationUpdate:^{
+        presentationUpdateHappened = true;
+    }];
+    TestWebKitAPI::Util::run(&presentationUpdateHappened);
+#endif
 }
 
 @end

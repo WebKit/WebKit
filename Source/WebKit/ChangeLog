@@ -1,3 +1,28 @@
+2018-04-20  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r229828): web view doesn’t update or respond to resizing until client calls policy decision handler
+        https://bugs.webkit.org/show_bug.cgi?id=184210
+        <rdar://problem/39072354>
+
+        Reviewed by Wenson Hsieh.
+
+        r229828 tried to have some API tests happy on iOS by freezing the layer tree
+        during the navigation policy decision. However, this is observable by the client
+        application and a regression from when the policy delegate was synchronous.
+
+        To address the issue, this patch reverts r229828 and instead updates the iOS
+        API tests to wait for the next presentation update after navigating
+        before interacting with the view.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::cancelPolicyCheck):
+        (WebKit::WebFrameLoaderClient::provisionalLoadStarted):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+
 2018-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         Limit cookie header access to Network process

@@ -150,8 +150,6 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
     ResourceRequest requestCopy = request;
     m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, didReceiveRedirectResponse, formState, policyDecisionMode, [this, function = WTFMove(function), request = WTFMove(requestCopy), formState = makeRefPtr(formState), suggestedFilename = WTFMove(suggestedFilename)](PolicyAction policyAction) mutable {
-        m_frame.loader().client().didDecidePolicyForNavigationAction();
-
         m_delegateIsDecidingNavigationPolicy = false;
 
         switch (policyAction) {

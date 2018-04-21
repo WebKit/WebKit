@@ -312,8 +312,6 @@ public:
     // -- Called from WebCore clients.
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
 
-    void didStartNavigationPolicyCheck();
-    void didCompleteNavigationPolicyCheck();
     void didStartPageTransition();
     void didCompletePageTransition();
     void didCommitLoad(WebFrame*);
