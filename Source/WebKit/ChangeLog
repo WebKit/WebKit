@@ -1,3 +1,16 @@
+2018-04-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Disable backward and forward navigation swipes while in fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=184656
+        rdar://problem/36057535
+
+        Reviewed by Tim Horton.
+
+        Disable navigation swipes while in fullscreen.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::canSwipeInDirection const):
+
 2018-04-21  Youenn Fablet  <youenn@apple.com>
 
         Activate NetworkLoadChecker for media loads

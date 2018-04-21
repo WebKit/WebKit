@@ -30,6 +30,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "ViewGestureControllerMessages.h"
 #import "WebBackForwardList.h"
+#import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <wtf/MathExtras.h>
@@ -115,6 +116,10 @@ void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* 
     
 bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 {
+#if ENABLE(FULLSCREEN_API)
+    if (m_webPageProxy.fullScreenManager() && m_webPageProxy.fullScreenManager()->isFullScreen())
+        return false;
+#endif
     RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
     auto& backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : m_webPageProxy.backForwardList();
     if (direction == SwipeDirection::Back)
