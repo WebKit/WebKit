@@ -1757,11 +1757,14 @@ typedef struct {
 
 static Bar* barCreate()
 {
-    return g_new0(Bar, 1);
+    Bar* bar = g_new0(Bar, 1);
+    new (bar) Bar();
+    return bar;
 }
 
 static void barFree(Bar* bar)
 {
+    bar->~Bar();
     g_free(bar);
 }
 
