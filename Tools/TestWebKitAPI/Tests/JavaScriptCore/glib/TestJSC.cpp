@@ -2510,7 +2510,6 @@ static void testsJSCVirtualMachine()
             g_assert_true(jsc_value_object_is_instance_of(object.get(), jsc_class_get_name(jscClass)));
         });
         thread->waitForCompletion();
-        thread->detach();
 
         GRefPtr<JSCValue> object = adoptGRef(jsc_context_get_value(context.get(), "f"));
         checker.watch(object.get());
@@ -2550,10 +2549,8 @@ static void testsJSCVirtualMachine()
             }));
         }
 
-        for (auto& thread : threads) {
+        for (auto& thread : threads)
             thread->waitForCompletion();
-            thread->detach();
-        }
 
         g_assert_true(ok);
     }

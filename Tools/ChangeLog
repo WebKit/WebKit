@@ -1,5 +1,17 @@
 2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] ERROR: Thread was unable to be detached when running /jsc/vm test in debug
+        https://bugs.webkit.org/show_bug.cgi?id=184815
+
+        Reviewed by Michael Catanzaro.
+
+        This is because in the test we are calling both join and detach. We should only call join.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testsJSCVirtualMachine):
+
+2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GLIB] Test /jsc/prototypes crashes in debug
         https://bugs.webkit.org/show_bug.cgi?id=184814
 
