@@ -1,3 +1,27 @@
+2018-04-22  Paul Knight  <pknight@apple.com>
+
+        Add -[WKInputDelegate _webView:decidePolicyForFocusedElement:] so clients can request default focusing behavior
+        https://bugs.webkit.org/show_bug.cgi?id=184844
+
+        Reviewed by Dan Bernstein.
+
+        If a client doesn't implement -[_WKInputDelegate _webView:focusShouldStartInputSession:] the default
+        focus behavior only brings up the keyboard if it's already onscreen, the interaction is user driven,
+        and other factors that even depend on what feature flags are enabled.
+
+        If a client implements _webView:focusShouldStartInputSession:, they don't have a good way to specifiy
+        they'd like to fall back to the default behavior. This makes it difficult for a client to use the
+        default in most cases, but sometimes allow programmatic focus from the page, for example.
+
+        Add a new delegate method -_webView:decidePolicyForFocusedElement: that returns a new enum type
+        _WKFocusStartsInputSessionPolicy. Clients can return _WKFocusStartsInputSessionPolicyAuto to request
+        the default behavior, or _WKFocusStartsInputSessionPolicyAllow / Disallow to directly control whether
+        the keyboard appears to assist the focused node.
+
+        * UIProcess/API/Cocoa/_WKInputDelegate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
 2018-04-21  Jeremy Jones  <jeremyj@apple.com>
 
         Disable backward and forward navigation swipes while in fullscreen.

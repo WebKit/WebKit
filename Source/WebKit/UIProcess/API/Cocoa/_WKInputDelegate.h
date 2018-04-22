@@ -34,6 +34,14 @@
 @protocol _WKFocusedElementInfo;
 @protocol _WKFormInputSession;
 
+#if TARGET_OS_IPHONE
+typedef NS_ENUM(NSInteger, _WKFocusStartsInputSessionPolicy) {
+    _WKFocusStartsInputSessionPolicyAuto,
+    _WKFocusStartsInputSessionPolicyAllow,
+    _WKFocusStartsInputSessionPolicyDisallow,
+} WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#endif
+
 @protocol _WKInputDelegate <NSObject>
 
 @optional
@@ -43,6 +51,7 @@
 
 #if TARGET_OS_IPHONE
 - (BOOL)_webView:(WKWebView *)webView focusShouldStartInputSession:(id <_WKFocusedElementInfo>)info;
+- (_WKFocusStartsInputSessionPolicy)_webView:(WKWebView *)webView decidePolicyForFocusedElement:(id <_WKFocusedElementInfo>)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView accessoryViewCustomButtonTappedInFormInputSession:(id <_WKFormInputSession>)inputSession;
 - (void)_webView:(WKWebView *)webView insertTextSuggestion:(UITextSuggestion *)suggestion inInputSession:(id <_WKFormInputSession>)inputSession WK_API_AVAILABLE(ios(10.0));
 - (void)_webView:(WKWebView *)webView willStartInputSession:(id <_WKFormInputSession>)inputSession WK_API_AVAILABLE(ios(WK_IOS_TBA));
