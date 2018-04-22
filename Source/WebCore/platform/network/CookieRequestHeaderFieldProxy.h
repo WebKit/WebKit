@@ -56,7 +56,7 @@ void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 
 template<class Decoder>
 std::optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
-{                        
+{
     CookieRequestHeaderFieldProxy result;
     if (!decoder.decode(result.sessionID))
         return std::nullopt;

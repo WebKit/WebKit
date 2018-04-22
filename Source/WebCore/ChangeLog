@@ -3,6 +3,16 @@
         Cleanup CookieRequestHeaderFieldProxy
         https://bugs.webkit.org/show_bug.cgi?id=184868
 
+        Remove extraneous whitespace that I inadvertently added.
+
+        * platform/network/CookieRequestHeaderFieldProxy.h:
+        (WebCore::CookieRequestHeaderFieldProxy::decode):
+
+2018-04-21  Daniel Bates  <dabates@apple.com>
+
+        Cleanup CookieRequestHeaderFieldProxy
+        https://bugs.webkit.org/show_bug.cgi?id=184868
+
         Reviewed by Youenn Fablet.
 
         Simplify the struct CookieRequestHeaderFieldProxy and make it consistent with other structs.
