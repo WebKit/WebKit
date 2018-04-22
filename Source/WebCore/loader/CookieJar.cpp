@@ -84,12 +84,16 @@ CookieRequestHeaderFieldProxy cookieRequestHeaderFieldProxy(const Document& docu
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
-    auto includeSecureCookies = shouldIncludeSecureCookies(document, url);
-
-    if (auto* frame = document.frame())
-        return { storageSession(document).sessionID(), document.firstPartyForCookies(), url, frame->loader().client().frameID(), frame->loader().client().pageID(), includeSecureCookies };
-
-    return { storageSession(document).sessionID(), document.firstPartyForCookies(), url, std::nullopt, std::nullopt, includeSecureCookies };
+    CookieRequestHeaderFieldProxy proxy;
+    proxy.sessionID = storageSession(document).sessionID();
+    proxy.firstParty = document.firstPartyForCookies();
+    proxy.url = url;
+    proxy.includeSecureCookies = shouldIncludeSecureCookies(document, url);
+    if (auto* frame = document.frame()) {
+        proxy.frameID = frame->loader().client().frameID();
+        proxy.pageID = frame->loader().client().pageID();
+    }
+    return proxy;
 }
 
 void setCookies(Document& document, const URL& url, const String& cookieString)

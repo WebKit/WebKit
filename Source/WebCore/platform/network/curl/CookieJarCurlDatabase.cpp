@@ -96,7 +96,7 @@ std::pair<String, bool> CookieJarCurlDatabase::cookieRequestHeaderFieldValue(con
 
 std::pair<String, bool> CookieJarCurlDatabase::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const CookieRequestHeaderFieldProxy& headerFieldProxy) const
 {
-    return cookieRequestHeaderFieldValue(session, headerFieldProxy.m_firstParty, headerFieldProxy.m_url, headerFieldProxy.m_frameID, headerFieldProxy.m_pageID, headerFieldProxy.m_includeSecureCookies);    
+    return cookieRequestHeaderFieldValue(session, headerFieldProxy.firstParty, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies);    
 }
 
 bool CookieJarCurlDatabase::cookiesEnabled(const NetworkStorageSession& session) const

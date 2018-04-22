@@ -254,7 +254,7 @@ std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSessio
 
 std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const CookieRequestHeaderFieldProxy& headerFieldProxy)
 {
-    return cookiesForSession(session, headerFieldProxy.m_firstParty, headerFieldProxy.m_url, headerFieldProxy.m_frameID, headerFieldProxy.m_pageID, IncludeHTTPOnly, headerFieldProxy.m_includeSecureCookies);
+    return cookiesForSession(session, headerFieldProxy.firstParty, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, IncludeHTTPOnly, headerFieldProxy.includeSecureCookies);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& cookieStr)

@@ -32,33 +32,12 @@
 namespace WebCore {
 
 struct CookieRequestHeaderFieldProxy {
-    PAL::SessionID m_sessionID;
-    URL m_firstParty;
-    URL m_url;
-    std::optional<uint64_t> m_frameID;
-    std::optional<uint64_t> m_pageID;
-    IncludeSecureCookies m_includeSecureCookies { IncludeSecureCookies::No };
-
-    CookieRequestHeaderFieldProxy() = default;
-    CookieRequestHeaderFieldProxy(PAL::SessionID&& sessionID, URL&& firstParty, URL&& url, std::optional<uint64_t>&& frameID, std::optional<uint64_t>&& pageID, IncludeSecureCookies includeSecureCookies)
-        : m_sessionID(WTFMove(sessionID))
-        , m_firstParty(WTFMove(firstParty))
-        , m_url(WTFMove(url))
-        , m_frameID(WTFMove(frameID))
-        , m_pageID(WTFMove(pageID))
-        , m_includeSecureCookies(includeSecureCookies)
-    {
-    }
-
-    CookieRequestHeaderFieldProxy(PAL::SessionID sessionID, const URL& firstParty, const URL& url, const std::optional<uint64_t>& frameID, const std::optional<uint64_t>& pageID, IncludeSecureCookies includeSecureCookies)
-        : m_sessionID(sessionID)
-        , m_firstParty(firstParty)
-        , m_url(url)
-        , m_frameID(frameID)
-        , m_pageID(pageID)
-        , m_includeSecureCookies(includeSecureCookies)
-    {
-    }
+    PAL::SessionID sessionID;
+    URL firstParty;
+    URL url;
+    std::optional<uint64_t> frameID;
+    std::optional<uint64_t> pageID;
+    IncludeSecureCookies includeSecureCookies { IncludeSecureCookies::No };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<CookieRequestHeaderFieldProxy> decode(Decoder&);
@@ -67,42 +46,31 @@ struct CookieRequestHeaderFieldProxy {
 template<class Encoder>
 void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 {
-    encoder << m_sessionID;
-    encoder << m_firstParty;
-    encoder << m_url;
-    encoder << m_frameID;
-    encoder << m_pageID;
-    encoder << m_includeSecureCookies;
+    encoder << sessionID;
+    encoder << firstParty;
+    encoder << url;
+    encoder << frameID;
+    encoder << pageID;
+    encoder << includeSecureCookies;
 }
 
 template<class Decoder>
 std::optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(Decoder& decoder)
-{
-    PAL::SessionID sessionID;
-    if (!decoder.decode(sessionID))
+{                        
+    CookieRequestHeaderFieldProxy result;
+    if (!decoder.decode(result.sessionID))
         return std::nullopt;
-
-    URL firstParty;
-    if (!decoder.decode(firstParty))
+    if (!decoder.decode(result.firstParty))
         return std::nullopt;
-
-    URL url;
-    if (!decoder.decode(url))
+    if (!decoder.decode(result.url))
         return std::nullopt;
-
-    std::optional<uint64_t> frameID;
-    if (!decoder.decode(frameID))
+    if (!decoder.decode(result.frameID))
         return std::nullopt;
-
-    std::optional<uint64_t> pageID;
-    if (!decoder.decode(pageID))
+    if (!decoder.decode(result.pageID))
         return std::nullopt;
-
-    IncludeSecureCookies includeSecureCookies;
-    if (!decoder.decode(includeSecureCookies))
+    if (!decoder.decode(result.includeSecureCookies))
         return std::nullopt;
-
-    return {{ WTFMove(sessionID), WTFMove(firstParty), WTFMove(url), WTFMove(*frameID), WTFMove(*pageID), includeSecureCookies }};
+    return WTFMove(result);
 }
 
-}
+} // namespace WebCore

@@ -234,7 +234,7 @@ std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSessio
 
 std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const CookieRequestHeaderFieldProxy& headerFieldProxy)
 {
-    return cookieRequestHeaderFieldValue(session, headerFieldProxy.m_firstParty, headerFieldProxy.m_url, headerFieldProxy.m_frameID, headerFieldProxy.m_pageID, headerFieldProxy.m_includeSecureCookies);
+    return cookieRequestHeaderFieldValue(session, headerFieldProxy.firstParty, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies);
 }
 
 bool cookiesEnabled(const NetworkStorageSession& session)
