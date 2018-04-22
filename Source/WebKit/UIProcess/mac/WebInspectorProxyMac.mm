@@ -217,6 +217,11 @@ WebPageProxy* WebInspectorProxy::platformCreateFrontendPage()
 
     m_closeFrontendAfterInactivityTimer.stop();
 
+    if (m_inspectorViewController) {
+        ASSERT(m_objCAdapter);
+        return [m_inspectorViewController webView]->_page.get();
+    }
+
     m_objCAdapter = adoptNS([[WKWebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     [[NSNotificationCenter defaultCenter] addObserver:m_objCAdapter.get() selector:@selector(inspectedViewFrameDidChange:) name:NSViewFrameDidChangeNotification object:inspectedView];

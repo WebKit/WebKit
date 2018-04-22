@@ -1,3 +1,18 @@
+2018-04-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: WebInspectorProxy releases WKWebInspectorProxyObjCAdapter without removing corresponding observer
+        https://bugs.webkit.org/show_bug.cgi?id=184865
+        <rdar://problem/37764960>
+
+        Reviewed by Brian Burg.
+
+        Replace the early return removed in https://bugs.webkit.org/show_bug.cgi?id=177661,
+        so that WKWebInspectorProxyObjCAdapter and the view controller can be reused
+        when reopening the Inspector while the WebView is still alive.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+
 2018-04-22  Paul Knight  <pknight@apple.com>
 
         Add -[WKInputDelegate _webView:decidePolicyForFocusedElement:] so clients can request default focusing behavior
