@@ -1,3 +1,38 @@
+2018-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove ModuleLoaderPrototype
+        https://bugs.webkit.org/show_bug.cgi?id=184784
+
+        Reviewed by Mark Lam.
+
+        When we introduce ModuleLoaderPrototype, ModuleLoader may be created by users and exposed to users.
+        However, the loader spec is abandoned. So we do not need to have ModuleLoaderPrototype and JSModuleLoader.
+        This patch merges ModuleLoaderPrototype's functionality into JSModuleLoader.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * builtins/ModuleLoader.js: Renamed from Source/JavaScriptCore/builtins/ModuleLoaderPrototype.js.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::proxyRevokeStructure const):
+        (JSC::JSGlobalObject::moduleLoaderStructure const): Deleted.
+        * runtime/JSModuleLoader.cpp:
+        (JSC::moduleLoaderParseModule):
+        (JSC::moduleLoaderRequestedModules):
+        (JSC::moduleLoaderModuleDeclarationInstantiation):
+        (JSC::moduleLoaderResolve):
+        (JSC::moduleLoaderResolveSync):
+        (JSC::moduleLoaderFetch):
+        (JSC::moduleLoaderGetModuleNamespaceObject):
+        (JSC::moduleLoaderEvaluate):
+        * runtime/JSModuleLoader.h:
+        * runtime/ModuleLoaderPrototype.cpp: Removed.
+        * runtime/ModuleLoaderPrototype.h: Removed.
+
 2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] All API tests fail in debug builds

@@ -108,7 +108,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/IteratorPrototype.js \
     $(JavaScriptCore)/builtins/MapIteratorPrototype.js \
     $(JavaScriptCore)/builtins/MapPrototype.js \
-    $(JavaScriptCore)/builtins/ModuleLoaderPrototype.js \
+    $(JavaScriptCore)/builtins/ModuleLoader.js \
     $(JavaScriptCore)/builtins/NumberConstructor.js \
     $(JavaScriptCore)/builtins/NumberPrototype.js \
     $(JavaScriptCore)/builtins/ObjectConstructor.js \
@@ -158,11 +158,11 @@ OBJECT_LUT_HEADERS = \
     JSDataViewPrototype.lut.h \
     JSGlobalObject.lut.h \
     JSInternalPromiseConstructor.lut.h \
+    JSModuleLoader.lut.h \
     JSONObject.lut.h \
     JSPromisePrototype.lut.h \
     JSPromiseConstructor.lut.h \
     MapPrototype.lut.h \
-    ModuleLoaderPrototype.lut.h \
     NumberConstructor.lut.h \
     NumberPrototype.lut.h \
     ObjectConstructor.lut.h \

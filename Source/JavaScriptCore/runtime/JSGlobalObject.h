@@ -98,7 +98,7 @@ class DirectEvalExecutable;
 class LLIntOffsetsExtractor;
 class MapPrototype;
 class Microtask;
-class ModuleLoaderPrototype;
+class ModuleLoader;
 class ModuleProgramExecutable;
 class NativeErrorConstructor;
 class NullGetterFunction;
@@ -302,7 +302,6 @@ public:
     WriteBarrier<GeneratorFunctionPrototype> m_generatorFunctionPrototype;
     WriteBarrier<GeneratorPrototype> m_generatorPrototype;
     WriteBarrier<AsyncGeneratorPrototype> m_asyncGeneratorPrototype;
-    WriteBarrier<ModuleLoaderPrototype> m_moduleLoaderPrototype;
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
@@ -358,7 +357,6 @@ public:
     WriteBarrier<Structure> m_proxyObjectStructure;
     WriteBarrier<Structure> m_callableProxyObjectStructure;
     WriteBarrier<Structure> m_proxyRevokeStructure;
-    WriteBarrier<Structure> m_moduleLoaderStructure;
     WriteBarrier<JSArrayBufferPrototype> m_arrayBufferPrototype;
     WriteBarrier<Structure> m_arrayBufferStructure;
 #if ENABLE(SHARED_ARRAY_BUFFER)
@@ -677,7 +675,6 @@ public:
     Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(); }
     Structure* callableProxyObjectStructure() const { return m_callableProxyObjectStructure.get(); }
     Structure* proxyRevokeStructure() const { return m_proxyRevokeStructure.get(); }
-    Structure* moduleLoaderStructure() const { return m_moduleLoaderStructure.get(); }
     Structure* restParameterStructure() const { return arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous); }
 #if ENABLE(WEBASSEMBLY)
     Structure* webAssemblyModuleRecordStructure() const { return m_webAssemblyModuleRecordStructure.get(); }

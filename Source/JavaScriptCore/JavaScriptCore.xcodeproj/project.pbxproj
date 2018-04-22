@@ -1240,7 +1240,7 @@
 		996B731D1BDA08EF00331B84 /* JSGlobalObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730B1BD9FA2C00331B84 /* JSGlobalObject.lut.h */; };
 		996B731E1BDA08EF00331B84 /* JSPromiseConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E2417BFFA36007CB63A /* JSPromiseConstructor.lut.h */; };
 		996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E2517BFFA36007CB63A /* JSPromisePrototype.lut.h */; };
-		996B73201BDA08EF00331B84 /* ModuleLoaderPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730C1BD9FA2C00331B84 /* ModuleLoaderPrototype.lut.h */; };
+		996B73201BDA08EF00331B84 /* JSModuleLoader.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730C1BD9FA2C00331B84 /* JSModuleLoader.lut.h */; };
 		996B73211BDA08EF00331B84 /* NumberPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */; };
 		996B73221BDA08EF00331B84 /* ObjectConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */; };
 		996B73231BDA08EF00331B84 /* ReflectObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */; };
@@ -1705,7 +1705,6 @@
 		E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = E35070891DC49BB60089BCD6 /* DOMJITSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E354622B1B6065D100545386 /* ConstructAbility.h in Headers */ = {isa = PBXBuildFile; fileRef = E354622A1B6065D100545386 /* ConstructAbility.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterSnippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E355F3531B7DC85300C50DC5 /* ModuleLoaderPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */; };
 		E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3865,7 +3864,7 @@
 		996B73091BD9FA2C00331B84 /* ErrorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorPrototype.lut.h; sourceTree = "<group>"; };
 		996B730A1BD9FA2C00331B84 /* JSDataViewPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataViewPrototype.lut.h; sourceTree = "<group>"; };
 		996B730B1BD9FA2C00331B84 /* JSGlobalObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.lut.h; sourceTree = "<group>"; };
-		996B730C1BD9FA2C00331B84 /* ModuleLoaderPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleLoaderPrototype.lut.h; sourceTree = "<group>"; };
+		996B730C1BD9FA2C00331B84 /* JSModuleLoader.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleLoader.lut.h; sourceTree = "<group>"; };
 		996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberPrototype.lut.h; sourceTree = "<group>"; };
 		996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectConstructor.lut.h; sourceTree = "<group>"; };
 		996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.lut.h; sourceTree = "<group>"; };
@@ -4520,7 +4519,7 @@
 		E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InitializeThreading.cpp; sourceTree = "<group>"; };
 		E18E3A560DF9278C00D90B34 /* VM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = VM.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		E18E3A570DF9278C00D90B34 /* VM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = VM.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		E30677971B8BC6F5003F87F0 /* ModuleLoaderPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ModuleLoaderPrototype.js; sourceTree = "<group>"; };
+		E30677971B8BC6F5003F87F0 /* ModuleLoader.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ModuleLoader.js; sourceTree = "<group>"; };
 		E31618101EC5FE080006A218 /* DOMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAnnotation.h; sourceTree = "<group>"; };
 		E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMAttributeGetterSetter.cpp; sourceTree = "<group>"; };
 		E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAttributeGetterSetter.h; sourceTree = "<group>"; };
@@ -4556,8 +4555,6 @@
 		E35070891DC49BB60089BCD6 /* DOMJITSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITSignature.h; sourceTree = "<group>"; };
 		E354622A1B6065D100545386 /* ConstructAbility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructAbility.h; sourceTree = "<group>"; };
 		E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCallDOMGetterSnippet.h; sourceTree = "<group>"; };
-		E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleLoaderPrototype.cpp; sourceTree = "<group>"; };
-		E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleLoaderPrototype.h; sourceTree = "<group>"; };
 		E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAbstractHeap.cpp; sourceTree = "<group>"; };
 		E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeap.h; sourceTree = "<group>"; };
 		E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHeapRange.cpp; sourceTree = "<group>"; };
@@ -6191,7 +6188,7 @@
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
 				70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */,
 				7035587E1C418458004BD7BF /* MapPrototype.lut.h */,
-				996B730C1BD9FA2C00331B84 /* ModuleLoaderPrototype.lut.h */,
+				996B730C1BD9FA2C00331B84 /* ModuleLoader.lut.h */,
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
 				996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */,
 				996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */,
@@ -6827,8 +6824,6 @@
 				90213E3C123A40C200D422F3 /* MemoryStatistics.h */,
 				7C008CE5187631B600955C24 /* Microtask.h */,
 				FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */,
-				E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */,
-				E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */,
 				147341DD1DC2CE9600AA29BA /* ModuleProgramExecutable.cpp */,
 				147341D51DC02EB900AA29BA /* ModuleProgramExecutable.h */,
 				BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */,
@@ -7932,7 +7927,7 @@
 				E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */,
 				7CF9BC5B1B65D9A3009DB1EF /* IteratorPrototype.js */,
 				7035587C1C418419004BD7BF /* MapPrototype.js */,
-				E30677971B8BC6F5003F87F0 /* ModuleLoaderPrototype.js */,
+				E30677971B8BC6F5003F87F0 /* ModuleLoader.js */,
 				A52704861D027C8800354C37 /* NumberConstructor.js */,
 				A15DE5C51C0FBF8D0089133D /* NumberPrototype.js */,
 				7CF9BC5C1B65D9B1009DB1EF /* ObjectConstructor.js */,
@@ -9200,8 +9195,7 @@
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
-				E355F3531B7DC85300C50DC5 /* ModuleLoaderPrototype.h in Headers */,
-				996B73201BDA08EF00331B84 /* ModuleLoaderPrototype.lut.h in Headers */,
+				996B73201BDA08EF00331B84 /* ModuleLoader.lut.h in Headers */,
 				9F63434577274FAFB9336C38 /* ModuleNamespaceAccessCase.h in Headers */,
 				14AD910F1DCA92940014F9FE /* ModuleProgramCodeBlock.h in Headers */,
 				147341D61DC02EB900AA29BA /* ModuleProgramExecutable.h in Headers */,

@@ -131,7 +131,6 @@
 #include "MarkedSpaceInlines.h"
 #include "MathObject.h"
 #include "Microtask.h"
-#include "ModuleLoaderPrototype.h"
 #include "NativeErrorConstructor.h"
 #include "NativeErrorPrototype.h"
 #include "NullGetterFunction.h"
@@ -650,8 +649,6 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     
 #undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
     
-    m_moduleLoaderPrototype.set(vm, this, ModuleLoaderPrototype::create(vm, this, ModuleLoaderPrototype::createStructure(vm, this, m_objectPrototype.get())));
-    
     // Constructors
 
     ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
@@ -779,8 +776,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     ReflectObject* reflectObject = ReflectObject::create(vm, this, ReflectObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Reflect, reflectObject, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    m_moduleLoaderStructure.set(vm, this, JSModuleLoader::createStructure(vm, this, m_moduleLoaderPrototype.get()));
-    m_moduleLoader.set(vm, this, JSModuleLoader::create(globalExec(), vm, this, m_moduleLoaderStructure.get()));
+    m_moduleLoader.set(vm, this, JSModuleLoader::create(globalExec(), vm, this, JSModuleLoader::createStructure(vm, this, jsNull())));
     if (Options::exposeInternalModuleLoader())
         putDirectWithoutTransition(vm, vm.propertyNames->Loader, m_moduleLoader.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
@@ -1374,7 +1370,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_asyncGeneratorPrototype);
     visitor.append(thisObject->m_asyncIteratorPrototype);
     visitor.append(thisObject->m_asyncGeneratorFunctionPrototype);
-    visitor.append(thisObject->m_moduleLoaderPrototype);
 
     thisObject->m_debuggerScopeStructure.visit(visitor);
     thisObject->m_withScopeStructure.visit(visitor);
@@ -1425,7 +1420,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_proxyObjectStructure);
     visitor.append(thisObject->m_callableProxyObjectStructure);
     visitor.append(thisObject->m_proxyRevokeStructure);
-    visitor.append(thisObject->m_moduleLoaderStructure);
     
     visitor.append(thisObject->m_arrayBufferPrototype);
     visitor.append(thisObject->m_arrayBufferStructure);

@@ -858,7 +858,6 @@ runtime/MatchResult.cpp
 runtime/MathCommon.cpp
 runtime/MathObject.cpp
 runtime/MemoryStatistics.cpp
-runtime/ModuleLoaderPrototype.cpp
 runtime/ModuleProgramExecutable.cpp
 runtime/NativeErrorConstructor.cpp
 runtime/NativeErrorPrototype.cpp
