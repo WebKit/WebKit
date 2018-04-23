@@ -1,3 +1,17 @@
+2018-04-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Roll out r226655 because it broke OSR entry when the pre-header is inadequately profiled.
+
+        Rubber stamped by Saam Barati.
+        
+        This is a >2x speed-up in SunSpider/bitops-bitwise-and. We don't really care about SunSpider
+        anymore, but r226655 didn't result in any benchmark wins and just regressed this test by a lot.
+        Seems sensible to just roll it out.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2018-04-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove ModuleLoaderPrototype
