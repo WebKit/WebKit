@@ -40,6 +40,7 @@
 #include <WebCore/PageCache.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ProcessID.h>
 
 using namespace WebCore;
 
@@ -96,7 +97,7 @@ void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
     auto result = idToHistoryItemMap().add(item->identifier(), item.ptr());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getpid(), item.ptr(), item->identifier().logString(), item->urlString().utf8().data());
+    LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getCurrentProcessID(), item.ptr(), item->identifier().logString(), item->urlString().utf8().data());
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(toBackForwardListItemState(item.get())));
 }
 

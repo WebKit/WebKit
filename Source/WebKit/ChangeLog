@@ -1,3 +1,15 @@
+2018-04-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK2] REGRESSION(r230834) 'getpid': identifier not found
+        https://bugs.webkit.org/show_bug.cgi?id=184877
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItem): Use WTF::getCurrentProcessID() instead of getpid().
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goToBackForwardItem): Ditto.
+
 2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Drop RefCounted inheritance off of TextureMapperBackingStore

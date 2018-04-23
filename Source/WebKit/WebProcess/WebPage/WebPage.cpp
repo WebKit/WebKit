@@ -212,6 +212,7 @@
 #include <WebCore/WebGLStateTracker.h>
 #include <WebCore/markup.h>
 #include <pal/SessionID.h>
+#include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/TextStream.h>
@@ -1403,7 +1404,7 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, const BackForwardItemId
     if (!item)
         return;
 
-    LOG(Loading, "In WebProcess pid %i, WebPage %" PRIu64 " is navigating to back/forward URL %s", getpid(), m_pageID, item->url().string().utf8().data());
+    LOG(Loading, "In WebProcess pid %i, WebPage %" PRIu64 " is navigating to back/forward URL %s", getCurrentProcessID(), m_pageID, item->url().string().utf8().data());
 
     ASSERT(!m_pendingNavigationID);
     m_pendingNavigationID = navigationID;
