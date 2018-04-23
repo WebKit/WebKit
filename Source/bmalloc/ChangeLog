@@ -1,3 +1,13 @@
+2018-04-23  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Include stdio.h before using stderr
+        https://bugs.webkit.org/show_bug.cgi?id=184872
+
+        Reviewed by Yusuke Suzuki.
+
+        * bmalloc/PerProcess.cpp:
+        * bmalloc/Scavenger.cpp:
+
 2018-04-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, follow-up patch after r230474

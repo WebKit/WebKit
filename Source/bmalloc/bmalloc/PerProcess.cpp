@@ -26,6 +26,7 @@
 #include "PerProcess.h"
 
 #include "VMAllocate.h"
+#include <stdio.h>
 
 namespace bmalloc {
 

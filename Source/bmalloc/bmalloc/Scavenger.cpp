@@ -36,6 +36,7 @@
 #import <mach/mach.h>
 #import <mach/mach_error.h>
 #endif
+#include <stdio.h>
 #include <thread>
 
 namespace bmalloc {
