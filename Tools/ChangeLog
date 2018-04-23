@@ -1,3 +1,18 @@
+2018-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] Move navigation policy decision from the injected bundle to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184801
+
+        Reviewed by Geoffrey Garen.
+
+        Move navigation policy decision from the injected bundle to the UIProcess in WebKitTestRunner.
+        This is a more common configuration and therefore should be the default testing configuration.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction):
+        Always respond with 'PassThrough' in the InjectedBundle so the UIProcess
+        is now asked for the policy decision.
+
 2018-04-23  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Add Debug bots (build and tests) for WPE
