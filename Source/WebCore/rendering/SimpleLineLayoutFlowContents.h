@@ -65,8 +65,9 @@ private:
 inline const FlowContents::Segment& FlowContents::segmentForRun(unsigned start, unsigned end) const
 {
     ASSERT(start <= end);
+    auto isEmptyRange = start == end;
     auto& lastSegment = m_segments[m_lastSegmentIndex];
-    if (lastSegment.start <= start && end <= lastSegment.end)
+    if ((lastSegment.start <= start && end <= lastSegment.end) && (!isEmptyRange || end != lastSegment.end))
         return m_segments[m_lastSegmentIndex];
     return m_segments[segmentIndexForRunSlow(start, end)];
 }

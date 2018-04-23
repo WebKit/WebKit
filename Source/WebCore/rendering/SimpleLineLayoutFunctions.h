@@ -64,6 +64,9 @@ Vector<FloatQuad> collectAbsoluteQuadsForRange(const RenderObject&, unsigned sta
 LayoutUnit lineHeightFromFlow(const RenderBlockFlow&);
 LayoutUnit baselineFromFlow(const RenderBlockFlow&);
 
+bool canUseForLineBoxTree(RenderBlockFlow&, const Layout&);
+void generateLineBoxTree(RenderBlockFlow&, const Layout&);
+
 const RenderObject& rendererForPosition(const FlowContents&, unsigned);
 
 void simpleLineLayoutWillBeDeleted(const Layout&);

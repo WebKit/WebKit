@@ -202,6 +202,16 @@ WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRect(const Layout
     return { rangeBegin, rangeEnd };
 }
 
+WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForLine(unsigned lineIndex) const
+{
+    auto rangeBegin = begin().advanceLines(lineIndex);
+    if (rangeBegin == end())
+        return { end(), end() };
+    auto rangeEnd = rangeBegin;
+    rangeEnd.advanceLines(1);
+    return { rangeBegin, rangeEnd };
+}
+
 WTF::IteratorRange<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderObject& renderer) const
 {
     if (begin() == end())

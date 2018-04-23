@@ -104,6 +104,7 @@ public:
 
     WTF::IteratorRange<Iterator> rangeForRect(const LayoutRect&) const;
     WTF::IteratorRange<Iterator> rangeForRenderer(const RenderObject&) const;
+    WTF::IteratorRange<Iterator> rangeForLine(unsigned lineIndex) const;
     Iterator runForPoint(const LayoutPoint&) const;
     WTF::IteratorRange<Iterator> rangeForRendererWithOffsets(const RenderObject&, unsigned start, unsigned end) const;
 

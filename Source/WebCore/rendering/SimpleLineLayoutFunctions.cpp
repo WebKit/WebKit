@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SimpleLineLayoutFunctions.h"
 
+#include "BidiRun.h"
+#include "BidiRunList.h"
 #include "FontCache.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -33,6 +35,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "LineInfo.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderIterator.h"
@@ -267,6 +270,97 @@ void simpleLineLayoutWillBeDeleted(const Layout& layout)
 {
     for (unsigned i = 0; i < layout.runCount(); ++i)
         TextPainter::removeGlyphDisplayList(layout.runAt(i));
+}
+
+bool canUseForLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
+{
+    if (layout.isPaginated())
+        return false;
+    
+    if (flow.style().preserveNewline())
+        return false;
+    
+    if (!flow.firstChild())
+        return false;
+    
+    if (flow.firstChild() != flow.lastChild())
+        return false;
+
+    if (!is<RenderText>(*flow.firstChild()))
+        return false;
+
+    return true;
+}
+
+static void initializeInlineBox(InlineBox& inlineBox, const RunResolver::Run& run)
+{
+    inlineBox.setLogicalLeft(run.logicalLeft());
+    inlineBox.setLogicalTop(run.rect().y());
+    inlineBox.setLogicalWidth(run.logicalRight() - run.logicalLeft());
+
+    inlineBox.setHasHyphen(run.hasHyphen());
+    inlineBox.setExpansionWithoutGrowing(run.expansion());
+
+    auto expansionBehavior = run.expansionBehavior();
+    inlineBox.setCanHaveLeadingExpansion(expansionBehavior & AllowLeadingExpansion);
+    inlineBox.setCanHaveTrailingExpansion(expansionBehavior & AllowTrailingExpansion);
+    if (expansionBehavior & ForceTrailingExpansion)
+        inlineBox.setForceTrailingExpansion();
+    if (expansionBehavior & ForceLeadingExpansion)
+        inlineBox.setForceLeadingExpansion();
+}
+
+void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
+{
+    ASSERT(!flow.lineBoxes().firstLineBox());
+    if (!layout.runCount())
+        return;
+
+    Ref<BidiContext> bidiContext = BidiContext::create(0, U_LEFT_TO_RIGHT);
+    auto resolver = runResolver(flow, layout);
+    unsigned lineIndex = 0;
+    while (true) {
+        auto range = resolver.rangeForLine(lineIndex++);
+        if (range.begin() == range.end())
+            break;
+
+        // Generate bidi runs out of simple line layout runs.
+        BidiRunList<BidiRun> bidiRuns;
+        for (auto it = range.begin(); it != range.end(); ++it) {
+            auto run = *it;
+            bidiRuns.appendRun(std::make_unique<BidiRun>(run.start(), run.end(), *flow.firstChild(), bidiContext.ptr(), U_LEFT_TO_RIGHT));
+        }
+
+        LineInfo lineInfo;
+        lineInfo.setFirstLine(!flow.lineBoxes().firstLineBox());
+        // FIXME: This is needed for flow boxes -but we don't have them yet.
+        // lineInfo.setLastLine(lastLine);
+        lineInfo.setEmpty(!bidiRuns.runCount());
+        bidiRuns.setLogicallyLastRun(bidiRuns.lastRun());
+        auto* root = flow.constructLine(bidiRuns, lineInfo);
+        bidiRuns.clear();
+        if (!root)
+            continue;
+
+        auto& rootLineBox = *root;
+        auto it = range.begin();
+        float lineWidth = 0;
+        // Set the geometry for the inlineboxes.
+        for (auto* inlineBox = rootLineBox.firstChild(); inlineBox && it != range.end(); inlineBox = inlineBox->nextOnLine(), ++it) {
+            auto run = *it;
+            initializeInlineBox(*inlineBox, run);
+            lineWidth += inlineBox->logicalWidth();
+        }
+
+        // Finish setting up the rootline.
+        auto firstRun = *range.begin();
+        rootLineBox.setLogicalLeft(firstRun.logicalLeft());
+        rootLineBox.setLogicalWidth(lineWidth);
+        auto lineTop = firstRun.rect().y();
+        auto lineHeight = firstRun.rect().height();
+        rootLineBox.setLogicalTop(lineTop);
+        rootLineBox.setLineTopBottomPositions(lineTop, lineTop + lineHeight, lineTop, lineTop + lineHeight);
+    }
 }
 
 #if ENABLE(TREE_DEBUGGING)

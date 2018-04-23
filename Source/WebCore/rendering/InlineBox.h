@@ -280,6 +280,12 @@ public:
     }
     float expansion() const { return m_expansion; }
 
+    void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }
+    void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
+    void setCanHaveTrailingExpansion(bool canHaveTrailingExpansion) { m_bitfields.setCanHaveTrailingExpansion(canHaveTrailingExpansion); }
+    void setForceTrailingExpansion() { m_bitfields.setForceTrailingExpansion(true); }
+    void setForceLeadingExpansion() { m_bitfields.setForceLeadingExpansion(true); }
+
 private:
     InlineBox* m_next { nullptr }; // The next element on the same line as us.
     InlineBox* m_prev { nullptr }; // The previous element on the same line as us.
@@ -395,14 +401,9 @@ protected:
 
     // For InlineTextBox
     bool hasHyphen() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
-    void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }    
     bool canHaveLeadingExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
-    void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
     bool canHaveTrailingExpansion() const { return m_bitfields.canHaveTrailingExpansion(); }
-    void setCanHaveTrailingExpansion(bool canHaveTrailingExpansion) { m_bitfields.setCanHaveTrailingExpansion(canHaveTrailingExpansion); }
-    void setForceTrailingExpansion() { m_bitfields.setForceTrailingExpansion(true); }
     bool forceTrailingExpansion() const { return m_bitfields.forceTrailingExpansion(); }
-    void setForceLeadingExpansion() { m_bitfields.setForceLeadingExpansion(true); }
     bool forceLeadingExpansion() const { return m_bitfields.forceLeadingExpansion(); }
     
     // For InlineFlowBox and InlineTextBox
