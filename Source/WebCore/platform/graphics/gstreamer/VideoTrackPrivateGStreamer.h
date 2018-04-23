@@ -48,6 +48,7 @@ public:
     {
         return adoptRef(*new VideoTrackPrivateGStreamer(player, index, stream));
     }
+    Kind kind() const final;
 #endif
 
     void disconnect() override;
