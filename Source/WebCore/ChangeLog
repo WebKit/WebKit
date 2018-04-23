@@ -1,3 +1,59 @@
+2018-04-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LayoutFormattingContext] Initial commit.
+        https://bugs.webkit.org/show_bug.cgi?id=184896
+
+        Reviewed by Antti Koivisto.
+
+        This is the initial commit of the new layout component -class definitions only (and mostly public functions).
+        See the header files (and Tools/LayoutReloaded project) for more information.
+
+        // Top level layout.
+        rootContainer = TreeBuilder::createLayoutTree(document);
+        rootDisplayBox = new Display::Box();
+        rootDisplayBox->setSize(viewportSize);
+        layoutContext = new LayoutContext(rootContainer, rootDisplayBox);
+        layoutContext->layout(rootContainer);
+
+        Driven by build time flag (currently off). Not testable yet.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/BlockFormatting/BlockFormattingContext.cpp: Added.
+        * layout/BlockFormatting/BlockFormattingContext.h: Added.
+        * layout/BlockFormatting/BlockFormattingState.cpp: Added.
+        * layout/BlockFormatting/BlockFormattingState.h: Added.
+        * layout/BlockFormatting/BlockMarginCollapse.cpp: Added.
+        * layout/BlockFormatting/BlockMarginCollapse.h: Added.
+        * layout/DisplayTree/DisplayBox.cpp: Added.
+        * layout/DisplayTree/DisplayBox.h: Added.
+        * layout/FloatingContext.cpp: Added.
+        * layout/FloatingContext.h: Added.
+        * layout/FloatingState.cpp: Added.
+        * layout/FloatingState.h: Added.
+        * layout/FormattingContext.cpp: Added.
+        * layout/FormattingContext.h: Added.
+        * layout/FormattingState.cpp: Added.
+        * layout/FormattingState.h: Added.
+        * layout/InlineFormatting/InlineFormattingContext.cpp: Added.
+        * layout/InlineFormatting/InlineFormattingContext.h: Added.
+        * layout/InlineFormatting/InlineFormattingState.cpp: Added.
+        * layout/InlineFormatting/InlineFormattingState.h: Added.
+        * layout/LayoutCtx.cpp: Added.
+        * layout/LayoutCtx.h: Added.
+        * layout/LayoutTree/LayoutBlockContainer.cpp: Added.
+        * layout/LayoutTree/LayoutBlockContainer.h: Added.
+        * layout/LayoutTree/LayoutBox.cpp: Added.
+        * layout/LayoutTree/LayoutBox.h: Added.
+        * layout/LayoutTree/LayoutContainer.cpp: Added.
+        * layout/LayoutTree/LayoutContainer.h: Added.
+        * layout/LayoutTree/LayoutCtx.h: Added.
+        * layout/LayoutTree/LayoutInlineBox.cpp: Added.
+        * layout/LayoutTree/LayoutInlineBox.h: Added.
+        * layout/LayoutTree/LayoutInlineContainer.cpp: Added.
+        * layout/LayoutTree/LayoutInlineContainer.h: Added.
+
 2018-04-23  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Mac and iOS build after r230921

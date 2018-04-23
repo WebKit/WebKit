@@ -500,6 +500,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_JAVASCRIPT_I18N_API 0
 #endif
 
+#if !defined(ENABLE_LAYOUT_FORMATTING_CONTEXT)
+#define ENABLE_LAYOUT_FORMATTING_CONTEXT 0
+#endif
+
 #if !defined(ENABLE_LEGACY_CSS_VENDOR_PREFIXES)
 #define ENABLE_LEGACY_CSS_VENDOR_PREFIXES 0
 #endif
