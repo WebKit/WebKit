@@ -1,3 +1,10 @@
+2018-04-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, speculative macOS build fix attempt.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::provideMediaData):
+
 2018-04-23  Daniel Bates  <dabates@apple.com>
 
         Implement Same-Site cookies
