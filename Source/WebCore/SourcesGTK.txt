@@ -46,6 +46,8 @@ loader/soup/ResourceLoaderSoup.cpp
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 
+page/scrolling/generic/ScrollingThreadGeneric.cpp
+
 platform/ScrollAnimationKinetic.cpp
 platform/ScrollAnimationSmooth.cpp
 platform/UserAgentQuirks.cpp

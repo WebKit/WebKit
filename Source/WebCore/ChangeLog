@@ -1,5 +1,33 @@
 2018-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        [AsyncScrolling] Add generic ScrollingThread implementation
+        https://bugs.webkit.org/show_bug.cgi?id=184809
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a generic ScrollingThread implementation that internally uses
+        RunLoop facilities to run the scrolling thread and dispatch
+        callbacks on that thread.
+
+        ScrollingThread::initializeRunLoop() retrieves address of the
+        thread-specific RunLoop and signals the Condition object.
+        ScrollingThread::wakeUpRunLoop() uses RunLoop::dispatch() to schedule
+        callback dispatches on the scrolling thread.
+
+        ScrollingThread::createThreadIfNeeded() mimics Cocoa implementation and
+        waits for the RunLoop address to be retrieved before continuing.
+
+        * SourcesGTK.txt: Add to build.
+        * SourcesWPE.txt: Ditto.
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+        * page/scrolling/ScrollingThread.h:
+        * page/scrolling/generic/ScrollingThreadGeneric.cpp: Added.
+        (WebCore::ScrollingThread::initializeRunLoop):
+        (WebCore::ScrollingThread::wakeUpRunLoop):
+
+2018-04-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordinatedGraphics] Unused contentsSize, coveredRect attributes in CoordinatedGraphicsState
         https://bugs.webkit.org/show_bug.cgi?id=184811
 

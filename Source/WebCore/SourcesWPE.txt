@@ -34,6 +34,8 @@ page/linux/ResourceUsageThreadLinux.cpp
 page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
 page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
 
+page/scrolling/generic/ScrollingThreadGeneric.cpp
+
 platform/UserAgentQuirks.cpp
 
 // This can't go into SourcesGLib.txt because it has to go into WebCorePlatformGTK.

@@ -38,6 +38,8 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
+#else
+#include <wtf/RunLoop.h>
 #endif
 
 namespace WebCore {
@@ -83,6 +85,8 @@ private:
     // FIXME: We should use WebCore::RunLoop here.
     RetainPtr<CFRunLoopRef> m_threadRunLoop;
     RetainPtr<CFRunLoopSourceRef> m_threadRunLoopSource;
+#else
+    RunLoop* m_runLoop { nullptr };
 #endif
 };
 

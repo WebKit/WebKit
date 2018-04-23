@@ -86,6 +86,8 @@ void ScrollingThread::createThreadIfNeeded()
         
 #if PLATFORM(COCOA)
         m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_threadRunLoop; });
+#else
+        m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_runLoop; });
 #endif
     }
 }
