@@ -1,3 +1,20 @@
+2018-04-23  Daniel Bates  <dabates@apple.com>
+
+        Implement Same-Site cookies
+        https://bugs.webkit.org/show_bug.cgi?id=159464
+        <rdar://problem/27196358>
+
+        Reviewed by Brent Fulgham.
+
+        Pass the Same-Site info through the strategy.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::cookiesForDOM):
+        (WebPlatformStrategies::setCookiesFromDOM):
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebPlatformStrategies::getRawCookies):
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2018-04-20  Youenn Fablet  <youenn@apple.com>
 
         Make PluginData cache its web visible plugins

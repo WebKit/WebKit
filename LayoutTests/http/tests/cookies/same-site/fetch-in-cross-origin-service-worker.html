@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/workers/service/resources/sw-test-pre.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpChildFramesAsText();
+
+async function runTest()
+{
+    if (!navigator.serviceWorker) {
+        document.writeln("This test requires Service Workers.");
+        return;
+    }
+
+    if (window.location.hostname === "127.0.0.1") {
+        await resetCookies();
+        await setCookie("strict", "10", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+        await setCookie("implicit-strict", "10", {"SameSite": null, "Max-Age": 100, "path": "/"});
+        await setCookie("strict-because-invalid-SameSite-value", "10", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+        await setCookie("lax", "10", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+        window.location.hostname = "localhost";
+    } else {
+        // localhost
+        await interceptedFrame("resources/passthrough-service-worker.js", "resources/fetch-in-cross-origin-service-worker.html");
+    }
+}
+runTest();
+</script>
+</body>
+</html>

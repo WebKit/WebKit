@@ -1744,6 +1744,7 @@ platform/network/ResourceHandle.cpp
 platform/network/ResourceHandleClient.cpp
 platform/network/ResourceRequestBase.cpp
 platform/network/ResourceResponseBase.cpp
+platform/network/SameSiteInfo.cpp
 platform/network/SocketStreamHandle.cpp
 platform/network/SocketStreamHandleImpl.cpp
 platform/network/SynchronousLoaderClient.cpp

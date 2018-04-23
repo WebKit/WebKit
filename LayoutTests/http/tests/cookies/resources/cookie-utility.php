@@ -6,6 +6,13 @@ function deleteCookie($value, $name)
     setcookie($name, "deleted", time() - 86400, '/');
 }
 
+if ($queryfunction == "deleteCookiesAndPostMessage") {
+    array_walk($_COOKIE, deleteCookie);
+    echo "<script>window.opener.postMessage('done', '*');</script>\n";
+    return;
+}
+
+
 if ($queryfunction == "deleteCookies") {
     array_walk($_COOKIE, deleteCookie);
     echo "Deleted all cookies";

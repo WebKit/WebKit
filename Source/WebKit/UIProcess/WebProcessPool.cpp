@@ -1187,10 +1187,15 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
         ResourceRequest updatedRequest(request);
         // Request's firstPartyForCookies will be used as Original URL of the download request.
         // We set the value to top level document's URL.
-        if (initiatingPage)
-            updatedRequest.setFirstPartyForCookies(URL(URL(), initiatingPage->pageLoadState().url()));
-        else
+        if (initiatingPage) {
+            URL initiatingPageURL = URL { URL { }, initiatingPage->pageLoadState().url() };
+            updatedRequest.setFirstPartyForCookies(initiatingPageURL);
+            updatedRequest.setIsSameSite(registrableDomainsAreEqual(initiatingPageURL, request.url()));
+        } else {
             updatedRequest.setFirstPartyForCookies(URL());
+            updatedRequest.setIsSameSite(false);
+        }
+        updatedRequest.setIsTopSite(false);
         networkProcess()->send(Messages::NetworkProcess::DownloadRequest(sessionID, downloadProxy->downloadID(), updatedRequest, suggestedFilename), 0);
         return downloadProxy;
     }

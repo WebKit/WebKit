@@ -90,6 +90,8 @@ static inline ResourceRequest constructRevalidationRequest(const Key& key, const
     ResourceRequest revalidationRequest(key.identifier());
     revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders());
     revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
+    revalidationRequest.setIsSameSite(subResourceInfo.isSameSite());
+    revalidationRequest.setIsTopSite(subResourceInfo.isTopSite());
     if (!key.partition().isEmpty())
         revalidationRequest.setCachePartition(key.partition());
     ASSERT_WITH_MESSAGE(key.range().isEmpty(), "range is not supported");
