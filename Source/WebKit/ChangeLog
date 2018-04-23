@@ -1,3 +1,30 @@
+2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Remove unused trajectory cruft in CoordinatedLayerTreeHost, CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=184881
+
+        Reviewed by Michael Catanzaro.
+
+        The CompositingCoordinator::setVisibleContentsRect() method is always
+        called with a (0,0) FloatPoint value as the trajectory vector parameter,
+        which is already the default value in TiledBackingStore where this ends
+        up. Removing this call chain also enables removing some unnecessary and
+        odd code in the CoordinatedGraphicsLayer class.
+
+        This doesn't yet touch the trajectory logic in the TiledBackingStore
+        class since it's not yet a given this won't be used in the future. But
+        if that will be necessary, hope is to not use it this way.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::setVisibleContentsRect):
+        (WebKit::CompositingCoordinator::mainContentsLayer): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::didChangeViewport):
+
 2018-04-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WK2] REGRESSION(r230834) 'getpid': identifier not found

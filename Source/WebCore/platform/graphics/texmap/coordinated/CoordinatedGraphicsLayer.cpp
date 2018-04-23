@@ -801,28 +801,6 @@ void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
     m_layerState.imageChanged = true;
 }
 
-CoordinatedGraphicsLayer* CoordinatedGraphicsLayer::findFirstDescendantWithContentsRecursively()
-{
-    if (shouldHaveBackingStore())
-        return this;
-
-    for (auto& child : children()) {
-        if (CoordinatedGraphicsLayer* layer = downcast<CoordinatedGraphicsLayer>(*child).findFirstDescendantWithContentsRecursively())
-            return layer;
-    }
-
-    return nullptr;
-}
-
-void CoordinatedGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
-{
-    if (!m_mainBackingStore)
-        return;
-
-    m_mainBackingStore->setTrajectoryVector(trajectoryVector);
-    setNeedsVisibleRectAdjustment();
-}
-
 void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
 {
     if (shouldHaveBackingStore())

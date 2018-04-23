@@ -73,13 +73,12 @@ public:
     void sizeDidChange(const WebCore::IntSize&);
     void deviceOrPageScaleFactorChanged();
 
-    void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
+    void setVisibleContentsRect(const WebCore::FloatRect&);
     void renderNextFrame();
 
     void createRootLayer(const WebCore::IntSize&);
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
     WebCore::GraphicsLayer* rootCompositingLayer() const { return m_rootCompositingLayer; }
-    WebCore::CoordinatedGraphicsLayer* mainContentsLayer();
 
     void forceFrameSync() { m_shouldSyncFrame = true; }
 

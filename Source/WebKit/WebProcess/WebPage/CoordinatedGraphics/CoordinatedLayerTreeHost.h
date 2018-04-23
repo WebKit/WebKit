@@ -57,7 +57,7 @@ protected:
     void deviceOrPageScaleFactorChanged() override;
     void pageBackgroundTransparencyChanged() override;
 
-    void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
+    void setVisibleContentsRect(const WebCore::FloatRect&);
     void renderNextFrame();
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;

@@ -224,7 +224,7 @@ void ThreadedCoordinatedLayerTreeHost::didChangeViewport()
     if (scrollbar && !scrollbar->isOverlayScrollbar())
         visibleRect.expand(0, scrollbar->height());
 
-    CoordinatedLayerTreeHost::setVisibleContentsRect(visibleRect, FloatPoint::zero());
+    CoordinatedLayerTreeHost::setVisibleContentsRect(visibleRect);
 
     float pageScale = m_viewportController.pageScaleFactor();
     IntPoint scrollPosition = roundedIntPoint(visibleRect.location());

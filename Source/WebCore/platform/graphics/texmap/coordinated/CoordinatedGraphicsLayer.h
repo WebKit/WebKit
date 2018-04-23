@@ -116,8 +116,6 @@ public:
     FloatPoint computePositionRelativeToBase();
     void computePixelAlignment(FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset);
 
-    void setVisibleContentRectTrajectoryVector(const FloatPoint&);
-
     CoordinatedLayerID id() const { return m_id; }
 
     void setFixedToViewport(bool isFixed);
@@ -134,8 +132,6 @@ public:
 
     void setNeedsVisibleRectAdjustment();
     void purgeBackingStores();
-
-    CoordinatedGraphicsLayer* findFirstDescendantWithContentsRecursively();
 
 private:
     bool isCoordinatedGraphicsLayer() const override { return true; }

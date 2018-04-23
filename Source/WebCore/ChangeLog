@@ -1,5 +1,21 @@
 2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove unused trajectory cruft in CoordinatedLayerTreeHost, CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=184881
+
+        Reviewed by Michael Catanzaro.
+
+        Remove the redundant findFirstDescendantWithContentsRecursively() and
+        setVisibleContentRectTrajectoryVector() methods on the
+        CoordinatedGraphicsLayer class.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::findFirstDescendantWithContentsRecursively): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::setVisibleContentRectTrajectoryVector): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
+2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] TiledBackingStore unnecessarily tracks alpha support value
         https://bugs.webkit.org/show_bug.cgi?id=184880
 

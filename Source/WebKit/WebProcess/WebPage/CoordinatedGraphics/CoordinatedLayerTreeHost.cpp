@@ -139,9 +139,9 @@ void CoordinatedLayerTreeHost::sizeDidChange(const IntSize& newSize)
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)
+void CoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect)
 {
-    m_coordinator.setVisibleContentsRect(rect, trajectoryVector);
+    m_coordinator.setVisibleContentsRect(rect);
     scheduleLayerFlush();
 }
 
