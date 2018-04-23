@@ -1,3 +1,21 @@
+2018-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][WPE] TestSSL fails due to additional TLS errors returned
+        https://bugs.webkit.org/show_bug.cgi?id=184860
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add script and config file for regenerating the test certificate.
+        Regenerate it. TestSSL no longer fails on my machine.
+
+        I do see a ton of network process crashes and JavaScript errors, none of
+        which prevent the test from passing, but this commit only claims to fix
+        the certificate validation portion of the test.
+
+        * TestWebKitAPI/Tests/WebKitGLib/resources/generate-test-cert.sh: Added.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/test-cert.conf: Added.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/test-cert.pem:
+
 2018-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] ERROR: Thread was unable to be detached when running /jsc/vm test in debug
