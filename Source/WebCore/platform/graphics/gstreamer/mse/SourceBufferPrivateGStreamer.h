@@ -64,6 +64,7 @@ public:
 
     void flush(const AtomicString&) final;
     void enqueueSample(Ref<MediaSample>&&, const AtomicString&) final;
+    void allSamplesInTrackEnqueued(const AtomicString&) final;
     bool isReadyForMoreSamples(const AtomicString&) final;
     void setActive(bool) final;
     void stopAskingForMoreSamples(const AtomicString&) final;

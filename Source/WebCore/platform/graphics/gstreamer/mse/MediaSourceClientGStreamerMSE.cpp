@@ -196,6 +196,14 @@ void MediaSourceClientGStreamerMSE::enqueueSample(Ref<MediaSample>&& sample)
         m_playerPrivate->m_playbackPipeline->enqueueSample(WTFMove(sample));
 }
 
+void MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued(const AtomicString& trackId)
+{
+    ASSERT(WTF::isMainThread());
+
+    if (m_playerPrivate)
+        m_playerPrivate->m_playbackPipeline->allSamplesInTrackEnqueued(trackId);
+}
+
 GRefPtr<WebKitMediaSrc> MediaSourceClientGStreamerMSE::webKitMediaSrc()
 {
     ASSERT(WTF::isMainThread());

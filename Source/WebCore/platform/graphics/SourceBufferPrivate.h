@@ -56,6 +56,7 @@ public:
 
     virtual void flush(const AtomicString&) { }
     virtual void enqueueSample(Ref<MediaSample>&&, const AtomicString&) { }
+    virtual void allSamplesInTrackEnqueued(const AtomicString&) { }
     virtual bool isReadyForMoreSamples(const AtomicString&) { return false; }
     virtual void setActive(bool) { }
     virtual void stopAskingForMoreSamples(const AtomicString&) { }

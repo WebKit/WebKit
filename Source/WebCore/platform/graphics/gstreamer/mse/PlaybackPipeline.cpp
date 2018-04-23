@@ -513,6 +513,12 @@ void PlaybackPipeline::enqueueSample(Ref<MediaSample>&& mediaSample)
     }
 }
 
+void PlaybackPipeline::allSamplesInTrackEnqueued(const AtomicString& trackId)
+{
+    Stream* stream = getStreamByTrackId(m_webKitMediaSrc.get(), trackId);
+    gst_app_src_end_of_stream(GST_APP_SRC(stream->appsrc));
+}
+
 GstElement* PlaybackPipeline::pipeline()
 {
     if (!m_webKitMediaSrc || !GST_ELEMENT_PARENT(GST_ELEMENT(m_webKitMediaSrc.get())))

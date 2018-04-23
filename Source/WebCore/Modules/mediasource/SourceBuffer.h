@@ -115,6 +115,8 @@ public:
 
     bool hasPendingActivity() const final;
 
+    void trySignalAllSamplesEnqueued();
+
 private:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource*);
 
@@ -179,6 +181,8 @@ private:
     bool hasAudio() const;
 
     void rangeRemoval(const MediaTime&, const MediaTime&);
+
+    void trySignalAllSamplesInTrackEnqueued(const AtomicString&);
 
     friend class Internals;
     WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomicString&);

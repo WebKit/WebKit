@@ -1,3 +1,53 @@
+2018-04-23  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Add allSamplesInTrackEnqueued event
+        https://bugs.webkit.org/show_bug.cgi?id=184737
+
+        MediaSource has a .endOfStream() method to signal when there are no more frames
+        after the ones currently buffered.
+
+        This bit of data is important for some multimedia frameworks. For instance, in
+        GStreamer a stream of frames being decoded should be terminated by a
+        'end-of-stream' (EOS) event that has a similar meaning. Some GStreamer elements
+        will expect this event in order to work properly under some circumstances.
+
+        Unfortunately currently WebKit provides no mechanism for this: an event of
+        sorts should be emitted after no more frames are going to be enqueued to signal
+        the end of the stream. The closest mechanism WebKit has for this is
+        `markEndOfStream()`, but it's not exactly the same: markEndOfStream() informs
+        that -- as far as network buffering is concerned -- we are done; but at that
+        point there may still be (and often are) many frames waiting in the
+        decodeQueue, so it would be wrong to signal the decoder that there are no more
+        frames.
+
+        This patch introduces a new optional method in SourceBufferPrivate,
+        `allSamplesInTrackEnqueued(const AtomicString& trackID)` that is called
+        whenever the MediaSource is in "ended" state (the user has called
+        `MediaSource.endOfStream()`) and the decodeQueue is empty. Media framework
+        implementations can use this method to send a EOS event to a decoder that needs
+        it.
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::streamEndedWithError):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::provideMediaData):
+        (WebCore::SourceBuffer::trySignalAllSamplesInTrackEnqueued):
+        (WebCore::SourceBuffer::trySignalAllSamplesEnqueued):
+        * Modules/mediasource/SourceBuffer.h:
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::allSamplesInTrackEnqueued):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::allSamplesInTrackEnqueued):
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h:
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+
 2018-04-23  Ms2ger  <Ms2ger@igalia.com>
 
         Avoid uninitialized memory read.

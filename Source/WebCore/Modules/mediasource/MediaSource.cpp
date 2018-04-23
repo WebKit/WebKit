@@ -587,6 +587,8 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         setDurationInternal(maxEndTime);
 
         // 2. Notify the media element that it now has all of the media data.
+        for (auto& sourceBuffer : *m_sourceBuffers)
+            sourceBuffer->trySignalAllSamplesEnqueued();
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
     } else if (error == EndOfStreamError::Network) {
         // ↳ If error is set to "network"

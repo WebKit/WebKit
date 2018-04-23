@@ -52,6 +52,7 @@ public:
     void removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer>);
     void flush(AtomicString);
     void enqueueSample(Ref<MediaSample>&&);
+    void allSamplesInTrackEnqueued(const AtomicString&);
 
     void clearPlayerPrivate();
 

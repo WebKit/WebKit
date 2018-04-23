@@ -118,6 +118,11 @@ void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, cons
     m_client->enqueueSample(WTFMove(sample));
 }
 
+void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomicString& trackId)
+{
+    m_client->allSamplesInTrackEnqueued(trackId);
+}
+
 bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(const AtomicString&)
 {
     return m_isReadyForMoreSamples;

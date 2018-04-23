@@ -1852,7 +1852,23 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomicString
 #endif
     }
 
-    LOG(MediaSource, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples", this, enqueuedSamples);
+    LOG(MediaSource, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples, %lu remaining", this, enqueuedSamples, trackBuffer.decodeQueue.size());
+
+    trySignalAllSamplesInTrackEnqueued(trackID);
+}
+
+void SourceBuffer::trySignalAllSamplesInTrackEnqueued(const AtomicString& trackID)
+{
+    if (m_source->isEnded() && m_trackBufferMap.get(trackID).decodeQueue.empty()) {
+        LOG(MediaSource, "SourceBuffer::trySignalAllSamplesInTrackEnqueued(%p) - All samples in track \"%s\" enqueued.", this, trackID.string().utf8().data());
+        m_private->allSamplesInTrackEnqueued(trackID);
+    }
+}
+
+void SourceBuffer::trySignalAllSamplesEnqueued()
+{
+    for (const AtomicString& trackID : m_trackBufferMap.keys())
+        trySignalAllSamplesInTrackEnqueued(trackID);
 }
 
 void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, const AtomicString& trackID, const MediaTime& time)
