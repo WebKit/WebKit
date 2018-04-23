@@ -122,7 +122,6 @@ public:
 
     void setFixedToViewport(bool isFixed);
 
-    IntRect coverRect() const { return m_mainBackingStore ? m_mainBackingStore->mapToContents(m_mainBackingStore->coverRect()) : IntRect(); }
     IntRect transformedVisibleRect();
 
     // TiledBackingStoreClient

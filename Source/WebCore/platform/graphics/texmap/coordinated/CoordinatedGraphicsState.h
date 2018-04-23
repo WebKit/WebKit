@@ -178,8 +178,6 @@ struct CoordinatedGraphicsLayerState {
 struct CoordinatedGraphicsState {
     uint32_t rootCompositingLayer;
     FloatPoint scrollPosition;
-    IntSize contentsSize;
-    IntRect coveredRect;
 
     Vector<CoordinatedLayerID> layersToCreate;
     Vector<std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>> layersToUpdate;

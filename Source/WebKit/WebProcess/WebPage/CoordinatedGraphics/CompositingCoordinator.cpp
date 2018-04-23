@@ -125,11 +125,6 @@ bool CompositingCoordinator::flushPendingLayerChanges()
     if (m_shouldSyncFrame) {
         didSync = true;
 
-        if (m_rootCompositingLayer) {
-            m_state.contentsSize = roundedIntSize(m_rootCompositingLayer->size());
-            if (CoordinatedGraphicsLayer* contentsLayer = mainContentsLayer())
-                m_state.coveredRect = contentsLayer->coverRect();
-        }
         m_state.scrollPosition = m_visibleContentsRect.location();
 
         m_client.commitSceneState(m_state);
