@@ -1,3 +1,28 @@
+2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] TiledBackingStore unnecessarily tracks alpha support value
+        https://bugs.webkit.org/show_bug.cgi?id=184880
+
+        Reviewed by Michael Catanzaro.
+
+        Drop the m_supportsAlpha member from the TiledBackingStore class. The
+        member value was unused. TiledBackingStore::setSupportsAlpha() method
+        is removed.
+
+        TiledBackingStore::setSupportsAlpha() invalidated the backing store,
+        so CoordinatedGraphicsLayer::setContentsOpaque() now enforces the same
+        behavior by manually updating the m_needsDisplay struct. This means
+        that during the following layer flush the backing store is repainted
+        in its entirety.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsOpaque):
+        (WebCore::CoordinatedGraphicsLayer::createBackingStore):
+        * platform/graphics/texmap/coordinated/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::setSupportsAlpha): Deleted.
+        * platform/graphics/texmap/coordinated/TiledBackingStore.h:
+
 2018-04-23  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Start implementing Audio/VideoTrackPrivateGSTreamer::kind method

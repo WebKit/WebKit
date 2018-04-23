@@ -41,7 +41,6 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient& client, float cont
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_coverAreaMultiplier(2.0f)
     , m_contentsScale(contentsScale)
-    , m_supportsAlpha(false)
     , m_pendingTileCreation(false)
 {
 }
@@ -392,14 +391,6 @@ Tile::Coordinate TiledBackingStore::tileCoordinateForPoint(const IntPoint& point
     int x = point.x() / m_tileSize.width();
     int y = point.y() / m_tileSize.height();
     return Tile::Coordinate(std::max(x, 0), std::max(y, 0));
-}
-
-void TiledBackingStore::setSupportsAlpha(bool a)
-{
-    if (a == m_supportsAlpha)
-        return;
-    m_supportsAlpha = a;
-    invalidate(m_rect);
 }
 
 }
