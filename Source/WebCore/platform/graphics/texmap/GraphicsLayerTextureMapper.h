@@ -156,7 +156,7 @@ private:
     TextureMapperLayer m_layer;
     RefPtr<TextureMapperTiledBackingStore> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;
-    RefPtr<TextureMapperBackingStore> m_backingStore;
+    RefPtr<TextureMapperTiledBackingStore> m_backingStore;
 
     int m_changeMask;
     bool m_needsDisplay;

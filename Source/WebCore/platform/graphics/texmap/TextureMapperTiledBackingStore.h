@@ -24,13 +24,14 @@
 #include "Image.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperTile.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class TextureMapper;
 
-class TextureMapperTiledBackingStore : public TextureMapperBackingStore {
+class TextureMapperTiledBackingStore : public RefCounted<TextureMapperTiledBackingStore>, public TextureMapperBackingStore {
 public:
     static Ref<TextureMapperTiledBackingStore> create() { return adoptRef(*new TextureMapperTiledBackingStore); }
     virtual ~TextureMapperTiledBackingStore() = default;

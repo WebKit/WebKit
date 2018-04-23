@@ -89,7 +89,7 @@ public:
     void setAnimations(const TextureMapperAnimations&);
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
-    void setBackingStore(RefPtr<TextureMapperBackingStore>&&);
+    void setBackingStore(TextureMapperBackingStore*);
 
     bool applyAnimationsRecursively(MonotonicTime);
     bool syncAnimations(MonotonicTime);
@@ -147,7 +147,7 @@ private:
     Vector<TextureMapperLayer*> m_children;
     TextureMapperLayer* m_parent { nullptr };
     TextureMapperLayer* m_effectTarget { nullptr };
-    RefPtr<TextureMapperBackingStore> m_backingStore;
+    TextureMapperBackingStore* m_backingStore { nullptr };
     TextureMapperPlatformLayer* m_contentsLayer { nullptr };
     float m_currentOpacity { 1.0 };
     FilterOperations m_currentFilters;

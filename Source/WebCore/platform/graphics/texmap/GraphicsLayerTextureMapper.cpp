@@ -447,7 +447,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         m_layer.setFilters(filters());
 
     if (m_changeMask & BackingStoreChange)
-        m_layer.setBackingStore(m_backingStore.copyRef());
+        m_layer.setBackingStore(m_backingStore.get());
 
     if (m_changeMask & DebugVisualsChange)
         m_layer.setDebugVisuals(isShowingDebugBorder(), debugBorderColor(), debugBorderWidth(), isShowingRepaintCounter());
@@ -518,11 +518,10 @@ void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
     if (dirtyRect.isEmpty())
         return;
 
-    TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
-    backingStore->updateContentsScale(pageScaleFactor() * deviceScaleFactor());
+    m_backingStore->updateContentsScale(pageScaleFactor() * deviceScaleFactor());
 
     dirtyRect.scale(pageScaleFactor() * deviceScaleFactor());
-    backingStore->updateContents(*textureMapper, this, m_size, dirtyRect);
+    m_backingStore->updateContents(*textureMapper, this, m_size, dirtyRect);
 
     m_needsDisplay = false;
     m_needsDisplayRect = IntRect();

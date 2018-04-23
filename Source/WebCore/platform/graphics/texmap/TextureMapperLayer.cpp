@@ -627,9 +627,9 @@ void TextureMapperLayer::setFixedToViewport(bool fixedToViewport)
     m_fixedToViewport = fixedToViewport;
 }
 
-void TextureMapperLayer::setBackingStore(RefPtr<TextureMapperBackingStore>&& backingStore)
+void TextureMapperLayer::setBackingStore(TextureMapperBackingStore* backingStore)
 {
-    m_backingStore = WTFMove(backingStore);
+    m_backingStore = backingStore;
 }
 
 bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const

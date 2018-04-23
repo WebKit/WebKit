@@ -27,7 +27,7 @@ namespace WebCore {
 class FloatRect;
 class TextureMapper;
 
-class TextureMapperBackingStore : public RefCounted<TextureMapperBackingStore>, public TextureMapperPlatformLayer {
+class TextureMapperBackingStore : public TextureMapperPlatformLayer {
 public:
     virtual ~TextureMapperBackingStore() = default;
 

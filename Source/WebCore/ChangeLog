@@ -1,3 +1,33 @@
+2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Drop RefCounted inheritance off of TextureMapperBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=184810
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turn TextureMapperBackingStore into a simple interface that doesn't
+        inherit from RefCounted<>. Instead, push that inheritance off to the
+        classes that implement the TextureMapperBackingStore interface. This
+        narrows down the purpose of TextureMapperBackingStore towards a simple
+        interface that TextureMapper algorithms can work with.
+
+        TextureMapperLayer has its m_backingStore member variable turn into
+        a simple pointer instead of a RefPtr<>. Setter method and call sites of
+        that method are updated to reflect that.
+
+        TextureMapperTiledBackingStore now inherits from RefCounted<> directly,
+        instead of through TextureMapperBackingStore.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIfNeeded):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::setBackingStore):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/TextureMapperTiledBackingStore.h:
+
 2018-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [AsyncScrolling] Add generic ScrollingThread implementation

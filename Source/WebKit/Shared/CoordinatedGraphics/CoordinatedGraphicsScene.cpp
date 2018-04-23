@@ -318,7 +318,7 @@ void CoordinatedGraphicsScene::createBackingStoreIfNeeded(TextureMapperLayer* la
 
     auto backingStore = CoordinatedBackingStore::create();
     m_backingStores.add(layer, backingStore.copyRef());
-    layer->setBackingStore(WTFMove(backingStore));
+    layer->setBackingStore(backingStore.ptr());
 }
 
 void CoordinatedGraphicsScene::removeBackingStoreIfNeeded(TextureMapperLayer* layer)

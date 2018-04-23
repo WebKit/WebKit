@@ -1,3 +1,17 @@
+2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Drop RefCounted inheritance off of TextureMapperBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=184810
+
+        Reviewed by Carlos Garcia Campos.
+
+        CoordinatedBackingStore should inherit directly from RefCounted<> now
+        that TextureMapperBackingStore doesn't anymore.
+
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::createBackingStoreIfNeeded):
+
 2018-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Unused contentsSize, coveredRect attributes in CoordinatedGraphicsState
