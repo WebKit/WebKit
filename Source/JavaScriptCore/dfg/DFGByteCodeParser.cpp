@@ -71,7 +71,7 @@ namespace JSC { namespace DFG {
 
 namespace DFGByteCodeParserInternal {
 #ifdef NDEBUG
-static const bool verbose = true;
+static const bool verbose = false;
 #else
 static const bool verbose = true;
 #endif
