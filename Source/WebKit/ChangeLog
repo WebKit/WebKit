@@ -1,3 +1,18 @@
+2018-04-23  Chris Dumez  <cdumez@apple.com>
+
+        WebProcessProxy frequently re-takes a process assertion for the network process even though is already has one
+        https://bugs.webkit.org/show_bug.cgi?id=184889
+        <rdar://problem/38151530>
+
+        Reviewed by Brady Eidson.
+
+        In ProcessThrottler::updateAssertionNow(), if the new process assertion state is the same
+        as the existing one, then return early. Otherwise, we would end up calling WebProcessProxy::didSetAssertionState()
+        for the same assertion state, which would cause duplicate logging but also some unnecessary work.
+
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertionNow):
+
 2018-04-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Remove unused trajectory cruft in CoordinatedLayerTreeHost, CoordinatedGraphicsLayer
