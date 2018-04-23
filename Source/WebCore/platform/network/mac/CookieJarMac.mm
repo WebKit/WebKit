@@ -98,8 +98,8 @@ static void setHTTPCookiesForURL(CFHTTPCookieStorageRef cookieStorage, NSArray *
     // somewhere it can be shared.
     static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
     NSDictionary *policyProperties = @{
-        (NSString *)_kCFHTTPCookiePolicyPropertySiteForCookies: sameSiteInfo.isSameSite ? url : emptyURL,
-        (NSString *)_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation: [NSNumber numberWithBool:sameSiteInfo.isTopSite],
+        @"_kCFHTTPCookiePolicyPropertySiteForCookies": sameSiteInfo.isSameSite ? url : emptyURL,
+        @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation": [NSNumber numberWithBool:sameSiteInfo.isTopSite],
     };
     if (!cookieStorage) {
         if ([NSHTTPCookieStorage instancesRespondToSelector:@selector(_setCookies:forURL:mainDocumentURL:policyProperties:)])
