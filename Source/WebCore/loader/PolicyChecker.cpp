@@ -123,7 +123,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, bool didRec
 
     loader->setLastCheckedRequest(ResourceRequest(request));
 
-    if (request.url().isBlankURL())
+    // Initial 'about:blank' load needs to happen synchronously so the policy check needs to be synchronous in this case.
+    if (!m_frame.loader().stateMachine().committedFirstRealDocumentLoad() && request.url().isBlankURL() && !substituteData.isValid())
         policyDecisionMode = PolicyDecisionMode::Synchronous;
 
 #if USE(QUICK_LOOK)

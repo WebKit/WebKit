@@ -1,3 +1,20 @@
+2018-04-23  Chris Dumez  <cdumez@apple.com>
+
+        HTML String load cannot be prevented by responding 'Cancel' asynchronously in decidePolicyForNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=184848
+        <rdar://problem/39145306>
+
+        Reviewed by Brady Eidson.
+
+        When calling loadHTMLString on a WebView, we end up doing a load for 'about:blank'
+        with substitute data. In such case, we want to do a regular asynchronous policy
+        delegate check, there is no reason we need it to be synchronous. Update our check
+        to make sure we only do a synchronous policy check for initial 'about:blank' loads
+        that do not have substitute data.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+
 2018-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] 100vw is roughly half of the viewport width in extra zoom mode

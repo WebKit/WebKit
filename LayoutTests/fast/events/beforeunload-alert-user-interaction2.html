@@ -16,8 +16,8 @@ onload = function() {
     const testInput = document.getElementById("testInput");
     UIHelper.activateAt(testInput.offsetLeft + 5, testInput.offsetTop + 5).then(function() {
         setTimeout(function() {
+            testFrame.onload = finishJSTest;
             testFrame.src = "about:blank";
-            setTimeout(finishJSTest, 0);
         }, 0);
     });
 };

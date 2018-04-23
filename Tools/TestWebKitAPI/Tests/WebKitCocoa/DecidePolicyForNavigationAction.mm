@@ -35,6 +35,7 @@
 
 #if WK_API_ENABLED
 
+static bool shouldCancelNavigation;
 static bool createdWebView;
 static bool decidedPolicy;
 static bool finishedNavigation;
@@ -51,6 +52,16 @@ static NSString *secondURL = @"data:text/html,Second";
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
+    if (shouldCancelNavigation) {
+        int64_t deferredWaitTime = 100 * NSEC_PER_MSEC;
+        dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, deferredWaitTime);
+        dispatch_after(when, dispatch_get_main_queue(), ^{
+            decisionHandler(WKNavigationActionPolicyCancel);
+            decidedPolicy = true;
+        });
+        return;
+    }
+
     decisionHandler(webView == newWebView.get() ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
 
     action = navigationAction;
@@ -285,7 +296,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
     action = nullptr;
 }
 
-TEST(WebKit, DecidePolicyForNavigationActionForLoadHTMLString)
+TEST(WebKit, DecidePolicyForNavigationActionForLoadHTMLStringAllow)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -296,9 +307,31 @@ TEST(WebKit, DecidePolicyForNavigationActionForLoadHTMLString)
     [webView setNavigationDelegate:controller.get()];
     [webView setUIDelegate:controller.get()];
 
+    finishedNavigation = false;
     decidedPolicy = false;
     [webView loadHTMLString:@"TEST" baseURL:[NSURL URLWithString:@"about:blank"]];
-    TestWebKitAPI::Util::run(&decidedPolicy);
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    EXPECT_TRUE(decidedPolicy);
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionForLoadHTMLStringDeny)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+
+    auto controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+    [webView setUIDelegate:controller.get()];
+
+    shouldCancelNavigation = true;
+    finishedNavigation = false;
+    decidedPolicy = false;
+    [webView loadHTMLString:@"TEST" baseURL:[NSURL URLWithString:@"about:blank"]];
+    TestWebKitAPI::Util::sleep(0.5);
+    EXPECT_FALSE(finishedNavigation);
+    shouldCancelNavigation = false;
 }
 
 TEST(WebKit, DecidePolicyForNavigationActionForTargetedWindowOpen)

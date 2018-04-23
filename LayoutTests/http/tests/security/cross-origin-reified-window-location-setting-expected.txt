@@ -3,7 +3,9 @@ Tests that window.location can be set cross-origin even if the window object is 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS crossOriginWindow.location.href threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS crossOriginWindow.location = 'about:blank' did not throw exception.
+PASS crossOriginWindow.location.href threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS crossOriginWindow.location.href is "about:blank"
 PASS successfullyParsed is true
 
