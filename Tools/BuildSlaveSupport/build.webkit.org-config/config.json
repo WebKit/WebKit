@@ -78,7 +78,9 @@
                     { "name": "jsconly-linux-igalia-bot-4", "platform": "jsc-only" },
 
                     { "name": "wpe-linux-bot-1", "platform": "wpe" },
-                    { "name": "wpe-linux-bot-2", "platform": "wpe" }
+                    { "name": "wpe-linux-bot-2", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-3", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-4", "platform": "wpe" }
                   ],
 
     "builders":   [ { "name": "Apple High Sierra Debug (Build)", "type": "Build", "builddir": "highsierra-debug",
@@ -336,6 +338,17 @@
                       "name": "WPE Linux 64-bit Release (Tests)", "type": "Test", "builddir": "wpe-linux-64-release-tests",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-2"]
+                    },
+                    {
+                      "name": "WPE Linux 64-bit Debug (Build)", "type": "Build", "builddir": "wpe-linux-64-debug",
+                      "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["wpe-linux-64-release-tests"],
+                      "slavenames": ["wpe-linux-bot-3"]
+                    },
+                    {
+                      "name": "WPE Linux 64-bit Debug (Tests)", "type": "Test", "builddir": "wpe-linux-64-debug-tests",
+                      "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["wpe-linux-bot-4"]
                     }
                   ],
 
@@ -343,7 +356,8 @@
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
                                        "GTK Linux 64-bit Release Debian Stable (Build)", "GTK Linux 64-bit Release Ubuntu LTS (Build)",
                                        "JSCOnly Linux AArch64 Release", "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Traditional Release",
-                                       "JSCOnly Linux MIPS32el Release", "WinCairo 64-Bit Release", "WinCairo 64-bit WKL Debug (Build)", "WPE Linux 64-bit Release (Build)"]
+                                       "JSCOnly Linux MIPS32el Release", "WinCairo 64-Bit Release", "WinCairo 64-bit WKL Debug (Build)",
+                                       "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra Release (32-bit Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)", "Apple High Sierra 32-bit JSC (BuildAndTest)"]
@@ -431,6 +445,9 @@
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-release-tests",
                       "builderNames": ["WPE Linux 64-bit Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "wpe-linux-64-debug-tests",
+                      "builderNames": ["WPE Linux 64-bit Debug (Tests)"]
                     }
                   ]
 }

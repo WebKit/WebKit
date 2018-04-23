@@ -1,3 +1,21 @@
+2018-04-23  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] Add Debug bots (build and tests) for WPE
+        https://bugs.webkit.org/show_bug.cgi?id=184887
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Deployed 2 new bots for WPE Debug: wpe-linux-bot-3 and
+        wpe-linux-bot-4
+
+        Both bots have already the credentials ready to authenticated against
+        build.webkit.org. They provides the bots for the "debug" configuration over
+        the "WPE" platform and building for the "x86_64" architecture:
+        WPE Linux 64-bit Debug (Build) and WPE Linux 64-bit Debug (Tests) 
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2018-04-23  Chris Dumez  <cdumez@apple.com>
 
         HTML String load cannot be prevented by responding 'Cancel' asynchronously in decidePolicyForNavigationAction
