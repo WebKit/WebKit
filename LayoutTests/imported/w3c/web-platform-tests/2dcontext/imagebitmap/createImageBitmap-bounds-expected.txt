@@ -1,0 +1,3 @@
+
+PASS createImageBitmap: clipping to the bitmap 
+

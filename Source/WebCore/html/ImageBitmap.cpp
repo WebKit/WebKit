@@ -162,9 +162,7 @@ static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSi
     auto sourceRectangle = rect.value_or(IntRect { 0, 0, inputSize.width(), inputSize.height() });
 
     // 4. Clip sourceRectangle to the dimensions of input.
-
-    sourceRectangle.setWidth(std::min(sourceRectangle.width(), inputSize.width()));
-    sourceRectangle.setHeight(std::min(sourceRectangle.height(), inputSize.height()));
+    sourceRectangle.intersect(IntRect { 0, 0, inputSize.width(), inputSize.height() });
 
     return { WTFMove(sourceRectangle) };
 }
