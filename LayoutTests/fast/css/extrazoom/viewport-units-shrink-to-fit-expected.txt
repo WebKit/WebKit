@@ -1,0 +1,14 @@
+PASS innerWidthBeforeRemoval is 512
+PASS Math.round(largeElementRectBeforeRemoval.width) is 512
+PASS Math.round(largeElementRectBeforeRemoval.height) is innerHeightBeforeRemoval
+PASS Math.round(mediumElementRectBeforeRemoval.width) is 320
+
+After removing large container:
+
+PASS innerWidthAfterRemoval is 320
+PASS Math.round(mediumElementRectAfterRemoval.width) is 320
+PASS Math.round(mediumElementRectAfterRemoval.height) is innerHeightAfterRemoval
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

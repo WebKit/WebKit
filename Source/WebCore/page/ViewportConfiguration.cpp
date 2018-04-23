@@ -171,6 +171,11 @@ bool ViewportConfiguration::shouldIgnoreScalingConstraints() const
     return shouldIgnoreHorizontalScalingConstraints() || shouldIgnoreVerticalScalingConstraints();
 }
 
+bool ViewportConfiguration::shouldIgnoreScalingConstraintsRegardlessOfContentSize() const
+{
+    return m_canIgnoreScalingConstraints && m_forceHorizontalShrinkToFit;
+}
+
 double ViewportConfiguration::initialScaleFromSize(double width, double height, bool shouldIgnoreScalingConstraints) const
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
@@ -200,7 +205,7 @@ double ViewportConfiguration::initialScale() const
 
 double ViewportConfiguration::initialScaleIgnoringContentSize() const
 {
-    return initialScaleFromSize(layoutWidth(), layoutHeight(), false);
+    return initialScaleFromSize(layoutWidth(), layoutHeight(), shouldIgnoreScalingConstraintsRegardlessOfContentSize());
 }
 
 double ViewportConfiguration::minimumScale() const

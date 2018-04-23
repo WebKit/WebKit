@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #large, #medium {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            await UIHelper.ensurePresentationUpdate();
+
+            largeElementRectBeforeRemoval = large.getBoundingClientRect();
+            mediumElementRectBeforeRemoval = medium.getBoundingClientRect();
+            innerWidthBeforeRemoval = innerWidth;
+            innerHeightBeforeRemoval = innerHeight;
+
+            large.remove();
+            await UIHelper.ensurePresentationUpdate();
+
+            mediumElementRectAfterRemoval = medium.getBoundingClientRect();
+            innerWidthAfterRemoval = innerWidth;
+            innerHeightAfterRemoval = innerHeight;
+
+            shouldBe("innerWidthBeforeRemoval", "512");
+            shouldBe("Math.round(largeElementRectBeforeRemoval.width)", "512");
+            shouldBe("Math.round(largeElementRectBeforeRemoval.height)", "innerHeightBeforeRemoval");
+            shouldBe("Math.round(mediumElementRectBeforeRemoval.width)", "320");
+            debug("\nAfter removing large container:\n");
+            shouldBe("innerWidthAfterRemoval", "320");
+            shouldBe("Math.round(mediumElementRectAfterRemoval.width)", "320");
+            shouldBe("Math.round(mediumElementRectAfterRemoval.height)", "innerHeightAfterRemoval");
+
+            finishJSTest();
+        }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <div id="large" style="width: 160vw; height: 160vh; background-color: blue;"></div>
+    <div id="medium" style="width: 100vw; height: 100vh; background-color: green;"></div>
+</body>
+</html>

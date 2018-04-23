@@ -1,3 +1,36 @@
+2018-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] 100vw is roughly half of the viewport width in extra zoom mode
+        https://bugs.webkit.org/show_bug.cgi?id=184871
+        <rdar://problem/39477595>
+
+        Reviewed by Andy Estes.
+
+        Currently, when computing CSS viewport units, we use ViewportConfiguration::initialScaleIgnoringContentSize().
+        This method computes an initial scale from the layout width and height without relying on any information
+        derived from the current content size. This is done to ensure that the content size and viewport dimensions for
+        CSS viewport units should not be simultaneously dependent on each other.
+
+        Since shrink-to-fit heuristics depend on content size, we currently assume that shrink-to-fit is disabled when
+        computing initialScaleIgnoringContentSize, by always passing in `false` for `shouldIgnoreScalingConstraints`.
+        However, in extra zoom mode, the opposite is true: since we force both `m_canIgnoreScalingConstraints` and
+        `m_forceHorizontalShrinkToFit` to be `true` in this mode, we will always try to shrink-to-fit regardless of
+        content size.
+
+        Because of this shrink-to-fit disparity between `initialScale` and `initialScaleIgnoringContentSize`, viewport
+        units in extra zoom mode are currently computed assuming an initial scale set by the page, whereas the real
+        viewport is scaled to fit, which causes any lengths computed in terms of vw and vh to be incorrect. To fix this,
+        we introduce a version of shouldIgnoreScalingConstraints() that returns `true` iff scaling constraints are
+        always ignored, regardless of content size. We then use this in initialScaleIgnoringContentSize, instead of
+        always passing in `false` for `shouldIgnoreScalingConstraints`.
+
+        Test: fast/css/extrazoom/viewport-units-shrink-to-fit.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::shouldIgnoreScalingConstraintsRegardlessOfContentSize const):
+        (WebCore::ViewportConfiguration::initialScaleIgnoringContentSize const):
+        * page/ViewportConfiguration.h:
+
 2018-04-23  Zalan Bujtas  <zalan@apple.com>
 
         [Simple line layout] Generate inline boxtree using simple line layout runs.

@@ -116,6 +116,7 @@ private:
     int layoutWidth() const;
     int layoutHeight() const;
 
+    bool shouldIgnoreScalingConstraintsRegardlessOfContentSize() const;
     bool shouldIgnoreScalingConstraints() const;
     bool shouldIgnoreVerticalScalingConstraints() const;
     bool shouldIgnoreHorizontalScalingConstraints() const;
