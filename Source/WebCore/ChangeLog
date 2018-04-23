@@ -1,3 +1,15 @@
+2018-04-23  Daniel Bates  <dabates@apple.com>
+
+        Another attempt to fix the Windows build following r230921
+        (https://bugs.webkit.org/show_bug.cgi?id=159464)
+
+        Pass dictionary key name using a string instead of a constant and pass CFURL* to
+        siteForCookies().
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+
 2018-04-23  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutFormattingContext] Initial commit.

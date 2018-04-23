@@ -185,10 +185,10 @@ void ResourceRequest::doUpdatePlatformRequest()
 
     CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
 
-    _CFURLRequestSetProtocolProperty(cfRequest, CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"), siteForCookies(m_sameSiteDisposition, url));
+    _CFURLRequestSetProtocolProperty(cfRequest, CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"), siteForCookies(m_sameSiteDisposition, url.get()));
     int isTopSite = m_isTopSite;
     RetainPtr<CFNumberRef> isTopSiteCF = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &isTopSite));
-    _CFURLRequestSetProtocolProperty(cfRequest, _kCFHTTPCookiePolicyPropertyisTopSite, isTopSiteCF.get());
+    _CFURLRequestSetProtocolProperty(cfRequest, CFSTR("_kCFHTTPCookiePolicyPropertyisTopSite"), isTopSiteCF.get());
 
     unsigned fallbackCount = m_responseContentDispositionEncodingFallbackArray.size();
     RetainPtr<CFMutableArrayRef> encodingFallbacks = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, fallbackCount, 0));
@@ -269,7 +269,7 @@ void ResourceRequest::doUpdateResourceRequest()
 
     RetainPtr<CFURLRef> siteForCookies = adoptCF(checked_cf_cast<CFURLRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"))));
     m_sameSiteDisposition = !siteForCookies ? SameSiteDisposition::Unspecified : (registrableDomainsAreEqual(siteForCookies.get(), m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
-    RetainPtr<CFNumberRef> isTopSiteCF = adoptCF(checked_cf_cast<CFNumber>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), _kCFHTTPCookiePolicyPropertyisTopSite)));
+    RetainPtr<CFNumberRef> isTopSiteCF = adoptCF(checked_cf_cast<CFNumber>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertyisTopSite"))));
     if (!isTopSiteCF)
         m_isTopSite = false;
     else {
