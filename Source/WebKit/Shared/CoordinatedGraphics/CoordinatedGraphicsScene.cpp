@@ -239,15 +239,14 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
         }
     }
 
-    prepareContentBackingStore(layer, commitScope);
-
     // Apply Operations.
     setLayerChildrenIfNeeded(layer, layerState);
+    setLayerFiltersIfNeeded(layer, layerState);
+    setLayerAnimationsIfNeeded(layer, layerState);
+    prepareContentBackingStore(layer, commitScope);
     createTilesIfNeeded(layer, layerState);
     removeTilesIfNeeded(layer, layerState, commitScope);
     updateTilesIfNeeded(layer, layerState, commitScope);
-    setLayerFiltersIfNeeded(layer, layerState);
-    setLayerAnimationsIfNeeded(layer, layerState);
     syncPlatformLayerIfNeeded(layer, layerState);
     setLayerRepaintCountIfNeeded(layer, layerState);
 }
