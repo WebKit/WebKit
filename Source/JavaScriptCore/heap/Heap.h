@@ -382,6 +382,8 @@ public:
     void forEachSlotVisitor(const Func&);
     
     ThreadLocalCacheLayout& threadLocalCacheLayout() { return *m_threadLocalCacheLayout; }
+    
+    Seconds totalGCTime() const { return m_totalGCTime; }
 
 private:
     friend class AllocatingScope;
@@ -723,6 +725,7 @@ private:
     MonotonicTime m_lastGCStartTime;
     MonotonicTime m_lastGCEndTime;
     MonotonicTime m_currentGCStartTime;
+    Seconds m_totalGCTime;
     
     uintptr_t m_barriersExecuted { 0 };
     

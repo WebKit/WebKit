@@ -1763,6 +1763,12 @@ static EncodedJSValue JSC_HOST_CALL functionDeltaBetweenButterflies(ExecState* e
     return JSValue::encode(jsNumber(static_cast<int32_t>(delta)));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionTotalGCTime(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    return JSValue::encode(jsNumber(vm.heap.totalGCTime().seconds()));
+}
+
 void JSDollarVM::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
@@ -1850,6 +1856,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "createCustomTestGetterSetter", functionCreateCustomTestGetterSetter, 1);
 
     addFunction(vm, "deltaBetweenButterflies", functionDeltaBetweenButterflies, 2);
+    
+    addFunction(vm, "totalGCTime", functionTotalGCTime, 0);
 }
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, const char* name, NativeFunction function, unsigned arguments)

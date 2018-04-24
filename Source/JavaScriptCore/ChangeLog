@@ -1,3 +1,23 @@
+2018-04-24  Filip Pizlo  <fpizlo@apple.com>
+
+        $vm.totalGCTime() should be a thing
+        https://bugs.webkit.org/show_bug.cgi?id=184916
+
+        Reviewed by Sam Weinig.
+        
+        When debugging regressions in tests that are GC heavy, it's nice to be able to query the total
+        time spent in GC to determine if the regression is because the GC got slower.
+        
+        This adds $vm.totalGCTime(), which tells you the total time spent in GC, in seconds.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        * heap/Heap.h:
+        (JSC::Heap::totalGCTime const):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionTotalGCTime):
+        (JSC::JSDollarVM::finishCreation):
+
 2018-04-23  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutFormattingContext] Initial commit.
