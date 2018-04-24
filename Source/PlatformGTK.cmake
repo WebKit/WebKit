@@ -53,7 +53,8 @@ endif ()
 
 add_custom_target(check
     COMMAND ${TOOLS_DIR}/Scripts/run-gtk-tests
-    COMMAND ${TOOLS_DIR}/gtk/check-for-webkitdom-api-breaks
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    VERBATIM
 )
 
 if (DEVELOPER_MODE)

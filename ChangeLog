@@ -1,3 +1,23 @@
+2018-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] check target looks broken
+        https://bugs.webkit.org/show_bug.cgi?id=184407
+
+        Reviewed by Carlos Garcia Campos.
+
+        It's pretty clear that nobody has been using check for a long time.
+
+        We got rid of check-for-webkitdom-api-breaks a long time ago, when we stopped autogenerating
+        the DOM API, but it's still used in the check target. Fix this.
+
+        Also, the check target for some reason runs itself from the Source subdirectory of the
+        builddir, but the test script expects to be run from the toplevel build directory. Fix this
+        too.
+
+        Add VERBATIM for good measure.
+
+        * Source/PlatformGTK.cmake:
+
 2018-04-20  Daniel Bates  <dabates@apple.com>
 
         Unreviewed, rolling out r230117.
