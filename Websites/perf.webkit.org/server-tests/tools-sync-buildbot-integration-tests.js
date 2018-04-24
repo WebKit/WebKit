@@ -12,6 +12,7 @@ const TestServer = require('./resources/test-server.js');
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
+const BrowserPrivilegedAPI = require('../public/v3/privileged-api.js').PrivilegedAPI;
 
 const configWithOneTesterTwoBuilders = {
     triggerableName: 'build-webkit',
@@ -177,21 +178,24 @@ function createTestGroup(task_name='custom task') {
     });
 }
 
-function createTestGroupWihPatch()
+async function createTestGroupWihPatch()
 {
-    return TemporaryFile.makeTemporaryFile('patch.dat', 'patch file').then((patchFile) => {
-        return UploadedFile.uploadFile(patchFile);
-    }).then((patchFile) => {
-        const someTest = Test.findById(MockData.someTestId());
-        const webkit = Repository.findById(MockData.webkitRepositoryId());
-        const set1 = new CustomCommitSet;
-        set1.setRevisionForRepository(webkit, '191622', patchFile);
-        const set2 = new CustomCommitSet;
-        set2.setRevisionForRepository(webkit, '191622');
-        return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]);
-    }).then((task) => {
-        return TestGroup.findAllByTask(task.id())[0];
-    })
+    const patchFile = await TemporaryFile.makeTemporaryFile('patch.dat', 'patch file');
+    const originalPrivilegedAPI = global.PrivilegedAPI;
+    BrowserPrivilegedAPI._token = null;
+    global.PrivilegedAPI = BrowserPrivilegedAPI;
+    const uploadedPatchFile = await UploadedFile.uploadFile(patchFile);
+    global.PrivilegedAPI = originalPrivilegedAPI;
+
+    const someTest = Test.findById(MockData.someTestId());
+    const webkit = Repository.findById(MockData.webkitRepositoryId());
+    const set1 = new CustomCommitSet;
+    set1.setRevisionForRepository(webkit, '191622', uploadedPatchFile);
+    const set2 = new CustomCommitSet;
+    set2.setRevisionForRepository(webkit, '191622');
+    const task = await TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]);
+
+    return TestGroup.findAllByTask(task.id())[0];
 }
 
 function createTestGroupWihOwnedCommit()
@@ -227,11 +231,12 @@ function uploadRoot(buildRequestId, buildNumber, repositoryList = ["WebKit"], bu
 }
 
 describe('sync-buildbot', function () {
-    prepareServerTest(this);
+    prepareServerTest(this, 'node');
     TemporaryFile.inject();
 
     beforeEach(() => {
         MockRemoteAPI.reset('http://build.webkit.org');
+        PrivilegedAPI.configure('test', 'password');
     });
 
 

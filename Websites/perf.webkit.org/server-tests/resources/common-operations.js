@@ -17,15 +17,21 @@ function addSlaveForReport(report)
     });
 }
 
-function prepareServerTest(test)
+function prepareServerTest(test, privilegedAPIType='browser')
 {
     test.timeout(5000);
-    TestServer.inject();
+    TestServer.inject(privilegedAPIType);
 
-    beforeEach(function () {
+    beforeEach(async function () {
+        const database = TestServer.database();
         if (typeof(MockData) != 'undefined')
             MockData.resetV3Models();
-        TestServer.database().connect({keepAlive: true});
+        await database.connect({keepAlive: true});
+        if (privilegedAPIType === 'browser')
+            return;
+        const entry = await TestServer.database().selectFirstRow('build_slaves', {name: 'test'});
+        if (!entry)
+            await addSlaveForReport({slaveName: 'test', slavePassword: 'password'});
     });
 
     afterEach(function () {

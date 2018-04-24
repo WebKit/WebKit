@@ -34,7 +34,6 @@ importFromV3('models/triggerable.js', 'Triggerable');
 importFromV3('models/triggerable.js', 'TriggerableRepositoryGroup');
 importFromV3('models/uploaded-file.js', 'UploadedFile');
 
-importFromV3('privileged-api.js', 'PrivilegedAPI');
 importFromV3('instrumentation.js', 'Instrumentation');
 importFromV3('lazily-evaluated-function.js', 'LazilyEvaluatedFunction');
 importFromV3('commit-set-range-bisector.js', 'CommitSetRangeBisector');

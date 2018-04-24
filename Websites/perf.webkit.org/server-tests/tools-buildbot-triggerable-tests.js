@@ -17,7 +17,7 @@ function assertRequestAndResolve(request, method, url, content)
 }
 
 describe('BuildbotTriggerable', function () {
-    prepareServerTest(this);
+    prepareServerTest(this, 'node');
 
     beforeEach(function () {
         MockData.resetV3Models();

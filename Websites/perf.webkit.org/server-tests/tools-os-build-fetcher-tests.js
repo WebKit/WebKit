@@ -13,7 +13,7 @@ const MockLogger = require('./resources/mock-logger.js').MockLogger;
 
 describe('OSBuildFetcher', function() {
     this.timeout(5000);
-    TestServer.inject();
+    TestServer.inject('node');
 
     beforeEach(function () {
         MockRemoteAPI.reset('http://build.webkit.org');

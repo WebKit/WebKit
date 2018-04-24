@@ -1,13 +1,15 @@
 'use strict';
 
-let assert = require('assert');
-let childProcess = require('child_process');
-let fs = require('fs');
-let path = require('path');
+const assert = require('assert');
+const childProcess = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-let Config = require('../../tools/js/config.js');
-let Database = require('../../tools/js/database.js');
-let RemoteAPI = require('../../tools/js/remote.js').RemoteAPI;
+const Config = require('../../tools/js/config.js');
+const Database = require('../../tools/js/database.js');
+const RemoteAPI = require('../../tools/js/remote.js').RemoteAPI;
+const BrowserPrivilegedAPI = require('../../public/v3/privileged-api.js').PrivilegedAPI;
+const NodePrivilegedAPI = require('../../tools/js/privileged-api').PrivilegedAPI;
 
 class TestServer {
     constructor()
@@ -231,15 +233,18 @@ class TestServer {
         resolve();
     }
 
-    inject()
+    inject(privilegedAPIType='browser')
     {
-        let self = this;
+        console.assert(privilegedAPIType === 'browser' || privilegedAPIType === 'node');
+        const useNodePrivilegedAPI = privilegedAPIType === 'node';
+        const self = this;
         before(function () {
             this.timeout(10000);
             return self.start();
         });
 
         let originalRemote;
+        let originalPrivilegedAPI;
 
         beforeEach(function () {
             this.timeout(10000);
@@ -249,7 +254,10 @@ class TestServer {
             global.RemoteAPI = self._remote;
             self._remote.clearCookies();
 
-            if (global.PrivilegedAPI) {
+            originalPrivilegedAPI = global.PrivilegedAPI;
+            global.PrivilegedAPI = useNodePrivilegedAPI ? NodePrivilegedAPI : BrowserPrivilegedAPI;
+
+            if (!useNodePrivilegedAPI) {
                 global.PrivilegedAPI._token = null;
                 global.PrivilegedAPI._expiration = null;
             }
@@ -258,6 +266,7 @@ class TestServer {
         after(function () {
             this.timeout(10000);
             global.RemoteAPI = originalRemote;
+            global.PrivilegedAPI = originalPrivilegedAPI;
             return self.stop();
         });
     }

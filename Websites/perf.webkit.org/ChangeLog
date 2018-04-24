@@ -1,5 +1,42 @@
 2018-04-23  Dewei Zhu  <dewei_zhu@apple.com>
 
+        Tool scripts should not use PrivilegedAPI from 'public/v3/privileged-api.js'.
+        https://bugs.webkit.org/show_bug.cgi?id=184766
+
+        Reviewed by Ryosuke Niwa.
+
+        For tools, we should not use PrivilegedAPI for tools as current PrivilegedAPI
+        is used by UI and it is unnecessary to generate CSRF token for tools.
+        Will post a followup patch that creates a PrivilegedAPI used by tools.
+        Make a change on TestServer.inject and MockRemoteAPI.inject to allow specifying
+        BrowserPrivilegedAPI or NodePrivilegedAPI in the test. Currently defaults to
+        BrowserPrivilegedAPI as this is the test behavior before this change.
+
+        * server-tests/resources/common-operations.js: Allow passing type of privileged api
+        information to TestServer.inject.
+        * server-tests/resources/test-server.js: Conditionally inject PrivilegedAPI based on
+        type of privileged api.
+        (TestServer.prototype.inject):
+        (TestServer):
+        * server-tests/tools-buildbot-triggerable-tests.js: Updated 'prepareServerTest' invocation.
+        * server-tests/tools-os-build-fetcher-tests.js: Updated 'prepareServerTest' invocation.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Temporarily injecting
+        BrowserPrivilegedAPI for mocking UploadedFile. The actual script does not rely on
+        BrowserPrivilegedAPI at all.
+        (async.createTestGroupWihPatch):
+        (beforeEach):
+        * tools/js/privileged-api.js: Added NodePrivilegedAPI
+        (NodePrivilegedAPI.prototype.sendRequest):
+        (NodePrivilegedAPI.configure): Configure the slave name and password.
+        (NodePrivilegedAPI):
+        * tools/js/v3-models.js: Removed the import of PrivilegedAPI.
+        * unit-tests/privileged-api-tests.js:. Added unit tests for NodePrivilegedAPI.
+        * unit-tests/resources/mock-remote-api.js: Conditionally inject PrivilegedAPI based on
+        the type of privileged api.
+        (MockRemoteAPI.inject):
+
+2018-04-23  Dewei Zhu  <dewei_zhu@apple.com>
+
         Revision information returned by querying measurement set api with analysis task id should contain commit order.
         https://bugs.webkit.org/show_bug.cgi?id=184902
 
