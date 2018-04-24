@@ -20,8 +20,8 @@ onload = function() {
 
     setTimeout(function() {
         shouldBeEqualToString("testInput.value", "a");
+        testFrame.onload = finishJSTest;
         testFrame.src = "about:blank";
-        setTimeout(finishJSTest, 0);
     }, 0);
 };
 </script>

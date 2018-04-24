@@ -1,3 +1,11 @@
+2018-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix a few tests that became flaky after r230919.
+
+        * fast/events/beforeunload-alert-handled-keydown.html:
+        * fast/events/beforeunload-alert-no-user-interaction.html:
+        * fast/events/beforeunload-alert-user-interaction.html:
+
 2018-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230921, r230923, r230924, r230932,

@@ -17,8 +17,8 @@ onload = function() {
     if (window.eventSender)
         eventSender.keyDown("a");
     setTimeout(function() {
+        testFrame.onload = finishJSTest;
         testFrame.src = "about:blank";
-        setTimeout(finishJSTest, 0);
     }, 0);
 };
 </script>

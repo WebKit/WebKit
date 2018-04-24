@@ -12,8 +12,8 @@ onload = function() {
         return "FAIL: a beforeunload alert was shown even though the user did not interact with the page.";
     };
     setTimeout(function() {
+        testFrame.onload = finishJSTest;
         testFrame.src = "about:blank";
-        setTimeout(finishJSTest, 0);
     }, 0);
 };
 </script>
