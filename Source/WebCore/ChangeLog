@@ -1,3 +1,19 @@
+2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Avoid painting backing stores for zero-opacity layers
+        https://bugs.webkit.org/show_bug.cgi?id=184143
+
+        Reviewed by Carlos Garcia Campos.
+
+        Skip generating backing stores for layers that have zero opacity and do
+        not animate the opacity value. In the current CoordinatedGraphics system
+        this can end up saving loads of memory on Web content that deploys a
+        large number of such elements.
+
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::shouldHaveBackingStore const):
+
 2018-04-24  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Apple Internal build following r230944

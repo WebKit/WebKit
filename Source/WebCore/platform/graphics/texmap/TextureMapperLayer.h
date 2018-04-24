@@ -87,6 +87,7 @@ public:
     void setRepaintCount(int);
     void setContentsLayer(TextureMapperPlatformLayer*);
     void setAnimations(const TextureMapperAnimations&);
+    const TextureMapperAnimations& animations() const { return m_animations; }
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(TextureMapperBackingStore*);
