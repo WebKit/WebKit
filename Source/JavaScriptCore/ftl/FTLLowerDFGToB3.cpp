@@ -6438,14 +6438,6 @@ private:
         
         MultiGetByOffsetData& data = m_node->multiGetByOffsetData();
 
-        if (data.cases.isEmpty()) {
-            // Protect against creating a Phi function with zero inputs. LLVM didn't like that.
-            // It's not clear if this is needed anymore.
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=154382
-            terminate(BadCache);
-            return;
-        }
-        
         Vector<LBasicBlock, 2> blocks(data.cases.size());
         for (unsigned i = data.cases.size(); i--;)
             blocks[i] = m_out.newBlock();
@@ -6462,8 +6454,8 @@ private:
                 cases.append(SwitchCase(weakStructureID(structure), blocks[i], Weight(1)));
             }
         }
-        m_out.switchInstruction(
-            m_out.load32(base, m_heaps.JSCell_structureID), cases, exit, Weight(0));
+        bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
         
         LBasicBlock lastNext = m_out.m_nextBlock;
         
@@ -6504,7 +6496,7 @@ private:
         }
         
         m_out.appendTo(exit, continuation);
-        if (!m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet))
+        if (!structuresChecked)
             speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
         m_out.unreachable();
         
@@ -6544,8 +6536,8 @@ private:
                 cases.append(SwitchCase(weakStructureID(structure), blocks[i], Weight(1)));
             }
         }
-        m_out.switchInstruction(
-            m_out.load32(base, m_heaps.JSCell_structureID), cases, exit, Weight(0));
+        bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
+        emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
         
         LBasicBlock lastNext = m_out.m_nextBlock;
         
@@ -6587,7 +6579,7 @@ private:
         }
         
         m_out.appendTo(exit, continuation);
-        if (!m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet))
+        if (!structuresChecked)
             speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
         m_out.unreachable();
         
@@ -12028,6 +12020,29 @@ private:
             });
         patchpoint->effects = Effects::forCall();
         setJSValue(patchpoint);
+    }
+    
+    void emitSwitchForMultiByOffset(LValue base, bool structuresChecked, Vector<SwitchCase, 2>& cases, LBasicBlock exit)
+    {
+        if (cases.isEmpty()) {
+            m_out.jump(exit);
+            return;
+        }
+        
+        if (structuresChecked) {
+            std::sort(
+                cases.begin(), cases.end(),
+                [&] (const SwitchCase& a, const SwitchCase& b) -> bool {
+                    return a.value()->asInt() < b.value()->asInt();
+                });
+            SwitchCase last = cases.takeLast();
+            m_out.switchInstruction(
+                m_out.load32(base, m_heaps.JSCell_structureID), cases, last.target(), Weight(0));
+            return;
+        }
+        
+        m_out.switchInstruction(
+            m_out.load32(base, m_heaps.JSCell_structureID), cases, exit, Weight(0));
     }
     
     void compareEqObjectOrOtherToObject(Edge leftChild, Edge rightChild)

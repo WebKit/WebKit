@@ -1,5 +1,36 @@
 2018-04-24  Filip Pizlo  <fpizlo@apple.com>
 
+        MultiByOffset should emit one fewer branches in the case that the set of structures is proved already
+        https://bugs.webkit.org/show_bug.cgi?id=184923
+
+        Reviewed by Saam Barati.
+        
+        If we have a MultiGetByOffset or MultiPutByOffset over a structure set that we've already proved
+        (i.e. we know that the object has one of those structures), then previously we would still emit a
+        switch with a case per structure along with a default case. That would mean one extra redundant
+        branch to check that whatever structure we wound up with belongs to the set. In that case, we
+        were already making the default case be an Oops.
+        
+        One possible solution would be to say that the default case being Oops means that B3 doesn't need
+        to emit the extra branch. But that would require having B3 exploit the fact that Oops is known to
+        be unreachable. Although B3 IR semantics (webkit.org/docs/b3/intermediate-representation.html)
+        seem to allow this, I don't particularly like that style of optimization. I like Oops to mean
+        trap.
+        
+        So, this patch makes FTL lowering turn one of the cases into the default, explicitly removing the
+        extra branch.
+        
+        This is not a speed-up. But it makes the B3 IR for MultiByOffset a lot simpler, which should make
+        it easier to implement B3-level optimizations for MultiByOffset. It also makes the IR easier to
+        read.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::emitSwitchForMultiByOffset):
+
+2018-04-24  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE should know how to decay a MultiGetByOffset
         https://bugs.webkit.org/show_bug.cgi?id=159859
 
