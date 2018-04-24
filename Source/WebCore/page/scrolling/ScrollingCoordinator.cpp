@@ -44,19 +44,11 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-#if USE(COORDINATED_GRAPHICS)
-#include "ScrollingCoordinatorCoordinatedGraphics.h"
-#endif
-
 namespace WebCore {
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(COORDINATED_GRAPHICS)
 Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
-#if USE(COORDINATED_GRAPHICS)
-    return adoptRef(*new ScrollingCoordinatorCoordinatedGraphics(page));
-#endif
-
     return adoptRef(*new ScrollingCoordinator(page));
 }
 #endif

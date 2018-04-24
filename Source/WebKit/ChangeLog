@@ -1,5 +1,35 @@
 2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove unused fixed layout functionality
+        https://bugs.webkit.org/show_bug.cgi?id=184908
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ports using the CoordinatedGraphics subsystem don't expose fixed layout
+        support. As such, we're able to remove a lot of unused code and
+        unnecessary USE(COORDINATED_GRAPHICS) special cases in generic sections
+        in both WebCore and WebKit.
+
+        Remove USE(COORDINATED_GRAPHICS) special-casing from the
+        WebPage::setUseFixedLayout() method. This is not possible to enable for
+        the GTK+ and WPE ports that use the CoordinatedGraphics subsytem via
+        API. Removing all this unlocks removing considerable amounts of dead
+        code and complexities in CoordinatedGraphics.
+
+        WebChromeClient::delegatedScrollRequested() method is removed, along
+        with the WebPage::pageDidRequestScroll() method that was only called
+        from there.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::delegatedScrollRequested): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout):
+        (WebKit::WebPage::pageDidRequestScroll): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
+2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Avoid painting backing stores for zero-opacity layers
         https://bugs.webkit.org/show_bug.cgi?id=184143
 

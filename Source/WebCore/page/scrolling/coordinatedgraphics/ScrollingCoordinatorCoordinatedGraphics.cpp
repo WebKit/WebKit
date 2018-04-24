@@ -24,87 +24,16 @@
  */
 
 #include "config.h"
-#include "ScrollingCoordinatorCoordinatedGraphics.h"
+#include "ScrollingCoordinator.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CoordinatedGraphicsLayer.h"
-#include "FrameView.h"
-#include "HostWindow.h"
-#include "Page.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
-#include "ScrollingConstraints.h"
-#include "ScrollingStateFixedNode.h"
-#include "ScrollingStateScrollingNode.h"
-#include "ScrollingStateStickyNode.h"
-#include "ScrollingStateTree.h"
-
 namespace WebCore {
 
-ScrollingCoordinatorCoordinatedGraphics::ScrollingCoordinatorCoordinatedGraphics(Page* page)
-    : ScrollingCoordinator(page)
-    , m_scrollingStateTree(std::make_unique<ScrollingStateTree>())
+Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
-}
-
-ScrollingCoordinatorCoordinatedGraphics::~ScrollingCoordinatorCoordinatedGraphics() = default;
-
-ScrollingNodeID ScrollingCoordinatorCoordinatedGraphics::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
-{
-    return m_scrollingStateTree->attachNode(nodeType, newNodeID, parentID);
-}
-
-void ScrollingCoordinatorCoordinatedGraphics::detachFromStateTree(ScrollingNodeID nodeID)
-{
-    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (node && node->nodeType() == FixedNode)
-        downcast<CoordinatedGraphicsLayer>(*static_cast<GraphicsLayer*>(node->layer())).setFixedToViewport(false);
-
-    m_scrollingStateTree->detachNode(nodeID);
-}
-
-void ScrollingCoordinatorCoordinatedGraphics::clearStateTree()
-{
-    m_scrollingStateTree->clear();
-}
-
-void ScrollingCoordinatorCoordinatedGraphics::updateNodeLayer(ScrollingNodeID nodeID, GraphicsLayer* graphicsLayer)
-{
-    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (!node)
-        return;
-
-    node->setLayer(graphicsLayer);
-}
-
-void ScrollingCoordinatorCoordinatedGraphics::updateNodeViewportConstraints(ScrollingNodeID nodeID, const ViewportConstraints& constraints)
-{
-    auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
-    if (!node)
-        return;
-
-    switch (constraints.constraintType()) {
-    case ViewportConstraints::FixedPositionConstraint: {
-        auto& layer = node->layer();
-        if (layer.representsGraphicsLayer())
-            downcast<CoordinatedGraphicsLayer>(static_cast<GraphicsLayer*>(layer))->setFixedToViewport(true);
-        break;
-    }
-    case ViewportConstraints::StickyPositionConstraint:
-        break; // FIXME : Support sticky elements.
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-bool ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate(FrameView& frameView, const IntPoint& scrollPosition)
-{
-    if (!frameView.delegatesScrolling())
-        return false;
-
-    frameView.hostWindow()->delegatedScrollRequested(scrollPosition);
-    return true;
+    // FIXME: Return an object implementing AsyncScrollingCoordinator.
+    return adoptRef(*new ScrollingCoordinator(page));
 }
 
 } // namespace WebCore

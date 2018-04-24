@@ -1,3 +1,44 @@
+2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordGraphics] Remove unused fixed layout functionality
+        https://bugs.webkit.org/show_bug.cgi?id=184908
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ports using the CoordinatedGraphics subsystem don't expose fixed layout
+        support. As such, we're able to remove a lot of unused code and
+        unnecessary USE(COORDINATED_GRAPHICS) special cases in generic sections
+        in both WebCore and WebKit.
+
+        With fixed layout not available for use to users of the GTK+ and WPE
+        ports, we can remove the ScrollingCoordinatorCoordinatedGraphics
+        implementation, making room for an implementation that inherits from
+        AsyncScrollingCoordinator in the future. For that purpose the
+        ScrollingCoordinator::create() function is moved into the
+        ScrollingCoordinatorCoordinatedGraphics.cpp file already.
+
+        This also enables removing delegatedScrollRequested() method from
+        HostWindow and the inheriting ChromeClient interface.
+
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::delegatedScrollRequested): Deleted.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::ScrollingCoordinatorCoordinatedGraphics): Deleted.
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::attachToStateTree): Deleted.
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::detachFromStateTree): Deleted.
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::clearStateTree): Deleted.
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::updateNodeLayer): Deleted.
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::updateNodeViewportConstraints): Deleted.
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate): Deleted.
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.h: Removed.
+        * platform/HostWindow.h:
+
 2018-04-24  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Apple Internal build following r230922

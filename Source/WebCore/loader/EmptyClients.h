@@ -106,10 +106,6 @@ class EmptyChromeClient : public ChromeClient {
     void invalidateContentsForSlowScroll(const IntRect&) final { }
     void scroll(const IntSize&, const IntRect&, const IntRect&) final { }
 
-#if USE(COORDINATED_GRAPHICS)
-    void delegatedScrollRequested(const IntPoint&) final { }
-#endif
-
     IntPoint screenToRootView(const IntPoint& p) const final { return p; }
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
 

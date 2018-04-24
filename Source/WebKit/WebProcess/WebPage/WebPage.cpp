@@ -1753,26 +1753,11 @@ void WebPage::setUseFixedLayout(bool fixed)
 #if !PLATFORM(IOS)
     m_page->settings().setFixedElementsLayoutRelativeToFrame(fixed);
 #endif
-#if USE(COORDINATED_GRAPHICS)
-    m_page->settings().setAcceleratedCompositingForFixedPositionEnabled(fixed);
-    m_page->settings().setDelegatesPageScaling(fixed);
-    m_page->settings().setScrollingCoordinatorEnabled(fixed);
-#endif
-
-#if USE(COORDINATED_GRAPHICS) && ENABLE(SMOOTH_SCROLLING)
-    // Delegated scrolling will be enabled when the FrameView is created if fixed layout is enabled.
-    // Ensure we don't do animated scrolling in the WebProcess in that case.
-    m_page->settings().setScrollAnimatorEnabled(!fixed);
-#endif
 
     FrameView* view = mainFrameView();
     if (!view)
         return;
 
-#if USE(COORDINATED_GRAPHICS)
-    view->setDelegatesScrolling(fixed);
-    view->setPaintsEntireContents(fixed);
-#endif
     view->setUseFixedLayout(fixed);
     if (!fixed)
         setFixedLayoutSize(IntSize());
@@ -2170,15 +2155,6 @@ void WebPage::pageStoppedScrolling()
     if (Frame* frame = m_mainFrame->coreFrame())
         frame->loader().history().saveScrollPositionAndViewStateToItem(frame->loader().history().currentItem());
 }
-
-#if USE(COORDINATED_GRAPHICS)
-void WebPage::pageDidRequestScroll(const IntPoint& point)
-{
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    drawingArea()->scroll(IntRect(point, IntSize()), IntSize());
-#endif
-}
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
 WebContextMenu* WebPage::contextMenu()

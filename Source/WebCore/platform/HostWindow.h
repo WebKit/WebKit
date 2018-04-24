@@ -50,11 +50,6 @@ public:
     // Requests the host invalidate the contents, not the root view. This is the slow path for scrolling.
     virtual void invalidateContentsForSlowScroll(const IntRect& updateRect) = 0;
 
-#if USE(COORDINATED_GRAPHICS)
-    // Requests the host to do the actual scrolling. This is only used in combination with a tiled backing store.
-    virtual void delegatedScrollRequested(const IntPoint& scrollPoint) = 0;
-#endif
-
     // Methods for doing coordinate conversions to and from screen coordinates.
     virtual IntPoint screenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;

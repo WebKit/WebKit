@@ -71,9 +71,6 @@ public:
     void invalidateContentsAndRootView(const IntRect&) override;
     void invalidateContentsForSlowScroll(const IntRect&) override;
     void scroll(const IntSize&, const IntRect&, const IntRect&) override;
-#if USE(COORDINATED_GRAPHICS)
-    void delegatedScrollRequested(const IntPoint& scrollPoint) override;
-#endif
     IntPoint screenToRootView(const IntPoint&) const override;
     IntRect rootViewToScreen(const IntRect&) const override;
 #if PLATFORM(IOS)

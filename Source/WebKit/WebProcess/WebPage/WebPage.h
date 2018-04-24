@@ -656,10 +656,6 @@ public:
 
     void pageDidScroll();
 
-#if USE(COORDINATED_GRAPHICS)
-    void pageDidRequestScroll(const WebCore::IntPoint&);
-#endif
-
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu();
     WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
