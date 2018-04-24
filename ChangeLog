@@ -1,3 +1,15 @@
+2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Remove libgbm dependency
+        https://bugs.webkit.org/show_bug.cgi?id=184906
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove the libgbm CMake search module. It's not necessary anymore
+        after r230562.
+
+        * Source/cmake/FindLibGBM.cmake: Removed.
+
 2018-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] check target looks broken

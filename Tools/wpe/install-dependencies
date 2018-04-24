@@ -109,7 +109,6 @@ function installDependenciesWithApt {
         gsettings-desktop-schemas-dev \
         libegl1-mesa-dev \
         libexpat1-dev \
-        libgbm-dev \
         libgles2-mesa-dev \
         libluajit-5.1-dev \
         libmount-dev \
@@ -301,7 +300,6 @@ function installDependenciesWithDnf {
         libXrandr-devel \
         luajit \
         luajit-devel \
-        mesa-libgbm-devel \
         mesa-libGLES-devel \
         mesa-libEGL-devel \
         opus-devel \

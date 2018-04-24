@@ -1,3 +1,18 @@
+2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Remove libgbm dependency
+        https://bugs.webkit.org/show_bug.cgi?id=184906
+
+        Reviewed by Carlos Garcia Campos.
+
+        Stop searching for libgbm, using its compiler flags for the
+        HeadlessViewBackend compilation and linking against the .so object.
+        This is not necessary anymore after r230562 switched to a different
+        backend implementation for testing.
+
+        * wpe/HeadlessViewBackend/CMakeLists.txt:
+        * wpe/install-dependencies:
+
 2018-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Make it possible to use a different timeout for slow test cases in GLib tests
