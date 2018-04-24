@@ -67,6 +67,7 @@
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchPopupMenu.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerClientIdentifier.h>
 #include <WebCore/ServiceWorkerData.h>
@@ -2832,5 +2833,28 @@ bool ArgumentCoder<AttachmentInfo>::decode(Decoder& decoder, AttachmentInfo& inf
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+void ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::encode(Encoder& encoder, const Vector<RefPtr<SecurityOrigin>>& origins)
+{
+    encoder << static_cast<uint64_t>(origins.size());
+    for (auto& origin : origins)
+        encoder << *origin;
+}
+    
+bool ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::decode(Decoder& decoder, Vector<RefPtr<SecurityOrigin>>& origins)
+{
+    uint64_t dataSize;
+    if (!decoder.decode(dataSize))
+        return false;
+
+    origins.reserveInitialCapacity(dataSize);
+    for (uint64_t i = 0; i < dataSize; ++i) {
+        auto decodedOriginRefPtr = SecurityOrigin::decode(decoder);
+        if (!decodedOriginRefPtr)
+            return false;
+        origins.uncheckedAppend(decodedOriginRefPtr.releaseNonNull());
+    }
+    return true;
+}
 
 } // namespace IPC

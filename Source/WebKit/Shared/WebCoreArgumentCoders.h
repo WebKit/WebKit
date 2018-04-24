@@ -85,6 +85,7 @@ class Region;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class SecurityOrigin;
 class SpringTimingFunction;
 class StepsTimingFunction;
 class FramesTimingFunction;
@@ -697,6 +698,11 @@ template<> struct ArgumentCoder<WebCore::AttachmentInfo> {
 };
 
 #endif
+
+template<> struct ArgumentCoder<Vector<RefPtr<WebCore::SecurityOrigin>>> {
+    static void encode(Encoder&, const Vector<RefPtr<WebCore::SecurityOrigin>>&);
+    static bool decode(Decoder&, Vector<RefPtr<WebCore::SecurityOrigin>>&);
+};
 
 } // namespace IPC
 

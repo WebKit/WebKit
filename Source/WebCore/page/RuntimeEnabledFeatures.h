@@ -250,6 +250,9 @@ public:
     void setRestrictedHTTPResponseAccess(bool isEnabled) { m_isRestrictedHTTPResponseAccess = isEnabled; }
     bool restrictedHTTPResponseAccess() const { return m_isRestrictedHTTPResponseAccess; }
 
+    void setFromOriginResponseHeaderEnabled(bool isEnabled) { m_fromOriginResponseHeaderEnabled = isEnabled; }
+    bool fromOriginResponseHeaderEnabled() const { return m_fromOriginResponseHeaderEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -383,7 +386,9 @@ private:
     bool m_resourceLoadStatisticsDebugMode { false };
 
     bool m_isRestrictedHTTPResponseAccess { false };
-    
+
+    bool m_fromOriginResponseHeaderEnabled { false };
+
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };
 

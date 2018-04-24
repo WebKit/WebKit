@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a cross-origin fetch in a data: iframe load fails if the server blocks cross-origin loads with a 'From-Origin: same' response header.");
+        jsTestIsAsync = true;
+        testRunner.dumpChildFramesAsText();
+
+        function receiveMessage(event) {
+            if (event.origin === "null") {
+                if (event.data.indexOf("fetchSuccess") !== -1)
+                    testFailed("127.0.0.1 fetch in data: iframe succeeded.");
+                else if (event.data.indexOf("fetchError") !== -1)
+                    testPassed("127.0.0.1 fetch in data: iframe blocked.");
+                else
+                    testFailed("Received an unrecognized message. " + event.data);
+            } else {
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+            }
+            finishJSTest();
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+    </script>
+</head>
+<body>
+<!-- data url equivalent to from-origin/resources/iframeIPAddressFetch.html -->
+<iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDxzY3JpcHQ+CiAgICAgICAgZnVuY3Rpb24gZmV0Y2hFcnJvcigpIHsKICAgICAgICAgICAgdG9wLnBvc3RNZXNzYWdlKCJmZXRjaEVycm9yIiwgImh0dHA6Ly8xMjcuMC4wLjE6ODAwMCIpOwogICAgICAgIH0KCiAgICAgICAgZnVuY3Rpb24gZmV0Y2hTdWNjZXNzKCkgewogICAgICAgICAgICB0b3AucG9zdE1lc3NhZ2UoImZldGNoU3VjY2VzcyIsICJodHRwOi8vMTI3LjAuMC4xOjgwMDAiKTsKICAgICAgICB9CgogICAgICAgIGZldGNoKCJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZnJvbS1vcmlnaW4vcmVzb3VyY2VzL2ZldGNoLnBocD9mcm9tT3JpZ2luPXNhbWUiKS50aGVuKGZ1bmN0aW9uKHJlc3BvbnNlKSB7CiAgICAgICAgICAgIHJldHVybiByZXNwb25zZS5qc29uKCk7CiAgICAgICAgfSkudGhlbihmdW5jdGlvbihkYXRhKSB7CiAgICAgICAgICAgIGNvbnN0IHBhcnNlZERhdGEgPSBKU09OLnBhcnNlKGRhdGEpOwogICAgICAgICAgICBpZiAocGFyc2VkRGF0YS5GZXRjaCkKICAgICAgICAgICAgICAgIGZldGNoU3VjY2VzcygpOwogICAgICAgICAgICBlbHNlCiAgICAgICAgICAgICAgICBmZXRjaEVycm9yKCk7CiAgICAgICAgfSkuY2F0Y2goZnVuY3Rpb24oZXJyb3IpIHsKICAgICAgICAgICAgZmV0Y2hFcnJvcigpOwogICAgICAgIH0pOwogICAgPC9zY3JpcHQ+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDM+VGhlIGlmcmFtZSBtYWtpbmcgYSAxMjcuMC4wLjEgZmV0Y2ggY2FsbC48L2gzPgo8L2JvZHk+CjwvaHRtbD4K"></iframe>
+</body>
+</html>

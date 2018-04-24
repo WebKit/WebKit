@@ -56,6 +56,7 @@ Default-Style
 ETag
 Expect
 Expires
+From-Origin
 Host
 If-Match
 If-Modified-Since

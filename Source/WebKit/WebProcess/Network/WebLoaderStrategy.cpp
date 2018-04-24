@@ -325,6 +325,20 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     // FIXME: We should also sanitize redirect response for navigations.
     loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess() && resourceLoader.options().mode != FetchOptions::Mode::Navigate;
 
+    bool isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
+
+    loadParameters.shouldEnableFromOriginResponseHeader = RuntimeEnabledFeatures::sharedFeatures().fromOriginResponseHeaderEnabled() && !isMainFrameNavigation;
+    if (loadParameters.shouldEnableFromOriginResponseHeader) {
+        Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
+        for (auto* frame = resourceLoader.frame(); frame; frame = frame->tree().parent()) {
+            if (frame->document())
+                frameAncestorOrigins.append(makeRefPtr(frame->document()->securityOrigin()));
+            if (frame->isMainFrame())
+                break;
+        }
+        loadParameters.frameAncestorOrigins = WTFMove(frameAncestorOrigins);
+    }
+
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);
 
     RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: Resource is being scheduled with the NetworkProcess (frame = %p, priority = %d, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader.frame(), static_cast<int>(resourceLoader.request().priority()), loadParameters.webPageID, loadParameters.webFrameID, loadParameters.identifier);

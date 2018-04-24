@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a same-origin image load succeeds if the server blocks cross-origin loads with a 'From-Origin: same-site' response header.");
+        jsTestIsAsync = true;
+
+        function imageLoadError() {
+            testFailed("Image load blocked.");
+            finishJSTest();
+        }
+
+        function imageLoadSuccess() {
+            testPassed("Image load succeeded.");
+            finishJSTest();
+        }
+    </script>
+</head>
+<body>
+<img src="http://127.0.0.1:8000/from-origin/resources/image.php?fromOrigin=same-site" onerror="imageLoadError()" onload="imageLoadSuccess()">
+</body>
+</html>

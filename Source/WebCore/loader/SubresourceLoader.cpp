@@ -650,6 +650,9 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
 
 void SubresourceLoader::didFail(const ResourceError& error)
 {
+    if (m_frame && m_frame->document() && error.isAccessControl() && options().destination != FetchOptions::Destination::Serviceworker && options().destination != FetchOptions::Destination::EmptyString)
+        m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
+
 #if USE(QUICK_LOOK)
     if (auto previewLoader = m_previewLoader.get())
         previewLoader->didFail();

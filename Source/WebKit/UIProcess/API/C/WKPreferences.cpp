@@ -1964,6 +1964,16 @@ bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferenc
     return toImpl(preferencesRef)->allowCrossOriginSubresourcesToAskForCredentials();
 }
 
+void WKPreferencesSetFromOriginResponseHeaderEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setFromOriginResponseHeaderEnabled(flag);
+}
+
+bool WKPreferencesGetFromOriginResponseHeaderEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->fromOriginResponseHeaderEnabled();
+}
+
 void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setRestrictedHTTPResponseAccess(flag);

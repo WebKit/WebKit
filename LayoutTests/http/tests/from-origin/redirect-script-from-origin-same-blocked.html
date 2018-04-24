@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a redirected cross-origin script load fails if the server blocks it with a 'From-Origin: same' response header.");
+        jsTestIsAsync = true;
+
+        function scriptLoadError() {
+            testPassed("Script load blocked.");
+            finishJSTest();
+        }
+
+        function scriptLoadSuccess() {
+            testFailed("Script load succeeded.");
+            finishJSTest();
+        }
+    </script>
+</head>
+<body>
+<script src="http://127.0.0.1:8000/from-origin/resources/redirect.php?redirectTo=http://localhost:8000/from-origin/resources/script.php?fromOrigin=same" onload="scriptLoadSuccess()" onerror="scriptLoadError()"></script>
+</body>
+</html>

@@ -315,6 +315,10 @@ WK_EXPORT void WKPreferencesSetMediaCapabilitiesEnabled(WKPreferencesRef prefere
 WK_EXPORT bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef);
 WK_EXPORT void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool allow);
 
+// Defaults to false.
+WK_EXPORT bool WKPreferencesGetFromOriginResponseHeaderEnabled(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetFromOriginResponseHeaderEnabled(WKPreferencesRef preferencesRef, bool allow);
+
 #ifdef __cplusplus
 }
 #endif

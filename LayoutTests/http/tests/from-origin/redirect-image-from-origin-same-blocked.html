@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a redirected cross-origin image load fails if the server blocks it with a 'From-Origin: same' response header.");
+        jsTestIsAsync = true;
+
+        function imageLoadError() {
+            testPassed("Image load blocked.");
+            finishJSTest();
+        }
+
+        function imageLoadSuccess() {
+            testFailed("Image load succeeded.");
+            finishJSTest();
+        }
+    </script>
+</head>
+<body>
+<img src="http://127.0.0.1:8000/from-origin/resources/redirect.php?redirectTo=http://localhost:8000/from-origin/resources/image.php?fromOrigin=same" onerror="imageLoadError()" onload="imageLoadSuccess()">
+</body>
+</html>

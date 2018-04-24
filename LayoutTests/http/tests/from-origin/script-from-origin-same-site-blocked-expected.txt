@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Cancelled load because it violates the resource's From-Origin response header.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+Tests that a cross-origin script load fails if the server blocks it with a 'From-Origin: same-site' response header.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Script load blocked
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

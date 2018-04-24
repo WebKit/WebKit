@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a nested cross-origin document load fails if the server blocks cross-origin loads with a 'From-Origin: same' response header and the iframe is sandboxed.");
+        testRunner.dumpChildFramesAsText();
+    </script>
+</head>
+<body>
+<iframe src="http://127.0.0.1:8000/from-origin/resources/nestedLocalhostIframe.html" sandbox=""></iframe>
+</body>
+</html>

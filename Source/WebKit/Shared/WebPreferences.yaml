@@ -1233,3 +1233,11 @@ RestrictedHTTPResponseAccess:
     humanReadableDescription: "Restricted HTTP Response Access to Web Process"
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
+
+FromOriginResponseHeaderEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "From-Origin Response Header"
+    humanReadableDescription: "Support for the From-Origin Response Header"
+    category: experimental
+    webcoreBinding: RuntimeEnabledFeatures

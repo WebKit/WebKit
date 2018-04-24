@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a same-origin xhr load succeeds if the server blocks cross-origin loads with a 'From-Origin: same-site' response header.");
+        jsTestIsAsync = true;
+
+        function transferComplete() {
+            if (xhr.responseText === "xhr")
+                testPassed("Xhr succeeded.");
+            else
+                testFailed("Unknown xhr response: " + xhr.responseText);
+            finishJSTest();
+        }
+
+        function transferFailed() {
+            testFailed("Xhr blocked. " + xhr.statusText);
+            finishJSTest();
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener("load", transferComplete);
+        xhr.addEventListener("error", transferFailed);
+        xhr.open("GET", "http://127.0.0.1:8000/from-origin/resources/xhr.php?fromOrigin=same-site");
+        xhr.send();
+    </script>
+</head>
+<body>
+</body>
+</html>

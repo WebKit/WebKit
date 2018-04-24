@@ -1,3 +1,26 @@
+2018-04-24  John Wilander  <wilander@apple.com>
+
+        From-Origin: Support for 'same' and 'same-site' response header, nested frame origin check
+        https://bugs.webkit.org/show_bug.cgi?id=184560
+        <rdar://problem/38901344>
+
+        Reviewed by Youenn Fablet and Daniel Bates.
+
+        This patch implements significant parts of https://github.com/whatwg/fetch/issues/687.
+        We consume the From-Origin response header and only load the resource if:
+        - The header is non-existent, empty, or invalid.
+        - The header specifies 'same' and the resource's origin matches the originating
+          document's origin and the origins up the frame tree.
+        - The header specifies 'same-site' and the resource's eTLD+1 matches the originating
+          document's eTLD+1 and the eTLD+1 of the documents up the frame tree.
+
+        This feature is experimental and off by default.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/HTTPParsers.cpp: Added.
+        (TestWebKitAPI::TEST):
+            Tests for From-Origin header parsing.
+
 2018-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.

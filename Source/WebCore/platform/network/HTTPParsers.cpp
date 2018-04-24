@@ -897,4 +897,20 @@ String normalizeHTTPMethod(const String& method)
     return method;
 }
 
+FromOriginDisposition parseFromOriginHeader(const String& header)
+{
+    auto strippedHeader = stripLeadingAndTrailingHTTPSpaces(header);
+
+    if (strippedHeader.isEmpty())
+        return FromOriginDisposition::None;
+
+    if (equalLettersIgnoringASCIICase(strippedHeader, "same"))
+        return FromOriginDisposition::Same;
+
+    if (equalLettersIgnoringASCIICase(strippedHeader, "same-site"))
+        return FromOriginDisposition::SameSite;
+
+    return FromOriginDisposition::Invalid;
+}
+
 }

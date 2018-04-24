@@ -710,6 +710,9 @@ http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subreso
 # Process swapping is only implemented on WebKit2.
 http/tests/navigation/process-swap-window-open.html [ Pass ]
 
+# From-Origin response header is only implemented in WebKit2.
+http/tests/from-origin/ [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

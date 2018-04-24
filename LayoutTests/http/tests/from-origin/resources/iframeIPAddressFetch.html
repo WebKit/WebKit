@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function fetchError() {
+            top.postMessage("fetchError", "http://127.0.0.1:8000");
+        }
+
+        function fetchSuccess() {
+            top.postMessage("fetchSuccess", "http://127.0.0.1:8000");
+        }
+
+        fetch("http://127.0.0.1:8000/from-origin/resources/fetch.php?fromOrigin=same").then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            const parsedData = JSON.parse(data);
+            if (parsedData.Fetch)
+                fetchSuccess();
+            else
+                fetchError();
+        }).catch(function(error) {
+            fetchError();
+        });
+    </script>
+</head>
+<body>
+    <h3>The iframe making a 127.0.0.1 fetch call.</h3>
+</body>
+</html>

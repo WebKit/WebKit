@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that a cross-origin image load inside an about:blank iframe fails if the server blocks it with a 'From-Origin: same' response header.");
+        jsTestIsAsync = true;
+
+        function imageLoadError() {
+            testPassed("Image load blocked.");
+            finishJSTest();
+        }
+
+        function imageLoadSuccess() {
+            testFailed("Image load succeeded.");
+            finishJSTest();
+        }
+
+        function injectImageIntoIframe() {
+            var imgElement = new Image();
+            imgElement.src = "http://localhost:8000/from-origin/resources/image.php?fromOrigin=same";
+            imgElement.onload = imageLoadSuccess;
+            imgElement.onerror = imageLoadError;
+            document.getElementById("theIframe").contentDocument.body.appendChild(imgElement);
+        }
+    </script>
+</head>
+<body onload="injectImageIntoIframe()">
+<iframe src="about:blank" id="theIframe"></iframe>
+</body>
+</html>
