@@ -41,13 +41,6 @@
         return dylib; \
     }
 
-#define SOFT_LINK_LIBRARY_OPTIONAL(lib) \
-    static void* lib##Library() \
-    { \
-        static void* dylib = dlopen("/usr/lib/" #lib ".dylib", RTLD_NOW); \
-        return dylib; \
-    }
-
 #define SOFT_LINK_FRAMEWORK(framework) \
     static void* framework##Library() \
     { \
