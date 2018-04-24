@@ -46,6 +46,11 @@ extern "C" {
  JavaScript objects between contexts in different groups will produce undefined behavior.
  When objects from the same context group are used in multiple threads, explicit
  synchronization is required.
+
+ A JSContextGroup may need to run deferred tasks on a run loop, such as garbage collection
+ or resolving WebAssembly compilations. By default, calling JSContextGroupCreate will use
+ the run loop of the thread it was called on. Currently, there is no API to change a
+ JSContextGroup's run loop once it has been created.
 @result The created JSContextGroup.
 */
 JS_EXPORT JSContextGroupRef JSContextGroupCreate(void) CF_AVAILABLE(10_6, 7_0);

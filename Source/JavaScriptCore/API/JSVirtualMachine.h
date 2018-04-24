@@ -33,6 +33,11 @@
  or set of execution resources. Thread safety is supported by locking the
  virtual machine, with concurrent JavaScript execution supported by allocating
  separate instances of JSVirtualMachine.
+
+ A virtual machine may need to run deferred tasks on a run loop, such as garbage collection
+ or resolving WebAssembly compilations. By default, a virtual machine will use the run loop
+ of the thread it was initialized on. Currently, there is no API to change a
+ JSVirtualMachine's run loop once it has been initialized.
 */
 NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSVirtualMachine : NSObject
