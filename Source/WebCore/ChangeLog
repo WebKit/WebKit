@@ -1,3 +1,9 @@
+2018-04-24  Zalan Bujtas  <zalan@apple.com>
+
+        Fix project file after r230931.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-04-24  Jer Noble  <jer.noble@apple.com>
 
         Don't add system framework paths to FRAMEWORK_SEARCH_PATHS

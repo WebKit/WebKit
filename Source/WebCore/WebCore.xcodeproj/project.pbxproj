@@ -15395,7 +15395,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				115CFA66208AF720001E6991 /* layout */,
 				1C09D04B1E31C32800725F18 /* PAL.xcodeproj */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
@@ -15419,6 +15418,7 @@
 				51741D080B07257000ED442C /* history */,
 				93EEC1EC09C2877700C515D1 /* html */,
 				1C81B94D0E9732D900266E07 /* inspector */,
+				115CFA66208AF720001E6991 /* layout */,
 				BCB16BFB0979C38700467741 /* loader */,
 				FABE72EC1059C1EB00D999DD /* mathml */,
 				65BF02180974806300C43196 /* page */,
@@ -15701,8 +15701,7 @@
 				1199FA5A208E3C7F002358CC /* DisplayBox.cpp */,
 				1199FA59208E3C7F002358CC /* DisplayBox.h */,
 			);
-			name = displaytree;
-			path = displaytree.temp_caseinsensitive_rename.;
+			path = displaytree;
 			sourceTree = "<group>";
 		};
 		1221E0581C02B409006A1A00 /* Animation */ = {
