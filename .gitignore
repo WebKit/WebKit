@@ -48,3 +48,7 @@ __cmake_systeminformation/
 
 # Ignore YouCompleteMe symlinks
 .ycm_extra_conf.py
+
+# Ignore generated Test262 results file
+Tools/Scripts/test262/test262-results.yaml
+
