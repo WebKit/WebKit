@@ -1,32 +1,14 @@
-2018-04-23  Commit Queue  <commit-queue@webkit.org>
+2018-04-23  Daniel Bates  <dabates@apple.com>
 
-        Unreviewed, rolling out r230921, r230923, r230924, r230932,
-        and r230934.
-        https://bugs.webkit.org/show_bug.cgi?id=184903
-
-        Builds still broken (Requested by ryanhaddad on #webkit).
-
-        Reverted changesets:
-
-        "Implement Same-Site cookies"
+        Implement Same-Site cookies
         https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230921
+        <rdar://problem/27196358>
 
-        "Attempt to fix the build after r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230923
+        Reviewed by Brent Fulgham.
 
-        "Attempt to fix the Mac and iOS build after r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230924
+        Forward declare some SPI.
 
-        "Another attempt to fix the Windows build following r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230932
-
-        "Attempt to fix the Apple Internal build following r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230934
+        * pal/spi/cf/CFNetworkSPI.h:
 
 2018-04-23  Zalan Bujtas  <zalan@apple.com>
 

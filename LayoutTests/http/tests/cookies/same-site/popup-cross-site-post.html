@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+<script src="../resources/testharness-helpers.js"></script>
+<body>
+<script>
+if (window.location.hostname == "127.0.0.1") {
+    clearKnownCookies();
+    document.cookie = STRICT_DOM + "=1; SameSite=Strict; Max-Age=100; path=/";
+    document.cookie = IMPLICIT_STRICT_DOM + "=1; SameSite; Max-Age=100; path=/";
+    document.cookie = STRICT_BECAUSE_INVALID_SAMESITE_VALUE + "=1; SameSite=invalid; Max-Age=100; path=/";
+    document.cookie = LAX_DOM + "=1; SameSite=Lax; Max-Age=100; path=/";
+    document.cookie = NORMAL_DOM + "=1; Max-Age=100; path=/";
+    window.location.hostname = "localhost";
+} else {
+    async_test(t => {
+        window.addEventListener("message", t.step_func_done(e => {
+            assert_equals(e.data.http[STRICT_DOM], undefined, "strict");
+            assert_equals(e.data.http[IMPLICIT_STRICT_DOM], undefined, "implicit-strict");
+            assert_equals(e.data.http[STRICT_BECAUSE_INVALID_SAMESITE_VALUE], undefined, "strict-because-invalid-SameSite-value");
+            assert_equals(e.data.http[LAX_DOM], undefined, "lax");
+            assert_equals(e.data.http[NORMAL_DOM], "1", "normal");
+            assert_equals(normalizeCookie(e.data.document), normalizeCookie(LAX_DOM + "=1; " + NORMAL_DOM + "=1"));
+            e.source.close();
+        }));
+
+        var f = document.createElement('form');
+        f.action = "http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.php";
+        f.method = "POST";
+        f.target = "_blank"
+        window.onload = t.step_func(f.submit.bind(f));
+        document.body.appendChild(f);
+    }, "'127.0.0.1' is not same-site with 'localhost', so samesite cookies are not sent via POST.");
+}
+</script>
+</body>

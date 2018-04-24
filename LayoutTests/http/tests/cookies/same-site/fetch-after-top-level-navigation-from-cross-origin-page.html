@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", "5", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-strict", "5", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("strict-because-invalid-SameSite-value", "5", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "5", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+    window.location.href = "http://localhost:8000/cookies/same-site/resources/click-hyperlink.php?href=http%3A//127.0.0.1%3A8000/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.php";
+}
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/workers/service/resources/sw-test-pre.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpChildFramesAsText();
+
+async function runTest()
+{
+    if (!navigator.serviceWorker) {
+        document.writeln("This test requires Service Workers.");
+        return;
+    }
+
+    await resetCookies();
+    await setCookie("strict", "11", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-strict", "11", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("strict-because-invalid-SameSite-value", "11", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "11", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+    await interceptedFrame("resources/passthrough-service-worker.js", "resources/fetch-in-same-origin-service-worker.php");
+}
+runTest();
+</script>
+</body>
+</html>

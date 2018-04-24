@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CookiesStrategy.h"
+#include "SameSiteInfo.h"
 #include "URL.h"
 #include <pal/SessionID.h>
 
@@ -34,6 +35,7 @@ namespace WebCore {
 struct CookieRequestHeaderFieldProxy {
     PAL::SessionID sessionID;
     URL firstParty;
+    SameSiteInfo sameSiteInfo;
     URL url;
     std::optional<uint64_t> frameID;
     std::optional<uint64_t> pageID;
@@ -48,6 +50,7 @@ void CookieRequestHeaderFieldProxy::encode(Encoder& encoder) const
 {
     encoder << sessionID;
     encoder << firstParty;
+    encoder << sameSiteInfo;
     encoder << url;
     encoder << frameID;
     encoder << pageID;
@@ -61,6 +64,8 @@ std::optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::deco
     if (!decoder.decode(result.sessionID))
         return std::nullopt;
     if (!decoder.decode(result.firstParty))
+        return std::nullopt;
+    if (!decoder.decode(result.sameSiteInfo))
         return std::nullopt;
     if (!decoder.decode(result.url))
         return std::nullopt;

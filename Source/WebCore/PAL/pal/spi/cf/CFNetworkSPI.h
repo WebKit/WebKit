@@ -34,7 +34,6 @@
 #define USE_CFNETWORK_IGNORE_HSTS 1
 #endif
 
-
 #if PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
@@ -124,16 +123,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (NSDate *)_lastModifiedDate;
 @end
 
-@interface NSURLSessionTask (TimingData)
-- (NSDictionary *)_timingData;
-@end
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-@interface NSURLSessionTask (ResourceHints)
-@property (nonatomic, assign) BOOL _preconnect;
-@end
-#endif
-
 @interface NSHTTPCookie ()
 - (CFHTTPCookieRef)_CFHTTPCookie;
 + (CFArrayRef __nullable)_ns2cfCookies:(NSArray * __nullable)nsCookies CF_RETURNS_RETAINED;
@@ -170,13 +159,21 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @end
 
 @interface NSHTTPCookieStorage ()
-- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition completionHandler:(void (^)(NSArray *))completionHandler;
 - (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
+- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition completionHandler:(void (^)(NSArray *))completionHandler;
+- (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition policyProperties:(NSDictionary*)props completionHandler:(void (^)(NSArray *))completionHandler;
+- (void)_setCookies:(NSArray *)cookies forURL:(NSURL *)URL mainDocumentURL:(NSURL *)mainDocumentURL policyProperties:(NSDictionary*) props;
 @end
 
 @interface NSURLSessionTask ()
+- (NSDictionary *)_timingData;
 @property (readwrite, copy) NSString *_pathToDownloadTaskFile;
 @property (copy) NSString *_storagePartitionIdentifier;
+@property (nullable, readwrite, retain) NSURL *_siteForCookies;
+@property (readwrite) BOOL _isTopLevelNavigation;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@property (nonatomic, assign) BOOL _preconnect;
+#endif
 @end
 
 #endif // defined(__OBJC__)

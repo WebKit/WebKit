@@ -45,6 +45,7 @@ void SubresourceInfo::encode(WTF::Persistence::Encoder& encoder) const
     if (m_isTransient)
         return;
 
+    encoder << m_isSameSite;
     encoder << m_firstPartyForCookies;
     encoder << m_requestHeaders;
     encoder.encodeEnum(m_priority);
@@ -64,7 +65,10 @@ bool SubresourceInfo::decode(WTF::Persistence::Decoder& decoder, SubresourceInfo
     
     if (info.m_isTransient)
         return true;
-    
+
+    if (!decoder.decode(info.m_isSameSite))
+        return false;
+
     if (!decoder.decode(info.m_firstPartyForCookies))
         return false;
 
@@ -115,6 +119,7 @@ SubresourceInfo::SubresourceInfo(const Key& key, const WebCore::ResourceRequest&
     , m_lastSeen(WallTime::now())
     , m_firstSeen(previousInfo ? previousInfo->firstSeen() : m_lastSeen)
     , m_isTransient(!previousInfo)
+    , m_isSameSite(request.isSameSite())
     , m_firstPartyForCookies(request.firstPartyForCookies())
     , m_requestHeaders(request.httpHeaderFields())
     , m_priority(request.priority())

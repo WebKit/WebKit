@@ -1055,6 +1055,12 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
 {
     for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame))
         frame->document()->setFirstPartyForCookies(url);
+
+    String registrableDomain = ResourceRequest::partitionName(url.host());
+    for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
+        if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(frame->document()->url()) || registrableDomainsAreEqual(frame->document()->url(), registrableDomain))
+            frame->document()->setFirstPartyForSameSiteCookies(url);
+    }
 }
 
 // This does the same kind of work that didOpenURL does, except it relies on the fact
@@ -1398,6 +1404,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
         request.setSubstituteData(defaultSubstituteDataForURL(request.resourceRequest().url()));
 
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(request.resourceRequest(), request.substituteData());
+    addSameSiteInfoToRequestIfNeeded(loader->request());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
     SetForScope<bool> currentLoadShouldCheckNavigationPolicyGuard(m_currentLoadShouldCheckNavigationPolicy, request.shouldCheckNavigationPolicy());
@@ -1673,6 +1680,8 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
 
     // FIXME: We don't have a mechanism to revalidate the main resource without reloading at the moment.
     request.setCachePolicy(ReloadIgnoringCacheData);
+
+    addSameSiteInfoToRequestIfNeeded(request);
 
     // If we're about to re-post, set up action so the application can warn the user.
     if (request.httpMethod() == "POST")
@@ -2440,12 +2449,15 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
     // FIXME: Rename firstPartyForCookies back to mainDocumentURL. It was a mistake to think that it was only used for cookies.
     // The originalURL is defined as the URL of the page where the download was initiated.
     URL originalURL;
-    if (m_frame.document()) {
-        originalURL = m_frame.document()->firstPartyForCookies();
+    auto* initiator = m_frame.document();
+    if (initiator) {
+        originalURL = initiator->firstPartyForCookies();
         // If there is no main document URL, it means that this document is newly opened and just for download purpose.
         // In this case, we need to set the originalURL to this document's opener's main document URL.
-        if (originalURL.isEmpty() && opener() && opener()->document())
+        if (originalURL.isEmpty() && opener() && opener()->document()) {
             originalURL = opener()->document()->firstPartyForCookies();
+            initiator = opener()->document();
+        }
     }
     // If the originalURL is the same as the requested URL, we are processing a download
     // initiated directly without a page and do not need to specify the originalURL.
@@ -2453,6 +2465,7 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
         request.setFirstPartyForCookies(URL());
     else
         request.setFirstPartyForCookies(originalURL);
+    addSameSiteInfoToRequestIfNeeded(request, initiator);
 }
 
 void FrameLoader::didReachLayoutMilestone(LayoutMilestones milestones)
@@ -2683,6 +2696,20 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
             request.setFirstPartyForCookies(document->firstPartyForCookies());
     }
 
+    if (request.isSameSiteUnspecified()) {
+        auto* initiator = m_frame.document();
+        if (isMainResource) {
+            auto* ownerFrame = m_frame.tree().parent();
+            if (!ownerFrame)
+                ownerFrame = m_opener;
+            if (ownerFrame)
+                initiator = ownerFrame->document();
+            ASSERT(ownerFrame || m_frame.isMainFrame());
+        }
+        addSameSiteInfoToRequestIfNeeded(request, initiator);
+        request.setIsTopSite(isMainResource && m_frame.isMainFrame());
+    }
+
     Page* page = frame().page();
     bool hasSpecificCachePolicy = request.cachePolicy() != UseProtocolCachePolicy;
 
@@ -2748,6 +2775,24 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& 
     }
 
     request.setHTTPOrigin(origin);
+}
+
+// Implements the "'Same-site' and 'cross-site' Requests" algorithm from <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-2.1>.
+// The algorithm is ammended to treat URLs that inherit their security origin from their owner (e.g. about:blank)
+// as same-site. This matches the behavior of Chrome and Firefox.
+void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, const Document* initiator)
+{
+    if (!request.isSameSiteUnspecified())
+        return;
+    if (!initiator) {
+        request.setIsSameSite(true);
+        return;
+    }
+    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(request.url())) {
+        request.setIsSameSite(true);
+        return;
+    }
+    request.setIsSameSite(registrableDomainsAreEqual(initiator->firstPartyForSameSiteCookies(), request.url()));
 }
 
 void FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest& request)
@@ -3805,6 +3850,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
         request.resourceRequest().setHTTPReferrer(referrer);
     FrameLoader::addHTTPOriginIfNeeded(request.resourceRequest(), openerFrame.loader().outgoingOrigin());
     FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(request.resourceRequest());
+    FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), openerFrame.document());
 
     Page* oldPage = openerFrame.page();
     if (!oldPage)

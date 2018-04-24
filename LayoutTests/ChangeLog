@@ -1,3 +1,93 @@
+2018-04-23  Daniel Bates  <dabates@apple.com>
+
+        Implement Same-Site cookies
+        https://bugs.webkit.org/show_bug.cgi?id=159464
+        <rdar://problem/27196358>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests. These tests are skipped on all ports for now, including Mac and iOS. We will
+        look to subsequently enable the tests for Mac and iOS once we have CFNetwork support for
+        Same-Site cookies.
+
+        The following tests and utilities were taken in whole or in part from Blink:
+            http/tests/cookies/resources/echo-json.php
+            http/tests/cookies/resources/post-cookies-onmessage.php
+            http/tests/cookies/resources/post-cookies-to-opener.php
+            http/tests/cookies/resources/testharness-helpers.js
+            http/tests/cookies/same-site/popup-cross-site-post.html
+            http/tests/cookies/same-site/popup-cross-site.html
+            http/tests/cookies/same-site/popup-same-site-post.html
+            http/tests/cookies/same-site/popup-same-site.html
+
+        The following files were derived from tests taken from Blink:
+            http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html
+            http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html
+
+        * TestExpectations: Skip on all ports for now.
+        * http/tests/cookies/resources/cookie-utilities.js: Added.
+        (createCookie):
+        (setBaseDocumentWhenFetchingDOMCookies):
+        (setDOMCookie):
+        * http/tests/cookies/resources/cookie-utility.php:
+        * http/tests/cookies/resources/echo-json.php: Added.
+        * http/tests/cookies/resources/post-cookies-onmessage.php: Added.
+        * http/tests/cookies/resources/post-cookies-to-opener.php: Added.
+        * http/tests/cookies/resources/testharness-helpers.js: Added.
+        (clearKnownCookies):
+        * http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html: Added.
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html: Added.
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html: Added.
+        * http/tests/cookies/same-site/fetch-cookies-set-in-about-blank-iframe-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-cookies-set-in-about-blank-iframe.html: Added.
+        * http/tests/cookies/same-site/fetch-in-about-blank-page-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-about-blank-page.html: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-iframe-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-iframe.html: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-page-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-page.html: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-service-worker-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-worker-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-cross-origin-worker.html: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-page-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-page.html: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-service-worker-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-srcdoc-iframe-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-srcdoc-iframe.html: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-worker-expected.txt: Added.
+        * http/tests/cookies/same-site/fetch-in-same-origin-worker.html: Added.
+        * http/tests/cookies/same-site/popup-cross-site-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-cross-site-post-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-cross-site-post.html: Added.
+        * http/tests/cookies/same-site/popup-cross-site.html: Added.
+        * http/tests/cookies/same-site/popup-same-site-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-same-site-post-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-same-site-post.html: Added.
+        * http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html: Added.
+        * http/tests/cookies/same-site/popup-same-site-via-same-site-redirect-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html: Added.
+        * http/tests/cookies/same-site/popup-same-site.html: Added.
+        * http/tests/cookies/same-site/resources/click-hyperlink.php: Added.
+        * http/tests/cookies/same-site/resources/echo-iframe-src.php: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-navigating-iframe-in-cross-origin-page.php: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.php: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.php: Added.
+        * http/tests/cookies/same-site/resources/fetch-in-cross-origin-iframe.html: Added.
+        * http/tests/cookies/same-site/resources/fetch-in-cross-origin-service-worker.html: Added.
+        * http/tests/cookies/same-site/resources/fetch-in-cross-origin-worker.js: Added.
+        (async.checkResult):
+        * http/tests/cookies/same-site/resources/fetch-in-same-origin-service-worker.php: Added.
+        * http/tests/cookies/same-site/resources/fetch-in-same-origin-worker.js: Added.
+        (async.checkResult):
+        * http/tests/cookies/same-site/resources/passthrough-service-worker.js: Added.
+        * platform/mac-wk1/TestExpectations: Skip the Service Worker tests as they are not supported in LegacyWebKit.
+
 2018-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] REGRESSION(230860) Unable to change time input values using UI

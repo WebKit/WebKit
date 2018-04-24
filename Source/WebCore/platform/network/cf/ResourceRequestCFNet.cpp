@@ -29,6 +29,7 @@
 #include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
 #include <pal/spi/cf/CFNetworkSPI.h>
+#include <wtf/cf/TypeCastsCF.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"
@@ -48,6 +49,8 @@
 #if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
+
+WTF_DECLARE_CF_TYPE_TRAIT(CFURL);
 
 namespace WebCore {
 
@@ -141,6 +144,21 @@ static inline CFURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceReque
     return kCFURLRequestCachePolicyReloadIgnoringCache;
 }
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+static CFURLRef siteForCookies(ResourceRequest::SameSiteDisposition disposition, CFURLRef url)
+{
+    switch (disposition) {
+    case ResourceRequest::SameSiteDisposition::Unspecified:
+        return { };
+    case ResourceRequest::SameSiteDisposition::SameSite:
+        return url;
+    case ResourceRequest::SameSiteDisposition::CrossSite:
+        static CFURLRef emptyURL = CFURLCreateWithString(nullptr, CFSTR(""), nullptr);
+        return emptyURL;
+    }
+}
+#endif
+
 void ResourceRequest::doUpdatePlatformRequest()
 {
     CFMutableURLRequestRef cfRequest;
@@ -168,6 +186,14 @@ void ResourceRequest::doUpdatePlatformRequest()
     setHeaderFields(cfRequest, httpHeaderFields());
 
     CFURLRequestSetShouldHandleHTTPCookies(cfRequest, allowCookies());
+
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+    _CFURLRequestSetProtocolProperty(cfRequest, CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"), siteForCookies(m_sameSiteDisposition, url.get()));
+
+    int isTopSite = m_isTopSite;
+    RetainPtr<CFNumberRef> isTopSiteCF = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &isTopSite));
+    _CFURLRequestSetProtocolProperty(cfRequest, CFSTR("_kCFHTTPCookiePolicyPropertyisTopSite"), isTopSiteCF.get());
+#endif
 
     unsigned fallbackCount = m_responseContentDispositionEncodingFallbackArray.size();
     RetainPtr<CFMutableArrayRef> encodingFallbacks = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, fallbackCount, 0));
@@ -245,6 +271,20 @@ void ResourceRequest::doUpdateResourceRequest()
 
     if (resourcePrioritiesEnabled())
         m_priority = toResourceLoadPriority(CFURLRequestGetRequestPriority(m_cfRequest.get()));
+
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+    RetainPtr<CFURLRef> siteForCookies = adoptCF(checked_cf_cast<CFURLRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"))));
+    m_sameSiteDisposition = !siteForCookies ? SameSiteDisposition::Unspecified : (registrableDomainsAreEqual(siteForCookies.get(), m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
+
+    RetainPtr<CFNumberRef> isTopSiteCF = adoptCF(checked_cf_cast<CFNumber>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertyisTopSite"))));
+    if (!isTopSiteCF)
+        m_isTopSite = false;
+    else {
+        int isTopSite = 0;
+        CFNumberGetValue(isTopSiteCF.get(), kCFNumberIntType, &isTopSite);
+        m_isTopSite = isTopSite;
+    }
+#endif
 
     m_httpHeaderFields.clear();
     if (CFDictionaryRef headers = CFURLRequestCopyAllHTTPHeaderFields(m_cfRequest.get())) {

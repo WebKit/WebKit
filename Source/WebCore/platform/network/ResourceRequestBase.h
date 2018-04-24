@@ -77,7 +77,18 @@ public:
     
     WEBCORE_EXPORT const URL& firstPartyForCookies() const;
     WEBCORE_EXPORT void setFirstPartyForCookies(const URL&);
-    
+
+    // Same-Site cookies; see <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-2.1>
+    // and <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-5.2>.
+    // FIXME: For some reason the main resource request may be updated more than once. We start off as Unspecified
+    // to detect if we need to compute the same-site and top-site state or not. See FIXME in DocumentLoader::startLoadingMainResource().
+    enum class SameSiteDisposition { Unspecified, SameSite, CrossSite };
+    bool isSameSiteUnspecified() const { return m_sameSiteDisposition == SameSiteDisposition::Unspecified; }
+    WEBCORE_EXPORT bool isSameSite() const; // Whether this request's registrable domain matches the request's initiator's "site for cookies".
+    WEBCORE_EXPORT void setIsSameSite(bool);
+    WEBCORE_EXPORT bool isTopSite() const; // Whether this request is for a top-level navigation.
+    WEBCORE_EXPORT void setIsTopSite(bool);
+
     WEBCORE_EXPORT const String& httpMethod() const;
     WEBCORE_EXPORT void setHTTPMethod(const String& httpMethod);
     
@@ -213,6 +224,8 @@ protected:
     mutable bool m_resourceRequestBodyUpdated { false };
     mutable bool m_platformRequestBodyUpdated { false };
     bool m_hiddenFromInspector { false };
+    SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
+    bool m_isTopSite { false };
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
     Requester m_requester { Requester::Unspecified };
     String m_initiatorIdentifier;
@@ -225,6 +238,16 @@ private:
 };
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
+
+// FIXME: Find a better place for these functions.
+inline bool registrableDomainsAreEqual(const URL& a, const URL& b)
+{
+    return ResourceRequestBase::partitionName(a.host()) == ResourceRequestBase::partitionName(b.host());
+}
+inline bool registrableDomainsAreEqual(const URL& a, const String& registrableDomain)
+{
+    return ResourceRequestBase::partitionName(a.host()) == registrableDomain;
+}
 
 inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::equal(a, b); }
 inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
@@ -245,6 +268,8 @@ ALWAYS_INLINE void ResourceRequestBase::encodeBase(Encoder& encoder) const
     encoder << m_responseContentDispositionEncodingFallbackArray;
     encoder.encodeEnum(m_cachePolicy);
     encoder << m_allowCookies;
+    encoder.encodeEnum(m_sameSiteDisposition);
+    encoder << m_isTopSite;
     encoder.encodeEnum(m_priority);
     encoder.encodeEnum(m_requester);
 }
@@ -281,6 +306,16 @@ ALWAYS_INLINE bool ResourceRequestBase::decodeBase(Decoder& decoder)
     if (!decoder.decode(allowCookies))
         return false;
     m_allowCookies = allowCookies;
+
+    SameSiteDisposition sameSiteDisposition;
+    if (!decoder.decodeEnum(sameSiteDisposition))
+        return false;
+    m_sameSiteDisposition = sameSiteDisposition;
+
+    bool isTopSite;
+    if (!decoder.decode(isTopSite))
+        return false;
+    m_isTopSite = isTopSite;
 
     ResourceLoadPriority priority;
     if (!decoder.decodeEnum(priority))

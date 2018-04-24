@@ -50,35 +50,174 @@
 
         * platform/graphics/wayland/WlUniquePtr.h:
 
-2018-04-23  Commit Queue  <commit-queue@webkit.org>
+2018-04-23  Daniel Bates  <dabates@apple.com>
 
-        Unreviewed, rolling out r230921, r230923, r230924, r230932,
-        and r230934.
-        https://bugs.webkit.org/show_bug.cgi?id=184903
-
-        Builds still broken (Requested by ryanhaddad on #webkit).
-
-        Reverted changesets:
-
-        "Implement Same-Site cookies"
+        Implement Same-Site cookies
         https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230921
+        <rdar://problem/27196358>
 
-        "Attempt to fix the build after r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230923
+        Reviewed by Brent Fulgham.
 
-        "Attempt to fix the Mac and iOS build after r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230924
+        Implements support for Same-Site cookies as per <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00>.
+        The implementation is materially consistent with the spec. though implements the computation
+        for a document's "site for cookies" indirectly as part of loading its frame. This is done to
+        avoid traversing the frame tree on each subresource request initiated by the document or one
+        of its workers. We take advantage of the fact that Web Workers and Service Workers use their
+        host document's loader to load resources on their behalf to use the correct "site for cookies"
+        for requests (e.g. fetch()) initiating by them without the need to duplicate and store the
+        host document's "site for cookies" in the worker's script execution context.
 
-        "Another attempt to fix the Windows build following r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230932
+        The implementation differs from the spec. in the handling of about: URLs and the empty URL
+        and makes the implementation in WebKit match the behavior of Chrome and Firefox as well as
+        consistent with origin inheritance as described in <https://html.spec.whatwg.org/multipage/browsers.html#origin>
+        (16 April 2018). Specifically, requests to about:blank, about:srcdoc and the empty URL ("")
+        are treated as same-site because these URLs inherit their origin from their owner.
 
-        "Attempt to fix the Apple Internal build following r230921"
-        https://bugs.webkit.org/show_bug.cgi?id=159464
-        https://trac.webkit.org/changeset/230934
+        Tests: http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html
+               http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html
+               http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
+               http/tests/cookies/same-site/fetch-cookies-set-in-about-blank-iframe.html
+               http/tests/cookies/same-site/fetch-in-about-blank-page.html
+               http/tests/cookies/same-site/fetch-in-cross-origin-iframe.html
+               http/tests/cookies/same-site/fetch-in-cross-origin-page.html
+               http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html
+               http/tests/cookies/same-site/fetch-in-cross-origin-worker.html
+               http/tests/cookies/same-site/fetch-in-same-origin-page.html
+               http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html
+               http/tests/cookies/same-site/fetch-in-same-origin-srcdoc-iframe.html
+               http/tests/cookies/same-site/fetch-in-same-origin-worker.html
+               http/tests/cookies/same-site/popup-cross-site-post.html
+               http/tests/cookies/same-site/popup-cross-site.html
+               http/tests/cookies/same-site/popup-same-site-post.html
+               http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html
+               http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html
+               http/tests/cookies/same-site/popup-same-site.html
+
+        * Sources.txt: Add source file SameSiteInfo.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Add source files SameSiteInfo.{cpp, h}.
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Modified to call SecurityPolicy::shouldInheritSecurityOriginFromOwner().
+        (WebCore::Document::shouldInheritContentSecurityPolicyFromOwner const): Ditto.
+        (WebCore::shouldInheritSecurityOriginFromOwner): Deleted; moved to SecurityPolicy.
+        * dom/Document.h:
+        (WebCore::Document::firstPartyForSameSiteCookies const): Added.
+        (WebCore::Document::setFirstPartyForSameSiteCookies): Added.
+        * loader/CookieJar.cpp:
+        (WebCore::sameSiteInfo): Returns the same-site info for the request used to load the specified document.
+        (WebCore::cookies): Pass the same-site info down to the platform.
+        (WebCore::cookieRequestHeaderFieldProxy): Ditto.
+        (WebCore::setCookies): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Add same-site info to the request.
+        (WebCore::DocumentLoader::startLoadingMainResource): Update a FIXME comment to explain that
+        we can simplify ResourceRequestBase if we can remove the call to addExtraFieldsToMainResourceRequest()
+        here. Specifically, we would not need to differentiate between a request with an unspecified
+        same-site state (default state of a new request) from a request whose same-site state has
+        been explicitly set if we can assume that the same-site state of a request is set exactly
+        once. In absence of this guarantee we need an "unspecified" state to avoid overriding existing
+        same-site information computed with a null initiating document (the case of a new address bar
+        initiated load) from a load initiated by the document associated with this loader.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setFirstPartyForCookies): Modified to also update the first party for
+        same-site cookies ("site for cookies").
+        (WebCore::FrameLoader::load): Add same-site info to the request.
+        (WebCore::FrameLoader::reload): Ditto.
+        (WebCore::FrameLoader::setOriginalURLForDownloadRequest): Ditto.
+        (WebCore::FrameLoader::addExtraFieldsToRequest): If the request does not already have
+        same-site info then compute it and add it to the request. Mark main frame main resource
+        requests as a "top-site".
+        (WebCore::FrameLoader::addSameSiteInfoToRequestIfNeeded): Implements the "'Same-site' and 'cross-site'
+        Requests" algorithm from <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-2.1>.
+        (WebCore::createWindow): Add same-site info to the request.
+        * loader/FrameLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init): Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow): Ditto.
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::shouldInheritSecurityOriginFromOwner): Moved from Document.cpp.
+        * page/SecurityPolicy.h:
+        * platform/CookiesStrategy.h:
+        * platform/network/CacheValidation.cpp:
+        (WebCore::headerValueForVary): Pass the same-site info down to the platform.
+        * platform/network/CookieRequestHeaderFieldProxy.h:
+        (WebCore::CookieRequestHeaderFieldProxy::encode const): Encode same-site bits.
+        (WebCore::CookieRequestHeaderFieldProxy::decode): Decode same-site bits.
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy): Added.
+        (WebCore::ResourceRequestBase::isSameSite const): Added.
+        (WebCore::ResourceRequestBase::setIsSameSite): Added.
+        (WebCore::ResourceRequestBase::isTopSite const): Added.
+        (WebCore::ResourceRequestBase::setIsTopSite): Added.
+        (WebCore::equalIgnoringHeaderFields):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::isSameSiteUnspecified const): Added. See comment for DocumentLoader::startLoadingMainResource()
+        for more details.
+        (WebCore::registrableDomainsAreEqual): Added.
+        (WebCore::ResourceRequestBase::encodeBase const): Encode same-site bits.
+        (WebCore::ResourceRequestBase::decodeBase): Decode same-site bits.
+        * platform/network/SameSiteInfo.cpp: Added.
+        (WebCore::SameSiteInfo::create):
+        * platform/network/SameSiteInfo.h: Added.
+        (WebCore::SameSiteInfo::encode const):
+        (WebCore::SameSiteInfo::decode):
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::setCookiesFromDOM): Pass Same-Site info down.
+        (WebCore::cookiesForDOM): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::siteForCookies): Added.
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Update platform request with same-site info.
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Ditto.
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Ditto.
+        (WebCore::siteForCookies): Added.
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Update platform request with same-site info.
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::cookiesForDOM): Pass Same-Site info down.
+        (WebCore::setCookiesFromDOM): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/curl/CookieJarCurlDatabase.cpp:
+        (WebCore::CookieJarCurlDatabase::setCookiesFromDOM const): Ditto.
+        (WebCore::CookieJarCurlDatabase::cookiesForDOM const): Ditto.
+        (WebCore::CookieJarCurlDatabase::cookieRequestHeaderFieldValue const): Ditto.
+        (WebCore::CookieJarCurlDatabase::getRawCookies const): Ditto.
+        * platform/network/curl/CookieJarCurlDatabase.h:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::createCurlRequest): Ditto.
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesForURL): Added; shared function to return the cookies based on the specified criterion. 
+        (WebCore::setHTTPCookiesForURL): Moved from the bottom of the file to top to be closer to the other
+        CFNetwork helper functions. Modified to support fetching same-site cookies.
+        (WebCore::httpCookiesForURL): Moved to be under setHTTPCookiesForURL(). Modified to call cookiesForURL().
+        Note the SPI used in cookiesForURL() apply the same criterion for whether to fetch secure cookies as we
+        were computing here. That is, the CFNetwork SPI only returns secure cookies if the specified URL's scheme
+        case-insensitively matches "https".
+        (WebCore::cookiesInPartitionForURL): Wrote in terms of cookiesForURL().
+        (WebCore::cookiesForSession): Pass the Same-Site info.
+        (WebCore::cookiesForDOM): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::setCookiesFromDOM): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        (WebCore::deleteCookie): Pass std::nullopt for the Same-Site info so that we do not consider the SameSite
+        attribute when fetching cookies to delete.
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookiesFromDOM): Pass the Same-Site info.
+        (WebCore::cookiesForDOM): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::createPageForServiceWorker): Set the first party for same site cookies ("site for cookies") to
+        the script URL.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Copy the first party for same-site cookies to the
+        new document.
 
 2018-04-23  Antti Koivisto  <antti@apple.com>
 
@@ -345,7 +484,7 @@
         * platform/network/curl/ResourceHandleCurl.cpp:
         (WebCore::ResourceHandle::createCurlRequest): Ditto.
         * platform/network/mac/CookieJarMac.mm:
-        (WebCore::cookiesForURL): Added; shared function to return the cookies based on the specified criterion. 
+        (WebCore::cookiesForURL): Added; shared function to return the cookies based on the specified criterion.
         (WebCore::setHTTPCookiesForURL): Moved from the bottom of the file to top to be closer to the other
         CFNetwork helper functions. Modified to support fetching same-site cookies.
         (WebCore::httpCookiesForURL): Moved to be under setHTTPCookiesForURL(). Modified to call cookiesForURL().

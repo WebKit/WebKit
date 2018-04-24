@@ -214,6 +214,7 @@ public:
     
     static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
     static void addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest&);
+    static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
 
     FrameLoaderClient& client() const { return m_client; }
 

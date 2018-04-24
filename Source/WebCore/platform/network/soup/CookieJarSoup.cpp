@@ -51,7 +51,7 @@ static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name
     return false;
 }
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value)
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
@@ -119,15 +119,17 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     return { String::fromUTF8(cookieHeader.get()), didAccessSecureCookies };
 }
 
-std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
+    UNUSED_PARAM(firstParty);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
     return cookiesForSession(session, url, false, includeSecureCookies);
 }
 
-std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
+std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies includeSecureCookies)
 {
+    UNUSED_PARAM(firstParty);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
     // Secure cookies will still only be included if url's protocol is https.
@@ -136,7 +138,7 @@ std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSessio
 
 std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const CookieRequestHeaderFieldProxy& headerFieldProxy)
 {
-    return cookieRequestHeaderFieldValue(session, headerFieldProxy.firstParty, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies);
+    return cookieRequestHeaderFieldValue(session, headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, headerFieldProxy.includeSecureCookies);
 }
 
 bool cookiesEnabled(const NetworkStorageSession& session)
@@ -145,8 +147,9 @@ bool cookiesEnabled(const NetworkStorageSession& session)
     return policy == SOUP_COOKIE_JAR_ACCEPT_ALWAYS || policy == SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies)
 {
+    UNUSED_PARAM(firstParty);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
     rawCookies.clear();
