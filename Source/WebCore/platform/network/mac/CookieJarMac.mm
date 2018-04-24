@@ -73,21 +73,17 @@ static void deleteHTTPCookie(CFHTTPCookieStorageRef cookieStorage, NSHTTPCookie 
     CFHTTPCookieStorageDeleteCookie(cookieStorage, [cookie _GetInternalCFHTTPCookie]);
 }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 static RetainPtr<NSDictionary> policyProperties(const SameSiteInfo& sameSiteInfo, NSURL *url)
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
     NSDictionary *policyProperties = @{
         @"_kCFHTTPCookiePolicyPropertySiteForCookies": sameSiteInfo.isSameSite ? url : emptyURL,
         @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation": [NSNumber numberWithBool:sameSiteInfo.isTopSite],
     };
     return policyProperties;
-#else
-    UNUSED_PARAM(sameSiteInfo);
-    UNUSED_PARAM(url);
-    return nullptr;
-#endif
 }
+#endif
 
 static NSArray *cookiesForURL(NSHTTPCookieStorage *storage, NSURL *url, NSURL *mainDocumentURL, const std::optional<SameSiteInfo>& sameSiteInfo, NSString *partition = nullptr)
 {
