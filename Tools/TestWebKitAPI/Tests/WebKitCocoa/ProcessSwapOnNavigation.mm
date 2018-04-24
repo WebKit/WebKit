@@ -785,7 +785,7 @@ TEST(ProcessSwap, OnePreviousProcessRemains)
     EXPECT_EQ(3u, seenPIDs.size());
 
     // But only 2 of those processes should still be alive
-    EXPECT_EQ(2u, [processPool _webProcessCount]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
 }
 
 static const char* pageCache1Bytes = R"PSONRESOURCE(
@@ -826,7 +826,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad1 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(1u, [processPool _webProcessCount]);
+    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmed]);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main.html"]];
 
@@ -836,7 +836,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad2 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(2u, [processPool _webProcessCount]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
     EXPECT_NE(pidAfterLoad1, pidAfterLoad2);
 
     [webView goBack];
@@ -847,7 +847,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad3 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(2u, [processPool _webProcessCount]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
     EXPECT_EQ(pidAfterLoad1, pidAfterLoad3);
     EXPECT_EQ(1u, [receivedMessages count]);
     EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"Was persisted" ]);
@@ -861,11 +861,45 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad4 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(2u, [processPool _webProcessCount]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
     EXPECT_EQ(pidAfterLoad2, pidAfterLoad4);
     EXPECT_EQ(2u, [receivedMessages count]);
     EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"Was persisted" ]);
     EXPECT_EQ(2u, seenPIDs.size());
+}
+
+TEST(ProcessSwap, NumberOfPrewarmedProcesses)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host1/main.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(2u, [processPool _webProcessCount]);
+    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(1u, [processPool _prewarmedWebProcessCount]);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host3/main.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(3u, [processPool _webProcessCount]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(1u, [processPool _prewarmedWebProcessCount]);
 }
 
 static const char* visibilityBytes = R"PSONRESOURCE(

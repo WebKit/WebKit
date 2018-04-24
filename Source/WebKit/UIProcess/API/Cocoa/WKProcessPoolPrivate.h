@@ -89,6 +89,8 @@
 
 // Test only.
 - (size_t)_webProcessCount WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (size_t)_prewarmedWebProcessCount WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (size_t)_webProcessCountIgnoringPrewarmed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (size_t)_pluginProcessCount WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 - (size_t)_serviceWorkerProcessCount WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_syncNetworkProcessCookies WK_API_AVAILABLE(macosx(10.13), ios(11.0));

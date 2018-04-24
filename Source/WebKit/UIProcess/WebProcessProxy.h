@@ -97,7 +97,12 @@ public:
     typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&);
+    enum class IsInPrewarmedPool {
+        No,
+        Yes
+    };
+
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&, IsInPrewarmedPool);
     ~WebProcessProxy();
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
@@ -213,9 +218,12 @@ public:
     void releaseBackgroundActivityTokenForFullscreenInput();
 #endif
 
+    bool isInPrewarmedPool() const { return m_isInPrewarmedPool; }
+    void setIsInPrewarmedPool(bool isInPrewarmedPool) { m_isInPrewarmedPool = isInPrewarmedPool; }
+
 protected:
     static uint64_t generatePageID();
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore&);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore&, IsInPrewarmedPool);
 
     // ChildProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
@@ -340,6 +348,7 @@ private:
     HashMap<uint64_t, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>> m_localPortActivityCompletionHandlers;
 
     bool m_hasCommittedAnyProvisionalLoads { false };
+    bool m_isInPrewarmedPool;
 
 #if ENABLE(EXTRA_ZOOM_MODE)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;

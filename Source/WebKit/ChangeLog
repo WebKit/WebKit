@@ -1,3 +1,50 @@
+2018-04-24  Saam Barati  <sbarati@apple.com>
+
+        Keep around a pre-warmed process when doing process swap on navigation
+        https://bugs.webkit.org/show_bug.cgi?id=184765
+        <rdar://problem/39685099>
+
+        Reviewed by Ryosuke Niwa and Brady Eidson.
+
+        This patch makes it so that WebProcessPool prewarms a process when process
+        swap on navigation is turned on. When we do a process swap on navigation,
+        we first try to grab a prewarmed process before creating a new one.
+        
+        We try to be smart about when to create these processes. The initial heuristic
+        that this patch chooses is when we reach the DidFirstVisuallyNonEmptyLayout
+        layout milestone. We're going to try to improve on this heuristic in:
+        https://bugs.webkit.org/show_bug.cgi?id=184899
+        
+        This is a 40% progression on PLT with process swap on navigation turned on.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _prewarmedWebProcessCount]):
+        (-[WKProcessPool _webProcessCountIgnoringPrewarmed]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::ServiceWorkerProcessProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::notifyProcessPoolToPrewarm):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::warmInitialProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        (WebKit::WebProcessPool::processForNavigation):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::create):
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::m_isInPrewarmedPool):
+        (WebKit::m_userMediaCaptureManagerProxy): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::isInPrewarmedPool const):
+        (WebKit::WebProcessProxy::setIsInPrewarmedPool):
+
 2018-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230971.
