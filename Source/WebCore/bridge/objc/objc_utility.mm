@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2013, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,8 +81,10 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
     ObjcValue result;
     double d = 0;
 
-    if (value.isNumber() || value.isString() || value.isBoolean())
+    if (value.isNumber() || value.isString() || value.isBoolean()) {
+        JSLockHolder lock(exec);
         d = value.toNumber(exec);
+    }
 
     switch (type) {
         case ObjcObjectType: {
