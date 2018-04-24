@@ -84,6 +84,7 @@ static RetainPtr<NSDictionary> policyProperties(const SameSiteInfo& sameSiteInfo
     return policyProperties;
 #else
     UNUSED_PARAM(sameSiteInfo);
+    UNUSED_PARAM(url);
     return nullptr;
 #endif
 }
