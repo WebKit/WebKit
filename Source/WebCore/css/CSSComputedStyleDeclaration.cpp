@@ -397,7 +397,6 @@ static const CSSPropertyID computedProperties[] = {
 #if PLATFORM(IOS)
     CSSPropertyWebkitTouchCallout,
 #endif
-    CSSPropertyShapeOutside,
 #if ENABLE(TOUCH_EVENTS)
     CSSPropertyWebkitTapHighlightColor,
 #endif
@@ -430,7 +429,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyCy,
     CSSPropertyMask,
     CSSPropertyMaskType,
-    CSSPropertyFilter,
     CSSPropertyFloodColor,
     CSSPropertyFloodOpacity,
     CSSPropertyLightingColor,
