@@ -16,6 +16,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CurlDownload.cpp
     platform/network/curl/CurlFormDataStream.cpp
     platform/network/curl/CurlMultipartHandle.cpp
+    platform/network/curl/CurlProxySettings.cpp
     platform/network/curl/CurlRequest.cpp
     platform/network/curl/CurlRequestScheduler.cpp
     platform/network/curl/CurlResourceHandleDelegate.cpp

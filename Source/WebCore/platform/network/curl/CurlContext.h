@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc.  All rights reserved.
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CurlProxySettings.h"
 #include "CurlSSLHandle.h"
 #include "URL.h"
 
@@ -43,15 +44,6 @@
 #include <curl/curl.h>
 
 namespace WebCore {
-
-enum class CurlProxyType {
-    Invalid = -1,
-    HTTP = CURLPROXY_HTTP,
-    Socks4 = CURLPROXY_SOCKS4,
-    Socks4A = CURLPROXY_SOCKS4A,
-    Socks5 = CURLPROXY_SOCKS5,
-    Socks5Hostname = CURLPROXY_SOCKS5_HOSTNAME
-};
 
 // Values taken from http://www.browserscope.org/ following
 // the rule "Do What Every Other Modern Browser Is Doing".
@@ -102,16 +94,6 @@ class CurlContext : public CurlGlobal {
     WTF_MAKE_NONCOPYABLE(CurlContext);
     friend NeverDestroyed<CurlContext>;
 public:
-    struct ProxyInfo {
-        String host;
-        unsigned long port;
-        CurlProxyType type { CurlProxyType::Invalid };
-        String username;
-        String password;
-
-        const String url() const;
-    };
-
     WEBCORE_EXPORT static CurlContext& singleton();
 
     virtual ~CurlContext();
@@ -121,9 +103,9 @@ public:
     CurlRequestScheduler& scheduler() { return *m_scheduler; }
 
     // Proxy
-    const ProxyInfo& proxyInfo() const { return m_proxy; }
-    void setProxyInfo(const ProxyInfo& info) { m_proxy = info;  }
-    void setProxyInfo(const String& host = emptyString(), unsigned long port = 0, CurlProxyType = CurlProxyType::HTTP, const String& username = emptyString(), const String& password = emptyString());
+    const CurlProxySettings& proxySettings() const { return m_proxySettings; }
+    void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
+    void setProxyUserPass(const String& user, const String& password) { m_proxySettings.setUserPass(user, password); }
 
     // SSL
     CurlSSLHandle& sslHandle() { return m_sslHandle; }
@@ -144,7 +126,7 @@ private:
     CurlContext();
     void initShareHandle();
 
-    ProxyInfo m_proxy;
+    CurlProxySettings m_proxySettings;
     CurlShareHandle m_shareHandle;
     CurlSSLHandle m_sslHandle;
     std::unique_ptr<CurlRequestScheduler> m_scheduler;

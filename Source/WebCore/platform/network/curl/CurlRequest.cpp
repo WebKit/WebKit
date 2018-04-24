@@ -312,6 +312,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
 
     m_response.url = m_request.url();
     m_response.statusCode = statusCode;
+    m_response.httpConnectCode = httpConnectCode;
 
     if (auto length = m_curlHandle->getContentLength())
         m_response.expectedContentLength = *length;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,7 +80,7 @@ bool ResourceResponse::isAppendableHeader(const String &key)
 ResourceResponse::ResourceResponse(const CurlResponse& response)
     : ResourceResponseBase(response.url, "", response.expectedContentLength, "")
 {
-    setHTTPStatusCode(response.statusCode);
+    setHTTPStatusCode(response.statusCode ? response.statusCode : response.httpConnectCode);
 
     for (const auto& header : response.headers)
         appendHTTPHeaderField(header);

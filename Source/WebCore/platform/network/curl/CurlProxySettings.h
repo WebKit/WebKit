@@ -9,7 +9,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -26,41 +26,46 @@
 #pragma once
 
 #include "URL.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CurlResponse {
+class CurlProxySettings {
 public:
-    CurlResponse() = default;
+    enum class Mode {
+        Default,
+        NoProxy,
+        Custom
+    };
 
-    CurlResponse isolatedCopy() const
-    {
-        CurlResponse copy;
+    CurlProxySettings() = default;
+    WEBCORE_EXPORT explicit CurlProxySettings(Mode mode) : m_mode(mode) { }
+    WEBCORE_EXPORT CurlProxySettings(URL&&, String&& ignoreHosts);
 
-        copy.url = url.isolatedCopy();
-        copy.statusCode = statusCode;
-        copy.httpConnectCode = httpConnectCode;
-        copy.expectedContentLength = expectedContentLength;
+    WEBCORE_EXPORT CurlProxySettings(const CurlProxySettings&) = default;
+    WEBCORE_EXPORT CurlProxySettings& operator=(const CurlProxySettings&) = default;
 
-        for (const auto& header : headers)
-            copy.headers.append(header.isolatedCopy());
+    bool isEmpty() const { return m_mode == Mode::Custom && m_urlSerializedWithPort.isEmpty() && m_ignoreHosts.isEmpty(); }
 
-        copy.connectPort = connectPort;
-        copy.availableHttpAuth = availableHttpAuth;
-        copy.httpVersion = httpVersion;
+    Mode mode() const { return m_mode; }
+    const String& url() const { return m_urlSerializedWithPort; }
+    const String& ignoreHosts() const { return m_ignoreHosts; }
 
-        return copy;
-    }
+    WEBCORE_EXPORT void setUserPass(const String&, const String&);
+    const String user() const { return m_url.user(); }
+    const String password() const { return m_url.pass(); }
 
-    URL url;
-    long statusCode { 0 };
-    long httpConnectCode { 0 };
-    long long expectedContentLength { 0 };
-    Vector<String> headers;
+private:
+    Mode m_mode { Mode::Default };
+    URL m_url;
+    String m_ignoreHosts;
 
-    uint16_t connectPort { 0 };
-    long availableHttpAuth { 0 };
-    long httpVersion { 0 };
+    // We can't simply use m_url.string() because we need to explicitly indicate the port number
+    // to libcurl. URLParser omit the default port while parsing, but libcurl assume 1080 as a
+    // default HTTP Proxy, not 80, if port number is not in the url.
+    String m_urlSerializedWithPort;
+
+    void rebuildUrl();
 };
 
 } // namespace WebCore

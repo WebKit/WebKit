@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc.  All rights reserved.
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,34 +136,6 @@ void CurlContext::initShareHandle()
     curl_easy_setopt(curl, CURLOPT_SHARE, m_shareHandle.handle());
 
     curl_easy_cleanup(curl);
-}
-
-// Proxy =======================
-
-const String CurlContext::ProxyInfo::url() const
-{
-    String userPass;
-    if (username.length() || password.length())
-        userPass = username + ":" + password + "@";
-
-    return String("http://") + userPass + host + ":" + String::number(port);
-}
-
-void CurlContext::setProxyInfo(const String& host,
-    unsigned long port,
-    CurlProxyType type,
-    const String& username,
-    const String& password)
-{
-    ProxyInfo info;
-
-    info.host = host;
-    info.port = port;
-    info.type = type;
-    info.username = username;
-    info.password = password;
-
-    setProxyInfo(info);
 }
 
 bool CurlContext::isHttp2Enabled() const
@@ -512,11 +484,26 @@ void CurlHandle::setSslKeyPassword(const char* password)
 
 void CurlHandle::enableProxyIfExists()
 {
-    auto& proxy = CurlContext::singleton().proxyInfo();
+    auto& proxy = CurlContext::singleton().proxySettings();
 
-    if (proxy.type != CurlProxyType::Invalid) {
+    switch (proxy.mode()) {
+    case CurlProxySettings::Mode::Default :
+        // For the proxy set by environment variable
+        if (!proxy.user().isEmpty())
+            curl_easy_setopt(m_handle, CURLOPT_PROXYUSERNAME, proxy.user().utf8().data());
+        if (!proxy.password().isEmpty())
+            curl_easy_setopt(m_handle, CURLOPT_PROXYPASSWORD, proxy.password().utf8().data());
+        curl_easy_setopt(m_handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+        break;
+    case CurlProxySettings::Mode::NoProxy :
+        // Disable the use of a proxy, even if there is an environment variable set for it.
+        curl_easy_setopt(m_handle, CURLOPT_PROXY, "");
+        break;
+    case CurlProxySettings::Mode::Custom :
         curl_easy_setopt(m_handle, CURLOPT_PROXY, proxy.url().utf8().data());
-        curl_easy_setopt(m_handle, CURLOPT_PROXYTYPE, proxy.type);
+        curl_easy_setopt(m_handle, CURLOPT_NOPROXY, proxy.ignoreHosts().utf8().data());
+        curl_easy_setopt(m_handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+        break;
     }
 }
 

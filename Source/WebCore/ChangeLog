@@ -1,3 +1,49 @@
+2018-04-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Extract proxy settings into a separate class to hold advanced information.
+        https://bugs.webkit.org/show_bug.cgi?id=184714
+
+        It was simplely structure to hold proxy setting. To support advanced feature of proxy
+        such as authentication, more inteligent object is required to store intermediate state
+        or errors. That's why we've introduced new class for that purpose.
+
+        Reviewed by Youenn Fablet.
+
+        No new tests because there's no new behavior.
+
+        * platform/Curl.cmake:
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::enableProxyIfExists):
+        (WebCore::CurlContext::ProxyInfo::url const): Deleted.
+        (WebCore::CurlContext::setProxyInfo): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlContext::proxySettings const):
+        (WebCore::CurlContext::setProxySettings):
+        (WebCore::CurlContext::setProxyUserPass):
+        (WebCore::CurlContext::proxyInfo const): Deleted.
+        (WebCore::CurlContext::setProxyInfo): Deleted.
+        * platform/network/curl/CurlProxySettings.cpp: Added.
+        (WebCore::CurlProxySettings::CurlProxySettings):
+        (WebCore::CurlProxySettings::rebuildUrl):
+        (WebCore::CurlProxySettings::setUserPass):
+        (WebCore::protocolIsInSocksFamily):
+        (WebCore::getProxyPort):
+        (WebCore::createProxyUrl):
+        * platform/network/curl/CurlProxySettings.h: Added.
+        (WebCore::CurlProxySettings::CurlProxySettings):
+        (WebCore::CurlProxySettings::isEmpty const):
+        (WebCore::CurlProxySettings::mode const):
+        (WebCore::CurlProxySettings::url const):
+        (WebCore::CurlProxySettings::ignoreHosts const):
+        (WebCore::CurlProxySettings::user const):
+        (WebCore::CurlProxySettings::password const):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::didReceiveHeader):
+        * platform/network/curl/CurlResponse.h:
+        (WebCore::CurlResponse::isolatedCopy const):
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+
 2018-04-24  Youenn Fablet  <youenn@apple.com>
 
         Throw in case of PeerConnection created for detached documents
