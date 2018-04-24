@@ -46,7 +46,6 @@
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProtectionSpace.h>
-#include <WebCore/SameSiteInfo.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SynchronousLoaderClient.h>
 #include <wtf/RunLoop.h>
@@ -871,10 +870,10 @@ void NetworkResourceLoader::logCookieInformation() const
     auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID());
     ASSERT(networkStorageSession);
 
-    logCookieInformation("NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), identifier());
+    logCookieInformation("NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), identifier());
 }
 
-static void logBlockedCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& firstParty, const SameSiteInfo& sameSiteInfo, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+static void logBlockedCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& firstParty, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
     ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
 
@@ -893,20 +892,18 @@ static void logBlockedCookieInformation(const String& label, const void* loggedO
     LOCAL_LOG(R"(  "partition": "%{public}s",)", "BLOCKED");
     LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", "false");
     LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
-    LOCAL_LOG(R"(  "isSameSite": "%{public}s",)", sameSiteInfo.isSameSite ? "true" : "false");
-    LOCAL_LOG(R"(  "isTopSite": "%{public}s",)", sameSiteInfo.isTopSite ? "true" : "false");
     LOCAL_LOG(R"(  "cookies": [])");
     LOCAL_LOG(R"(  "})");
 #undef LOCAL_LOG
 #undef LOCAL_LOG_IF_ALLOWED
 }
 
-static void logCookieInformationInternal(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& partition, const WebCore::SameSiteInfo& sameSiteInfo, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+static void logCookieInformationInternal(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& partition, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
     ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
 
     Vector<WebCore::Cookie> cookies;
-    if (!WebCore::getRawCookies(networkStorageSession, partition, sameSiteInfo, url, frameID, pageID, cookies))
+    if (!WebCore::getRawCookies(networkStorageSession, partition, url, frameID, pageID, cookies))
         return;
 
     auto escapedURL = escapeForJSON(url.string());
@@ -925,8 +922,6 @@ static void logCookieInformationInternal(const String& label, const void* logged
     LOCAL_LOG(R"(  "partition": "%{public}s",)", escapedPartition.utf8().data());
     LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", hasStorageAccess ? "true" : "false");
     LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
-    LOCAL_LOG(R"(  "isSameSite": "%{public}s",)", sameSiteInfo.isSameSite ? "true" : "false");
-    LOCAL_LOG(R"(  "isTopSite": "%{public}s",)", sameSiteInfo.isTopSite ? "true" : "false");
     LOCAL_LOG(R"(  "cookies": [)");
 
     auto size = cookies.size();
@@ -942,7 +937,6 @@ static void logCookieInformationInternal(const String& label, const void* logged
         auto escapedPath = escapeForJSON(cookie.path);
         auto escapedComment = escapeForJSON(cookie.comment);
         auto escapedCommentURL = escapeForJSON(cookie.commentURL.string());
-        // FIXME: Log Same-Site policy for each cookie. See <https://bugs.webkit.org/show_bug.cgi?id=184894>.
 
         LOCAL_LOG(R"(  { "name": "%{public}s",)", escapedName.utf8().data());
         LOCAL_LOG(R"(    "value": "%{public}s",)", escapedValue.utf8().data());
@@ -962,15 +956,15 @@ static void logCookieInformationInternal(const String& label, const void* logged
 #undef LOCAL_LOG_IF_ALLOWED
 }
 
-void NetworkResourceLoader::logCookieInformation(const String& label, const void* loggedObject, const NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+void NetworkResourceLoader::logCookieInformation(const String& label, const void* loggedObject, const NetworkStorageSession& networkStorageSession, const URL& firstParty, const URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
     ASSERT(shouldLogCookieInformation());
 
     if (networkStorageSession.shouldBlockCookies(firstParty, url))
-        logBlockedCookieInformation(label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
+        logBlockedCookieInformation(label, loggedObject, networkStorageSession, firstParty, url, referrer, frameID, pageID, identifier);
     else {
         auto partition = URL(ParsedURLString, networkStorageSession.cookieStoragePartition(firstParty, url, frameID, pageID));
-        logCookieInformationInternal(label, loggedObject, networkStorageSession, partition, sameSiteInfo, url, referrer, frameID, pageID, identifier);
+        logCookieInformationInternal(label, loggedObject, networkStorageSession, partition, url, referrer, frameID, pageID, identifier);
     }
 }
 #endif

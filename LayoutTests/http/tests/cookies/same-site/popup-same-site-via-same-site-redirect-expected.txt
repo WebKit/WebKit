@@ -1,3 +1,0 @@
-
-PASS '127.0.0.1' is same-site with itself, so samesite cookies are sent. 
-

@@ -48,11 +48,6 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.mm>
 #endif
 
-@interface NSURLSessionTask (Staging)
-@property (nullable, readwrite, retain) NSURL *_siteForCookies;
-@property (readwrite) BOOL _isTopLevelNavigation;
-@end
-
 namespace WebKit {
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
@@ -155,20 +150,7 @@ void NetworkDataTaskCocoa::applyCookiePartitioningPolicy(const String& requiredS
 
 bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request)
 {
-    return !WebCore::registrableDomainsAreEqual(request.url(), request.firstPartyForCookies());
-}
-
-static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* task, const WebCore::ResourceRequest& request)
-{
-    if (request.isSameSiteUnspecified())
-        return;
-    static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
-    if (@available(macOS 10.14, iOS 12, *)) {
-        if ([task respondsToSelector:@selector(set_siteForCookies:)])
-            task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : emptyURL;
-        if ([task respondsToSelector:@selector(set_isTopLevelNavigation:)])
-            task._isTopLevelNavigation = request.isTopSite();
-    }
+    return request.partitionName(request.url().host()) != request.partitionName(request.firstPartyForCookies().host());
 }
 
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
@@ -261,8 +243,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     if (WebCore::ResourceRequest::resourcePrioritiesEnabled())
         m_task.get().priority = toNSURLSessionTaskPriority(request.priority());
-
-    updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 }
 
 NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
@@ -384,8 +364,6 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         applyCookiePartitioningPolicy(requiredStoragePartition, m_task.get()._storagePartitionIdentifier);
     }
 #endif
-
-    updateTaskWithFirstPartyForSameSiteCookies(m_task.get(), request);
 
     if (m_client)
         m_client->willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), WTFMove(completionHandler));

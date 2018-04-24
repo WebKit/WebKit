@@ -43,7 +43,6 @@
 #include "Logging.h"
 #include "NetworkStorageSession.h"
 #include "ResourceHandleInternal.h"
-#include "SameSiteInfo.h"
 #include "SharedBuffer.h"
 #include "SynchronousLoaderClient.h"
 #include "TextEncoding.h"
@@ -146,7 +145,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest& request, Req
         auto& storageSession = NetworkStorageSession::defaultStorageSession();
         auto& cookieJar = storageSession.cookieStorage();
         auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-        String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
+        String cookieHeaderField = cookieJar.cookieRequestHeaderFieldValue(storageSession, request.firstPartyForCookies(), request.url(), std::nullopt, std::nullopt, includeSecureCookies).first;
         if (!cookieHeaderField.isEmpty())
             request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
     }

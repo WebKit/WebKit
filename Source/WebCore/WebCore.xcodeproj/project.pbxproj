@@ -4085,7 +4085,6 @@
 		CE799FA41C6A503A0097B518 /* ContentSecurityPolicyDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799FA21C6A503A0097B518 /* ContentSecurityPolicyDirective.h */; };
 		CE799FA81C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799FA61C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h */; };
 		CE799FAC1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799FAA1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h */; };
-		CE7A6C28208537E200FA2B46 /* SameSiteInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7A6C26208537E200FA2B46 /* SameSiteInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7E17831C83A49100AD06AF /* ContentSecurityPolicyHash.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7E17821C83A49100AD06AF /* ContentSecurityPolicyHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13431,8 +13430,6 @@
 		CE799FA61C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyMediaListDirective.h; path = csp/ContentSecurityPolicyMediaListDirective.h; sourceTree = "<group>"; };
 		CE799FA91C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicySourceListDirective.cpp; path = csp/ContentSecurityPolicySourceListDirective.cpp; sourceTree = "<group>"; };
 		CE799FAA1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicySourceListDirective.h; path = csp/ContentSecurityPolicySourceListDirective.h; sourceTree = "<group>"; };
-		CE7A6C26208537E200FA2B46 /* SameSiteInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SameSiteInfo.h; sourceTree = "<group>"; };
-		CE7A6C27208537E200FA2B46 /* SameSiteInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SameSiteInfo.cpp; sourceTree = "<group>"; };
 		CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextUIController.h; sourceTree = "<group>"; };
 		CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AlternativeTextUIController.mm; sourceTree = "<group>"; };
 		CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAlternativeWithRange.h; sourceTree = "<group>"; };
@@ -18975,8 +18972,6 @@
 				514C76680CE923A1007EF3CD /* ResourceRequestBase.h */,
 				514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */,
 				514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */,
-				CE7A6C27208537E200FA2B46 /* SameSiteInfo.cpp */,
-				CE7A6C26208537E200FA2B46 /* SameSiteInfo.h */,
 				510D4A2E103165EE0049EA54 /* SocketStreamError.h */,
 				510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */,
 				510D4A31103165EE0049EA54 /* SocketStreamHandle.h */,
@@ -29907,7 +29902,6 @@
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
 				293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */,
 				7C52229E1E1DAE47002CB8F7 /* RuntimeEnabledFeatures.h in Headers */,
-				CE7A6C28208537E200FA2B46 /* SameSiteInfo.h in Headers */,
 				CDD7089718359F6F002B3DC6 /* SampleMap.h in Headers */,
 				49E911CB0EF86D47009D0CAF /* ScaleTransformOperation.h in Headers */,
 				5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */,

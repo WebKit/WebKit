@@ -146,8 +146,6 @@ http/wpt/cache-storage [ Skip ]
 http/tests/cache-storage [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Skip ]
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
-http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Skip ]
-http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html [ Skip ]
 
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]

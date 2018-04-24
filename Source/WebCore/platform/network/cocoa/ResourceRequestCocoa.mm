@@ -87,10 +87,6 @@ void ResourceRequest::doUpdateResourceRequest()
     m_timeoutInterval = [m_nsRequest.get() timeoutInterval];
     m_firstPartyForCookies = [m_nsRequest.get() mainDocumentURL];
 
-    URL siteForCookies { [m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
-    m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (registrableDomainsAreEqual(siteForCookies, m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
-    m_isTopSite = static_cast<NSNumber*>([m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
-
     if (NSString* method = [m_nsRequest.get() HTTPMethod])
         m_httpMethod = method;
     m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
@@ -133,18 +129,6 @@ void ResourceRequest::doUpdateResourceHTTPBody()
     }
 }
 
-static NSURL *siteForCookies(ResourceRequest::SameSiteDisposition disposition, NSURL *url)
-{
-    switch (disposition) {
-    case ResourceRequest::SameSiteDisposition::Unspecified:
-        return { };
-    case ResourceRequest::SameSiteDisposition::SameSite:
-        return url;
-    case ResourceRequest::SameSiteDisposition::CrossSite:
-        return [NSURL URLWithString:@""];
-    }
-}
-
 void ResourceRequest::doUpdatePlatformRequest()
 {
     if (isNull()) {
@@ -177,9 +161,6 @@ void ResourceRequest::doUpdatePlatformRequest()
     if (!httpMethod().isEmpty())
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowCookies()];
-
-    [nsRequest _setProperty:siteForCookies(m_sameSiteDisposition, nsRequest.URL) forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
-    [nsRequest _setProperty:[NSNumber numberWithBool:m_isTopSite] forKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"];
 
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
     for (NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])

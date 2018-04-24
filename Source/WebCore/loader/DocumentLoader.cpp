@@ -604,8 +604,6 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (m_frame->isMainFrame())
         newRequest.setFirstPartyForCookies(newRequest.url());
 
-    FrameLoader::addSameSiteInfoToRequestIfNeeded(newRequest, m_frame->document());
-
     if (!didReceiveRedirectResponse)
         frameLoader()->client().dispatchWillChangeDocument();
 
@@ -1687,8 +1685,6 @@ void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
     // If not, it would be great to remove this line of code.
     // Note that currently, some requests may have incorrect extra fields even if this function has been called,
     // because we pass a wrong loadType (see FIXME in addExtraFieldsToMainResourceRequest()).
-    // If we remove this line of code then ResourceRequestBase does not need to track whether isSameSite
-    // is unspecified.
     frameLoader()->addExtraFieldsToMainResourceRequest(m_request);
 
     ASSERT(timing().startTime());
