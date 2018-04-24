@@ -33,6 +33,7 @@ import json
 import operator
 
 from committer_auth import CommitterAuth
+import make_passwords_json
 import wkbuild
 
 trunk_filter = ChangeFilter(branch=["trunk", None])
@@ -42,9 +43,12 @@ def pickLatestBuild(builder, requests):
     return max(requests, key=operator.attrgetter("submittedAt"))
 
 
-def loadBuilderConfig(c):
+def loadBuilderConfig(c, test_mode_is_enabled=False):
     # FIXME: These file handles are leaked.
-    passwords = json.load(open('passwords.json'))
+    if test_mode_is_enabled:
+        passwords = make_passwords_json.create_mock_slave_passwords_dict()
+    else:
+        passwords = json.load(open('passwords.json'))
     config = json.load(open('config.json'))
 
     c['slaves'] = [BuildSlave(slave['name'], passwords[slave['name']], max_builds=1) for slave in config['slaves']]

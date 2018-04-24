@@ -23,29 +23,10 @@ class BuildBotConfigLoader(object):
         scripts_dir = os.path.join(webkit_tools_dir, 'Scripts')
         sys.path.append(scripts_dir)
 
-    def _mock_open(self, filename):
-        if filename == 'passwords.json':
-            return StringIO.StringIO(json.dumps(make_passwords_json.create_mock_slave_passwords_dict()))
-        return __builtins__.open(filename)
-
-    def _add_dependant_modules_to_sys_modules(self):
+    def _add_dependent_modules_to_sys_modules(self):
+        self._add_webkitpy_to_sys_path()
         from webkitpy.thirdparty.autoinstalled import buildbot
         sys.modules['buildbot'] = buildbot
-
-    def load_config(self, master_cfg_path):
-        # Before we can use webkitpy.thirdparty, we need to fix our path to include webkitpy.
-        # FIXME: If we're ever run by test-webkitpy we won't need this step.
-        self._add_webkitpy_to_sys_path()
-        # master.cfg expects the buildbot module to be in sys.path.
-        self._add_dependant_modules_to_sys_modules()
-
-        # master.cfg expects a passwords.json file which is not checked in.  Fake it by mocking open().
-        globals()['open'] = self._mock_open
-        # Because the master_cfg_path may have '.' in its name, we can't just use import, we have to use execfile.
-        # We pass globals() as both the globals and locals to mimic exectuting in the global scope, so
-        # that globals defined in master.cfg will be global to this file too.
-        execfile(master_cfg_path, globals(), globals())
-        globals()['open'] = __builtins__.open  # Stop mocking open().
 
 
 class RunWebKitTestsTest(unittest.TestCase):
@@ -551,7 +532,10 @@ class RunBenchmarkTest(unittest.TestCase):
 # 'build.webkit.org-config' is not a valid module name (due to '.' and '-')
 # so for now this is a stand-alone test harness.
 if __name__ == '__main__':
-    BuildBotConfigLoader().load_config('master.cfg')
+    BuildBotConfigLoader()._add_dependent_modules_to_sys_modules()
+    from loadConfig import *
+    c = {}
+    loadBuilderConfig(c, test_mode_is_enabled=True)
     BuildStepsConstructorTest.generateTests()
     BuildStepsTest.generateTests()
     unittest.main()
