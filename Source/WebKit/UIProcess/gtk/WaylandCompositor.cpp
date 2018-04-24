@@ -476,7 +476,7 @@ static GRefPtr<GSource> createWaylandLoopSource(struct wl_display* display)
 
 WaylandCompositor::WaylandCompositor()
 {
-    WlUniquePtr<struct wl_display> display(wl_display_create());
+    std::unique_ptr<struct wl_display, DisplayDeleter> display(wl_display_create());
     if (!display) {
         WTFLogAlways("Nested Wayland compositor could not create display object");
         return;

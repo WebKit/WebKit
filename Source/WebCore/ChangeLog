@@ -1,3 +1,20 @@
+2018-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Remove WlUniquePtr<wl_display> footgun
+        https://bugs.webkit.org/show_bug.cgi?id=184405
+
+        Reviewed by Carlos Garcia Campos.
+
+        WlUniquePtr<wl_display> is a pretty big footgun because there are two different destruction
+        functions -- wl_display_disconnect() and wl_display_destroy() -- and which one you need to
+        use depends on how the wl_display() was created, and WebKit uses both in different places.
+        So WlUniquePtr<wl_display> is pretty unsafe. See bug #176490 for an example of fun caused
+        by using it incorrectly.
+
+        Let's use std::unique_ptr with custom deleter functors instead.
+
+        * platform/graphics/wayland/WlUniquePtr.h:
+
 2018-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230921, r230923, r230924, r230932,

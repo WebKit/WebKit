@@ -1,3 +1,17 @@
+2018-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Remove WlUniquePtr<wl_display> footgun
+        https://bugs.webkit.org/show_bug.cgi?id=184405
+
+        Reviewed by Carlos Garcia Campos.
+
+        Switch to std::unique_ptr.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::WaylandCompositor):
+        * UIProcess/gtk/WaylandCompositor.h:
+        (WebKit::WaylandCompositor::DisplayDeleter::operator()):
+
 2018-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230921, r230923, r230924, r230932,
