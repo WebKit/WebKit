@@ -1,3 +1,15 @@
+2018-04-23  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r220112): reCAPTCHA images render off screen on Twitch.tv app Log In or Sign Up
+        https://bugs.webkit.org/show_bug.cgi?id=182859
+        <rdar://problem/37595065>
+
+        Reviewed by Zalan Bujtas
+
+        * fast/frames/flattening/media-query-growing-content-expected.txt: Removed.
+        * fast/frames/flattening/media-query-growing-content.html: Removed.
+        * fast/frames/flattening/resources/media-query-min-height-with-flattening.html: Removed.
+
 2018-04-23  Daniel Bates  <dabates@apple.com>
 
         Implement Same-Site cookies
