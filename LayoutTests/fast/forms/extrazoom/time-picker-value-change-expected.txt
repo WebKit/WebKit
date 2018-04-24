@@ -1,0 +1,5 @@
+PASS time.value is '09:41'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -190,6 +190,8 @@ interface UIScriptController {
     void selectFormAccessoryPickerRow(long rowIndex);
     readonly attribute DOMString selectFormPopoverTitle;
 
+    void setTimePickerValue(long hour, long minute);
+
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
 

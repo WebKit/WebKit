@@ -4608,12 +4608,19 @@ bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& 
 void WebPage::setTextAsync(const String& text)
 {
     auto frame = makeRef(m_page->focusController().focusedOrMainFrame());
-    if (!frame->selection().selection().isContentEditable())
+    if (frame->selection().selection().isContentEditable()) {
+        UserTypingGestureIndicator indicator(frame.get());
+        frame->selection().selectAll();
+        frame->editor().insertText(text, nullptr, TextEventInputKeyboard);
         return;
+    }
 
-    UserTypingGestureIndicator indicator(frame.get());
-    frame->selection().selectAll();
-    frame->editor().insertText(text, nullptr, TextEventInputKeyboard);
+    if (is<HTMLInputElement>(m_assistedNode.get())) {
+        downcast<HTMLInputElement>(*m_assistedNode).setValueForUser(text);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void WebPage::insertTextAsync(const String& text, const EditingRange& replacementEditingRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo, bool suppressSelectionUpdate)

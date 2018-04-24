@@ -193,4 +193,10 @@ window.UIHelper = class UIHelper {
         const enterTextScript = `(() => uiController.enterText(\`${escapedText}\`))()`;
         return new Promise(resolve => testRunner.runUIScript(enterTextScript, resolve));
     }
+
+    static setTimePickerValue(hours, minutes)
+    {
+        const setValueScript = `(() => uiController.setTimePickerValue(${hours}, ${minutes}))()`;
+        return new Promise(resolve => testRunner.runUIScript(setValueScript, resolve));
+    }
 }

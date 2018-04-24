@@ -99,6 +99,7 @@ public:
     void dismissFormAccessoryView();
     void selectFormAccessoryPickerRow(long);
     JSRetainPtr<JSStringRef> selectFormPopoverTitle() const;
+    void setTimePickerValue(long hour, long minute);
     
     JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const;
     void overridePreference(JSStringRef preference, JSStringRef value);
