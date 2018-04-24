@@ -36,6 +36,7 @@ class IceCandidateInterface;
 namespace WebCore {
 
 class LibWebRTCMediaEndpoint;
+class LibWebRTCProvider;
 class RTCRtpReceiver;
 class RTCSessionDescription;
 class RTCStatsReport;
@@ -46,7 +47,7 @@ class RealtimeOutgoingVideoSource;
 
 class LibWebRTCPeerConnectionBackend final : public PeerConnectionBackend {
 public:
-    explicit LibWebRTCPeerConnectionBackend(RTCPeerConnection&);
+    LibWebRTCPeerConnectionBackend(RTCPeerConnection&, LibWebRTCProvider&);
     ~LibWebRTCPeerConnectionBackend();
 
     bool hasAudioSources() const { return m_audioSources.size(); }

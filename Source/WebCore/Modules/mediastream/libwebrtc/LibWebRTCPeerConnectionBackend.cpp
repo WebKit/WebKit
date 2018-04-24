@@ -49,19 +49,18 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
 {
     if (!LibWebRTCProvider::webRTCAvailable())
         return nullptr;
-    return std::make_unique<LibWebRTCPeerConnectionBackend>(peerConnection);
+
+    auto* page = downcast<Document>(*peerConnection.scriptExecutionContext()).page();
+    if (!page)
+        return nullptr;
+    return std::make_unique<LibWebRTCPeerConnectionBackend>(peerConnection, page->libWebRTCProvider());
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createLibWebRTCPeerConnectionBackend;
 
-static inline LibWebRTCProvider& libWebRTCProvider(RTCPeerConnection& peerConnection)
-{
-    return downcast<Document>(*peerConnection.scriptExecutionContext()).page()->libWebRTCProvider();
-}
-
-LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection)
+LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection& peerConnection, LibWebRTCProvider& provider)
     : PeerConnectionBackend(peerConnection)
-    , m_endpoint(LibWebRTCMediaEndpoint::create(*this, libWebRTCProvider(peerConnection)))
+    , m_endpoint(LibWebRTCMediaEndpoint::create(*this, provider))
 {
 }
 
@@ -120,7 +119,11 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
 
 bool LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration&& configuration)
 {
-    return m_endpoint->setConfiguration(libWebRTCProvider(m_peerConnection), configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
+    auto* page = downcast<Document>(*m_peerConnection.scriptExecutionContext()).page();
+    if (!page)
+        return false;
+
+    return m_endpoint->setConfiguration(page->libWebRTCProvider(), configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
 }
 
 void LibWebRTCPeerConnectionBackend::getStats(MediaStreamTrack* track, Ref<DeferredPromise>&& promise)

@@ -1,3 +1,25 @@
+2018-04-24  Youenn Fablet  <youenn@apple.com>
+
+        Throw in case of PeerConnection created for detached documents
+        https://bugs.webkit.org/show_bug.cgi?id=184921
+        <rdar://problem/39629216>
+
+        Reviewed by Eric Carlson.
+
+        Add a check to ensure that page is not null when creating a peer connection backend.
+        In that case, the peer connection constructor will later on throw.
+        The same for setConfiguration is done.
+        Behavior is consistent with Chrome.
+
+        Test: webrtc/pc-detached-document.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::createLibWebRTCPeerConnectionBackend):
+        (WebCore::LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend):
+        (WebCore::LibWebRTCPeerConnectionBackend::setConfiguration):
+        (WebCore::libWebRTCProvider): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
 2018-04-24  John Wilander  <wilander@apple.com>
 
         From-Origin: Support for 'same' and 'same-site' response header, nested frame origin check

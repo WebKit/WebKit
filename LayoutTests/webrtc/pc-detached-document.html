@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+test(() => {
+    var frame = document.createElement("iframe");
+    frame.setAttribute("src", "/");
+    document.body.appendChild(frame);
+    var constructor = frame.contentWindow.RTCPeerConnection;
+    document.body.removeChild(frame);
+    assert_throws('NotSupportedError', () => { new constructor() });
+}, "Peer Connection objects should not be created in detached documents");
+test(() => {
+    var frame = document.createElement("iframe");
+    frame.setAttribute("src", "/");
+    document.body.appendChild(frame);
+    var pc = new frame.contentWindow.RTCPeerConnection();
+    document.body.removeChild(frame);
+    assert_throws('InvalidStateError', () => { pc.setConfiguration({}) });
+}, "Peer Connection objects should not be created in detached documents");
+</script>
+</body>
+</html>
