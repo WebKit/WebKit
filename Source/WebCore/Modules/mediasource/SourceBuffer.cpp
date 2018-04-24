@@ -1852,7 +1852,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomicString
 #endif
     }
 
-    LOG(MediaSource, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples, %zu remaining", this, enqueuedSamples, trackBuffer.decodeQueue.size());
+    LOG(MediaSource, "SourceBuffer::provideMediaData(%p) - Enqueued %u samples, %zu remaining", this, enqueuedSamples, static_cast<size_t>(trackBuffer.decodeQueue.size()));
 
     trySignalAllSamplesInTrackEnqueued(trackID);
 }

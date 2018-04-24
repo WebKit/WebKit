@@ -1,3 +1,16 @@
+2018-04-24  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Apple Internal build following r230922
+        (https://bugs.webkit.org/show_bug.cgi?id=184737)
+
+        Cast the return value of std::map::size() to a size_t before logging it with format specifier
+        "%zu". std::map::size() returns a size_type. According to <http://en.cppreference.com/w/cpp/container/map>
+        size_type is "usually a size_t", but it may not be. An Apple Internal debug builder reports
+        that size_type = unsigned int != unsigned long = size_t.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::provideMediaData):
+
 2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Avoid painting backing stores for zero-opacity layers
