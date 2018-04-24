@@ -1,3 +1,78 @@
+2018-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/webdriver/webdriver/transport.py:
+        * imported/w3c/tools/wptrunner/README.rst:
+        * imported/w3c/tools/wptrunner/requirements_chrome.txt:
+        * imported/w3c/tools/wptrunner/requirements_edge.txt:
+        * imported/w3c/tools/wptrunner/requirements_firefox.txt:
+        * imported/w3c/tools/wptrunner/requirements_ie.txt:
+        * imported/w3c/tools/wptrunner/requirements_opera.txt:
+        * imported/w3c/tools/wptrunner/requirements_safari.txt: Added.
+        * imported/w3c/tools/wptrunner/requirements_sauce.txt:
+        * imported/w3c/tools/wptrunner/requirements_webkit.txt: Added.
+        * imported/w3c/tools/wptrunner/tox.ini:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/__init__.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/chrome.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/chrome_android.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/edge.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/firefox.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/ie.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/opera.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/safari.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/sauce.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/sauce_setup/edge-prerun.bat:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/sauce_setup/safari-prerun.sh:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/servo.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/servodriver.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/webkit.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/environment.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executormarionette.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorselenium.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorservo.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorservodriver.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorwebkit.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/protocol.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/pytestrunner/runner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_marionette.js:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_marionette_resume.js: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_webdriver_resume.js:
+        * imported/w3c/tools/wptrunner/wptrunner/testdriver-extra.js:
+        * imported/w3c/tools/wptrunner/wptrunner/testloader.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/base.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_products.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/update/metadata.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/update.py:
+        * imported/w3c/tools/wptrunner/wptrunner/webdriver_server.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptcommandline.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wpttest.py:
+        * imported/w3c/webdriver/tests/actions/modifier_click.py:
+        * imported/w3c/webdriver/tests/actions/mouse_dblclick.py:
+        * imported/w3c/webdriver/tests/actions/mouse_pause_dblclick.py: Added.
+        * imported/w3c/webdriver/tests/actions/special_keys.py:
+        * imported/w3c/webdriver/tests/contexts/maximize_window.py:
+        * imported/w3c/webdriver/tests/cookies/add_cookie.py:
+        * imported/w3c/webdriver/tests/element_retrieval/find_element.py:
+        * imported/w3c/webdriver/tests/element_retrieval/find_element_from_element.py:
+        * imported/w3c/webdriver/tests/element_retrieval/find_elements.py:
+        * imported/w3c/webdriver/tests/element_retrieval/find_elements_from_element.py:
+        * imported/w3c/webdriver/tests/element_send_keys/form_controls.py:
+        * imported/w3c/webdriver/tests/execute_async_script/collections.py: Added.
+        * imported/w3c/webdriver/tests/execute_async_script/user_prompts.py:
+        * imported/w3c/webdriver/tests/execute_script/collections.py: Added.
+        * imported/w3c/webdriver/tests/execute_script/user_prompts.py:
+        * imported/w3c/webdriver/tests/fullscreen_window.py:
+        * imported/w3c/webdriver/tests/interaction/element_clear.py:
+        * imported/w3c/webdriver/tests/minimize_window.py:
+        * imported/w3c/webdriver/tests/set_window_rect.py:
+        * imported/w3c/webdriver/tests/support/fixtures.py:
+
 2018-03-27  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r229937): WebDriver tests no longer run, test runner hangs when launching wpt web server

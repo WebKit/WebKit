@@ -94,8 +94,6 @@ class TestEnvironment(object):
 
         self.config = self.load_config()
         self.setup_server_logging()
-        ports = serve.get_ports(self.config, self.ssl_env)
-        self.config = serve.normalise_config(self.config, ports)
 
         assert self.env_extras_cms is None, (
             "A TestEnvironment object cannot be nested")
@@ -107,7 +105,8 @@ class TestEnvironment(object):
             cm.__enter__()
             self.env_extras_cms.append(cm)
 
-        self.servers = serve.start(self.config, self.ssl_env,
+        self.servers = serve.start(self.config,
+                                   self.ssl_env,
                                    self.get_routes())
         if self.options.get("supports_debugger") and self.debug_info and self.debug_info.interactive:
             self.ignore_interrupts()
@@ -136,43 +135,36 @@ class TestEnvironment(object):
 
     def load_config(self):
         default_config_path = os.path.join(serve_path(self.test_paths), "config.default.json")
-        local_config = {
-            "ports": {
-                "http": [8000, 8001],
-                "https": [8443],
-                "ws": [8888]
-            },
-            "check_subdomains": False,
-            "bind_hostname": self.options["bind_hostname"],
-            "ssl": {}
-        }
-
-        if "host" in self.options:
-            local_config["host"] = self.options["host"]
+        override_path = os.path.join(serve_path(self.test_paths), "config.json")
 
         with open(default_config_path) as f:
             default_config = json.load(f)
 
-        #TODO: allow non-default configuration for ssl
+        config = serve.Config(override_ssl_env=self.ssl_env, **default_config)
 
-        local_config["external_host"] = self.options.get("external_host", None)
-        local_config["ssl"]["encrypt_after_connect"] = self.options.get("encrypt_after_connect", False)
+        config.ports = {
+            "http": [8000, 8001],
+            "https": [8443],
+            "ws": [8888]
+        }
 
-        config = serve.merge_json(default_config, local_config)
-        config["doc_root"] = serve_path(self.test_paths)
+        if os.path.exists(override_path):
+            with open(override_path) as f:
+                override_obj = json.load(f)
+            config.update(override_obj)
 
-        if not self.ssl_env.ssl_enabled:
-            config["ports"]["https"] = [None]
+        config.check_subdomains = False
+        config.ssl = {}
 
-        host = self.options.get("certificate_domain", config["host"])
-        hosts = [host]
-        hosts.extend("%s.%s" % (item[0], host) for item in serve.get_subdomains(host).values())
-        key_file, certificate = self.ssl_env.host_cert_path(hosts)
+        if "browser_host" in self.options:
+            config.browser_host = self.options["browser_host"]
 
-        config["key_file"] = key_file
-        config["certificate"] = certificate
+        if "bind_address" in self.options:
+            config.bind_address = self.options["bind_address"]
 
-        serve.set_computed_defaults(config)
+        config.server_host = self.options.get("server_host", None)
+        config.ssl["encrypt_after_connect"] = self.options.get("encrypt_after_connect", False)
+        config.doc_root = serve_path(self.test_paths)
 
         return config
 
@@ -200,10 +192,14 @@ class TestEnvironment(object):
         for path, format_args, content_type, route in [
                 ("testharness_runner.html", {}, "text/html", "/testharness_runner.html"),
                 (self.options.get("testharnessreport", "testharnessreport.js"),
-                 {"output": self.pause_after_test}, "text/javascript",
+                 {"output": self.pause_after_test}, "text/javascript;charset=utf8",
                  "/resources/testharnessreport.js")]:
             path = os.path.normpath(os.path.join(here, path))
-            route_builder.add_static(path, format_args, content_type, route)
+            # Note that .headers. files don't apply to static routes, so we need to
+            # readd any static headers here.
+            headers = {"Cache-Control": "max-age=3600"}
+            route_builder.add_static(path, format_args, content_type, route,
+                                     headers=headers)
 
         data = b""
         with open(os.path.join(repo_root, "resources", "testdriver.js"), "rb") as fp:
@@ -230,20 +226,23 @@ class TestEnvironment(object):
             if not failed:
                 return
             time.sleep(0.5)
-        raise EnvironmentError("Servers failed to start (scheme:port): %s" % ("%s:%s" for item in failed))
+        raise EnvironmentError("Servers failed to start: %s" %
+                               ", ".join("%s:%s" % item for item in failed))
 
     def test_servers(self):
         failed = []
+        host = self.config["server_host"]
         for scheme, servers in self.servers.iteritems():
             for port, server in servers:
                 if self.test_server_port:
                     s = socket.socket()
                     try:
-                        s.connect((self.config["host"], port))
+                        s.connect((host, port))
                     except socket.error:
-                        failed.append((scheme, port))
+                        failed.append((host, port))
                     finally:
                         s.close()
 
                 if not server.is_alive():
                     failed.append((scheme, port))
+        return failed

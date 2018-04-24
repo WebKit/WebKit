@@ -1,25 +1,27 @@
 from .base import Browser, ExecutorBrowser, require_arg
-from ..webdriver_server import OperaDriverServer
 from ..executors import executor_kwargs as base_executor_kwargs
 from ..executors.executorselenium import (SeleniumTestharnessExecutor,
                                           SeleniumRefTestExecutor)
-from ..executors.executoropera import OperaDriverWdspecExecutor
+from ..executors.executorwebkit import WebKitDriverWdspecExecutor
+from ..webdriver_server import WebKitDriverServer
 
 
-__wptrunner__ = {"product": "opera",
+__wptrunner__ = {"product": "webkit",
                  "check_args": "check_args",
-                 "browser": "OperaBrowser",
+                 "browser": "WebKitBrowser",
+                 "browser_kwargs": "browser_kwargs",
                  "executor": {"testharness": "SeleniumTestharnessExecutor",
                               "reftest": "SeleniumRefTestExecutor",
-                              "wdspec": "OperaDriverWdspecExecutor"},
-                 "browser_kwargs": "browser_kwargs",
+                              "wdspec": "WebKitDriverWdspecExecutor"},
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
                  "env_options": "env_options"}
 
 
 def check_args(**kwargs):
+    require_arg(kwargs, "binary")
     require_arg(kwargs, "webdriver_binary")
+    require_arg(kwargs, "webkit_port")
 
 
 def browser_kwargs(test_type, run_info_data, **kwargs):
@@ -28,29 +30,28 @@ def browser_kwargs(test_type, run_info_data, **kwargs):
             "webdriver_args": kwargs.get("webdriver_args")}
 
 
-def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
-                    **kwargs):
+def capabilities_for_port(webkit_port, binary, binary_args):
     from selenium.webdriver import DesiredCapabilities
 
+    if webkit_port == "gtk":
+        capabilities = dict(DesiredCapabilities.WEBKITGTK.copy())
+        capabilities["webkitgtk:browserOptions"] = {
+            "binary": binary,
+            "args": binary_args
+        }
+        return capabilities
+
+    return {}
+
+
+def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
+                    **kwargs):
     executor_kwargs = base_executor_kwargs(test_type, server_config,
                                            cache_manager, **kwargs)
     executor_kwargs["close_after_done"] = True
-    capabilities = dict(DesiredCapabilities.OPERA.items())
-    capabilities.setdefault("operaOptions", {})["prefs"] = {
-        "profile": {
-            "default_content_setting_values": {
-                "popups": 1
-            }
-        }
-    }
-    for (kwarg, capability) in [("binary", "binary"), ("binary_args", "args")]:
-        if kwargs[kwarg] is not None:
-            capabilities["operaOptions"][capability] = kwargs[kwarg]
-    if test_type == "testharness":
-        capabilities["operaOptions"]["useAutomationExtension"] = False
-        capabilities["operaOptions"]["excludeSwitches"] = ["enable-automation"]
-    if test_type == "wdspec":
-        capabilities["operaOptions"]["w3c"] = True
+    capabilities = capabilities_for_port(kwargs["webkit_port"],
+                                         kwargs["binary"],
+                                         kwargs.get("binary_args", []))
     executor_kwargs["capabilities"] = capabilities
     return executor_kwargs
 
@@ -63,20 +64,17 @@ def env_options():
     return {}
 
 
-class OperaBrowser(Browser):
-    """Opera is backed by operadriver, which is supplied through
-    ``wptrunner.webdriver.OperaDriverServer``.
+class WebKitBrowser(Browser):
+    """Generic WebKit browser is backed by WebKit's WebDriver implementation,
+    which is supplied through ``wptrunner.webdriver.WebKitDriverServer``.
     """
 
-    def __init__(self, logger, binary, webdriver_binary="operadriver",
+    def __init__(self, logger, binary, webdriver_binary=None,
                  webdriver_args=None):
-        """Creates a new representation of Opera.  The `binary` argument gives
-        the browser binary to use for testing."""
         Browser.__init__(self, logger)
         self.binary = binary
-        self.server = OperaDriverServer(self.logger,
-                                        binary=webdriver_binary,
-                                        args=webdriver_args)
+        self.server = WebKitDriverServer(self.logger, binary=webdriver_binary,
+                                         args=webdriver_args)
 
     def start(self, **kwargs):
         self.server.start(block=False)

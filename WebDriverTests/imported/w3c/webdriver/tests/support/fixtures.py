@@ -1,20 +1,18 @@
+from __future__ import print_function
+
 import json
 import os
 import urlparse
 import re
+import sys
 
 import webdriver
-import mozlog
 
-from tests.support.asserts import assert_error
 from tests.support.http_request import HTTPRequest
 from tests.support.wait import wait
-from tests.support import merge_dictionaries
 
 default_host = "http://127.0.0.1"
 default_port = "4444"
-
-logger = mozlog.get_default_logger()
 
 
 def ignore_exceptions(f):
@@ -22,7 +20,7 @@ def ignore_exceptions(f):
         try:
             return f(*args, **kwargs)
         except webdriver.error.WebDriverException as e:
-            logger.warning("Ignored exception %s" % e)
+            print("Ignored exception %s" % e, file=sys.stderr)
     inner.__name__ = f.__name__
     return inner
 
@@ -182,7 +180,8 @@ def new_session(configuration, request):
         global _current_session
         if _current_session is not None and _current_session.session_id:
             _current_session.end()
-            _current_session = None
+
+        _current_session = None
 
     def create_session(body):
         global _current_session
@@ -215,7 +214,7 @@ def add_browser_capabilites(configuration):
 def url(server_config):
     def inner(path, protocol="http", query="", fragment=""):
         port = server_config["ports"][protocol][0]
-        host = "%s:%s" % (server_config["host"], port)
+        host = "%s:%s" % (server_config["browser_host"], port)
         return urlparse.urlunsplit((protocol, host, path, query, fragment))
 
     inner.__name__ = "url"

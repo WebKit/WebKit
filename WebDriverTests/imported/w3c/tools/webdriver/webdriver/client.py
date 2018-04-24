@@ -6,10 +6,6 @@ import transport
 
 from six import string_types
 
-from mozlog import get_default_logger
-
-logger = get_default_logger()
-
 
 def command(func):
     def inner(self, *args, **kwargs):
@@ -371,6 +367,9 @@ class Session(object):
         self.alert = UserPrompt(self)
         self.actions = Actions(self)
 
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.session_id or "(disconnected)")
+
     def __eq__(self, other):
         return (self.session_id is not None and isinstance(other, Session) and
                 self.session_id == other.session_id)
@@ -631,6 +630,9 @@ class Element(object):
 
         assert id not in self.session._element_cache
         self.session._element_cache[self.id] = self
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.id)
 
     def __eq__(self, other):
         return (isinstance(other, Element) and self.id == other.id and

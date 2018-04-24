@@ -1,3 +1,10 @@
+2018-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.__init__):
+
 2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Remove libgbm dependency
