@@ -115,7 +115,6 @@ struct CoordinatedGraphicsLayerState {
             bool backfaceVisible : 1;
             bool masksToBounds : 1;
             bool preserves3D : 1;
-            bool fixedToViewport : 1;
             bool isScrollable: 1;
         };
         unsigned flags;
@@ -129,7 +128,6 @@ struct CoordinatedGraphicsLayerState {
         , backfaceVisible(true)
         , masksToBounds(false)
         , preserves3D(false)
-        , fixedToViewport(false)
         , isScrollable(false)
         , opacity(0)
         , replica(InvalidCoordinatedLayerID)
@@ -177,7 +175,6 @@ struct CoordinatedGraphicsLayerState {
 
 struct CoordinatedGraphicsState {
     uint32_t rootCompositingLayer;
-    FloatPoint scrollPosition;
 
     Vector<CoordinatedLayerID> layersToCreate;
     Vector<std::pair<CoordinatedLayerID, CoordinatedGraphicsLayerState>> layersToUpdate;

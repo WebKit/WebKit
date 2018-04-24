@@ -72,11 +72,10 @@ void TextureMapperLayer::computeTransformsRecursive()
 
         const float originX = m_state.anchorPoint.x() * m_state.size.width();
         const float originY = m_state.anchorPoint.y() * m_state.size.height();
-        auto position = adjustedPosition();
 
         m_layerTransforms.combined = parentTransform;
         m_layerTransforms.combined
-            .translate3d(originX + position.x(), originY + position.y(), m_state.anchorPoint.z())
+            .translate3d(originX + m_state.pos.x(), originY + m_state.pos.y(), m_state.anchorPoint.z())
             .multiply(m_layerTransforms.localTransform);
 
         m_layerTransforms.combinedForChildren = m_layerTransforms.combined;
@@ -622,11 +621,6 @@ void TextureMapperLayer::setAnimations(const TextureMapperAnimations& animations
     m_animations = animations;
 }
 
-void TextureMapperLayer::setFixedToViewport(bool fixedToViewport)
-{
-    m_fixedToViewport = fixedToViewport;
-}
-
 void TextureMapperLayer::setBackingStore(TextureMapperBackingStore* backingStore)
 {
     m_backingStore = backingStore;
@@ -661,28 +655,6 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
     m_currentFilters = applicationResults.filters.value_or(m_state.filters);
 
     return applicationResults.hasRunningAnimations;
-}
-
-bool TextureMapperLayer::isAncestorFixedToViewport() const
-{
-    for (TextureMapperLayer* parent = m_parent; parent; parent = parent->m_parent) {
-        if (parent->m_fixedToViewport)
-            return true;
-    }
-
-    return false;
-}
-
-void TextureMapperLayer::setScrollPositionDeltaIfNeeded(const FloatSize& delta)
-{
-    // delta is the difference between the scroll offset in the ui process and the scroll offset
-    // in the web process. We add this delta to the position of fixed layers, to make
-    // sure that they do not move while scrolling. We need to reset this delta to fixed layers
-    // that have an ancestor which is also a fixed layer, because the delta will be added to the ancestor.
-    if (isAncestorFixedToViewport())
-        m_scrollPositionDelta = FloatSize();
-    else
-        m_scrollPositionDelta = delta;
 }
 
 }

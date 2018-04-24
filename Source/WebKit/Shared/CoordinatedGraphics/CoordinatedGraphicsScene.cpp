@@ -61,9 +61,8 @@ void CoordinatedGraphicsScene::applyStateChanges(const Vector<CoordinatedGraphic
         commitSceneState(state);
 }
 
-void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, const Color& backgroundColor, bool drawsBackground, const FloatPoint& contentPosition, TextureMapper::PaintFlags PaintFlags)
+void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, const Color& backgroundColor, bool drawsBackground, TextureMapper::PaintFlags PaintFlags)
 {
-    adjustPositionForFixedLayers(contentPosition);
     TextureMapperLayer* currentRootLayer = rootLayer();
     if (!currentRootLayer)
         return;
@@ -104,20 +103,6 @@ void CoordinatedGraphicsScene::updateViewport()
 {
     if (m_client)
         m_client->updateViewport();
-}
-
-void CoordinatedGraphicsScene::adjustPositionForFixedLayers(const FloatPoint& contentPosition)
-{
-    if (m_fixedLayers.isEmpty())
-        return;
-
-    // Fixed layer positions are updated by the web process when we update the visible contents rect / scroll position.
-    // If we want those layers to follow accurately the viewport when we move between the web process updates, we have to offset
-    // them by the delta between the current position and the position of the viewport used for the last layout.
-    FloatSize delta = contentPosition - m_scrollPosition;
-
-    for (auto& fixedLayer : m_fixedLayers.values())
-        fixedLayer->setScrollPositionDeltaIfNeeded(delta);
 }
 
 void CoordinatedGraphicsScene::syncPlatformLayerIfNeeded(TextureMapperLayer* layer, const CoordinatedGraphicsLayerState& state)
@@ -228,15 +213,6 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
         // Never clip the root layer.
         layer->setMasksToBounds(id == m_rootLayerID ? false : layerState.masksToBounds);
         layer->setPreserves3D(layerState.preserves3D);
-
-        bool fixedToViewportChanged = layer->fixedToViewport() != layerState.fixedToViewport;
-        layer->setFixedToViewport(layerState.fixedToViewport);
-        if (fixedToViewportChanged) {
-            if (layerState.fixedToViewport)
-                m_fixedLayers.add(id, layer);
-            else
-                m_fixedLayers.remove(id);
-        }
     }
 
     // Apply Operations.
@@ -281,7 +257,6 @@ void CoordinatedGraphicsScene::deleteLayer(CoordinatedLayerID layerID)
     ASSERT(layer);
 
     m_backingStores.remove(layer.get());
-    m_fixedLayers.remove(layerID);
 #if USE(COORDINATED_GRAPHICS_THREADED)
     if (auto platformLayerProxy = m_platformLayerProxies.take(layer.get()))
         platformLayerProxy->invalidate();
@@ -459,8 +434,6 @@ void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& 
 
     CommitScope commitScope;
 
-    m_scrollPosition = state.scrollPosition;
-
     createLayers(state.layersToCreate);
     deleteLayers(state.layersToRemove);
 
@@ -507,7 +480,6 @@ void CoordinatedGraphicsScene::purgeGLResources()
     m_rootLayer = nullptr;
     m_rootLayerID = InvalidCoordinatedLayerID;
     m_layers.clear();
-    m_fixedLayers.clear();
     m_textureMapper = nullptr;
     m_backingStores.clear();
 }

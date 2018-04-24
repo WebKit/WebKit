@@ -88,8 +88,6 @@ public:
     void setContentsLayer(TextureMapperPlatformLayer*);
     void setAnimations(const TextureMapperAnimations&);
     const TextureMapperAnimations& animations() const { return m_animations; }
-    void setFixedToViewport(bool);
-    bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(TextureMapperBackingStore*);
 
     bool applyAnimationsRecursively(MonotonicTime);
@@ -97,8 +95,6 @@ public:
     bool descendantsOrSelfHaveRunningAnimations() const;
 
     void paint();
-
-    void setScrollPositionDeltaIfNeeded(const FloatSize&);
 
     void addChild(TextureMapperLayer*);
 
@@ -115,8 +111,6 @@ private:
 
     static void sortByZOrder(Vector<TextureMapperLayer* >& array);
 
-    FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta; }
-    bool isAncestorFixedToViewport() const;
     TransformationMatrix replicaTransform();
     void removeFromParent();
     void removeAllChildren();
@@ -204,8 +198,6 @@ private:
     State m_state;
     TextureMapper* m_textureMapper { nullptr };
     TextureMapperAnimations m_animations;
-    FloatSize m_scrollPositionDelta;
-    bool m_fixedToViewport { false };
     uint32_t m_id { 0 };
 
     struct {

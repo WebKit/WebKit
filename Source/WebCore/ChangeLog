@@ -1,5 +1,47 @@
 2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove dead fixed layer code
+        https://bugs.webkit.org/show_bug.cgi?id=184912
+
+        Reviewed by Michael Catanzaro.
+
+        Remove CoordinatedGraphicsLayer::setFixedToViewport() and the
+        corresponding attribute on the CoordinatedGraphicsLayerState struct.
+        The method is not called anywhere since r230952.
+
+        CoordinatedGraphicsState struct also loses the scrollPosition attribute
+        that also isn't used anymore.
+
+        Changes to GraphicsLayerTextureMapper class mirror those made to
+        CoordinatedGraphicsLayer, removing support for the fixed-to-viewport
+        attribute. This too was not called from anywhere.
+
+        All that enables us removing fixed-to-viewport handling in the
+        TextureMapperLayer class. Along with related changes in the
+        CoordinatedGraphicsScene class, we're able to remove a bunch of methods
+        and member variables that are not used or needed anymore.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        (WebCore::GraphicsLayerTextureMapper::setFixedToViewport): Deleted.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeTransformsRecursive):
+        (WebCore::TextureMapperLayer::setFixedToViewport): Deleted.
+        (WebCore::TextureMapperLayer::isAncestorFixedToViewport const): Deleted.
+        (WebCore::TextureMapperLayer::setScrollPositionDeltaIfNeeded): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        (WebCore::CoordinatedGraphicsLayer::setFixedToViewport): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+        (WebCore::CoordinatedGraphicsLayerState::CoordinatedGraphicsLayerState):
+
+2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordGraphics] Remove unused fixed layout functionality
         https://bugs.webkit.org/show_bug.cgi?id=184908
 

@@ -42,7 +42,6 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(Type layerType, GraphicsL
     , m_compositedNativeImagePtr(0)
     , m_changeMask(NoChanges)
     , m_needsDisplay(false)
-    , m_fixedToViewport(false)
     , m_debugBorderWidth(0)
     , m_contentsLayer(0)
 {
@@ -464,9 +463,6 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     if (m_changeMask & AnimationStarted)
         client().notifyAnimationStarted(this, "", m_animationStartTime);
 
-    if (m_changeMask & FixedToViewporChange)
-        m_layer.setFixedToViewport(fixedToViewport());
-
     m_changeMask = NoChanges;
 }
 
@@ -609,15 +605,6 @@ bool GraphicsLayerTextureMapper::setFilters(const FilterOperations& filters)
     }
 
     return canCompositeFilters;
-}
-
-void GraphicsLayerTextureMapper::setFixedToViewport(bool fixed)
-{
-    if (m_fixedToViewport == fixed)
-        return;
-
-    m_fixedToViewport = fixed;
-    notifyChange(FixedToViewporChange);
 }
 
 void GraphicsLayerTextureMapper::setRepaintCount(int repaintCount)

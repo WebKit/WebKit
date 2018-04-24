@@ -240,7 +240,7 @@ void ThreadedCompositor::renderLayerTree()
 
     m_scene->applyStateChanges(states);
     m_scene->paintToCurrentGLContext(viewportTransform, 1, FloatRect { FloatPoint { }, viewportSize },
-        Color::transparent, !drawsBackground, scrollPosition, m_paintFlags);
+        Color::transparent, !drawsBackground, m_paintFlags);
 
     m_context->swapBuffers();
 

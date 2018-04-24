@@ -1,5 +1,35 @@
 2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordGraphics] Remove dead fixed layer code
+        https://bugs.webkit.org/show_bug.cgi?id=184912
+
+        Reviewed by Michael Catanzaro.
+
+        Drop the unused fixed layer handling  code in CoordinatedGraphicsScene.
+        The m_fixedLayers container can be removed, along with the
+        adjustPositionForFixedLayers() method that operated on that container.
+
+        This was the only method that operated with the m_scrollPosition member
+        variable and the contentsPosition argument that's passed to the
+        CoordinatedGraphicsScene::paintToCurrentGLContext() method. Both of
+        these are removed, along with the scrollPosition attribute on the
+        CoordinatedGraphicsState struct.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::CoordinatedGraphicsScene::setLayerState):
+        (WebKit::CoordinatedGraphicsScene::deleteLayer):
+        (WebKit::CoordinatedGraphicsScene::commitSceneState):
+        (WebKit::CoordinatedGraphicsScene::purgeGLResources):
+        (WebKit::CoordinatedGraphicsScene::adjustPositionForFixedLayers): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+
+2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
         REGRESSION(r230950): Faulty commit sequencing in CoordinatedGraphicsScene
         https://bugs.webkit.org/show_bug.cgi?id=184917
 

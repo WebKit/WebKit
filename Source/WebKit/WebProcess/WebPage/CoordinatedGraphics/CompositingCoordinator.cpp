@@ -125,8 +125,6 @@ bool CompositingCoordinator::flushPendingLayerChanges()
     if (m_shouldSyncFrame) {
         didSync = true;
 
-        m_state.scrollPosition = m_visibleContentsRect.location();
-
         m_client.commitSceneState(m_state);
 
         clearPendingStateChanges();

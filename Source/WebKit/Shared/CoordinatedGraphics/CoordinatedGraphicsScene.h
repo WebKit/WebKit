@@ -72,7 +72,7 @@ public:
     virtual ~CoordinatedGraphicsScene();
 
     void applyStateChanges(const Vector<WebCore::CoordinatedGraphicsState>&);
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, const WebCore::Color& backgroundColor, bool drawsBackground, const WebCore::FloatPoint&, WebCore::TextureMapper::PaintFlags = 0);
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, const WebCore::Color& backgroundColor, bool drawsBackground, WebCore::TextureMapper::PaintFlags = 0);
     void detach();
 
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
@@ -125,8 +125,6 @@ private:
     WebCore::TextureMapperLayer* getLayerByIDIfExists(WebCore::CoordinatedLayerID);
     WebCore::TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 
-    void adjustPositionForFixedLayers(const WebCore::FloatPoint& contentPosition);
-
     void updateViewport();
 
     void createLayer(WebCore::CoordinatedLayerID);
@@ -160,9 +158,7 @@ private:
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
     HashMap<WebCore::CoordinatedLayerID, std::unique_ptr<WebCore::TextureMapperLayer>> m_layers;
-    HashMap<WebCore::CoordinatedLayerID, WebCore::TextureMapperLayer*> m_fixedLayers;
     WebCore::CoordinatedLayerID m_rootLayerID { WebCore::InvalidCoordinatedLayerID };
-    WebCore::FloatPoint m_scrollPosition;
     WebCore::Color m_viewBackgroundColor { WebCore::Color::white };
 
     WebCore::TextureMapperFPSCounter m_fpsCounter;

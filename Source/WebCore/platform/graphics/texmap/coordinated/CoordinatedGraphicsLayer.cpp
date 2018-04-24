@@ -129,7 +129,6 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_shouldSyncFilters(true)
     , m_shouldSyncImageBacking(true)
     , m_shouldSyncAnimations(true)
-    , m_fixedToViewport(false)
     , m_movingVisibleRect(false)
     , m_pendingContentsScaleAdjustment(false)
     , m_pendingVisibleRectAdjustment(false)
@@ -578,18 +577,6 @@ void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& initialRec
     addRepaintRect(rect);
 }
 
-void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
-{
-    if (m_fixedToViewport == isFixed)
-        return;
-
-    m_fixedToViewport = isFixed;
-    m_layerState.fixedToViewport = isFixed;
-    m_layerState.flagsChanged = true;
-
-    didChangeLayerState();
-}
-
 void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 {
     if (CoordinatedGraphicsLayer* mask = downcast<CoordinatedGraphicsLayer>(maskLayer()))
@@ -675,7 +662,6 @@ void CoordinatedGraphicsLayer::syncLayerState()
         m_layerState.backfaceVisible = backfaceVisibility();
         m_layerState.masksToBounds = masksToBounds();
         m_layerState.preserves3D = preserves3D();
-        m_layerState.fixedToViewport = fixedToViewport();
     }
 
     if (m_layerState.debugVisualsChanged) {
