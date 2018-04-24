@@ -233,6 +233,10 @@
         }
     },
     "TestJSC": {
-        "expected": {"all@Debug": {"slow": true}}
+        "subtests": {
+            "/jsc/vm": {
+                "expected": {"all@Debug": {"slow": true}}
+            }
+        }
     }
 }

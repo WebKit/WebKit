@@ -92,9 +92,14 @@ class Message(object):
 
 class GLibTestRunner(object):
 
-    def __init__(self, test_binary, timeout):
+    def __init__(self, test_binary, timeout, is_slow_function=None, slow_timeout=0):
         self._test_binary = test_binary
         self._timeout = timeout
+        if is_slow_function is not None:
+            self._is_test_slow = is_slow_function
+        else:
+            self._is_test_slow = lambda x, y: False
+        self._slow_timeout = slow_timeout
 
         self._stderr_fd = None
         self._subtest = None
@@ -174,10 +179,7 @@ class GLibTestRunner(object):
         alarm(timeout)
 
     @staticmethod
-    def _stop_timeout(timeout):
-        if timeout <= 0:
-            return
-
+    def _stop_timeout():
         alarm(0)
 
     def _subtest_start(self, subtest):
@@ -185,7 +187,10 @@ class GLibTestRunner(object):
         message = self._subtest + ':'
         sys.stdout.write('  %-68s' % message)
         sys.stdout.flush()
-        self._start_timeout(self._timeout)
+        timeout = self._timeout
+        if self._is_test_slow(os.path.basename(self._test_binary), self._subtest):
+            timeout = self._slow_timeout
+        self._start_timeout(timeout)
 
     def _subtest_message(self, message):
         if self._subtest is None:
@@ -206,7 +211,7 @@ class GLibTestRunner(object):
         sys.stderr.flush()
 
     def _subtest_end(self, result, did_timeout=False):
-        self._stop_timeout(self._timeout)
+        self._stop_timeout()
         if did_timeout:
             self._results[self._subtest] = 'TIMEOUT'
         elif result == TEST_RUN_SUCCESS:
