@@ -1,3 +1,16 @@
+2018-04-24  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r221839): Fix requests with FormData containing empty files
+        https://bugs.webkit.org/show_bug.cgi?id=184490
+        <rdar://problem/39385169>
+
+        Reviewed by Geoffrey Garen.
+
+        Verify that the final boundary is present in the request body when submitting FormData containing an empty file.
+
+        * http/tests/local/formdata/send-form-data-with-empty-file-expected.txt: Added.
+        * http/tests/local/formdata/send-form-data-with-empty-file.html: Added.
+
 2018-04-23  Daniel Bates  <dabates@apple.com>
 
         Implement Same-Site cookies

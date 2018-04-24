@@ -223,7 +223,7 @@ void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, 
 
     if (!file.path().isEmpty())
         appendFile(file.path(), shouldGenerateFile);
-    else
+    else if (file.size())
         appendBlob(file.url());
 }
 

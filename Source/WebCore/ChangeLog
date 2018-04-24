@@ -1,3 +1,19 @@
+2018-04-24  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r221839): Fix requests with FormData containing empty files
+        https://bugs.webkit.org/show_bug.cgi?id=184490
+        <rdar://problem/39385169>
+
+        Reviewed by Geoffrey Garen.
+
+        We should not append the blob to the FormData when it is a file but has no path. It broke
+        the submission since the request was failing to read the file in FormDataStreamCFNet.h:156
+
+        Test: http/tests/local/formdata/send-form-data-with-empty-file.html
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendMultiPartFileValue):
+
 2018-04-24  Zalan Bujtas  <zalan@apple.com>
 
         Fix project file after r230931.
