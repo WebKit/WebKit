@@ -1,3 +1,12 @@
+2018-04-24  Nan Wang  <n_wang@apple.com>
+
+        AX: soft link libAccessibility.dylb
+        https://bugs.webkit.org/show_bug.cgi?id=184919
+
+        Reviewed by Chris Fleizach.
+
+        * wtf/cocoa/SoftLinking.h:
+
 2018-04-23  Zalan Bujtas  <zalan@apple.com>
 
         [LayoutFormattingContext] Initial commit.

@@ -207,14 +207,10 @@ static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif // PLATFORM(MAC)
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
-#if __has_include(<AccessibilitySupport.h>)
-#include <AccessibilitySupport.h>
-#else
-extern "C" {
-CFStringRef kAXSWebAccessibilityEventsEnabledNotification;
-Boolean _AXSWebAccessibilityEventsEnabled();
-}
-#endif
+#include <wtf/SoftLinking.h>
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+SOFT_LINK_MAY_FAIL(libAccessibility, _AXSWebAccessibilityEventsEnabled, Boolean, (), ())
+SOFT_LINK_CONSTANT_MAY_FAIL(libAccessibility, kAXSWebAccessibilityEventsEnabledNotification, CFStringRef)
 #endif
 
 static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
@@ -700,7 +696,8 @@ static void validate(WKWebViewConfiguration *configuration)
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), accessibilityEventsEnabledChangedCallback, kAXSWebAccessibilityEventsEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
+    if (canLoadkAXSWebAccessibilityEventsEnabledNotification())
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), accessibilityEventsEnabledChangedCallback, getkAXSWebAccessibilityEventsEnabledNotification(), 0, CFNotificationSuspensionBehaviorDeliverImmediately);
     [self _updateAccessibilityEventsEnabled];
 #endif
 
@@ -3073,6 +3070,8 @@ static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, v
 
 - (void)_updateAccessibilityEventsEnabled
 {
+    if (!canLoad_AXSWebAccessibilityEventsEnabled())
+        return;
     _page->updateAccessibilityEventsEnabled(_AXSWebAccessibilityEventsEnabled());
 }
 #endif
