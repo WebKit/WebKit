@@ -50,6 +50,7 @@ public:
     void cancelIfNotFinishing();
     bool isSubresourceLoader() const override;
     CachedResource* cachedResource();
+    WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
 
     SecurityOrigin* origin() { return m_origin.get(); }
 #if PLATFORM(IOS)

@@ -100,7 +100,7 @@ void EventSource::connect()
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbacks;
     options.credentials = m_withCredentials ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
-    options.preflightPolicy = PreventPreflight;
+    options.preflightPolicy = PreflightPolicy::Prevent;
     options.mode = FetchOptions::Mode::Cors;
     options.cache = FetchOptions::Cache::NoStore;
     options.dataBufferingPolicy = DoNotBufferData;

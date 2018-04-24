@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "FetchOptions.h"
 #include "HTTPHeaderNames.h"
 #include "ServiceWorkerTypes.h"
@@ -111,6 +112,12 @@ enum class ContentEncodingSniffingPolicy {
     DoNotSniff,
 };
 
+enum class PreflightPolicy {
+    Consider,
+    Force,
+    Prevent
+};
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions() { }
 
@@ -158,6 +165,9 @@ struct ResourceLoaderOptions : public FetchOptions {
     unsigned maxRedirectCount { 20 };
 
     Vector<String> derivedCachedDataTypesToRetrieve;
+
+    PreflightPolicy preflightPolicy { PreflightPolicy::Consider };
+    std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 
 } // namespace WebCore

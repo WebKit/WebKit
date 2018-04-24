@@ -1,3 +1,38 @@
+2018-04-23  Youenn Fablet  <youenn@apple.com>
+
+        Make WebLoaderStrategy send to NetworkResourceLoader necessary parameters to handle full loads in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184763
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior yet since we do not use these parameters in NetworkProcess yet.
+
+        Add PreflightPolicy and CSP response headers as ResourceLoaderOptions.
+        This allows passing them from DocumentThreadableLoader to WebLoaderStrategy.
+
+        Allow getting the original headers from a SubresourceLoader.
+        This allows passing them from DocumentThreadableLoader down to WebLoaderStrategy.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::startLoadingBlobURL):
+        (WebCore::FetchLoader::start):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        * loader/ResourceLoaderOptions.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::originalHeaders const):
+        * loader/SubresourceLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions):
+        (WebCore::ThreadableLoaderOptions::isolatedCopy const):
+        * loader/ThreadableLoader.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2018-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Remove WlUniquePtr<wl_display> footgun

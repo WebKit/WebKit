@@ -41,12 +41,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkLoadChecker::NetworkLoadChecker(WebCore::FetchOptions&& options, PAL::SessionID sessionID, WebCore::HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin)
+NetworkLoadChecker::NetworkLoadChecker(WebCore::FetchOptions&& options, PAL::SessionID sessionID, WebCore::HTTPHeaderMap&& originalRequestHeaders, URL&& url, RefPtr<SecurityOrigin>&& sourceOrigin, PreflightPolicy preflightPolicy)
     : m_options(WTFMove(options))
     , m_sessionID(sessionID)
     , m_originalRequestHeaders(WTFMove(originalRequestHeaders))
     , m_url(WTFMove(url))
     , m_origin(WTFMove(sourceOrigin))
+    , m_preflightPolicy(preflightPolicy)
 {
     if (m_options.mode == FetchOptions::Mode::Cors || m_options.mode == FetchOptions::Mode::SameOrigin)
         m_isSameOriginRequest = m_url.protocolIsData() || m_url.protocolIsBlob() || m_origin->canRequest(m_url);
@@ -192,12 +193,21 @@ void NetworkLoadChecker::checkCORSRequest(ResourceRequest&& request, ValidationH
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     // Except in case where preflight is needed, loading should be able to continue on its own.
-    if (m_isSimpleRequest && isSimpleCrossOriginAccessRequest(request.httpMethod(), m_originalRequestHeaders)) {
+    switch (m_preflightPolicy) {
+    case PreflightPolicy::Force:
+        checkCORSRequestWithPreflight(WTFMove(request), WTFMove(handler));
+        break;
+    case PreflightPolicy::Consider:
+        if (!m_isSimpleRequest || !isSimpleCrossOriginAccessRequest(request.httpMethod(), m_originalRequestHeaders)) {
+            checkCORSRequestWithPreflight(WTFMove(request), WTFMove(handler));
+            return;
+        }
+        FALLTHROUGH;
+    case PreflightPolicy::Prevent:
         updateRequestForAccessControl(request, *m_origin, m_storedCredentialsPolicy);
         handler(WTFMove(request));
-        return;
+        break;
     }
-    checkCORSRequestWithPreflight(WTFMove(request), WTFMove(handler));
 }
 
 void NetworkLoadChecker::checkCORSRedirectedRequest(ResourceRequest&& request, ValidationHandler&& handler)

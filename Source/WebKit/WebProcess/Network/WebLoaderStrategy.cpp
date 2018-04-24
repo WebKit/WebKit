@@ -274,6 +274,32 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.derivedCachedDataTypesToRetrieve = resourceLoader.options().derivedCachedDataTypesToRetrieve;
     loadParameters.options = resourceLoader.options();
+    loadParameters.preflightPolicy = resourceLoader.options().preflightPolicy;
+
+    auto* document = resourceLoader.frame() ? resourceLoader.frame()->document() : nullptr;
+    if (resourceLoader.options().cspResponseHeaders)
+        loadParameters.cspResponseHeaders = resourceLoader.options().cspResponseHeaders;
+    else if (document && !document->shouldBypassMainWorldContentSecurityPolicy()) {
+        if (auto* contentSecurityPolicy = document->contentSecurityPolicy())
+            loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
+    }
+
+    if (resourceLoader.isSubresourceLoader()) {
+        if (auto* headers = static_cast<SubresourceLoader&>(resourceLoader).originalHeaders())
+            loadParameters.originalRequestHeaders = *headers;
+    }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (document) {
+        loadParameters.mainDocumentURL = document->topDocument().url();
+        // FIXME: Instead of passing userContentControllerIdentifier, the NetworkProcess should be able to get it using webPageId.
+        auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frame()->loader().client());
+        auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+        auto* webPage = webFrame ? webFrame->page() : nullptr;
+        if (webPage)
+            loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
+    }
+#endif
 
     if (loadParameters.options.mode != FetchOptions::Mode::Navigate) {
         // FIXME: All loaders should provide their origin if navigation mode is cors/no-cors/same-origin.

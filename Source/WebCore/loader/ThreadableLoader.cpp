@@ -54,9 +54,8 @@ ThreadableLoaderOptions::ThreadableLoaderOptions(FetchOptions&& baseOptions)
 {
 }
 
-ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy filteringPolicy)
+ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy filteringPolicy)
     : ResourceLoaderOptions(baseOptions)
-    , preflightPolicy(preflightPolicy)
     , contentSecurityPolicyEnforcement(contentSecurityPolicyEnforcement)
     , initiator(WTFMove(initiator))
     , filteringPolicy(filteringPolicy)
@@ -93,9 +92,9 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.derivedCachedDataTypesToRetrieve.reserveInitialCapacity(this->derivedCachedDataTypesToRetrieve.size());
     for (auto& derivedCachedDataType : this->derivedCachedDataTypesToRetrieve)
         copy.derivedCachedDataTypesToRetrieve.uncheckedAppend(derivedCachedDataType.isolatedCopy());
+    copy.preflightPolicy = this->preflightPolicy;
 
     // ThreadableLoaderOptions
-    copy.preflightPolicy = this->preflightPolicy;
     copy.contentSecurityPolicyEnforcement = this->contentSecurityPolicyEnforcement;
     copy.initiator = this->initiator.isolatedCopy();
     copy.filteringPolicy = this->filteringPolicy;

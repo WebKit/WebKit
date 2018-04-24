@@ -60,6 +60,7 @@ public:
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     WebCore::HTTPHeaderMap originalRequestHeaders;
     bool shouldRestrictHTTPResponseAccess { false };
+    WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::URL mainDocumentURL;

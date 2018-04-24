@@ -109,7 +109,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
 
     // No need to do preflight if the network stack will do it for us.
     if (!m_async && platformStrategies()->loaderStrategy()->isDoingLoadingSecurityChecks())
-        m_options.preflightPolicy = PreventPreflight;
+        m_options.preflightPolicy = PreflightPolicy::Prevent;
 
     // Referrer and Origin headers should be set after the preflight if any.
     ASSERT(!request.hasHTTPReferrer() && !request.hasHTTPOrigin());
@@ -134,6 +134,9 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
         m_options.filteringPolicy = ResponseFilteringPolicy::Disable;
     }
 
+    if (m_contentSecurityPolicy || !document.shouldBypassMainWorldContentSecurityPolicy())
+        m_options.cspResponseHeaders = this->contentSecurityPolicy().responseHeaders();
+
     // As per step 11 of https://fetch.spec.whatwg.org/#main-fetch, data scheme (if same-origin data-URL flag is set) and about scheme are considered same-origin.
     if (request.url().protocolIsData())
         m_sameOriginRequest = options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set;
@@ -155,7 +158,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
 {
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
-    if ((m_options.preflightPolicy == ConsiderPreflight && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields())) || m_options.preflightPolicy == PreventPreflight)
+    if ((m_options.preflightPolicy == PreflightPolicy::Consider && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields())) || m_options.preflightPolicy == PreflightPolicy::Prevent)
         makeSimpleCrossOriginAccessRequest(WTFMove(request));
     else {
 #if ENABLE(SERVICE_WORKER)
@@ -179,8 +182,8 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
 
 void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(ResourceRequest&& request)
 {
-    ASSERT(m_options.preflightPolicy != ForcePreflight);
-    ASSERT(m_options.preflightPolicy == PreventPreflight || isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()));
+    ASSERT(m_options.preflightPolicy != PreflightPolicy::Force);
+    ASSERT(m_options.preflightPolicy == PreflightPolicy::Prevent || isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()));
 
     // Cross-origin requests are only allowed for HTTP and registered schemes. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
     if (!SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(request.url().protocol().toStringWithoutCopying())) {

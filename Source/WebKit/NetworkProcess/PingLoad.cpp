@@ -42,7 +42,7 @@ PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, WTF::CompletionHa
     : m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(NetworkLoadChecker::create(FetchOptions { m_parameters.options}, m_parameters.sessionID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef()))
+    , m_networkLoadChecker(NetworkLoadChecker::create(FetchOptions { m_parameters.options}, m_parameters.sessionID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy))
 {
 
     if (m_parameters.cspResponseHeaders)

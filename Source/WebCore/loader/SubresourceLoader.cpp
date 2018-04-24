@@ -784,4 +784,9 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     m_documentLoader->cachedResourceLoader().resourceTimingInformation().addResourceTiming(*m_resource, *document, WTFMove(resourceTiming));
 }
 
+const HTTPHeaderMap* SubresourceLoader::originalHeaders() const
+{
+    return (m_resource  && m_resource->originalRequest()) ? &m_resource->originalRequest()->httpHeaderFields() : nullptr;
+}
+
 }
