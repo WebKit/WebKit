@@ -1,3 +1,32 @@
+2018-04-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CSE should know how to decay a MultiGetByOffset
+        https://bugs.webkit.org/show_bug.cgi?id=159859
+
+        Reviewed by Keith Miller.
+        
+        This teaches Node::remove() how to decay a MultiGetByOffset to a CheckStructure, so that
+        clobberize() can report a def() for MultiGetByOffset.
+        
+        This is a slight improvement to codegen in splay because splay is a heavy user of
+        MultiGetByOffset. It uses it redundantly in one of its hot functions (the function called
+        "splay_"). I don't see a net speed-up in the benchmark. However, this is just a first step to
+        removing MultiXByOffset-related redundancies, which by my estimates account for 16% of
+        splay's time.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::remove):
+        (JSC::DFG::Node::removeWithoutChecks):
+        (JSC::DFG::Node::replaceWith):
+        (JSC::DFG::Node::replaceWithWithoutChecks):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToMultiGetByOffset):
+        (JSC::DFG::Node::replaceWith): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2018-04-24  Keith Miller  <keith_miller@apple.com>
 
         Update API docs with information on which run loop the VM will use
