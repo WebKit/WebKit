@@ -736,39 +736,17 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsInPrewarmedPool isInPrewarmedPool)
+WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDataStore)
 {
-    auto processProxy = WebProcessProxy::create(*this, websiteDataStore, isInPrewarmedPool);
+    auto processProxy = WebProcessProxy::create(*this, websiteDataStore);
     auto& process = processProxy.get();
     initializeNewWebProcess(process, websiteDataStore);
     m_processes.append(WTFMove(processProxy));
-    if (isInPrewarmedPool == WebProcessProxy::IsInPrewarmedPool::Yes)
-        ++m_prewarmedProcessCount;
 
     if (m_serviceWorkerProcessesTerminationTimer.isActive())
         m_serviceWorkerProcessesTerminationTimer.stop();
 
     return process;
-}
-
-RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore& websiteDataStore)
-{
-    if (!m_prewarmedProcessCount)
-        return nullptr;
-
-    for (const auto& process : m_processes) {
-        if (process->isInPrewarmedPool()) {
-            --m_prewarmedProcessCount;
-            process->setIsInPrewarmedPool(false);
-            if (&process->websiteDataStore() != &websiteDataStore)
-                process->send(Messages::WebProcess::AddWebsiteDataStore(websiteDataStore.parameters()), 0);
-            return process.get();
-        }
-    }
-
-    ASSERT_NOT_REACHED();
-    m_prewarmedProcessCount = 0;
-    return nullptr;
 }
 
 #if PLATFORM(MAC)
@@ -948,7 +926,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 void WebProcessPool::warmInitialProcess()
 {
-    if (m_prewarmedProcessCount) {
+    if (m_haveInitialEmptyProcess) {
         ASSERT(!m_processes.isEmpty());
         return;
     }
@@ -958,7 +936,9 @@ void WebProcessPool::warmInitialProcess()
 
     if (!m_websiteDataStore)
         m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-    createNewWebProcess(m_websiteDataStore->websiteDataStore(), WebProcessProxy::IsInPrewarmedPool::Yes);
+    createNewWebProcess(m_websiteDataStore->websiteDataStore());
+
+    m_haveInitialEmptyProcess = true;
 }
 
 void WebProcessPool::enableProcessTermination()
@@ -1014,8 +994,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
-    if (process->isInPrewarmedPool())
-        --m_prewarmedProcessCount;
+    if (m_haveInitialEmptyProcess && process == m_processes.last())
+        m_haveInitialEmptyProcess = false;
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
@@ -1102,14 +1082,14 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     }
 
     RefPtr<WebProcessProxy> process;
-    if (pageConfiguration->relatedPage()) {
+    if (m_haveInitialEmptyProcess) {
+        process = m_processes.last();
+        m_haveInitialEmptyProcess = false;
+    } else if (pageConfiguration->relatedPage()) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->process();
-    } else {
-        process = tryTakePrewarmedProcess(pageConfiguration->websiteDataStore()->websiteDataStore());
-        if (!process)
-            process = &createNewWebProcessRespectingProcessCountLimit(pageConfiguration->websiteDataStore()->websiteDataStore());
-    }
+    } else
+        process = &createNewWebProcessRespectingProcessCountLimit(pageConfiguration->websiteDataStore()->websiteDataStore());
 
 #if ENABLE(SERVICE_WORKER)
     ASSERT(!is<ServiceWorkerProcessProxy>(*process));
@@ -1246,17 +1226,6 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
         // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
         process->send(Messages::WebProcess::HandleInjectedBundleMessage(messageName, UserData(process->transformObjectsToHandles(messageBody).get())), 0);
     }
-}
-
-void WebProcessPool::didReachGoodTimeToPrewarm()
-{
-    if (!m_configuration->processSwapsOnNavigation())
-        return;
-    if (!m_websiteDataStore)
-        m_websiteDataStore = API::WebsiteDataStore::defaultDataStore().ptr();
-    static constexpr size_t maxPrewarmCount = 1;
-    while (m_prewarmedProcessCount < maxPrewarmCount)
-        createNewWebProcess(m_websiteDataStore->websiteDataStore(), WebProcessProxy::IsInPrewarmedPool::Yes);
 }
 
 void WebProcessPool::populateVisitedLinks()
@@ -2050,8 +2019,6 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, co
         return page.process();
 
     action = PolicyAction::Suspend;
-    if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore()))
-        return process.releaseNonNull();
     return createNewWebProcess(page.websiteDataStore());
 }
 

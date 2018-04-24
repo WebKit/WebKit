@@ -1,3 +1,16 @@
+2018-04-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r230938.
+
+        Introduced two ProcessSwap API test failures.
+
+        Reverted changeset:
+
+        "Keep around a pre-warmed process when doing process swap on
+        navigation"
+        https://bugs.webkit.org/show_bug.cgi?id=184765
+        https://trac.webkit.org/changeset/230938
+
 2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Remove dead fixed layer code

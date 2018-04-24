@@ -50,7 +50,7 @@ Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool&
 }
 
 ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, const SecurityOriginData& securityOrigin, WebsiteDataStore& store)
-    : WebProcessProxy { pool, store, IsInPrewarmedPool::No }
+    : WebProcessProxy { pool, store }
     , m_securityOrigin(securityOrigin)
     , m_serviceWorkerPageID(generatePageID())
 {

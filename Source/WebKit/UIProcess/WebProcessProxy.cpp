@@ -105,14 +105,14 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
     return pageMap;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsInPrewarmedPool isInPrewarmedPool)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore)
 {
-    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isInPrewarmedPool));
+    auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore));
     proxy->connect();
     return proxy;
 }
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsInPrewarmedPool isInPrewarmedPool)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_responsivenessTimer(*this)
     , m_backgroundResponsivenessTimer(*this)
@@ -126,7 +126,6 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore& 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_userMediaCaptureManagerProxy(std::make_unique<UserMediaCaptureManagerProxy>(*this))
 #endif
-    , m_isInPrewarmedPool(isInPrewarmedPool == IsInPrewarmedPool::Yes)
 {
     auto result = allProcesses().add(coreProcessIdentifier(), this);
     ASSERT_UNUSED(result, result.isNewEntry);
