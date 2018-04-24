@@ -25,13 +25,12 @@
 
 #pragma once
 
-#include "LayoutContext.h"
+#include "FrameViewLayoutContext.h"
 #include "LayoutRect.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class LayoutContext;
 class RenderBlockFlow;
 class RenderBox;
 class RenderElement;
@@ -53,7 +52,7 @@ public:
 #endif
     {
     }
-    LayoutState(const LayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
+    LayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
     enum class IsPaginated { No, Yes };
     explicit LayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
@@ -92,10 +91,10 @@ public:
 private:
     void computeOffsets(const LayoutState& ancestor, RenderBox&, LayoutSize offset);
     void computeClipRect(const LayoutState& ancestor, RenderBox&);
-    // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/LayoutContext.
-    void computePaginationInformation(const LayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
+    // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/FrameViewLayoutContext.
+    void computePaginationInformation(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
     void propagateLineGridInfo(const LayoutState& ancestor, RenderBox&);
-    void establishLineGrid(const LayoutContext::LayoutStateStack&, RenderBlockFlow&);
+    void establishLineGrid(const FrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
     void computeLineGridPaginationOrigin(const RenderMultiColumnFlow&);
 
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173
@@ -142,7 +141,7 @@ public:
     ~LayoutStateMaintainer();
 
 private:
-    LayoutContext& m_context;
+    FrameViewLayoutContext& m_context;
     bool m_paintOffsetCacheIsDisabled { false };
     bool m_didPushLayoutState { false };
 };
@@ -153,18 +152,18 @@ public:
     ~SubtreeLayoutStateMaintainer();
 
 private:
-    LayoutContext* m_context { nullptr };
+    FrameViewLayoutContext* m_context { nullptr };
     bool m_didDisablePaintOffsetCache { false };
 };
 
 class LayoutStateDisabler {
     WTF_MAKE_NONCOPYABLE(LayoutStateDisabler);
 public:
-    LayoutStateDisabler(LayoutContext&);
+    LayoutStateDisabler(FrameViewLayoutContext&);
     ~LayoutStateDisabler();
 
 private:
-    LayoutContext& m_context;
+    FrameViewLayoutContext& m_context;
 };
 
 class PaginatedLayoutStateMaintainer {
@@ -173,7 +172,7 @@ public:
     ~PaginatedLayoutStateMaintainer();
 
 private:
-    LayoutContext& m_context;
+    FrameViewLayoutContext& m_context;
     bool m_pushed { false };
 };
 

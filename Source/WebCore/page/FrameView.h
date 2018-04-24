@@ -27,7 +27,7 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
 #include "ContainerNode.h"
-#include "LayoutContext.h"
+#include "FrameViewLayoutContext.h"
 #include "LayoutMilestones.h"
 #include "LayoutRect.h"
 #include "Pagination.h"
@@ -73,7 +73,7 @@ class FrameView final : public ScrollView {
 public:
     friend class RenderView;
     friend class Internals;
-    friend class LayoutContext;
+    friend class FrameViewLayoutContext;
 
     WEBCORE_EXPORT static Ref<FrameView> create(Frame&);
     static Ref<FrameView> create(Frame&, const IntSize& initialSize);
@@ -109,8 +109,8 @@ public:
     void setContentsSize(const IntSize&) final;
     void updateContentsSize() final;
 
-    const LayoutContext& layoutContext() const { return m_layoutContext; }
-    LayoutContext& layoutContext() { return m_layoutContext; }
+    const FrameViewLayoutContext& layoutContext() const { return m_layoutContext; }
+    FrameViewLayoutContext& layoutContext() { return m_layoutContext; }
 
     WEBCORE_EXPORT bool didFirstLayout() const;
     void queuePostLayoutCallback(WTF::Function<void ()>&&);
@@ -912,7 +912,7 @@ private:
     IntRect* m_cachedWindowClipRect { nullptr };
     Vector<WTF::Function<void ()>> m_postLayoutCallbackQueue;
 
-    LayoutContext m_layoutContext;
+    FrameViewLayoutContext m_layoutContext;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

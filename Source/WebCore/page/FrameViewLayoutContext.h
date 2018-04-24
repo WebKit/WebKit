@@ -44,10 +44,10 @@ class RenderObject;
 class RenderElement;
 class RenderView;
     
-class LayoutContext {
+class FrameViewLayoutContext {
 public:
-    LayoutContext(FrameView&);
-    ~LayoutContext();
+    FrameViewLayoutContext(FrameView&);
+    ~FrameViewLayoutContext();
 
     void layout();
 

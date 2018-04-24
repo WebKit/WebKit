@@ -1,3 +1,126 @@
+2018-04-24  Antti Koivisto  <antti@apple.com>
+
+        Rename LayoutCtx.h/cpp to LayoutContext.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=184922
+
+        Reviewed by Zalan Bujtas.
+
+        To achieve this the existing LayoutContext class is renamed to FrameViewLayoutContext.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutContext.cpp: Copied from Source/WebCore/layout/LayoutCtx.cpp.
+        * layout/LayoutContext.h: Copied from Source/WebCore/layout/LayoutCtx.h.
+        * layout/LayoutCtx.cpp: Removed.
+        * layout/LayoutCtx.h: Removed.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::shouldDeferScrollUpdateAfterContentSizeChange):
+        (WebCore::FrameView::updateLayoutViewport):
+        (WebCore::FrameView::updateLayerPositionsAfterScrolling):
+        (WebCore::FrameView::updateCompositingLayersAfterScrolling):
+        (WebCore::FrameView::availableContentSizeChanged):
+        * page/FrameView.h:
+        * page/FrameViewLayoutContext.cpp: Copied from Source/WebCore/page/LayoutContext.cpp.
+        (WebCore::LayoutScope::LayoutScope):
+        (WebCore::FrameViewLayoutContext::FrameViewLayoutContext):
+        (WebCore::FrameViewLayoutContext::~FrameViewLayoutContext):
+        (WebCore::FrameViewLayoutContext::layout):
+        (WebCore::FrameViewLayoutContext::runOrScheduleAsynchronousTasks):
+        (WebCore::FrameViewLayoutContext::runAsynchronousTasks):
+        (WebCore::FrameViewLayoutContext::flushAsynchronousTasks):
+        (WebCore::FrameViewLayoutContext::reset):
+        (WebCore::FrameViewLayoutContext::needsLayout const):
+        (WebCore::FrameViewLayoutContext::setNeedsLayout):
+        (WebCore::FrameViewLayoutContext::enableSetNeedsLayout):
+        (WebCore::FrameViewLayoutContext::disableSetNeedsLayout):
+        (WebCore::FrameViewLayoutContext::scheduleLayout):
+        (WebCore::FrameViewLayoutContext::unscheduleLayout):
+        (WebCore::FrameViewLayoutContext::scheduleSubtreeLayout):
+        (WebCore::FrameViewLayoutContext::layoutTimerFired):
+        (WebCore::FrameViewLayoutContext::convertSubtreeLayoutToFullLayout):
+        (WebCore::FrameViewLayoutContext::setSubtreeLayoutRoot):
+        (WebCore::FrameViewLayoutContext::canPerformLayout const):
+        (WebCore::FrameViewLayoutContext::applyTextSizingIfNeeded):
+        (WebCore::FrameViewLayoutContext::updateStyleForLayout):
+        (WebCore::FrameViewLayoutContext::handleLayoutWithFrameFlatteningIfNeeded):
+        (WebCore::FrameViewLayoutContext::startLayoutAtMainFrameViewIfNeeded):
+        (WebCore::FrameViewLayoutContext::layoutDelta const):
+        (WebCore::FrameViewLayoutContext::addLayoutDelta):
+        (WebCore::FrameViewLayoutContext::layoutDeltaMatches):
+        (WebCore::FrameViewLayoutContext::layoutState const):
+        (WebCore::FrameViewLayoutContext::pushLayoutState):
+        (WebCore::FrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded):
+        (WebCore::FrameViewLayoutContext::popLayoutState):
+        (WebCore::FrameViewLayoutContext::checkLayoutState):
+        (WebCore::FrameViewLayoutContext::frame const):
+        (WebCore::FrameViewLayoutContext::view const):
+        (WebCore::FrameViewLayoutContext::renderView const):
+        (WebCore::FrameViewLayoutContext::document const):
+        (WebCore::LayoutContext::LayoutContext): Deleted.
+        (WebCore::LayoutContext::~LayoutContext): Deleted.
+        (WebCore::LayoutContext::layout): Deleted.
+        (WebCore::LayoutContext::runOrScheduleAsynchronousTasks): Deleted.
+        (WebCore::LayoutContext::runAsynchronousTasks): Deleted.
+        (WebCore::LayoutContext::flushAsynchronousTasks): Deleted.
+        (WebCore::LayoutContext::reset): Deleted.
+        (WebCore::LayoutContext::needsLayout const): Deleted.
+        (WebCore::LayoutContext::setNeedsLayout): Deleted.
+        (WebCore::LayoutContext::enableSetNeedsLayout): Deleted.
+        (WebCore::LayoutContext::disableSetNeedsLayout): Deleted.
+        (WebCore::LayoutContext::scheduleLayout): Deleted.
+        (WebCore::LayoutContext::unscheduleLayout): Deleted.
+        (WebCore::LayoutContext::scheduleSubtreeLayout): Deleted.
+        (WebCore::LayoutContext::layoutTimerFired): Deleted.
+        (WebCore::LayoutContext::convertSubtreeLayoutToFullLayout): Deleted.
+        (WebCore::LayoutContext::setSubtreeLayoutRoot): Deleted.
+        (WebCore::LayoutContext::canPerformLayout const): Deleted.
+        (WebCore::LayoutContext::applyTextSizingIfNeeded): Deleted.
+        (WebCore::LayoutContext::updateStyleForLayout): Deleted.
+        (WebCore::LayoutContext::handleLayoutWithFrameFlatteningIfNeeded): Deleted.
+        (WebCore::LayoutContext::startLayoutAtMainFrameViewIfNeeded): Deleted.
+        (WebCore::LayoutContext::layoutDelta const): Deleted.
+        (WebCore::LayoutContext::addLayoutDelta): Deleted.
+        (WebCore::LayoutContext::layoutDeltaMatches): Deleted.
+        (WebCore::LayoutContext::layoutState const): Deleted.
+        (WebCore::LayoutContext::pushLayoutState): Deleted.
+        (WebCore::LayoutContext::pushLayoutStateForPaginationIfNeeded): Deleted.
+        (WebCore::LayoutContext::popLayoutState): Deleted.
+        (WebCore::LayoutContext::checkLayoutState): Deleted.
+        (WebCore::LayoutContext::frame const): Deleted.
+        (WebCore::LayoutContext::view const): Deleted.
+        (WebCore::LayoutContext::renderView const): Deleted.
+        (WebCore::LayoutContext::document const): Deleted.
+        * page/FrameViewLayoutContext.h: Copied from Source/WebCore/page/LayoutContext.h.
+        (WebCore::LayoutContext::startDisallowingLayout): Deleted.
+        (WebCore::LayoutContext::endDisallowingLayout): Deleted.
+        (WebCore::LayoutContext::layoutPhase const): Deleted.
+        (WebCore::LayoutContext::isLayoutNested const): Deleted.
+        (WebCore::LayoutContext::isLayoutPending const): Deleted.
+        (WebCore::LayoutContext::isInLayout const): Deleted.
+        (WebCore::LayoutContext::isInRenderTreeLayout const): Deleted.
+        (WebCore::LayoutContext::inPaintableState const): Deleted.
+        (WebCore::LayoutContext::layoutCount const): Deleted.
+        (WebCore::LayoutContext::subtreeLayoutRoot const): Deleted.
+        (WebCore::LayoutContext::clearSubtreeLayoutRoot): Deleted.
+        (WebCore::LayoutContext::resetFirstLayoutFlag): Deleted.
+        (WebCore::LayoutContext::didFirstLayout const): Deleted.
+        (WebCore::LayoutContext::setNeedsFullRepaint): Deleted.
+        (WebCore::LayoutContext::needsFullRepaint const): Deleted.
+        (WebCore::LayoutContext::isPaintOffsetCacheEnabled const): Deleted.
+        (WebCore::LayoutContext::layoutDisallowed const): Deleted.
+        (WebCore::LayoutContext::isLayoutSchedulingEnabled const): Deleted.
+        (WebCore::LayoutContext::inAsynchronousTasks const): Deleted.
+        (WebCore::LayoutContext::disablePaintOffsetCache): Deleted.
+        (WebCore::LayoutContext::enablePaintOffsetCache): Deleted.
+        * page/LayoutContext.cpp: Removed.
+        * page/LayoutContext.h: Removed.
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::computePaginationInformation):
+        (WebCore::LayoutState::establishLineGrid):
+        (WebCore::LayoutStateDisabler::LayoutStateDisabler):
+        * rendering/LayoutState.h:
+
 2018-04-24  Mark Lam  <mark.lam@apple.com>
 
         Need to acquire the VM lock before calling toNumber on a JSValue.

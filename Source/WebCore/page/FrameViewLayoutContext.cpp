@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutContext.h"
+#include "FrameViewLayoutContext.h"
 
 #include "CSSAnimationController.h"
 #include "DebugPageOverlays.h"
@@ -91,9 +91,9 @@ private:
 
 class LayoutScope {
 public:
-    LayoutScope(LayoutContext& layoutContext)
+    LayoutScope(FrameViewLayoutContext& layoutContext)
         : m_view(layoutContext.view())
-        , m_nestedState(layoutContext.m_layoutNestedState, layoutContext.m_layoutNestedState == LayoutContext::LayoutNestedState::NotInLayout ? LayoutContext::LayoutNestedState::NotNested : LayoutContext::LayoutNestedState::Nested)
+        , m_nestedState(layoutContext.m_layoutNestedState, layoutContext.m_layoutNestedState == FrameViewLayoutContext::LayoutNestedState::NotInLayout ? FrameViewLayoutContext::LayoutNestedState::NotNested : FrameViewLayoutContext::LayoutNestedState::Nested)
         , m_schedulingIsEnabled(layoutContext.m_layoutSchedulingIsEnabled, false)
         , m_inProgrammaticScroll(layoutContext.view().inProgrammaticScroll())
     {
@@ -107,25 +107,25 @@ public:
         
 private:
     FrameView& m_view;
-    SetForScope<LayoutContext::LayoutNestedState> m_nestedState;
+    SetForScope<FrameViewLayoutContext::LayoutNestedState> m_nestedState;
     SetForScope<bool> m_schedulingIsEnabled;
     bool m_inProgrammaticScroll { false };
 };
 
-LayoutContext::LayoutContext(FrameView& frameView)
+FrameViewLayoutContext::FrameViewLayoutContext(FrameView& frameView)
     : m_frameView(frameView)
-    , m_layoutTimer(*this, &LayoutContext::layoutTimerFired)
-    , m_asynchronousTasksTimer(*this, &LayoutContext::runAsynchronousTasks)
+    , m_layoutTimer(*this, &FrameViewLayoutContext::layoutTimerFired)
+    , m_asynchronousTasksTimer(*this, &FrameViewLayoutContext::runAsynchronousTasks)
 {
 }
 
-LayoutContext::~LayoutContext()
+FrameViewLayoutContext::~FrameViewLayoutContext()
 {
 }
 
-void LayoutContext::layout()
+void FrameViewLayoutContext::layout()
 {
-    LOG_WITH_STREAM(Layout, stream << "FrameView " << &view() << " LayoutContext::layout() with size " << view().layoutSize());
+    LOG_WITH_STREAM(Layout, stream << "FrameView " << &view() << " FrameViewLayoutContext::layout() with size " << view().layoutSize());
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate() || ScriptDisallowedScope::LayoutAssertionDisableScope::shouldDisable());
     ASSERT(LayoutDisallowedScope::isLayoutAllowed());
@@ -219,7 +219,7 @@ void LayoutContext::layout()
     DebugPageOverlays::didLayout(view().frame());
 }
 
-void LayoutContext::runOrScheduleAsynchronousTasks()
+void FrameViewLayoutContext::runOrScheduleAsynchronousTasks()
 {
     if (m_asynchronousTasksTimer.isActive())
         return;
@@ -248,7 +248,7 @@ void LayoutContext::runOrScheduleAsynchronousTasks()
     }
 }
 
-void LayoutContext::runAsynchronousTasks()
+void FrameViewLayoutContext::runAsynchronousTasks()
 {
     m_asynchronousTasksTimer.stop();
     if (m_inAsynchronousTasks)
@@ -257,14 +257,14 @@ void LayoutContext::runAsynchronousTasks()
     view().performPostLayoutTasks();
 }
 
-void LayoutContext::flushAsynchronousTasks()
+void FrameViewLayoutContext::flushAsynchronousTasks()
 {
     if (!m_asynchronousTasksTimer.isActive())
         return;
     runAsynchronousTasks();
 }
 
-void LayoutContext::reset()
+void FrameViewLayoutContext::reset()
 {
     m_layoutPhase = LayoutPhase::OutsideLayout;
     clearSubtreeLayoutRoot();
@@ -277,7 +277,7 @@ void LayoutContext::reset()
     m_needsFullRepaint = true;
 }
 
-bool LayoutContext::needsLayout() const
+bool FrameViewLayoutContext::needsLayout() const
 {
     // This can return true in cases where the document does not have a body yet.
     // Document::shouldScheduleLayout takes care of preventing us from scheduling
@@ -289,7 +289,7 @@ bool LayoutContext::needsLayout() const
         || (m_disableSetNeedsLayoutCount && m_setNeedsLayoutWasDeferred);
 }
 
-void LayoutContext::setNeedsLayout()
+void FrameViewLayoutContext::setNeedsLayout()
 {
     if (m_disableSetNeedsLayoutCount) {
         m_setNeedsLayoutWasDeferred = true;
@@ -302,19 +302,19 @@ void LayoutContext::setNeedsLayout()
     }
 }
 
-void LayoutContext::enableSetNeedsLayout()
+void FrameViewLayoutContext::enableSetNeedsLayout()
 {
     ASSERT(m_disableSetNeedsLayoutCount);
     if (!--m_disableSetNeedsLayoutCount)
         m_setNeedsLayoutWasDeferred = false; // FIXME: Find a way to make the deferred layout actually happen.
 }
 
-void LayoutContext::disableSetNeedsLayout()
+void FrameViewLayoutContext::disableSetNeedsLayout()
 {
     ++m_disableSetNeedsLayoutCount;
 }
 
-void LayoutContext::scheduleLayout()
+void FrameViewLayoutContext::scheduleLayout()
 {
     // FIXME: We should assert the page is not in the page cache, but that is causing
     // too many false assertions. See <rdar://problem/7218118>.
@@ -351,7 +351,7 @@ void LayoutContext::scheduleLayout()
     m_layoutTimer.startOneShot(delay);
 }
 
-void LayoutContext::unscheduleLayout()
+void FrameViewLayoutContext::unscheduleLayout()
 {
     if (m_asynchronousTasksTimer.isActive())
         m_asynchronousTasksTimer.stop();
@@ -368,7 +368,7 @@ void LayoutContext::unscheduleLayout()
     m_delayedLayout = false;
 }
 
-void LayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoot)
+void FrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoot)
 {
     ASSERT(renderView());
     auto& renderView = *this->renderView();
@@ -424,7 +424,7 @@ void LayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoot)
     InspectorInstrumentation::didInvalidateLayout(frame());
 }
 
-void LayoutContext::layoutTimerFired()
+void FrameViewLayoutContext::layoutTimerFired()
 {
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
@@ -433,19 +433,19 @@ void LayoutContext::layoutTimerFired()
     layout();
 }
 
-void LayoutContext::convertSubtreeLayoutToFullLayout()
+void FrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
 {
     ASSERT(subtreeLayoutRoot());
     subtreeLayoutRoot()->markContainingBlocksForLayout(ScheduleRelayout::No);
     clearSubtreeLayoutRoot();
 }
 
-void LayoutContext::setSubtreeLayoutRoot(RenderElement& layoutRoot)
+void FrameViewLayoutContext::setSubtreeLayoutRoot(RenderElement& layoutRoot)
 {
     m_subtreeLayoutRoot = makeWeakPtr(layoutRoot);
 }
 
-bool LayoutContext::canPerformLayout() const
+bool FrameViewLayoutContext::canPerformLayout() const
 {
     if (isInRenderTreeLayout())
         return false;
@@ -463,7 +463,7 @@ bool LayoutContext::canPerformLayout() const
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
-void LayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
+void FrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 {
     auto& settings = layoutRoot.settings();
     if (!settings.textAutosizingEnabled() || renderView()->printing())
@@ -484,7 +484,7 @@ void LayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 }
 #endif
 
-void LayoutContext::updateStyleForLayout()
+void FrameViewLayoutContext::updateStyleForLayout()
 {
     Document& document = *frame().document();
 
@@ -504,7 +504,7 @@ void LayoutContext::updateStyleForLayout()
     document.updateStyleIfNeeded();
 }
 
-bool LayoutContext::handleLayoutWithFrameFlatteningIfNeeded()
+bool FrameViewLayoutContext::handleLayoutWithFrameFlatteningIfNeeded()
 {
     if (!view().isInChildFrameWithFrameFlattening())
         return false;
@@ -514,7 +514,7 @@ bool LayoutContext::handleLayoutWithFrameFlatteningIfNeeded()
     return !layoutRoot || !layoutRoot->needsLayout();
 }
 
-void LayoutContext::startLayoutAtMainFrameViewIfNeeded()
+void FrameViewLayoutContext::startLayoutAtMainFrameViewIfNeeded()
 {
     // When we start a layout at the child level as opposed to the topmost frame view and this child
     // frame requires flattening, we need to re-initiate the layout at the topmost view. Layout
@@ -538,21 +538,21 @@ void LayoutContext::startLayoutAtMainFrameViewIfNeeded()
     parentView->layoutContext().layout();
 }
 
-LayoutSize LayoutContext::layoutDelta() const
+LayoutSize FrameViewLayoutContext::layoutDelta() const
 {
     if (auto* layoutState = this->layoutState())
         return layoutState->layoutDelta();
     return { };
 }
     
-void LayoutContext::addLayoutDelta(const LayoutSize& delta)
+void FrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
 {
     if (auto* layoutState = this->layoutState())
         layoutState->addLayoutDelta(delta);
 }
     
 #if !ASSERT_DISABLED
-bool LayoutContext::layoutDeltaMatches(const LayoutSize& delta)
+bool FrameViewLayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 {
     if (auto* layoutState = this->layoutState())
         return layoutState->layoutDeltaMatches(delta);
@@ -560,14 +560,14 @@ bool LayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 }
 #endif
 
-LayoutState* LayoutContext::layoutState() const
+LayoutState* FrameViewLayoutContext::layoutState() const
 {
     if (m_layoutStateStack.isEmpty())
         return nullptr;
     return m_layoutStateStack.last().get();
 }
 
-void LayoutContext::pushLayoutState(RenderElement& root)
+void FrameViewLayoutContext::pushLayoutState(RenderElement& root)
 {
     ASSERT(!m_paintOffsetCacheDisableCount);
     ASSERT(!layoutState());
@@ -575,7 +575,7 @@ void LayoutContext::pushLayoutState(RenderElement& root)
     m_layoutStateStack.append(std::make_unique<LayoutState>(root));
 }
 
-bool LayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
+bool FrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
 {
     if (layoutState())
         return false;
@@ -583,7 +583,7 @@ bool LayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layout
     return true;
 }
     
-bool LayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged)
+bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged)
 {
     // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
     auto* layoutState = this->layoutState();
@@ -595,35 +595,35 @@ bool LayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSize& offse
     return false;
 }
     
-void LayoutContext::popLayoutState()
+void FrameViewLayoutContext::popLayoutState()
 {
     m_layoutStateStack.removeLast();
 }
     
 #ifndef NDEBUG
-void LayoutContext::checkLayoutState()
+void FrameViewLayoutContext::checkLayoutState()
 {
     ASSERT(layoutDeltaMatches(LayoutSize()));
     ASSERT(!m_paintOffsetCacheDisableCount);
 }
 #endif
 
-Frame& LayoutContext::frame() const
+Frame& FrameViewLayoutContext::frame() const
 {
     return view().frame();
 }
 
-FrameView& LayoutContext::view() const
+FrameView& FrameViewLayoutContext::view() const
 {
     return m_frameView;
 }
 
-RenderView* LayoutContext::renderView() const
+RenderView* FrameViewLayoutContext::renderView() const
 {
     return view().renderView();
 }
 
-Document* LayoutContext::document() const
+Document* FrameViewLayoutContext::document() const
 {
     return frame().document();
 }
