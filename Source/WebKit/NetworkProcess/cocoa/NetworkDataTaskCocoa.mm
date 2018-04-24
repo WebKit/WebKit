@@ -48,6 +48,11 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.mm>
 #endif
 
+@interface NSURLSessionTask (Staging)
+@property (nullable, readwrite, retain) NSURL *_siteForCookies;
+@property (readwrite) BOOL _isTopLevelNavigation;
+@end
+
 namespace WebKit {
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
@@ -158,10 +163,12 @@ static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* tas
     if (request.isSameSiteUnspecified())
         return;
     static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
-    if ([task respondsToSelector:@selector(set_siteForCookies:)])
-        task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : emptyURL;
-    if ([task respondsToSelector:@selector(set_isTopLevelNavigation:)])
-        task._isTopLevelNavigation = request.isTopSite();
+    if (@available(macOS 10.14, iOS 12, *)) {
+        if ([task respondsToSelector:@selector(set_siteForCookies:)])
+            task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : emptyURL;
+        if ([task respondsToSelector:@selector(set_isTopLevelNavigation:)])
+            task._isTopLevelNavigation = request.isTopSite();
+    }
 }
 
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
