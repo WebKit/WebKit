@@ -106,8 +106,8 @@ int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
 
-class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, private IPC::MessageReceiver
-    {
+class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, private IPC::MessageReceiver {
+
 public:
     static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
 
@@ -449,6 +449,7 @@ public:
     Ref<WebProcessProxy> processForNavigation(WebPageProxy&, const API::Navigation&, WebCore::PolicyAction&);
     void registerSuspendedPageProxy(SuspendedPageProxy&);
     void unregisterSuspendedPageProxy(SuspendedPageProxy&);
+    void didReachGoodTimeToPrewarm();
 
 private:
     void platformInitialize();
@@ -456,7 +457,9 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    WebProcessProxy& createNewWebProcess(WebsiteDataStore&);
+    RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
+
+    WebProcessProxy& createNewWebProcess(WebsiteDataStore&, WebProcessProxy::IsInPrewarmedPool = WebProcessProxy::IsInPrewarmedPool::No);
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore&);
 
     void requestWebContentStatistics(StatisticsRequest*);
@@ -516,7 +519,7 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
 
     Vector<RefPtr<WebProcessProxy>> m_processes;
-    bool m_haveInitialEmptyProcess { false };
+    unsigned m_prewarmedProcessCount { 0 };
 
     WebProcessProxy* m_processWithPageCache { nullptr };
 #if ENABLE(SERVICE_WORKER)

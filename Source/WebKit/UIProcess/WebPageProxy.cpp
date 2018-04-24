@@ -506,6 +506,11 @@ bool WebPageProxy::isValid() const
     return m_isValid;
 }
 
+void WebPageProxy::notifyProcessPoolToPrewarm()
+{
+    m_process->processPool().didReachGoodTimeToPrewarm();
+}
+
 void WebPageProxy::setPreferences(WebPreferences& preferences)
 {
     if (&preferences == m_preferences.ptr())
@@ -3845,8 +3850,10 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, cons
 
     m_loaderClient->didFirstVisuallyNonEmptyLayoutForFrame(*this, *frame, m_process->transformHandlesToObjects(userData.object()).get());
 
-    if (frame->isMainFrame())
+    if (frame->isMainFrame()) {
         m_pageClient.didFirstVisuallyNonEmptyLayoutForMainFrame();
+        notifyProcessPoolToPrewarm();
+    }
 }
 
 void WebPageProxy::didLayoutForCustomContentProvider()
