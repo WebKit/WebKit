@@ -73,6 +73,9 @@ all : $(HEADERS)
 WEBCORE_HEADER_REPLACE_RULES = -e 's/<WebCore\//<WebKitLegacy\//' -e "s/(^ *)WEBCORE_EXPORT /\1/"
 WEBCORE_HEADER_MIGRATE_CMD = sed -E $(WEBCORE_HEADER_REPLACE_RULES) $< > $@; touch $(PRIVATE_HEADERS_DIR)
 
+FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
+HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
+
 $(PRIVATE_HEADERS_DIR)/% : % MigrateHeaders.make
 	$(WEBCORE_HEADER_MIGRATE_CMD)
 
@@ -83,7 +86,7 @@ all : $(REEXPORT_FILE)
 
 TAPI_PATH = $(strip $(shell xcrun --find tapi 2>/dev/null))
 ifneq (,$(TAPI_PATH))
-REEXPORT_COMMAND = $(TAPI_PATH) reexport -arch $(CURRENT_ARCH) -$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)) -isysroot $(SDK_DIR) -F $(BUILT_PRODUCTS_DIR) $^ -o $@
+REEXPORT_COMMAND = $(TAPI_PATH) reexport -arch $(CURRENT_ARCH) -$(DEPLOYMENT_TARGET_CLANG_FLAG_NAME)=$($(DEPLOYMENT_TARGET_CLANG_ENV_NAME)) -isysroot $(SDK_DIR) $(HEADER_FLAGS) $(FRAMEWORK_FLAGS) $^ -o $@
 else
 # Temporary stub for SDKs that don't have the tapi command, <rdar://problem/24582471>.
 REEXPORT_COMMAND = touch $@

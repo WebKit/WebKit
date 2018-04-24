@@ -1,3 +1,14 @@
+2018-04-24  Jer Noble  <jer.noble@apple.com>
+
+        Don't add system framework paths to FRAMEWORK_SEARCH_PATHS
+        https://bugs.webkit.org/show_bug.cgi?id=184786
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebCore.xcconfig:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordGraphics] Remove dead fixed layer code
