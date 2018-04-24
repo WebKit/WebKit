@@ -500,4 +500,49 @@ describe("/api/measurement-set", function () {
         });
     });
 
+    async function reportAfterAddingBuilderAndAggregatorsWithResponse(report)
+    {
+        await addBuilderForReport(report);
+        const db = TestServer.database();
+        await Promise.all([
+            db.insert('aggregators', {name: 'Arithmetic'}),
+            db.insert('aggregators', {name: 'Geometric'}),
+        ]);
+        return await TestServer.remoteAPI().postJSON('/api/report/', [report]);
+    }
+
+    const reportWithBuildRequest = {
+        "buildNumber": "123",
+        "buildTime": "2013-02-28T10:12:03.388304",
+        "builderName": "someBuilder",
+        "builderPassword": "somePassword",
+        "platform": "Mountain Lion",
+        "buildRequest": "700",
+        "tests": {
+            "test": {
+                "metrics": {"FrameRate": { "current": [[[0, 4], [100, 5], [205, 3]]] }}
+            },
+        },
+        "revisions": {
+            "macOS": {
+                "revision": "10.8.2 12C60"
+            },
+            "WebKit": {
+                "revision": "141977",
+                "timestamp": "2013-02-06T08:55:20.9Z"
+            }
+        }
+    };
+
+    it("should allow to report a build request", async () => {
+        await MockData.addMockData(TestServer.database());
+        let response = await reportAfterAddingBuilderAndAggregatorsWithResponse(reportWithBuildRequest);
+        assert.equal(response['status'], 'OK');
+        response = await TestServer.remoteAPI().getJSONWithStatus('/api/measurement-set/?analysisTask=500');
+        assert.equal(response['status'], 'OK');
+        assert.deepEqual(response['measurements'], [[1, 4, 3, 12, 50, [
+                ['1', '9', '10.8.2 12C60', null, 0], ['2', '11', '141977', null, 1360140920900]],
+            1, 1362046323388, '123', 1, 1, 'current']]);
+    });
+
 });

@@ -1,3 +1,15 @@
+2018-04-23  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Revision information returned by querying measurement set api with analysis task id should contain commit order.
+        https://bugs.webkit.org/show_bug.cgi?id=184902
+
+        Reviewed by Ryosuke Niwa.
+
+        This is a bug fix for r230719 which does not cover the case while querying `measurement-set.php?analysisTask=$task_id`
+
+        * public/api/measurement-set.php: AnalysisResultsFetcher.fetch_commits results should contains commit order.
+        * server-tests/api-measurement-set-tests.js: Added unit test for this change.
+
 2018-04-19  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add a bisect button to automatically schedule bisecting A/B tasks.
