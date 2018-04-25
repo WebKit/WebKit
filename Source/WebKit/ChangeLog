@@ -1,3 +1,17 @@
+2018-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PSON: Don't create a new process when navigating to a blob URL, data URL, and about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=184962
+
+        Reviewed by Youenn Fablet.
+        <rdar://problem/39715044>
+
+        Build fix. Revert the change in r231019 to remove the empty URL and about:blank check here.
+        These checks are for the source / originating URL, not the target URL.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
         WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier should use DoNotProcessIncomingMessagesWhenWaitingForSyncReply
