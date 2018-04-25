@@ -1,3 +1,23 @@
+2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] The search field on www.bing.com is missing label text
+        https://bugs.webkit.org/show_bug.cgi?id=184975
+        <rdar://problem/39723081>
+
+        Reviewed by Tim Horton.
+
+        Adds UIScriptController.formInputLabel, which asynchronously requests the input label text for the currently
+        focused element in extra zoom mode.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::formInputLabel const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::formInputLabel const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::formInputLabel const):
+
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Should load injected bundle from builddir in developer builds

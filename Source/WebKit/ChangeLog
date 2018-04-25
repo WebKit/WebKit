@@ -1,3 +1,29 @@
+2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] The search field on www.bing.com is missing label text
+        https://bugs.webkit.org/show_bug.cgi?id=184975
+        <rdar://problem/39723081>
+
+        Reviewed by Tim Horton.
+
+        Adds support for displaying the "aria-label" attribute as the input view's label text in extra zoom mode. Also
+        adds support for grabbing the input label's text for testing.
+
+        Test: fast/forms/extrazoom/form-control-label-text.html
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode const):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView formInputLabel]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView formInputLabel]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation):
+
 2018-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         PSON: Don't create a new process when navigating to a blob URL, data URL, and about:blank

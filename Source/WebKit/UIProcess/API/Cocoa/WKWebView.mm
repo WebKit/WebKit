@@ -5921,6 +5921,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return [_contentView selectFormPopoverTitle];
 }
 
+- (NSString *)formInputLabel
+{
+    return [_contentView formInputLabel];
+}
+
 - (void)didStartFormControlInteraction
 {
     // For subclasses to override.

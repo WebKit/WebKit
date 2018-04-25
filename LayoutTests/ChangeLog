@@ -1,3 +1,21 @@
+2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] The search field on www.bing.com is missing label text
+        https://bugs.webkit.org/show_bug.cgi?id=184975
+        <rdar://problem/39723081>
+
+        Reviewed by Tim Horton.
+
+        Adds a layout test to check that the label text of the focused form control in the input view can be sourced
+        from (1) the "placeholder" attribute, (2) the "title" attribute, (3) the "aria-label" attribute, or (4) an
+        associated label element.
+
+        * fast/forms/extrazoom/form-control-label-text-expected.txt: Added.
+        * fast/forms/extrazoom/form-control-label-text.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.formInputLabel):
+        (window.UIHelper):
+
 2018-04-25  Megan Gardner  <megan_gardner@apple.com>
 
         Don't activate Selection Assistant unless it is actually needed.

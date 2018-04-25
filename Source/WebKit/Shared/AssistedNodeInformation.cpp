@@ -93,6 +93,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(autofillFieldName);
     encoder << placeholder;
     encoder << label;
+    encoder << ariaLabel;
     encoder << assistedNodeIdentifier;
 }
 
@@ -186,6 +187,9 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
         return false;
 
     if (!decoder.decode(result.label))
+        return false;
+
+    if (!decoder.decode(result.ariaLabel))
         return false;
 
     if (!decoder.decode(result.assistedNodeIdentifier))

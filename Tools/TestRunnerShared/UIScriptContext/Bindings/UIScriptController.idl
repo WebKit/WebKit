@@ -189,6 +189,7 @@ interface UIScriptController {
     // <select> picker
     void selectFormAccessoryPickerRow(long rowIndex);
     readonly attribute DOMString selectFormPopoverTitle;
+    readonly attribute DOMString formInputLabel;
 
     void setTimePickerValue(long hour, long minute);
 

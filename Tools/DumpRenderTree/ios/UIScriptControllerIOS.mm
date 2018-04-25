@@ -171,6 +171,11 @@ JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
 {
     return nullptr;
 }
+
+JSRetainPtr<JSStringRef> UIScriptController::formInputLabel() const
+{
+    return nullptr;
+}
     
 JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {

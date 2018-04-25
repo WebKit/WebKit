@@ -199,4 +199,13 @@ window.UIHelper = class UIHelper {
         const setValueScript = `(() => uiController.setTimePickerValue(${hours}, ${minutes}))()`;
         return new Promise(resolve => testRunner.runUIScript(setValueScript, resolve));
     }
+
+    static formInputLabel()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.formInputLabel);
+            })()`, resolve);
+        });
+    }
 }

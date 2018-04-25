@@ -311,6 +311,11 @@ JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> UIScriptController::formInputLabel() const
+{
+    return nullptr;
+}
+
 void UIScriptController::scrollToOffset(long x, long y)
 {
 }

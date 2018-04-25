@@ -117,6 +117,7 @@ struct AssistedNodeInformation {
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
     String placeholder;
     String label;
+    String ariaLabel;
 
     uint64_t assistedNodeIdentifier { 0 };
 

@@ -2345,8 +2345,11 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         }
     }
 
-    if (is<HTMLElement>(m_assistedNode.get()))
-        information.title = downcast<HTMLElement>(*m_assistedNode).title();
+    if (is<Element>(m_assistedNode.get())) {
+        auto& element = downcast<Element>(*m_assistedNode);
+        information.title = element.title();
+        information.ariaLabel = element.attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
+    }
 
     if (is<HTMLSelectElement>(*m_assistedNode)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*m_assistedNode);

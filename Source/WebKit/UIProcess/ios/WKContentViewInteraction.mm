@@ -5515,6 +5515,15 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return [(WKFormSelectControl *)_inputPeripheral selectFormPopoverTitle];
 }
 
+- (NSString *)formInputLabel
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    if (_presentedFullScreenInputViewController)
+        return [self inputLabelTextForViewController:(id)_presentedFullScreenInputViewController.get()];
+#endif
+    return nil;
+}
+
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute
 {
 #if ENABLE(EXTRA_ZOOM_MODE)
