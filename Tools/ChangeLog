@@ -1,3 +1,67 @@
+2018-04-25  Jonathan Bedard  <jbedard@apple.com>
+
+        API test harness should be Python
+        https://bugs.webkit.org/show_bug.cgi?id=181043
+        <rdar://problem/36164410>
+
+        Reviewed by David Kilzer.
+
+        Run API tests from a Python script rather than Perl. The Python API tests have
+        the same structure as the layout tests.
+
+        * Scripts/run-api-tests: Changed from Perl to Python.
+        * Scripts/webkitpy/api_tests: Added.
+        * Scripts/webkitpy/api_tests/__init__.py: Added.
+        * Scripts/webkitpy/api_tests/manager.py: Added.
+        (Manager):
+        (Manager.__init__):
+        (Manager._test_list_from_output): Construct a list of tests from the output of
+        TestWTF and TestWebKitAPI.
+        (Manager._find_test_subset): Given a list of all possible tests and command line
+        arguments, return a list of tests which match the provided arguments.
+        (Manager._collect_tests): Run TestWTF and TestWebKitAPI with --gtest_list_tests
+        to determine which tests will be run.
+        (Manager._print_test_result): Formatted print of a test with it's output.
+        (Manager._print_tests_result_with_status): Print all tests and output for tests
+        which ran with a specified exit status.
+        (Manager.run): Collect all tests, run them and then print results from the run.
+        * Scripts/webkitpy/api_tests/run_api_tests.py: Added.
+        (main): Parse arguments, construct a port, early exit for illegal ports and
+        then run tests.
+        (run): Setup logging and printing before using the Manager to run tests.
+        (parse_args): Use argparse to define all options used by run-api-tests.
+        * Scripts/webkitpy/api_tests/runner.py: Added.
+        (Runner):
+        (Runner.__init__):
+        (Runner._shard_tests): Split tests so that each suite runs together.
+        (Runner.command_for_port): Run a command on the device specified by the given
+        port object. Once <https://bugs.webkit.org/show_bug.cgi?id=175204> is completed,
+        this function would be entirely replaced by the server_process factory owned
+        by the port object.
+        (Runner.run): Run all shards in the message_pool.
+        (Runner.handle): Handle reports from child processes.
+        (Runner.result_map_by_status): Return a mapping of tests to output for tests
+        which exit with a specific status.
+        (_Worker):
+        (_Worker.__init__):
+        (_Worker._filter_noisy_output): Filter out objc warnings since these polite the log.
+        (_Worker._run_single_test): Runs a single test in a single child process.
+        (_Worker._run_shard_with_binary): Attempts to run a group of tests in the same
+        child process. If this technique fails, the remaining tests are run singly.
+        (_Worker.handle): Run the specified shard.
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.check_api_test_build): Check if TestWTF and TestWebKitAPI are built.
+        (Port.environment_for_api_tests): Return the environment needed to run
+        the TestWebKitAPI binary.
+        (Port. path_to_api_test_binaries): Return a list of the path to all binaries
+        used when running API tests.
+        (Port._build_api_tests): Build TestWTF and TestWebKitAPI if required.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.environment_for_api_tests): Enable GuardMalloc for API tests.
+        * Scripts/webkitpy/port/server_process.py: 
+        (ServerProcess.pop_all_buffered_stdout):
+
 2018-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Incorrect number of WebDriver test failures shown in the bots

@@ -135,6 +135,13 @@ class MacPort(DarwinPort):
                 config_map[version_name.lower().replace(' ', '') + '+'] = version_names
         return config_map
 
+    def environment_for_api_tests(self):
+        result = super(MacPort, self).environment_for_api_tests()
+        if self.get_option('guard_malloc'):
+            result['DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
+            result['__XPC_DYLD_INSERT_LIBRARIES'] = '/usr/lib/libgmalloc.dylib'
+        return result
+
     def setup_environ_for_server(self, server_name=None):
         env = super(MacPort, self).setup_environ_for_server(server_name)
         if server_name == self.driver_name():

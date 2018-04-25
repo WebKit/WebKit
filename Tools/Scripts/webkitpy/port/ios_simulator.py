@@ -108,6 +108,17 @@ class IOSSimulatorPort(IOSPort):
 
         SimulatedDeviceManager.tear_down(self.host)
 
+    def environment_for_api_tests(self):
+        no_prefix = super(IOSSimulatorPort, self).environment_for_api_tests()
+        result = {}
+        SIMCTL_ENV_PREFIX = 'SIMCTL_CHILD_'
+        for value in no_prefix:
+            if not value.startswith(SIMCTL_ENV_PREFIX):
+                result[SIMCTL_ENV_PREFIX + value] = no_prefix[value]
+            else:
+                result[value] = no_prefix[value]
+        return result
+
     def setup_environ_for_server(self, server_name=None):
         _log.debug("setup_environ_for_server")
         env = super(IOSSimulatorPort, self).setup_environ_for_server(server_name)

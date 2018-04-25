@@ -240,6 +240,27 @@ class Port(object):
                 return False
         return True
 
+    def check_api_test_build(self):
+        if not self._root_was_set and self.get_option('build') and not self._build_api_tests():
+            return False
+        if self.get_option('install') and not self._check_port_build():
+            return False
+
+        for binary in self.path_to_api_test_binaries():
+            if not self._filesystem.exists(binary):
+                _log.error('{} was not found at {}'.format(os.path.basename(binary), binary))
+                return False
+        return True
+
+    def environment_for_api_tests(self):
+        build_root_path = str(self._build_path())
+        return {
+            'DYLD_LIBRARY_PATH': build_root_path,
+            '__XPC_DYLD_LIBRARY_PATH': build_root_path,
+            'DYLD_FRAMEWORK_PATH': build_root_path,
+            '__XPC_DYLD_FRAMEWORK_PATH': build_root_path,
+        }
+
     def _check_driver(self):
         driver_path = self._path_to_driver()
         if not self._filesystem.exists(driver_path):
@@ -1336,6 +1357,17 @@ class Port(object):
         This is likely used only by diff_image()"""
         return self._build_path('ImageDiff')
 
+    def path_to_api_test_binaries(self):
+        binary_names = ['TestWTF']
+        if self.host.platform.is_win():
+            binary_names += ['TestWebCore', 'TestWebKitLegacy']
+        else:
+            binary_names += ['TestWebKitAPI']
+        binary_paths = [self._build_path(binary_name) for binary_name in binary_names]
+        if self.host.platform.is_win():
+            binary_paths = [os.path.splitext(binary_path)[0] + '.exe' for binary_path in binary_paths]
+        return binary_paths
+
     def _path_to_lighttpd(self):
         """Returns the path to the LigHTTPd binary.
 
@@ -1444,6 +1476,15 @@ class Port(object):
             self._run_script("build-dumprendertree", args=self._build_driver_flags(), env=env)
             if self.get_option('webkit_test_runner'):
                 self._run_script("build-webkittestrunner", args=self._build_driver_flags(), env=env)
+        except ScriptError as e:
+            _log.error(e.message_with_output(output_limit=None))
+            return False
+        return True
+
+    def _build_api_tests(self):
+        environment = self.host.copy_current_environment().to_dictionary()
+        try:
+            self._run_script('build-api-tests', args=self._build_driver_flags(), env=environment)
         except ScriptError as e:
             _log.error(e.message_with_output(output_limit=None))
             return False
