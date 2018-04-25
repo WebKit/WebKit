@@ -60,6 +60,7 @@ if (isGtk()) {
     $launcherName = launcherName();
     @jhbuildWrapper = wrapperPrefixIfNeeded();
     $ENV{"WEBKIT_EXEC_PATH"} = catdir(productDir(), "bin");
+    $ENV{"WEBKIT_INJECTED_BUNDLE_PATH"} = catdir(productDir(), "lib");
     $ENV{"LD_LIBRARY_PATH"} = catdir(productDir(), "lib") . (defined $ENV{"LD_LIBRARY_PATH"} ? ":" . $ENV{"LD_LIBRARY_PATH"} : "" );
     print "Starting $launcherName \n";
     exec @jhbuildWrapper, $launcherName, @ARGV or die;
