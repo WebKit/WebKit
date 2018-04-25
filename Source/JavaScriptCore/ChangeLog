@@ -1,3 +1,17 @@
+2018-04-24  Keith Miller  <keith_miller@apple.com>
+
+        fromCharCode is missing some exception checks
+        https://bugs.webkit.org/show_bug.cgi?id=184952
+
+        Reviewed by Saam Barati.
+
+        I also removed the pointless slow path function and moved it into the
+        main function.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCode):
+        (JSC::stringFromCharCodeSlowCase): Deleted.
+
 2018-04-24  Filip Pizlo  <fpizlo@apple.com>
 
         MultiByOffset should emit one fewer branches in the case that the set of structures is proved already
