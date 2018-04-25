@@ -1,3 +1,28 @@
+2018-04-25  Andy Estes  <aestes@apple.com>
+
+        [Mac] Number of drop items is always 0 when performing a DHTML drag
+        https://bugs.webkit.org/show_bug.cgi?id=184943
+
+        Reviewed by Ryosuke Niwa.
+
+        New API test: DragAndDropPasteboardTests.NumberOfValidItemsForDrop
+
+        DragController tracks the number of items to be accepted by a file input element, taking
+        into account whether the control is disabled or accepts multiple files. When this number
+        changes, WebKit informs the NSDraggingInfo-conforming object passed to -draggingUpdated by
+        calling -setNumberOfValidItemsForDrop:. This number is presented to the user in a badge
+        rendered next to the dragging item thumbnails.
+
+        When performing a DHTML drag, we don't know how many items the page will accept, so prior
+        to this patch we would render a "0" in the badge. This is misleading, because the page is
+        more likely to accept all the items (or at least one of them) rather than none of them.
+
+        Let's do the straightforward thing and set numberOfValidItemsForDrop to equal the number of
+        files in the drag operation when performing a DHTML file drag.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+
 2018-04-25  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Set route sharing policy when setting audio session category

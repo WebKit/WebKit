@@ -1,3 +1,17 @@
+2018-04-25  Andy Estes  <aestes@apple.com>
+
+        [Mac] Number of drop items is always 0 when performing a DHTML drag
+        https://bugs.webkit.org/show_bug.cgi?id=184943
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DragAndDropPasteboardTests.mm:
+        (-[DragInfo numberOfValidItemsForDrop]):
+        (-[DragInfo setNumberOfValidItemsForDrop:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/full-page-dropzone.html: Added.
+
 2018-04-25  Jonathan Bedard  <jbedard@apple.com>
 
         API test harness should be Python

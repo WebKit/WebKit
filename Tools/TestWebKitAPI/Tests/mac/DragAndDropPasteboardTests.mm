@@ -28,6 +28,7 @@
 #if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
+#import "TestWKWebView.h"
 #import <AppKit/NSDragging.h>
 #import <WebKit/WebView.h>
 #import <wtf/BlockPtr.h>
@@ -81,6 +82,7 @@
     RetainPtr<DragSource> _source;
     RetainPtr<NSWindow> _window;
     NSSize _offset;
+    NSInteger _numberOfValidItemsForDrop;
 }
 @property (nonatomic) NSPoint lastMousePosition;
 @end
@@ -178,11 +180,12 @@
 
 - (NSInteger)numberOfValidItemsForDrop
 {
-    return 1;
+    return _numberOfValidItemsForDrop;
 }
 
 - (void)setNumberOfValidItemsForDrop:(NSInteger)number
 {
+    _numberOfValidItemsForDrop = number;
 }
 
 - (void)enumerateDraggingItemsWithOptions:(NSEnumerationOptions)enumOpts forView:(NSView *)view classes:(NSArray *)classArray searchOptions:(NSDictionary *)searchOptions usingBlock:(void (^)(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop))block
@@ -250,6 +253,35 @@ TEST(DragAndDropPasteboardTests, DropJPEG)
     RetainPtr<WebView> resultingWebView = webViewAfterPerformingDragOperation(pasteboard);
     EXPECT_TRUE([[resultingWebView stringByEvaluatingJavaScriptFromString:@"document.querySelector('img').tagName === 'IMG'"] isEqualToString:@"true"]);
 }
+    
+#if WK_API_ENABLED
+
+TEST(DragAndDropPasteboardTests, NumberOfValidItemsForDrop)
+{
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard declareTypes:@[NSFilenamesPboardType] owner:nil];
+    [pasteboard setPropertyList:@[@"file-name"] forType:NSFilenamesPboardType];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto hostWindow = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:0 backing:NSBackingStoreBuffered defer:NO]);
+    [hostWindow setFrameOrigin:NSMakePoint(0, 0)];
+    [[hostWindow contentView] addSubview:webView.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"full-page-dropzone"];
+
+    auto dragSource = adoptNS([[DragSource alloc] init]);
+    auto dragInfo = adoptNS([[DragInfo alloc] initWithImage:getTestImage() offset:NSMakeSize(0, 0) pasteboard:pasteboard source:dragSource.get() destinationWindow:hostWindow.get()]);
+
+    [dragInfo setLastMousePosition:NSMakePoint(0, 200)];
+    [webView draggingEntered:dragInfo.get()];
+    EXPECT_WK_STREQ(@"1", [webView stringByEvaluatingJavaScript:@"window.dragEnteredForTesting"]);
+
+    [dragInfo setLastMousePosition:NSMakePoint(200, 200)];
+    [webView draggingUpdated:dragInfo.get()];
+    EXPECT_EQ(1U, [dragInfo numberOfValidItemsForDrop]);
+}
+
+#endif // WK_API_ENABLED
 
 } // namespace TestWebKitAPI
 
