@@ -50,6 +50,7 @@ struct NavigationActionData {
     WTF::String downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     bool isRedirect { false };
+    bool treatAsSameOriginNavigation { false };
     bool isCrossOriginWindowOpenNavigation { false };
     std::optional<std::pair<uint64_t, uint64_t>> opener;
 };

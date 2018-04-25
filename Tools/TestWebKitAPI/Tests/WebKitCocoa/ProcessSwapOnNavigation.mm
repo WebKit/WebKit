@@ -1054,4 +1054,178 @@ TEST(ProcessSwap, LoadUnload)
 }
 #endif // !TARGET_OS_IPHONE
 
+static const char* sameOriginBlobNavigationTestBytes = R"PSONRESOURCE(
+<!DOCTYPE html>
+<html>
+<body>
+<p><a id="link">Click here</a></p>
+<script>
+const blob = new Blob(['<!DOCTYPE html><html><p>PASS</p></html>'], {type: 'text/html'});
+link.href = URL.createObjectURL(blob);
+</script>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, SameOriginBlobNavigation)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"document.getElementById('link').click()" completionHandler: nil];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+    EXPECT_EQ(pid1, pid2);
+}
+
+TEST(ProcessSwap, CrossOriginBlobNavigation)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON1"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON2"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson1://host/main1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+
+    bool finishedRunningScript = false;
+    String blobURL;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"document.getElementById('link').href" completionHandler: [&] (id result, NSError *error) {
+        blobURL = String([NSString stringWithFormat:@"%@", result]);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson2://host/main1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    finishedRunningScript = false;
+    String script = "document.getElementById('link').href = '" + blobURL + "'";
+    [webView _evaluateJavaScriptWithoutUserGesture:(NSString *)script completionHandler: [&] (id result, NSError *error) {
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+
+    // This navigation will fail.
+    [webView _evaluateJavaScriptWithoutUserGesture:@"document.getElementById('link').click()" completionHandler: [&] (id result, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid3 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid3);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+    EXPECT_NE(pid1, pid2);
+    EXPECT_EQ(pid2, pid3);
+}
+
+TEST(ProcessSwap, NavigateToAboutBlank)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+    EXPECT_EQ(pid1, pid2);
+}
+
+TEST(ProcessSwap, NavigateToDataURL)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr<PSONScheme> handler = adoptNS([[PSONScheme alloc] initWithBytes:sameOriginBlobNavigationTestBytes]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    numberOfDecidePolicyCalls = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://host/main1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/plain,PASS"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+    EXPECT_EQ(pid1, pid2);
+}
+
 #endif // WK_API_ENABLED

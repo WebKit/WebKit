@@ -1,3 +1,18 @@
+2018-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PSON: Don't create a new process when navigating to a blob URL, data URL, and about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=184962
+
+        Reviewed by Youenn Fablet.
+
+        Added four test cases for navigating to a blob URL, data URL, and about:blank with process-swap-on-navigation turned on.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (ProcessSwap.SameOriginBlobNavigation): Added.
+        (ProcessSwap.CrossOriginBlobNavigation): Added.
+        (ProcessSwap.NavigateToAboutBlank): Added.
+        (ProcessSwap.NavigateToDataURL): Added.
+
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Remove deprecated functions and properties from the API

@@ -1,3 +1,37 @@
+2018-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PSON: Don't create a new process when navigating to a blob URL, data URL, and about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=184962
+
+        Reviewed by Youenn Fablet.
+
+        Don't create a new WebContent process when navigating to a blob object URL since doing so
+        can result in a race condition in which the blog URL is removed from the blob registry of
+        the network process by the time the navigation gets commited. This causes a failure in
+        fast/dom/HTMLAnchorElement/anchor-download-unset.html and oher layout tests.
+
+        In the future, the network process should verify that a given WebContent process has access
+        to a given blob URL. For now, we rely on WebContent process to tell us whether it can
+        navigate to a given blob URL or not.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const): Encode newly added treatAsSameOriginNavigation.
+        (WebKit::NavigationActionData::decode): Ditto for decoding.
+        * Shared/NavigationActionData.h:
+        (WebKit::NavigationActionData::treatAsSameOriginNavigation): Added.
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setTreatAsSameOriginNavigation): Added.
+        (API::Navigation::treatAsSameOriginNavigation const): Added.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Use the current process when
+        treatAsSameOriginNavigation is set to true; i.e. when navigating to a blob URL the current
+        document has access.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-04-25  Megan Gardner  <megan_gardner@apple.com>
 
         Don't activate Selection Assistant unless it is actually needed.

@@ -3956,6 +3956,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     navigation->setShouldForceDownload(!navigationActionData.downloadAttribute.isNull());
     navigation->setCurrentRequest(ResourceRequest(request), m_process->coreProcessIdentifier());
     navigation->setCurrentRequestIsRedirect(navigationActionData.isRedirect);
+    navigation->setTreatAsSameOriginNavigation(navigationActionData.treatAsSameOriginNavigation);
     navigation->setIsCrossOriginWindowOpenNavigation(navigationActionData.isCrossOriginWindowOpenNavigation);
     navigation->setOpener(navigationActionData.opener);
 

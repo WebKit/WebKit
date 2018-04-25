@@ -84,6 +84,9 @@ public:
     void setShouldForceDownload(bool value) { m_shouldForceDownload = value; }
     bool shouldForceDownload() const { return m_shouldForceDownload; }
 
+    void setTreatAsSameOriginNavigation(bool value) { m_treatAsSameOriginNavigation = value; }
+    bool treatAsSameOriginNavigation() const { return m_treatAsSameOriginNavigation; }
+
     void setIsCrossOriginWindowOpenNavigation(bool value) { m_isCrossOriginWindowOpenNavigation = value; }
     bool isCrossOriginWindowOpenNavigation() const { return m_isCrossOriginWindowOpenNavigation; }
 
@@ -111,6 +114,7 @@ private:
     RefPtr<WebKit::WebBackForwardListItem> m_targetItem;
     RefPtr<WebKit::WebBackForwardListItem> m_fromItem;
     std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
+    bool m_treatAsSameOriginNavigation { false };
     bool m_isCrossOriginWindowOpenNavigation { false };
     std::optional<std::pair<uint64_t, uint64_t>> m_opener;
 };

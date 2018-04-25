@@ -72,6 +72,8 @@ public:
 
     const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
 
+    bool treatAsSameOriginNavigation() const { return m_treatAsSameOriginNavigation; }
+
     void setIsCrossOriginWindowOpenNavigation(bool value) { m_isCrossOriginWindowOpenNavigation = value; }
     bool isCrossOriginWindowOpenNavigation() const { return m_isCrossOriginWindowOpenNavigation; }
 
@@ -87,6 +89,7 @@ private:
     RefPtr<Event> m_event;
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
     AtomicString m_downloadAttribute;
+    bool m_treatAsSameOriginNavigation;
     bool m_isCrossOriginWindowOpenNavigation { false };
     std::optional<std::pair<uint64_t /* pageID */, uint64_t /* frameID */>> m_opener;
 };

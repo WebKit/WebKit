@@ -47,6 +47,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << downloadAttribute;
     encoder << clickLocationInRootViewCoordinates;
     encoder << isRedirect;
+    encoder << treatAsSameOriginNavigation;
     encoder << isCrossOriginWindowOpenNavigation;
     encoder << opener;
 }
@@ -97,6 +98,11 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!isRedirect)
         return std::nullopt;
 
+    std::optional<bool> treatAsSameOriginNavigation;
+    decoder >> treatAsSameOriginNavigation;
+    if (!treatAsSameOriginNavigation)
+        return std::nullopt;
+
     std::optional<bool> isCrossOriginWindowOpenNavigation;
     decoder >> isCrossOriginWindowOpenNavigation;
     if (!isCrossOriginWindowOpenNavigation)
@@ -107,7 +113,9 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!opener)
         return std::nullopt;
 
-    return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier), WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates), WTFMove(*isRedirect), *isCrossOriginWindowOpenNavigation, WTFMove(*opener) }};
+    return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
+        WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
+        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *isCrossOriginWindowOpenNavigation, WTFMove(*opener) }};
 }
 
 } // namespace WebKit

@@ -1,3 +1,23 @@
+2018-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PSON: Don't create a new process when navigating to a blob URL, data URL, and about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=184962
+
+        Reviewed by Youenn Fablet.
+
+        Added NavigationAction::treatAsSameOriginNavigation, which signifies WebKit code to avoid creating
+        a new WebContent process when navigating to a blob URL, data URL, and about:blank.
+
+        Tests: ProcessSwap.SameOriginBlobNavigation
+               ProcessSwap.CrossOriginBlobNavigation
+               ProcessSwap.NavigateToAboutBlank
+               ProcessSwap.NavigateToDataURL
+
+        * loader/NavigationAction.cpp:
+        (WebCore::treatAsSameOriginNavigation):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::treatAsSameOriginNavigation const):
+
 2018-04-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement Layout::BlockContainer functions.
