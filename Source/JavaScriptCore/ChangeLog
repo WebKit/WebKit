@@ -1,3 +1,12 @@
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Miscellaneous build cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=184399
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformGTK.cmake:
+
 2018-04-24  Keith Miller  <keith_miller@apple.com>
 
         fromCharCode is missing some exception checks

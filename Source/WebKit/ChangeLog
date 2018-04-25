@@ -1,3 +1,12 @@
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Miscellaneous build cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=184399
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformGTK.cmake:
+
 2018-04-25  Dean Jackson  <dino@apple.com>
 
         Make a better flag for system preview, and disable it where necessary
