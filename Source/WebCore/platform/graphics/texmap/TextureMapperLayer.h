@@ -177,7 +177,8 @@ private:
         bool showRepaintCounter : 1;
 
         State()
-            : opacity(1)
+            : anchorPoint(0.5, 0.5, 0)
+            , opacity(1)
             , maskLayer(0)
             , replicaLayer(0)
             , debugBorderWidth(0)

@@ -3369,8 +3369,6 @@ webkit.org/b/184778 inspector/canvas/setShaderProgramHighlighted.html [ Failure 
 webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
 webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
 
-webkit.org/b/184780 fast/repaint/fixed-scale.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

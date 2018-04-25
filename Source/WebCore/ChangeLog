@@ -1,3 +1,16 @@
+2018-04-25  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] fast/repaint/fixed-scale.html failing since r230479 "[TexMap] TextureMapperLayer unnecessarily duplicates state in GraphicsLayerTransform"
+        https://bugs.webkit.org/show_bug.cgi?id=184780
+
+        Reviewed by Žan Doberšek.
+
+        Initialize the anchorPoint to (0.5, 0.5, 0) in TextureMapperLayer::State.
+
+        Covered by existent tests.
+
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2018-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement MouseEvent.buttons
