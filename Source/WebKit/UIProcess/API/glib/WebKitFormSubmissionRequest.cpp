@@ -86,6 +86,7 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std:
     return request;
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_form_submission_request_get_text_fields:
  * @request: a #WebKitFormSubmissionRequest
@@ -115,6 +116,7 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
 
     return request->priv->values.get();
 }
+#endif
 
 /**
  * webkit_form_submission_request_list_text_fields:

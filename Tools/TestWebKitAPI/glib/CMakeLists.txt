@@ -120,7 +120,6 @@ ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest ${WebKitGLibAPIWebProcessTests})
 ADD_WK2_TEST(TestAuthentication ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp)
 ADD_WK2_TEST(TestAutomationSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp)
 ADD_WK2_TEST(TestBackForwardList ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp)
-ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp)
 ADD_WK2_TEST(TestDownloads ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp)
 ADD_WK2_TEST(TestWebKitFaviconDatabase ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp)
 ADD_WK2_TEST(TestWebKitFindController ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp)
@@ -141,3 +140,8 @@ ADD_WK2_TEST(TestWebKitUserContentManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKi
 ADD_WK2_TEST(TestWebsiteData ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp)
 ADD_WK2_TEST(TestConsoleMessage ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp)
 ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDOMElement.cpp)
+
+# FIXME: Enable for WPE
+if (PORT STREQUAL "GTK")
+    ADD_WK2_TEST(TestCookieManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp)
+endif ()

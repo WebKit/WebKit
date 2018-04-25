@@ -1,3 +1,17 @@
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Remove deprecated functions and properties from the API
+        https://bugs.webkit.org/show_bug.cgi?id=179295
+
+        Reviewed by Žan Doberšek.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+        (testWebViewAuthenticationStorage): Disable this test for now. It will require some effort
+        to rewrite LoadTrackingTest to not require the web view at construction time.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings): Don't test private browsing setting, which is gone.
+        * TestWebKitAPI/glib/CMakeLists.txt: Disable TestCookieManager for now.
+
 2018-04-25  Andy Estes  <aestes@apple.com>
 
         [Mac] Number of drop items is always 0 when performing a DHTML drag

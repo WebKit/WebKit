@@ -420,6 +420,7 @@ gboolean webkit_cookie_manager_delete_cookie_finish(WebKitCookieManager* manager
     return g_task_propagate_boolean(G_TASK(result), error);
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_cookie_manager_get_domains_with_cookies:
  * @cookie_manager: a #WebKitCookieManager
@@ -518,3 +519,4 @@ void webkit_cookie_manager_delete_all_cookies(WebKitCookieManager* manager)
 
     webkit_website_data_manager_clear(manager->priv->dataManager, WEBKIT_WEBSITE_DATA_COOKIES, 0, nullptr, nullptr, nullptr);
 }
+#endif

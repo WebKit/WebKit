@@ -1,5 +1,35 @@
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE] Remove deprecated functions and properties from the API
+        https://bugs.webkit.org/show_bug.cgi?id=179295
+
+        Reviewed by Žan Doberšek.
+
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        * UIProcess/API/glib/WebKitFormSubmissionRequest.cpp:
+        * UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:
+        (webkitNavigationPolicyDecisionGetProperty):
+        (webkit_navigation_policy_decision_class_init):
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkit_web_context_class_init):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkitWebViewHandleAuthenticationChallenge):
+        (webkitWebViewWebProcessTerminated):
+        * UIProcess/API/wpe/WebKitCookieManager.h:
+        * UIProcess/API/wpe/WebKitFormSubmissionRequest.h:
+        * UIProcess/API/wpe/WebKitNavigationPolicyDecision.h:
+        * UIProcess/API/wpe/WebKitSettings.h:
+        * UIProcess/API/wpe/WebKitWebContext.h:
+
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, silence -Wreturn-type warning
         https://bugs.webkit.org/show_bug.cgi?id=184560
 

@@ -145,7 +145,9 @@ enum {
 
     INSECURE_CONTENT_DETECTED,
 
+#if PLATFORM(GTK)
     WEB_PROCESS_CRASHED,
+#endif
     WEB_PROCESS_TERMINATED,
 
     AUTHENTICATE,
@@ -1788,6 +1790,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_INSECURE_CONTENT_EVENT);
 
+#if PLATFORM(GTK)
     /**
      * WebKitWebView::web-process-crashed:
      * @web_view: the #WebKitWebView
@@ -1807,6 +1810,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_signal_accumulator_true_handled, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 0);
+#endif
 
     /**
      * WebKitWebView::web-process-terminated:
@@ -2342,9 +2346,13 @@ void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmission
 
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, AuthenticationChallengeProxy* authenticationChallenge)
 {
+#if PLATFORM(GTK)
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     gboolean privateBrowsingEnabled = webView->priv->isEphemeral || webkit_settings_get_enable_private_browsing(webView->priv->settings.get());
     G_GNUC_END_IGNORE_DEPRECATIONS;
+#else
+    gboolean privateBrowsingEnabled = webView->priv->isEphemeral;
+#endif
     webView->priv->authenticationRequest = adoptGRef(webkitAuthenticationRequestCreate(authenticationChallenge, privateBrowsingEnabled));
     gboolean returnValue;
     g_signal_emit(webView, signals[AUTHENTICATE], 0, webView->priv->authenticationRequest.get(), &returnValue);
@@ -3833,10 +3841,12 @@ cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAs
 
 void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessTerminationReason reason)
 {
+#if PLATFORM(GTK)
     if (reason == WEBKIT_WEB_PROCESS_CRASHED) {
         gboolean returnValue;
         g_signal_emit(webView, signals[WEB_PROCESS_CRASHED], 0, &returnValue);
     }
+#endif
     g_signal_emit(webView, signals[WEB_PROCESS_TERMINATED], 0, reason);
 }
 

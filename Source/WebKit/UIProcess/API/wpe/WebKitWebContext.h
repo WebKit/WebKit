@@ -284,10 +284,6 @@ WEBKIT_API void
 webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,
                                                      const gchar                   *hostname);
 
-WEBKIT_DEPRECATED_FOR(webkit_web_context_new_with_website_data_manager) void
-webkit_web_context_set_disk_cache_directory         (WebKitWebContext              *context,
-                                                     const gchar                   *directory);
-
 WEBKIT_API void
 webkit_web_context_allow_tls_certificate_for_host   (WebKitWebContext              *context,
                                                      GTlsCertificate               *certificate,
