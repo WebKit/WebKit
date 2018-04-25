@@ -1,3 +1,20 @@
+2018-04-25  Robin Morisset  <rmorisset@apple.com>
+
+        In FTLLowerDFGToB3.cpp::compileCreateRest, always use a contiguous array as the indexing type when under isWatchingHavingABadTimeWatchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=184773
+        <rdar://problem/37773612>
+
+        Reviewed by Filip Pizlo.
+
+        We were calling restParameterStructure(), which returns arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous).
+        arrayStructureForIndexingTypeDuringAllocation uses m_arrayStructureForIndexingShapeDuringAllocation, which is set to SlowPutArrayStorage when we are 'having a bad time'.
+        This is problematic, because the structure is then passed to allocateUninitializedContiguousJSArray, which ASSERTs that the indexing type is contiguous (or int32).
+        We solve the problem by using originalArrayStructureForIndexingType which always returns a structure with the right indexing type (contiguous), even if we are having a bad time.
+        This is safe, as we are under isWatchingHavingABadTimeWatchpoint, so if we have a bad time, the code we generate will never be installed.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateRest):
+
 2018-04-25  Mark Lam  <mark.lam@apple.com>
 
         Push the definition of PtrTag down to the WTF layer.

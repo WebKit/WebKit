@@ -676,6 +676,7 @@ public:
     Structure* callableProxyObjectStructure() const { return m_callableProxyObjectStructure.get(); }
     Structure* proxyRevokeStructure() const { return m_proxyRevokeStructure.get(); }
     Structure* restParameterStructure() const { return arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous); }
+    Structure* originalRestParameterStructure() const { return originalArrayStructureForIndexingType(ArrayWithContiguous); }
 #if ENABLE(WEBASSEMBLY)
     Structure* webAssemblyModuleRecordStructure() const { return m_webAssemblyModuleRecordStructure.get(); }
     Structure* webAssemblyFunctionStructure() const { return m_webAssemblyFunctionStructure.get(); }
