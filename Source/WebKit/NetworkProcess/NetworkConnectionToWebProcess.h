@@ -130,7 +130,7 @@ private:
     void performSynchronousLoad(NetworkResourceLoadParameters&&, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
     void loadPing(NetworkResourceLoadParameters&&);
     void prefetchDNS(const String&);
-    void preconnectTo(uint64_t preconnectionIdentifier, NetworkLoadParameters&&);
+    void preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&&);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void setDefersLoading(ResourceLoadIdentifier, bool);

@@ -183,6 +183,8 @@ public:
 
         bool refresh = equalIgnoringFragmentIdentifier(frame.document()->url(), url());
         ResourceRequest resourceRequest { url(), referrer(), refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy };
+        if (initiatedByMainFrame() == InitiatedByMainFrame::Yes)
+            resourceRequest.setRequester(ResourceRequest::Requester::Main);
         FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), resourceRequest, "_self", lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, shouldOpenExternalURLs(), initiatedByMainFrame() };
 
         frame.loader().changeLocation(WTFMove(frameLoadRequest));

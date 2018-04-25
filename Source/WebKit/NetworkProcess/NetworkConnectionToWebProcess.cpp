@@ -301,7 +301,7 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
     NetworkProcess::singleton().prefetchDNS(hostname);
 }
 
-void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkLoadParameters&& parameters)
+void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&& parameters)
 {
 #if ENABLE(SERVER_PRECONNECT)
     new PreconnectTask(WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {

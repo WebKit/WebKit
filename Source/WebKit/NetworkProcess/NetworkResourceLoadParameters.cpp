@@ -82,6 +82,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << defersLoading;
     encoder << needsCertificateInfo;
+    encoder << isMainFrameNavigation;
     encoder << maximumBufferingTime;
     encoder << derivedCachedDataTypesToRetrieve;
 
@@ -167,6 +168,8 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.defersLoading))
         return false;
     if (!decoder.decode(result.needsCertificateInfo))
+        return false;
+    if (!decoder.decode(result.isMainFrameNavigation))
         return false;
     if (!decoder.decode(result.maximumBufferingTime))
         return false;

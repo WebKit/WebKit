@@ -1,3 +1,49 @@
+2018-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Don't Block First Party Cookies on Redirects
+        https://bugs.webkit.org/show_bug.cgi?id=184948
+        <rdar://problem/39534099>
+
+        Reviewed by Youenn Fablet.
+
+        Top-level navigations should not be subject to cookie blocking behavior. When performing redirects for main frame
+        navigation we are blocking cookies, leading to site breakage.
+        
+        We need to keep track of which NetworkDataTasks are due to a main frame navigation. When a redirect is performed
+        on the main frame, we should treat the new origin as the 'first party for cookies' and avoid blocking cookies for
+        that URL.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo): Use the correct parameter type. We actually serialize
+        NetworkResourceLoadParameters over IPC, so we should get access to all the members of this child class.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create): Pass new 'loadIsForNavigation' flag to create methods. 
+        (WebKit::NetworkDataTask::NetworkDataTask): Capture 'loadIsForNavigation' in constructor.
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::isTopLevelNavigation const): Added.
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::NetworkDataTaskBlob): Accept new constructor argument.
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::willPerformHTTPRedirection): Retain requester value from old request during redirect.
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (NetworkResourceLoadParameters::decode): Update to pass new flag.
+        (NetworkResourceLoadParameters::encode): Ditto.
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/capture/NetworkDataTaskReplay.cpp:
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::NetworkDataTaskReplay): Accept new constructor argument.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa): Accept new constructor argument.
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::NetworkDataTaskCurl): Accept new constructor argument.
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup): Accept new constructor argument.
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
         Ensure DNT is set for redirections handled in NetworkProcess

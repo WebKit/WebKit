@@ -325,9 +325,9 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     // FIXME: We should also sanitize redirect response for navigations.
     loadParameters.shouldRestrictHTTPResponseAccess = RuntimeEnabledFeatures::sharedFeatures().restrictedHTTPResponseAccess() && resourceLoader.options().mode != FetchOptions::Mode::Navigate;
 
-    bool isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
+    loadParameters.isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
 
-    loadParameters.shouldEnableFromOriginResponseHeader = RuntimeEnabledFeatures::sharedFeatures().fromOriginResponseHeaderEnabled() && !isMainFrameNavigation;
+    loadParameters.shouldEnableFromOriginResponseHeader = RuntimeEnabledFeatures::sharedFeatures().fromOriginResponseHeaderEnabled() && !loadParameters.isMainFrameNavigation;
     if (loadParameters.shouldEnableFromOriginResponseHeader) {
         Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
         for (auto* frame = resourceLoader.frame(); frame; frame = frame->tree().parent()) {

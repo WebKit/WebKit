@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,8 +126,10 @@ public:
     void setSuggestedFilename(const String& suggestedName) { m_suggestedFilename = suggestedName; }
     const String& partition() { return m_partition; }
 
+    bool isTopLevelNavigation() const { return m_dataTaskIsForMainFrameNavigation; }
+
 protected:
-    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
+    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
 
     enum FailureType {
         NoFailure,
@@ -155,6 +157,7 @@ protected:
     WebCore::ResourceRequest m_firstRequest;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     String m_suggestedFilename;
+    bool m_dataTaskIsForMainFrameNavigation { false };
 };
 
 } // namespace WebKit

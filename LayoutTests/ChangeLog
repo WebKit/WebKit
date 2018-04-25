@@ -1,3 +1,14 @@
+2018-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Don't Block First Party Cookies on Redirects
+        https://bugs.webkit.org/show_bug.cgi?id=184948
+        <rdar://problem/39534099>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html: Added.
+
 2018-04-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline tests for iOS.

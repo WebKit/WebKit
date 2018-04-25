@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ namespace NetworkCapture {
 static const char* const webKitRelayDomain = "WebKitReplay";
 
 NetworkDataTaskReplay::NetworkDataTaskReplay(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters, Resource* resource)
-    : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
+    : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
     , m_currentRequest(m_firstRequest)
     , m_resource(resource)
 {

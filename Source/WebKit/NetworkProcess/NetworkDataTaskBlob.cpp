@@ -72,7 +72,7 @@ static const char* httpInternalErrorText = "Internal Server Error";
 static const char* const webKitBlobResourceDomain = "WebKitBlobResource";
 
 NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& request, ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
-    : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false)
+    : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false)
     , m_stream(std::make_unique<AsyncFileStream>(*this))
     , m_fileReferences(fileReferences)
 {

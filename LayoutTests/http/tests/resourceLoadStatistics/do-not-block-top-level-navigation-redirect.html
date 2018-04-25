@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+<script>
+    description("Tests that blocking is not applied to top-level navigation redirects.");
+    jsTestIsAsync = true;
+
+    internals.setResourceLoadStatisticsEnabled(true);
+    testRunner.setCookieStoragePartitioningEnabled(true);
+
+    function doRedirect()
+    {
+        testRunner.setStatisticsPrevalentResource("http://localhost", true);
+        if (!testRunner.isStatisticsPrevalentResource("http://localhost")) {
+            testFailed("Host did not get set as prevalent resource.");
+            finishJSTest();
+        }
+        else
+            window.location = "http://localhost:8000/cookies/resources/set-cookie-on-redirect.php?step=1";
+    }
+</script>
+</head>
+<body onload="doRedirect()">
+</body>
+</html>
