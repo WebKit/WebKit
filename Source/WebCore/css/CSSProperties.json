@@ -4522,6 +4522,15 @@
                 "url": "https://www.w3.org/TR/filter-effects/#FilterProperty"
             }
         },
+        "color-filter": {
+            "inherited": true,
+            "codegen-properties": {
+                "conditional-converter": "FilterOperations"
+            },
+            "status": {
+                "status": "experimental"
+            }
+        },
         "align-content": {
             "values": [
                 "flex-start",

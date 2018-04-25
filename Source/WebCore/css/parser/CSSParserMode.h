@@ -105,6 +105,7 @@ public:
     bool springTimingFunctionEnabled { false };
     bool constantPropertiesEnabled { false };
     bool conicGradientsEnabled { false };
+    bool colorFilterEnabled { false };
     bool deferredCSSParserEnabled { false };
     bool allowNewLinesClamp { false };
     

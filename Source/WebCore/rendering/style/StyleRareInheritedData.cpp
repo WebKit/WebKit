@@ -29,6 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "ShadowData.h"
 #include "StyleCustomPropertyData.h"
+#include "StyleFilterData.h"
 #include "StyleImage.h"
 #include <wtf/PointerComparison.h>
 
@@ -41,7 +42,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     Color colors[9];
     void* ownPtrs[1];
     AtomicString atomicStrings[5];
-    void* refPtrs[2];
+    void* refPtrs[3];
     Length lengths[2];
     float secondFloat;
     unsigned bitfields[4];
@@ -50,7 +51,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     short hyphenationShorts[3];
 
 #if PLATFORM(IOS)
-    Color compositionColor;
+    Color compositionColor; // FIXME: this has gone.
 #endif
 #if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust;
@@ -136,6 +137,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
+    , colorFilter(StyleFilterData::create())
     , lineGrid(RenderStyle::initialLineGrid())
     , tabSize(RenderStyle::initialTabSize())
 #if ENABLE(TEXT_AUTOSIZING)
@@ -231,6 +233,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
     , hyphenationLimitLines(o.hyphenationLimitLines)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
+    , colorFilter(o.colorFilter)
     , lineGrid(o.lineGrid)
     , tabSize(o.tabSize)
 #if ENABLE(TEXT_AUTOSIZING)
@@ -307,6 +310,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hyphenationString == o.hyphenationString
         && textEmphasisCustomMark == o.textEmphasisCustomMark
         && arePointingToEqualData(quotes, o.quotes)
+        && colorFilter == o.colorFilter
         && tabSize == o.tabSize
         && lineGrid == o.lineGrid
 #if ENABLE(CSS_IMAGE_ORIENTATION)
@@ -343,6 +347,11 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && miterLimit == o.miterLimit
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage);
+}
+
+bool StyleRareInheritedData::hasColorFilters() const
+{
+    return !colorFilter->operations.isEmpty();
 }
 
 } // namespace WebCore

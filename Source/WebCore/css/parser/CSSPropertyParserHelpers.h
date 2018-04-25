@@ -93,8 +93,12 @@ enum class ConsumeGeneratedImage {
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, CSSParserContext, ConsumeGeneratedImage = ConsumeGeneratedImage::Allow);
 RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, CSSParserContext);
 
-RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange&, const CSSParserContext&);
+enum class AllowedFilterFunctions {
+    All,
+    Color
+};
+
+RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions = AllowedFilterFunctions::All);
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, CSSParserMode, bool allowInset, bool allowSpread);
 
 // Template implementations are at the bottom of the file for readability.

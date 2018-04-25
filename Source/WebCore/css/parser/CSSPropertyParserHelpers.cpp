@@ -1404,11 +1404,32 @@ static bool isValidPrimitiveFilterFunction(CSSValueID filterFunction)
     }
 }
 
-RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const CSSParserContext& context)
+static bool isColorFilterFunction(CSSValueID filterFunction)
+{
+    switch (filterFunction) {
+    case CSSValueBrightness:
+    case CSSValueContrast:
+    case CSSValueGrayscale:
+    case CSSValueHueRotate:
+    case CSSValueInvert:
+    case CSSValueOpacity:
+    case CSSValueSaturate:
+    case CSSValueSepia:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
 {
     CSSValueID filterType = range.peek().functionId();
     if (!isValidPrimitiveFilterFunction(filterType))
         return nullptr;
+
+    if (allowedFunctions == AllowedFilterFunctions::Color && !isColorFilterFunction(filterType))
+        return nullptr;
+
     CSSParserTokenRange args = consumeFunction(range);
     RefPtr<CSSFunctionValue> filterValue = CSSFunctionValue::create(filterType);
     RefPtr<CSSValue> parsedValue;
@@ -1444,16 +1465,17 @@ RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const
     return filterValue;
 }
 
-RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeFilter(CSSParserTokenRange& range, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
 
+    bool referenceFiltersAllowed = allowedFunctions == AllowedFilterFunctions::All;
     auto list = CSSValueList::createSpaceSeparated();
     do {
-        RefPtr<CSSValue> filterValue = consumeUrl(range);
+        RefPtr<CSSValue> filterValue = referenceFiltersAllowed ? consumeUrl(range) : nullptr;
         if (!filterValue) {
-            filterValue = consumeFilterFunction(range, context);
+            filterValue = consumeFilterFunction(range, context, allowedFunctions);
             if (!filterValue)
                 return nullptr;
         }

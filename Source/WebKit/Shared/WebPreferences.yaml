@@ -1080,11 +1080,18 @@ CacheAPIEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+ColorFilterEnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "Color Filter"
+  humanReadableDescription: "Enable CSS Color Filter property"
+  category: experimental
+
 ConstantPropertiesEnabled:
   type: bool
   defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "Constant Properties"
-  humanReadableDescription: "Enable CSS constant() properties"
+  humanReadableDescription: "Enable CSS constant() values"
   category: experimental
 
 SpringTimingFunctionEnabled:

@@ -1,5 +1,54 @@
 2018-04-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Add a new "color-filter" CSS property as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=184940
+        rdar://problem/39664904
+
+        Reviewed by Jon Lee.
+        
+        Add a new CSS property called "color-filter" as an experimental feature (off by default).
+        
+        This property specifies a list of filter functions (as specified in https://drafts.fxtf.org/filter-effects/#supported-filter-functions)
+        to CSS colors, allowing authors to modify the provided page colors, for example to improve accessibility.
+        Filters that move pixels (i.e. blur() and drop-shadow()) are invalid in this property.
+        
+        Colors will be mapped through the filter functions just before paint time, and gradient stop colors will also be mapped.
+        
+        This patch adds support for parsing color-filter.
+
+        Test: css3/color-filters/color-filter-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserMode.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::isColorFilterFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeFilterFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeFilter):
+        * css/parser/CSSPropertyParserHelpers.h:
+        * page/Settings.yaml:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::mutableColorFilter):
+        (WebCore::RenderStyle::colorFilter const):
+        (WebCore::RenderStyle::hasColorFilter const):
+        (WebCore::RenderStyle::setColorFilter):
+        (WebCore::RenderStyle::initialColorFilter):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        (WebCore::StyleRareInheritedData::hasColorFilters const):
+        * rendering/style/StyleRareInheritedData.h:
+
+2018-04-24  Simon Fraser  <simon.fraser@apple.com>
+
         shape-outside and filter styles occur twice in the result of getComputedStyle
         https://bugs.webkit.org/show_bug.cgi?id=184931
 

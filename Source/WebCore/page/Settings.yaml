@@ -520,7 +520,11 @@ shouldConvertInvalidURLsToBlank:
 
 springTimingFunctionEnabled:
   initial: false
+
 conicGradientsEnabled:
+  initial: false
+
+colorFilterEnabled:
   initial: false
 
 treatIPAddressAsDomain:

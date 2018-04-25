@@ -905,6 +905,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, unsigned& chan
         || !m_backgroundData->isEquivalentForPainting(*other.m_backgroundData)
         || m_rareInheritedData->userModify != other.m_rareInheritedData->userModify
         || m_rareInheritedData->userSelect != other.m_rareInheritedData->userSelect
+        || m_rareInheritedData->colorFilter != other.m_rareInheritedData->colorFilter
         || m_rareNonInheritedData->userDrag != other.m_rareNonInheritedData->userDrag
         || m_rareNonInheritedData->borderFit != other.m_rareNonInheritedData->borderFit
         || m_rareNonInheritedData->objectFit != other.m_rareNonInheritedData->objectFit

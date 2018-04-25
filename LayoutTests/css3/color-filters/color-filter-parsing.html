@@ -1,0 +1,69 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="test"></div>
+
+<script>
+
+if (window.internals)
+    internals.settings.setColorFilterEnabled(true);
+
+var testDiv = document.querySelector('#test');
+
+function testColorFilterParsing(value, expected, name)
+{
+    test(() => {
+		testDiv.style.colorFilter = '';
+		testDiv.style.colorFilter = value;
+		var computedStyle = getComputedStyle(testDiv).colorFilter;
+        assert_equals(computedStyle, expected);
+    }, name);
+}
+
+testColorFilterParsing("none", "none", "Parse none");
+testColorFilterParsing("auto", "none", "Parse auto");
+testColorFilterParsing("garbage", "none", "Parsing garbage value returns none");
+testColorFilterParsing("garbage()", "none", "Parsing garbage function returns none");
+
+// Argument-free funtions.
+testColorFilterParsing("brightness()", "brightness(1)", "Parse brightness()"); // webkit.org/b/184937
+testColorFilterParsing("contrast()", "contrast(1)", "Parse contrast()");
+testColorFilterParsing("grayscale()", "grayscale(1)", "Parse grayscale()");
+testColorFilterParsing("hue-rotate()", "hue-rotate(0deg)", "Parse hue-rotate()");
+testColorFilterParsing("invert()", "invert(1)", "Parse invert");
+testColorFilterParsing("opacity()", "opacity(1)", "Parse opacity()");
+testColorFilterParsing("saturate()", "saturate(1)", "Parse saturate()");
+testColorFilterParsing("sepia()", "sepia(1)", "Parse sepia()");
+
+// Functions not allowed.
+testColorFilterParsing("drop-shadow(110px 110px 0 blue)", "none", "drop-shadow() is not allowed in color-filter");
+testColorFilterParsing("blur(10px)", "none", "blur() is not allowed in color-filter");
+
+// Argument canonicalization.
+testColorFilterParsing("grayscale(30%)", "grayscale(0.3)", "Canonicalize grayscale() argument");
+testColorFilterParsing("hue-rotate(1.2rad)", "hue-rotate(68.75493541569878deg)", "Canonicalize hue-rotate() argument");
+
+// Negative values.
+testColorFilterParsing("brightness(-0.4)", "none", "Negative value for brightness() is invalid"); // webkit.org/b/184937
+testColorFilterParsing("contrast(-0.6)", "none", "Negative value for contrast() is invalid");
+testColorFilterParsing("grayscale(-0.)", "none", "Negative value for grayscale() is invalid");
+testColorFilterParsing("hue-rotate(-20deg)", "hue-rotate(-20deg)", "Negative value allowed for hue-rotate()");
+testColorFilterParsing("invert(-0.6)", "none", "Negative value for invert() is invalid");
+testColorFilterParsing("opacity(-0.5)", "none", "Negative value for opacity() is invalid");
+testColorFilterParsing("saturate(-0.2)", "none", "Negative value for saturate() is invalid");
+testColorFilterParsing("sepia(-0.5)", "none", "Negative value for sepia() is invalid");
+
+// Values > 1 or 100%
+testColorFilterParsing("brightness(2.4)", "brightness(2.4)", "brightness(): values of amount over 100% are allowed, providing brighter results");
+testColorFilterParsing("contrast(3.6)", "contrast(3.6)", "contrast(): values of amount over 100% are allowed, providing results with more contrast");
+testColorFilterParsing("grayscale(120%)", "grayscale(1)", "Values of amount over 100% are allowed but UAs must clamp the values to 1");
+testColorFilterParsing("hue-rotate(740deg)", "hue-rotate(740deg)", "hue-rotate(): implementations must not normalize this value in order to allow animations beyond 360deg");
+testColorFilterParsing("invert(2.3)", "invert(1)", "invert(): values of amount over 100% are allowed but UAs must clamp the values to 1");
+testColorFilterParsing("opacity(12.5)", "opacity(1)", "opacity(): values of amount over 100% are allowed but UAs must clamp the values to 1");
+testColorFilterParsing("saturate(200%)", "saturate(2)", "saturate(): values of amount over 100% are allowed, providing super-saturated results");
+testColorFilterParsing("sepia(5.3)", "sepia(1)", "sepia(): values of amount over 100% are allowed but UAs must clamp the values to 1");
+
+// Function lists.
+testColorFilterParsing("grayscale(50%) hue-rotate(45deg) opacity(0.5)", "grayscale(0.5) hue-rotate(45deg) opacity(0.5)", "Parse filter list");
+testColorFilterParsing("grayscale(50%) blur(10px) opacity(0.5)", "none", "Filter list with blur is invalid");
+
+</script>

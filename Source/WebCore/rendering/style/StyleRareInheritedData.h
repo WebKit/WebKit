@@ -40,6 +40,7 @@ namespace WebCore {
 class CursorList;
 class QuotesData;
 class ShadowData;
+class StyleFilterData;
 class StyleImage;
 
 // This struct is for rarely used inherited CSS3, CSS2, and WebKit-specific properties.
@@ -56,6 +57,8 @@ public:
     {
         return !(*this == o);
     }
+
+    bool hasColorFilters() const;
 
     RefPtr<StyleImage> listStyleImage;
 
@@ -156,6 +159,7 @@ public:
 
     AtomicString textEmphasisCustomMark;
     RefPtr<QuotesData> quotes;
+    DataRef<StyleFilterData> colorFilter;
 
     AtomicString lineGrid;
     unsigned tabSize;

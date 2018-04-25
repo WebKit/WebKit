@@ -4133,7 +4133,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
 #endif
-        return consumeFilter(m_range, m_context);
+        return consumeFilter(m_range, m_context, AllowedFilterFunctions::All);
+    case CSSPropertyColorFilter:
+        if (!m_context.colorFilterEnabled)
+            return nullptr;
+        return consumeFilter(m_range, m_context, AllowedFilterFunctions::Color);
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyWebkitTextDecorationLine:

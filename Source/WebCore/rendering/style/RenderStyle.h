@@ -753,6 +753,10 @@ public:
     bool hasFilter() const { return !m_rareNonInheritedData->filter->operations.operations().isEmpty(); }
     bool hasReferenceFilterOnly() const;
 
+    FilterOperations& mutableColorFilter() { return m_rareInheritedData.access().colorFilter.access().operations; }
+    const FilterOperations& colorFilter() const { return m_rareInheritedData->colorFilter->operations; }
+    bool hasColorFilter() const { return !m_rareInheritedData->colorFilter->operations.operations().isEmpty(); }
+
 #if ENABLE(FILTERS_LEVEL_2)
     FilterOperations& mutableBackdropFilter() { return m_rareNonInheritedData.access().backdropFilter.access().operations; }
     const FilterOperations& backdropFilter() const { return m_rareNonInheritedData->backdropFilter->operations; }
@@ -1157,6 +1161,7 @@ public:
     void setRubyPosition(RubyPosition position) { SET_VAR(m_rareInheritedData, rubyPosition, position); }
 
     void setFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareNonInheritedData, filter, operations, ops); }
+    void setColorFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareInheritedData, colorFilter, operations, ops); }
 
 #if ENABLE(FILTERS_LEVEL_2)
     void setBackdropFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareNonInheritedData, backdropFilter, operations, ops); }
@@ -1658,6 +1663,7 @@ public:
 #endif
 
     static const FilterOperations& initialFilter() { static NeverDestroyed<FilterOperations> ops; return ops; }
+    static const FilterOperations& initialColorFilter() { static NeverDestroyed<FilterOperations> ops; return ops; }
 
 #if ENABLE(FILTERS_LEVEL_2)
     static const FilterOperations& initialBackdropFilter() { static NeverDestroyed<FilterOperations> ops; return ops; }
