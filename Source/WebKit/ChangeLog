@@ -1,5 +1,13 @@
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, silence -Wreturn-type warning
+        https://bugs.webkit.org/show_bug.cgi?id=184560
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::shouldCancelCrossOriginLoad):
+
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Miscellaneous build cleanups
         https://bugs.webkit.org/show_bug.cgi?id=184399
 

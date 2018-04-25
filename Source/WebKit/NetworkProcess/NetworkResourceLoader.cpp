@@ -395,6 +395,8 @@ static bool shouldCancelCrossOriginLoad(const ResourceResponse& response, const 
     case WebCore::FromOriginDisposition::SameSite:
         return !areFrameAncestorsSameSite(response, frameAncestorOrigins);
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static ResourceError fromOriginResourceError(const URL& url)
