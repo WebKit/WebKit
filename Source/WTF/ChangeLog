@@ -1,3 +1,15 @@
+2018-04-25  Dean Jackson  <dino@apple.com>
+
+        Make a better flag for system preview, and disable it where necessary
+        https://bugs.webkit.org/show_bug.cgi?id=184968
+        <rdar://problem/39686506>
+
+        Reviewed by Eric Carlson.
+
+        Add a new USE(SYSTEM_PREVIEW).
+
+        * wtf/Platform.h:
+
 2018-04-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r230971.

@@ -593,8 +593,10 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         imageResource().cachedImage()->addPendingImageDrawingClient(*this);
 
+#if USE(SYSTEM_PREVIEW)
     if (imageElement && imageElement->isSystemPreviewImage())
         theme().paintSystemPreviewBadge(*img, paintInfo, rect);
+#endif
 
     return drawResult;
 }

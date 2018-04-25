@@ -53,7 +53,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/SystemPreviewDetection.cpp>
 #endif
 
@@ -368,6 +368,7 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
         PingLoader::sendPing(*document().frame(), document().completeURL(pingURLs[i]), destinationURL);
 }
 
+#if USE(SYSTEM_PREVIEW)
 bool HTMLAnchorElement::isSystemPreviewLink() const
 {
 #if USE(APPLE_INTERNAL_SDK)
@@ -376,8 +377,6 @@ bool HTMLAnchorElement::isSystemPreviewLink() const
     auto systemPreviewRelValue = String { ASCIILiteral("system-preview") };
 #endif
 
-    // The relList is created on demand, which means that calling relList()
-    // is only available in a non-const method.
     if (!relList().contains(systemPreviewRelValue))
         return false;
 
@@ -391,6 +390,7 @@ bool HTMLAnchorElement::isSystemPreviewLink() const
 
     return false;
 }
+#endif
 
 void HTMLAnchorElement::handleClick(Event& event)
 {

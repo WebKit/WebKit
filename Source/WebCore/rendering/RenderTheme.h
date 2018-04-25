@@ -246,7 +246,9 @@ public:
     virtual bool shouldMockBoldSystemFontForAccessibility() const { return false; }
     virtual void setShouldMockBoldSystemFontForAccessibility(bool) { }
 
+#if USE(SYSTEM_PREVIEW)
     virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
+#endif
 
 protected:
     virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;

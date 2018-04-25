@@ -76,6 +76,7 @@ bool HTMLPictureElement::viewportChangeAffectedPicture() const
     return false;
 }
 
+#if USE(SYSTEM_PREVIEW)
 bool HTMLPictureElement::isSystemPreviewImage() const
 {
     const auto* parent = parentElement();
@@ -83,6 +84,7 @@ bool HTMLPictureElement::isSystemPreviewImage() const
         return false;
     return downcast<HTMLAnchorElement>(parent)->isSystemPreviewLink();
 }
+#endif
 
 }
 

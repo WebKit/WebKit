@@ -266,7 +266,7 @@
 #include "MockCredentialsMessenger.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/SystemPreviewDetection.cpp>
 #endif
 
@@ -4474,7 +4474,7 @@ MockCredentialsMessenger& Internals::mockCredentialsMessenger() const
 
 String Internals::systemPreviewRelType()
 {
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
     return getSystemPreviewRelValue();
 #else
     return ASCIILiteral("system-preview");
@@ -4483,16 +4483,26 @@ String Internals::systemPreviewRelType()
 
 bool Internals::isSystemPreviewLink(Element& element) const
 {
+#if USE(SYSTEM_PREVIEW)
     return is<HTMLAnchorElement>(element) && downcast<HTMLAnchorElement>(element).isSystemPreviewLink();
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
 }
 
 bool Internals::isSystemPreviewImage(Element& element) const
 {
+#if USE(SYSTEM_PREVIEW)
     if (is<HTMLImageElement>(element))
         return downcast<HTMLImageElement>(element).isSystemPreviewImage();
     if (is<HTMLPictureElement>(element))
         return downcast<HTMLPictureElement>(element).isSystemPreviewImage();
     return false;
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
 }
 
 bool Internals::usingAppleInternalSDK() const

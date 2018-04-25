@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SystemPreviewController.h"
 
-#if PLATFORM(IOS) && USE(QUICK_LOOK)
+#if USE(SYSTEM_PREVIEW)
 
 #import "APIUIClient.h"
 #import "WebPageProxy.h"

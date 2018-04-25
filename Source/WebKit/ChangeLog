@@ -1,3 +1,18 @@
+2018-04-25  Dean Jackson  <dino@apple.com>
+
+        Make a better flag for system preview, and disable it where necessary
+        https://bugs.webkit.org/show_bug.cgi?id=184968
+        <rdar://problem/39686506>
+
+        Reviewed by Eric Carlson.
+
+        Use USE(SYSTEM_PREVIEW).
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        (-[WKWebViewContentProviderRegistry init]):
+        * UIProcess/ios/WKSystemPreviewView.mm:
+
 2018-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement MouseEvent.buttons

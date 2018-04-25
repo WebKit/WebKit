@@ -1,3 +1,17 @@
+2018-04-25  Dean Jackson  <dino@apple.com>
+
+        Make a better flag for system preview, and disable it where necessary
+        https://bugs.webkit.org/show_bug.cgi?id=184968
+        <rdar://problem/39686506>
+
+        Reviewed by Eric Carlson.
+
+        These tests have platform-specific results for the moment.
+
+        * TestExpectations:
+        * system-preview/badge-expected.html: Removed.
+        * system-preview/detection-expected.txt: Removed.
+
 2018-04-25  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] fast/repaint/fixed-scale.html failing since r230479 "[TexMap] TextureMapperLayer unnecessarily duplicates state in GraphicsLayerTransform"

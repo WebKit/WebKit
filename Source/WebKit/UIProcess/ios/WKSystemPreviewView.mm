@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKSystemPreviewView.h"
 
-#if PLATFORM(IOS) && USE(QUICK_LOOK)
+#if USE(SYSTEM_PREVIEW)
 
 #import "APIFindClient.h"
 #import "APIUIClient.h"

@@ -41,7 +41,7 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/SystemPreviewTypes.cpp>
 #endif
 
@@ -65,7 +65,7 @@ using namespace WebKit;
         [self registerProvider:[WKLegacyPDFView class] forMIMEType:mimeType];
 #endif
 
-#if PLATFORM(IOS) && USE(QUICK_LOOK) && USE(APPLE_INTERNAL_SDK)
+#if USE(SYSTEM_PREVIEW) && USE(APPLE_INTERNAL_SDK)
     for (auto& mimeType : getSystemPreviewMIMETypes())
         [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
 #endif

@@ -68,7 +68,9 @@ public:
 
     WEBCORE_EXPORT DOMTokenList& relList() const;
 
+#if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreviewLink() const;
+#endif
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document&);

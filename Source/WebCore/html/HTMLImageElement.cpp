@@ -677,6 +677,7 @@ bool HTMLImageElement::willRespondToMouseClickEvents()
 }
 #endif
 
+#if USE(SYSTEM_PREVIEW)
 bool HTMLImageElement::isSystemPreviewImage() const
 {
     const auto* parent = parentElement();
@@ -684,5 +685,6 @@ bool HTMLImageElement::isSystemPreviewImage() const
         return false;
     return downcast<HTMLAnchorElement>(parent)->isSystemPreviewLink();
 }
+#endif
 
 }

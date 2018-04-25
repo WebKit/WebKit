@@ -1037,6 +1037,10 @@
 #endif
 #endif
 
+#if PLATFORM(IOS) && USE(QUICK_LOOK)
+#define USE_SYSTEM_PREVIEW 1
+#endif
+
 #if PLATFORM(COCOA)
 
 #define USE_AVFOUNDATION 1
