@@ -104,6 +104,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             StringView source = executable->source().provider()->getRange(
                 executable->parametersStartOffset(),
                 executable->parametersStartOffset() + executable->source().length());
+            scope.release();
             return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
         }
 
