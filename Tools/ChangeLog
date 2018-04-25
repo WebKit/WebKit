@@ -1,5 +1,19 @@
 2018-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Incorrect number of WebDriver test failures shown in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=184959
+
+        Reviewed by Michael Catanzaro.
+
+        The regular expression we are using to get the number of failures from the log is matching a particular test
+        error output. Improve the regular expression to avoid matching other strings in the log. Ensure that only
+        matches at the beginning of lines and add spaces after Unexpected and before the (<failures>).
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunWebDriverTests.commandComplete):
+
+2018-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Implement MouseEvent.buttons
         https://bugs.webkit.org/show_bug.cgi?id=184913
 
