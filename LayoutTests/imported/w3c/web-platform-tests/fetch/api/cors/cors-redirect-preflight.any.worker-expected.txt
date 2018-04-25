@@ -1,3 +1,18 @@
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field x-w3c is not allowed by Access-Control-Allow-Headers.
 
 PASS Redirect 301: same origin to cors (preflight after redirection success case) 
 PASS Redirect 301: same origin to cors (preflight after redirection failure case) 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 22: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-options-not-supported.py. Preflight response is not successful
 
 PASS Preflighted cross-origin request denied 
 

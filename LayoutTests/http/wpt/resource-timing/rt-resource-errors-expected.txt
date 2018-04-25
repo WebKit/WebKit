@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Refused to load http://localhost:8801/WebKit/resource-timing/resources/resource.png?csp-denied because it does not appear in the img-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/WebKit/resource-timing/resources/data.json?cors-denied. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/WebKit/resource-timing/resources/data.json?cors-denied due to access control checks.
 Resource Timing: Error cases
 
 

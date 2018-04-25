@@ -1,7 +1,11 @@
-CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi. Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi. Preflight response is not successful
-CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php. Preflight response is not successful
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php. Preflight response is not successful
+CONSOLE MESSAGE: line 26: Preflight response is not successful
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+CONSOLE MESSAGE: line 26: Preflight response is not successful
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.php due to access control checks.
 Tests that not successful preflight responses make preflight failing
 
 Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&access-control-allow-headers=x-webkit&access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi (sync)

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Preflight response is not successful
 GET should not trigger a preflight request from a worker unless it has non-simple headers.
 
 PASS: Cross-domain access allowed for simple get.

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fregistration-worker.js due to access control checks.
 
 PASS Registering same scope as the script directory without the last slash 
 PASS Registration scope outside the script directory 

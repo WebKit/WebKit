@@ -1,7 +1,11 @@
-CONSOLE MESSAGE: EventSource cannot load ftp://127.0.0.1/. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: EventSource cannot load motd. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: EventSource cannot load localhost:8080/. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: EventSource cannot load tel:1234. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load ftp://127.0.0.1/ due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load motd due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load localhost:8080/ due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load tel:1234 due to access control checks.
 Test EventSource with non-HTTP protocol schemes in the URL. Should print a series of PASS messages followed by DONE.
 
 PASS: got error event and readyState is CLOSED

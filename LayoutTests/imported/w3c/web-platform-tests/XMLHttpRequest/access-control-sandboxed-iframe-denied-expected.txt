@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 12: XMLHttpRequest cannot load http://localhost:8800/XMLHttpRequest/resources/pass.txt?pipe=header(Cache-Control,no-store)|header(Content-Type,text/plain). Origin null is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 12: Origin null is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 12: XMLHttpRequest cannot load http://localhost:8800/XMLHttpRequest/resources/pass.txt?pipe=header(Cache-Control,no-store)|header(Content-Type,text/plain) due to access control checks.
 
 
 PASS Check that path exists and is accessible via local XHR request 

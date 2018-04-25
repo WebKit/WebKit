@@ -60,14 +60,17 @@ CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
 
 void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, unsigned long identifier, const ResourceResponse& response)
 {
+    auto* frame = loader.document().frame();
+    ASSERT(frame);
+
     String errorDescription;
     if (!WebCore::validatePreflightResponse(request, response, loader.options().storedCredentialsPolicy, loader.securityOrigin(), errorDescription)) {
+        if (auto* document = frame->document())
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorDescription);
+
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), errorDescription, ResourceError::Type::AccessControl));
         return;
     }
-
-    Frame* frame = loader.document().frame();
-    ASSERT(frame);
 
     // FIXME: <https://webkit.org/b/164889> Web Inspector: Show Preflight Request information in inspector
     // This is only showing success preflight requests and responses but we should show network events
@@ -144,7 +147,10 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     // FIXME: Ideally, we should ask platformLoadResourceSynchronously to set ResourceResponse isRedirected and use it here.
     bool isRedirect = preflightRequest.url().strippedForUseAsReferrer() != response.url().strippedForUseAsReferrer();
     if (isRedirect || !response.isSuccessful()) {
-        loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), ASCIILiteral("Preflight response is not successful"), ResourceError::Type::AccessControl));
+        auto errorMessage = ASCIILiteral("Preflight response is not successful");
+        loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
+
+        loader.preflightFailure(identifier, ResourceError { errorDomainWebKitInternal, 0, request.url(), errorMessage, ResourceError::Type::AccessControl });
         return;
     }
 

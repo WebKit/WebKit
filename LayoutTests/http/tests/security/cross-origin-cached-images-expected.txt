@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Origin http://localhost:8080 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000 due to access control checks.
 CONSOLE MESSAGE: Origin http://localhost:8080 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000 due to access control checks.
 Tests source origin difference for cached resources.
 
 Trying to load sequentially the same image from different origins.

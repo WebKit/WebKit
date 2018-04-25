@@ -1,8 +1,10 @@
 CONSOLE MESSAGE: line 19: No-Cors mode requires follow redirect mode
-CONSOLE MESSAGE: line 19: Fetch API cannot load http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii. Not allowed to request resource
+CONSOLE MESSAGE: line 19: Not allowed to request resource
+CONSOLE MESSAGE: line 19: Fetch API cannot load http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii due to access control checks.
 CONSOLE MESSAGE: line 32: No-Cors mode requires follow redirect mode
-CONSOLE MESSAGE: line 32: Fetch API cannot load http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii. Not allowed to request resource
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii. Redirections are not allowed
+CONSOLE MESSAGE: line 32: Not allowed to request resource
+CONSOLE MESSAGE: line 32: Fetch API cannot load http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii due to access control checks.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/fetch/resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii due to access control checks.
 
 PASS Fetch should check for redirections even if resource is preloaded (same fetch options except for redirect mode) 
 PASS Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 

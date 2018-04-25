@@ -2,7 +2,8 @@ frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
 CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi because 'block-all-mixed-content' appears in the Content Security Policy.
-CONSOLE MESSAGE: line 30: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi. Not allowed to request resource
+CONSOLE MESSAGE: line 30: Not allowed to request resource
+CONSOLE MESSAGE: line 30: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame

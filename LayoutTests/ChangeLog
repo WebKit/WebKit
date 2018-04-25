@@ -1,3 +1,74 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Make DocumentThreadableLoader error logging more consistent
+        https://bugs.webkit.org/show_bug.cgi?id=184853
+
+        Reviewed by Chris Dumez.
+
+        Removing JS console log output for some tests.
+        Updating tests according modified error logging.
+
+        * TestExpectations:
+        * http/tests/security/bypassing-cors-checks-for-extension-urls-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-redirect-to-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-redirect-to-blocked-expected.txt:
+        * http/tests/security/cross-origin-cached-images-expected.txt:
+        * http/tests/security/cross-origin-cached-images-parallel-expected.txt:
+        * http/tests/security/img-with-failed-cors-check-fails-to-load-expected.txt:
+        * http/tests/security/load-image-after-redirection-2-expected.txt:
+        * http/tests/security/load-image-after-redirection-expected.txt:
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame-expected.txt:
+        * http/tests/security/video-poster-cross-origin-crash-expected.txt:
+        * http/tests/security/video-poster-cross-origin-crash2-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-async-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-header-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-method-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-sync-not-supported-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-expected.txt:
+        * http/tests/xmlhttprequest/access-control-sandboxed-iframe-denied-without-wildcard-expected.txt:
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight-expected.txt:
+        * http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-2-expected.txt:
+        * http/tests/xmlhttprequest/cross-site-denied-response-sync-expected.txt:
+        * http/tests/xmlhttprequest/origin-exact-matching-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-https-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains-expected.txt:
+        * http/tests/xmlhttprequest/origin-whitelisting-removal-expected.txt:
+        * http/tests/xmlhttprequest/post-blob-content-type-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-expected.txt:
+        * http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-sync-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events-expected.txt:
+        * http/tests/xmlhttprequest/upload-request-error-event-order-expected.txt:
+        * http/tests/xmlhttprequest/workers/access-control-basic-get-fail-non-simple-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * platform/mac-wk1/http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/access-control-and-redirects-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/access-control-and-redirects-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/access-control-preflight-not-successful-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/cross-origin-no-authorization-expected.txt:
+        * platform/win/http/tests/xmlhttprequest/redirect-cross-origin-tripmine-expected.txt:
+
 2018-04-25  Dean Jackson  <dino@apple.com>
 
         Make a better flag for system preview, and disable it where necessary

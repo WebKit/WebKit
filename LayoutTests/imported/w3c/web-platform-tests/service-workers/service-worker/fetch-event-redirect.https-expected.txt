@@ -1,7 +1,9 @@
 CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
-CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-sameorigin-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Flocalhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py&expected_type=opaqueredirect. Not allowed to request resource
+CONSOLE MESSAGE: line 51: Not allowed to request resource
+CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-sameorigin-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Flocalhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py&expected_type=opaqueredirect due to access control checks.
 CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
-CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-sameorigin-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Flocalhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py. Not allowed to request resource
+CONSOLE MESSAGE: line 51: Not allowed to request resource
+CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-sameorigin-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Flocalhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py due to access control checks.
 
 PASS initialize global state 
 PASS Non-navigation, manual redirect, cors mode Request redirected to same-origin without credentials should succeed opaqueredirect interception and response should not be redirected 

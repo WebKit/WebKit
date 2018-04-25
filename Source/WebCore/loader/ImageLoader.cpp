@@ -284,13 +284,15 @@ void ImageLoader::notifyFinished(CachedResource& resource)
         return;
 
     if (m_image->resourceError().isAccessControl()) {
+        URL imageURL = m_image->url();
+
         clearImageWithoutConsideringPendingLoadEvent();
 
         m_hasPendingErrorEvent = true;
         errorEventSender().dispatchEventSoon(*this);
 
-        static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Cross-origin image load denied by Cross-Origin Resource Sharing policy."));
-        element().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
+        auto message = makeString("Cannot load image ", imageURL.string(), " due to access control checks.");
+        element().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
 
         if (hasPendingDecodePromises())
             decodeError("Access control error.");

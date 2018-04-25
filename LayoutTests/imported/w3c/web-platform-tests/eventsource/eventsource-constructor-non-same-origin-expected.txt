@@ -1,7 +1,11 @@
-CONSOLE MESSAGE: EventSource cannot load ftp://example.not/. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: EventSource cannot load about:blank. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: EventSource cannot load mailto:whatwg@awesome.example. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: EventSource cannot load javascript:alert('FAIL'). Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load ftp://example.not/ due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load about:blank due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load mailto:whatwg@awesome.example due to access control checks.
+CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load javascript:alert('FAIL') due to access control checks.
 
 PASS EventSource: constructor (act as if there is a network error) (ftp://example.not/) 
 PASS EventSource: constructor (act as if there is a network error) (about:blank) 

@@ -436,7 +436,10 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
         return;
     }
 #endif
-    logErrorAndFail(error);
+    if (m_shouldLogError == ShouldLogError::Yes)
+        logError(m_document, error, m_options.initiator);
+
+    m_client->didFail(error);
 }
 
 void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
@@ -455,8 +458,11 @@ void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const 
     m_preflightChecker = std::nullopt;
 
     InspectorInstrumentation::didFailLoading(m_document.frame(), m_document.frame()->loader().documentLoader(), identifier, error);
-    ASSERT(m_client);
-    logErrorAndFail(error);
+
+    if (m_shouldLogError == ShouldLogError::Yes)
+        logError(m_document, error, m_options.initiator);
+
+    m_client->didFail(error);
 }
 
 void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCheckPolicy securityCheck)
@@ -646,8 +652,11 @@ void DocumentThreadableLoader::reportIntegrityMetadataError(const URL& url)
 
 void DocumentThreadableLoader::logErrorAndFail(const ResourceError& error)
 {
-    if (m_shouldLogError == ShouldLogError::Yes)
+    if (m_shouldLogError == ShouldLogError::Yes) {
+        if (error.isAccessControl() && !error.localizedDescription().isEmpty())
+            m_document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
         logError(m_document, error, m_options.initiator);
+    }
     ASSERT(m_client);
     m_client->didFail(error);
 }

@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-preflight-request-invalid-status.py?code=400. Preflight response is not successful
+CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-preflight-request-invalid-status.py?code=400 due to access control checks.
 
 PASS Request with 400 preflight response 
 

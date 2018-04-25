@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: line 331: callback not yet supported
 Blocked access to external URL http://foo/
-CONSOLE MESSAGE: EventSource cannot load http://foo/. 
+CONSOLE MESSAGE: EventSource cannot load http://foo/ due to access control checks.
 EventSource IDL tests
 
 

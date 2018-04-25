@@ -1,8 +1,13 @@
-CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load mailto:test@example.org. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load tel:+31600000000. Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load http://127.0.0.1:8800/. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load javascript:alert('FAIL'). Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load http://127.0.0.1:8800/folder.txt. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 23: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load mailto:test@example.org due to access control checks.
+CONSOLE MESSAGE: line 23: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load tel:+31600000000 due to access control checks.
+CONSOLE MESSAGE: line 23: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load http://127.0.0.1:8800/ due to access control checks.
+CONSOLE MESSAGE: line 23: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load javascript:alert('FAIL') due to access control checks.
+CONSOLE MESSAGE: line 23: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 23: XMLHttpRequest cannot load http://127.0.0.1:8800/folder.txt due to access control checks.
 
 PASS XMLHttpRequest: send() - non same-origin (mailto:test@example.org) 
 PASS XMLHttpRequest: send() - non same-origin (tel:+31600000000) 

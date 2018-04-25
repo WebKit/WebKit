@@ -1,3 +1,10 @@
+CONSOLE MESSAGE: Method DELETE is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Method PUT is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Method PATCH is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Method NEW is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Request header field x-test-header1 is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Method PUT is not allowed by Access-Control-Allow-Methods.
 
 PASS CORS [DELETE], server allows 
 PASS CORS [DELETE], server refuses 

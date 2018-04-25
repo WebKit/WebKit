@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 35: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?test=access-control-preflight-sync-header-denied&state=header. Request header field X-NON-STANDARD is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 35: Request header field X-NON-STANDARD is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 35: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?test=access-control-preflight-sync-header-denied&state=header due to access control checks.
 PASS: Request successfully blocked.
 
 

@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Response served by service worker is opaque redirect
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt due to access control checks.
+CONSOLE MESSAGE: Response served by service worker has redirections
 
 PASS Verify redirect mode of Fetch API and ServiceWorker FetchEvent. 
 PASS Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. 

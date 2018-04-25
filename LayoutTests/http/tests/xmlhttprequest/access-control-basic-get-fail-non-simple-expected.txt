@@ -1,3 +1,4 @@
-CONSOLE MESSAGE: line 28: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi. Preflight response is not successful
+CONSOLE MESSAGE: line 28: Preflight response is not successful
+CONSOLE MESSAGE: line 28: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi due to access control checks.
 PASS: Exception thrown. Cross-domain access was denied in 'send'. [ A network error occurred.].
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 22: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-cors-safelisted-request-headers.py. Preflight response is not successful
 
 FAIL Request with CORS-safelisted headers  A network error occurred.
 

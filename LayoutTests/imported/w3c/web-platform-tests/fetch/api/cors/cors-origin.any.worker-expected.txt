@@ -6,6 +6,7 @@ CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-A
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 
 PASS Cross domain different subdomain [origin OK] 
 PASS Cross domain different subdomain [origin KO] 

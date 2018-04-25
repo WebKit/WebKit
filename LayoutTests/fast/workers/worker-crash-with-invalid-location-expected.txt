@@ -1,4 +1,5 @@
 Blocked access to external URL http://example.com/worker.js
+CONSOLE MESSAGE: line 18: Cannot load http://example.com/worker.js due to access control checks.
 Test worker fetch of blocked url. Should print a "PASS" statement.
 
 PASS

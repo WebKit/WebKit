@@ -1,13 +1,13 @@
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/top.txt. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/top.txt due to access control checks.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/fetch/api/resources/top.txt. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/fetch/api/resources/top.txt due to access control checks.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/api/resources/top.txt. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/api/resources/top.txt due to access control checks.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8801/fetch/api/resources/top.txt. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8801/fetch/api/resources/top.txt due to access control checks.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/fetch/api/resources/top.txt. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/fetch/api/resources/top.txt due to access control checks.
 
 PASS Same domain different port [no-cors mode] 
 PASS Same domain different port [server forbid CORS] 

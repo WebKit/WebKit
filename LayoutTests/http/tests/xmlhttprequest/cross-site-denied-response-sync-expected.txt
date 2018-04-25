@@ -1,3 +1,4 @@
-CONSOLE MESSAGE: line 55: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/reply.xml. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 55: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 55: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/reply.xml due to access control checks.
 PASS
 

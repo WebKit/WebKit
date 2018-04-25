@@ -1,15 +1,15 @@
 Blocked access to external URL http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message
-CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message. 
+CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message due to access control checks.
 Blocked access to external URL http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=redirect&location=/eventsource/resources/cors.py?run=message
-CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=redirect&location=/eventsource/resources/cors.py?run=message. 
+CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=redirect&location=/eventsource/resources/cors.py?run=message due to access control checks.
 Blocked access to external URL http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=status-reconnect&status=200
-CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=status-reconnect&status=200. 
+CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=status-reconnect&status=200 due to access control checks.
 Blocked access to external URL http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message&origin=http://example.org
-CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message&origin=http://example.org. 
+CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message&origin=http://example.org due to access control checks.
 Blocked access to external URL http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message&origin=
-CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message&origin=. 
+CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/cors.py?run=message&origin= due to access control checks.
 Blocked access to external URL http://xn--lve-6lad.localhost:8800/eventsource/resources/message.py
-CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/message.py. 
+CONSOLE MESSAGE: EventSource cannot load http://xn--lve-6lad.localhost:8800/eventsource/resources/message.py due to access control checks.
 
 Harness Error (TIMEOUT), message = null
 

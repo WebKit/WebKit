@@ -1,3 +1,42 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Make DocumentThreadableLoader error logging more consistent
+        https://bugs.webkit.org/show_bug.cgi?id=184853
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased tests.
+        Make EventSource, XHR and Fetch log error messages consistently.
+        This patch also prepares consistent error logging between WK1 and WK2 as WK2 NetworkProcess
+        will issue more and more errors in places different from WK1.
+        This is the reason for SubresourceLoader changes in this patch and DTL/didFail/preflightFailure changes.
+
+        Update ImageLoader error message to be more general than CORS.
+
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::doPreflight): Add some more logging for consistency between WK1 and WK2.
+        (WebCore::CrossOriginPreflightChecker::validatePreflightResponse): Ditto.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        (WebCore::DocumentThreadableLoader::logErrorAndFail):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFail):
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::logError):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResourceRequestInitiators.cpp:
+        (WebCore::CachedResourceRequestInitiators::CachedResourceRequestInitiators):
+        * loader/cache/CachedResourceRequestInitiators.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect):
+        (WebCore::EventSource::didFail):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFail):
+
 2018-04-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement Layout::Box functions.

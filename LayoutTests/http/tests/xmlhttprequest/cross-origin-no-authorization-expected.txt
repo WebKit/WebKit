@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 56: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php. Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: line 56: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: line 56: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php due to access control checks.
 CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php due to access control checks.
 Start

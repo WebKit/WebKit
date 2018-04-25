@@ -1,23 +1,43 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
+CONSOLE MESSAGE: line 62: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 62: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cross-origin-tripmine.php due to access control checks.
 Test that a cross-origin redirect does not result in a non-simple request being sent to the target.
 
 Asynchronous XMLHttpRequest 307 POST redirect:

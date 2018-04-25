@@ -1,5 +1,7 @@
 CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/inspector/network/loadResource-insecure-resource.html was not allowed to display insecure content from http://127.0.0.0:8000/inspector/network/resources/data.json?2.
 
+CONSOLE MESSAGE: Not allowed to request resource
+CONSOLE MESSAGE: Cannot load http://127.0.0.0:8000/inspector/network/resources/data.json?2 due to access control checks.
 Tests loading resources on a secure page with Network.loadResource.
 
 

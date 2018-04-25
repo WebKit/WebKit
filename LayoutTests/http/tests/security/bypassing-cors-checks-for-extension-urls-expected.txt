@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load safari-extension://test1. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 19: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load safari-extension://test1 due to access control checks.
 This test ensures that XHR/Fetch will bypass CORS for user extension URLS in case the page is running user scripts.
 
 

@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-put-allow.py. Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 26: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-put-allow.py due to access control checks.
 
 PASS Deny cross-origin request with non-CORS-safelisted content type 
 

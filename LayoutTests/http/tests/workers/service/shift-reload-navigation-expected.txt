@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8080/resources/square100.png.fromserviceworker. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8080/resources/square100.png.fromserviceworker due to access control checks.
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8080/resources/square100.png.fromserviceworker. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8080/resources/square100.png.fromserviceworker due to access control checks.
 PASS: Fetch failed as expected with: TypeError: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 PASS: Got response with buffer byte length being 12940
 PASS: Fetch failed as expected with: TypeError: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.

@@ -1,21 +1,39 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept-Language is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Content-Language is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Content-Language is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept-Language is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Language is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Language is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
+CONSOLE MESSAGE: Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php due to access control checks.
 PASS Accept header value 'application/json,text/*,*/*' SHOULD NOT cause a preflight
 PASS Accept header with normal value 'application/vnd.api+json' SHOULD NOT cause a preflight
 PASS Accept header with normal value 'text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c' SHOULD NOT cause a preflight

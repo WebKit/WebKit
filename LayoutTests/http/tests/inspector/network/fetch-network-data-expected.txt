@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 2: Fetch API cannot load http://localhost:8000/inspector/network/resources/cors-data.pl. Cross origin requests are not allowed when using same-origin fetch mode.
+CONSOLE MESSAGE: line 2: Fetch API cannot load http://localhost:8000/inspector/network/resources/cors-data.pl.
 Tests for Network data with different types of Fetch requests.
 
 

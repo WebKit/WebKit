@@ -1,3 +1,43 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Make DocumentThreadableLoader error logging more consistent
+        https://bugs.webkit.org/show_bug.cgi?id=184853
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/XMLHttpRequest/access-control-basic-cors-safelisted-request-headers-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-basic-denied-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-basic-get-fail-non-simple-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-basic-non-cors-safelisted-content-type-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-basic-post-with-non-cors-safelisted-content-type-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-basic-preflight-denied-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-preflight-request-invalid-status-301-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-preflight-request-invalid-status-400-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-preflight-request-invalid-status-501-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-sandboxed-iframe-denied-expected.txt:
+        * web-platform-tests/XMLHttpRequest/access-control-sandboxed-iframe-denied-without-wildcard-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin.sub-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-others-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-basic.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-origin.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-star.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-status.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-schemes-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-fallback.https-expected.txt:
+
 2018-04-25  Ms2ger  <Ms2ger@igalia.com>
 
         imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-* LayoutTests are flaky failures

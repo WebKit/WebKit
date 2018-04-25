@@ -1,13 +1,13 @@
 CONSOLE MESSAGE: Cross-origin redirection to mailto:a@a.com denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=mailto:a@a.com. Cross-origin redirection to mailto:a@a.com denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=mailto:a@a.com due to access control checks.
 CONSOLE MESSAGE: Cross-origin redirection to data:,HI denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=data:,HI. Cross-origin redirection to data:,HI denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=data:,HI due to access control checks.
 CONSOLE MESSAGE: Cross-origin redirection to facetime:a@a.org denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=facetime:a@a.org. Cross-origin redirection to facetime:a@a.org denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=facetime:a@a.org due to access control checks.
 CONSOLE MESSAGE: Cross-origin redirection to about:blank denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=about:blank. Cross-origin redirection to about:blank denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=about:blank due to access control checks.
 CONSOLE MESSAGE: Cross-origin redirection to about:unicorn denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=about:unicorn. Cross-origin redirection to about:unicorn denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8800/fetch/api/resources/redirect.py?location=about:unicorn due to access control checks.
 CONSOLE MESSAGE: Not allowed to load local resource: blob:djfksfjs
 
 PASS Fetch: handling different schemes in redirects 

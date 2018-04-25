@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: line 64: Not allowed to load local resource: nonexistent.html
-CONSOLE MESSAGE: line 64: XMLHttpRequest cannot load nonexistent.html. Not allowed to request resource
+CONSOLE MESSAGE: line 64: Not allowed to request resource
+CONSOLE MESSAGE: line 64: XMLHttpRequest cannot load nonexistent.html due to access control checks.
 
 Bug 22475: REGRESSION: Async XMLHttpRequest never finishes on nonexistent files anymore
 

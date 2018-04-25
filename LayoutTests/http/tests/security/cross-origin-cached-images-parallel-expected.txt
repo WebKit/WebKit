@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Origin http://localhost:8080 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
-CONSOLE MESSAGE: Origin http://localhost:8080 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
 Tests source origin difference for cached resources.
 
 Trying to load sequentially the same image from different origins.

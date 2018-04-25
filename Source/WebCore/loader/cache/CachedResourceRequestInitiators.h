@@ -34,6 +34,7 @@ struct CachedResourceRequestInitiators {
     CachedResourceRequestInitiators();
 
     const AtomicString css;
+    const AtomicString eventsource;
     const AtomicString fetch;
     const AtomicString icon;
     const AtomicString xmlhttprequest;

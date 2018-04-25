@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?test=access-control-preflight-sync-non-supported. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 34: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 34: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?test=access-control-preflight-sync-non-supported due to access control checks.
 PASS: Request successfully blocked.
 
 

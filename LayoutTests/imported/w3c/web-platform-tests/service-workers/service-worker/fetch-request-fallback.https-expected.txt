@@ -3,9 +3,9 @@ CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-worke
 CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py? due to access control checks.
 CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cannot load image https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?PNGIMAGE& due to access control checks.
 CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Cannot load image https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FPNGIMAGE%26 due to access control checks.
 
 PASS initialize global state 
 PASS The SW must intercept the request for a main resource. 

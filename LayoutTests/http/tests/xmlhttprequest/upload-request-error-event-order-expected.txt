@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cross-site-progress-events.cgi due to access control checks.
 Test to validate the order in which the events are fired in case of a request error.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

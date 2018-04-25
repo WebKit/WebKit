@@ -1,3 +1,10 @@
+CONSOLE MESSAGE: Method SUPER is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Method OK is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Method OK is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Method PUT is not allowed by Access-Control-Allow-Methods.
+CONSOLE MESSAGE: Request header field X-Test is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Request header field X-Test is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Method PUT is not allowed by Access-Control-Allow-Methods.
 
 PASS CORS that succeeds with credentials: false; method: GET (allowed: get); header: X-Test,1 (allowed: x-test) 
 FAIL CORS that succeeds with credentials: false; method: SUPER (allowed: *); header: X-Test,1 (allowed: x-test) promise_test: Unhandled rejection with value: object "TypeError: Method SUPER is not allowed by Access-Control-Allow-Methods."

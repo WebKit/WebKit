@@ -892,15 +892,6 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         return;
     }
 
-    // Network failures are already reported to Web Inspector by ResourceLoader.
-    if (error.domain() == errorDomainWebKitInternal) {
-        String message = makeString("XMLHttpRequest cannot load ", error.failingURL().string(), ". ", error.localizedDescription());
-        logConsoleError(scriptExecutionContext(), message);
-    } else if (error.isAccessControl()) {
-        String message = makeString("XMLHttpRequest cannot load ", error.failingURL().string(), " due to access control checks.");
-        logConsoleError(scriptExecutionContext(), message);
-    }
-
     // In case didFail is called synchronously on an asynchronous XHR call, let's dispatch network error asynchronously
     if (m_async && m_sendFlag && !m_loader) {
         m_sendFlag = false;
