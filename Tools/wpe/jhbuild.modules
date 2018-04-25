@@ -196,7 +196,7 @@
     </dependencies>
   </autotools>
 
-  <autotools id="libepoxy" autogen-sh="configure" autogenargs="--enable-glx=no">
+  <autotools id="libepoxy" autogen-sh="configure">
     <branch module="anholt/libepoxy/releases/download/1.4.3/libepoxy-1.4.3.tar.xz"
             version="1.4.3" repo="github-tarball"/>
   </autotools>
