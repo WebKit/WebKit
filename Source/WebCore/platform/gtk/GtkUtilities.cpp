@@ -77,4 +77,9 @@ String defaultGtkSystemFont()
     return String::fromUTF8(fontString.get());
 }
 
+unsigned stateModifierForGdkButton(unsigned button)
+{
+    return 1 << (8 + button - 1);
+}
+
 } // namespace WebCore

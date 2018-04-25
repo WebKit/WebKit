@@ -28,6 +28,7 @@
 
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
+#include <WebCore/GtkUtilities.h>
 #include <gtk/gtk.h>
 
 namespace WebKit {
@@ -104,7 +105,8 @@ static void doMotionEvent(GtkWidget* widget, const WebCore::IntPoint& location, 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, WebEvent::Modifiers keyModifiers)
 {
     unsigned gdkButton = mouseButtonToGdkButton(button);
-    unsigned state = modifiersToEventState(keyModifiers);
+    auto modifier = stateModifierForGdkButton(gdkButton);
+    unsigned state = modifiersToEventState(keyModifiers) | m_currentModifiers;
 
     switch (interaction) {
     case MouseInteraction::Move:
@@ -112,19 +114,21 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     case MouseInteraction::Down:
         doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
+        m_currentModifiers |= modifier;
         break;
     case MouseInteraction::Up:
         doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
+        m_currentModifiers &= ~modifier;
         break;
     case MouseInteraction::SingleClick:
         doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
-        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
+        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state | modifier);
         break;
     case MouseInteraction::DoubleClick:
         doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
-        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
+        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state | modifier);
         doMouseEvent(GDK_BUTTON_PRESS, page.viewWidget(), locationInView, gdkButton, state);
-        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state);
+        doMouseEvent(GDK_BUTTON_RELEASE, page.viewWidget(), locationInView, gdkButton, state | modifier);
         break;
     }
 }
@@ -156,21 +160,16 @@ static void doKeyStrokeEvent(GdkEventType type, GtkWidget* widget, unsigned keyV
     }
 }
 
-static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key, GdkModifierType& state)
+static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key)
 {
-    state = static_cast<GdkModifierType>(0);
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
-        state = GDK_SHIFT_MASK;
         return GDK_KEY_Shift_R;
     case Inspector::Protocol::Automation::VirtualKey::Control:
-        state = GDK_CONTROL_MASK;
         return GDK_KEY_Control_R;
     case Inspector::Protocol::Automation::VirtualKey::Alternate:
-        state = GDK_MOD1_MASK;
         return GDK_KEY_Alt_L;
     case Inspector::Protocol::Automation::VirtualKey::Meta:
-        state = GDK_META_MASK;
         return GDK_KEY_Meta_R;
     case Inspector::Protocol::Automation::VirtualKey::Command:
         return GDK_KEY_Execute;
@@ -280,24 +279,39 @@ static int keyCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key,
     return 0;
 }
 
+static unsigned modifiersForKeyCode(unsigned keyCode)
+{
+    switch (keyCode) {
+    case GDK_KEY_Shift_R:
+        return GDK_SHIFT_MASK;
+    case GDK_KEY_Control_R:
+        return GDK_CONTROL_MASK;
+    case GDK_KEY_Alt_L:
+        return GDK_MOD1_MASK;
+    case GDK_KEY_Meta_R:
+        return GDK_META_MASK;
+    }
+    return 0;
+}
+
 void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& page, KeyboardInteraction interaction, std::optional<VirtualKey> virtualKey, std::optional<CharKey> charKey)
 {
     ASSERT(virtualKey.has_value() || charKey.has_value());
 
-    GdkModifierType updateState;
-    int keyCode;
+    unsigned keyCode;
     if (virtualKey.has_value())
-        keyCode = keyCodeForVirtualKey(virtualKey.value(), updateState);
+        keyCode = keyCodeForVirtualKey(virtualKey.value());
     else
         keyCode = gdk_unicode_to_keyval(g_utf8_get_char(&charKey.value()));
+    unsigned modifiers = modifiersForKeyCode(keyCode);
 
     switch (interaction) {
     case KeyboardInteraction::KeyPress:
-        m_currentModifiers |= updateState;
+        m_currentModifiers |= modifiers;
         doKeyStrokeEvent(GDK_KEY_PRESS, page.viewWidget(), keyCode, m_currentModifiers);
         break;
     case KeyboardInteraction::KeyRelease:
-        m_currentModifiers &= ~updateState;
+        m_currentModifiers &= ~modifiers;
         doKeyStrokeEvent(GDK_KEY_RELEASE, page.viewWidget(), keyCode, m_currentModifiers);
         break;
     case KeyboardInteraction::InsertByKey:

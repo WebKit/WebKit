@@ -106,11 +106,39 @@ static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)
     return static_cast<WebMouseEvent::Button>(button);
 }
 
+static inline short pressedMouseButtons(GdkModifierType state)
+{
+    // MouseEvent.buttons
+    // https://www.w3.org/TR/uievents/#ref-for-dom-mouseevent-buttons-1
+
+    // 0 MUST indicate no button is currently active.
+    short buttons = 0;
+
+    // 1 MUST indicate the primary button of the device (in general, the left button or the only button on
+    // single-button devices, used to activate a user interface control or select text).
+    if (state & GDK_BUTTON1_MASK)
+        buttons |= 1;
+
+    // 4 MUST indicate the auxiliary button (in general, the middle button, often combined with a mouse wheel).
+    if (state & GDK_BUTTON2_MASK)
+        buttons |= 4;
+
+    // 2 MUST indicate the secondary button (in general, the right button, often used to display a context menu),
+    // if present.
+    if (state & GDK_BUTTON3_MASK)
+        buttons |= 2;
+
+    return buttons;
+}
+
 WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int currentClickCount)
 {
     double x, y, xRoot, yRoot;
     gdk_event_get_coords(event, &x, &y);
     gdk_event_get_root_coords(event, &xRoot, &yRoot);
+
+    GdkModifierType state = static_cast<GdkModifierType>(0);
+    gdk_event_get_state(event, &state);
 
     WebEvent::Type type = static_cast<WebEvent::Type>(0);
     switch (event->type) {
@@ -121,19 +149,25 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
         break;
     case GDK_BUTTON_PRESS:
     case GDK_2BUTTON_PRESS:
-    case GDK_3BUTTON_PRESS:
+    case GDK_3BUTTON_PRESS: {
         type = WebEvent::MouseDown;
+        auto modifier = stateModifierForGdkButton(event->button.button);
+        state = static_cast<GdkModifierType>(state | modifier);
         break;
-    case GDK_BUTTON_RELEASE:
+    }
+    case GDK_BUTTON_RELEASE: {
         type = WebEvent::MouseUp;
+        auto modifier = stateModifierForGdkButton(event->button.button);
+        state = static_cast<GdkModifierType>(state & ~modifier);
         break;
+    }
     default :
         ASSERT_NOT_REACHED();
     }
 
     return WebMouseEvent(type,
         buttonForEvent(event),
-        0,
+        pressedMouseButtons(state),
         IntPoint(x, y),
         IntPoint(xRoot, yRoot),
         0 /* deltaX */,

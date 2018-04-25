@@ -16,8 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef GtkUtilities_h 
-#define GtkUtilities_h 
+#pragma once
 
 #include <gtk/gtk.h>
 #include <wtf/MonotonicTime.h>
@@ -45,6 +44,6 @@ WallTime wallTimeForEvent(const GdkEvent*);
 
 String defaultGtkSystemFont();
 
-} // namespace WebCore
+unsigned stateModifierForGdkButton(unsigned button);
 
-#endif // GtkUtilities_h
+} // namespace WebCore

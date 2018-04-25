@@ -1,3 +1,16 @@
+2018-04-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement MouseEvent.buttons
+        https://bugs.webkit.org/show_bug.cgi?id=184913
+
+        Reviewed by Žan Doberšek.
+
+        Add helper function to get the state modifier of a GDK button.
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::stateModifierForGdkButton):
+        * platform/gtk/GtkUtilities.h:
+
 2018-04-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in ScriptController::canExecuteScripts via CachedSVGFont::ensureCustomFontData during
