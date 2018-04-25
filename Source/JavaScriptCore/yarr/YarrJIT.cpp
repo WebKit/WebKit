@@ -3299,10 +3299,12 @@ class YarrGenerator : private MacroAssembler {
         if (m_pattern.m_saveInitialStartValue)
             push(X86Registers::ebx);
 
+#if OS(WINDOWS)
+        push(X86Registers::edi);
+#endif
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns) {
 #if OS(WINDOWS)
-            push(X86Registers::edi);
             push(X86Registers::esi);
 #endif
             push(X86Registers::r12);
@@ -3392,9 +3394,11 @@ class YarrGenerator : private MacroAssembler {
             pop(X86Registers::r12);
 #if OS(WINDOWS)
             pop(X86Registers::esi);
-            pop(X86Registers::edi);
 #endif
         }
+#endif
+#if OS(WINDOWS)
+        pop(X86Registers::edi);
 #endif
 
         if (m_pattern.m_saveInitialStartValue)
