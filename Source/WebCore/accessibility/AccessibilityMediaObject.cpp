@@ -173,7 +173,7 @@ bool AccessibilityMediaObject::isPlayingInline() const
     if (!element)
         return false;
     
-    return !element->mediaSession().requiresFullscreenForVideoPlayback(*element);
+    return !element->mediaSession().requiresFullscreenForVideoPlayback();
 }
 
 void AccessibilityMediaObject::enterFullscreen() const

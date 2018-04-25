@@ -158,18 +158,19 @@ static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
 }
 #endif // PLATFORM(MAC)
 
-SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
+SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() const
 {
     if (m_element.isSuspended())
         return { };
 
-    if (element.document().isMediaDocument() && !element.document().ownerElement())
+    auto& document = m_element.document();
+    if (document.isMediaDocument() && !document.ownerElement())
         return { };
 
-    if (pageExplicitlyAllowsElementToAutoplayInline(element))
+    if (pageExplicitlyAllowsElementToAutoplayInline(m_element))
         return { };
 
-    if (requiresFullscreenForVideoPlayback(element) && !fullscreenPermitted(element)) {
+    if (requiresFullscreenForVideoPlayback() && !fullscreenPermitted()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because of fullscreen restriction");
         return MediaPlaybackDenialReason::FullscreenRequired;
     }
@@ -178,35 +179,35 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
         return { };
 
 #if ENABLE(MEDIA_STREAM)
-    if (element.hasMediaStreamSrcObject()) {
-        if (element.document().isCapturing())
+    if (m_element.hasMediaStreamSrcObject()) {
+        if (document.isCapturing())
             return { };
-        if (element.document().mediaState() & MediaProducer::IsPlayingAudio)
+        if (document.mediaState() & MediaProducer::IsPlayingAudio)
             return { };
     }
 #endif
 
 #if PLATFORM(MAC)
     // FIXME <https://webkit.org/b/175856>: Make this dependent on a runtime flag for desktop autoplay restrictions.
-    const auto& topDocument = element.document().topDocument();
+    const auto& topDocument = document.topDocument();
     if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.settings().needsSiteSpecificQuirks())
         return { };
 
-    if (element.document().hasHadUserInteraction() && needsArbitraryUserGestureAutoplayQuirk(element.document()))
+    if (document.hasHadUserInteraction() && needsArbitraryUserGestureAutoplayQuirk(document))
         return { };
 #endif
 
-    if (m_restrictions & RequireUserGestureForVideoRateChange && element.isVideo() && !element.document().processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForVideoRateChange && m_element.isVideo() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for video rate change restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
-    if (m_restrictions & RequireUserGestureForAudioRateChange && (!element.isVideo() || element.hasAudio()) && !element.muted() && element.volume() && !element.document().processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForAudioRateChange && (!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for audio rate change restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
-    if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && element.isVideo() && !element.document().processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && m_element.isVideo() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because of video low power mode restriction");
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
@@ -249,12 +250,12 @@ bool MediaElementSession::autoplayPermitted() const
     return true;
 }
 
-bool MediaElementSession::dataLoadingPermitted(const HTMLMediaElement& element) const
+bool MediaElementSession::dataLoadingPermitted() const
 {
     if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
         return true;
 
-    if (m_restrictions & RequireUserGestureForLoad && !element.document().processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForLoad && !m_element.document().processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::dataLoadingPermitted - returning FALSE");
         return false;
     }
@@ -262,9 +263,9 @@ bool MediaElementSession::dataLoadingPermitted(const HTMLMediaElement& element) 
     return true;
 }
 
-bool MediaElementSession::fullscreenPermitted(const HTMLMediaElement& element) const
+bool MediaElementSession::fullscreenPermitted() const
 {
-    if (m_restrictions & RequireUserGestureForFullscreen && !element.document().processingUserGestureForMedia()) {
+    if (m_restrictions & RequireUserGestureForFullscreen && !m_element.document().processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::fullscreenPermitted - returning FALSE");
         return false;
     }
@@ -272,9 +273,9 @@ bool MediaElementSession::fullscreenPermitted(const HTMLMediaElement& element) c
     return true;
 }
 
-bool MediaElementSession::pageAllowsDataLoading(const HTMLMediaElement& element) const
+bool MediaElementSession::pageAllowsDataLoading() const
 {
-    Page* page = element.document().page();
+    Page* page = m_element.document().page();
     if (m_restrictions & RequirePageConsentToLoadMedia && page && !page->canStartMedia()) {
         LOG(Media, "MediaElementSession::pageAllowsDataLoading - returning FALSE");
         return false;
@@ -283,9 +284,9 @@ bool MediaElementSession::pageAllowsDataLoading(const HTMLMediaElement& element)
     return true;
 }
 
-bool MediaElementSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement& element) const
+bool MediaElementSession::pageAllowsPlaybackAfterResuming() const
 {
-    Page* page = element.document().page();
+    Page* page = m_element.document().page();
     if (m_restrictions & RequirePageConsentToResumeMedia && page && !page->canStartMedia()) {
         LOG(Media, "MediaElementSession::pageAllowsPlaybackAfterResuming - returning FALSE");
         return false;
@@ -341,7 +342,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return false;
     }
 
-    if (!playbackPermitted(m_element)) {
+    if (!playbackPermitted()) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Playback not permitted");
         return false;
     }
@@ -411,31 +412,32 @@ bool MediaElementSession::wantsToObserveViewportVisibilityForAutoplay() const
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void MediaElementSession::showPlaybackTargetPicker(const HTMLMediaElement& element)
+void MediaElementSession::showPlaybackTargetPicker()
 {
     LOG(Media, "MediaElementSession::showPlaybackTargetPicker");
 
-    if (m_restrictions & RequireUserGestureToShowPlaybackTargetPicker && !element.document().processingUserGestureForMedia()) {
+    auto& document = m_element.document();
+    if (m_restrictions & RequireUserGestureToShowPlaybackTargetPicker && !document.processingUserGestureForMedia()) {
         LOG(Media, "MediaElementSession::showPlaybackTargetPicker - returning early because of permissions");
         return;
     }
 
-    if (!element.document().page()) {
+    if (!document.page()) {
         LOG(Media, "MediaElementSession::showingPlaybackTargetPickerPermitted - returning early because page is NULL");
         return;
     }
 
 #if !PLATFORM(IOS)
-    if (element.readyState() < HTMLMediaElementEnums::HAVE_METADATA) {
+    if (m_element.readyState() < HTMLMediaElementEnums::HAVE_METADATA) {
         LOG(Media, "MediaElementSession::showPlaybackTargetPicker - returning early because element is not playable");
         return;
     }
 #endif
 
-    element.document().showPlaybackTargetPicker(*this, is<HTMLVideoElement>(element));
+    document.showPlaybackTargetPicker(*this, is<HTMLVideoElement>(m_element));
 }
 
-bool MediaElementSession::hasWirelessPlaybackTargets(const HTMLMediaElement&) const
+bool MediaElementSession::hasWirelessPlaybackTargets() const
 {
 #if PLATFORM(IOS)
     // FIXME: consolidate Mac and iOS implementations
@@ -447,20 +449,20 @@ bool MediaElementSession::hasWirelessPlaybackTargets(const HTMLMediaElement&) co
     return m_hasPlaybackTargets;
 }
 
-bool MediaElementSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& element) const
+bool MediaElementSession::wirelessVideoPlaybackDisabled() const
 {
-    if (!element.document().settings().allowsAirPlayForMediaPlayback()) {
+    if (!m_element.document().settings().allowsAirPlayForMediaPlayback()) {
         LOG(Media, "MediaElementSession::wirelessVideoPlaybackDisabled - returning TRUE because of settings");
         return true;
     }
 
-    if (element.hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)) {
+    if (m_element.hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)) {
         LOG(Media, "MediaElementSession::wirelessVideoPlaybackDisabled - returning TRUE because of attribute");
         return true;
     }
 
 #if PLATFORM(IOS)
-    auto& legacyAirplayAttributeValue = element.attributeWithoutSynchronization(HTMLNames::webkitairplayAttr);
+    auto& legacyAirplayAttributeValue = m_element.attributeWithoutSynchronization(HTMLNames::webkitairplayAttr);
     if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "deny")) {
         LOG(Media, "MediaElementSession::wirelessVideoPlaybackDisabled - returning TRUE because of legacy attribute");
         return true;
@@ -471,7 +473,7 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& 
     }
 #endif
 
-    auto player = element.player();
+    auto player = m_element.player();
     if (!player)
         return true;
 
@@ -481,14 +483,14 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& 
     return disabled;
 }
 
-void MediaElementSession::setWirelessVideoPlaybackDisabled(const HTMLMediaElement& element, bool disabled)
+void MediaElementSession::setWirelessVideoPlaybackDisabled(bool disabled)
 {
     if (disabled)
         addBehaviorRestriction(WirelessVideoPlaybackDisabled);
     else
         removeBehaviorRestriction(WirelessVideoPlaybackDisabled);
 
-    auto player = element.player();
+    auto player = m_element.player();
     if (!player)
         return;
 
@@ -496,17 +498,16 @@ void MediaElementSession::setWirelessVideoPlaybackDisabled(const HTMLMediaElemen
     player->setWirelessVideoPlaybackDisabled(disabled);
 }
 
-void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(const HTMLMediaElement& element, bool hasListeners)
+void MediaElementSession::setHasPlaybackTargetAvailabilityListeners(bool hasListeners)
 {
     LOG(Media, "MediaElementSession::setHasPlaybackTargetAvailabilityListeners - hasListeners %s", hasListeners ? "TRUE" : "FALSE");
 
 #if PLATFORM(IOS)
-    UNUSED_PARAM(element);
     m_hasPlaybackTargetAvailabilityListeners = hasListeners;
     PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
 #else
     UNUSED_PARAM(hasListeners);
-    element.document().playbackTargetPickerClientStateDidChange(*this, element.mediaState());
+    m_element.document().playbackTargetPickerClientStateDidChange(*this, m_element.mediaState());
 #endif
 }
 
@@ -559,17 +560,17 @@ void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
     client().setShouldPlayToPlaybackTarget(shouldPlay);
 }
 
-void MediaElementSession::mediaStateDidChange(const HTMLMediaElement& element, MediaProducer::MediaStateFlags state)
+void MediaElementSession::mediaStateDidChange(MediaProducer::MediaStateFlags state)
 {
-    element.document().playbackTargetPickerClientStateDidChange(*this, state);
+    m_element.document().playbackTargetPickerClientStateDidChange(*this, state);
 }
 #endif
 
-MediaPlayer::Preload MediaElementSession::effectivePreloadForElement(const HTMLMediaElement& element) const
+MediaPlayer::Preload MediaElementSession::effectivePreloadForElement() const
 {
-    MediaPlayer::Preload preload = element.preloadValue();
+    MediaPlayer::Preload preload = m_element.preloadValue();
 
-    if (pageExplicitlyAllowsElementToAutoplayInline(element))
+    if (pageExplicitlyAllowsElementToAutoplayInline(m_element))
         return preload;
 
     if (m_restrictions & MetadataPreloadingNotPermitted)
@@ -583,67 +584,65 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement(const HTMLM
     return preload;
 }
 
-bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement& element) const
+bool MediaElementSession::requiresFullscreenForVideoPlayback() const
 {
-    if (pageExplicitlyAllowsElementToAutoplayInline(element))
+    if (pageExplicitlyAllowsElementToAutoplayInline(m_element))
         return false;
 
-    if (is<HTMLAudioElement>(element))
+    if (is<HTMLAudioElement>(m_element))
         return false;
 
-    if (element.document().isMediaDocument()) {
-        ASSERT(is<HTMLVideoElement>(element));
-        const HTMLVideoElement& videoElement = *downcast<const HTMLVideoElement>(&element);
-        if (element.readyState() < HTMLVideoElement::HAVE_METADATA || !videoElement.hasEverHadVideo())
+    if (m_element.document().isMediaDocument()) {
+        ASSERT(is<HTMLVideoElement>(m_element));
+        const HTMLVideoElement& videoElement = *downcast<const HTMLVideoElement>(&m_element);
+        if (m_element.readyState() < HTMLVideoElement::HAVE_METADATA || !videoElement.hasEverHadVideo())
             return false;
     }
 
-    if (element.isTemporarilyAllowingInlinePlaybackAfterFullscreen())
+    if (m_element.isTemporarilyAllowingInlinePlaybackAfterFullscreen())
         return false;
 
-    if (!element.document().settings().allowsInlineMediaPlayback())
+    if (!m_element.document().settings().allowsInlineMediaPlayback())
         return true;
 
-    if (!element.document().settings().inlineMediaPlaybackRequiresPlaysInlineAttribute())
+    if (!m_element.document().settings().inlineMediaPlaybackRequiresPlaysInlineAttribute())
         return false;
 
 #if PLATFORM(IOS)
     if (IOSApplication::isIBooks())
-        return !element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) && !element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
+        return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) && !m_element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
     if (dyld_get_program_sdk_version() < DYLD_IOS_VERSION_10_0)
-        return !element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);
+        return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);
 #endif
 
-    if (element.document().isMediaDocument() && element.document().ownerElement())
+    if (m_element.document().isMediaDocument() && m_element.document().ownerElement())
         return false;
 
-    return !element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
+    return !m_element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
 }
 
-bool MediaElementSession::allowsAutomaticMediaDataLoading(const HTMLMediaElement& element) const
+bool MediaElementSession::allowsAutomaticMediaDataLoading() const
 {
-    if (pageExplicitlyAllowsElementToAutoplayInline(element))
+    if (pageExplicitlyAllowsElementToAutoplayInline(m_element))
         return true;
 
-    if (element.document().settings().mediaDataLoadsAutomatically())
+    if (m_element.document().settings().mediaDataLoadsAutomatically())
         return true;
 
     return false;
 }
 
-void MediaElementSession::mediaEngineUpdated(const HTMLMediaElement& element)
+void MediaElementSession::mediaEngineUpdated()
 {
     LOG(Media, "MediaElementSession::mediaEngineUpdated");
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_restrictions & WirelessVideoPlaybackDisabled)
-        setWirelessVideoPlaybackDisabled(element, true);
+        setWirelessVideoPlaybackDisabled(true);
     if (m_playbackTarget)
         client().setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
     if (m_shouldPlayToPlaybackTarget)
         client().setShouldPlayToPlaybackTarget(true);
-#else
-    UNUSED_PARAM(element);
 #endif
     
 }
@@ -654,9 +653,9 @@ void MediaElementSession::resetPlaybackSessionState()
     addBehaviorRestriction(RequireUserGestureToControlControlsManager | RequirePlaybackToControlControlsManager);
 }
 
-bool MediaElementSession::allowsPictureInPicture(const HTMLMediaElement& element) const
+bool MediaElementSession::allowsPictureInPicture() const
 {
-    return element.document().settings().allowsPictureInPictureMediaPlayback() && !element.webkitCurrentPlaybackTargetIsWireless();
+    return m_element.document().settings().allowsPictureInPictureMediaPlayback() && !m_element.webkitCurrentPlaybackTargetIsWireless();
 }
 
 #if PLATFORM(IOS)

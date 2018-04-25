@@ -530,7 +530,7 @@ String PlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName() c
 
 bool PlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 {
-    return m_mediaElement && m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement);
+    return m_mediaElement && m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled();
 }
 
 bool PlaybackSessionModelMediaElement::isMuted() const

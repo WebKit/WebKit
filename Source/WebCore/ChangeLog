@@ -1,3 +1,78 @@
+2018-04-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] remove media element parameter from MediaElementSession methods
+        https://bugs.webkit.org/show_bug.cgi?id=184992
+        <rdar://problem/39731624>
+
+        Reviewed by Jon Lee.
+
+        No new tests, no behavior change.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::allowsInlineMediaPlayback const):
+        (WebCore::MediaControlsHost::userGestureRequired const):
+        * accessibility/AccessibilityMediaObject.cpp:
+        (WebCore::AccessibilityMediaObject::isPlayingInline const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay const):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::webkitShowPlaybackTargetPicker):
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::configureMediaControls):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::mediaPlayerIsFullscreenPermitted const):
+        (WebCore::HTMLMediaElement::updateMediaState):
+        (WebCore::HTMLMediaElement::mediaState const):
+        (WebCore::HTMLMediaElement::allowsMediaDocumentInlinePlaybackChanged):
+        (WebCore::HTMLMediaElement::updateShouldPlay):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute):
+        (WebCore::HTMLVideoElement::supportsFullscreen const):
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen):
+        (WebCore::HTMLVideoElement::webkitWirelessVideoPlaybackDisabled const):
+        (WebCore::HTMLVideoElement::webkitSupportsPresentationMode const):
+        (WebCore::HTMLVideoElement::setFullscreenMode):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted const):
+        (WebCore::MediaElementSession::dataLoadingPermitted const):
+        (WebCore::MediaElementSession::fullscreenPermitted const):
+        (WebCore::MediaElementSession::pageAllowsDataLoading const):
+        (WebCore::MediaElementSession::pageAllowsPlaybackAfterResuming const):
+        (WebCore::MediaElementSession::canShowControlsManager const):
+        (WebCore::MediaElementSession::showPlaybackTargetPicker):
+        (WebCore::MediaElementSession::hasWirelessPlaybackTargets const):
+        (WebCore::MediaElementSession::wirelessVideoPlaybackDisabled const):
+        (WebCore::MediaElementSession::setWirelessVideoPlaybackDisabled):
+        (WebCore::MediaElementSession::setHasPlaybackTargetAvailabilityListeners):
+        (WebCore::MediaElementSession::mediaStateDidChange):
+        (WebCore::MediaElementSession::effectivePreloadForElement const):
+        (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback const):
+        (WebCore::MediaElementSession::allowsAutomaticMediaDataLoading const):
+        (WebCore::MediaElementSession::mediaEngineUpdated):
+        (WebCore::MediaElementSession::allowsPictureInPicture const):
+        * html/MediaElementSession.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled const):
+
 2018-04-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Remove access to keychain from the WebContent process
