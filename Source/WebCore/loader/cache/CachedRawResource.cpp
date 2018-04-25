@@ -64,12 +64,15 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
     ASSERT(dataBufferingPolicy() == BufferData);
     m_data = &data;
 
-    auto incrementalData = calculateIncrementalDataChunk(&data);
-    setEncodedSize(data.size());
-    if (incrementalData) {
+    auto previousDataSize = encodedSize();
+    while (data.size() > previousDataSize) {
+        auto incrementalData = data.getSomeData(previousDataSize);
+        previousDataSize += incrementalData.size();
+
         SetForScope<bool> notifyScope(m_inIncrementalDataNotify, true);
-        notifyClientsDataWasReceived(incrementalData->data(), incrementalData->size());
-    }
+        notifyClientsDataWasReceived(incrementalData.data(), incrementalData.size());
+    };
+    setEncodedSize(data.size());
 
     if (dataBufferingPolicy() == DoNotBufferData) {
         if (m_loader)

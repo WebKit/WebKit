@@ -1,5 +1,19 @@
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
+        CachedRawResource is not handling incremental data computation correctly
+        https://bugs.webkit.org/show_bug.cgi?id=184936
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/resources/service-worker-fetch-worker.js:
+        (stringToBuffer):
+        (event.event.request.url.endsWith):
+        * http/tests/workers/service/resources/service-worker-fetch.js:
+        (async.test):
+        * http/tests/workers/service/service-worker-fetch.https-expected.txt:
+
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
         Ensure DNT is set for redirections handled in NetworkProcess
         https://bugs.webkit.org/show_bug.cgi?id=184890
 

@@ -1,8 +1,11 @@
 async function test()
 {
     try {
-        var frame = await interceptedFrame("resources/service-worker-fetch-worker.js", "/workers/service/resources/");
+        var frame = await interceptedFrame("resources/service-worker-fetch-worker.js", "/workers/service/resources/test.bodyasstream");
         var fetch = frame.contentWindow.fetch;
+
+        var expectedFrameContent = "This test passes if the sentence is complete with PASS.";
+        log("Checking frame content received as chunks: " + (frame.contentWindow.document.body.innerHTML === expectedFrameContent ? "PASS" : "FAIL"));
 
         var response = await fetch("status");
         log("Status is " + response.statusText);

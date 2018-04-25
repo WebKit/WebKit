@@ -1,3 +1,19 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        CachedRawResource is not handling incremental data computation correctly
+        https://bugs.webkit.org/show_bug.cgi?id=184936
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated test.
+
+        The previous logic was handling the case of only one additional segment being added to the SharedBuffer.
+        In service worker case, a SharedBuffer may contain more than one segment.
+        This is fixed by iterating until all new data is sent to clients.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::updateBuffer):
+
 2018-04-25  Andy Estes  <aestes@apple.com>
 
         [Mac] Number of drop items is always 0 when performing a DHTML drag

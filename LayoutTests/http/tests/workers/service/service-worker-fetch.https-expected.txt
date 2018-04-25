@@ -1,4 +1,5 @@
 
+Checking frame content received as chunks: PASS
 Status is no status
 Got image response with buffer byte length being 12940
 Got should-be-empty response with buffer byte length being 0 and status is Empty stream
