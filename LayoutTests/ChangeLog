@@ -1,3 +1,15 @@
+2018-04-25  Ms2ger  <Ms2ger@igalia.com>
+
+        imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-* LayoutTests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=182833
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestExpectations: enable tests
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: update expectations
+        * platform/ios/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: update expectations
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: update expectations
+
 2018-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Add a new "color-filter" CSS property as an experimental feature

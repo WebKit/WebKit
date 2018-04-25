@@ -1,3 +1,13 @@
+2018-04-25  Ms2ger  <Ms2ger@igalia.com>
+
+        imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-* LayoutTests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=182833
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * web-platform-tests/2dcontext/imagebitmap/common.sub.js: ensure event handlers aren't garbage collected
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: update expectations
+
 2018-04-24  John Wilander  <wilander@apple.com>
 
         From-Origin: Support for 'same' and 'same-site' response header, nested frame origin check

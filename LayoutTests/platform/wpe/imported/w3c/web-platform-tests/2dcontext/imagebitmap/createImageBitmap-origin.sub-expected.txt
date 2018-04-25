@@ -9,6 +9,7 @@ FAIL cross-origin HTMLImageElement promise_test: Unhandled rejection with value:
 FAIL cross-origin SVGImageElement promise_test: Unhandled rejection with value: object "[object Event]"
 FAIL cross-origin HTMLVideoElement promise_test: Unhandled rejection with value: object "[object Event]"
 TIMEOUT redirected to cross-origin HTMLVideoElement Test timed out
+NOTRUN redirected to same-origin HTMLVideoElement 
 NOTRUN unclean HTMLCanvasElement 
 NOTRUN unclean ImageBitmap 
 
