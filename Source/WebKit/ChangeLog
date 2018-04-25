@@ -1,3 +1,32 @@
+2018-04-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Remove access to keychain from the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=184428
+        <rdar://problem/13150903>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does the followings:
+        1. Added necessary support to move HTMLKeygenElement's operation from WebContent Process to UI Process.
+        2. Craft new SPI copySignedPublicKeyAndChallengeString to supply HTMLKeygenElement with dummy data such
+        that WebKitTestRunner tests will not modify the underlying key store (e.g., the macOS Keychain).
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::signedPublicKeyAndChallengeString):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/C/WKPageNavigationClient.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::signedPublicKeyAndChallengeString):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::signedPublicKeyAndChallengeString):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::signedPublicKeyAndChallengeString const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] The search field on www.bing.com is missing label text

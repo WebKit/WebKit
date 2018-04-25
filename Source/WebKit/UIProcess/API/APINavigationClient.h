@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIData.h"
+#include "APIString.h"
 #include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
 #include "SameDocumentNavigationType.h"
@@ -93,6 +94,8 @@ public:
     virtual void processDidBecomeUnresponsive(WebKit::WebPageProxy&) { }
 
     virtual RefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
+
+    virtual RefPtr<String> signedPublicKeyAndChallengeString(WebKit::WebPageProxy&, unsigned keySizeIndex, const RefPtr<String>& challengeString, const WebCore::URL&) { return nullptr; }
 
 #if USE(QUICK_LOOK)
     virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }

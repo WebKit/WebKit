@@ -523,4 +523,7 @@ messages -> WebPageProxy {
     StartDisplayLink(unsigned observerID)
     StopDisplayLink(unsigned observerID)
 #endif
+
+    SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, WebCore::URL url) -> (String result)
+
 }

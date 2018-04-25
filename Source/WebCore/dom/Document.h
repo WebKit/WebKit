@@ -1429,6 +1429,8 @@ public:
     void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
 #endif
 
+    String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&);
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);

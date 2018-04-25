@@ -138,6 +138,7 @@
 #include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RenderEmbeddedObject.h>
+#include <WebCore/SSLKeyGenerator.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/TextCheckerClient.h>
@@ -6788,6 +6789,18 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succ
     succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
 }
 #endif
+
+void WebPageProxy::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const WebCore::URL& url, String& result)
+{
+    PageClientProtector protector(m_pageClient);
+
+    if (m_navigationClient) {
+        if (auto apiString = m_navigationClient->signedPublicKeyAndChallengeString(*this, keySizeIndex, API::String::create(challengeString), url))
+            result = apiString->string();
+        return;
+    }
+    result = WebCore::signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
+}
 
 void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
 {

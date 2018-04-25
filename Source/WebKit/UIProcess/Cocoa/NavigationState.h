@@ -111,6 +111,8 @@ private:
 
         RefPtr<API::Data> webCryptoMasterKey(WebPageProxy&) override;
 
+        RefPtr<API::String> signedPublicKeyAndChallengeString(WebPageProxy&, unsigned keySizeIndex, const RefPtr<API::String>& challengeString, const WebCore::URL&) override;
+
 #if USE(QUICK_LOOK)
         void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
         void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&) override;

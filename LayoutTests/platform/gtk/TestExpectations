@@ -2531,9 +2531,6 @@ webkit.org/b/100238 fast/history/window-open.html [ Failure ]
 webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
 webkit.org/b/53964 fast/forms/option-mouseevents.html [ Failure ]
 
-# keygen element rendering is broken
-webkit.org/b/54136 http/tests/misc/submit-post-keygen.html [ Failure ]
-
 webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/123097 media/track/track-user-preferences.html [ Skip ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]

@@ -9,7 +9,7 @@ function runTest()
 {
     var r = document.getElementById('result');
     var o = document.getElementById('output').firstChild;
-    if (o.nodeValue == 'spkac exists') 
+    if (o.nodeValue == 'MIHFMHEwXDANBgkqhkiG9w0BAQEFAANLADBIAkEAnX0TILJrOMUue%2BPtwBRE6XfV%0AWtKQbsshxk5ZhcUwcwyvcnIq9b82QhJdoACdD34rqfCAIND46fXKQUnb0mvKzQID%0AAQABFhFNb3ppbGxhSXNNeUZyaWVuZDANBgkqhkiG9w0BAQQFAANBAAKv2Eex2n%2FS%0Ar%2F7iJNroWlSzSMtTiQTEB%2BADWHGj9u1xrUrOilq%2Fo2cuQxIfZcNZkYAkWP4DubqW%0Ai0%2F%2FrgBvmco%3D')
         r.innerHTML = "SUCCESS: keygen was parsed correctly";
     else
         r.innerHTML = "FAILURE: keygen was not parsed correctly. value=" +
@@ -27,7 +27,7 @@ This is a regression test for keygen tag POST processing: https://bugs.webkit.or
 </p>
 <div style='display: none;' id='output'><?php
 if (array_key_exists('spkac', $_REQUEST)) {
-    echo "spkac exists";
+    echo $_REQUEST['spkac'];
 } else {
     echo "spkac does not exist";
 }

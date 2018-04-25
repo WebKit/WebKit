@@ -1,3 +1,27 @@
+2018-04-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Remove access to keychain from the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=184428
+        <rdar://problem/13150903>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does the followings:
+        1. Added an API test for this patch.
+        2. Instrument DumpRenderTree and WebKitTestRunner to take advantages of new SPIs.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate signedPublicKeyAndChallengeStringForWebView:]):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/SSLKeyGenerator.mm: Added.
+        (TestWebKitAPI::SSLKeyGeneratorTest::SetUp):
+        (TestWebKitAPI::SSLKeyGeneratorTest::TearDown):
+        (TestWebKitAPI::TEST_F):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::copySignedPublicKeyAndChallengeString):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+
 2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] The search field on www.bing.com is missing label text

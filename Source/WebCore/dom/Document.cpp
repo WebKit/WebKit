@@ -7795,4 +7795,12 @@ void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConne
 }
 #endif
 
+String Document::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url)
+{
+    Page* page = this->page();
+    if (!page)
+        return emptyString();
+    return page->chrome().client().signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
+}
+
 } // namespace WebCore

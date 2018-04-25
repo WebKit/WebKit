@@ -124,7 +124,7 @@ bool HTMLKeygenElement::appendFormData(DOMFormData& formData, bool)
     // Only RSA is supported at this time.
     if (!isKeytypeRSA())
         return false;
-    auto value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), attributeWithoutSynchronization(challengeAttr), document().baseURL());
+    auto value = document().signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), attributeWithoutSynchronization(challengeAttr), document().baseURL());
     if (value.isNull())
         return false;
     formData.append(name(), value);

@@ -308,4 +308,6 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 
 - (NSData *)webCryptoMasterKeyForWebView:(WebView *)sender;
 
+- (NSString *)signedPublicKeyAndChallengeStringForWebView:(WebView *)sender;
+
 @end

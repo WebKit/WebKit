@@ -238,7 +238,7 @@ namespace WebCore {
     WEBCORE_EXPORT String pdfDocumentTypeDescription();
     WEBCORE_EXPORT String postScriptDocumentTypeDescription();
     String keygenMenuItem2048();
-    String keygenKeychainItemName(const String& host);
+    WEBCORE_EXPORT String keygenKeychainItemName(const String& host);
 #endif
 
 #if PLATFORM(IOS)

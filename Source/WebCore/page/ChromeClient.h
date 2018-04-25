@@ -475,6 +475,8 @@ public:
 
     virtual void testIncomingSyncIPCMessageWhileWaitingForSyncReply() { }
 
+    virtual String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&) const { return emptyString(); }
+
 protected:
     virtual ~ChromeClient() = default;
 };

@@ -1,3 +1,19 @@
+2018-04-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Remove access to keychain from the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=184428
+        <rdar://problem/13150903>
+
+        Reviewed by Brent Fulgham.
+
+        Alter the layout test to match dummy data supplied by the test runners.
+        Modify expectations as well.
+
+        * http/tests/misc/resources/check-keygen-post.php:
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] The search field on www.bing.com is missing label text

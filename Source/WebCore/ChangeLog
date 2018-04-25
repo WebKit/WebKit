@@ -1,3 +1,29 @@
+2018-04-25  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Remove access to keychain from the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=184428
+        <rdar://problem/13150903>
+
+        Reviewed by Brent Fulgham.
+
+        Part 2.
+
+        This patch move the operation of HTMLKeygenElement from WebContent Process to UI Process.
+        Function signedPublicKeyAndChallengeString is therefore marked as WEBCORE_EXPORT. Also, a
+        localized string is marked WEBCORE_EXPORT as well to support the API test.
+
+        Covered by existing tests and api tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::signedPublicKeyAndChallengeString):
+        * dom/Document.h:
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::appendFormData):
+        * page/ChromeClient.h:
+        * platform/LocalizedStrings.h:
+        * platform/SSLKeyGenerator.h:
+
 2018-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         PSON: Don't create a new process when navigating to a blob URL, data URL, and about:blank
