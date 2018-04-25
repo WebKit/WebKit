@@ -353,7 +353,8 @@ void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
         }
 
         // Finish setting up the rootline.
-        auto firstRun = *range.begin();
+        auto iter = range.begin();
+        auto firstRun = *iter;
         rootLineBox.setLogicalLeft(firstRun.logicalLeft());
         rootLineBox.setLogicalWidth(lineWidth);
         auto lineTop = firstRun.rect().y();

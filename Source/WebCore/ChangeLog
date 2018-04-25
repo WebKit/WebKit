@@ -1,3 +1,19 @@
+2018-04-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Crash under WebCore::SimpleLineLayout::generateLineBoxTree
+        https://bugs.webkit.org/show_bug.cgi?id=184953
+
+        This is possibly a MSVC compiler bug, since a simple rearrangement of the code fixes the crash.
+        The crash is only happening in release builds, which also is an indication of this being a
+        compiler issue.
+
+        Reviewed by Zalan Bujtas.
+
+        No new tests, covered by existing tests.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::generateLineBoxTree):
+
 2018-04-25  Dean Jackson  <dino@apple.com>
 
         Make a better flag for system preview, and disable it where necessary
