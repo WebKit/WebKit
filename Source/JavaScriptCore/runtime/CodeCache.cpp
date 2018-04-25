@@ -158,7 +158,8 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     functionExecutable->setSourceURLDirective(source.provider()->sourceURL());
     functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURL());
 
-    m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));
+    if (Options::useCodeCache())
+        m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));
     return functionExecutable;
 }
 
