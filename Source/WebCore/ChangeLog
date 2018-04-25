@@ -1,3 +1,26 @@
+2018-04-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in ScriptController::canExecuteScripts via CachedSVGFont::ensureCustomFontData during
+        Document::updateStyleIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=184950
+
+        Reviewed by Zalan Bujtas.
+
+        Convert an existing ScriptDisallowedScope::EventAllowedScope which only disables the debug assertions
+        by ScriptDisallowedScope::DisableAssertionsInScope which also disables the release assertion.
+
+        Because SVG font is loaded in a document isolated from the rest of the page (m_externalSVGDocument),
+        there is no security implication to execute scripts in this isolated document.
+
+        Unfortunately, no new tests. I could never make CachedSVGFont::ensureCustomFontData to get called inside
+        style resolution with m_externalSVGDocument set to nullptr after many attempts. Even EventAllowedScope
+        I added 13 months ago in r211965, which this patch replaces by DisableAssertionsInScope, is not utilized
+        by the existing layout tests since removing the assertion doesn't cause any layout test to hit an assertion.
+
+        * dom/ScriptDisallowedScope.h: Updated the comment.
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData): Replaced the asssertion.
+
 2018-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         visitedDependentColor() should take a CSSPropertyID
