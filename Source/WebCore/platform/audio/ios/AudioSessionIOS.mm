@@ -111,6 +111,7 @@ void AudioSession::setCategory(CategoryType newCategory)
     NSString *categoryString;
     NSString *categoryMode = AVAudioSessionModeDefault;
     AVAudioSessionCategoryOptions options = 0;
+    AVAudioSessionRouteSharingPolicy policy = AVAudioSessionRouteSharingPolicyDefault;
 
     switch (newCategory) {
     case AmbientSound:
@@ -121,6 +122,7 @@ void AudioSession::setCategory(CategoryType newCategory)
         break;
     case MediaPlayback:
         categoryString = AVAudioSessionCategoryPlayback;
+        policy = AVAudioSessionRouteSharingPolicyLongForm;
         break;
     case RecordAudio:
         categoryString = AVAudioSessionCategoryRecord;
@@ -140,7 +142,7 @@ void AudioSession::setCategory(CategoryType newCategory)
     }
 
     NSError *error = nil;
-    [[AVAudioSession sharedInstance] setCategory:categoryString mode:categoryMode options:options error:&error];
+    [[AVAudioSession sharedInstance] setCategory:categoryString mode:categoryMode routeSharingPolicy:policy options:options error:&error];
 #if !PLATFORM(IOS_SIMULATOR) && !ENABLE(MINIMAL_SIMULATOR)
     ASSERT(!error);
 #endif

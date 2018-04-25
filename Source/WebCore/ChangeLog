@@ -1,3 +1,14 @@
+2018-04-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Set route sharing policy when setting audio session category
+        https://bugs.webkit.org/show_bug.cgi?id=184979
+        <rdar://problem/39709577>
+
+        Reviewed by Jer Noble.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory):
+
 2018-04-25  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix wrong schema checking on r230973
