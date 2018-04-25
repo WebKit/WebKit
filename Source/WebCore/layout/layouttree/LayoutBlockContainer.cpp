@@ -25,3 +25,34 @@
 
 #include "config.h"
 #include "LayoutBlockContainer.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "RenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(BlockContainer);
+
+BlockContainer::BlockContainer(RenderStyle&& style)
+    : Container(WTFMove(style))
+{
+}
+
+bool BlockContainer::establishesInlineFormattingContext() const
+{
+    // 9.4.2 Inline formatting contexts
+    // An inline formatting context is established by a block container box that contains no block-level boxes.
+    for (auto* child = firstInFlowChild(); child; child = child->nextInFlowSibling()) {
+        if (child->isBlockLevelBox())
+            return false;
+    }
+    return hasInFlowOrFloatingChild();
+}
+
+}
+}
+
+#endif
