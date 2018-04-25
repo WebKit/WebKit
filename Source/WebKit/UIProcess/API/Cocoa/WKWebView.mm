@@ -207,6 +207,7 @@ static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif // PLATFORM(MAC)
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
+#include <wtf/darwin/WeakLinking.h>
 #if __has_include(<AccessibilitySupport.h>)
 #include <AccessibilitySupport.h>
 #else
@@ -700,7 +701,9 @@ static void validate(WKWebViewConfiguration *configuration)
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), accessibilityEventsEnabledChangedCallback, kAXSWebAccessibilityEventsEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
+    const auto* notificationPtr = &kAXSWebAccessibilityEventsEnabledNotification;
+    if (notificationPtr)
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), accessibilityEventsEnabledChangedCallback, kAXSWebAccessibilityEventsEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
     [self _updateAccessibilityEventsEnabled];
 #endif
 
@@ -827,9 +830,12 @@ static void validate(WKWebViewConfiguration *configuration)
 #if PLATFORM(IOS)
     [_remoteObjectRegistry _invalidate];
     [[_configuration _contentProviderRegistry] removePage:*_page];
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), nullptr, nullptr);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_scrollView setInternalDelegate:nil];
+#endif
+
+#if ENABLE(ACCESSIBILITY_EVENTS)
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), nullptr, nullptr);
 #endif
 
     pageToViewMap().remove(_page.get());
@@ -3073,7 +3079,8 @@ static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, v
 
 - (void)_updateAccessibilityEventsEnabled
 {
-    _page->updateAccessibilityEventsEnabled(_AXSWebAccessibilityEventsEnabled());
+    if (!isNullFunctionPointer(_AXSWebAccessibilityEventsEnabled))
+        _page->updateAccessibilityEventsEnabled(_AXSWebAccessibilityEventsEnabled());
 }
 #endif
 
