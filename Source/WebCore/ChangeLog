@@ -1,3 +1,17 @@
+2018-04-25  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Fix wrong schema checking on r230973
+        https://bugs.webkit.org/show_bug.cgi?id=184977
+
+        Did write a wrong condition when making a string.
+
+        Reviewed by Alex Christensen.
+
+        No new tests because test interface is not ready.
+
+        * platform/network/curl/CurlProxySettings.cpp:
+        (WebCore::createProxyUrl):
+
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
         Make DocumentThreadableLoader error logging more consistent

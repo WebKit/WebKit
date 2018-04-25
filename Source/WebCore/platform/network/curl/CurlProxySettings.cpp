@@ -88,7 +88,7 @@ static std::optional<String> createProxyUrl(const URL &url)
     if (url.isEmpty() || url.host().isEmpty())
         return std::nullopt;
 
-    if (url.protocolIsInHTTPFamily() && !protocolIsInSocksFamily(url))
+    if (!url.protocolIsInHTTPFamily() && !protocolIsInSocksFamily(url))
         return std::nullopt;
 
     auto port = getProxyPort(url);
