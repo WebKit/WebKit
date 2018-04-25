@@ -29,6 +29,7 @@
 
 #include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -39,23 +40,31 @@ namespace Layout {
 class Container : public Box {
     WTF_MAKE_ISO_ALLOCATED(Container);
 public:
+    friend class TreeBuilder;
+
     Container(RenderStyle&&);
 
-    void setFirstChild(Layout::Box&);
-    void setLastChild(Layout::Box&);
+    const Box* firstChild() const { return m_firstChild; }
+    const Box* firstInFlowChild() const;
+    const Box* firstInFlowOrFloatingChild() const;
+    const Box* lastChild() const { return m_lastChild; }
+    const Box* lastInFlowChild() const;
+    const Box* lastInFlowOrFloatingChild() const;
 
-    Box* firstChild() const;
-    Box* firstInFlowChild() const;
-    Box* firstInFlowOrFloatingChild() const;
-    Box* lastChild() const;
-    Box* lastInFlowChild() const;
-    Box* lastInFlowOrFloatingChild() const;
+    bool hasChild() const { return firstChild(); }
+    bool hasInFlowChild() const { return firstInFlowChild(); }
+    bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
 
-    bool hasChild() const;
-    bool hasInFlowChild() const;
-    bool hasInFlowOrFloatingChild() const;
+    const Vector<WeakPtr<Box>>& outOfFlowDescendants() { return m_outOfFlowDescendants; }
 
-    Vector<Box&> outOfFlowDescendants() const;
+private:
+    void setFirstChild(Box&);
+    void setLastChild(Box&);
+    void setOutOfFlowDescendants(Vector<WeakPtr<Box>>&&);
+
+    Box* m_firstChild { nullptr };
+    Box* m_lastChild { nullptr };
+    Vector<WeakPtr<Box>> m_outOfFlowDescendants;
 };
 
 }

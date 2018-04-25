@@ -1,3 +1,27 @@
+2018-04-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement Layout::Container functions.
+        https://bugs.webkit.org/show_bug.cgi?id=184988
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutContainer.cpp:
+        (WebCore::Layout::Container::Container):
+        (WebCore::Layout::Container::firstInFlowChild const):
+        (WebCore::Layout::Container::firstInFlowOrFloatingChild const):
+        (WebCore::Layout::Container::lastInFlowChild const):
+        (WebCore::Layout::Container::lastInFlowOrFloatingChild const):
+        (WebCore::Layout::Container::setFirstChild):
+        (WebCore::Layout::Container::setLastChild):
+        (WebCore::Layout::Container::setOutOfFlowDescendants):
+        * layout/layouttree/LayoutContainer.h:
+        (WebCore::Layout::Container::firstChild const):
+        (WebCore::Layout::Container::lastChild const):
+        (WebCore::Layout::Container::hasChild const):
+        (WebCore::Layout::Container::hasInFlowChild const):
+        (WebCore::Layout::Container::hasInFlowOrFloatingChild const):
+        (WebCore::Layout::Container::outOfFlowDescendants):
+
 2018-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         Don't Block First Party Cookies on Redirects

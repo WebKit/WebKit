@@ -25,3 +25,77 @@
 
 #include "config.h"
 #include "LayoutContainer.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "RenderStyle.h"
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Container);
+
+Container::Container(RenderStyle&& style)
+    : Box(WTFMove(style))
+{
+}
+
+const Box* Container::firstInFlowChild() const
+{
+    if (auto* firstChild = this->firstChild()) {
+        if (firstChild->isInFlow())
+            return firstChild;
+        return firstChild->nextInFlowSibling();
+    }
+    return nullptr;
+}
+
+const Box* Container::firstInFlowOrFloatingChild() const
+{
+    if (auto* firstChild = this->firstChild()) {
+        if (firstChild->isInFlow() || firstChild->isFloatingPositioned())
+            return firstChild;
+        return firstChild->nextInFlowOrFloatingSibling();
+    }
+    return nullptr;
+}
+
+const Box* Container::lastInFlowChild() const
+{
+    if (auto* lastChild = this->lastChild()) {
+        if (lastChild->isInFlow())
+            return lastChild;
+        return lastChild->previousInFlowSibling();
+    }
+    return nullptr;
+}
+
+const Box* Container::lastInFlowOrFloatingChild() const
+{
+    if (auto* lastChild = this->lastChild()) {
+        if (lastChild->isInFlow() || lastChild->isFloatingPositioned())
+            return lastChild;
+        return lastChild->previousInFlowOrFloatingSibling();
+    }
+    return nullptr;
+}
+
+void Container::setFirstChild(Box& childBox)
+{
+    m_firstChild = &childBox;
+}
+
+void Container::setLastChild(Box& childBox)
+{
+    m_lastChild = &childBox;
+}
+
+void Container::setOutOfFlowDescendants(Vector<WeakPtr<Box>>&& descendantList)
+{
+    m_outOfFlowDescendants = WTFMove(descendantList);
+}
+
+}
+}
+#endif
