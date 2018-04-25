@@ -105,9 +105,6 @@ namespace JSC {
             d30,
             d31,
 #endif // CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
-
-            // Pseudonyms for some of the registers.
-            SD0 = d7, /* Same as thumb assembler. */
         } FPRegisterID;
 
     } // namespace ARMRegisters

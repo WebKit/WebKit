@@ -1,3 +1,74 @@
+2018-04-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r230748) [GTK][ARM] no matching function for call to 'JSC::CCallHelpers::swap(JSC::ARMRegisters::FPRegisterID&, JSC::ARMRegisters::FPRegisterID&)'
+        https://bugs.webkit.org/show_bug.cgi?id=184730
+
+        Reviewed by Mark Lam.
+
+        Add swap(FPRegisterID, FPRegisterID) implementation using ARMRegisters::SD0 (temporary register in MacroAssemblerARM).
+        And we now use dataTempRegister, addressTempRegister, and fpTempRegister instead of using S0, S1, and SD0.
+
+        We also change swap(RegisterID, RegisterID) implementation to use moves and temporaries simply. This is aligned to
+        ARMv7 implementation.
+
+        * assembler/ARMAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::add32):
+        (JSC::MacroAssemblerARM::and32):
+        (JSC::MacroAssemblerARM::lshift32):
+        (JSC::MacroAssemblerARM::mul32):
+        (JSC::MacroAssemblerARM::or32):
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::urshift32):
+        (JSC::MacroAssemblerARM::sub32):
+        (JSC::MacroAssemblerARM::xor32):
+        (JSC::MacroAssemblerARM::load8):
+        (JSC::MacroAssemblerARM::abortWithReason):
+        (JSC::MacroAssemblerARM::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::store8):
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::push):
+        (JSC::MacroAssemblerARM::swap):
+        (JSC::MacroAssemblerARM::branch8):
+        (JSC::MacroAssemblerARM::branchPtr):
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerARM::branchTest8):
+        (JSC::MacroAssemblerARM::branchTest32):
+        (JSC::MacroAssemblerARM::jump):
+        (JSC::MacroAssemblerARM::branchAdd32):
+        (JSC::MacroAssemblerARM::mull32):
+        (JSC::MacroAssemblerARM::branchMul32):
+        (JSC::MacroAssemblerARM::patchableBranch32):
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::compare32):
+        (JSC::MacroAssemblerARM::compare8):
+        (JSC::MacroAssemblerARM::test32):
+        (JSC::MacroAssemblerARM::test8):
+        (JSC::MacroAssemblerARM::add64):
+        (JSC::MacroAssemblerARM::load32):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM::branch32WithPatch):
+        (JSC::MacroAssemblerARM::storePtrWithPatch):
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::storeDouble):
+        (JSC::MacroAssemblerARM::addDouble):
+        (JSC::MacroAssemblerARM::divDouble):
+        (JSC::MacroAssemblerARM::subDouble):
+        (JSC::MacroAssemblerARM::mulDouble):
+        (JSC::MacroAssemblerARM::convertInt32ToDouble):
+        (JSC::MacroAssemblerARM::branchDouble):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARM::truncateDoubleToInt32):
+        (JSC::MacroAssemblerARM::truncateDoubleToUint32):
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerARM::branchDoubleNonZero):
+        (JSC::MacroAssemblerARM::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerARM::call32):
+        (JSC::MacroAssemblerARM::internalCompare32):
+
 2018-04-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Fix js/regexp-unicode.html crash.
