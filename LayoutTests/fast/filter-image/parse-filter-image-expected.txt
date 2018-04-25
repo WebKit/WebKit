@@ -52,7 +52,7 @@ PASS innerStyle("background-image", "filter(none, brightness(1.0))") is "filter(
 PASS innerStyle("background-image", "filter(none, brightness(0))") is "filter(none, brightness(0))"
 PASS innerStyle("background-image", "filter(none, brightness(0.5) brightness(0.25))") is "filter(none, brightness(0.5) brightness(0.25))"
 PASS innerStyle("background-image", "filter(none, brightness(0.5) grayscale(0.25))") is "filter(none, brightness(0.5) grayscale(0.25))"
-PASS innerStyle("background-image", "filter(none, brightness(-1.1))") is "filter(none, brightness(-1.1))"
+PASS innerStyle("background-image", "filter(none, brightness(-1.1))") is ""
 PASS innerStyle("background-image", "filter(none, brightness(101%))") is "filter(none, brightness(101%))"
 PASS innerStyle("background-image", "filter(none, grayscale(0.25) brightness(0.5))") is "filter(none, grayscale(0.25) brightness(0.5))"
 PASS innerStyle("background-image", "filter(none, contrast(1))") is "filter(none, contrast(1))"

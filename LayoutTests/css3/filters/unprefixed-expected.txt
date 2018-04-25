@@ -194,7 +194,7 @@ PASS subRule.cssText is "brightness(0)"
 
 No values : brightness()
 PASS filterStyle.length is 1
-PASS subRule.cssText is "brightness(0)"
+PASS subRule.cssText is "brightness(1)"
 
 Multiple values : brightness(0.5) brightness(0.25)
 PASS filterStyle.length is 2

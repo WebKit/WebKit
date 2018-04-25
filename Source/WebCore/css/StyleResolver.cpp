@@ -1981,7 +1981,7 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
         case FilterOperation::BRIGHTNESS:
         case FilterOperation::CONTRAST:
         case FilterOperation::OPACITY: {
-            double amount = (operationType == FilterOperation::BRIGHTNESS) ? 0 : 1;
+            double amount = 1;
             if (filterValue.length() == 1) {
                 amount = firstValue->doubleValue();
                 if (firstValue->isPercentage())

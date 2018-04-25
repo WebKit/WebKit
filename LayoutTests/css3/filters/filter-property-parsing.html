@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE>
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -59,6 +59,24 @@ function testFilterRule(description, rule, expectedLength, expectedValue, expect
             shouldBe("subRule.cssText", `"${expectedTexts[i]}"`);
         }
     }
+    
+    stylesheet.deleteRule(0);
+}
+
+function testInvalidFilterRule(description, rule)
+{
+    debug("");
+    debug(`${description} : ${rule}`);
+
+    stylesheet.insertRule(`body { filter: ${rule}; }`, 0);
+    cssRule = stylesheet.cssRules.item(0);
+
+    shouldBe("cssRule.type", "1");
+
+    declaration = cssRule.style;
+    shouldBe("declaration.length", "0");
+    shouldBe("declaration.getPropertyValue('filter')", "''");
+
     stylesheet.deleteRule(0);
 }
 
@@ -130,6 +148,8 @@ testFilterRule("Percentages over 100 are clamped",
                "sepia(101%)", 1, "sepia(100%)",
                ["sepia(100%)"]);
 
+testInvalidFilterRule("Negative value", "sepia(-0.5)");
+
 testFilterRule("Zero value",
                "sepia(0)", 1, "sepia(0)",
                ["sepia(0)"]);
@@ -137,6 +157,8 @@ testFilterRule("Zero value",
 testFilterRule("No values",
                "sepia()", 1, "sepia()",
                ["sepia()"]);
+
+testInvalidFilterRule("Negative value", "grayscale(-0.2)");
 
 testFilterRule("Multiple values",
                "sepia(0.5) sepia(0.25)", 2, "sepia(0.5) sepia(0.25)",
@@ -165,6 +187,8 @@ testFilterRule("Float value converts to integer",
 testFilterRule("Input value > 1",
                "saturate(5.5)", 1, "saturate(5.5)",
                ["saturate(5.5)"]);
+
+testInvalidFilterRule("Negative value", "saturate(-0.5)");
 
 testFilterRule("Zero value",
                "saturate(0)", 1, "saturate(0)",
@@ -202,9 +226,13 @@ testFilterRule("Turns value",
                "hue-rotate(0.5turn)", 1, "hue-rotate(0.5turn)",
                ["hue-rotate(0.5turn)"]);
 
+testFilterRule("Negative value",
+              "hue-rotate(-370.2deg)", 1, "hue-rotate(-370.2deg)",
+              ["hue-rotate(-370.2deg)"]);
+
 testFilterRule("Zero value",
                "hue-rotate(0)", 1, "hue-rotate(0deg)",
-              ["hue-rotate(0deg)"]);
+               ["hue-rotate(0deg)"]);
 
 testFilterRule("No values",
                "hue-rotate()", 1, "hue-rotate()",
@@ -238,6 +266,8 @@ testFilterRule("Zero value",
                "invert(0)", 1, "invert(0)",
                ["invert(0)"]);
 
+testInvalidFilterRule("Negative value", "invert(-0.5)");
+
 testFilterRule("No values",
                "invert()", 1, "invert()",
                ["invert()"]);
@@ -269,6 +299,8 @@ testFilterRule("Values over 1 are clamped",
 testFilterRule("Percentages over 100 are clamped",
                "opacity(500%)", 1, "opacity(100%)",
                ["opacity(100%)"]);
+
+testInvalidFilterRule("Negative value", "opacity(-0.5)");
 
 testFilterRule("Zero value",
                "opacity(0)", 1, "opacity(0)",
@@ -302,6 +334,8 @@ testFilterRule("Zero value",
               "brightness(0)", 1, "brightness(0)",
               ["brightness(0)"]);
 
+testInvalidFilterRule("Negative value", "brightness(-2)");
+
 testFilterRule("No values",
               "brightness()", 1, "brightness()",
               ["brightness()"]);
@@ -314,9 +348,8 @@ testFilterRule("Rule combinations",
               "brightness(0.5) grayscale(0.25)", 2, "brightness(0.5) grayscale(0.25)",
               ["brightness(0.5)", "grayscale(0.25)"]);
 
-testFilterRule("Parameter less than -100%",
-              "brightness(-1.1)", 1, "brightness(-1.1)",
-              ["brightness(-1.1)"]);
+testInvalidFilterRule("Value less than -100%", "brightness(-1.1)");
+testInvalidFilterRule("Negative value", "brightness(-0.6)");
 
 testFilterRule("Parameter more than 100%",
               "brightness(101%)", 1, "brightness(101%)",
@@ -346,6 +379,8 @@ testFilterRule("Zero value",
               "contrast(0)", 1, "contrast(0)",
               ["contrast(0)"]);
 
+testInvalidFilterRule("Negative value", "contrast(-0.2)");
+
 testFilterRule("No values",
               "contrast()", 1, "contrast()",
               ["contrast()"]);
@@ -353,6 +388,8 @@ testFilterRule("No values",
 testFilterRule("Value greater than one",
               "contrast(2)", 1, "contrast(2)",
               ["contrast(2)"]);
+
+testInvalidFilterRule("Negative value", "contrast(-0.8)");
 
 testFilterRule("Multiple values",
               "contrast(0.5) contrast(0.25)", 2, "contrast(0.5) contrast(0.25)",
@@ -377,6 +414,8 @@ testFilterRule("One length",
 testFilterRule("No values",
                "blur()", 1, "blur()",
                ["blur()"]);
+
+testInvalidFilterRule("Negative value", "blur(-2px)");
 
 testFilterRule("Color then three values",
               "drop-shadow(red 1px 2px 3px)", 1, "drop-shadow(red 1px 2px 3px)",

@@ -1421,6 +1421,18 @@ static bool isColorFilterFunction(CSSValueID filterFunction)
     }
 }
 
+static bool allowsValuesGreaterThanOne(CSSValueID filterFunction)
+{
+    switch (filterFunction) {
+    case CSSValueBrightness:
+    case CSSValueContrast:
+    case CSSValueSaturate:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
 {
     CSSValueID filterType = range.peek().functionId();
@@ -1439,11 +1451,8 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
     else {
         if (args.atEnd())
             return filterValue;
-        if (filterType == CSSValueBrightness) {
-            parsedValue = consumePercent(args, ValueRangeAll);
-            if (!parsedValue)
-                parsedValue = consumeNumber(args, ValueRangeAll);
-        } else if (filterType == CSSValueHueRotate)
+
+        if (filterType == CSSValueHueRotate)
             parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid);
         else if (filterType == CSSValueBlur)
             parsedValue = consumeLength(args, HTMLStandardMode, ValueRangeNonNegative);
@@ -1451,7 +1460,7 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
             parsedValue = consumePercent(args, ValueRangeNonNegative);
             if (!parsedValue)
                 parsedValue = consumeNumber(args, ValueRangeNonNegative);
-            if (parsedValue && filterType != CSSValueSaturate && filterType != CSSValueContrast) {
+            if (parsedValue && !allowsValuesGreaterThanOne(filterType)) {
                 bool isPercentage = downcast<CSSPrimitiveValue>(*parsedValue).isPercentage();
                 double maxAllowed = isPercentage ? 100.0 : 1.0;
                 if (downcast<CSSPrimitiveValue>(*parsedValue).doubleValue() > maxAllowed)

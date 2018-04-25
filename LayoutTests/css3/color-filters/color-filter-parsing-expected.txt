@@ -3,7 +3,7 @@ PASS Parse none
 PASS Parse auto 
 PASS Parsing garbage value returns none 
 PASS Parsing garbage function returns none 
-FAIL Parse brightness() assert_equals: expected "brightness(1)" but got "brightness(0)"
+PASS Parse brightness() 
 PASS Parse contrast() 
 PASS Parse grayscale() 
 PASS Parse hue-rotate() 
@@ -15,7 +15,7 @@ PASS drop-shadow() is not allowed in color-filter
 PASS blur() is not allowed in color-filter 
 PASS Canonicalize grayscale() argument 
 PASS Canonicalize hue-rotate() argument 
-FAIL Negative value for brightness() is invalid assert_equals: expected "none" but got "brightness(-0.4)"
+PASS Negative value for brightness() is invalid 
 PASS Negative value for contrast() is invalid 
 PASS Negative value for grayscale() is invalid 
 PASS Negative value allowed for hue-rotate() 

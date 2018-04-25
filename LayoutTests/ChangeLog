@@ -1,3 +1,35 @@
+2018-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        brightness() filter should default to 1, and not allow negative values
+        https://bugs.webkit.org/show_bug.cgi?id=184937
+
+        Reviewed by Dean Jackson.
+        
+        Added negative value tests to filter-property-parsing.html and backdropfilter-property-parsing.html,
+        and made these tests more similar.
+        
+        Fixed expected computed value for brightness() to be brightness(1) in the tests.
+        
+        The effect-brightness* test results failed because elements with invalid brightness values now
+        no longer create a RenderLayer.
+
+        * css3/color-filters/color-filter-parsing-expected.txt:
+        * css3/color-filters/color-filter-parsing.html:
+        * css3/filters/backdrop/backdropfilter-property-computed-style-expected.txt:
+        * css3/filters/backdrop/backdropfilter-property-computed-style.html:
+        * css3/filters/backdrop/backdropfilter-property-parsing-expected.txt:
+        * css3/filters/backdrop/backdropfilter-property-parsing.html:
+        * css3/filters/effect-brightness-expected.txt:
+        * css3/filters/filter-property-computed-style-expected.txt:
+        * css3/filters/filter-property-computed-style.html:
+        * css3/filters/filter-property-parsing-expected.txt:
+        * css3/filters/filter-property-parsing.html:
+        * css3/filters/unprefixed-expected.txt:
+        * css3/filters/unprefixed.html:
+        * fast/filter-image/parse-filter-image-expected.txt:
+        * fast/filter-image/parse-filter-image.html:
+        * platform/mac/css3/filters/effect-brightness-clamping-expected.txt:
+
 2018-04-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE][Debug] Test gardening of EME related tests.

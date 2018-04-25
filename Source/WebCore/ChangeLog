@@ -1,3 +1,25 @@
+2018-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        brightness() filter should default to 1, and not allow negative values
+        https://bugs.webkit.org/show_bug.cgi?id=184937
+
+        Reviewed by Dean Jackson.
+
+        Remove the special-casing for brightness() in consumeFilterFunction(), so it now
+        follows the same logic as the other color-related filters in not allowing negative
+        values.
+
+        Removed the special-casing for brightness() in createFilterOperations() so its default
+        value is now 1.
+
+        Modified existing tests.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::allowsValuesGreaterThanOne):
+        (WebCore::CSSPropertyParserHelpers::consumeFilterFunction):
+
 2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Missing closing parenthesis when determining INSTALL_PATH build setting in WebCore.xcconfig

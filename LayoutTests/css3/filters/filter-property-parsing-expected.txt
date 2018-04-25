@@ -177,6 +177,11 @@ PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia(100%)"
 
+Negative value : sepia(-0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
+
 Zero value : sepia(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -196,6 +201,11 @@ PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "sepia()"
+
+Negative value : grayscale(-0.2)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
 
 Multiple values : sepia(0.5) sepia(0.25)
 PASS cssRule.type is 1
@@ -268,6 +278,11 @@ PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "saturate(5.5)"
+
+Negative value : saturate(-0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
 
 Zero value : saturate(0)
 PASS cssRule.type is 1
@@ -361,6 +376,16 @@ PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "hue-rotate(0.5turn)"
 
+Negative value : hue-rotate(-370.2deg)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('filter') is "hue-rotate(-370.2deg)"
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
+PASS jsWrapperClass(filterRule.constructor) is 'Function'
+PASS filterRule.length is 1
+PASS subRule.cssText is "hue-rotate(-370.2deg)"
+
 Zero value : hue-rotate(0)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -452,6 +477,11 @@ PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "invert(0)"
 
+Negative value : invert(-0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
+
 No values : invert()
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -533,6 +563,11 @@ PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "opacity(100%)"
+
+Negative value : opacity(-0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
 
 Zero value : opacity(0)
 PASS cssRule.type is 1
@@ -616,6 +651,11 @@ PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "brightness(0)"
 
+Negative value : brightness(-2)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
+
 No values : brightness()
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -648,15 +688,15 @@ PASS filterRule.length is 2
 PASS subRule.cssText is "brightness(0.5)"
 PASS subRule.cssText is "grayscale(0.25)"
 
-Parameter less than -100% : brightness(-1.1)
+Value less than -100% : brightness(-1.1)
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('filter') is "brightness(-1.1)"
-PASS jsWrapperClass(filterRule) is 'CSSValueList'
-PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
-PASS jsWrapperClass(filterRule.constructor) is 'Function'
-PASS filterRule.length is 1
-PASS subRule.cssText is "brightness(-1.1)"
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
+
+Negative value : brightness(-0.6)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
 
 Parameter more than 100% : brightness(101%)
 PASS cssRule.type is 1
@@ -729,6 +769,11 @@ PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(0)"
 
+Negative value : contrast(-0.2)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
+
 No values : contrast()
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -748,6 +793,11 @@ PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "contrast(2)"
+
+Negative value : contrast(-0.8)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
 
 Multiple values : contrast(0.5) contrast(0.25)
 PASS cssRule.type is 1
@@ -811,6 +861,11 @@ PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'Function'
 PASS filterRule.length is 1
 PASS subRule.cssText is "blur()"
+
+Negative value : blur(-2px)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('filter') is ''
 
 Color then three values : drop-shadow(red 1px 2px 3px)
 PASS cssRule.type is 1

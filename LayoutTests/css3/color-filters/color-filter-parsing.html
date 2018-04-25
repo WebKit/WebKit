@@ -25,7 +25,7 @@ testColorFilterParsing("garbage", "none", "Parsing garbage value returns none");
 testColorFilterParsing("garbage()", "none", "Parsing garbage function returns none");
 
 // Argument-free funtions.
-testColorFilterParsing("brightness()", "brightness(1)", "Parse brightness()"); // webkit.org/b/184937
+testColorFilterParsing("brightness()", "brightness(1)", "Parse brightness()");
 testColorFilterParsing("contrast()", "contrast(1)", "Parse contrast()");
 testColorFilterParsing("grayscale()", "grayscale(1)", "Parse grayscale()");
 testColorFilterParsing("hue-rotate()", "hue-rotate(0deg)", "Parse hue-rotate()");
@@ -43,7 +43,7 @@ testColorFilterParsing("grayscale(30%)", "grayscale(0.3)", "Canonicalize graysca
 testColorFilterParsing("hue-rotate(1.2rad)", "hue-rotate(68.75493541569878deg)", "Canonicalize hue-rotate() argument");
 
 // Negative values.
-testColorFilterParsing("brightness(-0.4)", "none", "Negative value for brightness() is invalid"); // webkit.org/b/184937
+testColorFilterParsing("brightness(-0.4)", "none", "Negative value for brightness() is invalid");
 testColorFilterParsing("contrast(-0.6)", "none", "Negative value for contrast() is invalid");
 testColorFilterParsing("grayscale(-0.)", "none", "Negative value for grayscale() is invalid");
 testColorFilterParsing("hue-rotate(-20deg)", "hue-rotate(-20deg)", "Negative value allowed for hue-rotate()");
