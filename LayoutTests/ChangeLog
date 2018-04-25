@@ -1,5 +1,19 @@
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
+        Ensure DNT is set for redirections handled in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184890
+
+        Reviewed by Ryosuke Niwa.
+
+        * http/wpt/fetch/dnt-header-after-redirection-expected.txt: Added.
+        * http/wpt/fetch/dnt-header-after-redirection.html: Added.
+        * http/wpt/fetch/resources/dnt-status.py: Added.
+        * http/wpt/fetch/resources/redirect.py: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
         Make DocumentThreadableLoader error logging more consistent
         https://bugs.webkit.org/show_bug.cgi?id=184853
 

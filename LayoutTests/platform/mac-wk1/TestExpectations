@@ -453,6 +453,9 @@ webkit.org/b/182571 media/modern-media-controls/tracks-support/tracks-support-sh
 
 webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
 
+# Requires WK2 loading support
+http/wpt/fetch/dnt-header-after-redirection.html [ Skip ]
+
 # requires wk2 speculative tiling
 fast/images/low-memory-decode.html [ Skip ]
 

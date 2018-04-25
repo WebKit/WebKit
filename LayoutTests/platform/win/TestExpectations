@@ -3712,6 +3712,9 @@ js/dom/builtin-getter-name.html [ Failure ]
 fast/text/variations/font-selection-font-weight.html [ ImageOnlyFailure ]
 fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Skip ]
 
+# Requires WK2 loading support
+http/wpt/fetch/dnt-header-after-redirection.html [ Skip ]
+
 # html/syntax web platform tests are failing on Windows.
 webkit.org/b/162415 imported/w3c/web-platform-tests/html/syntax [ Skip ]
 

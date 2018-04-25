@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DNT header after redirections</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+</head>
+<body>
+    <video id='video'></video>
+    <script>
+function waitFor(test, duration)
+{
+    return new Promise(resolve => {
+        test.step_timeout(resolve, duration);
+    });
+}
+
+async function checkDNTHeader(test, token)
+{
+    let maxPollCount = 20;
+    for (let cptr = 0; cptr < maxPollCount; cptr++) {
+        await waitFor(test, 10);
+        const response = await fetch("resources/dnt-status.py?read&token=" + token);
+        if (await response.text() === "1")
+            return true;
+    }
+    return false;
+}
+
+if (window.testRunner)
+    testRunner.setPrivateBrowsingEnabled(true);
+else
+    alert("Make sure to run this test in Private Browsing Mode");
+
+promise_test(async (test) => {
+    const token = self.token();
+    const finalURL = "dnt-status.py?store&token=" + token;
+    video.src = "resources/redirect.py?location=" + encodeURIComponent(finalURL);
+
+    assert_true(await checkDNTHeader(test, token), "DNT header is there");
+}, "video load with DNT");
+
+promise_test(async (test) => {
+    const token = self.token();
+    const finalURL = "dnt-status.py?store&token=" + token;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/redirect.py?location=" + encodeURIComponent(finalURL), false);
+    xhr.send();
+
+    const response = await fetch("resources/dnt-status.py?read&token=" + token);
+    assert_equals(await response.text(), "1", "DNT header");
+}, "Sync XHR with DNT");
+
+promise_test(async (test) => {
+    const token = self.token();
+    const finalURL = "dnt-status.py?store&token=" + token;
+
+    navigator.sendBeacon("resources/redirect.py?location=" + encodeURIComponent(finalURL), "");
+
+    assert_true(await checkDNTHeader(test, token), "DNT header is there");
+}, "Beacon with DNT");
+    </script>
+</body>
+</html>

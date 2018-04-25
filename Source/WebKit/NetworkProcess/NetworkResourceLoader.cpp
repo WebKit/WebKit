@@ -575,7 +575,10 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
             if (storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy()) {
                 // We need to restart the load to update the session according the new credential policy.
                 m_networkLoad->cancel();
-                this->startNetworkLoad(WTFMove(result.value()), FirstLoad::No);
+                auto request = WTFMove(result.value());
+                m_networkLoadChecker->prepareRedirectedRequest(request);
+
+                this->startNetworkLoad(WTFMove(request), FirstLoad::No);
                 return;
             }
 
@@ -626,6 +629,9 @@ ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceRespo
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
     RELEASE_LOG_IF_ALLOWED("continueWillSendRequest: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+
+    if (m_networkLoadChecker)
+        m_networkLoadChecker->prepareRedirectedRequest(newRequest);
 
     m_isAllowedToAskUserForCredentials = isAllowedToAskUserForCredentials;
 

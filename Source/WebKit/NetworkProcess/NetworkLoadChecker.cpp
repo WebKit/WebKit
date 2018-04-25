@@ -34,6 +34,7 @@
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
+#include <WebCore/HTTPParsers.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkLoadChecker::" fmt, this, ##__VA_ARGS__)
 
@@ -71,7 +72,19 @@ void NetworkLoadChecker::check(ResourceRequest&& request, ValidationHandler&& ha
     ASSERT(!isChecking());
 
     m_firstRequestHeaders = request.httpHeaderFields();
+    // FIXME: We should not get this information from the request but directly from some NetworkProcess setting.
+    m_dntHeaderValue = m_firstRequestHeaders.get(HTTPHeaderName::DNT);
+    if (m_dntHeaderValue.isNull() && m_sessionID.isEphemeral()) {
+        m_dntHeaderValue = "1";
+        request.setHTTPHeaderField(HTTPHeaderName::DNT, m_dntHeaderValue);
+    }
     checkRequest(WTFMove(request), WTFMove(handler));
+}
+
+void NetworkLoadChecker::prepareRedirectedRequest(ResourceRequest& request)
+{
+    if (!m_dntHeaderValue.isNull())
+        request.setHTTPHeaderField(HTTPHeaderName::DNT, m_dntHeaderValue);
 }
 
 void NetworkLoadChecker::checkRedirection(WebCore::ResourceResponse& redirectResponse, ResourceRequest&& request, ValidationHandler&& handler)

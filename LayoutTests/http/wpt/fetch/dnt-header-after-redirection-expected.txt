@@ -1,0 +1,6 @@
+
+
+PASS video load with DNT 
+PASS Sync XHR with DNT 
+PASS Beacon with DNT 
+

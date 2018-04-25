@@ -99,7 +99,10 @@ void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, R
             this->didFinish(result.error());
             return;
         }
-        completionHandler(WTFMove(result.value()));
+        auto request = WTFMove(result.value());
+        m_networkLoadChecker->prepareRedirectedRequest(request);
+
+        completionHandler(WTFMove(request));
     });
 }
 

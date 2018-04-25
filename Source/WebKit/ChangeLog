@@ -1,3 +1,29 @@
+2018-04-25  Youenn Fablet  <youenn@apple.com>
+
+        Ensure DNT is set for redirections handled in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=184890
+
+        Reviewed by Ryosuke Niwa.
+
+        Compute whether DNT header should be set on requests based on:
+        - request has a DNT header
+        - session is ephemeral (aka private browsing mode)
+        In both cases, we ensure a DNT header is added for any request triggered by a redirection.
+
+        Covered by http/wpt/fetch/dnt-header-after-redirection.html.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::check):
+        (WebKit::NetworkLoadChecker::prepareRedirectedRequest):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::willPerformHTTPRedirection):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Remove deprecated functions and properties from the API

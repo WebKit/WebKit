@@ -52,6 +52,7 @@ public:
     using ValidationHandler = CompletionHandler<void(RequestOrError&&)>;
     void check(WebCore::ResourceRequest&&, ValidationHandler&&);
     void checkRedirection(WebCore::ResourceResponse&, WebCore::ResourceRequest&&, ValidationHandler&&);
+    void prepareRedirectedRequest(WebCore::ResourceRequest&);
 
     WebCore::ResourceError validateResponse(WebCore::ResourceResponse&);
 
@@ -109,6 +110,7 @@ private:
     size_t m_redirectCount { 0 };
     WebCore::URL m_previousURL;
     WebCore::PreflightPolicy m_preflightPolicy;
+    String m_dntHeaderValue;
 };
 
 }
