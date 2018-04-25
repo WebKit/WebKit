@@ -70,7 +70,7 @@ public:
     bool canContainFixedPositionObjects() const;
     bool canContainAbsolutelyPositionedObjects() const;
 
-    Color selectionColor(int colorProperty) const;
+    Color selectionColor(CSSPropertyID) const;
     std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
     // Obtains the selection colors that should be used when painting a selection.

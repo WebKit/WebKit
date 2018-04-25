@@ -1413,7 +1413,7 @@ public:
     bool lastChildState() const { return m_nonInheritedFlags.lastChildState; }
     void setLastChildState() { setUnique(); m_nonInheritedFlags.lastChildState = true; }
 
-    WEBCORE_EXPORT Color visitedDependentColor(int colorProperty) const;
+    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID) const;
     bool backgroundColorEqualsToColorIgnoringVisited(const Color& color) const { return color == backgroundColor(); }
 
     void setHasExplicitlyInheritedProperties() { m_nonInheritedFlags.hasExplicitlyInheritedProperties = true; }
@@ -1827,7 +1827,7 @@ private:
     static bool isDisplayGridBox(EDisplay);
     static bool isDisplayFlexibleOrGridBox(EDisplay);
 
-    Color colorIncludingFallback(int colorProperty, bool visitedLink) const;
+    Color colorIncludingFallback(CSSPropertyID colorProperty, bool visitedLink) const;
 
     bool changeAffectsVisualOverflow(const RenderStyle&) const;
     bool changeRequiresLayout(const RenderStyle&, unsigned& changedContextSensitiveProperties) const;

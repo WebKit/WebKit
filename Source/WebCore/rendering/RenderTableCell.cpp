@@ -558,8 +558,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
 {
     // For the start border, we need to check, in order of precedence:
     // (1) Our start border.
-    int startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
-    int endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
+    CSSPropertyID startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result(style().borderStart(), includeColor ? style().visitedDependentColor(startColorProperty) : Color(), BCELL);
 
     RenderTable* table = this->table();
@@ -669,8 +669,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
 {
     // For end border, we need to check, in order of precedence:
     // (1) Our end border.
-    int startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
-    int endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
+    CSSPropertyID startColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderStartColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID endColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderEndColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderEnd(), includeColor ? style().visitedDependentColor(endColorProperty) : Color(), BCELL);
 
     RenderTable* table = this->table();
@@ -782,8 +782,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorder
 {
     // For before border, we need to check, in order of precedence:
     // (1) Our before border.
-    int beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderBeforeColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
-    int afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderAfterColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
+    CSSPropertyID beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderBeforeColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderAfterColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderBefore(), includeColor ? style().visitedDependentColor(beforeColorProperty) : Color(), BCELL);
     
     RenderTable* table = this->table();
@@ -879,8 +879,8 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
 {
     // For after border, we need to check, in order of precedence:
     // (1) Our after border.
-    int beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderBeforeColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
-    int afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderAfterColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : 0;
+    CSSPropertyID beforeColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderBeforeColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
+    CSSPropertyID afterColorProperty = includeColor ? CSSProperty::resolveDirectionAwareProperty(CSSPropertyWebkitBorderAfterColor, styleForCellFlow().direction(), styleForCellFlow().writingMode()) : CSSPropertyInvalid;
     CollapsedBorderValue result = CollapsedBorderValue(style().borderAfter(), includeColor ? style().visitedDependentColor(afterColorProperty) : Color(), BCELL);
     
     RenderTable* table = this->table();

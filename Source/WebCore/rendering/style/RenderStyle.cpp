@@ -1758,7 +1758,7 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
     }
 }
 
-Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) const
+Color RenderStyle::colorIncludingFallback(CSSPropertyID colorProperty, bool visitedLink) const
 {
     Color result;
     EBorderStyle borderStyle = BNONE;
@@ -1822,7 +1822,7 @@ Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) c
     return result;
 }
 
-Color RenderStyle::visitedDependentColor(int colorProperty) const
+Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
 {
     Color unvisitedColor = colorIncludingFallback(colorProperty, false);
     if (insideLink() != InsideVisitedLink)

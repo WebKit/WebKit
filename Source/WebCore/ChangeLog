@@ -1,5 +1,30 @@
 2018-04-24  Simon Fraser  <simon.fraser@apple.com>
 
+        visitedDependentColor() should take a CSSPropertyID
+        https://bugs.webkit.org/show_bug.cgi?id=184949
+
+        Reviewed by Sam Weinig.
+        
+        Change RenderStyle::colorIncludingFallback(), RenderStyle::visitedDependentColor()
+        and RenderElement::selectionColor() to take CSSPropertyID rather than int.
+
+        No behavior change.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionColor const):
+        * rendering/RenderElement.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeCollapsedStartBorder const):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder const):
+        (WebCore::RenderTableCell::computeCollapsedBeforeBorder const):
+        (WebCore::RenderTableCell::computeCollapsedAfterBorder const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorIncludingFallback const):
+        (WebCore::RenderStyle::visitedDependentColor const):
+        * rendering/style/RenderStyle.h:
+
+2018-04-24  Simon Fraser  <simon.fraser@apple.com>
+
         Add a new "color-filter" CSS property as an experimental feature
         https://bugs.webkit.org/show_bug.cgi?id=184940
         rdar://problem/39664904

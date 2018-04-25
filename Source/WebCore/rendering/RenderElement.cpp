@@ -1356,7 +1356,7 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoS
     return style;
 }
 
-Color RenderElement::selectionColor(int colorProperty) const
+Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
 {
     // If the element is unselectable, or we are only painting the selection,
     // don't override the foreground color with the selection foreground color.
