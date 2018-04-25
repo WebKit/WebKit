@@ -1,3 +1,54 @@
+2018-04-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement LayoutContexet::layout() and its dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=184951
+
+        Reviewed by Antti Koivisto.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        (WebCore::Layout::FormattingContext::~FormattingContext):
+        (WebCore::Layout::FormattingContext::computeStaticPosition):
+        (WebCore::Layout::FormattingContext::computeInFlowPositionedPosition):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowPosition):
+        (WebCore::Layout::FormattingContext::computeWidth):
+        (WebCore::Layout::FormattingContext::computeHeight):
+        (WebCore::Layout::FormattingContext::marginTop):
+        (WebCore::Layout::FormattingContext::marginLeft):
+        (WebCore::Layout::FormattingContext::marginBottom):
+        (WebCore::Layout::FormattingContext::marginRight):
+        * layout/FormattingContext.h:
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::FormattingState):
+        * layout/FormattingState.h:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::LayoutContext):
+        (WebCore::Layout::LayoutContext::updateLayout):
+        (WebCore::Layout::LayoutContext::formattingState):
+        (WebCore::Layout::LayoutContext::formattingContext):
+        * layout/LayoutContext.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::BlockFormattingContext):
+        (WebCore::Layout::BlockFormattingContext::layout):
+        (WebCore::Layout::BlockFormattingContext::formattingState const):
+        (WebCore::Layout::BlockFormattingContext::computeStaticPosition):
+        (WebCore::Layout::BlockFormattingContext::computeWidth):
+        (WebCore::Layout::BlockFormattingContext::computeHeight):
+        (WebCore::Layout::BlockFormattingContext::marginTop):
+        (WebCore::Layout::BlockFormattingContext::marginBottom):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingState.cpp:
+        (WebCore::Layout::BlockFormattingState::BlockFormattingState):
+        * layout/blockformatting/BlockFormattingState.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        (WebCore::Layout::InlineFormattingContext::layout):
+        (WebCore::Layout::InlineFormattingContext::formattingState const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::InlineFormattingState):
+        * layout/inlineformatting/InlineFormattingState.h:
+
 2018-04-25  Mark Lam  <mark.lam@apple.com>
 
         Push the definition of PtrTag down to the WTF layer.

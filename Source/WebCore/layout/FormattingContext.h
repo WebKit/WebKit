@@ -29,6 +29,7 @@
 
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,25 +41,29 @@ class Box;
 class FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FormattingContext);
 public:
-    FormattingContext(FormattingState&);
+    FormattingContext(Box& formattingContextRoot);
     virtual ~FormattingContext();
 
-    virtual void layout();
+    virtual void layout(FormattingState&) = 0;
+    virtual std::unique_ptr<FormattingState> formattingState() const = 0;
 
-    FormattingState& formattingState() const;
+    const Box& root() const { return *m_root; }
 
 protected:
-    virtual void computeStaticPosition(const Box&);
-    virtual void computeInFlowPositionedPosition(const Box&);
-    virtual void computeOutOfFlowPosition(const Box&);
+    virtual void computeStaticPosition(const Box&) const;
+    virtual void computeInFlowPositionedPosition(const Box&) const;
+    virtual void computeOutOfFlowPosition(const Box&) const;
 
-    virtual void computeWidth(const Box&);
-    virtual void computeHeight(const Box&);
+    virtual void computeWidth(const Box&) const;
+    virtual void computeHeight(const Box&) const;
 
-    virtual LayoutUnit marginTop(const Box&);
-    virtual LayoutUnit marginLeft(const Box&);
-    virtual LayoutUnit marginBottom(const Box&);
-    virtual LayoutUnit marginRight(const Box&);
+    virtual LayoutUnit marginTop(const Box&) const;
+    virtual LayoutUnit marginLeft(const Box&) const;
+    virtual LayoutUnit marginBottom(const Box&) const;
+    virtual LayoutUnit marginRight(const Box&) const;
+
+private:
+    WeakPtr<Box> m_root;
 };
 
 }

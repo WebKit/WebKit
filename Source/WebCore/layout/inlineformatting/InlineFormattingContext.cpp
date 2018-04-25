@@ -25,3 +25,32 @@
 
 #include "config.h"
 #include "InlineFormattingContext.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "InlineFormattingState.h"
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
+
+InlineFormattingContext::InlineFormattingContext(Box& formattingContextRoot)
+    : FormattingContext(formattingContextRoot)
+{
+}
+
+void InlineFormattingContext::layout(FormattingState&)
+{
+}
+
+std::unique_ptr<FormattingState> InlineFormattingContext::formattingState() const
+{
+    return std::make_unique<InlineFormattingState>();
+}
+
+}
+}
+
+#endif

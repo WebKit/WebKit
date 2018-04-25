@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -37,8 +38,6 @@ class Box;
 
 namespace Layout {
 
-class Box;
-class Container;
 class FormattingContext;
 class FormattingState;
 class StyleDiff;
@@ -51,20 +50,22 @@ class StyleDiff;
 class LayoutContext {
     WTF_MAKE_ISO_ALLOCATED(LayoutContext);
 public:
-    LayoutContext(const Container& rootContainer);
+    LayoutContext(Box& root);
 
-    void layout();
-
-    Container& rootContainer() const;
-    FormattingContext& formattingContext(const Container& formattingRoot) const;
-    FormattingState& establishedFormattingState(const Container& formattingRoot);
-    FormattingState& formattingState(const Box&);
+    void updateLayout();
 
     void addDisplayBox(const Box&, Display::Box&);
     Display::Box* displayBox(const Box&) const;
 
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&) const;
+
+private:
+    FormattingState& formattingState(const FormattingContext&);
+    std::unique_ptr<FormattingContext> formattingContext(Box& formattingContextRoot);
+
+    WeakPtr<Box> m_root;
+    HashMap<const Box*, std::unique_ptr<FormattingState>> m_formattingStates;
 };
 
 }

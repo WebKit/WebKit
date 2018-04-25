@@ -34,18 +34,14 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
-class Container;
 class FloatingState;
-class LayoutState;
 class StyleDiff;
 
 class FormattingState {
     WTF_MAKE_ISO_ALLOCATED(FormattingState);
 public:
-    FormattingState(Container& formattingRoot, LayoutState&);
+    FormattingState();
 
-    Container& formattingRoot() const;
-    LayoutState& layoutState() const;
     FloatingState& floatingState();
 
     void markNeedsLayout(const Box&, StyleDiff);

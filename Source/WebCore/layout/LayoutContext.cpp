@@ -25,3 +25,53 @@
 
 #include "config.h"
 #include "LayoutContext.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include "BlockFormattingContext.h"
+#include "BlockFormattingState.h"
+#include "InlineFormattingContext.h"
+#include "InlineFormattingState.h"
+#include "LayoutBox.h"
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutContext);
+
+LayoutContext::LayoutContext(Box& root)
+    : m_root(makeWeakPtr(root))
+{
+}
+
+void LayoutContext::updateLayout()
+{
+    auto context = formattingContext(*m_root);
+    auto state = formattingState(*context);
+    context->layout(state);
+}
+
+FormattingState& LayoutContext::formattingState(const FormattingContext& context)
+{
+    return *m_formattingStates.ensure(&context.root(), [&context] {
+        return context.formattingState();
+    }).iterator->value;
+}
+
+std::unique_ptr<FormattingContext> LayoutContext::formattingContext(Box& formattingContextRoot)
+{
+    if (formattingContextRoot.establishesBlockFormattingContext())
+        return std::make_unique<BlockFormattingContext>(formattingContextRoot);
+
+    if (formattingContextRoot.establishesInlineFormattingContext())
+        return std::make_unique<InlineFormattingContext>(formattingContextRoot);
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+}
+}
+
+#endif

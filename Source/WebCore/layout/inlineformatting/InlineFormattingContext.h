@@ -41,9 +41,10 @@ class InlineFormattingState;
 class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(InlineFormattingState&);
+    InlineFormattingContext(Box& formattingContextRoot);
 
-    void layout() override;
+    void layout(FormattingState&) override;
+    std::unique_ptr<FormattingState> formattingState() const override;
 };
 
 }

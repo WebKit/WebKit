@@ -34,14 +34,11 @@ namespace WebCore {
 
 namespace Layout {
 
-class Container;
-class LayoutState;
-
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingState);
 public:
-    InlineFormattingState(Layout::Container& formattingRoot, LayoutState&);
+    InlineFormattingState();
 };
 
 }

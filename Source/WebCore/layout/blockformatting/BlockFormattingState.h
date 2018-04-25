@@ -34,14 +34,11 @@ namespace WebCore {
 
 namespace Layout {
 
-class Container;
-class LayoutState;
-
 // BlockFormattingState holds the state for a particular block formatting context tree.
 class BlockFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingState);
 public:
-    BlockFormattingState(Layout::Container& formattingRoot, LayoutState&);
+    BlockFormattingState();
 };
 
 }

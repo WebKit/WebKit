@@ -25,3 +25,65 @@
 
 #include "config.h"
 #include "FormattingContext.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
+
+FormattingContext::FormattingContext(Box& formattingContextRoot)
+    : m_root(makeWeakPtr(formattingContextRoot))
+{
+}
+
+FormattingContext::~FormattingContext()
+{
+}
+
+void FormattingContext::computeStaticPosition(const Box&) const
+{
+}
+
+void FormattingContext::computeInFlowPositionedPosition(const Box&) const
+{
+}
+
+void FormattingContext::computeOutOfFlowPosition(const Box&) const
+{
+}
+
+void FormattingContext::computeWidth(const Box&) const
+{
+}
+
+void FormattingContext::computeHeight(const Box&) const
+{
+}
+
+LayoutUnit FormattingContext::marginTop(const Box&) const
+{
+    return 0;
+}
+
+LayoutUnit FormattingContext::marginLeft(const Box&) const
+{
+    return 0;
+}
+
+LayoutUnit FormattingContext::marginBottom(const Box&) const
+{
+    return 0;
+}
+
+LayoutUnit FormattingContext::marginRight(const Box&) const
+{
+    return 0;
+}
+
+}
+}
+#endif

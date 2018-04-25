@@ -25,3 +25,21 @@
 
 #include "config.h"
 #include "BlockFormattingState.h"
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+namespace Layout {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(BlockFormattingState);
+
+BlockFormattingState::BlockFormattingState()
+    : FormattingState()
+{
+}
+
+}
+}
+#endif
