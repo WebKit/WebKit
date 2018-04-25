@@ -1,3 +1,11 @@
+2018-04-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline tests for iOS.
+
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/media/modern-media-controls/compact-media-controls/compact-media-controls-constructor-expected.txt: Added.
+        * platform/ios/media/modern-media-controls/compact-media-controls/compact-media-controls-layout-expected.txt: Added.
+
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
         CachedRawResource is not handling incremental data computation correctly
