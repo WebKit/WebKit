@@ -1,3 +1,11 @@
+2018-04-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][Debug] Test gardening of EME related tests.
+
+        Report and mark the tests crashing on the Debug build.
+
+        * platform/wpe/TestExpectations:
+
 2018-04-25  Jiewen Tan  <jiewen_tan@apple.com>
 
         Remove access to keychain from the WebContent process
