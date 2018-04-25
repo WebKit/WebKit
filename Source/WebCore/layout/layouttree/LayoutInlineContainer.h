@@ -32,12 +32,14 @@
 
 namespace WebCore {
 
+class RenderStyle;
+
 namespace Layout {
 
 class InlineContainer : public Container {
     WTF_MAKE_ISO_ALLOCATED(InlineContainer);
 public:
-    InlineContainer(const RenderStyle&);
+    InlineContainer(RenderStyle&&);
 };
 
 }

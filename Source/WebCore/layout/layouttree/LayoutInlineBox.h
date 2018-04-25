@@ -32,12 +32,14 @@
 
 namespace WebCore {
 
+class RenderStyle;
+
 namespace Layout {
 
 class InlineBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineBox);
 public:
-    InlineBox(const RenderStyle&);
+    InlineBox(RenderStyle&&);
 };
 
 }

@@ -1,3 +1,52 @@
+2018-04-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Implement Layout::Box functions.
+        https://bugs.webkit.org/show_bug.cgi?id=184974
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutBlockContainer.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        (WebCore::Layout::Box::~Box):
+        (WebCore::Layout::Box::establishesFormattingContext const):
+        (WebCore::Layout::Box::establishesBlockFormattingContext const):
+        (WebCore::Layout::Box::isRelativelyPositioned const):
+        (WebCore::Layout::Box::isStickyPositioned const):
+        (WebCore::Layout::Box::isAbsolutelyPositioned const):
+        (WebCore::Layout::Box::isFixedPositioned const):
+        (WebCore::Layout::Box::isFloatingPositioned const):
+        (WebCore::Layout::Box::containingBlock const):
+        (WebCore::Layout::Box::isDescendantOf const):
+        (WebCore::Layout::Box::isAnonymous const):
+        (WebCore::Layout::Box::isInlineBlockBox const):
+        (WebCore::Layout::Box::isBlockLevelBox const):
+        (WebCore::Layout::Box::isInlineLevelBox const):
+        (WebCore::Layout::Box::isBlockContainerBox const):
+        (WebCore::Layout::Box::isInitialContainingBlock const):
+        (WebCore::Layout::Box::nextInFlowSibling const):
+        (WebCore::Layout::Box::nextInFlowOrFloatingSibling const):
+        (WebCore::Layout::Box::previousInFlowSibling const):
+        (WebCore::Layout::Box::previousInFlowOrFloatingSibling const):
+        (WebCore::Layout::Box::setParent):
+        (WebCore::Layout::Box::setNextSibling):
+        (WebCore::Layout::Box::setPreviousSibling):
+        (WebCore::Layout::Box::isOverflowVisible const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::establishesInlineFormattingContext const):
+        (WebCore::Layout::Box::isInFlow const):
+        (WebCore::Layout::Box::isPositioned const):
+        (WebCore::Layout::Box::isInFlowPositioned const):
+        (WebCore::Layout::Box::isOutOfFlowPositioned const):
+        (WebCore::Layout::Box::isFloatingOrOutOfFlowPositioned const):
+        (WebCore::Layout::Box::parent const):
+        (WebCore::Layout::Box::nextSibling const):
+        (WebCore::Layout::Box::previousSibling const):
+        (WebCore::Layout::Box::weakPtrFactory const):
+        * layout/layouttree/LayoutContainer.h:
+        * layout/layouttree/LayoutInlineBox.h:
+        * layout/layouttree/LayoutInlineContainer.h:
+
 2018-04-25  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Crash under WebCore::SimpleLineLayout::generateLineBoxTree

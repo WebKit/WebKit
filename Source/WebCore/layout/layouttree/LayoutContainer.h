@@ -32,14 +32,14 @@
 
 namespace WebCore {
 
-namespace Layout {
-
 class RenderStyle;
+
+namespace Layout {
 
 class Container : public Box {
     WTF_MAKE_ISO_ALLOCATED(Container);
 public:
-    Container(const RenderStyle&);
+    Container(RenderStyle&&);
 
     void setFirstChild(Layout::Box&);
     void setLastChild(Layout::Box&);

@@ -27,61 +27,79 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "RenderStyle.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 namespace Layout {
 
 class Container;
-class RenderStyle;
+class TreeBuilder;
 
 class Box {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    Box(const RenderStyle&);
+    friend class TreeBuilder;
+
+    Box(RenderStyle&&);
     virtual ~Box();
 
     bool establishesFormattingContext() const;
     virtual bool establishesBlockFormattingContext() const;
-    virtual bool establishesInlineFormattingContext() const;
+    virtual bool establishesInlineFormattingContext() const { return false; }
 
-    bool isPositioned() const;
-    bool isInFlowPositioned() const;
-    bool isOutOfFlowPositioned() const;
+    bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
+    bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
+    bool isInFlowPositioned() const { return isRelativelyPositioned() || isStickyPositioned(); }
+    bool isOutOfFlowPositioned() const { return isAbsolutelyPositioned() || isFixedPositioned(); }
     bool isRelativelyPositioned() const;
+    bool isStickyPositioned() const;
     bool isAbsolutelyPositioned() const;
     bool isFixedPositioned() const;
     bool isFloatingPositioned() const;
 
-    bool isFloatingOrOutOfFlowPositioned() const;
+    bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 
-    Container* containingBlock() const;
+    const Container* containingBlock() const;
     bool isDescendantOf(Container&) const;
 
-    bool isAnonymous() const;
-
-    bool isContainer() const;
-    bool isInlineContainer() const;
-    bool isInlineBox() const;
-    bool isInlineBlockBox() const;
+    bool isAnonymous() const { return m_isAnonymous; }
 
     bool isBlockLevelBox() const;
     bool isInlineLevelBox() const;
+    bool isInlineBlockBox() const;
     bool isBlockContainerBox() const;
+    bool isInitialContainingBlock() const;
 
-    bool isRootBox() const;
-    Container* parent() const;
-    Box* nextSibling() const;
-    Box* nextInFlowSibling() const;
-    Box* nextInFlowOrFloatingSibling() const;
-    Box* previousSibling() const;
-    Box* previousInFlowSibling() const;
-    Box* previousInFlowOrFloatingSibling() const;
+    const Container* parent() const { return m_parent; }
+    const Box* nextSibling() const { return m_nextSibling; }
+    const Box* nextInFlowSibling() const;
+    const Box* nextInFlowOrFloatingSibling() const;
+    const Box* previousSibling() const { return m_previousSibling; }
+    const Box* previousInFlowSibling() const;
+    const Box* previousInFlowOrFloatingSibling() const;
 
-    void setParent(Container&);
-    void setNextSibling(Box&);
-    void setPreviousSibling(Box&);
+    auto& weakPtrFactory() const { return m_weakFactory; }
+
+protected:
+    bool isOverflowVisible() const;
+
+private:
+    void setParent(Container& parent) { m_parent = &parent; }
+    void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
+    void setPreviousSibling(Box& previousSibling) { m_previousSibling = &previousSibling; }
+    void setIsAnonymous() { m_isAnonymous = true; }
+
+    WeakPtrFactory<Box> m_weakFactory;
+    RenderStyle m_style;
+
+    Container* m_parent { nullptr };
+    Box* m_previousSibling { nullptr };
+    Box* m_nextSibling { nullptr };
+
+    bool m_isAnonymous { false };
 };
 
 }
