@@ -342,7 +342,7 @@
                     {
                       "name": "WPE Linux 64-bit Debug (Build)", "type": "Build", "builddir": "wpe-linux-64-debug",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["wpe-linux-64-release-tests"],
+                      "triggers": ["wpe-linux-64-debug-tests"],
                       "slavenames": ["wpe-linux-bot-3"]
                     },
                     {
