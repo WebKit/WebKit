@@ -1956,9 +1956,7 @@
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F222B751AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp */; };
 		6F7CA3C6208C2957002F29AB /* LayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C4208C2956002F29AB /* LayoutContext.h */; };
-		6F7CA3C7208C2957002F29AB /* LayoutContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F7CA3C5208C2956002F29AB /* LayoutContext.cpp */; };
 		6F7CA3CA208C2B2E002F29AB /* InlineFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */; };
-		6F7CA3CB208C2B2E002F29AB /* InlineFormattingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */; };
 		6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A131A70756200A735F4 /* WebGLSync.cpp */; };
 		6F995A161A70756200A735F4 /* WebGLSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A141A70756200A735F4 /* WebGLSync.h */; };
 		6F995A1F1A7078B100A735F4 /* WebGLQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A171A7078B100A735F4 /* WebGLQuery.cpp */; };
@@ -31306,10 +31304,8 @@
 				07367DE0172CA68200D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.mm in Sources */,
 				BE16C59417CFE17200852C04 /* InbandWebVTTTextTrack.cpp in Sources */,
 				CD063F821E23FA8900812BE3 /* InitDataRegistry.cpp in Sources */,
-				6F7CA3CB208C2B2E002F29AB /* InlineFormattingContext.cpp in Sources */,
 				538EC93E1F99BF5A004D22A8 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
-				6F7CA3C7208C2957002F29AB /* LayoutContext.cpp in Sources */,
 				CDA98E0B1603CD6000FEA3B1 /* LegacyCDM.cpp in Sources */,
 				CDE8B5EC1A69777300B4B66A /* LegacyCDMPrivateClearKey.cpp in Sources */,
 				CDCA98EB18B2C8EB00C12FF9 /* LegacyCDMPrivateMediaPlayer.cpp in Sources */,
