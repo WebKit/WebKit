@@ -1,3 +1,17 @@
+2018-04-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't activate Selection Assistant unless it is actually needed.
+        https://bugs.webkit.org/show_bug.cgi?id=184944
+        <rdar://problem/39469671>
+
+        Reviewed by Tim Horton.
+        
+        Don't activate the selection unless we need to. Activating on init is overeager and allowing Javascript to 
+        activate selections without user input.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView useSelectionAssistantWithGranularity:]):
+
 2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix entitlements and sandbox configurations in WebKit after r230778

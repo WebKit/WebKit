@@ -1932,9 +1932,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         // Reset the gesture recognizers in case editibility has changed.
         [_textSelectionAssistant setGestureRecognizers];
     }
-
-    if (self.isFirstResponder && !self.suppressAssistantSelectionView)
-        [_textSelectionAssistant activateSelection];
 }
 
 - (void)clearSelection

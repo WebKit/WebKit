@@ -1349,21 +1349,4 @@ webkit.org/b/183860 [ Release ] http/wpt/service-workers/third-party-registratio
 
 webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 
-#FIXME: <rdar://problem/39469671> Tests that fail when run after fast/events/ios/double-tap-zoom.html with UIWKTextInteractionAssistant turned on
-fast/flexbox/flexbox-fail-to-select-same-line.html [ ImageOnlyFailure Pass ]
-fast/html/marquee-child-wrap.html [ ImageOnlyFailure Pass ]
-fast/misc/subtree-layouts.html [ ImageOnlyFailure Pass ]
-fast/multicol/simple-line-layout-widows-when-switching-over-to-normal-line-layout.html [ ImageOnlyFailure Pass ]
-fast/text/international/hebrew-selection.html [ ImageOnlyFailure Pass ]
-imported/blink/editing/selection/deleteFromDocument-crash.html [ ImageOnlyFailure Pass ]
-imported/blink/editing/style/justify-left-crash.html [ ImageOnlyFailure Pass ]
-imported/blink/fast/css/user-select-none.html [ ImageOnlyFailure Pass ]
-imported/blink/fast/text/international/repaint-glyph-bounds.html [ ImageOnlyFailure Pass ]
-imported/mozilla/svg/text/multiple-chunks-selection.svg [ ImageOnlyFailure Pass ]
-imported/mozilla/svg/text/selectSubString-2.svg [ ImageOnlyFailure Pass ]
-imported/mozilla/svg/text/selectSubString-3.svg [ ImageOnlyFailure Pass ]
-imported/mozilla/svg/text/selectSubString.svg [ ImageOnlyFailure Pass ]
-imported/mozilla/svg/text/textpath-selection.svg [ ImageOnlyFailure Pass ]
-svg/foreignObject/viewport-foreignobject-crash.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
