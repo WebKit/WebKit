@@ -1,5 +1,260 @@
 2018-04-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [WinCairo] Add WKView and WKAPI
+        https://bugs.webkit.org/show_bug.cgi?id=182869
+
+        Reviewed by Alex Christensen.
+
+        Resurrected source files for WebKit for Windows port which was
+        removed in r139003.
+
+        * PlatformWin.cmake: Renamed the output name of WebKit to WebKit2
+        not to conflict WebKitLegacy. Added source files and include paths.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/win/WKAPICastWin.h: Added.
+        * UIProcess/API/C/win/WKView.cpp: Added.
+        (WKViewCreate):
+        (WKViewGetWindow):
+        (WKViewGetPage):
+        (WKViewSetParentWindow):
+        (WKViewWindowAncestryDidChange):
+        (WKViewSetIsInWindow):
+        (WKViewSetScrollOffsetOnNextResize):
+        * UIProcess/API/C/win/WKView.h: Added.
+        * UIProcess/API/win/APIWebsiteDataStoreWin.cpp: Added.
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultCacheStorageDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp: Added.
+        (WebKit::processName):
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::terminateProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessFailedToLaunch):
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess):
+        * UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp: Added.
+        (WebKit::WebsiteDataStore::platformInitialize):
+        (WebKit::WebsiteDataStore::platformDestroy):
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches):
+        * UIProcess/win/PageClientImpl.cpp: Added.
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::requestScroll):
+        (WebKit::PageClientImpl::viewScrollPosition):
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::PageClientImpl::processDidExit):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::setCursorHiddenUntilMouseMoves):
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        (WebKit::PageClientImpl::screenToRootView):
+        (WebKit::PageClientImpl::rootViewToScreen):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::createColorPicker):
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::preferencesDidChange):
+        (WebKit::PageClientImpl::didChangeContentSize):
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::fullScreenManagerProxyClient):
+        (WebKit::PageClientImpl::closeFullScreenManager):
+        (WebKit::PageClientImpl::isFullScreen):
+        (WebKit::PageClientImpl::enterFullScreen):
+        (WebKit::PageClientImpl::exitFullScreen):
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomContentProvider):
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        (WebKit::PageClientImpl::navigationGestureWillEnd):
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+        (WebKit::PageClientImpl::willRecordNavigationSnapshot):
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot):
+        (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+        (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):
+        (WebKit::PageClientImpl::didChangeBackgroundColor):
+        (WebKit::PageClientImpl::isPlayingAudioWillChange):
+        (WebKit::PageClientImpl::isPlayingAudioDidChange):
+        (WebKit::PageClientImpl::refView):
+        (WebKit::PageClientImpl::derefView):
+        * UIProcess/win/PageClientImpl.h: Added.
+        * UIProcess/win/TextCheckerWin.cpp: Added.
+        (WebKit::checkerState):
+        (WebKit::TextChecker::state):
+        (WebKit::TextChecker::setTestingMode):
+        (WebKit::TextChecker::isTestingMode):
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        (WebKit::TextChecker::grammarCheckingEnabledStateChanged):
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::spellingUIIsShowing):
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/win/WebContextMenuProxyWin.cpp: Added.
+        (WebKit::WebContextMenuProxyWin::show):
+        (WebKit::WebContextMenuProxyWin::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyWin::WebContextMenuProxyWin):
+        (WebKit::WebContextMenuProxyWin::~WebContextMenuProxyWin):
+        * UIProcess/win/WebContextMenuProxyWin.h: Added.
+        (WebKit::WebContextMenuProxyWin::create):
+        * UIProcess/win/WebInspectorProxyWin.cpp: Added.
+        (WebKit::WebInspectorProxy::platformCreateFrontendPage):
+        (WebKit::WebInspectorProxy::platformCreateFrontendWindow):
+        (WebKit::WebInspectorProxy::platformCloseFrontendPageAndWindow):
+        (WebKit::WebInspectorProxy::platformDidCloseForCrash):
+        (WebKit::WebInspectorProxy::platformInvalidate):
+        (WebKit::WebInspectorProxy::platformHide):
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::platformBringInspectedPageToFront):
+        (WebKit::WebInspectorProxy::platformIsFront):
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorTestPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowWidth):
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        (WebKit::WebInspectorProxy::platformSave):
+        (WebKit::WebInspectorProxy::platformAppend):
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged):
+        * UIProcess/win/WebPageProxyWin.cpp: Added.
+        (WebKit::WebPageProxy::platformInitialize):
+        (WebKit::WebPageProxy::standardUserAgent):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        (WebKit::WebPageProxy::editorStateChanged):
+        * UIProcess/win/WebPreferencesWin.cpp: Added.
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey):
+        (WebKit::WebPreferences::platformUpdateFloatValueForKey):
+        (WebKit::WebPreferences::platformGetStringUserValueForKey):
+        (WebKit::WebPreferences::platformGetBoolUserValueForKey):
+        (WebKit::WebPreferences::platformGetUInt32UserValueForKey):
+        (WebKit::WebPreferences::platformGetDoubleUserValueForKey):
+        * UIProcess/win/WebProcessPoolWin.cpp: Added.
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInvalidateContext):
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaCacheDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultJavaScriptConfigurationDirectory):
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        * UIProcess/win/WebView.cpp: Added.
+        (WebKit::WebView::WebViewWndProc):
+        (WebKit::WebView::wndProc):
+        (WebKit::WebView::registerWebViewWindowClass):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::~WebView):
+        (WebKit::WebView::initialize):
+        (WebKit::WebView::setParentWindow):
+        (WebKit::findTopLevelParentWindow):
+        (WebKit::WebView::windowAncestryDidChange):
+        (WebKit::WebView::onMouseEvent):
+        (WebKit::WebView::onWheelEvent):
+        (WebKit::WebView::onHorizontalScroll):
+        (WebKit::WebView::onVerticalScroll):
+        (WebKit::WebView::onKeyEvent):
+        (WebKit::drawPageBackground):
+        (WebKit::WebView::paint):
+        (WebKit::WebView::onPaintEvent):
+        (WebKit::WebView::onPrintClientEvent):
+        (WebKit::WebView::onSizeEvent):
+        (WebKit::WebView::onWindowPositionChangedEvent):
+        (WebKit::WebView::onSetFocusEvent):
+        (WebKit::WebView::onKillFocusEvent):
+        (WebKit::WebView::onTimerEvent):
+        (WebKit::WebView::onShowWindowEvent):
+        (WebKit::WebView::onSetCursor):
+        (WebKit::WebView::updateActiveState):
+        (WebKit::WebView::updateActiveStateSoon):
+        (WebKit::initCommonControls):
+        (WebKit::WebView::initializeToolTipWindow):
+        (WebKit::WebView::startTrackingMouseLeave):
+        (WebKit::WebView::stopTrackingMouseLeave):
+        (WebKit::WebView::shouldInitializeTrackPointHack):
+        (WebKit::WebView::close):
+        (WebKit::WebView::cursorToShow const):
+        (WebKit::WebView::updateNativeCursor):
+        (WebKit::WebView::setOverrideCursor):
+        (WebKit::WebView::setIsInWindow):
+        (WebKit::WebView::setIsVisible):
+        (WebKit::WebView::isWindowActive):
+        (WebKit::WebView::isFocused):
+        (WebKit::WebView::isVisible):
+        (WebKit::WebView::isInWindow):
+        (WebKit::WebView::setScrollOffsetOnNextResize):
+        (WebKit::WebView::setViewNeedsDisplay):
+        (WebKit::WebView::createColorChooserProxy):
+        (WebKit::WebView::didCommitLoadForMainFrame):
+        (WebKit::WebView::customRepresentationZoomFactor):
+        (WebKit::WebView::setCustomRepresentationZoomFactor):
+        (WebKit::WebView::findStringInCustomRepresentation):
+        (WebKit::WebView::countStringMatchesInCustomRepresentation):
+        (WebKit::WebView::nativeWindow):
+        (WebKit::WebView::windowReceivedMessage):
+        * UIProcess/win/WebView.h: Added.
+        (WebKit::WebView::create):
+        (WebKit::WebView::window const):
+        (WebKit::WebView::page const):
+        (WebKit::WebView::drawingArea):
+        (WebKit::WebView::setWasActivatedByMouseEvent):
+
+2018-04-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         Implement Same-Site cookies
         https://bugs.webkit.org/show_bug.cgi?id=159464
         <rdar://problem/27196358>

@@ -572,4 +572,8 @@ inline WKWebGLLoadPolicy toAPI(WebCore::WebGLLoadPolicy webGLLoadPolicy)
 #include "WKAPICastWPE.h"
 #endif
 
+#if defined(WIN32) || defined(_WIN32)
+#include "WKAPICastWin.h"
+#endif
+
 #endif // WKAPICast_h

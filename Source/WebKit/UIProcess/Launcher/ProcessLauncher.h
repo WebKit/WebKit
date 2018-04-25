@@ -35,6 +35,10 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(WIN)
+#include <wtf/win/Win32Handle.h>
+#endif
+
 namespace WebKit {
 
 class ProcessLauncher : public ThreadSafeRefCounted<ProcessLauncher> {
@@ -90,6 +94,10 @@ private:
 
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
+#endif
+
+#if PLATFORM(WIN)
+    WTF::Win32Handle m_hProcess;
 #endif
 
     WeakPtrFactory<ProcessLauncher> m_weakPtrFactory;

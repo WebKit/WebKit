@@ -1,4 +1,4 @@
-set(WebKit_OUTPUT_NAME WebKit)
+set(WebKit_OUTPUT_NAME WebKit2)
 set(WebKit_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(WebKit_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
 set(WebKit_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
@@ -15,10 +15,13 @@ list(APPEND WebKit_SOURCES
     Platform/IPC/win/AttachmentWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
 
+    Platform/classifier/ResourceLoadStatisticsClassifier.cpp
+
     Platform/win/LoggingWin.cpp
     Platform/win/ModuleWin.cpp
     Platform/win/SharedMemoryWin.cpp
 
+    Shared/win/ChildProcessMainWin.cpp
     Shared/win/NativeWebKeyboardEventWin.cpp
     Shared/win/NativeWebMouseEventWin.cpp
     Shared/win/NativeWebTouchEventWin.cpp
@@ -26,6 +29,33 @@ list(APPEND WebKit_SOURCES
     Shared/win/WebEventFactory.cpp
 
     StorageProcess/win/StorageProcessMainWin.cpp
+
+    UIProcess/AcceleratedDrawingAreaProxy.cpp
+    UIProcess/BackingStore.cpp
+    UIProcess/DefaultUndoController.cpp
+    UIProcess/DrawingAreaProxyImpl.cpp
+    UIProcess/LegacySessionStateCodingNone.cpp
+    UIProcess/WebResourceLoadStatisticsStore.cpp
+    UIProcess/WebResourceLoadStatisticsTelemetry.cpp
+
+    UIProcess/API/C/win/WKView.cpp
+
+    UIProcess/API/win/APIWebsiteDataStoreWin.cpp
+
+    UIProcess/Launcher/win/ProcessLauncherWin.cpp
+
+    UIProcess/WebStorage/StorageManager.cpp
+
+    UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp
+
+    UIProcess/win/PageClientImpl.cpp
+    UIProcess/win/TextCheckerWin.cpp
+    UIProcess/win/WebContextMenuProxyWin.cpp
+    UIProcess/win/WebInspectorProxyWin.cpp
+    UIProcess/win/WebPageProxyWin.cpp
+    UIProcess/win/WebPreferencesWin.cpp
+    UIProcess/win/WebProcessPoolWin.cpp
+    UIProcess/win/WebView.cpp
 
     WebProcess/InjectedBundle/win/InjectedBundleWin.cpp
 
@@ -121,11 +151,20 @@ if (${WTF_PLATFORM_WIN_CAIRO})
 
         NetworkProcess/curl/NetworkDataTaskCurl.cpp
         NetworkProcess/curl/NetworkProcessCurl.cpp
+        NetworkProcess/curl/NetworkSessionCurl.cpp
         NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
+
+        Shared/API/c/cairo/WKImageCairo.cpp
 
         Shared/Authentication/curl/AuthenticationManagerCurl.cpp
 
+        Shared/cairo/ShareableBitmapCairo.cpp
+
         Shared/curl/WebCoreArgumentCodersCurl.cpp
+
+        UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
+
+        UIProcess/cairo/BackingStoreCairo.cpp
 
         WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp
     )
@@ -165,8 +204,10 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     Shared/API/c/cf
     Shared/API/c/win
 
-    UIProcess/API/c
+    UIProcess/API/C
     UIProcess/API/cpp
+
+    UIProcess/API/C/win
 
     WebProcess/WebPage
 
