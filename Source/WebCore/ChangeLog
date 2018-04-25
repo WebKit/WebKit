@@ -1,3 +1,14 @@
+2018-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Missing closing parenthesis when determining INSTALL_PATH build setting in WebCore.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=184999
+
+        Reviewed by Tim Horton.
+
+        Tweaks a line in WebCore.xcconfig that computes INSTALL_PATH, so that it doesn't use WK_NOT or WK_EMPTY.
+
+        * Configurations/WebCore.xcconfig:
+
 2018-04-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement LayoutContexet::layout() and its dependencies.
