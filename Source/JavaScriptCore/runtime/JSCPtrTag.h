@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "JSCPtrTag.h"
-#include "JSExportMacros.h"
-#include <functional>
-#include <wtf/PrintStream.h>
-#include <wtf/text/CString.h>
+#include <wtf/PtrTag.h>
 
 namespace JSC {
 
-template<PtrTag> class MacroAssemblerCodePtr;
-template<PtrTag> class MacroAssemblerCodeRef;
+using PtrTag = WTF::PtrTag;
 
-#if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, const char* prefix, PrintStream&);
-#else
-inline bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, const char*, PrintStream&)
-{
-    return false;
-}
-#endif
+#define FOR_EACH_JSC_PTRTAG(v) \
+    v(B3CCallPtrTag) \
+    v(B3CompilationPtrTag) \
+    v(BytecodePtrTag) \
+    v(DisassemblyPtrTag) \
+    v(ExceptionHandlerPtrTag) \
+    v(JITThunkPtrTag) \
+    v(JITStubRoutinePtrTag) \
+    v(JSEntryPtrTag) \
+    v(JSInternalPtrTag) \
+    v(JSSwitchPtrTag) \
+    v(LinkBufferPtrTag) \
+    v(OperationPtrTag) \
+    v(OSRExitPtrTag) \
+    v(SlowPathPtrTag) \
+    v(WasmEntryPtrTag) \
+    v(Yarr8BitPtrTag) \
+    v(Yarr16BitPtrTag) \
+    v(YarrMatchOnly8BitPtrTag) \
+    v(YarrMatchOnly16BitPtrTag) \
+    v(YarrBacktrackPtrTag) \
 
-// Prints either the disassembly, or a line of text indicating that disassembly failed and
-// the range of machine code addresses.
-void disassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>&, size_t, const char* prefix, PrintStream& out);
-
-// Asynchronous disassembly. This happens on another thread, and calls the provided
-// callback when the disassembly is done.
-void disassembleAsynchronously(
-    const CString& header, const MacroAssemblerCodeRef<DisassemblyPtrTag>&, size_t, const char* prefix);
-
-JS_EXPORT_PRIVATE void waitForAsynchronousDisassembly();
+FOR_EACH_JSC_PTRTAG(WTF_DECLARE_PTRTAG)
 
 } // namespace JSC
+

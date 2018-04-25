@@ -27,70 +27,48 @@
 
 #include <wtf/PointerPreparations.h>
 
-namespace JSC {
+namespace WTF {
 
-#define FOR_EACH_BASE_PTRTAG_ENUM(v) \
+#define FOR_EACH_BASE_WTF_PTRTAG(v) \
     v(NoPtrTag) \
     v(CFunctionPtrTag) \
 
-#define FOR_EACH_ADDITIONAL_PTRTAG_ENUM(v) \
-    v(B3CCallPtrTag) \
-    v(B3CompilationPtrTag) \
-    v(BytecodePtrTag) \
-    v(DisassemblyPtrTag) \
-    v(ExceptionHandlerPtrTag) \
-    v(JITThunkPtrTag) \
-    v(JITStubRoutinePtrTag) \
-    v(JSEntryPtrTag) \
-    v(JSInternalPtrTag) \
-    v(JSSwitchPtrTag) \
-    v(LinkBufferPtrTag) \
-    v(OperationPtrTag) \
-    v(OSRExitPtrTag) \
-    v(SlowPathPtrTag) \
-    v(WasmEntryPtrTag) \
-    v(Yarr8BitPtrTag) \
-    v(Yarr16BitPtrTag) \
-    v(YarrMatchOnly8BitPtrTag) \
-    v(YarrMatchOnly16BitPtrTag) \
-    v(YarrBacktrackPtrTag) \
+#define FOR_EACH_ADDITIONAL_WTF_PTRTAG(v) \
 
-#define FOR_EACH_PTRTAG_ENUM(v) \
-    FOR_EACH_BASE_PTRTAG_ENUM(v) \
-    FOR_EACH_ADDITIONAL_PTRTAG_ENUM(v) \
+#define FOR_EACH_WTF_PTRTAG(v) \
+    FOR_EACH_BASE_WTF_PTRTAG(v) \
+    FOR_EACH_ADDITIONAL_WTF_PTRTAG(v) \
 
 enum PtrTag : uintptr_t {
     NoPtrTag,
     CFunctionPtrTag,
-
-#ifndef PTRTAG_ENUM_HASH
-#define DECLARE_PTRTAG_ENUM(tag)  tag,
-#else
-#define DECLARE_PTRTAG_ENUM(tag)  tag = PTRTAG_ENUM_HASH(tag),
-#endif
-    FOR_EACH_ADDITIONAL_PTRTAG_ENUM(DECLARE_PTRTAG_ENUM)
-#undef DECLARE_PTRTAG_ENUM
 };
+
+#ifndef WTF_PTRTAG_HASH
+template<size_t N>
+constexpr uintptr_t makePtrTagHash(const char (&str)[N])
+{
+    uintptr_t result = 134775813;
+    for (size_t i = 0; i < N; ++i)
+        result += ((result * str[i]) ^ (result >> 16));
+    return result & 0xffff;
+}
+
+#define WTF_PTRTAG_HASH(tag) WTF::makePtrTagHash(#tag)
+#endif
+
+#define WTF_DECLARE_PTRTAG(tag) \
+    constexpr PtrTag tag = static_cast<PtrTag>(WTF_PTRTAG_HASH(#tag)); \
+    static_assert(tag != NoPtrTag && tag != CFunctionPtrTag, "");
 
 static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0), "");
 static_assert(static_cast<uintptr_t>(CFunctionPtrTag) == static_cast<uintptr_t>(1), "");
 
-inline const char* ptrTagName(PtrTag tag)
-{
-#define RETURN_PTRTAG_NAME(_tagName) case _tagName: return #_tagName;
-    switch (tag) {
-        FOR_EACH_PTRTAG_ENUM(RETURN_PTRTAG_NAME)
-    default: return "<unknown>";
-    }
-#undef RETURN_PTRTAG_NAME
-}
+FOR_EACH_ADDITIONAL_WTF_PTRTAG(WTF_DECLARE_PTRTAG)
 
 #if !USE(POINTER_PROFILING)
 
 inline const char* tagForPtr(const void*) { return "<no tag>"; }
-
-template<typename... Arguments>
-inline constexpr PtrTag ptrTag(Arguments&&...) { return NoPtrTag; }
 
 template<typename T, typename PtrType, typename = std::enable_if_t<std::is_pointer<PtrType>::value && !std::is_same<T, PtrType>::value>>
 inline constexpr T tagCodePtr(PtrType ptr, PtrTag) { return bitwise_cast<T>(ptr); }
@@ -173,8 +151,29 @@ template<typename PtrType> void assertIsNullOrTaggedWith(PtrType, PtrTag) { }
 
 #endif // !USE(POINTER_PROFILING)
 
-} // namespace JSC
+} // namespace WTF
+
+using WTF::CFunctionPtrTag;
+using WTF::NoPtrTag;
+using WTF::PtrTag;
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PtrTagSupport.h>)
 #include <WebKitAdditions/PtrTagSupport.h>
 #endif
+
+using WTF::tagForPtr;
+
+using WTF::tagCodePtr;
+using WTF::untagCodePtr;
+using WTF::retagCodePtr;
+using WTF::removeCodePtrTag;
+using WTF::tagCFunctionPtr;
+using WTF::untagCFunctionPtr;
+
+using WTF::assertIsCFunctionPtr;
+using WTF::assertIsNullOrCFunctionPtr;
+using WTF::assertIsNotTagged;
+using WTF::assertIsTagged;
+using WTF::assertIsNullOrTagged;
+using WTF::assertIsTaggedWith;
+using WTF::assertIsNullOrTaggedWith;

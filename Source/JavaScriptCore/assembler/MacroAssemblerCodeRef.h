@@ -27,7 +27,7 @@
 
 #include "ExecutableAllocator.h"
 #include "JSCPoison.h"
-#include "PtrTag.h"
+#include "JSCPtrTag.h"
 #include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>

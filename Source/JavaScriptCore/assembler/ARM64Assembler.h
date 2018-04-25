@@ -29,7 +29,7 @@
 
 #include "AssemblerBuffer.h"
 #include "AssemblerCommon.h"
-#include "PtrTag.h"
+#include "JSCPtrTag.h"
 #include <limits.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>

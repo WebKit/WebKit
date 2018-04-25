@@ -28,8 +28,8 @@
 
 #include "Instruction.h"
 #include "Interpreter.h"
+#include "JSCPtrTag.h"
 #include "LLIntData.h"
-#include "PtrTag.h"
 #include "UnlinkedCodeBlock.h"
 
 namespace JSC {

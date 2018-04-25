@@ -29,7 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLState.h"
-#include "PtrTag.h"
+#include "JSCPtrTag.h"
 
 namespace JSC { namespace FTL {
 

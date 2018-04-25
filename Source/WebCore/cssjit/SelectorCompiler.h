@@ -58,25 +58,25 @@ SelectorCompilationStatus compileSelector(const CSSSelector*, SelectorContext, J
 inline RuleCollectorSimpleSelectorChecker ruleCollectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
-    return JSC::untagCFunctionPtr<RuleCollectorSimpleSelectorChecker, CSSSelectorPtrTag>(executableAddress);
+    return WTF::untagCFunctionPtr<RuleCollectorSimpleSelectorChecker, CSSSelectorPtrTag>(executableAddress);
 }
 
 inline QuerySelectorSimpleSelectorChecker querySelectorSimpleSelectorCheckerFunction(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SimpleSelectorChecker);
-    return JSC::untagCFunctionPtr<QuerySelectorSimpleSelectorChecker, CSSSelectorPtrTag>(executableAddress);
+    return WTF::untagCFunctionPtr<QuerySelectorSimpleSelectorChecker, CSSSelectorPtrTag>(executableAddress);
 }
 
 inline RuleCollectorSelectorCheckerWithCheckingContext ruleCollectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-    return JSC::untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext, CSSSelectorPtrTag>(executableAddress);
+    return WTF::untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext, CSSSelectorPtrTag>(executableAddress);
 }
 
 inline QuerySelectorSelectorCheckerWithCheckingContext querySelectorSelectorCheckerFunctionWithCheckingContext(void* executableAddress, SelectorCompilationStatus compilationStatus)
 {
     ASSERT_UNUSED(compilationStatus, compilationStatus == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-    return JSC::untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext, CSSSelectorPtrTag>(executableAddress);
+    return WTF::untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext, CSSSelectorPtrTag>(executableAddress);
 }
 
 } // namespace SelectorCompiler

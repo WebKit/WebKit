@@ -28,7 +28,7 @@
 
 #include "Disassembler.h"
 #include "JSCInlines.h"
-#include "PtrTag.h"
+#include "JSCPtrTag.h"
 #include <mutex>
 
 namespace JSC {

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PtrTag.h"
+#include "JSCPtrTag.h"
 
 namespace JSC {
 

@@ -770,6 +770,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCJSValue.h
     runtime/JSCJSValueInlines.h
     runtime/JSCPoison.h
+    runtime/JSCPtrTag.h
     runtime/JSCallee.h
     runtime/JSCast.h
     runtime/JSCell.h
@@ -838,7 +839,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Operations.h
     runtime/Options.h
     runtime/ParseInt.h
-    runtime/PtrTag.h
     runtime/PrivateName.h
     runtime/ProgramExecutable.h
     runtime/PromiseDeferredTimer.h

@@ -27,12 +27,15 @@
 
 #if ENABLE(CSS_SELECTOR_JIT)
 
-#include <JavaScriptCore/PtrTag.h>
+#include <JavaScriptCore/JSCPtrTag.h>
 
 namespace WebCore {
 
-static constexpr JSC::PtrTag CSSSelectorPtrTag = static_cast<JSC::PtrTag>(0xc551);
-static constexpr JSC::PtrTag CSSOperationPtrTag = static_cast<JSC::PtrTag>(0xc552);
+#define FOR_EACH_CSS_PTRTAG(v) \
+    v(CSSSelectorPtrTag) \
+    v(CSSOperationPtrTag) \
+
+FOR_EACH_CSS_PTRTAG(WTF_DECLARE_PTRTAG)
 
 } // namespace WebCore
 

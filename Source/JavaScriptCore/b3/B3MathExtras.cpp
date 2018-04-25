@@ -35,8 +35,8 @@
 #include "B3ConstPtrValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
+#include "JSCPtrTag.h"
 #include "MathCommon.h"
-#include "PtrTag.h"
 
 namespace JSC { namespace B3 {
 

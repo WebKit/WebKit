@@ -26,7 +26,7 @@
 #pragma once
 
 #include "JITCompilationEffort.h"
-#include "PtrTag.h"
+#include "JSCPtrTag.h"
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>

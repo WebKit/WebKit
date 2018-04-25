@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CodeSpecializationKind.h"
-#include "PtrTag.h"
+#include "JSCPtrTag.h"
 
 #if ENABLE(JIT)
 namespace JSC {

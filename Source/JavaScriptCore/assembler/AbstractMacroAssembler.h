@@ -31,10 +31,10 @@
 #include "CPU.h"
 #include "CodeLocation.h"
 #include "JSCJSValue.h"
+#include "JSCPtrTag.h"
 #include "MacroAssemblerCodeRef.h"
 #include "MacroAssemblerHelpers.h"
 #include "Options.h"
-#include "PtrTag.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/SharedTask.h>

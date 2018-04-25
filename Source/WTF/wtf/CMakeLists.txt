@@ -167,6 +167,7 @@ set(WTF_PUBLIC_HEADERS
     PriorityQueue.h
     ProcessID.h
     ProcessPrivilege.h
+    PtrTag.h
     RAMSize.h
     RandomDevice.h
     RandomNumber.h

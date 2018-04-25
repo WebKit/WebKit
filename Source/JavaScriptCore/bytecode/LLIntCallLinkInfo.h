@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include "JSCPtrTag.h"
 #include "JSFunction.h"
 #include "MacroAssemblerCodeRef.h"
-#include "PtrTag.h"
 #include <wtf/SentinelLinkedList.h>
 
 namespace JSC {

@@ -1,3 +1,35 @@
+2018-04-25  Mark Lam  <mark.lam@apple.com>
+
+        Push the definition of PtrTag down to the WTF layer.
+        https://bugs.webkit.org/show_bug.cgi?id=184976
+        <rdar://problem/39723901>
+
+        Reviewed by Saam Barati.
+
+        This is in preparation for doing pointer profiling at the WTF layer as well.
+        Also deleted an unused ptrTag() function.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PtrTag.h: Copied from Source/JavaScriptCore/runtime/PtrTag.h.
+        (WTF::makePtrTagHash):
+        (JSC::ptrTagName): Deleted.
+        (JSC::tagForPtr): Deleted.
+        (JSC::ptrTag): Deleted.
+        (JSC::tagCodePtr): Deleted.
+        (JSC::untagCodePtr): Deleted.
+        (JSC::retagCodePtr): Deleted.
+        (JSC::removeCodePtrTag): Deleted.
+        (JSC::tagCFunctionPtr): Deleted.
+        (JSC::untagCFunctionPtr): Deleted.
+        (JSC::assertIsCFunctionPtr): Deleted.
+        (JSC::assertIsNullOrCFunctionPtr): Deleted.
+        (JSC::assertIsNotTagged): Deleted.
+        (JSC::assertIsTagged): Deleted.
+        (JSC::assertIsNullOrTagged): Deleted.
+        (JSC::assertIsTaggedWith): Deleted.
+        (JSC::assertIsNullOrTaggedWith): Deleted.
+
 2018-04-25  Dean Jackson  <dino@apple.com>
 
         Make a better flag for system preview, and disable it where necessary
