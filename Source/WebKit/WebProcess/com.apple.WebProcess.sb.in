@@ -365,7 +365,6 @@
     (xpc-service-name "com.apple.hiservices-xpcservice")
     (xpc-service-name "com.apple.ist.ds.appleconnect2.HelperService")
     (xpc-service-name "com.apple.print.normalizerd")
-    (xpc-service-name "com.apple.securityd.xpc")
     (xpc-service-name "com.apple.signpost.signpost-notificationd")
 )
 #endif
@@ -469,9 +468,6 @@
         "com.apple.driver.AppleHIDMouse"
         "com.apple.lookup.shared"
         "com.apple.networkConnect"
-        "com.apple.security"
-        "com.apple.security.common"
-        "com.apple.security.revocation"
         "com.apple.speech.voice.prefs"
         "com.apple.systemsound"
         "com.apple.universalaccess"
@@ -600,40 +596,11 @@
        (global-name "com.apple.xpcd")
 )
 
-;; Security framework
-(allow mach-lookup
-       (global-name "com.apple.ctkd.token-client")
-       (global-name "com.apple.ocspd")
-       (global-name "com.apple.securityd.xpc") 
-       (global-name "com.apple.CoreAuthentication.agent.libxpc")
-       (global-name "com.apple.SecurityServer"))
-
-;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
-;; Restrict AppSandboxed processes from creating /Library/Keychains, but allow access to the contents of /Library/Keychains:
-(allow file-read-data file-read-metadata file-write*
-    (subpath "/Library/Keychains"))
-
-;; Do permit creating per-user keychains
-(allow file-read* file-write*
-    (home-subpath "/Library/Keychains"))
-
-;; Except deny access to new-style iOS Keychain folders which are UUIDs.
-(deny file-read* file-write*
-    (regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)"))
-    (home-regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)")))
-
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
 (allow file-read*
        (subpath "/private/var/db/mds")
-       (literal "/private/var/db/DetachedSignatures")
-       ; The following are needed until <rdar://problem/11134688> is resolved.
-       (literal "/Library/Preferences/com.apple.security.plist")
-       (literal "/Library/Preferences/com.apple.security.common.plist")
-       (literal "/Library/Preferences/com.apple.security.revocation.plist")
-       (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
-       (home-literal "/Library/Preferences/com.apple.security.plist")
-       (home-literal "/Library/Preferences/com.apple.security.revocation.plist"))
+       (literal "/private/var/db/DetachedSignatures"))
 
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
