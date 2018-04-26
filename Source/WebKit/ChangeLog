@@ -1,5 +1,15 @@
 2018-04-26  Jer Noble  <jer.noble@apple.com>
 
+        WK_COCOA_TOUCH the WK_ACCESSIBILITY_LDFLAGS
+        https://bugs.webkit.org/show_bug.cgi?id=185007
+        <rdar://problem/39735943>
+
+        Reviewed by Timothy Hatcher.
+
+        * Configurations/WebKit.xcconfig:
+
+2018-04-26  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed build fix; fix iOS TAPI build step after r231063.
 
         * Configurations/WebKit.xcconfig:
