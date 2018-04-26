@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ WEBCORE_EXPORT @interface WAKScrollView : WAKView <WebCoreFrameScrollView>
 {
     WAKView *_documentView;  // Only here so the ObjC instance stays around.
     WAKClipView *_contentView;
-    id _delegate;
     NSPoint _scrollOrigin;
 }
 
@@ -57,8 +56,7 @@ WEBCORE_EXPORT @interface WAKScrollView : WAKView <WebCoreFrameScrollView>
 - (BOOL)drawsBackground;
 - (float)horizontalLineScroll;
 
-- (void)setDelegate:(id)delegate;
-- (id)delegate;
+@property (nonatomic, weak) id delegate;
 
 - (CGRect)unobscuredContentRect;
 - (void)setActualScrollPosition:(CGPoint)point;

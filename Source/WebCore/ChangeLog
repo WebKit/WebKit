@@ -1,3 +1,21 @@
+2018-04-26  David Kilzer  <ddkilzer@apple.com>
+
+        Make WAKScrollView delegate a weak property
+        <https://webkit.org/b/184799>
+        <rdar://problem/39469669>
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios/wak/WAKScrollView.h:
+        - Remove `delegate` instance variable declaration.
+        - Declare `delegate` property as weak.
+        (-[WAKScrollView setDelegate:]): Delete declaration.
+        (-[WAKScrollView delegate]): Ditto.
+        * platform/ios/wak/WAKScrollView.mm:
+        - Synthesize getter/setter methods for `delegate` property.
+        (-[WAKScrollView setDelegate:]): Delete implementation.
+        (-[WAKScrollView delegate]): Ditto.
+
 2018-04-26  Youenn Fablet  <youenn@apple.com>
 
         CORS preflight checker should add a console message when preflight load is blocked
