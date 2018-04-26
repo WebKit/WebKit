@@ -1907,3 +1907,5 @@ webkit.org/b/48451 animations/combo-transform-translate+scale.html [ Pass Failur
 webkit.org/b/48451 animations/play-state.html [ Pass Failure ]
 webkit.org/b/48451 animations/suspend-resume-animation.html [ Pass Failure ]
 webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
+
+webkit.org/b/184800 http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Timeout ]
