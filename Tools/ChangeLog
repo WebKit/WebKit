@@ -1,3 +1,13 @@
+2018-04-26  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add release bots for WinCairo.
+        https://bugs.webkit.org/show_bug.cgi?id=185042
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        Add a release build bot and two test bots, replacing the outdated WinCairo release bots.
+
 2018-04-26  Sihui Liu  <sihui_liu@apple.com>
 
         -[WKHTTPCookieStore deleteCookie:completionHandler:] doesn't delete cookies

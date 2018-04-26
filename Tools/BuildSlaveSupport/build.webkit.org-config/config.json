@@ -54,9 +54,9 @@
                     { "name": "bot511", "platform": "win" },
                     { "name": "bot501", "platform": "win" },
 
-                    { "name": "wincairo-1", "platform": "wincairo" },
-                    { "name": "wincairo-2", "platform": "wincairo" },
-
+                    { "name": "wincairo-wkl-release-build-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-release-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-release-tests-02", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-build-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-tests-01", "platform": "wincairo" },
                     { "name": "wincairo-wkl-debug-tests-02", "platform": "wincairo" },
@@ -293,9 +293,15 @@
                       "slavenames": ["gtk-linux-slave-11"]
                     },
                     {
-                      "name": "WinCairo 64-Bit Release", "type": "Build", "builddir": "win-cairo-release",
+                      "name": "WinCairo 64-bit WKL Release (Build)", "type": "Build", "builddir": "wincairo-wkl-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["wincairo-1", "wincairo-2"]
+                      "triggers": ["wincairo-wkl-release-tests"],
+                      "slavenames": ["wincairo-wkl-release-build-01"]
+                    },
+                    {
+                      "name": "WinCairo 64-bit WKL Release (Tests)", "type": "TestWebKit1", "builddir": "wincairo-wkl-release-tests",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["wincairo-wkl-release-tests-01", "wincairo-wkl-release-tests-02"]
                     },
                     {
                       "name": "WinCairo 64-bit WKL Debug (Build)", "type": "Build", "builddir": "wincairo-wkl-debug",
@@ -356,7 +362,7 @@
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
                                        "GTK Linux 64-bit Release Debian Stable (Build)", "GTK Linux 64-bit Release Ubuntu LTS (Build)",
                                        "JSCOnly Linux AArch64 Release", "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Traditional Release",
-                                       "JSCOnly Linux MIPS32el Release", "WinCairo 64-Bit Release", "WinCairo 64-bit WKL Debug (Build)",
+                                       "JSCOnly Linux MIPS32el Release", "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
@@ -439,6 +445,9 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-wayland-tests",
                       "builderNames": ["GTK Linux 64-bit Release Wayland (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-wkl-release-tests",
+                      "builderNames": ["WinCairo 64-bit WKL Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "wincairo-wkl-debug-tests",
                       "builderNames": ["WinCairo 64-bit WKL Debug (Tests)"]
