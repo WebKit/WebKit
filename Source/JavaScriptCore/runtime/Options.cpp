@@ -49,7 +49,7 @@
 #endif
 
 #if OS(WINDOWS)
-#include "MacroAssemblerX86.h"
+#include "MacroAssembler.h"
 #endif
 
 namespace JSC {

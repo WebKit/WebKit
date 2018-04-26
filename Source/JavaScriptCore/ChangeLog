@@ -1,3 +1,11 @@
+2018-04-26  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: Windows build fix.
+
+        Not reviewed.
+
+        * runtime/Options.cpp:
+
 2018-04-26  Jer Noble  <jer.noble@apple.com>
 
         WK_COCOA_TOUCH all the things.
