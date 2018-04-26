@@ -1,3 +1,20 @@
+2018-04-26  Daniel Bates  <dabates@apple.com>
+
+        DocumentLoader::loadMainResource() should WTFMove() the passed ResourceRequest
+        https://bugs.webkit.org/show_bug.cgi?id=185002
+
+        Reviewed by Youenn Fablet and Alex Christensen.
+
+        In r224852 we extracted logic from DocumentLoader::startLoadingMainResource() into a new
+        function DocumentLoader::loadMainResource() that could be shared by both DocumentLoader::startLoadingMainResource()
+        and the service worker code. As part of this extraction, DocumentLoader::loadMainResource()
+        takes a ResourceRequest by rvalue reference, but it never actually takes ownership of this
+        ResourceRequest and subsequently makes a copy of it when instantiating a CachedResourceRequest.
+        Instead we should WTFMove() the passed request into the CachedResourceRequest.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::loadMainResource):
+
 2018-04-26  Sihui Liu  <sihui_liu@apple.com>
 
         -[WKHTTPCookieStore deleteCookie:completionHandler:] doesn't delete cookies

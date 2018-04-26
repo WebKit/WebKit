@@ -1732,12 +1732,12 @@ void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
 {
     static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::Navigate, IncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching);
-    CachedResourceRequest mainResourceRequest(ResourceRequest(request), mainResourceLoadOptions);
+    CachedResourceRequest mainResourceRequest(WTFMove(request), mainResourceLoadOptions);
     if (!m_frame->isMainFrame() && m_frame->document()) {
         // If we are loading the main resource of a subframe, use the cache partition of the main document.
         mainResourceRequest.setDomainForCachePartition(*m_frame->document());
     } else {
-        auto origin = SecurityOrigin::create(request.url());
+        auto origin = SecurityOrigin::create(mainResourceRequest.url());
         origin->setStorageBlockingPolicy(frameLoader()->frame().settings().storageBlockingPolicy());
         mainResourceRequest.setDomainForCachePartition(origin->domainForCachePartition());
     }
@@ -1783,20 +1783,19 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
     if (!mainResourceLoader()) {
         m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
-        frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, request);
-        frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
+        frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, mainResourceRequest.resourceRequest());
+        frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, mainResourceRequest.resourceRequest(), ResourceResponse());
     }
 
     becomeMainResourceClient();
 
     // A bunch of headers are set when the underlying ResourceLoader is created, and m_request needs to include those.
-    if (mainResourceLoader())
-        request = mainResourceLoader()->originalRequest();
+    ResourceRequest updatedRequest = mainResourceLoader() ? mainResourceLoader()->originalRequest() : mainResourceRequest.resourceRequest();
     // If there was a fragment identifier on m_request, the cache will have stripped it. m_request should include
     // the fragment identifier, so add that back in.
-    if (equalIgnoringFragmentIdentifier(m_request.url(), request.url()))
-        request.setURL(m_request.url());
-    setRequest(request);
+    if (equalIgnoringFragmentIdentifier(m_request.url(), updatedRequest.url()))
+        updatedRequest.setURL(m_request.url());
+    setRequest(updatedRequest);
 }
 
 void DocumentLoader::cancelPolicyCheckIfNeeded()
