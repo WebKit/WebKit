@@ -1,3 +1,25 @@
+2018-04-26  Daniel Bates  <dabates@apple.com>
+
+        Rename NetworkLoadChecker::returnError() to NetworkLoadChecker::accessControlErrorForValidationHandler()
+        https://bugs.webkit.org/show_bug.cgi?id=185035
+
+        Reviewed by Youenn Fablet.
+
+        Substitute NetworkLoadChecker::accessControlErrorForValidationHandler() for NetworkLoadChecker::returnError()
+        to better describe that it is a convenience function that returns a wrapped ResourceError object,
+        that represents an access control error, suitable to be passed directly to a validation handler.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRedirection): Update as needed for renaming.
+        (WebKit::NetworkLoadChecker::accessControlErrorForValidationHandler): Use auto -> syntax to avoid the need to
+        class-qualify the return type. Also renamed parameter from error to message as it represents the message/description
+        for the access control error.
+        (WebKit::NetworkLoadChecker::checkRequest): Update as needed for renaming. Also substitute "message" for "error"
+        to match the argument of accessControlErrorForValidationHandler() with the same name.
+        (WebKit::NetworkLoadChecker::continueCheckingRequest): Update as needed for renaming.
+        (WebKit::NetworkLoadChecker::returnError): Deleted; renamed to accessControlErrorForValidationHandler().
+        * NetworkProcess/NetworkLoadChecker.h:
+
 2018-04-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         Remove access to keychain from the WebContent process

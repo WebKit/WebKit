@@ -99,7 +99,7 @@ void NetworkLoadChecker::checkRedirection(WebCore::ResourceResponse& redirectRes
     }
 
     if (m_options.redirect != FetchOptions::Redirect::Follow) {
-        handler(returnError(ASCIILiteral("Redirections are not allowed")));
+        handler(accessControlErrorForValidationHandler(ASCIILiteral("Redirections are not allowed")));
         return;
     }
 
@@ -107,7 +107,7 @@ void NetworkLoadChecker::checkRedirection(WebCore::ResourceResponse& redirectRes
     // See https://github.com/whatwg/fetch/issues/393
 
     if (++m_redirectCount > 20) {
-        handler(returnError(ASCIILiteral("Load cannot follow more than 20 redirections")));
+        handler(accessControlErrorForValidationHandler(ASCIILiteral("Load cannot follow more than 20 redirections")));
         return;
     }
 
@@ -142,9 +142,9 @@ ResourceError NetworkLoadChecker::validateResponse(ResourceResponse& response)
     return { };
 }
 
-NetworkLoadChecker::RequestOrError NetworkLoadChecker::returnError(String&& error)
+auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message) -> RequestOrError
 {
-    return makeUnexpected(ResourceError { String { }, 0, m_url, WTFMove(error), ResourceError::Type::AccessControl });
+    return makeUnexpected(ResourceError { String { }, 0, m_url, WTFMove(message), ResourceError::Type::AccessControl });
 }
 
 void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandler&& handler)
@@ -152,7 +152,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ValidationHandl
 #if ENABLE(CONTENT_EXTENSIONS)
     processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler)](auto&& request, auto status) mutable {
         if (status.blockedLoad) {
-            handler(this->returnError(ASCIILiteral("Blocked by content extension")));
+            handler(this->accessControlErrorForValidationHandler(ASCIILiteral("Blocked by content extension")));
             return;
         }
         this->continueCheckingRequest(WTFMove(request), WTFMove(handler));
@@ -173,8 +173,8 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
                 request.setURL(url);
         }
         if (m_options.destination == FetchOptions::Destination::EmptyString && !contentSecurityPolicy->allowConnectToSource(request.url(), isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No)) {
-            String error = !isRedirected() ? ASCIILiteral("Blocked by Content Security Policy") : makeString("Blocked ", request.url().string(), " by Content Security Policy");
-            handler(returnError(WTFMove(error)));
+            String message = !isRedirected() ? ASCIILiteral("Blocked by Content Security Policy") : makeString("Blocked ", request.url().string(), " by Content Security Policy");
+            handler(accessControlErrorForValidationHandler(WTFMove(message)));
             return;
         }
     }
@@ -189,7 +189,7 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
 
     if (m_options.mode == FetchOptions::Mode::SameOrigin) {
         String message = makeString("Unsafe attempt to load URL ", request.url().stringCenterEllipsizedToLength(), " from origin ", m_origin->toString(), ". Domains, protocols and ports must match.\n");
-        handler(returnError(WTFMove(message)));
+        handler(accessControlErrorForValidationHandler(WTFMove(message)));
         return;
     }
 

@@ -84,7 +84,7 @@ private:
     void checkCORSRedirectedRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
     void checkCORSRequestWithPreflight(WebCore::ResourceRequest&&, ValidationHandler&&);
 
-    RequestOrError returnError(String&& error);
+    RequestOrError accessControlErrorForValidationHandler(String&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void processContentExtensionRulesForLoad(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&, const WebCore::ContentExtensions::BlockedStatus&)>&&);
