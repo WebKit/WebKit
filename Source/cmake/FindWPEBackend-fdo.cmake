@@ -29,15 +29,15 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(PC_WPEBACKEND_FDO QUIET wpebackend-fdo)
+pkg_check_modules(PC_WPEBACKEND_FDO QUIET wpebackend-fdo-0.1)
 
 find_path(WPEBACKEND_FDO_INCLUDE_DIRS
-    NAMES wpe-fdo/initialize-egl.h
+    NAMES wpe/fdo.h
     HINTS ${PC_WPEBACKEND_FDO_INCLUDEDIR} ${PC_WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
 find_library(WPEBACKEND_FDO_LIBRARIES
-    NAMES WPEBackend-fdo
+    NAMES WPEBackend-fdo-0.1
     HINTS ${PC_WPEBACKEND_FDO_LIBDIR} ${PC_WPEBACKEND_FDO_LIBRARY_DIRS}
 )
 

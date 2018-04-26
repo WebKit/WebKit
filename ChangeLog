@@ -1,5 +1,17 @@
 2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE] Build and link against latest WPEBackend and WPEBackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=184643
+
+        Reviewed by Žan Doberšek.
+
+        Update find modules to include the API versions.
+
+        * Source/cmake/FindWPEBackend-fdo.cmake:
+        * Source/cmake/FindWPEBackend.cmake:
+
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Some options should be marked as advanced
         https://bugs.webkit.org/show_bug.cgi?id=184972
 

@@ -116,7 +116,12 @@ static void testWebViewWebBackend(Test* test, gconstpointer)
         // initialize
         [](void*) { },
         // get_renderer_host_fd
-        [](void*) -> int { return -1; }
+        [](void*) -> int { return -1; },
+        // padding
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr
     };
 
     // User provided backend with default deleter (we don't have a way to check the backend will be actually freed).

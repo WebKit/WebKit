@@ -32,7 +32,7 @@
 #include <cairo.h>
 #include <glib.h>
 #include <unordered_map>
-#include <wpe-fdo/view-backend-exportable.h>
+#include <wpe/fdo.h>
 
 #ifndef EGL_WL_bind_wayland_display
 #define EGL_WL_bind_wayland_display 1

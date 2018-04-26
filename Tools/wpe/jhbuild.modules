@@ -164,7 +164,7 @@
 
   <cmake id="wpebackend">
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend.git"
-            tag="3013faaebab42e7ef7497b3850a2902978eb3d6f" />
+            tag="761496dff51b6962200294b4fe2bc9529da731a8" />
   </cmake>
 
   <cmake id="wpebackend-fdo">
@@ -173,7 +173,7 @@
       <dep package="glib"/>
     </dependencies>
     <branch repo="github.com" module="Igalia/WPEBackend-fdo.git"
-            tag="064c60806422ff1bb32cef7fb1de68923aecba82"/>
+            tag="bdd46870b1dc3c92005343e3161bdd24f620b11d"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">
@@ -202,7 +202,7 @@
   </autotools>
 
   <autotools id="dyz" supports-non-srcdir-builds="no">
-    <branch repo="github.com" module="Igalia/dyz" tag="74a368cc63a0ff9bba675182affa3a3fd13aad80"/>
+    <branch repo="github.com" module="Igalia/dyz" tag="4f196778c82ed72095e72c9d401cd2ff8ba36c60"/>
   </autotools>
 
   <meson id="graphene">

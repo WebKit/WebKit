@@ -30,7 +30,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebCore/NotImplemented.h>
-#include <wpe/view-backend.h>
+#include <wpe/wpe.h>
 #include <xkbcommon/xkbcommon-keysyms.h>
 #include <xkbcommon/xkbcommon.h>
 

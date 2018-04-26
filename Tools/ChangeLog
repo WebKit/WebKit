@@ -1,3 +1,28 @@
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build and link against latest WPEBackend and WPEBackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=184643
+
+        Reviewed by Žan Doberšek.
+
+        Add missing INCLUDE_DIRS in many places.
+
+        Adapt to single-header WPE includes.
+
+        Null-initialize padding to silence -Wmissing-field-initializers. (Yuck.)
+
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewWebBackend):
+        * TestWebKitAPI/glib/PlatformWPE.cmake:
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/PlatformWPE.cmake:
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        * wpe/HeadlessViewBackend/CMakeLists.txt:
+        * wpe/HeadlessViewBackend/HeadlessViewBackend.cpp:
+        * wpe/HeadlessViewBackend/HeadlessViewBackend.h:
+        * wpe/jhbuild.modules:
+
 2018-04-25  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION (r230998): Bot watcher's dashboard doesn't display number of API test failures

@@ -29,15 +29,15 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(PC_WPE QUIET wpe)
+pkg_check_modules(PC_WPE QUIET wpe-0.1)
 
 find_path(WPE_INCLUDE_DIRS
-    NAMES wpe/loader.h
+    NAMES wpe/wpe.h
     HINTS ${PC_WPE_INCLUDEDIR} ${PC_WPE_INCLUDE_DIRS}
 )
 
 find_library(WPE_LIBRARIES
-    NAMES WPEBackend
+    NAMES WPEBackend-0.1
     HINTS ${PC_WPE_LIBDIR} ${PC_WPE_LIBRARY_DIRS}
 )
 

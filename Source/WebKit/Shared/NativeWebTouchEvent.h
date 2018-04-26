@@ -35,7 +35,7 @@ struct _UIWebTouchEvent;
 #elif PLATFORM(GTK)
 #include <WebCore/GUniquePtrGtk.h>
 #elif PLATFORM(WPE)
-#include <wpe/input.h>
+#include <wpe/wpe.h>
 #endif
 
 namespace WebKit {

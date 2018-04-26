@@ -26,7 +26,7 @@
 
 #include <glib-object.h>
 #include <wpe/WebKitDefines.h>
-#include <wpe/view-backend.h>
+#include <wpe/wpe.h>
 
 G_BEGIN_DECLS
 

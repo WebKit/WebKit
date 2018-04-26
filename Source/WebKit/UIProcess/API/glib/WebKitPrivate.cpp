@@ -27,7 +27,7 @@
 #if PLATFORM(GTK)
 #include <gdk/gdk.h>
 #elif PLATFORM(WPE)
-#include <wpe/input.h>
+#include <wpe/wpe.h>
 #endif
 
 #if PLATFORM(GTK)

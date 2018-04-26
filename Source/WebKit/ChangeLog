@@ -1,3 +1,26 @@
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build and link against latest WPEBackend and WPEBackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=184643
+
+        Reviewed by Žan Doberšek.
+
+        Adapt to single-header WPE includes.
+
+        Null-initialize padding to silence -Wmissing-field-initializers. (Yuck.)
+
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/wpe/WebEventFactory.cpp:
+        * UIProcess/API/glib/WebKitPrivate.cpp:
+        * UIProcess/API/wpe/CompositingManagerProxy.cpp:
+        * UIProcess/API/wpe/ScrollGestureController.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        * UIProcess/API/wpe/WebKitWebViewBackend.h:
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp:
+        (WebKit::AcceleratedSurfaceWPE::initialize):
+
 2018-04-25  Saam Barati  <sbarati@apple.com>
 
         dlopen the bundle's executable before calling -[NSBundle load] since that will also do a bunch of other things we don't need

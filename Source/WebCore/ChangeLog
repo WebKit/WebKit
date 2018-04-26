@@ -1,3 +1,16 @@
+2018-04-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build and link against latest WPEBackend and WPEBackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=184643
+
+        Reviewed by Žan Doberšek.
+
+        Adapt to single-header WPE includes.
+
+        * platform/graphics/egl/GLContextEGLWPE.cpp:
+        * platform/graphics/wpe/PlatformDisplayWPE.cpp:
+        * platform/wpe/PlatformPasteboardWPE.cpp:
+
 2018-04-25  Youenn Fablet  <youenn@apple.com>
 
         Use NetworkLoadChecker for all subresource loads except fetch/XHR

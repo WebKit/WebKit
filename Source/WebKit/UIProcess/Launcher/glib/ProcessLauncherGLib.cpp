@@ -41,7 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(WPE)
-#include <wpe/renderer-host.h>
+#include <wpe/wpe.h>
 #endif
 
 namespace WebKit {
